@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Plugin.name
+Bundle-SymbolicName: org.eclipse.zest.layouts;singleton:=true
+Bundle-Version: 2.0.0.qualifier
+Bundle-Vendor: %Plugin.providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.zest.layouts,
+ org.eclipse.zest.layouts.algorithms,
+ org.eclipse.zest.layouts.dataStructures,
+ org.eclipse.zest.layouts.interfaces
+Require-Bundle: org.eclipse.swt;visibility:=reexport,
+ org.eclipse.core.runtime,
+ org.eclipse.jface,
+ org.eclipse.draw2d
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

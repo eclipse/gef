@@ -1,0 +1,4 @@
+1154453403140	Convert local variable 'label' to field
+1154543427984	Rename method 'getMaxBounds'
+1154543083953	Rename method 'getScreenBounds'
+1154535190155	Rename type 'NestedSidePane'

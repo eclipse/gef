@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<session version="1.0">
+<refactoring comment="" description="Rename local variable 'currentBounds' in 'org.eclipse.mylar.zest.layouts.dataStructures.DisplayIndependentPoint.convertFromPercent(...)' to 'bounds'" id="org.eclipse.jdt.ui.rename.local.variable" input="=org.eclipse.mylar.zest.layouts/src&lt;org.eclipse.mylar.zest.layouts.dataStructures{DisplayIndependentPoint.java" name="bounds" project="org.eclipse.mylar.zest.layouts" references="true" selection="2965 13" stamp="1150141460218"/>
+<refactoring comment="" description="Rename local variable 'currentBounds' in 'org.eclipse.mylar.zest.layouts.dataStructures.DisplayIndependentPoint.convertToPercent(...)' to 'bounds'" id="org.eclipse.jdt.ui.rename.local.variable" input="=org.eclipse.mylar.zest.layouts/src&lt;org.eclipse.mylar.zest.layouts.dataStructures{DisplayIndependentPoint.java" name="bounds" project="org.eclipse.mylar.zest.layouts" references="true" selection="2339 13" stamp="1150141478562"/>
+</session>
