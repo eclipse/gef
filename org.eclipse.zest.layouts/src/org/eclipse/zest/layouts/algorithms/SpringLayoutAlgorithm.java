@@ -516,6 +516,9 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	 * Puts vertices in random places, all between (0,0) and (1,1).
 	 */
 	public void placeRandomly() {
+		if ( locationsX.length == 0 ) {
+			return;
+		}
 		// If only one node in the data repository, put it in the middle
 		if (locationsX.length == 1) {
 			// If only one node in the data repository, put it in the middle
