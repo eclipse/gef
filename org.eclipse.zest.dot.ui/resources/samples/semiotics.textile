@@ -1,0 +1,11 @@
+h1. Semiotics
+
+To get started with semiotics, we first take a look at the semiotic triangle of _Ogden and Richards_ (1923):
+
+bc. graph {
+  graph[layout=spring]
+  Symbol; Referent; Reference
+  Symbol -- Referent [label="Stands for" style=dashed]
+  Referent -- Reference [label="Refers to"] 
+  Reference -- Symbol [label="Symbolizes"]
+}
