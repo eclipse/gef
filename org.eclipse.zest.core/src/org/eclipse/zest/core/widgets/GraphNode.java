@@ -244,7 +244,9 @@ public class GraphNode extends GraphItem {
 			currentLocation.setPreciseX(x);
 			currentLocation.setPreciseY(y);
 			refreshBounds();
-			parent.getLayoutContext().fireNodeMovedEvent(this.getLayout());
+			if (getGraphModel().isDynamicLayoutEnabled()) {
+				parent.getLayoutContext().fireNodeMovedEvent(this.getLayout());
+			}
 		}
 	}
 
