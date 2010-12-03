@@ -186,6 +186,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	public void applyLayout(boolean clean) {
+		initLayout();
 		if (!clean)
 			return;
 		while (performAnotherNonContinuousIteration()) {
