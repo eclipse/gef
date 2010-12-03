@@ -5,12 +5,11 @@ Bundle-SymbolicName: org.eclipse.zest.core;singleton:=true
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Bundle-Version: 2.0.0.qualifier
-Require-Bundle: org.eclipse.ui,
- org.eclipse.draw2d,
+Require-Bundle: org.eclipse.draw2d,
  org.eclipse.zest.layouts;bundle-version="2.0.0"
 Eclipse-LazyStart: false
-Export-Package: org.eclipse.zest.core.viewers,
- org.eclipse.zest.core.widgets,
- org.eclipse.zest.core.widgets.custom
+Export-Package: org.eclipse.zest.core.widgets,
+ org.eclipse.zest.core.widgets.custom,
+ org.eclipse.zest.core.widgets.internal;x-internal:=true
 Import-Package: com.ibm.icu.text;version="[3.8.1,5.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
