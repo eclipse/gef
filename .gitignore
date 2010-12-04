@@ -1,5 +1,4 @@
 bin
-src-gen/
 plugin.xml_gen
 *.jar
 test.properties
