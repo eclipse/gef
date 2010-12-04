@@ -2,5 +2,5 @@ bin
 plugin.xml_gen
 *.jar
 test.properties
-org.eclipse.zest.dot.tests/resources/output/*.dot
-org.eclipse.zest.dot.tests/resources/tests/*.png
+org.eclipse.zest.tests/resources/output/*.dot
+org.eclipse.zest.tests/resources/tests/*.png
