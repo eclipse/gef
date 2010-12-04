@@ -354,9 +354,6 @@ class InternalLayoutContext implements LayoutContext {
 	 * after firing of events.
 	 */
 	void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		if (this.layoutAlgorithm != null) {
-			this.layoutAlgorithm.setLayoutContext(null);
-		}
 		this.layoutAlgorithm = algorithm;
 		this.layoutAlgorithm.setLayoutContext(this);
 	}
