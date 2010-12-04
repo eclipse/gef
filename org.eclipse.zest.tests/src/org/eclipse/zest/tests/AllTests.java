@@ -4,9 +4,9 @@
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ * Contributors: Fabian Steeg
  *******************************************************************************/
-package org.eclipse.zest.tests.dot;
+package org.eclipse.zest.tests;
 
 import junit.framework.Assert;
 

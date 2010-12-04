@@ -4,10 +4,12 @@
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * <p/>
- * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ * Contributors: Fabian Steeg
  *******************************************************************************/
-package org.eclipse.zest.tests.dot;
+package org.eclipse.zest.tests;
 
+import org.eclipse.zest.tests.dot.DotExportSuite;
+import org.eclipse.zest.tests.dot.DotImportSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -17,6 +19,7 @@ import org.junit.runners.Suite;
  * @author Fabian Steeg (fsteeg)
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DotExportSuite.class, DotImportSuite.class })
+@Suite.SuiteClasses({ GraphSelectionTests.class, DotExportSuite.class,
+		DotImportSuite.class })
 public final class AllHeadlessTests {
 }
