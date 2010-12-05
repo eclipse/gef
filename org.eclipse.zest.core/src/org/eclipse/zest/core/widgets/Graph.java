@@ -855,6 +855,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * @see org.eclipse.swt.widgets.Widget#notifyListeners(int, org.eclipse.swt.widgets.Event)
 	 */
 	public void notifyListeners(int eventType, Event event) {
+		super.notifyListeners(eventType, event);
 		if (eventType == SWT.Selection && event != null) {
 			notifySelectionListeners(new SelectionEvent(event));
 		}
