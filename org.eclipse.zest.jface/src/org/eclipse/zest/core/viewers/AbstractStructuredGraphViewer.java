@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2005-2010, CHISEL Group, University of Victoria, Victoria, BC,
+ * Copyright 2005-2011, CHISEL Group, University of Victoria, Victoria, BC,
  * Canada. All rights reserved. This program and the accompanying materials are
  * made available under the terms of the Eclipse Public License v1.0 which
  * accompanies this distribution, and is available at
@@ -343,14 +343,6 @@ public abstract class AbstractStructuredGraphViewer extends
 				node.dispose();
 			}
 		}
-	}
-
-	protected void handleDispose(DisposeEvent event) {
-
-		if (getControl() != null && !getControl().isDisposed()) {
-			getControl().dispose();
-		}
-		super.handleDispose(event);
 	}
 
 	/*
