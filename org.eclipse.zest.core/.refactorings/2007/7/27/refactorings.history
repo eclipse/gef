@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<session version="1.0">
+<refactoring comment="Extract constant 'org.eclipse.mylyn.zest.core.widgets.GraphContainer.MIN_WIDTH' from expression '150'&#13;&#10;- Original project: 'org.eclipse.mylyn.zest.core'&#13;&#10;- Constant name: 'MIN_WIDTH'&#13;&#10;- Constant expression: '150'&#13;&#10;- Declared visibility: 'private'" description="Extract constant 'MIN_WIDTH'" flags="786432" id="org.eclipse.jdt.ui.extract.constant" input="/src&lt;org.eclipse.mylyn.zest.core.widgets{GraphContainer.java" name="MIN_WIDTH" qualify="false" replace="false" selection="9141 3" stamp="1183692637406" version="1.0" visibility="2"/>
+</session>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;figure&apos; in &apos;org.eclipse.zest.tests.swt.GraphSnippet13.main(...)&apos; to &apos;tooltip&apos;&#x0D;&#x0A;- Original project: &apos;org.eclipse.zest.tests&apos;&#x0D;&#x0A;- Original element: &apos;org.eclipse.zest.tests.swt.GraphSnippet13.main(String[]).figure&apos;&#x0D;&#x0A;- Renamed element: &apos;figure&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;figure&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;org.eclipse.zest.tests.swt{GraphSnippet13.java[GraphSnippet13~main~\[QString;@figure!4738!4767!4746!4751!QIFigure;" name="tooltip" references="true" stamp="1237998877437" version="1.0"/>
+</session>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete 1 element(s) from project 'org.eclipse.mylyn.zest.core'&#13;&#10;- Original project: 'org.eclipse.mylyn.zest.core'&#13;&#10;- Original element: 'org.eclipse.mylyn.zest.examples.swt.LargeTest.java'" description="Delete element" element1="/src&lt;org.eclipse.mylyn.zest.examples.swt{LargeTest.java" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1187639130390" subPackages="false" version="1.0"/>
+</session>
