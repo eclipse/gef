@@ -1,8 +1,8 @@
-#Wed May 19 22:48:56 CEST 2010
+#Sun Jan 23 17:45:25 CET 2011
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
-formatter_profile=_Mylar based on Eclipse [built-in]
-formatter_settings_version=11
+formatter_profile=org.eclipse.jdt.ui.default.eclipse_profile
+formatter_settings_version=12
 instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true
 internal.default.compliance=default
 sp_cleanup.add_default_serial_version_id=true
