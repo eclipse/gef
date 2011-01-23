@@ -739,7 +739,7 @@ public class GraphNode extends GraphItem {
 	 * Sets the node as selected.
 	 */
 	void setSelected(boolean selected) {
-		if (selected = isSelected()) {
+		if (selected == isSelected()) {
 			return;
 		}
 		if (selected) {

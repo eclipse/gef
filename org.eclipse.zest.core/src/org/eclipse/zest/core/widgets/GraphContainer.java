@@ -636,10 +636,6 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm,
 			boolean applyLayout) {
-		if (this.layoutAlgorithm != null) {
-			this.layoutAlgorithm.setLayoutContext(null);
-		}
-
 		this.layoutAlgorithm = algorithm;
 		this.layoutAlgorithm.setLayoutContext(getLayoutContext());
 		if (applyLayout) {

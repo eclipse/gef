@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="zest">
+<locations>
+<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+<unit id="org.eclipse.draw2d.feature.group" version="3.7.0.v20101110-1717-46-7w3121222103161"/>
+<unit id="org.eclipse.draw2d.sdk.feature.group" version="3.7.0.v20101110-1717-7A7I-8yF4F-9C9F5AECC58F38x42"/>
+<unit id="org.eclipse.draw2d.source.feature.group" version="3.7.0.v20101110-1717-46-7w3121222103161"/>
+<repository location="http://download.eclipse.org/tools/gef/updates/interim/"/>
+</location>
+<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="1.0.1.v201008251220"/>
+<unit id="org.eclipse.jet.sdk.feature.group" version="1.1.0.v201006011447-42-86A3NrKJOOHXQlFdKR4A35"/>
+<unit id="org.eclipse.xpand.sdk.feature.group" version="1.0.1.v201008251147"/>
+<repository location="http://download.eclipse.org/releases/indigo"/>
+</location>
+<location includeAllPlatforms="false" includeMode="planner" type="InstallableUnit">
+<unit id="org.eclipse.platform.ide" version="3.7.0.I20101028-1441"/>
+<repository location="http://download.eclipse.org/eclipse/updates/3.7milestones"/>
+</location>
+</locations>
+</target>

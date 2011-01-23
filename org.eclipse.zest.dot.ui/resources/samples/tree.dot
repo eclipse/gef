@@ -1,0 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Fabian Steeg. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ *******************************************************************************/
+digraph the_agent_likes_martini {
+	node[shape=box]
+	
+	// non-terminal nodes
+	S; NP1[label="NP"]; V; VP; NP2[label="NP"]; DET; N 
+	
+	//terminal nodes
+	the; agent;	likes; martini
+	
+	// "the agent"
+	S -> NP1; NP1 -> DET; NP1 -> N
+	DET -> the[style=dashed]; N -> agent[style=dashed]
+	
+	// "likes martini"
+	S -> VP; VP -> V; VP -> NP2
+	V -> likes[style=dashed]; NP2 -> martini[style=dashed]
+} 

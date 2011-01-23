@@ -5,7 +5,8 @@
  * accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group, University of Victoria Mateusz Matela
+ * Contributors: The Chisel Group, University of Victoria 
+ *               Mateusz Matela
  ******************************************************************************/
 package org.eclipse.zest.core.widgets;
 
@@ -289,26 +290,19 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * 
 	 * @param l
 	 */
-	public void setSelection(GraphItem[] nodes) {
+	public void setSelection(GraphItem[] items) {
 		clearSelection();
-		if (nodes != null) {
-			for (int i = 0; i < nodes.length; i++) {
-				if (nodes[i] != null && nodes[i] instanceof GraphItem) {
-					selectedItems.add(nodes[i]);
-					(nodes[i]).highlight();
+		if (items != null) {
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null) {
+					select(items[i]);
 				}
 			}
 		}
-		// TODO shouldn't this method fire a selection event?
 	}
 
 	public void selectAll() {
-		clearSelection();
-		for (int i = 0; i < nodes.size(); i++) {
-			selectedItems.add(nodes.get(i));
-			((GraphNode) nodes.get(i)).highlight();
-		}
-		// TODO shouldn't this method fire a selection event?
+		setSelection((GraphItem[]) nodes.toArray(new GraphItem[] {}));
 	}
 
 	/**
@@ -857,29 +851,56 @@ public class Graph extends FigureCanvas implements IContainer {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Widget#notifyListeners(int,
+	 * org.eclipse.swt.widgets.Event)
+	 */
+	public void notifyListeners(int eventType, Event event) {
+		super.notifyListeners(eventType, event);
+		if (eventType == SWT.Selection && event != null) {
+			notifySelectionListeners(new SelectionEvent(event));
+		}
+	}
+
 	private void clearSelection() {
-		if (selectedItems.size() > 0) {
-			Iterator iterator = selectedItems.iterator();
-			while (iterator.hasNext()) {
-				GraphItem item = (GraphItem) iterator.next();
-				item.unhighlight();
-				iterator.remove();
-			}
+		Iterator iterator = new ArrayList(selectedItems).iterator();
+		while (iterator.hasNext()) {
+			deselect((GraphItem) iterator.next());
 		}
 	}
 
 	private void fireWidgetSelectedEvent(Item item) {
+		Event swtEvent = new Event();
+		swtEvent.item = item;
+		swtEvent.widget = this;
+		notifySelectionListeners(new SelectionEvent(swtEvent));
+	}
+
+	private void notifySelectionListeners(SelectionEvent event) {
 		Iterator iterator = selectionListeners.iterator();
 		while (iterator.hasNext()) {
-			SelectionListener selectionListener = (SelectionListener) iterator
-					.next();
-			Event swtEvent = new Event();
-			swtEvent.item = item;
-			swtEvent.widget = this;
-			SelectionEvent event = new SelectionEvent(swtEvent);
-			selectionListener.widgetSelected(event);
+			((SelectionListener) iterator.next()).widgetSelected(event);
 		}
+	}
 
+	private void deselect(GraphItem item) {
+		selectedItems.remove(item);
+		item.unhighlight();
+		setNodeSelected(item, false);
+	}
+
+	private void select(GraphItem item) {
+		selectedItems.add(item);
+		item.highlight();
+		setNodeSelected(item, true);
+	}
+
+	private void setNodeSelected(GraphItem item, boolean selected) {
+		if (item instanceof GraphNode) {
+			((GraphNode) item).setSelected(selected);
+		}
 	}
 
 	/**
