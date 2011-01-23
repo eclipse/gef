@@ -22,8 +22,8 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 
 /**
- * This snippet creates a graph with 80*3 nodes (240 nodes).  Only the icons are shown for the nodes, but if
- * you mouse over the node you get the entire text.
+ * This snippet creates a graph with 80*3 nodes (240 nodes). Only the icons are
+ * shown for the nodes, but if you mouse over the node you get the entire text.
  * 
  * @author Ian Bull
  * 
@@ -37,7 +37,8 @@ public class FisheyeGraphSnippet {
 		Display d = new Display();
 		Shell shell = new Shell(d);
 		shell.setText("GraphSnippet6");
-		Image image1 = Display.getDefault().getSystemImage(SWT.ICON_INFORMATION);
+		Image image1 = Display.getDefault()
+				.getSystemImage(SWT.ICON_INFORMATION);
 		Image image2 = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
 		Image image3 = Display.getDefault().getSystemImage(SWT.ICON_ERROR);
 		shell.setLayout(new FillLayout());

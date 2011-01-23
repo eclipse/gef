@@ -29,9 +29,13 @@ class AlgorithmHelper {
 	 * @param destinationBounds
 	 * @param resize
 	 */
-	public static void fitWithinBounds(EntityLayout[] entities, DisplayIndependentRectangle destinationBounds, boolean resize) {
-		DisplayIndependentRectangle startingBounds = getLayoutBounds(entities, false);
-		double sizeScale = Math.min(destinationBounds.width / startingBounds.width, destinationBounds.height / startingBounds.height);
+	public static void fitWithinBounds(EntityLayout[] entities,
+			DisplayIndependentRectangle destinationBounds, boolean resize) {
+		DisplayIndependentRectangle startingBounds = getLayoutBounds(entities,
+				false);
+		double sizeScale = Math.min(destinationBounds.width
+				/ startingBounds.width, destinationBounds.height
+				/ startingBounds.height);
 		if (entities.length == 1) {
 			fitSingleEntity(entities[0], destinationBounds, resize);
 			return;
@@ -41,8 +45,10 @@ class AlgorithmHelper {
 			DisplayIndependentDimension size = entity.getSize();
 			if (entity.isMovable()) {
 				DisplayIndependentPoint location = entity.getLocation();
-				double percentX = (location.x - startingBounds.x) / (startingBounds.width);
-				double percentY = (location.y - startingBounds.y) / (startingBounds.height);
+				double percentX = (location.x - startingBounds.x)
+						/ (startingBounds.width);
+				double percentY = (location.y - startingBounds.y)
+						/ (startingBounds.height);
 
 				if (resize && entity.isResizable()) {
 					size.width *= sizeScale;
@@ -50,27 +56,31 @@ class AlgorithmHelper {
 					entity.setSize(size.width, size.height);
 				}
 
-				location.x = destinationBounds.x + size.width / 2 + percentX * (destinationBounds.width - size.width);
-				location.y = destinationBounds.y + size.height / 2 + percentY * (destinationBounds.height - size.height);
+				location.x = destinationBounds.x + size.width / 2 + percentX
+						* (destinationBounds.width - size.width);
+				location.y = destinationBounds.y + size.height / 2 + percentY
+						* (destinationBounds.height - size.height);
 				entity.setLocation(location.x, location.y);
 
-			} else
-			if (resize && entity.isResizable()) {
+			} else if (resize && entity.isResizable()) {
 				entity.setSize(size.width * sizeScale, size.height * sizeScale);
 			}
 		}
 	}
 
-	private static void fitSingleEntity(EntityLayout entity, DisplayIndependentRectangle destinationBounds, boolean resize) {
+	private static void fitSingleEntity(EntityLayout entity,
+			DisplayIndependentRectangle destinationBounds, boolean resize) {
 		if (entity.isMovable()) {
-			entity.setLocation(destinationBounds.x + destinationBounds.width / 2, destinationBounds.y + destinationBounds.height / 2);
+			entity.setLocation(destinationBounds.x + destinationBounds.width
+					/ 2, destinationBounds.y + destinationBounds.height / 2);
 		}
 		if (resize && entity.isResizable()) {
 			double width = destinationBounds.width;
 			double height = destinationBounds.height;
 			double preferredAspectRatio = entity.getPreferredAspectRatio();
 			if (preferredAspectRatio > 0) {
-				DisplayIndependentDimension fixedSize = fixAspectRatio(width, height, preferredAspectRatio);
+				DisplayIndependentDimension fixedSize = fixAspectRatio(width,
+						height, preferredAspectRatio);
 				entity.setSize(fixedSize.width, fixedSize.height);
 			} else {
 				entity.setSize(width, height);
@@ -88,7 +98,8 @@ class AlgorithmHelper {
 	public static void maximizeSizes(EntityLayout[] entities) {
 		if (entities.length > 1) {
 			DisplayIndependentDimension minDistance = getMinimumDistance(entities);
-			double nodeSize = Math.max(minDistance.width, minDistance.height) * PADDING_PERCENT;
+			double nodeSize = Math.max(minDistance.width, minDistance.height)
+					* PADDING_PERCENT;
 			double width = nodeSize;
 			double height = nodeSize;
 			for (int i = 0; i < entities.length; i++) {
@@ -96,7 +107,8 @@ class AlgorithmHelper {
 				if (entity.isResizable()) {
 					double preferredRatio = entity.getPreferredAspectRatio();
 					if (preferredRatio > 0) {
-						DisplayIndependentDimension fixedSize = fixAspectRatio(width, height, preferredRatio);
+						DisplayIndependentDimension fixedSize = fixAspectRatio(
+								width, height, preferredRatio);
 						entity.setSize(fixedSize.width, fixedSize.height);
 					} else {
 						entity.setSize(width, height);
@@ -106,7 +118,8 @@ class AlgorithmHelper {
 		}
 	}
 
-	private static DisplayIndependentDimension fixAspectRatio(double width, double height, double preferredRatio) {
+	private static DisplayIndependentDimension fixAspectRatio(double width,
+			double height, double preferredRatio) {
 		double actualRatio = width / height;
 		if (actualRatio > preferredRatio) {
 			width = height * preferredRatio;
@@ -132,7 +145,8 @@ class AlgorithmHelper {
 	 * size of the nodes or not. If the size is not included, the bounds will
 	 * only be guaranteed to include the center of each node.
 	 */
-	public static DisplayIndependentRectangle getLayoutBounds(EntityLayout[] entities, boolean includeNodeSize) {
+	public static DisplayIndependentRectangle getLayoutBounds(
+			EntityLayout[] entities, boolean includeNodeSize) {
 		double rightSide = Double.NEGATIVE_INFINITY;
 		double bottomSide = Double.NEGATIVE_INFINITY;
 		double leftSide = Double.POSITIVE_INFINITY;
@@ -153,7 +167,8 @@ class AlgorithmHelper {
 				bottomSide = Math.max(location.y, bottomSide);
 			}
 		}
-		return new DisplayIndependentRectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
+		return new DisplayIndependentRectangle(leftSide, topSide, rightSide
+				- leftSide, bottomSide - topSide);
 	}
 
 	/**
@@ -180,8 +195,10 @@ class AlgorithmHelper {
 	 * 
 	 * 
 	 */
-	public static DisplayIndependentDimension getMinimumDistance(EntityLayout[] entities) {
-		DisplayIndependentDimension horAndVertdistance = new DisplayIndependentDimension(Double.MAX_VALUE, Double.MAX_VALUE);
+	public static DisplayIndependentDimension getMinimumDistance(
+			EntityLayout[] entities) {
+		DisplayIndependentDimension horAndVertdistance = new DisplayIndependentDimension(
+				Double.MAX_VALUE, Double.MAX_VALUE);
 		double minDistance = Double.MAX_VALUE;
 
 		// TODO: Very Slow!

@@ -40,7 +40,8 @@ public class GraphJFaceSnippet4 {
 		}
 
 		public Object[] getElements(Object input) {
-			return new Object[] { "Rock2Paper", "Paper2Scissors", "Scissors2Rock" };
+			return new Object[] { "Rock2Paper", "Paper2Scissors",
+					"Scissors2Rock" };
 		}
 
 		public Object getSource(Object rel) {
@@ -67,10 +68,12 @@ public class GraphJFaceSnippet4 {
 	}
 
 	static class MyLabelProvider extends LabelProvider {
-		final Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
 
 		public Image getImage(Object element) {
-			if (element.equals("Rock") || element.equals("Paper") || element.equals("Scissors")) {
+			if (element.equals("Rock") || element.equals("Paper")
+					|| element.equals("Scissors")) {
 				return image;
 			}
 			return null;
@@ -102,7 +105,8 @@ public class GraphJFaceSnippet4 {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				System.out.println("Selection Changed: "
-						+ selectionToString((StructuredSelection) event.getSelection()));
+						+ selectionToString((StructuredSelection) event
+								.getSelection()));
 			}
 
 			private String selectionToString(StructuredSelection selection) {

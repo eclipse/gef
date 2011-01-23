@@ -74,7 +74,8 @@ public class GraphJFaceSnippet1 {
 	}
 
 	static class MyLabelProvider extends LabelProvider {
-		final Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
 
 		public Image getImage(Object element) {
 			if (element instanceof String) {
@@ -118,7 +119,8 @@ public class GraphJFaceSnippet1 {
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				System.out.println("Selection changed: " + (event.getSelection()));
+				System.out.println("Selection changed: "
+						+ (event.getSelection()));
 			}
 
 		});

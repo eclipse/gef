@@ -45,8 +45,7 @@ public class DAGExample {
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 10, 10));
 		g.setSize(500, 500);
 
-		g
-				.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
+		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
 		g.setExpandCollapseManager(new DAGExpandCollapseManager());
 
@@ -69,8 +68,6 @@ public class DAGExample {
 		new GraphConnection(g, ZestStyles.CONNECTIONS_DIRECTED, e, h);
 		new GraphConnection(g, ZestStyles.CONNECTIONS_DIRECTED, root, h);
 
-
-		
 		hookMenu(g);
 
 		final Button buttonTopDown = new Button(shell, SWT.FLAT);
@@ -96,8 +93,6 @@ public class DAGExample {
 		buttonBottomUp.addSelectionListener(buttonListener);
 		buttonLeftRight.addSelectionListener(buttonListener);
 		buttonRightLeft.addSelectionListener(buttonListener);
-		
-
 
 		shell.open();
 		while (!shell.isDisposed()) {

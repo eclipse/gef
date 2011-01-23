@@ -33,7 +33,8 @@ public class CompartmentFigure extends Figure {
 		}
 
 		public void paint(IFigure figure, Graphics graphics, Insets insets) {
-			graphics.drawLine(getPaintRectangle(figure, insets).getTopLeft(), tempRect.getTopRight());
+			graphics.drawLine(getPaintRectangle(figure, insets).getTopLeft(),
+					tempRect.getTopRight());
 		}
 	}
 }

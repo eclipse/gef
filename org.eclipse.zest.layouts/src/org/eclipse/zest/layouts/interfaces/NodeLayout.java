@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.zest.layouts.interfaces;
 
-
 public interface NodeLayout extends EntityLayout {
 
 	public boolean isPrunable();

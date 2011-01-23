@@ -93,6 +93,7 @@ public interface LayoutListener {
 	 *            the subgraph that was resized
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean subgraphResized(LayoutContext context, SubgraphLayout subgraph);
+	public boolean subgraphResized(LayoutContext context,
+			SubgraphLayout subgraph);
 
 }

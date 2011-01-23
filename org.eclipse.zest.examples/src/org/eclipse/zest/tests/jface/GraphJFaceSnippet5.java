@@ -33,12 +33,14 @@ public class GraphJFaceSnippet5 {
 
 	static class MyContentProvider implements IGraphContentProvider {
 
-		Object[] elements = new Object[] { "Rock2Paper", "Paper2Scissors", "Scissors2Rock" };
+		Object[] elements = new Object[] { "Rock2Paper", "Paper2Scissors",
+				"Scissors2Rock" };
 
 		public Object getDestination(Object rel) {
 			if ("Rock2Paper".equals(rel)) {
 				return "Rock";
-			} else if ("Paper2Scissors".equals(rel) || "Scissors2Paper".equals(rel)) {
+			} else if ("Paper2Scissors".equals(rel)
+					|| "Scissors2Paper".equals(rel)) {
 				return "Paper";
 			} else if ("Scissors2Rock".equals(rel)) {
 				return "Scissors";
@@ -53,7 +55,8 @@ public class GraphJFaceSnippet5 {
 		public Object getSource(Object rel) {
 			if ("Rock2Paper".equals(rel)) {
 				return "Paper";
-			} else if ("Paper2Scissors".equals(rel) || "Scissors2Paper".equals(rel)) {
+			} else if ("Paper2Scissors".equals(rel)
+					|| "Scissors2Paper".equals(rel)) {
 				return "Scissors";
 			} else if ("Scissors2Rock".equals(rel)) {
 				return "Rock";
@@ -78,16 +81,17 @@ public class GraphJFaceSnippet5 {
 	}
 
 	static class MyLabelProvider extends LabelProvider {
-		final Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);	
-		
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
+
 		public MyLabelProvider() {
-			
+
 		}
-		
+
 		public String getText(Object element) {
 			return element.toString();
 		}
-		
+
 		public Image getImage(Object element) {
 			return image;
 		}
@@ -123,7 +127,8 @@ public class GraphJFaceSnippet5 {
 		button.setText("Refresh");
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				contentProvider.setElements(new Object[] { "Rock2Paper", "Scissors2Paper", "Scissors2Rock" });
+				contentProvider.setElements(new Object[] { "Rock2Paper",
+						"Scissors2Paper", "Scissors2Rock" });
 				viewer.refresh();
 			}
 		});
@@ -131,7 +136,8 @@ public class GraphJFaceSnippet5 {
 
 	private static void buildViewer(Composite parent) {
 		viewer = new GraphViewer(parent, SWT.NONE);
-		viewer.getGraphControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		viewer.getGraphControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 		contentProvider = new MyContentProvider();
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new MyLabelProvider());

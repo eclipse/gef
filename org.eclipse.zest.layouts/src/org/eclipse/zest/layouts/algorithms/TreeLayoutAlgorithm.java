@@ -77,10 +77,12 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	public void setDirection(int direction) {
-		if (direction == TOP_DOWN || direction == BOTTOM_UP || direction == LEFT_RIGHT || direction == RIGHT_LEFT)
+		if (direction == TOP_DOWN || direction == BOTTOM_UP
+				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT)
 			this.direction = direction;
 		else
-			throw new IllegalArgumentException("Invalid direction: " + direction);
+			throw new IllegalArgumentException("Invalid direction: "
+					+ direction);
 	}
 
 	/**
@@ -120,7 +122,8 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
 
-		DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(bounds);
+		DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
+				bounds);
 		int insets = 4;
 		bounds2.x += insets;
 		bounds2.y += insets;
@@ -140,7 +143,8 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			layerSize = bounds.width / superRoot.height;
 		}
 		int leafCountSoFar = 0;
-		for (Iterator iterator = superRoot.getChildren().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = superRoot.getChildren().iterator(); iterator
+				.hasNext();) {
 			TreeNode rootInfo = (TreeNode) iterator.next();
 			computePositionRecursively(rootInfo, leafCountSoFar);
 			leafCountSoFar = leafCountSoFar + rootInfo.numOfLeaves;
@@ -150,29 +154,37 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 	/**
 	 * Computes positions recursively until the leaf nodes are reached.
 	 */
-	private void computePositionRecursively(TreeNode entityInfo, int relativePosition) {
-		double breadthPosition = relativePosition + entityInfo.numOfLeaves / 2.0;
+	private void computePositionRecursively(TreeNode entityInfo,
+			int relativePosition) {
+		double breadthPosition = relativePosition + entityInfo.numOfLeaves
+				/ 2.0;
 		double depthPosition = (entityInfo.depth + 0.5);
 
 		switch (direction) {
 		case TOP_DOWN:
-			entityInfo.getNode().setLocation(breadthPosition * leafSize, depthPosition * layerSize);
+			entityInfo.getNode().setLocation(breadthPosition * leafSize,
+					depthPosition * layerSize);
 			break;
 		case BOTTOM_UP:
-			entityInfo.getNode().setLocation(breadthPosition * leafSize, bounds.height - depthPosition * layerSize);
+			entityInfo.getNode().setLocation(breadthPosition * leafSize,
+					bounds.height - depthPosition * layerSize);
 			break;
 		case LEFT_RIGHT:
-			entityInfo.getNode().setLocation(depthPosition * layerSize, breadthPosition * leafSize);
+			entityInfo.getNode().setLocation(depthPosition * layerSize,
+					breadthPosition * leafSize);
 			break;
 		case RIGHT_LEFT:
-			entityInfo.getNode().setLocation(bounds.width - depthPosition * layerSize, breadthPosition * leafSize);
+			entityInfo.getNode().setLocation(
+					bounds.width - depthPosition * layerSize,
+					breadthPosition * leafSize);
 			break;
 		}
 
-		for (Iterator iterator = entityInfo.children.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = entityInfo.children.iterator(); iterator
+				.hasNext();) {
 			TreeNode childInfo = (TreeNode) iterator.next();
 			computePositionRecursively(childInfo, relativePosition);
 			relativePosition += childInfo.numOfLeaves;
 		}
 	}
-} 
+}

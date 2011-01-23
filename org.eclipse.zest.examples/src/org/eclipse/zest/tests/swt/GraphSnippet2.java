@@ -34,7 +34,8 @@ public class GraphSnippet2 {
 	public static void main(String[] args) {
 		Display d = new Display();
 		Shell shell = new Shell(d);
-		Image image1 = Display.getDefault().getSystemImage(SWT.ICON_INFORMATION);
+		Image image1 = Display.getDefault()
+				.getSystemImage(SWT.ICON_INFORMATION);
 		Image image2 = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
 		Image image3 = Display.getDefault().getSystemImage(SWT.ICON_ERROR);
 		shell.setLayout(new FillLayout());

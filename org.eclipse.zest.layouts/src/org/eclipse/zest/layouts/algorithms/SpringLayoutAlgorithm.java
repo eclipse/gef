@@ -173,12 +173,14 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			return false;
 		}
 
-		public boolean subgraphMoved(LayoutContext context, SubgraphLayout subgraph) {
+		public boolean subgraphMoved(LayoutContext context,
+				SubgraphLayout subgraph) {
 			// TODO Auto-generated method stub
 			return false;
 		}
 
-		public boolean subgraphResized(LayoutContext context, SubgraphLayout subgraph) {
+		public boolean subgraphResized(LayoutContext context,
+				SubgraphLayout subgraph) {
 			// TODO Auto-generated method stub
 			return false;
 		}
@@ -197,7 +199,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			AlgorithmHelper.maximizeSizes(entities);
 
 		if (fitWithinBounds) {
-			DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(bounds);
+			DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
+					bounds);
 			int insets = 4;
 			bounds2.x += insets;
 			bounds2.y += insets;
@@ -416,8 +419,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		ConnectionLayout[] connections = context.getConnections();
 		for (int i = 0; i < connections.length; i++) {
 			ConnectionLayout connection = connections[i];
-			Integer source = (Integer) entityToPosition.get(getEntity(connection.getSource()));
-			Integer target = (Integer) entityToPosition.get(getEntity(connection.getTarget()));
+			Integer source = (Integer) entityToPosition
+					.get(getEntity(connection.getSource()));
+			Integer target = (Integer) entityToPosition
+					.get(getEntity(connection.getTarget()));
 			if (source == null || target == null)
 				continue;
 			double weight = connection.getWeight();
@@ -517,7 +522,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	 * Puts vertices in random places, all between (0,0) and (1,1).
 	 */
 	public void placeRandomly() {
-		if ( locationsX.length == 0 ) {
+		if (locationsX.length == 0) {
 			return;
 		}
 		// If only one node in the data repository, put it in the middle
@@ -567,11 +572,14 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			for (int i = 0; i < this.locationsX.length; i++) {
 
 				for (int j = i + 1; j < locationsX.length; j++) {
-					double dx = (locationsX[i] - locationsX[j]) / bounds.width / boundsScaleX;
-					double dy = (locationsY[i] - locationsY[j]) / bounds.height / boundsScaleY;
+					double dx = (locationsX[i] - locationsX[j]) / bounds.width
+							/ boundsScaleX;
+					double dy = (locationsY[i] - locationsY[j]) / bounds.height
+							/ boundsScaleY;
 					double distance_sq = dx * dx + dy * dy;
 					// make sure distance and distance squared not too small
-					distance_sq = Math.max(MIN_DISTANCE * MIN_DISTANCE, distance_sq);
+					distance_sq = Math.max(MIN_DISTANCE * MIN_DISTANCE,
+							distance_sq);
 					double distance = Math.sqrt(distance_sq);
 
 					// If there are relationships between srcObj and destObj
@@ -584,7 +592,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 					double f;
 					if (sumOfWeights > 0) {
 						// nodes are pulled towards each other
-						f = -sprStrain * Math.log(distance / sprLength) * sumOfWeights;
+						f = -sprStrain * Math.log(distance / sprLength)
+								* sumOfWeights;
 					} else {
 						// nodes are repelled from each other
 						f = sprGravitation / (distance_sq);
@@ -686,7 +695,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			maxY = Math.max(maxY, locationsY[i] + sizeH[i] / 2);
 			minY = Math.min(minY, locationsY[i] - sizeH[i] / 2);
 		}
-		return new DisplayIndependentRectangle(minX, minY, maxX - minX, maxY - minY);
+		return new DisplayIndependentRectangle(minX, minY, maxX - minX, maxY
+				- minY);
 	}
 
 	private void improveBoundScaleX(DisplayIndependentRectangle currentBounds) {
@@ -770,8 +780,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	// }
 
 	private void moveToCenter(DisplayIndependentRectangle currentBounds) {
-		double moveX = (currentBounds.x + currentBounds.width / 2) - (bounds.x + bounds.width / 2);
-		double moveY = (currentBounds.y + currentBounds.height / 2) - (bounds.y + bounds.height / 2);
+		double moveX = (currentBounds.x + currentBounds.width / 2)
+				- (bounds.x + bounds.width / 2);
+		double moveY = (currentBounds.y + currentBounds.height / 2)
+				- (bounds.y + bounds.height / 2);
 		for (int i = 0; i < locationsX.length; i++) {
 			locationsX[i] -= moveX;
 			locationsY[i] -= moveY;

@@ -225,11 +225,11 @@ public class XYScaledGraphics extends ScaledGraphics {
 	public void drawImage(Image srcImage, int x, int y) {
 		org.eclipse.swt.graphics.Rectangle size = srcImage.getBounds();
 		double imageZoom = Math.min(xZoom, yZoom);
-		graphics.drawImage(srcImage, 0, 0, size.width, size.height, (int) (Math
-				.floor((x * xZoom + fractionalX))), (int) (Math.floor((y
-				* yZoom + fractionalY))), (int) (Math.floor((size.width
-				* imageZoom + fractionalX))), (int) (Math.floor((size.height
-				* imageZoom + fractionalY))));
+		graphics.drawImage(srcImage, 0, 0, size.width, size.height,
+				(int) (Math.floor((x * xZoom + fractionalX))),
+				(int) (Math.floor((y * yZoom + fractionalY))),
+				(int) (Math.floor((size.width * imageZoom + fractionalX))),
+				(int) (Math.floor((size.height * imageZoom + fractionalY))));
 	}
 
 	/** @see Graphics#drawImage(Image, int, int, int, int, int, int, int, int) */
@@ -247,9 +247,9 @@ public class XYScaledGraphics extends ScaledGraphics {
 	/** @see Graphics#drawLine(int, int, int, int) */
 	public void drawLine(int x1, int y1, int x2, int y2) {
 		graphics.drawLine((int) (Math.floor((x1 * xZoom + fractionalX))),
-				(int) (Math.floor((y1 * yZoom + fractionalY))), (int) (Math
-						.floor((x2 * xZoom + fractionalX))), (int) (Math
-						.floor((y2 * yZoom + fractionalY))));
+				(int) (Math.floor((y1 * yZoom + fractionalY))),
+				(int) (Math.floor((x2 * xZoom + fractionalX))),
+				(int) (Math.floor((y2 * yZoom + fractionalY))));
 	}
 
 	/** @see Graphics#drawOval(int, int, int, int) */
@@ -329,10 +329,10 @@ public class XYScaledGraphics extends ScaledGraphics {
 			int selectionStart, int selectionEnd, Color selectionForeground,
 			Color selectionBackground) {
 		TextLayout scaled = zoomTextLayout(layout);
-		graphics.drawTextLayout(scaled, (int) Math.floor(x * xZoom
-				+ fractionalX), (int) Math.floor(y * yZoom + fractionalY),
-				selectionStart, selectionEnd, selectionBackground,
-				selectionForeground);
+		graphics.drawTextLayout(scaled,
+				(int) Math.floor(x * xZoom + fractionalX),
+				(int) Math.floor(y * yZoom + fractionalY), selectionStart,
+				selectionEnd, selectionBackground, selectionForeground);
 		scaled.dispose();
 	}
 
@@ -717,11 +717,9 @@ public class XYScaledGraphics extends ScaledGraphics {
 		tempRECT.x = (int) (Math.floor(r.x * xZoom + fractionalX));
 		tempRECT.y = (int) (Math.floor(r.y * yZoom + fractionalY));
 		tempRECT.width = (int) (Math
-				.ceil(((r.x + r.width) * xZoom + fractionalX)))
-				- tempRECT.x;
+				.ceil(((r.x + r.width) * xZoom + fractionalX))) - tempRECT.x;
 		tempRECT.height = (int) (Math
-				.ceil(((r.y + r.height) * yZoom + fractionalY)))
-				- tempRECT.y;
+				.ceil(((r.y + r.height) * yZoom + fractionalY))) - tempRECT.y;
 		return tempRECT;
 	}
 
@@ -731,8 +729,7 @@ public class XYScaledGraphics extends ScaledGraphics {
 		tempRECT.width = (int) (Math.floor(((x + w - 1) * xZoom + fractionalX)))
 				- tempRECT.x + 1;
 		tempRECT.height = (int) (Math
-				.floor(((y + h - 1) * yZoom + fractionalY)))
-				- tempRECT.y + 1;
+				.floor(((y + h - 1) * yZoom + fractionalY))) - tempRECT.y + 1;
 		return tempRECT;
 	}
 

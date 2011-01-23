@@ -534,8 +534,8 @@ public abstract class AbstractStructuredGraphViewer extends
 			GraphNode newNode = (GraphNode) nodesMap.get(data);
 			if (newNode != null) {
 				GraphNode oldNode = (GraphNode) oldNodesMap.get(data);
-				newNode.setLocation(oldNode.getLocation().x, oldNode
-						.getLocation().y);
+				newNode.setLocation(oldNode.getLocation().x,
+						oldNode.getLocation().y);
 				if (oldNode.isSizeFixed()) {
 					newNode.setSize(oldNode.getSize().width,
 							oldNode.getSize().height);

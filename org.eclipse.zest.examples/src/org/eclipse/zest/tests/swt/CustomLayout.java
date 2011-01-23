@@ -52,7 +52,8 @@ public class CustomLayout {
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
 					EntityLayout layoutEntity = entitiesToLayout[currentStep];
-					layoutEntity.setLocation(xLocation, layoutEntity.getLocation().y);
+					layoutEntity.setLocation(xLocation,
+							layoutEntity.getLocation().y);
 					xLocation += distance;
 				}
 			}

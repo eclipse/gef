@@ -61,7 +61,8 @@ public class GraphSnippet5 {
 
 		Shell shell = new Shell(d);
 		shell.setText("Graph Snippet 5");
-		Image image1 = Display.getDefault().getSystemImage(SWT.ICON_INFORMATION);
+		Image image1 = Display.getDefault()
+				.getSystemImage(SWT.ICON_INFORMATION);
 		Image image2 = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
 		Image image3 = Display.getDefault().getSystemImage(SWT.ICON_ERROR);
 		shell.setLayout(new FillLayout());
@@ -99,8 +100,10 @@ public class GraphSnippet5 {
 					}
 				} else if (e.keyCode == ENTER) {
 					complete = true;
-				} else if ((e.character >= 'a' && e.character <= 'z') || (e.character >= 'A' && e.character <= 'Z')
-						|| (e.character == '.') || (e.character >= '0' && e.character <= '9')) {
+				} else if ((e.character >= 'a' && e.character <= 'z')
+						|| (e.character >= 'A' && e.character <= 'Z')
+						|| (e.character == '.')
+						|| (e.character >= '0' && e.character <= '9')) {
 					stringBuffer.append(e.character);
 				}
 				Iterator iterator = figureListing.keySet().iterator();
@@ -108,12 +111,14 @@ public class GraphSnippet5 {
 				if (stringBuffer.length() > 0) {
 					while (iterator.hasNext()) {
 						String string = (String) iterator.next();
-						if (string.indexOf(stringBuffer.toString().toLowerCase()) >= 0) {
+						if (string.indexOf(stringBuffer.toString()
+								.toLowerCase()) >= 0) {
 							list.add(figureListing.get(string));
 						}
 					}
 				}
-				g.setSelection((GraphItem[]) list.toArray(new GraphItem[list.size()]));
+				g.setSelection((GraphItem[]) list.toArray(new GraphItem[list
+						.size()]));
 				if (complete && stringBuffer.length() > 0) {
 					stringBuffer.delete(0, stringBuffer.length());
 				}

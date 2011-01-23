@@ -93,13 +93,14 @@ public class GraphModelEntityRelationshipFactory extends
 		IGraphEntityRelationshipContentProvider content = getCastedContent();
 		for (int i = 0; i < modelNodes.length; i++) {
 			for (int j = 0; j < modelNodes.length; j++) {
-				Object[] rels = content.getRelationships(modelNodes[i]
-						.getData(), modelNodes[j].getData());
+				Object[] rels = content.getRelationships(
+						modelNodes[i].getData(), modelNodes[j].getData());
 				if (rels != null) {
 					rels = filter(getViewer().getInput(), rels);
 					for (int r = 0; r < rels.length; r++) {
-						createConnection(model, rels[r], modelNodes[i]
-								.getData(), modelNodes[j].getData());
+						createConnection(model, rels[r],
+								modelNodes[i].getData(),
+								modelNodes[j].getData());
 					}
 				}
 			}

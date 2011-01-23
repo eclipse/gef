@@ -448,8 +448,8 @@ public class GraphContainer extends GraphNode implements IContainer {
 			GraphNode node = (GraphNode) nodesToConsider.get(0);
 			if (nodeInStripe(leftSide, rightSide, node)) {
 				leftSide = Math.min(leftSide, node.getBounds().x);
-				rightSide = Math.max(rightSide, node.getBounds().x
-						+ node.getBounds().width);
+				rightSide = Math.max(rightSide,
+						node.getBounds().x + node.getBounds().width);
 				// If this node is in the stripe, move it up
 				// the previous node
 				GraphNode previousNode = null;
@@ -771,8 +771,8 @@ public class GraphContainer extends GraphNode implements IContainer {
 		containerFigure.addLayoutListener(LayoutAnimator.getDefault());
 
 		containerFigure.setLayoutManager(new FreeformLayout());
-		expandGraphLabel = new ExpandGraphLabel(this, node.getText(), node
-				.getImage(), false);
+		expandGraphLabel = new ExpandGraphLabel(this, node.getText(),
+				node.getImage(), false);
 		expandGraphLabel.setText(getText());
 		expandGraphLabel.setImage(getImage());
 		ContainerDimension containerDimension = computeContainerSize();

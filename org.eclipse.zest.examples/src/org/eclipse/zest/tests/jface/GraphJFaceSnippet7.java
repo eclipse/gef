@@ -45,7 +45,8 @@ import org.eclipse.zest.tests.uml.UMLClassFigure;
  */
 public class GraphJFaceSnippet7 {
 
-	public static IFigure createClassFigure1(Font classFont, Image classImage, Image publicField, Image privateField) {
+	public static IFigure createClassFigure1(Font classFont, Image classImage,
+			Image publicField, Image privateField) {
 		Label classLabel1 = new Label("Table", classImage);
 		classLabel1.setFont(classFont);
 
@@ -65,7 +66,8 @@ public class GraphJFaceSnippet7 {
 		return classFigure;
 	}
 
-	static class MyContentProvider implements IGraphEntityContentProvider, INestedContentProvider {
+	static class MyContentProvider implements IGraphEntityContentProvider,
+			INestedContentProvider {
 
 		public Object[] getConnectedTo(Object entity) {
 			if (entity.equals("First")) {
@@ -113,11 +115,14 @@ public class GraphJFaceSnippet7 {
 
 	}
 
-	static class MyLabelProvider extends LabelProvider implements IFigureProvider {
-		final Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
+	static class MyLabelProvider extends LabelProvider implements
+			IFigureProvider {
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
 
 		public Image getImage(Object element) {
-			if (element.equals("Rock") || element.equals("Paper") || element.equals("Scissors")) {
+			if (element.equals("Rock") || element.equals("Paper")
+					|| element.equals("Scissors")) {
 				return image;
 			}
 			return null;
@@ -134,10 +139,12 @@ public class GraphJFaceSnippet7 {
 			Image classImage = new Image(Display.getDefault(),
 					UMLClassFigure.class.getResourceAsStream("class_obj.gif"));
 			Image privateField = new Image(Display.getDefault(),
-					UMLClassFigure.class.getResourceAsStream("field_private_obj.gif"));
+					UMLClassFigure.class
+							.getResourceAsStream("field_private_obj.gif"));
 			Image publicField = new Image(Display.getDefault(),
 					UMLClassFigure.class.getResourceAsStream("methpub_obj.gif"));
-			return createClassFigure1(classFont, classImage, publicField, privateField);
+			return createClassFigure1(classFont, classImage, publicField,
+					privateField);
 		}
 
 	}

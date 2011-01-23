@@ -28,7 +28,7 @@ import org.eclipse.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.zest.layouts.interfaces.SubgraphLayout;
 
 public class DirectedGraphLayoutAlgorithm implements LayoutAlgorithm {
-	
+
 	class ExtendedDirectedGraphLayout extends DirectedGraphLayout {
 
 		public void visit(DirectedGraph graph) {
@@ -95,8 +95,10 @@ public class DirectedGraphLayoutAlgorithm implements LayoutAlgorithm {
 		}
 		ConnectionLayout[] connections = context.getConnections();
 		for (int i = 0; i < connections.length; i++) {
-			Node source = (Node) mapping.get(getEntity(connections[i].getSource()));
-			Node dest = (Node) mapping.get(getEntity(connections[i].getTarget()));
+			Node source = (Node) mapping.get(getEntity(connections[i]
+					.getSource()));
+			Node dest = (Node) mapping
+					.get(getEntity(connections[i].getTarget()));
 			if (source != null && dest != null) {
 				Edge edge = new Edge(connections[i], source, dest);
 				graph.edges.add(edge);

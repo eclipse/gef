@@ -12,14 +12,15 @@ import org.eclipse.zest.layouts.interfaces.EntityLayout;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
 /**
- * This snippet shows how to create a custom layout. This layout simply lays the nodes out vertically
- * on the same Y-Axis as they currently have.  All the work is done in the applyLayoutInternal Method.
+ * This snippet shows how to create a custom layout. This layout simply lays the
+ * nodes out vertically on the same Y-Axis as they currently have. All the work
+ * is done in the applyLayoutInternal Method.
  * 
  * @author irbull
- *
+ * 
  */
 public class CustomLayout {
-	
+
 	public static void main(String[] args) {
 		Display d = new Display();
 		Shell shell = new Shell(d);
@@ -35,13 +36,14 @@ public class CustomLayout {
 		new GraphConnection(g, SWT.NONE, n, n2);
 		new GraphConnection(g, SWT.NONE, n2, n3);
 		new GraphConnection(g, SWT.NONE, n3, n);
-		
+
 		LayoutAlgorithm layoutAlgorithm = new LayoutAlgorithm() {
 			private LayoutContext context;
+
 			public void setLayoutContext(LayoutContext context) {
 				this.context = context;
 			}
-			
+
 			public void applyLayout(boolean clean) {
 				EntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
@@ -50,13 +52,14 @@ public class CustomLayout {
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
 					EntityLayout layoutEntity = entitiesToLayout[currentStep];
-					layoutEntity.setLocation(xLocation, layoutEntity.getLocation().y);
-					xLocation+= distance;
+					layoutEntity.setLocation(xLocation,
+							layoutEntity.getLocation().y);
+					xLocation += distance;
 				}
 			}
 		};
 		g.setLayoutAlgorithm(layoutAlgorithm, true);
-		
+
 		shell.open();
 		while (!shell.isDisposed()) {
 			while (!d.readAndDispatch()) {

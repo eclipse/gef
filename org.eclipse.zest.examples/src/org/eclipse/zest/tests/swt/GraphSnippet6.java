@@ -37,7 +37,8 @@ public class GraphSnippet6 {
 		Display d = new Display();
 		Shell shell = new Shell(d);
 		shell.setText("GraphSnippet6");
-		Image image1 = Display.getDefault().getSystemImage(SWT.ICON_INFORMATION);
+		Image image1 = Display.getDefault()
+				.getSystemImage(SWT.ICON_INFORMATION);
 		Image image2 = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
 		Image image3 = Display.getDefault().getSystemImage(SWT.ICON_ERROR);
 		shell.setLayout(new FillLayout());
@@ -46,13 +47,16 @@ public class GraphSnippet6 {
 		Graph g = new Graph(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		for (int i = 0; i < 80; i++) {
-			GraphNode n1 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT | ZestStyles.NODES_FISHEYE);
+			GraphNode n1 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT
+					| ZestStyles.NODES_FISHEYE);
 			n1.setText("Information");
 			n1.setImage(image1);
-			GraphNode n2 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT | ZestStyles.NODES_FISHEYE);
+			GraphNode n2 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT
+					| ZestStyles.NODES_FISHEYE);
 			n2.setText("Warning");
 			n2.setImage(image2);
-			GraphNode n3 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT | ZestStyles.NODES_FISHEYE);
+			GraphNode n3 = new GraphNode(g, ZestStyles.NODES_HIDE_TEXT
+					| ZestStyles.NODES_FISHEYE);
 			n3.setText("Error");
 			n3.setImage(image3);
 			new GraphConnection(g, SWT.NONE, n1, n2);

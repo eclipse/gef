@@ -18,13 +18,13 @@ package org.eclipse.zest.layouts.dataStructures;
  */
 public class DisplayIndependentDimension {
 	public double width, height;
-	
-	public DisplayIndependentDimension (double width, double height) {
+
+	public DisplayIndependentDimension(double width, double height) {
 		this.width = width;
 		this.height = height;
 	}
 
-	public DisplayIndependentDimension (DisplayIndependentDimension dimension) {
+	public DisplayIndependentDimension(DisplayIndependentDimension dimension) {
 		this.width = dimension.width;
 		this.height = dimension.height;
 	}

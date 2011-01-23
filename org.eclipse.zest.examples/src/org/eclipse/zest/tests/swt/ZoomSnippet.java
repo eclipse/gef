@@ -62,29 +62,36 @@ public class ZoomSnippet {
 		}
 	}
 
-	public static void populateContainer(GraphContainer c, Graph g, int number, boolean radial) {
-		GraphNode a = new GraphNode(c, ZestStyles.NODES_FISHEYE | ZestStyles.NODES_HIDE_TEXT);
+	public static void populateContainer(GraphContainer c, Graph g, int number,
+			boolean radial) {
+		GraphNode a = new GraphNode(c, ZestStyles.NODES_FISHEYE
+				| ZestStyles.NODES_HIDE_TEXT);
 		a.setText("SomeClass.java");
 		a.setImage(classImage);
 		for (int i = 0; i < 4; i++) {
-			GraphNode b = new GraphNode(c, ZestStyles.NODES_FISHEYE | ZestStyles.NODES_HIDE_TEXT);
+			GraphNode b = new GraphNode(c, ZestStyles.NODES_FISHEYE
+					| ZestStyles.NODES_HIDE_TEXT);
 			b.setText("SomeNestedClass.java");
 			b.setImage(classImage);
 			new GraphConnection(g, SWT.NONE, a, b);
 			for (int j = 0; j < 4; j++) {
-				GraphNode d = new GraphNode(c, ZestStyles.NODES_FISHEYE | ZestStyles.NODES_HIDE_TEXT);
+				GraphNode d = new GraphNode(c, ZestStyles.NODES_FISHEYE
+						| ZestStyles.NODES_HIDE_TEXT);
 				d.setText("DefaultAction.java");
 				d.setImage(classImage);
 				new GraphConnection(g, SWT.NONE, b, d);
 				if (number > 2) {
 					for (int k = 0; k < 4; k++) {
-						GraphNode e = new GraphNode(c, ZestStyles.NODES_FISHEYE | ZestStyles.NODES_HIDE_TEXT);
+						GraphNode e = new GraphNode(c, ZestStyles.NODES_FISHEYE
+								| ZestStyles.NODES_HIDE_TEXT);
 						e.setText("LastAction(Hero).java");
 						e.setImage(classImage);
 						new GraphConnection(g, SWT.NONE, d, e);
 						if (number > 3) {
 							for (int l = 0; l < 4; l++) {
-								GraphNode f = new GraphNode(c, ZestStyles.NODES_FISHEYE | ZestStyles.NODES_HIDE_TEXT);
+								GraphNode f = new GraphNode(c,
+										ZestStyles.NODES_FISHEYE
+												| ZestStyles.NODES_HIDE_TEXT);
 								f.setText("LastAction(Hero).java");
 								f.setImage(classImage);
 								new GraphConnection(g, SWT.NONE, e, f);
@@ -115,8 +122,10 @@ public class ZoomSnippet {
 		// Create the shell
 		Display d = new Display();
 
-		image1 = new Image(Display.getDefault(), ZoomSnippet.class.getResourceAsStream("package_obj.gif"));
-		classImage = new Image(Display.getDefault(), ZoomSnippet.class.getResourceAsStream("class_obj.gif"));
+		image1 = new Image(Display.getDefault(),
+				ZoomSnippet.class.getResourceAsStream("package_obj.gif"));
+		classImage = new Image(Display.getDefault(),
+				ZoomSnippet.class.getResourceAsStream("class_obj.gif"));
 
 		Shell shell = new Shell(d);
 		shell.setText("GraphSnippet1");
@@ -126,8 +135,9 @@ public class ZoomSnippet {
 		final Graph g = new Graph(shell, SWT.NONE);
 		createContainer(g);
 
-		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
-				new GridLayoutAlgorithm(), new HorizontalShiftAlgorithm() });
+		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(
+				new LayoutAlgorithm[] { new GridLayoutAlgorithm(),
+						new HorizontalShiftAlgorithm() });
 		// g.setLayoutAlgorithm(new
 		// GridLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 		g.setLayoutAlgorithm(compositeLayoutAlgorithm, true);

@@ -23,11 +23,13 @@ public interface GraphStructureListener {
 			return false;
 		}
 
-		public boolean connectionAdded(LayoutContext context, ConnectionLayout connection) {
+		public boolean connectionAdded(LayoutContext context,
+				ConnectionLayout connection) {
 			return false;
 		}
 
-		public boolean connectionRemoved(LayoutContext context, ConnectionLayout connection) {
+		public boolean connectionRemoved(LayoutContext context,
+				ConnectionLayout connection) {
 			return false;
 		}
 	}
@@ -90,7 +92,8 @@ public interface GraphStructureListener {
 	 *            the added connection
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean connectionAdded(LayoutContext context, ConnectionLayout connection);
+	public boolean connectionAdded(LayoutContext context,
+			ConnectionLayout connection);
 
 	/**
 	 * This method is called whenever a connection is removed from a context. It
@@ -114,6 +117,7 @@ public interface GraphStructureListener {
 	 *            the added connection
 	 * @return true if no further operations after this event are required
 	 */
-	public boolean connectionRemoved(LayoutContext context, ConnectionLayout connection);
+	public boolean connectionRemoved(LayoutContext context,
+			ConnectionLayout connection);
 
 }

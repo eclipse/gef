@@ -50,37 +50,50 @@ public class GraphSnippet8 {
 		GraphNode f = new GraphNode(graph, SWT.NONE, "F");
 		GraphNode g = new GraphNode(graph, SWT.NONE, "G");
 		GraphNode h = new GraphNode(graph, SWT.NONE, "H");
-		GraphConnection connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, a, b);
+		GraphConnection connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, a, b);
 		connection.setData(Boolean.TRUE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, a, c);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, a, c);
 		connection.setData(Boolean.TRUE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, a, c);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, a, c);
 		connection.setData(Boolean.TRUE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, a, d);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, a, d);
 		connection.setData(Boolean.TRUE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, b, e);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, b, e);
 		connection.setData(Boolean.FALSE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, b, f);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, b, f);
 		connection.setData(Boolean.FALSE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, c, g);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, c, g);
 		connection.setData(Boolean.FALSE);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, d, h);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, d, h);
 		connection.setData(Boolean.FALSE);
 
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, b, c);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, b, c);
 		connection.setLineColor(ColorConstants.red);
 		connection.setLineWidth(3);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, c, d);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, c, d);
 		connection.setLineColor(ColorConstants.red);
 		connection.setLineWidth(3);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, e, f);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, e, f);
 		connection.setLineColor(ColorConstants.red);
 		connection.setLineWidth(3);
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, f, g);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, f, g);
 		connection.setLineColor(ColorConstants.red);
 		connection.setLineWidth(3);
 
-		connection = new GraphConnection(graph, ZestStyles.CONNECTIONS_DIRECTED, h, e);
+		connection = new GraphConnection(graph,
+				ZestStyles.CONNECTIONS_DIRECTED, h, e);
 		connection.setLineColor(ColorConstants.red);
 		connection.setLineWidth(3);
 

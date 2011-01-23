@@ -43,7 +43,8 @@ public class GraphSnippet4 {
 	 * @return
 	 */
 	public static Image mergeImages(Image image1, Image image2) {
-		Image mergedImage = new Image(Display.getDefault(), image1.getBounds().width + image2.getBounds().width,
+		Image mergedImage = new Image(Display.getDefault(),
+				image1.getBounds().width + image2.getBounds().width,
 				image1.getBounds().height);
 		GC gc = new GC(mergedImage);
 		gc.drawImage(image1, 0, 0);
@@ -59,7 +60,8 @@ public class GraphSnippet4 {
 		Display d = new Display();
 		Shell shell = new Shell(d);
 		shell.setText("Graph Snippet 4");
-		Image image1 = Display.getDefault().getSystemImage(SWT.ICON_INFORMATION);
+		Image image1 = Display.getDefault()
+				.getSystemImage(SWT.ICON_INFORMATION);
 		Image image2 = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
 		Image image3 = Display.getDefault().getSystemImage(SWT.ICON_ERROR);
 		shell.setLayout(new FillLayout());
@@ -82,7 +84,8 @@ public class GraphSnippet4 {
 
 		Image information2warningImage = mergeImages(image1, image2);
 		Image warning2error = mergeImages(image2, image3);
-		IFigure tooltip1 = new Label("Information to Warning", information2warningImage);
+		IFigure tooltip1 = new Label("Information to Warning",
+				information2warningImage);
 		IFigure tooltip2 = new Label("Warning to Error", warning2error);
 		connection1.setTooltip(tooltip1);
 		connection2.setTooltip(tooltip2);

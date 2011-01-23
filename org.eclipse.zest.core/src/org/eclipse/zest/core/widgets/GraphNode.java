@@ -86,7 +86,8 @@ public class GraphNode extends GraphItem {
 		this(graphModel, style, "" /* text */, null /* image */, data);
 	}
 
-	private GraphNode(IContainer graphModel, int style, String text, Image image, Object data) {
+	private GraphNode(IContainer graphModel, int style, String text,
+			Image image, Object data) {
 		super(graphModel.getGraph(), style, data);
 		initModel(graphModel, text, image);
 		if (nodeFigure == null) {
@@ -149,7 +150,8 @@ public class GraphNode extends GraphItem {
 		super.dispose();
 		this.isDisposed = true;
 		while (getSourceConnections().size() > 0) {
-			GraphConnection connection = (GraphConnection) getSourceConnections().get(0);
+			GraphConnection connection = (GraphConnection) getSourceConnections()
+					.get(0);
 			if (!connection.isDisposed()) {
 				connection.dispose();
 			} else {
@@ -157,7 +159,8 @@ public class GraphNode extends GraphItem {
 			}
 		}
 		while (getTargetConnections().size() > 0) {
-			GraphConnection connection = (GraphConnection) getTargetConnections().get(0);
+			GraphConnection connection = (GraphConnection) getTargetConnections()
+					.get(0);
 			if (!connection.isDisposed()) {
 				connection.dispose();
 			} else {
@@ -403,7 +406,8 @@ public class GraphNode extends GraphItem {
 			if (fishEyeBounds != null) {
 				fishEyeFigure.getParent().translateToRelative(fishEyeBounds);
 				fishEyeFigure.getParent().translateFromParent(fishEyeBounds);
-				fishEyeFigure.getParent().setConstraint(fishEyeFigure, fishEyeBounds);
+				fishEyeFigure.getParent().setConstraint(fishEyeFigure,
+						fishEyeBounds);
 			}
 		}
 	}
@@ -477,7 +481,8 @@ public class GraphNode extends GraphItem {
 	 */
 	public void setNodeStyle(int nodeStyle) {
 		this.nodeStyle = nodeStyle;
-		this.cacheLabel = ((this.nodeStyle & ZestStyles.NODES_CACHE_LABEL) > 0) ? true : false;
+		this.cacheLabel = ((this.nodeStyle & ZestStyles.NODES_CACHE_LABEL) > 0) ? true
+				: false;
 	}
 
 	public void setSize(double width, double height) {
@@ -507,12 +512,14 @@ public class GraphNode extends GraphItem {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 		this.getFigure().setVisible(visible);
-		for (Iterator iterator2 = sourceConnections.iterator(); iterator2.hasNext();) {
+		for (Iterator iterator2 = sourceConnections.iterator(); iterator2
+				.hasNext();) {
 			GraphConnection connection = (GraphConnection) iterator2.next();
 			connection.setVisible(visible);
 		}
 
-		for (Iterator iterator2 = targetConnections.iterator(); iterator2.hasNext();) {
+		for (Iterator iterator2 = targetConnections.iterator(); iterator2
+				.hasNext();) {
 			GraphConnection connection = (GraphConnection) iterator2.next();
 			connection.setVisible(visible);
 		}
@@ -554,7 +561,8 @@ public class GraphNode extends GraphItem {
 			}
 
 			// Add the fisheye
-			this.getGraphModel().fishEye(nodeFigure, fishEyeFigure, rectangle, true);
+			this.getGraphModel().fishEye(nodeFigure, fishEyeFigure, rectangle,
+					true);
 			if (fishEyeFigure != null) {
 				isFisheyeEnabled = true;
 			}
@@ -562,7 +570,8 @@ public class GraphNode extends GraphItem {
 
 		} else {
 			isFisheyeEnabled = false;
-			this.getGraphModel().removeFishEye(fishEyeFigure, nodeFigure, animate);
+			this.getGraphModel().removeFishEye(fishEyeFigure, nodeFigure,
+					animate);
 			return null;
 		}
 	}
@@ -586,7 +595,8 @@ public class GraphNode extends GraphItem {
 		GraphLabel figure = (GraphLabel) currentFigure;
 		IFigure toolTip;
 
-		if (!checkStyle(ZestStyles.NODES_HIDE_TEXT) && !figure.getText().equals(this.getText())) {
+		if (!checkStyle(ZestStyles.NODES_HIDE_TEXT)
+				&& !figure.getText().equals(this.getText())) {
 			figure.setText(this.getText());
 		}
 		if (figure.getIcon() != getImage()) {
@@ -630,7 +640,8 @@ public class GraphNode extends GraphItem {
 	protected IFigure createFigureForModel() {
 		GraphNode node = this;
 		boolean cacheLabel = (this).cacheLabel();
-		final GraphLabel label = new GraphLabel(node.getText(), node.getImage(), cacheLabel);
+		final GraphLabel label = new GraphLabel(node.getText(),
+				node.getImage(), cacheLabel);
 		label.setFont(this.font);
 		if (checkStyle(ZestStyles.NODES_HIDE_TEXT)) {
 			label.setText("");
@@ -649,10 +660,13 @@ public class GraphNode extends GraphItem {
 					if (size.width >= 0 && size.height >= 0) {
 						size = newBounds.getSize();
 					}
-					currentLocation = new PrecisionPoint(nodeFigure.getBounds().getTopLeft());
+					currentLocation = new PrecisionPoint(nodeFigure.getBounds()
+							.getTopLeft());
 					parent.getLayoutContext().fireNodeResizedEvent(getLayout());
-				} else if (currentLocation.x != newBounds.x || currentLocation.y != newBounds.y) {
-					currentLocation = new PrecisionPoint(nodeFigure.getBounds().getTopLeft());
+				} else if (currentLocation.x != newBounds.x
+						|| currentLocation.y != newBounds.y) {
+					currentLocation = new PrecisionPoint(nodeFigure.getBounds()
+							.getTopLeft());
 					parent.getLayoutContext().fireNodeMovedEvent(getLayout());
 				}
 			}
@@ -663,7 +677,8 @@ public class GraphNode extends GraphItem {
 	private IFigure createFishEyeFigure() {
 		GraphNode node = this;
 		boolean cacheLabel = this.cacheLabel();
-		GraphLabel label = new GraphLabel(node.getText(), node.getImage(), cacheLabel);
+		GraphLabel label = new GraphLabel(node.getText(), node.getImage(),
+				cacheLabel);
 
 		if (highlighted == HIGHLIGHT_ON) {
 			label.setForegroundColor(getForegroundColor());
@@ -690,11 +705,14 @@ public class GraphNode extends GraphItem {
 		Dimension newSize = fishEyeFigure.getPreferredSize();
 		Rectangle currentSize = rectangle.getCopy();
 		nodeFigure.translateToAbsolute(currentSize);
-		int expandedH = Math.max((newSize.height - currentSize.height) / 2 + 1, 0);
-		int expandedW = Math.max((newSize.width - currentSize.width) / 2 + 1, 0);
+		int expandedH = Math.max((newSize.height - currentSize.height) / 2 + 1,
+				0);
+		int expandedW = Math
+				.max((newSize.width - currentSize.width) / 2 + 1, 0);
 		Dimension expandAmount = new Dimension(expandedW, expandedH);
 		nodeFigure.translateToAbsolute(rectangle);
-		rectangle.expand(new Insets(expandAmount.height, expandAmount.width, expandAmount.height, expandAmount.width));
+		rectangle.expand(new Insets(expandAmount.height, expandAmount.width,
+				expandAmount.height, expandAmount.width));
 		if (expandedH <= 0 && expandedW <= 0) {
 			return null;
 		}
