@@ -1,0 +1,6 @@
+bin
+plugin.xml_gen
+*.jar
+test.properties
+org.eclipse.zest.tests/resources/output/*.dot
+org.eclipse.zest.tests/resources/tests/*.png
