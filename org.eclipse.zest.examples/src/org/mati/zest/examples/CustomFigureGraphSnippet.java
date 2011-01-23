@@ -46,51 +46,51 @@ public class CustomFigureGraphSnippet {
 		Figure person = new Figure();
 		person.setLayoutManager(new FreeformLayout());
 		IFigure head = null;
-		if ( headImage != null ) {
-			headImage = new Image(headImage.getDevice(), headImage.getImageData().scaledTo(40, 50));
+		if (headImage != null) {
+			headImage = new Image(headImage.getDevice(), headImage
+					.getImageData().scaledTo(40, 50));
 			head = new ImageFigure(headImage);
-		}
-		else
+		} else
 			head = new Ellipse();
 		head.setSize(40, 50);
-		
+
 		PolylineShape body = new PolylineShape();
 		body.setLineWidth(1);
-		body.setStart(new Point(20,40));
-		body.setEnd(new Point(20,100));
-		body.setBounds(new Rectangle(0,0,40,100));
-		
+		body.setStart(new Point(20, 40));
+		body.setEnd(new Point(20, 100));
+		body.setBounds(new Rectangle(0, 0, 40, 100));
+
 		PolylineShape leftLeg = new PolylineShape();
 		leftLeg.setLineWidth(1);
-		leftLeg.setStart(new Point(20,100));
-		leftLeg.setEnd(new Point(0,130));
-		leftLeg.setBounds(new Rectangle(0,0,40,130));
-		
+		leftLeg.setStart(new Point(20, 100));
+		leftLeg.setEnd(new Point(0, 130));
+		leftLeg.setBounds(new Rectangle(0, 0, 40, 130));
+
 		PolylineShape rightLeg = new PolylineShape();
 		rightLeg.setLineWidth(1);
-		rightLeg.setStart(new Point(20,100));
-		rightLeg.setEnd(new Point(40,130));
-		rightLeg.setBounds(new Rectangle(0,0,40,130));
-		
+		rightLeg.setStart(new Point(20, 100));
+		rightLeg.setEnd(new Point(40, 130));
+		rightLeg.setBounds(new Rectangle(0, 0, 40, 130));
+
 		PolylineShape leftArm = new PolylineShape();
 		leftArm.setLineWidth(1);
-		leftArm.setStart(new Point(20,60));
-		leftArm.setEnd(new Point(0,50));
-		leftArm.setBounds(new Rectangle(0,0,40,130));
-		
+		leftArm.setStart(new Point(20, 60));
+		leftArm.setEnd(new Point(0, 50));
+		leftArm.setBounds(new Rectangle(0, 0, 40, 130));
+
 		PolylineShape rightArm = new PolylineShape();
 		rightArm.setLineWidth(1);
-		rightArm.setStart(new Point(20,60));
-		rightArm.setEnd(new Point(40,50));
-		rightArm.setBounds(new Rectangle(0,0,40,130));
-		
+		rightArm.setStart(new Point(20, 60));
+		rightArm.setEnd(new Point(40, 50));
+		rightArm.setBounds(new Rectangle(0, 0, 40, 130));
+
 		person.add(head);
 		person.add(body);
 		person.add(leftLeg);
 		person.add(rightLeg);
 		person.add(leftArm);
 		person.add(rightArm);
-		person.setSize(40,130);
+		person.setSize(40, 130);
 		return person;
 	}
 
@@ -101,46 +101,47 @@ public class CustomFigureGraphSnippet {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		
 		final Graph g = new Graph(shell, SWT.NONE);
-		g.addSelectionListener(new SelectionListener(){
-		
+		g.addSelectionListener(new SelectionListener() {
+
 			public void widgetSelected(SelectionEvent e) {
 				Iterator iter = g.getSelection().iterator();
-				while(iter.hasNext()) {
+				while (iter.hasNext()) {
 					Object o = iter.next();
-					if ( o instanceof CGraphNode) {
-						IFigure figure = ((CGraphNode)o).getFigure();
+					if (o instanceof CGraphNode) {
+						IFigure figure = ((CGraphNode) o).getFigure();
 						figure.setBackgroundColor(ColorConstants.blue);
 						figure.setForegroundColor(ColorConstants.blue);
 					}
 				}
 				iter = g.getNodes().iterator();
-				while ( iter.hasNext()) {
+				while (iter.hasNext()) {
 					Object o = iter.next();
-					if ( o instanceof CGraphNode) {
-						if ( !g.getSelection().contains(o)) {
-							((CGraphNode)o).getFigure().setBackgroundColor(ColorConstants.black);
-							((CGraphNode)o).getFigure().setForegroundColor(ColorConstants.black);
+					if (o instanceof CGraphNode) {
+						if (!g.getSelection().contains(o)) {
+							((CGraphNode) o).getFigure().setBackgroundColor(
+									ColorConstants.black);
+							((CGraphNode) o).getFigure().setForegroundColor(
+									ColorConstants.black);
 						}
 					}
 				}
 			}
-		
+
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		Image zx = new Image(d, "zx.png");
 		Image ibull = new Image(d, "ibull.jpg");
 		CGraphNode n = new CGraphNode(g, SWT.NONE, createPersonFigure(zx));
-		CGraphNode n2 = new CGraphNode(g, SWT.NONE,  createPersonFigure(ibull));
+		CGraphNode n2 = new CGraphNode(g, SWT.NONE, createPersonFigure(ibull));
 		GraphNode n3 = new GraphNode(g, SWT.NONE, "PDE");
 		GraphNode n4 = new GraphNode(g, SWT.NONE, "Zest");
 		GraphNode n5 = new GraphNode(g, SWT.NONE, "PDE Viz tool");
-		
+
 		new GraphConnection(g, SWT.NONE, n, n2);
 		new GraphConnection(g, SWT.NONE, n, n3);
 		new GraphConnection(g, SWT.NONE, n2, n4);

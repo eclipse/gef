@@ -158,10 +158,10 @@ public class Graph extends FigureCanvas implements IContainer {
 
 		this.setContents(createLayers());
 		DragSupport dragSupport = new DragSupport();
-		this.getLightweightSystem().getRootFigure().addMouseListener(
-				dragSupport);
-		this.getLightweightSystem().getRootFigure().addMouseMotionListener(
-				dragSupport);
+		this.getLightweightSystem().getRootFigure()
+				.addMouseListener(dragSupport);
+		this.getLightweightSystem().getRootFigure()
+				.addMouseMotionListener(dragSupport);
 
 		this.nodes = new ArrayList();
 		this.preferredSize = new Dimension(-1, -1);
@@ -643,10 +643,10 @@ public class Graph extends FigureCanvas implements IContainer {
 						Point relativeLocation = (Point) locationsIterator
 								.next();
 
-						item.getFigure().getParent().translateToRelative(
-								pointCopy);
-						item.getFigure().getParent().translateFromParent(
-								pointCopy);
+						item.getFigure().getParent()
+								.translateToRelative(pointCopy);
+						item.getFigure().getParent()
+								.translateFromParent(pointCopy);
 
 						((GraphNode) item)
 								.setLocation(relativeLocation.x + pointCopy.x,
@@ -851,8 +851,11 @@ public class Graph extends FigureCanvas implements IContainer {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Widget#notifyListeners(int, org.eclipse.swt.widgets.Event)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Widget#notifyListeners(int,
+	 * org.eclipse.swt.widgets.Event)
 	 */
 	public void notifyListeners(int eventType, Event event) {
 		super.notifyListeners(eventType, event);

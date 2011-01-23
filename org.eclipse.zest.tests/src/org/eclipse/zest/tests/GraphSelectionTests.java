@@ -39,7 +39,8 @@ public class GraphSelectionTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		graph = new Graph(new Shell(), STYLE);
-		nodes = new GraphNode[] { new GraphNode(graph, STYLE), new GraphNode(graph, STYLE) };
+		nodes = new GraphNode[] { new GraphNode(graph, STYLE),
+				new GraphNode(graph, STYLE) };
 		new GraphConnection(graph, STYLE, nodes[0], nodes[1]);
 	}
 
@@ -62,8 +63,10 @@ public class GraphSelectionTests extends TestCase {
 		Event event = new Event();
 		event.widget = nodes[0];
 		graph.notifyListeners(SWT.Selection, event);
-		assertEquals("Two listeners should receive one event each", 2, selectionEvents.size());
-		assertEquals("Two listeners should receive the same event", selectionEvents.get(0), selectionEvents.get(1));
+		assertEquals("Two listeners should receive one event each", 2,
+				selectionEvents.size());
+		assertEquals("Two listeners should receive the same event",
+				selectionEvents.get(0), selectionEvents.get(1));
 	}
 
 	/**
@@ -73,7 +76,9 @@ public class GraphSelectionTests extends TestCase {
 		graph.setSelection(nodes);
 		nodes[0].dispose();
 		graph.layout();
-		assertEquals("Disposing a selected node should remove it from the selection", 1, graph.getSelection().size());
+		assertEquals(
+				"Disposing a selected node should remove it from the selection",
+				1, graph.getSelection().size());
 	}
 
 	/**
@@ -84,15 +89,19 @@ public class GraphSelectionTests extends TestCase {
 		final List selectionEvents = new ArrayList();
 		graph.addSelectionListener(setupListener(selectionEvents));
 		graph.setSelection(nodes);
-		assertEquals("Programmatic selection should not trigger events", 0, selectionEvents.size());
+		assertEquals("Programmatic selection should not trigger events", 0,
+				selectionEvents.size());
 		for (int i = 0; i < nodes.length; i++) {
 			GraphNode node = nodes[i];
-			assertTrue("Programmatic selection should select nodes", node.isSelected());
+			assertTrue("Programmatic selection should select nodes",
+					node.isSelected());
 		}
 		graph.setSelection(new GraphNode[] { nodes[0] });
 		for (int i = 1; i < nodes.length; i++) {
 			GraphNode node = nodes[i];
-			assertFalse("Changing the selection should deselect the nodes selected before", node.isSelected());
+			assertFalse(
+					"Changing the selection should deselect the nodes selected before",
+					node.isSelected());
 		}
 	}
 
@@ -104,10 +113,13 @@ public class GraphSelectionTests extends TestCase {
 		final List selectionEvents = new ArrayList();
 		graph.addSelectionListener(setupListener(selectionEvents));
 		graph.selectAll();
-		assertEquals("Programmatic selection should not trigger events", 0, selectionEvents.size());
-		for (Iterator iterator = graph.getNodes().iterator(); iterator.hasNext();) {
+		assertEquals("Programmatic selection should not trigger events", 0,
+				selectionEvents.size());
+		for (Iterator iterator = graph.getNodes().iterator(); iterator
+				.hasNext();) {
 			GraphNode node = (GraphNode) iterator.next();
-			assertTrue("Programmatic selection should set nodes selected", node.isSelected());
+			assertTrue("Programmatic selection should set nodes selected",
+					node.isSelected());
 		}
 	}
 
@@ -122,9 +134,11 @@ public class GraphSelectionTests extends TestCase {
 		Event event = new Event();
 		event.widget = graph;
 		graph.notifyListeners(SWT.Dispose, event);
-		assertEquals("Non-selection events should not be received", 0, selectionEvents.size());
+		assertEquals("Non-selection events should not be received", 0,
+				selectionEvents.size());
 		graph.notifyListeners(SWT.Selection, event);
-		assertEquals("Selection events should be received", 1, selectionEvents.size());
+		assertEquals("Selection events should be received", 1,
+				selectionEvents.size());
 	}
 
 	private SelectionListener setupListener(final List events) {

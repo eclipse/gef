@@ -40,7 +40,8 @@ import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
  */
 public class GraphJFaceSnippet6 {
 
-	static class MyContentProvider implements IGraphEntityContentProvider, INestedContentProvider {
+	static class MyContentProvider implements IGraphEntityContentProvider,
+			INestedContentProvider {
 
 		public Object[] getConnectedTo(Object entity) {
 			if (entity.equals("First")) {
@@ -89,10 +90,12 @@ public class GraphJFaceSnippet6 {
 	}
 
 	static class MyLabelProvider extends LabelProvider {
-		final Image image = Display.getDefault().getSystemImage(SWT.ICON_WARNING);
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
 
 		public Image getImage(Object element) {
-			if (element.equals("Rock") || element.equals("Paper") || element.equals("Scissors")) {
+			if (element.equals("Rock") || element.equals("Paper")
+					|| element.equals("Scissors")) {
 				return image;
 			}
 			return null;

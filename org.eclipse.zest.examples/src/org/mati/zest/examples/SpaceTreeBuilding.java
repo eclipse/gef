@@ -32,14 +32,14 @@ public class SpaceTreeBuilding {
 		shell.setSize(400, 400);
 
 		final Graph g = new Graph(shell, SWT.NONE);
-		
+
 		hookMenu(g);
 
 		SpaceTreeLayoutAlgorithm spaceTreeLayoutAlgorithm = new SpaceTreeLayoutAlgorithm();
 		g.setLayoutAlgorithm(spaceTreeLayoutAlgorithm, false);
 		g.setExpandCollapseManager(spaceTreeLayoutAlgorithm
 				.getExpandCollapseManager());
-		
+
 		g.setSubgraphFactory(new DefaultSubgraph.LabelSubgraphFactory());
 
 		for (int i = 0; i < 20; i++) {
@@ -64,7 +64,7 @@ public class SpaceTreeBuilding {
 
 	private static void hookMenu(final Graph g) {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		
+
 		Action parentAction = new Action() {
 			public void run() {
 				List selection = g.getSelection();

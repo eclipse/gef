@@ -50,7 +50,8 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 			Rectangle newBounds = figure.getBounds();
 			if (!newBounds.getSize().equals(previousBounds.getSize())) {
 				(context).fireSubgraphResizedEvent(FigureSubgraph.this);
-			} else if (!newBounds.getLocation().equals(previousBounds.getLocation())) {
+			} else if (!newBounds.getLocation().equals(
+					previousBounds.getLocation())) {
 				(context).fireSubgraphMovedEvent(FigureSubgraph.this);
 			}
 			previousBounds = newBounds.getCopy();
@@ -134,7 +135,8 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		if (location == null) {
 			Point location2 = getFigure().getBounds().getLocation();
 			Dimension size = getFigure().getSize();
-			return new DisplayIndependentPoint(location2.x + size.width / 2, location2.y + size.height / 2);
+			return new DisplayIndependentPoint(location2.x + size.width / 2,
+					location2.y + size.height / 2);
 		}
 		return new DisplayIndependentPoint(location);
 	}
@@ -187,7 +189,8 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		if (location != null) {
 			isLayoutBeingApplied = true;
 			Dimension size = figure.getSize();
-			figure.setLocation(new PrecisionPoint(location.x - size.width / 2, location.y - size.height / 2));
+			figure.setLocation(new PrecisionPoint(location.x - size.width / 2,
+					location.y - size.height / 2));
 			isLayoutBeingApplied = false;
 		}
 	}

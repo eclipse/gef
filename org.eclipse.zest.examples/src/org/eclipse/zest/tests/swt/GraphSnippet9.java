@@ -38,7 +38,8 @@ public class GraphSnippet9 {
 
 		final Graph graph = new Graph(shell, SWT.NONE);
 
-		GraphNode a = new GraphNode(graph, ZestStyles.CONNECTIONS_DIRECTED, "Root");
+		GraphNode a = new GraphNode(graph, ZestStyles.CONNECTIONS_DIRECTED,
+				"Root");
 		GraphConnection connection = new GraphConnection(graph, SWT.NONE, a, a);
 		connection.setText("A to A");
 		a.setLocation(100, 100);

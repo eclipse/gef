@@ -36,11 +36,9 @@ public class TreeLayoutExample {
 
 		final Graph g = new Graph(shell, SWT.NONE);
 		final TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
-		g
-				.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
+		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
 		g.setExpandCollapseManager(new DAGExpandCollapseManager());
-
 
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 10, 10));
 		g.setSize(500, 500);
@@ -62,7 +60,6 @@ public class TreeLayoutExample {
 
 			new GraphConnection(g, SWT.NONE, root, n).setDirected(true);
 		}
-
 
 		hookMenu(g);
 
@@ -97,7 +94,7 @@ public class TreeLayoutExample {
 		buttonBottomUp.addSelectionListener(buttonListener);
 		buttonLeftRight.addSelectionListener(buttonListener);
 		buttonRightLeft.addSelectionListener(buttonListener);
-		
+
 		final Button resizeButton = new Button(shell, SWT.CHECK);
 		resizeButton.setText("Resize");
 		resizeButton.addSelectionListener(new SelectionAdapter() {

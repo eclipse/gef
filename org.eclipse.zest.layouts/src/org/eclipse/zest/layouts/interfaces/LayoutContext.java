@@ -55,7 +55,8 @@ public interface LayoutContext {
 	 * @param layoutEntity2
 	 * @return
 	 */
-	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1, EntityLayout layoutEntity2);
+	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
+			EntityLayout layoutEntity2);
 
 	/**
 	 * 
@@ -129,7 +130,8 @@ public interface LayoutContext {
 	 * 
 	 * @param expandCollapseManager
 	 */
-	public void setExpandCollapseManager(ExpandCollapseManager expandCollapseManager);
+	public void setExpandCollapseManager(
+			ExpandCollapseManager expandCollapseManager);
 
 	/**
 	 * 

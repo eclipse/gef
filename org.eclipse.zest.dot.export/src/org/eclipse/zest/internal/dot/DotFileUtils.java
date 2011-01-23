@@ -147,9 +147,9 @@ public final class DotFileUtils {
 				File destinationFolder = new File(destinationRootFolder,
 						source.getName());
 				if (!destinationFolder.mkdirs() && !destinationFolder.exists()) {
-					throw new IllegalStateException(
-							DotMessages.DotFileUtils_0 + ": " //$NON-NLS-1$
-									+ destinationFolder);
+					throw new IllegalStateException(DotMessages.DotFileUtils_0
+							+ ": " //$NON-NLS-1$
+							+ destinationFolder);
 				}
 				copyAllFiles(source, destinationFolder);
 			} else {

@@ -57,7 +57,8 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 
 		Comparator entityComparator = new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return (int) (((EntityLayout) o1).getLocation().y - ((EntityLayout) o2).getLocation().y);
+				return (int) (((EntityLayout) o1).getLocation().y - ((EntityLayout) o2)
+						.getLocation().y);
 			}
 		};
 		DisplayIndependentRectangle bounds = context.getBounds();
@@ -70,11 +71,14 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			int i = 0;
 			int width = (int) (bounds.width / 2 - currentRow.size() * 75);
 
-			heightSoFar += ((EntityLayout) currentRow.get(0)).getSize().height + VSPACING;
-			for (Iterator iterator2 = currentRow.iterator(); iterator2.hasNext();) {
+			heightSoFar += ((EntityLayout) currentRow.get(0)).getSize().height
+					+ VSPACING;
+			for (Iterator iterator2 = currentRow.iterator(); iterator2
+					.hasNext();) {
 				EntityLayout entity = (EntityLayout) iterator2.next();
 				DisplayIndependentDimension size = entity.getSize();
-				entity.setLocation(width + 10 * ++i + size.width / 2, heightSoFar + size.height / 2);
+				entity.setLocation(width + 10 * ++i + size.width / 2,
+						heightSoFar + size.height / 2);
 				width += size.width;
 			}
 		}
@@ -91,7 +95,8 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			List currentRow = (List) iterator.next();
 			EntityLayout currentRowEntity = (EntityLayout) currentRow.get(0);
 			double currentRowY = currentRowEntity.getLocation().y;
-			if (layoutY >= currentRowY - DELTA && layoutY <= currentRowY + DELTA) {
+			if (layoutY >= currentRowY - DELTA
+					&& layoutY <= currentRowY + DELTA) {
 				currentRow.add(entity);
 				return;
 			}

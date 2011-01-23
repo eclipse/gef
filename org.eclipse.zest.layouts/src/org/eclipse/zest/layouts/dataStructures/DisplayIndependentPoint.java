@@ -18,20 +18,21 @@ package org.eclipse.zest.layouts.dataStructures;
  */
 public class DisplayIndependentPoint {
 	public double x, y;
-	
-	
-	public boolean equals( Object o ) {
+
+	public boolean equals(Object o) {
 		DisplayIndependentPoint that = (DisplayIndependentPoint) o;
-		if ( this.x == that.x && this.y == that.y ) return true;
-		else return false;
+		if (this.x == that.x && this.y == that.y)
+			return true;
+		else
+			return false;
 	}
-	
-	public DisplayIndependentPoint (double x, double y) {
+
+	public DisplayIndependentPoint(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public DisplayIndependentPoint (DisplayIndependentPoint point) {
+	public DisplayIndependentPoint(DisplayIndependentPoint point) {
 		this.x = point.x;
 		this.y = point.y;
 	}
@@ -39,46 +40,55 @@ public class DisplayIndependentPoint {
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
-	
+
 	/**
-	 * Create a new point based on the current point but in a new coordinate system
+	 * Create a new point based on the current point but in a new coordinate
+	 * system
+	 * 
 	 * @param currentBounds
 	 * @param targetBounds
 	 * @return
 	 */
-	public DisplayIndependentPoint convert(DisplayIndependentRectangle currentBounds ,
+	public DisplayIndependentPoint convert(
+			DisplayIndependentRectangle currentBounds,
 			DisplayIndependentRectangle targetBounds) {
 		double currentWidth = currentBounds.width;
 		double currentHeight = currentBounds.height;
-		
-        double newX = (currentBounds.width == 0) ? 0 : 
-        	(x / currentWidth) * targetBounds.width + targetBounds.x;
-        double newY = (currentBounds.height == 0) ? 0 : 
-        	(y / currentHeight) * targetBounds.height + targetBounds.y;
-        return new DisplayIndependentPoint( newX, newY );
+
+		double newX = (currentBounds.width == 0) ? 0 : (x / currentWidth)
+				* targetBounds.width + targetBounds.x;
+		double newY = (currentBounds.height == 0) ? 0 : (y / currentHeight)
+				* targetBounds.height + targetBounds.y;
+		return new DisplayIndependentPoint(newX, newY);
 	}
-	
+
 	/**
-	 * Converts this point based on the current x, y values to a percentage  
-	 * of the specified coordinate system
+	 * Converts this point based on the current x, y values to a percentage of
+	 * the specified coordinate system
+	 * 
 	 * @param bounds
 	 * @return
 	 */
-	public DisplayIndependentPoint convertToPercent(DisplayIndependentRectangle bounds) {
-        double newX = (bounds.width == 0) ? 0 : ((double)(x - bounds.x))/ bounds.width;
-        double newY = (bounds.height == 0) ? 0 : ((double)(y - bounds.y))/bounds.height;
-        return new DisplayIndependentPoint(newX, newY);
+	public DisplayIndependentPoint convertToPercent(
+			DisplayIndependentRectangle bounds) {
+		double newX = (bounds.width == 0) ? 0 : ((double) (x - bounds.x))
+				/ bounds.width;
+		double newY = (bounds.height == 0) ? 0 : ((double) (y - bounds.y))
+				/ bounds.height;
+		return new DisplayIndependentPoint(newX, newY);
 	}
-	
+
 	/**
-	 * Converts this point based on the current x, y values from a percentage  
-	 * of the specified coordinate system
+	 * Converts this point based on the current x, y values from a percentage of
+	 * the specified coordinate system
+	 * 
 	 * @param bounds
-	 * @return 
+	 * @return
 	 */
-	public DisplayIndependentPoint convertFromPercent(DisplayIndependentRectangle bounds) {
+	public DisplayIndependentPoint convertFromPercent(
+			DisplayIndependentRectangle bounds) {
 		double newX = bounds.x + x * bounds.width;
 		double newY = bounds.y + y * bounds.height;
-        return new DisplayIndependentPoint(newX, newY);
+		return new DisplayIndependentPoint(newX, newY);
 	}
 }

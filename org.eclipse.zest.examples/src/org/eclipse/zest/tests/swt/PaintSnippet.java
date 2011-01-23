@@ -75,7 +75,8 @@ public class PaintSnippet {
 
 			public void widgetSelected(SelectionEvent e) {
 
-				Point size = new Point(g.getContents().getSize().width, g.getContents().getSize().height);
+				Point size = new Point(g.getContents().getSize().width, g
+						.getContents().getSize().height);
 				final Image image = new Image(null, size.x, size.y);
 				GC gc = new GC(image);
 				SWTGraphics swtGraphics = new SWTGraphics(gc);

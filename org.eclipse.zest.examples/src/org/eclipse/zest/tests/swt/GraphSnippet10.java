@@ -45,7 +45,8 @@ public class GraphSnippet10 {
 		n.setBorderWidth(3);
 		GraphNode n2 = new GraphNode(g, SWT.NONE, "Rock");
 		GraphNode n3 = new GraphNode(g, SWT.NONE, "Scissors");
-		final GraphConnection connection = new GraphConnection(g, SWT.NONE, n, n2);
+		final GraphConnection connection = new GraphConnection(g, SWT.NONE, n,
+				n2);
 		connection.setLineWidth(3);
 		new GraphConnection(g, SWT.NONE, n2, n3);
 		new GraphConnection(g, SWT.NONE, n3, n);

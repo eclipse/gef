@@ -304,11 +304,11 @@ public abstract class AbstractStylingModelFactory implements
 				GraphNode oldNode = (GraphNode) nodesMap
 						.get(nodes[i].getData());
 				if (oldNode != null) {
-					nodes[i].setLocation(oldNode.getLocation().x, oldNode
-							.getLocation().y);
+					nodes[i].setLocation(oldNode.getLocation().x,
+							oldNode.getLocation().y);
 					if (oldNode.isSizeFixed()) {
-						nodes[i].setSize(oldNode.getSize().width, oldNode
-								.getSize().height);
+						nodes[i].setSize(oldNode.getSize().width,
+								oldNode.getSize().height);
 					}
 				}
 			}
@@ -318,8 +318,8 @@ public abstract class AbstractStylingModelFactory implements
 				GraphNode node = viewer.getGraphModelNode(key);
 				if (node != null) {
 					GraphNode oldNode = (GraphNode) nodesMap.get(key);
-					node.setLocation(oldNode.getLocation().x, oldNode
-							.getLocation().y);
+					node.setLocation(oldNode.getLocation().x,
+							oldNode.getLocation().y);
 					if (oldNode.isSizeFixed()) {
 						node.setSize(oldNode.getSize().width,
 								oldNode.getSize().height);

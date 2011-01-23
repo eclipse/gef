@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.zest.layouts.interfaces;
 
-
 /**
  * An interface for subgraphs in layout. A subgraph is a set of pruned nodes
  * that will be displayed as one element. A subgraph must contain at least one
@@ -79,7 +78,7 @@ public interface SubgraphLayout extends EntityLayout {
 	 *         laid out.
 	 */
 	public boolean isGraphEntity();
-	
+
 	/**
 	 * @return true if this subgraph is visualized differently depending on
 	 *         direction

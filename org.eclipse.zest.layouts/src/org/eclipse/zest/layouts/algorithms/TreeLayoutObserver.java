@@ -40,7 +40,8 @@ public class TreeLayoutObserver {
 	 * structure made of <code>TreeNode</code>'s subclasses.
 	 */
 	public static class TreeNodeFactory {
-		public TreeNode createTreeNode(NodeLayout nodeLayout, TreeLayoutObserver observer) {
+		public TreeNode createTreeNode(NodeLayout nodeLayout,
+				TreeLayoutObserver observer) {
 			return new TreeNode(nodeLayout, observer);
 		}
 	}
@@ -203,7 +204,8 @@ public class TreeLayoutObserver {
 				height = 0;
 				numOfLeaves = 0;
 				numOfDescendants = 0;
-				for (ListIterator iterator = children.listIterator(); iterator.hasNext();) {
+				for (ListIterator iterator = children.listIterator(); iterator
+						.hasNext();) {
 					TreeNode child = (TreeNode) iterator.next();
 					child.depth = this.depth + 1;
 					child.order = this.order + this.numOfLeaves;
@@ -228,8 +230,10 @@ public class TreeLayoutObserver {
 			NodeLayout[] predecessingNodes = node.getPredecessingNodes();
 			parent = null;
 			for (int i = 0; i < predecessingNodes.length; i++) {
-				TreeNode potentialParent = (TreeNode) owner.layoutToTree.get(predecessingNodes[i]);
-				if (!children.contains(potentialParent) && isBetterParent(potentialParent))
+				TreeNode potentialParent = (TreeNode) owner.layoutToTree
+						.get(predecessingNodes[i]);
+				if (!children.contains(potentialParent)
+						&& isBetterParent(potentialParent))
 					parent = potentialParent;
 			}
 			if (parent == null)
@@ -252,9 +256,11 @@ public class TreeLayoutObserver {
 		protected boolean isBetterParent(TreeNode potentialParent) {
 			if (this.parent == null && !this.isAncestorOf(potentialParent))
 				return true;
-			if (potentialParent.depth <= this.depth && potentialParent.depth != -1)
+			if (potentialParent.depth <= this.depth
+					&& potentialParent.depth != -1)
 				return true;
-			if (this.parent.depth == -1 && potentialParent.depth >= 0 && !this.isAncestorOf(potentialParent))
+			if (this.parent.depth == -1 && potentialParent.depth >= 0
+					&& !this.isAncestorOf(potentialParent))
 				return true;
 			return false;
 		}
@@ -329,7 +335,8 @@ public class TreeLayoutObserver {
 			TreeNode treeNode = (TreeNode) layoutToTree.get(node);
 			treeNode.parent.children.remove(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator iterator = treeListeners.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = treeListeners.iterator(); iterator
+					.hasNext();) {
 				TreeListener listener = (TreeListener) iterator.next();
 				listener.nodeRemoved(treeNode);
 			}
@@ -340,16 +347,20 @@ public class TreeLayoutObserver {
 			TreeNode treeNode = getTreeNode(node);
 			superRoot.addChild(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator iterator = treeListeners.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = treeListeners.iterator(); iterator
+					.hasNext();) {
 				TreeListener listener = (TreeListener) iterator.next();
 				listener.nodeAdded(treeNode);
 			}
 			return false;
 		}
 
-		public boolean connectionRemoved(LayoutContext context, ConnectionLayout connection) {
-			TreeNode node1 = (TreeNode) layoutToTree.get(connection.getSource());
-			TreeNode node2 = (TreeNode) layoutToTree.get(connection.getTarget());
+		public boolean connectionRemoved(LayoutContext context,
+				ConnectionLayout connection) {
+			TreeNode node1 = (TreeNode) layoutToTree
+					.get(connection.getSource());
+			TreeNode node2 = (TreeNode) layoutToTree
+					.get(connection.getTarget());
 			if (node1.parent == node2) {
 				node1.findNewParent();
 				if (node1.parent != node2) {
@@ -367,9 +378,12 @@ public class TreeLayoutObserver {
 			return false;
 		}
 
-		public boolean connectionAdded(LayoutContext context, ConnectionLayout connection) {
-			TreeNode source = (TreeNode) layoutToTree.get(connection.getSource());
-			TreeNode target = (TreeNode) layoutToTree.get(connection.getTarget());
+		public boolean connectionAdded(LayoutContext context,
+				ConnectionLayout connection) {
+			TreeNode source = (TreeNode) layoutToTree.get(connection
+					.getSource());
+			TreeNode target = (TreeNode) layoutToTree.get(connection
+					.getTarget());
 			if (source == target)
 				return false;
 			if (target.isBetterParent(source)) {
@@ -390,7 +404,8 @@ public class TreeLayoutObserver {
 		}
 
 		private void fireParentChanged(TreeNode node, TreeNode previousParent) {
-			for (Iterator iterator = treeListeners.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = treeListeners.iterator(); iterator
+					.hasNext();) {
 				TreeListener listener = (TreeListener) iterator.next();
 				listener.parentChanged(node, previousParent);
 			}
@@ -503,7 +518,8 @@ public class TreeLayoutObserver {
 		}
 		while (!nodesToAdd.isEmpty()) {
 			Object[] dequeued = (Object[]) nodesToAdd.removeFirst();
-			TreeNode currentNode = factory.createTreeNode((NodeLayout) dequeued[0], this);
+			TreeNode currentNode = factory.createTreeNode(
+					(NodeLayout) dequeued[0], this);
 			layoutToTree.put(dequeued[0], currentNode);
 			TreeNode currentRoot = (TreeNode) dequeued[1];
 
@@ -512,7 +528,8 @@ public class TreeLayoutObserver {
 			for (int i = 0; i < children.length; i++) {
 				if (!alreadyVisited.contains(children[i])) {
 					alreadyVisited.add(children[i]);
-					nodesToAdd.addLast(new Object[] { children[i], currentNode });
+					nodesToAdd
+							.addLast(new Object[] { children[i], currentNode });
 				}
 			}
 		}

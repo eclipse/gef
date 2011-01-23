@@ -37,8 +37,9 @@ import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 public class SpringLayoutProgress {
 	static Runnable r = null;
 	static boolean MouseDown = false;
-			
+
 	static boolean first = true;
+
 	/**
 	 * @param args
 	 */
@@ -59,11 +60,10 @@ public class SpringLayoutProgress {
 		GraphNode aa = new GraphNode(g, SWT.NONE, "A");
 		GraphNode bb = new GraphNode(g, SWT.NONE, "B");
 		GraphNode cc = new GraphNode(g, SWT.NONE, "C");
-		
+
 		GraphNode dd = new GraphNode(g, SWT.NONE, "D");
 		GraphNode ee = new GraphNode(g, SWT.NONE, "E");
 		GraphNode ff = new GraphNode(g, SWT.NONE, "F");
-
 
 		GraphNode root = new GraphNode(g, SWT.NONE, "Root");
 
@@ -87,16 +87,16 @@ public class SpringLayoutProgress {
 		nodes[2] = cc;
 
 		for (int k = 0; k < 1; k++) {
-		for (int i = 0; i < 8; i++) {
-			GraphNode n = new GraphNode(g, SWT.NONE, "1 - " + i);
-			for (int j = 0; j < 5; j++) {
-				GraphNode n2 = new GraphNode(g, SWT.NONE, "2 - " + j);
-				new GraphConnection(g, SWT.NONE, n, n2).setWeight(-1);
-				new GraphConnection(g, SWT.NONE, nodes[j % 3], n2);
+			for (int i = 0; i < 8; i++) {
+				GraphNode n = new GraphNode(g, SWT.NONE, "1 - " + i);
+				for (int j = 0; j < 5; j++) {
+					GraphNode n2 = new GraphNode(g, SWT.NONE, "2 - " + j);
+					new GraphConnection(g, SWT.NONE, n, n2).setWeight(-1);
+					new GraphConnection(g, SWT.NONE, nodes[j % 3], n2);
 
+				}
+				new GraphConnection(g, SWT.NONE, root, n);
 			}
-			new GraphConnection(g, SWT.NONE, root, n);
-		}
 		}
 
 		List nodes2 = g.getNodes();
@@ -105,27 +105,27 @@ public class SpringLayoutProgress {
 			node.setLocation(200, 200);
 		}
 		g.addMouseListener(new MouseListener() {
-			
+
 			public void mouseUp(MouseEvent e) {
 				// TODO Auto-generated method stub
 				MouseDown = false;
-				
+
 			}
-			
+
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
 				MouseDown = true;
-				
+
 			}
-			
+
 			public void mouseDoubleClick(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
 		g.addSelectionListener(new SelectionListener() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				List selection = g.getSelection();
 				List graphNodes = g.getNodes();
@@ -173,20 +173,19 @@ public class SpringLayoutProgress {
 						}
 
 					}
-					
+
 				}
-				
+
 			}
-			
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		final SpringLayoutAlgorithm springLayoutAlgorithm = new SpringLayoutAlgorithm();
 		g.addLayoutFilter(new LayoutFilter() {
-			
+
 			public boolean isObjectFiltered(GraphItem item) {
 				if (item instanceof GraphNode) {
 					return item.getGraphModel().getSelection().contains(item)
@@ -209,6 +208,7 @@ public class SpringLayoutProgress {
 
 		b.addSelectionListener(new SelectionAdapter() {
 			int steps = 0;
+
 			public void widgetSelected(SelectionEvent e) {
 
 				r = new Runnable() {
@@ -239,7 +239,5 @@ public class SpringLayoutProgress {
 			}
 		}
 	}
-
-
 
 }

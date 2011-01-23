@@ -47,7 +47,8 @@ public class GraphSnippet12 {
 		person.setLayoutManager(new FreeformLayout());
 		IFigure head = null;
 		if (headImage != null) {
-			headImage = new Image(headImage.getDevice(), headImage.getImageData().scaledTo(40, 50));
+			headImage = new Image(headImage.getDevice(), headImage
+					.getImageData().scaledTo(40, 50));
 			head = new ImageFigure(headImage);
 		} else
 			head = new Ellipse();
@@ -118,8 +119,10 @@ public class GraphSnippet12 {
 					Object o = iter.next();
 					if (o instanceof CGraphNode) {
 						if (!g.getSelection().contains(o)) {
-							((CGraphNode) o).getFigure().setBackgroundColor(ColorConstants.black);
-							((CGraphNode) o).getFigure().setForegroundColor(ColorConstants.black);
+							((CGraphNode) o).getFigure().setBackgroundColor(
+									ColorConstants.black);
+							((CGraphNode) o).getFigure().setForegroundColor(
+									ColorConstants.black);
 						}
 					}
 				}

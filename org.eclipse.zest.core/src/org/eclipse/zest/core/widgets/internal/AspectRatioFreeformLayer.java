@@ -27,7 +27,8 @@ import org.eclipse.draw2d.text.CaretInfo;
 
 // @tag zest.bug.156286-Scaling.fix : make this implement scalable figure so
 // that a zoom manager can be used on GraphEditParts.
-public class AspectRatioFreeformLayer extends FreeformLayer implements ScalableFigure, FreeformFigure {
+public class AspectRatioFreeformLayer extends FreeformLayer implements
+		ScalableFigure, FreeformFigure {
 
 	private double widthScale = 1.0;
 	private double heigthScale = 1.0;
@@ -99,7 +100,8 @@ public class AspectRatioFreeformLayer extends FreeformLayer implements ScalableF
 		Dimension d = super.getPreferredSize(wHint, hHint);
 		int w = getInsets().getWidth();
 		int h = getInsets().getHeight();
-		return d.getExpanded(-w, -h).scale(widthScale, heigthScale).expand(w, h);
+		return d.getExpanded(-w, -h).scale(widthScale, heigthScale)
+				.expand(w, h);
 	}
 
 	public void translateFromParent(Translatable t) {
@@ -133,9 +135,11 @@ public class AspectRatioFreeformLayer extends FreeformLayer implements ScalableF
 			Point p = (Point) t;
 			p.scale(1 / widthScale, 1 / heigthScale);
 		} else if (t instanceof PointList) {
-			throw new RuntimeException("PointList not supported in AspectRatioScale");
+			throw new RuntimeException(
+					"PointList not supported in AspectRatioScale");
 		} else {
-			throw new RuntimeException(t.toString() + " not supported in AspectRatioScale");
+			throw new RuntimeException(t.toString()
+					+ " not supported in AspectRatioScale");
 		}
 
 		// t.performScale(1/widthScale);
@@ -172,9 +176,11 @@ public class AspectRatioFreeformLayer extends FreeformLayer implements ScalableF
 			Point p = (Point) t;
 			p.scale(widthScale, heigthScale);
 		} else if (t instanceof PointList) {
-			throw new RuntimeException("PointList not supported in AspectRatioScale");
+			throw new RuntimeException(
+					"PointList not supported in AspectRatioScale");
 		} else {
-			throw new RuntimeException(t.toString() + " not supported in AspectRatioScale");
+			throw new RuntimeException(t.toString()
+					+ " not supported in AspectRatioScale");
 		}
 
 		super.translateToParent(t);

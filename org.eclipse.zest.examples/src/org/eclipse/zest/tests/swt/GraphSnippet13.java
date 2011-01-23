@@ -52,7 +52,8 @@ public class GraphSnippet13 {
 		person.setLayoutManager(new FreeformLayout());
 		IFigure head = null;
 		if (headImage != null) {
-			headImage = new Image(headImage.getDevice(), headImage.getImageData().scaledTo(40, 50));
+			headImage = new Image(headImage.getDevice(), headImage
+					.getImageData().scaledTo(40, 50));
 			head = new ImageFigure(headImage);
 		} else
 			head = new Ellipse();
@@ -123,8 +124,10 @@ public class GraphSnippet13 {
 					Object o = iter.next();
 					if (o instanceof CGraphNode) {
 						if (!g.getSelection().contains(o)) {
-							((CGraphNode) o).getFigure().setBackgroundColor(ColorConstants.black);
-							((CGraphNode) o).getFigure().setForegroundColor(ColorConstants.black);
+							((CGraphNode) o).getFigure().setBackgroundColor(
+									ColorConstants.black);
+							((CGraphNode) o).getFigure().setForegroundColor(
+									ColorConstants.black);
 						}
 					}
 				}
@@ -158,9 +161,11 @@ public class GraphSnippet13 {
 		GraphNode n2 = new GraphNode(c2, SWT.NONE, "Chris A.");
 		n2.setTooltip(tooltip);
 
-		GraphConnection connection = new GraphConnection(g, ZestStyles.CONNECTIONS_DIRECTED, n1, n2);
+		GraphConnection connection = new GraphConnection(g,
+				ZestStyles.CONNECTIONS_DIRECTED, n1, n2);
 		connection.setCurveDepth(-30);
-		GraphConnection connection2 = new GraphConnection(g, ZestStyles.CONNECTIONS_DIRECTED, n2, n1);
+		GraphConnection connection2 = new GraphConnection(g,
+				ZestStyles.CONNECTIONS_DIRECTED, n2, n1);
 		connection2.setCurveDepth(-30);
 
 		g.setLayoutAlgorithm(new SpringLayoutAlgorithm(), true);

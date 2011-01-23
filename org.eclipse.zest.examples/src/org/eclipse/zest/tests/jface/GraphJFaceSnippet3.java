@@ -40,9 +40,10 @@ import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
  */
 public class GraphJFaceSnippet3 {
 
-	public static final String graph = "a calls b\n" + "a calls c\n" + "b calld d\n" + "b calls e\n" + "c calls f\n"
-			+ "c calls g\n" + "d calls h\n" + "d calls i\n" + "e calls j\n" + "e calls k\n" + "f calls l\n"
-			+ "f calls m\n";
+	public static final String graph = "a calls b\n" + "a calls c\n"
+			+ "b calld d\n" + "b calls e\n" + "c calls f\n" + "c calls g\n"
+			+ "d calls h\n" + "d calls i\n" + "e calls j\n" + "e calls k\n"
+			+ "f calls l\n" + "f calls m\n";
 
 	static class SimpleGraphContentProvider implements IGraphContentProvider {
 
@@ -90,12 +91,14 @@ public class GraphJFaceSnippet3 {
 		shell.setText("Simple Graph File Format");
 
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-		dialog.setFilterNames(new String[] { "Simple Graph Files (*.sgf)", "All Files (*.*)" });
+		dialog.setFilterNames(new String[] { "Simple Graph Files (*.sgf)",
+				"All Files (*.*)" });
 		dialog.setFilterExtensions(new String[] { "*.sgf", "*.*" }); // Windows
 																		// wild
 																		// cards
 
-		String directory = System.getProperty("user.dir") + "/src/org/eclipse/zest/tests/jface/SimpleGraph.sgf"; // eclipse/zest/examples/jface/";
+		String directory = System.getProperty("user.dir")
+				+ "/src/org/eclipse/zest/tests/jface/SimpleGraph.sgf"; // eclipse/zest/examples/jface/";
 		System.out.println(directory);
 		dialog.setFilterPath(directory);
 		// dialog.setFilterPath(System.getProperty("user.dir") +

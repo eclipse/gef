@@ -37,7 +37,8 @@ public interface ExpandCollapseManager {
 	 * @param expanded
 	 *            true to expand, false to collapse
 	 */
-	public void setExpanded(LayoutContext context, NodeLayout node, boolean expanded);
+	public void setExpanded(LayoutContext context, NodeLayout node,
+			boolean expanded);
 
 	/**
 	 * Checks if given node can be expanded.

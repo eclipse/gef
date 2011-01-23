@@ -79,8 +79,8 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 					// just create the node for the destination
 					if (dest != null) {
 						if (figureProvider != null) {
-							createNode(model, dest, figureProvider
-									.getFigure(dest));
+							createNode(model, dest,
+									figureProvider.getFigure(dest));
 						} else {
 							createNode(model, dest);
 						}
@@ -90,8 +90,8 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 					// just create the node for the source
 					if (source != null) {
 						if (figureProvider != null) {
-							createNode(model, source, figureProvider
-									.getFigure(dest));
+							createNode(model, source,
+									figureProvider.getFigure(dest));
 						} else {
 							createNode(model, source);
 						}

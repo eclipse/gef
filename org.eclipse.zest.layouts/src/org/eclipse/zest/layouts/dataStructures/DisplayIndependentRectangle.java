@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.zest.layouts.dataStructures;
 
-
 /**
  * This is a rectangle that isn't dependent on awt, swt, or any other library,
  * except layout.
@@ -18,17 +17,18 @@ package org.eclipse.zest.layouts.dataStructures;
  * @author Casey Best
  */
 public class DisplayIndependentRectangle {
-	
+
 	public double x, y, width, height;
-	
+
 	public DisplayIndependentRectangle() {
 		this.x = 0;
 		this.y = 0;
 		this.width = 0;
 		this.height = 0;
 	}
-	
-	public DisplayIndependentRectangle(double x, double y, double width, double height) {
+
+	public DisplayIndependentRectangle(double x, double y, double width,
+			double height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -41,15 +41,13 @@ public class DisplayIndependentRectangle {
 		this.width = rect.width;
 		this.height = rect.height;
 	}
-	
+
 	public String toString() {
 		return "(" + x + ", " + y + ", " + width + ", " + height + ")";
 	}
-	
+
 	public boolean intersects(DisplayIndependentRectangle rect) {
-		return rect.x < x + width 
-			&& rect.y < y + height 
-			&& rect.x + rect.width > x 
-			&& rect.y + rect.height > y;
+		return rect.x < x + width && rect.y < y + height
+				&& rect.x + rect.width > x && rect.y + rect.height > y;
 	}
 }

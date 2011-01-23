@@ -37,7 +37,8 @@ import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 public class UMLExample {
 	public static Color classColor = null;
 
-	public static IFigure createClassFigure1(Font classFont, Image classImage, Image publicField, Image privateField) {
+	public static IFigure createClassFigure1(Font classFont, Image classImage,
+			Image publicField, Image privateField) {
 		Label classLabel1 = new Label("Table", classImage);
 		classLabel1.setFont(classFont);
 
@@ -57,7 +58,8 @@ public class UMLExample {
 		return classFigure;
 	}
 
-	public static IFigure createClassFigure2(Font classFont, Image classImage, Image publicField, Image privateField) {
+	public static IFigure createClassFigure2(Font classFont, Image classImage,
+			Image publicField, Image privateField) {
 		Label classLabel2 = new Label("Column", classImage);
 		classLabel2.setFont(classFont);
 
@@ -102,19 +104,25 @@ public class UMLExample {
 		classColor = new Color(null, 255, 255, 206);
 
 		Font classFont = new Font(null, "Arial", 12, SWT.BOLD);
-		Image classImage = new Image(Display.getDefault(), UMLClassFigure.class.getResourceAsStream("class_obj.gif"));
+		Image classImage = new Image(Display.getDefault(),
+				UMLClassFigure.class.getResourceAsStream("class_obj.gif"));
 		Image privateField = new Image(Display.getDefault(),
-				UMLClassFigure.class.getResourceAsStream("field_private_obj.gif"));
-		Image publicField = new Image(Display.getDefault(), UMLClassFigure.class.getResourceAsStream("methpub_obj.gif"));
+				UMLClassFigure.class
+						.getResourceAsStream("field_private_obj.gif"));
+		Image publicField = new Image(Display.getDefault(),
+				UMLClassFigure.class.getResourceAsStream("methpub_obj.gif"));
 
 		Graph g = new Graph(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		GraphContainer c = new GraphContainer(g, SWT.NONE);
 		c.setText("A UML Container");
-		UMLNode n = new UMLNode(c, SWT.NONE, createClassFigure1(classFont, classImage, publicField, privateField));
+		UMLNode n = new UMLNode(c, SWT.NONE, createClassFigure1(classFont,
+				classImage, publicField, privateField));
 
-		GraphNode n1 = new UMLNode(g, SWT.NONE, createClassFigure1(classFont, classImage, publicField, privateField));
-		GraphNode n2 = new UMLNode(g, SWT.NONE, createClassFigure2(classFont, classImage, publicField, privateField));
+		GraphNode n1 = new UMLNode(g, SWT.NONE, createClassFigure1(classFont,
+				classImage, publicField, privateField));
+		GraphNode n2 = new UMLNode(g, SWT.NONE, createClassFigure2(classFont,
+				classImage, publicField, privateField));
 
 		new GraphConnection(g, SWT.NONE, n1, n2);
 		new GraphConnection(g, SWT.NONE, n, n1);

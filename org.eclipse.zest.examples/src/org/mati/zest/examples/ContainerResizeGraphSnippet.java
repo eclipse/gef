@@ -61,7 +61,8 @@ public class ContainerResizeGraphSnippet {
 		}
 	}
 
-	public static void populateContainer(GraphContainer c, Graph g, int number, boolean radial) {
+	public static void populateContainer(GraphContainer c, Graph g, int number,
+			boolean radial) {
 		GraphNode a = new GraphNode(c, ZestStyles.NODES_FISHEYE
 				| ZestStyles.NODES_HIDE_TEXT);
 		a.setText("SomeClass.java");
@@ -120,8 +121,12 @@ public class ContainerResizeGraphSnippet {
 		// Create the shell
 		Display d = new Display();
 
-		image1 = new Image(Display.getDefault(), ContainerResizeGraphSnippet.class.getResourceAsStream("package_obj.gif"));
-		classImage = new Image(Display.getDefault(), ContainerResizeGraphSnippet.class.getResourceAsStream("class_obj.gif"));
+		image1 = new Image(Display.getDefault(),
+				ContainerResizeGraphSnippet.class
+						.getResourceAsStream("package_obj.gif"));
+		classImage = new Image(Display.getDefault(),
+				ContainerResizeGraphSnippet.class
+						.getResourceAsStream("class_obj.gif"));
 
 		Shell shell = new Shell(d);
 		shell.setText("GraphSnippet1");
@@ -131,8 +136,11 @@ public class ContainerResizeGraphSnippet {
 		final Graph g = new Graph(shell, SWT.NONE);
 		createContainer(g);
 
-		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(new LayoutAlgorithm[] { new GridLayoutAlgorithm(), new HorizontalShiftAlgorithm() });
-		//g.setLayoutAlgorithm(new GridLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
+		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(
+				new LayoutAlgorithm[] { new GridLayoutAlgorithm(),
+						new HorizontalShiftAlgorithm() });
+		// g.setLayoutAlgorithm(new
+		// GridLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), true);
 		g.setLayoutAlgorithm(compositeLayoutAlgorithm, true);
 
 		g.addKeyListener(new KeyListener() {

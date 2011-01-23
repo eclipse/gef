@@ -94,8 +94,8 @@ public class GraphItemStyler {
 			int swt = getLineStyleForZestStyle(conn.getConnectionStyle());
 			conn.setLineStyle(swt);
 			if (labelProvider instanceof ISelfStyleProvider) {
-				((ISelfStyleProvider) labelProvider).selfStyleConnection(conn
-						.getData(), conn);
+				((ISelfStyleProvider) labelProvider).selfStyleConnection(
+						conn.getData(), conn);
 			}
 		}
 	}

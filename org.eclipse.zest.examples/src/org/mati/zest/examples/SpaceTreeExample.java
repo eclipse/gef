@@ -22,7 +22,7 @@ import org.eclipse.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 public class SpaceTreeExample {
 
 	static Graph g;
-	
+
 	static GraphNode source;
 
 	static GraphNode target;
@@ -39,7 +39,7 @@ public class SpaceTreeExample {
 		g = new Graph(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		g.setNodeStyle(ZestStyles.NODES_FISHEYE);
-		
+
 		TriangleSubgraphFactory factory = new DefaultSubgraph.TriangleSubgraphFactory();
 		factory.setColor(ColorConstants.green);
 
@@ -54,7 +54,6 @@ public class SpaceTreeExample {
 		// g.setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
 		createTree(g, "!", 5, 5);
 
-
 		hookMenu(g);
 
 		shell.open();
@@ -65,7 +64,8 @@ public class SpaceTreeExample {
 		}
 	}
 
-	private static GraphNode createTree(Graph g, String rootTitle, int depth, int breadth) {
+	private static GraphNode createTree(Graph g, String rootTitle, int depth,
+			int breadth) {
 		GraphNode root = new GraphNode(g, SWT.NONE, rootTitle);
 		if (depth > 0) {
 			for (int i = 0; i < breadth; i++) {

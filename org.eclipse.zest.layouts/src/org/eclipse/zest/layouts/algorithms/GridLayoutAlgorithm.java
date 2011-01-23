@@ -16,14 +16,13 @@ import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.EntityLayout;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
-
 /**
  * @version 2.0
  * @author Ian Bull
  * @author Casey Best and Rob Lintern
  */
 public class GridLayoutAlgorithm implements LayoutAlgorithm {
-	
+
 	private static final double PADDING_PERCENTAGE = 0.95;
 	private static final int MIN_ENTITY_SIZE = 5;
 
@@ -36,11 +35,10 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 
 	private LayoutContext context;
 
-
 	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 	}
-    
+
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
@@ -57,16 +55,17 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 * 
 	 * @param bounds
 	 */
-    protected void calculateGrid(DisplayIndependentRectangle bounds) {
+	protected void calculateGrid(DisplayIndependentRectangle bounds) {
 		numChildren = context.getNodes().length;
-		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.x, bounds.y, bounds.width, bounds.height);
+		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.x,
+				bounds.y, bounds.width, bounds.height);
 		cols = result[0];
 		rows = result[1];
-		
+
 		colWidth = bounds.width / cols;
 		rowHeight = bounds.height / rows;
-		
-		double [] nodeSize = calculateNodeSize (colWidth, rowHeight);
+
+		double[] nodeSize = calculateNodeSize(colWidth, rowHeight);
 		childrenWidth = nodeSize[0];
 		childrenHeight = nodeSize[1];
 		offsetX = (colWidth - childrenWidth) / 2.0; // half of the space between
@@ -85,18 +84,22 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 * @param bounds
 	 *            the bounds in which the layout can place the entities.
 	 */
-	protected synchronized void applyLayoutInternal(EntityLayout[] entitiesToLayout, DisplayIndependentRectangle bounds) {
-		
+	protected synchronized void applyLayoutInternal(
+			EntityLayout[] entitiesToLayout, DisplayIndependentRectangle bounds) {
+
 		int index = 0;
-		for( int i = 0; i < rows; i++ ) {
-			for( int j = 0; j < cols; j++ ) {
-				if( (i*cols + j) < numChildren ) {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if ((i * cols + j) < numChildren) {
 					EntityLayout node = entitiesToLayout[index++];
 					if (resize && node.isResizable())
-						node.setSize(Math.max(childrenWidth, MIN_ENTITY_SIZE), Math.max(childrenHeight, MIN_ENTITY_SIZE));
+						node.setSize(Math.max(childrenWidth, MIN_ENTITY_SIZE),
+								Math.max(childrenHeight, MIN_ENTITY_SIZE));
 					DisplayIndependentDimension size = node.getSize();
-					double xmove = bounds.x + j * colWidth + offsetX + size.width / 2;
-					double ymove = bounds.y + i * rowHeight + offsetY + size.height / 2;
+					double xmove = bounds.x + j * colWidth + offsetX
+							+ size.width / 2;
+					double ymove = bounds.y + i * rowHeight + offsetY
+							+ size.height / 2;
 					if (node.isMovable())
 						node.setLocation(xmove, ymove);
 				}
@@ -105,74 +108,83 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	/**
-	 * Calculates and returns an array containing the number of columns, followed by the number of rows
+	 * Calculates and returns an array containing the number of columns,
+	 * followed by the number of rows
 	 */
-	protected int[] calculateNumberOfRowsAndCols(int numChildren, double boundX, double boundY, double boundWidth, double boundHeight) {
+	protected int[] calculateNumberOfRowsAndCols(int numChildren,
+			double boundX, double boundY, double boundWidth, double boundHeight) {
 		if (aspectRatio == 1.0) {
-			return calculateNumberOfRowsAndCols_square (numChildren, boundX, boundY, boundWidth, boundHeight);
+			return calculateNumberOfRowsAndCols_square(numChildren, boundX,
+					boundY, boundWidth, boundHeight);
 		} else {
-			return calculateNumberOfRowsAndCols_rectangular (numChildren);
+			return calculateNumberOfRowsAndCols_rectangular(numChildren);
 		}
 	}
-	
-	protected int[] calculateNumberOfRowsAndCols_square (int numChildren, double boundX, double boundY, double boundWidth, double boundHeight) {
-		int rows = Math.max (1, (int) Math.sqrt(numChildren * boundHeight/boundWidth));
-		int cols = Math.max (1, (int) Math.sqrt(numChildren * boundWidth/boundHeight));
-		
+
+	protected int[] calculateNumberOfRowsAndCols_square(int numChildren,
+			double boundX, double boundY, double boundWidth, double boundHeight) {
+		int rows = Math.max(1,
+				(int) Math.sqrt(numChildren * boundHeight / boundWidth));
+		int cols = Math.max(1,
+				(int) Math.sqrt(numChildren * boundWidth / boundHeight));
+
 		// if space is taller than wide, adjust rows first
 		if (boundWidth <= boundHeight) {
-			//decrease number of rows and columns until just enough or not enough
-			while (rows*cols > numChildren) {
-				if (rows > 1) 
+			// decrease number of rows and columns until just enough or not
+			// enough
+			while (rows * cols > numChildren) {
+				if (rows > 1)
 					rows--;
-				if (rows*cols > numChildren)
-					if (cols > 1) 
+				if (rows * cols > numChildren)
+					if (cols > 1)
 						cols--;
-			}			
-			//increase number of rows and columns until just enough
-			while (rows*cols < numChildren) {
+			}
+			// increase number of rows and columns until just enough
+			while (rows * cols < numChildren) {
 				rows++;
-				if (rows*cols < numChildren)
+				if (rows * cols < numChildren)
 					cols++;
 			}
 		} else {
-			//decrease number of rows and columns until just enough or not enough
-			while (rows*cols > numChildren) {
-				if (cols > 1) 
+			// decrease number of rows and columns until just enough or not
+			// enough
+			while (rows * cols > numChildren) {
+				if (cols > 1)
 					cols--;
-				if (rows*cols > numChildren)
-					if (rows > 1) 
+				if (rows * cols > numChildren)
+					if (rows > 1)
 						rows--;
-			}			
-			//increase number of rows and columns until just enough
-			while (rows*cols < numChildren) {
+			}
+			// increase number of rows and columns until just enough
+			while (rows * cols < numChildren) {
 				cols++;
-				if (rows*cols < numChildren)
+				if (rows * cols < numChildren)
 					rows++;
 			}
 		}
-		int[] result = {cols, rows};
+		int[] result = { cols, rows };
 		return result;
 	}
-	
-	protected int [] calculateNumberOfRowsAndCols_rectangular (int numChildren) {
-		int rows =  Math.max (1, (int)Math.ceil(Math.sqrt(numChildren)));
-		int cols = Math.max (1, (int)Math.ceil(Math.sqrt(numChildren)));		
-		int[] result = {cols, rows};
+
+	protected int[] calculateNumberOfRowsAndCols_rectangular(int numChildren) {
+		int rows = Math.max(1, (int) Math.ceil(Math.sqrt(numChildren)));
+		int cols = Math.max(1, (int) Math.ceil(Math.sqrt(numChildren)));
+		int[] result = { cols, rows };
 		return result;
 	}
-	
-	
-	protected double [] calculateNodeSize (double colWidth, double rowHeight) {
-		double childW = Math.max (MIN_ENTITY_SIZE, PADDING_PERCENTAGE*colWidth);	
-		double childH = Math.max (MIN_ENTITY_SIZE, PADDING_PERCENTAGE*(rowHeight - rowPadding));	
-		double whRatio = colWidth/rowHeight;
+
+	protected double[] calculateNodeSize(double colWidth, double rowHeight) {
+		double childW = Math
+				.max(MIN_ENTITY_SIZE, PADDING_PERCENTAGE * colWidth);
+		double childH = Math.max(MIN_ENTITY_SIZE, PADDING_PERCENTAGE
+				* (rowHeight - rowPadding));
+		double whRatio = colWidth / rowHeight;
 		if (whRatio < aspectRatio) {
 			childH = childW / aspectRatio;
 		} else {
 			childW = childH * aspectRatio;
 		}
-		double [] result = {childW, childH};
+		double[] result = { childW, childH };
 		return result;
 	}
 
@@ -182,11 +194,11 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 * @param rowPadding
 	 *            padding - should be greater than or equal to 0
 	 */
-    public void setRowPadding(int rowPadding) {
+	public void setRowPadding(int rowPadding) {
 		if (rowPadding >= 0) {
 			this.rowPadding = rowPadding;
-        }
-    }
+		}
+	}
 
 	/**
 	 * Sets the preferred aspect ratio for layout entities. The default aspect

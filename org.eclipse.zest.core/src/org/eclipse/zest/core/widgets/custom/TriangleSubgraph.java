@@ -132,14 +132,17 @@ public class TriangleSubgraph extends FigureSubgraph {
 
 	private TriangleParameters parameters;
 
-	public TriangleSubgraph(NodeLayout[] nodes, LayoutContext context, TriangleParameters triangleParameters) {
+	public TriangleSubgraph(NodeLayout[] nodes, LayoutContext context,
+			TriangleParameters triangleParameters) {
 		super(nodes, context);
 		this.parameters = triangleParameters;
 		if (contextToTree.get(context) == null) {
-			TreeLayoutObserver treeLayoutObserver = new TreeLayoutObserver(context, null);
+			TreeLayoutObserver treeLayoutObserver = new TreeLayoutObserver(
+					context, null);
 			treeLayoutObserver.addTreeListener(new TreeListener() {
 				protected void defaultHandle(TreeNode changedNode) {
-					SubgraphLayout subgraph = changedNode.getNode().getSubgraph();
+					SubgraphLayout subgraph = changedNode.getNode()
+							.getSubgraph();
 					if (subgraph instanceof TriangleSubgraph) {
 						((TriangleSubgraph) subgraph).updateFigure();
 					}
@@ -160,8 +163,10 @@ public class TriangleSubgraph extends FigureSubgraph {
 	}
 
 	protected void updateFigure() {
-		TreeLayoutObserver tree = (TreeLayoutObserver) contextToTree.get(context);
-		TreeNode subgraphRoot = tree.getTreeNode((NodeLayout) nodes.iterator().next());
+		TreeLayoutObserver tree = (TreeLayoutObserver) contextToTree
+				.get(context);
+		TreeNode subgraphRoot = tree.getTreeNode((NodeLayout) nodes.iterator()
+				.next());
 		if (subgraphRoot == null) {
 			return;
 		}
@@ -170,30 +175,47 @@ public class TriangleSubgraph extends FigureSubgraph {
 		}
 
 		TreeNode superRoot = tree.getSuperRoot();
-		double triangleHeight = parameters.referenceHeight * subgraphRoot.getHeight() / superRoot.getHeight();
+		double triangleHeight = parameters.referenceHeight
+				* subgraphRoot.getHeight() / superRoot.getHeight();
 
 		int numOfNodes = superRoot.getNumOfDescendants();
-		int numOfNodesWithChildren = numOfNodes - superRoot.getNumOfLeaves() + 1;
-		double logBase = (numOfNodesWithChildren > 0) ? (double) numOfNodes / numOfNodesWithChildren : 1;
+		int numOfNodesWithChildren = numOfNodes - superRoot.getNumOfLeaves()
+				+ 1;
+		double logBase = (numOfNodesWithChildren > 0) ? (double) numOfNodes
+				/ numOfNodesWithChildren : 1;
 		// logarithm base is the average number of children for whole context
-		double triangleBaseModifier = (parameters.referenceBase - 1) / log(superRoot.getNumOfLeaves(), logBase);
-		double triangleBase = parameters.referenceBase + triangleBaseModifier * log((double) subgraphRoot.getNumOfLeaves() / superRoot.getNumOfLeaves(), logBase);
+		double triangleBaseModifier = (parameters.referenceBase - 1)
+				/ log(superRoot.getNumOfLeaves(), logBase);
+		double triangleBase = parameters.referenceBase
+				+ triangleBaseModifier
+				* log((double) subgraphRoot.getNumOfLeaves()
+						/ superRoot.getNumOfLeaves(), logBase);
 
 		if (parameters.direction == 0) {
 			parameters.direction = parameters.direction;
 		}
-		if (parameters.direction == TOP_DOWN || parameters.direction == BOTTOM_UP) {
-			figure.setSize((int) (triangleBase + 0.5), (int) (triangleHeight + 0.5));
+		if (parameters.direction == TOP_DOWN
+				|| parameters.direction == BOTTOM_UP) {
+			figure.setSize((int) (triangleBase + 0.5),
+					(int) (triangleHeight + 0.5));
 		} else {
-			figure.setSize((int) (triangleHeight + 0.5), (int) (triangleBase + 0.5));
+			figure.setSize((int) (triangleHeight + 0.5),
+					(int) (triangleBase + 0.5));
 		}
 
-		int numOfNodesWithChildrenInSubgraph = nodes.size() - subgraphRoot.getNumOfLeaves() + 1;
-		double avgNumOfChildrenInSugbraph = (numOfNodesWithChildrenInSubgraph > 0) ? (double) nodes.size() / numOfNodesWithChildrenInSubgraph : 1;
-		int r = (int) (parameters.color.getRed() + ((double) 255 - parameters.color.getRed()) / avgNumOfChildrenInSugbraph);
-		int g = (int) (parameters.color.getGreen() + ((double) 255 - parameters.color.getGreen()) / avgNumOfChildrenInSugbraph);
-		int b = (int) (parameters.color.getBlue() + ((double) 255 - parameters.color.getBlue()) / avgNumOfChildrenInSugbraph);
-		figure.setBackgroundColor(new Color(parameters.color.getDevice(), r, g, b));
+		int numOfNodesWithChildrenInSubgraph = nodes.size()
+				- subgraphRoot.getNumOfLeaves() + 1;
+		double avgNumOfChildrenInSugbraph = (numOfNodesWithChildrenInSubgraph > 0) ? (double) nodes
+				.size() / numOfNodesWithChildrenInSubgraph
+				: 1;
+		int r = (int) (parameters.color.getRed() + ((double) 255 - parameters.color
+				.getRed()) / avgNumOfChildrenInSugbraph);
+		int g = (int) (parameters.color.getGreen() + ((double) 255 - parameters.color
+				.getGreen()) / avgNumOfChildrenInSugbraph);
+		int b = (int) (parameters.color.getBlue() + ((double) 255 - parameters.color
+				.getBlue()) / avgNumOfChildrenInSugbraph);
+		figure.setBackgroundColor(new Color(parameters.color.getDevice(), r, g,
+				b));
 		figure.setForegroundColor(parameters.color);
 	}
 
@@ -206,7 +228,8 @@ public class TriangleSubgraph extends FigureSubgraph {
 		if (parameters.direction == direction) {
 			return;
 		}
-		if (direction == TOP_DOWN || direction == BOTTOM_UP || direction == LEFT_RIGHT || direction == RIGHT_LEFT) {
+		if (direction == TOP_DOWN || direction == BOTTOM_UP
+				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT) {
 			parameters.direction = direction;
 			updateFigure();
 		} else {
