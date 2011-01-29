@@ -11,6 +11,7 @@
 package org.eclipse.zest.layouts.algorithms;
 
 import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentDimension;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.EntityLayout;
@@ -34,6 +35,17 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	protected double childrenHeight, childrenWidth;
 
 	private LayoutContext context;
+
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #GridLayoutAlgorithm()}.
+	 */
+	public GridLayoutAlgorithm(int style) {
+		this();
+		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
+	}
+
+	public GridLayoutAlgorithm() {
+	}
 
 	public void setLayoutContext(LayoutContext context) {
 		this.context = context;

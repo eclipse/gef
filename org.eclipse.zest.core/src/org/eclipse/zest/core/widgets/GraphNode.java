@@ -86,6 +86,10 @@ public class GraphNode extends GraphItem {
 		this(graphModel, style, "" /* text */, null /* image */, data);
 	}
 
+	public GraphNode(IContainer graphModel, int style, String text, Image image) {
+		this(graphModel, style, text, image, null);
+	}
+
 	private GraphNode(IContainer graphModel, int style, String text,
 			Image image, Object data) {
 		super(graphModel.getGraph(), style, data);

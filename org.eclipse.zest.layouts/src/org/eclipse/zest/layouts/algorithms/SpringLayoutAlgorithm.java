@@ -13,6 +13,7 @@ package org.eclipse.zest.layouts.algorithms;
 import java.util.HashMap;
 
 import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentDimension;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentPoint;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
@@ -185,6 +186,17 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			return false;
 		}
 
+	}
+
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #SpringLayoutAlgorithm()}.
+	 */
+	public SpringLayoutAlgorithm(int style) {
+		this();
+		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
+	}
+
+	public SpringLayoutAlgorithm() {
 	}
 
 	public void applyLayout(boolean clean) {

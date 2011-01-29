@@ -298,6 +298,23 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
+	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)} and
+	 *             set text and image on created instance.
+	 */
+	public GraphContainer(Graph graph, int style, String text, Image image) {
+		this(graph, style);
+		setText(text);
+		setImage(image);
+	}
+
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)}.
+	 */
+	public GraphContainer(GraphContainer container, int style) {
+		this(container.getGraph(), style);
+	}
+
+	/**
 	 * Custom figures cannot be set on a GraphContainer.
 	 */
 	public void setCustomFigure(IFigure nodeFigure) {

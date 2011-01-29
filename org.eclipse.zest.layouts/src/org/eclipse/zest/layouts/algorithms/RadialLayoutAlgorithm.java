@@ -11,6 +11,7 @@
 package org.eclipse.zest.layouts.algorithms;
 
 import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentPoint;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.EntityLayout;
@@ -33,6 +34,17 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 	private boolean resize = false;
 
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
+
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #RadialLayoutAlgorithm()}.
+	 */
+	public RadialLayoutAlgorithm(int style) {
+		this();
+		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
+	}
+
+	public RadialLayoutAlgorithm() {
+	}
 
 	public void applyLayout(boolean clean) {
 		if (!clean)

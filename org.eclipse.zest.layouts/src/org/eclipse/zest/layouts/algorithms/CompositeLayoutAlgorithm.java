@@ -21,6 +21,15 @@ public class CompositeLayoutAlgorithm implements LayoutAlgorithm {
 		this.algorithms = algorithms;
 	}
 
+	/**
+	 * @deprecated Since Zest 2.0, use
+	 *             {@link #CompositeLayoutAlgorithm(LayoutAlgorithm[])}
+	 */
+	public CompositeLayoutAlgorithm(int style,
+			LayoutAlgorithm[] layoutAlgorithms) {
+		this(layoutAlgorithms);
+	}
+
 	public void applyLayout(boolean clean) {
 		for (int i = 0; i < algorithms.length; i++) {
 			algorithms[i].applyLayout(clean);
