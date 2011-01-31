@@ -1,4 +1,5 @@
 bin
+target
 .refactorings
 plugin.xml_gen
 *.jar
