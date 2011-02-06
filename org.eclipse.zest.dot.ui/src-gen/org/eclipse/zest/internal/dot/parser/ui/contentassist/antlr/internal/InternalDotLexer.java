@@ -13,318 +13,356 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalDotLexer extends Lexer {
     public static final int RULE_ID=5;
+    public static final int T__26=26;
+    public static final int T__25=25;
+    public static final int T__24=24;
+    public static final int T__23=23;
+    public static final int T__22=22;
     public static final int RULE_ANY_OTHER=11;
-    public static final int T26=26;
-    public static final int T25=25;
-    public static final int Tokens=27;
-    public static final int T24=24;
+    public static final int T__21=21;
+    public static final int T__20=20;
     public static final int EOF=-1;
     public static final int RULE_SL_COMMENT=9;
-    public static final int T23=23;
-    public static final int T22=22;
-    public static final int T21=21;
-    public static final int T20=20;
     public static final int RULE_ML_COMMENT=8;
+    public static final int T__19=19;
     public static final int RULE_STRING=7;
+    public static final int T__16=16;
     public static final int RULE_DOT_ID=4;
+    public static final int T__15=15;
+    public static final int T__18=18;
+    public static final int T__17=17;
+    public static final int T__12=12;
+    public static final int T__14=14;
+    public static final int T__13=13;
     public static final int RULE_INT=6;
-    public static final int T12=12;
-    public static final int T13=13;
-    public static final int T14=14;
     public static final int RULE_WS=10;
-    public static final int T15=15;
-    public static final int T16=16;
-    public static final int T17=17;
-    public static final int T18=18;
-    public static final int T19=19;
+
+    // delegates
+    // delegators
+
     public InternalDotLexer() {;} 
     public InternalDotLexer(CharStream input) {
-        super(input);
+        this(input, new RecognizerSharedState());
+    }
+    public InternalDotLexer(CharStream input, RecognizerSharedState state) {
+        super(input,state);
+
     }
     public String getGrammarFileName() { return "../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g"; }
 
-    // $ANTLR start T12
-    public final void mT12() throws RecognitionException {
+    // $ANTLR start "T__12"
+    public final void mT__12() throws RecognitionException {
         try {
-            int _type = T12;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:10:5: ( '->' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:10:7: '->'
+            int _type = T__12;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:11:7: ( '->' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:11:9: '->'
             {
             match("->"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T12
+    // $ANTLR end "T__12"
 
-    // $ANTLR start T13
-    public final void mT13() throws RecognitionException {
+    // $ANTLR start "T__13"
+    public final void mT__13() throws RecognitionException {
         try {
-            int _type = T13;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:11:5: ( '--' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:11:7: '--'
+            int _type = T__13;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:12:7: ( '--' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:12:9: '--'
             {
             match("--"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T13
+    // $ANTLR end "T__13"
 
-    // $ANTLR start T14
-    public final void mT14() throws RecognitionException {
+    // $ANTLR start "T__14"
+    public final void mT__14() throws RecognitionException {
         try {
-            int _type = T14;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:12:5: ( 'graph' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:12:7: 'graph'
+            int _type = T__14;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:13:7: ( 'graph' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:13:9: 'graph'
             {
             match("graph"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T14
+    // $ANTLR end "T__14"
 
-    // $ANTLR start T15
-    public final void mT15() throws RecognitionException {
+    // $ANTLR start "T__15"
+    public final void mT__15() throws RecognitionException {
         try {
-            int _type = T15;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:13:5: ( 'digraph' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:13:7: 'digraph'
+            int _type = T__15;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:14:7: ( 'digraph' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:14:9: 'digraph'
             {
             match("digraph"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T15
+    // $ANTLR end "T__15"
 
-    // $ANTLR start T16
-    public final void mT16() throws RecognitionException {
+    // $ANTLR start "T__16"
+    public final void mT__16() throws RecognitionException {
         try {
-            int _type = T16;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:14:5: ( 'node' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:14:7: 'node'
+            int _type = T__16;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:15:7: ( 'node' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:15:9: 'node'
             {
             match("node"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T16
+    // $ANTLR end "T__16"
 
-    // $ANTLR start T17
-    public final void mT17() throws RecognitionException {
+    // $ANTLR start "T__17"
+    public final void mT__17() throws RecognitionException {
         try {
-            int _type = T17;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:15:5: ( 'edge' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:15:7: 'edge'
+            int _type = T__17;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:16:7: ( 'edge' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:16:9: 'edge'
             {
             match("edge"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T17
+    // $ANTLR end "T__17"
 
-    // $ANTLR start T18
-    public final void mT18() throws RecognitionException {
+    // $ANTLR start "T__18"
+    public final void mT__18() throws RecognitionException {
         try {
-            int _type = T18;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:16:5: ( '{' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:16:7: '{'
+            int _type = T__18;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:17:7: ( '{' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:17:9: '{'
             {
             match('{'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T18
+    // $ANTLR end "T__18"
 
-    // $ANTLR start T19
-    public final void mT19() throws RecognitionException {
+    // $ANTLR start "T__19"
+    public final void mT__19() throws RecognitionException {
         try {
-            int _type = T19;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:17:5: ( '}' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:17:7: '}'
+            int _type = T__19;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:18:7: ( '}' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:18:9: '}'
             {
             match('}'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T19
+    // $ANTLR end "T__19"
 
-    // $ANTLR start T20
-    public final void mT20() throws RecognitionException {
+    // $ANTLR start "T__20"
+    public final void mT__20() throws RecognitionException {
         try {
-            int _type = T20;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:18:5: ( ';' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:18:7: ';'
+            int _type = T__20;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:19:7: ( ';' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:19:9: ';'
             {
             match(';'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T20
+    // $ANTLR end "T__20"
 
-    // $ANTLR start T21
-    public final void mT21() throws RecognitionException {
+    // $ANTLR start "T__21"
+    public final void mT__21() throws RecognitionException {
         try {
-            int _type = T21;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:19:5: ( '=' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:19:7: '='
+            int _type = T__21;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:20:7: ( '=' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:20:9: '='
             {
             match('='); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T21
+    // $ANTLR end "T__21"
 
-    // $ANTLR start T22
-    public final void mT22() throws RecognitionException {
+    // $ANTLR start "T__22"
+    public final void mT__22() throws RecognitionException {
         try {
-            int _type = T22;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:20:5: ( '[' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:20:7: '['
+            int _type = T__22;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:21:7: ( '[' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:21:9: '['
             {
             match('['); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T22
+    // $ANTLR end "T__22"
 
-    // $ANTLR start T23
-    public final void mT23() throws RecognitionException {
+    // $ANTLR start "T__23"
+    public final void mT__23() throws RecognitionException {
         try {
-            int _type = T23;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:21:5: ( ']' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:21:7: ']'
+            int _type = T__23;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:22:7: ( ']' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:22:9: ']'
             {
             match(']'); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T23
+    // $ANTLR end "T__23"
 
-    // $ANTLR start T24
-    public final void mT24() throws RecognitionException {
+    // $ANTLR start "T__24"
+    public final void mT__24() throws RecognitionException {
         try {
-            int _type = T24;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:22:5: ( ',' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:22:7: ','
+            int _type = T__24;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:23:7: ( ',' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:23:9: ','
             {
             match(','); 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T24
+    // $ANTLR end "T__24"
 
-    // $ANTLR start T25
-    public final void mT25() throws RecognitionException {
+    // $ANTLR start "T__25"
+    public final void mT__25() throws RecognitionException {
         try {
-            int _type = T25;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:23:5: ( 'subgraph' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:23:7: 'subgraph'
+            int _type = T__25;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:24:7: ( 'subgraph' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:24:9: 'subgraph'
             {
             match("subgraph"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T25
+    // $ANTLR end "T__25"
 
-    // $ANTLR start T26
-    public final void mT26() throws RecognitionException {
+    // $ANTLR start "T__26"
+    public final void mT__26() throws RecognitionException {
         try {
-            int _type = T26;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:24:5: ( 'strict' )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:24:7: 'strict'
+            int _type = T__26;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:25:7: ( 'strict' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:25:9: 'strict'
             {
             match("strict"); 
 
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end T26
+    // $ANTLR end "T__26"
 
-    // $ANTLR start RULE_DOT_ID
+    // $ANTLR start "RULE_DOT_ID"
     public final void mRULE_DOT_ID() throws RecognitionException {
         try {
             int _type = RULE_DOT_ID;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2344:13: ( ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* | '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( '\"' ) )* '\"' | ( '-' )? ( '.' ( '0' .. '9' )+ | ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ) ) )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2344:15: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* | '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( '\"' ) )* '\"' | ( '-' )? ( '.' ( '0' .. '9' )+ | ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ) )
             {
@@ -412,7 +450,7 @@ public class InternalDotLexer extends Lexer {
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("2344:15: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* | '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( '\"' ) )* '\"' | ( '-' )? ( '.' ( '0' .. '9' )+ | ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ) )", 10, 0, input);
+                    new NoViableAltException("", 10, 0, input);
 
                 throw nvae;
             }
@@ -444,10 +482,9 @@ public class InternalDotLexer extends Lexer {
 
                     }
                     else {
-                        MismatchedSetException mse =
-                            new MismatchedSetException(null,input);
-                        recover(mse);    throw mse;
-                    }
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
 
                     // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2344:45: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
                     loop2:
@@ -469,10 +506,9 @@ public class InternalDotLexer extends Lexer {
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
@@ -502,7 +538,7 @@ public class InternalDotLexer extends Lexer {
                             if ( (LA3_2=='\"') ) {
                                 int LA3_4 = input.LA(3);
 
-                                if ( ((LA3_4>='\u0000' && LA3_4<='\uFFFE')) ) {
+                                if ( ((LA3_4>='\u0000' && LA3_4<='\uFFFF')) ) {
                                     alt3=1;
                                 }
 
@@ -517,13 +553,13 @@ public class InternalDotLexer extends Lexer {
                             else if ( (LA3_2=='\''||LA3_2=='b'||LA3_2=='f'||LA3_2=='n'||LA3_2=='r'||LA3_2=='t') ) {
                                 alt3=1;
                             }
-                            else if ( ((LA3_2>='\u0000' && LA3_2<='!')||(LA3_2>='#' && LA3_2<='&')||(LA3_2>='(' && LA3_2<='[')||(LA3_2>=']' && LA3_2<='a')||(LA3_2>='c' && LA3_2<='e')||(LA3_2>='g' && LA3_2<='m')||(LA3_2>='o' && LA3_2<='q')||LA3_2=='s'||(LA3_2>='u' && LA3_2<='\uFFFE')) ) {
+                            else if ( ((LA3_2>='\u0000' && LA3_2<='!')||(LA3_2>='#' && LA3_2<='&')||(LA3_2>='(' && LA3_2<='[')||(LA3_2>=']' && LA3_2<='a')||(LA3_2>='c' && LA3_2<='e')||(LA3_2>='g' && LA3_2<='m')||(LA3_2>='o' && LA3_2<='q')||LA3_2=='s'||(LA3_2>='u' && LA3_2<='\uFFFF')) ) {
                                 alt3=2;
                             }
 
 
                         }
-                        else if ( ((LA3_0>='\u0000' && LA3_0<='!')||(LA3_0>='#' && LA3_0<='[')||(LA3_0>=']' && LA3_0<='\uFFFE')) ) {
+                        else if ( ((LA3_0>='\u0000' && LA3_0<='!')||(LA3_0>='#' && LA3_0<='[')||(LA3_0>=']' && LA3_0<='\uFFFF')) ) {
                             alt3=2;
                         }
 
@@ -538,10 +574,9 @@ public class InternalDotLexer extends Lexer {
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
@@ -549,15 +584,14 @@ public class InternalDotLexer extends Lexer {
                     	case 2 :
                     	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2344:125: ~ ( '\"' )
                     	    {
-                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='\uFFFE') ) {
+                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
@@ -605,7 +639,7 @@ public class InternalDotLexer extends Lexer {
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("2344:143: ( '.' ( '0' .. '9' )+ | ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? )", 9, 0, input);
+                            new NoViableAltException("", 9, 0, input);
 
                         throw nvae;
                     }
@@ -738,17 +772,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_DOT_ID
+    // $ANTLR end "RULE_DOT_ID"
 
-    // $ANTLR start RULE_ID
+    // $ANTLR start "RULE_ID"
     public final void mRULE_ID() throws RecognitionException {
         try {
             int _type = RULE_ID;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2346:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2346:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
@@ -775,10 +811,9 @@ public class InternalDotLexer extends Lexer {
 
             }
             else {
-                MismatchedSetException mse =
-                    new MismatchedSetException(null,input);
-                recover(mse);    throw mse;
-            }
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
 
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2346:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop12:
@@ -800,10 +835,9 @@ public class InternalDotLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -817,17 +851,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_ID
+    // $ANTLR end "RULE_ID"
 
-    // $ANTLR start RULE_INT
+    // $ANTLR start "RULE_INT"
     public final void mRULE_INT() throws RecognitionException {
         try {
             int _type = RULE_INT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2348:10: ( ( '0' .. '9' )+ )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2348:12: ( '0' .. '9' )+
             {
@@ -864,21 +900,23 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_INT
+    // $ANTLR end "RULE_INT"
 
-    // $ANTLR start RULE_STRING
+    // $ANTLR start "RULE_STRING"
     public final void mRULE_STRING() throws RecognitionException {
         try {
             int _type = RULE_STRING;
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:13: ( ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:13: ( ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -890,16 +928,16 @@ public class InternalDotLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("2350:15: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )", 16, 0, input);
+                    new NoViableAltException("", 16, 0, input);
 
                 throw nvae;
             }
             switch (alt16) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:16: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:16: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:20: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:20: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop14:
                     do {
                         int alt14=3;
@@ -908,41 +946,39 @@ public class InternalDotLexer extends Lexer {
                         if ( (LA14_0=='\\') ) {
                             alt14=1;
                         }
-                        else if ( ((LA14_0>='\u0000' && LA14_0<='!')||(LA14_0>='#' && LA14_0<='[')||(LA14_0>=']' && LA14_0<='\uFFFE')) ) {
+                        else if ( ((LA14_0>='\u0000' && LA14_0<='!')||(LA14_0>='#' && LA14_0<='[')||(LA14_0>=']' && LA14_0<='\uFFFF')) ) {
                             alt14=2;
                         }
 
 
                         switch (alt14) {
                     	case 1 :
-                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:21: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
+                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:21: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
                     	    {
                     	    match('\\'); 
-                    	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
+                    	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
                     	        input.consume();
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:62: ~ ( ( '\\\\' | '\"' ) )
+                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:66: ~ ( ( '\\\\' | '\"' ) )
                     	    {
-                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
+                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
@@ -958,10 +994,10 @@ public class InternalDotLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:82: '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:86: '\\'' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:87: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:91: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop15:
                     do {
                         int alt15=3;
@@ -970,41 +1006,39 @@ public class InternalDotLexer extends Lexer {
                         if ( (LA15_0=='\\') ) {
                             alt15=1;
                         }
-                        else if ( ((LA15_0>='\u0000' && LA15_0<='&')||(LA15_0>='(' && LA15_0<='[')||(LA15_0>=']' && LA15_0<='\uFFFE')) ) {
+                        else if ( ((LA15_0>='\u0000' && LA15_0<='&')||(LA15_0>='(' && LA15_0<='[')||(LA15_0>=']' && LA15_0<='\uFFFF')) ) {
                             alt15=2;
                         }
 
 
                         switch (alt15) {
                     	case 1 :
-                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:88: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
+                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:92: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
                     	    {
                     	    match('\\'); 
-                    	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
+                    	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
                     	        input.consume();
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:129: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2350:137: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
-                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFE') ) {
+                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
 
                     	    }
                     	    else {
-                    	        MismatchedSetException mse =
-                    	            new MismatchedSetException(null,input);
-                    	        recover(mse);    throw mse;
-                    	    }
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
 
 
                     	    }
@@ -1025,17 +1059,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_STRING
+    // $ANTLR end "RULE_STRING"
 
-    // $ANTLR start RULE_ML_COMMENT
+    // $ANTLR start "RULE_ML_COMMENT"
     public final void mRULE_ML_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_ML_COMMENT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2352:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2352:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
@@ -1053,13 +1089,13 @@ public class InternalDotLexer extends Lexer {
                     if ( (LA17_1=='/') ) {
                         alt17=2;
                     }
-                    else if ( ((LA17_1>='\u0000' && LA17_1<='.')||(LA17_1>='0' && LA17_1<='\uFFFE')) ) {
+                    else if ( ((LA17_1>='\u0000' && LA17_1<='.')||(LA17_1>='0' && LA17_1<='\uFFFF')) ) {
                         alt17=1;
                     }
 
 
                 }
-                else if ( ((LA17_0>='\u0000' && LA17_0<=')')||(LA17_0>='+' && LA17_0<='\uFFFE')) ) {
+                else if ( ((LA17_0>='\u0000' && LA17_0<=')')||(LA17_0>='+' && LA17_0<='\uFFFF')) ) {
                     alt17=1;
                 }
 
@@ -1083,17 +1119,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_ML_COMMENT
+    // $ANTLR end "RULE_ML_COMMENT"
 
-    // $ANTLR start RULE_SL_COMMENT
+    // $ANTLR start "RULE_SL_COMMENT"
     public final void mRULE_SL_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_SL_COMMENT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2354:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2354:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
@@ -1105,7 +1143,7 @@ public class InternalDotLexer extends Lexer {
                 int alt18=2;
                 int LA18_0 = input.LA(1);
 
-                if ( ((LA18_0>='\u0000' && LA18_0<='\t')||(LA18_0>='\u000B' && LA18_0<='\f')||(LA18_0>='\u000E' && LA18_0<='\uFFFE')) ) {
+                if ( ((LA18_0>='\u0000' && LA18_0<='\t')||(LA18_0>='\u000B' && LA18_0<='\f')||(LA18_0>='\u000E' && LA18_0<='\uFFFF')) ) {
                     alt18=1;
                 }
 
@@ -1114,15 +1152,14 @@ public class InternalDotLexer extends Lexer {
             	case 1 :
             	    // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2354:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
-            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFE') ) {
+            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -1172,17 +1209,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_SL_COMMENT
+    // $ANTLR end "RULE_SL_COMMENT"
 
-    // $ANTLR start RULE_WS
+    // $ANTLR start "RULE_WS"
     public final void mRULE_WS() throws RecognitionException {
         try {
             int _type = RULE_WS;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2356:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2356:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
@@ -1207,10 +1246,9 @@ public class InternalDotLexer extends Lexer {
 
             	    }
             	    else {
-            	        MismatchedSetException mse =
-            	            new MismatchedSetException(null,input);
-            	        recover(mse);    throw mse;
-            	    }
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;}
 
 
             	    }
@@ -1228,17 +1266,19 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_WS
+    // $ANTLR end "RULE_WS"
 
-    // $ANTLR start RULE_ANY_OTHER
+    // $ANTLR start "RULE_ANY_OTHER"
     public final void mRULE_ANY_OTHER() throws RecognitionException {
         try {
             int _type = RULE_ANY_OTHER;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2358:16: ( . )
             // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:2358:18: .
             {
@@ -1246,174 +1286,175 @@ public class InternalDotLexer extends Lexer {
 
             }
 
-            this.type = _type;
+            state.type = _type;
+            state.channel = _channel;
         }
         finally {
         }
     }
-    // $ANTLR end RULE_ANY_OTHER
+    // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:8: ( T12 | T13 | T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | RULE_DOT_ID | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | RULE_DOT_ID | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
         int alt22=23;
         alt22 = dfa22.predict(input);
         switch (alt22) {
             case 1 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:10: T12
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:10: T__12
                 {
-                mT12(); 
+                mT__12(); 
 
                 }
                 break;
             case 2 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:14: T13
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:16: T__13
                 {
-                mT13(); 
+                mT__13(); 
 
                 }
                 break;
             case 3 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:18: T14
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:22: T__14
                 {
-                mT14(); 
+                mT__14(); 
 
                 }
                 break;
             case 4 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:22: T15
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:28: T__15
                 {
-                mT15(); 
+                mT__15(); 
 
                 }
                 break;
             case 5 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:26: T16
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:34: T__16
                 {
-                mT16(); 
+                mT__16(); 
 
                 }
                 break;
             case 6 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:30: T17
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:40: T__17
                 {
-                mT17(); 
+                mT__17(); 
 
                 }
                 break;
             case 7 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:34: T18
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:46: T__18
                 {
-                mT18(); 
+                mT__18(); 
 
                 }
                 break;
             case 8 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:38: T19
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:52: T__19
                 {
-                mT19(); 
+                mT__19(); 
 
                 }
                 break;
             case 9 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:42: T20
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:58: T__20
                 {
-                mT20(); 
+                mT__20(); 
 
                 }
                 break;
             case 10 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:46: T21
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:64: T__21
                 {
-                mT21(); 
+                mT__21(); 
 
                 }
                 break;
             case 11 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:50: T22
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:70: T__22
                 {
-                mT22(); 
+                mT__22(); 
 
                 }
                 break;
             case 12 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:54: T23
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:76: T__23
                 {
-                mT23(); 
+                mT__23(); 
 
                 }
                 break;
             case 13 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:58: T24
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:82: T__24
                 {
-                mT24(); 
+                mT__24(); 
 
                 }
                 break;
             case 14 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:62: T25
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:88: T__25
                 {
-                mT25(); 
+                mT__25(); 
 
                 }
                 break;
             case 15 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:66: T26
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:94: T__26
                 {
-                mT26(); 
+                mT__26(); 
 
                 }
                 break;
             case 16 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:70: RULE_DOT_ID
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:100: RULE_DOT_ID
                 {
                 mRULE_DOT_ID(); 
 
                 }
                 break;
             case 17 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:82: RULE_ID
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:112: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
             case 18 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:90: RULE_INT
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:120: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
             case 19 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:99: RULE_STRING
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:129: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
             case 20 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:111: RULE_ML_COMMENT
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:141: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
             case 21 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:127: RULE_SL_COMMENT
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:157: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
             case 22 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:143: RULE_WS
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:173: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
             case 23 :
-                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:151: RULE_ANY_OTHER
+                // ../org.eclipse.zest.dot.ui/src-gen/org/eclipse/zest/internal/dot/parser/ui/contentassist/antlr/internal/InternalDot.g:1:181: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -1428,32 +1469,33 @@ public class InternalDotLexer extends Lexer {
     protected DFA22 dfa22 = new DFA22(this);
     static final String DFA22_eotS =
         "\1\uffff\1\26\4\31\7\uffff\1\31\1\26\1\31\2\26\1\31\2\26\5\uffff"+
-        "\5\31\7\uffff\3\31\3\uffff\1\31\4\uffff\7\31\2\uffff\2\31\1\105"+
-        "\1\106\2\31\3\uffff\1\111\1\31\2\uffff\2\31\1\uffff\2\31\1\117\1"+
-        "\120\1\31\2\uffff\1\122\1\uffff";
+        "\5\31\7\uffff\3\31\3\uffff\1\31\4\uffff\7\31\3\uffff\2\31\1\106"+
+        "\1\107\2\31\3\uffff\1\112\1\31\2\uffff\2\31\1\uffff\2\31\1\120\1"+
+        "\121\1\31\2\uffff\1\123\1\uffff";
     static final String DFA22_eofS =
-        "\123\uffff";
+        "\124\uffff";
     static final String DFA22_minS =
         "\1\0\1\55\4\60\7\uffff\1\60\1\101\1\60\1\0\2\60\1\0\1\52\5\uffff"+
-        "\5\60\7\uffff\3\60\2\0\1\uffff\1\60\4\uffff\6\60\3\0\6\60\1\uffff"+
+        "\5\60\7\uffff\3\60\2\0\1\uffff\1\60\4\uffff\6\60\4\0\6\60\1\uffff"+
         "\2\0\2\60\2\uffff\2\60\1\uffff\5\60\2\uffff\1\60\1\uffff";
     static final String DFA22_maxS =
-        "\1\ufffe\1\76\4\172\7\uffff\3\172\1\ufffe\2\71\1\ufffe\1\57\5\uffff"+
-        "\5\172\7\uffff\3\172\2\ufffe\1\uffff\1\71\4\uffff\6\172\3\ufffe"+
-        "\6\172\1\uffff\2\ufffe\2\172\2\uffff\2\172\1\uffff\5\172\2\uffff"+
+        "\1\uffff\1\76\4\172\7\uffff\3\172\1\uffff\2\71\1\uffff\1\57\5\uffff"+
+        "\5\172\7\uffff\3\172\2\uffff\1\uffff\1\71\4\uffff\6\172\4\uffff"+
+        "\6\172\1\uffff\2\uffff\2\172\2\uffff\2\172\1\uffff\5\172\2\uffff"+
         "\1\172\1\uffff";
     static final String DFA22_acceptS =
         "\6\uffff\1\7\1\10\1\11\1\12\1\13\1\14\1\15\10\uffff\1\26\1\27\1"+
         "\1\1\2\1\20\5\uffff\1\7\1\10\1\11\1\12\1\13\1\14\1\15\5\uffff\1"+
-        "\20\1\uffff\1\23\1\24\1\25\1\26\17\uffff\1\20\4\uffff\1\5\1\6\2"+
+        "\20\1\uffff\1\23\1\24\1\25\1\26\20\uffff\1\20\4\uffff\1\5\1\6\2"+
         "\uffff\1\3\5\uffff\1\17\1\4\1\uffff\1\16";
     static final String DFA22_specialS =
-        "\123\uffff}>";
+        "\1\2\17\uffff\1\0\2\uffff\1\1\25\uffff\1\5\1\6\14\uffff\1\12\1\7"+
+        "\1\11\1\4\7\uffff\1\10\1\3\20\uffff}>";
     static final String[] DFA22_transitionS = {
             "\11\26\2\25\2\26\1\25\22\26\1\25\1\26\1\20\4\26\1\23\4\26\1"+
             "\14\1\1\1\21\1\24\12\22\1\26\1\10\1\26\1\11\3\26\32\17\1\12"+
             "\1\26\1\13\1\16\1\17\1\26\3\17\1\3\1\5\1\17\1\2\6\17\1\4\4\17"+
-            "\1\15\7\17\1\6\1\26\1\7\uff81\26",
+            "\1\15\7\17\1\6\1\26\1\7\uff82\26",
             "\1\30\1\31\1\uffff\12\31\4\uffff\1\27",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\32\10\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\10\33\1\34\21\33",
@@ -1470,10 +1512,10 @@ public class InternalDotLexer extends Lexer {
             "\33",
             "\32\50\4\uffff\1\50\1\uffff\32\50",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
-            "\42\52\1\53\71\52\1\51\uffa2\52",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
             "\12\31",
             "\12\54",
-            "\uffff\55",
+            "\0\55",
             "\1\56\4\uffff\1\57",
             "",
             "",
@@ -1495,47 +1537,48 @@ public class InternalDotLexer extends Lexer {
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\1\33\1\65\30\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\66\10\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
-            "\42\31\1\67\4\31\1\71\64\31\1\70\5\31\1\71\3\31\1\71\7\31\1"+
-            "\71\3\31\1\71\1\31\1\71\uff8a\31",
-            "\42\52\1\53\71\52\1\51\uffa2\52",
+            "\42\31\1\67\4\31\1\72\64\31\1\71\5\31\1\72\3\31\1\72\7\31\1"+
+            "\72\3\31\1\72\1\31\1\72\1\70\uff8a\31",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
             "",
             "\12\54",
             "",
             "",
             "",
             "",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\72\12\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\73\10\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\4\33\1\74\25\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\73\12\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\74\10\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\4\33\1\75\25\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\6\33\1\76\23\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\10\33\1\77\21\33",
-            "\42\52\1\53\71\52\1\51\uffa2\52",
-            "\42\52\1\100\4\52\1\102\64\52\1\101\5\52\1\102\3\52\1\102\7"+
-            "\52\1\102\3\52\1\102\1\52\1\102\uff8a\52",
-            "\42\52\1\53\71\52\1\51\uffa2\52",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\103\22\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\1\104\31\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\4\33\1\76\25\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\6\33\1\77\23\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\10\33\1\100\21\33",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
+            "\42\52\1\101\4\52\1\103\64\52\1\102\5\52\1\103\3\52\1\103\7"+
+            "\52\1\103\3\52\1\103\1\52\1\103\uff8b\52",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\104\22\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\1\105\31\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\107\10\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\2\33\1\110\27\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\21\33\1\110\10\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\2\33\1\111\27\33",
             "",
-            "\42\31\1\67\4\31\1\71\64\31\1\70\5\31\1\71\3\31\1\71\7\31\1"+
-            "\71\3\31\1\71\1\31\1\71\uff8a\31",
-            "\42\52\1\53\71\52\1\51\uffa2\52",
+            "\42\31\1\67\4\31\1\72\64\31\1\71\5\31\1\72\3\31\1\72\7\31\1"+
+            "\72\3\31\1\72\1\31\1\72\1\70\uff8a\31",
+            "\42\52\1\53\71\52\1\51\uffa3\52",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\112\12\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\113\12\33",
             "",
             "",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\1\113\31\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\23\33\1\114\6\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\1\114\31\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\23\33\1\115\6\33",
             "",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\115\22\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\116\12\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\116\22\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\17\33\1\117\12\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
-            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\121\22\33",
+            "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\7\33\1\122\22\33",
             "",
             "",
             "\12\33\7\uffff\32\33\4\uffff\1\33\1\uffff\32\33",
@@ -1572,7 +1615,199 @@ public class InternalDotLexer extends Lexer {
             this.transition = DFA22_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T12 | T13 | T14 | T15 | T16 | T17 | T18 | T19 | T20 | T21 | T22 | T23 | T24 | T25 | T26 | RULE_DOT_ID | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | RULE_DOT_ID | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+        }
+        public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
+            IntStream input = _input;
+        	int _s = s;
+            switch ( s ) {
+                    case 0 : 
+                        int LA22_16 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_16=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_16>='\u0000' && LA22_16<='!')||(LA22_16>='#' && LA22_16<='[')||(LA22_16>=']' && LA22_16<='\uFFFF')) ) {s = 42;}
+
+                        else if ( (LA22_16=='\"') ) {s = 43;}
+
+                        else s = 22;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
+                        int LA22_19 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA22_19>='\u0000' && LA22_19<='\uFFFF')) ) {s = 45;}
+
+                        else s = 22;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA22_0 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_0=='-') ) {s = 1;}
+
+                        else if ( (LA22_0=='g') ) {s = 2;}
+
+                        else if ( (LA22_0=='d') ) {s = 3;}
+
+                        else if ( (LA22_0=='n') ) {s = 4;}
+
+                        else if ( (LA22_0=='e') ) {s = 5;}
+
+                        else if ( (LA22_0=='{') ) {s = 6;}
+
+                        else if ( (LA22_0=='}') ) {s = 7;}
+
+                        else if ( (LA22_0==';') ) {s = 8;}
+
+                        else if ( (LA22_0=='=') ) {s = 9;}
+
+                        else if ( (LA22_0=='[') ) {s = 10;}
+
+                        else if ( (LA22_0==']') ) {s = 11;}
+
+                        else if ( (LA22_0==',') ) {s = 12;}
+
+                        else if ( (LA22_0=='s') ) {s = 13;}
+
+                        else if ( (LA22_0=='^') ) {s = 14;}
+
+                        else if ( ((LA22_0>='A' && LA22_0<='Z')||LA22_0=='_'||(LA22_0>='a' && LA22_0<='c')||LA22_0=='f'||(LA22_0>='h' && LA22_0<='m')||(LA22_0>='o' && LA22_0<='r')||(LA22_0>='t' && LA22_0<='z')) ) {s = 15;}
+
+                        else if ( (LA22_0=='\"') ) {s = 16;}
+
+                        else if ( (LA22_0=='.') ) {s = 17;}
+
+                        else if ( ((LA22_0>='0' && LA22_0<='9')) ) {s = 18;}
+
+                        else if ( (LA22_0=='\'') ) {s = 19;}
+
+                        else if ( (LA22_0=='/') ) {s = 20;}
+
+                        else if ( ((LA22_0>='\t' && LA22_0<='\n')||LA22_0=='\r'||LA22_0==' ') ) {s = 21;}
+
+                        else if ( ((LA22_0>='\u0000' && LA22_0<='\b')||(LA22_0>='\u000B' && LA22_0<='\f')||(LA22_0>='\u000E' && LA22_0<='\u001F')||LA22_0=='!'||(LA22_0>='#' && LA22_0<='&')||(LA22_0>='(' && LA22_0<='+')||LA22_0==':'||LA22_0=='<'||(LA22_0>='>' && LA22_0<='@')||LA22_0=='\\'||LA22_0=='`'||LA22_0=='|'||(LA22_0>='~' && LA22_0<='\uFFFF')) ) {s = 22;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
+                        int LA22_67 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_67=='\"') ) {s = 43;}
+
+                        else if ( (LA22_67=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_67>='\u0000' && LA22_67<='!')||(LA22_67>='#' && LA22_67<='[')||(LA22_67>=']' && LA22_67<='\uFFFF')) ) {s = 42;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 4 : 
+                        int LA22_58 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_58=='\"') ) {s = 43;}
+
+                        else if ( (LA22_58=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_58>='\u0000' && LA22_58<='!')||(LA22_58>='#' && LA22_58<='[')||(LA22_58>=']' && LA22_58<='\uFFFF')) ) {s = 42;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 5 : 
+                        int LA22_41 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_41=='\"') ) {s = 55;}
+
+                        else if ( (LA22_41=='u') ) {s = 56;}
+
+                        else if ( (LA22_41=='\\') ) {s = 57;}
+
+                        else if ( (LA22_41=='\''||LA22_41=='b'||LA22_41=='f'||LA22_41=='n'||LA22_41=='r'||LA22_41=='t') ) {s = 58;}
+
+                        else if ( ((LA22_41>='\u0000' && LA22_41<='!')||(LA22_41>='#' && LA22_41<='&')||(LA22_41>='(' && LA22_41<='[')||(LA22_41>=']' && LA22_41<='a')||(LA22_41>='c' && LA22_41<='e')||(LA22_41>='g' && LA22_41<='m')||(LA22_41>='o' && LA22_41<='q')||LA22_41=='s'||(LA22_41>='v' && LA22_41<='\uFFFF')) ) {s = 25;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 6 : 
+                        int LA22_42 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_42=='\"') ) {s = 43;}
+
+                        else if ( (LA22_42=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_42>='\u0000' && LA22_42<='!')||(LA22_42>='#' && LA22_42<='[')||(LA22_42>=']' && LA22_42<='\uFFFF')) ) {s = 42;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 7 : 
+                        int LA22_56 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_56=='\"') ) {s = 43;}
+
+                        else if ( (LA22_56=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_56>='\u0000' && LA22_56<='!')||(LA22_56>='#' && LA22_56<='[')||(LA22_56>=']' && LA22_56<='\uFFFF')) ) {s = 42;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 8 : 
+                        int LA22_66 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_66=='\"') ) {s = 55;}
+
+                        else if ( (LA22_66=='u') ) {s = 56;}
+
+                        else if ( (LA22_66=='\\') ) {s = 57;}
+
+                        else if ( (LA22_66=='\''||LA22_66=='b'||LA22_66=='f'||LA22_66=='n'||LA22_66=='r'||LA22_66=='t') ) {s = 58;}
+
+                        else if ( ((LA22_66>='\u0000' && LA22_66<='!')||(LA22_66>='#' && LA22_66<='&')||(LA22_66>='(' && LA22_66<='[')||(LA22_66>=']' && LA22_66<='a')||(LA22_66>='c' && LA22_66<='e')||(LA22_66>='g' && LA22_66<='m')||(LA22_66>='o' && LA22_66<='q')||LA22_66=='s'||(LA22_66>='v' && LA22_66<='\uFFFF')) ) {s = 25;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 9 : 
+                        int LA22_57 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_57=='\"') ) {s = 65;}
+
+                        else if ( (LA22_57=='\\') ) {s = 66;}
+
+                        else if ( (LA22_57=='\''||LA22_57=='b'||LA22_57=='f'||LA22_57=='n'||LA22_57=='r'||LA22_57=='t') ) {s = 67;}
+
+                        else if ( ((LA22_57>='\u0000' && LA22_57<='!')||(LA22_57>='#' && LA22_57<='&')||(LA22_57>='(' && LA22_57<='[')||(LA22_57>=']' && LA22_57<='a')||(LA22_57>='c' && LA22_57<='e')||(LA22_57>='g' && LA22_57<='m')||(LA22_57>='o' && LA22_57<='q')||LA22_57=='s'||(LA22_57>='u' && LA22_57<='\uFFFF')) ) {s = 42;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 10 : 
+                        int LA22_55 = input.LA(1);
+
+                        s = -1;
+                        if ( (LA22_55=='\"') ) {s = 43;}
+
+                        else if ( (LA22_55=='\\') ) {s = 41;}
+
+                        else if ( ((LA22_55>='\u0000' && LA22_55<='!')||(LA22_55>='#' && LA22_55<='[')||(LA22_55>=']' && LA22_55<='\uFFFF')) ) {s = 42;}
+
+                        else s = 25;
+
+                        if ( s>=0 ) return s;
+                        break;
+            }
+            NoViableAltException nvae =
+                new NoViableAltException(getDescription(), 22, _s, input);
+            error(nvae);
+            throw nvae;
         }
     }
  

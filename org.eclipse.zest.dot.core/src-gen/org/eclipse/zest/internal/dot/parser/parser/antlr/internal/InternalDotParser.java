@@ -1,10 +1,8 @@
 package org.eclipse.zest.internal.dot.parser.parser.antlr.internal; 
 
-import java.io.InputStream;
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
-import org.eclipse.xtext.parsetree.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.common.util.Enumerator;
@@ -12,7 +10,6 @@ import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
 import org.eclipse.xtext.parser.antlr.AntlrDatatypeRuleToken;
-import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.zest.internal.dot.parser.services.DotGrammarAccess;
 
 
@@ -29,22 +26,44 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_DOT_ID", "RULE_ID", "RULE_INT", "RULE_STRING", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'strict'", "'{'", "'}'", "';'", "'='", "'['", "']'", "','", "'subgraph'", "'->'", "'--'", "'graph'", "'digraph'", "'node'", "'edge'"
     };
     public static final int RULE_ID=5;
-    public static final int RULE_STRING=7;
-    public static final int RULE_DOT_ID=4;
+    public static final int T__26=26;
+    public static final int T__25=25;
+    public static final int T__24=24;
+    public static final int T__23=23;
+    public static final int T__22=22;
     public static final int RULE_ANY_OTHER=11;
-    public static final int RULE_INT=6;
-    public static final int RULE_WS=10;
+    public static final int T__21=21;
+    public static final int T__20=20;
     public static final int RULE_SL_COMMENT=9;
     public static final int EOF=-1;
     public static final int RULE_ML_COMMENT=8;
+    public static final int T__19=19;
+    public static final int RULE_STRING=7;
+    public static final int T__16=16;
+    public static final int RULE_DOT_ID=4;
+    public static final int T__15=15;
+    public static final int T__18=18;
+    public static final int T__17=17;
+    public static final int T__12=12;
+    public static final int T__14=14;
+    public static final int T__13=13;
+    public static final int RULE_INT=6;
+    public static final int RULE_WS=10;
+
+    // delegates
+    // delegators
+
 
         public InternalDotParser(TokenStream input) {
-            super(input);
-            ruleMemo = new HashMap[60+1];
-         }
+            this(input, new RecognizerSharedState());
+        }
+        public InternalDotParser(TokenStream input, RecognizerSharedState state) {
+            super(input, state);
+             
+        }
         
 
-    public String[] getTokenNames() { return tokenNames; }
+    public String[] getTokenNames() { return InternalDotParser.tokenNames; }
     public String getGrammarFileName() { return "../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g"; }
 
 
@@ -56,17 +75,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
      
      	private DotGrammarAccess grammarAccess;
      	
-        public InternalDotParser(TokenStream input, IAstFactory factory, DotGrammarAccess grammarAccess) {
+        public InternalDotParser(TokenStream input, DotGrammarAccess grammarAccess) {
             this(input);
-            this.factory = factory;
-            registerRules(grammarAccess.getGrammar());
             this.grammarAccess = grammarAccess;
-        }
-        
-        @Override
-        protected InputStream getTokenFile() {
-        	ClassLoader classLoader = getClass().getClassLoader();
-        	return classLoader.getResourceAsStream("org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.tokens");
+            registerRules(grammarAccess.getGrammar());
         }
         
         @Override
@@ -81,8 +93,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
 
-    // $ANTLR start entryRuleGraphvizModel
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:84:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
+    // $ANTLR start "entryRuleGraphvizModel"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:74:1: entryRuleGraphvizModel returns [EObject current=null] : iv_ruleGraphvizModel= ruleGraphvizModel EOF ;
     public final EObject entryRuleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
@@ -90,20 +102,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:85:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:86:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:75:2: (iv_ruleGraphvizModel= ruleGraphvizModel EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:76:2: iv_ruleGraphvizModel= ruleGraphvizModel EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getGraphvizModelRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getGraphvizModelRule()); 
             }
             pushFollow(FOLLOW_ruleGraphvizModel_in_entryRuleGraphvizModel81);
             iv_ruleGraphvizModel=ruleGraphvizModel();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleGraphvizModel; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGraphvizModel91); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGraphvizModel91); if (state.failed) return current;
 
             }
 
@@ -117,24 +130,24 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleGraphvizModel
+    // $ANTLR end "entryRuleGraphvizModel"
 
 
-    // $ANTLR start ruleGraphvizModel
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:93:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleMainGraph ) )* ;
+    // $ANTLR start "ruleGraphvizModel"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:83:1: ruleGraphvizModel returns [EObject current=null] : ( (lv_graphs_0_0= ruleMainGraph ) )* ;
     public final EObject ruleGraphvizModel() throws RecognitionException {
         EObject current = null;
 
         EObject lv_graphs_0_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:98:6: ( ( (lv_graphs_0_0= ruleMainGraph ) )* )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:99:1: ( (lv_graphs_0_0= ruleMainGraph ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:86:28: ( ( (lv_graphs_0_0= ruleMainGraph ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:87:1: ( (lv_graphs_0_0= ruleMainGraph ) )*
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:99:1: ( (lv_graphs_0_0= ruleMainGraph ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:87:1: ( (lv_graphs_0_0= ruleMainGraph ) )*
             loop1:
             do {
                 int alt1=2;
@@ -147,37 +160,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt1) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:100:1: (lv_graphs_0_0= ruleMainGraph )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:88:1: (lv_graphs_0_0= ruleMainGraph )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:100:1: (lv_graphs_0_0= ruleMainGraph )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:101:3: lv_graphs_0_0= ruleMainGraph
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:88:1: (lv_graphs_0_0= ruleMainGraph )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:89:3: lv_graphs_0_0= ruleMainGraph
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getGraphvizModelAccess().getGraphsMainGraphParserRuleCall_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getGraphvizModelAccess().getGraphsMainGraphParserRuleCall_0()); 
             	      	    
             	    }
             	    pushFollow(FOLLOW_ruleMainGraph_in_ruleGraphvizModel136);
             	    lv_graphs_0_0=ruleMainGraph();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getGraphvizModelRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getGraphvizModelRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"graphs",
-            	      	        		lv_graphs_0_0, 
-            	      	        		"MainGraph", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"graphs",
+            	              		lv_graphs_0_0, 
+            	              		"MainGraph");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -195,10 +203,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -210,11 +216,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleGraphvizModel
+    // $ANTLR end "ruleGraphvizModel"
 
 
-    // $ANTLR start entryRuleMainGraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:131:1: entryRuleMainGraph returns [EObject current=null] : iv_ruleMainGraph= ruleMainGraph EOF ;
+    // $ANTLR start "entryRuleMainGraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:113:1: entryRuleMainGraph returns [EObject current=null] : iv_ruleMainGraph= ruleMainGraph EOF ;
     public final EObject entryRuleMainGraph() throws RecognitionException {
         EObject current = null;
 
@@ -222,20 +228,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:132:2: (iv_ruleMainGraph= ruleMainGraph EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:133:2: iv_ruleMainGraph= ruleMainGraph EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:114:2: (iv_ruleMainGraph= ruleMainGraph EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:115:2: iv_ruleMainGraph= ruleMainGraph EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getMainGraphRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getMainGraphRule()); 
             }
             pushFollow(FOLLOW_ruleMainGraph_in_entryRuleMainGraph172);
             iv_ruleMainGraph=ruleMainGraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleMainGraph; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleMainGraph182); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleMainGraph182); if (state.failed) return current;
 
             }
 
@@ -249,31 +256,33 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleMainGraph
+    // $ANTLR end "entryRuleMainGraph"
 
 
-    // $ANTLR start ruleMainGraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:140:1: ruleMainGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? '{' ( (lv_stmts_4_0= ruleStmt ) )* '}' ) ;
+    // $ANTLR start "ruleMainGraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:122:1: ruleMainGraph returns [EObject current=null] : ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? otherlv_3= '{' ( (lv_stmts_4_0= ruleStmt ) )* otherlv_5= '}' ) ;
     public final EObject ruleMainGraph() throws RecognitionException {
         EObject current = null;
 
         Token lv_strict_0_0=null;
         Token lv_name_2_0=null;
+        Token otherlv_3=null;
+        Token otherlv_5=null;
         Enumerator lv_type_1_0 = null;
 
         EObject lv_stmts_4_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:145:6: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? '{' ( (lv_stmts_4_0= ruleStmt ) )* '}' ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:146:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? '{' ( (lv_stmts_4_0= ruleStmt ) )* '}' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:125:28: ( ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? otherlv_3= '{' ( (lv_stmts_4_0= ruleStmt ) )* otherlv_5= '}' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:126:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? otherlv_3= '{' ( (lv_stmts_4_0= ruleStmt ) )* otherlv_5= '}' )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:146:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? '{' ( (lv_stmts_4_0= ruleStmt ) )* '}' )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:146:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? '{' ( (lv_stmts_4_0= ruleStmt ) )* '}'
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:126:1: ( ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? otherlv_3= '{' ( (lv_stmts_4_0= ruleStmt ) )* otherlv_5= '}' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:126:2: ( (lv_strict_0_0= 'strict' ) )? ( (lv_type_1_0= ruleGraphType ) ) ( (lv_name_2_0= RULE_DOT_ID ) )? otherlv_3= '{' ( (lv_stmts_4_0= ruleStmt ) )* otherlv_5= '}'
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:146:2: ( (lv_strict_0_0= 'strict' ) )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:126:2: ( (lv_strict_0_0= 'strict' ) )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -282,30 +291,23 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt2) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:147:1: (lv_strict_0_0= 'strict' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:127:1: (lv_strict_0_0= 'strict' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:147:1: (lv_strict_0_0= 'strict' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:148:3: lv_strict_0_0= 'strict'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:127:1: (lv_strict_0_0= 'strict' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:128:3: lv_strict_0_0= 'strict'
                     {
-                    lv_strict_0_0=(Token)input.LT(1);
-                    match(input,12,FOLLOW_12_in_ruleMainGraph225); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    lv_strict_0_0=(Token)match(input,12,FOLLOW_12_in_ruleMainGraph225); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                              createLeafNode(grammarAccess.getMainGraphAccess().getStrictStrictKeyword_0_0(), "strict"); 
+                              newLeafNode(lv_strict_0_0, grammarAccess.getMainGraphAccess().getStrictStrictKeyword_0_0());
                           
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
 
                       	        if (current==null) {
-                      	            current = factory.create(grammarAccess.getMainGraphRule().getType().getClassifier());
-                      	            associateNodeWithAstElement(currentNode, current);
+                      	            current = createModelElement(grammarAccess.getMainGraphRule());
                       	        }
-                      	        
-                      	        try {
-                      	       		set(current, "strict", true, "strict", lastConsumedNode);
-                      	        } catch (ValueConverterException vce) {
-                      				handleValueConverterException(vce);
-                      	        }
+                             		setWithLastConsumed(current, "strict", true, "strict");
                       	    
                     }
 
@@ -317,38 +319,33 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:167:3: ( (lv_type_1_0= ruleGraphType ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:168:1: (lv_type_1_0= ruleGraphType )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:141:3: ( (lv_type_1_0= ruleGraphType ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:142:1: (lv_type_1_0= ruleGraphType )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:168:1: (lv_type_1_0= ruleGraphType )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:169:3: lv_type_1_0= ruleGraphType
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:142:1: (lv_type_1_0= ruleGraphType )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:143:3: lv_type_1_0= ruleGraphType
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getMainGraphAccess().getTypeGraphTypeEnumRuleCall_1_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getMainGraphAccess().getTypeGraphTypeEnumRuleCall_1_0()); 
               	    
             }
             pushFollow(FOLLOW_ruleGraphType_in_ruleMainGraph260);
             lv_type_1_0=ruleGraphType();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getMainGraphRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getMainGraphRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"type",
-              	        		lv_type_1_0, 
-              	        		"GraphType", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"type",
+                      		lv_type_1_0, 
+                      		"GraphType");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -357,7 +354,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:191:2: ( (lv_name_2_0= RULE_DOT_ID ) )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:159:2: ( (lv_name_2_0= RULE_DOT_ID ) )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -366,34 +363,27 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt3) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:192:1: (lv_name_2_0= RULE_DOT_ID )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:160:1: (lv_name_2_0= RULE_DOT_ID )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:192:1: (lv_name_2_0= RULE_DOT_ID )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:193:3: lv_name_2_0= RULE_DOT_ID
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:160:1: (lv_name_2_0= RULE_DOT_ID )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:161:3: lv_name_2_0= RULE_DOT_ID
                     {
-                    lv_name_2_0=(Token)input.LT(1);
-                    match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleMainGraph277); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    lv_name_2_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleMainGraph277); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                      			createLeafNode(grammarAccess.getMainGraphAccess().getNameDOT_IDTerminalRuleCall_2_0(), "name"); 
+                      			newLeafNode(lv_name_2_0, grammarAccess.getMainGraphAccess().getNameDOT_IDTerminalRuleCall_2_0()); 
                       		
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
 
                       	        if (current==null) {
-                      	            current = factory.create(grammarAccess.getMainGraphRule().getType().getClassifier());
-                      	            associateNodeWithAstElement(currentNode, current);
+                      	            current = createModelElement(grammarAccess.getMainGraphRule());
                       	        }
-                      	        try {
-                      	       		set(
-                      	       			current, 
-                      	       			"name",
-                      	        		lv_name_2_0, 
-                      	        		"DOT_ID", 
-                      	        		lastConsumedNode);
-                      	        } catch (ValueConverterException vce) {
-                      				handleValueConverterException(vce);
-                      	        }
+                             		setWithLastConsumed(
+                             			current, 
+                             			"name",
+                              		lv_name_2_0, 
+                              		"DOT_ID");
                       	    
                     }
 
@@ -405,13 +395,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,13,FOLLOW_13_in_ruleMainGraph293); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_3=(Token)match(input,13,FOLLOW_13_in_ruleMainGraph295); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getMainGraphAccess().getLeftCurlyBracketKeyword_3(), null); 
+                  	newLeafNode(otherlv_3, grammarAccess.getMainGraphAccess().getLeftCurlyBracketKeyword_3());
                   
             }
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:219:1: ( (lv_stmts_4_0= ruleStmt ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:181:1: ( (lv_stmts_4_0= ruleStmt ) )*
             loop4:
             do {
                 int alt4=2;
@@ -424,37 +414,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:220:1: (lv_stmts_4_0= ruleStmt )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:182:1: (lv_stmts_4_0= ruleStmt )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:220:1: (lv_stmts_4_0= ruleStmt )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:221:3: lv_stmts_4_0= ruleStmt
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:182:1: (lv_stmts_4_0= ruleStmt )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:183:3: lv_stmts_4_0= ruleStmt
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getMainGraphAccess().getStmtsStmtParserRuleCall_4_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getMainGraphAccess().getStmtsStmtParserRuleCall_4_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleStmt_in_ruleMainGraph314);
+            	    pushFollow(FOLLOW_ruleStmt_in_ruleMainGraph316);
             	    lv_stmts_4_0=ruleStmt();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getMainGraphRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getMainGraphRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"stmts",
-            	      	        		lv_stmts_4_0, 
-            	      	        		"Stmt", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"stmts",
+            	              		lv_stmts_4_0, 
+            	              		"Stmt");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -469,10 +454,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,14,FOLLOW_14_in_ruleMainGraph325); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_5=(Token)match(input,14,FOLLOW_14_in_ruleMainGraph329); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getMainGraphAccess().getRightCurlyBracketKeyword_5(), null); 
+                  	newLeafNode(otherlv_5, grammarAccess.getMainGraphAccess().getRightCurlyBracketKeyword_5());
                   
             }
 
@@ -481,10 +466,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -496,11 +479,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleMainGraph
+    // $ANTLR end "ruleMainGraph"
 
 
-    // $ANTLR start entryRuleStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:255:1: entryRuleStmt returns [EObject current=null] : iv_ruleStmt= ruleStmt EOF ;
+    // $ANTLR start "entryRuleStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:211:1: entryRuleStmt returns [EObject current=null] : iv_ruleStmt= ruleStmt EOF ;
     public final EObject entryRuleStmt() throws RecognitionException {
         EObject current = null;
 
@@ -508,20 +491,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:256:2: (iv_ruleStmt= ruleStmt EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:257:2: iv_ruleStmt= ruleStmt EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:212:2: (iv_ruleStmt= ruleStmt EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:213:2: iv_ruleStmt= ruleStmt EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getStmtRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getStmtRule()); 
             }
-            pushFollow(FOLLOW_ruleStmt_in_entryRuleStmt361);
+            pushFollow(FOLLOW_ruleStmt_in_entryRuleStmt365);
             iv_ruleStmt=ruleStmt();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleStmt; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleStmt371); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleStmt375); if (state.failed) return current;
 
             }
 
@@ -535,14 +519,15 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleStmt
+    // $ANTLR end "entryRuleStmt"
 
 
-    // $ANTLR start ruleStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:264:1: ruleStmt returns [EObject current=null] : ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) ( ';' )? ) ;
+    // $ANTLR start "ruleStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:220:1: ruleStmt returns [EObject current=null] : ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) (otherlv_6= ';' )? ) ;
     public final EObject ruleStmt() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_6=null;
         EObject this_Attribute_0 = null;
 
         EObject this_EdgeStmtNode_1 = null;
@@ -556,245 +541,176 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject this_Subgraph_5 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:269:6: ( ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) ( ';' )? ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:270:1: ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) ( ';' )? )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:223:28: ( ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) (otherlv_6= ';' )? ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:224:1: ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) (otherlv_6= ';' )? )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:270:1: ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) ( ';' )? )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) ( ';' )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:224:1: ( (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) (otherlv_6= ';' )? )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:224:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph ) (otherlv_6= ';' )?
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:224:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )
             int alt5=6;
-            switch ( input.LA(1) ) {
-            case RULE_DOT_ID:
-                {
-                int LA5_1 = input.LA(2);
-
-                if ( (synpred5()) ) {
-                    alt5=1;
-                }
-                else if ( (synpred6()) ) {
-                    alt5=2;
-                }
-                else if ( (synpred8()) ) {
-                    alt5=4;
-                }
-                else {
-                    if (backtracking>0) {failed=true; return current;}
-                    NoViableAltException nvae =
-                        new NoViableAltException("270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )", 5, 1, input);
-
-                    throw nvae;
-                }
-                }
-                break;
-            case 20:
-                {
-                int LA5_2 = input.LA(2);
-
-                if ( (synpred7()) ) {
-                    alt5=3;
-                }
-                else if ( (true) ) {
-                    alt5=6;
-                }
-                else {
-                    if (backtracking>0) {failed=true; return current;}
-                    NoViableAltException nvae =
-                        new NoViableAltException("270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )", 5, 2, input);
-
-                    throw nvae;
-                }
-                }
-                break;
-            case 13:
-                {
-                int LA5_3 = input.LA(2);
-
-                if ( (synpred7()) ) {
-                    alt5=3;
-                }
-                else if ( (true) ) {
-                    alt5=6;
-                }
-                else {
-                    if (backtracking>0) {failed=true; return current;}
-                    NoViableAltException nvae =
-                        new NoViableAltException("270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )", 5, 3, input);
-
-                    throw nvae;
-                }
-                }
-                break;
-            case 23:
-            case 25:
-            case 26:
-                {
-                alt5=5;
-                }
-                break;
-            default:
-                if (backtracking>0) {failed=true; return current;}
-                NoViableAltException nvae =
-                    new NoViableAltException("270:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )", 5, 0, input);
-
-                throw nvae;
-            }
-
+            alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:271:2: this_Attribute_0= ruleAttribute
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:225:2: this_Attribute_0= ruleAttribute
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getAttributeParserRuleCall_0_0(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getAttributeParserRuleCall_0_0()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleAttribute_in_ruleStmt422);
+                    pushFollow(FOLLOW_ruleAttribute_in_ruleStmt426);
                     this_Attribute_0=ruleAttribute();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_Attribute_0; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:284:2: this_EdgeStmtNode_1= ruleEdgeStmtNode
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:238:2: this_EdgeStmtNode_1= ruleEdgeStmtNode
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getEdgeStmtNodeParserRuleCall_0_1(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getEdgeStmtNodeParserRuleCall_0_1()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleEdgeStmtNode_in_ruleStmt452);
+                    pushFollow(FOLLOW_ruleEdgeStmtNode_in_ruleStmt456);
                     this_EdgeStmtNode_1=ruleEdgeStmtNode();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_EdgeStmtNode_1; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 3 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:297:2: this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:251:2: this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getEdgeStmtSubgraphParserRuleCall_0_2(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getEdgeStmtSubgraphParserRuleCall_0_2()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_ruleStmt482);
+                    pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_ruleStmt486);
                     this_EdgeStmtSubgraph_2=ruleEdgeStmtSubgraph();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_EdgeStmtSubgraph_2; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 4 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:310:2: this_NodeStmt_3= ruleNodeStmt
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:264:2: this_NodeStmt_3= ruleNodeStmt
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getNodeStmtParserRuleCall_0_3(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getNodeStmtParserRuleCall_0_3()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleNodeStmt_in_ruleStmt512);
+                    pushFollow(FOLLOW_ruleNodeStmt_in_ruleStmt516);
                     this_NodeStmt_3=ruleNodeStmt();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_NodeStmt_3; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 5 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:323:2: this_AttrStmt_4= ruleAttrStmt
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:277:2: this_AttrStmt_4= ruleAttrStmt
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getAttrStmtParserRuleCall_0_4(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getAttrStmtParserRuleCall_0_4()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleAttrStmt_in_ruleStmt542);
+                    pushFollow(FOLLOW_ruleAttrStmt_in_ruleStmt546);
                     this_AttrStmt_4=ruleAttrStmt();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_AttrStmt_4; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 6 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:336:2: this_Subgraph_5= ruleSubgraph
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:290:2: this_Subgraph_5= ruleSubgraph
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getStmtAccess().getSubgraphParserRuleCall_0_5(), currentNode); 
+                              newCompositeNode(grammarAccess.getStmtAccess().getSubgraphParserRuleCall_0_5()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleSubgraph_in_ruleStmt572);
+                    pushFollow(FOLLOW_ruleSubgraph_in_ruleStmt576);
                     this_Subgraph_5=ruleSubgraph();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_Subgraph_5; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
@@ -803,7 +719,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:347:2: ( ';' )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:301:2: (otherlv_6= ';' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -812,12 +728,12 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:347:4: ';'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:301:4: otherlv_6= ';'
                     {
-                    match(input,15,FOLLOW_15_in_ruleStmt583); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    otherlv_6=(Token)match(input,15,FOLLOW_15_in_ruleStmt589); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                              createLeafNode(grammarAccess.getStmtAccess().getSemicolonKeyword_1(), null); 
+                          	newLeafNode(otherlv_6, grammarAccess.getStmtAccess().getSemicolonKeyword_1());
                           
                     }
 
@@ -832,10 +748,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -847,11 +761,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleStmt
+    // $ANTLR end "ruleStmt"
 
 
-    // $ANTLR start entryRuleEdgeStmtNode
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:359:1: entryRuleEdgeStmtNode returns [EObject current=null] : iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF ;
+    // $ANTLR start "entryRuleEdgeStmtNode"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:313:1: entryRuleEdgeStmtNode returns [EObject current=null] : iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF ;
     public final EObject entryRuleEdgeStmtNode() throws RecognitionException {
         EObject current = null;
 
@@ -859,20 +773,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:360:2: (iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:361:2: iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:314:2: (iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:315:2: iv_ruleEdgeStmtNode= ruleEdgeStmtNode EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getEdgeStmtNodeRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getEdgeStmtNodeRule()); 
             }
-            pushFollow(FOLLOW_ruleEdgeStmtNode_in_entryRuleEdgeStmtNode621);
+            pushFollow(FOLLOW_ruleEdgeStmtNode_in_entryRuleEdgeStmtNode627);
             iv_ruleEdgeStmtNode=ruleEdgeStmtNode();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleEdgeStmtNode; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStmtNode631); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStmtNode637); if (state.failed) return current;
 
             }
 
@@ -886,11 +801,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeStmtNode
+    // $ANTLR end "entryRuleEdgeStmtNode"
 
 
-    // $ANTLR start ruleEdgeStmtNode
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:368:1: ruleEdgeStmtNode returns [EObject current=null] : ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) ;
+    // $ANTLR start "ruleEdgeStmtNode"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:322:1: ruleEdgeStmtNode returns [EObject current=null] : ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) ;
     public final EObject ruleEdgeStmtNode() throws RecognitionException {
         EObject current = null;
 
@@ -901,47 +816,42 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:373:6: ( ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:374:1: ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:325:28: ( ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:326:1: ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:374:1: ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:374:2: ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:326:1: ( ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:326:2: ( (lv_node_id_0_0= ruleNodeId ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )*
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:374:2: ( (lv_node_id_0_0= ruleNodeId ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:375:1: (lv_node_id_0_0= ruleNodeId )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:326:2: ( (lv_node_id_0_0= ruleNodeId ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:327:1: (lv_node_id_0_0= ruleNodeId )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:375:1: (lv_node_id_0_0= ruleNodeId )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:376:3: lv_node_id_0_0= ruleNodeId
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:327:1: (lv_node_id_0_0= ruleNodeId )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:328:3: lv_node_id_0_0= ruleNodeId
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getNode_idNodeIdParserRuleCall_0_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getNode_idNodeIdParserRuleCall_0_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleNodeId_in_ruleEdgeStmtNode677);
+            pushFollow(FOLLOW_ruleNodeId_in_ruleEdgeStmtNode683);
             lv_node_id_0_0=ruleNodeId();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeStmtNodeRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeStmtNodeRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"node_id",
-              	        		lv_node_id_0_0, 
-              	        		"NodeId", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"node_id",
+                      		lv_node_id_0_0, 
+                      		"NodeId");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -950,7 +860,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:398:2: ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:344:2: ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+
             int cnt7=0;
             loop7:
             do {
@@ -964,37 +874,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt7) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:399:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:345:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:399:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:400:3: lv_edgeRHS_1_0= ruleEdgeRhs
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:345:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:346:3: lv_edgeRHS_1_0= ruleEdgeRhs
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getEdgeRHSEdgeRhsParserRuleCall_1_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getEdgeRHSEdgeRhsParserRuleCall_1_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtNode698);
+            	    pushFollow(FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtNode704);
             	    lv_edgeRHS_1_0=ruleEdgeRhs();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getEdgeStmtNodeRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getEdgeStmtNodeRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"edgeRHS",
-            	      	        		lv_edgeRHS_1_0, 
-            	      	        		"EdgeRhs", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"edgeRHS",
+            	              		lv_edgeRHS_1_0, 
+            	              		"EdgeRhs");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1006,7 +911,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             	default :
             	    if ( cnt7 >= 1 ) break loop7;
-            	    if (backtracking>0) {failed=true; return current;}
+            	    if (state.backtracking>0) {state.failed=true; return current;}
                         EarlyExitException eee =
                             new EarlyExitException(7, input);
                         throw eee;
@@ -1014,7 +919,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 cnt7++;
             } while (true);
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:422:3: ( (lv_attributes_2_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:362:3: ( (lv_attributes_2_0= ruleAttrList ) )*
             loop8:
             do {
                 int alt8=2;
@@ -1027,37 +932,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt8) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:423:1: (lv_attributes_2_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:363:1: (lv_attributes_2_0= ruleAttrList )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:423:1: (lv_attributes_2_0= ruleAttrList )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:424:3: lv_attributes_2_0= ruleAttrList
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:363:1: (lv_attributes_2_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:364:3: lv_attributes_2_0= ruleAttrList
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getAttributesAttrListParserRuleCall_2_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getEdgeStmtNodeAccess().getAttributesAttrListParserRuleCall_2_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleAttrList_in_ruleEdgeStmtNode720);
+            	    pushFollow(FOLLOW_ruleAttrList_in_ruleEdgeStmtNode726);
             	    lv_attributes_2_0=ruleAttrList();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getEdgeStmtNodeRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getEdgeStmtNodeRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"attributes",
-            	      	        		lv_attributes_2_0, 
-            	      	        		"AttrList", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"attributes",
+            	              		lv_attributes_2_0, 
+            	              		"AttrList");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1078,10 +978,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -1093,11 +991,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeStmtNode
+    // $ANTLR end "ruleEdgeStmtNode"
 
 
-    // $ANTLR start entryRuleEdgeStmtSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:454:1: entryRuleEdgeStmtSubgraph returns [EObject current=null] : iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF ;
+    // $ANTLR start "entryRuleEdgeStmtSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:388:1: entryRuleEdgeStmtSubgraph returns [EObject current=null] : iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF ;
     public final EObject entryRuleEdgeStmtSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -1105,20 +1003,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:455:2: (iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:456:2: iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:389:2: (iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:390:2: iv_ruleEdgeStmtSubgraph= ruleEdgeStmtSubgraph EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getEdgeStmtSubgraphRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getEdgeStmtSubgraphRule()); 
             }
-            pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_entryRuleEdgeStmtSubgraph757);
+            pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_entryRuleEdgeStmtSubgraph763);
             iv_ruleEdgeStmtSubgraph=ruleEdgeStmtSubgraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleEdgeStmtSubgraph; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStmtSubgraph767); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeStmtSubgraph773); if (state.failed) return current;
 
             }
 
@@ -1132,11 +1031,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeStmtSubgraph
+    // $ANTLR end "entryRuleEdgeStmtSubgraph"
 
 
-    // $ANTLR start ruleEdgeStmtSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:463:1: ruleEdgeStmtSubgraph returns [EObject current=null] : ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) ;
+    // $ANTLR start "ruleEdgeStmtSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:397:1: ruleEdgeStmtSubgraph returns [EObject current=null] : ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) ;
     public final EObject ruleEdgeStmtSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -1147,47 +1046,42 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_2_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:468:6: ( ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:469:1: ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:400:28: ( ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:401:1: ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:469:1: ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:469:2: ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:401:1: ( ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:401:2: ( (lv_subgraph_0_0= ruleSubgraph ) ) ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+ ( (lv_attributes_2_0= ruleAttrList ) )*
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:469:2: ( (lv_subgraph_0_0= ruleSubgraph ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:470:1: (lv_subgraph_0_0= ruleSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:401:2: ( (lv_subgraph_0_0= ruleSubgraph ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:402:1: (lv_subgraph_0_0= ruleSubgraph )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:470:1: (lv_subgraph_0_0= ruleSubgraph )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:471:3: lv_subgraph_0_0= ruleSubgraph
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:402:1: (lv_subgraph_0_0= ruleSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:403:3: lv_subgraph_0_0= ruleSubgraph
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getSubgraphSubgraphParserRuleCall_0_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getSubgraphSubgraphParserRuleCall_0_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeStmtSubgraph813);
+            pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeStmtSubgraph819);
             lv_subgraph_0_0=ruleSubgraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeStmtSubgraphRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeStmtSubgraphRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"subgraph",
-              	        		lv_subgraph_0_0, 
-              	        		"Subgraph", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"subgraph",
+                      		lv_subgraph_0_0, 
+                      		"Subgraph");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -1196,7 +1090,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:493:2: ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:419:2: ( (lv_edgeRHS_1_0= ruleEdgeRhs ) )+
             int cnt9=0;
             loop9:
             do {
@@ -1210,37 +1104,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt9) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:494:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:420:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:494:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:495:3: lv_edgeRHS_1_0= ruleEdgeRhs
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:420:1: (lv_edgeRHS_1_0= ruleEdgeRhs )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:421:3: lv_edgeRHS_1_0= ruleEdgeRhs
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getEdgeRHSEdgeRhsParserRuleCall_1_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getEdgeRHSEdgeRhsParserRuleCall_1_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtSubgraph834);
+            	    pushFollow(FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtSubgraph840);
             	    lv_edgeRHS_1_0=ruleEdgeRhs();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getEdgeStmtSubgraphRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getEdgeStmtSubgraphRule());
             	      	        }
-            	      	        try {
-            	      	       		set(
-            	      	       			current, 
-            	      	       			"edgeRHS",
-            	      	        		lv_edgeRHS_1_0, 
-            	      	        		"EdgeRhs", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		set(
+            	             			current, 
+            	             			"edgeRHS",
+            	              		lv_edgeRHS_1_0, 
+            	              		"EdgeRhs");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1252,7 +1141,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             	default :
             	    if ( cnt9 >= 1 ) break loop9;
-            	    if (backtracking>0) {failed=true; return current;}
+            	    if (state.backtracking>0) {state.failed=true; return current;}
                         EarlyExitException eee =
                             new EarlyExitException(9, input);
                         throw eee;
@@ -1260,7 +1149,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 cnt9++;
             } while (true);
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:517:3: ( (lv_attributes_2_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:437:3: ( (lv_attributes_2_0= ruleAttrList ) )*
             loop10:
             do {
                 int alt10=2;
@@ -1273,37 +1162,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:518:1: (lv_attributes_2_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:438:1: (lv_attributes_2_0= ruleAttrList )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:518:1: (lv_attributes_2_0= ruleAttrList )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:519:3: lv_attributes_2_0= ruleAttrList
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:438:1: (lv_attributes_2_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:439:3: lv_attributes_2_0= ruleAttrList
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getAttributesAttrListParserRuleCall_2_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getEdgeStmtSubgraphAccess().getAttributesAttrListParserRuleCall_2_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleAttrList_in_ruleEdgeStmtSubgraph856);
+            	    pushFollow(FOLLOW_ruleAttrList_in_ruleEdgeStmtSubgraph862);
             	    lv_attributes_2_0=ruleAttrList();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getEdgeStmtSubgraphRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getEdgeStmtSubgraphRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"attributes",
-            	      	        		lv_attributes_2_0, 
-            	      	        		"AttrList", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"attributes",
+            	              		lv_attributes_2_0, 
+            	              		"AttrList");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1324,10 +1208,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -1339,11 +1221,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeStmtSubgraph
+    // $ANTLR end "ruleEdgeStmtSubgraph"
 
 
-    // $ANTLR start entryRuleNodeStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:549:1: entryRuleNodeStmt returns [EObject current=null] : iv_ruleNodeStmt= ruleNodeStmt EOF ;
+    // $ANTLR start "entryRuleNodeStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:463:1: entryRuleNodeStmt returns [EObject current=null] : iv_ruleNodeStmt= ruleNodeStmt EOF ;
     public final EObject entryRuleNodeStmt() throws RecognitionException {
         EObject current = null;
 
@@ -1351,20 +1233,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:550:2: (iv_ruleNodeStmt= ruleNodeStmt EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:551:2: iv_ruleNodeStmt= ruleNodeStmt EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:464:2: (iv_ruleNodeStmt= ruleNodeStmt EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:465:2: iv_ruleNodeStmt= ruleNodeStmt EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getNodeStmtRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getNodeStmtRule()); 
             }
-            pushFollow(FOLLOW_ruleNodeStmt_in_entryRuleNodeStmt893);
+            pushFollow(FOLLOW_ruleNodeStmt_in_entryRuleNodeStmt899);
             iv_ruleNodeStmt=ruleNodeStmt();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleNodeStmt; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeStmt903); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeStmt909); if (state.failed) return current;
 
             }
 
@@ -1378,11 +1261,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleNodeStmt
+    // $ANTLR end "entryRuleNodeStmt"
 
 
-    // $ANTLR start ruleNodeStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:558:1: ruleNodeStmt returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* ) ;
+    // $ANTLR start "ruleNodeStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:472:1: ruleNodeStmt returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* ) ;
     public final EObject ruleNodeStmt() throws RecognitionException {
         EObject current = null;
 
@@ -1390,44 +1273,37 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_1_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:563:6: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:564:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:475:28: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:476:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:564:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:564:2: ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:476:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )* )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:476:2: ( (lv_name_0_0= RULE_DOT_ID ) ) ( (lv_attributes_1_0= ruleAttrList ) )*
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:564:2: ( (lv_name_0_0= RULE_DOT_ID ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:565:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:476:2: ( (lv_name_0_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:477:1: (lv_name_0_0= RULE_DOT_ID )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:565:1: (lv_name_0_0= RULE_DOT_ID )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:566:3: lv_name_0_0= RULE_DOT_ID
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:477:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:478:3: lv_name_0_0= RULE_DOT_ID
             {
-            lv_name_0_0=(Token)input.LT(1);
-            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleNodeStmt945); if (failed) return current;
-            if ( backtracking==0 ) {
+            lv_name_0_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleNodeStmt951); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-              			createLeafNode(grammarAccess.getNodeStmtAccess().getNameDOT_IDTerminalRuleCall_0_0(), "name"); 
+              			newLeafNode(lv_name_0_0, grammarAccess.getNodeStmtAccess().getNameDOT_IDTerminalRuleCall_0_0()); 
               		
             }
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getNodeStmtRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode, current);
+              	            current = createModelElement(grammarAccess.getNodeStmtRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"name",
-              	        		lv_name_0_0, 
-              	        		"DOT_ID", 
-              	        		lastConsumedNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
+                     		setWithLastConsumed(
+                     			current, 
+                     			"name",
+                      		lv_name_0_0, 
+                      		"DOT_ID");
               	    
             }
 
@@ -1436,7 +1312,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:588:2: ( (lv_attributes_1_0= ruleAttrList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:494:2: ( (lv_attributes_1_0= ruleAttrList ) )*
             loop11:
             do {
                 int alt11=2;
@@ -1449,37 +1325,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:589:1: (lv_attributes_1_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:495:1: (lv_attributes_1_0= ruleAttrList )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:589:1: (lv_attributes_1_0= ruleAttrList )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:590:3: lv_attributes_1_0= ruleAttrList
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:495:1: (lv_attributes_1_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:496:3: lv_attributes_1_0= ruleAttrList
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getNodeStmtAccess().getAttributesAttrListParserRuleCall_1_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getNodeStmtAccess().getAttributesAttrListParserRuleCall_1_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleAttrList_in_ruleNodeStmt971);
+            	    pushFollow(FOLLOW_ruleAttrList_in_ruleNodeStmt977);
             	    lv_attributes_1_0=ruleAttrList();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getNodeStmtRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getNodeStmtRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"attributes",
-            	      	        		lv_attributes_1_0, 
-            	      	        		"AttrList", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"attributes",
+            	              		lv_attributes_1_0, 
+            	              		"AttrList");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1500,10 +1371,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -1515,11 +1384,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleNodeStmt
+    // $ANTLR end "ruleNodeStmt"
 
 
-    // $ANTLR start entryRuleAttribute
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:620:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
+    // $ANTLR start "entryRuleAttribute"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:520:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
     public final EObject entryRuleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -1527,20 +1396,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:621:2: (iv_ruleAttribute= ruleAttribute EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:622:2: iv_ruleAttribute= ruleAttribute EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:521:2: (iv_ruleAttribute= ruleAttribute EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:522:2: iv_ruleAttribute= ruleAttribute EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getAttributeRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getAttributeRule()); 
             }
-            pushFollow(FOLLOW_ruleAttribute_in_entryRuleAttribute1008);
+            pushFollow(FOLLOW_ruleAttribute_in_entryRuleAttribute1014);
             iv_ruleAttribute=ruleAttribute();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleAttribute; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAttribute1018); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAttribute1024); if (state.failed) return current;
 
             }
 
@@ -1554,55 +1424,49 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAttribute
+    // $ANTLR end "entryRuleAttribute"
 
 
-    // $ANTLR start ruleAttribute
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:629:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) '=' ( (lv_value_2_0= RULE_DOT_ID ) ) ) ;
+    // $ANTLR start "ruleAttribute"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:529:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) ) ;
     public final EObject ruleAttribute() throws RecognitionException {
         EObject current = null;
 
         Token lv_name_0_0=null;
+        Token otherlv_1=null;
         Token lv_value_2_0=null;
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:634:6: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) '=' ( (lv_value_2_0= RULE_DOT_ID ) ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:635:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:532:28: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:533:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:635:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:635:2: ( (lv_name_0_0= RULE_DOT_ID ) ) '=' ( (lv_value_2_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:533:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:533:2: ( (lv_name_0_0= RULE_DOT_ID ) ) otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:635:2: ( (lv_name_0_0= RULE_DOT_ID ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:636:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:533:2: ( (lv_name_0_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:534:1: (lv_name_0_0= RULE_DOT_ID )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:636:1: (lv_name_0_0= RULE_DOT_ID )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:637:3: lv_name_0_0= RULE_DOT_ID
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:534:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:535:3: lv_name_0_0= RULE_DOT_ID
             {
-            lv_name_0_0=(Token)input.LT(1);
-            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAttribute1060); if (failed) return current;
-            if ( backtracking==0 ) {
+            lv_name_0_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAttribute1066); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-              			createLeafNode(grammarAccess.getAttributeAccess().getNameDOT_IDTerminalRuleCall_0_0(), "name"); 
+              			newLeafNode(lv_name_0_0, grammarAccess.getAttributeAccess().getNameDOT_IDTerminalRuleCall_0_0()); 
               		
             }
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getAttributeRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode, current);
+              	            current = createModelElement(grammarAccess.getAttributeRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"name",
-              	        		lv_name_0_0, 
-              	        		"DOT_ID", 
-              	        		lastConsumedNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
+                     		setWithLastConsumed(
+                     			current, 
+                     			"name",
+                      		lv_name_0_0, 
+                      		"DOT_ID");
               	    
             }
 
@@ -1611,41 +1475,34 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,16,FOLLOW_16_in_ruleAttribute1075); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_1=(Token)match(input,16,FOLLOW_16_in_ruleAttribute1083); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getAttributeAccess().getEqualsSignKeyword_1(), null); 
+                  	newLeafNode(otherlv_1, grammarAccess.getAttributeAccess().getEqualsSignKeyword_1());
                   
             }
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:663:1: ( (lv_value_2_0= RULE_DOT_ID ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:664:1: (lv_value_2_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:555:1: ( (lv_value_2_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:556:1: (lv_value_2_0= RULE_DOT_ID )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:664:1: (lv_value_2_0= RULE_DOT_ID )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:665:3: lv_value_2_0= RULE_DOT_ID
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:556:1: (lv_value_2_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:557:3: lv_value_2_0= RULE_DOT_ID
             {
-            lv_value_2_0=(Token)input.LT(1);
-            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAttribute1092); if (failed) return current;
-            if ( backtracking==0 ) {
+            lv_value_2_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAttribute1100); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-              			createLeafNode(grammarAccess.getAttributeAccess().getValueDOT_IDTerminalRuleCall_2_0(), "value"); 
+              			newLeafNode(lv_value_2_0, grammarAccess.getAttributeAccess().getValueDOT_IDTerminalRuleCall_2_0()); 
               		
             }
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getAttributeRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode, current);
+              	            current = createModelElement(grammarAccess.getAttributeRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"value",
-              	        		lv_value_2_0, 
-              	        		"DOT_ID", 
-              	        		lastConsumedNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
+                     		setWithLastConsumed(
+                     			current, 
+                     			"value",
+                      		lv_value_2_0, 
+                      		"DOT_ID");
               	    
             }
 
@@ -1660,10 +1517,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -1675,11 +1530,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttribute
+    // $ANTLR end "ruleAttribute"
 
 
-    // $ANTLR start entryRuleAttrStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:695:1: entryRuleAttrStmt returns [EObject current=null] : iv_ruleAttrStmt= ruleAttrStmt EOF ;
+    // $ANTLR start "entryRuleAttrStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:581:1: entryRuleAttrStmt returns [EObject current=null] : iv_ruleAttrStmt= ruleAttrStmt EOF ;
     public final EObject entryRuleAttrStmt() throws RecognitionException {
         EObject current = null;
 
@@ -1687,20 +1542,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:696:2: (iv_ruleAttrStmt= ruleAttrStmt EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:697:2: iv_ruleAttrStmt= ruleAttrStmt EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:582:2: (iv_ruleAttrStmt= ruleAttrStmt EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:583:2: iv_ruleAttrStmt= ruleAttrStmt EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getAttrStmtRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getAttrStmtRule()); 
             }
-            pushFollow(FOLLOW_ruleAttrStmt_in_entryRuleAttrStmt1133);
+            pushFollow(FOLLOW_ruleAttrStmt_in_entryRuleAttrStmt1141);
             iv_ruleAttrStmt=ruleAttrStmt();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleAttrStmt; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAttrStmt1143); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAttrStmt1151); if (state.failed) return current;
 
             }
 
@@ -1714,11 +1570,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAttrStmt
+    // $ANTLR end "entryRuleAttrStmt"
 
 
-    // $ANTLR start ruleAttrStmt
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:704:1: ruleAttrStmt returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ ) ;
+    // $ANTLR start "ruleAttrStmt"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:590:1: ruleAttrStmt returns [EObject current=null] : ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ ) ;
     public final EObject ruleAttrStmt() throws RecognitionException {
         EObject current = null;
 
@@ -1727,47 +1583,42 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_attributes_1_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:709:6: ( ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:710:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:593:28: ( ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:594:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:710:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:710:2: ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:594:1: ( ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+ )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:594:2: ( (lv_type_0_0= ruleAttributeType ) ) ( (lv_attributes_1_0= ruleAttrList ) )+
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:710:2: ( (lv_type_0_0= ruleAttributeType ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:711:1: (lv_type_0_0= ruleAttributeType )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:594:2: ( (lv_type_0_0= ruleAttributeType ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:595:1: (lv_type_0_0= ruleAttributeType )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:711:1: (lv_type_0_0= ruleAttributeType )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:712:3: lv_type_0_0= ruleAttributeType
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:595:1: (lv_type_0_0= ruleAttributeType )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:596:3: lv_type_0_0= ruleAttributeType
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getAttrStmtAccess().getTypeAttributeTypeEnumRuleCall_0_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getAttrStmtAccess().getTypeAttributeTypeEnumRuleCall_0_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleAttributeType_in_ruleAttrStmt1189);
+            pushFollow(FOLLOW_ruleAttributeType_in_ruleAttrStmt1197);
             lv_type_0_0=ruleAttributeType();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getAttrStmtRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getAttrStmtRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"type",
-              	        		lv_type_0_0, 
-              	        		"AttributeType", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"type",
+                      		lv_type_0_0, 
+                      		"AttributeType");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -1776,7 +1627,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:734:2: ( (lv_attributes_1_0= ruleAttrList ) )+
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:612:2: ( (lv_attributes_1_0= ruleAttrList ) )+
             int cnt12=0;
             loop12:
             do {
@@ -1790,37 +1641,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt12) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:735:1: (lv_attributes_1_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:613:1: (lv_attributes_1_0= ruleAttrList )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:735:1: (lv_attributes_1_0= ruleAttrList )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:736:3: lv_attributes_1_0= ruleAttrList
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:613:1: (lv_attributes_1_0= ruleAttrList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:614:3: lv_attributes_1_0= ruleAttrList
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getAttrStmtAccess().getAttributesAttrListParserRuleCall_1_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getAttrStmtAccess().getAttributesAttrListParserRuleCall_1_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleAttrList_in_ruleAttrStmt1210);
+            	    pushFollow(FOLLOW_ruleAttrList_in_ruleAttrStmt1218);
             	    lv_attributes_1_0=ruleAttrList();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getAttrStmtRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getAttrStmtRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"attributes",
-            	      	        		lv_attributes_1_0, 
-            	      	        		"AttrList", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"attributes",
+            	              		lv_attributes_1_0, 
+            	              		"AttrList");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1832,7 +1678,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             	default :
             	    if ( cnt12 >= 1 ) break loop12;
-            	    if (backtracking>0) {failed=true; return current;}
+            	    if (state.backtracking>0) {state.failed=true; return current;}
                         EarlyExitException eee =
                             new EarlyExitException(12, input);
                         throw eee;
@@ -1846,10 +1692,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -1861,11 +1705,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttrStmt
+    // $ANTLR end "ruleAttrStmt"
 
 
-    // $ANTLR start entryRuleAttrList
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:766:1: entryRuleAttrList returns [EObject current=null] : iv_ruleAttrList= ruleAttrList EOF ;
+    // $ANTLR start "entryRuleAttrList"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:638:1: entryRuleAttrList returns [EObject current=null] : iv_ruleAttrList= ruleAttrList EOF ;
     public final EObject entryRuleAttrList() throws RecognitionException {
         EObject current = null;
 
@@ -1873,20 +1717,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:767:2: (iv_ruleAttrList= ruleAttrList EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:768:2: iv_ruleAttrList= ruleAttrList EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:639:2: (iv_ruleAttrList= ruleAttrList EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:640:2: iv_ruleAttrList= ruleAttrList EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getAttrListRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getAttrListRule()); 
             }
-            pushFollow(FOLLOW_ruleAttrList_in_entryRuleAttrList1247);
+            pushFollow(FOLLOW_ruleAttrList_in_entryRuleAttrList1255);
             iv_ruleAttrList=ruleAttrList();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleAttrList; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAttrList1257); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAttrList1265); if (state.failed) return current;
 
             }
 
@@ -1900,33 +1745,35 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAttrList
+    // $ANTLR end "entryRuleAttrList"
 
 
-    // $ANTLR start ruleAttrList
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:775:1: ruleAttrList returns [EObject current=null] : ( '[' ( (lv_a_list_1_0= ruleAList ) )* ']' ) ;
+    // $ANTLR start "ruleAttrList"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:647:1: ruleAttrList returns [EObject current=null] : (otherlv_0= '[' ( (lv_a_list_1_0= ruleAList ) )* otherlv_2= ']' ) ;
     public final EObject ruleAttrList() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_0=null;
+        Token otherlv_2=null;
         EObject lv_a_list_1_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:780:6: ( ( '[' ( (lv_a_list_1_0= ruleAList ) )* ']' ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:781:1: ( '[' ( (lv_a_list_1_0= ruleAList ) )* ']' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:650:28: ( (otherlv_0= '[' ( (lv_a_list_1_0= ruleAList ) )* otherlv_2= ']' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:651:1: (otherlv_0= '[' ( (lv_a_list_1_0= ruleAList ) )* otherlv_2= ']' )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:781:1: ( '[' ( (lv_a_list_1_0= ruleAList ) )* ']' )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:781:3: '[' ( (lv_a_list_1_0= ruleAList ) )* ']'
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:651:1: (otherlv_0= '[' ( (lv_a_list_1_0= ruleAList ) )* otherlv_2= ']' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:651:3: otherlv_0= '[' ( (lv_a_list_1_0= ruleAList ) )* otherlv_2= ']'
             {
-            match(input,17,FOLLOW_17_in_ruleAttrList1292); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_0=(Token)match(input,17,FOLLOW_17_in_ruleAttrList1302); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getAttrListAccess().getLeftSquareBracketKeyword_0(), null); 
+                  	newLeafNode(otherlv_0, grammarAccess.getAttrListAccess().getLeftSquareBracketKeyword_0());
                   
             }
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:785:1: ( (lv_a_list_1_0= ruleAList ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:655:1: ( (lv_a_list_1_0= ruleAList ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1939,37 +1786,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt13) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:786:1: (lv_a_list_1_0= ruleAList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:656:1: (lv_a_list_1_0= ruleAList )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:786:1: (lv_a_list_1_0= ruleAList )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:787:3: lv_a_list_1_0= ruleAList
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:656:1: (lv_a_list_1_0= ruleAList )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:657:3: lv_a_list_1_0= ruleAList
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getAttrListAccess().getA_listAListParserRuleCall_1_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getAttrListAccess().getA_listAListParserRuleCall_1_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleAList_in_ruleAttrList1313);
+            	    pushFollow(FOLLOW_ruleAList_in_ruleAttrList1323);
             	    lv_a_list_1_0=ruleAList();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getAttrListRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getAttrListRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"a_list",
-            	      	        		lv_a_list_1_0, 
-            	      	        		"AList", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"a_list",
+            	              		lv_a_list_1_0, 
+            	              		"AList");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -1984,10 +1826,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,18,FOLLOW_18_in_ruleAttrList1324); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_2=(Token)match(input,18,FOLLOW_18_in_ruleAttrList1336); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getAttrListAccess().getRightSquareBracketKeyword_2(), null); 
+                  	newLeafNode(otherlv_2, grammarAccess.getAttrListAccess().getRightSquareBracketKeyword_2());
                   
             }
 
@@ -1996,10 +1838,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2011,11 +1851,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttrList
+    // $ANTLR end "ruleAttrList"
 
 
-    // $ANTLR start entryRuleAList
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:821:1: entryRuleAList returns [EObject current=null] : iv_ruleAList= ruleAList EOF ;
+    // $ANTLR start "entryRuleAList"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:685:1: entryRuleAList returns [EObject current=null] : iv_ruleAList= ruleAList EOF ;
     public final EObject entryRuleAList() throws RecognitionException {
         EObject current = null;
 
@@ -2023,20 +1863,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:822:2: (iv_ruleAList= ruleAList EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:823:2: iv_ruleAList= ruleAList EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:686:2: (iv_ruleAList= ruleAList EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:687:2: iv_ruleAList= ruleAList EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getAListRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getAListRule()); 
             }
-            pushFollow(FOLLOW_ruleAList_in_entryRuleAList1360);
+            pushFollow(FOLLOW_ruleAList_in_entryRuleAList1372);
             iv_ruleAList=ruleAList();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleAList; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAList1370); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAList1382); if (state.failed) return current;
 
             }
 
@@ -2050,55 +1891,50 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleAList
+    // $ANTLR end "entryRuleAList"
 
 
-    // $ANTLR start ruleAList
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:830:1: ruleAList returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? ( ',' )? ) ;
+    // $ANTLR start "ruleAList"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:694:1: ruleAList returns [EObject current=null] : ( ( (lv_name_0_0= RULE_DOT_ID ) ) (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? (otherlv_3= ',' )? ) ;
     public final EObject ruleAList() throws RecognitionException {
         EObject current = null;
 
         Token lv_name_0_0=null;
+        Token otherlv_1=null;
         Token lv_value_2_0=null;
+        Token otherlv_3=null;
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:835:6: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? ( ',' )? ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:836:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? ( ',' )? )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:697:28: ( ( ( (lv_name_0_0= RULE_DOT_ID ) ) (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? (otherlv_3= ',' )? ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:698:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? (otherlv_3= ',' )? )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:836:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? ( ',' )? )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:836:2: ( (lv_name_0_0= RULE_DOT_ID ) ) ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? ( ',' )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:698:1: ( ( (lv_name_0_0= RULE_DOT_ID ) ) (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? (otherlv_3= ',' )? )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:698:2: ( (lv_name_0_0= RULE_DOT_ID ) ) (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )? (otherlv_3= ',' )?
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:836:2: ( (lv_name_0_0= RULE_DOT_ID ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:837:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:698:2: ( (lv_name_0_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:699:1: (lv_name_0_0= RULE_DOT_ID )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:837:1: (lv_name_0_0= RULE_DOT_ID )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:838:3: lv_name_0_0= RULE_DOT_ID
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:699:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:700:3: lv_name_0_0= RULE_DOT_ID
             {
-            lv_name_0_0=(Token)input.LT(1);
-            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAList1412); if (failed) return current;
-            if ( backtracking==0 ) {
+            lv_name_0_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAList1424); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-              			createLeafNode(grammarAccess.getAListAccess().getNameDOT_IDTerminalRuleCall_0_0(), "name"); 
+              			newLeafNode(lv_name_0_0, grammarAccess.getAListAccess().getNameDOT_IDTerminalRuleCall_0_0()); 
               		
             }
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getAListRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode, current);
+              	            current = createModelElement(grammarAccess.getAListRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"name",
-              	        		lv_name_0_0, 
-              	        		"DOT_ID", 
-              	        		lastConsumedNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
+                     		setWithLastConsumed(
+                     			current, 
+                     			"name",
+                      		lv_name_0_0, 
+                      		"DOT_ID");
               	    
             }
 
@@ -2107,7 +1943,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:860:2: ( '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:716:2: (otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) ) )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -2116,43 +1952,36 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt14) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:860:4: '=' ( (lv_value_2_0= RULE_DOT_ID ) )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:716:4: otherlv_1= '=' ( (lv_value_2_0= RULE_DOT_ID ) )
                     {
-                    match(input,16,FOLLOW_16_in_ruleAList1428); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    otherlv_1=(Token)match(input,16,FOLLOW_16_in_ruleAList1442); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                              createLeafNode(grammarAccess.getAListAccess().getEqualsSignKeyword_1_0(), null); 
+                          	newLeafNode(otherlv_1, grammarAccess.getAListAccess().getEqualsSignKeyword_1_0());
                           
                     }
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:864:1: ( (lv_value_2_0= RULE_DOT_ID ) )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:865:1: (lv_value_2_0= RULE_DOT_ID )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:720:1: ( (lv_value_2_0= RULE_DOT_ID ) )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:721:1: (lv_value_2_0= RULE_DOT_ID )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:865:1: (lv_value_2_0= RULE_DOT_ID )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:866:3: lv_value_2_0= RULE_DOT_ID
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:721:1: (lv_value_2_0= RULE_DOT_ID )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:722:3: lv_value_2_0= RULE_DOT_ID
                     {
-                    lv_value_2_0=(Token)input.LT(1);
-                    match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAList1445); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    lv_value_2_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleAList1459); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                      			createLeafNode(grammarAccess.getAListAccess().getValueDOT_IDTerminalRuleCall_1_1_0(), "value"); 
+                      			newLeafNode(lv_value_2_0, grammarAccess.getAListAccess().getValueDOT_IDTerminalRuleCall_1_1_0()); 
                       		
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
 
                       	        if (current==null) {
-                      	            current = factory.create(grammarAccess.getAListRule().getType().getClassifier());
-                      	            associateNodeWithAstElement(currentNode, current);
+                      	            current = createModelElement(grammarAccess.getAListRule());
                       	        }
-                      	        try {
-                      	       		set(
-                      	       			current, 
-                      	       			"value",
-                      	        		lv_value_2_0, 
-                      	        		"DOT_ID", 
-                      	        		lastConsumedNode);
-                      	        } catch (ValueConverterException vce) {
-                      				handleValueConverterException(vce);
-                      	        }
+                             		setWithLastConsumed(
+                             			current, 
+                             			"value",
+                              		lv_value_2_0, 
+                              		"DOT_ID");
                       	    
                     }
 
@@ -2167,7 +1996,7 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:888:4: ( ',' )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:738:4: (otherlv_3= ',' )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -2176,12 +2005,12 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt15) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:888:6: ','
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:738:6: otherlv_3= ','
                     {
-                    match(input,19,FOLLOW_19_in_ruleAList1463); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    otherlv_3=(Token)match(input,19,FOLLOW_19_in_ruleAList1479); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                              createLeafNode(grammarAccess.getAListAccess().getCommaKeyword_2(), null); 
+                          	newLeafNode(otherlv_3, grammarAccess.getAListAccess().getCommaKeyword_2());
                           
                     }
 
@@ -2196,10 +2025,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2211,11 +2038,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAList
+    // $ANTLR end "ruleAList"
 
 
-    // $ANTLR start entryRuleSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:900:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
+    // $ANTLR start "entryRuleSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:750:1: entryRuleSubgraph returns [EObject current=null] : iv_ruleSubgraph= ruleSubgraph EOF ;
     public final EObject entryRuleSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -2223,20 +2050,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:901:2: (iv_ruleSubgraph= ruleSubgraph EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:902:2: iv_ruleSubgraph= ruleSubgraph EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:751:2: (iv_ruleSubgraph= ruleSubgraph EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:752:2: iv_ruleSubgraph= ruleSubgraph EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getSubgraphRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getSubgraphRule()); 
             }
-            pushFollow(FOLLOW_ruleSubgraph_in_entryRuleSubgraph1501);
+            pushFollow(FOLLOW_ruleSubgraph_in_entryRuleSubgraph1517);
             iv_ruleSubgraph=ruleSubgraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleSubgraph; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleSubgraph1511); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleSubgraph1527); if (state.failed) return current;
 
             }
 
@@ -2250,28 +2078,31 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleSubgraph
+    // $ANTLR end "entryRuleSubgraph"
 
 
-    // $ANTLR start ruleSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:909:1: ruleSubgraph returns [EObject current=null] : ( ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? '{' ( (lv_stmts_3_0= ruleStmt ) )* '}' ) ;
+    // $ANTLR start "ruleSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:759:1: ruleSubgraph returns [EObject current=null] : ( (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? otherlv_2= '{' ( (lv_stmts_3_0= ruleStmt ) )* otherlv_4= '}' ) ;
     public final EObject ruleSubgraph() throws RecognitionException {
         EObject current = null;
 
+        Token otherlv_0=null;
         Token lv_name_1_0=null;
+        Token otherlv_2=null;
+        Token otherlv_4=null;
         EObject lv_stmts_3_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:914:6: ( ( ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? '{' ( (lv_stmts_3_0= ruleStmt ) )* '}' ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:915:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? '{' ( (lv_stmts_3_0= ruleStmt ) )* '}' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:762:28: ( ( (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? otherlv_2= '{' ( (lv_stmts_3_0= ruleStmt ) )* otherlv_4= '}' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:763:1: ( (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? otherlv_2= '{' ( (lv_stmts_3_0= ruleStmt ) )* otherlv_4= '}' )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:915:1: ( ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? '{' ( (lv_stmts_3_0= ruleStmt ) )* '}' )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:915:2: ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? '{' ( (lv_stmts_3_0= ruleStmt ) )* '}'
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:763:1: ( (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? otherlv_2= '{' ( (lv_stmts_3_0= ruleStmt ) )* otherlv_4= '}' )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:763:2: (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )? otherlv_2= '{' ( (lv_stmts_3_0= ruleStmt ) )* otherlv_4= '}'
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:915:2: ( 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )?
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:763:2: (otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )? )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -2280,15 +2111,15 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             }
             switch (alt17) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:915:4: 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )?
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:763:4: otherlv_0= 'subgraph' ( (lv_name_1_0= RULE_DOT_ID ) )?
                     {
-                    match(input,20,FOLLOW_20_in_ruleSubgraph1547); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    otherlv_0=(Token)match(input,20,FOLLOW_20_in_ruleSubgraph1565); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
-                              createLeafNode(grammarAccess.getSubgraphAccess().getSubgraphKeyword_0_0(), null); 
+                          	newLeafNode(otherlv_0, grammarAccess.getSubgraphAccess().getSubgraphKeyword_0_0());
                           
                     }
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:919:1: ( (lv_name_1_0= RULE_DOT_ID ) )?
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:767:1: ( (lv_name_1_0= RULE_DOT_ID ) )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -2297,34 +2128,27 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt16) {
                         case 1 :
-                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:920:1: (lv_name_1_0= RULE_DOT_ID )
+                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:768:1: (lv_name_1_0= RULE_DOT_ID )
                             {
-                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:920:1: (lv_name_1_0= RULE_DOT_ID )
-                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:921:3: lv_name_1_0= RULE_DOT_ID
+                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:768:1: (lv_name_1_0= RULE_DOT_ID )
+                            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:769:3: lv_name_1_0= RULE_DOT_ID
                             {
-                            lv_name_1_0=(Token)input.LT(1);
-                            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleSubgraph1564); if (failed) return current;
-                            if ( backtracking==0 ) {
+                            lv_name_1_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleSubgraph1582); if (state.failed) return current;
+                            if ( state.backtracking==0 ) {
 
-                              			createLeafNode(grammarAccess.getSubgraphAccess().getNameDOT_IDTerminalRuleCall_0_1_0(), "name"); 
+                              			newLeafNode(lv_name_1_0, grammarAccess.getSubgraphAccess().getNameDOT_IDTerminalRuleCall_0_1_0()); 
                               		
                             }
-                            if ( backtracking==0 ) {
+                            if ( state.backtracking==0 ) {
 
                               	        if (current==null) {
-                              	            current = factory.create(grammarAccess.getSubgraphRule().getType().getClassifier());
-                              	            associateNodeWithAstElement(currentNode, current);
+                              	            current = createModelElement(grammarAccess.getSubgraphRule());
                               	        }
-                              	        try {
-                              	       		set(
-                              	       			current, 
-                              	       			"name",
-                              	        		lv_name_1_0, 
-                              	        		"DOT_ID", 
-                              	        		lastConsumedNode);
-                              	        } catch (ValueConverterException vce) {
-                              				handleValueConverterException(vce);
-                              	        }
+                                     		setWithLastConsumed(
+                                     			current, 
+                                     			"name",
+                                      		lv_name_1_0, 
+                                      		"DOT_ID");
                               	    
                             }
 
@@ -2342,13 +2166,13 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            match(input,13,FOLLOW_13_in_ruleSubgraph1582); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_2=(Token)match(input,13,FOLLOW_13_in_ruleSubgraph1602); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_1(), null); 
+                  	newLeafNode(otherlv_2, grammarAccess.getSubgraphAccess().getLeftCurlyBracketKeyword_1());
                   
             }
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:947:1: ( (lv_stmts_3_0= ruleStmt ) )*
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:789:1: ( (lv_stmts_3_0= ruleStmt ) )*
             loop18:
             do {
                 int alt18=2;
@@ -2361,37 +2185,32 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
                 switch (alt18) {
             	case 1 :
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:948:1: (lv_stmts_3_0= ruleStmt )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:790:1: (lv_stmts_3_0= ruleStmt )
             	    {
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:948:1: (lv_stmts_3_0= ruleStmt )
-            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:949:3: lv_stmts_3_0= ruleStmt
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:790:1: (lv_stmts_3_0= ruleStmt )
+            	    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:791:3: lv_stmts_3_0= ruleStmt
             	    {
-            	    if ( backtracking==0 ) {
+            	    if ( state.backtracking==0 ) {
             	       
-            	      	        currentNode=createCompositeNode(grammarAccess.getSubgraphAccess().getStmtsStmtParserRuleCall_2_0(), currentNode); 
+            	      	        newCompositeNode(grammarAccess.getSubgraphAccess().getStmtsStmtParserRuleCall_2_0()); 
             	      	    
             	    }
-            	    pushFollow(FOLLOW_ruleStmt_in_ruleSubgraph1603);
+            	    pushFollow(FOLLOW_ruleStmt_in_ruleSubgraph1623);
             	    lv_stmts_3_0=ruleStmt();
-            	    _fsp--;
-            	    if (failed) return current;
-            	    if ( backtracking==0 ) {
+
+            	    state._fsp--;
+            	    if (state.failed) return current;
+            	    if ( state.backtracking==0 ) {
 
             	      	        if (current==null) {
-            	      	            current = factory.create(grammarAccess.getSubgraphRule().getType().getClassifier());
-            	      	            associateNodeWithAstElement(currentNode.getParent(), current);
+            	      	            current = createModelElementForParent(grammarAccess.getSubgraphRule());
             	      	        }
-            	      	        try {
-            	      	       		add(
-            	      	       			current, 
-            	      	       			"stmts",
-            	      	        		lv_stmts_3_0, 
-            	      	        		"Stmt", 
-            	      	        		currentNode);
-            	      	        } catch (ValueConverterException vce) {
-            	      				handleValueConverterException(vce);
-            	      	        }
-            	      	        currentNode = currentNode.getParent();
+            	             		add(
+            	             			current, 
+            	             			"stmts",
+            	              		lv_stmts_3_0, 
+            	              		"Stmt");
+            	      	        afterParserOrEnumRuleCall();
             	      	    
             	    }
 
@@ -2406,10 +2225,10 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            match(input,14,FOLLOW_14_in_ruleSubgraph1614); if (failed) return current;
-            if ( backtracking==0 ) {
+            otherlv_4=(Token)match(input,14,FOLLOW_14_in_ruleSubgraph1636); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-                      createLeafNode(grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_3(), null); 
+                  	newLeafNode(otherlv_4, grammarAccess.getSubgraphAccess().getRightCurlyBracketKeyword_3());
                   
             }
 
@@ -2418,10 +2237,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2433,11 +2250,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleSubgraph
+    // $ANTLR end "ruleSubgraph"
 
 
-    // $ANTLR start entryRuleEdgeRhs
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:983:1: entryRuleEdgeRhs returns [EObject current=null] : iv_ruleEdgeRhs= ruleEdgeRhs EOF ;
+    // $ANTLR start "entryRuleEdgeRhs"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:819:1: entryRuleEdgeRhs returns [EObject current=null] : iv_ruleEdgeRhs= ruleEdgeRhs EOF ;
     public final EObject entryRuleEdgeRhs() throws RecognitionException {
         EObject current = null;
 
@@ -2445,20 +2262,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:984:2: (iv_ruleEdgeRhs= ruleEdgeRhs EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:985:2: iv_ruleEdgeRhs= ruleEdgeRhs EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:820:2: (iv_ruleEdgeRhs= ruleEdgeRhs EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:821:2: iv_ruleEdgeRhs= ruleEdgeRhs EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getEdgeRhsRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getEdgeRhsRule()); 
             }
-            pushFollow(FOLLOW_ruleEdgeRhs_in_entryRuleEdgeRhs1650);
+            pushFollow(FOLLOW_ruleEdgeRhs_in_entryRuleEdgeRhs1672);
             iv_ruleEdgeRhs=ruleEdgeRhs();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleEdgeRhs; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhs1660); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhs1682); if (state.failed) return current;
 
             }
 
@@ -2472,11 +2290,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeRhs
+    // $ANTLR end "entryRuleEdgeRhs"
 
 
-    // $ANTLR start ruleEdgeRhs
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:992:1: ruleEdgeRhs returns [EObject current=null] : (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph ) ;
+    // $ANTLR start "ruleEdgeRhs"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:828:1: ruleEdgeRhs returns [EObject current=null] : (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph ) ;
     public final EObject ruleEdgeRhs() throws RecognitionException {
         EObject current = null;
 
@@ -2485,29 +2303,29 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject this_EdgeRhsSubgraph_1 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:997:6: ( (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:998:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:831:28: ( (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:832:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:998:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:832:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )
             int alt19=2;
             int LA19_0 = input.LA(1);
 
             if ( (LA19_0==21) ) {
                 int LA19_1 = input.LA(2);
 
-                if ( (LA19_1==13||LA19_1==20) ) {
-                    alt19=2;
-                }
-                else if ( (LA19_1==RULE_DOT_ID) ) {
+                if ( (LA19_1==RULE_DOT_ID) ) {
                     alt19=1;
                 }
+                else if ( (LA19_1==13||LA19_1==20) ) {
+                    alt19=2;
+                }
                 else {
-                    if (backtracking>0) {failed=true; return current;}
+                    if (state.backtracking>0) {state.failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("998:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )", 19, 1, input);
+                        new NoViableAltException("", 19, 1, input);
 
                     throw nvae;
                 }
@@ -2515,75 +2333,77 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
             else if ( (LA19_0==22) ) {
                 int LA19_2 = input.LA(2);
 
-                if ( (LA19_2==13||LA19_2==20) ) {
-                    alt19=2;
-                }
-                else if ( (LA19_2==RULE_DOT_ID) ) {
+                if ( (LA19_2==RULE_DOT_ID) ) {
                     alt19=1;
                 }
+                else if ( (LA19_2==13||LA19_2==20) ) {
+                    alt19=2;
+                }
                 else {
-                    if (backtracking>0) {failed=true; return current;}
+                    if (state.backtracking>0) {state.failed=true; return current;}
                     NoViableAltException nvae =
-                        new NoViableAltException("998:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )", 19, 2, input);
+                        new NoViableAltException("", 19, 2, input);
 
                     throw nvae;
                 }
             }
             else {
-                if (backtracking>0) {failed=true; return current;}
+                if (state.backtracking>0) {state.failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("998:1: (this_EdgeRhsNode_0= ruleEdgeRhsNode | this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph )", 19, 0, input);
+                    new NoViableAltException("", 19, 0, input);
 
                 throw nvae;
             }
             switch (alt19) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:999:2: this_EdgeRhsNode_0= ruleEdgeRhsNode
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:833:2: this_EdgeRhsNode_0= ruleEdgeRhsNode
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getEdgeRhsAccess().getEdgeRhsNodeParserRuleCall_0(), currentNode); 
+                              newCompositeNode(grammarAccess.getEdgeRhsAccess().getEdgeRhsNodeParserRuleCall_0()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleEdgeRhsNode_in_ruleEdgeRhs1710);
+                    pushFollow(FOLLOW_ruleEdgeRhsNode_in_ruleEdgeRhs1732);
                     this_EdgeRhsNode_0=ruleEdgeRhsNode();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_EdgeRhsNode_0; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1012:2: this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:846:2: this_EdgeRhsSubgraph_1= ruleEdgeRhsSubgraph
                     {
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
                       	  /* */ 
                       	
                     }
-                    if ( backtracking==0 ) {
+                    if ( state.backtracking==0 ) {
                        
-                              currentNode=createCompositeNode(grammarAccess.getEdgeRhsAccess().getEdgeRhsSubgraphParserRuleCall_1(), currentNode); 
+                              newCompositeNode(grammarAccess.getEdgeRhsAccess().getEdgeRhsSubgraphParserRuleCall_1()); 
                           
                     }
-                    pushFollow(FOLLOW_ruleEdgeRhsSubgraph_in_ruleEdgeRhs1740);
+                    pushFollow(FOLLOW_ruleEdgeRhsSubgraph_in_ruleEdgeRhs1762);
                     this_EdgeRhsSubgraph_1=ruleEdgeRhsSubgraph();
-                    _fsp--;
-                    if (failed) return current;
-                    if ( backtracking==0 ) {
+
+                    state._fsp--;
+                    if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
                        
                               current = this_EdgeRhsSubgraph_1; 
-                              currentNode = currentNode.getParent();
+                              afterParserOrEnumRuleCall();
                           
                     }
 
@@ -2595,10 +2415,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2610,11 +2428,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeRhs
+    // $ANTLR end "ruleEdgeRhs"
 
 
-    // $ANTLR start entryRuleEdgeRhsNode
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1031:1: entryRuleEdgeRhsNode returns [EObject current=null] : iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF ;
+    // $ANTLR start "entryRuleEdgeRhsNode"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:865:1: entryRuleEdgeRhsNode returns [EObject current=null] : iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF ;
     public final EObject entryRuleEdgeRhsNode() throws RecognitionException {
         EObject current = null;
 
@@ -2622,20 +2440,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1032:2: (iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1033:2: iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:866:2: (iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:867:2: iv_ruleEdgeRhsNode= ruleEdgeRhsNode EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getEdgeRhsNodeRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getEdgeRhsNodeRule()); 
             }
-            pushFollow(FOLLOW_ruleEdgeRhsNode_in_entryRuleEdgeRhsNode1775);
+            pushFollow(FOLLOW_ruleEdgeRhsNode_in_entryRuleEdgeRhsNode1797);
             iv_ruleEdgeRhsNode=ruleEdgeRhsNode();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleEdgeRhsNode; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhsNode1785); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhsNode1807); if (state.failed) return current;
 
             }
 
@@ -2649,11 +2468,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeRhsNode
+    // $ANTLR end "entryRuleEdgeRhsNode"
 
 
-    // $ANTLR start ruleEdgeRhsNode
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:1: ruleEdgeRhsNode returns [EObject current=null] : ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) ) ;
+    // $ANTLR start "ruleEdgeRhsNode"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:874:1: ruleEdgeRhsNode returns [EObject current=null] : ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) ) ;
     public final EObject ruleEdgeRhsNode() throws RecognitionException {
         EObject current = null;
 
@@ -2662,47 +2481,42 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_node_1_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1045:6: ( ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:877:28: ( ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:878:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:2: ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:878:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:878:2: ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_node_1_0= ruleNodeId ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:2: ( (lv_op_0_0= ruleEdgeOp ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1047:1: (lv_op_0_0= ruleEdgeOp )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:878:2: ( (lv_op_0_0= ruleEdgeOp ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:879:1: (lv_op_0_0= ruleEdgeOp )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1047:1: (lv_op_0_0= ruleEdgeOp )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1048:3: lv_op_0_0= ruleEdgeOp
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:879:1: (lv_op_0_0= ruleEdgeOp )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:880:3: lv_op_0_0= ruleEdgeOp
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeRhsNodeAccess().getOpEdgeOpEnumRuleCall_0_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeRhsNodeAccess().getOpEdgeOpEnumRuleCall_0_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleEdgeOp_in_ruleEdgeRhsNode1831);
+            pushFollow(FOLLOW_ruleEdgeOp_in_ruleEdgeRhsNode1853);
             lv_op_0_0=ruleEdgeOp();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeRhsNodeRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeRhsNodeRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"op",
-              	        		lv_op_0_0, 
-              	        		"EdgeOp", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"op",
+                      		lv_op_0_0, 
+                      		"EdgeOp");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -2711,38 +2525,33 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1070:2: ( (lv_node_1_0= ruleNodeId ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1071:1: (lv_node_1_0= ruleNodeId )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:896:2: ( (lv_node_1_0= ruleNodeId ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:897:1: (lv_node_1_0= ruleNodeId )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1071:1: (lv_node_1_0= ruleNodeId )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1072:3: lv_node_1_0= ruleNodeId
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:897:1: (lv_node_1_0= ruleNodeId )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:898:3: lv_node_1_0= ruleNodeId
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeRhsNodeAccess().getNodeNodeIdParserRuleCall_1_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeRhsNodeAccess().getNodeNodeIdParserRuleCall_1_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleNodeId_in_ruleEdgeRhsNode1852);
+            pushFollow(FOLLOW_ruleNodeId_in_ruleEdgeRhsNode1874);
             lv_node_1_0=ruleNodeId();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeRhsNodeRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeRhsNodeRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"node",
-              	        		lv_node_1_0, 
-              	        		"NodeId", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"node",
+                      		lv_node_1_0, 
+                      		"NodeId");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -2757,10 +2566,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2772,11 +2579,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeRhsNode
+    // $ANTLR end "ruleEdgeRhsNode"
 
 
-    // $ANTLR start entryRuleEdgeRhsSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1102:1: entryRuleEdgeRhsSubgraph returns [EObject current=null] : iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF ;
+    // $ANTLR start "entryRuleEdgeRhsSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:922:1: entryRuleEdgeRhsSubgraph returns [EObject current=null] : iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF ;
     public final EObject entryRuleEdgeRhsSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -2784,20 +2591,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1103:2: (iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1104:2: iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:923:2: (iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:924:2: iv_ruleEdgeRhsSubgraph= ruleEdgeRhsSubgraph EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getEdgeRhsSubgraphRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getEdgeRhsSubgraphRule()); 
             }
-            pushFollow(FOLLOW_ruleEdgeRhsSubgraph_in_entryRuleEdgeRhsSubgraph1888);
+            pushFollow(FOLLOW_ruleEdgeRhsSubgraph_in_entryRuleEdgeRhsSubgraph1910);
             iv_ruleEdgeRhsSubgraph=ruleEdgeRhsSubgraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleEdgeRhsSubgraph; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhsSubgraph1898); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleEdgeRhsSubgraph1920); if (state.failed) return current;
 
             }
 
@@ -2811,11 +2619,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleEdgeRhsSubgraph
+    // $ANTLR end "entryRuleEdgeRhsSubgraph"
 
 
-    // $ANTLR start ruleEdgeRhsSubgraph
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1111:1: ruleEdgeRhsSubgraph returns [EObject current=null] : ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) ) ;
+    // $ANTLR start "ruleEdgeRhsSubgraph"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:931:1: ruleEdgeRhsSubgraph returns [EObject current=null] : ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) ) ;
     public final EObject ruleEdgeRhsSubgraph() throws RecognitionException {
         EObject current = null;
 
@@ -2824,47 +2632,42 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         EObject lv_subgraph_1_0 = null;
 
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1116:6: ( ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1117:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:934:28: ( ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:935:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1117:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1117:2: ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:935:1: ( ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:935:2: ( (lv_op_0_0= ruleEdgeOp ) ) ( (lv_subgraph_1_0= ruleSubgraph ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1117:2: ( (lv_op_0_0= ruleEdgeOp ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1118:1: (lv_op_0_0= ruleEdgeOp )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:935:2: ( (lv_op_0_0= ruleEdgeOp ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:936:1: (lv_op_0_0= ruleEdgeOp )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1118:1: (lv_op_0_0= ruleEdgeOp )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1119:3: lv_op_0_0= ruleEdgeOp
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:936:1: (lv_op_0_0= ruleEdgeOp )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:937:3: lv_op_0_0= ruleEdgeOp
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeRhsSubgraphAccess().getOpEdgeOpEnumRuleCall_0_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeRhsSubgraphAccess().getOpEdgeOpEnumRuleCall_0_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleEdgeOp_in_ruleEdgeRhsSubgraph1944);
+            pushFollow(FOLLOW_ruleEdgeOp_in_ruleEdgeRhsSubgraph1966);
             lv_op_0_0=ruleEdgeOp();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeRhsSubgraphRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeRhsSubgraphRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"op",
-              	        		lv_op_0_0, 
-              	        		"EdgeOp", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"op",
+                      		lv_op_0_0, 
+                      		"EdgeOp");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -2873,38 +2676,33 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1141:2: ( (lv_subgraph_1_0= ruleSubgraph ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1142:1: (lv_subgraph_1_0= ruleSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:953:2: ( (lv_subgraph_1_0= ruleSubgraph ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:954:1: (lv_subgraph_1_0= ruleSubgraph )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1142:1: (lv_subgraph_1_0= ruleSubgraph )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1143:3: lv_subgraph_1_0= ruleSubgraph
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:954:1: (lv_subgraph_1_0= ruleSubgraph )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:955:3: lv_subgraph_1_0= ruleSubgraph
             {
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
                
-              	        currentNode=createCompositeNode(grammarAccess.getEdgeRhsSubgraphAccess().getSubgraphSubgraphParserRuleCall_1_0(), currentNode); 
+              	        newCompositeNode(grammarAccess.getEdgeRhsSubgraphAccess().getSubgraphSubgraphParserRuleCall_1_0()); 
               	    
             }
-            pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeRhsSubgraph1965);
+            pushFollow(FOLLOW_ruleSubgraph_in_ruleEdgeRhsSubgraph1987);
             lv_subgraph_1_0=ruleSubgraph();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getEdgeRhsSubgraphRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode.getParent(), current);
+              	            current = createModelElementForParent(grammarAccess.getEdgeRhsSubgraphRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"subgraph",
-              	        		lv_subgraph_1_0, 
-              	        		"Subgraph", 
-              	        		currentNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
-              	        currentNode = currentNode.getParent();
+                     		set(
+                     			current, 
+                     			"subgraph",
+                      		lv_subgraph_1_0, 
+                      		"Subgraph");
+              	        afterParserOrEnumRuleCall();
               	    
             }
 
@@ -2919,10 +2717,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -2934,11 +2730,11 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeRhsSubgraph
+    // $ANTLR end "ruleEdgeRhsSubgraph"
 
 
-    // $ANTLR start entryRuleNodeId
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1173:1: entryRuleNodeId returns [EObject current=null] : iv_ruleNodeId= ruleNodeId EOF ;
+    // $ANTLR start "entryRuleNodeId"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:979:1: entryRuleNodeId returns [EObject current=null] : iv_ruleNodeId= ruleNodeId EOF ;
     public final EObject entryRuleNodeId() throws RecognitionException {
         EObject current = null;
 
@@ -2946,20 +2742,21 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1174:2: (iv_ruleNodeId= ruleNodeId EOF )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1175:2: iv_ruleNodeId= ruleNodeId EOF
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:980:2: (iv_ruleNodeId= ruleNodeId EOF )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:981:2: iv_ruleNodeId= ruleNodeId EOF
             {
-            if ( backtracking==0 ) {
-               currentNode = createCompositeNode(grammarAccess.getNodeIdRule(), currentNode); 
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getNodeIdRule()); 
             }
-            pushFollow(FOLLOW_ruleNodeId_in_entryRuleNodeId2001);
+            pushFollow(FOLLOW_ruleNodeId_in_entryRuleNodeId2023);
             iv_ruleNodeId=ruleNodeId();
-            _fsp--;
-            if (failed) return current;
-            if ( backtracking==0 ) {
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
                current =iv_ruleNodeId; 
             }
-            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeId2011); if (failed) return current;
+            match(input,EOF,FOLLOW_EOF_in_entryRuleNodeId2033); if (state.failed) return current;
 
             }
 
@@ -2973,51 +2770,44 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end entryRuleNodeId
+    // $ANTLR end "entryRuleNodeId"
 
 
-    // $ANTLR start ruleNodeId
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1182:1: ruleNodeId returns [EObject current=null] : ( (lv_name_0_0= RULE_DOT_ID ) ) ;
+    // $ANTLR start "ruleNodeId"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:988:1: ruleNodeId returns [EObject current=null] : ( (lv_name_0_0= RULE_DOT_ID ) ) ;
     public final EObject ruleNodeId() throws RecognitionException {
         EObject current = null;
 
         Token lv_name_0_0=null;
 
-         EObject temp=null; setCurrentLookahead(); resetLookahead(); 
+         enterRule(); 
             
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1187:6: ( ( (lv_name_0_0= RULE_DOT_ID ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1188:1: ( (lv_name_0_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:991:28: ( ( (lv_name_0_0= RULE_DOT_ID ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:992:1: ( (lv_name_0_0= RULE_DOT_ID ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1188:1: ( (lv_name_0_0= RULE_DOT_ID ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1189:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:992:1: ( (lv_name_0_0= RULE_DOT_ID ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:993:1: (lv_name_0_0= RULE_DOT_ID )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1189:1: (lv_name_0_0= RULE_DOT_ID )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1190:3: lv_name_0_0= RULE_DOT_ID
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:993:1: (lv_name_0_0= RULE_DOT_ID )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:994:3: lv_name_0_0= RULE_DOT_ID
             {
-            lv_name_0_0=(Token)input.LT(1);
-            match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleNodeId2052); if (failed) return current;
-            if ( backtracking==0 ) {
+            lv_name_0_0=(Token)match(input,RULE_DOT_ID,FOLLOW_RULE_DOT_ID_in_ruleNodeId2074); if (state.failed) return current;
+            if ( state.backtracking==0 ) {
 
-              			createLeafNode(grammarAccess.getNodeIdAccess().getNameDOT_IDTerminalRuleCall_0(), "name"); 
+              			newLeafNode(lv_name_0_0, grammarAccess.getNodeIdAccess().getNameDOT_IDTerminalRuleCall_0()); 
               		
             }
-            if ( backtracking==0 ) {
+            if ( state.backtracking==0 ) {
 
               	        if (current==null) {
-              	            current = factory.create(grammarAccess.getNodeIdRule().getType().getClassifier());
-              	            associateNodeWithAstElement(currentNode, current);
+              	            current = createModelElement(grammarAccess.getNodeIdRule());
               	        }
-              	        try {
-              	       		set(
-              	       			current, 
-              	       			"name",
-              	        		lv_name_0_0, 
-              	        		"DOT_ID", 
-              	        		lastConsumedNode);
-              	        } catch (ValueConverterException vce) {
-              				handleValueConverterException(vce);
-              	        }
+                     		setWithLastConsumed(
+                     			current, 
+                     			"name",
+                      		lv_name_0_0, 
+                      		"DOT_ID");
               	    
             }
 
@@ -3029,10 +2819,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -3044,20 +2832,23 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleNodeId
+    // $ANTLR end "ruleNodeId"
 
 
-    // $ANTLR start ruleEdgeOp
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1220:1: ruleEdgeOp returns [Enumerator current=null] : ( ( '->' ) | ( '--' ) ) ;
+    // $ANTLR start "ruleEdgeOp"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1018:1: ruleEdgeOp returns [Enumerator current=null] : ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) ) ;
     public final Enumerator ruleEdgeOp() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+
+         enterRule(); 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1224:6: ( ( ( '->' ) | ( '--' ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1225:1: ( ( '->' ) | ( '--' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1020:28: ( ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1021:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1225:1: ( ( '->' ) | ( '--' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1021:1: ( (enumLiteral_0= '->' ) | (enumLiteral_1= '--' ) )
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -3068,24 +2859,24 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 alt20=2;
             }
             else {
-                if (backtracking>0) {failed=true; return current;}
+                if (state.backtracking>0) {state.failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1225:1: ( ( '->' ) | ( '--' ) )", 20, 0, input);
+                    new NoViableAltException("", 20, 0, input);
 
                 throw nvae;
             }
             switch (alt20) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1225:2: ( '->' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1021:2: (enumLiteral_0= '->' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1225:2: ( '->' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1225:4: '->'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1021:2: (enumLiteral_0= '->' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1021:4: enumLiteral_0= '->'
                     {
-                    match(input,21,FOLLOW_21_in_ruleEdgeOp2104); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_0=(Token)match(input,21,FOLLOW_21_in_ruleEdgeOp2128); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getEdgeOpAccess().getDirectedEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getEdgeOpAccess().getDirectedEnumLiteralDeclaration_0(), null); 
+                              newLeafNode(enumLiteral_0, grammarAccess.getEdgeOpAccess().getDirectedEnumLiteralDeclaration_0()); 
                           
                     }
 
@@ -3095,16 +2886,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1231:6: ( '--' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1027:6: (enumLiteral_1= '--' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1231:6: ( '--' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1231:8: '--'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1027:6: (enumLiteral_1= '--' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1027:8: enumLiteral_1= '--'
                     {
-                    match(input,22,FOLLOW_22_in_ruleEdgeOp2119); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_1=(Token)match(input,22,FOLLOW_22_in_ruleEdgeOp2145); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getEdgeOpAccess().getUndirectedEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getEdgeOpAccess().getUndirectedEnumLiteralDeclaration_1(), null); 
+                              newLeafNode(enumLiteral_1, grammarAccess.getEdgeOpAccess().getUndirectedEnumLiteralDeclaration_1()); 
                           
                     }
 
@@ -3119,10 +2910,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -3134,20 +2923,23 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleEdgeOp
+    // $ANTLR end "ruleEdgeOp"
 
 
-    // $ANTLR start ruleGraphType
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1241:1: ruleGraphType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'digraph' ) ) ;
+    // $ANTLR start "ruleGraphType"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1037:1: ruleGraphType returns [Enumerator current=null] : ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) ) ;
     public final Enumerator ruleGraphType() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+
+         enterRule(); 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1245:6: ( ( ( 'graph' ) | ( 'digraph' ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1246:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1039:28: ( ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1246:1: ( ( 'graph' ) | ( 'digraph' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'digraph' ) )
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -3158,24 +2950,24 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 alt21=2;
             }
             else {
-                if (backtracking>0) {failed=true; return current;}
+                if (state.backtracking>0) {state.failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1246:1: ( ( 'graph' ) | ( 'digraph' ) )", 21, 0, input);
+                    new NoViableAltException("", 21, 0, input);
 
                 throw nvae;
             }
             switch (alt21) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1246:2: ( 'graph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:2: (enumLiteral_0= 'graph' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1246:2: ( 'graph' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1246:4: 'graph'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:2: (enumLiteral_0= 'graph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1040:4: enumLiteral_0= 'graph'
                     {
-                    match(input,23,FOLLOW_23_in_ruleGraphType2162); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_0=(Token)match(input,23,FOLLOW_23_in_ruleGraphType2190); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0(), null); 
+                              newLeafNode(enumLiteral_0, grammarAccess.getGraphTypeAccess().getGraphEnumLiteralDeclaration_0()); 
                           
                     }
 
@@ -3185,16 +2977,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1252:6: ( 'digraph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:6: (enumLiteral_1= 'digraph' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1252:6: ( 'digraph' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1252:8: 'digraph'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:6: (enumLiteral_1= 'digraph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1046:8: enumLiteral_1= 'digraph'
                     {
-                    match(input,24,FOLLOW_24_in_ruleGraphType2177); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_1=(Token)match(input,24,FOLLOW_24_in_ruleGraphType2207); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1(), null); 
+                              newLeafNode(enumLiteral_1, grammarAccess.getGraphTypeAccess().getDigraphEnumLiteralDeclaration_1()); 
                           
                     }
 
@@ -3209,10 +3001,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -3224,20 +3014,24 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleGraphType
+    // $ANTLR end "ruleGraphType"
 
 
-    // $ANTLR start ruleAttributeType
-    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1262:1: ruleAttributeType returns [Enumerator current=null] : ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) ;
+    // $ANTLR start "ruleAttributeType"
+    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1056:1: ruleAttributeType returns [Enumerator current=null] : ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) ) ;
     public final Enumerator ruleAttributeType() throws RecognitionException {
         Enumerator current = null;
 
-         setCurrentLookahead(); resetLookahead(); 
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+        Token enumLiteral_2=null;
+
+         enterRule(); 
         try {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1266:6: ( ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) ) )
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1267:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1058:28: ( ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1059:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
             {
-            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1267:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )
+            // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1059:1: ( (enumLiteral_0= 'graph' ) | (enumLiteral_1= 'node' ) | (enumLiteral_2= 'edge' ) )
             int alt22=3;
             switch ( input.LA(1) ) {
             case 23:
@@ -3256,25 +3050,25 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                 }
                 break;
             default:
-                if (backtracking>0) {failed=true; return current;}
+                if (state.backtracking>0) {state.failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("1267:1: ( ( 'graph' ) | ( 'node' ) | ( 'edge' ) )", 22, 0, input);
+                    new NoViableAltException("", 22, 0, input);
 
                 throw nvae;
             }
 
             switch (alt22) {
                 case 1 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1267:2: ( 'graph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1059:2: (enumLiteral_0= 'graph' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1267:2: ( 'graph' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1267:4: 'graph'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1059:2: (enumLiteral_0= 'graph' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1059:4: enumLiteral_0= 'graph'
                     {
-                    match(input,23,FOLLOW_23_in_ruleAttributeType2220); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_0=(Token)match(input,23,FOLLOW_23_in_ruleAttributeType2252); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0(), null); 
+                              newLeafNode(enumLiteral_0, grammarAccess.getAttributeTypeAccess().getGraphEnumLiteralDeclaration_0()); 
                           
                     }
 
@@ -3284,16 +3078,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1273:6: ( 'node' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1065:6: (enumLiteral_1= 'node' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1273:6: ( 'node' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1273:8: 'node'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1065:6: (enumLiteral_1= 'node' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1065:8: enumLiteral_1= 'node'
                     {
-                    match(input,25,FOLLOW_25_in_ruleAttributeType2235); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_1=(Token)match(input,25,FOLLOW_25_in_ruleAttributeType2269); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1(), null); 
+                              newLeafNode(enumLiteral_1, grammarAccess.getAttributeTypeAccess().getNodeEnumLiteralDeclaration_1()); 
                           
                     }
 
@@ -3303,16 +3097,16 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1279:6: ( 'edge' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1071:6: (enumLiteral_2= 'edge' )
                     {
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1279:6: ( 'edge' )
-                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1279:8: 'edge'
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1071:6: (enumLiteral_2= 'edge' )
+                    // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:1071:8: enumLiteral_2= 'edge'
                     {
-                    match(input,26,FOLLOW_26_in_ruleAttributeType2250); if (failed) return current;
-                    if ( backtracking==0 ) {
+                    enumLiteral_2=(Token)match(input,26,FOLLOW_26_in_ruleAttributeType2286); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
 
                               current = grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
-                              createLeafNode(grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2(), null); 
+                              newLeafNode(enumLiteral_2, grammarAccess.getAttributeTypeAccess().getEdgeEnumLiteralDeclaration_2()); 
                           
                     }
 
@@ -3327,10 +3121,8 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
 
             }
 
-            if ( backtracking==0 ) {
-               resetLookahead(); 
-                  	lastConsumedNode = currentNode;
-                  
+            if ( state.backtracking==0 ) {
+               leaveRule(); 
             }
         }
          
@@ -3342,142 +3134,279 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end ruleAttributeType
+    // $ANTLR end "ruleAttributeType"
 
-    // $ANTLR start synpred5
-    public final void synpred5_fragment() throws RecognitionException {   
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:271:2: ( ruleAttribute )
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:271:2: ruleAttribute
+    // $ANTLR start synpred5_InternalDot
+    public final void synpred5_InternalDot_fragment() throws RecognitionException {   
+        EObject this_Attribute_0 = null;
+
+
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:225:2: (this_Attribute_0= ruleAttribute )
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:225:2: this_Attribute_0= ruleAttribute
         {
-        if ( backtracking==0 ) {
+        if ( state.backtracking==0 ) {
            
           	  /* */ 
           	
         }
-        pushFollow(FOLLOW_ruleAttribute_in_synpred5422);
-        ruleAttribute();
-        _fsp--;
-        if (failed) return ;
+        pushFollow(FOLLOW_ruleAttribute_in_synpred5_InternalDot426);
+        this_Attribute_0=ruleAttribute();
+
+        state._fsp--;
+        if (state.failed) return ;
 
         }
     }
-    // $ANTLR end synpred5
+    // $ANTLR end synpred5_InternalDot
 
-    // $ANTLR start synpred6
-    public final void synpred6_fragment() throws RecognitionException {   
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:284:2: ( ruleEdgeStmtNode )
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:284:2: ruleEdgeStmtNode
+    // $ANTLR start synpred6_InternalDot
+    public final void synpred6_InternalDot_fragment() throws RecognitionException {   
+        EObject this_EdgeStmtNode_1 = null;
+
+
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:238:2: (this_EdgeStmtNode_1= ruleEdgeStmtNode )
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:238:2: this_EdgeStmtNode_1= ruleEdgeStmtNode
         {
-        if ( backtracking==0 ) {
+        if ( state.backtracking==0 ) {
            
           	  /* */ 
           	
         }
-        pushFollow(FOLLOW_ruleEdgeStmtNode_in_synpred6452);
-        ruleEdgeStmtNode();
-        _fsp--;
-        if (failed) return ;
+        pushFollow(FOLLOW_ruleEdgeStmtNode_in_synpred6_InternalDot456);
+        this_EdgeStmtNode_1=ruleEdgeStmtNode();
+
+        state._fsp--;
+        if (state.failed) return ;
 
         }
     }
-    // $ANTLR end synpred6
+    // $ANTLR end synpred6_InternalDot
 
-    // $ANTLR start synpred7
-    public final void synpred7_fragment() throws RecognitionException {   
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:297:2: ( ruleEdgeStmtSubgraph )
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:297:2: ruleEdgeStmtSubgraph
+    // $ANTLR start synpred7_InternalDot
+    public final void synpred7_InternalDot_fragment() throws RecognitionException {   
+        EObject this_EdgeStmtSubgraph_2 = null;
+
+
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:251:2: (this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph )
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:251:2: this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph
         {
-        if ( backtracking==0 ) {
+        if ( state.backtracking==0 ) {
            
           	  /* */ 
           	
         }
-        pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_synpred7482);
-        ruleEdgeStmtSubgraph();
-        _fsp--;
-        if (failed) return ;
+        pushFollow(FOLLOW_ruleEdgeStmtSubgraph_in_synpred7_InternalDot486);
+        this_EdgeStmtSubgraph_2=ruleEdgeStmtSubgraph();
+
+        state._fsp--;
+        if (state.failed) return ;
 
         }
     }
-    // $ANTLR end synpred7
+    // $ANTLR end synpred7_InternalDot
 
-    // $ANTLR start synpred8
-    public final void synpred8_fragment() throws RecognitionException {   
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:310:2: ( ruleNodeStmt )
-        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:310:2: ruleNodeStmt
+    // $ANTLR start synpred8_InternalDot
+    public final void synpred8_InternalDot_fragment() throws RecognitionException {   
+        EObject this_NodeStmt_3 = null;
+
+
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:264:2: (this_NodeStmt_3= ruleNodeStmt )
+        // ../org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/parser/antlr/internal/InternalDot.g:264:2: this_NodeStmt_3= ruleNodeStmt
         {
-        if ( backtracking==0 ) {
+        if ( state.backtracking==0 ) {
            
           	  /* */ 
           	
         }
-        pushFollow(FOLLOW_ruleNodeStmt_in_synpred8512);
-        ruleNodeStmt();
-        _fsp--;
-        if (failed) return ;
+        pushFollow(FOLLOW_ruleNodeStmt_in_synpred8_InternalDot516);
+        this_NodeStmt_3=ruleNodeStmt();
+
+        state._fsp--;
+        if (state.failed) return ;
 
         }
     }
-    // $ANTLR end synpred8
+    // $ANTLR end synpred8_InternalDot
 
-    public final boolean synpred5() {
-        backtracking++;
+    // Delegated rules
+
+    public final boolean synpred7_InternalDot() {
+        state.backtracking++;
         int start = input.mark();
         try {
-            synpred5_fragment(); // can never throw exception
+            synpred7_InternalDot_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
-        boolean success = !failed;
+        boolean success = !state.failed;
         input.rewind(start);
-        backtracking--;
-        failed=false;
+        state.backtracking--;
+        state.failed=false;
         return success;
     }
-    public final boolean synpred6() {
-        backtracking++;
+    public final boolean synpred8_InternalDot() {
+        state.backtracking++;
         int start = input.mark();
         try {
-            synpred6_fragment(); // can never throw exception
+            synpred8_InternalDot_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
-        boolean success = !failed;
+        boolean success = !state.failed;
         input.rewind(start);
-        backtracking--;
-        failed=false;
+        state.backtracking--;
+        state.failed=false;
         return success;
     }
-    public final boolean synpred7() {
-        backtracking++;
+    public final boolean synpred5_InternalDot() {
+        state.backtracking++;
         int start = input.mark();
         try {
-            synpred7_fragment(); // can never throw exception
+            synpred5_InternalDot_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
-        boolean success = !failed;
+        boolean success = !state.failed;
         input.rewind(start);
-        backtracking--;
-        failed=false;
+        state.backtracking--;
+        state.failed=false;
         return success;
     }
-    public final boolean synpred8() {
-        backtracking++;
+    public final boolean synpred6_InternalDot() {
+        state.backtracking++;
         int start = input.mark();
         try {
-            synpred8_fragment(); // can never throw exception
+            synpred6_InternalDot_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
-        boolean success = !failed;
+        boolean success = !state.failed;
         input.rewind(start);
-        backtracking--;
-        failed=false;
+        state.backtracking--;
+        state.failed=false;
         return success;
     }
 
 
+    protected DFA5 dfa5 = new DFA5(this);
+    static final String DFA5_eotS =
+        "\14\uffff";
+    static final String DFA5_eofS =
+        "\14\uffff";
+    static final String DFA5_minS =
+        "\1\4\3\0\10\uffff";
+    static final String DFA5_maxS =
+        "\1\32\3\0\10\uffff";
+    static final String DFA5_acceptS =
+        "\4\uffff\1\5\2\uffff\1\1\1\2\1\4\1\3\1\6";
+    static final String DFA5_specialS =
+        "\1\uffff\1\0\1\1\1\2\10\uffff}>";
+    static final String[] DFA5_transitionS = {
+            "\1\1\10\uffff\1\3\6\uffff\1\2\2\uffff\1\4\1\uffff\2\4",
+            "\1\uffff",
+            "\1\uffff",
+            "\1\uffff",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+    };
+
+    static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
+    static final short[] DFA5_eof = DFA.unpackEncodedString(DFA5_eofS);
+    static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars(DFA5_minS);
+    static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars(DFA5_maxS);
+    static final short[] DFA5_accept = DFA.unpackEncodedString(DFA5_acceptS);
+    static final short[] DFA5_special = DFA.unpackEncodedString(DFA5_specialS);
+    static final short[][] DFA5_transition;
+
+    static {
+        int numStates = DFA5_transitionS.length;
+        DFA5_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA5_transition[i] = DFA.unpackEncodedString(DFA5_transitionS[i]);
+        }
+    }
+
+    class DFA5 extends DFA {
+
+        public DFA5(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 5;
+            this.eot = DFA5_eot;
+            this.eof = DFA5_eof;
+            this.min = DFA5_min;
+            this.max = DFA5_max;
+            this.accept = DFA5_accept;
+            this.special = DFA5_special;
+            this.transition = DFA5_transition;
+        }
+        public String getDescription() {
+            return "224:2: (this_Attribute_0= ruleAttribute | this_EdgeStmtNode_1= ruleEdgeStmtNode | this_EdgeStmtSubgraph_2= ruleEdgeStmtSubgraph | this_NodeStmt_3= ruleNodeStmt | this_AttrStmt_4= ruleAttrStmt | this_Subgraph_5= ruleSubgraph )";
+        }
+        public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
+            TokenStream input = (TokenStream)_input;
+        	int _s = s;
+            switch ( s ) {
+                    case 0 : 
+                        int LA5_1 = input.LA(1);
+
+                         
+                        int index5_1 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred5_InternalDot()) ) {s = 7;}
+
+                        else if ( (synpred6_InternalDot()) ) {s = 8;}
+
+                        else if ( (synpred8_InternalDot()) ) {s = 9;}
+
+                         
+                        input.seek(index5_1);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
+                        int LA5_2 = input.LA(1);
+
+                         
+                        int index5_2 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred7_InternalDot()) ) {s = 10;}
+
+                        else if ( (true) ) {s = 11;}
+
+                         
+                        input.seek(index5_2);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA5_3 = input.LA(1);
+
+                         
+                        int index5_3 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred7_InternalDot()) ) {s = 10;}
+
+                        else if ( (true) ) {s = 11;}
+
+                         
+                        input.seek(index5_3);
+                        if ( s>=0 ) return s;
+                        break;
+            }
+            if (state.backtracking>0) {state.failed=true; return -1;}
+            NoViableAltException nvae =
+                new NoViableAltException(getDescription(), 5, _s, input);
+            error(nvae);
+            throw nvae;
+        }
+    }
  
 
     public static final BitSet FOLLOW_ruleGraphvizModel_in_entryRuleGraphvizModel81 = new BitSet(new long[]{0x0000000000000000L});
@@ -3485,87 +3414,87 @@ public class InternalDotParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_ruleMainGraph_in_ruleGraphvizModel136 = new BitSet(new long[]{0x0000000001801002L});
     public static final BitSet FOLLOW_ruleMainGraph_in_entryRuleMainGraph172 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleMainGraph182 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_12_in_ruleMainGraph225 = new BitSet(new long[]{0x0000000001800000L});
+    public static final BitSet FOLLOW_12_in_ruleMainGraph225 = new BitSet(new long[]{0x0000000001803010L});
     public static final BitSet FOLLOW_ruleGraphType_in_ruleMainGraph260 = new BitSet(new long[]{0x0000000000002010L});
     public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleMainGraph277 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_13_in_ruleMainGraph293 = new BitSet(new long[]{0x0000000006906010L});
-    public static final BitSet FOLLOW_ruleStmt_in_ruleMainGraph314 = new BitSet(new long[]{0x0000000006906010L});
-    public static final BitSet FOLLOW_14_in_ruleMainGraph325 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleStmt_in_entryRuleStmt361 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleStmt371 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttribute_in_ruleStmt422 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_ruleStmt452 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_ruleStmt482 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_ruleNodeStmt_in_ruleStmt512 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_ruleAttrStmt_in_ruleStmt542 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_ruleStmt572 = new BitSet(new long[]{0x0000000000008002L});
-    public static final BitSet FOLLOW_15_in_ruleStmt583 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_entryRuleEdgeStmtNode621 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStmtNode631 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNodeId_in_ruleEdgeStmtNode677 = new BitSet(new long[]{0x0000000000600000L});
-    public static final BitSet FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtNode698 = new BitSet(new long[]{0x0000000000620002L});
-    public static final BitSet FOLLOW_ruleAttrList_in_ruleEdgeStmtNode720 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_entryRuleEdgeStmtSubgraph757 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStmtSubgraph767 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeStmtSubgraph813 = new BitSet(new long[]{0x0000000000600000L});
-    public static final BitSet FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtSubgraph834 = new BitSet(new long[]{0x0000000000620002L});
-    public static final BitSet FOLLOW_ruleAttrList_in_ruleEdgeStmtSubgraph856 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_ruleNodeStmt_in_entryRuleNodeStmt893 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleNodeStmt903 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleNodeStmt945 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_ruleAttrList_in_ruleNodeStmt971 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_ruleAttribute_in_entryRuleAttribute1008 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAttribute1018 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAttribute1060 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_16_in_ruleAttribute1075 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAttribute1092 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttrStmt_in_entryRuleAttrStmt1133 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAttrStmt1143 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttributeType_in_ruleAttrStmt1189 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_ruleAttrList_in_ruleAttrStmt1210 = new BitSet(new long[]{0x0000000000020002L});
-    public static final BitSet FOLLOW_ruleAttrList_in_entryRuleAttrList1247 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAttrList1257 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_17_in_ruleAttrList1292 = new BitSet(new long[]{0x0000000000040010L});
-    public static final BitSet FOLLOW_ruleAList_in_ruleAttrList1313 = new BitSet(new long[]{0x0000000000040010L});
-    public static final BitSet FOLLOW_18_in_ruleAttrList1324 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAList_in_entryRuleAList1360 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAList1370 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAList1412 = new BitSet(new long[]{0x0000000000090002L});
-    public static final BitSet FOLLOW_16_in_ruleAList1428 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAList1445 = new BitSet(new long[]{0x0000000000080002L});
-    public static final BitSet FOLLOW_19_in_ruleAList1463 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_entryRuleSubgraph1501 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleSubgraph1511 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_20_in_ruleSubgraph1547 = new BitSet(new long[]{0x0000000000002010L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleSubgraph1564 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_13_in_ruleSubgraph1582 = new BitSet(new long[]{0x0000000006906010L});
-    public static final BitSet FOLLOW_ruleStmt_in_ruleSubgraph1603 = new BitSet(new long[]{0x0000000006906010L});
-    public static final BitSet FOLLOW_14_in_ruleSubgraph1614 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeRhs_in_entryRuleEdgeRhs1650 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhs1660 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeRhsNode_in_ruleEdgeRhs1710 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeRhsSubgraph_in_ruleEdgeRhs1740 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeRhsNode_in_entryRuleEdgeRhsNode1775 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhsNode1785 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeOp_in_ruleEdgeRhsNode1831 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_ruleNodeId_in_ruleEdgeRhsNode1852 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeRhsSubgraph_in_entryRuleEdgeRhsSubgraph1888 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhsSubgraph1898 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeOp_in_ruleEdgeRhsSubgraph1944 = new BitSet(new long[]{0x0000000000102000L});
-    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeRhsSubgraph1965 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNodeId_in_entryRuleNodeId2001 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleNodeId2011 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleNodeId2052 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_21_in_ruleEdgeOp2104 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_22_in_ruleEdgeOp2119 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_ruleGraphType2162 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_24_in_ruleGraphType2177 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_ruleAttributeType2220 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_ruleAttributeType2235 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_26_in_ruleAttributeType2250 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAttribute_in_synpred5422 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_synpred6452 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_synpred7482 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleNodeStmt_in_synpred8512 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_13_in_ruleMainGraph295 = new BitSet(new long[]{0x0000000006906010L});
+    public static final BitSet FOLLOW_ruleStmt_in_ruleMainGraph316 = new BitSet(new long[]{0x0000000006906010L});
+    public static final BitSet FOLLOW_14_in_ruleMainGraph329 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleStmt_in_entryRuleStmt365 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleStmt375 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttribute_in_ruleStmt426 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_ruleStmt456 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_ruleStmt486 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_ruleNodeStmt_in_ruleStmt516 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_ruleAttrStmt_in_ruleStmt546 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_ruleStmt576 = new BitSet(new long[]{0x0000000000008002L});
+    public static final BitSet FOLLOW_15_in_ruleStmt589 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_entryRuleEdgeStmtNode627 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStmtNode637 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNodeId_in_ruleEdgeStmtNode683 = new BitSet(new long[]{0x0000000000600000L});
+    public static final BitSet FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtNode704 = new BitSet(new long[]{0x0000000000620002L});
+    public static final BitSet FOLLOW_ruleAttrList_in_ruleEdgeStmtNode726 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_entryRuleEdgeStmtSubgraph763 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeStmtSubgraph773 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeStmtSubgraph819 = new BitSet(new long[]{0x0000000000600000L});
+    public static final BitSet FOLLOW_ruleEdgeRhs_in_ruleEdgeStmtSubgraph840 = new BitSet(new long[]{0x0000000000620002L});
+    public static final BitSet FOLLOW_ruleAttrList_in_ruleEdgeStmtSubgraph862 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_ruleNodeStmt_in_entryRuleNodeStmt899 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleNodeStmt909 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleNodeStmt951 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_ruleAttrList_in_ruleNodeStmt977 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_ruleAttribute_in_entryRuleAttribute1014 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAttribute1024 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAttribute1066 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_16_in_ruleAttribute1083 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAttribute1100 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttrStmt_in_entryRuleAttrStmt1141 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAttrStmt1151 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttributeType_in_ruleAttrStmt1197 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_ruleAttrList_in_ruleAttrStmt1218 = new BitSet(new long[]{0x0000000000020002L});
+    public static final BitSet FOLLOW_ruleAttrList_in_entryRuleAttrList1255 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAttrList1265 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_17_in_ruleAttrList1302 = new BitSet(new long[]{0x0000000000040010L});
+    public static final BitSet FOLLOW_ruleAList_in_ruleAttrList1323 = new BitSet(new long[]{0x0000000000040010L});
+    public static final BitSet FOLLOW_18_in_ruleAttrList1336 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAList_in_entryRuleAList1372 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAList1382 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAList1424 = new BitSet(new long[]{0x0000000000090002L});
+    public static final BitSet FOLLOW_16_in_ruleAList1442 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleAList1459 = new BitSet(new long[]{0x0000000000080002L});
+    public static final BitSet FOLLOW_19_in_ruleAList1479 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_entryRuleSubgraph1517 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleSubgraph1527 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_20_in_ruleSubgraph1565 = new BitSet(new long[]{0x0000000000002010L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleSubgraph1582 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_13_in_ruleSubgraph1602 = new BitSet(new long[]{0x0000000006906010L});
+    public static final BitSet FOLLOW_ruleStmt_in_ruleSubgraph1623 = new BitSet(new long[]{0x0000000006906010L});
+    public static final BitSet FOLLOW_14_in_ruleSubgraph1636 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeRhs_in_entryRuleEdgeRhs1672 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhs1682 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeRhsNode_in_ruleEdgeRhs1732 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeRhsSubgraph_in_ruleEdgeRhs1762 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeRhsNode_in_entryRuleEdgeRhsNode1797 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhsNode1807 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeOp_in_ruleEdgeRhsNode1853 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_ruleNodeId_in_ruleEdgeRhsNode1874 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeRhsSubgraph_in_entryRuleEdgeRhsSubgraph1910 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleEdgeRhsSubgraph1920 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeOp_in_ruleEdgeRhsSubgraph1966 = new BitSet(new long[]{0x0000000000102000L});
+    public static final BitSet FOLLOW_ruleSubgraph_in_ruleEdgeRhsSubgraph1987 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNodeId_in_entryRuleNodeId2023 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleNodeId2033 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_DOT_ID_in_ruleNodeId2074 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_21_in_ruleEdgeOp2128 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_22_in_ruleEdgeOp2145 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_ruleGraphType2190 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_24_in_ruleGraphType2207 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_ruleAttributeType2252 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_ruleAttributeType2269 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_26_in_ruleAttributeType2286 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAttribute_in_synpred5_InternalDot426 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtNode_in_synpred6_InternalDot456 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleEdgeStmtSubgraph_in_synpred7_InternalDot486 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleNodeStmt_in_synpred8_InternalDot516 = new BitSet(new long[]{0x0000000000000002L});
 
 }

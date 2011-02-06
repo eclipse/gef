@@ -8,84 +8,84 @@
     complianceLevel="5.0" copyrightFields="false" editPluginID="org.eclipse.zest.dot.core.edit"
     editorPluginID="org.eclipse.zest.dot.core.editor">
   <genPackages prefix="Dot" basePackage="org.eclipse.zest.internal.dot.parser" disposableProviderFactory="true"
-      ecorePackage="Dot.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Dot.ecore#//EdgeOp">
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//EdgeOp/directed"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//EdgeOp/undirected"/>
+      ecorePackage="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeOp">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeOp/directed"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeOp/undirected"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Dot.ecore#//GraphType">
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//GraphType/graph"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//GraphType/digraph"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//GraphType">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//GraphType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//GraphType/digraph"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Dot.ecore#//AttributeType">
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//AttributeType/graph"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//AttributeType/node"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//AttributeType/edge"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttributeType">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttributeType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttributeType/node"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttributeType/edge"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Dot.ecore#//CompassPt">
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/north"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/northeast"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/east"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/southeast"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/south"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/southwest"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/west"/>
-      <genEnumLiterals ecoreEnumLiteral="Dot.ecore#//CompassPt/northwest"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt">
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/north"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/northeast"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/east"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/southeast"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/south"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/southwest"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/west"/>
+      <genEnumLiterals ecoreEnumLiteral="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//CompassPt/northwest"/>
     </genEnums>
-    <genClasses ecoreClass="Dot.ecore#//GraphvizModel">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//GraphvizModel/graphs"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//GraphvizModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//GraphvizModel/graphs"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//MainGraph">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//MainGraph/strict"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//MainGraph/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//MainGraph/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//MainGraph/stmts"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//MainGraph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//MainGraph/strict"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//MainGraph/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//MainGraph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//MainGraph/stmts"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//Stmt"/>
-    <genClasses ecoreClass="Dot.ecore#//EdgeStmtNode">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtNode/node_id"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtNode/edgeRHS"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtNode/attributes"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Stmt"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtNode">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtNode/node_id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtNode/edgeRHS"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtNode/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//EdgeStmtSubgraph">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtSubgraph/subgraph"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtSubgraph/edgeRHS"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeStmtSubgraph/attributes"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtSubgraph">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtSubgraph/subgraph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtSubgraph/edgeRHS"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeStmtSubgraph/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//NodeStmt">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//NodeStmt/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//NodeStmt/attributes"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//NodeStmt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//NodeStmt/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//NodeStmt/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//Attribute">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//Attribute/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//Attribute/value"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Attribute/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Attribute/value"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//AttrStmt">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//AttrStmt/type"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//AttrStmt/attributes"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttrStmt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttrStmt/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttrStmt/attributes"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//AttrList">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//AttrList/a_list"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttrList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AttrList/a_list"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//AList">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//AList/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//AList/value"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AList">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AList/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//AList/value"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//Subgraph">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//Subgraph/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//Subgraph/stmts"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Subgraph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Subgraph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//Subgraph/stmts"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//EdgeRhs">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//EdgeRhs/op"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhs">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhs/op"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//EdgeRhsNode">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeRhsNode/node"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhsNode">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhsNode/node"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//EdgeRhsSubgraph">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Dot.ecore#//EdgeRhsSubgraph/subgraph"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhsSubgraph">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//EdgeRhsSubgraph/subgraph"/>
     </genClasses>
-    <genClasses ecoreClass="Dot.ecore#//NodeId">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Dot.ecore#//NodeId/name"/>
+    <genClasses ecoreClass="platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//NodeId">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute platform:/resource/org.eclipse.zest.dot.core/src-gen/org/eclipse/zest/internal/dot/parser/Dot.ecore#//NodeId/name"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

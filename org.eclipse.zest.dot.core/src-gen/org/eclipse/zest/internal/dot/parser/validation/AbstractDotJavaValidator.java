@@ -10,7 +10,7 @@ import org.eclipse.xtext.validation.ComposedChecks;
 @ComposedChecks(validators= {org.eclipse.xtext.validation.ImportUriValidator.class})
 public class AbstractDotJavaValidator extends AbstractDeclarativeValidator {
 
-@Override
+	@Override
 	protected List<EPackage> getEPackages() {
 	    List<EPackage> result = new ArrayList<EPackage>();
 	    result.add(org.eclipse.zest.internal.dot.parser.dot.DotPackage.eINSTANCE);

@@ -49,8 +49,8 @@ Workflow {
 			fragment = exporting.QualifiedNamesFragment {}
 			fragment = formatting.FormatterFragment {}
 			fragment = labeling.LabelProviderFragment {}
-			fragment = outline.TransformerFragment {}
-			fragment = outline.OutlineNodeAdapterFactoryFragment {}
+			fragment = outline.OutlineTreeProviderFragment {}
+			fragment = outline.QuickOutlineFragment {}
 			fragment = outline.QuickOutlineFragment {}
 			fragment = contentAssist.JavaBasedContentAssistFragment {}
 			fragment = builder.BuilderIntegrationFragment {}
