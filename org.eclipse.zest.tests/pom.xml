@@ -21,7 +21,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -XstartOnFirstThread</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 					<testSuite>org.eclipse.zest.tests</testSuite>
 					<testClass>org.eclipse.zest.tests.AllHeadlessTests</testClass>
 					<product>org.eclipse.sdk.ide</product>
