@@ -91,7 +91,7 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 					if (source != null) {
 						if (figureProvider != null) {
 							createNode(model, source,
-									figureProvider.getFigure(dest));
+									figureProvider.getFigure(source));
 						} else {
 							createNode(model, source);
 						}
