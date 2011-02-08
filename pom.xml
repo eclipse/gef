@@ -26,7 +26,7 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<tycho.version>0.10.0</tycho.version>
+		<tycho.version>0.11.0-SNAPSHOT</tycho.version>
 		<tycho.groupid>org.sonatype.tycho</tycho.groupid>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
