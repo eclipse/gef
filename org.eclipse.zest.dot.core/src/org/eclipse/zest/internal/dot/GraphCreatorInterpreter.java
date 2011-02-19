@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2009, 2011 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -50,7 +50,7 @@ import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
  */
 public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
-	private Map<String, GraphNode> nodes = new HashMap<String, GraphNode>();
+	private Map<String, GraphNode> nodes;
 	private Graph graph;
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
@@ -72,6 +72,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 							.errors().toString()));
 		}
 		this.graph = graph;
+		nodes = new HashMap<String, GraphNode>();
 		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(
 				dotAst.resource(), false);
 		while (contents.hasNext()) {
@@ -91,7 +92,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	public Object caseAttribute(Attribute object) {
 		/*
 		 * Convenience for common 'rankdir=LR' attribute: use
-		 * HorizontalTreeLayoutAlgorithm if nothing else is specified
+		 * TreeLayoutAlgorithm.LEFT_RIGHT if nothing else is specified
 		 */
 		if (object.getName().equals("rankdir") //$NON-NLS-1$
 				&& object.getValue().equals("LR")) { //$NON-NLS-1$
@@ -233,12 +234,13 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		}
 	}
 
-	private void createNode(final NodeStmt eStatementObject) {
-		String nodeId = eStatementObject.getName();
-		GraphNode node = new GraphNode(currentParentGraph(), SWT.NONE, nodeId);
+	private void createNode(final NodeStmt nodeStatement) {
+		String nodeId = nodeStatement.getName();
+		GraphNode node = nodes.containsKey(nodeId) ? nodes.get(nodeId)
+				: new GraphNode(currentParentGraph(), SWT.NONE, nodeId);
 		node.setText(nodeId);
 		node.setData(nodeId);
-		String value = getAttributeValue(eStatementObject, "label"); //$NON-NLS-1$
+		String value = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
 		if (value != null) {
 			node.setText(value);
 		} else if (globalNodeLabel != null) {

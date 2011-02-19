@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2009, 2011 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -312,6 +312,36 @@ public final class TestGraphInstanceDotImport {
 		Assert.assertEquals(1, graph.getConnections().size());
 	}
 
+	@Test
+	public void nodesBeforeEdges() {
+		Graph graph = interpreter.create(new Shell(), SWT.NONE,
+				parse("graph{1;2;3;4; 1->2;2->3;2->4}")); //$NON-NLS-1$
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(4, graph.getNodes().size());
+		Assert.assertEquals(3, graph.getConnections().size());
+	}
+
+	@Test
+	public void nodesAfterEdges() {
+		Graph graph = interpreter.create(new Shell(), SWT.NONE,
+				parse("graph{1->2;2->3;2->4;1[label=\"node\"];2;3;4}")); //$NON-NLS-1$
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(4, graph.getNodes().size());
+		Assert.assertEquals(3, graph.getConnections().size());
+		Assert.assertEquals("node",
+				((GraphNode) graph.getNodes().get(0)).getText());
+	}
+
+	@Test
+	public void useInterpreterTwice() {
+		String dot = "graph{1;2;3;4; 1->2;2->3;2->4}"; //$NON-NLS-1$
+		Graph graph1 = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Graph graph2 = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph2); //$NON-NLS-1$
+		Assert.assertEquals(4, graph2.getNodes().size());
+		Assert.assertEquals(3, graph2.getConnections().size());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void faultyLayout() {
 		interpreter.create(new Shell(), SWT.NONE,
@@ -324,72 +354,11 @@ public final class TestGraphInstanceDotImport {
 				parse("graph Sample{1;2;1->2[style=\"dashed++\"]}")); //$NON-NLS-1$
 	}
 
-	/**
-	 * Import instance by interpreting the parsed AST.
-	 */
-	@Test
-	public void viaInterpreter() {
-		test(interpreter);
-	}
-
-	/**
-	 * Test importing a DOT graph to a Zest graph instance directly. Internally,
-	 * this compiles the generated Zest class and loads it using Reflection.
-	 */
-	static void test(final GraphCreatorInterpreter converter) {
-
-		/*
-		 * This is not really working, it only appears to be, as the generated
-		 * file will be compiled by the IDE and will then be available to the
-		 * classloader. A symptom of this is that it will only work starting
-		 * with the second run.
-		 */
-		Shell shell = new Shell();
-		DotAst dot1 = parse("digraph TestingGraph {1;2;3;4; 1->2;2->3;2->4}"); //$NON-NLS-1$
-		Graph graph = converter.create(shell, SWT.NONE, dot1);
-		Assert.assertNotNull("Created graph must exist!", graph); //$NON-NLS-1$
-		// open(shell); // blocks UI when running tests
-		Assert.assertEquals(4, graph.getNodes().size());
-		Assert.assertEquals(3, graph.getConnections().size());
-		System.out.println(String.format(
-				"Imported '%s' to Graph '%s' of type '%s'", dot1, graph, graph //$NON-NLS-1$
-						.getClass().getSimpleName()));
-
-		/*
-		 * Check a unique name works, i.e. no existing classes on the classpath
-		 * could be used instead of the new one:
-		 */
-		DotAst dot2 = parse("digraph TestingGraph" + System.currentTimeMillis() //$NON-NLS-1$
-				+ "{1;2;3;4; 1->2;2->3;2->4}"); //$NON-NLS-1$
-		graph = converter.create(shell, SWT.NONE, dot2);
-		Assert.assertNotNull("Created graph must exist!", graph); //$NON-NLS-1$
-		// open(shell); // blocks UI when running tests
-		Assert.assertEquals(4, graph.getNodes().size());
-		Assert.assertEquals(3, graph.getConnections().size());
-		System.out.println(String.format(
-				"Imported '%s' to Graph '%s' of type '%s'", dot2, graph, graph //$NON-NLS-1$
-						.getClass().getSimpleName()));
-
-		/*
-		 * Check if a DOT graph with the same name is changed when the generated
-		 * class is loaded:
-		 */
-		DotAst dot3 = parse("digraph TestingGraph{1;2;3 1->2;2->3}"); //$NON-NLS-1$
-		graph = converter.create(shell, SWT.NONE, dot3);
-		Assert.assertNotNull("Created graph must exist!", graph); //$NON-NLS-1$
-		Assert.assertEquals(3, graph.getNodes().size());
-		Assert.assertEquals(2, graph.getConnections().size());
-		System.out.println(String.format(
-				"Imported '%s' to Graph '%s' of type '%s'", dot3, graph, graph //$NON-NLS-1$
-						.getClass().getSimpleName()));
-		// open(shell); // blocks UI when running tests
-	}
-
-	private static DotAst parse(String dot) {
+	private DotAst parse(String dot) {
 		return new DotImport(dot).getDotAst();
 	}
 
-	static void open(final Shell shell) {
+	private void open(final Shell shell) {
 		shell.setText("Testing"); //$NON-NLS-1$
 		shell.setLayout(new FillLayout());
 		shell.setSize(600, 300);
