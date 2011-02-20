@@ -335,11 +335,66 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void useInterpreterTwice() {
 		String dot = "graph{1;2;3;4; 1->2;2->3;2->4}"; //$NON-NLS-1$
-		Graph graph1 = interpreter.create(new Shell(), SWT.NONE, parse(dot));
-		Graph graph2 = interpreter.create(new Shell(), SWT.NONE, parse(dot));
-		Assert.assertNotNull("Created graph must not be null", graph2); //$NON-NLS-1$
-		Assert.assertEquals(4, graph2.getNodes().size());
-		Assert.assertEquals(3, graph2.getConnections().size());
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(4, graph.getNodes().size());
+		Assert.assertEquals(3, graph.getConnections().size());
+	}
+
+	@Test
+	public void idsWithQuotes() {
+		String dot = "graph{\"node 1\";\"node 2\"}"; //$NON-NLS-1$
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node 1",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(0)).getText());
+		Assert.assertEquals("node 2",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(1)).getText());
+	}
+
+	@Test
+	public void escapedQuotes() {
+		String dot = "graph{n1[label=\"node \\\"1\\\"\"]}"; //$NON-NLS-1$
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node \"1\"",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(0)).getText());
+	}
+
+	@Test
+	public void fullyQuoted() {
+		String dot = "graph{\"n1\";\"n2\";\"n1\"->\"n2\"}"; //$NON-NLS-1$
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals(2, graph.getNodes().size());
+		Assert.assertEquals(1, graph.getConnections().size());
+		Assert.assertEquals("n1", //$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(0)).getText());
+		Assert.assertEquals("n2", //$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(1)).getText());
+	}
+
+	@Test
+	public void labelsWithQuotes() {
+		String dot = "graph{n1[label=\"node 1\"];n2[label=\"node 2\"];n1--n2[label=\"edge 1\"]}"; //$NON-NLS-1$
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node 1",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(0)).getText());
+		Assert.assertEquals("node 2",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(1)).getText());
+		Assert.assertEquals("edge 1", ((GraphConnection) graph.getConnections()//$NON-NLS-1$
+				.get(0)).getText());
+	}
+
+	@Test
+	public void newLinesInLabels() {
+		String dot = "graph{n1[label=\"node\n1\"]}"; //$NON-NLS-1$
+		Graph graph = interpreter.create(new Shell(), SWT.NONE, parse(dot));
+		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
+		Assert.assertEquals("node\n1",//$NON-NLS-1$
+				((GraphNode) graph.getNodes().get(0)).getText());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -358,6 +413,8 @@ public final class TestGraphInstanceDotImport {
 		return new DotImport(dot).getDotAst();
 	}
 
+	@SuppressWarnings("unused")
+	/* would block when running tests */
 	private void open(final Shell shell) {
 		shell.setText("Testing"); //$NON-NLS-1$
 		shell.setLayout(new FillLayout());

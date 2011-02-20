@@ -127,10 +127,10 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	@Override
 	public Object caseNodeId(NodeId object) {
 		if (!gotSource) {
-			currentEdgeSourceNodeId = object.getName();
+			currentEdgeSourceNodeId = escaped(object.getName());
 			gotSource = true;
 		} else {
-			String targetNodeId = object.getName();
+			String targetNodeId = escaped(object.getName());
 			if (currentEdgeSourceNodeId != null && targetNodeId != null) {
 				GraphConnection graphConnection = new GraphConnection(graph,
 						SWT.NONE, node(currentEdgeSourceNodeId),
@@ -235,7 +235,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	}
 
 	private void createNode(final NodeStmt nodeStatement) {
-		String nodeId = nodeStatement.getName();
+		String nodeId = escaped(nodeStatement.getName());
 		GraphNode node = nodes.containsKey(nodeId) ? nodes.get(nodeId)
 				: new GraphNode(currentParentGraph(), SWT.NONE, nodeId);
 		node.setText(nodeId);
@@ -281,14 +281,23 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 					if (next instanceof AList) {
 						AList attributeElement = (AList) next;
 						if (attributeElement.getName().equals(attributeName)) {
-							String label = attributeElement.getValue()
-									.replaceAll("\"", ""); //$NON-NLS-1$//$NON-NLS-2$
-							return label;
+							return escaped(attributeElement.getValue());
 						}
 					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private String escaped(String id) {
+		return id
+		/* In DOT, an ID can be quoted... */
+		.replaceAll("^\"|\"$", "")
+		/*
+		 * ...and may contain escaped quotes, see footnote on
+		 * http://www.graphviz.org/doc/info/lang.html
+		 */
+		.replaceAll("\\\\\"", "\"");
 	}
 }
