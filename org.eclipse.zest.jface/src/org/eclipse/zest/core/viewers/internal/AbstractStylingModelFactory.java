@@ -69,12 +69,13 @@ public abstract class AbstractStylingModelFactory implements
 		if (dest != source) {
 			leftList = getConnectionList(dest, source);
 		}
-
+		int size = (leftList != null) ? leftList.size() + rightList.size()
+				: rightList.size();
 		// adjust the arcs going from source to destination
-		adjustCurves(rightList);
+		adjustCurves(rightList, size);
 		// adjust the arcs going from destination to source
 		if (leftList != null) {
-			adjustCurves(leftList);
+			adjustCurves(leftList, size);
 		}
 	}
 
@@ -83,31 +84,20 @@ public abstract class AbstractStylingModelFactory implements
 	 * the bezier curves based on the number of curves in the list.
 	 * 
 	 * @param rightList
+	 * @param size
+	 *            total number of arcs - may be bigger then connections.size
 	 */
-	protected void adjustCurves(List connections) {
-		// @tag TODO curves : add back this code to adjust the curves
-		// int scale = 3;
-		// for (int i = 0; i < connections.size(); i++) {
-		// GraphConnection conn = (GraphConnection) connections.get(i);
-		// if (conn.getSource() == conn.getDestination()) {
-		// scale = 5;
-		// }
-		// // even if the connection isn't curved in the style, the edit part
-		// // may decide that it should be curved if source and dest are equal.
-		// // @tag drawing(arcs) : check here if arcs are too close when being
-		// // drawn. Adjust the constant.
-		// int lineWidth = conn.getLineWidth();
-		// conn.setCurveDepth((i + 1) * (scale + lineWidth));
-		//
-		// // @tag zest(bug(152530-Bezier(fix))) : set the angles, etc based on
-		// // the count.
-		// // limit the angle to 90 degrees.
-		// conn.setStartAngle(90.0 - 85.0 / Math.pow(i, 1.0 / 9.0));
-		// conn.setEndAngle(85.0 / Math.pow(i, 1.0 / 9.0) - 90.0);
-		// // limit the length to 1
-		// conn.setStartLength(.75 - .25 / (Math.sqrt(i)));
-		// conn.setEndLength(.75 - .25 / (Math.sqrt(i)));
-		// }
+	protected void adjustCurves(List connections, int size) {
+		for (int i = 0; i < connections.size(); i++) {
+			GraphConnection conn = (GraphConnection) connections.get(i);
+			int radius = 20;
+			if (conn.getSource() == conn.getDestination()) {
+				radius = 40;
+			} else if (size < 2) {
+				radius = 0;
+			}
+			conn.setCurveDepth((i + 1) * radius);
+		}
 	}
 
 	/**
