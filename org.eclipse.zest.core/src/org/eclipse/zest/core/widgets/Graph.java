@@ -744,32 +744,34 @@ public class Graph extends FigureCanvas implements IContainer {
 
 			getRootLayer().translateToRelative(mousePoint);
 
-			if (me.getState() == SWT.ALT) {
-				double scale = getRootLayer().getScale();
-				scale *= 1.05;
-				getRootLayer().setScale(scale);
-				Point newMousePoint = mousePoint.getCopy().scale(1.05);
-				Point delta = new Point(newMousePoint.x - mousePoint.x,
-						newMousePoint.y - mousePoint.y);
-				Point newViewLocation = getViewport().getViewLocation()
-						.getCopy().translate(delta);
-				getViewport().setViewLocation(newViewLocation);
+			if ((me.getState() & SWT.MOD3) != 0) {
+				if ((me.getState() & SWT.MOD2) == 0) {
+					double scale = getRootLayer().getScale();
+					scale *= 1.05;
+					getRootLayer().setScale(scale);
+					Point newMousePoint = mousePoint.getCopy().scale(1.05);
+					Point delta = new Point(newMousePoint.x - mousePoint.x,
+							newMousePoint.y - mousePoint.y);
+					Point newViewLocation = getViewport().getViewLocation()
+							.getCopy().translate(delta);
+					getViewport().setViewLocation(newViewLocation);
 
-				clearSelection();
-				return;
-			} else if (me.getState() == (SWT.ALT | SWT.SHIFT)) {
-				double scale = getRootLayer().getScale();
-				scale /= 1.05;
-				getRootLayer().setScale(scale);
+					clearSelection();
+					return;
+				} else {
+					double scale = getRootLayer().getScale();
+					scale /= 1.05;
+					getRootLayer().setScale(scale);
 
-				Point newMousePoint = mousePoint.getCopy().scale(1 / 1.05);
-				Point delta = new Point(newMousePoint.x - mousePoint.x,
-						newMousePoint.y - mousePoint.y);
-				Point newViewLocation = getViewport().getViewLocation()
-						.getCopy().translate(delta);
-				getViewport().setViewLocation(newViewLocation);
-				clearSelection();
-				return;
+					Point newMousePoint = mousePoint.getCopy().scale(1 / 1.05);
+					Point delta = new Point(newMousePoint.x - mousePoint.x,
+							newMousePoint.y - mousePoint.y);
+					Point newViewLocation = getViewport().getViewLocation()
+							.getCopy().translate(delta);
+					getViewport().setViewLocation(newViewLocation);
+					clearSelection();
+					return;
+				}
 			} else {
 				boolean hasSelection = selectedItems.size() > 0;
 				IFigure figureUnderMouse = getFigureAt(mousePoint.x,
@@ -784,7 +786,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				// being held down, then select
 				// nothing
 				if (figureUnderMouse == null || figureUnderMouse == Graph.this) {
-					if (me.getState() != SWT.CONTROL) {
+					if ((me.getState() & SWT.MOD1) != 0) {
 						clearSelection();
 						if (hasSelection) {
 							fireWidgetSelectedEvent(null);
@@ -797,7 +799,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				GraphItem itemUnderMouse = (GraphItem) figure2ItemMap
 						.get(figureUnderMouse);
 				if (itemUnderMouse == null) {
-					if (me.getState() != SWT.CONTROL) {
+					if ((me.getState() & SWT.MOD1) != 0) {
 						clearSelection();
 						if (hasSelection) {
 							fireWidgetSelectedEvent(null);
@@ -811,7 +813,7 @@ public class Graph extends FigureCanvas implements IContainer {
 					// held down, remove this selection
 					// @tag Zest.selection : This deselects when you have CTRL
 					// pressed
-					if (me.getState() == SWT.CONTROL) {
+					if ((me.getState() & SWT.MOD1) != 0) {
 						selectedItems.remove(itemUnderMouse);
 						(itemUnderMouse).unhighlight();
 						fireWidgetSelectedEvent(itemUnderMouse);
@@ -819,7 +821,7 @@ public class Graph extends FigureCanvas implements IContainer {
 					return;
 				}
 
-				if (me.getState() != SWT.CONTROL) {
+				if ((me.getState() & SWT.MOD1) == 0) {
 					clearSelection();
 				}
 
