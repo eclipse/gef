@@ -20,6 +20,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ GraphSelectionTests.class, GraphViewerTests.class,
-		IFigureProviderTests.class, DotExportSuite.class, DotImportSuite.class })
+		IFigureProviderTests.class, LayoutAlgorithmTests.class,
+		DotExportSuite.class, DotImportSuite.class })
 public final class AllHeadlessTests {
 }

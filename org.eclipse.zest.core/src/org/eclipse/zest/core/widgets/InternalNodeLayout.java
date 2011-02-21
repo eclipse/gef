@@ -18,6 +18,7 @@ import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentDimension;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentPoint;
 import org.eclipse.zest.layouts.interfaces.ConnectionLayout;
@@ -271,6 +272,10 @@ class InternalNodeLayout implements NodeLayout {
 
 	GraphNode getNode() {
 		return node;
+	}
+
+	public Item[] getItems() {
+		return new GraphNode[] { node };
 	}
 
 	void applyLayout() {

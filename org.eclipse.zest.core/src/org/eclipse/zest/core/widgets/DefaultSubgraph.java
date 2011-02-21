@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.zest.core.widgets.custom.LabelSubgraph;
 import org.eclipse.zest.core.widgets.custom.TriangleSubgraph;
 import org.eclipse.zest.core.widgets.custom.TriangleSubgraph.TriangleParameters;
@@ -323,6 +324,27 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 
 		NodeLayout[] result2 = new NodeLayout[i];
+		System.arraycopy(result, 0, result2, 0, i);
+		return result2;
+	}
+
+	public Item[] getItems() {
+		GraphNode[] result = new GraphNode[nodes.size()];
+		int i = 0;
+		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
+			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
+			// getItems always returns an array of size 1 in case of
+			// InternalNodeLayout
+			result[i] = (GraphNode) node.getItems()[0];
+			if (!context.isLayoutItemFiltered(node.getNode())) {
+				i++;
+			}
+		}
+		if (i == nodes.size()) {
+			return result;
+		}
+
+		GraphNode[] result2 = new GraphNode[i];
 		System.arraycopy(result, 0, result2, 0, i);
 		return result2;
 	}

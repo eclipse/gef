@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.zest.layouts.interfaces;
 
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentDimension;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentPoint;
 
@@ -103,4 +104,13 @@ public interface EntityLayout {
 	 * @return array of predecessors of this node
 	 */
 	public EntityLayout[] getPredecessingEntities();
+
+	/**
+	 * Returns all graph items that are represented using this single entity.
+	 * They are useful when a layout would get information about the graph it
+	 * draws.
+	 * 
+	 * @return an array of graph items
+	 */
+	public Item[] getItems();
 }
