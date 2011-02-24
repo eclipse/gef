@@ -75,8 +75,15 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 		hookControl(this.graph);
 	}
 
-	public void setControl(Graph graphModel) {
-		this.graph = graphModel;
+	/**
+	 * Initializes the viewer.
+	 * 
+	 * @param graph
+	 *            The initial graph widget
+	 */
+	public GraphViewer(Graph graph) {
+		super(graph.getStyle());
+		this.graph = graph;
 		hookControl(this.graph);
 	}
 

@@ -19,6 +19,9 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.GraphViewer;
+import org.eclipse.zest.core.widgets.Graph;
+import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphNode;
 
 /**
  * Tests for the {@link GraphViewer} class.
@@ -63,5 +66,17 @@ public class GraphViewerTests extends TestCase {
 		shell.dispose();
 		Assert.assertTrue("The viewer's graph control should be disposed",
 				viewer.getControl().isDisposed());
+	}
+
+	/**
+	 * Test creation of a graph viewer from a graph widget.
+	 */
+	public void testCreateFromGraph() {
+		Graph g = new Graph(shell, SWT.NONE);
+		new GraphConnection(g, SWT.NONE, new GraphNode(g, SWT.NONE),
+				new GraphNode(g, SWT.NONE));
+		GraphViewer v = new GraphViewer(g);
+		Assert.assertEquals(2, v.getGraphControl().getNodes().size());
+		Assert.assertEquals(1, v.getGraphControl().getConnections().size());
 	}
 }
