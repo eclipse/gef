@@ -161,26 +161,17 @@
 		<p>The main bug for this feature is 
 			<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=277380" target="doc_external">bug 277380</a>. View a 
 			<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=specific&amp;order=relevance+desc&amp;bug_status=__all__&amp;product=GEF&amp;content=%5Bdot4zest%5D" target="doc_external">complete list</a> of related bugs. If you have suggestions for this feature you can 
-			<a href="https://bugs.eclipse.org/bugs/enter_bug.cgi?bug_file_loc=http%3A%2F%2Fwiki.eclipse.org%2FGraphviz_DOT_as_a_DSL_for_Zest&amp;bug_severity=enhancement&amp;bug_status=NEW&amp;comment=&amp;component=Zest&amp;contenttypeentry=&amp;contenttypemethod=autodetect&amp;contenttypeselection=text%2Fplain&amp;data=&amp;description=&amp;flag_type-1=X&amp;flag_type-2=X&amp;flag_type-6=X&amp;form_name=enter_bug&amp;maketemplate=Remember%20values%20as%20bookmarkable%20template&amp;op_sys=All&amp;priority=P3&amp;product=GEF&amp;rep_platform=All&amp;short_desc=%5Bdot4zest%5D%20New%20request%20summary&amp;version=unspecified" target="doc_external">file a new bug</a>. The code for this feature is part of the CVS repository at 
-			<i>dev.eclipse.org:/cvsroot/tools</i>. The dot4zest bundles can be found in 
-			<i>org.eclipse.gef/plugins</i> and 
-			<i>org.eclipse.gef/test</i>, named 
-			<i>org.eclipse.zest.dot.*</i>. 
+			<a href="https://bugs.eclipse.org/bugs/enter_bug.cgi?bug_file_loc=http%3A%2F%2Fwiki.eclipse.org%2FGraphviz_DOT_as_a_DSL_for_Zest&amp;bug_severity=enhancement&amp;bug_status=NEW&amp;comment=&amp;component=Zest&amp;contenttypeentry=&amp;contenttypemethod=autodetect&amp;contenttypeselection=text%2Fplain&amp;data=&amp;description=&amp;flag_type-1=X&amp;flag_type-2=X&amp;flag_type-6=X&amp;form_name=enter_bug&amp;maketemplate=Remember%20values%20as%20bookmarkable%20template&amp;op_sys=All&amp;priority=P3&amp;product=GEF&amp;rep_platform=All&amp;short_desc=%5Bdot4zest%5D%20New%20request%20summary&amp;version=unspecified" target="doc_external">file a new bug</a>. The code for this feature is part of the Zest 2.0 Git repository. The dot4zest bundles are named 
+			<i>org.eclipse.zest.dot.*</i>. See the general instructions for 
+			<a href="http://wiki.eclipse.org/Zest#Setup" title="Zest#Setup" target="doc_external">setting up Zest 2.0</a>.
 		</p>
-		<p>To run the current work in progress code (in Eclipse 3.6 Helios), install the Zest, JET, Xtext and MWE features (which are available from the Helios update site under the 
-			<i>modeling</i> category). You will also have to install the Xtext Antlr feature 1.x.x from the Itemis update site at 
-			<i>
-				<a href="http://download.itemis.com/updates/milestones" target="doc_external">http://download.itemis.com/updates/milestones</a>
-			</i> (see the 
-			<a href="http://www.eclipse.org/Xtext/documentation/0_7_0/xtext.html#antlr_ip_issue" target="doc_external">Xtext documentation</a> for details on this). 
-		</p>
-		<p>Then, check out the bundles from the CVS location above. After the checkout, run (Run As -&gt; MWE2 workflow) the 
+		<p>After changes to the Xtext grammar, run (Run As -&gt; MWE2 workflow) the 
 			<i>GenerateDot.mwe2</i> in the 
-			<i>/src/org/eclipse/zest/internal/dot/parser</i> folder of the import bundle. Make sure to set the project or workspace encoding to UTF-8.
+			<i>/src/org/eclipse/zest/internal/dot/parser</i> folder of the core bundle. Make sure to set the project or workspace encoding to UTF-8.
 		</p>
 		<p>Run the 
 			<i>All*.java</i> test suites of the test bundle (
-			<i>org.eclipse.gef/test/org.eclipse.zest.dot.tests</i>) as JUnit or JUnit Pug-in tests to get an impression of the current implementation state. To use the UI components, run an Eclipse application configured with 
+			<i>org.eclipse.zest.tests</i>) as JUnit or JUnit Pug-in tests to get an impression of the current implementation state. To use the UI components, run an Eclipse application configured with 
 			<i>org.eclipse.zest.dot.ui</i> and required plugins. See details on usage in the user documentation above.
 		</p>
 		<h3 id="Motivation">Motivation</h3>
