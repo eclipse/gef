@@ -254,12 +254,15 @@ public class TreeLayoutObserver {
 		 *         better than its current parent
 		 */
 		protected boolean isBetterParent(TreeNode potentialParent) {
+			if (potentialParent == null)
+				return false;
 			if (this.parent == null && !this.isAncestorOf(potentialParent))
 				return true;
 			if (potentialParent.depth <= this.depth
 					&& potentialParent.depth != -1)
 				return true;
-			if (this.parent.depth == -1 && potentialParent.depth >= 0
+			if (this.parent != null && this.parent.depth == -1
+					&& potentialParent.depth >= 0
 					&& !this.isAncestorOf(potentialParent))
 				return true;
 			return false;
