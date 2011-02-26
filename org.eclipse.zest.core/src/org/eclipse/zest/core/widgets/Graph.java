@@ -215,11 +215,11 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
-	 * Gets a list of the GraphModelNode children objects under the root node in
-	 * this diagram. If the root node is null then all the top level nodes are
+	 * Gets a list of the GraphNode children objects under the root node in this
+	 * graph. If the root node is null then all the top level nodes are
 	 * returned.
 	 * 
-	 * @return List of GraphModelNode objects
+	 * @return List of GraphNode objects
 	 */
 	public List getNodes() {
 		return nodes;
@@ -358,6 +358,8 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
+	 * Apply this graphs's layout cleanly and display all changes.
+	 * 
 	 * @since 2.0
 	 */
 	public void applyLayoutNow() {
@@ -915,6 +917,23 @@ public class Graph extends FigureCanvas implements IContainer {
 		GraphConnection[] connsArray = new GraphConnection[connections.size()];
 		connsArray = (GraphConnection[]) connections.toArray(connsArray);
 		return connsArray;
+	}
+
+	/**
+	 * Clear the graph of all its content.
+	 * 
+	 * @since 2.0
+	 */
+	public void clear() {
+		for (Iterator i = new ArrayList(connections).iterator(); i.hasNext();) {
+			removeConnection((GraphConnection) i.next());
+		}
+		for (Iterator i = new HashSet(subgraphFigures).iterator(); i.hasNext();) {
+			removeSubgraphFigure((IFigure) i.next());
+		}
+		for (Iterator i = new ArrayList(nodes).iterator(); i.hasNext();) {
+			removeNode((GraphNode) i.next());
+		}
 	}
 
 	void removeConnection(GraphConnection connection) {

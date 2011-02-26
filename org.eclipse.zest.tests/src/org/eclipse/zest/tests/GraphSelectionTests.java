@@ -141,6 +141,18 @@ public class GraphSelectionTests extends TestCase {
 				selectionEvents.size());
 	}
 
+	public void testClearGraphCheckSelection() throws Exception {
+		graph.setSelection(nodes);
+		assertEquals(2, graph.getSelection().size());
+		graph.clear();
+		assertEquals(0, graph.getNodes().size());
+		assertEquals(0, graph.getConnections().size());
+		assertEquals(0, graph.getSelection().size());
+		setUp();
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getConnections().size());
+	}
+
 	private SelectionListener setupListener(final List events) {
 		return new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
