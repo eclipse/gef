@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.zest.sdk"
+      id="org.eclipse.zest.source-feature"
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName">
@@ -17,47 +17,43 @@
       %license
    </license>
 
-   <includes
-         id="org.eclipse.zest.source-feature"
-         version="0.0.0"/>
-
    <plugin
-         id="org.eclipse.zest.core"
+         id="org.eclipse.zest.core.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.zest.dot.core"
+         id="org.eclipse.zest.dot.core.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.zest.dot.export"
+         id="org.eclipse.zest.dot.export.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.zest.dot.ui"
+         id="org.eclipse.zest.dot.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.zest.jface"
+         id="org.eclipse.zest.jface.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.zest.layouts"
+         id="org.eclipse.zest.layouts.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

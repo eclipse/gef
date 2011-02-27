@@ -38,6 +38,7 @@
 		<module>org.eclipse.zest.dot.export</module>
 		<module>org.eclipse.zest.dot.ui</module>
 		<module>org.eclipse.zest.feature</module>
+		<module>org.eclipse.zest.source-feature</module>
 		<module>org.eclipse.zest.repository</module>
 		<!--<module>org.eclipse.zest.tests</module>-->
 	</modules>
@@ -86,6 +87,19 @@
 								</artifact>
 							</artifacts>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.tycho</groupId>
+				<artifactId>maven-osgi-source-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
