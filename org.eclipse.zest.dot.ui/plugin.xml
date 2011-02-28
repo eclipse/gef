@@ -21,6 +21,7 @@
 	<!-- Help contents -->
     <extension point="org.eclipse.help.toc">
         <toc file="Graphviz-DOT-as-a-DSL-for-Zest-toc.xml" primary="true"/>
+        <toc file="Zest-toc.xml" primary="true"/>
     </extension>
     
     <!-- DOT editor -->

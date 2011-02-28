@@ -9,9 +9,9 @@
  *******************************************************************************/
  -->
 <!-- dot4zest documentation build script -->
-<project name="dot4zest" default="doc" basedir=".">
+<project name="Zest Documentation" default="doc" basedir=".">
  <path id="wikitext.tasks.classpath">
-    <fileset dir="Graphviz_DOT_as_a_DSL_for_Zest">
+    <fileset dir=".">
     	<!-- To build the documentation from the wiki, we need the wikitext.core 
     	and wikitext.mediawiki Jars from the WikiText standalone distribution: -->
         <include name="org.eclipse.mylyn.wikitext.*core*.jar"/>
@@ -34,9 +34,12 @@
         dest="${basedir}"
         title="Graphviz DOT as a DSL for Zest"
         generateUnifiedToc="false">
-     	<!-- Set up which wiki page to pull from: -->
+     	<!-- Set up which wiki pages to pull from: -->
+     	<path name="Zest" 
+                title="Zest Documentation" 
+                generateToc="true"/>     	
         <path name="Graphviz_DOT_as_a_DSL_for_Zest" 
-                title="Graphviz DOT as a DSL for Zest" 
+                title="DOT for Zest" 
                 generateToc="true"/>
      </mediawiki-to-eclipse-help>   
  </target>
