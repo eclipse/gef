@@ -40,7 +40,7 @@
 		<module>org.eclipse.zest.feature</module>
 		<module>org.eclipse.zest.source-feature</module>
 		<module>org.eclipse.zest.repository</module>
-		<!--<module>org.eclipse.zest.tests</module>-->
+		<module>org.eclipse.zest.tests</module>
 	</modules>
 	<build>
 		<plugins>

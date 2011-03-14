@@ -12,6 +12,33 @@
 	<artifactId>org.eclipse.zest.tests</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
+	<properties>
+		<vmargs>-Xmx512m -XX:MaxPermSize=256m</vmargs>
+	</properties>
+	<profiles>
+		<profile>
+			<id>skip-tests</id>
+			<activation>
+				<property>
+					<name>skip-tests</name>
+				</property>
+			</activation>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>mac-customization</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<vmargs>-Xmx512m -XX:MaxPermSize=256m -XstartOnFirstThread</vmargs>
+			</properties>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -21,7 +48,7 @@
 				<configuration>
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -XstartOnFirstThread</argLine>
+					<argLine>${vmargs}</argLine>
 					<testSuite>org.eclipse.zest.tests</testSuite>
 					<testClass>org.eclipse.zest.tests.AllHeadlessTests</testClass>
 					<product>org.eclipse.sdk.ide</product>
