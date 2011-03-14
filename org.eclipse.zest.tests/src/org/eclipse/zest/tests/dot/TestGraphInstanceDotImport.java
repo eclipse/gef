@@ -414,6 +414,20 @@ public final class TestGraphInstanceDotImport {
 				((GraphNode) graph.getNodes().get(0)).getText());
 	}
 
+	@Test
+	public void multiEdgeStatements() {
+		Graph graph = new DotGraph("digraph{1->2->3->4}", new Shell(), SWT.NONE); //$NON-NLS-1$
+		assertEquals(4, graph.getNodes().size());
+		assertEquals(3, graph.getConnections().size());
+		/* Each node should be connected to one other, the next node: */
+		assertEquals(1, ((GraphNode) graph.getNodes().get(0))
+				.getSourceConnections().size());
+		assertEquals(1, ((GraphNode) graph.getNodes().get(1))
+				.getSourceConnections().size());
+		assertEquals(1, ((GraphNode) graph.getNodes().get(2))
+				.getSourceConnections().size());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void faultyLayout() {
 		interpreter.create(new Shell(), SWT.NONE,

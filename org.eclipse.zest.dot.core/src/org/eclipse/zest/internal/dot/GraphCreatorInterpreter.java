@@ -127,34 +127,37 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	@Override
 	public Object caseNodeId(NodeId object) {
 		if (!gotSource) {
-			currentEdgeSourceNodeId = escaped(object.getName());
 			gotSource = true;
 		} else {
 			String targetNodeId = escaped(object.getName());
 			if (currentEdgeSourceNodeId != null && targetNodeId != null) {
-				GraphConnection graphConnection = new GraphConnection(graph,
-						SWT.NONE, node(currentEdgeSourceNodeId),
-						node(targetNodeId));
-				/* Set the optional label, if set in the DOT input: */
-				if (currentEdgeLabelValue != null) {
-					graphConnection.setText(currentEdgeLabelValue);
-				} else if (globalEdgeLabel != null) {
-					graphConnection.setText(globalEdgeLabel);
-				}
-				/* Set the optional style, if set in the DOT input: */
-				if (currentEdgeStyleValue != null) {
-					Style v = Enum.valueOf(Style.class,
-							currentEdgeStyleValue.toUpperCase());
-					graphConnection.setLineStyle(v.style);
-				} else if (globalEdgeStyle != null) {
-					Style v = Enum.valueOf(Style.class,
-							globalEdgeStyle.toUpperCase());
-					graphConnection.setLineStyle(v.style);
-				}
+				addConnectionTo(targetNodeId);
 			}
 			gotSource = false;
 		}
+		/* Current node is potential source in case next is caseEdgeRhsNode: */
+		currentEdgeSourceNodeId = escaped(object.getName());
 		return super.caseNodeId(object);
+	}
+
+	private void addConnectionTo(String targetNodeId) {
+		GraphConnection graphConnection = new GraphConnection(graph, SWT.NONE,
+				node(currentEdgeSourceNodeId), node(targetNodeId));
+		/* Set the optional label, if set in the DOT input: */
+		if (currentEdgeLabelValue != null) {
+			graphConnection.setText(currentEdgeLabelValue);
+		} else if (globalEdgeLabel != null) {
+			graphConnection.setText(globalEdgeLabel);
+		}
+		/* Set the optional style, if set in the DOT input: */
+		if (currentEdgeStyleValue != null) {
+			Style v = Enum.valueOf(Style.class,
+					currentEdgeStyleValue.toUpperCase());
+			graphConnection.setLineStyle(v.style);
+		} else if (globalEdgeStyle != null) {
+			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
+			graphConnection.setLineStyle(v.style);
+		}
 	}
 
 	@Override
