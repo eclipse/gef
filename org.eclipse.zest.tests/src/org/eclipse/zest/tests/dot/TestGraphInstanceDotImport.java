@@ -20,6 +20,7 @@ import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.dot.DotGraph;
 import org.eclipse.zest.internal.dot.DotAst;
 import org.eclipse.zest.internal.dot.DotImport;
 import org.eclipse.zest.internal.dot.GraphCreatorInterpreter;
@@ -113,10 +114,26 @@ public final class TestGraphInstanceDotImport {
 				GraphContainer.class, graph.getNodes().get(1).getClass());
 		assertEquals(3, ((GraphContainer) graph.getNodes().get(1)).getNodes()
 				.size());
-		// TODO add GraphContainer#getLayoutAlgorithm() for test below
-		// Assert.assertEquals(RadialLayoutAlgorithm.class, ((GraphContainer)
-		// graph.getNodes().get(0)).getLayoutAlgorithm());
+		assertEquals(RadialLayoutAlgorithm.class, ((GraphContainer) graph
+				.getNodes().get(0)).getLayoutAlgorithm().getClass());
 		// TODO nodes between and after subgraphs
+	}
+
+	@Test
+	public void layoutClusterSubgraph() {
+		Shell shell = new Shell();
+		Graph graph = new DotGraph("digraph{"
+				+ "subgraph cluster{graph[layout=radial]}; "
+				+ "subgraph cluster{};}", shell, SWT.NONE);
+		// open(shell);
+		assertEquals("The first node should be a graph container",
+				GraphContainer.class, graph.getNodes().get(0).getClass());
+		assertEquals("The second node should be a graph container",
+				GraphContainer.class, graph.getNodes().get(1).getClass());
+		assertEquals(RadialLayoutAlgorithm.class, ((GraphContainer) graph
+				.getNodes().get(0)).getLayoutAlgorithm().getClass());
+		assertEquals(TreeLayoutAlgorithm.class, ((GraphContainer) graph
+				.getNodes().get(1)).getLayoutAlgorithm().getClass());
 	}
 
 	@Test

@@ -957,4 +957,11 @@ public class GraphContainer extends GraphNode implements IContainer {
 		}
 		return result;
 	}
+
+	/**
+	 * @since 2.0
+	 */
+	public LayoutAlgorithm getLayoutAlgorithm() {
+		return layoutAlgorithm;
+	}
 }
