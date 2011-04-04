@@ -68,13 +68,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 			if (getLabelProvider() instanceof IFigureProvider) {
 				figureProvider = (IFigureProvider) getLabelProvider();
 			}
-			if (!filterElement(inputElement, data)) {
-				if (figureProvider != null) {
-					createNode(model, data, figureProvider.getFigure(data));
-				} else {
-					createNode(model, data);
-				}
-			}
+			createNode(model, data);
 		}
 
 		// We may have other entities (such as children of containers)
