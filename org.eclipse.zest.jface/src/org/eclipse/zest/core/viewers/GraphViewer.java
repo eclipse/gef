@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -31,6 +32,7 @@ import org.eclipse.zest.core.viewers.internal.GraphModelEntityFactory;
 import org.eclipse.zest.core.viewers.internal.GraphModelEntityRelationshipFactory;
 import org.eclipse.zest.core.viewers.internal.GraphModelFactory;
 import org.eclipse.zest.core.viewers.internal.IStylingGraphModelFactory;
+import org.eclipse.zest.core.viewers.internal.TreeModelEntityFactory;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.ZestStyles;
@@ -196,9 +198,11 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 			super.setContentProvider(contentProvider);
 		} else if (contentProvider instanceof IGraphEntityRelationshipContentProvider) {
 			super.setContentProvider(contentProvider);
+		} else if (contentProvider instanceof ITreeContentProvider) {
+			super.setContentProvider(contentProvider);
 		} else {
 			throw new IllegalArgumentException(
-					"Invalid content provider, only IGraphContentProvider, IGraphEntityContentProvider, or IGraphEntityRelationshipContentProvider are supported.");
+					"Invalid content provider, only IGraphContentProvider, IGraphEntityContentProvider, IGraphEntityRelationshipContentProvider and ITreeContentProvider are supported.");
 		}
 	}
 
@@ -369,6 +373,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 				modelFactory = new GraphModelEntityFactory(this);
 			} else if (getContentProvider() instanceof IGraphEntityRelationshipContentProvider) {
 				modelFactory = new GraphModelEntityRelationshipFactory(this);
+			} else if (getContentProvider() instanceof ITreeContentProvider) {
+				modelFactory = new TreeModelEntityFactory(this);
 			}
 		}
 		return modelFactory;
