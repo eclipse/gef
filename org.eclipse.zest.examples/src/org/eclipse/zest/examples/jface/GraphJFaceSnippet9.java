@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright 2005-2007, CHISEL Group, University of Victoria, Victoria, BC, Canada.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2011 Zoltan Ujhelyi. All rights reserved. This program and
+ * the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     The Chisel Group, University of Victoria
+ * <p/>
+ * Contributors: Zoltan Ujhelyi - initial implementation
  *******************************************************************************/
 package org.eclipse.zest.examples.jface;
 
@@ -28,33 +26,22 @@ import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
 /**
  * This snippet shows how to use the ITreeContentProvider to build a graph.
- * 
- * @author Ian Bull
- * 
  */
 public class GraphJFaceSnippet9 {
 
-	/**
-	 * The Content Provider
-	 * 
-	 * @author irbull
-	 * 
-	 */
 	static class MyContentProvider implements ITreeContentProvider {
 
 		private static final String n1 = "First", n2 = "Second", n3 = "Third",
-				n4 = "Forth";
+				n4 = "Fourth";
 
 		public Object[] getElements(Object inputElement) {
 			return new String[] { n1 };
 		}
 
 		public void dispose() {
-
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
 		}
 
 		public Object[] getChildren(Object parentElement) {
@@ -105,9 +92,6 @@ public class GraphJFaceSnippet9 {
 
 	static GraphViewer viewer = null;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display d = new Display();
 		Shell shell = new Shell(d);
@@ -116,14 +100,11 @@ public class GraphJFaceSnippet9 {
 		Button button = new Button(shell, SWT.PUSH);
 		button.setText("Reload");
 		button.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent e) {
 				viewer.setInput(new Object());
 			}
-
 		});
 		viewer = new GraphViewer(shell, SWT.NONE);
-
 		viewer.setContentProvider(new MyContentProvider());
 		viewer.setLabelProvider(new MyLabelProvider());
 		viewer.setLayoutAlgorithm(new TreeLayoutAlgorithm());
@@ -132,16 +113,13 @@ public class GraphJFaceSnippet9 {
 				System.out.println("Selection changed: "
 						+ (event.getSelection()));
 			}
-
 		});
 		viewer.setInput(new Object());
-
 		shell.open();
 		while (!shell.isDisposed()) {
 			while (!d.readAndDispatch()) {
 				d.sleep();
 			}
 		}
-
 	}
 }

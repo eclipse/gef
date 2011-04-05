@@ -1,10 +1,12 @@
-/*
- * Tree Model Entity Factory
- * 
- * Authors:
- *   Sushant Sirsikar - initial implementation
- *   Zoltan Ujhelyi - adaptation to Zest 2.0
- */
+/*******************************************************************************
+ * Copyright (c) 2011 Sushant Sirsikar and others. All rights reserved. This 
+ * program and the accompanying materials are made available under the terms of 
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors:  Sushant Sirsikar - initial implementation
+ *                Zoltan Ujhelyi - adaptation to Zest 2.0
+ *******************************************************************************/
 package org.eclipse.zest.core.viewers.internal;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -18,7 +20,6 @@ import org.eclipse.zest.core.widgets.GraphNode;
  * A model factory for creating graph content based on an ITreeContentProvider
  * 
  * @author sushant sirsikar
- * 
  */
 public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 
@@ -45,7 +46,6 @@ public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 			return;
 		for (Object data : entities) {
 			createGraphNodes(model, data, provider);
-
 		}
 	}
 
