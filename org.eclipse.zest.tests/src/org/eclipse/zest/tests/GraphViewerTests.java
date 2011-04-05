@@ -79,4 +79,15 @@ public class GraphViewerTests extends TestCase {
 		Assert.assertEquals(2, v.getGraphControl().getNodes().size());
 		Assert.assertEquals(1, v.getGraphControl().getConnections().size());
 	}
+
+	/**
+	 * Try to find an item that cannot be found (see
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=237489)
+	 */
+	public void testFindGraphItem() {
+		Assert.assertNull(
+				"If an item cannot be found, the viewer should return null",
+				viewer.findGraphItem(new Integer(5)));
+	}
+
 }
