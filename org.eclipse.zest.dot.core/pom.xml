@@ -15,8 +15,8 @@
 	<build>
 	    <plugins>
 	      <plugin>
-	         <groupId>org.sonatype.tycho</groupId>
-	         <artifactId>maven-osgi-source-plugin</artifactId>
+	         <groupId>${tycho.groupId}</groupId>
+	         <artifactId>tycho-source-plugin</artifactId>
 	      </plugin>
 	    </plugins>
   	</build>

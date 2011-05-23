@@ -26,8 +26,8 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<tycho.version>0.10.0</tycho.version>
-		<tycho.groupid>org.sonatype.tycho</tycho.groupid>
+		<tycho.version>0.12.0</tycho.version>
+		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<modules>
@@ -45,13 +45,13 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
+				<groupId>${tycho.groupId}</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
+				<groupId>${tycho.groupId}</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
@@ -91,8 +91,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>maven-osgi-source-plugin</artifactId>
+				<groupId>${tycho.groupId}</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<executions>
 					<execution>

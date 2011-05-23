@@ -42,8 +42,8 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.sonatype.tycho</groupId>
-				<artifactId>maven-osgi-test-plugin</artifactId>
+				<groupId>${tycho.groupId}</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>

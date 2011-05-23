@@ -15,7 +15,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>${tycho.groupid}</groupId>
+				<groupId>${tycho.groupId}</groupId>
 				<artifactId>tycho-p2-publisher-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
