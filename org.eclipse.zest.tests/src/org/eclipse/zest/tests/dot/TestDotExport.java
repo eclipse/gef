@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.eclipse.zest.tests.dot;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -19,8 +21,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.dot.DotGraph;
 import org.eclipse.zest.internal.dot.DotExport;
-import org.eclipse.zest.tests.dot.TestDotTemplate;
+import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.junit.Test;
 
 /**
@@ -70,6 +76,29 @@ public class TestDotExport extends TestDotTemplate {
 				!dot.contains(containerLabel));
 		Assert.assertTrue("Nodes in containers should be rendered", //$NON-NLS-1$
 				dot.contains(nodeLabel));
+	}
+
+	/** Test mapping of Zest layouts to Graphviz layouts. */
+	@Test
+	public void zestToGraphvizLayoutMapping() {
+		DotGraph graph = new DotGraph(new Shell(), SWT.NONE);
+		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(), false);
+		assertTrue("TreeLayout -> 'dot'",
+				graph.toDot().contains("graph[layout=dot]"));
+		graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(), false);
+		assertTrue("RadialLayout -> 'twopi'",
+				graph.toDot().contains("graph[layout=twopi]"));
+		graph.setLayoutAlgorithm(new GridLayoutAlgorithm(), false);
+		assertTrue("GridLayout -> 'osage'",
+				graph.toDot().contains("graph[layout=osage]"));
+		graph.setLayoutAlgorithm(new SpringLayoutAlgorithm(), false);
+		assertTrue("SpringLayout, small -> 'fdp'",
+				graph.toDot().contains("graph[layout=fdp]"));
+		for (int i = 0; i < 100; i++) {
+			new GraphNode(graph, SWT.NONE);
+		}
+		assertTrue("SpringLayout, large -> 'sfdp'",
+				graph.toDot().contains("graph[layout=sfdp]"));
 	}
 
 	private void assertNoBlankLines(final String dot) {
