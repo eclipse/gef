@@ -128,7 +128,7 @@ public final class DotExport {
 	 * @param resultFile
 	 * @return The image file exported via DOT for the given Zest graph, or null
 	 */
-	File toImage(final String dotDir, final String format,
+	public File toImage(final String dotDir, final String format,
 			final String resultFile) {
 		File dotFile = DotFileUtils.write(dotString);
 		File image = DotDrawer.renderImage(new File(dotDir), dotFile, format,

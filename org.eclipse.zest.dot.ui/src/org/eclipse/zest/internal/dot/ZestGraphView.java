@@ -79,6 +79,7 @@ public final class ZestGraphView extends ViewPart {
 	private static final String EXPORT = DotUiMessages.ZestGraphView_7;
 	private static final String EXPORT_MODE = DotUiMessages.ZestGraphView_8;
 	private static final String UPDATE_MODE = DotUiMessages.ZestGraphView_9;
+	private static final String LINK_MODE = DotUiMessages.ZestGraphView_10;
 
 	private static final String RESOURCES_ICONS_OPEN_GIF = "resources/icons/open.gif"; //$NON-NLS-1$
 	private static final String RESOURCES_ICONS_EXPORT_GIF = "resources/icons/export.gif"; //$NON-NLS-1$
@@ -86,6 +87,7 @@ public final class ZestGraphView extends ViewPart {
 	private static final String RESOURCES_ICONS_LAYOUT = "resources/icons/layout.gif"; //$NON-NLS-1$
 	private static final String RESOURCES_ICONS_EXPORT_MODE = "resources/icons/export-mode.gif"; //$NON-NLS-1$
 	private static final String RESOURCES_ICONS_UPDATE_MODE = "resources/icons/update-mode.gif"; //$NON-NLS-1$
+	private static final String RESOURCES_ICONS_LINK_MODE = "resources/icons/link-mode.gif"; //$NON-NLS-1$
 
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
 	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
@@ -93,6 +95,7 @@ public final class ZestGraphView extends ViewPart {
 
 	private boolean exportFromZestGraph = true;
 	private boolean listenToDotContent = false;
+	private boolean linkImage = false;
 
 	private Composite composite;
 	private Graph graph;
@@ -173,6 +176,7 @@ public final class ZestGraphView extends ViewPart {
 		addResetButton();
 		addExportModeButton();
 		addExportButton();
+		addLinkModeButton();
 	}
 
 	public Graph getGraph() {
@@ -209,6 +213,7 @@ public final class ZestGraphView extends ViewPart {
 					graph.applyLayout();
 				}
 				handleWikiText(currentDot);
+				linkCorrespondingImage();
 			}
 		};
 		Display display = getViewSite().getShell().getDisplay();
@@ -216,6 +221,15 @@ public final class ZestGraphView extends ViewPart {
 			display.asyncExec(runnable);
 		} else {
 			display.syncExec(runnable);
+		}
+	}
+
+	protected void linkCorrespondingImage() {
+		boolean canExportFromZest = exportFromZestGraph && graph != null;
+		boolean canExportFromDot = !exportFromZestGraph && dotString != null;
+		if (linkImage && (canExportFromZest || canExportFromDot)) {
+			File image = generateImageFromGraph(true, FORMAT_PNG);
+			openFile(image);
 		}
 	}
 
@@ -295,27 +309,38 @@ public final class ZestGraphView extends ViewPart {
 					openFile(image);
 				}
 			}
-
-			private void openFile(File file) {
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IPath location = Path.fromOSString(file.getAbsolutePath());
-				IFile copy = workspace.getRoot().getFileForLocation(location);
-				IEditorRegistry registry = PlatformUI.getWorkbench()
-						.getEditorRegistry();
-				if (registry.isSystemExternalEditorAvailable(copy.getName())) {
-					try {
-						getViewSite().getPage().openEditor(
-								new FileEditorInput(copy),
-								IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					}
-				}
-			}
 		};
 		exportAction.setImageDescriptor(DotUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_EXPORT_GIF));
 		getViewSite().getActionBars().getToolBarManager().add(exportAction);
+	}
+
+	private void openFile(File file) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPath location = Path.fromOSString(file.getAbsolutePath());
+		IFile copy = workspace.getRoot().getFileForLocation(location);
+		IEditorRegistry registry = PlatformUI.getWorkbench()
+				.getEditorRegistry();
+		if (registry.isSystemExternalEditorAvailable(copy.getName())) {
+			try {
+				getViewSite().getPage().openEditor(new FileEditorInput(copy),
+						IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+			} catch (PartInitException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void addLinkModeButton() {
+		Action linkModeAction = new Action(LINK_MODE, SWT.TOGGLE) {
+			public void run() {
+				linkImage = toggle(this, linkImage);
+			}
+		};
+		linkModeAction.setId(linkModeAction.getText());
+		linkModeAction.setImageDescriptor(DotUiActivator
+				.getImageDescriptor(RESOURCES_ICONS_LINK_MODE));
+		getViewSite().getActionBars().getToolBarManager().add(linkModeAction);
 	}
 
 	private void addResetButton() {
@@ -458,7 +483,8 @@ public final class ZestGraphView extends ViewPart {
 			final String format) {
 		DotExport dotExport = exportFromZestGraph ? new DotExport(graph)
 				: new DotExport(dotString);
-		File image = dotExport.toImage(DotDirStore.getDotDirPath(), null);
+		File image = dotExport.toImage(DotDirStore.getDotDirPath(), format,
+				null);
 		try {
 			URL url = file.getParent().getLocationURI().toURL();
 			File copy = DotFileUtils.copySingleFile(DotFileUtils.resolve(url),
