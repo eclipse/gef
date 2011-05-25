@@ -16,14 +16,9 @@ digraph SampleGraph {
 	/* Specify global attributes for the graph (layout supported), nodes (label 
 	   supported) and edges (label and style supported), override these in 
 	   individual nodes or edges (see below): */
-	graph[layout=grid]
+	graph[layout=osage]
    	node[label="node2"]
    	edge[label="edge", style=dashed]
-  	/*-------------------------------------------------------------------------*/
-	/* Specify the Zest layout algorithm to use, e.g. tree, spring, radial, 
-	   grid, or any x to use the xLayoutAlgorithm class (this is ignored by 
-	   Graphviz). */
-	//layout=spring
 	/*-------------------------------------------------------------------------*/
 	/* Nodes can have specified labels: */
 	1[label="one"]

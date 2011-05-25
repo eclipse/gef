@@ -57,10 +57,20 @@ public final class DotAst {
 	 * algorithms.
 	 */
 	enum Layout {
-		TREE(new TreeLayoutAlgorithm()), HTREE(new TreeLayoutAlgorithm(
-				TreeLayoutAlgorithm.LEFT_RIGHT)), GRID(
-				new GridLayoutAlgorithm()), RADIAL(new RadialLayoutAlgorithm()), SPRING(
-				new SpringLayoutAlgorithm());
+		/***/
+		DOT(new TreeLayoutAlgorithm()),
+		/***/
+		OSAGE(new GridLayoutAlgorithm()),
+		/***/
+		TWOPI(new RadialLayoutAlgorithm()),
+		/***/
+		CIRCO(new RadialLayoutAlgorithm()),
+		/***/
+		NEATO(new RadialLayoutAlgorithm()),
+		/***/
+		FDP(new SpringLayoutAlgorithm()),
+		/***/
+		SFDP(new SpringLayoutAlgorithm());
 		LayoutAlgorithm algorithm;
 
 		Layout(final LayoutAlgorithm algorithm) {

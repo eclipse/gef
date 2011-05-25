@@ -8,7 +8,7 @@
  *******************************************************************************/
 digraph ExperimentalAnimationLayout {
 	/* We can specify a Zest layout for the animation here: */
-	graph[layout=radial] // = RadialLayoutAlgorithm
+	graph[layout=twopi] // = RadialLayoutAlgorithm
 	1;2;3;4;5
 	/* The single animation steps are marked by numbers: */
 	subgraph cluster_0{ 1 -> 2 }

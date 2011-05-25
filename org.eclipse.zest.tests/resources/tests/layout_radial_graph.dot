@@ -8,7 +8,7 @@
  *******************************************************************************/
 /* Test input. */
 digraph LayoutRadialGraph{
-	graph[layout=radial] // = RadialLayoutAlgorithm
+	graph[layout=twopi] // = RadialLayoutAlgorithm
 	1;2;3;4;5
 	1->2; 2->3; 2->4; 4->5
 }

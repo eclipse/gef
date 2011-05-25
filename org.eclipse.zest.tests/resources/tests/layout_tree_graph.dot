@@ -8,7 +8,7 @@
  *******************************************************************************/
 /* Test input. */
 digraph LayoutTreeGraph{
-	graph[layout=tree] // = TreeLayoutAlgorithm
+	graph[layout=dot] // = TreeLayoutAlgorithm
 	1;2;3;4;5
 	1->2; 2->3; 2->4; 4->5
 }

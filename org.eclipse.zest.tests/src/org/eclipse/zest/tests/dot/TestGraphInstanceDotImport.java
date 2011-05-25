@@ -97,7 +97,7 @@ public final class TestGraphInstanceDotImport {
 	public void labeledClusterSubgraph() {
 		Shell shell = new Shell();
 		DotImport dotImport = new DotImport("digraph{"
-				+ "subgraph cluster{graph[layout=radial]; label=left; 1->2}; "
+				+ "subgraph cluster{graph[layout=twopi]; label=left; 1->2}; "
 				+ "subgraph cluster{label=right; 1->3; 3->4; 3->5};}");
 		Graph graph = dotImport.newGraphInstance(shell, SWT.NONE);
 		// open(shell);
@@ -123,7 +123,7 @@ public final class TestGraphInstanceDotImport {
 	public void layoutClusterSubgraph() {
 		Shell shell = new Shell();
 		Graph graph = new DotGraph("digraph{"
-				+ "subgraph cluster{graph[layout=radial]}; "
+				+ "subgraph cluster{graph[layout=twopi]}; "
 				+ "subgraph cluster{};}", shell, SWT.NONE);
 		// open(shell);
 		assertEquals("The first node should be a graph container",
@@ -245,7 +245,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void layoutSpring() {
 		Graph graph = interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{graph[layout=spring];1;}")); //$NON-NLS-1$
+				parse("graph Sample{graph[layout=fdp];1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(SpringLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
@@ -254,7 +254,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void layoutGrid() {
 		Graph graph = interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{graph[layout=grid];1;}")); //$NON-NLS-1$
+				parse("graph Sample{graph[layout=osage];1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(GridLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
@@ -263,7 +263,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void layoutRadial() {
 		Graph graph = interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{graph[layout=radial];1;}")); //$NON-NLS-1$
+				parse("graph Sample{graph[layout=twopi];1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(RadialLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
@@ -272,7 +272,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void layoutTree() {
 		Graph graph = interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{graph[layout=tree];1;}")); //$NON-NLS-1$
+				parse("graph Sample{graph[layout=dot];1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(TreeLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
@@ -281,7 +281,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	public void layoutHorizontalTreeViaLayout() {
 		Graph graph = interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{graph[layout=htree];1;}")); //$NON-NLS-1$
+				parse("graph Sample{graph[layout=dot];rankdir=LR;1;}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(TreeLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
