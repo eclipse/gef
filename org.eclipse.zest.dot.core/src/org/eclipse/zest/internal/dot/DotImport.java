@@ -60,7 +60,7 @@ public final class DotImport {
 
 	private void init(final String dotString) {
 		if (dotString == null || dotString.trim().length() == 0) {
-			throw new IllegalArgumentException(DotMessages.DotImport_2 + ": "
+			throw new IllegalArgumentException(DotMessages.DotImport_2 + ": " //$NON-NLS-1$
 					+ dotString);
 		}
 		loadFrom(dotString);

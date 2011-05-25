@@ -296,11 +296,11 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private String escaped(String id) {
 		return id
 		/* In DOT, an ID can be quoted... */
-		.replaceAll("^\"|\"$", "")
-		/*
-		 * ...and may contain escaped quotes, see footnote on
-		 * http://www.graphviz.org/doc/info/lang.html
-		 */
-		.replaceAll("\\\\\"", "\"");
+		.replaceAll("^\"|\"$", "") //$NON-NLS-1$//$NON-NLS-2$
+				/*
+				 * ...and may contain escaped quotes, see footnote on
+				 * http://www.graphviz.org/doc/info/lang.html
+				 */
+				.replaceAll("\\\\\"", "\""); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
