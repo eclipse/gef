@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.Animation;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.CoordinateListener;
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.FreeformLayer;
@@ -102,6 +103,8 @@ public class Graph extends FigureCanvas implements IContainer {
 
 	private ScalableFreeformLayeredPane rootlayer;
 	private ZestRootLayer zestRootLayer;
+
+	private ConnectionRouter defaultConnectionRouter;
 
 	/**
 	 * Constructor for a Graph. This widget represents the root of the graph,
@@ -1254,5 +1257,56 @@ public class Graph extends FigureCanvas implements IContainer {
 		Dimension preferredSize = this.getPreferredSize();
 		return new DisplayIndependentRectangle(0, 0, preferredSize.width,
 				preferredSize.height);
+	}
+
+	/**
+	 * Sets the default connection router for the graph view, but does not apply
+	 * it retroactively.
+	 * 
+	 * @param defaultConnectionRouter
+	 * @since 2.0
+	 */
+	public void setDefaultConnectionRouter(
+			ConnectionRouter defaultConnectionRouter) {
+		this.defaultConnectionRouter = defaultConnectionRouter;
+	}
+
+	/**
+	 * Returns the default connection router for the graph view.
+	 * 
+	 * @return the default connection router; may be null.
+	 * @since 2.0
+	 */
+	public ConnectionRouter getDefaultConnectionRouter() {
+		return defaultConnectionRouter;
+	}
+
+	/**
+	 * Sets the default connection router for all connections that have no
+	 * connection routers attached to them.
+	 * 
+	 * @since 2.0
+	 */
+	public void applyConnectionRouter() {
+		// for (GraphConnection conn : getConnections()){
+		Iterator iterator = getConnections().iterator();
+		while (iterator.hasNext()) {
+			GraphConnection conn = (GraphConnection) iterator.next();
+			conn.getConnectionFigure().setConnectionRouter(
+					defaultConnectionRouter);
+		}
+		this.getRootLayer().getUpdateManager().performUpdate();
+	}
+
+	/**
+	 * Updates the deafult connection router and applies to to all existing
+	 * connections that have no connection routers set to them.
+	 * 
+	 * @param defaultConnectionRouter
+	 * @since 2.0
+	 */
+	public void applyConnectionRouter(ConnectionRouter defaultConnectionRouter) {
+		setDefaultConnectionRouter(defaultConnectionRouter);
+		applyConnectionRouter();
 	}
 }

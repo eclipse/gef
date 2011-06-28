@@ -13,6 +13,7 @@ package org.eclipse.zest.core.widgets;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -72,6 +73,8 @@ public class GraphConnection extends GraphItem {
 
 	private boolean highlighted;
 	private boolean hasCustomTooltip;
+
+	private ConnectionRouter router = null;
 
 	public GraphConnection(Graph graphModel, int style, GraphNode source,
 			GraphNode destination) {
@@ -614,6 +617,9 @@ public class GraphConnection extends GraphItem {
 			PolylineArcConnection arcConnection = (PolylineArcConnection) connection;
 			arcConnection.setDepth(curveDepth);
 		}
+		if (connectionFigure != null) {
+			applyConnectionRouter(connectionFigure);
+		}
 		if ((connectionStyle & ZestStyles.CONNECTIONS_DIRECTED) > 0) {
 			PolygonDecoration decoration = new PolygonDecoration();
 			if (getLineWidth() < 3) {
@@ -667,6 +673,7 @@ public class GraphConnection extends GraphItem {
 			} else {
 				connectionFigure = new PolylineConnection();
 			}
+			applyConnectionRouter(connectionFigure);
 			sourceAnchor = new RoundedChopboxAnchor(
 					getSource().getNodeFigure(), 8);
 			targetAnchor = new RoundedChopboxAnchor(getDestination()
@@ -736,4 +743,29 @@ public class GraphConnection extends GraphItem {
 			layout.applyLayout();
 		}
 	}
+
+	/**
+	 * Applies the connection router with a possible fallback to the default
+	 * connection router to the graph
+	 * 
+	 * @param conn
+	 * @since 2.0
+	 */
+	void applyConnectionRouter(Connection conn) {
+		if (router != null) {
+			conn.setConnectionRouter(router);
+		} else if (graph.getDefaultConnectionRouter() != null) {
+			conn.setConnectionRouter(graph.getDefaultConnectionRouter());
+		}
+	}
+
+	/**
+	 * Sets the connection router of the connection
+	 * 
+	 * @param router
+	 */
+	public void setRouter(ConnectionRouter router) {
+		this.router = router;
+	}
+
 }

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.zest.core.viewers.internal;
 
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -17,6 +18,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.zest.core.viewers.IConnectionRouterStyleProvider;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
@@ -90,6 +92,11 @@ public class GraphItemStyler {
 						(IEntityConnectionStyleProvider) labelProvider);
 			} else if (labelProvider instanceof IConnectionStyleProvider) {
 				styleConnection(conn, (IConnectionStyleProvider) labelProvider);
+			}
+			if (labelProvider instanceof IConnectionRouterStyleProvider) {
+				ConnectionRouter router = ((IConnectionRouterStyleProvider) labelProvider)
+						.getConnectionRouter(conn.getExternalConnection());
+				conn.setRouter(router);
 			}
 			int swt = getLineStyleForZestStyle(conn.getConnectionStyle());
 			conn.setLineStyle(swt);
