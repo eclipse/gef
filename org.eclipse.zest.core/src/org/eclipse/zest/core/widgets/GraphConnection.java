@@ -745,9 +745,11 @@ public class GraphConnection extends GraphItem {
 	}
 
 	/**
-	 * Sets the connection router
+	 * Applies the connection router with a possible fallback to the default
+	 * connection router to the graph
 	 * 
 	 * @param conn
+	 * @since 2.0
 	 */
 	void applyConnectionRouter(Connection conn) {
 		if (router != null) {
@@ -756,4 +758,14 @@ public class GraphConnection extends GraphItem {
 			conn.setConnectionRouter(graph.getDefaultConnectionRouter());
 		}
 	}
+
+	/**
+	 * Sets the connection router of the connection
+	 * 
+	 * @param router
+	 */
+	public void setRouter(ConnectionRouter router) {
+		this.router = router;
+	}
+
 }
