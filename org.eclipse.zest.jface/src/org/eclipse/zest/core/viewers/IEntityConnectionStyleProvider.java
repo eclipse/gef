@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.zest.core.viewers;
 
+import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.services.IDisposable;
@@ -83,4 +84,15 @@ public interface IEntityConnectionStyleProvider extends IDisposable {
 	 * @return
 	 */
 	public IFigure getTooltip(Object entity);
+
+	/**
+	 * Returns the connection router of the single relation.
+	 * 
+	 * @param src
+	 *            the source entity.
+	 * @param dest
+	 *            the destination entity.
+	 * @return the router for the connection. Null for default.
+	 */
+	public ConnectionRouter getRouter(Object src, Object dest);
 }

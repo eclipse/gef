@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.zest.core.viewers.IConnectionRouterStyleProvider;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
@@ -93,11 +92,6 @@ public class GraphItemStyler {
 			} else if (labelProvider instanceof IConnectionStyleProvider) {
 				styleConnection(conn, (IConnectionStyleProvider) labelProvider);
 			}
-			if (labelProvider instanceof IConnectionRouterStyleProvider) {
-				ConnectionRouter router = ((IConnectionRouterStyleProvider) labelProvider)
-						.getRouter(conn.getExternalConnection());
-				conn.setRouter(router);
-			}
 			int swt = getLineStyleForZestStyle(conn.getConnectionStyle());
 			conn.setLineStyle(swt);
 			if (labelProvider instanceof ISelfStyleProvider) {
@@ -157,6 +151,10 @@ public class GraphItemStyler {
 		if ((w = provider.getLineWidth(rel)) >= 0) {
 			conn.setLineWidth(w);
 		}
+		ConnectionRouter cr;
+		if ((cr = provider.getRouter(rel)) != null) {
+			conn.setRouter(cr);
+		}
 	}
 
 	/**
@@ -206,6 +204,10 @@ public class GraphItemStyler {
 		int w = -1;
 		if ((w = provider.getLineWidth(src, dest)) >= 0) {
 			conn.setLineWidth(w);
+		}
+		ConnectionRouter cr;
+		if ((cr = provider.getRouter(src, dest)) != null) {
+			conn.setRouter(cr);
 		}
 	}
 

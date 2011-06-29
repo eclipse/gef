@@ -14,6 +14,7 @@ package org.eclipse.zest.examples.jface;
 import java.util.Iterator;
 
 import org.eclipse.draw2d.ConnectionRouter;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -21,12 +22,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.GraphViewer;
-import org.eclipse.zest.core.viewers.IConnectionRouterStyleProvider;
+import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
+import org.eclipse.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
@@ -83,8 +86,8 @@ public class ManhattanLayoutJFaceSnippet {
 
 	}
 
-	static class MyLabelProvider extends LabelProvider implements
-			IConnectionRouterStyleProvider {
+	static class MyConnectionRelationLabelProvider extends LabelProvider
+			implements IConnectionStyleProvider {
 		final Image image = Display.getDefault().getSystemImage(
 				SWT.ICON_WARNING);
 
@@ -100,11 +103,82 @@ public class ManhattanLayoutJFaceSnippet {
 			return element.toString();
 		}
 
+		/* Relation-based customization: IConnectionStyleProvider */
+
 		public ConnectionRouter getRouter(Object rel) {
 			if (!rel.equals("Scissors2Rock"))
 				return new ManhattanConnectionRouter();
 			else
 				return null;
+		}
+
+		public int getConnectionStyle(Object rel) {
+			return SWT.NONE;
+		}
+
+		public Color getColor(Object rel) {
+			return null;
+		}
+
+		public Color getHighlightColor(Object rel) {
+			return null;
+		}
+
+		public int getLineWidth(Object rel) {
+			return -1;
+		}
+
+		public IFigure getTooltip(Object entity) {
+			return null;
+		}
+
+	}
+
+	static class MyEndpointEntityLabelProvider extends LabelProvider implements
+			IEntityConnectionStyleProvider {
+		final Image image = Display.getDefault().getSystemImage(
+				SWT.ICON_WARNING);
+
+		public Image getImage(Object element) {
+			if (element.equals("Rock") || element.equals("Paper")
+					|| element.equals("Scissors")) {
+				return image;
+			}
+			return null;
+		}
+
+		public String getText(Object element) {
+			return element.toString();
+		}
+
+		/* Endpoint-based customization: IEntityConnectionStyleProvider */
+
+		public ConnectionRouter getRouter(Object src, Object dest) {
+			System.out.println(src + " -> " + dest);
+			if (!(src.equals("Paper") && dest.equals("Rock")))
+				return new ManhattanConnectionRouter();
+			else
+				return null;
+		}
+
+		public int getConnectionStyle(Object src, Object dest) {
+			return SWT.NONE;
+		}
+
+		public Color getColor(Object src, Object dest) {
+			return null;
+		}
+
+		public Color getHighlightColor(Object src, Object dest) {
+			return null;
+		}
+
+		public int getLineWidth(Object src, Object dest) {
+			return -1;
+		}
+
+		public IFigure getTooltip(Object entity) {
+			return null;
 		}
 
 	}
@@ -122,7 +196,7 @@ public class ManhattanLayoutJFaceSnippet {
 		shell.setSize(400, 400);
 		viewer = new GraphViewer(shell, SWT.NONE);
 		viewer.setContentProvider(new MyContentProvider());
-		viewer.setLabelProvider(new MyLabelProvider());
+		viewer.setLabelProvider(new MyConnectionRelationLabelProvider()); // MyEndpointEntityLabelProvider
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.setInput(new Object());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
