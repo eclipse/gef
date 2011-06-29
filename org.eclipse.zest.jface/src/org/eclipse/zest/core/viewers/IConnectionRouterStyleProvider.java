@@ -4,7 +4,7 @@
 package org.eclipse.zest.core.viewers;
 
 import org.eclipse.draw2d.ConnectionRouter;
-import org.eclipse.zest.core.widgets.Graph;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * Extension connection style provider that supports setting connection routers.
@@ -12,15 +12,13 @@ import org.eclipse.zest.core.widgets.Graph;
  * @author Zoltan Ujhelyi
  * @since 2.0
  */
-public interface IConnectionRouterStyleProvider {
+public interface IConnectionRouterStyleProvider extends IDisposable {
 
 	/**
-	 * Calculates the connection router of the single relation.
+	 * Returns the connection router of the single relation.
 	 * 
 	 * @param rel
-	 * @return the calculated connection router
-	 * @see Graph#setDefaultConnectionRouter(ConnectionRouter) to set the
-	 *      default router
+	 * @return the connection router for rel
 	 */
-	public ConnectionRouter getConnectionRouter(Object rel);
+	public ConnectionRouter getRouter(Object rel);
 }

@@ -1266,8 +1266,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * @param defaultConnectionRouter
 	 * @since 2.0
 	 */
-	public void setDefaultConnectionRouter(
-			ConnectionRouter defaultConnectionRouter) {
+	void setDefaultConnectionRouter(ConnectionRouter defaultConnectionRouter) {
 		this.defaultConnectionRouter = defaultConnectionRouter;
 	}
 
@@ -1277,7 +1276,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * @return the default connection router; may be null.
 	 * @since 2.0
 	 */
-	public ConnectionRouter getDefaultConnectionRouter() {
+	ConnectionRouter getDefaultConnectionRouter() {
 		return defaultConnectionRouter;
 	}
 
@@ -1287,7 +1286,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * 
 	 * @since 2.0
 	 */
-	public void applyConnectionRouter() {
+	void applyConnectionRouter() {
 		// for (GraphConnection conn : getConnections()){
 		Iterator iterator = getConnections().iterator();
 		while (iterator.hasNext()) {
@@ -1299,14 +1298,14 @@ public class Graph extends FigureCanvas implements IContainer {
 	}
 
 	/**
-	 * Updates the deafult connection router and applies to to all existing
-	 * connections that have no connection routers set to them.
+	 * Updates the connection router and applies to to all existing connections
+	 * that have no connection routers set to them.
 	 * 
-	 * @param defaultConnectionRouter
+	 * @param connectionRouter
 	 * @since 2.0
 	 */
-	public void applyConnectionRouter(ConnectionRouter defaultConnectionRouter) {
-		setDefaultConnectionRouter(defaultConnectionRouter);
+	public void setRouter(ConnectionRouter connectionRouter) {
+		setDefaultConnectionRouter(connectionRouter);
 		applyConnectionRouter();
 	}
 }

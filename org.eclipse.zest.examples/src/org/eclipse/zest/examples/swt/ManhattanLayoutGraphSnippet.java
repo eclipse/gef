@@ -5,7 +5,9 @@
  * accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: The Chisel Group, University of Victoria
+ * Contributors: 
+ * 		The Chisel Group, University of Victoria
+ * 		Zoltan Ujhelyi - update for connection router
  ******************************************************************************/
 package org.eclipse.zest.examples.swt;
 
@@ -66,7 +68,7 @@ public class ManhattanLayoutGraphSnippet {
 				} else {
 					router = null;
 				}
-				g.applyConnectionRouter(router);
+				g.setRouter(router);
 			}
 
 		});

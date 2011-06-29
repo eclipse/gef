@@ -95,7 +95,7 @@ public class GraphItemStyler {
 			}
 			if (labelProvider instanceof IConnectionRouterStyleProvider) {
 				ConnectionRouter router = ((IConnectionRouterStyleProvider) labelProvider)
-						.getConnectionRouter(conn.getExternalConnection());
+						.getRouter(conn.getExternalConnection());
 				conn.setRouter(router);
 			}
 			int swt = getLineStyleForZestStyle(conn.getConnectionStyle());

@@ -15,7 +15,7 @@ import org.eclipse.zest.layouts.dataStructures.DisplayIndependentPoint;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.EntityLayout;
 
-public class AlgorithmHelper {
+class AlgorithmHelper {
 
 	public static int MIN_NODE_SIZE = 8;
 

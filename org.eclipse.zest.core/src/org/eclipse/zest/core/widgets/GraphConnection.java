@@ -763,6 +763,7 @@ public class GraphConnection extends GraphItem {
 	 * Sets the connection router of the connection
 	 * 
 	 * @param router
+	 * @since 2.0
 	 */
 	public void setRouter(ConnectionRouter router) {
 		this.router = router;

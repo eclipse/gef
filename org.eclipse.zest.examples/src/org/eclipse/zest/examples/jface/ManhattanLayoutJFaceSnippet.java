@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     The Chisel Group, University of Victoria
+ *     Zoltan Ujhelyi - update for connectionprovider
  *******************************************************************************/
 package org.eclipse.zest.examples.jface;
 
@@ -99,7 +100,7 @@ public class ManhattanLayoutJFaceSnippet {
 			return element.toString();
 		}
 
-		public ConnectionRouter getConnectionRouter(Object rel) {
+		public ConnectionRouter getRouter(Object rel) {
 			if (!rel.equals("Scissors2Rock"))
 				return new ManhattanConnectionRouter();
 			else
