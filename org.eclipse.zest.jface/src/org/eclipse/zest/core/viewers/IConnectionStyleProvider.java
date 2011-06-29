@@ -70,13 +70,13 @@ public interface IConnectionStyleProvider extends IDisposable {
 	public int getLineWidth(Object rel);
 
 	/**
-	 * Returns the tooltop for this node. If null is returned Zest will simply
-	 * use the default tooltip.
+	 * Returns the tooltip for the connection.
 	 * 
-	 * @param entity
-	 * @return
+	 * @param rel
+	 *            the relationship represented by this connection.
+	 * @return the tooltip for the connection. Null for default.
 	 */
-	public IFigure getTooltip(Object entity);
+	public IFigure getTooltip(Object rel);
 
 	/**
 	 * Returns the connection router of the single relation.

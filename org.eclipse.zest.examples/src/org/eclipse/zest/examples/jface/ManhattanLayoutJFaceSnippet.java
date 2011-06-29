@@ -177,7 +177,7 @@ public class ManhattanLayoutJFaceSnippet {
 			return -1;
 		}
 
-		public IFigure getTooltip(Object entity) {
+		public IFigure getTooltip(Object src, Object dest) {
 			return null;
 		}
 
