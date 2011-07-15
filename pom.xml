@@ -19,6 +19,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
+		<!-- At the moment the Fornax plugin is only available as snapshot -->
+		<pluginRepository>
+			<id>fornax-snapshots</id>
+			<url>http://www.fornax-platform.org/archiva/repository/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
 	</pluginRepositories>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse</groupId>

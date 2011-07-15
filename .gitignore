@@ -10,3 +10,4 @@ org.eclipse.zest.tests/resources/tests/*.png
 org.eclipse.zest.dot.ui/Graphviz_DOT_as_a_DSL_for_Zest
 org.eclipse.zest.dot.ui/Zest
 org.eclipse.zest.dot.ui/*-toc.xml
+src-gen

@@ -22,7 +22,7 @@ Stmt: ( Attribute | EdgeStmtNode |  EdgeStmtSubgraph |  NodeStmt | AttrStmt | Su
 
 EdgeStmtNode : node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
-EdgeStmtSubgraph : subgraph=Subgraph  (edgeRHS=EdgeRhs)+ (attributes+=AttrList)*;
+EdgeStmtSubgraph : subgraph=Subgraph  (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
 NodeStmt   :  name=DOT_ID (attributes+=AttrList)*;
 //NodeStmt     :  name=DOT_ID (port=Port)? (attributes+=AttrList)*; // see FIXME for port
@@ -31,11 +31,11 @@ Attribute: name=DOT_ID "=" value=DOT_ID;
 
 AttrStmt  	:  	type=AttributeType (attributes+=AttrList)+;
 
-AttrList : "[" (a_list+=AList)* "]";
+AttrList : "[" {AttrList} (a_list+=AList)* "]";
 
 AList: name=DOT_ID ("=" value=DOT_ID)? (",")?;
 
-Subgraph : ( "subgraph" name=DOT_ID? )? "{" (stmts+=Stmt)* "}";
+Subgraph : ( "subgraph" {Subgraph} name=DOT_ID? ) "{" (stmts+=Stmt)* "}";
 
 //FIXME: Generated portImpl class has compilation errors with Helios Xtext
 //Port : ":" name=DOT_ID ( ":" compass_pt=CompassPt )? | ":" compass_pt=CompassPt;
