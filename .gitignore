@@ -2,7 +2,6 @@ bin
 target
 .refactorings
 plugin.xml_gen
-.antlr-generator-3.2.0.jar
 test.properties
 org.eclipse.zest.tests/resources/output/*.dot
 org.eclipse.zest.tests/resources/tests/*.png
