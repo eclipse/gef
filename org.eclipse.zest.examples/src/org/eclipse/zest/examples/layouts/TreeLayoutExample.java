@@ -2,6 +2,7 @@ package org.eclipse.zest.examples.layouts;
 
 import java.util.List;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -28,11 +29,11 @@ public class TreeLayoutExample {
 		// Create the shell
 		Display d = new Display();
 		Shell shell = new Shell(d);
-		shell.setText("GraphSnippet1");
+		shell.setText("TreeLayoutExample");
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 10;
 		shell.setLayout(gridLayout);
-		shell.setSize(500, 500);
+		shell.setSize(600, 500);
 
 		final Graph g = new Graph(shell, SWT.NONE);
 		final TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
@@ -100,6 +101,15 @@ public class TreeLayoutExample {
 		resizeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				algorithm.setResizing(resizeButton.getSelection());
+			}
+		});
+
+		final Button nodeSpaceButton = new Button(shell, SWT.CHECK);
+		nodeSpaceButton.setText("Set node space");
+		nodeSpaceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				algorithm.setNodeSpace(nodeSpaceButton.getSelection() ? new Dimension(
+						100, 100) : null);
 			}
 		});
 

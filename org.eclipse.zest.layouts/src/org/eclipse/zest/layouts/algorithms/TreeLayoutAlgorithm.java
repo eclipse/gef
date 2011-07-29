@@ -7,11 +7,13 @@
  * Contributors: The Chisel Group - initial API and implementation
  *               Mateusz Matela 
  *               Ian Bull
+ *               Miles Parker - optional node space configuration
  ******************************************************************************/
 package org.eclipse.zest.layouts.algorithms;
 
 import java.util.Iterator;
 
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
@@ -65,11 +67,52 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private TreeLayoutObserver treeObserver;
 
+	private Dimension nodeSpace;
+
+	/**
+	 * Create a default Tree Layout.
+	 */
 	public TreeLayoutAlgorithm() {
 	}
 
+	/**
+	 * Create a Tree Layout with a specified direction.
+	 * 
+	 * @param direction
+	 *            The direction, one of {@link TreeLayoutAlgorithm#BOTTOM_UP},
+	 *            {@link TreeLayoutAlgorithm#LEFT_RIGHT},
+	 *            {@link TreeLayoutAlgorithm#RIGHT_LEFT},
+	 *            {@link TreeLayoutAlgorithm#TOP_DOWN}
+	 */
 	public TreeLayoutAlgorithm(int direction) {
+		this(direction, null);
+	}
+
+	/**
+	 * Create a Tree Layout with fixed size spacing around nodes. If nodeSpace
+	 * is not null, the layout will size the container to the ideal space to
+	 * just contain all nodes of fixed size without any overlap. Otherwise, the
+	 * algorithm will size for the container's available space.
+	 * 
+	 * @param direction
+	 *            The direction, one of {@link TreeLayoutAlgorithm#BOTTOM_UP},
+	 *            {@link TreeLayoutAlgorithm#LEFT_RIGHT},
+	 *            {@link TreeLayoutAlgorithm#RIGHT_LEFT},
+	 *            {@link TreeLayoutAlgorithm#TOP_DOWN}
+	 * @param nodeSpace
+	 *            the size to make each node. May be null.
+	 */
+	public TreeLayoutAlgorithm(int direction, Dimension nodeSpace) {
 		setDirection(direction);
+		this.nodeSpace = nodeSpace;
+	}
+
+	/**
+	 * @param nodeSpaceSize
+	 *            the nodeSpaceSize to set
+	 */
+	public void setNodeSpace(Dimension nodeSpace) {
+		this.nodeSpace = nodeSpace;
 	}
 
 	public int getDirection() {
@@ -108,7 +151,9 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			treeObserver.stop();
 		}
 		this.context = context;
-		treeObserver = new TreeLayoutObserver(context, null);
+		if (context != null) {
+			treeObserver = new TreeLayoutObserver(context, null);
+		}
 	}
 
 	public void applyLayout(boolean clean) {
@@ -121,33 +166,53 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
+		scaleEntities(entities);
+	}
 
-		DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
-				bounds);
-		int insets = 4;
-		bounds2.x += insets;
-		bounds2.y += insets;
-		bounds2.width -= 2 * insets;
-		bounds2.height -= 2 * insets;
-		AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
+	private void scaleEntities(EntityLayout[] entities) {
+		if (nodeSpace == null) {
+			DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
+					bounds);
+			int insets = 4;
+			bounds2.x += insets;
+			bounds2.y += insets;
+			bounds2.width -= 2 * insets;
+			bounds2.height -= 2 * insets;
+			AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
+		}
 	}
 
 	void internalApplyLayout() {
 		TreeNode superRoot = treeObserver.getSuperRoot();
 		bounds = context.getBounds();
-		if (direction == TOP_DOWN || direction == BOTTOM_UP) {
-			leafSize = bounds.width / superRoot.numOfLeaves;
-			layerSize = bounds.height / superRoot.height;
-		} else {
-			leafSize = bounds.height / superRoot.numOfLeaves;
-			layerSize = bounds.width / superRoot.height;
-		}
+		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
 		for (Iterator iterator = superRoot.getChildren().iterator(); iterator
 				.hasNext();) {
 			TreeNode rootInfo = (TreeNode) iterator.next();
 			computePositionRecursively(rootInfo, leafCountSoFar);
 			leafCountSoFar = leafCountSoFar + rootInfo.numOfLeaves;
+		}
+	}
+
+	private void updateLeafAndLayerSizes() {
+		if (nodeSpace != null) {
+			if (getDirection() == TOP_DOWN || getDirection() == BOTTOM_UP) {
+				leafSize = nodeSpace.preciseWidth();
+				layerSize = nodeSpace.preciseHeight();
+			} else {
+				leafSize = nodeSpace.preciseHeight();
+				layerSize = nodeSpace.preciseWidth();
+			}
+		} else {
+			TreeNode superRoot = treeObserver.getSuperRoot();
+			if (direction == TOP_DOWN || direction == BOTTOM_UP) {
+				leafSize = bounds.width / superRoot.numOfLeaves;
+				layerSize = bounds.height / superRoot.height;
+			} else {
+				leafSize = bounds.height / superRoot.numOfLeaves;
+				layerSize = bounds.width / superRoot.height;
+			}
 		}
 	}
 
