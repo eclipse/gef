@@ -85,6 +85,12 @@ public final class DotAst {
 	 *            The DOT file to parse
 	 */
 	public DotAst(final File dotFile) {
+		String extension = ".dot"; //$NON-NLS-1$
+		if (!dotFile.getName().endsWith(extension)) {
+			throw new IllegalArgumentException(String.format(
+					"DOT file name must end with '%s' but was '%s'", extension, //$NON-NLS-1$
+					dotFile.getName()));
+		}
 		this.resource = loadResource(dotFile);
 	}
 
