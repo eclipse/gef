@@ -35,7 +35,7 @@
 				</os>
 			</activation>
 			<properties>
-				<vmargs>-Xmx512m -XX:MaxPermSize=256m -XstartOnFirstThread</vmargs>
+				<vmargs>-Xmx768m -XX:MaxPermSize=512m -XstartOnFirstThread</vmargs>
 			</properties>
 		</profile>
 	</profiles>

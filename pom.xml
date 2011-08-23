@@ -38,6 +38,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<modules>
+		<module>org.eclipse.zest.cloudio</module>	
 		<module>org.eclipse.zest.core</module>
 		<module>org.eclipse.zest.jface</module>
 		<module>org.eclipse.zest.layouts</module>
