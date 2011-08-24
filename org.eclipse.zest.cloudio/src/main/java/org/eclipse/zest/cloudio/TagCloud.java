@@ -514,7 +514,7 @@ public class TagCloud extends Canvas {
 		for (int y = 0; y < id.height; y++) {
 			id.getPixels(0, y, id.width, pixels, 0);
 			for (int i = 0; i < pixels.length; i++) {
-				if (pixels[i] == 0) {
+				if (pixels[i] < 5) {
 					matrix[y][i] = true;
 				}
 			}
