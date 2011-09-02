@@ -412,16 +412,9 @@ public abstract class AbstractStructuredGraphViewer extends
 		List internalSelection = getWidgetSelection();
 		LinkedList externalSelection = new LinkedList();
 		for (Iterator i = internalSelection.iterator(); i.hasNext();) {
-			// @tag zest.todo : should there be a method on IGraphItem to get
-			// the external data?
-			GraphItem item = (GraphItem) i.next();
-			if (item instanceof GraphNode) {
-				externalSelection.add(((GraphNode) item).getData());
-			} else if (item instanceof GraphConnection) {
-				externalSelection.add(((GraphConnection) item)
-						.getExternalConnection());
-			} else if (item instanceof Widget) {
-				externalSelection.add(((Widget) item).getData());
+			Object data = ((GraphItem) i.next()).getData();
+			if (data != null) {
+				externalSelection.add(data);
 			}
 		}
 		return externalSelection;

@@ -193,6 +193,7 @@ public class GraphConnection extends GraphItem {
 	 * Gets the external connection object.
 	 * 
 	 * @return Object
+	 * @deprecated Use {@link #getData()} instead
 	 */
 	public Object getExternalConnection() {
 		return this.getData();
