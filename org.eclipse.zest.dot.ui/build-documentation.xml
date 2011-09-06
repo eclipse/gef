@@ -32,15 +32,18 @@
         formatoutput="true"
         defaultAbsoluteLinkTarget="doc_external"
         dest="${basedir}"
-        title="Graphviz DOT as a DSL for Zest"
+        title="Zest"
         generateUnifiedToc="false">
      	<!-- Set up which wiki pages to pull from: -->
      	<path name="Zest" 
-                title="Zest Documentation" 
-                generateToc="true"/>     	
-        <path name="Graphviz_DOT_as_a_DSL_for_Zest" 
-                title="DOT for Zest" 
-                generateToc="true"/>
-     </mediawiki-to-eclipse-help>   
+              title="Zest Basic Documentation" 
+              generateToc="true"/>     	
+      <path name="Zest/DOT" 
+              title="Zest Graphviz DOT Support" 
+              generateToc="true"/>
+     	<path name="Zest/Cloudio" 
+              title="Zest Cloudio Tag Cloud" 
+              generateToc="true"/>
+     </mediawiki-to-eclipse-help>
  </target>
 </project>
