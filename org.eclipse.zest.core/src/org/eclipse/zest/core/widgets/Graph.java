@@ -791,7 +791,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				// being held down, then select
 				// nothing
 				if (figureUnderMouse == null || figureUnderMouse == Graph.this) {
-					if ((me.getState() & SWT.MOD1) != 0) {
+					if ((me.getState() & SWT.MOD1) == 0) {
 						clearSelection();
 						if (hasSelection) {
 							fireWidgetSelectedEvent(null);
