@@ -787,9 +787,8 @@ public class Graph extends FigureCanvas implements IContainer {
 					figureUnderMouse.getParent()
 							.translateFromParent(mousePoint);
 				}
-				// If the figure under the mouse is the canvas, and CTRL is not
-				// being held down, then select
-				// nothing
+				// If the figure under the mouse is the canvas, and CTRL/CMD is
+				// not being held down, then select nothing
 				if (figureUnderMouse == null || figureUnderMouse == Graph.this) {
 					if ((me.getState() & SWT.MOD1) == 0) {
 						clearSelection();
@@ -814,10 +813,10 @@ public class Graph extends FigureCanvas implements IContainer {
 					return;
 				}
 				if (selectedItems.contains(itemUnderMouse)) {
-					// We have already selected this node, and CTRL is being
+					// We have already selected this node, and CTRL/CMD is being
 					// held down, remove this selection
-					// @tag Zest.selection : This deselects when you have CTRL
-					// pressed
+					// @tag Zest.selection : This deselects when you have
+					// CTRL/CMD pressed
 					if ((me.getState() & SWT.MOD1) != 0) {
 						selectedItems.remove(itemUnderMouse);
 						(itemUnderMouse).unhighlight();
