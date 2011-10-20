@@ -75,24 +75,42 @@ public class GraphNode extends GraphItem {
 	private boolean hasCustomTooltip;
 
 	public GraphNode(IContainer graphModel, int style) {
-		this(graphModel, style, null);
+		// TODO remove cast when deprecated API is removed
+		this(graphModel, style, (IFigure) null);
 	}
 
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #GraphNode(IContainer, int)} and
+	 *             {@link #setText(String)}
+	 */
 	public GraphNode(IContainer graphModel, int style, String text) {
 		this(graphModel, style, text, null, null);
 	}
 
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #GraphNode(IContainer, int)} and
+	 *             {@link #setData(Object)}
+	 */
 	public GraphNode(IContainer graphModel, int style, Object data) {
 		this(graphModel, style, "" /* text */, null /* image */, data);
 	}
 
+	/**
+	 * @deprecated Since Zest 2.0, use {@link #GraphNode(IContainer, int)},
+	 *             {@link #setText(String)}, and {@link #setImage(Image)}
+	 */
 	public GraphNode(IContainer graphModel, int style, String text, Image image) {
 		this(graphModel, style, text, image, null);
 	}
 
+	protected GraphNode(IContainer graphModel, int style, IFigure figure) {
+		this(graphModel, style, "", null, figure);
+	}
+
+	// TODO change Object to IFigure when deprecated API is removed
 	private GraphNode(IContainer graphModel, int style, String text,
 			Image image, Object data) {
-		super(graphModel.getGraph(), style, data);
+		super(graphModel, style, data);
 		initModel(graphModel, text, image);
 		if (nodeFigure == null) {
 			initFigure();

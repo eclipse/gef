@@ -33,15 +33,24 @@ public abstract class GraphItem extends Item {
 	 * @param style
 	 */
 	public GraphItem(Widget parent, int style) {
-		this(parent, style | SWT.NO_BACKGROUND, null);
+		super(parent, style | SWT.NO_BACKGROUND);
 	}
 
 	/**
-	 * @param parent
-	 * @param style
+	 * @deprecated Since Zest 2.0, use {@link #GraphItem(Graph, int)} and
+	 *             {@link #setData(Object)}
 	 */
 	public GraphItem(Widget parent, int style, Object data) {
-		super(parent, style | SWT.NO_BACKGROUND);
+		this(parent, style | SWT.NO_BACKGROUND);
+		setDataChecked(data);
+	}
+
+	protected GraphItem(IContainer parent, int style, Object data) {
+		this(parent.getGraph(), style | SWT.NO_BACKGROUND);
+		setDataChecked(data);
+	}
+
+	private void setDataChecked(Object data) {
 		if (data != null) {
 			this.setData(data);
 		}

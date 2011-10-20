@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2009, 2011 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -21,9 +21,9 @@ import org.junit.runners.Suite;
  * @author Fabian Steeg (fsteeg)
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ GraphSelectionTests.class, GraphViewerTests.class,
-		IFigureProviderTests.class, LayoutAlgorithmTests.class,
-		DotExportSuite.class, DotImportSuite.class, TagCloudTests.class,
-		TagCloudViewerTests.class })
+@Suite.SuiteClasses({ GraphTests.class, GraphSelectionTests.class,
+		GraphViewerTests.class, IFigureProviderTests.class,
+		LayoutAlgorithmTests.class, DotExportSuite.class, DotImportSuite.class,
+		TagCloudTests.class, TagCloudViewerTests.class })
 public final class AllHeadlessTests {
 }

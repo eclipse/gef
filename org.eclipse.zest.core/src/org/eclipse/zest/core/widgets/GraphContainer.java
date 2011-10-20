@@ -290,7 +290,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * @since 2.0
 	 */
 	public GraphContainer(Graph graph, int style) {
-		super(graph, style, "");
+		super(graph, style);
 		initModel(graph, "", null);
 		close(false);
 		childNodes = new ArrayList();
@@ -298,8 +298,8 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)} and
-	 *             set text and image on created instance.
+	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)},
+	 *             {@link #setText(String)}, and {@link #setImage(Image)}
 	 */
 	public GraphContainer(Graph graph, int style, String text, Image image) {
 		this(graph, style);
