@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="zest" sequenceNumber="17">
+<target name="zest" sequenceNumber="18">
 <locations>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.jet.sdk.feature.group" version="1.1.1.v201101271243-42186A5NsKEQPHRQeFaJS4A35"/>
@@ -13,7 +13,7 @@
 <repository location="http://download.eclipse.org/eclipse/updates/3.7"/>
 </location>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.draw2d.sdk.feature.group" version="3.7.0.v20110425-2050-7A7I-8yF4F18BBI4E8L558F38x42"/>
+<unit id="org.eclipse.draw2d.sdk.feature.group" version="3.7.1.v20110830-1143-7A7I18yF5F18FCD4HAF849E78x42"/>
 <repository location="http://download.eclipse.org/tools/gef/updates/releases"/>
 </location>
 </locations>
