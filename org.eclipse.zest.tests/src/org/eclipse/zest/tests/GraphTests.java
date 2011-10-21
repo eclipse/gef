@@ -31,11 +31,13 @@ public class GraphTests extends TestCase {
 
 	private Graph graph;
 
+	private GraphConnection connection;
+
 	protected void setUp() throws Exception {
 		graph = new Graph(new Shell(), STYLE);
 		nodes = new GraphNode[] { new GraphNode(graph, STYLE),
 				new GraphNode(graph, STYLE) };
-		new GraphConnection(graph, STYLE, nodes[0], nodes[1]);
+		connection = new GraphConnection(graph, STYLE, nodes[0], nodes[1]);
 	}
 
 	public void testGraphData() {
@@ -53,6 +55,32 @@ public class GraphTests extends TestCase {
 		GraphItem item = (GraphConnection) graph.getConnections().get(0);
 		item.setData("connection item data");
 		assertEquals("connection item data", item.getData());
+	}
+
+	/**
+	 * Avoid infinite loop by disposed nodes during graph disposal.
+	 * 
+	 * @See https://bugs.eclipse.org/bugs/show_bug.cgi?id=361541
+	 */
+	public void testDisposeGraphWithDisposedNode() {
+		nodes[0].dispose(); // removes the node from the graph's nodes list
+		graph.getNodes().add(nodes[0]); // but we're malicious and add it back
+		assertTrue("Node should be disposed", nodes[0].isDisposed());
+		graph.dispose();
+		assertTrue("Graph should be disposed", graph.isDisposed());
+	}
+
+	/**
+	 * Avoid infinite loop by disposed connections during graph disposal.
+	 * 
+	 * @See https://bugs.eclipse.org/bugs/show_bug.cgi?id=361541
+	 */
+	public void testDisposeGraphWithDisposedConnection() {
+		connection.dispose();
+		graph.getConnections().add(connection);
+		assertTrue("Connection should be disposed", connection.isDisposed());
+		graph.dispose();
+		assertTrue("Graph should be disposed", graph.isDisposed());
 	}
 
 }

@@ -589,7 +589,7 @@ public class GraphConnection extends GraphItem {
 	}
 
 	private void doUpdateFigure(Connection connection) {
-		if (connection == null) {
+		if (connection == null || this.isDisposed()) {
 			return;
 		}
 		Shape connectionShape = (Shape) connection;

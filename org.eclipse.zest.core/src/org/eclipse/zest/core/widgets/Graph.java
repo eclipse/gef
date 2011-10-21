@@ -333,13 +333,13 @@ public class Graph extends FigureCanvas implements IContainer {
 	public void dispose() {
 		while (nodes.size() > 0) {
 			GraphNode node = (GraphNode) nodes.get(0);
-			if (node != null && !node.isDisposed()) {
+			if (node != null) {
 				node.dispose();
 			}
 		}
 		while (connections.size() > 0) {
 			GraphConnection connection = (GraphConnection) connections.get(0);
-			if (connection != null && !connection.isDisposed()) {
+			if (connection != null) {
 				connection.dispose();
 			}
 		}
