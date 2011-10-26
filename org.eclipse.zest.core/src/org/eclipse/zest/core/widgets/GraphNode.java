@@ -79,10 +79,6 @@ public class GraphNode extends GraphItem {
 		this(graphModel, style, (IFigure) null);
 	}
 
-	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphNode(IContainer, int)} and
-	 *             {@link #setText(String)}
-	 */
 	public GraphNode(IContainer graphModel, int style, String text) {
 		this(graphModel, style, text, null, null);
 	}
