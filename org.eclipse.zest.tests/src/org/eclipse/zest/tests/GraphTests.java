@@ -10,12 +10,14 @@ package org.eclipse.zest.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.draw2d.Figure;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.core.widgets.internal.ZestRootLayer;
 
 /**
  * General tests for the {@link Graph} class.
@@ -81,6 +83,26 @@ public class GraphTests extends TestCase {
 		assertTrue("Connection should be disposed", connection.isDisposed());
 		graph.dispose();
 		assertTrue("Graph should be disposed", graph.isDisposed());
+	}
+
+	/**
+	 * Avoid issues when un-highlighting non-existent nodes on
+	 * {@link #ZestRootLayer}.
+	 * 
+	 * @See https://bugs.eclipse.org/bugs/show_bug.cgi?id=361525
+	 */
+	public void testUnHighlightNode() {
+		new ZestRootLayer().unHighlightNode(new Figure());
+	}
+
+	/**
+	 * Avoid issues when un-highlighting non-existent connections on
+	 * {@link #ZestRootLayer}.
+	 * 
+	 * @See https://bugs.eclipse.org/bugs/show_bug.cgi?id=361525
+	 */
+	public void testUnHighlightConnection() {
+		new ZestRootLayer().unHighlightConnection(new Figure());
 	}
 
 }

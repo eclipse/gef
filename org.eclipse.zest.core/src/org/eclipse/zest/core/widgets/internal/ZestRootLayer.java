@@ -178,8 +178,7 @@ public class ZestRootLayer extends FreeformLayer {
 	public void remove(IFigure child) {
 		int position = this.getChildren().indexOf(child);
 		if (position == -1) {
-			throw new RuntimeException(
-					"Can't remove a figure that is not on this ZestRootLayer");
+			return;
 		}
 		itemsInLayer[getLayer(position)]--;
 		if (decoratingFigures.contains(child)) {
