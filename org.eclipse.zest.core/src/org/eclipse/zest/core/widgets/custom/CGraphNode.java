@@ -11,8 +11,6 @@
 package org.eclipse.zest.core.widgets.custom;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
@@ -47,30 +45,6 @@ public class CGraphNode extends GraphNode {
 	protected IFigure createFigureForModel() {
 		this.figure = (IFigure) this.getData();
 		return this.figure;
-	}
-
-	public void setBackgroundColor(Color c) {
-		getFigure().setBackgroundColor(c);
-	}
-
-	public void setFont(Font font) {
-		getFigure().setFont(font);
-	}
-
-	public Color getBackgroundColor() {
-		return getFigure().getBackgroundColor();
-	}
-
-	public Font getFont() {
-		return getFigure().getFont();
-	}
-
-	public Color getForegroundColor() {
-		return getFigure().getForegroundColor();
-	}
-
-	protected void updateFigureForModel(IFigure currentFigure) {
-		// Undefined
 	}
 
 }

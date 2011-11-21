@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.zest.core.widgets.ILabeledFigure;
 
 /**
  * A cached label to improve performance of text drawing under linux
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Display;
  * @author Ian Bull
  * 
  */
-public abstract class CachedLabel extends Label {
+public abstract class CachedLabel extends Label implements ILabeledFigure {
 
 	/*
 	 * (non-Javadoc)

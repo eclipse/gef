@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.zest.core.widgets.IStyleableFigure;
 
 /**
  * Overrides the Draw2D Label Figure class to ensure that the text is never
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Chris Callendar
  */
-public class GraphLabel extends CachedLabel {
+public class GraphLabel extends CachedLabel implements IStyleableFigure {
 
 	private Color borderColor;
 	private int borderWidth;

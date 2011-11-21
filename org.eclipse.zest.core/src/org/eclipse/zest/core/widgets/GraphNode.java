@@ -607,34 +607,40 @@ public class GraphNode extends GraphItem {
 			return;
 		}
 
-		if (!(currentFigure instanceof GraphLabel)) {
-			return;
-		}
-		GraphLabel figure = (GraphLabel) currentFigure;
+		IFigure figure = currentFigure;
 		IFigure toolTip;
 
-		if (!checkStyle(ZestStyles.NODES_HIDE_TEXT)
-				&& !figure.getText().equals(this.getText())) {
-			figure.setText(this.getText());
-		}
-		if (figure.getIcon() != getImage()) {
-			figure.setIcon(getImage());
-		}
-
-		if (highlighted == HIGHLIGHT_ON) {
-			figure.setForegroundColor(getForegroundColor());
-			figure.setBackgroundColor(getHighlightColor());
-			figure.setBorderColor(getBorderHighlightColor());
-		} else {
-			figure.setForegroundColor(getForegroundColor());
-			figure.setBackgroundColor(getBackgroundColor());
-			figure.setBorderColor(getBorderColor());
+		if (figure instanceof ILabeledFigure) {
+			// update label text/icon for figures implementing ILabeledFigure
+			ILabeledFigure labeledFigure = (ILabeledFigure) figure;
+			if (!checkStyle(ZestStyles.NODES_HIDE_TEXT)
+					&& !labeledFigure.getText().equals(this.getText())) {
+				labeledFigure.setText(this.getText());
+			}
+			if (labeledFigure.getIcon() != getImage()) {
+				labeledFigure.setIcon(getImage());
+			}
 		}
 
-		figure.setBorderWidth(getBorderWidth());
+		if (figure instanceof IStyleableFigure) {
+			// update styles (colors, border) for figures implementing
+			// IStyleableFigure
+			IStyleableFigure styleableFigure = (IStyleableFigure) figure;
+			if (highlighted == HIGHLIGHT_ON) {
+				styleableFigure.setForegroundColor(getForegroundColor());
+				styleableFigure.setBackgroundColor(getHighlightColor());
+				styleableFigure.setBorderColor(getBorderHighlightColor());
+			} else {
+				styleableFigure.setForegroundColor(getForegroundColor());
+				styleableFigure.setBackgroundColor(getBackgroundColor());
+				styleableFigure.setBorderColor(getBorderColor());
+			}
 
-		if (figure.getFont() != getFont()) {
-			figure.setFont(getFont());
+			styleableFigure.setBorderWidth(getBorderWidth());
+
+			if (figure.getFont() != getFont()) {
+				figure.setFont(getFont());
+			}
 		}
 
 		if (this.getTooltip() == null && hasCustomTooltip == false) {
@@ -652,6 +658,7 @@ public class GraphNode extends GraphItem {
 				this.fishEyeFigure = newFisheyeFigure;
 			}
 		}
+
 		refreshBounds();
 	}
 
