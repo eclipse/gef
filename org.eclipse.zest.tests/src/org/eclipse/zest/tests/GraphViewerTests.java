@@ -8,16 +8,22 @@
  *******************************************************************************/
 package org.eclipse.zest.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.util.DelegatingDragAdapter;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.widgets.Graph;
@@ -109,6 +115,22 @@ public class GraphViewerTests extends TestCase {
 		n2.setData("2");
 		assertEquals("Other data should be in the selection", 2,
 				((StructuredSelection) viewer.getSelection()).size());
+	}
+
+	/**
+	 * Assert that listeners for post selection events are properly notified by
+	 * the viewer (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=366916)
+	 */
+	public void testPostSelectionListener() {
+		final List<SelectionChangedEvent> selected = new ArrayList<SelectionChangedEvent>();
+		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				selected.add(event);
+			}
+		});
+		viewer.getControl().notifyListeners(SWT.Selection, new Event());
+		assertFalse("Post selection listeners should be notified",
+				selected.isEmpty());
 	}
 
 }
