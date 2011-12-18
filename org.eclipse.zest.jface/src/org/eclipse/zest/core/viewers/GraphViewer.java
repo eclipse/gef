@@ -107,7 +107,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 							.next();
 					listener.selectionChanged(event);
 				}
-
+				firePostSelectionChanged(event);
 			}
 
 		});
