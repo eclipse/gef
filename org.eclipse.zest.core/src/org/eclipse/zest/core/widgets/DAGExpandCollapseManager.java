@@ -34,7 +34,7 @@ import org.eclipse.zest.layouts.interfaces.NodeLayout;
  * </p>
  * </p>
  * <p>
- * <b>NOTE:</b> A <code>Graph</code> using this manger should use
+ * <b>NOTE:</b> A <code>Graph</code> using this manager should use
  * {@link DefaultSubgraph}, which doesn't show any information about subgraphs
  * in the graph. That's because for this manager it doesn't matter which
  * subgraph a node belongs to (each pruning creates a new subgraph). Also, this
