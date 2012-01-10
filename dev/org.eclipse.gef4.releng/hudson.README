@@ -1,0 +1,52 @@
+To execute this build as a Hudson build job, you have to configure the following:
+
+Source-Code-Management:
++ CVS
+    Cvsroot         
+    	:pserver:anonymous@dev.eclipse.org:/cvsroot/tools
+    Module          
+    	org.eclipse.gef
+    Local directory 
+    	.
+    
+Build:
++ Execute Shell
+    Command 
+    	if [ -d "build" ]; then
+   			rm -fr build
+		fi
+		mkdir build
+		cp -R GEF4/dev/* build/
+		cp -R GEF4/plugins/* build/
+		cp -R GEF4/features/* build/
+
++ Invoke Maven 3
+	Goals
+		clean install
+	POM File
+		build/org.eclipse.gef4.releng/pom.xml
+	Profiles
+		hudson.eclipse.org
+	JVM Options
+		-Dorg.eclipse.update.jarprocessor.pack200="/shared/common/sun-jdk1.6.0_21_x64/jre/bin"
+NOTE: Profiles may be left empty in case no signing is to be performed
+		
++ Execute Shell
+	Command
+		if [ -d "update-site" ]; then
+      		rm -fr update-site
+		fi
+		mkdir update-site
+		cp -R build/org.eclipse.gef4.repository/target/checksumFix/* update-site/
+NOTE: In case signing is not performed, build/org.eclipse.gef4.repository/target/checksumFix/* 
+      has be replaced with build/org.eclipse.gef4.repository/target/repository/* 
+		
+		
+Post-Build-Actions:
++ Publish JUnit Test Results
+	Testreports in XML format
+		**/target/surefire-reports/*.xml
++ Archive the artifacs
+	Files to archive
+		update-site/**
+		

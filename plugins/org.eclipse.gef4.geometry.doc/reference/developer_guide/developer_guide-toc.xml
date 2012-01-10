@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<toc topic="help/developer_guide.html" label="developer_guide">
+	<topic href="help/developer_guide.html" label="GEF 4 Geometry Developer Guide">
+		<topic href="help/developer_guide.html#General" label="General"></topic>
+		<topic href="help/developer_guide.html#Primitives" label="Primitives"></topic>
+		<topic href="help/developer_guide.html#Geometries" label="Geometries"></topic>
+		<topic href="help/developer_guide.html#Transformations" label="Transformations"></topic>
+		<topic href="help/developer_guide.html#Conversions" label="Conversions"></topic>
+	</topic>
+</toc>

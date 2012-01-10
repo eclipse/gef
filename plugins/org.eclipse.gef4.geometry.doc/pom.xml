@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.gef4</groupId>
+		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
+	</parent>
+	<groupId>org.eclipse.gef4.plugins</groupId>
+	<artifactId>org.eclipse.gef4.geometry.doc</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>prepare-api-context-libs</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>api-context-libs</outputDirectory>
+							<stripVersion>true</stripVersion>
+						</configuration>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>generate-doc</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<ant antfile="generateDoc.xml" inheritRefs="true" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

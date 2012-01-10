@@ -1,0 +1,14 @@
+
+= GEF 4 Geometry Developer Guide =
+
+== General ==
+
+.. explain some design decisions, especially w.r.t. to differences compared to Draw2d. e.g. imprecision, rectangle containment testing, etc.
+
+== Primitives ==
+
+== Geometries ==
+
+== Transformations ==
+
+== Conversions == 

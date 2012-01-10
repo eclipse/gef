@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.gef4.geometry_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.geometry.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.doc" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.geometry.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.geometry.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.tests" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
+   <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
+</site>

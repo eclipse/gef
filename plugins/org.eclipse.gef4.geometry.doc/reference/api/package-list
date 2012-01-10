@@ -1,0 +1,6 @@
+org.eclipse.gef4.geometry
+org.eclipse.gef4.geometry.convert
+org.eclipse.gef4.geometry.euclidean
+org.eclipse.gef4.geometry.shapes
+org.eclipse.gef4.geometry.transform
+org.eclipse.gef4.geometry.utils

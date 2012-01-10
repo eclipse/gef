@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="JUNO_3_8" sequenceNumber="0">
+<locations>
+<location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.sdk.ide" version="3.8.0.I20111223-0735"/>
+<repository location="http://download.eclipse.org/eclipse/updates/3.8-I-builds"/>
+</location>
+</locations>
+</target>
