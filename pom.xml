@@ -13,6 +13,10 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
+		  <id>maven.eclipse.org</id>
+		  <url>http://maven.eclipse.org/nexus/content/repositories/milestone-indigo</url>
+		</pluginRepository>
+		<pluginRepository>
 			<id>sonatype-repository</id>
 			<url>http://repository.sonatype.org/content/groups/public/</url>
 			<snapshots>
