@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="JUNO_4_2" sequenceNumber="4">
+<target name="JUNO_4_2" sequenceNumber="5">
 <locations>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120105-2100"/>
+<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120119-2200"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.2-I-builds"/>
 </location>
 </locations>
