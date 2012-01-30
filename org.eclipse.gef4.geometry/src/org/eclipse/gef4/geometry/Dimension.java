@@ -106,20 +106,6 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a {@link Dimension} with the width and height of the
-	 * 
-	 * @link{org.eclipse.swt.graphics.Image supplied as input.
-	 * 
-	 * @param image
-	 *            The image supplying the width and height values
-	 */
-	public Dimension(org.eclipse.swt.graphics.Image image) {
-		org.eclipse.swt.graphics.Rectangle r = image.getBounds();
-		width = r.width;
-		height = r.height;
-	}
-
-	/**
 	 * Constructs a {@link Dimension} where the width and height are the x and y
 	 * distances of the input point from the origin.
 	 * 

@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
-import org.eclipse.swt.widgets.Display;
 import org.junit.Test;
 
 /**
@@ -40,9 +39,6 @@ public class DimensionTests {
 		Dimension d1 = new Dimension(10, 10);
 		assertTrue(d1.equals(new Dimension(new org.eclipse.swt.graphics.Point(
 				10, 10))));
-
-		assertTrue(d1.equals(new Dimension(new org.eclipse.swt.graphics.Image(
-				Display.getDefault(), 10, 10))));
 	}
 
 	@Test
