@@ -108,7 +108,7 @@ public class Ellipse implements Geometry {
 	 *         contained, <code>false</code> otherwise
 	 */
 	public boolean contains(Ellipse o) {
-		for (CubicCurve seg : o.getBorderSegments()) {
+		for (CubicCurve seg : o.getSegments()) {
 			if (!contains(seg)) {
 				return false;
 			}
@@ -704,7 +704,7 @@ public class Ellipse implements Geometry {
 
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(e2.getIntersections(seg)));
 		}
 
@@ -723,7 +723,7 @@ public class Ellipse implements Geometry {
 	public Point[] getIntersections(Arc arc) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve mySeg : getBorderSegments()) {
+		for (CubicCurve mySeg : getSegments()) {
 			for (CubicCurve arcSeg : arc.getBorderSegments()) {
 				intersections.addAll(Arrays.asList(mySeg
 						.getIntersections(arcSeg)));
@@ -743,7 +743,7 @@ public class Ellipse implements Geometry {
 	public Point[] getIntersections(CubicCurve curve) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(curve.getIntersections(seg)));
 		}
 
@@ -757,7 +757,7 @@ public class Ellipse implements Geometry {
 	 * 
 	 * @return border-segments
 	 */
-	public CubicCurve[] getBorderSegments() {
+	public CubicCurve[] getSegments() {
 		CubicCurve[] segs = new CubicCurve[4];
 		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
 		// on the approximation used here

@@ -347,7 +347,7 @@ public class Polygon implements Geometry {
 	 * @return true if it is contained, false otherwise
 	 */
 	public boolean contains(Ellipse e) {
-		for (CubicCurve curve : e.getBorderSegments()) {
+		for (CubicCurve curve : e.getSegments()) {
 			if (!contains(curve)) {
 				return false;
 			}
