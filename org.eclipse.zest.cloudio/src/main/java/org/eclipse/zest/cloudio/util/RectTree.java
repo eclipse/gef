@@ -29,7 +29,7 @@ public class RectTree {
 	
 	private short xOffset, yOffset;
 	
-	private final RectNode root;
+	private RectNode root;
 	
 	private LinkedList<RectNode> leaves;
 	
@@ -137,17 +137,21 @@ public class RectTree {
 		}
 
 
-		public short getWordId(Point position) {
+		public short getWordId(int x, int y) {
 			if(filled > 0) return filled;
 			if(children == null) {
 				return filled;
 			}
 			for(int i = 0; i < childAreas.length; i++) {
-				if(childAreas[i].intersects(position.x-2, position.y-2, 4, 4) && children[i] != null) {
-					return children[i].getWordId(position);
+				if(childAreas[i].intersects(x-2, y-2, 4, 4) && children[i] != null) {
+					return children[i].getWordId(x, y);
 				}
 			}
 			return 0;
+		}
+		
+		public short getWordId(Point position) {
+			return getWordId(position.x, position.y);
 		}
 
 	}
@@ -173,12 +177,12 @@ public class RectTree {
 		this.yOffset = (short) y;
 	}
 
-	public boolean fits(final short[][] mainTree) {
+	public boolean fits(final CloudMatrix mainTree) {
 		LinkedList<RectNode> leaves = getLeaves();
 		Iterator<RectNode> nodes = leaves.iterator();
 		while(nodes.hasNext()) {
 			RectNode node = nodes.next();
-			if(mainTree[(node.rect.x+xOffset)/minResolution][(node.rect.y+yOffset)/minResolution] != EMPTY) {
+			if(!mainTree.isEmpty((node.rect.x+xOffset)/minResolution,(node.rect.y+yOffset)/minResolution)) {
 				nodes.remove();
 				leaves.addFirst(node);
 				return false;
@@ -208,16 +212,24 @@ public class RectTree {
 		}
 	}
 	
-	public void place(final short[][] mainTree, short id) {
+	public void place(final CloudMatrix mainTree, short id) {
 		Collection<RectNode> leaves = getLeaves();
 		for (RectNode node : leaves) {
-			mainTree[(node.rect.x+xOffset)/minResolution][(node.rect.y+yOffset)/minResolution] = id;
+			mainTree.set(node, id, xOffset, yOffset, minResolution);
 		}
 	}
 
 	public void releaseRects() {
 		getLeaves();
 		root.children = null;
+	}
+
+	public RectNode getRoot() {
+		return root;
+	}
+
+	public void reset() {
+		root = new RectNode(root.rect);
 	}
 
 

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.zest.cloudio.Word;
+import org.eclipse.zest.cloudio.util.CloudMatrix;
 import org.eclipse.zest.cloudio.util.RectTree;
 
 /**
@@ -85,7 +86,7 @@ public class DefaultLayouter implements ILayouter {
 	 * @param cloudArea
 	 * @return
 	 */
-	public boolean layout(Point offset, final Word word, final Rectangle cloudArea, short[][] mainTree) {
+	public boolean layout(Point offset, final Word word, final Rectangle cloudArea, CloudMatrix mainTree) {
 		Assert.isLegal(word != null, "Word cannot be null!");
 		Point next = new Point(-word.width/2, -word.height/2);
 		next.x += random.nextInt(25);

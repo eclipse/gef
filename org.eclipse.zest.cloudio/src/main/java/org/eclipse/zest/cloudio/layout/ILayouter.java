@@ -11,6 +11,7 @@ package org.eclipse.zest.cloudio.layout;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.zest.cloudio.Word;
+import org.eclipse.zest.cloudio.util.CloudMatrix;
 
 /**
  * 
@@ -25,10 +26,10 @@ public interface ILayouter {
 	 * @param offset
 	 * @param word
 	 * @param cloudArea
-	 * @param mainTree
+	 * @param cloudMatrix
 	 * @return
 	 */
-	public boolean layout(Point initial, final Word word, final Rectangle cloudArea, short[][] mainTree);
+	public boolean layout(Point initial, final Word word, final Rectangle cloudArea, CloudMatrix cloudMatrix);
 	
 	/**
 	 * Calculates the initial offset of the given word, within the bounds

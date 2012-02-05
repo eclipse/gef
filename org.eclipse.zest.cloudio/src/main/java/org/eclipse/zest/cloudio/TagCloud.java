@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.zest.cloudio.layout.DefaultLayouter;
 import org.eclipse.zest.cloudio.layout.ILayouter;
+import org.eclipse.zest.cloudio.util.CloudMatrix;
 import org.eclipse.zest.cloudio.util.RectTree;
 import org.eclipse.zest.cloudio.util.SmallRect;
 
@@ -67,18 +68,18 @@ public class TagCloud extends Canvas {
 	 * Minimum 'resolution' of the {@link RectTree} used for
 	 * collision handling.
 	 */
-	private static final int RESOLUTION = 5;
+	private final int accuracy;
 	
 	/**
 	 * Maximum size of the {@link RectTree} used for collision
 	 * handling. 
 	 */
-	private static final int TREE_SIZE = 5120/* * 2 */;
+	private final int maxSize;
 	
 	/**
 	 * Draw area.
 	 */
-	private final Rectangle cloudArea = new Rectangle(0, 0, TREE_SIZE, TREE_SIZE);
+	private final Rectangle cloudArea;
 
 	/**
 	 * Maximum Font Size.
@@ -151,7 +152,7 @@ public class TagCloud extends Canvas {
 	 */
 	private Set<Word> selection = new HashSet<Word>();
 	
-	private short[][] cloudMatrix;
+	private CloudMatrix cloudMatrix;
 	
 	/**
 	 * Executor service to process the creation of {@link RectTree} objects
@@ -208,16 +209,40 @@ public class TagCloud extends Canvas {
 	private Set<SelectionListener> selectionListeners = new HashSet<SelectionListener>();
 	
 	/**
-	 * Creates a new Tag cloud on the given parent. To add scroll bars
+	 * Creates a new Tag cloud on the given parent. When using this constructor, please 
+	 * read the following carefully:
+	 * <br>
+	 * Parameter <code>accuracy</code> defines the size of the raster used
+	 * when placing strings, and must be a value greater than <code>0</code>.
+	 * An accuracy of <code>1</code> will theoretically give best results, as the
+	 * drawable area is analyzed most detailed, but this will also be very slow.
+	 * <br>
+	 * Parameter <code>maxSize</code> defines the maximum size of the drawable
+	 * area and <strong>must</strong> be a power-of of <code>accuracy</code>,
+	 * such that <code>accuracy^n=maxSize</code> holds.
+	 * <br>
+	 *  To add scroll bars
 	 * to the cloud, use {@link SWT#HORIZONTAL} and {@link SWT#VERTICAL}.
+	 * @param accuracy
+	 * @param maxSize
 	 * @param parent
 	 * @param style
 	 */
-	public TagCloud(Composite parent, int style) {
+	public TagCloud(Composite parent, int style, int accuracy, int maxSize) {
 		super(parent, style);
+		Assert.isLegal(accuracy > 0, "Parameter accuracy must be greater than 0, but was " + accuracy);
+		Assert.isLegal(maxSize > 0, "Parameter maxSize must be greater than 0, but was " + maxSize);
+		int tmp = maxSize;
+		while(tmp > accuracy) {
+			tmp /= 2;
+		}
+		Assert.isLegal(tmp == accuracy, "Paramter maxSize must be a ");
+		this.accuracy = accuracy;
+		this.maxSize = maxSize;
+		cloudArea = new Rectangle(0, 0, maxSize, maxSize);
 		highlightColor = new Color(getDisplay(), Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB());
 		gc = new GC(this);
-		layouter = new DefaultLayouter(5, 5);
+		layouter = new DefaultLayouter(accuracy, accuracy);
 		setBackground(new Color(getDisplay(), Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getRGB()));
 		initListeners();
 		textLayerImage = new Image(getDisplay(), 100,100);
@@ -229,6 +254,20 @@ public class TagCloud extends Canvas {
 				internalDispose();
 			}
 		});
+	}
+	
+	
+	/**
+	 * Creates a new Tag cloud on the given parent. To add scroll bars
+	 * to the cloud, use {@link SWT#HORIZONTAL} and {@link SWT#VERTICAL}.
+	 * This is a shortcut to {@link TagCloud#TagCloud(Composite, int, int, int),
+	 * which sets the accuracy to <code>5</code> and the maximum size of the
+	 * drawable area to <code>5120</code>.
+	 * @param parent
+	 * @param style
+	 */
+	public TagCloud(Composite parent, int style) {
+		this(parent, style, 5, 5120);
 	}
 
 	/**
@@ -492,13 +531,13 @@ public class TagCloud extends Canvas {
 		// draw time...
 		g.drawString(word.string, 0, 0, false);
 		int max = Math.max(x,y);
-		int tmp = TREE_SIZE;
+		int tmp = maxSize;
 		while(max < tmp) {
 			tmp = tmp/2;
 		}
 		tmp = tmp*2;
 		SmallRect root = new SmallRect(0, 0, tmp, tmp); 
-		word.tree = new RectTree(root, RESOLUTION);
+		word.tree = new RectTree(root, accuracy);
 		final ImageData id = img.getImageData();
 		g.dispose();
 		img.dispose();
@@ -517,24 +556,25 @@ public class TagCloud extends Canvas {
 			id.getPixels(0, y, id.width, pixels, 0);
 			for (int i = 0; i < pixels.length; i++) {
 				int pixel = pixels[i];
-				int r = (pixel & palette.redMask) >> palette.redShift;
-				int g = (pixel & palette.greenMask) >> palette.greenShift;
-				int b = (pixel & palette.blueMask) >> palette.blueShift;
+				// Extracting color values as in PaletteData.getRGB(int pixel):
+				int r = (pixel >> (palette.redShift < 0 ? -palette.redShift : palette.redShift)) & palette.redMask;
+				int g = (pixel >> (palette.greenShift < 0 ? -palette.greenShift : palette.greenShift)) & palette.greenMask;
+				int b = (pixel >> (palette.blueShift < 0 ? -palette.blueShift : palette.blueShift)) & palette.blueMask;
 				if(r < 220 && g < 220 && b < 220) {
 					matrix[y][i] = true;
 				}
 			}
 		}
-		for(int i = 0; i < id.width; i+= RESOLUTION) {
-			for(int j = 0; j < id.height; j += RESOLUTION) {
+		for(int i = 0; i < id.width; i+= accuracy) {
+			for(int j = 0; j < id.height; j += accuracy) {
 				final int x = Math.max(0, i-1);
 				final int y = Math.max(0, j-1);
-				final int xMax = Math.min(i+RESOLUTION+2, id.width);
-				final int yMax = Math.min(j+RESOLUTION+2, id.height);
+				final int xMax = Math.min(i+accuracy+2, id.width);
+				final int yMax = Math.min(j+accuracy+2, id.height);
 found:			for(int a = x; a < xMax; a++) {
 					for(int b = y; b < yMax; b++) {
 						if(matrix[b][a]) {
-							SmallRect r = new SmallRect(i, j, RESOLUTION, RESOLUTION);
+							SmallRect r = new SmallRect(i, j, accuracy, accuracy);
 							word.tree.insert(r, word.id);
 							break found;
 						}
@@ -572,13 +612,10 @@ found:			for(int a = x; a < xMax; a++) {
 		int success = 0;
 		if(wordsToUse != null) {
 			double step = 100D / wordsToUse.size();
-			long lTime = 0;
 			final GC g = gc;
 			for (Word word : wordsToUse) {
-				long s = System.currentTimeMillis();
 				Point point = layouter.getInitialOffset(word, cloudArea);
 				boolean result = layouter.layout(point, word, cloudArea, cloudMatrix);
-				lTime += System.currentTimeMillis() - s;
 				if(!result) {
 					System.err.println("Failed to place " + word.string);
 					continue;
@@ -637,8 +674,8 @@ found:			for(int a = x; a < xMax; a++) {
 		if(textLayerImage != null) {
 			textLayerImage.dispose();
 		}
-		r.width += 5;
-		r.height += 5;
+		r.width += accuracy;
+		r.height += accuracy;
 		textLayerImage = new Image(getDisplay(), r.width, r.height);
 		gc = new GC(textLayerImage);
 		if(r.width > tmpImage.getBounds().width - r.x || r.height >= tmpImage.getBounds().width - r.y) {
@@ -707,11 +744,10 @@ found:			for(int a = x; a < xMax; a++) {
 	 * Reset the initial matrix
 	 */
 	private void resetLayout() {
-		if(cloudMatrix == null) cloudMatrix = new short[TREE_SIZE][TREE_SIZE];
-		for(int i = 0; i < cloudMatrix.length; i++) {
-			for(int j = 0; j < cloudMatrix[i].length; j++) {
-				cloudMatrix[i][j] = -1;
-			}
+		if(cloudMatrix == null) {
+			cloudMatrix = new CloudMatrix(maxSize, accuracy);
+		} else {
+			cloudMatrix.reset();
 		}
 	}
 	
@@ -861,12 +897,12 @@ found:			for(int a = x; a < xMax; a++) {
 		Point translatedMousePos = translateMousePos(point.x, point.y);
 		translatedMousePos.x += regionOffset.x;
 		translatedMousePos.y += regionOffset.y;
-		int x = translatedMousePos.x/RESOLUTION;
-		int y = translatedMousePos.y/RESOLUTION;
-		if(x >= cloudMatrix.length || y >= cloudMatrix[x].length) {
+		int x = translatedMousePos.x/accuracy;
+		int y = translatedMousePos.y/accuracy;
+		if(x >= maxSize || y >= maxSize) {
 			return null;
 		}
-		short wordId = cloudMatrix[x][y];
+		short wordId = cloudMatrix.get(x,y);
 		if(wordId > 0) {
 			Word clicked = wordsToUse.get(wordId-1);
 			return clicked;
@@ -1162,7 +1198,7 @@ found:			for(int a = x; a < xMax; a++) {
 	}
 	
 	/**
-	 * Sets the minimum font size. Should be a reasonable value > 0 (twice of {@link TagCloud#RESOLUTION}
+	 * Sets the minimum font size. Should be a reasonable value > 0 (twice of {@link TagCloud#accuracy}
 	 * is recommended). By default, this value is 12.
 	 * @param size
 	 */
