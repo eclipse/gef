@@ -39,6 +39,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -511,10 +512,15 @@ public class TagCloud extends Canvas {
 	private void calcWordExtents(final Word word, final ImageData id) {
 		final int[] pixels = new int[id.width];
 		final boolean[][] matrix = new boolean[id.height][id.width];
+		final PaletteData palette = id.palette;
 		for (int y = 0; y < id.height; y++) {
 			id.getPixels(0, y, id.width, pixels, 0);
 			for (int i = 0; i < pixels.length; i++) {
-				if (pixels[i] < 5) {
+				int pixel = pixels[i];
+				int r = (pixel & palette.redMask) >> palette.redShift;
+				int g = (pixel & palette.greenMask) >> palette.greenShift;
+				int b = (pixel & palette.blueMask) >> palette.blueShift;
+				if(r < 220 && g < 220 && b < 220) {
 					matrix[y][i] = true;
 				}
 			}
