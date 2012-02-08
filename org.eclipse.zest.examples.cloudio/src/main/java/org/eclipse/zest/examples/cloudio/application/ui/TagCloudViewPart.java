@@ -128,8 +128,27 @@ public class TagCloudViewPart extends ViewPart {
 			protected Group addLayoutButtons(Composite parent) {
 				Group buttons = super.addLayoutButtons(parent);
 				
-				
 				Label l = new Label(buttons, SWT.NONE);
+				l.setText("Scale");
+				final Combo scale = new Combo(buttons, SWT.DROP_DOWN | SWT.READ_ONLY);
+				scale.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+				scale.setItems(new String[] {"linear", "logarithmic"});
+				scale.select(1);
+				scale.addSelectionListener(new SelectionListener() {
+					
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						switch(scale.getSelectionIndex()) {
+						case 0 : labelProvider.setScale(TypeLabelProvider.Scaling.LINEAR); break;
+						case 1 : labelProvider.setScale(TypeLabelProvider.Scaling.LOGARITHMIC); break;
+						default: break;
+						}
+					}
+					
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {}
+				});
+				l = new Label(buttons, SWT.NONE);
 				l.setText("X Axis Variation");
 				final Combo xAxis = new Combo(buttons, SWT.DROP_DOWN | SWT.READ_ONLY);
 				xAxis.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));

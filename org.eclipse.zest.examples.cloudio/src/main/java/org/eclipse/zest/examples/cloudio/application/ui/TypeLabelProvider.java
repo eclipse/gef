@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.cloudio.IEditableCloudLabelProvider;
 import org.eclipse.zest.examples.cloudio.application.data.Type;
+import org.eclipse.zest.examples.cloudio.application.ui.TypeLabelProvider.Scaling;
 
 /**
  * 
@@ -34,12 +35,18 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	private double maxOccurrences;
 	private double minOccurrences;
 	
+	public enum Scaling {
+		
+		LINEAR, LOGARITHMIC;
+	}
+	
 	private Map<Object, Color> colors = new HashMap<Object, Color>();
 	private Map<Object, FontData[]> fonts = new HashMap<Object, FontData[]>();
 	private Random random = new Random();
 	protected List<Color> colorList;
 	protected List<Font> fontList;
 	protected List<Float> angles;
+	private Scaling scaling = Scaling.LOGARITHMIC;
 		
 	public TypeLabelProvider() {
 		colorList = new ArrayList<Color>();
@@ -55,9 +62,16 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 
 	@Override
 	public double getWeight(Object element) {
-		double count  = Math.log(((Type)element).getOccurrences() - minOccurrences+1);
-		count /=(Math.log(maxOccurrences));
-		return count;
+		switch(scaling) {
+			case LINEAR: return ((Type)element).getOccurrences()/maxOccurrences;
+			case LOGARITHMIC: {
+				double count  = Math.log(((Type)element).getOccurrences() - minOccurrences+1);
+				count /=(Math.log(maxOccurrences));
+				return count;
+			}
+			default: return 1;
+		}
+		
 	}
 
 	@Override
@@ -136,6 +150,10 @@ public class TypeLabelProvider extends BaseLabelProvider implements
 	@Override
 	public String getToolTip(Object element) {
 		return getLabel(element);
+	}
+
+	public void setScale(Scaling scaling) {
+		this.scaling = scaling;
 	}
 	
 	
