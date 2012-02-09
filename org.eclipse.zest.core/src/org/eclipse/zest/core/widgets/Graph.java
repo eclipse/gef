@@ -39,6 +39,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.GestureEvent;
+import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,6 +63,8 @@ import org.eclipse.zest.layouts.interfaces.ExpandCollapseManager;
  */
 public class Graph extends FigureCanvas implements IContainer {
 
+	private static final double MINIMUM_ZOOM = 0.1;
+	private static final double MAXIMUM_ZOOM = 10.0;
 	// CLASS CONSTANTS
 	public static final int ANIMATION_TIME = 500;
 	public static final int FISHEYE_ANIMATION_TIME = 100;
@@ -195,6 +199,29 @@ public class Graph extends FigureCanvas implements IContainer {
 
 			public void controlMoved(ControlEvent e) {
 				// do nothing
+			}
+		});
+		this.addGestureListener(new GestureListener() {
+
+			double zoom = 1.0;
+
+			public void gesture(GestureEvent e) {
+				switch (e.detail) {
+				case SWT.GESTURE_BEGIN:
+					zoom = getRootLayer().getScale();
+					break;
+				case SWT.GESTURE_END:
+					break;
+				case SWT.GESTURE_MAGNIFY:
+					double newValue = zoom * e.magnification;
+					if (newValue >= MINIMUM_ZOOM && newValue <= MAXIMUM_ZOOM) {
+						getRootLayer().setScale(newValue);
+						getRootLayer().repaint();
+					}
+					break;
+				default:
+					// Do nothing
+				}
 			}
 		});
 	}
