@@ -42,7 +42,7 @@ public class LoadFileAction extends AbstractTagCloudAction {
 			pd.getProgressMonitor().beginTask("Generating cloud...", 200);
 			TagCloudViewer viewer = getViewer();
 			viewer.setInput(types, pd.getProgressMonitor());
-			viewer.getCloud().layoutCloud(pd.getProgressMonitor(), false);
+			//viewer.getCloud().layoutCloud(pd.getProgressMonitor(), false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

@@ -215,7 +215,7 @@ public class TagCloudViewPart extends ViewPart {
 						dialog.open();
 						dialog.getProgressMonitor().beginTask("Layouting tag cloud...", 200);
 						viewer.setInput(viewer.getInput(), dialog.getProgressMonitor());
-						viewer.reset(dialog.getProgressMonitor(),false);
+						//viewer.reset(dialog.getProgressMonitor(),false);
 						dialog.close();
 					}
 					
