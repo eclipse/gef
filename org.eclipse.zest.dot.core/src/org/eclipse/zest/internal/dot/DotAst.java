@@ -23,9 +23,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.mwe.utils.StandaloneSetup;
 import org.eclipse.swt.SWT;
-import org.eclipse.zest.internal.dot.parser.DotStandaloneSetup;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
@@ -152,8 +150,6 @@ public final class DotAst {
 	}
 
 	private static Resource loadResource(final File file) {
-		new StandaloneSetup().setPlatformUri(".."); //$NON-NLS-1$
-		DotStandaloneSetup.doSetup();
 		ResourceSet set = new ResourceSetImpl();
 		Resource res = set.getResource(URI.createURI(file.toURI().toString()),
 				true);
