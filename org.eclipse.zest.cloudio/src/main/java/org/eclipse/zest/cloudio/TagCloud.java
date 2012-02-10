@@ -207,6 +207,8 @@ public class TagCloud extends Canvas {
 	private Set<EventListener> mouseListeners = new HashSet<EventListener>();
 
 	private Set<SelectionListener> selectionListeners = new HashSet<SelectionListener>();
+
+	private Image mask;
 	
 	/**
 	 * Creates a new Tag cloud on the given parent. When using this constructor, please 
@@ -749,6 +751,27 @@ found:			for(int a = x; a < xMax; a++) {
 		} else {
 			cloudMatrix.reset();
 		}
+		if(mask != null) {
+			resetMask();
+		}
+	}
+
+	private void resetMask() {
+		Image img = new Image(null, cloudArea.width, cloudArea.height);
+		GC gc = new GC(img);
+		gc.drawImage(mask, 0, 0, mask.getBounds().width, mask.getBounds().height, 0, 0, cloudArea.width, cloudArea.height);
+		ImageData id = img.getImageData();
+		img.dispose();
+		gc.dispose();
+		Word word = new Word("mask");
+		word.tree = new RectTree(new SmallRect(0, 0, cloudArea.width, cloudArea.height), 5);
+		calcWordExtents(word, id);
+		word.tree.place(cloudMatrix, (short) 1);
+	}
+
+
+	public void setMask(Image mask) {
+		this.mask = mask;
 	}
 	
 	private int getNumberOfThreads() {
