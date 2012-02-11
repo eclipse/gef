@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
@@ -28,7 +28,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class RoundedRectangle implements Geometry {
+public class RoundedRectangle extends AbstractGeometry implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,7 +89,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(final Point p) {
 		// quick rejection via bounds
@@ -130,7 +130,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(final Rectangle r) {
 		// check that all border points of the rectangle are contained.
@@ -159,7 +159,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
@@ -175,9 +175,9 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(final AffineTransform t) {
+	public IGeometry getTransformed(final AffineTransform t) {
 		// rounded rectangles may not be type-intrinsically transformed, so use
 		// a path representation
 		return toPath().getTransformed(t);
@@ -211,17 +211,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
-	}
-
-	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(final Rectangle r) {
 		// quick rejection via bounds
@@ -326,7 +316,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		Path path = new Path();
@@ -423,5 +413,12 @@ public class RoundedRectangle implements Geometry {
 	@Override
 	public String toString() {
 		return "RoundedRectangle: (" + x + ", " + y + ", " + width + ", " + height + ", " + arcWidth + ", " + arcHeight; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	}
+
+	/**
+	 * @see IGeometry#getCopy()
+	 */
+	public RoundedRectangle getCopy() {
+		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
 	}
 }

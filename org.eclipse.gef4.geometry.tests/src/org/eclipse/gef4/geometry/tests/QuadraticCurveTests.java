@@ -17,14 +17,31 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.CubicCurve;
-import org.eclipse.gef4.geometry.shapes.QuadraticCurve;
+import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.junit.Test;
 
 public class QuadraticCurveTests {
 	private static final int SEED = 123;
 	private final Point p = new Point(-10, -10), c = new Point(10, 0),
 			q = new Point(0, 10);
+
+	@Test
+	public void test_getters_and_setters() {
+		QuadraticCurve curve = new QuadraticCurve(p, c, q);
+		assertEquals(curve.getP1(), p);
+		assertEquals(curve.getP2(), q);
+		assertEquals(curve.getCtrl(), c);
+		Point newP = new Point(-5, -5);
+		Point newC = new Point(5, -5);
+		Point newQ = new Point(-5, 5);
+		curve.setP1(newP);
+		curve.setP2(newQ);
+		curve.setCtrl(newC);
+		assertEquals(curve.getP1(), newP);
+		assertEquals(curve.getP2(), newQ);
+		assertEquals(curve.getCtrl(), newC);
+	}
 
 	@Test
 	public void test_contains_Point() {

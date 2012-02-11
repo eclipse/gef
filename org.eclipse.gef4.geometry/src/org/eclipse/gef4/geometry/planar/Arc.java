@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,15 +28,30 @@ import org.eclipse.gef4.geometry.transform.AffineTransform;
  * @author anyssen
  * 
  */
-public class Arc implements Geometry {
+public class Arc implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
+
+	// TODO: move to utilities
+	private static final Path toPath(CubicCurve... curves) {
+		Path p = new Path();
+		for (int i = 0; i < curves.length; i++) {
+			if (i == 0) {
+				p.moveTo(curves[i].getX1(), curves[i].getY1());
+			}
+			p.curveTo(curves[i].getCtrl1X(), curves[i].getCtrl1Y(),
+					curves[i].getCtrl2X(), curves[i].getCtrl2Y(),
+					curves[i].getX2(), curves[i].getY2());
+		}
+		return p;
+	}
 
 	private double x;
 	private double y;
 	private double width;
 	private double height;
 	private Angle startAngle;
+
 	private Angle angularExtent;
 
 	/**
@@ -64,79 +79,60 @@ public class Arc implements Geometry {
 		this.angularExtent = angularExtent;
 	}
 
+	private CubicCurve computeApproximation(double start, double end) {
+		// compute major and minor axis length
+		double a = width / 2;
+		double b = height / 2;
+
+		// // calculate start and end points of the arc from start to end
+		Point startPoint = new Point(x + a + a * Math.cos(start), y + b - b
+				* Math.sin(start));
+		Point endPoint = new Point(x + a + a * Math.cos(end), y + b - b
+				* Math.sin(end));
+
+		// approximation by cubic Bezier according to approximation provided in:
+		// http://www.spaceroots.org/documents/ellipse/elliptical-arc.pdf
+		double t = Math.tan((end - start) / 2);
+		double alpha = Math.sin(end - start)
+				* (Math.sqrt(4.0d + 3.0d * t * t) - 1) / 3;
+		Point controlPoint1 = new Point(startPoint.x + alpha * -a
+				* Math.sin(start), startPoint.y - alpha * b * Math.cos(start));
+		Point controlPoint2 = new Point(
+				endPoint.x - alpha * -a * Math.sin(end), endPoint.y + alpha * b
+						* Math.cos(end));
+
+		Point[] points = new Point[] { startPoint, controlPoint1,
+				controlPoint2, endPoint };
+		return new CubicCurve(points);
+	}
+
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
 		return false;
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(Rectangle r) {
 		return false;
 	}
 
+	public Angle getAngularExtent() {
+		return angularExtent;
+	}
+
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
 
-	/**
-	 * @see Geometry#getTransformed(AffineTransform)
-	 */
-	public Geometry getTransformed(AffineTransform t) {
-		return toPath().getTransformed(t);
-	}
-
-	/**
-	 * @see Geometry#intersects(Rectangle)
-	 */
-	public boolean intersects(Rectangle r) {
-		throw new UnsupportedOperationException();
-	}
-
-	public double getX() {
-		return x;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public void setWidth(double width) {
-		this.width = width;
-	}
-
 	public double getHeight() {
 		return height;
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link CubicCurve}.
-	 * 
-	 * @param c
-	 *            The {@link CubicCurve} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(CubicCurve c) {
-		return c.getIntersections(this);
 	}
 
 	/**
@@ -154,11 +150,23 @@ public class Arc implements Geometry {
 
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(getIntersections(seg)));
 		}
 
 		return intersections.toArray(new Point[] {});
+	}
+
+	/**
+	 * Returns the points of intersection between this {@link Arc} and the given
+	 * {@link CubicCurve}.
+	 * 
+	 * @param c
+	 *            The {@link CubicCurve} to test for intersections
+	 * @return the points of intersection.
+	 */
+	public Point[] getIntersections(CubicCurve c) {
+		return c.getIntersections(this);
 	}
 
 	/**
@@ -184,7 +192,7 @@ public class Arc implements Geometry {
 	public Point[] getIntersections(Line l) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(seg.getIntersections(l)));
 		}
 
@@ -214,7 +222,7 @@ public class Arc implements Geometry {
 	public Point[] getIntersections(Polyline p) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(seg.getIntersections(p)));
 		}
 
@@ -232,7 +240,7 @@ public class Arc implements Geometry {
 	public Point[] getIntersections(QuadraticCurve c) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(seg.getIntersections(c)));
 		}
 
@@ -250,7 +258,7 @@ public class Arc implements Geometry {
 	public Point[] getIntersections(Rectangle r) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (CubicCurve seg : getBorderSegments()) {
+		for (CubicCurve seg : getSegments()) {
 			intersections.addAll(Arrays.asList(seg.getIntersections(r)));
 		}
 
@@ -261,59 +269,31 @@ public class Arc implements Geometry {
 	 * Returns the points of intersection between this {@link Arc} and the given
 	 * {@link RoundedRectangle}.
 	 * 
-	 * @param rr
+	 * @param r
 	 *            The {@link RoundedRectangle} to test for intersections
 	 * @return the points of intersection.
 	 */
-	public Point[] getIntersections(RoundedRectangle rr) {
+	public Point[] getIntersections(RoundedRectangle r) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
 		// line segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTop())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getLeft())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getBottom())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getTop())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getBottom())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getTopRight())));
+		intersections.addAll(Arrays.asList(getIntersections(r.getTopLeft())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(r.getBottomLeft())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(r.getBottomRight())));
 
 		return intersections.toArray(new Point[] {});
 	}
 
-	public void setHeight(double height) {
-		this.height = height;
-	}
-
-	public Angle getStartAngle() {
-		return startAngle;
-	}
-
-	public void setStartAngle(Angle startAngle) {
-		this.startAngle = startAngle;
-	}
-
-	public Angle getAngularExtent() {
-		return angularExtent;
-	}
-
-	public void setAngularExtent(Angle angularExtent) {
-		this.angularExtent = angularExtent;
-	}
-
-	/**
-	 * @see Geometry#toPath()
-	 */
-	public Path toPath() {
-		CubicCurve[] segments = getBorderSegments();
-		return toPath(segments);
-	}
-
-	public CubicCurve[] getBorderSegments() {
+	public CubicCurve[] getSegments() {
 		double start = getStartAngle().rad();
 		double end = getStartAngle().rad() + getAngularExtent().rad();
 
@@ -351,44 +331,72 @@ public class Arc implements Geometry {
 		return segments.toArray(new CubicCurve[] {});
 	}
 
-	private CubicCurve computeApproximation(double start, double end) {
-		// compute major and minor axis length
-		double a = width / 2;
-		double b = height / 2;
-
-		// // calculate start and end points of the arc from start to end
-		Point startPoint = new Point(x + a + a * Math.cos(start), y + b - b
-				* Math.sin(start));
-		Point endPoint = new Point(x + a + a * Math.cos(end), y + b - b
-				* Math.sin(end));
-
-		// approximation by cubic Bezier according to approximation provided in:
-		// http://www.spaceroots.org/documents/ellipse/elliptical-arc.pdf
-		double t = Math.tan((end - start) / 2);
-		double alpha = Math.sin(end - start)
-				* (Math.sqrt(4.0d + 3.0d * t * t) - 1) / 3;
-		Point controlPoint1 = new Point(startPoint.x + alpha * -a
-				* Math.sin(start), startPoint.y - alpha * b * Math.cos(start));
-		Point controlPoint2 = new Point(
-				endPoint.x - alpha * -a * Math.sin(end), endPoint.y + alpha * b
-						* Math.cos(end));
-
-		Point[] points = new Point[] { startPoint, controlPoint1,
-				controlPoint2, endPoint };
-		return new CubicCurve(points);
+	public Angle getStartAngle() {
+		return startAngle;
 	}
 
-	// TODO: move to utilities
-	private static final Path toPath(CubicCurve... curves) {
-		Path p = new Path();
-		for (int i = 0; i < curves.length; i++) {
-			if (i == 0) {
-				p.moveTo(curves[i].getX1(), curves[i].getY1());
-			}
-			p.curveTo(curves[i].getCtrl1X(), curves[i].getCtrl1Y(),
-					curves[i].getCtrl2X(), curves[i].getCtrl2Y(),
-					curves[i].getX2(), curves[i].getY2());
-		}
-		return p;
+	/**
+	 * @see IGeometry#getTransformed(AffineTransform)
+	 */
+	public IGeometry getTransformed(AffineTransform t) {
+		return toPath().getTransformed(t);
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	/**
+	 * @see IGeometry#intersects(Rectangle)
+	 */
+	public boolean intersects(Rectangle r) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setAngularExtent(Angle angularExtent) {
+		this.angularExtent = angularExtent;
+	}
+
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
+	public void setStartAngle(Angle startAngle) {
+		this.startAngle = startAngle;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	/**
+	 * @see IGeometry#toPath()
+	 */
+	public Path toPath() {
+		CubicCurve[] segments = getSegments();
+		return toPath(segments);
+	}
+
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Arc getCopy() {
+		return new Arc(x, y, width, height, startAngle, angularExtent);
 	}
 }

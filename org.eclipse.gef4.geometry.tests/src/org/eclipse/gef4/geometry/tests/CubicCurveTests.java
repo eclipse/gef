@@ -15,13 +15,35 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.CubicCurve;
+import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.junit.Test;
 
 public class CubicCurveTests {
 
 	private final Point p = new Point(-10, -10), c1 = new Point(0, -10),
 			c2 = new Point(10, 0), q = new Point(0, 10);
+
+	@Test
+	public void test_getters_and_setters() {
+		CubicCurve curve = new CubicCurve(p, c1, c2, q);
+		assertEquals(curve.getP1(), p);
+		assertEquals(curve.getP2(), q);
+		assertEquals(curve.getCtrl1(), c1);
+		assertEquals(curve.getCtrl2(), c2);
+		Point newP = new Point(-5, -5);
+		Point newC1 = new Point(5, -5);
+		Point newC2 = new Point(5, 0);
+		Point newQ = new Point(-5, 5);
+		curve.setP1(newP);
+		curve.setP2(newQ);
+		curve.setCtrl1(newC1);
+		curve.setCtrl2(newC2);
+		assertEquals(curve.getP1(), newP);
+		assertEquals(curve.getP2(), newQ);
+		assertEquals(curve.getCtrl1(), newC1);
+		assertEquals(curve.getCtrl2(), newC2);
+	}
 
 	@Test
 	public void test_contains_Point() {
@@ -73,7 +95,7 @@ public class CubicCurveTests {
 
 	@Test
 	public void test_getBounds() {
-		CubicCurve curve = new CubicCurve(p, c1, c2, q);
+		ICurve curve = new CubicCurve(p, c1, c2, q);
 
 		// p is the top-left point: (y-coordinates are inverted)
 		assertEquals(curve.getBounds().getTopLeft(), p);

@@ -16,9 +16,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.Ellipse;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.Ellipse;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.junit.Test;
 
 /**

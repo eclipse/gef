@@ -19,8 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
