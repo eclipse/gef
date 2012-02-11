@@ -73,6 +73,7 @@ public class ZoomContributionViewItem extends ContributionItem implements
 	 */
 	public ZoomContributionViewItem(IZoomableWorkbenchPart part) {
 		zoomManager = part.getZoomableViewer().getZoomManager();
+		zoomManager.addZoomListener(this);
 	}
 
 	/*
@@ -114,13 +115,15 @@ public class ZoomContributionViewItem extends ContributionItem implements
 	 * .ToolBar, int)
 	 */
 	public void fill(ToolBar parent, int index) {
-		ToolItem item = new ToolItem(parent, SWT.DROP_DOWN);
+		ToolItem item = new ToolItem(parent, SWT.SEPARATOR);
 		Combo combo = createCombo(parent);
 		item.setControl(combo);
+		item.setWidth(combo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
 	private Combo createCombo(Composite parent) {
 		this.combo = new Combo(parent, SWT.DROP_DOWN);
+		zoomLevels = zoomManager.getZoomLevelsAsText();
 		this.combo.setItems(zoomLevels);
 		this.combo.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -152,7 +155,8 @@ public class ZoomContributionViewItem extends ContributionItem implements
 		//
 		if (combo != null && !combo.isDisposed()) {
 			refreshCombo(rebuild);
-		} else if (fMenu != null && !fMenu.isDisposed()) {
+		}
+		if (fMenu != null && !fMenu.isDisposed()) {
 			refreshMenu(rebuild);
 		}
 	}
@@ -239,6 +243,9 @@ public class ZoomContributionViewItem extends ContributionItem implements
 		}
 		if (fMenu != null) {
 			fMenu = null;
+		}
+		if (zoomManager != null) {
+			zoomManager.removeZoomListener(this);
 		}
 		// @tag zest.bug.159667-ZoomDispose : make sure that we no longer listen
 		// to the part service.
