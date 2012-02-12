@@ -17,9 +17,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.CubicCurve;
-import org.eclipse.gef4.geometry.shapes.QuadraticCurve;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.QuadraticCurve;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;

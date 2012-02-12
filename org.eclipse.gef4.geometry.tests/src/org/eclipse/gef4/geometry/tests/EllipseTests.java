@@ -16,9 +16,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.Ellipse;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.Ellipse;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.junit.Test;
 
 /**
@@ -77,7 +77,7 @@ public class EllipseTests {
 	public void test_intersects_with_Line() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);
-		for (Line l : r.getSegments()) {
+		for (Line l : r.getOutlineSegments()) {
 			assertTrue(e.intersects(l)); // line touches ellipse (tangent)
 		}
 	}

@@ -10,11 +10,10 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -28,7 +27,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class RoundedRectangle implements Geometry {
+public class RoundedRectangle extends AbstractGeometry implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,7 +88,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(final Point p) {
 		// quick rejection via bounds
@@ -130,7 +129,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(final Rectangle r) {
 		// check that all border points of the rectangle are contained.
@@ -159,7 +158,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
@@ -172,15 +171,6 @@ public class RoundedRectangle implements Geometry {
 	 */
 	public double getHeight() {
 		return height;
-	}
-
-	/**
-	 * @see Geometry#getTransformed(AffineTransform)
-	 */
-	public Geometry getTransformed(final AffineTransform t) {
-		// rounded rectangles may not be type-intrinsically transformed, so use
-		// a path representation
-		return toPath().getTransformed(t);
 	}
 
 	/**
@@ -211,17 +201,7 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
-	}
-
-	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(final Rectangle r) {
 		// quick rejection via bounds
@@ -326,9 +306,11 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
+		// overwritten to optimize w.r.t. object creation (could otherwise use
+		// the segments)
 		Path path = new Path();
 		path.moveTo(x, y - arcHeight);
 		path.quadTo(x + arcWidth, y, x, y);
@@ -372,6 +354,25 @@ public class RoundedRectangle implements Geometry {
 	}
 
 	/**
+	 * @see org.eclipse.gef4.geometry.planar.IShape#getOutlineSegments()
+	 */
+	public ICurve[] getOutlineSegments() {
+		return new ICurve[] {
+				new QuadraticCurve(x, y - arcHeight, x + arcWidth, y, x, y),
+				new Line(x, y, x + width - arcWidth * 2, y),
+				new QuadraticCurve(x + width - arcWidth * 2, y, x + width, y
+						+ arcHeight, x + width, y),
+				new Line(x + width, y, x + width, y + height - arcHeight * 2),
+				new QuadraticCurve(x + width, y + height - arcHeight * 2, x
+						+ width - arcWidth * 2, y + height, x + width, y
+						+ width),
+				new Line(x + width, y + width, x + arcWidth, y + height),
+				new QuadraticCurve(x + arcWidth, y + height, x, y + height
+						- arcHeight * 2, x, y + height),
+				new Line(x, y + height, x, y - arcHeight) };
+	}
+
+	/**
 	 * Returns the left edge of this {@link RoundedRectangle}.
 	 * 
 	 * @return the left edge of this {@link RoundedRectangle}.
@@ -385,7 +386,7 @@ public class RoundedRectangle implements Geometry {
 	 * 
 	 * @return the top left {@link Arc} of this {@link RoundedRectangle}.
 	 */
-	public Arc getTopLeft() {
+	public Arc getTopLeftArc() {
 		return new Arc(x, y, arcWidth, arcHeight, Angle.fromDeg(90),
 				Angle.fromDeg(90));
 	}
@@ -395,7 +396,7 @@ public class RoundedRectangle implements Geometry {
 	 * 
 	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
 	 */
-	public Arc getTopRight() {
+	public Arc getTopRightArc() {
 		return new Arc(x + width - arcWidth, y, arcWidth, arcHeight,
 				Angle.fromDeg(0), Angle.fromDeg(90));
 	}
@@ -405,7 +406,7 @@ public class RoundedRectangle implements Geometry {
 	 * 
 	 * @return the bottom left {@link Arc} of this {@link RoundedRectangle}.
 	 */
-	public Arc getBottomLeft() {
+	public Arc getBottomLeftArc() {
 		return new Arc(x, y + height - arcHeight, arcWidth, arcHeight,
 				Angle.fromDeg(180), Angle.fromDeg(90));
 	}
@@ -415,7 +416,7 @@ public class RoundedRectangle implements Geometry {
 	 * 
 	 * @return the bottom right {@link Arc} of this {@link RoundedRectangle}.
 	 */
-	public Arc getBottomRight() {
+	public Arc getBottomRightArc() {
 		return new Arc(x + width - arcWidth, y + height - arcHeight, arcWidth,
 				arcHeight, Angle.fromDeg(270), Angle.fromDeg(90));
 	}
@@ -423,5 +424,12 @@ public class RoundedRectangle implements Geometry {
 	@Override
 	public String toString() {
 		return "RoundedRectangle: (" + x + ", " + y + ", " + width + ", " + height + ", " + arcWidth + ", " + arcHeight; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	}
+
+	/**
+	 * @see IGeometry#getCopy()
+	 */
+	public RoundedRectangle getCopy() {
+		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
 	}
 }

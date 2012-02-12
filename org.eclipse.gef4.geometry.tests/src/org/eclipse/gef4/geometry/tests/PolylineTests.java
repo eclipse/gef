@@ -16,7 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.Polyline;
+import org.eclipse.gef4.geometry.planar.Polyline;
 import org.junit.Test;
 
 public class PolylineTests {

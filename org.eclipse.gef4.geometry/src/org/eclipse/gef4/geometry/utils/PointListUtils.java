@@ -16,10 +16,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.Polygon;
-import org.eclipse.gef4.geometry.shapes.Polyline;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Polygon;
+import org.eclipse.gef4.geometry.planar.Polyline;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 /**
  * Common utilities for point manipulations as needed e.g. within
