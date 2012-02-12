@@ -3,8 +3,14 @@ package org.eclipse.gef4.geometry.planar;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 
-/*
- * TODO: make this class concrete and remove the two specializations for the quadratic and cubic case.
+/**
+ * Abstract base class of Bezier Curves.
+ * 
+ * TODO: make concrete -> leaf specializations in place but delegate
+ * functionality to here.
+ * 
+ * @author anyssen
+ * 
  */
 public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 
@@ -192,6 +198,10 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 		// TODO: may contain the rectangle only in case the rectangle is
 		// degenerated...
 		return false;
+	}
+
+	public int getDegree() {
+		return getCtrls().length;
 	}
 
 }

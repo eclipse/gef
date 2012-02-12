@@ -414,7 +414,7 @@ public class QuadraticCurve extends BezierCurve {
 	}
 
 	public boolean intersects(Rectangle r) {
-		for (Line l : r.getSegments()) {
+		for (Line l : r.getOutlineSegments()) {
 			if (intersects(l)) {
 				return true;
 			}

@@ -428,7 +428,7 @@ public class CubicCurve extends BezierCurve {
 	public Point[] getIntersections(Rectangle r) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : r.getSegments()) {
+		for (Line seg : r.getOutlineSegments()) {
 			intersections.addAll(Arrays.asList(getIntersections(seg)));
 		}
 
@@ -453,12 +453,12 @@ public class CubicCurve extends BezierCurve {
 		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}

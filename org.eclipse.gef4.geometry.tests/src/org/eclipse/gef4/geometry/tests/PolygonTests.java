@@ -433,9 +433,9 @@ public class PolygonTests {
 	public void test_getSegments() {
 		Rectangle bounds = RECTANGLE.getBounds();
 
-		for (Line s1 : bounds.getSegments()) {
+		for (Line s1 : bounds.getOutlineSegments()) {
 			boolean foundIt = false;
-			for (Line s2 : RECTANGLE.getSegments()) {
+			for (Line s2 : RECTANGLE.getOutlineSegments()) {
 				if (s1.equals(s2)) {
 					foundIt = true;
 					break;

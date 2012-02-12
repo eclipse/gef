@@ -77,7 +77,7 @@ public class EllipseTests {
 	public void test_intersects_with_Line() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);
-		for (Line l : r.getSegments()) {
+		for (Line l : r.getOutlineSegments()) {
 			assertTrue(e.intersects(l)); // line touches ellipse (tangent)
 		}
 	}

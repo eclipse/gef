@@ -38,7 +38,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  */
-public class Rectangle extends AbstractGeometry implements IGeometry {
+public class Rectangle extends AbstractGeometry implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -346,7 +346,7 @@ public class Rectangle extends AbstractGeometry implements IGeometry {
 	 * @return An array containing {@link Line} representations of this
 	 *         {@link Rectangle}'s borders.
 	 */
-	public Line[] getSegments() {
+	public Line[] getOutlineSegments() {
 		Line[] segments = new Line[4];
 		segments[0] = new Line(x, y, x + width, y);
 		segments[1] = new Line(x + width, y, x + width, y + height);
@@ -747,7 +747,7 @@ public class Rectangle extends AbstractGeometry implements IGeometry {
 			return true;
 		}
 
-		for (Line segment : getSegments()) {
+		for (Line segment : getOutlineSegments()) {
 			if (segment.intersects(l)) {
 				return true;
 			}

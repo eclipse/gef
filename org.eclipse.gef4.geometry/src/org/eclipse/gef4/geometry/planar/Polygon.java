@@ -35,7 +35,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * 
  */
-public class Polygon implements IGeometry {
+public class Polygon implements IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -126,7 +126,7 @@ public class Polygon implements IGeometry {
 	 */
 	public boolean contains(CubicCurve curve) {
 		if (contains(curve.getP1()) && contains(curve.getP2())) {
-			for (Line seg : getSegments()) {
+			for (Line seg : getOutlineSegments()) {
 				if (curve.intersects(seg)) {
 					return false;
 				}
@@ -276,7 +276,7 @@ public class Polygon implements IGeometry {
 	 */
 	public boolean contains(Polygon p) {
 		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getSegments();
+		Line[] otherSegments = p.getOutlineSegments();
 		for (int i = 0; i < otherSegments.length; i++) {
 			if (!contains(otherSegments[i])) {
 				return false;
@@ -312,7 +312,7 @@ public class Polygon implements IGeometry {
 	 */
 	public boolean contains(QuadraticCurve curve) {
 		if (contains(curve.getP1()) && contains(curve.getP2())) {
-			for (Line seg : getSegments()) {
+			for (Line seg : getOutlineSegments()) {
 				if (curve.intersects(seg)) {
 					return false;
 				}
@@ -364,14 +364,14 @@ public class Polygon implements IGeometry {
 		// walk through the segments of this polygon and count them
 		SegmentList segments = new SegmentList();
 
-		for (Line seg : getSegments()) {
+		for (Line seg : getOutlineSegments()) {
 			SegmentCounter sc = segments.find(seg);
 			sc.count++;
 		}
 
 		// walk through the segments of the other polygon and decrement their
 		// counter
-		for (Line seg : new Polygon(points).getSegments()) {
+		for (Line seg : new Polygon(points).getOutlineSegments()) {
 			SegmentCounter sc = segments.find(seg);
 			if (sc.count == 0) {
 				// if we add a new one or we delete one too often, these
@@ -440,7 +440,7 @@ public class Polygon implements IGeometry {
 	public Point[] getIntersections(CubicCurve c) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : getSegments()) {
+		for (Line seg : getOutlineSegments()) {
 			for (Point poi : c.getIntersections(seg)) {
 				intersections.add(poi);
 			}
@@ -470,7 +470,7 @@ public class Polygon implements IGeometry {
 	public Point[] getIntersections(Line l) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : getSegments()) {
+		for (Line segment : getOutlineSegments()) {
 			Point poi = segment.getIntersection(l);
 			if (poi != null) {
 				intersections.add(poi);
@@ -490,7 +490,7 @@ public class Polygon implements IGeometry {
 	public Point[] getIntersections(Polygon polygon) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			for (Point poi : getIntersections(segment)) {
 				intersections.add(poi);
 			}
@@ -528,7 +528,7 @@ public class Polygon implements IGeometry {
 	public Point[] getIntersections(QuadraticCurve c) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : getSegments()) {
+		for (Line seg : getOutlineSegments()) {
 			for (Point poi : c.getIntersections(seg)) {
 				intersections.add(poi);
 			}
@@ -547,7 +547,7 @@ public class Polygon implements IGeometry {
 	public Point[] getIntersections(Rectangle rect) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : rect.getSegments()) {
+		for (Line segment : rect.getOutlineSegments()) {
 			for (Point poi : getIntersections(segment)) {
 				intersections.add(poi);
 			}
@@ -578,12 +578,14 @@ public class Polygon implements IGeometry {
 		intersections.addAll(Arrays.asList(getIntersections(r.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(r.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getTopLeft())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(r.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(r.getTopRightArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(r.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(r.getTopLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(r
+				.getBottomLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(r
+				.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -608,7 +610,7 @@ public class Polygon implements IGeometry {
 	 * @return an array of {@link Line}s, representing the segments that make up
 	 *         this {@link Polygon}
 	 */
-	public Line[] getSegments() {
+	public Line[] getOutlineSegments() {
 		return PointListUtils.toSegmentsArray(points, true);
 	}
 
@@ -686,7 +688,7 @@ public class Polygon implements IGeometry {
 		}
 
 		// check for intersection with the segments
-		Line[] segments = getSegments();
+		Line[] segments = getOutlineSegments();
 		for (int i = 0; i < segments.length; i++) {
 			if (segments[i].intersects(line)) {
 				return true;
@@ -708,7 +710,7 @@ public class Polygon implements IGeometry {
 	 */
 	public boolean intersects(Polygon p) {
 		// reduce to segment intersection test
-		Line[] otherSegments = p.getSegments();
+		Line[] otherSegments = p.getOutlineSegments();
 		for (int i = 0; i < otherSegments.length; i++) {
 			if (intersects(otherSegments[i])) {
 				return true;

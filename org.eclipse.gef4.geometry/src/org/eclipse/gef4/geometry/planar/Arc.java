@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.transform.AffineTransform;
 
 /**
  * Represents the geometric shape of an arc, which is defined by its enclosing
@@ -28,7 +27,7 @@ import org.eclipse.gef4.geometry.transform.AffineTransform;
  * @author anyssen
  * 
  */
-public class Arc implements IGeometry {
+public class Arc extends AbstractGeometry implements IPolyCurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -283,12 +282,14 @@ public class Arc implements IGeometry {
 		intersections.addAll(Arrays.asList(getIntersections(r.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(r.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getTopLeft())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(r.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(r.getTopRightArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(r.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(r.getTopLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(r
+				.getBottomLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(r
+				.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -333,13 +334,6 @@ public class Arc implements IGeometry {
 
 	public Angle getStartAngle() {
 		return startAngle;
-	}
-
-	/**
-	 * @see IGeometry#getTransformed(AffineTransform)
-	 */
-	public IGeometry getTransformed(AffineTransform t) {
-		return toPath().getTransformed(t);
 	}
 
 	public double getWidth() {
@@ -389,8 +383,7 @@ public class Arc implements IGeometry {
 	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
-		CubicCurve[] segments = getSegments();
-		return toPath(segments);
+		return toPath(getSegments());
 	}
 
 	/**

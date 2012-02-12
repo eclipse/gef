@@ -181,7 +181,7 @@ public class Ellipse implements IGeometry {
 	 * @return true if it is contained, false otherwise
 	 */
 	public boolean contains(Polygon polygon) {
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			if (!contains(segment)) {
 				return false;
 			}
@@ -315,7 +315,7 @@ public class Ellipse implements IGeometry {
 	public Point[] getIntersections(Polygon polygon) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			for (Point intersection : getIntersections(segment)) {
 				intersections.add(intersection);
 			}
@@ -338,7 +338,7 @@ public class Ellipse implements IGeometry {
 	public Point[] getIntersections(Rectangle rectangle) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : rectangle.getSegments()) {
+		for (Line segment : rectangle.getOutlineSegments()) {
 			for (Point intersection : getIntersections(segment)) {
 				intersections.add(intersection);
 			}
@@ -368,12 +368,12 @@ public class Ellipse implements IGeometry {
 		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -584,7 +584,7 @@ public class Ellipse implements IGeometry {
 	 * @return true if they intersect, false otherwise
 	 */
 	public boolean intersects(Polygon polygon) {
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			if (intersects(segment)) {
 				return true;
 			}
@@ -627,7 +627,7 @@ public class Ellipse implements IGeometry {
 			return false;
 		}
 
-		Line[] segments = r.getSegments();
+		Line[] segments = r.getOutlineSegments();
 		for (int i = 0; i < segments.length; i++) {
 			if (intersects(segments[i])) {
 				return true;

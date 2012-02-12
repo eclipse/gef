@@ -169,7 +169,7 @@ public class Line extends BezierCurve implements ICurve {
 	public Point[] getIntersections(Rectangle r) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : r.getSegments()) {
+		for (Line seg : r.getOutlineSegments()) {
 			intersections.addAll(Arrays.asList(getIntersection(seg)));
 		}
 
@@ -186,12 +186,12 @@ public class Line extends BezierCurve implements ICurve {
 		intersections.add(getIntersection(rr.getRight()));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
