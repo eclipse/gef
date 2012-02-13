@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.zest.core.widgets.internal.ContainerFigure;
 import org.eclipse.zest.core.widgets.internal.ZestRootLayer;
+import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.ExpandCollapseManager;
@@ -63,8 +64,6 @@ import org.eclipse.zest.layouts.interfaces.ExpandCollapseManager;
  */
 public class Graph extends FigureCanvas implements IContainer {
 
-	private static final double MINIMUM_ZOOM = 0.1;
-	private static final double MAXIMUM_ZOOM = 10.0;
 	// CLASS CONSTANTS
 	public static final int ANIMATION_TIME = 500;
 	public static final int FISHEYE_ANIMATION_TIME = 100;
@@ -109,6 +108,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	private ZestRootLayer zestRootLayer;
 
 	private ConnectionRouter defaultConnectionRouter;
+	private ZoomManager zoomManager = null;
 
 	/**
 	 * Constructor for a Graph. This widget represents the root of the graph,
@@ -208,16 +208,13 @@ public class Graph extends FigureCanvas implements IContainer {
 			public void gesture(GestureEvent e) {
 				switch (e.detail) {
 				case SWT.GESTURE_BEGIN:
-					zoom = getRootLayer().getScale();
+					zoom = getZoomManager().getZoom();
 					break;
 				case SWT.GESTURE_END:
 					break;
 				case SWT.GESTURE_MAGNIFY:
 					double newValue = zoom * e.magnification;
-					if (newValue >= MINIMUM_ZOOM && newValue <= MAXIMUM_ZOOM) {
-						getRootLayer().setScale(newValue);
-						getRootLayer().repaint();
-					}
+					getZoomManager().setZoom(newValue);
 					break;
 				default:
 					// Do nothing
@@ -475,7 +472,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	public Dimension getPreferredSize() {
 		if (preferredSize.width < 0 || preferredSize.height < 0) {
 			org.eclipse.swt.graphics.Point size = getSize();
-			double scale = getRootLayer().getScale();
+			double scale = getZoomManager().getZoom();
 			return new Dimension((int) (size.x / scale + 0.5), (int) (size.y
 					/ scale + 0.5));
 		}
@@ -1333,5 +1330,20 @@ public class Graph extends FigureCanvas implements IContainer {
 	public void setRouter(ConnectionRouter connectionRouter) {
 		setDefaultConnectionRouter(connectionRouter);
 		applyConnectionRouter();
+	}
+
+	/**
+	 * Returns the ZoomManager component used for scaling the graph widget.
+	 * 
+	 * @return the ZoomManager component
+	 * @since 2.0
+	 */
+	// @tag zest.bug.156286-Zooming.fix.experimental : expose the zoom manager
+	// for new actions.
+	public ZoomManager getZoomManager() {
+		if (zoomManager == null) {
+			zoomManager = new ZoomManager(getRootLayer(), getViewport());
+		}
+		return zoomManager;
 	}
 }

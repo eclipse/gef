@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.zest.core.viewers;
+package org.eclipse.zest.core.widgets.zooming;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.zest.core.viewers.internal.SharedMessages;
+import org.eclipse.zest.core.widgets.internal.SharedMessages;
 
 /**
  * Manage the primary zoom function in a graphical viewer. This class is used by
@@ -55,7 +55,7 @@ public class ZoomManager {
 	/** Style bit meaning animate during {@link #zoomIn()} and {@link #zoomOut()} */
 	public static final int ANIMATE_ZOOM_IN_OUT = 1;
 
-	private List<ZoomListener> listeners = new ArrayList<ZoomListener>();
+	private List listeners = new ArrayList();
 
 	private double multiplier = 1.0;
 	private ScalableFigure pane;
@@ -83,7 +83,7 @@ public class ZoomManager {
 	 * visible on the screen.
 	 */
 	public static final String FIT_ALL = SharedMessages.FitAllAction_Label;
-	private List<String> zoomLevelContributions = Collections.emptyList();
+	private List zoomLevelContributions = Collections.emptyList();
 
 	//DecimalFormat format = new DecimalFormat("####%"); //$NON-NLS-1$
 
@@ -98,7 +98,7 @@ public class ZoomManager {
 	public ZoomManager(ScalableFigure pane, Viewport viewport) {
 		this.pane = pane;
 		this.viewport = viewport;
-		zoomLevelContributions = new ArrayList<String>();
+		zoomLevelContributions = new ArrayList();
 		zoomLevelContributions.add(FIT_ALL);
 	}
 
@@ -150,9 +150,9 @@ public class ZoomManager {
 	 * Notifies listeners that the zoom level has changed.
 	 */
 	protected void fireZoomChanged() {
-		Iterator<ZoomListener> iter = listeners.iterator();
+		Iterator iter = listeners.iterator();
 		while (iter.hasNext()) {
-			iter.next().zoomChanged(zoom);
+			((ZoomListener)iter.next()).zoomChanged(zoom);
 		}
 	}
 
@@ -340,7 +340,7 @@ public class ZoomManager {
 	 * 
 	 * @return the list of contributed zoom levels
 	 */
-	public List<String> getZoomLevelContributions() {
+	public List getZoomLevelContributions() {
 		return zoomLevelContributions;
 	}
 
@@ -366,7 +366,7 @@ public class ZoomManager {
 
 		if (zoomLevelContributions != null) {
 			for (int i = 0; i < zoomLevelContributions.size(); i++) {
-				zoomLevelStrings[i] = zoomLevelContributions.get(i);
+				zoomLevelStrings[i] = (String)zoomLevelContributions.get(i);
 			}
 		}
 		for (int i = 0; i < zoomLevels.length; i++) {
@@ -522,7 +522,7 @@ public class ZoomManager {
 	 * @param contributions
 	 *            the list of contributed zoom levels
 	 */
-	public void setZoomLevelContributions(List<String> contributions) {
+	public void setZoomLevelContributions(List contributions) {
 		zoomLevelContributions = contributions;
 	}
 

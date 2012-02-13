@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.zest.core.viewers;
+package org.eclipse.zest.core.widgets.zooming;
 
 /**
  * Listens to zoom level changes.

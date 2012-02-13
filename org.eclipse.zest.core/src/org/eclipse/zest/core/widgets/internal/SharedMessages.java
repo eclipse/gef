@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.zest.core.viewers.internal;
+package org.eclipse.zest.core.widgets.internal;
 
 /**
  * This class contains UI strings (translated, if available) that clients can
