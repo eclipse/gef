@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import java.awt.geom.Path2D;
 
@@ -34,7 +34,7 @@ import org.eclipse.swt.graphics.PathData;
  * 
  * @author anyssen
  */
-public class Path implements Geometry {
+public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Winding rule for determining the interior of the path. Indicates that a
@@ -114,14 +114,14 @@ public class Path implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
 		return delegate.contains(Geometry2AWT.toAWTPoint(p));
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(Rectangle r) {
 		return delegate.contains(Geometry2AWT.toAWTRectangle(r));
@@ -151,16 +151,16 @@ public class Path implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return AWT2Geometry.toRectangle(delegate.getBounds2D());
 	}
 
 	/**
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(AffineTransform t) {
+	public IGeometry getTransformed(AffineTransform t) {
 		return new Path(AWT2SWT.toSWTPathData(delegate
 				.getPathIterator(Geometry2AWT.toAWTAffineTransform(t))));
 	}
@@ -177,7 +177,7 @@ public class Path implements Geometry {
 	}
 
 	/**
-	 * {@link Geometry#intersects(Rectangle)}
+	 * {@link IGeometry#intersects(Rectangle)}
 	 */
 	public boolean intersects(Rectangle r) {
 		return delegate.intersects(Geometry2AWT.toAWTRectangle(r));
@@ -235,10 +235,10 @@ public class Path implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
-		return new Path(toSWTPathData(), getWindingRule());
+		return getCopy();
 	}
 
 	/**
@@ -248,6 +248,13 @@ public class Path implements Geometry {
 	 */
 	public PathData toSWTPathData() {
 		return AWT2SWT.toSWTPathData(delegate.getPathIterator(null));
+	}
+
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Path getCopy() {
+		return new Path(toSWTPathData(), getWindingRule());
 	}
 
 }

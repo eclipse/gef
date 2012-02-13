@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * @author Matthias Wienand
  */
-public class Ellipse implements Geometry {
+public class Ellipse implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
 
@@ -144,7 +144,7 @@ public class Ellipse implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
 		// point has to fulfill (x/a)^2 + (y/b)^2 <= 1, where a = width/2 and b
@@ -181,7 +181,7 @@ public class Ellipse implements Geometry {
 	 * @return true if it is contained, false otherwise
 	 */
 	public boolean contains(Polygon polygon) {
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			if (!contains(segment)) {
 				return false;
 			}
@@ -190,7 +190,7 @@ public class Ellipse implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(Rectangle r) {
 		// has to contain all border points of the rectangle, to contain it
@@ -243,7 +243,7 @@ public class Ellipse implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
@@ -315,7 +315,7 @@ public class Ellipse implements Geometry {
 	public Point[] getIntersections(Polygon polygon) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			for (Point intersection : getIntersections(segment)) {
 				intersections.add(intersection);
 			}
@@ -338,7 +338,7 @@ public class Ellipse implements Geometry {
 	public Point[] getIntersections(Rectangle rectangle) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : rectangle.getSegments()) {
+		for (Line segment : rectangle.getOutlineSegments()) {
 			for (Point intersection : getIntersections(segment)) {
 				intersections.add(intersection);
 			}
@@ -368,12 +368,12 @@ public class Ellipse implements Geometry {
 		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -513,9 +513,9 @@ public class Ellipse implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(AffineTransform t) {
+	public IGeometry getTransformed(AffineTransform t) {
 		// choose a path implementation
 		return toPath().getTransformed(t);
 	}
@@ -584,7 +584,7 @@ public class Ellipse implements Geometry {
 	 * @return true if they intersect, false otherwise
 	 */
 	public boolean intersects(Polygon polygon) {
-		for (Line segment : polygon.getSegments()) {
+		for (Line segment : polygon.getOutlineSegments()) {
 			if (intersects(segment)) {
 				return true;
 			}
@@ -619,7 +619,7 @@ public class Ellipse implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(Rectangle r) {
 		// quick rejection test
@@ -627,7 +627,7 @@ public class Ellipse implements Geometry {
 			return false;
 		}
 
-		Line[] segments = r.getSegments();
+		Line[] segments = r.getOutlineSegments();
 		for (int i = 0; i < segments.length; i++) {
 			if (intersects(segments[i])) {
 				return true;
@@ -663,7 +663,7 @@ public class Ellipse implements Geometry {
 	 * Returns a path representation of this {@link Ellipse}, which is an
 	 * approximation of the four segments by means of cubic Bezier curves.
 	 * 
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
@@ -724,7 +724,7 @@ public class Ellipse implements Geometry {
 		HashSet<Point> intersections = new HashSet<Point>();
 
 		for (CubicCurve mySeg : getSegments()) {
-			for (CubicCurve arcSeg : arc.getBorderSegments()) {
+			for (CubicCurve arcSeg : arc.getSegments()) {
 				intersections.addAll(Arrays.asList(mySeg
 						.getIntersections(arcSeg)));
 			}

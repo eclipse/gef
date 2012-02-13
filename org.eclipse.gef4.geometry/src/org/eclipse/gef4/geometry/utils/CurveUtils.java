@@ -16,10 +16,10 @@ import java.util.Set;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
-import org.eclipse.gef4.geometry.shapes.CubicCurve;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.QuadraticCurve;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.QuadraticCurve;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 /**
  * The {@link CurveUtils} class provides functionality that can be used for

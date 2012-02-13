@@ -20,9 +20,9 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.shapes.Line;
-import org.eclipse.gef4.geometry.shapes.Polygon;
-import org.eclipse.gef4.geometry.shapes.Rectangle;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Polygon;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
@@ -329,7 +329,7 @@ public class RectangleTests {
 	public void test_getSegments() {
 		forRectangles(new IAction() {
 			public void action(Rectangle rect, Point tl, Point br) {
-				Line[] segments = rect.getSegments();
+				Line[] segments = rect.getOutlineSegments();
 				// segments are top, right, bottom, left. in order.
 				Point tr = tl.getTranslated(br.x - tl.x, 0);
 				Point bl = tl.getTranslated(0, br.y - tl.y);
@@ -434,7 +434,7 @@ public class RectangleTests {
 	public void test_intersects_with_Line() {
 		Rectangle r1 = new Rectangle(-5, -5, 10, 10);
 
-		for (Line seg : r1.getSegments()) {
+		for (Line seg : r1.getOutlineSegments()) {
 			assertTrue(r1.intersects(seg));
 		}
 

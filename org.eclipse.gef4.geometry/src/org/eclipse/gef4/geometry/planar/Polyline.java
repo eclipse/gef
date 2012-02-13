@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
@@ -27,7 +27,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class Polyline implements Geometry {
+public class Polyline extends AbstractGeometry implements IPolyCurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -82,7 +82,7 @@ public class Polyline implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Point)
+	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
 		for (int i = 0; i + 1 < points.length; i++) {
@@ -96,7 +96,7 @@ public class Polyline implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(Rectangle r) {
 		// may contain the rectangle only in case it is degenerated
@@ -134,7 +134,7 @@ public class Polyline implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return PointListUtils.getBounds(points);
@@ -177,31 +177,21 @@ public class Polyline implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(AffineTransform t) {
+	public IGeometry getTransformed(AffineTransform t) {
 		return new Polyline(t.getTransformed(points));
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
-	}
-
-	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(Rectangle rect) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		Path path = new Path();
@@ -241,6 +231,13 @@ public class Polyline implements Geometry {
 	public int[] toSWTPointArray() {
 		return PointListUtils.toIntegerArray(PointListUtils
 				.toCoordinatesArray(points));
+	}
+
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Polyline getCopy() {
+		return new Polyline(PointListUtils.getCopy(points));
 	}
 
 }

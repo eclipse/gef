@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,11 +32,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class Line implements Geometry {
+public class Line extends BezierCurve implements ICurve {
 
 	private static final long serialVersionUID = 1L;
-
-	private double x1, y1, x2, y2;
 
 	/**
 	 * Constructs a new {@link Line}, which connects the two {@link Point}s
@@ -52,10 +50,7 @@ public class Line implements Geometry {
 	 *            the y-coordinate of the end point
 	 */
 	public Line(double x1, double y1, double x2, double y2) {
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
+		super(x1, y1, x2, y2);
 	}
 
 	/**
@@ -70,11 +65,6 @@ public class Line implements Geometry {
 		this(p1.x, p1.y, p2.x, p2.y);
 	}
 
-	@Override
-	public Object clone() {
-		return getCopy();
-	}
-
 	public boolean contains(Point p) {
 		// TODO: optimize w.r.t object creation
 		Point p1 = getP1();
@@ -86,12 +76,6 @@ public class Line implements Geometry {
 
 		return new Straight(p1, p2).containsWithinSegment(new Vector(p1),
 				new Vector(p2), new Vector(p));
-	}
-
-	public boolean contains(Rectangle r) {
-		// TODO: may contain the rectangle only in case the rectangle is
-		// degenerated...
-		return false;
 	}
 
 	/**
@@ -111,14 +95,14 @@ public class Line implements Geometry {
 	 *         point coordinates
 	 */
 	public boolean equals(double x1, double y1, double x2, double y2) {
-		return PrecisionUtils.equal(x1, this.x1)
-				&& PrecisionUtils.equal(y1, this.y1)
-				&& PrecisionUtils.equal(x2, this.x2)
-				&& PrecisionUtils.equal(y2, this.y2)
-				|| PrecisionUtils.equal(x2, this.x1)
-				&& PrecisionUtils.equal(y2, this.y1)
-				&& PrecisionUtils.equal(x1, this.x2)
-				&& PrecisionUtils.equal(y1, this.y2);
+		return PrecisionUtils.equal(x1, getX1())
+				&& PrecisionUtils.equal(y1, getY1())
+				&& PrecisionUtils.equal(x2, getX2())
+				&& PrecisionUtils.equal(y2, getY2())
+				|| PrecisionUtils.equal(x2, getX1())
+				&& PrecisionUtils.equal(y2, getY1())
+				&& PrecisionUtils.equal(x1, getX2())
+				&& PrecisionUtils.equal(y1, getY2());
 	}
 
 	@Override
@@ -136,7 +120,7 @@ public class Line implements Geometry {
 	 * Returns the smallest {@link Rectangle} containing this {@link Line}'s
 	 * start and end point
 	 * 
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(getP1(), getP2());
@@ -149,11 +133,11 @@ public class Line implements Geometry {
 	 * @return a new {@link Line} with the same start and end point coordinates
 	 */
 	public Line getCopy() {
-		return new Line(x1, y1, x2, y2);
+		return new Line(getX1(), getY1(), getX2(), getY2());
 	}
 
-	public Point[] getIntersections(Arc arc) {
-		return arc.getIntersections(this);
+	public Point[] getIntersections(Arc a) {
+		return a.getIntersections(this);
 	}
 
 	public Point[] getIntersections(CubicCurve c) {
@@ -185,7 +169,7 @@ public class Line implements Geometry {
 	public Point[] getIntersections(Rectangle r) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : r.getSegments()) {
+		for (Line seg : r.getOutlineSegments()) {
 			intersections.addAll(Arrays.asList(getIntersection(seg)));
 		}
 
@@ -202,12 +186,12 @@ public class Line implements Geometry {
 		intersections.add(getIntersection(rr.getRight()));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRight())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeft())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeft())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRight())));
+				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -253,26 +237,6 @@ public class Line implements Geometry {
 	}
 
 	/**
-	 * Returns a {@link Point} representing the start point of this {@link Line}
-	 * 
-	 * @return a new {@link Point} with the x and y coordinates of this
-	 *         {@link Line}'s start point
-	 */
-	public Point getP1() {
-		return new Point(x1, y1);
-	}
-
-	/**
-	 * Returns a {@link Point} representing the end point of this {@link Line}
-	 * 
-	 * @return a {@link Point} with the x and y coordinates of this {@link Line}
-	 *         's end point
-	 */
-	public Point getP2() {
-		return new Point(x2, y2);
-	}
-
-	/**
 	 * Returns an array, which contains two {@link Point}s representing the
 	 * start and end points of this {@link Line}
 	 * 
@@ -284,57 +248,11 @@ public class Line implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(AffineTransform localTransform) {
+	public IGeometry getTransformed(AffineTransform localTransform) {
 		Point[] transformed = localTransform.getTransformed(getPoints());
 		return new Line(transformed[0], transformed[1]);
-	}
-
-	/**
-	 * Returns the x-coordinate of this {@link Line}'s start point
-	 * 
-	 * @return the x-coordinate of the start point
-	 */
-	public double getX1() {
-		return x1;
-	}
-
-	/**
-	 * Returns the x-coordinate of this {@link Line}'s end point
-	 * 
-	 * @return the x-coordinate of the end point
-	 */
-	public double getX2() {
-		return x2;
-	}
-
-	/**
-	 * Returns the y-coordinate of this {@link Line}'s start point
-	 * 
-	 * @return the y-coordinate of the start point
-	 */
-	public double getY1() {
-		return y1;
-	}
-
-	/**
-	 * Returns the y-coordinate of this {@link Line}'s end point
-	 * 
-	 * @return the y-coordinate of the end point
-	 */
-	public double getY2() {
-		return y2;
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
 	}
 
 	/**
@@ -379,7 +297,7 @@ public class Line implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(Rectangle r) {
 		return r.intersects(this);
@@ -399,10 +317,10 @@ public class Line implements Geometry {
 	 *            the y-coordinate of the end point
 	 */
 	public void setLine(double x1, double y1, double x2, double y2) {
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
+		setX1(x1);
+		setY1(y1);
+		setX2(x2);
+		setY2(y2);
 	}
 
 	/**
@@ -433,90 +351,18 @@ public class Line implements Geometry {
 	}
 
 	/**
-	 * Initializes the start point coordinates of this line with the values of
-	 * the given {@link Point}
-	 * 
-	 * @param p1
-	 *            the Point whose x and y coordinates should be used to
-	 *            initialize this {@link Line}'s start point coordinates
-	 */
-	public void setP1(Point p1) {
-		this.x1 = p1.x;
-		this.y1 = p1.y;
-	}
-
-	/**
-	 * Initializes the end point coordinates of this line with the values of the
-	 * given {@link Point}
-	 * 
-	 * @param p2
-	 *            the Point whose x and y coordinates should be used to
-	 *            initialize this {@link Line}'s end point coordinates
-	 */
-	public void setP2(Point p2) {
-		this.x2 = p2.x;
-		this.y2 = p2.y;
-	}
-
-	/**
-	 * Initializes the start point x-coordinate of this line with the given
-	 * value.
-	 * 
-	 * @param x1
-	 *            the value to use as the new x-coordinate of this {@link Line}s
-	 *            start point
-	 */
-	public void setX1(double x1) {
-		this.x1 = x1;
-	}
-
-	/**
-	 * Initializes the end point x-coordinate of this line with the given value.
-	 * 
-	 * @param x2
-	 *            the value to use as the new x-coordinate of this {@link Line}s
-	 *            end point
-	 */
-	public void setX2(double x2) {
-		this.x2 = x2;
-	}
-
-	/**
-	 * Initializes the start point y-coordinate of this line with the given
-	 * value.
-	 * 
-	 * @param y1
-	 *            the value to use as the new y-coordinate of this {@link Line}s
-	 *            start point
-	 */
-	public void setY1(double y1) {
-		this.y1 = y1;
-	}
-
-	/**
-	 * Initializes the end point y-coordinate of this line with the given value.
-	 * 
-	 * @param y2
-	 *            the value to use as the new y-coordinate of this {@link Line}s
-	 *            end point
-	 */
-	public void setY2(double y2) {
-		this.y2 = y2;
-	}
-
-	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		Path path = new Path();
-		path.moveTo(x1, y1);
-		path.lineTo(x2, y2);
+		path.moveTo(getX1(), getY1());
+		path.lineTo(getX2(), getY1());
 		return path;
 	}
 
 	@Override
 	public String toString() {
-		return "Line: (" + x1 + ", " + y1 + ") -> (" + x2 + ", " + y2 + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		return "Line: (" + getX1() + ", " + getY1() + ") -> (" + getX2() + ", " + getY2() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	/**

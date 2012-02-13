@@ -11,7 +11,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *    
  *******************************************************************************/
-package org.eclipse.gef4.geometry.shapes;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Dimension;
@@ -38,7 +38,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  */
-public class Rectangle implements Geometry {
+public class Rectangle extends AbstractGeometry implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -134,15 +134,6 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
-	 * Overwritten with public visibility as recommended within
-	 * {@link Cloneable}.
-	 */
-	@Override
-	public Object clone() {
-		return getCopy();
-	}
-
-	/**
 	 * Returns whether the point given by x and y is within the boundaries of
 	 * this Rectangle.
 	 * 
@@ -198,7 +189,7 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#contains(Rectangle)
+	 * @see IGeometry#contains(Rectangle)
 	 */
 	public boolean contains(Rectangle r) {
 		return contains(r.x, r.y, r.width, r.height);
@@ -290,6 +281,16 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
+	 * Returns the area of this {@link Rectangle}, i.e. the product of its width
+	 * and height.
+	 * 
+	 * @return the area of this {@link Rectangle}
+	 */
+	public double getArea() {
+		return width * height;
+	}
+
+	/**
 	 * Returns an array of {@link Point}s representing the top-left, top-right,
 	 * bottom-right, and bottom-left border points of this {@link Rectangle}.
 	 * 
@@ -345,7 +346,7 @@ public class Rectangle implements Geometry {
 	 * @return An array containing {@link Line} representations of this
 	 *         {@link Rectangle}'s borders.
 	 */
-	public Line[] getSegments() {
+	public Line[] getOutlineSegments() {
 		Line[] segments = new Line[4];
 		segments[0] = new Line(x, y, x + width, y);
 		segments[1] = new Line(x + width, y, x + width, y + height);
@@ -386,7 +387,7 @@ public class Rectangle implements Geometry {
 	/**
 	 * Returns a copy of this {@link Rectangle}.
 	 * 
-	 * @see Geometry#getBounds()
+	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
 		return getCopy();
@@ -611,9 +612,9 @@ public class Rectangle implements Geometry {
 	 * Returns a {@link Polygon}, which represents the transformed
 	 * {@link Rectangle}.
 	 * 
-	 * @see Geometry#getTransformed(AffineTransform)
+	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
-	public Geometry getTransformed(AffineTransform t) {
+	public IGeometry getTransformed(AffineTransform t) {
 		// may not be type-intrinsically transformed, so use a polygon
 		// representation
 		return new Polygon(t.getTransformed(getPoints()));
@@ -710,16 +711,6 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
-	}
-
-	/**
 	 * Sets the bounds of this {@link Rectangle} to the intersection of this
 	 * {@link Rectangle} with the given one.
 	 * 
@@ -756,7 +747,7 @@ public class Rectangle implements Geometry {
 			return true;
 		}
 
-		for (Line segment : getSegments()) {
+		for (Line segment : getOutlineSegments()) {
 			if (segment.intersects(l)) {
 				return true;
 			}
@@ -765,7 +756,7 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#intersects(Rectangle)
+	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(Rectangle r) {
 		return !getIntersected(r).isEmpty();
@@ -1018,7 +1009,7 @@ public class Rectangle implements Geometry {
 	}
 
 	/**
-	 * @see Geometry#toPath()
+	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		Path path = new Path();
