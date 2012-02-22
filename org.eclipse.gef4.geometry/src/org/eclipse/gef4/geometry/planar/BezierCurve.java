@@ -159,12 +159,36 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 		this.y2 = y2;
 	}
 
+	/**
+	 * Returns an array of points representing the inner control points of this
+	 * curve, i.e. excluding the start and end points. In case of s linear
+	 * curve, no control points will be returned, in case of a quadratic curve,
+	 * one control point, and so on.
+	 * 
+	 * @return an array of points with the coordinates of the inner control
+	 *         points of this {@link BezierCurve}, i.e. exclusive of the start
+	 *         and end point. The number of control points will depend on the
+	 *         degree ({@link #getDegree()}) of the curve, so in case of a line
+	 *         (linear curve) the array will be empty, in case of a quadratic
+	 *         curve, it will be of size <code>1</code>, in case of a cubic
+	 *         curve of size <code>2</code>, etc..
+	 */
 	public Point[] getCtrls() {
 		return PointListUtils.toPointsArray(ctrlCoordinates);
 	}
 
+	/**
+	 * Returns the point-wise coordinates (i.e. x1, y1, x2, y2, etc.) of the
+	 * inner control points of this {@link BezierCurve}, i.e. exclusive of the
+	 * start and end points.
+	 * 
+	 * @see BezierCurve#getCtrls()
+	 * 
+	 * @return an array containing the inner control points' coordinates
+	 */
 	public double[] getCtrlCoordinates() {
 		return PointListUtils.getCopy(ctrlCoordinates);
+
 	}
 
 	public void setCtrls(Point... ctrls) {
@@ -204,6 +228,17 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 		return false;
 	}
 
+	/**
+	 * Returns the degree of this curve which corresponds to the number of
+	 * overall control points (including start and end point) used to define the
+	 * curve. The degree is zero-based, so a line (linear curve) will have
+	 * degree <code>1</code>, a quadratic curve will have degree <code>2</code>,
+	 * and so on. <code>1</code> in case of a
+	 * 
+	 * @return The degree of this {@link ICurve}, which corresponds to the
+	 *         zero-based overall number of control points (including start and
+	 *         end point) used to define this {@link ICurve}.
+	 */
 	public int getDegree() {
 		return getCtrls().length + 1;
 	}
