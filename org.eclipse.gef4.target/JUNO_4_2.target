@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.6"?>
 
-<target name="JUNO_4_2" sequenceNumber="7">
+<target name="JUNO_4_2" sequenceNumber="11">
 <locations>
 <location includeAllPlatforms="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120207-2200"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.2-I-builds"/>
+<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120127-1145"/>
+<repository location="http://download.eclipse.org/releases/juno/"/>
 </location>
 </locations>
 </target>
