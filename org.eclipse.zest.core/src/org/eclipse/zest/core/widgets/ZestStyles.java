@@ -84,6 +84,10 @@ public final class ZestStyles {
 	 * dash-dotted lines.
 	 */
 	public static final int CONNECTIONS_DASH_DOT = 1 << 5;
+	/**
+	 * Disallows the default multitouch gestures
+	 */
+	public static final int GESTURES_DISABLED = 1 << 6;
 
 	/**
 	 * Bitwise ANDs the styleToCheck integer with the given style.
