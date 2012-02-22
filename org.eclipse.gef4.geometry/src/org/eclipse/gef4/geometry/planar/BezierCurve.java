@@ -163,6 +163,10 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 		return PointListUtils.toPointsArray(ctrlCoordinates);
 	}
 
+	public double[] getCtrlCoordinates() {
+		return PointListUtils.getCopy(ctrlCoordinates);
+	}
+
 	public void setCtrls(Point... ctrls) {
 		ctrlCoordinates = PointListUtils.toCoordinatesArray(ctrls);
 	}
@@ -201,7 +205,7 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 	}
 
 	public int getDegree() {
-		return getCtrls().length;
+		return getCtrls().length + 1;
 	}
 
 }

@@ -96,6 +96,21 @@ public class PointListUtils {
 	}
 
 	/**
+	 * Copies an array of coordinates.
+	 * 
+	 * @param coordinates
+	 *            the array of coordinates to copy
+	 * @return a new array containing identical coordinates
+	 */
+	public static final double[] getCopy(double[] coordinates) {
+		double[] copy = new double[coordinates.length];
+		for (int i = 0; i < coordinates.length; i++) {
+			copy[i] = coordinates[i];
+		}
+		return copy;
+	}
+
+	/**
 	 * Utility method to create a unique hash code base on an array of given
 	 * {@link Point}s.
 	 * 
