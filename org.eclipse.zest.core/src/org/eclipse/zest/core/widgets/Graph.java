@@ -39,8 +39,6 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.GestureEvent;
-import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,6 +52,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.zest.core.widgets.internal.ContainerFigure;
 import org.eclipse.zest.core.widgets.internal.ZestRootLayer;
+import org.eclipse.zest.core.widgets.zooming.ZoomGestureListener;
 import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
@@ -201,26 +200,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				// do nothing
 			}
 		});
-		this.addGestureListener(new GestureListener() {
-
-			double zoom = 1.0;
-
-			public void gesture(GestureEvent e) {
-				switch (e.detail) {
-				case SWT.GESTURE_BEGIN:
-					zoom = getZoomManager().getZoom();
-					break;
-				case SWT.GESTURE_END:
-					break;
-				case SWT.GESTURE_MAGNIFY:
-					double newValue = zoom * e.magnification;
-					getZoomManager().setZoom(newValue);
-					break;
-				default:
-					// Do nothing
-				}
-			}
-		});
+		this.addGestureListener(new ZoomGestureListener(getZoomManager()));
 	}
 
 	/**
