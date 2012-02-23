@@ -203,8 +203,8 @@ public class Graph extends FigureCanvas implements IContainer {
 		});
 		if ((style & (ZestStyles.GESTURES_DISABLED)) == 0) {
 			// Only add default gestures if not disabled by style bit
-			this.addGestureListener(new ZoomGestureListener(getZoomManager()));
-			this.addGestureListener(new RotateGestureListener(this));
+			this.addGestureListener(new ZoomGestureListener());
+			this.addGestureListener(new RotateGestureListener());
 		}
 	}
 

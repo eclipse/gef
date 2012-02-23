@@ -11,6 +11,7 @@ package org.eclipse.zest.core.widgets.gestures;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.events.GestureListener;
+import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 
 /**
@@ -21,23 +22,17 @@ import org.eclipse.zest.core.widgets.zooming.ZoomManager;
  * @since 2.0
  */
 public class ZoomGestureListener implements GestureListener {
-	private final ZoomManager manager;
-
-	/**
-	 * Initializes the gesture listener
-	 * 
-	 * @param graph
-	 *            the graph widget to zoom
-	 */
-	public ZoomGestureListener(ZoomManager manager) {
-		this.manager = manager;
-	}
+	ZoomManager manager;
 
 	double zoom = 1.0;
 
 	public void gesture(GestureEvent e) {
+		if (!(e.widget instanceof Graph)) {
+			return;
+		}
 		switch (e.detail) {
 		case SWT.GESTURE_BEGIN:
+			manager = ((Graph) e.widget).getZoomManager();
 			zoom = manager.getZoom();
 			break;
 		case SWT.GESTURE_END:

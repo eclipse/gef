@@ -34,10 +34,6 @@ public class RotateGestureListener implements GestureListener {
 	List /* <Point> */originalLocations;
 	double xCenter, yCenter;
 
-	public RotateGestureListener(Graph graph) {
-		this.graph = graph;
-	}
-
 	void storePosition(List nodes) {
 		originalLocations = new ArrayList();
 		Iterator it = nodes.iterator();
@@ -69,8 +65,12 @@ public class RotateGestureListener implements GestureListener {
 	 * .GestureEvent)
 	 */
 	public void gesture(GestureEvent e) {
+		if (!(e.widget instanceof Graph)) {
+			return;
+		}
 		switch (e.detail) {
 		case SWT.GESTURE_BEGIN:
+			graph = (Graph) e.widget;
 			rotate = 0.0;
 			nodes = graph.getSelection();
 			if (nodes.isEmpty()) {
