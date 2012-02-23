@@ -186,12 +186,14 @@ public class Line extends BezierCurve implements ICurve {
 		intersections.add(getIntersection(rr.getRight()));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}

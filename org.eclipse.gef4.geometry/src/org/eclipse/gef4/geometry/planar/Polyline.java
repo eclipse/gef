@@ -27,11 +27,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class Polyline extends AbstractGeometry implements IPolyCurve {
+public class Polyline extends AbstractPointListBasedGeometry implements IPolyCurve {
 
 	private static final long serialVersionUID = 1L;
-
-	private final Point[] points;
 
 	/**
 	 * Constructs a new {@link Polyline} from a even-numbered sequence of
@@ -44,10 +42,7 @@ public class Polyline extends AbstractGeometry implements IPolyCurve {
 	 *            {@link Polyline} is to be created .
 	 */
 	public Polyline(double... coordinates) {
-		points = new Point[coordinates.length / 2];
-		for (int i = 0; i < coordinates.length / 2; i++) {
-			points[i] = new Point(coordinates[i * 2], coordinates[i * 2 + 1]);
-		}
+		super(coordinates);
 	}
 
 	/**
@@ -62,7 +57,7 @@ public class Polyline extends AbstractGeometry implements IPolyCurve {
 	 *            created.
 	 */
 	public Polyline(Point... points) {
-		this.points = PointListUtils.getCopy(points);
+		super(points);
 	}
 
 	/**
@@ -134,37 +129,6 @@ public class Polyline extends AbstractGeometry implements IPolyCurve {
 	}
 
 	/**
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return PointListUtils.getBounds(points);
-	}
-
-	/**
-	 * Returns a double array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this {@link Polyline}.
-	 * 
-	 * @return an array that alternately contains the x- and y-coordinates of
-	 *         this {@link Polyline}'s points.
-	 */
-	public double[] getCoordinates() {
-		return PointListUtils.toCoordinatesArray(points);
-	}
-
-	/**
-	 * Returns a copy of the points that make up this {@link Polyline}, where a
-	 * segment of the {@link Polyline} is represented between each two
-	 * succeeding {@link Point}s in the sequence, and from the last back to the
-	 * first.
-	 * 
-	 * @return an array of {@link Point}s representing the points that make up
-	 *         this {@link Polyline}
-	 */
-	public Point[] getPoints() {
-		return PointListUtils.getCopy(points);
-	}
-
-	/**
 	 * Returns a sequence of {@link Line}s, representing the segments that are
 	 * obtained by linking each two successive point of this {@link Polyline}
 	 * (including the last and the first one).
@@ -222,22 +186,10 @@ public class Polyline extends AbstractGeometry implements IPolyCurve {
 	}
 
 	/**
-	 * Returns an integer array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this {@link Polyline}.
-	 * 
-	 * @return an array containing integer values, which are obtained by casting
-	 *         the x- and y-coordinates of this {@link Polyline}.
-	 */
-	public int[] toSWTPointArray() {
-		return PointListUtils.toIntegerArray(PointListUtils
-				.toCoordinatesArray(points));
-	}
-
-	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
 	public Polyline getCopy() {
-		return new Polyline(PointListUtils.getCopy(points));
+		return new Polyline(getPoints());
 	}
 
 }

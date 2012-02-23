@@ -110,23 +110,6 @@ public class PointListUtils {
 		return copy;
 	}
 
-	/**
-	 * Utility method to create a unique hash code base on an array of given
-	 * {@link Point}s.
-	 * 
-	 * @param points
-	 *            the array of {@link Point}s used to calculate the hash value.
-	 * @return an integer value, which is computed by adding the hash code
-	 *         values of all {@link Point} objects contained in the given array
-	 */
-	public static int getHashCode(Point[] points) {
-		int hashCode = 0;
-		for (int i = 0; i < points.length; i++) {
-			hashCode += points[i].hashCode();
-		}
-		return hashCode;
-	}
-
 	private static void swapLowestYPointToStart(Point[] points) {
 		int minIdx = 0;
 		Point min = points[minIdx];

@@ -27,16 +27,13 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class RoundedRectangle extends AbstractGeometry implements IShape {
+public final class RoundedRectangle extends AbstractRectangleBasedGeometry implements
+		IShape {
 
 	private static final long serialVersionUID = 1L;
 
-	private double x;
-	private double y;
-	private double width;
-	private double height;
-	private double arcWidth;
-	private double arcHeight;
+	double arcWidth;
+	double arcHeight;
 
 	/**
 	 * Constructs a new {@link RoundedRectangle} from the given bounds and arc
@@ -158,49 +155,6 @@ public class RoundedRectangle extends AbstractGeometry implements IShape {
 	}
 
 	/**
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
-	}
-
-	/**
-	 * Returns the height of this {@link RoundedRectangle}.
-	 * 
-	 * @return the height of this {@link RoundedRectangle}
-	 */
-	public double getHeight() {
-		return height;
-	}
-
-	/**
-	 * Returns the width of this {@link RoundedRectangle}.
-	 * 
-	 * @return the width of this {@link RoundedRectangle}
-	 */
-	public double getWidth() {
-		return width;
-	}
-
-	/**
-	 * Returns the x-coordinate of this {@link RoundedRectangle}.
-	 * 
-	 * @return the x-coordinate of this {@link RoundedRectangle}
-	 */
-	public double getX() {
-		return x;
-	}
-
-	/**
-	 * Returns the y-coordinate of this {@link RoundedRectangle}.
-	 * 
-	 * @return the y-coordinate of this {@link RoundedRectangle}
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
 	 * @see IGeometry#intersects(Rectangle)
 	 */
 	public boolean intersects(final Rectangle r) {
@@ -261,48 +215,6 @@ public class RoundedRectangle extends AbstractGeometry implements IShape {
 	 */
 	public void setArcWidth(double arcWidth) {
 		this.arcWidth = arcWidth;
-	}
-
-	/**
-	 * Sets the height of this {@link RoundedRectangle} to the given value.
-	 * 
-	 * @param height
-	 *            the new height
-	 */
-	public void setHeight(double height) {
-		this.height = height;
-	}
-
-	/**
-	 * Sets the width of this {@link RoundedRectangle} to the given value.
-	 * 
-	 * @param width
-	 *            the new width
-	 */
-	public void setWidth(double width) {
-		this.width = width;
-	}
-
-	/**
-	 * Sets the x-coordinate of this {@link RoundedRectangle} to the given
-	 * value.
-	 * 
-	 * @param x
-	 *            the new x-coordinate
-	 */
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	/**
-	 * Sets the y-coordinate of this {@link RoundedRectangle} to the given
-	 * value.
-	 * 
-	 * @param y
-	 *            the new y-coordinate
-	 */
-	public void setY(double y) {
-		this.y = y;
 	}
 
 	/**

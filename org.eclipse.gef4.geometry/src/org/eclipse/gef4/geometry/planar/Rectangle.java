@@ -17,7 +17,6 @@ import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -38,14 +37,10 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  */
-public class Rectangle extends AbstractGeometry implements IShape {
+public final class Rectangle extends AbstractRectangleBasedGeometry implements
+		IShape {
 
 	private static final long serialVersionUID = 1L;
-
-	private double x;
-	private double y;
-	private double width;
-	private double height;
 
 	/**
 	 * Constructs a {@link Rectangle} with location (0,0) and a size of (0,0).
@@ -130,7 +125,7 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	 * 
 	 */
 	public Rectangle(Rectangle r) {
-		this(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+		this(r.x, r.y, r.width, r.height);
 	}
 
 	/**
@@ -385,15 +380,6 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	}
 
 	/**
-	 * Returns a copy of this {@link Rectangle}.
-	 * 
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return getCopy();
-	}
-
-	/**
 	 * Returns a new point representing the center of this Rectangle.
 	 * 
 	 * @return Point at the center of the rectangle
@@ -446,15 +432,6 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	public Rectangle getExpanded(double left, double top, double right,
 			double bottom) {
 		return getCopy().expand(left, top, right, bottom);
-	}
-
-	/**
-	 * Returns the height of this {@link Rectangle}.
-	 * 
-	 * @return the height of this {@link Rectangle}
-	 */
-	public double getHeight() {
-		return height;
 	}
 
 	/**
@@ -570,15 +547,6 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	}
 
 	/**
-	 * Returns the size of this {@link Rectangle}.
-	 * 
-	 * @return The current size
-	 */
-	public Dimension getSize() {
-		return new Dimension(width, height);
-	}
-
-	/**
 	 * Returns a new Point which represents the middle point of the top side of
 	 * this Rectangle.
 	 * 
@@ -684,33 +652,6 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	}
 
 	/**
-	 * Returns the width of this {@link Rectangle}.
-	 * 
-	 * @return the width of this {@link Rectangle}
-	 */
-	public double getWidth() {
-		return width;
-	}
-
-	/**
-	 * Returns the x-coordinate of this {@link Rectangle}.
-	 * 
-	 * @return The x coordinate
-	 */
-	public double getX() {
-		return x;
-	}
-
-	/**
-	 * Returns the y-coordinate of this {@link Rectangle}.
-	 * 
-	 * @return The y coordinate
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
 	 * Sets the bounds of this {@link Rectangle} to the intersection of this
 	 * {@link Rectangle} with the given one.
 	 * 
@@ -726,10 +667,12 @@ public class Rectangle extends AbstractGeometry implements IShape {
 		double y2 = Math.min(y + height, r.y + r.height);
 		if (PrecisionUtils.greaterEqual(x2 - x1, 0)
 				&& PrecisionUtils.greaterEqual(y2 - y1, 0)) {
-			return setBounds(x1, y1, x2 - x1 < 0 ? 0 : x2 - x1, y2 - y1 < 0 ? 0
-					: y2 - y1);
+			setBounds(x1, y1, x2 - x1 < 0 ? 0 : x2 - x1, y2 - y1 < 0 ? 0 : y2
+					- y1);
+			return this;
 		}
-		return setBounds(0, 0, 0, 0); // no intersection
+		setBounds(0, 0, 0, 0); // no intersection
+		return this;
 	}
 
 	/**
@@ -804,171 +747,6 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	}
 
 	/**
-	 * Sets the x, y, width and height values of this {@link Rectangle} to match
-	 * those that are given.
-	 * 
-	 * @param x
-	 *            the new x-coordinate
-	 * @param y
-	 *            the new y-coordinate
-	 * @param w
-	 *            the new width
-	 * @param h
-	 *            the new height
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setBounds(double x, double y, double w, double h) {
-		this.x = x;
-		this.y = y;
-		this.width = w;
-		this.height = h;
-		return this;
-	}
-
-	/**
-	 * Sets the location and size of this to match those given.
-	 * 
-	 * @param loc
-	 *            The new location
-	 * @param size
-	 *            The new size
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setBounds(Point loc, Dimension size) {
-		setBounds(loc.x, loc.y, size.width, size.height);
-		return this;
-	}
-
-	/**
-	 * Sets the location and size of this {@link Rectangle} to match those of
-	 * the given {@link Rectangle}.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} whose location and size are to be
-	 *            transferred.
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setBounds(Rectangle r) {
-		return setBounds(r.x, r.y, r.width, r.height);
-	}
-
-	/**
-	 * Sets the height of this {@link Rectangle}
-	 * 
-	 * @param height
-	 *            The new height
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setHeight(double height) {
-		if (height < 0) {
-			height = 0;
-		}
-		this.height = height;
-		return this;
-	}
-
-	/**
-	 * Sets the location of this {@link Rectangle} to the coordinates given as
-	 * input and returns this for convenience.
-	 * 
-	 * @param x
-	 *            The new x-coordinate
-	 * @param y
-	 *            The new y-coordinate
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setLocation(double x, double y) {
-		this.x = x;
-		this.y = y;
-		return this;
-	}
-
-	/**
-	 * Sets the location of this {@link Rectangle} to the point given as input
-	 * and returns this for convenience.
-	 * 
-	 * @param p
-	 *            the new location of this Rectangle
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle setLocation(Point p) {
-		return setLocation(p.x, p.y);
-	}
-
-	/**
-	 * Sets the width and height of this Rectangle to the width and height of
-	 * the given Dimension and returns this for convenience.
-	 * 
-	 * @param d
-	 *            The new Dimension
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setSize(Dimension d) {
-		return setSize(d.width, d.height);
-	}
-
-	/**
-	 * Sets the width of this Rectangle to <i>w</i> and the height of this
-	 * Rectangle to <i>h</i> and returns this for convenience.
-	 * 
-	 * @param w
-	 *            The new width
-	 * @param h
-	 *            The new height
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle setSize(double w, double h) {
-		if (w < 0) {
-			w = 0;
-		}
-		if (h < 0) {
-			h = 0;
-		}
-		width = w;
-		height = h;
-		return this;
-	}
-
-	/**
-	 * Sets the width of this {@link Rectangle}
-	 * 
-	 * @param width
-	 *            The new width
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setWidth(double width) {
-		if (width < 0) {
-			width = 0;
-		}
-		this.width = width;
-		return this;
-	}
-
-	/**
-	 * Sets the x-coordinate of this {@link Rectangle}
-	 * 
-	 * @param x
-	 *            The new x-coordinate
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setX(double x) {
-		this.x = x;
-		return this;
-	}
-
-	/**
-	 * Sets the y-coordinate of this {@link Rectangle}
-	 * 
-	 * @param y
-	 *            The new y-coordinate
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle setY(double y) {
-		this.y = y;
-		return this;
-	}
-
-	/**
 	 * Shrinks the sides of this Rectangle by the horizontal and vertical values
 	 * provided as input, and returns this Rectangle for convenience. The center
 	 * of this Rectangle is kept constant.
@@ -1029,7 +807,7 @@ public class Rectangle extends AbstractGeometry implements IShape {
 	 * @return A {@link Polygon} representation for this {@link Rectangle}
 	 */
 	public Polygon toPolygon() {
-		return new Polygon(PointListUtils.getCopy(getPoints()));
+		return new Polygon(getPoints());
 	}
 
 	@Override

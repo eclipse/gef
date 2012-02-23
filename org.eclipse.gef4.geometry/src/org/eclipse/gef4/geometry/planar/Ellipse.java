@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -34,14 +33,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * @author Matthias Wienand
  */
-public class Ellipse implements IGeometry {
+public class Ellipse extends AbstractRectangleBasedGeometry implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
-
-	private double x;
-	private double y;
-	private double width;
-	private double height;
 
 	/**
 	 * Constructs a new {@link Ellipse} so that it is fully contained within the
@@ -73,15 +67,6 @@ public class Ellipse implements IGeometry {
 	 */
 	public Ellipse(Rectangle r) {
 		this(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-	}
-
-	/**
-	 * Overwritten with public visibility as recommended within
-	 * {@link Cloneable}.
-	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return getCopy();
 	}
 
 	/**
@@ -243,13 +228,6 @@ public class Ellipse implements IGeometry {
 	}
 
 	/**
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
-	}
-
-	/**
 	 * Returns the center location of this {@link Ellipse}.
 	 * 
 	 * @return a {@link Point}, representing the center of this {@link Ellipse}.
@@ -267,16 +245,6 @@ public class Ellipse implements IGeometry {
 	 */
 	public Ellipse getCopy() {
 		return new Ellipse(x, y, width, height);
-	}
-
-	/**
-	 * Returns the height of this {@link Ellipse}, i.e. the height of the
-	 * {@link Ellipse}'s bounds.
-	 * 
-	 * @return the height of this {@link Ellipse}
-	 */
-	public double getHeight() {
-		return height;
 	}
 
 	/**
@@ -368,12 +336,14 @@ public class Ellipse implements IGeometry {
 		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -491,73 +461,11 @@ public class Ellipse implements IGeometry {
 	}
 
 	/**
-	 * Returns the location of this {@link Ellipse}, which is the location of
-	 * its bounds.
-	 * 
-	 * @return a {@link Point} representing the location of this {@link Ellipse}
-	 *         's bounds
-	 */
-	public Point getLocation() {
-		return new Point(x, y);
-	}
-
-	/**
-	 * Returns the size of this {@link Ellipse}, which is the size of its
-	 * bounds.
-	 * 
-	 * @return a {@link Dimension} representing the size of this {@link Ellipse}
-	 *         's bounds
-	 */
-	public Dimension getSize() {
-		return new Dimension(width, height);
-	}
-
-	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	public IGeometry getTransformed(AffineTransform t) {
 		// choose a path implementation
 		return toPath().getTransformed(t);
-	}
-
-	/**
-	 * Returns the width of this {@link Ellipse}, which is the width of its
-	 * bounds.
-	 * 
-	 * @return the width of this {@link Ellipse} 's bounds
-	 */
-	public double getWidth() {
-		return width;
-	}
-
-	/**
-	 * Returns the x-coordinate of this {@link Ellipse}'s location, which is the
-	 * location of its bounds.
-	 * 
-	 * @return the x-coordinate of this {@link Ellipse} 's location
-	 */
-	public double getX() {
-		return x;
-	}
-
-	/**
-	 * Returns the y-coordinate of this {@link Ellipse}'s location, which is the
-	 * location of its bounds.
-	 * 
-	 * @return the y-coordinate of this {@link Ellipse} 's location
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
 	}
 
 	/**
@@ -634,29 +542,6 @@ public class Ellipse implements IGeometry {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Initializes this {@link Ellipse} by means of the given bounds values.
-	 * 
-	 * @param x
-	 *            the new x-coordinate of this {@link Ellipse}, which is the
-	 *            x-coordinate of its bounds
-	 * @param y
-	 *            the new y-coordinate of this {@link Ellipse}, which is the
-	 *            y-coordinate of its bounds
-	 * @param width
-	 *            the new width of this {@link Ellipse}, which is the width of
-	 *            its bounds
-	 * @param height
-	 *            the new height of this {@link Ellipse}, which is the height of
-	 *            its bounds
-	 */
-	public void setBounds(double x, double y, double width, double height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
 	}
 
 	/**

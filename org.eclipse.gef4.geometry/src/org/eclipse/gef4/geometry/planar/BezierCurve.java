@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Point;
@@ -14,12 +25,13 @@ import org.eclipse.gef4.geometry.utils.PointListUtils;
  */
 public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 
-	private double x1, y1, x2, y2;
-	private double[] ctrlCoordinates = new double[] {};
+	double x1;
+	double y1;
+	double x2;
+	double y2;
 
-	public BezierCurve(Point... points) {
-		this(PointListUtils.toCoordinatesArray(points));
-	}
+	// TODO: use point array instead
+	double[] ctrlCoordinates = null;
 
 	public BezierCurve(double... coordinates) {
 		if (coordinates.length < 4) {
@@ -35,6 +47,75 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 			System.arraycopy(coordinates, 2, ctrlCoordinates, 0,
 					coordinates.length - 4);
 		}
+	}
+
+	public BezierCurve(Point... points) {
+		this(PointListUtils.toCoordinatesArray(points));
+	}
+
+	public final boolean contains(Rectangle r) {
+		// TODO: may contain the rectangle only in case the rectangle is
+		// degenerated...
+		return false;
+	}
+
+	public Point getCtrl(int i) {
+		return new Point(getCtrlX(i), getCtrlY(i));
+	}
+
+	/**
+	 * Returns the point-wise coordinates (i.e. x1, y1, x2, y2, etc.) of the
+	 * inner control points of this {@link BezierCurve}, i.e. exclusive of the
+	 * start and end points.
+	 * 
+	 * @see BezierCurve#getCtrls()
+	 * 
+	 * @return an array containing the inner control points' coordinates
+	 */
+	public double[] getCtrlCoordinates() {
+		return PointListUtils.getCopy(ctrlCoordinates);
+
+	}
+
+	/**
+	 * Returns an array of points representing the inner control points of this
+	 * curve, i.e. excluding the start and end points. In case of s linear
+	 * curve, no control points will be returned, in case of a quadratic curve,
+	 * one control point, and so on.
+	 * 
+	 * @return an array of points with the coordinates of the inner control
+	 *         points of this {@link BezierCurve}, i.e. exclusive of the start
+	 *         and end point. The number of control points will depend on the
+	 *         degree ({@link #getDegree()}) of the curve, so in case of a line
+	 *         (linear curve) the array will be empty, in case of a quadratic
+	 *         curve, it will be of size <code>1</code>, in case of a cubic
+	 *         curve of size <code>2</code>, etc..
+	 */
+	public Point[] getCtrls() {
+		return PointListUtils.toPointsArray(ctrlCoordinates);
+	}
+
+	public double getCtrlX(int i) {
+		return ctrlCoordinates[2 * i];
+	}
+
+	public double getCtrlY(int i) {
+		return ctrlCoordinates[2 * i + 1];
+	}
+
+	/**
+	 * Returns the degree of this curve which corresponds to the number of
+	 * overall control points (including start and end point) used to define the
+	 * curve. The degree is zero-based, so a line (linear curve) will have
+	 * degree <code>1</code>, a quadratic curve will have degree <code>2</code>,
+	 * and so on. <code>1</code> in case of a
+	 * 
+	 * @return The degree of this {@link ICurve}, which corresponds to the
+	 *         zero-based overall number of control points (including start and
+	 *         end point) used to define this {@link ICurve}.
+	 */
+	public int getDegree() {
+		return getCtrls().length + 1;
 	}
 
 	/**
@@ -89,6 +170,25 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 	 */
 	public double getY2() {
 		return y2;
+	}
+
+	protected void setCtrl(int i, Point p) {
+		setCtrlX(i, p.x);
+		setCtrlY(i, p.y);
+	}
+
+	public void setCtrls(Point... ctrls) {
+		ctrlCoordinates = PointListUtils.toCoordinatesArray(ctrls);
+	}
+
+	protected void setCtrlX(int i, double x) {
+		// TODO: enlarge array if its too small
+		ctrlCoordinates[2 * i] = x;
+	}
+
+	protected void setCtrlY(int i, double y) {
+		// TODO: enlarge array if its too small
+		ctrlCoordinates[2 * i + 1] = y;
 	}
 
 	/**
@@ -157,90 +257,6 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 	 */
 	public void setY2(double y2) {
 		this.y2 = y2;
-	}
-
-	/**
-	 * Returns an array of points representing the inner control points of this
-	 * curve, i.e. excluding the start and end points. In case of s linear
-	 * curve, no control points will be returned, in case of a quadratic curve,
-	 * one control point, and so on.
-	 * 
-	 * @return an array of points with the coordinates of the inner control
-	 *         points of this {@link BezierCurve}, i.e. exclusive of the start
-	 *         and end point. The number of control points will depend on the
-	 *         degree ({@link #getDegree()}) of the curve, so in case of a line
-	 *         (linear curve) the array will be empty, in case of a quadratic
-	 *         curve, it will be of size <code>1</code>, in case of a cubic
-	 *         curve of size <code>2</code>, etc..
-	 */
-	public Point[] getCtrls() {
-		return PointListUtils.toPointsArray(ctrlCoordinates);
-	}
-
-	/**
-	 * Returns the point-wise coordinates (i.e. x1, y1, x2, y2, etc.) of the
-	 * inner control points of this {@link BezierCurve}, i.e. exclusive of the
-	 * start and end points.
-	 * 
-	 * @see BezierCurve#getCtrls()
-	 * 
-	 * @return an array containing the inner control points' coordinates
-	 */
-	public double[] getCtrlCoordinates() {
-		return PointListUtils.getCopy(ctrlCoordinates);
-
-	}
-
-	public void setCtrls(Point... ctrls) {
-		ctrlCoordinates = PointListUtils.toCoordinatesArray(ctrls);
-	}
-
-	public Point getCtrl(int i) {
-		return new Point(getCtrlX(i), getCtrlY(i));
-	}
-
-	public double getCtrlX(int i) {
-		return ctrlCoordinates[2 * i];
-	}
-
-	public double getCtrlY(int i) {
-		return ctrlCoordinates[2 * i + 1];
-	}
-
-	protected void setCtrl(int i, Point p) {
-		setCtrlX(i, p.x);
-		setCtrlY(i, p.y);
-	}
-
-	protected void setCtrlX(int i, double x) {
-		// TODO: enlarge array if its too small
-		ctrlCoordinates[2 * i] = x;
-	}
-
-	protected void setCtrlY(int i, double y) {
-		// TODO: enlarge array if its too small
-		ctrlCoordinates[2 * i + 1] = y;
-	}
-
-	public final boolean contains(Rectangle r) {
-		// TODO: may contain the rectangle only in case the rectangle is
-		// degenerated...
-		return false;
-	}
-
-	/**
-	 * Returns the degree of this curve which corresponds to the number of
-	 * overall control points (including start and end point) used to define the
-	 * curve. The degree is zero-based, so a line (linear curve) will have
-	 * degree <code>1</code>, a quadratic curve will have degree <code>2</code>,
-	 * and so on. <code>1</code> in case of a
-	 * 
-	 * @return The degree of this {@link ICurve}, which corresponds to the
-	 *         zero-based overall number of control points (including start and
-	 *         end point) used to define this {@link ICurve}.
-	 */
-	public int getDegree() {
-		return getCtrls().length + 1;
 	}
 
 }

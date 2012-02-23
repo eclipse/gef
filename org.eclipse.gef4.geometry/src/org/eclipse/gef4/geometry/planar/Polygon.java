@@ -35,7 +35,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * 
  */
-public class Polygon implements IShape {
+public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -76,8 +76,6 @@ public class Polygon implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
-	private final Point[] points;
-
 	/**
 	 * Constructs a new {@link Polygon} from a even-numbered sequence of
 	 * coordinates. Similar to {@link Polygon#Polygon(Point...)}, only that
@@ -89,10 +87,7 @@ public class Polygon implements IShape {
 	 *            {@link Polygon} is to be created .
 	 */
 	public Polygon(double... coordinates) {
-		points = new Point[coordinates.length / 2];
-		for (int i = 0; i < coordinates.length / 2; i++) {
-			points[i] = new Point(coordinates[i * 2], coordinates[i * 2 + 1]);
-		}
+		super(coordinates);
 	}
 
 	/**
@@ -106,15 +101,7 @@ public class Polygon implements IShape {
 	 *            created.
 	 */
 	public Polygon(Point... points) {
-		this.points = PointListUtils.getCopy(points);
-	}
-
-	/**
-	 * Overwritten with public visibility as recommended in {@link Cloneable}.
-	 */
-	@Override
-	public Polygon clone() {
-		return getCopy();
+		super(points);
 	}
 
 	/**
@@ -385,24 +372,6 @@ public class Polygon implements IShape {
 	}
 
 	/**
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return PointListUtils.getBounds(points);
-	}
-
-	/**
-	 * Returns a double array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this {@link Polygon}.
-	 * 
-	 * @return an array that alternately contains the x- and y-coordinates of
-	 *         this {@link Polygon}'s points.
-	 */
-	public double[] getCoordinates() {
-		return PointListUtils.toCoordinatesArray(points);
-	}
-
-	/**
 	 * Returns a copy of this {@link Polygon}, which is made up by the same
 	 * points.
 	 * 
@@ -591,18 +560,6 @@ public class Polygon implements IShape {
 	}
 
 	/**
-	 * Returns a copy of the points that make up this {@link Polygon}, where a
-	 * segment of the {@link Polygon} is represented between each two succeeding
-	 * {@link Point}s in the sequence, and from the last back to the first.
-	 * 
-	 * @return an array of {@link Point}s representing the points that make up
-	 *         this {@link Polygon}
-	 */
-	public Point[] getPoints() {
-		return PointListUtils.getCopy(points);
-	}
-
-	/**
 	 * Returns a sequence of {@link Line}s, representing the segments that are
 	 * obtained by linking each two successive point of this {@link Polygon}
 	 * (including the last and the first one).
@@ -647,16 +604,6 @@ public class Polygon implements IShape {
 	 */
 	public Polygon getTranslated(Point pt) {
 		return getCopy().translate(pt);
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
 	}
 
 	/**
@@ -866,18 +813,6 @@ public class Polygon implements IShape {
 			stringBuffer.append("<no points>");
 		}
 		return stringBuffer.toString();
-	}
-
-	/**
-	 * Returns an integer array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this {@link Polygon}.
-	 * 
-	 * @return an array containing integer values, which are obtained by casting
-	 *         the x- and y-coordinates of this {@link Polygon}.
-	 */
-	public int[] toSWTPointArray() {
-		return PointListUtils.toIntegerArray(PointListUtils
-				.toCoordinatesArray(points));
 	}
 
 	/**

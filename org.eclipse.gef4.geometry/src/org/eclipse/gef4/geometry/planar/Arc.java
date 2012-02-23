@@ -27,7 +27,7 @@ import org.eclipse.gef4.geometry.Point;
  * @author anyssen
  * 
  */
-public class Arc extends AbstractGeometry implements IPolyCurve {
+public final class Arc extends AbstractRectangleBasedGeometry implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,19 +38,14 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 			if (i == 0) {
 				p.moveTo(curves[i].getX1(), curves[i].getY1());
 			}
-			p.curveTo(curves[i].getCtrl1X(), curves[i].getCtrl1Y(),
-					curves[i].getCtrl2X(), curves[i].getCtrl2Y(),
+			p.curveTo(curves[i].getCtrlX1(), curves[i].getCtrlY1(),
+					curves[i].getCtrlX2(), curves[i].getCtrlY2(),
 					curves[i].getX2(), curves[i].getY2());
 		}
 		return p;
 	}
 
-	private double x;
-	private double y;
-	private double width;
-	private double height;
 	private Angle startAngle;
-
 	private Angle angularExtent;
 
 	/**
@@ -121,17 +116,6 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 
 	public Angle getAngularExtent() {
 		return angularExtent;
-	}
-
-	/**
-	 * @see IGeometry#getBounds()
-	 */
-	public Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
-	}
-
-	public double getHeight() {
-		return height;
 	}
 
 	/**
@@ -294,6 +278,7 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 		return intersections.toArray(new Point[] {});
 	}
 
+	// TODO: rename this method...
 	public CubicCurve[] getSegments() {
 		double start = getStartAngle().rad();
 		double end = getStartAngle().rad() + getAngularExtent().rad();
@@ -336,16 +321,27 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 		return startAngle;
 	}
 
-	public double getWidth() {
-		return width;
+	public Point getPoint(Angle angularExtent) {
+		double a = width / 2;
+		double b = height / 2;
+
+		// // calculate start and end points of the arc from start to end
+		return new Point(x + a + a
+				* Math.cos(startAngle.rad() + angularExtent.rad()), y + b - b
+				* Math.sin(startAngle.rad() + angularExtent.rad()));
 	}
 
-	public double getX() {
-		return x;
+	/**
+	 * Returns a {@link Point} representing the start point of this {@link Arc}.
+	 * 
+	 * @return
+	 */
+	public Point getP1() {
+		return getPoint(Angle.fromRad(0));
 	}
 
-	public double getY() {
-		return y;
+	public Point getP2() {
+		return getPoint(angularExtent);
 	}
 
 	/**
@@ -359,24 +355,8 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 		this.angularExtent = angularExtent;
 	}
 
-	public void setHeight(double height) {
-		this.height = height;
-	}
-
 	public void setStartAngle(Angle startAngle) {
 		this.startAngle = startAngle;
-	}
-
-	public void setWidth(double width) {
-		this.width = width;
-	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	public void setY(double y) {
-		this.y = y;
 	}
 
 	/**
@@ -391,5 +371,21 @@ public class Arc extends AbstractGeometry implements IPolyCurve {
 	 */
 	public Arc getCopy() {
 		return new Arc(x, y, width, height, startAngle, angularExtent);
+	}
+
+	public double getY2() {
+		return getP2().y;
+	}
+
+	public double getY1() {
+		return getP1().y;
+	}
+
+	public double getX2() {
+		return getP2().x;
+	}
+
+	public double getX1() {
+		return getP1().x;
 	}
 }

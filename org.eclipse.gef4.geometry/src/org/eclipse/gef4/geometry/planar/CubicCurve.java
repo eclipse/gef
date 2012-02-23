@@ -169,8 +169,8 @@ public class CubicCurve extends BezierCurve {
 	public boolean equals(Object other) {
 		CubicCurve o = (CubicCurve) other;
 
-		Polygon myPoly = getControlPolygon();
-		Polygon otherPoly = o.getControlPolygon();
+		AbstractPointListBasedGeometry myPoly = getControlPolygon();
+		AbstractPointListBasedGeometry otherPoly = o.getControlPolygon();
 
 		return myPoly.equals(otherPoly);
 	}
@@ -194,8 +194,8 @@ public class CubicCurve extends BezierCurve {
 		double[] xts;
 		try {
 			xts = PolynomCalculationUtils.getQuadraticRoots(-3 * getX1() + 9
-					* getCtrl1X() - 9 * getCtrl2X() + 3 * getX2(), 6 * getX1()
-					- 12 * getCtrl1X() + 6 * getCtrl2X(), 3 * getCtrl1X() - 3
+					* getCtrlX1() - 9 * getCtrlX2() + 3 * getX2(), 6 * getX1()
+					- 12 * getCtrlX1() + 6 * getCtrlX2(), 3 * getCtrlX1() - 3
 					* getX1());
 		} catch (ArithmeticException x) {
 			return new Rectangle(getP1(), getP2());
@@ -222,8 +222,8 @@ public class CubicCurve extends BezierCurve {
 		double[] yts;
 		try {
 			yts = PolynomCalculationUtils.getQuadraticRoots(-3 * getY1() + 9
-					* getCtrl1Y() - 9 * getCtrl2Y() + 3 * getY2(), 6 * getY1()
-					- 12 * getCtrl1Y() + 6 * getCtrl2Y(), 3 * getCtrl1Y() - 3
+					* getCtrlY1() - 9 * getCtrlY2() + 3 * getY2(), 6 * getY1()
+					- 12 * getCtrlY1() + 6 * getCtrlY2(), 3 * getCtrlY1() - 3
 					* getY1());
 		} catch (ArithmeticException x) {
 			return new Rectangle(new Point(xmin, getP1().y), new Point(xmax,
@@ -262,7 +262,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return a new {@link CubicCurve} with the same start, end, and control
 	 *         point coordinates
 	 */
-	public BezierCurve getCopy() {
+	public CubicCurve getCopy() {
 		return new CubicCurve(getP1(), getCtrl1(), getCtrl2(), getP2());
 	}
 
@@ -272,7 +272,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the first control {@link Point}.
 	 */
 	public Point getCtrl1() {
-		return new Point(getCtrl1X(), getCtrl1Y());
+		return new Point(getCtrlX1(), getCtrlY1());
 	}
 
 	/**
@@ -280,7 +280,7 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @return the first control {@link Point}'s x-coordinate.
 	 */
-	public double getCtrl1X() {
+	public double getCtrlX1() {
 		return getCtrlX(0);
 	}
 
@@ -289,7 +289,7 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @return the first control {@link Point}'s y-coordinate.
 	 */
-	public double getCtrl1Y() {
+	public double getCtrlY1() {
 		return getCtrlY(0);
 	}
 
@@ -299,7 +299,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the second control {@link Point}.
 	 */
 	public Point getCtrl2() {
-		return new Point(getCtrl2X(), getCtrl2Y());
+		return new Point(getCtrlX2(), getCtrlY2());
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @return the second control {@link Point}'s x-coordinate.
 	 */
-	public double getCtrl2X() {
+	public double getCtrlX2() {
 		return getCtrlX(1);
 	}
 
@@ -316,7 +316,7 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @return the second control {@link Point}'s y-coordinate.
 	 */
-	public double getCtrl2Y() {
+	public double getCtrlY2() {
 		return getCtrlY(1);
 	}
 
@@ -453,12 +453,14 @@ public class CubicCurve extends BezierCurve {
 		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
 
 		// arc segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomLeftArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
 		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getBottomRightArc())));
+				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomLeftArc())));
+		intersections.addAll(Arrays.asList(getIntersections(rr
+				.getBottomRightArc())));
 
 		return intersections.toArray(new Point[] {});
 	}
@@ -593,15 +595,15 @@ public class CubicCurve extends BezierCurve {
 	public Path toPath() {
 		Path p = new Path();
 		p.moveTo(getX1(), getY1());
-		p.curveTo(getCtrl1X(), getCtrl1Y(), getCtrl2X(), getCtrl2Y(), getX2(),
+		p.curveTo(getCtrlX1(), getCtrlY1(), getCtrlX2(), getCtrlY2(), getX2(),
 				getY2());
 		return p;
 	}
 
 	public String toString() {
 		return "CubicCurve(x1 = " + getX1() + ", y1 = " + getY1()
-				+ ", ctrl1X = " + getCtrl1X() + ", ctrl1Y = " + getCtrl1Y()
-				+ ", ctrl2X = " + getCtrl2X() + ", ctrl2Y = " + getCtrl2Y()
+				+ ", ctrl1X = " + getCtrlX1() + ", ctrl1Y = " + getCtrlY1()
+				+ ", ctrl2X = " + getCtrlX2() + ", ctrl2Y = " + getCtrlY2()
 				+ ", x2 = " + getX2() + ", y2 = " + getY2();
 	}
 

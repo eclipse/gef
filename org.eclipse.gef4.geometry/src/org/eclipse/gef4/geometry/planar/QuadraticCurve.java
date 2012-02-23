@@ -224,8 +224,8 @@ public class QuadraticCurve extends BezierCurve {
 	public boolean equals(Object other) {
 		QuadraticCurve o = (QuadraticCurve) other;
 
-		Polygon myPoly = getControlPolygon();
-		Polygon otherPoly = o.getControlPolygon();
+		AbstractPointListBasedGeometry myPoly = getControlPolygon();
+		AbstractPointListBasedGeometry otherPoly = o.getControlPolygon();
 
 		return myPoly.equals(otherPoly);
 	}
