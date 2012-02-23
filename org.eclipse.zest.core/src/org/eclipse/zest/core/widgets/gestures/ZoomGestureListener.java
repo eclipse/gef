@@ -6,11 +6,12 @@
  * 
  * Contributors: Zoltan Ujhelyi
  ******************************************************************************/
-package org.eclipse.zest.core.widgets.zooming;
+package org.eclipse.zest.core.widgets.gestures;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.events.GestureListener;
+import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 
 /**
  * A simple magnify gesture listener class that calls an associated

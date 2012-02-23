@@ -50,9 +50,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.zest.core.widgets.gestures.RotateGestureListener;
+import org.eclipse.zest.core.widgets.gestures.ZoomGestureListener;
 import org.eclipse.zest.core.widgets.internal.ContainerFigure;
 import org.eclipse.zest.core.widgets.internal.ZestRootLayer;
-import org.eclipse.zest.core.widgets.zooming.ZoomGestureListener;
 import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
@@ -203,6 +204,7 @@ public class Graph extends FigureCanvas implements IContainer {
 		if ((style & (ZestStyles.GESTURES_DISABLED)) == 0) {
 			// Only add default gestures if not disabled by style bit
 			this.addGestureListener(new ZoomGestureListener(getZoomManager()));
+			this.addGestureListener(new RotateGestureListener(this));
 		}
 	}
 
