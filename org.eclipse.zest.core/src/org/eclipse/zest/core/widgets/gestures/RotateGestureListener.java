@@ -76,8 +76,17 @@ public class RotateGestureListener implements GestureListener {
 			if (nodes.isEmpty()) {
 				nodes = graph.getNodes();
 			}
-			xCenter = e.x;
-			yCenter = e.y;
+			xCenter = 0;// e.x;
+			yCenter = 0;// e.y;
+			Iterator it = nodes.iterator();
+			while (it.hasNext()) {
+				GraphNode node = (GraphNode) it.next();
+				Point location = node.getLocation();
+				xCenter += location.preciseX();
+				yCenter += location.preciseY();
+			}
+			xCenter = xCenter / nodes.size();
+			yCenter = yCenter / nodes.size();
 			storePosition(nodes);
 			break;
 		case SWT.GESTURE_END:
