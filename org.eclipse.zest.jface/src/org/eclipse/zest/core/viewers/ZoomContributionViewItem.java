@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.zest.core.widgets.zooming.ZoomListener;
+import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 
 /**
  * A contribution item that adds a combo to a toolbar or coolbar, or a list of
@@ -119,10 +121,11 @@ public class ZoomContributionViewItem extends ContributionItem implements
 		Combo combo = createCombo(parent);
 		item.setControl(combo);
 		item.setWidth(combo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		refreshCombo(false);
 	}
 
 	private Combo createCombo(Composite parent) {
-		this.combo = new Combo(parent, SWT.DROP_DOWN);
+		this.combo = new Combo(parent, SWT.NONE);
 		zoomLevels = zoomManager.getZoomLevelsAsText();
 		this.combo.setItems(zoomLevels);
 		this.combo.addSelectionListener(new SelectionAdapter() {
@@ -218,6 +221,13 @@ public class ZoomContributionViewItem extends ContributionItem implements
 		int index = combo.indexOf(zoom);
 		if (index > 0) {
 			combo.select(index);
+		} else {
+			int no = zoomLevels.length;
+			if (combo.getItemCount() > no) {
+				combo.remove(no);
+			}
+			combo.add(zoom, no);
+			combo.select(no);
 		}
 		combo.setEnabled(true);
 	}

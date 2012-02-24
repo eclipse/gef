@@ -6,7 +6,7 @@
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.zest.core.viewers;
+package org.eclipse.zest.core.widgets.zooming;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.zest.core.viewers.internal.SharedMessages;
+import org.eclipse.zest.core.widgets.internal.SharedMessages;
 
 /**
  * Manage the primary zoom function in a graphical viewer. This class is used by
@@ -83,7 +83,7 @@ public class ZoomManager {
 	 * visible on the screen.
 	 */
 	public static final String FIT_ALL = SharedMessages.FitAllAction_Label;
-	private List zoomLevelContributions = Collections.EMPTY_LIST;
+	private List zoomLevelContributions = Collections.emptyList();
 
 	//DecimalFormat format = new DecimalFormat("####%"); //$NON-NLS-1$
 
@@ -152,7 +152,7 @@ public class ZoomManager {
 	protected void fireZoomChanged() {
 		Iterator iter = listeners.iterator();
 		while (iter.hasNext()) {
-			((ZoomListener) iter.next()).zoomChanged(zoom);
+			((ZoomListener)iter.next()).zoomChanged(zoom);
 		}
 	}
 
@@ -366,7 +366,7 @@ public class ZoomManager {
 
 		if (zoomLevelContributions != null) {
 			for (int i = 0; i < zoomLevelContributions.size(); i++) {
-				zoomLevelStrings[i] = (String) zoomLevelContributions.get(i);
+				zoomLevelStrings[i] = (String)zoomLevelContributions.get(i);
 			}
 		}
 		for (int i = 0; i < zoomLevels.length; i++) {

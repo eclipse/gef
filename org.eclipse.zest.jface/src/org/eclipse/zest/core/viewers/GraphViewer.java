@@ -36,6 +36,7 @@ import org.eclipse.zest.core.viewers.internal.TreeModelEntityFactory;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 
 /**
@@ -54,7 +55,6 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	protected Graph graph = null;
 	private IStylingGraphModelFactory modelFactory = null;
 	private List selectionChangedListeners = null;
-	ZoomManager zoomManager = null;
 
 	/**
 	 * Initializes the viewer.
@@ -350,11 +350,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	// @tag zest.bug.156286-Zooming.fix.experimental : expose the zoom manager
 	// for new actions.
 	protected ZoomManager getZoomManager() {
-		if (zoomManager == null) {
-			zoomManager = new ZoomManager(getGraphControl().getRootLayer(),
-					getGraphControl().getViewport());
-		}
-		return zoomManager;
+		return getGraphControl().getZoomManager();
 	}
 
 	/**
