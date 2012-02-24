@@ -5,7 +5,8 @@ Bundle-SymbolicName: org.eclipse.zest.core;singleton:=true
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Bundle-Version: 2.0.0.qualifier
-Require-Bundle: org.eclipse.draw2d,
+Require-Bundle: org.eclipse.swt;bundle-version="3.7.0",
+ org.eclipse.draw2d,
  org.eclipse.zest.layouts;bundle-version="2.0.0"
 Eclipse-LazyStart: false
 Export-Package: org.eclipse.zest.core.widgets,
