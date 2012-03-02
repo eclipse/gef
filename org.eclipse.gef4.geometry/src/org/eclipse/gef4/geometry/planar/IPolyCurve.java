@@ -20,5 +20,5 @@ public interface IPolyCurve extends IGeometry {
 	 * @return an array of {@link ICurve}s, representing the segments that make
 	 *         up this {@link IPolyCurve}
 	 */
-	public ICurve[] getSegments();
+	public ICurve[] getCurves();
 }

@@ -136,7 +136,7 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 	 * @return an array of {@link Line}s, representing the segments that make up
 	 *         this {@link Polyline}
 	 */
-	public Line[] getSegments() {
+	public Line[] getCurves() {
 		return PointListUtils.toSegmentsArray(points, false);
 	}
 

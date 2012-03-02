@@ -147,7 +147,7 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	 * @return true if it is contained, false otherwise
 	 */
 	public boolean contains(Ellipse e) {
-		for (CubicCurve curve : e.getSegments()) {
+		for (CubicCurve curve : e.getOutlineSegments()) {
 			if (!contains(curve)) {
 				return false;
 			}
@@ -281,7 +281,7 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	 */
 	public boolean contains(Polyline p) {
 		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getSegments();
+		Line[] otherSegments = p.getCurves();
 		for (int i = 0; i < otherSegments.length; i++) {
 			if (!contains(otherSegments[i])) {
 				return false;
@@ -478,7 +478,7 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	public Point[] getIntersections(Polyline polyline) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line segment : polyline.getSegments()) {
+		for (Line segment : polyline.getCurves()) {
 			for (Point poi : getIntersections(segment)) {
 				intersections.add(poi);
 			}
@@ -676,7 +676,7 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	 */
 	public boolean intersects(Polyline p) {
 		// reduce to segment intersection test
-		Line[] otherSegments = p.getSegments();
+		Line[] otherSegments = p.getCurves();
 		for (int i = 0; i < otherSegments.length; i++) {
 			if (intersects(otherSegments[i])) {
 				return true;

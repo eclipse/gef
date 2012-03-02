@@ -398,7 +398,7 @@ public class CubicCurve extends BezierCurve {
 	public Point[] getIntersections(Polyline p) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : p.getSegments()) {
+		for (Line seg : p.getCurves()) {
 			intersections.addAll(Arrays.asList(getIntersections(seg)));
 		}
 

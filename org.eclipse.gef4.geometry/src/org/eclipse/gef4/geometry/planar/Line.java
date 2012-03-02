@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class Line extends BezierCurve implements ICurve {
+public class Line extends BezierCurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -155,7 +155,7 @@ public class Line extends BezierCurve implements ICurve {
 	public Point[] getIntersections(Polyline p) {
 		HashSet<Point> intersections = new HashSet<Point>();
 
-		for (Line seg : p.getSegments()) {
+		for (Line seg : p.getCurves()) {
 			intersections.add(getIntersection(seg));
 		}
 

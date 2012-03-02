@@ -119,6 +119,24 @@ public abstract class BezierCurve extends AbstractGeometry implements ICurve {
 	}
 
 	/**
+	 * Returns an array of points that represent this {@link BezierCurve}, i.e.
+	 * the start point, the inner control points, and the end points.
+	 * 
+	 * @return an array of points representing the control points (including
+	 *         start and end point) of this {@link BezierCurve}
+	 */
+	public Point[] getPoints() {
+		Point[] points = new Point[ctrlCoordinates.length / 2 + 2];
+		points[0] = new Point(x1, y1);
+		points[points.length - 1] = new Point(x2, y2);
+		for (int i = 1; i < points.length - 1; i++) {
+			points[i] = new Point(ctrlCoordinates[2 * i - 2],
+					ctrlCoordinates[2 * i - 1]);
+		}
+		return points;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 * 
 	 * @see org.eclipse.gef4.geometry.planar.ICurve#getP1()

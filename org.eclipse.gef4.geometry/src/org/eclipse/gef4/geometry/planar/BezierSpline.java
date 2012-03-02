@@ -16,7 +16,7 @@ import org.eclipse.gef4.geometry.transform.AffineTransform;
 
 public class BezierSpline implements IPolyCurve {
 
-	public BezierCurve[] getSegments() {
+	public BezierCurve[] getCurves() {
 		// TODO Auto-generated method stub
 		return null;
 	}
