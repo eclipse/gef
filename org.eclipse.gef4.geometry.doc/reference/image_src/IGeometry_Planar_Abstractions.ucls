@@ -12,7 +12,7 @@
   <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.ICurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/ICurve.java" binary="false">    
-    <position height="-1" width="-1" x="140" y="233"/>    
+    <position height="-1" width="-1" x="141" y="234"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
