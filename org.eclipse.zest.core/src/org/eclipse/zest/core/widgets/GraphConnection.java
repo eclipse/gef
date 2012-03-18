@@ -25,7 +25,6 @@ import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.core.widgets.internal.LoopAnchor;
 import org.eclipse.zest.core.widgets.internal.PolylineArcConnection;
@@ -54,7 +53,6 @@ public class GraphConnection extends GraphItem {
 	private Color foreground;
 	private int lineWidth;
 	private int lineStyle;
-	private LineAttributes lineAttributes;
 	private final Graph graph;
 
 	private int connectionStyle;
@@ -62,7 +60,8 @@ public class GraphConnection extends GraphItem {
 	private boolean isDisposed = false;
 
 	private Label connectionLabel = null;
-	private Connection connectionFigure = null;
+	private PolylineArcConnection connectionFigure = null;
+	private PolylineArcConnection cachedConnectionFigure = null;
 	private Connection sourceContainerConnectionFigure = null;
 	private Connection targetContainerConnectionFigure = null;
 
@@ -479,8 +478,7 @@ public class GraphConnection extends GraphItem {
 				&& depth == 0) {
 			// There is currently no curve, so we have to create
 			// a curved connection
-			this.lineAttributes = ((PolylineConnection) connectionFigure)
-					.getLineAttributes();
+			this.cachedConnectionFigure = connectionFigure;
 			graph.removeConnection(this);
 			this.curveDepth = depth;
 			this.connectionFigure = doCreateFigure();
@@ -582,7 +580,7 @@ public class GraphConnection extends GraphItem {
 		return (PolylineConnection) targetContainerConnectionFigure;
 	}
 
-	private void updateFigure(Connection connection) {
+	private void updateFigure(PolylineArcConnection connection) {
 		if (sourceContainerConnectionFigure != null) {
 			doUpdateFigure(sourceContainerConnectionFigure);
 		}
@@ -599,9 +597,6 @@ public class GraphConnection extends GraphItem {
 		Shape connectionShape = (Shape) connection;
 
 		connectionShape.setLineStyle(getLineStyle());
-		if (lineAttributes != null) {
-			connectionShape.setLineAttributes(lineAttributes);
-		}
 
 		if (this.getText() != null || this.getImage() != null) {
 			if (this.getImage() != null) {
@@ -620,7 +615,6 @@ public class GraphConnection extends GraphItem {
 			connectionShape.setForegroundColor(getLineColor());
 			connectionShape.setLineWidth(getLineWidth());
 		}
-
 		if (connection instanceof PolylineArcConnection) {
 			PolylineArcConnection arcConnection = (PolylineArcConnection) connection;
 			arcConnection.setDepth(curveDepth);
@@ -636,7 +630,10 @@ public class GraphConnection extends GraphItem {
 				double logLineWith = getLineWidth() / 2.0;
 				decoration.setScale(7 * logLineWith, 3 * logLineWith);
 			}
-			((PolylineConnection) connection).setTargetDecoration(decoration);
+			if (connection instanceof PolylineConnection) {
+				((PolylineArcConnection) connection)
+						.setTargetDecoration(decoration);
+			}
 		}
 
 		IFigure toolTip;
@@ -650,8 +647,8 @@ public class GraphConnection extends GraphItem {
 		connection.setToolTip(toolTip);
 	}
 
-	private Connection doCreateFigure() {
-		Connection connectionFigure = null;
+	private PolylineArcConnection doCreateFigure() {
+		PolylineArcConnection connectionFigure = cachedOrNewConnectionFigure();
 		ChopboxAnchor sourceAnchor = null;
 		ChopboxAnchor targetAnchor = null;
 		this.connectionLabel = new Label();
@@ -659,9 +656,7 @@ public class GraphConnection extends GraphItem {
 
 		if (getSource() == getDestination()) {
 			// If this is a self loop, create a looped arc and put the locator
-			// at the top
-			// of the connection
-			connectionFigure = new PolylineArcConnection();
+			// at the top of the connection
 			sourceAnchor = new LoopAnchor(getSource().getNodeFigure());
 			targetAnchor = new LoopAnchor(getDestination().getNodeFigure());
 			labelLocator = new MidpointLocator(connectionFigure, 0) {
@@ -675,11 +670,7 @@ public class GraphConnection extends GraphItem {
 			};
 		} else {
 			if (curveDepth != 0) {
-				connectionFigure = new PolylineArcConnection();
-				((PolylineArcConnection) connectionFigure)
-						.setDepth(this.curveDepth);
-			} else {
-				connectionFigure = new PolylineConnection();
+				connectionFigure.setDepth(this.curveDepth);
 			}
 			applyConnectionRouter(connectionFigure);
 			sourceAnchor = new RoundedChopboxAnchor(
@@ -695,6 +686,11 @@ public class GraphConnection extends GraphItem {
 
 		doUpdateFigure(connectionFigure);
 		return connectionFigure;
+	}
+
+	private PolylineArcConnection cachedOrNewConnectionFigure() {
+		return cachedConnectionFigure == null ? new PolylineArcConnection()
+				: cachedConnectionFigure;
 	}
 
 	IFigure getFigure() {
