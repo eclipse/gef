@@ -39,6 +39,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -206,6 +208,11 @@ public class Graph extends FigureCanvas implements IContainer {
 			this.addGestureListener(new ZoomGestureListener());
 			this.addGestureListener(new RotateGestureListener());
 		}
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				release();
+			}
+		});
 	}
 
 	/**
@@ -340,25 +347,8 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * Dispose of the nodes and edges when the graph is disposed.
 	 */
 	public void dispose() {
-		while (nodes.size() > 0) {
-			GraphNode node = (GraphNode) nodes.get(0);
-			if (node != null) {
-				node.dispose();
-			}
-		}
-		while (connections.size() > 0) {
-			GraphConnection connection = (GraphConnection) connections.get(0);
-			if (connection != null) {
-				connection.dispose();
-			}
-		}
+		release();
 		super.dispose();
-
-		LIGHT_BLUE.dispose();
-		LIGHT_BLUE_CYAN.dispose();
-		GREY_BLUE.dispose();
-		DARK_BLUE.dispose();
-		LIGHT_YELLOW.dispose();
 	}
 
 	/**
@@ -409,6 +399,26 @@ public class Graph extends FigureCanvas implements IContainer {
 	 */
 	public boolean isDynamicLayoutEnabled() {
 		return getLayoutContext().isBackgroundLayoutEnabled();
+	}
+
+	private void release() {
+		while (nodes.size() > 0) {
+			GraphNode node = (GraphNode) nodes.get(0);
+			if (node != null) {
+				node.dispose();
+			}
+		}
+		while (connections.size() > 0) {
+			GraphConnection connection = (GraphConnection) connections.get(0);
+			if (connection != null) {
+				connection.dispose();
+			}
+		}
+		LIGHT_BLUE.dispose();
+		LIGHT_BLUE_CYAN.dispose();
+		GREY_BLUE.dispose();
+		DARK_BLUE.dispose();
+		LIGHT_YELLOW.dispose();
 	}
 
 	private void applyLayoutInternal(boolean clean) {
