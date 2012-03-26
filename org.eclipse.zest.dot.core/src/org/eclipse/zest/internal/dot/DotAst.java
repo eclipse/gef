@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.zest.internal.dot;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.mwe.utils.StandaloneSetup;
 import org.eclipse.swt.SWT;
 import org.eclipse.zest.internal.dot.parser.DotStandaloneSetup;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
@@ -81,17 +80,11 @@ public final class DotAst {
 	private Resource resource;
 
 	/**
-	 * @param dotFile
-	 *            The DOT file to parse
+	 * @param dotString
+	 *            The DOT string to parse
 	 */
-	public DotAst(final File dotFile) {
-		String extension = ".dot"; //$NON-NLS-1$
-		if (!dotFile.getName().endsWith(extension)) {
-			throw new IllegalArgumentException(String.format(
-					"DOT file name must end with '%s' but was '%s'", extension, //$NON-NLS-1$
-					dotFile.getName()));
-		}
-		this.resource = loadResource(dotFile);
+	public DotAst(final String dotString) {
+		this.resource = loadResource(dotString);
 	}
 
 	/**
@@ -151,18 +144,15 @@ public final class DotAst {
 		return resource;
 	}
 
-	private static Resource loadResource(final File file) {
-		new StandaloneSetup().setPlatformUri(".."); //$NON-NLS-1$
+	private static Resource loadResource(final String dot) {
 		DotStandaloneSetup.doSetup();
 		ResourceSet set = new ResourceSetImpl();
-		Resource res = set.getResource(URI.createURI(file.toURI().toString()),
-				true);
-		if (!res.isLoaded()) {
-			try {
-				res.load(Collections.EMPTY_MAP);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		Resource res = set.createResource(URI.createURI("*.dot")); //$NON-NLS-1$
+		try {
+			res.load(new ByteArrayInputStream(dot.getBytes()),
+					Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return res;
 	}

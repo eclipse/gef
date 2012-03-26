@@ -13,6 +13,7 @@ import java.io.File;
 import junit.framework.Assert;
 
 import org.eclipse.zest.internal.dot.DotAst;
+import org.eclipse.zest.internal.dot.DotFileUtils;
 import org.junit.Test;
 
 /**
@@ -21,8 +22,9 @@ import org.junit.Test;
  * @author Fabian Steeg (fsteeg)
  */
 public class TestDotAst {
-	private static final DotAst DOT_AST = new DotAst(new File(
-			DotImportTestUtils.RESOURCES_TESTS + "sample_input.dot")); //$NON-NLS-1$
+	private static final DotAst DOT_AST = new DotAst(
+			DotFileUtils.read(new File(DotImportTestUtils.RESOURCES_TESTS
+					+ "sample_input.dot"))); //$NON-NLS-1$
 
 	@Test
 	public void parseName() {
@@ -34,9 +36,4 @@ public class TestDotAst {
 		Assert.assertEquals(0, DOT_AST.errors().size());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void extensionError() {
-		new DotAst(new File(DotImportTestUtils.RESOURCES_TESTS
-				+ "sample_input.dot.graph"));
-	}
 }

@@ -13,6 +13,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -45,6 +47,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
@@ -316,17 +319,33 @@ public final class ZestGraphView extends ViewPart {
 	}
 
 	private void openFile(File file) {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath location = Path.fromOSString(file.getAbsolutePath());
-		IFile copy = workspace.getRoot().getFileForLocation(location);
-		IEditorRegistry registry = PlatformUI.getWorkbench()
-				.getEditorRegistry();
-		if (registry.isSystemExternalEditorAvailable(copy.getName())) {
-			try {
-				getViewSite().getPage().openEditor(new FileEditorInput(copy),
-						IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-			} catch (PartInitException e) {
-				e.printStackTrace();
+		if (this.file == null) { // no workspace file for current graph
+			IFileStore fileStore = EFS.getLocalFileSystem().getStore(
+					new Path("")); //$NON-NLS-1$
+			fileStore = fileStore.getChild(file.getAbsolutePath());
+			if (!fileStore.fetchInfo().isDirectory()
+					&& fileStore.fetchInfo().exists()) {
+				IWorkbenchPage page = getSite().getPage();
+				try {
+					IDE.openEditorOnFileStore(page, fileStore);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IPath location = Path.fromOSString(file.getAbsolutePath());
+			IFile copy = workspace.getRoot().getFileForLocation(location);
+			IEditorRegistry registry = PlatformUI.getWorkbench()
+					.getEditorRegistry();
+			if (registry.isSystemExternalEditorAvailable(copy.getName())) {
+				try {
+					getViewSite().getPage().openEditor(
+							new FileEditorInput(copy),
+							IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -485,6 +504,9 @@ public final class ZestGraphView extends ViewPart {
 				: new DotExport(dotString);
 		File image = dotExport.toImage(DotDirStore.getDotDirPath(), format,
 				null);
+		if (file == null) {
+			return image;
+		}
 		try {
 			URL url = file.getParent().getLocationURI().toURL();
 			File copy = DotFileUtils.copySingleFile(DotFileUtils.resolve(url),

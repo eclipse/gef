@@ -8,14 +8,24 @@
  *******************************************************************************/
 package org.eclipse.zest.examples.jface;
 
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.PolygonDecoration;
+import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IGraphEntityContentProvider;
-import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.zest.core.viewers.ISelfStyleProvider;
+import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 /**
  * Shows curved edges.
@@ -29,7 +39,7 @@ public class GraphJFaceSnippet8 {
 
 		public Object[] getConnectedTo(Object entity) {
 			if (entity.equals("First")) {
-				return new Object[] { "First" };
+				return new Object[] { "First", "Second" };
 			}
 			if (entity.equals("Second")) {
 				return new Object[] { "Third" };
@@ -57,6 +67,44 @@ public class GraphJFaceSnippet8 {
 		}
 	}
 
+	static class MyLabelProvider extends LabelProvider implements
+			ISelfStyleProvider {
+
+		public Image getImage(Object element) {
+			return null;
+		}
+
+		public String getText(Object element) {
+			return element.toString();
+		}
+
+		public void selfStyleConnection(Object element,
+				GraphConnection connection) {
+			connection.setLineStyle(SWT.LINE_CUSTOM);
+			PolylineConnection pc = (PolylineConnection) connection
+					.getConnectionFigure();
+			pc.setLineDash(new float[] { 4 });
+			pc.setTargetDecoration(createDecoration(ColorConstants.white));
+			pc.setSourceDecoration(createDecoration(ColorConstants.green));
+		}
+
+		private PolygonDecoration createDecoration(final Color color) {
+			PolygonDecoration decoration = new PolygonDecoration() {
+				protected void fillShape(Graphics g) {
+					g.setBackgroundColor(color);
+					super.fillShape(g);
+				}
+			};
+			decoration.setScale(10, 5);
+			decoration.setBackgroundColor(color);
+			return decoration;
+		}
+
+		public void selfStyleNode(Object element, GraphNode node) {
+		}
+
+	}
+
 	static GraphViewer viewer = null;
 
 	public static void main(String[] args) {
@@ -66,7 +114,8 @@ public class GraphJFaceSnippet8 {
 		shell.setSize(400, 400);
 		viewer = new GraphViewer(shell, SWT.NONE);
 		viewer.setContentProvider(new MyContentProvider());
-		viewer.setLayoutAlgorithm(new RadialLayoutAlgorithm());
+		viewer.setLabelProvider(new MyLabelProvider());
+		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
 		viewer.setInput(new Object());
 
 		shell.open();

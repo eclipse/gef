@@ -35,8 +35,11 @@ public class GraphTests extends TestCase {
 
 	private GraphConnection connection;
 
+	Shell shell;
+
 	protected void setUp() throws Exception {
-		graph = new Graph(new Shell(), STYLE);
+		shell = new Shell();
+		graph = new Graph(shell, STYLE);
 		nodes = new GraphNode[] { new GraphNode(graph, STYLE),
 				new GraphNode(graph, STYLE) };
 		connection = new GraphConnection(graph, STYLE, nodes[0], nodes[1]);
@@ -103,6 +106,19 @@ public class GraphTests extends TestCase {
 	 */
 	public void testUnHighlightConnection() {
 		new ZestRootLayer().unHighlightConnection(new Figure());
+	}
+
+	/**
+	 * Check that Graph resources are cleaned up when parent is disposed (see
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=373191)
+	 */
+	public void testDisposal() {
+		GraphNode n = (GraphNode) graph.getNodes().get(0);
+		GraphConnection c = (GraphConnection) graph.getConnections().get(0);
+		shell.dispose();
+		assertTrue("The graph's nodes should be disposed", n.isDisposed());
+		assertTrue("The graph's edges should be disposed", c.isDisposed());
+
 	}
 
 }

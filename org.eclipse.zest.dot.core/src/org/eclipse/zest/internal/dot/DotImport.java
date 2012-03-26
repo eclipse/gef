@@ -24,7 +24,7 @@ import org.eclipse.zest.core.widgets.Graph;
  * @author Fabian Steeg (fsteeg)
  */
 public final class DotImport {
-	private File dotFile;
+	private String dotString;
 	private DotAst dotAst;
 
 	/**
@@ -32,7 +32,7 @@ public final class DotImport {
 	 *            The DOT file to import
 	 */
 	public DotImport(final File dotFile) {
-		this.dotFile = dotFile;
+		this.dotString = DotFileUtils.read(dotFile);
 		load();
 	}
 
@@ -42,8 +42,8 @@ public final class DotImport {
 	 */
 	public DotImport(final IFile dotFile) {
 		try {
-			this.dotFile = DotFileUtils.resolve(dotFile.getLocationURI()
-					.toURL());
+			this.dotString = DotFileUtils.read(DotFileUtils.resolve(dotFile
+					.getLocationURI().toURL()));
 			load();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public final class DotImport {
 	}
 
 	private void loadFrom(final String dotString) {
-		this.dotFile = DotFileUtils.write(dotString);
+		this.dotString = dotString;
 		load();
 	}
 
@@ -83,13 +83,13 @@ public final class DotImport {
 		List<String> errors = this.dotAst.errors();
 		if (errors.size() > 0) {
 			throw new IllegalArgumentException(String.format(
-					DotMessages.DotImport_1 + ": %s (%s)", dotFile, //$NON-NLS-1$
+					DotMessages.DotImport_1 + ": %s (%s)", dotString, //$NON-NLS-1$
 					errors.toString()));
 		}
 	}
 
 	private void load() {
-		this.dotAst = new DotAst(this.dotFile);
+		this.dotAst = new DotAst(this.dotString);
 	}
 
 	/**
@@ -143,6 +143,6 @@ public final class DotImport {
 	@Override
 	public String toString() {
 		return String.format("%s of %s at %s", getClass().getSimpleName(), //$NON-NLS-1$
-				dotAst, dotFile);
+				dotAst, dotString);
 	}
 }

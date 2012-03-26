@@ -39,6 +39,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,8 +52,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.zest.core.widgets.gestures.RotateGestureListener;
+import org.eclipse.zest.core.widgets.gestures.ZoomGestureListener;
 import org.eclipse.zest.core.widgets.internal.ContainerFigure;
 import org.eclipse.zest.core.widgets.internal.ZestRootLayer;
+import org.eclipse.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.zest.layouts.interfaces.ExpandCollapseManager;
@@ -105,6 +110,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	private ZestRootLayer zestRootLayer;
 
 	private ConnectionRouter defaultConnectionRouter;
+	private ZoomManager zoomManager = null;
 
 	/**
 	 * Constructor for a Graph. This widget represents the root of the graph,
@@ -195,6 +201,16 @@ public class Graph extends FigureCanvas implements IContainer {
 
 			public void controlMoved(ControlEvent e) {
 				// do nothing
+			}
+		});
+		if ((style & (ZestStyles.GESTURES_DISABLED)) == 0) {
+			// Only add default gestures if not disabled by style bit
+			this.addGestureListener(new ZoomGestureListener());
+			this.addGestureListener(new RotateGestureListener());
+		}
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				release();
 			}
 		});
 	}
@@ -331,25 +347,8 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * Dispose of the nodes and edges when the graph is disposed.
 	 */
 	public void dispose() {
-		while (nodes.size() > 0) {
-			GraphNode node = (GraphNode) nodes.get(0);
-			if (node != null) {
-				node.dispose();
-			}
-		}
-		while (connections.size() > 0) {
-			GraphConnection connection = (GraphConnection) connections.get(0);
-			if (connection != null) {
-				connection.dispose();
-			}
-		}
+		release();
 		super.dispose();
-
-		LIGHT_BLUE.dispose();
-		LIGHT_BLUE_CYAN.dispose();
-		GREY_BLUE.dispose();
-		DARK_BLUE.dispose();
-		LIGHT_YELLOW.dispose();
 	}
 
 	/**
@@ -402,6 +401,26 @@ public class Graph extends FigureCanvas implements IContainer {
 		return getLayoutContext().isBackgroundLayoutEnabled();
 	}
 
+	private void release() {
+		while (nodes.size() > 0) {
+			GraphNode node = (GraphNode) nodes.get(0);
+			if (node != null) {
+				node.dispose();
+			}
+		}
+		while (connections.size() > 0) {
+			GraphConnection connection = (GraphConnection) connections.get(0);
+			if (connection != null) {
+				connection.dispose();
+			}
+		}
+		LIGHT_BLUE.dispose();
+		LIGHT_BLUE_CYAN.dispose();
+		GREY_BLUE.dispose();
+		DARK_BLUE.dispose();
+		LIGHT_YELLOW.dispose();
+	}
+
 	private void applyLayoutInternal(boolean clean) {
 		if (getLayoutContext().getLayoutAlgorithm() == null) {
 			return;
@@ -448,7 +467,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	public Dimension getPreferredSize() {
 		if (preferredSize.width < 0 || preferredSize.height < 0) {
 			org.eclipse.swt.graphics.Point size = getSize();
-			double scale = getRootLayer().getScale();
+			double scale = getZoomManager().getZoom();
 			return new Dimension((int) (size.x / scale + 0.5), (int) (size.y
 					/ scale + 0.5));
 		}
@@ -1306,5 +1325,20 @@ public class Graph extends FigureCanvas implements IContainer {
 	public void setRouter(ConnectionRouter connectionRouter) {
 		setDefaultConnectionRouter(connectionRouter);
 		applyConnectionRouter();
+	}
+
+	/**
+	 * Returns the ZoomManager component used for scaling the graph widget.
+	 * 
+	 * @return the ZoomManager component
+	 * @since 2.0
+	 */
+	// @tag zest.bug.156286-Zooming.fix.experimental : expose the zoom manager
+	// for new actions.
+	public ZoomManager getZoomManager() {
+		if (zoomManager == null) {
+			zoomManager = new ZoomManager(getRootLayer(), getViewport());
+		}
+		return zoomManager;
 	}
 }
