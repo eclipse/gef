@@ -39,11 +39,11 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -137,10 +137,6 @@ public class TagCloud extends Canvas {
 	 */
 	private double currentZoom = 1;
 	
-	/**
-	 * The region used by the rendered words. 
-	 */
-	private Region region;
 	
 	/**
 	 * Minimum font size.
@@ -208,7 +204,7 @@ public class TagCloud extends Canvas {
 
 	private Set<SelectionListener> selectionListeners = new HashSet<SelectionListener>();
 
-	private Image mask;
+	private ImageData mask;
 	
 	/**
 	 * Creates a new Tag cloud on the given parent. When using this constructor, please 
@@ -598,7 +594,7 @@ found:			for(int a = x; a < xMax; a++) {
 		if(monitor != null) {
 			monitor.subTask("Placing words...");
 		}
-		region = new Region();
+		Rectangle r = new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
 		final Rectangle cloudArea = getCloudArea();
 		int w = cloudArea.width;
 		int h = cloudArea.height;
@@ -623,7 +619,18 @@ found:			for(int a = x; a < xMax; a++) {
 					continue;
 				}
 				success++;
-				region.add(word.x, word.y, word.width, word.height);
+				if(word.x < r.x) {
+					r.x = word.x;
+				}
+				if(word.y < r.y) {
+					r.y = word.y;
+				}
+				if(word.x + word.width > r.width) {
+					r.width = word.x + word.width;
+				}
+				if(word.y + word.height > r.height) {
+					r.height = word.y + word.height;
+				}
 				final Word wrd = word;
 				executors.execute(new Runnable() {
 					
@@ -638,29 +645,6 @@ found:			for(int a = x; a < xMax; a++) {
 					if(monitor != null) {
 						monitor.worked(5);
 					}
-//					executors.submit(new Runnable() {
-//						
-//						@Override
-//						public void run() {
-//							Rectangle r = region.getBounds();
-//							if(textLayerImage != null) {
-//								textLayerImage.dispose();
-//							}
-//							textLayerImage = new Image(getDisplay(), r.width, r.height);
-//							GC g2 = new GC(textLayerImage);
-//							g2.drawImage(tmpImage, r.x, r.y, r.width, r.height, 0, 0, r.width, r.height);
-//							g2.dispose();
-//							if(selectionLayerImage != null) {
-//								selectionLayerImage.dispose();
-//							}
-//							selectionLayerImage = new Image(getDisplay(), r.width, r.height);
-//							g2 = new GC(selectionLayerImage);
-//							g2.drawImage(textLayerImage, 0, 0);
-//							g2.dispose();
-//							zoomReset();
-//						}
-//					});
-				
 				}
 				
 			}
@@ -671,32 +655,21 @@ found:			for(int a = x; a < xMax; a++) {
 				e.printStackTrace();
 			}
 		}
-		Rectangle r = region.getBounds();
 		gc.dispose();
 		if(textLayerImage != null) {
 			textLayerImage.dispose();
 		}
-		r.width += accuracy;
-		r.height += accuracy;
-		textLayerImage = new Image(getDisplay(), r.width, r.height);
+		textLayerImage = new Image(getDisplay(), r.width-r.x, r.height-r.y);
 		gc = new GC(textLayerImage);
-		if(r.width > tmpImage.getBounds().width - r.x || r.height >= tmpImage.getBounds().width - r.y) {
-			MessageDialog.openError(getShell(), "Failed to place image", "The drawn image does not fit into the available region.");
-			tmpImage.dispose();
-			region.dispose();
-			gc.dispose();
-			return 0;
-		}
-		gc.drawImage(tmpImage, r.x, r.y, r.width, r.height, 0, 0, r.width, r.height);
+		gc.drawImage(tmpImage, r.x, r.y, r.width-r.x, r.height-r.y, 0, 0, textLayerImage.getBounds().width, textLayerImage.getBounds().height);
 		this.regionOffset = new Point(r.x, r.y);
 		tmpImage.dispose();
 		gc.dispose();
-		selectionLayerImage = new Image(getDisplay(), r.width, r.height);
+		selectionLayerImage = new Image(getDisplay(), textLayerImage.getBounds());
 		gc = new GC(selectionLayerImage);
 		gc.drawImage(textLayerImage, 0, 0);
 		gc.dispose();
-		region.dispose();
-		zoomReset();
+		zoomFit();
 		if(monitor != null) {
 			monitor.worked(10);
 		}
@@ -756,22 +729,39 @@ found:			for(int a = x; a < xMax; a++) {
 		}
 	}
 
-	private void resetMask() {
-		Image img = new Image(null, cloudArea.width, cloudArea.height);
-		GC gc = new GC(img);
-		gc.drawImage(mask, 0, 0, mask.getBounds().width, mask.getBounds().height, 0, 0, cloudArea.width, cloudArea.height);
-		ImageData id = img.getImageData();
-		img.dispose();
-		gc.dispose();
-		Word word = new Word("mask");
-		word.tree = new RectTree(new SmallRect(0, 0, cloudArea.width, cloudArea.height), 5);
-		calcWordExtents(word, id);
-		word.tree.place(cloudMatrix, (short) 1);
+	
+	/**
+	 * Set a background mask to define the drawable area
+	 * of the cloud. The image must be a square containing
+	 * black and white pixels only. It is scaled to the
+	 * full size of the drawable region. Black pixels
+	 * are interpreted as used, such that strings will be drawn
+	 * on white areas only. If parameter <code>bgData</code>
+	 * is <code>null</code>, the old mask will be removed.
+	 * @param bgData a square containing b&w pixels only
+	 */
+	public void setBackgroundMask(ImageData bgData) {
+		if(mask != null) {
+			mask = null;
+		}
+		if(bgData != null) {
+			Image img = new Image(null, cloudArea.width, cloudArea.height);
+			GC gc = new GC(img);
+			Image tmp = new Image(null, bgData);
+			gc.drawImage(tmp, 0, 0, tmp.getBounds().width, tmp.getBounds().height, 0, 0, cloudArea.width, cloudArea.height);
+			ImageData id = img.getImageData();
+			tmp.dispose();
+			img.dispose();
+			gc.dispose();
+			mask = id;
+		}
 	}
 
-
-	public void setMask(Image mask) {
-		this.mask = mask;
+	private void resetMask() {
+		Word word = new Word("mask");
+		word.tree = new RectTree(new SmallRect(0, 0, cloudArea.width, cloudArea.height), accuracy);
+		calcWordExtents(word, mask);
+		word.tree.place(cloudMatrix, RectTree.BACKGROUND);
 	}
 	
 	private int getNumberOfThreads() {
@@ -1160,7 +1150,7 @@ found:			for(int a = x; a < xMax; a++) {
 			MessageDialog.openError(getShell(), "Exception while layouting data", "An exception occurred while layouting: " + e.getMessage());
 			e.printStackTrace();
 		}
-		zoomFit();
+		//zoomFit();
 		redraw();
 		updateScrollbars();
 		return placedWords;
