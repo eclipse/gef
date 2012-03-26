@@ -36,7 +36,7 @@ public class CloudMatrix {
 	
 	public boolean isEmpty(int x, int y) {
 		short id = tree.getRoot().getWordId(x*minResolution, y*minResolution);
-		return id == -1 || id == 0;
+		return id == RectTree.EMPTY;
 	}
 
 	public void reset() {

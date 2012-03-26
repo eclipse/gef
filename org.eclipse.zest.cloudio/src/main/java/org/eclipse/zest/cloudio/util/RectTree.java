@@ -9,13 +9,13 @@
 package org.eclipse.zest.cloudio.util;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
+import java.util.Set;
 
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * A two-dimensional tree structure to store non-overlapping
@@ -33,12 +33,8 @@ public class RectTree {
 	
 	private LinkedList<RectNode> leaves;
 	
-	private static short EMPTY = -1, MISC = 0;
-	
-	public Rectangle minBounds = new Rectangle(Short.MAX_VALUE, Short.MAX_VALUE, Short.MIN_VALUE, Short.MIN_VALUE);
-	
-	private Stack<RectNode> lastPath = new Stack<RectNode>();
-	
+	public static short EMPTY = -1, MISC = 0, BACKGROUND = 1;
+		
 	class RectNode {
 
 		final SmallRect rect;
@@ -83,49 +79,47 @@ public class RectTree {
 			}
 			return index;
 		}
-
-		public void insert(SmallRect r, short id) {
+		
+		public boolean insert(SmallRect r, short id) {
 			if(rect.width == minResolution) {
 				filled = id;
-				return;
+				return true;
 			}
 			int i = getChildIndex(r);
-			lastPath.push(this);
 			if(children == null) {
 				children = new RectNode[4];
 			}
 			if(children[i] == null) {
 				children[i] = new RectNode(childAreas[i]);
 			}
-			if(children[i].rect.width >= minResolution && children[i].rect.height >= minResolution) {
-				children[i].insert(r, id);
-				if(children[i].rect.width == minResolution) {
-					children[i].filled = id;
-					SmallRect c = children[i].rect;
-					if(c.x < minBounds.x) minBounds.x = c.x;
-					if(c.y < minBounds.y) minBounds.y = c.y;
-					if(c.x > minBounds.width) minBounds.width = c.x;
-					if(c.y > minBounds.height) minBounds.height = c.y;
-				}
-			}
-			boolean filled = true;
-			if(children != null) {
-				for(int ix = 0; ix < 4; ix++) {
-					if(children[ix] == null) {
-						filled = false; 
-						break;
-					}
-					if(children[ix].filled == EMPTY) {
+			boolean filledChild = children[i].insert(r, id);
+			if(filledChild) {
+				Set<Short> ids = new HashSet<Short>();
+				boolean filled = true;
+				for(int j = 0; j < children.length; j++) {
+					if(i == j) continue;
+					if(children[j] == null || children[j].filled == EMPTY) {
 						filled = false;
 						break;
 					}
-				}			
+					ids.add(children[j].filled);
+				}
+				if(filled) {
+					if(ids.size() == 1) {
+						this.filled = ids.iterator().next();
+						if(this.filled == BACKGROUND) {
+							children = null;
+						}
+					} else {
+						this.filled = MISC;
+					}
+				}
+				return filled;
 			}
-			if(filled) {
-				this.filled = MISC;
-			}
+			return false;
 		}
 		
+
 		public boolean isAvailable(final SmallRect oRect) {
 			if(filled >= MISC) return false;
 			if(children == null) {
@@ -147,7 +141,7 @@ public class RectTree {
 					return children[i].getWordId(x, y);
 				}
 			}
-			return 0;
+			return EMPTY;
 		}
 		
 		public short getWordId(Point position) {
@@ -162,13 +156,6 @@ public class RectTree {
 	}
 			
 	public void insert(SmallRect r, short id) {
-		while(!lastPath.isEmpty()) {
-			RectNode node = lastPath.pop();
-			if(node.rect.intersects(r)) {
-				node.insert(r, id);
-				return;
-			}
-		}
 		root.insert(r, id);
 	}
 
