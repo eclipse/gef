@@ -8,6 +8,9 @@
 *******************************************************************************/
 package org.eclipse.zest.examples.cloudio.application.ui;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +23,18 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.zest.cloudio.CloudOptionsComposite;
 import org.eclipse.zest.cloudio.TagCloud;
@@ -125,6 +133,45 @@ public class TagCloudViewPart extends ViewPart {
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		options = new CloudOptionsComposite(parent, SWT.NONE, viewer) {
 			
+			protected Group addMaskButton(Composite parent) {
+				Group buttons = new Group(parent, SWT.SHADOW_IN);
+				buttons.setLayout(new GridLayout(2, true));
+				buttons.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+				Label l = new Label(buttons, SWT.NONE);
+				l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+				l.setText("Mask");
+				Button file = new Button(buttons, SWT.FLAT);
+				file.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+				file.setText("Open...");
+				file.addListener(SWT.Selection, new Listener() {
+
+					@Override
+					public void handleEvent(Event event) {
+						FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
+						
+						fd.setText("Select a square b&w png image as mask...");
+						String sourceFile = fd.open();
+						if(sourceFile == null) return;
+						try {
+							ImageLoader loader = new ImageLoader();
+							BufferedInputStream in = new BufferedInputStream(new FileInputStream(new File(sourceFile)));
+							ImageData[] data = loader.load(in);
+							in.close();
+							viewer.getCloud().setBackgroundMask(data[0]);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+				});
+				return buttons;
+			}
+			
+			protected void addGroups() {
+				addMaskButton(this);
+				super.addGroups();
+			}
+
 			protected Group addLayoutButtons(Composite parent) {
 				Group buttons = super.addLayoutButtons(parent);
 				
@@ -133,7 +180,6 @@ public class TagCloudViewPart extends ViewPart {
 				final Combo scale = new Combo(buttons, SWT.DROP_DOWN | SWT.READ_ONLY);
 				scale.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 				scale.setItems(new String[] {"linear", "logarithmic"});
-				scale.select(1);
 				scale.addSelectionListener(new SelectionListener() {
 					
 					@Override
@@ -148,6 +194,7 @@ public class TagCloudViewPart extends ViewPart {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {}
 				});
+				scale.select(1);
 				l = new Label(buttons, SWT.NONE);
 				l.setText("X Axis Variation");
 				final Combo xAxis = new Combo(buttons, SWT.DROP_DOWN | SWT.READ_ONLY);
