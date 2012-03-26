@@ -656,6 +656,7 @@ found:			for(int a = x; a < xMax; a++) {
 			}
 		}
 		gc.dispose();
+		if(success == 0) return success;
 		if(textLayerImage != null) {
 			textLayerImage.dispose();
 		}
