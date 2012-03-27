@@ -33,7 +33,7 @@ public class RectTree {
 	
 	private LinkedList<RectNode> leaves;
 	
-	public static short EMPTY = -1, MISC = 0, BACKGROUND = 1;
+	public static short EMPTY = -3, MISC = -2, BACKGROUND = -1;
 		
 	class RectNode {
 
@@ -132,12 +132,12 @@ public class RectTree {
 
 
 		public short getWordId(int x, int y) {
-			if(filled > 0) return filled;
+			if(filled > BACKGROUND) return filled;
 			if(children == null) {
 				return filled;
 			}
 			for(int i = 0; i < childAreas.length; i++) {
-				if(childAreas[i].intersects(x-2, y-2, 4, 4) && children[i] != null) {
+				if(childAreas[i].intersects(x, y, minResolution, minResolution) && children[i] != null) {
 					return children[i].getWordId(x, y);
 				}
 			}

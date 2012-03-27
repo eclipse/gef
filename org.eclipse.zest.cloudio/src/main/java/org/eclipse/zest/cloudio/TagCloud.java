@@ -39,7 +39,6 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
@@ -454,6 +453,7 @@ public class TagCloud extends Canvas {
 		double current = 0;
 		int next = 10;
 		executors = Executors.newFixedThreadPool(getNumberOfThreads());
+		final Color color = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		for (final Word word : wordsToUse) {
 			FontData[] fontData = word.getFontData();
 			int fontSize = (int) getFontSize(word);
@@ -462,7 +462,6 @@ public class TagCloud extends Canvas {
 			}
 			final Font font = new Font(gc.getDevice(), fontData);
 			gc.setFont(font);
-			final Color color = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 			final Point stringExtent = gc.stringExtent(word.string);
 			FontMetrics fm = gc.getFontMetrics();
 			stringExtent.y = fm.getHeight();
@@ -548,35 +547,26 @@ public class TagCloud extends Canvas {
 	 */
 	private void calcWordExtents(final Word word, final ImageData id) {
 		final int[] pixels = new int[id.width];
-		final boolean[][] matrix = new boolean[id.height][id.width];
 		final PaletteData palette = id.palette;
+		Set<SmallRect> inserted = new HashSet<SmallRect>();
 		for (int y = 0; y < id.height; y++) {
 			id.getPixels(0, y, id.width, pixels, 0);
 			for (int i = 0; i < pixels.length; i++) {
 				int pixel = pixels[i];
 				// Extracting color values as in PaletteData.getRGB(int pixel):
-				int r = (pixel >> (palette.redShift < 0 ? -palette.redShift : palette.redShift)) & palette.redMask;
-				int g = (pixel >> (palette.greenShift < 0 ? -palette.greenShift : palette.greenShift)) & palette.greenMask;
-				int b = (pixel >> (palette.blueShift < 0 ? -palette.blueShift : palette.blueShift)) & palette.blueMask;
-				if(r < 220 && g < 220 && b < 220) {
-					matrix[y][i] = true;
-				}
-			}
-		}
-		for(int i = 0; i < id.width; i+= accuracy) {
-			for(int j = 0; j < id.height; j += accuracy) {
-				final int x = Math.max(0, i-1);
-				final int y = Math.max(0, j-1);
-				final int xMax = Math.min(i+accuracy+2, id.width);
-				final int yMax = Math.min(j+accuracy+2, id.height);
-found:			for(int a = x; a < xMax; a++) {
-					for(int b = y; b < yMax; b++) {
-						if(matrix[b][a]) {
-							SmallRect r = new SmallRect(i, j, accuracy, accuracy);
-							word.tree.insert(r, word.id);
-							break found;
-						}
+				int r = pixel & palette.redMask;
+				r = (palette.redShift < 0) ? r >>> -palette.redShift : r << palette.redShift;
+				int g = pixel & palette.greenMask;
+				g = (palette.greenShift < 0) ? g >>> -palette.greenShift : g << palette.greenShift;
+				int b = pixel & palette.blueMask;
+				b = (palette.blueShift < 0) ? b >>> -palette.blueShift : b << palette.blueShift;
+				if(r < 250 || g < 250 || b < 250) {
+					SmallRect rect = new SmallRect((i/accuracy)*accuracy, (y/accuracy)*accuracy, accuracy, accuracy);
+					if(!inserted.contains(rect)) {
+						word.tree.insert(rect, word.id);
+						inserted.add(rect);
 					}
+					i += accuracy-1;
 				}
 			}
 		}
@@ -655,6 +645,7 @@ found:			for(int a = x; a < xMax; a++) {
 				e.printStackTrace();
 			}
 		}
+		//drawRects(gc);
 		gc.dispose();
 		if(success == 0) return success;
 		if(textLayerImage != null) {
@@ -677,6 +668,23 @@ found:			for(int a = x; a < xMax; a++) {
 		return success;
 	}
 	
+	/**
+	 * Test method to visualize the area occupied by each word.
+	 * @param gc
+	 */
+	private void drawRects(GC gc) {
+		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		gc.setAlpha(120);
+		for(int i = 0; i < maxSize; i+= accuracy) {
+			for(int j = 0; j < maxSize; j+= accuracy) {
+				if(!cloudMatrix.isEmpty(i/accuracy, j/accuracy)) {
+					gc.fillRectangle((i), (j), accuracy, accuracy);
+				}
+			}
+		}
+	}
+
+
 	/**
 	 * Sets the given list as input of the tag cloud,
 	 * replacing any previous content. By default,

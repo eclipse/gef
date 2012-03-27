@@ -94,6 +94,7 @@ public class DefaultLayouter implements ILayouter {
 		double growFactor = 1.6;
 		offset.x += cloudArea.width/2;
 		offset.y += cloudArea.height/2;
+		final int accuracy = mainTree.getMinResolution();
 		for(int i = 0; i < 5000; i++) {
 			final double radius = Math.sqrt((double) (next.x * next.x + next.y * next.y)) + growFactor;
 			double atan = Math.atan2(next.y, next.x);
@@ -110,8 +111,8 @@ public class DefaultLayouter implements ILayouter {
 			}
 			next.x =  (int) (radius * Math.cos(atan));
 			next.y =  (int) (radius * Math.sin(atan));
-			word.x = next.x + offset.x;
-			word.y = next.y + offset.y;
+			word.x = ((next.x + offset.x)/accuracy)*accuracy;
+			word.y = ((next.y + offset.y)/accuracy)*accuracy;
 			RectTree rt = word.tree;
 			if(rt == null) break;
 			rt.move(word.x, word.y);

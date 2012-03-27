@@ -23,7 +23,11 @@ public class CloudMatrix {
 	private final int max;
 
 	private final int minResolution;
-	
+
+	public int getMinResolution() {
+		return minResolution;
+	}
+
 	public CloudMatrix(int maxSize, int minResolution) {
 		this.max = maxSize;
 		this.minResolution = minResolution;
@@ -45,9 +49,9 @@ public class CloudMatrix {
 	}
 
 	public void set(RectNode node, short id, short xOffset, short yOffset, int minResolution) {
-		int cleanX = (xOffset + node.rect.x) / minResolution;
-		int cleanY = (yOffset + node.rect.y) / minResolution;
-		SmallRect rect = new SmallRect(cleanX* minResolution, cleanY* minResolution, minResolution, minResolution);
+		int cleanX = ((xOffset + node.rect.x) / minResolution) * minResolution;
+		int cleanY = ((yOffset + node.rect.y) / minResolution) * minResolution;
+		SmallRect rect = new SmallRect(cleanX, cleanY, minResolution, minResolution);
 		tree.insert(rect, id);
 	}
 	
