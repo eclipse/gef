@@ -301,9 +301,9 @@ public class CurveUtils {
 		}
 
 		/**
-		 * Constructs the explicit BÃ©zier curve for this curve's x-components.
+		 * Constructs the explicit Bezier curve for this curve's x-components.
 		 * 
-		 * @return the explicit BÃ©zier curve for this curve's x-components
+		 * @return the explicit Bezier curve for this curve's x-components
 		 */
 		public BezierCurve getExplicitX() {
 			Vector3D[] explicit = new Vector3D[points.length];
@@ -318,9 +318,9 @@ public class CurveUtils {
 		}
 
 		/**
-		 * Constructs the explicit BÃ©zier curve for this curve's y-components.
+		 * Constructs the explicit Bezier curve for this curve's y-components.
 		 * 
-		 * @return the explicit BÃ©zier curve for this curve's y-components
+		 * @return the explicit Bezier curve for this curve's y-components
 		 */
 		public BezierCurve getExplicitY() {
 			Vector3D[] explicit = new Vector3D[points.length];

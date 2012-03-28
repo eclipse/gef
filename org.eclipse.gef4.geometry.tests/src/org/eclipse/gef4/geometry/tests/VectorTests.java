@@ -213,9 +213,9 @@ public class VectorTests {
 		// TODO: normalize the vectors first, so that they get comparable.
 
 		// the description of the method is mistakable:
-		// 1) does it mean that an angle of 180Â° returns the same dissimilarity
-		// as an angle of 0Â°
-		// 2) or does it mean that an angle of 180Â° returns the highest
+		// 1) does it mean that an angle of 180° returns the same dissimilarity
+		// as an angle of 0°
+		// 2) or does it mean that an angle of 180° returns the highest
 		// dissimilarity?
 		//
 		// the following code expects the first case

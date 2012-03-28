@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Ny√üen (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
