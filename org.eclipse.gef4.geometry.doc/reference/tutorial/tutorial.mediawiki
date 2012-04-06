@@ -2,16 +2,6 @@
 
 This is a small tutorial for the GEF4 Geometry API.
 
-== REPL ==
-
-The GEF 4 Geometry API ships with an examples packages (org.eclipse.gef4.geometry.examples) which includes a graphical REPL (Read-Evaluate-Print-Loop). This tutorial explains the API with small code snippets which can be executed directly in the REPL.
-
-[[File:where-is-the-repl.png|Where is the REPL?]]
-[[File:repl-start|REPL on start]]
-[[File:repl-example|Ellipse visualization]]
-
-You can drag the blue control points to change the underlying figures.
-
 == 1. Class hierarchy ==
 
 The GEF 4 Geometry API is based on a skeleton of interfaces and implementation categories which classify the individual figures into groups according to their dimensionality and multiplicity (interface hierarchy) and their construction method (inheritance hierarchy) as follows:
