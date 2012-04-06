@@ -212,13 +212,17 @@ public class VectorTests {
 
 		// TODO: normalize the vectors first, so that they get comparable.
 
-		// the description of the method is mistakable:
-		// 1) does it mean that an angle of 180° returns the same dissimilarity
-		// as an angle of 0°
-		// 2) or does it mean that an angle of 180° returns the highest
-		// dissimilarity?
-		//
-		// the following code expects the first case
+		/*
+		 * the description of the method is mistakable:
+		 * 
+		 * 1) does it mean that an angle of 180 degrees returns the same
+		 * dissimilarity as an angle of 0 degrees?
+		 * 
+		 * 2) or does it mean that an angle of 180 degrees returns the highest
+		 * dissimilarity?
+		 * 
+		 * the following code expects the first case
+		 */
 
 		forVectorPairs(new VectorPairAction() {
 			@Override
@@ -387,14 +391,9 @@ public class VectorTests {
 		forVectorPairs(new VectorPairAction() {
 			@Override
 			public void action(Vector a, Vector b) {
-				Angle alpha = a.getAngle(b);
-				alpha.setRad(alpha.rad() * 2d);
-
-				// DEBUG
-				// if (a.isParallelTo(b) != alpha.equals(Angle.fromRad(0)))
-				// throw new IllegalStateException("");
-
-				assertTrue(a.isParallelTo(b) == alpha.equals(Angle.fromRad(0)));
+				// TODO: rewrite this test!
+				assertTrue(a.isParallelTo(b) == PrecisionUtils.equal(
+						a.getDissimilarity(b), 0));
 			}
 		});
 	}

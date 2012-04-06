@@ -12,13 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PolynomCalculationUtils;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a quadratic Bézier curve.
@@ -29,110 +24,6 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 public class QuadraticCurve extends BezierCurve {
 
 	private static final long serialVersionUID = 1L;
-
-	private static Point[] getIntersections(QuadraticCurve p, double ps,
-			double pe, Line l) {
-		// parameter convergence test
-		double pm = (ps + pe) / 2;
-
-		if (PrecisionUtils.equal(ps, pe, +2)) {
-			return new Point[] { p.get(pm) };
-		}
-
-		// no parameter convergence
-
-		// clip the curve
-		QuadraticCurve pc = p.clip(ps, pe);
-
-		// check the control polygon
-		Polygon polygon = pc.getControlPolygon();
-
-		if (polygon.intersects(l)) {
-			// area test
-			if (PrecisionUtils.equal(polygon.getBounds().getArea(), 0, +2)) {
-				// line/line intersection fallback for such small curves
-				Point poi = new Line(pc.getP1(), pc.getP2()).getIntersection(l);
-				if (poi != null) {
-					return new Point[] { poi };
-				}
-				return new Point[] {};
-			}
-
-			// individually test the curves left and right sides for points of
-			// intersection
-			HashSet<Point> intersections = new HashSet<Point>();
-
-			intersections.addAll(Arrays.asList(getIntersections(p, ps, pm, l)));
-			intersections.addAll(Arrays.asList(getIntersections(p, pm, pe, l)));
-
-			return intersections.toArray(new Point[] {});
-		}
-
-		// no intersections
-		return new Point[] {};
-	}
-
-	private static Point[] getIntersections(QuadraticCurve p, double ps,
-			double pe, QuadraticCurve q, double qs, double qe) {
-		// parameter convergence test
-		double pm = (ps + pe) / 2;
-		double qm = (qs + qe) / 2;
-
-		if (PrecisionUtils.equal(ps, pe)) {
-			return new Point[] { p.get(pm) };
-		}
-
-		if (PrecisionUtils.equal(qs, qe)) {
-			return new Point[] { q.get(qm) };
-		}
-
-		// no parameter convergence
-
-		// clip to parameter ranges
-		QuadraticCurve pc = p.clip(ps, pe);
-		QuadraticCurve qc = q.clip(qs, qe);
-
-		// check the control polygons
-		Polygon pPoly = pc.getControlPolygon();
-		Polygon qPoly = qc.getControlPolygon();
-
-		if (pPoly.intersects(qPoly)) {
-			// check the polygon's areas
-			double pArea = pPoly.getBounds().getArea();
-			double qArea = qPoly.getBounds().getArea();
-
-			if (PrecisionUtils.equal(pArea, 0, -2)
-					&& PrecisionUtils.equal(qArea, 0, -2)) {
-				// return line/line intersection
-				Point poi = new Line(pc.getP1(), pc.getP2())
-						.getIntersection(new Line(qc.getP1(), qc.getP2()));
-				if (poi != null) {
-					return new Point[] { poi };
-				}
-				return new Point[] {};
-			}
-
-			// areas not small enough
-
-			// individually test the left and right parts of the curves for
-			// points of intersection
-			HashSet<Point> intersections = new HashSet<Point>();
-
-			intersections.addAll(Arrays.asList(getIntersections(p, ps, pm, q,
-					qs, qm)));
-			intersections.addAll(Arrays.asList(getIntersections(p, ps, pm, q,
-					qm, qe)));
-			intersections.addAll(Arrays.asList(getIntersections(p, pm, pe, q,
-					qs, qm)));
-			intersections.addAll(Arrays.asList(getIntersections(p, pm, pe, q,
-					qm, qe)));
-
-			return intersections.toArray(new Point[] {});
-		}
-
-		// no intersections
-		return new Point[] {};
-	}
 
 	/**
 	 * Constructs a new {@link QuadraticCurve} from the given sequence of x- and
@@ -207,38 +98,16 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return the {@link QuadraticCurve} on the interval [t1, t2]
 	 */
 	public QuadraticCurve clip(double t1, double t2) {
-		return CurveUtils.clip(this, t1, t2);
-	}
-
-	/**
-	 * Check if the given {@link Point} (approximately) lies on the curve.
-	 * 
-	 * @param p
-	 *            the {@link Point} in question
-	 * @return true if p lies on the curve, false otherwise
-	 */
-	public boolean contains(Point p) {
-		return CurveUtils.contains(this, p);
+		return super.getClipped(t1, t2).toQuadratic();
 	}
 
 	public boolean equals(Object other) {
 		QuadraticCurve o = (QuadraticCurve) other;
 
-		AbstractPointListBasedGeometry myPoly = getControlPolygon();
-		AbstractPointListBasedGeometry otherPoly = o.getControlPolygon();
+		Polygon myPoly = getControlPolygon();
+		Polygon otherPoly = o.getControlPolygon();
 
 		return myPoly.equals(otherPoly);
-	}
-
-	/**
-	 * Get a single {@link Point} on this QuadraticCurve at parameter t.
-	 * 
-	 * @param t
-	 *            in range [0,1]
-	 * @return the {@link Point} at parameter t
-	 */
-	public Point get(double t) {
-		return CurveUtils.get(this, t);
 	}
 
 	/**
@@ -335,7 +204,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return the control point's x-coordinate
 	 */
 	public double getCtrlX() {
-		return getCtrlX(0);
+		return getPoint(1).x;
 	}
 
 	/**
@@ -344,7 +213,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return the control point's y-coordinate
 	 */
 	public double getCtrlY() {
-		return getCtrlY(0);
+		return getPoint(1).y;
 	}
 
 	/**
@@ -369,60 +238,6 @@ public class QuadraticCurve extends BezierCurve {
 	}
 
 	/**
-	 * Returns the points of intersection between this {@link QuadraticCurve}
-	 * and the given {@link Line} l.
-	 * 
-	 * @param l
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Line l) {
-		return getIntersections(this, 0, 1, l);
-	}
-
-	/**
-	 * Calculates the intersections of two {@link QuadraticCurve}s using the
-	 * subdivision algorithm.
-	 * 
-	 * @param other
-	 * @return points of intersection
-	 */
-	public Point[] getIntersections(QuadraticCurve other) {
-		return getIntersections(this, 0, 1, other, 0, 1);
-	}
-
-	/**
-	 * Checks if this {@link QuadraticCurve} intersects with the given line.
-	 * (Costly)
-	 * 
-	 * TODO: implement a faster algorithm for this intersection-test.
-	 * 
-	 * @param l
-	 * @return true if they intersect, false otherwise.
-	 */
-	public boolean intersects(Line l) {
-		return getIntersections(l).length > 0;
-	}
-
-	/**
-	 * Checks if two {@link QuadraticCurve}s intersect each other. (Costly)
-	 * 
-	 * @param other
-	 * @return true if the two curves intersect. false otherwise
-	 */
-	public boolean intersects(QuadraticCurve other) {
-		return getIntersections(other).length > 0;
-	}
-
-	public boolean intersects(Rectangle r) {
-		for (Line l : r.getOutlineSegments()) {
-			if (intersects(l)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Sets the curve's control point.
 	 * 
 	 * @param ctrl
@@ -438,7 +253,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @param ctrlX
 	 */
 	public void setCtrlX(double ctrlX) {
-		setCtrlX(0, ctrlX);
+		setPoint(1, new Point(ctrlX, getCtrlY()));
 	}
 
 	/**
@@ -447,7 +262,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @param ctrlY
 	 */
 	public void setCtrlY(double ctrlY) {
-		setCtrlY(0, ctrlY);
+		setPoint(1, new Point(getCtrlX(), ctrlY));
 	}
 
 	/**
@@ -461,7 +276,9 @@ public class QuadraticCurve extends BezierCurve {
 	 *         [0, t] 2. [t, 1]
 	 */
 	public QuadraticCurve[] split(double t) {
-		return CurveUtils.split(this, t);
+		BezierCurve[] split = super.split(t);
+		return new QuadraticCurve[] { split[0].toQuadratic(),
+				split[1].toQuadratic() };
 	}
 
 	/**
@@ -473,7 +290,7 @@ public class QuadraticCurve extends BezierCurve {
 	public Path toPath() {
 		Path p = new Path();
 		p.moveTo(getX1(), getY1());
-		p.quadTo(getCtrlX(), getCtrlY(), getX1(), getY2());
+		p.quadTo(getCtrlX(), getCtrlY(), getX2(), getY2());
 		return p;
 	}
 

@@ -38,7 +38,7 @@ public class Ring extends AbstractGeometry implements IPolyShape {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
-	public boolean intersects(Rectangle r) {
+	public boolean touches(Rectangle r) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
@@ -49,4 +49,5 @@ public class Ring extends AbstractGeometry implements IPolyShape {
 	public IGeometry getCopy() {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
+
 }

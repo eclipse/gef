@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -33,7 +34,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * @author Matthias Wienand
  */
-public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
+public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse> implements
+		IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -70,38 +72,6 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 	}
 
 	/**
-	 * Tests whether the given {@link CubicCurve} is fully contained within this
-	 * {@link Ellipse}.
-	 * 
-	 * @param c
-	 *            the {@link CubicCurve} to test for containment
-	 * @return <code>true</code> in case the given {@link CubicCurve} is fully
-	 *         contained, <code>false</code> otherwise
-	 */
-	public boolean contains(CubicCurve c) {
-		return contains(c.getP1()) && contains(c.getP2())
-				&& getIntersections(c).length == 0;
-	}
-
-	/**
-	 * Tests whether the given {@link Ellipse} is fully contained within this
-	 * {@link Ellipse}.
-	 * 
-	 * @param o
-	 *            the {@link Ellipse} to test for containment
-	 * @return <code>true</code> in case the given {@link Ellipse} is fully
-	 *         contained, <code>false</code> otherwise
-	 */
-	public boolean contains(Ellipse o) {
-		for (CubicCurve seg : o.getOutlineSegments()) {
-			if (!contains(seg)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Tests whether the given {@link Line} is fully contained within this
 	 * {@link Ellipse}.
 	 * 
@@ -118,70 +88,38 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
-		// point has to fulfill (x/a)^2 + (y/b)^2 <= 1, where a = width/2 and b
-		// = height/2, if ellipse is centered around origin, so we have to
-		// normalize point p by subtracting the center
+		/*
+		 * point has to fulfill (x/a)^2 + (y/b)^2 <= 1, where a = width/2 and b
+		 * = height/2, if ellipse is centered around origin, so we have to
+		 * normalize point p by subtracting the center
+		 */
 		double normalizedX = p.x - (x + width / 2);
 		double normalizedY = p.y - (y + height / 2);
+
 		// then check if it fulfills the ellipse equation
-		return PrecisionUtils.smallerEqual(normalizedX * normalizedX
+		if (PrecisionUtils.smallerEqual(normalizedX * normalizedX
 				/ (width * width * 0.25d) + normalizedY * normalizedY
-				/ (height * height * 0.25d), 1.0d);
-	}
+				/ (height * height * 0.25d), 1d)) {
+			return true;
+		}
 
-	/**
-	 * Tests if this {@link Ellipse} contains the given {@link Polygon} polygon.
-	 * 
-	 * @param polygon
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(Polygon polygon) {
-		for (Line segment : polygon.getOutlineSegments()) {
-			if (!contains(segment)) {
-				return false;
+		// is it "on" the outline?
+		for (CubicCurve seg : getOutlineSegments()) {
+			if (seg.contains(p)) {
+				return true;
 			}
 		}
-		return true;
+
+		// TODO: what about the small space between outline and ellipse area?
+
+		return false;
 	}
 
 	/**
-	 * Tests if this {@link Ellipse} contains the given {@link Polyline}
-	 * polyline.
-	 * 
-	 * @param polyline
-	 * @return true if it is contained, false otherwise
+	 * @see IShape#contains(IGeometry)
 	 */
-	public boolean contains(Polyline polyline) {
-		for (Line segment : polyline.getCurves()) {
-			if (!contains(segment)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Tests whether the given {@link QuadraticCurve} is fully contained within
-	 * this {@link Ellipse}.
-	 * 
-	 * @param c
-	 *            the {@link QuadraticCurve} to test for containment
-	 * @return <code>true</code> in case the given {@link QuadraticCurve} is
-	 *         fully contained, <code>false</code> otherwise
-	 */
-	public boolean contains(QuadraticCurve c) {
-		return contains(c.getP1()) && contains(c.getP2())
-				&& getIntersections(c).length == 0;
-	}
-
-	/**
-	 * @see IGeometry#contains(Rectangle)
-	 */
-	public boolean contains(Rectangle r) {
-		// has to contain all border points of the rectangle, to contain it
-		// completely
-		return contains(r.getTopLeft()) && contains(r.getTopRight())
-				&& contains(r.getBottomLeft()) && contains(r.getBottomRight());
+	public boolean contains(IGeometry g) {
+		return CurveUtils.contains(this, g);
 	}
 
 	/**
@@ -248,42 +186,17 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 	}
 
 	/**
-	 * Calculates the points of intersection of this {@link Ellipse} and the
-	 * given {@link Arc}.
+	 * Calculates the intersections of this {@link Ellipse} with the given
+	 * {@link ICurve}.
 	 * 
-	 * @param arc
-	 *            The {@link Arc} to compute intersection points with
-	 * @return the points of intersection of this {@link Ellipse} and the given
-	 *         {@link Arc}.
+	 * @param c
+	 * @return {@link Point}s of intersection
 	 */
-	public Point[] getIntersections(Arc arc) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve mySeg : getOutlineSegments()) {
-			for (CubicCurve arcSeg : arc.getSegments()) {
-				intersections.addAll(Arrays.asList(mySeg
-						.getIntersections(arcSeg)));
-			}
+	public Point[] getIntersections(ICurve c) {
+		if (c instanceof Line) {
+			return getIntersections((Line) c);
 		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Calculates the points of intersection of this {@link Ellipse} and the
-	 * given {@link CubicCurve}.
-	 * 
-	 * @param curve
-	 * @return points of intersection
-	 */
-	public Point[] getIntersections(CubicCurve curve) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getOutlineSegments()) {
-			intersections.addAll(Arrays.asList(curve.getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
+		return CurveUtils.getIntersections(c, this);
 	}
 
 	/**
@@ -291,7 +204,7 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 	 * {@link Ellipse}.
 	 * 
 	 * @param e2
-	 * @return points of intersection
+	 * @return {@link Point}s of intersection
 	 */
 	public Point[] getIntersections(Ellipse e2) {
 		if (equals(e2)) {
@@ -419,117 +332,8 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 		return intersections.toArray(new Point[] {});
 	}
 
-	/**
-	 * Returns the intersection points of this {@link Ellipse}'s outline with
-	 * the given {@link Polygon}'s outline.
-	 * 
-	 * @param polygon
-	 *            the {@link Polygon} to test for intersection
-	 * @return an array containing the intersection points of this
-	 *         {@link Ellipse}'s outline with the given {@link Polyline}'s
-	 *         outline in case such intersection points exist, an empty array
-	 *         otherwise
-	 */
-	public Point[] getIntersections(Polygon polygon) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : polygon.getOutlineSegments()) {
-			for (Point intersection : getIntersections(segment)) {
-				intersections.add(intersection);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the intersection points of this {@link Ellipse}'s outline with
-	 * the given {@link Polyline}.
-	 * 
-	 * @param polyline
-	 *            the {@link Polyline} to test for intersection
-	 * @return an array containing the intersection points of this
-	 *         {@link Ellipse}'s outline with the given {@link Polyline} in case
-	 *         such intersection points exist, an empty array otherwise
-	 */
-	public Point[] getIntersections(Polyline polyline) {
-		List<Point> intersections = new ArrayList<Point>();
-
-		for (Line segment : polyline.getCurves()) {
-			for (Point intersection : getIntersections(segment)) {
-				intersections.add(intersection);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Computes and returns the points of intersection of this {@link Ellipse}'s
-	 * outline with the given {@link QuadraticCurve}.
-	 * 
-	 * @param c
-	 * @return the points of intersection of this {@link Ellipse}'s outline with
-	 *         the given {@link QuadraticCurve}
-	 */
-	public Point[] getIntersections(QuadraticCurve c) {
-		return getIntersections(c.getElevated());
-	}
-
-	/**
-	 * Returns the intersection points of this {@link Ellipse}'s outline with
-	 * the given {@link Rectangle}'s outline.
-	 * 
-	 * @param rectangle
-	 *            the {@link Rectangle} to test for intersection
-	 * @return an array containing the intersection points of this
-	 *         {@link Ellipse}'s outline with the given {@link Rectangle}'s
-	 *         outline in case such intersection points exist, an empty array
-	 *         otherwise
-	 */
-	public Point[] getIntersections(Rectangle rectangle) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : rectangle.getOutlineSegments()) {
-			for (Point intersection : getIntersections(segment)) {
-				intersections.add(intersection);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the intersection points of this {@link Ellipse}'s outline with
-	 * the given {@link RoundedRectangle}'s outline.
-	 * 
-	 * @param rr
-	 *            The {@link RoundedRectangle} to test for intersection
-	 * @return an array containing the {@link Point}s of intersection of this
-	 *         {@link Ellipse}'s outline with the given {@link RoundedRectangle}
-	 *         's outline in case such intersection points exist, an empty array
-	 *         otherwise.
-	 */
-	public Point[] getIntersections(RoundedRectangle rr) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		// line segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTop())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getLeft())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getBottom())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
-
-		// arc segments
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomRightArc())));
-
-		return intersections.toArray(new Point[] {});
+	public IPolyCurve getOutline() {
+		return CurveUtils.getOutline(this);
 	}
 
 	/**
@@ -585,82 +389,6 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 	}
 
 	/**
-	 * Does the given {@link CubicCurve} intersect (including containment) this
-	 * {@link Ellipse}?
-	 * 
-	 * @param c
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(CubicCurve c) {
-		return contains(c.getP1()) && contains(c.getP2())
-				|| getIntersections(c).length > 0;
-	}
-
-	/**
-	 * At least one common point, which includes containment (check
-	 * getIntersections() to check if this is a true intersection).
-	 * 
-	 * @param l
-	 *            The {@link Line} to test for intersection.
-	 * @return <code>true</code> in case this {@link Ellipse} and the given
-	 *         {@link Line} share at least one common point, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean intersects(Line l) {
-		return contains(l) || getIntersections(l).length > 0;
-	}
-
-	/**
-	 * Tests if this {@link Ellipse} intersects the given {@link Polygon}
-	 * polygon.
-	 * 
-	 * @param polygon
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(Polygon polygon) {
-		for (Line segment : polygon.getOutlineSegments()) {
-			if (intersects(segment)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Tests if this {@link Ellipse} intersects the given {@link Polyline}
-	 * polyline.
-	 * 
-	 * @param polyline
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(Polyline polyline) {
-		for (Line segment : polyline.getCurves()) {
-			if (intersects(segment)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @see IGeometry#intersects(Rectangle)
-	 */
-	public boolean intersects(Rectangle r) {
-		// quick rejection test
-		if (!getBounds().intersects(r)) {
-			return false;
-		}
-
-		Line[] segments = r.getOutlineSegments();
-		for (int i = 0; i < segments.length; i++) {
-			if (intersects(segments[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns a path representation of this {@link Ellipse}, which is an
 	 * approximation of the four segments by means of cubic Bezier curves.
 	 * 
@@ -690,4 +418,5 @@ public class Ellipse extends AbstractRectangleBasedGeometry implements IShape {
 		return "Ellipse: (" + x + ", " + y + ", " + //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 				width + ", " + height + ")";//$NON-NLS-2$//$NON-NLS-1$
 	}
+
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.utils;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Polyline;
@@ -87,7 +89,7 @@ public class PointListUtils {
 	 * @return a new array, which contains copies of the given {@link Point}s at
 	 *         the respective index positions
 	 */
-	public static final Point[] getCopy(Point[] points) {
+	public static final Point[] copy(Point[] points) {
 		Point[] copy = new Point[points.length];
 		for (int i = 0; i < points.length; i++) {
 			copy[i] = points[i].getCopy();
@@ -102,7 +104,7 @@ public class PointListUtils {
 	 *            the array of coordinates to copy
 	 * @return a new array containing identical coordinates
 	 */
-	public static final double[] getCopy(double[] coordinates) {
+	public static final double[] copy(double[] coordinates) {
 		double[] copy = new double[coordinates.length];
 		for (int i = 0; i < coordinates.length; i++) {
 			copy[i] = coordinates[i];
@@ -158,8 +160,8 @@ public class PointListUtils {
 		for (int i = 3; i < points.length; i++) {
 			// do always turn right
 			while (stack.size() > 2
-					&& CurveUtils.getSignedDistance(stack.get(1), stack.get(0),
-							points[i]) > 0) {
+					&& Straight.getSignedDistanceCCW(stack.get(1),
+							stack.get(0), points[i]) > 0) {
 				stack.remove(0);
 			}
 			stack.add(0, points[i]);
@@ -288,6 +290,37 @@ public class PointListUtils {
 
 	private PointListUtils() {
 		// this class should not be instantiated by clients
+	}
+
+	/**
+	 * Transforms a sequence of {@link Line}s into a list of {@link Point}s.
+	 * Consecutive {@link Line}s are expected to share one of their end
+	 * {@link Point}s. The start {@link Point}s of the {@link Line}s are
+	 * returned. Additionally, the end {@link Point} of the last {@link Line} is
+	 * returned, too if the given boolean flag <code>open</code> is set to
+	 * <code>false</code>.
+	 * 
+	 * @param segmentsArray
+	 * @param open
+	 *            indicates whether to omit the end {@link Point} of the last
+	 *            {@link Line}
+	 * @return the start {@link Point}s of the {@link Line}s and the end
+	 *         {@link Point} of the last {@link Line} according to
+	 *         <code>open</code>
+	 */
+	public static Point[] toPointsArray(Line[] segmentsArray, boolean open) {
+		Point[] points = new Point[segmentsArray.length + (open ? 0 : 1)];
+
+		for (int i = 0; i < segmentsArray.length; i++) {
+			points[i] = segmentsArray[i].getP1();
+		}
+
+		if (!open) {
+			points[points.length - 1] = segmentsArray[segmentsArray.length - 1]
+					.getP2();
+		}
+
+		return points;
 	}
 
 }

@@ -17,7 +17,9 @@ import java.io.Serializable;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
+import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.projective.Straight3D;
+import org.eclipse.gef4.geometry.projective.Vector3D;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -58,6 +60,16 @@ public class Straight implements Cloneable, Serializable {
 		this(new Vector(point1), new Vector(point1, point2));
 	}
 
+	/**
+	 * Constructs a new {@link Straight} through the start and end {@link Point}
+	 * of the given {@link Line}.
+	 * 
+	 * @param line
+	 */
+	public Straight(Line line) {
+		this(line.getP1(), line.getP2());
+	}
+
 	@Override
 	public Straight clone() {
 		return getCopy();
@@ -74,7 +86,7 @@ public class Straight implements Cloneable, Serializable {
 	 */
 	public boolean intersects(Straight other) {
 		return !PrecisionUtils.equal(direction.getDotProduct(other.direction
-				.getOrthogonalComplement()), 0);
+				.getOrthogonalComplement()), 0, +6);
 	}
 
 	/**
@@ -128,11 +140,16 @@ public class Straight implements Cloneable, Serializable {
 	 *         if no intersection point exists (or the Straights are equal).
 	 */
 	public Vector getIntersection(Straight other) {
-		Point poi = CurveUtils.getIntersection(this, other);
-		if (poi != null) {
-			return new Vector(poi);
-		}
-		return null;
+		Vector3D l1 = new Vector3D(this.position.toPoint())
+				.getCrossed(new Vector3D(this.position.getAdded(this.direction)
+						.toPoint()));
+		Vector3D l2 = new Vector3D(other.position.toPoint())
+				.getCrossed(new Vector3D(other.position.getAdded(
+						other.direction).toPoint()));
+
+		Point poi = l1.getCrossed(l2).toPoint();
+
+		return poi == null ? null : new Vector(poi);
 	}
 
 	/**
@@ -232,20 +249,26 @@ public class Straight implements Cloneable, Serializable {
 	 * @return the signed distance of the given {@link Vector} to this Straight
 	 */
 	public double getSignedDistanceCCW(Vector vector) {
-		Vector projected = getProjection(vector);
-		Vector d = vector.getSubtracted(projected);
+		// TODO: check which implementation is better
 
-		double len = d.getLength();
+		return Straight.getSignedDistanceCCW(this.position.toPoint(),
+				this.position.getAdded(this.direction).toPoint(),
+				vector.toPoint());
 
-		if (!d.isNull()) {
-			Angle angleCW = direction.getAngleCW(d);
-
-			if (angleCW.equals(Angle.fromDeg(90))) {
-				len = -len;
-			}
-		}
-
-		return len;
+		// Vector projected = getProjection(vector);
+		// Vector d = vector.getSubtracted(projected);
+		//
+		// double len = d.getLength();
+		//
+		// if (!d.isNull()) {
+		// Angle angleCW = direction.getAngleCW(d);
+		//
+		// if (angleCW.equals(Angle.fromDeg(90))) {
+		// len = -len;
+		// }
+		// }
+		//
+		// return len;
 	}
 
 	/**
@@ -280,7 +303,7 @@ public class Straight implements Cloneable, Serializable {
 		if (direction.y != 0) {
 			return (p.y - position.y) / direction.y;
 		}
-		return 0;
+		return 0; // never get here
 	}
 
 	/**
@@ -417,6 +440,35 @@ public class Straight implements Cloneable, Serializable {
 	 */
 	public Straight getCopy() {
 		return new Straight(position, direction);
+	}
+
+	/**
+	 * Computes the signed distance of the third {@link Point} to the line
+	 * through the first two {@link Point}s.
+	 * 
+	 * The signed distance is positive if the three {@link Point}s are in
+	 * counter-clockwise order and negative if the {@link Point}s are in
+	 * clockwise order. It is zero if the third {@link Point} lies on the line.
+	 * 
+	 * If the first two {@link Point}s do not form a line (i.e. they are equal)
+	 * this function returns the distance of the first and the last
+	 * {@link Point}.
+	 * 
+	 * @param p
+	 *            the start-{@link Point} of the line
+	 * @param q
+	 *            the end-{@link Point} of the line
+	 * @param r
+	 *            the relative {@link Point} to test for
+	 * @return the signed distance of {@link Point} r to the line through
+	 *         {@link Point}s p and q
+	 */
+	public static double getSignedDistanceCCW(Point p, Point q, Point r) {
+		Straight3D line = Straight3D.through(new Vector3D(p), new Vector3D(q));
+		if (line == null) {
+			return 0d;
+		}
+		return -line.getSignedDistanceCW(new Vector3D(r));
 	}
 
 }

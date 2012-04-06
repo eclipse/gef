@@ -11,7 +11,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+/**
+ * An {@link IPolyShape} is the common abstraction over all {@link IGeometry}s
+ * that are constituted by several {@link IShape} parts.
+ */
 public interface IPolyShape extends IGeometry {
 
+	/**
+	 * Returns the {@link IShape}s that constitute this {@link IPolyShape}.
+	 * 
+	 * @return an array of {@link IShape}s, representing the parts that make up
+	 *         this {@link IPolyShape}.
+	 */
 	IShape[] getShapes();
+
+	// contains()
+
 }

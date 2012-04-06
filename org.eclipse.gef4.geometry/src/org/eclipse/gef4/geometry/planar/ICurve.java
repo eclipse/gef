@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -67,6 +68,52 @@ public interface ICurve extends IGeometry {
 	 *         start point.
 	 */
 	public Point getP1();
+
+	/**
+	 * A list of {@link BezierCurve}s that approximate the {@link ICurve}. For
+	 * example, a {@link Line} or a {@link BezierCurve} in general, could return
+	 * a list with the curve itself as its only element. But an {@link Ellipse}
+	 * or an {@link Arc} may return a list of consecutive {@link BezierCurve}s
+	 * which approximate the curve.
+	 * 
+	 * @return a list of {@link BezierCurve}s that approximate the
+	 *         {@link ICurve}
+	 */
+	public BezierCurve[] toBezier();
+
+	/**
+	 * Returns the points of intersection between this {@link ICurve} and the
+	 * given {@link ICurve}.
+	 * 
+	 * @param c
+	 *            the {@link ICurve} to compute intersection points for
+	 * @return the points of intersection.
+	 */
+	public Point[] getIntersections(final ICurve c);
+
+	/**
+	 * Tests if this {@link ICurve} and the given {@link ICurve} intersect, i.e.
+	 * whether a final set of intersection points exists. Two curves intersect
+	 * if they touch (see {@link IGeometry#touches(IGeometry)}) but not overlap
+	 * (see {@link ICurve#overlaps(ICurve)}).
+	 * 
+	 * @param c
+	 *            the {@link ICurve} to test for intersections
+	 * @return <code>true</code> if they intersect, <code>false</code> otherwise
+	 */
+	boolean intersects(final ICurve c);
+
+	/**
+	 * Tests if this {@link ICurve} and the given {@link ICurve} overlap, i.e.
+	 * whether an infinite set of intersection points exists. Two curves overlap
+	 * if they touch (see {@link IGeometry#touches(IGeometry)}) but not
+	 * intersect (see {@link ICurve#intersects(ICurve)}).
+	 * 
+	 * @param c
+	 *            the {@link ICurve} to test for overlap
+	 * @return <code>true</code> if they overlap, <code>false</code> otherwise
+	 */
+	boolean overlaps(final ICurve c);
 
 	// start point, end point, control points (optional)
 	// TODO: need to elevate

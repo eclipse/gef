@@ -17,71 +17,179 @@ import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.convert.AWT2Geometry;
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
 
+/**
+ * TODO
+ */
 public class AffineTransform {
 	// TODO: implement affine transform locally to get rid of dependency on
 	// awt.geom.
 
 	private java.awt.geom.AffineTransform delegate = new java.awt.geom.AffineTransform();
 
+	/**
+	 * TODO
+	 * 
+	 * @return
+	 */
 	public double[] getMatrix() {
 		double[] flatmatrix = new double[6];
 		delegate.getMatrix(flatmatrix);
 		return flatmatrix;
 	}
 
+	/**
+	 * TODO
+	 */
 	public AffineTransform() {
 	}
 
+	/**
+	 * TODO
+	 * 
+	 * @param m00
+	 * @param m10
+	 * @param m01
+	 * @param m11
+	 * @param m02
+	 * @param m12
+	 */
 	public AffineTransform(double m00, double m10, double m01, double m11,
 			double m02, double m12) {
 		delegate = new java.awt.geom.AffineTransform(m00, m10, m01, m11, m02,
 				m12);
 	}
 
+	/**
+	 * TODO
+	 * 
+	 * @param flatmatrix
+	 */
 	public AffineTransform(double[] flatmatrix) {
 		delegate = new java.awt.geom.AffineTransform(flatmatrix);
 	}
 
+	/**
+	 * TODO
+	 * 
+	 * @see java.awt.geom.AffineTransform#getType()
+	 * 
+	 * @return
+	 */
 	public int getType() {
 		return delegate.getType();
 	}
 
+	/**
+	 * Computes the determinant of the transformation matrix of this
+	 * {@link AffineTransform}.
+	 * 
+	 * @return the determinant of the transformation matrix of this
+	 *         {@link AffineTransform}
+	 */
 	public double getDeterminant() {
 		return delegate.getDeterminant();
 	}
 
+	/**
+	 * Returns the x-coordinate scaling of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the x-coordinate scaling of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getScaleX() {
 		return delegate.getScaleX();
 	}
 
+	/**
+	 * Returns the y-coordinate scaling of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the y-coordinate scaling of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getScaleY() {
 		return delegate.getScaleY();
 	}
 
+	/**
+	 * Returns the x-coordinate shearing of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the x-coordinate shearing of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getShearX() {
 		return delegate.getShearX();
 	}
 
+	/**
+	 * Returns the y-coordinate shearing of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the y-coordinate shearing of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getShearY() {
 		return delegate.getShearY();
 	}
 
+	/**
+	 * Returns the x-coordinate translation of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the x-coordinate translation of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getTranslateX() {
 		return delegate.getTranslateX();
 	}
 
+	/**
+	 * Returns the y-coordinate translation of this {@link AffineTransform}'s
+	 * transformation matrix.
+	 * 
+	 * @return the y-coordinate translation of this {@link AffineTransform}'s
+	 *         transformation matrix
+	 */
 	public double getTranslateY() {
 		return delegate.getTranslateY();
 	}
 
+	/**
+	 * Sets the translation values of the x- and y-coordinates in the
+	 * transformation matrix of this {@link AffineTransform}.
+	 * 
+	 * @param tx
+	 *            the x-coordinate translation
+	 * @param ty
+	 *            the y-coordinate translation
+	 */
 	public void translate(double tx, double ty) {
 		delegate.translate(tx, ty);
 	}
 
+	/**
+	 * Adds a rotation with the given angle (in radians) to the transformation
+	 * matrix of this {@link AffineTransform}.
+	 * 
+	 * @param theta
+	 *            the rotation angle in radians
+	 */
 	public void rotate(double theta) {
 		delegate.rotate(theta);
 	}
 
+	/**
+	 * Adds a rotation with the given angle (in radians) to the transformation
+	 * matrix of this {@link AffineTransform}.
+	 * 
+	 * TODO
+	 * 
+	 * @param theta
+	 * @param anchorx
+	 * @param anchory
+	 */
 	public void rotate(double theta, double anchorx, double anchory) {
 		delegate.rotate(theta, anchorx, anchory);
 	}

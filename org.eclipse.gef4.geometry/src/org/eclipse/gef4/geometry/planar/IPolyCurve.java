@@ -11,14 +11,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-public interface IPolyCurve extends IGeometry {
+/**
+ * An {@link IPolyCurve} is an {@link ICurve} that is constituted by multiple
+ * connected {@link ICurve} segments.
+ */
+public interface IPolyCurve extends ICurve {
 
 	/**
-	 * Returns a sequence of {@link ICurve}s, representing the curve segments of
-	 * this {@link IPolyCurve}.
+	 * Returns the {@link ICurve} segments of this {@link IPolyCurve}.
 	 * 
 	 * @return an array of {@link ICurve}s, representing the segments that make
 	 *         up this {@link IPolyCurve}
 	 */
 	public ICurve[] getCurves();
+
+	// TODO: intersects(), getIntersections(), overlaps()
+
 }

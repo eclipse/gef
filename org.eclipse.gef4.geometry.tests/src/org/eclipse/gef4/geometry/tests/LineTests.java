@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -60,13 +61,6 @@ public class LineTests {
 		assertTrue(l1.contains(l1.getP1()));
 		assertTrue(l1.contains(l1.getP2()));
 		assertFalse(l1.contains(new Point(1, 1)));
-	}
-
-	@Test
-	public void test_contains_Rect() {
-		assertFalse(new Line(0, 0, 5, 0).contains(new Rectangle()));
-		assertFalse(new Line(0, 0, 5, 0).contains(new Rectangle(0, 0, 5, 0)));
-		assertFalse(new Line(0, 0, 5, 0).contains(new Rectangle(1, 1, 1, 1)));
 	}
 
 	@Test
@@ -131,7 +125,7 @@ public class LineTests {
 		// simple intersection
 		Line l1 = new Line(0, 0, 4, 4);
 		Line l2 = new Line(0, 4, 4, 0);
-		assertTrue(l1.intersects(l2));
+		assertTrue(l1.touches(l2));
 		assertTrue(l1.getIntersection(l2).equals(new Point(2, 2)));
 		assertTrue(l2.getIntersection(l1).equals(new Point(2, 2)));
 
@@ -167,13 +161,109 @@ public class LineTests {
 	}
 
 	@Test
+	public void test_intersects_specials() {
+		// degenerated cases
+		Line degen = new Line(new Point(), new Point());
+		Line normal = new Line(new Point(-5, 0), new Point(5, 0));
+		assertTrue(degen.touches(normal));
+		assertTrue(normal.touches(degen));
+
+		// identical
+		assertTrue(normal.touches(normal));
+
+		// intersection within precision. no real intersection
+		Line close = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(close));
+		assertTrue(close.touches(normal));
+
+		Line closeSp = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(-5, 10));
+		assertTrue(normal.touches(closeSp));
+		assertTrue(closeSp.touches(normal));
+
+		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
+				UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(closeEp));
+		assertTrue(closeEp.touches(normal));
+
+		// intersection within precision, straights do intersect too, but the
+		// intersection of the straights is out of precision
+		Line slope = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, 2 * UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(slope));
+		assertTrue(slope.touches(normal));
+
+		// no intersection, straights do intersect
+		Line elsewhere = new Line(new Point(-5, 1), new Point(5, 10));
+		assertTrue(!normal.touches(elsewhere));
+		assertTrue(!elsewhere.touches(normal));
+
+		// big lines, imprecisely parallel but intersecting
+		Line bigX = new Line(new Point(-1000, 0), new Point(1000, 0));
+		Line impreciselyParallel = new Line(new Point(-1000,
+				-UNRECOGNIZABLE_FRACTION), new Point(1000,
+				UNRECOGNIZABLE_FRACTION));
+		assertTrue(new Vector(bigX.getP1(), bigX.getP2())
+				.isParallelTo(new Vector(impreciselyParallel.getP1(),
+						impreciselyParallel.getP2())));
+		assertTrue(bigX.touches(impreciselyParallel));
+	}
+
+	@Test
+	public void test_getIntersection_specials() {
+		// degenerated cases
+		Line degen = new Line(new Point(), new Point());
+		Line normal = new Line(new Point(-5, 0), new Point(5, 0));
+		assertEquals(new Point(), degen.getIntersection(normal));
+		assertEquals(new Point(), normal.getIntersection(degen));
+
+		// identical
+		assertNull(normal.getIntersection(normal));
+
+		// intersection within precision, no real intersection
+		Line close = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, UNRECOGNIZABLE_FRACTION));
+		// parallel so we do not return an intersection point
+		assertNull(normal.getIntersection(close));
+		assertNull(close.getIntersection(normal));
+
+		// non parallel, start point intersection
+		Line closeSp = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(-5, 10));
+		assertEquals(new Point(-5, 0), normal.getIntersection(closeSp));
+		assertEquals(new Point(-5, 0), closeSp.getIntersection(normal));
+
+		// non parallel, end point intersection
+		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
+				UNRECOGNIZABLE_FRACTION));
+		assertEquals(new Point(-5, 0), normal.getIntersection(closeEp));
+		assertEquals(new Point(-5, 0), closeEp.getIntersection(normal));
+
+		// intersection within precision, straights do intersect too, but the
+		// intersection of the straights is out of precision
+		Line slope = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, 2 * UNRECOGNIZABLE_FRACTION));
+
+		// no point of intersection can be identified, because both endpoints
+		// lie on the line. is is assumed to be parallel.
+		assertNull(normal.getIntersection(slope));
+		assertNull(slope.getIntersection(normal));
+
+		// no intersection, straights do intersect
+		Line elsewhere = new Line(new Point(-5, 1), new Point(5, 10));
+		assertNull(normal.getIntersection(elsewhere));
+		assertNull(elsewhere.getIntersection(normal));
+	}
+
+	@Test
 	public void test_getters() {
-		for (double x1 = -2; x1 <= 2; x1 += 0.2) {
-			for (double y1 = -2; y1 <= 2; y1 += 0.2) {
+		for (double x1 = -2; x1 <= 2; x1 += 0.5) {
+			for (double y1 = -2; y1 <= 2; y1 += 0.5) {
 				Point p1 = new Point(x1, y1);
 
-				for (double x2 = -2; x2 <= 2; x2 += 0.2) {
-					for (double y2 = -2; y2 <= 2; y2 += 0.2) {
+				for (double x2 = -2; x2 <= 2; x2 += 0.5) {
+					for (double y2 = -2; y2 <= 2; y2 += 0.5) {
 						Point p2 = new Point(x2, y2);
 						Line line = new Line(p1, p2);
 						assertTrue(line.getP1().equals(p1));
@@ -214,45 +304,45 @@ public class LineTests {
 		// simple intersection
 		Line l1 = new Line(0, 0, 4, 4);
 		Line l2 = new Line(0, 4, 4, 0);
-		assertTrue(l1.intersects(l2));
-		assertTrue(l2.intersects(l1));
+		assertTrue(l1.touches(l2));
+		assertTrue(l2.touches(l1));
 
 		// lines touch in one point
 		Line l3 = new Line(4, 4, 7, 9);
-		assertTrue(l1.intersects(l3));
-		assertTrue(l3.intersects(l1));
+		assertTrue(l1.touches(l3));
+		assertTrue(l3.touches(l1));
 
 		// lines overlap
 		Line l4 = new Line(2, 2, 6, 6);
-		assertTrue(l1.intersects(l4));
-		assertTrue(l4.intersects(l1));
+		assertTrue(l1.touches(l4));
+		assertTrue(l4.touches(l1));
 
 		// one line is a single point
 		Line l5 = new Line(1, 1, 1, 1);
-		assertTrue(l5.intersects(l1));
-		assertTrue(l1.intersects(l5));
+		assertTrue(l5.touches(l1));
+		assertTrue(l1.touches(l5));
 
 		// straights would intersect, but these lines do not
 		Line l6 = new Line(4, 0, 5, 4);
-		assertFalse(l6.intersects(l1));
-		assertFalse(l1.intersects(l6));
+		assertFalse(l6.touches(l1));
+		assertFalse(l1.touches(l6));
 	}
 
 	@Test
 	public void test_intersects_with_Rect() {
 		Line l1 = new Line(0, 0, 4, 4);
 		Rectangle r1 = new Rectangle(0, 4, 4, 4);
-		assertTrue(l1.intersects(r1));
+		assertTrue(l1.touches(r1));
 	}
 
 	@Test
 	public void test_setters() {
-		for (double x1 = -2; x1 <= 2; x1 += 0.2) {
-			for (double y1 = -2; y1 <= 2; y1 += 0.2) {
+		for (double x1 = -2; x1 <= 2; x1 += 0.5) {
+			for (double y1 = -2; y1 <= 2; y1 += 0.5) {
 				Point p1 = new Point(x1, y1);
 
-				for (double x2 = -2; x2 <= 2; x2 += 0.2) {
-					for (double y2 = -2; y2 <= 2; y2 += 0.2) {
+				for (double x2 = -2; x2 <= 2; x2 += 0.5) {
+					for (double y2 = -2; y2 <= 2; y2 += 0.5) {
 						Point p2 = new Point(x2, y2);
 
 						Line line = new Line(new Point(-5, -5), new Point(-10,

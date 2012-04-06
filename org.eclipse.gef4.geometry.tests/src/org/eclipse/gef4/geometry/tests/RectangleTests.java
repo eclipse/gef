@@ -169,8 +169,6 @@ public class RectangleTests {
 
 		// test self containment
 		assertTrue(preciseRect.contains(preciseRect));
-		assertTrue(preciseRect.contains(preciseRect.getX(), preciseRect.getY(),
-				preciseRect.getWidth(), preciseRect.getHeight()));
 		assertFalse(preciseRect.contains(preciseRect.getExpanded(
 				RECOGNIZABLE_FRACTION, RECOGNIZABLE_FRACTION)));
 
@@ -317,12 +315,19 @@ public class RectangleTests {
 		assertTrue(PrecisionUtils.equal(25.92755905511811, rect.getHeight()));
 
 		rect = new Rectangle(-9.486614173228347, -34.431496062992125,
-				41.99055118110236, 25.92755905511811).getScaled(2, 0);
+				2 * 9.486614173228347, 34.431496062992125).getScaled(2, 0);
 
-		assertTrue(PrecisionUtils.equal(-9.486614173228347, rect.getX()));
-		assertTrue(PrecisionUtils.equal(-34.431496062992125, rect.getY()));
-		assertTrue(PrecisionUtils.equal(2 * 41.99055118110236, rect.getWidth()));
+		assertTrue(PrecisionUtils.equal(2 * -9.486614173228347, rect.getX()));
+		assertTrue(PrecisionUtils.equal(0.5 * -34.431496062992125, rect.getY()));
+		assertTrue(PrecisionUtils.equal(4 * 9.486614173228347, rect.getWidth()));
 		assertTrue(PrecisionUtils.equal(0, rect.getHeight()));
+
+		// TODO: is this the desired behavior?
+		// assertTrue(PrecisionUtils.equal(-9.486614173228347, rect.getX()));
+		// assertTrue(PrecisionUtils.equal(-34.431496062992125, rect.getY()));
+		// assertTrue(PrecisionUtils.equal(2 * 41.99055118110236,
+		// rect.getWidth()));
+		// assertTrue(PrecisionUtils.equal(0, rect.getHeight()));
 	}
 
 	@Test
@@ -435,27 +440,45 @@ public class RectangleTests {
 		Rectangle r1 = new Rectangle(-5, -5, 10, 10);
 
 		for (Line seg : r1.getOutlineSegments()) {
-			assertTrue(r1.intersects(seg));
+			assertTrue(r1.touches(seg));
 		}
 
-		assertTrue(r1
-				.intersects(new Line(r1.getTopLeft(), r1.getBottomRight())));
-		assertTrue(r1.intersects(new Line(r1.getTop(), r1.getBottom())));
+		assertTrue(r1.touches(new Line(r1.getTopLeft(), r1.getBottomRight())));
+		assertTrue(r1.touches(new Line(r1.getTop(), r1.getBottom())));
 
-		assertTrue(r1.intersects(new Line(-10, 0, 10, 0)));
-		assertFalse(r1.intersects(new Line(-10, 0, -6, 0)));
-		assertFalse(r1.intersects(new Line(0, -10, 0, -6)));
-		assertFalse(r1.intersects(new Line(10, 0, 6, 0)));
-		assertFalse(r1.intersects(new Line(0, 10, 0, 6)));
+		assertTrue(r1.touches(new Line(-10, 0, 10, 0)));
+		assertFalse(r1.touches(new Line(-10, 0, -6, 0)));
+		assertFalse(r1.touches(new Line(0, -10, 0, -6)));
+		assertFalse(r1.touches(new Line(10, 0, 6, 0)));
+		assertFalse(r1.touches(new Line(0, 10, 0, 6)));
 	}
 
 	@Test
 	public void test_intersects_with_Rectangle() {
-		forRectanglePairs(new IPairAction() {
-			public void action(Rectangle r1, Rectangle r2) {
-				assertTrue(r1.intersects(r2) != r1.getIntersected(r2).isEmpty());
-			}
-		});
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 0,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(50, 50,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(100,
+				100, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-100,
+				-100, 100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-50, 0,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(-100, 0,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(50, 0,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(100, 0,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, -50,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, -100,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 50,
+				100, 100)));
+		assertTrue(new Rectangle(0, 0, 100, 100).touches(new Rectangle(0, 100,
+				100, 100)));
 	}
 
 	@Test
@@ -489,7 +512,7 @@ public class RectangleTests {
 		Rectangle rect4 = new Rectangle(0, 0, 10, 10);
 		assertEquals(rect3, rect4);
 
-		// TODO: how about negative width/height?
+		// negative width/height?
 		assertEquals(new Rectangle(), new Rectangle(0, 0, -10, -10));
 		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(5, 5, -10, 10));
 		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(5, 5, 10, -10));
@@ -674,7 +697,7 @@ public class RectangleTests {
 				assertEquals(bl, rect.getBottomLeft());
 				assertEquals(bo, rect.getBottom());
 				assertEquals(br, rect.getBottomRight());
-				assertEquals(ce, rect.getCenter());
+				assertEquals(ce, rect.getCentroid());
 			}
 		});
 	}

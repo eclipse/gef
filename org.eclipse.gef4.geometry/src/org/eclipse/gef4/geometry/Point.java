@@ -33,16 +33,6 @@ public class Point implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The x value.
-	 */
-	public double x;
-
-	/**
-	 * The y value.
-	 */
-	public double y;
-
-	/**
 	 * Creates a new Point representing the MAX of two provided Points.
 	 * 
 	 * @param p1
@@ -67,6 +57,16 @@ public class Point implements Cloneable, Serializable {
 	public static Point min(Point p1, Point p2) {
 		return new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
 	}
+
+	/**
+	 * The x value.
+	 */
+	public double x;
+
+	/**
+	 * The y value.
+	 */
+	public double y;
 
 	/**
 	 * Constructs a Point at location (0,0).
@@ -204,13 +204,20 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new SWT {@link org.eclipse.swt.graphics.Point Point} from this
-	 * Point.
+	 * Returns a new {@link Point} scaled by the given scale-factors. The
+	 * scaling is performed relative to the given {@link Point} center.
 	 * 
-	 * @return A new SWT Point
+	 * @param factorX
+	 *            The horizontal scale-factor
+	 * @param factorY
+	 *            The vertical scale-factor
+	 * @param center
+	 *            The relative {@link Point} for the scaling
+	 * @return The new, scaled {@link Point}
 	 */
-	public org.eclipse.swt.graphics.Point toSWTPoint() {
-		return new org.eclipse.swt.graphics.Point((int) x, (int) y);
+	public Point getScaled(double factorX, double factorY, Point center) {
+		return getTranslated(center.getNegated()).scale(factorX, factorY)
+				.translate(center);
 	}
 
 	/**
@@ -307,6 +314,25 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Scales this {@link Point} by the given scale-factors. The scaling is
+	 * performed relative to the given {@link Point} center.
+	 * 
+	 * @param factorX
+	 *            The horizontal scale-factor
+	 * @param factorY
+	 *            The vertical scale-factor
+	 * @param center
+	 *            The relative {@link Point} for the scaling
+	 * @return <code>this</code> for convenience
+	 */
+	public Point scale(double factorX, double factorY, Point center) {
+		translate(center.getNegated());
+		scale(factorX, factorY);
+		translate(center);
+		return this;
+	}
+
+	/**
 	 * Sets the location of this Point to the provided x and y locations.
 	 * 
 	 * @return <code>this</code> for convenience
@@ -364,6 +390,16 @@ public class Point implements Cloneable, Serializable {
 	@Override
 	public String toString() {
 		return "Point(" + x + ", " + y + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+	}
+
+	/**
+	 * Creates a new SWT {@link org.eclipse.swt.graphics.Point Point} from this
+	 * Point.
+	 * 
+	 * @return A new SWT Point
+	 */
+	public org.eclipse.swt.graphics.Point toSWTPoint() {
+		return new org.eclipse.swt.graphics.Point((int) x, (int) y);
 	}
 
 	/**
@@ -435,4 +471,5 @@ public class Point implements Cloneable, Serializable {
 	public double y() {
 		return y;
 	}
+
 }

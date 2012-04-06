@@ -13,14 +13,10 @@
 package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
-import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.euclidean.Straight;
-import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
@@ -35,7 +31,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * 
  */
-public class Polygon extends AbstractPointListBasedGeometry implements IShape {
+public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
+		IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -105,25 +102,6 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	}
 
 	/**
-	 * Tests if the given {@link CubicCurve} curve is contained in this
-	 * {@link Polygon}.
-	 * 
-	 * @param curve
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(CubicCurve curve) {
-		if (contains(curve.getP1()) && contains(curve.getP2())) {
-			for (Line seg : getOutlineSegments()) {
-				if (curve.intersects(seg)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Checks whether the point that is represented by its x- and y-coordinates
 	 * is contained within this {@link Polygon}.
 	 * 
@@ -137,59 +115,6 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	 */
 	public boolean contains(double x, double y) {
 		return contains(new Point(x, y));
-	}
-
-	/**
-	 * Tests if the given {@link Ellipse} e is contained in this {@link Polygon}
-	 * .
-	 * 
-	 * @param e
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(Ellipse e) {
-		for (CubicCurve curve : e.getOutlineSegments()) {
-			if (!contains(curve)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks whether the given {@link Line} is fully contained within this
-	 * {@link Polygon}.
-	 * 
-	 * @param line
-	 *            The {@link Line} to test for containment
-	 * @return <code>true</code> if the given {@link Line} is fully contained,
-	 *         <code>false</code> otherwise
-	 */
-	public boolean contains(Line line) {
-		// quick rejection test: if the end points are not contained, the line
-		// may not be contained
-		if (!contains(line.getP1()) || !contains(line.getP2())) {
-			return false;
-		}
-
-		// check for intersections with the segments of this polygon
-		for (int i = 0; i < points.length; i++) {
-			Point p1 = points[i];
-			Point p2 = i + 1 < points.length ? points[i + 1] : points[0];
-			Line segment = new Line(p1, p2);
-			if (line.intersects(segment)) {
-				Point intersection = line.getIntersection(segment);
-				if (intersection != null && !line.getP1().equals(intersection)
-						&& !line.getP2().equals(intersection)
-						&& !segment.getP1().equals(intersection)
-						&& !segment.getP2().equals(intersection)) {
-					// if we have a single intersection point and this does not
-					// match one of the end points of the line, the line is not
-					// contained
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -209,111 +134,81 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 				return false;
 			}
 
-			// choose a point p' outside the polygon not too close to its bounds
-			// (have it outside at 1% of its width and height) and construct a
-			// straight through p and p'
-			Vector u1 = new Vector(p);
-			Vector u2 = new Vector(bounds.getTopLeft().x
-					- (bounds.getWidth() / 100), bounds.getTopLeft().y
-					- (bounds.getHeight() / 100));
-			Straight s1 = new Straight(u1, u2.getSubtracted((u1)));
+			/*
+			 * choose a point p' outside the polygon:
+			 */
+			Point pp = new Point(p.x + bounds.getWidth() + 1, p.y);
 
-			// compute if there is an even or odd number of intersection of
-			// p->p' with all sides of the polygon; handle the special case the
-			// point is located on one of the sides
+			/*
+			 * construct a line from p to p':
+			 */
+			Line testLine = new Line(p, pp);
+
+			/*
+			 * compute if there is an even or odd number of intersection of the
+			 * test line with all sides of the polygon; handle the special case
+			 * the point is located on one of the sides
+			 */
 			boolean odd = false;
 			for (int i = 0; i < points.length; i++) {
-				Vector v1 = new Vector(points[i]);
-				Vector v2 = new Vector(
-						points[i + 1 < points.length ? i + 1 : 0]);
-				Vector direction = v2.getSubtracted(v1);
+				Point p1 = points[i];
+				Point p2 = points[i + 1 < points.length ? i + 1 : 0];
 
-				if (direction.isNull()) {
-					if (v1.equals(u1)) {
+				// check whether the point is located on the current side
+				if (p1.equals(p2)) {
+					if (p1.equals(p)) {
 						return true;
 					}
 					continue;
 				}
 
-				Straight s2 = new Straight(v1, direction);
+				Line link = new Line(p1, p2);
 
-				// check whether the point is located on the current side
-				if (s2.containsWithinSegment(v1, v2, u1)) {
+				if (link.contains(p)) {
 					return true;
 				}
 
-				// check if there is an intersection within the given segment
-				if (s2.intersectsWithinSegment(v1, v2, s1)
-						&& s1.intersectsWithinSegment(u1, u2, s2)) {
+				/*
+				 * check if one of the two vertices of the link line is
+				 * contained by the test line. the containment test is done to
+				 * handle special cases where the intersection has to be counted
+				 * appropriately.
+				 * 
+				 * 1) if the vertex is above (greater y-component) the other
+				 * point of the line, it is counted once.
+				 * 
+				 * 2) if the vertex is below (lower y-component) or on the same
+				 * height as the other point of the line, it is omitted.
+				 */
+				boolean p1contained = testLine.contains(p1);
+				boolean p2contained = testLine.contains(p2);
+
+				// TODO: is imprecision needed for this test?
+				if (p1contained || p2contained) {
+					if (p1contained) {
+						if (p1.y > p2.y) {
+							odd = !odd;
+						}
+					}
+					if (p2contained) {
+						if (p2.y > p1.y) {
+							odd = !odd;
+						}
+					}
+					continue;
+				}
+
+				/*
+				 * check the current link for an intersection with the test
+				 * line. if there is an intersection, change state.
+				 */
+				Point poi = testLine.getIntersection(link);
+				if (poi != null) {
 					odd = !odd;
 				}
 			}
 			return odd;
 		}
-	}
-
-	/**
-	 * Checks whether the given {@link Polygon} is fully contained within this
-	 * {@link Polygon}.
-	 * 
-	 * @param p
-	 *            The {@link Polygon} to test for containment
-	 * @return <code>true</code> if the given {@link Polygon} is fully
-	 *         contained, <code>false</code> otherwise.
-	 */
-	public boolean contains(Polygon p) {
-		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getOutlineSegments();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (!contains(otherSegments[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Tests if the given {@link Polyline} p is contained in this
-	 * {@link Polygon}.
-	 * 
-	 * @param p
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(Polyline p) {
-		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getCurves();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (!contains(otherSegments[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Tests if the given {@link QuadraticCurve} curve is contained in this
-	 * {@link Polygon}.
-	 * 
-	 * @param curve
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(QuadraticCurve curve) {
-		if (contains(curve.getP1()) && contains(curve.getP2())) {
-			for (Line seg : getOutlineSegments()) {
-				if (curve.intersects(seg)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @see IGeometry#contains(Rectangle)
-	 */
-	public boolean contains(Rectangle rect) {
-		return contains(rect.toPolygon());
 	}
 
 	@Override
@@ -372,6 +267,29 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	}
 
 	/**
+	 * Computes the area of this {@link Polygon}.
+	 * 
+	 * @return the area of this {@link Polygon}
+	 */
+	public double getArea() {
+		if (points.length < 3) {
+			return 0;
+		}
+
+		double area = 0;
+		for (int i = 0; i < points.length - 1; i++) {
+			area += points[i].x * points[i + 1].y - points[i].y
+					* points[i + 1].x;
+		}
+
+		// closing segment
+		area += points[points.length - 2].x * points[points.length - 1].y
+				- points[points.length - 2].y * points[points.length - 1].x;
+
+		return Math.abs(area) * 0.5;
+	}
+
+	/**
 	 * Returns a copy of this {@link Polygon}, which is made up by the same
 	 * points.
 	 * 
@@ -379,184 +297,6 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	 */
 	public Polygon getCopy() {
 		return new Polygon(getPoints());
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link Arc} arc.
-	 * 
-	 * @param arc
-	 *            The {@link Arc} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Arc arc) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : arc.getSegments()) {
-			intersections.addAll(Arrays.asList(getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link CubicCurve} c.
-	 * 
-	 * @param c
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(CubicCurve c) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : getOutlineSegments()) {
-			for (Point poi : c.getIntersections(seg)) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link Ellipse} e.
-	 * 
-	 * @param e
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Ellipse e) {
-		return e.getIntersections(this);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link Line} l.
-	 * 
-	 * @param l
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Line l) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : getOutlineSegments()) {
-			Point poi = segment.getIntersection(l);
-			if (poi != null) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given other {@link Polygon} polygon.
-	 * 
-	 * @param polygon
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Polygon polygon) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : polygon.getOutlineSegments()) {
-			for (Point poi : getIntersections(segment)) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link Polyline} polyline.
-	 * 
-	 * @param polyline
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Polyline polyline) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : polyline.getCurves()) {
-			for (Point poi : getIntersections(segment)) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link QuadraticCurve} c.
-	 * 
-	 * @param c
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(QuadraticCurve c) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : getOutlineSegments()) {
-			for (Point poi : c.getIntersections(seg)) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Polygon} and the
-	 * given {@link Rectangle} rect.
-	 * 
-	 * @param rect
-	 * @return The points of intersection.
-	 */
-	public Point[] getIntersections(Rectangle rect) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line segment : rect.getOutlineSegments()) {
-			for (Point poi : getIntersections(segment)) {
-				intersections.add(poi);
-			}
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Calculates the points of intersection of this {@link Polygon} and the
-	 * given {@link RoundedRectangle}.
-	 * 
-	 * @param r
-	 *            The {@link RoundedRectangle} to compute intersection points
-	 *            with
-	 * @return an array containing the points of intersection of this
-	 *         {@link Polygon} and the given {@link RoundedRectangle}. An empty
-	 *         array if there are no points of intersection or indefinitely many
-	 *         ones.
-	 */
-	public Point[] getIntersections(RoundedRectangle r) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		// line segments
-		intersections.addAll(Arrays.asList(getIntersections(r.getTop())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getLeft())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getBottom())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getRight())));
-
-		// arc segments
-		intersections
-				.addAll(Arrays.asList(getIntersections(r.getTopRightArc())));
-		intersections
-				.addAll(Arrays.asList(getIntersections(r.getTopLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(r
-				.getBottomLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(r
-				.getBottomRightArc())));
-
-		return intersections.toArray(new Point[] {});
 	}
 
 	/**
@@ -577,211 +317,6 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 	public IGeometry getTransformed(AffineTransform t) {
 		// shape type should remain polygon (not path)
 		return new Polygon(t.getTransformed(points));
-	}
-
-	/**
-	 * Returns a new Polygon which is shifted along each axis by the passed
-	 * values.
-	 * 
-	 * @param dx
-	 *            Displacement along X axis
-	 * @param dy
-	 *            Displacement along Y axis
-	 * @return The new translated rectangle
-	 * @since 2.0
-	 */
-	public Polygon getTranslated(double dx, double dy) {
-		return getCopy().translate(dx, dy);
-	}
-
-	/**
-	 * Returns a new Polygon which is shifted by the position of the given
-	 * Point.
-	 * 
-	 * @param pt
-	 *            Point providing the amount of shift along each axis
-	 * @return The new translated Polygon
-	 */
-	public Polygon getTranslated(Point pt) {
-		return getCopy().translate(pt);
-	}
-
-	/**
-	 * Tests if this {@link Polygon} intersects the given {@link Ellipse} e.
-	 * 
-	 * @param e
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(Ellipse e) {
-		return e.intersects(this);
-	}
-
-	/**
-	 * Checks if there is at least one common point between this {@link Polygon}
-	 * and the given {@link Line}, which includes the case that the given
-	 * {@link Line} is fully contained.
-	 * 
-	 * @param line
-	 *            The {@link Line} to test for intersection
-	 * @return <code>true</code> if this {@link Polygon} and the given
-	 *         {@link Line} share at least one common point, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean intersects(Line line) {
-		// quick acceptance test: if the end points of the line are contained,
-		// we already have a common point and may return
-		if (contains(line.getP1()) || contains(line.getP2())) {
-			return true;
-		}
-
-		// check for intersection with the segments
-		Line[] segments = getOutlineSegments();
-		for (int i = 0; i < segments.length; i++) {
-			if (segments[i].intersects(line)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if there is at least a common point between this {@link Polygon}
-	 * and the given {@link Polygon}, which includes the case that the given
-	 * {@link Polygon} is fully contained within this {@link Polygon} or vice
-	 * versa.
-	 * 
-	 * @param p
-	 *            the {@link Polygon} to test for intersection
-	 * @return <code>true</code> in case this {@link Polygon} and the given
-	 *         {@link Polygon} share at least one common point.
-	 */
-	public boolean intersects(Polygon p) {
-		// reduce to segment intersection test
-		Line[] otherSegments = p.getOutlineSegments();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (intersects(otherSegments[i])) {
-				return true;
-			}
-		}
-		// no intersection, so we still need to check for containment
-		return p.contains(this);
-	}
-
-	/**
-	 * Tests if this {@link Polygon} intersects with the given {@link Polyline}
-	 * p.
-	 * 
-	 * @param p
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(Polyline p) {
-		// reduce to segment intersection test
-		Line[] otherSegments = p.getCurves();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (intersects(otherSegments[i])) {
-				return true;
-			}
-		}
-		// no intersection, so we still need to check for containment
-		return contains(p);
-	}
-
-	/**
-	 * Checks if there is at least a common point between this {@link Polygon}
-	 * and the given {@link Rectangle}, which includes the case that the given
-	 * {@link Rectangle} is fully contained within this {@link Polygon} or vice
-	 * versa.
-	 * 
-	 * @see IGeometry#intersects(Rectangle)
-	 */
-	public boolean intersects(Rectangle rect) {
-		return intersects(rect.toPolygon());
-	}
-
-	/**
-	 * Rotates this {@link Polygon} counter-clock-wise by the given
-	 * {@link Angle} alpha around the given {@link Point} center.
-	 * 
-	 * The rotation is done by
-	 * <ol>
-	 * <li>translating this {@link Polygon} by the negated {@link Point} center</li>
-	 * <li>rotating each {@link Point} of this {@link Polygon}
-	 * counter-clock-wise by the given {@link Angle} angle</li>
-	 * <li>translating this {@link Polygon} back by the {@link Point} center</li>
-	 * </ol>
-	 * 
-	 * @param alpha
-	 *            The rotation {@link Angle}.
-	 * @param center
-	 *            The {@link Point} to rotate around.
-	 * @return This (counter-clock-wise-rotated) {@link Polygon} object.
-	 */
-	public Polygon rotateCCW(Angle alpha, Point center) {
-		translate(center.getNegated());
-		for (Point p : points) {
-			Point np = new Vector(p).rotateCCW(alpha).toPoint();
-			p.x = np.x;
-			p.y = np.y;
-		}
-		translate(center);
-		return this;
-	}
-
-	/**
-	 * Rotates this {@link Polygon} clock-wise by the given {@link Angle} alpha
-	 * around the given {@link Point} center.
-	 * 
-	 * The rotation is done by
-	 * <ol>
-	 * <li>translating this {@link Polygon} by the negated {@link Point} center</li>
-	 * <li>rotating each {@link Point} of this {@link Polygon} clock-wise by the
-	 * given {@link Angle} angle</li>
-	 * <li>translating this {@link Polygon} back by the {@link Point} center</li>
-	 * </ol>
-	 * 
-	 * @param alpha
-	 *            The rotation {@link Angle}.
-	 * @param center
-	 *            The {@link Point} to rotate around.
-	 * @return This (clock-wise-rotated) {@link Polygon} object.
-	 */
-	public Polygon rotateCW(Angle alpha, Point center) {
-		translate(center.getNegated());
-		for (Point p : points) {
-			Point np = new Vector(p).rotateCW(alpha).toPoint();
-			p.x = np.x;
-			p.y = np.y;
-		}
-		translate(center);
-		return this;
-	}
-
-	/**
-	 * Scales this {@link Polygon} object by the given factor from the given
-	 * center {@link Point}.
-	 * 
-	 * The scaling is done by
-	 * <ol>
-	 * <li>translating this {@link Polygon} by the negated center {@link Point}</li>
-	 * <li>scaling the individual {@link Polygon} {@link Point}s</li>
-	 * <li>translating this {@link Polygon} back</li>
-	 * </ol>
-	 * 
-	 * @param factor
-	 *            The scale-factor.
-	 * @param center
-	 *            The rotation {@link Point}.
-	 * @return This (scaled) {@link Polygon} object.
-	 */
-	public Polygon scale(double factor, Point center) {
-		translate(center.getNegated());
-		for (Point p : points) {
-			Point np = p.getScaled(factor);
-			p.x = np.x;
-			p.y = np.y;
-		}
-		translate(center);
-		return this;
 	}
 
 	/**
@@ -815,32 +350,109 @@ public class Polygon extends AbstractPointListBasedGeometry implements IShape {
 		return stringBuffer.toString();
 	}
 
-	/**
-	 * Moves this Polygon horizontally by dx and vertically by dy, then returns
-	 * this Rectangle for convenience.
-	 * 
-	 * @param dx
-	 *            Shift along X axis
-	 * @param dy
-	 *            Shift along Y axis
-	 * @return <code>this</code> for convenience
-	 */
-	public Polygon translate(double dx, double dy) {
-		PointListUtils.translate(points, dx, dy);
-		return this;
+	public Polyline getOutline() {
+		return new Polyline(PointListUtils.toSegmentsArray(points, true));
 	}
 
 	/**
-	 * Moves this Polygon horizontally by the x value of the given Point and
-	 * vertically by the y value of the given Point, then returns this Rectangle
-	 * for convenience.
+	 * Checks whether the given {@link Line} is fully contained within this
+	 * {@link Polygon}.
+	 * 
+	 * @param line
+	 *            The {@link Line} to test for containment
+	 * @return <code>true</code> if the given {@link Line} is fully contained,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean contains(Line line) {
+		// quick rejection test: if the end points are not contained, the line
+		// may not be contained
+		if (!contains(line.getP1()) || !contains(line.getP2())) {
+			return false;
+		}
+
+		// check for intersections with the segments of this polygon
+		for (int i = 0; i < points.length; i++) {
+			Point p1 = points[i];
+			Point p2 = i + 1 < points.length ? points[i + 1] : points[0];
+			Line segment = new Line(p1, p2);
+			if (line.intersects(segment)) {
+				Point intersection = line.getIntersection(segment);
+				if (intersection != null && !line.getP1().equals(intersection)
+						&& !line.getP2().equals(intersection)
+						&& !segment.getP1().equals(intersection)
+						&& !segment.getP2().equals(intersection)) {
+					// if we have a single intersection point and this does not
+					// match one of the end points of the line, the line is not
+					// contained
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether the given {@link Polygon} is fully contained within this
+	 * {@link Polygon}.
 	 * 
 	 * @param p
-	 *            Point which provides translation information
-	 * @return <code>this</code> for convenience
+	 *            The {@link Polygon} to test for containment
+	 * @return <code>true</code> if the given {@link Polygon} is fully
+	 *         contained, <code>false</code> otherwise.
 	 */
-	public Polygon translate(Point p) {
-		return translate(p.x, p.y);
+	public boolean contains(Polygon p) {
+		// all segments of the given polygon have to be contained
+		Line[] otherSegments = p.getOutlineSegments();
+		for (int i = 0; i < otherSegments.length; i++) {
+			if (!contains(otherSegments[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether the given {@link Rectangle} is fully contained within this
+	 * {@link Polygon}.
+	 * 
+	 * @param r
+	 *            the {@link Rectangle} to test for containment
+	 * @return <code>true</code> if the given {@link Rectangle} is fully
+	 *         contained, <code>false</code> otherwise.
+	 */
+	public boolean contains(Rectangle r) {
+		return contains(r.toPolygon());
+	}
+
+	/**
+	 * Tests if the given {@link Polyline} p is contained in this
+	 * {@link Polygon}.
+	 * 
+	 * @param p
+	 * @return true if it is contained, false otherwise
+	 */
+	public boolean contains(Polyline p) {
+		// all segments of the given polygon have to be contained
+		Line[] otherSegments = p.getCurves();
+		for (int i = 0; i < otherSegments.length; i++) {
+			if (!contains(otherSegments[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean contains(IGeometry g) {
+		if (g instanceof Line) {
+			return contains((Line) g);
+		} else if (g instanceof Polygon) {
+			return contains((Polygon) g);
+		} else if (g instanceof Polyline) {
+			return contains((Polyline) g);
+		} else if (g instanceof Rectangle) {
+			return contains((Rectangle) g);
+		}
+		return CurveUtils.contains(this, g);
 	}
 
 	// TODO: union point, rectangle, polygon, etc.

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Examples
+Bundle-SymbolicName: org.eclipse.gef4.geometry.examples
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.swt;bundle-version="3.7.0",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry

@@ -37,7 +37,7 @@ public class Region extends AbstractGeometry implements IPolyShape {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
-	public boolean intersects(Rectangle r) {
+	public boolean touches(Rectangle r) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

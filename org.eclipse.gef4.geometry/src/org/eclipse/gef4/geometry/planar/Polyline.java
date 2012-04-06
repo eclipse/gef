@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
@@ -27,7 +28,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public class Polyline extends AbstractPointListBasedGeometry implements IPolyCurve {
+public class Polyline extends AbstractPointListBasedGeometry<Polyline>
+		implements IPolyCurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,6 +63,16 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 	}
 
 	/**
+	 * Constructs a new {@link Polyline} from the given array of {@link Line}
+	 * segments.
+	 * 
+	 * @param segmentsArray
+	 */
+	public Polyline(Line[] segmentsArray) {
+		super(PointListUtils.toPointsArray(segmentsArray, false));
+	}
+
+	/**
 	 * Checks whether the point that is represented by its x- and y-coordinates
 	 * is contained within this {@link Polyline}.
 	 * 
@@ -87,14 +99,6 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 				return true;
 			}
 		}
-		return false;
-	}
-
-	/**
-	 * @see IGeometry#contains(Rectangle)
-	 */
-	public boolean contains(Rectangle r) {
-		// may contain the rectangle only in case it is degenerated
 		return false;
 	}
 
@@ -148,9 +152,16 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 	}
 
 	/**
-	 * @see IGeometry#intersects(Rectangle)
+	 * Tests whether this {@link Polyline} and the given {@link Rectangle}
+	 * touch, i.e. they have at least one {@link Point} in common.
+	 * 
+	 * @param rect
+	 *            the {@link Rectangle} to test
+	 * @return <code>true</code> if this {@link Polyline} and the
+	 *         {@link Rectangle} touch, otherwise <code>false</code>
+	 * @see IGeometry#touches(IGeometry)
 	 */
-	public boolean intersects(Rectangle rect) {
+	public boolean touches(Rectangle rect) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
@@ -166,6 +177,16 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 			}
 		}
 		return path;
+	}
+
+	/**
+	 * Transforms this {@link Polyline} into a {@link PolyBezier}.
+	 * 
+	 * @return a {@link PolyBezier} representing this {@link Polyline}
+	 */
+	public PolyBezier toPolyBezier() {
+		Line[] segments = PointListUtils.toSegmentsArray(points, false);
+		return new PolyBezier(segments);
 	}
 
 	@Override
@@ -190,6 +211,46 @@ public class Polyline extends AbstractPointListBasedGeometry implements IPolyCur
 	 */
 	public Polyline getCopy() {
 		return new Polyline(getPoints());
+	}
+
+	public double getY2() {
+		return getP2().y;
+	}
+
+	public double getY1() {
+		return getP1().y;
+	}
+
+	public double getX2() {
+		return getP2().x;
+	}
+
+	public double getX1() {
+		return getP1().x;
+	}
+
+	public Point getP2() {
+		return points[points.length - 1].getCopy();
+	}
+
+	public Point getP1() {
+		return points[0].getCopy();
+	}
+
+	public Line[] toBezier() {
+		return PointListUtils.toSegmentsArray(points, false);
+	}
+
+	public Point[] getIntersections(ICurve c) {
+		return CurveUtils.getIntersections(c, this);
+	}
+
+	public boolean intersects(ICurve c) {
+		return CurveUtils.intersects(c, this);
+	}
+
+	public boolean overlaps(ICurve c) {
+		return CurveUtils.overlaps(c, this);
 	}
 
 }

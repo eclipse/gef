@@ -12,12 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.projective.Vector3D;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -66,16 +64,13 @@ public class Line extends BezierCurve {
 	}
 
 	public boolean contains(Point p) {
-		// TODO: optimize w.r.t object creation
-		Point p1 = getP1();
-		Point p2 = getP2();
-
-		if (p1.equals(p2)) {
-			return p.equals(p1);
+		if (p == null) {
+			return false;
 		}
 
-		return new Straight(p1, p2).containsWithinSegment(new Vector(p1),
-				new Vector(p2), new Vector(p));
+		double distance = Math.abs(new Straight(getP1(), getP2())
+				.getSignedDistanceCCW(new Vector(p)));
+		return PrecisionUtils.equal(distance, 0) && getBounds().contains(p);
 	}
 
 	/**
@@ -133,69 +128,7 @@ public class Line extends BezierCurve {
 	 * @return a new {@link Line} with the same start and end point coordinates
 	 */
 	public Line getCopy() {
-		return new Line(getX1(), getY1(), getX2(), getY2());
-	}
-
-	public Point[] getIntersections(Arc a) {
-		return a.getIntersections(this);
-	}
-
-	public Point[] getIntersections(CubicCurve c) {
-		return c.getIntersections(this);
-	}
-
-	public Point[] getIntersections(Ellipse e) {
-		return e.getIntersections(this);
-	}
-
-	public Point[] getIntersections(Polygon p) {
-		return p.getIntersections(this);
-	}
-
-	public Point[] getIntersections(Polyline p) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : p.getCurves()) {
-			intersections.add(getIntersection(seg));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	public Point[] getIntersections(QuadraticCurve c) {
-		return c.getIntersections(this);
-	}
-
-	public Point[] getIntersections(Rectangle r) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : r.getOutlineSegments()) {
-			intersections.addAll(Arrays.asList(getIntersection(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	public Point[] getIntersections(RoundedRectangle rr) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		// line segments
-		intersections.add(getIntersection(rr.getTop()));
-		intersections.add(getIntersection(rr.getLeft()));
-		intersections.add(getIntersection(rr.getBottom()));
-		intersections.add(getIntersection(rr.getRight()));
-
-		// arc segments
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomRightArc())));
-
-		return intersections.toArray(new Point[] {});
+		return new Line(getP1(), getP2());
 	}
 
 	/**
@@ -210,33 +143,71 @@ public class Line extends BezierCurve {
 	 *         given one, in case it intersects, <code>null</code> instead
 	 */
 	public Point getIntersection(Line l) {
-		// if there is no intersection we may not return an intersection point
-		if (!intersects(l)) {
+		Point p1 = getP1();
+		Point p2 = getP2();
+
+		// degenerated case
+		if (p1.equals(p2)) {
+			if (l.contains(p1)) {
+				return p1;
+			} else if (l.contains(p2)) {
+				return p2;
+			}
 			return null;
 		}
 
-		Point p1 = getP1();
-		Point p2 = getP2();
-		Straight s1 = new Straight(p1, p2);
 		Point lp1 = l.getP1();
 		Point lp2 = l.getP2();
-		Straight s2 = new Straight(lp1, lp2);
-		// handle overlap in exactly one point
-		if (s1.equals(s2)) {
-			// lines may overlap in exactly one end point
-			if ((p1.equals(lp1) || p1.equals(lp2))
-					&& !(p2.equals(lp1) || p2.equals(lp2))) {
-				return p1;
-			} else if (p2.equals(lp1) || p2.equals(lp2)
-					&& !(p1.equals(lp1) || p1.equals(lp2))) {
-				return p2;
-			} else {
-				return null;
+
+		// degenerated case
+		if (lp1.equals(lp2)) {
+			if (contains(lp1)) {
+				return lp1;
+			} else if (contains(lp2)) {
+				return lp2;
 			}
+			return null;
 		}
-		// return the single intersection point
-		return s1.getIntersection(s2).toPoint();
+
+		Straight s1 = new Straight(p1, p2);
+		Straight s2 = new Straight(lp1, lp2);
+
+		if (s1.isParallelTo(s2)) {
+			if (s1.contains(new Vector(lp1))) {
+				// end-point-intersection? (no overlap)
+				double u1 = s1.getParameterAt(lp1);
+				double u2 = s1.getParameterAt(lp2);
+
+				if (PrecisionUtils.equal(u1, 0) && u2 < u1
+						|| PrecisionUtils.equal(u1, 1) && u2 > u1) {
+					return lp1;
+				} else if (PrecisionUtils.equal(u2, 0) && u1 < u2
+						|| PrecisionUtils.equal(u2, 1) && u1 > u2) {
+					return lp2;
+				}
+			}
+
+			return null;
+		}
+
+		Point intersection = s1.getIntersection(s2).toPoint();
+		return contains(intersection) && l.contains(intersection) ? intersection
+				: null;
 	}
+
+	@Override
+	public Point[] getIntersections(BezierCurve curve) {
+		if (curve instanceof Line) {
+			Point poi = getIntersection((Line) curve);
+			if (poi != null) {
+				return new Point[] { poi };
+			}
+			return new Point[] {};
+		}
+		return super.getIntersections(curve);
+	}
+
+	// TODO: add specialized getOverlap()
 
 	/**
 	 * Returns an array, which contains two {@link Point}s representing the
@@ -257,52 +228,112 @@ public class Line extends BezierCurve {
 		return new Line(transformed[0], transformed[1]);
 	}
 
+	public boolean intersects(Line l) {
+		return getIntersection(l) != null;
+	}
+
+	@Override
+	public boolean intersects(ICurve c) {
+		if (c instanceof Line) {
+			return intersects((Line) c);
+		}
+		return super.intersects(c);
+	}
+
+	public boolean touches(IGeometry g) {
+		if (g instanceof Line) {
+			return touches((Line) g);
+		}
+		return super.touches(g);
+	}
+
 	/**
-	 * Tests whether this {@link Line} and the given one intersect, i.e. if they
-	 * share at least one common point.
+	 * Tests whether this {@link Line} and the given one share at least one
+	 * common point.
 	 * 
 	 * @param l
 	 *            The {@link Line} to test.
 	 * @return <code>true</code> if this {@link Line} and the given one share at
 	 *         least one common point, <code>false</code> otherwise.
 	 */
-	public boolean intersects(Line l) {
+	public boolean touches(Line l) {
 		// TODO: optimize w.r.t. object creation
+
+		/*
+		 * 1) check degenerated (the start and end point imprecisely fall
+		 * together) and special cases where the lines have to be regarded as
+		 * intersecting, because they touch within the used imprecision, though
+		 * they would not intersect with absolute precision.
+		 */
 		Point p1 = getP1();
 		Point p2 = getP2();
 
-		if (p1.equals(p2)) {
-			return l.contains(p1);
+		boolean touches = l.contains(p1) || l.contains(p2);
+		if (touches || p1.equals(p2)) {
+			return touches;
 		}
 
 		Point lp1 = l.getP1();
 		Point lp2 = l.getP2();
 
-		if (lp1.equals(lp2)) {
-			return contains(lp1);
+		touches = contains(lp1) || contains(lp2);
+		if (touches || lp1.equals(lp2)) {
+			return touches;
 		}
+		Vector3D l1 = new Vector3D(p1).getCrossed(new Vector3D(p2));
+		Vector3D l2 = new Vector3D(lp1).getCrossed(new Vector3D(lp2));
 
-		Straight s1 = new Straight(p1, p2);
-		Straight s2 = new Straight(lp1, lp2);
-		Vector v1 = new Vector(p1);
-		Vector v2 = new Vector(p2);
-		Vector lv1 = new Vector(lp1);
-		Vector lv2 = new Vector(lp2);
-		// intersection within Straight does not cover overlap, therefore we
-		// have to check this separately here (via equality and containment of
-		// the end points)
-		return s1.equals(s2)
-				&& (s1.containsWithinSegment(v1, v2, lv1) || s1
-						.containsWithinSegment(v1, v2, lv2))
-				|| s1.intersectsWithinSegment(v1, v2, s2)
-				&& s2.intersectsWithinSegment(lv1, lv2, s1);
+		/*
+		 * 2) non-degenerated case. If the two respective straight lines
+		 * intersect, the intersection has to be contained by both line segments
+		 * for the segments to intersect. If the two respective straight lines
+		 * do not intersect, because they are parallel, the getIntersection()
+		 * method returns null.
+		 */
+		Point intersection = l1.getCrossed(l2).toPoint();
+		return intersection != null && contains(intersection)
+				&& l.contains(intersection);
 	}
 
 	/**
-	 * @see IGeometry#intersects(Rectangle)
+	 * Tests whether this {@link Line} and the given other {@link Line} overlap,
+	 * i.e. they share an infinite number of {@link Point}s.
+	 * 
+	 * @param l
+	 *            the other {@link Line} to test for overlap with this
+	 *            {@link Line}
+	 * @return <code>true</code> if this {@link Line} and the other {@link Line}
+	 *         overlap, otherwise <code>false</code>
+	 * @see ICurve#overlaps(ICurve)
 	 */
-	public boolean intersects(Rectangle r) {
-		return r.intersects(this);
+	public boolean overlaps(Line l) {
+		return touches(l) && !intersects(l);
+	}
+
+	@Override
+	public boolean overlaps(BezierCurve c) {
+		if (c instanceof Line) {
+			return overlaps((Line) c);
+		}
+
+		// BezierCurve: in order to overlap, all control points have to lie on a
+		// straight through its base line
+		Straight s = new Straight(this);
+		for (Line seg : PointListUtils.toSegmentsArray(c.getPoints(), false)) {
+			if (!s.equals(new Straight(seg))) {
+				return false;
+			}
+		}
+
+		// if the base line overlaps, we are done
+		if (overlaps(new Line(c.getP1(), c.getP2()))) {
+			return true;
+		} else {
+			// otherwise, we have to delegate to the general implementation for
+			// Bezier curves to take care of a degenerated curve, where the
+			// handle points are outside the base line of the Bezier curve.
+			return super.touches(c);
+		}
 	}
 
 	/**
@@ -319,10 +350,8 @@ public class Line extends BezierCurve {
 	 *            the y-coordinate of the end point
 	 */
 	public void setLine(double x1, double y1, double x2, double y2) {
-		setX1(x1);
-		setY1(y1);
-		setX2(x2);
-		setY2(y2);
+		setP1(new Point(x1, y1));
+		setP2(new Point(x2, y2));
 	}
 
 	/**
@@ -353,12 +382,52 @@ public class Line extends BezierCurve {
 	}
 
 	/**
+	 * Sets the x-coordinate of the start {@link Point} of this {@link Line} to
+	 * the given value.
+	 * 
+	 * @param x1
+	 */
+	public void setX1(double x1) {
+		setP1(new Point(x1, getY1()));
+	}
+
+	/**
+	 * Sets the y-coordinate of the start {@link Point} of this {@link Line} to
+	 * the given value.
+	 * 
+	 * @param y1
+	 */
+	public void setY1(double y1) {
+		setP1(new Point(getX1(), y1));
+	}
+
+	/**
+	 * Sets the x-coordinate of the end {@link Point} of this {@link Line} to
+	 * the given value.
+	 * 
+	 * @param x2
+	 */
+	public void setX2(double x2) {
+		setP2(new Point(x2, getY2()));
+	}
+
+	/**
+	 * Sets the y-coordinate of the end {@link Point} of this {@link Line} to
+	 * the given value.
+	 * 
+	 * @param y2
+	 */
+	public void setY2(double y2) {
+		setP2(new Point(getX2(), y2));
+	}
+
+	/**
 	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
 		Path path = new Path();
 		path.moveTo(getX1(), getY1());
-		path.lineTo(getX2(), getY1());
+		path.lineTo(getX2(), getY2());
 		return path;
 	}
 

@@ -388,35 +388,51 @@ public class PolygonTests {
 
 	@Test
 	public void test_getIntersections_Ellipse() {
-		assertTrue(new Polygon(RHOMB.getIntersections(new Ellipse(0, 0, 4, 4)))
-				.getBounds().equals(RHOMB.getBounds()));
+		assertTrue(new Polygon(RHOMB.getOutline().getIntersections(
+				new Ellipse(0, 0, 4, 4).getOutline())).getBounds().equals(
+				RHOMB.getBounds()));
 	}
 
 	@Test
 	public void test_getIntersections_Polygon() {
-		// TODO: something's wrong... debug this test
-		assertEquals(2, RHOMB.getIntersections(RECTANGLE).length);
-		assertEquals(4,
-				RHOMB.getIntersections(RHOMB.getBounds().toPolygon()).length);
+		assertEquals(
+				2,
+				RHOMB.getOutline().getIntersections(RECTANGLE.getOutline()).length);
+		assertEquals(
+				4,
+				RHOMB.getOutline().getIntersections(
+						RHOMB.getBounds().toPolygon().getOutline()).length);
 	}
 
 	@Test
 	public void test_getIntersections_Polyline() {
-		assertEquals(1, RHOMB.getIntersections(new Polyline(0, 0, 0, 4)).length);
-		assertEquals(2,
-				RHOMB.getIntersections(new Polyline(0, 0, 0, 4, 4, 4)).length);
+		assertEquals(
+				1,
+				RHOMB.getOutline().getIntersections(new Polyline(0, 0, 0, 4)).length);
+		assertEquals(
+				2,
+				RHOMB.getOutline().getIntersections(
+						new Polyline(0, 0, 0, 4, 4, 4)).length);
 		assertEquals(
 				3,
-				RHOMB.getIntersections(new Polyline(0, 0, 0, 4, 4, 4, 2, 2)).length);
-		assertEquals(4, RHOMB.getIntersections(new Polyline(0, 0, 0, 4, 4, 4,
-				2, 2, 4, 0)).length);
-		assertEquals(5, RHOMB.getIntersections(new Polyline(0, 0, 0, 4, 4, 4,
-				2, 2, 4, 0, 0, 0)).length);
+				RHOMB.getOutline().getIntersections(
+						new Polyline(0, 0, 0, 4, 4, 4, 2, 2)).length);
+		assertEquals(
+				4,
+				RHOMB.getOutline().getIntersections(
+						new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)).length);
+		assertEquals(
+				5,
+				RHOMB.getOutline().getIntersections(
+						new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0, 0)).length);
 	}
 
 	@Test
 	public void test_getIntersections_Rectangle() {
-		assertEquals(4, RHOMB.getIntersections(RHOMB.getBounds()).length);
+		assertEquals(
+				4,
+				RHOMB.getOutline().getIntersections(
+						RHOMB.getBounds().getOutline()).length);
 	}
 
 	@Test
@@ -481,76 +497,76 @@ public class PolygonTests {
 
 	@Test
 	public void test_intersects_Ellipse() {
-		assertTrue(RHOMB.intersects(new Ellipse(0, 0, 4, 4)));
+		assertTrue(RHOMB.touches(new Ellipse(0, 0, 4, 4)));
 	}
 
 	@Test
 	public void test_intersects_Line() {
-		assertFalse(RHOMB.intersects(new Line(-1, 1, 1, -1)));
-		assertTrue(RHOMB.intersects(new Line(-1, 2, 2, 2)));
-		assertTrue(RHOMB.intersects(new Line(2, 2, 5, 2)));
-		assertTrue(RHOMB.intersects(new Line(0, 2, 2, 0)));
-		assertTrue(RHOMB.intersects(new Line(0, 2, 2, 4)));
-		assertTrue(RHOMB.intersects(new Line(0, 2, 2, 2)));
-		assertTrue(RHOMB.intersects(new Line(1, 2, 3, 2)));
+		assertFalse(RHOMB.touches(new Line(-1, 1, 1, -1)));
+		assertTrue(RHOMB.touches(new Line(-1, 2, 2, 2)));
+		assertTrue(RHOMB.touches(new Line(2, 2, 5, 2)));
+		assertTrue(RHOMB.touches(new Line(0, 2, 2, 0)));
+		assertTrue(RHOMB.touches(new Line(0, 2, 2, 4)));
+		assertTrue(RHOMB.touches(new Line(0, 2, 2, 2)));
+		assertTrue(RHOMB.touches(new Line(1, 2, 3, 2)));
 		assertTrue(new Polygon(new Point(), new Point(0, 5), new Point(5, 5),
-				new Point(5, 0), new Point(2.5, 2.5)).intersects(new Line(1,
-				2.5, 4, 2.5)));
-		assertTrue(RHOMB.intersects(new Line(-1, 2, 5, 2)));
+				new Point(5, 0), new Point(2.5, 2.5)).touches(new Line(1, 2.5,
+				4, 2.5)));
+		assertTrue(RHOMB.touches(new Line(-1, 2, 5, 2)));
 	}
 
 	@Test
 	public void test_intersects_Polygon_Rhomb() {
 		assertTrue(
 				"The rhomb intersects itself, because it touches/contains itself",
-				RHOMB.intersects(RHOMB));
+				RHOMB.touches(RHOMB));
 
 		assertTrue(
 				"The rhomb intersects its shrinked self, because its shrinked self is fully contained by the rhomb",
-				RHOMB.intersects(RHOMB.getCopy().scale(0.5, new Point(2, 2))));
+				RHOMB.touches(RHOMB.getCopy().scale(0.5, new Point(2, 2))));
 
 		assertTrue(
 				"The rhomb intersects its expanded self, because its expanded self fully contains the rhomb",
-				RHOMB.intersects(RHOMB.getCopy().scale(2, new Point(2, 2))));
+				RHOMB.touches(RHOMB.getCopy().scale(2, new Point(2, 2))));
 
 		assertTrue(RHOMB.contains(new Point(4, 2)));
 		assertTrue(RHOMB.getTranslated(new Point(4, 0)).contains(
 				new Point(4, 2)));
 
 		assertTrue("The rhomb touches the given one",
-				RHOMB.intersects(RHOMB.getTranslated(4, 0)));
+				RHOMB.touches(RHOMB.getTranslated(4, 0)));
 		assertTrue("The rhomb intersects the given one",
-				RHOMB.intersects(RHOMB.getTranslated(2, 0)));
+				RHOMB.touches(RHOMB.getTranslated(2, 0)));
 	}
 
 	@Test
 	public void test_intersects_Polyline() {
-		assertFalse(RHOMB.intersects(new Polyline(0, 0, -1, -1)));
-		assertTrue(RHOMB.intersects(new Polyline(0, 0, 0, 4)));
-		assertTrue(RHOMB.intersects(new Polyline(0, 0, 0, 4, 4, 4)));
-		assertTrue(RHOMB.intersects(new Polyline(0, 0, 0, 4, 4, 4, 2, 2)));
-		assertTrue(RHOMB.intersects(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)));
-		assertTrue(RHOMB.intersects(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0,
-				0, 0)));
+		assertFalse(RHOMB.touches(new Polyline(0, 0, -1, -1)));
+		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4)));
+		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4)));
+		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2)));
+		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0)));
+		assertTrue(RHOMB.touches(new Polyline(0, 0, 0, 4, 4, 4, 2, 2, 4, 0, 0,
+				0)));
 	}
 
 	@Test
 	public void test_intersects_Rectangle_Rhomb() {
 		assertTrue(
 				"This rectangle is inside the rhomb and does therefore intersect it",
-				RHOMB.intersects(new Rectangle(1.5, 1.5, 1, 1)));
+				RHOMB.touches(new Rectangle(1.5, 1.5, 1, 1)));
 		assertTrue(
 				"This rectangle is inside the rhomb and does therefore intersect it",
-				RHOMB.intersects(new Rectangle(1, 1, 2, 2)));
+				RHOMB.touches(new Rectangle(1, 1, 2, 2)));
 		assertTrue(
 				"This rectangle is partly outside the rhomb and intersects it (intersection points are two polygon points)",
-				RHOMB.intersects(new Rectangle(0, 0, 2, 2)));
+				RHOMB.touches(new Rectangle(0, 0, 2, 2)));
 
 		assertTrue(RHOMB.contains(new Point(0, 2)));
 		assertTrue(new Rectangle(-2, 0, 2, 2).contains(new Point(0, 2)));
 		assertTrue(
 				"This rectangle is outside the rhomb and touches it in Point (0,2), which is contained in both",
-				RHOMB.intersects(new Rectangle(-2, 0, 2, 2)));
+				RHOMB.touches(new Rectangle(-2, 0, 2, 2)));
 	}
 
 	@Test
@@ -592,6 +608,33 @@ public class PolygonTests {
 		for (int i = 0; i < coords.length; i++) {
 			assertEquals((int) coords[i], ints[i]);
 		}
+	}
+
+	@Test
+	public void test_contains_imprecision() {
+		Polygon poly = new Polygon(new Point(0.16384889386958243,
+				0.5199137157713366), new Point(0.16388083282075672,
+				0.5199518598437528), new Point(0.1639056804775328,
+				0.5199687901987595), new Point(0.16381011945655763,
+				0.5198551130149273));
+		Point p = new Point(0.16383865075635337, 0.5198962222767928);
+		assertTrue(poly.contains(p));
+	}
+
+	@Test
+	public void test_contains_Point_special_cases() {
+		/*
+		 * TODO: special cases are impossible to test without knowing how the
+		 * algorithm counts intersections. The special cases are:
+		 * 
+		 * 1) the point is inside the polygon. the scan line intersects the
+		 * polygon in a vertex of the polygon. this is a double intersection in
+		 * the same point.
+		 * 
+		 * 2) the point is inside the polygon. the scan line intersects the
+		 * polygon in a vertex of the polygon and somewhere else. the vertex
+		 * intersection is a double intersection in the same point.
+		 */
 	}
 
 }

@@ -19,15 +19,7 @@ public class Pie extends AbstractGeometry implements IGeometry {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
-	public boolean contains(Rectangle r) {
-		throw new UnsupportedOperationException("Not yet implemented.");
-	}
-
 	public Rectangle getBounds() {
-		throw new UnsupportedOperationException("Not yet implemented.");
-	}
-
-	public boolean intersects(Rectangle r) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

@@ -121,7 +121,15 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
-	 * @see IGeometry#contains(Rectangle)
+	 * Returns <code>true</code> if the given {@link Rectangle} is contained
+	 * within {@link IGeometry}, <code>false</code> otherwise.
+	 * 
+	 * TODO: Generalize to arbitrary {@link IGeometry} objects.
+	 * 
+	 * @param r
+	 *            The {@link Rectangle} to test
+	 * @return <code>true</code> if the {@link Rectangle} is fully contained
+	 *         within this {@link IGeometry}
 	 */
 	public boolean contains(Rectangle r) {
 		return delegate.contains(Geometry2AWT.toAWTRectangle(r));
@@ -177,9 +185,17 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
-	 * {@link IGeometry#intersects(Rectangle)}
+	 * Tests whether this {@link Path} and the given {@link Rectangle} touch,
+	 * i.e. they have at least one {@link Point} in common.
+	 * 
+	 * @param r
+	 *            the {@link Rectangle} to test for at least one {@link Point}
+	 *            in common with this {@link Path}
+	 * @return <code>true</code> if this {@link Path} and the {@link Rectangle}
+	 *         touch, otherwise <code>false</code>
+	 * @see IGeometry#touches(IGeometry)
 	 */
-	public boolean intersects(Rectangle r) {
+	public boolean touches(Rectangle r) {
 		return delegate.intersects(Geometry2AWT.toAWTRectangle(r));
 	}
 

@@ -190,4 +190,9 @@ public class CubicCurveTests {
 		assertEquals(2, cc2.getIntersections(cc1).length);
 	}
 
+	@Test
+	public void test_getIntersections_containment() {
+		// TODO
+	}
+
 }

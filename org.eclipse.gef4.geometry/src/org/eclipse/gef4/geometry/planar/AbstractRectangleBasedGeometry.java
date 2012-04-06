@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -21,7 +22,8 @@ import org.eclipse.gef4.geometry.Point;
  * @author anyssen
  * 
  */
-abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
+abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?>>
+		extends AbstractGeometry {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,13 +40,17 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 		return new Rectangle(x, y, width, height);
 	}
 
+	public Point getCentroid() {
+		return new Point(x + width / 2, y + height / 2);
+	}
+
 	public final double getHeight() {
 		return height;
 	}
 
 	/**
-	 * Returns the location of this {@link AbstractRectangleBasedGeometry}, which is the
-	 * location of its bounds.
+	 * Returns the location of this {@link AbstractRectangleBasedGeometry},
+	 * which is the location of its bounds.
 	 * 
 	 * @return a {@link Point} representing the location of this
 	 *         {@link AbstractRectangleBasedGeometry} 's bounds
@@ -54,12 +60,71 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	}
 
 	/**
+	 * Returns a new {@link AbstractPointListBasedGeometry} which is scaled by
+	 * the given factor. The {@link AbstractPointListBasedGeometry} is
+	 * translated by the negated centroid (see {@link #getCentroid()}) first.
+	 * The translation is reversed afterwards.
+	 * 
+	 * @param factor
+	 *            The scale-factor
+	 * @return The new scaled {@link AbstractPointListBasedGeometry}
+	 * @see #getScaled(double, Point)
+	 */
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factor) {
+		return (T) ((T) getCopy()).scale(factor);
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factorX, double factorY) {
+		return (T) ((T) getCopy()).scale(factorX, factorY);
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factorX, double factorY, Point center) {
+		return (T) ((T) getCopy()).scale(factorX, factorY, center);
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factor, Point center) {
+		return (T) ((T) getCopy()).scale(factor, center);
+	}
+
+	/**
 	 * Returns the size of this {@link Rectangle}.
 	 * 
 	 * @return The current size
 	 */
 	public final Dimension getSize() {
 		return new Dimension(width, height);
+	}
+
+	/**
+	 * Returns a new {@link AbstractPointListBasedGeometry} which is shifted
+	 * along each axis by the passed values.
+	 * 
+	 * @param dx
+	 *            Displacement along X axis
+	 * @param dy
+	 *            Displacement along Y axis
+	 * @return The new translated {@link AbstractPointListBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getTranslated(double dx, double dy) {
+		return (T) ((T) getCopy()).translate(dx, dy);
+	}
+
+	/**
+	 * Returns a new {@link AbstractPointListBasedGeometry} which is shifted by
+	 * the position of the given {@link Point}.
+	 * 
+	 * @param pt
+	 *            {@link Point} providing the amount of shift along each axis
+	 * @return The new translated {@link AbstractPointListBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getTranslated(Point pt) {
+		return (T) ((T) getCopy()).translate(pt);
 	}
 
 	public final double getWidth() {
@@ -75,6 +140,39 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	}
 
 	/**
+	 * Scales this {@link AbstractPointListBasedGeometry} by the given factor.
+	 * The {@link AbstractPointListBasedGeometry} is translated by its negated
+	 * centroid (see {@link #getCentroid()}) first. The translation is reversed
+	 * afterwards.
+	 * 
+	 * @see #scale(double, Point)
+	 * @param factor
+	 * @return <code>this</code> for convenience
+	 */
+	public T scale(double factor) {
+		return scale(factor, factor);
+	}
+
+	public T scale(double factorX, double factorY) {
+		return scale(factorX, factorY, getCentroid());
+	}
+
+	@SuppressWarnings("unchecked")
+	public T scale(double factorX, double factorY, Point center) {
+		double nx = (x - center.x) * factorX + center.x;
+		double ny = (y - center.y) * factorY + center.y;
+		width = (x + width - center.x) * factorX + center.x - nx;
+		height = (y + height - center.y) * factorY + center.y - ny;
+		x = nx;
+		y = ny;
+		return (T) this;
+	}
+
+	public T scale(double factor, Point center) {
+		return scale(factor, factor, center);
+	}
+
+	/**
 	 * Sets the x, y, width and height values of this {@link Rectangle} to match
 	 * those that are given.
 	 * 
@@ -86,12 +184,15 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 *            the new width
 	 * @param h
 	 *            the new height
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setBounds(double x, double y, double w, double h) {
+	@SuppressWarnings("unchecked")
+	public final T setBounds(double x, double y, double w, double h) {
 		this.x = x;
 		this.y = y;
 		this.width = w;
 		this.height = h;
+		return (T) this;
 	}
 
 	/**
@@ -101,9 +202,12 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 *            The new location
 	 * @param size
 	 *            The new size
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setBounds(Point loc, Dimension size) {
+	@SuppressWarnings("unchecked")
+	public final T setBounds(Point loc, Dimension size) {
 		setBounds(loc.x, loc.y, size.width, size.height);
+		return (T) this;
 	}
 
 	/**
@@ -113,16 +217,21 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 * @param r
 	 *            The {@link Rectangle} whose location and size are to be
 	 *            transferred.
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setBounds(Rectangle r) {
+	@SuppressWarnings("unchecked")
+	public final T setBounds(Rectangle r) {
 		setBounds(r.x, r.y, r.width, r.height);
+		return (T) this;
 	}
 
-	public final void setHeight(double height) {
+	@SuppressWarnings("unchecked")
+	public final T setHeight(double height) {
 		if (height < 0) {
 			height = 0;
 		}
 		this.height = height;
+		return (T) this;
 	}
 
 	/**
@@ -133,10 +242,13 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 *            The new x-coordinate
 	 * @param y
 	 *            The new y-coordinate
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setLocation(double x, double y) {
+	@SuppressWarnings("unchecked")
+	public final T setLocation(double x, double y) {
 		this.x = x;
 		this.y = y;
+		return (T) this;
 	}
 
 	/**
@@ -145,9 +257,12 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 * 
 	 * @param p
 	 *            the new location of this Rectangle
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setLocation(Point p) {
+	@SuppressWarnings("unchecked")
+	public final T setLocation(Point p) {
 		setLocation(p.x, p.y);
+		return (T) this;
 	}
 
 	/**
@@ -156,9 +271,12 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 * 
 	 * @param d
 	 *            the new size
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setSize(Dimension d) {
+	@SuppressWarnings("unchecked")
+	public final T setSize(Dimension d) {
 		setSize(d.width, d.height);
+		return (T) this;
 	}
 
 	/**
@@ -169,8 +287,10 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 	 *            The new width
 	 * @param h
 	 *            The new height
+	 * @return <code>this</code> for convenience
 	 */
-	public final void setSize(double w, double h) {
+	@SuppressWarnings("unchecked")
+	public final T setSize(double w, double h) {
 		if (w < 0) {
 			w = 0;
 		}
@@ -179,21 +299,60 @@ abstract class AbstractRectangleBasedGeometry extends AbstractGeometry {
 		}
 		width = w;
 		height = h;
+		return (T) this;
 	}
 
-	public final void setWidth(double width) {
+	@SuppressWarnings("unchecked")
+	public final T setWidth(double width) {
 		if (width < 0) {
 			width = 0;
 		}
 		this.width = width;
+		return (T) this;
 	}
 
-	public final void setX(double x) {
+	@SuppressWarnings("unchecked")
+	public final T setX(double x) {
 		this.x = x;
+		return (T) this;
 	}
 
-	public final void setY(double y) {
+	@SuppressWarnings("unchecked")
+	public final T setY(double y) {
 		this.y = y;
+		return (T) this;
+	}
+
+	/**
+	 * Moves this {@link AbstractPointListBasedGeometry} horizontally by dx and
+	 * vertically by dy, then returns this
+	 * {@link AbstractPointListBasedGeometry} for convenience.
+	 * 
+	 * @param dx
+	 *            Shift along X axis
+	 * @param dy
+	 *            Shift along Y axis
+	 * @return <code>this</code> for convenience
+	 */
+	@SuppressWarnings("unchecked")
+	public T translate(double dx, double dy) {
+		x += dx;
+		y += dy;
+		return (T) this;
+	}
+
+	/**
+	 * Moves this {@link AbstractPointListBasedGeometry} horizontally by the x
+	 * value of the given {@link Point} and vertically by the y value of the
+	 * given {@link Point}, then returns this
+	 * {@link AbstractPointListBasedGeometry} for convenience.
+	 * 
+	 * @param p
+	 *            {@link Point} which provides translation information
+	 * @return <code>this</code> for convenience
+	 */
+	public T translate(Point p) {
+		return (T) translate(p.x, p.y);
 	}
 
 }

@@ -12,14 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PolynomCalculationUtils;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a cubic Bézier curve.
@@ -30,46 +25,6 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 public class CubicCurve extends BezierCurve {
 
 	private static final long serialVersionUID = 1L;
-
-	private static Point[] getIntersections(CubicCurve p, double ps, double pe,
-			Line l) {
-		// parameter convergence test
-		double pm = (ps + pe) / 2;
-
-		if (PrecisionUtils.equal(ps, pe, -2)) {
-			return new Point[] { p.get(pm) };
-		}
-
-		// no parameter convergence
-		// clip the curve
-		CubicCurve pc = p.clip(ps, pe);
-
-		// check the control polygon
-		Polygon polygon = pc.getControlPolygon();
-
-		if (polygon.intersects(l)) {
-			// area test
-			if (PrecisionUtils.equal(polygon.getBounds().getArea(), 0, -2)) {
-				// line/line intersection fallback for such small curves
-				Point poi = new Line(pc.getP1(), pc.getP2()).getIntersection(l);
-				if (poi != null) {
-					return new Point[] { poi };
-				}
-				return new Point[] {};
-			}
-
-			// "split" the curve to get precise intersections
-			HashSet<Point> intersections = new HashSet<Point>();
-
-			intersections.addAll(Arrays.asList(getIntersections(p, ps, pm, l)));
-			intersections.addAll(Arrays.asList(getIntersections(p, pm, pe, l)));
-
-			return intersections.toArray(new Point[] {});
-		}
-
-		// no intersections
-		return new Point[] {};
-	}
 
 	/**
 	 * Constructs a new {@link CubicCurve} object with the given sequence of x-
@@ -155,35 +110,17 @@ public class CubicCurve extends BezierCurve {
 	 * @return the {@link CubicCurve} on the interval [t1, t2]
 	 */
 	public CubicCurve clip(double t1, double t2) {
-		return CurveUtils.clip(this, t1, t2);
-	}
-
-	/**
-	 * @see IGeometry#contains(Point)
-	 */
-	public boolean contains(Point p) {
-		return CurveUtils.contains(this, p);
+		return super.getClipped(t1, t2).toCubic();
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		CubicCurve o = (CubicCurve) other;
 
-		AbstractPointListBasedGeometry myPoly = getControlPolygon();
-		AbstractPointListBasedGeometry otherPoly = o.getControlPolygon();
+		Polygon myPoly = getControlPolygon();
+		Polygon otherPoly = o.getControlPolygon();
 
 		return myPoly.equals(otherPoly);
-	}
-
-	/**
-	 * Get a single {@link Point} on this CubicCurve at parameter t.
-	 * 
-	 * @param t
-	 *            in range [0,1]
-	 * @return the {@link Point} at parameter t
-	 */
-	public Point get(double t) {
-		return CurveUtils.get(this, t);
 	}
 
 	/**
@@ -281,7 +218,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the first control {@link Point}'s x-coordinate.
 	 */
 	public double getCtrlX1() {
-		return getCtrlX(0);
+		return getPoint(1).x;
 	}
 
 	/**
@@ -290,7 +227,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the first control {@link Point}'s y-coordinate.
 	 */
 	public double getCtrlY1() {
-		return getCtrlY(0);
+		return getPoint(1).y;
 	}
 
 	/**
@@ -308,7 +245,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the second control {@link Point}'s x-coordinate.
 	 */
 	public double getCtrlX2() {
-		return getCtrlX(1);
+		return getPoint(2).x;
 	}
 
 	/**
@@ -317,152 +254,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return the second control {@link Point}'s y-coordinate.
 	 */
 	public double getCtrlY2() {
-		return getCtrlY(1);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Arc}.
-	 * 
-	 * @param arc
-	 *            The {@link Arc} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Arc arc) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : arc.getSegments()) {
-			intersections.addAll(Arrays.asList(getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given other {@link CubicCurve}.
-	 * 
-	 * @param other
-	 * @return the points of intersection
-	 */
-	public Point[] getIntersections(CubicCurve other) {
-		if (equals(other)) {
-			return new Point[] {};
-		}
-		return CurveUtils.getIntersections(this, other);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Ellipse}.
-	 * 
-	 * @param e
-	 *            The {@link Ellipse} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Ellipse e) {
-		return e.getIntersections(this);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Line} l.
-	 * 
-	 * @param l
-	 * @return the points of intersection
-	 */
-	public Point[] getIntersections(Line l) {
-		return getIntersections(this, 0, 1, l);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Polygon}.
-	 * 
-	 * @param p
-	 *            The {@link Polygon} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Polygon p) {
-		return p.getIntersections(this);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Polyline}.
-	 * 
-	 * @param p
-	 *            The {@link Polyline} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Polyline p) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : p.getCurves()) {
-			intersections.addAll(Arrays.asList(getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link QuadraticCurve}.
-	 * 
-	 * @param c
-	 *            The {@link QuadraticCurve} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(QuadraticCurve c) {
-		return getIntersections(c.getElevated());
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link Rectangle}.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Rectangle r) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (Line seg : r.getOutlineSegments()) {
-			intersections.addAll(Arrays.asList(getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link CubicCurve} and
-	 * the given {@link RoundedRectangle}.
-	 * 
-	 * @param rr
-	 *            The {@link RoundedRectangle} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(RoundedRectangle rr) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		// line segments
-		intersections.addAll(Arrays.asList(getIntersections(rr.getTop())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getLeft())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getBottom())));
-		intersections.addAll(Arrays.asList(getIntersections(rr.getRight())));
-
-		// arc segments
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopRightArc())));
-		intersections
-				.addAll(Arrays.asList(getIntersections(rr.getTopLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(rr
-				.getBottomRightArc())));
-
-		return intersections.toArray(new Point[] {});
+		return getPoint(2).y;
 	}
 
 	/**
@@ -472,23 +264,6 @@ public class CubicCurve extends BezierCurve {
 	 */
 	public IGeometry getTransformed(AffineTransform t) {
 		return null;
-	}
-
-	/**
-	 * Tests if this {@link CubicCurve} intersects the given {@link Line} r.
-	 * 
-	 * @param r
-	 * @return true if they intersect, false otherwise
-	 */
-	public boolean intersects(Line r) {
-		return getIntersections(r).length > 0;
-	}
-
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#intersects(Rectangle)
-	 */
-	public boolean intersects(Rectangle r) {
-		return false;
 	}
 
 	/**
@@ -510,7 +285,7 @@ public class CubicCurve extends BezierCurve {
 	 *            the new first control {@link Point}'s x-coordinate
 	 */
 	public void setCtrl1X(double ctrl1x) {
-		setCtrlX(0, ctrl1x);
+		setPoint(1, new Point(ctrl1x, getCtrlY1()));
 	}
 
 	/**
@@ -521,7 +296,7 @@ public class CubicCurve extends BezierCurve {
 	 *            the new first control {@link Point}'s y-coordinate
 	 */
 	public void setCtrl1Y(double ctrl1y) {
-		setCtrlY(0, ctrl1y);
+		setPoint(1, new Point(getCtrlX1(), ctrl1y));
 	}
 
 	/**
@@ -543,7 +318,7 @@ public class CubicCurve extends BezierCurve {
 	 *            the new second control {@link Point}'s x-coordinate
 	 */
 	public void setCtrl2X(double ctrl2x) {
-		setCtrlX(1, ctrl2x);
+		setPoint(2, new Point(ctrl2x, getCtrlY2()));
 	}
 
 	/**
@@ -554,7 +329,7 @@ public class CubicCurve extends BezierCurve {
 	 *            the new second control {@link Point}'s y-coordinate
 	 */
 	public void setCtrl2Y(double ctrl2y) {
-		setCtrlY(1, ctrl2y);
+		setPoint(2, new Point(getCtrlX2(), ctrl2y));
 	}
 
 	/**
@@ -586,7 +361,8 @@ public class CubicCurve extends BezierCurve {
 	 * @return the two {@link CubicCurve}s
 	 */
 	public CubicCurve[] split(double t) {
-		return CurveUtils.split(this, t);
+		BezierCurve[] split = super.split(t);
+		return new CubicCurve[] { split[0].toCubic(), split[1].toCubic() };
 	}
 
 	/**

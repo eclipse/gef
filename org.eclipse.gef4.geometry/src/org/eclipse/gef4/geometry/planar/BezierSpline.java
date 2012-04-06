@@ -14,39 +14,86 @@ package org.eclipse.gef4.geometry.planar;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 
-public class BezierSpline implements IPolyCurve {
+public class BezierSpline implements ICurve {
 
-	public BezierCurve[] getCurves() {
+	public boolean contains(Point p) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public Rectangle getBounds() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public boolean contains(Point p) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public IGeometry getCopy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public boolean contains(Rectangle r) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public Point[] getIntersections(ICurve g) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public Rectangle getBounds() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public Point getP1() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Point getP2() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public IGeometry getTransformed(AffineTransform t) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public boolean intersects(Rectangle r) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public double getX1() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getX2() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getY1() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double getY2() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean intersects(ICurve c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean overlaps(ICurve c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public BezierCurve[] toBezier() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Path toPath() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public IGeometry getCopy() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public boolean touches(IGeometry g) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

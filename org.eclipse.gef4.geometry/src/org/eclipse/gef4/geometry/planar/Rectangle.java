@@ -17,6 +17,8 @@ import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
+import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -37,8 +39,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  */
-public final class Rectangle extends AbstractRectangleBasedGeometry implements
-		IShape {
+public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
+		implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -147,29 +149,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * Returns true in case the rectangle specified by (x, y, width, height) is
-	 * contained within this {@link Rectangle}.
-	 * 
-	 * @param x
-	 *            The x coordinate of the rectangle to be tested for containment
-	 * @param y
-	 *            The y coordinate of the rectangle to be tested for containment
-	 * @param width
-	 *            The width of the rectangle to be tested for containment
-	 * @param height
-	 *            The height of the rectangle to be tested for containment
-	 * @return <code>true</code> if the rectangle characterized by (x,y, width,
-	 *         height) is (imprecisely) fully contained within this
-	 *         {@link Rectangle}, <code>false</code> otherwise
-	 */
-	public boolean contains(double x, double y, double width, double height) {
-		return PrecisionUtils.smallerEqual(this.x, x)
-				&& PrecisionUtils.smallerEqual(this.y, y)
-				&& PrecisionUtils.greaterEqual(this.width, width)
-				&& PrecisionUtils.greaterEqual(this.height, height);
-	}
-
-	/**
 	 * Returns whether the given point is within the boundaries of this
 	 * Rectangle. The boundaries are inclusive of the top and left edges, but
 	 * exclusive of the bottom and right edges.
@@ -181,13 +160,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	 */
 	public boolean contains(Point p) {
 		return contains(p.x(), p.y());
-	}
-
-	/**
-	 * @see IGeometry#contains(Rectangle)
-	 */
-	public boolean contains(Rectangle r) {
-		return contains(r.x, r.y, r.width, r.height);
 	}
 
 	/**
@@ -297,44 +269,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * Returns a new {@link Rectangle}, whose location is identical to the
-	 * location of this {@link Rectangle}, but whose size is scaled by the given
-	 * factor.
-	 * 
-	 * @param scale
-	 *            the scale factor, with which to multiply the height and width
-	 *            of this {@link Rectangle} when computing the size of the new
-	 *            {@link Rectangle} to be returned
-	 * @return a new {@link Rectangle} with a location identical to this one's
-	 *         and a size that is computed by multiplying width and height of
-	 *         this {@link Rectangle} by the given factor.
-	 */
-	public Rectangle getScaled(double scale) {
-		return getScaled(scale, scale);
-	}
-
-	/**
-	 * Returns a new {@link Rectangle}, whose location is identical to the
-	 * location of this {@link Rectangle}, but whose size is scaled by the given
-	 * factors.
-	 * 
-	 * @param scaleX
-	 *            the factor, with which to multiply the width of this
-	 *            {@link Rectangle}, when computing the size of the new
-	 *            {@link Rectangle} to be returned
-	 * @param scaleY
-	 *            the factor, with which to multiply the height of this
-	 *            {@link Rectangle} when computing the size of the new
-	 *            {@link Rectangle} to be returned
-	 * @return a new {@link Rectangle} with a location identical to this one's
-	 *         and a size that is computed by multiplying width and height of
-	 *         this {@link Rectangle} by the given factor.
-	 */
-	public Rectangle getScaled(double scaleX, double scaleY) {
-		return getCopy().scale(scaleX, scaleY);
-	}
-
-	/**
 	 * Returns an array of {@link Line}s representing the top, right, bottom,
 	 * and left borders of this {@link Rectangle}.
 	 * 
@@ -377,15 +311,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	 */
 	public Point getBottomRight() {
 		return new Point(x + width, y + height);
-	}
-
-	/**
-	 * Returns a new point representing the center of this Rectangle.
-	 * 
-	 * @return Point at the center of the rectangle
-	 */
-	public Point getCenter() {
-		return new Point(x + width / 2, y + height / 2);
 	}
 
 	/**
@@ -458,15 +383,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * Returns the location of this {@link Rectangle}.
-	 * 
-	 * @return The current location
-	 */
-	public Point getLocation() {
-		return new Point(x, y);
-	}
-
-	/**
 	 * Returns a new Point which represents the middle point of the right hand
 	 * side of this Rectangle.
 	 * 
@@ -478,38 +394,64 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * alpha around the {@link Point} center.
+	 * around the center ({@link #getCentroid()}) of this {@link Rectangle}.
 	 * 
-	 * If the rotation {@link Angle} is not an integer multiple 90\u00b0, the
-	 * resulting figure cannot be expressed as a {@link Rectangle} object.
+	 * @see #getRotatedCW(Angle, Point)
+	 * @param alpha
+	 *            the rotation {@link Angle}
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCW(Angle alpha) {
+		return getRotatedCW(alpha, getCentroid());
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
+	 * alpha around the given {@link Point}.
+	 * 
+	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
+	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
 	 * 
 	 * @param alpha
 	 *            the rotation angle
 	 * @param center
-	 *            the center point of the rotation
-	 * @return the rotated rectangle ({@link Polygon})
+	 *            the center point for the rotation
+	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCW(Angle alpha, Point center) {
-		return toPolygon().rotateCW(alpha, center);
+		return (Polygon) toPolygon().rotateCW(alpha, center);
 	}
 
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
-	 * {@link Angle} alpha around the {@link Point} center.
+	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}
+	 * (see {@link #getCentroid()}).
 	 * 
-	 * If the rotation {@link Angle} is not an integer multiple 90\u00b0, the
-	 * resulting figure cannot be expressed as a {@link Rectangle} object.
+	 * @see #getRotatedCCW(Angle, Point)
+	 * @param alpha
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCCW(Angle alpha) {
+		return getRotatedCCW(alpha, getCentroid());
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} counter-clock-wise by the given
+	 * {@link Angle} around the given {@link Point}.
+	 * 
+	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
+	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
 	 * 
 	 * @param alpha
 	 *            the rotation angle
 	 * @param center
-	 *            the center point of the rotation
-	 * @return the rotated rectangle ({@link Polygon})
+	 *            the center point for the rotation
+	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCCW(Angle alpha, Point center) {
-		return toPolygon().rotateCCW(alpha, center);
+		return (Polygon) toPolygon().rotateCCW(alpha, center);
 	}
 
 	/**
@@ -589,34 +531,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * Returns a new Rectangle which is shifted along each axis by the passed
-	 * values.
-	 * 
-	 * @param dx
-	 *            Displacement along X axis
-	 * @param dy
-	 *            Displacement along Y axis
-	 * @return The new translated rectangle
-	 * 
-	 */
-	public Rectangle getTranslated(double dx, double dy) {
-		return getCopy().translate(dx, dy);
-	}
-
-	/**
-	 * Returns a new Rectangle which is shifted by the position of the given
-	 * Point.
-	 * 
-	 * @param pt
-	 *            Point providing the amount of shift along each axis
-	 * @return The new translated Rectangle
-	 * 
-	 */
-	public Rectangle getTranslated(Point pt) {
-		return getCopy().translate(pt);
-	}
-
-	/**
 	 * Returns a new rectangle whose width and height have been interchanged, as
 	 * well as its x and y values. This can be useful in orientation changes.
 	 * 
@@ -676,8 +590,8 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * Tests whether this {@link Rectangle} and the given {@link Line}
-	 * intersect, i.e. whether they have at least one point in common.
+	 * Tests whether this {@link Rectangle} and the given {@link Line} touch,
+	 * i.e. whether they have at least one point in common.
 	 * 
 	 * @param l
 	 *            The {@link Line} to test.
@@ -685,7 +599,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	 *         {@link Line} share at least one common point, <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean intersects(Line l) {
+	public boolean touches(Line l) {
 		if (contains(l.getP1()) || contains(l.getP2())) {
 			return true;
 		}
@@ -699,10 +613,31 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	}
 
 	/**
-	 * @see IGeometry#intersects(Rectangle)
+	 * Tests whether this {@link Rectangle} and the given other
+	 * {@link Rectangle} touch, i.e. whether they have at least one point in
+	 * common.
+	 * 
+	 * @param r
+	 *            The {@link Rectangle} to test
+	 * @return <code>true</code> if this {@link Rectangle} and the given
+	 *         {@link Rectangle} share at least one common point,
+	 *         <code>false</code> otherwise.
+	 * @see IGeometry#touches(IGeometry)
 	 */
-	public boolean intersects(Rectangle r) {
-		return !getIntersected(r).isEmpty();
+	public boolean touches(Rectangle r) {
+		return PrecisionUtils.smallerEqual(r.x, x + width)
+				&& PrecisionUtils.smallerEqual(r.y, y + height)
+				&& PrecisionUtils.greaterEqual(r.x + r.width, x)
+				&& PrecisionUtils.greaterEqual(r.y + r.height, y);
+	}
+
+	public boolean touches(IGeometry g) {
+		if (g instanceof Line) {
+			return touches((Line) g);
+		} else if (g instanceof Rectangle) {
+			return touches((Rectangle) g);
+		}
+		return super.touches(g);
 	}
 
 	/**
@@ -716,34 +651,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	public boolean isEmpty() {
 		return PrecisionUtils.smallerEqual(width, 0)
 				|| PrecisionUtils.smallerEqual(height, 0);
-	}
-
-	/**
-	 * Scales the size of this Rectangle by the given scale and returns this for
-	 * convenience.
-	 * 
-	 * @param scaleFactor
-	 *            The factor by which this size will be scaled
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle scale(double scaleFactor) {
-		return scale(scaleFactor, scaleFactor);
-	}
-
-	/**
-	 * Scales the size of this Rectangle by the given scales and returns this
-	 * for convenience.
-	 * 
-	 * @param scaleX
-	 *            the factor by which the width has to be scaled
-	 * @param scaleY
-	 *            the factor by which the height has to be scaled
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle scale(double scaleX, double scaleY) {
-		width *= scaleX;
-		height *= scaleY;
-		return this;
 	}
 
 	/**
@@ -807,7 +714,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	 * @return A {@link Polygon} representation for this {@link Rectangle}
 	 */
 	public Polygon toPolygon() {
-		return new Polygon(getPoints());
+		return new Polygon(PointListUtils.copy(getPoints()));
 	}
 
 	@Override
@@ -832,33 +739,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 				(int) Math.floor(y),
 				(int) Math.ceil(width + x - Math.floor(x)),
 				(int) Math.ceil(height + y - Math.floor(y)));
-	}
-
-	/**
-	 * Moves this {@link Rectangle} horizontally by dx and vertically by dy.
-	 * 
-	 * @param dx
-	 *            Shift along X axis
-	 * @param dy
-	 *            Shift along Y axis
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle translate(double dx, double dy) {
-		x += dx;
-		y += dy;
-		return this;
-	}
-
-	/**
-	 * Moves this {@link Rectangle} horizontally by the x value of the given
-	 * {@link Point} and vertically by the y value of the given {@link Point}.
-	 * 
-	 * @param p
-	 *            The {@link Point} which provides the translation information
-	 * @return <code>this</code> for convenience
-	 */
-	public Rectangle translate(Point p) {
-		return translate(p.x, p.y);
 	}
 
 	/**
@@ -951,6 +831,57 @@ public final class Rectangle extends AbstractRectangleBasedGeometry implements
 	 */
 	public Rectangle union(Rectangle r) {
 		return union(r.x, r.y, r.width, r.height);
+	}
+
+	public Polyline getOutline() {
+		return new Polyline(x, y, x + width, y, x + width, y + height, x, y
+				+ height, x, y);
+	}
+
+	public boolean contains(IGeometry g) {
+		if (g instanceof Rectangle) {
+			return contains((Rectangle) g);
+		}
+		return CurveUtils.contains(this, g);
+	}
+
+	/**
+	 * Returns true in case the rectangle specified by (x, y, width, height) is
+	 * contained within this {@link Rectangle}.
+	 * 
+	 * @param x
+	 *            The x coordinate of the rectangle to be tested for containment
+	 * @param y
+	 *            The y coordinate of the rectangle to be tested for containment
+	 * @param width
+	 *            The width of the rectangle to be tested for containment
+	 * @param height
+	 *            The height of the rectangle to be tested for containment
+	 * @return <code>true</code> if the rectangle characterized by (x,y, width,
+	 *         height) is (imprecisely) fully contained within this
+	 *         {@link Rectangle}, <code>false</code> otherwise
+	 */
+	public boolean contains(double x, double y, double width, double height) {
+		return PrecisionUtils.smallerEqual(this.x, x)
+				&& PrecisionUtils.smallerEqual(this.y, y)
+				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
+				&& PrecisionUtils
+						.greaterEqual(this.y + this.height, y + height);
+	}
+
+	/**
+	 * Tests whether this {@link Rectangle} fully contains the given other
+	 * {@link Rectangle}.
+	 * 
+	 * @param r
+	 *            the other {@link Rectangle} to test for being contained by
+	 *            this {@link Rectangle}
+	 * @return <code>true</code> if this {@link Rectangle} contains the other
+	 *         {@link Rectangle}, otherwise <code>false</code>
+	 * @see IShape#contains(IGeometry)
+	 */
+	public boolean contains(Rectangle r) {
+		return contains(r.x, r.y, r.width, r.height);
 	}
 
 }

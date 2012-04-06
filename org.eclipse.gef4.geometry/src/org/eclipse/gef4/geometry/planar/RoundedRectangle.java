@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -27,8 +28,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * @author anyssen
  */
-public final class RoundedRectangle extends AbstractRectangleBasedGeometry implements
-		IShape {
+public final class RoundedRectangle extends
+		AbstractRectangleBasedGeometry<Rectangle> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -126,15 +127,6 @@ public final class RoundedRectangle extends AbstractRectangleBasedGeometry imple
 	}
 
 	/**
-	 * @see IGeometry#contains(Rectangle)
-	 */
-	public boolean contains(final Rectangle r) {
-		// check that all border points of the rectangle are contained.
-		return contains(r.getTopLeft()) && contains(r.getTopRight())
-				&& contains(r.getBottomLeft()) && contains(r.getBottomRight());
-	}
-
-	/**
 	 * Returns the arc height of this {@link RoundedRectangle}, which is the
 	 * height of the arc used to define its rounded corners.
 	 * 
@@ -152,47 +144,6 @@ public final class RoundedRectangle extends AbstractRectangleBasedGeometry imple
 	 */
 	public double getArcWidth() {
 		return arcWidth;
-	}
-
-	/**
-	 * @see IGeometry#intersects(Rectangle)
-	 */
-	public boolean intersects(final Rectangle r) {
-		// quick rejection via bounds
-		final Rectangle testRect = getBounds();
-		if (!testRect.intersects(r)) {
-			return false;
-		}
-
-		// check for intersection within the two inner rectangles
-		testRect.setBounds(x, y + arcHeight, width, height - 2 * arcHeight);
-		if (testRect.intersects(r)) {
-			return true;
-		}
-		testRect.setBounds(x + arcWidth, y, width - 2 * arcWidth, height);
-		if (testRect.contains(r)) {
-			return true;
-		}
-
-		// check the arcs
-		final Ellipse e = new Ellipse(x, y, 2 * arcWidth, 2 * arcHeight);
-		if (e.intersects(r)) {
-			return true;
-		}
-		e.setBounds(x, y + height - 2 * arcHeight, 2 * arcWidth, 2 * arcHeight);
-		if (e.intersects(r)) {
-			return true;
-		}
-		e.setBounds(x + width - 2 * arcWidth, y, 2 * arcWidth, 2 * arcHeight);
-		if (e.intersects(r)) {
-			return true;
-		}
-		e.setBounds(x + width - 2 * arcWidth, y + height - 2 * arcHeight,
-				2 * arcWidth, 2 * arcHeight);
-		if (e.intersects(r)) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -344,4 +295,13 @@ public final class RoundedRectangle extends AbstractRectangleBasedGeometry imple
 	public RoundedRectangle getCopy() {
 		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
 	}
+
+	public IPolyCurve getOutline() {
+		return CurveUtils.getOutline(this);
+	}
+
+	public boolean contains(IGeometry g) {
+		return CurveUtils.contains(this, g);
+	}
+
 }

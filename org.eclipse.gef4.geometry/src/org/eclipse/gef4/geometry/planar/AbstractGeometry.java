@@ -22,7 +22,7 @@ abstract class AbstractGeometry implements IGeometry {
 	 * {@link Cloneable}.
 	 */
 	@Override
-	public final Object clone() {
+	public Object clone() {
 		return getCopy();
 	}
 
@@ -44,7 +44,37 @@ abstract class AbstractGeometry implements IGeometry {
 	 * @return a transformed {@link Path} representation of this
 	 *         {@link IGeometry}
 	 */
-	public IGeometry getTransformed(AffineTransform t) {
+	public IGeometry getTransformed(final AffineTransform t) {
 		return toPath().getTransformed(t);
 	}
+
+	// TODO: implement IPolyShape semantic
+	public boolean touches(final IGeometry g) {
+		if (this instanceof ICurve) {
+			if (g instanceof ICurve) {
+				return ((ICurve) this).intersects((ICurve) g)
+						|| ((ICurve) this).overlaps((ICurve) g);
+			} else if (g instanceof IShape) {
+				return ((IShape) g).contains((ICurve) this)
+						|| this.touches(((IShape) g).getOutline());
+			} else {
+				throw new UnsupportedOperationException("Not yet implemented.");
+			}
+		} else if (this instanceof IShape) {
+			if (g instanceof ICurve) {
+				return ((IShape) this).contains((ICurve) g)
+						|| ((IShape) this).getOutline().touches((ICurve) g);
+			} else if (g instanceof IShape) {
+				return ((IShape) this).contains((IShape) g)
+						|| ((IShape) g).contains((IShape) this)
+						|| ((IShape) this).getOutline().touches(
+								((IShape) g).getOutline());
+			} else {
+				throw new UnsupportedOperationException("Not yet implemented.");
+			}
+		} else {
+			throw new UnsupportedOperationException("Not yet implemented.");
+		}
+	}
+
 }

@@ -54,7 +54,7 @@ public class PointListUtilsTests {
 			points[i] = new Point(i * i, i + i);
 		}
 
-		Point[] copy = PointListUtils.getCopy(points);
+		Point[] copy = PointListUtils.copy(points);
 
 		for (int i = 0; i < 10; i++) {
 			assertTrue(points[i].equals(copy[i]));

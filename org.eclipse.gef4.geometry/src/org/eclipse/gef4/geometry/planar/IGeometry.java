@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -37,17 +38,6 @@ public interface IGeometry extends Cloneable, Serializable {
 	boolean contains(final Point p);
 
 	/**
-	 * Returns <code>true</code> if the given {@link Rectangle} is contained
-	 * within {@link IGeometry}, <code>false</code> otherwise.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} to test
-	 * @return <code>true</code> if the {@link Rectangle} is fully contained
-	 *         within this {@link IGeometry}
-	 */
-	boolean contains(final Rectangle r);
-
-	/**
 	 * Returns the smallest {@link Rectangle} fully enclosing this
 	 * {@link IGeometry}.
 	 * 
@@ -55,6 +45,19 @@ public interface IGeometry extends Cloneable, Serializable {
 	 *         {@link IGeometry}
 	 */
 	Rectangle getBounds();
+
+	// TODO: getTightBounds() : Polygon
+
+	/**
+	 * Returns <code>true</code> if the input {@link IGeometry} touches this
+	 * {@link IGeometry}, i.e. there is at least one common point.
+	 * 
+	 * @param g
+	 *            The {@link IGeometry} for the intersection test
+	 * @return <code>true</code> if the input {@link IGeometry} and this
+	 *         {@link IGeometry} have at least one common point.
+	 */
+	boolean touches(IGeometry g);
 
 	/**
 	 * Returns a new {@link IGeometry}, which represents the given
@@ -70,18 +73,6 @@ public interface IGeometry extends Cloneable, Serializable {
 	 *         {@link AffineTransform}.
 	 */
 	IGeometry getTransformed(final AffineTransform t);
-
-	/**
-	 * Returns <code>true</code> if the input Rectangle intersects this
-	 * Geometry, i.e. there is at least one common point. This includes the case
-	 * that the given rectangle is fully contained.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} for the intersection test
-	 * @return <code>true</code> if the input {@link Rectangle} and this
-	 *         {@link IGeometry} have at least one common point.
-	 */
-	boolean intersects(final Rectangle r);
 
 	/**
 	 * Converts this {@link IGeometry} into a {@link Path} representation.

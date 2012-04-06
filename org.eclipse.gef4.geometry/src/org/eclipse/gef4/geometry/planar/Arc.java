@@ -12,12 +12,11 @@
 package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
 
 /**
  * Represents the geometric shape of an arc, which is defined by its enclosing
@@ -27,7 +26,8 @@ import org.eclipse.gef4.geometry.Point;
  * @author anyssen
  * 
  */
-public final class Arc extends AbstractRectangleBasedGeometry implements ICurve {
+public final class Arc extends AbstractRectangleBasedGeometry<Arc> implements
+		ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -108,178 +108,116 @@ public final class Arc extends AbstractRectangleBasedGeometry implements ICurve 
 	}
 
 	/**
-	 * @see IGeometry#contains(Rectangle)
+	 * Returns the extension {@link Angle} of this {@link Arc}, i.e. the
+	 * {@link Angle} defining the span of the {@link Arc}.
+	 * 
+	 * @return the extension {@link Angle} of this {@link Arc}
 	 */
-	public boolean contains(Rectangle r) {
-		return false;
-	}
-
 	public Angle getAngularExtent() {
 		return angularExtent;
 	}
 
 	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * other {@link Arc}.
-	 * 
-	 * @param other
-	 *            The {@link Arc} to test for intersections
-	 * @return the points of intersection.
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
-	public Point[] getIntersections(Arc other) {
-		if (equals(other)) {
-			return new Point[] {};
+	public Arc getCopy() {
+		return new Arc(x, y, width, height, startAngle, angularExtent);
+	}
+
+	public Point[] getIntersections(ICurve g) {
+		return CurveUtils.getIntersections(this, g);
+	}
+
+	/**
+	 * Returns a {@link Point} representing the start point of this {@link Arc}.
+	 * 
+	 * @return the start {@link Point} of this {@link Arc}
+	 */
+	public Point getP1() {
+		return getPoint(Angle.fromRad(0));
+	}
+
+	public Point getP2() {
+		return getPoint(angularExtent);
+	}
+
+	/**
+	 * Computes a {@link Point} on this {@link Arc}. The {@link Point}'s
+	 * coordinates are calculated by moving the given {@link Angle} on the
+	 * {@link Arc} starting at the {@link Arc} start {@link Point}.
+	 * 
+	 * @param angularExtent
+	 * @return the {@link Point} at the given {@link Angle}
+	 */
+	public Point getPoint(Angle angularExtent) {
+		double a = width / 2;
+		double b = height / 2;
+
+		// // calculate start and end points of the arc from start to end
+		return new Point(x + a + a
+				* Math.cos(startAngle.rad() + angularExtent.rad()), y + b - b
+				* Math.sin(startAngle.rad() + angularExtent.rad()));
+	}
+
+	/**
+	 * Returns this {@link Arc}'s start {@link Angle}.
+	 * 
+	 * @return this {@link Arc}'s start {@link Angle}
+	 */
+	public Angle getStartAngle() {
+		return startAngle;
+	}
+
+	public double getX1() {
+		return getP1().x;
+	}
+
+	public double getX2() {
+		return getP2().x;
+	}
+
+	public double getY1() {
+		return getP1().y;
+	}
+
+	public double getY2() {
+		return getP2().y;
+	}
+
+	public boolean intersects(ICurve c) {
+		return CurveUtils.getIntersections(this, c).length > 0;
+	}
+
+	public boolean overlaps(ICurve c) {
+		for (BezierCurve seg1 : toBezier()) {
+			if (seg1.overlaps(c)) {
+				return true;
+			}
 		}
-
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getSegments()) {
-			intersections.addAll(Arrays.asList(getIntersections(seg)));
-		}
-
-		return intersections.toArray(new Point[] {});
+		return false;
 	}
 
 	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link CubicCurve}.
+	 * Sets the extension {@link Angle} of this {@link Arc}.
 	 * 
-	 * @param c
-	 *            The {@link CubicCurve} to test for intersections
-	 * @return the points of intersection.
+	 * @param angularExtent
+	 *            the new extension {@link Angle} for this {@link Arc}
 	 */
-	public Point[] getIntersections(CubicCurve c) {
-		return c.getIntersections(this);
+	public void setAngularExtent(Angle angularExtent) {
+		this.angularExtent = angularExtent;
 	}
 
 	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link Ellipse}.
+	 * Sets the start {@link Angle} of this {@link Arc}.
 	 * 
-	 * @param e
-	 *            The {@link Ellipse} to test for intersections
-	 * @return the points of intersection.
+	 * @param startAngle
+	 *            the new start {@link Angle} for this {@link Arc}
 	 */
-	public Point[] getIntersections(Ellipse e) {
-		return e.getIntersections(this);
+	public void setStartAngle(Angle startAngle) {
+		this.startAngle = startAngle;
 	}
 
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link Line}.
-	 * 
-	 * @param l
-	 *            The {@link Line} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Line l) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getSegments()) {
-			intersections.addAll(Arrays.asList(seg.getIntersections(l)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link Polygon}.
-	 * 
-	 * @param p
-	 *            The {@link Polygon} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Polygon p) {
-		return p.getIntersections(this);
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link Polyline}.
-	 * 
-	 * @param p
-	 *            The {@link Polyline} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Polyline p) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getSegments()) {
-			intersections.addAll(Arrays.asList(seg.getIntersections(p)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link QuadraticCurve}.
-	 * 
-	 * @param c
-	 *            The {@link QuadraticCurve} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(QuadraticCurve c) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getSegments()) {
-			intersections.addAll(Arrays.asList(seg.getIntersections(c)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link Rectangle}.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(Rectangle r) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		for (CubicCurve seg : getSegments()) {
-			intersections.addAll(Arrays.asList(seg.getIntersections(r)));
-		}
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	/**
-	 * Returns the points of intersection between this {@link Arc} and the given
-	 * {@link RoundedRectangle}.
-	 * 
-	 * @param r
-	 *            The {@link RoundedRectangle} to test for intersections
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(RoundedRectangle r) {
-		HashSet<Point> intersections = new HashSet<Point>();
-
-		// line segments
-		intersections.addAll(Arrays.asList(getIntersections(r.getTop())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getLeft())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getBottom())));
-		intersections.addAll(Arrays.asList(getIntersections(r.getRight())));
-
-		// arc segments
-		intersections
-				.addAll(Arrays.asList(getIntersections(r.getTopRightArc())));
-		intersections
-				.addAll(Arrays.asList(getIntersections(r.getTopLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(r
-				.getBottomLeftArc())));
-		intersections.addAll(Arrays.asList(getIntersections(r
-				.getBottomRightArc())));
-
-		return intersections.toArray(new Point[] {});
-	}
-
-	// TODO: rename this method...
-	public CubicCurve[] getSegments() {
+	public CubicCurve[] toBezier() {
 		double start = getStartAngle().rad();
 		double end = getStartAngle().rad() + getAngularExtent().rad();
 
@@ -317,75 +255,10 @@ public final class Arc extends AbstractRectangleBasedGeometry implements ICurve 
 		return segments.toArray(new CubicCurve[] {});
 	}
 
-	public Angle getStartAngle() {
-		return startAngle;
-	}
-
-	public Point getPoint(Angle angularExtent) {
-		double a = width / 2;
-		double b = height / 2;
-
-		// // calculate start and end points of the arc from start to end
-		return new Point(x + a + a
-				* Math.cos(startAngle.rad() + angularExtent.rad()), y + b - b
-				* Math.sin(startAngle.rad() + angularExtent.rad()));
-	}
-
-	/**
-	 * Returns a {@link Point} representing the start point of this {@link Arc}.
-	 * 
-	 * @return
-	 */
-	public Point getP1() {
-		return getPoint(Angle.fromRad(0));
-	}
-
-	public Point getP2() {
-		return getPoint(angularExtent);
-	}
-
-	/**
-	 * @see IGeometry#intersects(Rectangle)
-	 */
-	public boolean intersects(Rectangle r) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setAngularExtent(Angle angularExtent) {
-		this.angularExtent = angularExtent;
-	}
-
-	public void setStartAngle(Angle startAngle) {
-		this.startAngle = startAngle;
-	}
-
 	/**
 	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
-		return toPath(getSegments());
-	}
-
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
-	 */
-	public Arc getCopy() {
-		return new Arc(x, y, width, height, startAngle, angularExtent);
-	}
-
-	public double getY2() {
-		return getP2().y;
-	}
-
-	public double getY1() {
-		return getP1().y;
-	}
-
-	public double getX2() {
-		return getP2().x;
-	}
-
-	public double getX1() {
-		return getP1().x;
+		return toPath(toBezier());
 	}
 }

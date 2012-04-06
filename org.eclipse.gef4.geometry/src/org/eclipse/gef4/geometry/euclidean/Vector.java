@@ -113,7 +113,7 @@ public class Vector implements Cloneable, Serializable {
 
 	/**
 	 * Calculates the magnitude of the cross product of this {@link Vector} with
-	 * another. Normalized the {@link Vector}s before calculating the cross
+	 * another. Normalizes the {@link Vector}s before calculating the cross
 	 * product. Represents the amount by which two {@link Vector}s are
 	 * directionally different. Parallel {@link Vector}s return a value of 0.
 	 * 
@@ -135,7 +135,9 @@ public class Vector implements Cloneable, Serializable {
 	 *         otherwise.
 	 */
 	public boolean isParallelTo(Vector other) {
-		return PrecisionUtils.equal(getDissimilarity(other), 0);
+		Angle alpha = getAngle(other);
+		alpha.setRad(2d * alpha.rad());
+		return alpha.equals(Angle.fromRad(0d));
 	}
 
 	/**
