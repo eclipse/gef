@@ -8,10 +8,11 @@
 		</fileset>
 	</path>
 	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
-
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties"/>
+	
 	<target name="all">
 		<antcall target="generate.api" />
-		<antcall target="generate.developer.guide" />
+		<antcall target="generate.doc" />
 	</target>
 
 	<target name="generate.api">
@@ -64,14 +65,12 @@
 		<echo message="Done." />
 	</target>
 
-	<target name="generate.developer.guide">
-		<echo message="Generating developer guide..." />
-		<wikitext-to-eclipse-help markupLanguage="MediaWiki" multipleOutputFiles="true" navigationImages="true" helpPrefix="help">
-			<fileset dir="${basedir}/reference/developer_guide">
-				<include name="*.mediawiki" />
-			</fileset>
-		</wikitext-to-eclipse-help>
-		<echo message="Done." />
+	<target name="generate.doc">
+		<!-- Set up the base wiki location to pull content from: -->
+		<mediawiki-to-eclipse-help wikiBaseUrl="http://wiki.eclipse.org" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" title="GEF4 Geometry" generateUnifiedToc="false">
+			<!-- Set up which wiki pages to pull from: -->
+			<path name="GEF/GEF4/Geometry" title="GEF4 Geometry Documentation" generateToc="true" />
+		</mediawiki-to-eclipse-help>
 	</target>
 </project>
 

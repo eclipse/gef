@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <toc label="GEF4 Geometry Documentation">
-   <topic href="reference/developer_guide/developer_guide.html" label="Developer Guide">
-		<link toc="reference/developer_guide/guide-toc.xml" />
-	</topic>
-	<topic href="reference/api/overview-summary.html" label="API Reference">
+   <link toc="reference/wiki/GEF-GEF4-Geometry-toc.xml"/>
+   <topic href="reference/api/overview-summary.html" label="API Reference">
 	</topic>
 </toc>
