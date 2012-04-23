@@ -1,30 +1,36 @@
 To execute this build as a Hudson build job, you have to configure the following:
 
 Source-Code-Management:
-+ CVS
-    Cvsroot         
-    	:pserver:anonymous@dev.eclipse.org:/cvsroot/tools
-    Module          
-    	org.eclipse.gef
-    Local directory 
-    	.
++ Git
+	+ Repositories
+    	URL of repository         
+    		http://git.eclipse.org/gitroot/gef/org.eclipse.gef4.git
+    	Name of repository
+    		origin
+		Refspec
+			+refs/heads/*:refs/remotes/origin/*
+    Branches to build
+    	Branch Specifier          
+    		master
+    	Clean after checkout
+    		<checked>
+    	Wipe out workspace before build
+    		<checked>
+    		
+Build Environment:
++ Run Xvnc during build
+	<checked>
     
 Build:
-+ Execute Shell
-    Command 
-    	if [ -d "build" ]; then
-   			rm -fr build
-		fi
-		mkdir build
-		cp -R GEF4/dev/* build/
-		cp -R GEF4/plugins/* build/
-		cp -R GEF4/features/* build/
-
 + Invoke Maven 3
 	Goals
 		clean install
 	POM File
-		build/org.eclipse.gef4.releng/pom.xml
+		org.eclipse.gef4.releng/pom.xml
+	Private repository
+		<checked>
+	Private temporary directory
+		<checked>
 	Profiles
 		hudson.eclipse.org
 	JVM Options
@@ -37,7 +43,7 @@ NOTE: Profiles may be left empty in case no signing is to be performed
       		rm -fr update-site
 		fi
 		mkdir update-site
-		cp -R build/org.eclipse.gef4.repository/target/checksumFix/* update-site/
+		cp -R org.eclipse.gef4.repository/target/checksumFix/* update-site/
 NOTE: In case signing is not performed, build/org.eclipse.gef4.repository/target/checksumFix/* 
       has be replaced with build/org.eclipse.gef4.repository/target/repository/* 
 		
