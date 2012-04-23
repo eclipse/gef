@@ -126,6 +126,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * @see IGeometry#getBounds()
 	 */
+	@Override
 	public Rectangle getBounds() {
 		// extremes of the x(t) and y(t) functions:
 		double[] xts;
@@ -199,6 +200,7 @@ public class CubicCurve extends BezierCurve {
 	 * @return a new {@link CubicCurve} with the same start, end, and control
 	 *         point coordinates
 	 */
+	@Override
 	public CubicCurve getCopy() {
 		return new CubicCurve(getP1(), getCtrl1(), getCtrl2(), getP2());
 	}
@@ -262,6 +264,7 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		return null;
 	}
@@ -360,6 +363,7 @@ public class CubicCurve extends BezierCurve {
 	 *            split point's parameter value
 	 * @return the two {@link CubicCurve}s
 	 */
+	@Override
 	public CubicCurve[] split(double t) {
 		BezierCurve[] split = super.split(t);
 		return new CubicCurve[] { split[0].toCubic(), split[1].toCubic() };
@@ -368,6 +372,7 @@ public class CubicCurve extends BezierCurve {
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		Path p = new Path();
 		p.moveTo(getX1(), getY1());
@@ -376,6 +381,7 @@ public class CubicCurve extends BezierCurve {
 		return p;
 	}
 
+	@Override
 	public String toString() {
 		return "CubicCurve(x1 = " + getX1() + ", y1 = " + getY1()
 				+ ", ctrl1X = " + getCtrlX1() + ", ctrl1Y = " + getCtrlY1()

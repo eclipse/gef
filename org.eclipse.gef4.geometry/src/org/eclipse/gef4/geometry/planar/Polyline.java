@@ -147,6 +147,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		return new Polyline(t.getTransformed(points));
 	}

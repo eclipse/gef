@@ -101,6 +101,7 @@ public class QuadraticCurve extends BezierCurve {
 		return super.getClipped(t1, t2).toQuadratic();
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		QuadraticCurve o = (QuadraticCurve) other;
 
@@ -117,6 +118,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * 
 	 * @return the bounds {@link Rectangle}
 	 */
+	@Override
 	public Rectangle getBounds() {
 		// extremes of the x(t) and y(t) functions:
 		double[] xts;
@@ -185,6 +187,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return a new {@link QuadraticCurve} with the same start, end, and
 	 *         control point coordinates
 	 */
+	@Override
 	public QuadraticCurve getCopy() {
 		return new QuadraticCurve(getP1(), getCtrl(), getP2());
 	}
@@ -275,6 +278,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * @return two QuadraticCurve objects constituting the original curve: 1.
 	 *         [0, t] 2. [t, 1]
 	 */
+	@Override
 	public QuadraticCurve[] split(double t) {
 		BezierCurve[] split = super.split(t);
 		return new QuadraticCurve[] { split[0].toQuadratic(),
@@ -287,6 +291,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * 
 	 * @return a {@link Path} object representing the curve
 	 */
+	@Override
 	public Path toPath() {
 		Path p = new Path();
 		p.moveTo(getX1(), getY1());

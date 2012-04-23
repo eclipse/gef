@@ -281,7 +281,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 * @see #rotateCW(Angle, Point)
 	 */
 	public T rotateCW(Angle alpha) {
-		return (T) rotateCW(alpha, getCentroid());
+		return rotateCW(alpha, getCentroid());
 	}
 
 	/**
@@ -389,7 +389,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 * @return <code>this</code> for convenience
 	 */
 	public T translate(Point p) {
-		return (T) translate(p.x, p.y);
+		return translate(p.x, p.y);
 	}
 
 }

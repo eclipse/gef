@@ -335,6 +335,7 @@ public class AffineTransform {
 		delegate.deltaTransform(srcPts, srcOff, dstPts, dstOff, numPts);
 	}
 
+	@Override
 	public String toString() {
 		return delegate.toString();
 	}
@@ -343,14 +344,17 @@ public class AffineTransform {
 		return delegate.isIdentity();
 	}
 
+	@Override
 	public Object clone() {
 		return delegate.clone();
 	}
 
+	@Override
 	public int hashCode() {
 		return delegate.hashCode();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return delegate.equals(obj);
 	}

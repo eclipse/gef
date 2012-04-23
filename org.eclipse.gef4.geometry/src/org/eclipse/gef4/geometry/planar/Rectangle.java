@@ -195,6 +195,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * @return Returns the result of the equality test
 	 * 
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
@@ -420,7 +421,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCW(Angle alpha, Point center) {
-		return (Polygon) toPolygon().rotateCW(alpha, center);
+		return toPolygon().rotateCW(alpha, center);
 	}
 
 	/**
@@ -451,7 +452,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCCW(Angle alpha, Point center) {
-		return (Polygon) toPolygon().rotateCCW(alpha, center);
+		return toPolygon().rotateCCW(alpha, center);
 	}
 
 	/**
@@ -524,6 +525,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * 
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		// may not be type-intrinsically transformed, so use a polygon
 		// representation
@@ -631,6 +633,7 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 				&& PrecisionUtils.greaterEqual(r.y + r.height, y);
 	}
 
+	@Override
 	public boolean touches(IGeometry g) {
 		if (g instanceof Line) {
 			return touches((Line) g);

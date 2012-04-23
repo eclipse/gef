@@ -182,6 +182,7 @@ public final class Vector3D {
 		return new Point(this.x / this.z, this.y / this.z);
 	}
 
+	@Override
 	public String toString() {
 		return "Vector3D (" + x + ", " + y + ", " + z + ")";
 	}

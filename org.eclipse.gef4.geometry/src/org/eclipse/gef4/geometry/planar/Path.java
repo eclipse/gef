@@ -168,6 +168,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		return new Path(AWT2SWT.toSWTPathData(delegate
 				.getPathIterator(Geometry2AWT.toAWTAffineTransform(t))));

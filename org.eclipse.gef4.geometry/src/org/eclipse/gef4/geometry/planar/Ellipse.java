@@ -383,6 +383,7 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse> implements
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		// choose a path implementation
 		return toPath().getTransformed(t);

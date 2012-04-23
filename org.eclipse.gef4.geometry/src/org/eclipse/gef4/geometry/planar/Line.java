@@ -63,6 +63,7 @@ public class Line extends BezierCurve {
 		this(p1.x, p1.y, p2.x, p2.y);
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		if (p == null) {
 			return false;
@@ -117,6 +118,7 @@ public class Line extends BezierCurve {
 	 * 
 	 * @see IGeometry#getBounds()
 	 */
+	@Override
 	public Rectangle getBounds() {
 		return new Rectangle(getP1(), getP2());
 	}
@@ -127,6 +129,7 @@ public class Line extends BezierCurve {
 	 * 
 	 * @return a new {@link Line} with the same start and end point coordinates
 	 */
+	@Override
 	public Line getCopy() {
 		return new Line(getP1(), getP2());
 	}
@@ -216,6 +219,7 @@ public class Line extends BezierCurve {
 	 * @return an array with two {@link Point}s, whose x and y coordinates match
 	 *         those of this {@link Line}'s start and end point
 	 */
+	@Override
 	public Point[] getPoints() {
 		return new Point[] { getP1(), getP2() };
 	}
@@ -223,6 +227,7 @@ public class Line extends BezierCurve {
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform localTransform) {
 		Point[] transformed = localTransform.getTransformed(getPoints());
 		return new Line(transformed[0], transformed[1]);
@@ -240,6 +245,7 @@ public class Line extends BezierCurve {
 		return super.intersects(c);
 	}
 
+	@Override
 	public boolean touches(IGeometry g) {
 		if (g instanceof Line) {
 			return touches((Line) g);
@@ -424,6 +430,7 @@ public class Line extends BezierCurve {
 	/**
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		Path path = new Path();
 		path.moveTo(getX1(), getY1());

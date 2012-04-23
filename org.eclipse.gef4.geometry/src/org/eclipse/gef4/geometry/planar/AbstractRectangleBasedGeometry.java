@@ -352,7 +352,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * @return <code>this</code> for convenience
 	 */
 	public T translate(Point p) {
-		return (T) translate(p.x, p.y);
+		return translate(p.x, p.y);
 	}
 
 }

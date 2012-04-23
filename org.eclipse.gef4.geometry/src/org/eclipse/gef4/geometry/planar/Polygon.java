@@ -314,6 +314,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
+	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		// shape type should remain polygon (not path)
 		return new Polygon(t.getTransformed(points));

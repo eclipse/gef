@@ -55,18 +55,18 @@ abstract class AbstractGeometry implements IGeometry {
 				return ((ICurve) this).intersects((ICurve) g)
 						|| ((ICurve) this).overlaps((ICurve) g);
 			} else if (g instanceof IShape) {
-				return ((IShape) g).contains((ICurve) this)
+				return ((IShape) g).contains(this)
 						|| this.touches(((IShape) g).getOutline());
 			} else {
 				throw new UnsupportedOperationException("Not yet implemented.");
 			}
 		} else if (this instanceof IShape) {
 			if (g instanceof ICurve) {
-				return ((IShape) this).contains((ICurve) g)
-						|| ((IShape) this).getOutline().touches((ICurve) g);
+				return ((IShape) this).contains(g)
+						|| ((IShape) this).getOutline().touches(g);
 			} else if (g instanceof IShape) {
-				return ((IShape) this).contains((IShape) g)
-						|| ((IShape) g).contains((IShape) this)
+				return ((IShape) this).contains(g)
+						|| ((IShape) g).contains(this)
 						|| ((IShape) this).getOutline().touches(
 								((IShape) g).getOutline());
 			} else {
