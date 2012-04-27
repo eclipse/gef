@@ -30,12 +30,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.zest.core.widgets.CGraphNode;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
+import org.eclipse.zest.core.widgets.custom.CGraphNode;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 /**
