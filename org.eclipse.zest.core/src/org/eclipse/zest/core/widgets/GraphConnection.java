@@ -665,6 +665,7 @@ public class GraphConnection extends GraphItem {
 					p.x = getConnection().getPoints().getPoint(getIndex()).x;
 					p.y = (int) (getConnection().getPoints().getPoint(
 							getIndex()).y - (curveDepth * 1.5));
+					getConnection().translateToAbsolute(p);
 					return p;
 				}
 			};
