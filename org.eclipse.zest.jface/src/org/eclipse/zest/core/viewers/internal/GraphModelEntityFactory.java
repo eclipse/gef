@@ -63,7 +63,9 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 		}
 		for (int i = 0; i < entities.length; i++) {
 			Object data = entities[i];
-			createNode(model, data);
+			if (!filterElement(inputElement, data)) {
+				createNode(model, data);
+			}
 		}
 
 		// We may have other entities (such as children of containers)
