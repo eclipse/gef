@@ -15,9 +15,12 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.util.DelegatingDragAdapter;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -26,6 +29,8 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.GraphViewer;
+import org.eclipse.zest.core.viewers.IGraphContentProvider;
+import org.eclipse.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
@@ -131,6 +136,118 @@ public class GraphViewerTests extends TestCase {
 		viewer.getControl().notifyListeners(SWT.Selection, new Event());
 		assertFalse("Post selection listeners should be notified",
 				selected.isEmpty());
+	}
+
+	/**
+	 * Assert that a ViewerFilter filters both nodes and connections when using
+	 * an IGraphEntityContentProvider (see
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=381852)
+	 */
+	public void testViewerFilterWithGraphEntityContentProvider() {
+		testViewerFilter(new SampleGraphEntityContentProvider());
+	}
+
+	/**
+	 * Assert that a ViewerFilter filters both nodes and connections when using
+	 * an IGraphContentProvider.
+	 */
+	public void testViewerFilterWithGraphContentProvider() {
+		testViewerFilter(new SampleGraphContentProvider());
+	}
+
+	public void testViewerFilter(IContentProvider contentProvider) {
+		viewer.setContentProvider(contentProvider);
+		viewer.setInput(new Object());
+		assertNodesAndConnections(3, 3);
+		viewer.setFilters(new ViewerFilter[] { new SampleBooleanFilter(false) });
+		assertNodesAndConnections(0, 0);
+		viewer.setFilters(new ViewerFilter[] { new SampleBooleanFilter(true) });
+		assertNodesAndConnections(3, 3);
+	}
+
+	private void assertNodesAndConnections(int nodes, int connections) {
+		assertEquals(nodes, viewer.getGraphControl().getNodes().size());
+		assertEquals(connections, viewer.getGraphControl().getConnections()
+				.size());
+	}
+
+	static class SampleBooleanFilter extends ViewerFilter {
+		private final boolean filter;
+
+		SampleBooleanFilter(boolean filter) {
+			this.filter = filter;
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			return filter;
+		}
+	}
+
+	static class SampleGraphContentProvider implements IGraphContentProvider {
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+		}
+
+		public Object getDestination(Object r) {
+			if (r.equals("1to2"))
+				return "2";
+			if (r.equals("2to3"))
+				return "3";
+			if (r.equals("3to1"))
+				return "1";
+			return null;
+		}
+
+		public Object[] getElements(Object arg0) {
+			return new String[] { "1to2", "2to3", "3to1" };
+		}
+
+		public Object getSource(Object r) {
+			if (r.equals("1to2"))
+				return "1";
+			if (r.equals("2to3"))
+				return "2";
+			if (r.equals("3to1"))
+				return "3";
+			return null;
+		}
+
+	}
+
+	static class SampleGraphEntityContentProvider implements
+			IGraphEntityContentProvider {
+
+		public Object[] getConnectedTo(Object entity) {
+			if (entity.equals("1")) {
+				return new Object[] { "2" };
+			}
+			if (entity.equals("2")) {
+				return new Object[] { "3" };
+			}
+			if (entity.equals("3")) {
+				return new Object[] { "2" };
+			}
+			return null;
+		}
+
+		public Object[] getElements(Object inputElement) {
+			return new String[] { "1", "2", "3" };
+		}
+
+		public double getWeight(Object entity1, Object entity2) {
+			return 0;
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 	}
 
 }

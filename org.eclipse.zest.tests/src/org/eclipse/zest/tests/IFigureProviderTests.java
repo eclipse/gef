@@ -14,6 +14,7 @@ import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.Ellipse;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -22,6 +23,8 @@ import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IFigureProvider;
 import org.eclipse.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.zest.core.widgets.custom.CGraphNode;
+import org.eclipse.zest.tests.GraphViewerTests.SampleGraphContentProvider;
+import org.eclipse.zest.tests.GraphViewerTests.SampleGraphEntityContentProvider;
 
 /**
  * Tests for the {@link IFigureProvider} class.
@@ -61,11 +64,18 @@ public class IFigureProviderTests extends TestCase {
 	/**
 	 * Test with IGraphContentProvider that provides destinations and sources.
 	 */
-	public void testWithFullProvider() {
-		testWith(new FullContentProvider());
+	public void testWithGraphProvider() {
+		testWith(new SampleGraphEntityContentProvider());
 	}
 
-	private void testWith(IGraphContentProvider contentProvider) {
+	/**
+	 * Test with IGraphEntityContentProvider.
+	 */
+	public void testWithGraphEntityProvider() {
+		testWith(new SampleGraphContentProvider());
+	}
+
+	private void testWith(IStructuredContentProvider contentProvider) {
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new CustomLabelProvider());
 		viewer.setInput(new Object());
@@ -119,40 +129,6 @@ public class IFigureProviderTests extends TestCase {
 		}
 
 		public Object getDestination(Object r) {
-			return null;
-		}
-
-		public Object[] getElements(Object arg0) {
-			return new String[] { "1to2", "2to3", "3to1" };
-		}
-
-		public Object getSource(Object r) {
-			if (r.equals("1to2"))
-				return "1";
-			if (r.equals("2to3"))
-				return "2";
-			if (r.equals("3to1"))
-				return "3";
-			return null;
-		}
-
-	}
-
-	private class FullContentProvider implements IGraphContentProvider {
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
-		}
-
-		public Object getDestination(Object r) {
-			if (r.equals("1to2"))
-				return "2";
-			if (r.equals("2to3"))
-				return "3";
-			if (r.equals("3to1"))
-				return "1";
 			return null;
 		}
 
