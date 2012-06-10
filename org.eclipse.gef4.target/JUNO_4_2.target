@@ -4,7 +4,7 @@
 <target name="JUNO_4_2" sequenceNumber="14">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120603-1910"/>
+<unit id="org.eclipse.sdk.ide" version="4.2.0.I20120608-1400"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.2-I-builds"/>
 </location>
 </locations>
