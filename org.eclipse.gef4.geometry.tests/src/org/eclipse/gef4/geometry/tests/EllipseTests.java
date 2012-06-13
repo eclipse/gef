@@ -11,16 +11,18 @@
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.Ellipse;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.junit.Test;
-
 
 /**
  * Unit tests for {@link Ellipse}.
@@ -34,35 +36,32 @@ public class EllipseTests {
 			.getPrecisionFraction();
 
 	@Test
-	public void test_contains_with_Point() {
+	public void test_equals() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertFalse(e.equals(null));
+		assertFalse(e.equals(new Point()));
+		assertEquals(e, e);
+		assertEquals(e, new Ellipse(0, 0, 100, 50));
+		assertEquals(e, new Ellipse(new Rectangle(0, 0, 100, 50)));
+		assertEquals(e, e.getCopy());
+		assertFalse(e.equals(new Ellipse(0, 0, 100, 10)));
+		assertFalse(e.equals(new Ellipse(0, 0, 10, 50)));
+		assertFalse(e.equals(new Ellipse(10, 0, 100, 50)));
+		assertFalse(e.equals(new Ellipse(0, 10, 100, 50)));
+	}
+
+	@Test
+	public void test_contains_Point() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);
 
-		assertTrue(e.contains(r.getCentroid()));
+		checkPointContainment(r, e);
 
-		assertTrue(e.contains(r.getLeft()));
-		assertTrue(e.contains(r.getLeft().getTranslated(PRECISION_FRACTION * 1,
-				0)));
-		assertFalse(e.contains(r.getLeft().getTranslated(
-				-PRECISION_FRACTION * 1000, 0)));
-
+		// these things could not be tested in the general case, because of
+		// AWT's behavior
 		assertTrue(e.contains(r.getTop()));
-		assertTrue(e.contains(r.getTop().getTranslated(0,
-				PRECISION_FRACTION * 100)));
-		assertFalse(e.contains(r.getTop().getTranslated(0,
-				-PRECISION_FRACTION * 100)));
-
 		assertTrue(e.contains(r.getRight()));
-		assertTrue(e.contains(r.getRight().getTranslated(
-				-PRECISION_FRACTION * 100, 0)));
-		assertFalse(e.contains(r.getRight().getTranslated(
-				PRECISION_FRACTION * 100, 0)));
-
 		assertTrue(e.contains(r.getBottom()));
-		assertTrue(e.contains(r.getBottom().getTranslated(0,
-				-PRECISION_FRACTION * 100)));
-		assertFalse(e.contains(r.getBottom().getTranslated(0,
-				PRECISION_FRACTION * 100)));
 
 		for (Point p : e.getIntersections(new Line(r.getTopLeft(), r
 				.getBottomRight()))) {
@@ -72,10 +71,75 @@ public class EllipseTests {
 				.getBottomLeft()))) {
 			assertTrue(e.contains(p));
 		}
+
+		for (CubicCurve c : e.getOutlineSegments()) {
+			assertTrue(e.contains(c.get(0.5)));
+		}
+	}
+
+	private void checkPointContainment(Rectangle r, IGeometry g) {
+		assertFalse(g.contains(r.getTopLeft()));
+		assertFalse(g.contains(r.getTopRight()));
+		assertFalse(g.contains(r.getBottomLeft()));
+		assertFalse(g.contains(r.getBottomRight()));
+
+		assertTrue(g.contains(r.getCentroid()));
+
+		assertTrue(g.contains(r.getLeft()));
+		assertTrue(g.contains(r.getLeft().getTranslated(PRECISION_FRACTION * 1,
+				0)));
+		assertFalse(g.contains(r.getLeft().getTranslated(
+				-PRECISION_FRACTION * 1000, 0)));
+
+		// due to AWT's behavior, we won't check getTop() but a point very near
+		// to it, so that the Path() will survive these tests, too
+		assertTrue(g.contains(r.getTop().getTranslated(0, 1)));
+		assertTrue(g.contains(r.getTop().getTranslated(0,
+				PRECISION_FRACTION * 100)));
+		assertFalse(g.contains(r.getTop().getTranslated(0,
+				-PRECISION_FRACTION * 100)));
+
+		// due to AWT's behavior, we won't check getRight() but a point very
+		// near to it, so that the Path() will survive these tests, too
+		assertTrue(g.contains(r.getRight().getTranslated(-1, 0)));
+		assertTrue(g.contains(r.getRight().getTranslated(
+				-PRECISION_FRACTION * 100, 0)));
+		assertFalse(g.contains(r.getRight().getTranslated(
+				PRECISION_FRACTION * 100, 0)));
+
+		// due to AWT's behavior, we won't check getBottom() but a point very
+		// near to it, so that the Path() will survive these tests, too
+		assertTrue(g.contains(r.getBottom().getTranslated(0, -1)));
+		assertTrue(g.contains(r.getBottom().getTranslated(0,
+				-PRECISION_FRACTION * 100)));
+		assertFalse(g.contains(r.getBottom().getTranslated(0,
+				PRECISION_FRACTION * 100)));
 	}
 
 	@Test
-	public void test_intersects_with_Line() {
+	public void test_contains_Line() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertFalse(e.contains(new Line(-10, -10, 10, -10)));
+		assertFalse(e.contains(new Line(-10, -10, 50, 50)));
+		assertTrue(e.contains(new Line(1, 25, 99, 25)));
+		assertTrue(e.contains(new Line(0, 25, 100, 25)));
+	}
+
+	@Test
+	public void test_getCenter() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertEquals(new Point(50, 25), e.getCenter());
+		e.scale(2);
+		assertEquals(new Point(50, 25), e.getCenter());
+		e.scale(0.5);
+		e.scale(2, new Point());
+		assertEquals(new Point(100, 50), e.getCenter());
+		e.translate(-100, -50);
+		assertEquals(new Point(), e.getCenter());
+	}
+
+	@Test
+	public void test_intersects_Line() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);
 		for (Line l : r.getOutlineSegments()) {
@@ -83,8 +147,45 @@ public class EllipseTests {
 		}
 	}
 
+	private void checkPoints(Point[] expected, Point[] obtained) {
+		assertEquals(expected.length, obtained.length);
+		for (Point e : expected) {
+			boolean found = false;
+			for (Point o : obtained) {
+				if (e.equals(o)) {
+					found = true;
+					break;
+				}
+			}
+			assertTrue(found);
+		}
+	}
+
 	@Test
-	public void test_get_intersections_with_Ellipse_strict() {
+	public void test_getIntersections_Line() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		Line lh = new Line(0, 25, 100, 25);
+		Point[] is = e.getIntersections(lh);
+		checkPoints(new Point[] { new Point(0, 25), new Point(100, 25) }, is);
+		Line lv = new Line(50, 0, 50, 50);
+		is = e.getIntersections(lv);
+		checkPoints(new Point[] { new Point(50, 0), new Point(50, 50) }, is);
+
+		lh = lh.getTranslated(new Point(0, -25)).toLine();
+		is = e.getIntersections(lh);
+		checkPoints(new Point[] { new Point(50, 0) }, is);
+
+		lv = lv.getTranslated(new Point(-50, 0)).toLine();
+		is = e.getIntersections(lv);
+		checkPoints(new Point[] { new Point(0, 25) }, is);
+
+		Line li = new Line(-100, 100, 0, 50);
+		is = e.getIntersections(li);
+		assertEquals(0, is.length);
+	}
+
+	@Test
+	public void test_get_intersections_Ellipse_strict() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e1 = new Ellipse(r);
 		Ellipse e2 = new Ellipse(r);
@@ -203,7 +304,7 @@ public class EllipseTests {
 	}
 
 	@Test
-	public void test_getIntersections_with_Ellipse_tolerance() {
+	public void test_getIntersections_Ellipse_tolerance() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e1 = new Ellipse(r);
 		Ellipse e2 = new Ellipse(r);
@@ -245,7 +346,7 @@ public class EllipseTests {
 
 	// @Ignore("This test is too strict. For a liberal test see below: test_getIntersections_with_Ellipse_Bezier_special_tolerance")
 	@Test
-	public void test_getIntersections_with_Ellipse_Bezier_special() {
+	public void test_getIntersections_Ellipse_Bezier_special() {
 		// 3 nearly tangential intersections
 		Ellipse e1 = new Ellipse(126, 90, 378, 270);
 		Ellipse e2 = new Ellipse(222, 77, 200, 200);
@@ -263,7 +364,7 @@ public class EllipseTests {
 	}
 
 	@Test
-	public void test_getIntersections_with_Ellipse_Bezier_special_tolerance() {
+	public void test_getIntersections_Ellipse_Bezier_special_tolerance() {
 		// 3 nearly tangential intersections
 		Ellipse e1 = new Ellipse(126, 90, 378, 270);
 		Ellipse e2 = new Ellipse(222, 77, 200, 200);
@@ -277,6 +378,19 @@ public class EllipseTests {
 
 		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
 		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
+	}
+
+	@Test
+	public void test_toPath() {
+		Rectangle r = new Rectangle(0, 0, 100, 50);
+		Ellipse e = new Ellipse(r);
+		checkPointContainment(r, e.toPath());
+	}
+
+	@Test
+	public void test_toString() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertEquals("Ellipse (0.0, 0.0, 100.0, 50.0)", e.toString());
 	}
 
 }

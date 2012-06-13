@@ -333,11 +333,14 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 		}
 		infoLabel.setText(infoText);
 
+		// open the shell before creating the controllable shapes so that their
+		// default coordinates are not changed due to the resize of their canvas
+		shell.open();
+
 		controllableShape1 = createControllableShape1(shell);
 		controllableShape2 = createControllableShape2(shell);
 
 		shell.addPaintListener(this);
-		shell.open();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

@@ -39,8 +39,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  */
-public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
-		implements IShape {
+public final class Rectangle extends
+		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -149,6 +149,37 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	}
 
 	/**
+	 * Returns true in case the rectangle specified by (x, y, width, height) is
+	 * contained within this {@link Rectangle}.
+	 * 
+	 * @param x
+	 *            The x coordinate of the rectangle to be tested for containment
+	 * @param y
+	 *            The y coordinate of the rectangle to be tested for containment
+	 * @param width
+	 *            The width of the rectangle to be tested for containment
+	 * @param height
+	 *            The height of the rectangle to be tested for containment
+	 * @return <code>true</code> if the rectangle characterized by (x,y, width,
+	 *         height) is (imprecisely) fully contained within this
+	 *         {@link Rectangle}, <code>false</code> otherwise
+	 */
+	public boolean contains(double x, double y, double width, double height) {
+		return PrecisionUtils.smallerEqual(this.x, x)
+				&& PrecisionUtils.smallerEqual(this.y, y)
+				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
+				&& PrecisionUtils
+						.greaterEqual(this.y + this.height, y + height);
+	}
+
+	public boolean contains(IGeometry g) {
+		if (g instanceof Rectangle) {
+			return contains((Rectangle) g);
+		}
+		return CurveUtils.contains(this, g);
+	}
+
+	/**
 	 * Returns whether the given point is within the boundaries of this
 	 * Rectangle. The boundaries are inclusive of the top and left edges, but
 	 * exclusive of the bottom and right edges.
@@ -160,6 +191,21 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 */
 	public boolean contains(Point p) {
 		return contains(p.x(), p.y());
+	}
+
+	/**
+	 * Tests whether this {@link Rectangle} fully contains the given other
+	 * {@link Rectangle}.
+	 * 
+	 * @param r
+	 *            the other {@link Rectangle} to test for being contained by
+	 *            this {@link Rectangle}
+	 * @return <code>true</code> if this {@link Rectangle} contains the other
+	 *         {@link Rectangle}, otherwise <code>false</code>
+	 * @see IShape#contains(IGeometry)
+	 */
+	public boolean contains(Rectangle r) {
+		return contains(r.x, r.y, r.width, r.height);
 	}
 
 	/**
@@ -256,33 +302,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 */
 	public double getArea() {
 		return width * height;
-	}
-
-	/**
-	 * Returns an array of {@link Point}s representing the top-left, top-right,
-	 * bottom-right, and bottom-left border points of this {@link Rectangle}.
-	 * 
-	 * @return An array containing the border points of this {@link Rectangle}
-	 */
-	public Point[] getPoints() {
-		return new Point[] { getTopLeft(), getTopRight(), getBottomRight(),
-				getBottomLeft() };
-	}
-
-	/**
-	 * Returns an array of {@link Line}s representing the top, right, bottom,
-	 * and left borders of this {@link Rectangle}.
-	 * 
-	 * @return An array containing {@link Line} representations of this
-	 *         {@link Rectangle}'s borders.
-	 */
-	public Line[] getOutlineSegments() {
-		Line[] segments = new Line[4];
-		segments[0] = new Line(x, y, x + width, y);
-		segments[1] = new Line(x + width, y, x + width, y + height);
-		segments[2] = new Line(x + width, y + height, x, y + height);
-		segments[3] = new Line(x, y + height, x, y);
-		return segments;
 	}
 
 	/**
@@ -383,6 +402,38 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 		return new Point(x, y + height / 2);
 	}
 
+	public Polyline getOutline() {
+		return new Polyline(x, y, x + width, y, x + width, y + height, x, y
+				+ height, x, y);
+	}
+
+	/**
+	 * Returns an array of {@link Line}s representing the top, right, bottom,
+	 * and left borders of this {@link Rectangle}.
+	 * 
+	 * @return An array containing {@link Line} representations of this
+	 *         {@link Rectangle}'s borders.
+	 */
+	public Line[] getOutlineSegments() {
+		Line[] segments = new Line[4];
+		segments[0] = new Line(x, y, x + width, y);
+		segments[1] = new Line(x + width, y, x + width, y + height);
+		segments[2] = new Line(x + width, y + height, x, y + height);
+		segments[3] = new Line(x, y + height, x, y);
+		return segments;
+	}
+
+	/**
+	 * Returns an array of {@link Point}s representing the top-left, top-right,
+	 * bottom-right, and bottom-left border points of this {@link Rectangle}.
+	 * 
+	 * @return An array containing the border points of this {@link Rectangle}
+	 */
+	public Point[] getPoints() {
+		return new Point[] { getTopLeft(), getTopRight(), getBottomRight(),
+				getBottomLeft() };
+	}
+
 	/**
 	 * Returns a new Point which represents the middle point of the right hand
 	 * side of this Rectangle.
@@ -391,37 +442,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 */
 	public Point getRight() {
 		return new Point(x + width, y + height / 2);
-	}
-
-	/**
-	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * around the center ({@link #getCentroid()}) of this {@link Rectangle}.
-	 * 
-	 * @see #getRotatedCW(Angle, Point)
-	 * @param alpha
-	 *            the rotation {@link Angle}
-	 * @return the resulting {@link Polygon}
-	 */
-	public Polygon getRotatedCW(Angle alpha) {
-		return getRotatedCW(alpha, getCentroid());
-	}
-
-	/**
-	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * alpha around the given {@link Point}.
-	 * 
-	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
-	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
-	 * That's why this method returns a {@link Polygon} instead.
-	 * 
-	 * @param alpha
-	 *            the rotation angle
-	 * @param center
-	 *            the center point for the rotation
-	 * @return the resulting {@link Polygon}
-	 */
-	public Polygon getRotatedCW(Angle alpha, Point center) {
-		return toPolygon().rotateCW(alpha, center);
 	}
 
 	/**
@@ -434,7 +454,28 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCCW(Angle alpha) {
-		return getRotatedCCW(alpha, getCentroid());
+		Point centroid = getCentroid();
+		return toPolygon().rotateCCW(alpha, centroid.x, centroid.y);
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} counter-clock-wise by the given
+	 * {@link Angle} around the given {@link Point}.
+	 * 
+	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
+	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
+	 * That's why this method returns a {@link Polygon} instead.
+	 * 
+	 * @param alpha
+	 *            the rotation angle
+	 * @param cx
+	 *            x-component of the center point for the rotation
+	 * @param cy
+	 *            y-component of the center point for the rotation
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCCW(Angle alpha, double cx, double cy) {
+		return toPolygon().rotateCCW(alpha, cx, cy);
 	}
 
 	/**
@@ -452,7 +493,59 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCCW(Angle alpha, Point center) {
-		return toPolygon().rotateCCW(alpha, center);
+		return toPolygon().rotateCCW(alpha, center.x, center.y);
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
+	 * around the center ({@link #getCentroid()}) of this {@link Rectangle}.
+	 * 
+	 * @see #getRotatedCW(Angle, Point)
+	 * @param alpha
+	 *            the rotation {@link Angle}
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCW(Angle alpha) {
+		Point centroid = getCentroid();
+		return toPolygon().rotateCW(alpha, centroid.x, centroid.y);
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
+	 * alpha around the given {@link Point} (cx, cy).
+	 * 
+	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
+	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
+	 * That's why this method returns a {@link Polygon} instead.
+	 * 
+	 * @param alpha
+	 *            the rotation angle
+	 * @param cx
+	 *            x-component of the center point for the rotation
+	 * @param cy
+	 *            y-component of the center point for the rotation
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCW(Angle alpha, double cx, double cy) {
+		return toPolygon().rotateCW(alpha, cx, cy);
+	}
+
+	/**
+	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
+	 * alpha around the given {@link Point}.
+	 * 
+	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
+	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
+	 * That's why this method returns a {@link Polygon} instead.
+	 * 
+	 * @param alpha
+	 *            the rotation angle
+	 * @param center
+	 *            the center point for the rotation
+	 * @return the resulting {@link Polygon}
+	 */
+	public Polygon getRotatedCW(Angle alpha, Point center) {
+		return toPolygon().rotateCW(alpha, center.x, center.y);
 	}
 
 	/**
@@ -592,58 +685,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	}
 
 	/**
-	 * Tests whether this {@link Rectangle} and the given {@link Line} touch,
-	 * i.e. whether they have at least one point in common.
-	 * 
-	 * @param l
-	 *            The {@link Line} to test.
-	 * @return <code>true</code> if this {@link Rectangle} and the given
-	 *         {@link Line} share at least one common point, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean touches(Line l) {
-		if (contains(l.getP1()) || contains(l.getP2())) {
-			return true;
-		}
-
-		for (Line segment : getOutlineSegments()) {
-			if (segment.intersects(l)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Tests whether this {@link Rectangle} and the given other
-	 * {@link Rectangle} touch, i.e. whether they have at least one point in
-	 * common.
-	 * 
-	 * @param r
-	 *            The {@link Rectangle} to test
-	 * @return <code>true</code> if this {@link Rectangle} and the given
-	 *         {@link Rectangle} share at least one common point,
-	 *         <code>false</code> otherwise.
-	 * @see IGeometry#touches(IGeometry)
-	 */
-	public boolean touches(Rectangle r) {
-		return PrecisionUtils.smallerEqual(r.x, x + width)
-				&& PrecisionUtils.smallerEqual(r.y, y + height)
-				&& PrecisionUtils.greaterEqual(r.x + r.width, x)
-				&& PrecisionUtils.greaterEqual(r.y + r.height, y);
-	}
-
-	@Override
-	public boolean touches(IGeometry g) {
-		if (g instanceof Line) {
-			return touches((Line) g);
-		} else if (g instanceof Rectangle) {
-			return touches((Rectangle) g);
-		}
-		return super.touches(g);
-	}
-
-	/**
 	 * Returns <code>true</code> if this Rectangle's width or height is less
 	 * than or equal to 0.
 	 * 
@@ -744,6 +785,57 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 				(int) Math.ceil(height + y - Math.floor(y)));
 	}
 
+	public boolean touches(IGeometry g) {
+		if (g instanceof Line) {
+			return touches((Line) g);
+		} else if (g instanceof Rectangle) {
+			return touches((Rectangle) g);
+		}
+		return super.touches(g);
+	}
+
+	/**
+	 * Tests whether this {@link Rectangle} and the given {@link Line} touch,
+	 * i.e. whether they have at least one point in common.
+	 * 
+	 * @param l
+	 *            The {@link Line} to test.
+	 * @return <code>true</code> if this {@link Rectangle} and the given
+	 *         {@link Line} share at least one common point, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean touches(Line l) {
+		if (contains(l.getP1()) || contains(l.getP2())) {
+			return true;
+		}
+
+		for (Line segment : getOutlineSegments()) {
+			if (segment.intersects(l)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tests whether this {@link Rectangle} and the given other
+	 * {@link Rectangle} touch, i.e. whether they have at least one point in
+	 * common.
+	 * 
+	 * @param r
+	 *            The {@link Rectangle} to test
+	 * @return <code>true</code> if this {@link Rectangle} and the given
+	 *         {@link Rectangle} share at least one common point,
+	 *         <code>false</code> otherwise.
+	 * @see IGeometry#touches(IGeometry)
+	 */
+	public boolean touches(Rectangle r) {
+		return PrecisionUtils.smallerEqual(r.x, x + width)
+				&& PrecisionUtils.smallerEqual(r.y, y + height)
+				&& PrecisionUtils.greaterEqual(r.x + r.width, x)
+				&& PrecisionUtils.greaterEqual(r.y + r.height, y);
+	}
+
 	/**
 	 * Switches the x and y values, as well as the width and height of this
 	 * Rectangle. Useful for orientation changes.
@@ -834,57 +926,6 @@ public final class Rectangle extends AbstractRectangleBasedGeometry<Rectangle>
 	 */
 	public Rectangle union(Rectangle r) {
 		return union(r.x, r.y, r.width, r.height);
-	}
-
-	public Polyline getOutline() {
-		return new Polyline(x, y, x + width, y, x + width, y + height, x, y
-				+ height, x, y);
-	}
-
-	public boolean contains(IGeometry g) {
-		if (g instanceof Rectangle) {
-			return contains((Rectangle) g);
-		}
-		return CurveUtils.contains(this, g);
-	}
-
-	/**
-	 * Returns true in case the rectangle specified by (x, y, width, height) is
-	 * contained within this {@link Rectangle}.
-	 * 
-	 * @param x
-	 *            The x coordinate of the rectangle to be tested for containment
-	 * @param y
-	 *            The y coordinate of the rectangle to be tested for containment
-	 * @param width
-	 *            The width of the rectangle to be tested for containment
-	 * @param height
-	 *            The height of the rectangle to be tested for containment
-	 * @return <code>true</code> if the rectangle characterized by (x,y, width,
-	 *         height) is (imprecisely) fully contained within this
-	 *         {@link Rectangle}, <code>false</code> otherwise
-	 */
-	public boolean contains(double x, double y, double width, double height) {
-		return PrecisionUtils.smallerEqual(this.x, x)
-				&& PrecisionUtils.smallerEqual(this.y, y)
-				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
-				&& PrecisionUtils
-						.greaterEqual(this.y + this.height, y + height);
-	}
-
-	/**
-	 * Tests whether this {@link Rectangle} fully contains the given other
-	 * {@link Rectangle}.
-	 * 
-	 * @param r
-	 *            the other {@link Rectangle} to test for being contained by
-	 *            this {@link Rectangle}
-	 * @return <code>true</code> if this {@link Rectangle} contains the other
-	 *         {@link Rectangle}, otherwise <code>false</code>
-	 * @see IShape#contains(IGeometry)
-	 */
-	public boolean contains(Rectangle r) {
-		return contains(r.x, r.y, r.width, r.height);
 	}
 
 }

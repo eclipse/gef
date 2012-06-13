@@ -40,10 +40,6 @@ public class RectangleTests {
 		void action(Rectangle rect, Point tl, Point br);
 	}
 
-	private interface IPairAction {
-		void action(Rectangle r1, Rectangle r2);
-	}
-
 	private static final double PRECISION_FRACTION = TestUtils
 			.getPrecisionFraction();
 
@@ -52,32 +48,6 @@ public class RectangleTests {
 
 	private static final double UNRECOGNIZABLE_FRACTION = PRECISION_FRACTION
 			- PRECISION_FRACTION / 10;
-
-	private void forRectanglePairs(IPairAction action) {
-		for (double x11 = -2; x11 <= 2.4; x11 += 1.1) {
-			for (double y11 = -2; y11 <= 2.4; y11 += 1.1) {
-				Point p11 = new Point(x11, y11);
-				for (double x12 = -2; x12 <= 2.4; x12 += 1.1) {
-					for (double y12 = -2; y12 <= 2.4; y12 += 1.1) {
-						Point p12 = new Point(x12, y12);
-						Rectangle r1 = new Rectangle(p11, p12);
-						for (double x21 = -2; x21 <= 2.4; x21 += 1.1) {
-							for (double y21 = -2; y21 <= 2.4; y21 += 1.1) {
-								Point p21 = new Point(x21, y21);
-								for (double x22 = -2; x22 <= 2.4; x22 += 1.1) {
-									for (double y22 = -2; y22 <= 2.4; y22 += 1.1) {
-										Point p22 = new Point(x22, y22);
-										Rectangle r2 = new Rectangle(p21, p22);
-										action.action(r1, r2);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
 	private void forRectangles(IAction action) {
 		for (double x1 = -2; x1 <= 2; x1 += 0.4) {
@@ -198,6 +168,12 @@ public class RectangleTests {
 		assertTrue(recognizableExpanded.contains(preciseRect));
 		assertFalse(recognizableShrinked.contains(preciseRect));
 		assertFalse(recognizableShrinked.contains(recognizableExpanded));
+
+		// Regression test for a contains() bug that caused false positives for
+		// a "containing" Rectangle with smaller x and y coordinates and greater
+		// width and height as the "contained" one.
+		assertFalse(new Rectangle(0, 0, 100, 100).contains(new Rectangle(200,
+				200, 1, 1)));
 	}
 
 	@Test

@@ -216,8 +216,7 @@ public class Point implements Cloneable, Serializable {
 	 * @return The new, scaled {@link Point}
 	 */
 	public Point getScaled(double factorX, double factorY, Point center) {
-		return getTranslated(center.getNegated()).scale(factorX, factorY)
-				.translate(center);
+		return getCopy().scale(factorX, factorY, center);
 	}
 
 	/**

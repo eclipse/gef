@@ -48,6 +48,16 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	}
 
 	/**
+	 * Constructs a new {@link Polyline} from the given array of {@link Line}
+	 * segments.
+	 * 
+	 * @param segmentsArray
+	 */
+	public Polyline(Line[] segmentsArray) {
+		super(PointListUtils.toPointsArray(segmentsArray, false));
+	}
+
+	/**
 	 * Constructs a new {@link Polyline} from the given sequence of
 	 * {@link Point} s. The {@link Polyline} that is created will be
 	 * automatically closed, i.e. it will not only contain a segment between
@@ -60,16 +70,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 */
 	public Polyline(Point... points) {
 		super(points);
-	}
-
-	/**
-	 * Constructs a new {@link Polyline} from the given array of {@link Line}
-	 * segments.
-	 * 
-	 * @param segmentsArray
-	 */
-	public Polyline(Line[] segmentsArray) {
-		super(PointListUtils.toPointsArray(segmentsArray, false));
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o instanceof Polygon) {
+		if (o instanceof Polyline) {
 			Polyline p = (Polyline) o;
 			return equals(p.getPoints());
 		}
@@ -129,7 +129,15 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		if (points.length != this.points.length) {
 			return false;
 		}
-		return PointListUtils.equals(this.points, points);
+		return PointListUtils.equals(this.points, points)
+				|| PointListUtils.equalsReverse(this.points, points);
+	}
+
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Polyline getCopy() {
+		return new Polyline(getPoints());
 	}
 
 	/**
@@ -144,6 +152,18 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return PointListUtils.toSegmentsArray(points, false);
 	}
 
+	public Point[] getIntersections(ICurve c) {
+		return CurveUtils.getIntersections(c, this);
+	}
+
+	public Point getP1() {
+		return points[0].getCopy();
+	}
+
+	public Point getP2() {
+		return points[points.length - 1].getCopy();
+	}
+
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
@@ -152,18 +172,32 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return new Polyline(t.getTransformed(points));
 	}
 
-	/**
-	 * Tests whether this {@link Polyline} and the given {@link Rectangle}
-	 * touch, i.e. they have at least one {@link Point} in common.
-	 * 
-	 * @param rect
-	 *            the {@link Rectangle} to test
-	 * @return <code>true</code> if this {@link Polyline} and the
-	 *         {@link Rectangle} touch, otherwise <code>false</code>
-	 * @see IGeometry#touches(IGeometry)
-	 */
-	public boolean touches(Rectangle rect) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public double getX1() {
+		return getP1().x;
+	}
+
+	public double getX2() {
+		return getP2().x;
+	}
+
+	public double getY1() {
+		return getP1().y;
+	}
+
+	public double getY2() {
+		return getP2().y;
+	}
+
+	public boolean intersects(ICurve c) {
+		return CurveUtils.intersects(c, this);
+	}
+
+	public boolean overlaps(ICurve c) {
+		return CurveUtils.overlaps(c, this);
+	}
+
+	public Line[] toBezier() {
+		return PointListUtils.toSegmentsArray(points, false);
 	}
 
 	/**
@@ -208,50 +242,17 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	}
 
 	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 * Tests whether this {@link Polyline} and the given {@link Rectangle}
+	 * touch, i.e. they have at least one {@link Point} in common.
+	 * 
+	 * @param rect
+	 *            the {@link Rectangle} to test
+	 * @return <code>true</code> if this {@link Polyline} and the
+	 *         {@link Rectangle} touch, otherwise <code>false</code>
+	 * @see IGeometry#touches(IGeometry)
 	 */
-	public Polyline getCopy() {
-		return new Polyline(getPoints());
-	}
-
-	public double getY2() {
-		return getP2().y;
-	}
-
-	public double getY1() {
-		return getP1().y;
-	}
-
-	public double getX2() {
-		return getP2().x;
-	}
-
-	public double getX1() {
-		return getP1().x;
-	}
-
-	public Point getP2() {
-		return points[points.length - 1].getCopy();
-	}
-
-	public Point getP1() {
-		return points[0].getCopy();
-	}
-
-	public Line[] toBezier() {
-		return PointListUtils.toSegmentsArray(points, false);
-	}
-
-	public Point[] getIntersections(ICurve c) {
-		return CurveUtils.getIntersections(c, this);
-	}
-
-	public boolean intersects(ICurve c) {
-		return CurveUtils.intersects(c, this);
-	}
-
-	public boolean overlaps(ICurve c) {
-		return CurveUtils.overlaps(c, this);
+	public boolean touches(Rectangle rect) {
+		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 }

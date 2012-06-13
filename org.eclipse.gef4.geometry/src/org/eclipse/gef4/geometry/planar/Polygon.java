@@ -13,6 +13,10 @@
 package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
@@ -33,6 +37,24 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  */
 public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		IShape {
+
+	/**
+	 * The {@link NonSimplePolygonException} is thrown if a non-simple
+	 * {@link Polygon}, i.e. a {@link Polygon} with self-intersections, is asked
+	 * for its triangulation ({@link Polygon#getTriangulation()}).
+	 */
+	@SuppressWarnings("serial")
+	public class NonSimplePolygonException extends RuntimeException {
+		@SuppressWarnings("javadoc")
+		public NonSimplePolygonException() {
+			super();
+		}
+
+		@SuppressWarnings("javadoc")
+		public NonSimplePolygonException(String s) {
+			super(s);
+		}
+	}
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -73,6 +95,87 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 	private static final long serialVersionUID = 1L;
 
+	private static Polygon clipEar(Polygon p, int[] ear, ArrayList<Polygon> ears) {
+		Point[] points = p.getPoints();
+		ears.add(new Polygon(points[ear[0]], points[ear[1]], points[ear[2]]));
+		return new Polygon(getPointsWithout(points, ear[1]));
+	}
+
+	/**
+	 * Searches the given list of {@link Point}s for a vertex that starts an
+	 * ear. An ear is a list of 3 vertices which build up a triangle that lies
+	 * inside the {@link Polygon} respective to the list of {@link Point}s and
+	 * can be clipped out of it so that the remaining {@link Polygon} remains
+	 * simple.
+	 * 
+	 * @param points
+	 * @return
+	 */
+	private static int[] findEarVertex(Polygon p) {
+		Point[] points = p.getPoints();
+
+		for (int start = 0; start < points.length; start++) {
+			int mid = start == points.length - 1 ? 0 : start + 1;
+			int end = start == points.length - 2 ? 0
+					: start == points.length - 1 ? 1 : start + 2;
+
+			if (p.contains(new Line(points[start], points[end]))) {
+				return new int[] { start, mid, end };
+			}
+		}
+
+		// this should never happen (for simple polygons)
+		return null;
+	}
+
+	private static Point[] getPointsWithout(Point[] points,
+			int... indicesToRemove) {
+		Point[] rest = new Point[points.length - indicesToRemove.length];
+		Arrays.sort(indicesToRemove);
+		for (int i = 0, j = 0; i < indicesToRemove.length; i++) {
+			for (int r = j; r < indicesToRemove[i]; r++)
+				rest[r - i] = points[r];
+			j = indicesToRemove[i] + 1;
+		}
+		for (int i = indicesToRemove[indicesToRemove.length - 1] + 1; i < points.length; i++)
+			rest[i - indicesToRemove.length] = points[i];
+		return rest;
+	}
+
+	/**
+	 * Clips exactly one ear off of the given {@link Polygon} and adds it to the
+	 * list of ears. If the resulting {@link Polygon} is a triangle, this is
+	 * added to the list of ears, too. Otherwise, the method recurses.
+	 * 
+	 * @param p
+	 * @param ears
+	 */
+	private static void triangulate(Polygon p, ArrayList<Polygon> ears) {
+		if (p == null) {
+			throw new IllegalArgumentException(
+					"The given Polygon may not be null.");
+		}
+		if (ears == null) {
+			throw new IllegalArgumentException(
+					"The given ear-list may not be null.");
+		}
+		if (p.points.length < 3) {
+			throw new IllegalArgumentException(
+					"The given Polygon may not have less than three vertices.");
+		}
+
+		if (p.points.length == 3) {
+			ears.add(p.getCopy());
+			return;
+		}
+
+		int[] ear = findEarVertex(p);
+		Polygon rest = clipEar(p, ear, ears);
+
+		// recurse
+		triangulate(rest, ears);
+	}
+
 	/**
 	 * Constructs a new {@link Polygon} from a even-numbered sequence of
 	 * coordinates. Similar to {@link Polygon#Polygon(Point...)}, only that
@@ -102,6 +205,34 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	}
 
 	/**
+	 * Assures that this {@link Polygon} is simple, i.e. it does not have any
+	 * self-intersections. We do not need to test for voids as they are not
+	 * considered in the interpretation of the {@link Polygon}'s {@link Point}s.
+	 * 
+	 * If the {@link Polygon} does not have at least three vertices, a
+	 * {@link NonSimplePolygonException} is thrown.
+	 * 
+	 * The edges are added to the {@link Polygon} one after the other. If a
+	 * self-intersection is found an {@link NonSimplePolygonException} is
+	 * thrown.
+	 */
+	private void assureSimplicity() throws NonSimplePolygonException {
+		if (points.length < 3)
+			throw new NonSimplePolygonException(
+					"A polygon can only be constructed of at least 3 vertices.");
+
+		for (Line e1 : getOutlineSegments())
+			for (Line e2 : getOutlineSegments())
+				if (!e1.getP1().equals(e2.getP1())
+						&& !e1.getP2().equals(e2.getP1())
+						&& !e1.getP1().equals(e2.getP2())
+						&& !e1.getP2().equals(e2.getP2()))
+					if (e1.touches(e2))
+						throw new NonSimplePolygonException(
+								"Only simple polygons allowed. A polygon without any self-intersections is considered to be simple. This polygon is not simple.");
+	}
+
+	/**
 	 * Checks whether the point that is represented by its x- and y-coordinates
 	 * is contained within this {@link Polygon}.
 	 * 
@@ -115,6 +246,67 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 */
 	public boolean contains(double x, double y) {
 		return contains(new Point(x, y));
+	}
+
+	public boolean contains(IGeometry g) {
+		if (g instanceof Line) {
+			return contains((Line) g);
+		} else if (g instanceof Polygon) {
+			return contains((Polygon) g);
+		} else if (g instanceof Polyline) {
+			return contains((Polyline) g);
+		} else if (g instanceof Rectangle) {
+			return contains((Rectangle) g);
+		}
+		return CurveUtils.contains(this, g);
+	}
+
+	/**
+	 * Checks whether the given {@link Line} is fully contained within this
+	 * {@link Polygon}.
+	 * 
+	 * @param line
+	 *            The {@link Line} to test for containment
+	 * @return <code>true</code> if the given {@link Line} is fully contained,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean contains(Line line) {
+		// quick rejection test: if the end points are not contained, the line
+		// may not be contained
+		if (!contains(line.getP1()) || !contains(line.getP2())) {
+			return false;
+		}
+
+		Set<Double> intersectionParams = new HashSet<Double>();
+
+		for (Line seg : getOutlineSegments()) {
+			Point poi = seg.getIntersection(line);
+			if (poi != null)
+				intersectionParams.add(line.getParameterAt(poi));
+		}
+
+		if (intersectionParams.size() <= 1) {
+			return true;
+		}
+
+		Double[] poiParams = intersectionParams.toArray(new Double[] {});
+		Arrays.sort(poiParams, new Comparator<Double>() {
+			public int compare(Double t, Double u) {
+				double d = t - u;
+				return d < 0 ? -1 : d > 0 ? 1 : 0;
+			}
+		});
+
+		// check the points between the intersections for containment
+		if (!contains(line.get(poiParams[0] / 2))) {
+			return false;
+		}
+		for (int i = 0; i < poiParams.length - 1; i++) {
+			if (!contains(line.get((poiParams[i] + poiParams[i + 1]) / 2))) {
+				return false;
+			}
+		}
+		return contains(line.get((poiParams[poiParams.length - 1] + 1) / 2));
 	}
 
 	/**
@@ -211,6 +403,57 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		}
 	}
 
+	/**
+	 * Checks whether the given {@link Polygon} is fully contained within this
+	 * {@link Polygon}.
+	 * 
+	 * @param p
+	 *            The {@link Polygon} to test for containment
+	 * @return <code>true</code> if the given {@link Polygon} is fully
+	 *         contained, <code>false</code> otherwise.
+	 */
+	public boolean contains(Polygon p) {
+		// all segments of the given polygon have to be contained
+		Line[] otherSegments = p.getOutlineSegments();
+		for (int i = 0; i < otherSegments.length; i++) {
+			if (!contains(otherSegments[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Tests if the given {@link Polyline} p is contained in this
+	 * {@link Polygon}.
+	 * 
+	 * @param p
+	 * @return true if it is contained, false otherwise
+	 */
+	public boolean contains(Polyline p) {
+		// all segments of the given polygon have to be contained
+		Line[] otherSegments = p.getCurves();
+		for (int i = 0; i < otherSegments.length; i++) {
+			if (!contains(otherSegments[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether the given {@link Rectangle} is fully contained within this
+	 * {@link Polygon}.
+	 * 
+	 * @param r
+	 *            the {@link Rectangle} to test for containment
+	 * @return <code>true</code> if the given {@link Rectangle} is fully
+	 *         contained, <code>false</code> otherwise.
+	 */
+	public boolean contains(Rectangle r) {
+		return contains(r.toPolygon());
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -272,21 +515,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * @return the area of this {@link Polygon}
 	 */
 	public double getArea() {
-		if (points.length < 3) {
-			return 0;
-		}
-
-		double area = 0;
-		for (int i = 0; i < points.length - 1; i++) {
-			area += points[i].x * points[i + 1].y - points[i].y
-					* points[i + 1].x;
-		}
-
-		// closing segment
-		area += points[points.length - 2].x * points[points.length - 1].y
-				- points[points.length - 2].y * points[points.length - 1].x;
-
-		return Math.abs(area) * 0.5;
+		return Math.abs(getSignedArea());
 	}
 
 	/**
@@ -297,6 +526,10 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 */
 	public Polygon getCopy() {
 		return new Polygon(getPoints());
+	}
+
+	public Polyline getOutline() {
+		return new Polyline(PointListUtils.toSegmentsArray(points, true));
 	}
 
 	/**
@@ -312,12 +545,52 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	}
 
 	/**
+	 * Computes the signed area of this {@link Polygon}. The sign of the area is
+	 * negative for counter clockwise ordered vertices. It is positive for
+	 * clockwise ordered vertices.
+	 * 
+	 * @return the signed area of this {@link Polygon}
+	 */
+	public double getSignedArea() {
+		if (points.length < 3) {
+			return 0;
+		}
+
+		double area = 0;
+		for (int i = 0; i < points.length - 1; i++) {
+			area += points[i].x * points[i + 1].y - points[i].y
+					* points[i + 1].x;
+		}
+
+		// closing segment
+		area += points[points.length - 2].x * points[points.length - 1].y
+				- points[points.length - 2].y * points[points.length - 1].x;
+
+		return area * 0.5;
+	}
+
+	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		// shape type should remain polygon (not path)
 		return new Polygon(t.getTransformed(points));
+	}
+
+	/**
+	 * Naive, recursive ear-clipping algorithm to triangulate this simple,
+	 * planar {@link Polygon}.
+	 * 
+	 * @return triangulation {@link Polygon}s (triangles)
+	 * @throws NonSimplePolygonException
+	 *             if <code>this</code> is a non-simple {@link Polygon}
+	 */
+	public Polygon[] getTriangulation() throws NonSimplePolygonException {
+		assureSimplicity();
+		ArrayList<Polygon> ears = new ArrayList<Polygon>(points.length - 2);
+		triangulate(this, ears);
+		return ears.toArray(new Polygon[] {});
 	}
 
 	/**
@@ -351,110 +624,4 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		return stringBuffer.toString();
 	}
 
-	public Polyline getOutline() {
-		return new Polyline(PointListUtils.toSegmentsArray(points, true));
-	}
-
-	/**
-	 * Checks whether the given {@link Line} is fully contained within this
-	 * {@link Polygon}.
-	 * 
-	 * @param line
-	 *            The {@link Line} to test for containment
-	 * @return <code>true</code> if the given {@link Line} is fully contained,
-	 *         <code>false</code> otherwise
-	 */
-	public boolean contains(Line line) {
-		// quick rejection test: if the end points are not contained, the line
-		// may not be contained
-		if (!contains(line.getP1()) || !contains(line.getP2())) {
-			return false;
-		}
-
-		// check for intersections with the segments of this polygon
-		for (int i = 0; i < points.length; i++) {
-			Point p1 = points[i];
-			Point p2 = i + 1 < points.length ? points[i + 1] : points[0];
-			Line segment = new Line(p1, p2);
-			if (line.intersects(segment)) {
-				Point intersection = line.getIntersection(segment);
-				if (intersection != null && !line.getP1().equals(intersection)
-						&& !line.getP2().equals(intersection)
-						&& !segment.getP1().equals(intersection)
-						&& !segment.getP2().equals(intersection)) {
-					// if we have a single intersection point and this does not
-					// match one of the end points of the line, the line is not
-					// contained
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks whether the given {@link Polygon} is fully contained within this
-	 * {@link Polygon}.
-	 * 
-	 * @param p
-	 *            The {@link Polygon} to test for containment
-	 * @return <code>true</code> if the given {@link Polygon} is fully
-	 *         contained, <code>false</code> otherwise.
-	 */
-	public boolean contains(Polygon p) {
-		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getOutlineSegments();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (!contains(otherSegments[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks whether the given {@link Rectangle} is fully contained within this
-	 * {@link Polygon}.
-	 * 
-	 * @param r
-	 *            the {@link Rectangle} to test for containment
-	 * @return <code>true</code> if the given {@link Rectangle} is fully
-	 *         contained, <code>false</code> otherwise.
-	 */
-	public boolean contains(Rectangle r) {
-		return contains(r.toPolygon());
-	}
-
-	/**
-	 * Tests if the given {@link Polyline} p is contained in this
-	 * {@link Polygon}.
-	 * 
-	 * @param p
-	 * @return true if it is contained, false otherwise
-	 */
-	public boolean contains(Polyline p) {
-		// all segments of the given polygon have to be contained
-		Line[] otherSegments = p.getCurves();
-		for (int i = 0; i < otherSegments.length; i++) {
-			if (!contains(otherSegments[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public boolean contains(IGeometry g) {
-		if (g instanceof Line) {
-			return contains((Line) g);
-		} else if (g instanceof Polygon) {
-			return contains((Polygon) g);
-		} else if (g instanceof Polyline) {
-			return contains((Polyline) g);
-		} else if (g instanceof Rectangle) {
-			return contains((Rectangle) g);
-		}
-		return CurveUtils.contains(this, g);
-	}
-
-	// TODO: union point, rectangle, polygon, etc.
 }

@@ -45,9 +45,12 @@ public class DimensionTests {
 	public void test_contains() {
 		Dimension d1 = new Dimension(0.1, 0.1);
 		Dimension d2 = new Dimension(0.2, 0.2);
+		Dimension d3 = new Dimension(0.1, 0.3);
 
 		assertTrue(d2.contains(d1));
 		assertFalse(d1.contains(d2));
+		assertFalse(d2.contains(d3));
+		assertTrue(d3.contains(d1));
 	}
 
 	@Test
@@ -64,16 +67,20 @@ public class DimensionTests {
 	 */
 	@Test
 	public void test_equals() {
-		Dimension p1 = new Dimension(0.1, 0.1);
-		Dimension p2 = new Dimension(0.2, 0.2);
-		assertFalse(p1.equals(p2));
+		Dimension d1 = new Dimension(0.1, 0.1);
+		Dimension d2 = new Dimension(0.2, 0.2);
+		Dimension d3 = new Dimension(0.1, 0.2);
+		Dimension d4 = new Dimension(0.2, 0.1);
+		assertFalse(d1.equals(d2));
+		assertFalse(d1.equals(d3));
+		assertFalse(d1.equals(d4));
 
-		p1 = new Dimension(0.2, 0.2);
-		assertTrue(p1.equals(p2));
+		d1 = new Dimension(0.2, 0.2);
+		assertTrue(d1.equals(d2));
 
 		// wrong type
-		p1 = new Dimension(1, 1);
-		assertFalse(p1.equals(new org.eclipse.swt.graphics.Point(1, 1)));
+		d1 = new Dimension(1, 1);
+		assertFalse(d1.equals(new org.eclipse.swt.graphics.Point(1, 1)));
 	}
 
 	@Test

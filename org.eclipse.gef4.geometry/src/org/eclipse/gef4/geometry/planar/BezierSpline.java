@@ -14,7 +14,7 @@ package org.eclipse.gef4.geometry.planar;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 
-public class BezierSpline implements ICurve {
+public class BezierSpline extends AbstractGeometry implements ICurve {
 
 	public boolean contains(Point p) {
 		// TODO Auto-generated method stub

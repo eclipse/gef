@@ -184,7 +184,7 @@ public final class Vector3D {
 
 	@Override
 	public String toString() {
-		return "Vector3D (" + x + ", " + y + ", " + z + ")";
+		return "Vector3D(" + x + ", " + y + ", " + z + ")";
 	}
 
 	@Override

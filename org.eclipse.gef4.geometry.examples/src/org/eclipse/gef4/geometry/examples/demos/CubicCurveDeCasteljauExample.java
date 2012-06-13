@@ -9,9 +9,11 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.examples.intersection;
+package org.eclipse.gef4.geometry.examples.demos;
 
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample.AbstractControllableShape;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;

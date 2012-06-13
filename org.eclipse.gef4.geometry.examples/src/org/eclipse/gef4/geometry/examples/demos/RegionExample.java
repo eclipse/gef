@@ -9,23 +9,26 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.examples.intersection;
+package org.eclipse.gef4.geometry.examples.demos;
 
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample.AbstractControllableShape;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
-import org.eclipse.gef4.geometry.planar.Polygon;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.Region;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-public class ConvexHullExample extends AbstractIntersectionExample {
+public class RegionExample extends AbstractIntersectionExample {
 	public static void main(String[] args) {
-		new ConvexHullExample("Convex Hull Example");
+		new RegionExample("Region Example");
 	}
 
-	public ConvexHullExample(String title) {
+	public RegionExample(String title) {
 		super(title);
 	}
 
@@ -34,26 +37,41 @@ public class ConvexHullExample extends AbstractIntersectionExample {
 			@Override
 			public void createControlPoints() {
 				addControlPoint(new Point(100, 100));
-				addControlPoint(new Point(150, 400));
-				addControlPoint(new Point(200, 300));
-				addControlPoint(new Point(250, 150));
-				addControlPoint(new Point(300, 250));
-				addControlPoint(new Point(350, 200));
-				addControlPoint(new Point(400, 350));
+				addControlPoint(new Point(200, 200));
+
+				addControlPoint(new Point(150, 150));
+				addControlPoint(new Point(250, 250));
 			}
 
 			@Override
-			public IGeometry createGeometry() {
-				Polygon convexHull = new Polygon(
-						PointListUtils.getConvexHull(getControlPoints()));
-				return convexHull;
+			public Region createGeometry() {
+				Point[] cp = getControlPoints();
+				Region region = new Region(new Rectangle(cp[0], cp[1]),
+						new Rectangle(cp[2], cp[3]));
+				return region;
 			}
 
 			@Override
 			public void drawShape(GC gc) {
-				Polygon convexHull = (Polygon) createGeometry();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), convexHull.toPath().toSWTPathData()));
+				Region region = createGeometry();
+
+				gc.setClipping(region.toSWTRegion());
+
+				for (int y = 0; y < 800; y += 20) {
+					gc.drawString(
+							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+							20, y);
+				}
+
+				gc.setClipping((org.eclipse.swt.graphics.Region) null);
+
+				gc.setAlpha(128);
+				gc.setBackground(Display.getCurrent().getSystemColor(
+						SWT.COLOR_BLUE));
+				for (Rectangle r : region.getShapes()) {
+					gc.fillRectangle(r.toSWTRectangle());
+				}
+				gc.setAlpha(255);
 			}
 		};
 	}

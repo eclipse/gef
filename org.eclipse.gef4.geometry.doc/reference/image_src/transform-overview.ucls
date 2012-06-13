@@ -1,0 +1,44 @@
+<class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.transform.AffineTransform" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/transform/AffineTransform.java" binary="false">    
+    <position height="-1" width="-1" x="169" y="127"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.transform.IRotatable" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/transform/IRotatable.java" binary="false">    
+    <position height="-1" width="-1" x="448" y="-207"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <interface id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.transform.IScalable" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/transform/IScalable.java" binary="false">    
+    <position height="-1" width="-1" x="671" y="-160"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <interface id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.transform.ITranslatable" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/transform/ITranslatable.java" binary="false">    
+    <position height="-1" width="-1" x="874" y="-225"/>    
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </interface>  
+  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
+    <attributes public="true" package="false" protected="false" private="false"/>    
+    <operations public="true" package="false" protected="false" private="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

@@ -126,6 +126,10 @@ public class PointTests {
 		q = new Point(3, 6);
 		assertTrue(p.getScaled(3, 6).equals(q));
 		assertTrue(q.getScaled(1f / 3f, 1f / 6f).equals(p));
+
+		// scale around some other point
+		Point c = new Point(10, 10);
+		assertEquals(new Point(9, 8), q.getScaled(1d / 7d, 1d / 2d, c));
 	}
 
 	@Test

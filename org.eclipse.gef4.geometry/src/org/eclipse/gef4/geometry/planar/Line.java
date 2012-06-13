@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
@@ -198,6 +201,43 @@ public class Line extends BezierCurve {
 				: null;
 	}
 
+	/**
+	 * Provides an optimized version of the
+	 * {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
+	 * method.
+	 * 
+	 * @param other
+	 * @param intersections
+	 * @return see
+	 *         {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
+	 */
+	public Set<IntervalPair> getIntersectionIntervalPairs(Line other,
+			Set<Point> intersections) {
+		Straight s1 = new Straight(this);
+		Straight s2 = new Straight(other);
+		Vector vi = s1.getIntersection(s2);
+		if (vi != null) {
+			Point pi = vi.toPoint();
+			if (contains(pi)) {
+				double param1 = s1.getParameterAt(pi);
+				double param2 = s2.getParameterAt(pi);
+				HashSet<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
+				intervalPairs.add(new IntervalPair(this, new Interval(param1,
+						param1), other, new Interval(param2, param2)));
+				return intervalPairs;
+			}
+		}
+		return new HashSet<IntervalPair>();
+	}
+
+	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
+			Set<Point> intersections) {
+		if (other instanceof Line) {
+			return getIntersectionIntervalPairs((Line) other, intersections);
+		}
+		return super.getIntersectionIntervalPairs(other, intersections);
+	}
+
 	@Override
 	public Point[] getIntersections(BezierCurve curve) {
 		if (curve instanceof Line) {
@@ -233,6 +273,13 @@ public class Line extends BezierCurve {
 		return new Line(transformed[0], transformed[1]);
 	}
 
+	/**
+	 * Provides an optimized version of the
+	 * {@link BezierCurve#intersects(ICurve)} method.
+	 * 
+	 * @param l
+	 * @return see {@link BezierCurve#intersects(ICurve)}
+	 */
 	public boolean intersects(Line l) {
 		return getIntersection(l) != null;
 	}

@@ -12,17 +12,35 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Polyline;
 import org.junit.Test;
 
 public class PolylineTests {
 
-	private static final Polyline POLYLINE = new Polyline(new Point[] {
-			new Point(0, 0), new Point(1, 0), new Point(6, 5) });
+	private static final Point[] POINTS = new Point[] { new Point(0, 0),
+			new Point(1, 0), new Point(6, 5) };
+	private static final Polyline POLYLINE = new Polyline(POINTS);
+
+	@Test
+	public void test_equals() {
+		assertEquals(POLYLINE, POLYLINE);
+		assertFalse(POLYLINE.equals((Object) null));
+		assertFalse(POLYLINE.equals(new Line(1, 2, 3, 4)));
+
+		List<Point> points = Arrays.asList(POINTS);
+		Collections.reverse(points);
+		assertEquals(POLYLINE, new Polyline(points.toArray(new Point[] {})));
+	}
 
 	@Test
 	public void test_contains_with_Point() {

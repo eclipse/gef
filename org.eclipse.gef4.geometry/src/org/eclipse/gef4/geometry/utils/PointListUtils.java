@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Polyline;
@@ -32,13 +34,15 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 public class PointListUtils {
 
 	/**
-	 * Compares two array of {@link Point} for equality.
+	 * Compares two arrays of {@link Point} for equality.
+	 * 
+	 * TODO: What is the benefit over using Arrays.equals()?
 	 * 
 	 * @param p1
 	 *            the first array of points to compare
 	 * @param p2
 	 *            the second array of points to compare
-	 * @return <code>true</code> in case both arrays are of the same lenght and
+	 * @return <code>true</code> in case both arrays are of the same length and
 	 *         for each index <code>i</code> it holds that <code>p1[i]</code>
 	 *         equals <code>p2[i]</code>, <code>false</code> otherwise
 	 */
@@ -48,6 +52,29 @@ public class PointListUtils {
 		}
 		for (int i = 0; i < p1.length; i++) {
 			if (!p1[i].equals(p2[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Compares two arrays of {@link Point} for reverse equality, i.e. if one
+	 * array is the reverse of the other array.
+	 * 
+	 * @param p1
+	 *            the first array of {@link Point} to compare
+	 * @param p2
+	 *            the second array of {@link Point} to compare
+	 * @return <code>true</code> in case one array is the reverse of the other
+	 *         array, <code>false</code> otherwise
+	 */
+	public static boolean equalsReverse(Point[] p1, Point[] p2) {
+		if (p1.length != p2.length) {
+			return false;
+		}
+		for (int i = 0; i < p1.length; i++) {
+			if (!p1[i].equals(p2[p1.length - i - 1])) {
 				return false;
 			}
 		}
@@ -321,6 +348,101 @@ public class PointListUtils {
 		}
 
 		return points;
+	}
+
+	/**
+	 * Computes the centroid of the given {@link Point}s. The centroid is the
+	 * "center of gravity", i.e. assuming the {@link Polygon} spanned by the
+	 * {@link Point}s is made of a material of constant density, it will be in a
+	 * balanced state, if you put it on a pin that is placed exactly on its
+	 * centroid.
+	 * 
+	 * @param points
+	 * @return the center {@link Point} (or centroid) of the given {@link Point}
+	 *         s
+	 */
+	public static Point computeCentroid(Point... points) {
+		if (points.length == 0) {
+			return null;
+		} else if (points.length == 1) {
+			return points[0].getCopy();
+		}
+
+		double cx = 0, cy = 0, a, sa = 0;
+		for (int i = 0; i < points.length - 1; i++) {
+			a = points[i].x * points[i + 1].y - points[i].y * points[i + 1].x;
+			sa += a;
+			cx += (points[i].x + points[i + 1].x) * a;
+			cy += (points[i].y + points[i + 1].y) * a;
+		}
+
+		// closing segment
+		a = points[points.length - 2].x * points[points.length - 1].y
+				- points[points.length - 2].y * points[points.length - 1].x;
+		sa += a;
+		cx += (points[points.length - 2].x + points[points.length - 1].x) * a;
+		cy += (points[points.length - 2].x + points[points.length - 1].x) * a;
+
+		return new Point(cx / (3 * sa), cy / (3 * sa));
+	}
+
+	/**
+	 * Rotates (in-place) the given {@link Point}s counter-clock-wise (CCW) by
+	 * the specified {@link Angle} around the given center {@link Point}.
+	 * 
+	 * @param points
+	 * @param angle
+	 * @param cx
+	 * @param cy
+	 */
+	public static void rotateCCW(Point[] points, Angle angle, double cx,
+			double cy) {
+		translate(points, -cx, -cy);
+		for (Point p : points) {
+			Point np = new Vector(p).rotateCCW(angle).toPoint();
+			p.x = np.x;
+			p.y = np.y;
+		}
+		translate(points, cx, cy);
+	}
+
+	/**
+	 * Rotates (in-place) the given {@link Point}s clock-wise (CW) by the
+	 * specified {@link Angle} around the given center {@link Point}.
+	 * 
+	 * @param points
+	 * @param angle
+	 * @param cx
+	 * @param cy
+	 */
+	public static void rotateCW(Point[] points, Angle angle, double cx,
+			double cy) {
+		translate(points, -cx, -cy);
+		for (Point p : points) {
+			Point np = new Vector(p).rotateCW(angle).toPoint();
+			p.x = np.x;
+			p.y = np.y;
+		}
+		translate(points, cx, cy);
+	}
+
+	/**
+	 * Scales the given array of {@link Point}s by the given x and y scale
+	 * factors around the given center {@link Point} (cx, cy).
+	 * 
+	 * @param points
+	 * @param fx
+	 * @param fy
+	 * @param cx
+	 * @param cy
+	 */
+	public static void scale(Point[] points, double fx, double fy, double cx,
+			double cy) {
+		translate(points, -cx, -cy);
+		for (Point p : points) {
+			p.scale(fx, fy);
+		}
+		translate(points, cx, cy);
 	}
 
 }

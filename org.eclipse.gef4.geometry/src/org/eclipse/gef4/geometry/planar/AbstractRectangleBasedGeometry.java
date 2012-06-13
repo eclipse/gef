@@ -14,16 +14,32 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.transform.IRotatable;
+import org.eclipse.gef4.geometry.transform.IScalable;
+import org.eclipse.gef4.geometry.transform.ITranslatable;
 
 /**
+ * <p>
  * Abstract superclass of geometries that are defined by means of their upper
  * left coordinate (x,y) and a given width and height.
+ * </p>
+ * 
+ * <p>
+ * The type parameter <code>T</code> specifies the type of the inheriting class.
+ * This is to be able to return the correct type, so that a type cast is
+ * unnecessary.
+ * </p>
+ * 
+ * <p>
+ * The type parameter <code>S</code> specifies the result type of all rotation
+ * short-cut methods. See {@link IRotatable} for more information.
+ * </p>
  * 
  * @author anyssen
- * 
  */
-abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?>>
-		extends AbstractGeometry {
+abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
+		extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
+		IRotatable<S> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,26 +69,25 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * which is the location of its bounds.
 	 * 
 	 * @return a {@link Point} representing the location of this
-	 *         {@link AbstractRectangleBasedGeometry} 's bounds
+	 *         {@link AbstractRectangleBasedGeometry}'s bounds
 	 */
 	public Point getLocation() {
 		return new Point(x, y);
 	}
 
-	/**
-	 * Returns a new {@link AbstractPointListBasedGeometry} which is scaled by
-	 * the given factor. The {@link AbstractPointListBasedGeometry} is
-	 * translated by the negated centroid (see {@link #getCentroid()}) first.
-	 * The translation is reversed afterwards.
-	 * 
-	 * @param factor
-	 *            The scale-factor
-	 * @return The new scaled {@link AbstractPointListBasedGeometry}
-	 * @see #getScaled(double, Point)
-	 */
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factor) {
 		return (T) ((T) getCopy()).scale(factor);
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factor, Point center) {
+		return (T) ((T) getCopy()).scale(factor, center);
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getScaled(double factor, double centerX, double centerY) {
+		return (T) ((T) getCopy()).scale(factor, centerX, centerY);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -86,8 +101,9 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getScaled(double factor, Point center) {
-		return (T) ((T) getCopy()).scale(factor, center);
+	public T getScaled(double factorX, double factorY, double centerX,
+			double centerY) {
+		return (T) ((T) getCopy()).scale(factorX, factorY, centerX, centerY);
 	}
 
 	/**
@@ -139,37 +155,33 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return y;
 	}
 
-	/**
-	 * Scales this {@link AbstractPointListBasedGeometry} by the given factor.
-	 * The {@link AbstractPointListBasedGeometry} is translated by its negated
-	 * centroid (see {@link #getCentroid()}) first. The translation is reversed
-	 * afterwards.
-	 * 
-	 * @see #scale(double, Point)
-	 * @param factor
-	 * @return <code>this</code> for convenience
-	 */
+	@SuppressWarnings("unchecked")
+	public T scale(double fx, double fy, double cx, double cy) {
+		x = (x - cx) * fx + cx;
+		y = (y - cy) * fy + cy;
+		width *= fx;
+		height *= fy;
+		return (T) this;
+	}
+
+	public T scale(double fx, double fy, Point center) {
+		return scale(fx, fy, center.x, center.y);
+	}
+
+	public T scale(double fx, double fy) {
+		return scale(fx, fy, getCentroid());
+	}
+
 	public T scale(double factor) {
 		return scale(factor, factor);
 	}
 
-	public T scale(double factorX, double factorY) {
-		return scale(factorX, factorY, getCentroid());
-	}
-
-	@SuppressWarnings("unchecked")
-	public T scale(double factorX, double factorY, Point center) {
-		double nx = (x - center.x) * factorX + center.x;
-		double ny = (y - center.y) * factorY + center.y;
-		width = (x + width - center.x) * factorX + center.x - nx;
-		height = (y + height - center.y) * factorY + center.y - ny;
-		x = nx;
-		y = ny;
-		return (T) this;
-	}
-
 	public T scale(double factor, Point center) {
-		return scale(factor, factor, center);
+		return scale(factor, center.x, center.y);
+	}
+
+	public T scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
 	}
 
 	/**

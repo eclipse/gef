@@ -14,8 +14,10 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -24,21 +26,20 @@ import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Straight3D;
 import org.eclipse.gef4.geometry.projective.Vector3D;
+import org.eclipse.gef4.geometry.transform.IRotatable;
+import org.eclipse.gef4.geometry.transform.IScalable;
+import org.eclipse.gef4.geometry.transform.ITranslatable;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Abstract base class of Bezier Curves.
  * 
- * TODO: make concrete -> leaf specializations in place but delegate
- * functionality to here.
- * 
  * @author anyssen
- * 
  */
-public class BezierCurve extends AbstractGeometry implements ICurve {
-
-	private static final long serialVersionUID = 1L;
+public class BezierCurve extends AbstractGeometry implements ICurve,
+		ITranslatable<BezierCurve>, IScalable<BezierCurve>,
+		IRotatable<BezierCurve> {
 
 	private static class FatLine {
 		public static FatLine from(BezierCurve c, boolean ortho) {
@@ -186,6 +187,19 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		}
 
 		/**
+		 * Expands this {@link Interval} to include the given other
+		 * {@link Interval}.
+		 * 
+		 * @param i
+		 */
+		public void expand(Interval i) {
+			if (i.a < a)
+				a = i.a;
+			if (i.b > b)
+				b = i.b;
+		}
+
+		/**
 		 * Returns a copy of this {@link Interval}.
 		 * 
 		 * @return a copy of this {@link Interval}
@@ -305,6 +319,22 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		}
 
 		/**
+		 * Expands this {@link IntervalPair} to include the given other
+		 * {@link IntervalPair}.
+		 * 
+		 * @param ip
+		 */
+		public void expand(IntervalPair ip) {
+			if (p == ip.p) {
+				pi.expand(ip.pi);
+				qi.expand(ip.qi);
+			} else {
+				pi.expand(ip.qi);
+				qi.expand(ip.pi);
+			}
+		}
+
+		/**
 		 * Returns a copy of this {@link IntervalPair}. The underlying
 		 * {@link BezierCurve}s are only shallow copied. The corresponding
 		 * parameter {@link Interval}s are truly copied.
@@ -323,7 +353,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		 * @return the first sub-curve of this {@link IntervalPair}
 		 */
 		public BezierCurve getPClipped() {
-			return p.getClipped(pi.a, pi.b);
+			return p.getClipped(Math.max(pi.a, 0), Math.min(pi.b, 1));
 		}
 
 		/**
@@ -350,7 +380,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		 * @return the second sub-curve of this {@link IntervalPair}
 		 */
 		public BezierCurve getQClipped() {
-			return q.getClipped(qi.a, qi.b);
+			return q.getClipped(Math.max(qi.a, 0), Math.min(qi.b, 1));
 		}
 
 		/**
@@ -403,6 +433,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		public boolean pIsBetterThanQ(Point p, Point q);
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	// TODO: use constants that limit the number of iterations for the
 	// different iterative/recursive algorithms:
 	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
@@ -418,32 +450,49 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 
 	private static IntervalPair[] clusterChunks(IntervalPair[] intervalPairs,
 			int shift) {
-		List<IntervalPair> clusters = new ArrayList<IntervalPair>();
+		ArrayList<IntervalPair> ips = new ArrayList<IntervalPair>();
 
-		// TODO: do something intelligent instead!
-		boolean isCompletelyClustered = true;
+		ips.addAll(Arrays.asList(intervalPairs));
 
-		for (IntervalPair ip : intervalPairs) {
-			boolean isExpansion = false;
+		Collections.sort(ips, new Comparator<IntervalPair>() {
+			public int compare(IntervalPair i, IntervalPair j) {
+				return i.pi.a <= j.pi.a ? -1 : 1;
+			}
+		});
 
-			for (IntervalPair cluster : clusters) {
-				if (isNextTo(cluster, ip, shift)) {
-					expand(cluster, ip);
-					isExpansion = true;
-					break;
+		// for (IntervalPair ip : ips) {
+		// System.out.println("P [" + ip.pi.a + ";" + ip.pi.b + "]  Q ["
+		// + ip.qi.a + ";" + ip.qi.b + "]");
+		// }
+
+		ArrayList<IntervalPair> clusters = new ArrayList<IntervalPair>();
+		IntervalPair current = null;
+		boolean couldMerge;
+
+		do {
+			clusters.clear();
+			couldMerge = false;
+			for (IntervalPair i : ips) {
+				if (current == null) {
+					current = i.getCopy();
+				} else if (isNextTo(current, i, shift)) {
+					couldMerge = true;
+					current.expand(i);
+				} else {
+					isNextTo(current, i, shift);
+					clusters.add(current);
+					current = i.getCopy();
 				}
 			}
-
-			if (!isExpansion) {
-				clusters.add(ip);
-			} else {
-				isCompletelyClustered = false;
+			if (current != null) {
+				clusters.add(current);
+				current = null;
 			}
-		}
+			ips.clear();
+			ips.addAll(clusters);
+		} while (couldMerge);
 
-		IntervalPair[] clustersArray = clusters.toArray(new IntervalPair[] {});
-		return isCompletelyClustered ? clustersArray : clusterChunks(
-				clustersArray, shift);
+		return clusters.toArray(new IntervalPair[] {});
 	}
 
 	private static void copyIntervalPair(IntervalPair a, IntervalPair b) {
@@ -453,19 +502,65 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		a.qi = b.qi;
 	}
 
-	private static void expand(IntervalPair group, IntervalPair newcomer) {
-		if (group.pi.a > newcomer.pi.a) {
-			group.pi.a = newcomer.pi.a;
+	private static IntervalPair extractOverlap(
+			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
+		// merge intersection candidates and end points
+		IntervalPair[] fineChunks = new IntervalPair[intersectionCandidates.length
+				+ endPoints.length];
+		for (int i = 0; i < intersectionCandidates.length; i++) {
+			fineChunks[i] = intersectionCandidates[i];
 		}
-		if (group.pi.b < newcomer.pi.b) {
-			group.pi.b = newcomer.pi.b;
+		for (int i = 0; i < endPoints.length; i++) {
+			fineChunks[intersectionCandidates.length + i] = endPoints[i];
 		}
-		if (group.qi.a > newcomer.qi.a) {
-			group.qi.a = newcomer.qi.a;
+
+		if (fineChunks.length == 0) {
+			return null;
 		}
-		if (group.qi.b < newcomer.qi.b) {
-			group.qi.b = newcomer.qi.b;
+
+		// recluster chunks
+		normalizeIntervalPairs(fineChunks);
+		IntervalPair[] chunks = clusterChunks(fineChunks, CHUNK_SHIFT - 1);
+
+		/*
+		 * if they overlap, the chunk has to start/end in a start-/endpoint of
+		 * the curves.
+		 */
+
+		for (IntervalPair overlap : chunks) {
+			if (PrecisionUtils.smallerEqual(overlap.pi.a, 0)
+					&& PrecisionUtils.greaterEqual(overlap.pi.b, 1)
+					|| PrecisionUtils.smallerEqual(overlap.qi.a, 0)
+					&& PrecisionUtils.greaterEqual(overlap.qi.b, 1)
+					|| (PrecisionUtils.smallerEqual(overlap.pi.a, 0) || PrecisionUtils
+							.greaterEqual(overlap.pi.b, 1))
+					&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
+							.greaterEqual(overlap.qi.b, 1))) {
+				// it overlaps
+				if (PrecisionUtils.smallerEqual(overlap.pi.a, 0,
+						CHUNK_SHIFT - 1)
+						&& PrecisionUtils.smallerEqual(overlap.pi.b, 0,
+								CHUNK_SHIFT - 1)
+						|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
+								CHUNK_SHIFT - 1)
+						|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
+								CHUNK_SHIFT - 1)
+						|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
+								CHUNK_SHIFT - 1)) {
+					// only end-point-intersection
+					return null;
+				}
+				return refineOverlap(overlap);
+			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -515,84 +610,13 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		return (y - p.y + m * p.x) / m;
 	}
 
-	private static boolean isNextTo(IntervalPair a, IntervalPair b, int shift) {
-		boolean isPNeighbour = PrecisionUtils.greaterEqual(a.pi.a, b.pi.a,
-				shift)
-				&& PrecisionUtils.smallerEqual(a.pi.a, b.pi.b, shift)
-				|| PrecisionUtils.smallerEqual(a.pi.a, b.pi.a, shift)
-				&& PrecisionUtils.greaterEqual(a.pi.b, b.pi.a, shift);
-		boolean isQNeighbour = PrecisionUtils.greaterEqual(a.qi.a, b.qi.a,
-				shift)
-				&& PrecisionUtils.smallerEqual(a.qi.a, b.qi.b, shift)
-				|| PrecisionUtils.smallerEqual(a.qi.a, b.qi.a, shift)
-				&& PrecisionUtils.greaterEqual(a.qi.b, b.qi.a, shift);
-
-		return isPNeighbour && isQNeighbour;
+	private static boolean isNextTo(Interval i, Interval j, int shift) {
+		return PrecisionUtils.smallerEqual(j.a, i.b, shift)
+				&& PrecisionUtils.greaterEqual(j.b, i.a, shift);
 	}
 
-	private static IntervalPair isOverlap(
-			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
-		// merge intersection candidates and end points
-		IntervalPair[] fineChunks = new IntervalPair[intersectionCandidates.length
-				+ endPoints.length];
-		for (int i = 0; i < intersectionCandidates.length; i++) {
-			fineChunks[i] = intersectionCandidates[i];
-		}
-		for (int i = 0; i < endPoints.length; i++) {
-			fineChunks[intersectionCandidates.length + i] = endPoints[i];
-		}
-
-		if (fineChunks.length == 0) {
-			return new IntervalPair(null, null, null, null);
-		}
-
-		// recluster chunks
-		normalizeIntervalPairs(fineChunks);
-		IntervalPair[] chunks = clusterChunks(fineChunks, CHUNK_SHIFT - 1);
-
-		// we should have a single chunk now
-		if (chunks.length != 1) {
-			return new IntervalPair(null, null, null, null);
-		}
-
-		IntervalPair overlap = chunks[0];
-
-		/*
-		 * if they do overlap in a single point, the point of intersection has
-		 * to be an end-point of both curves. therefore, we do not have to
-		 * consider this case here, because it is already checked in the main
-		 * intersection method.
-		 * 
-		 * if they overlap, the chunk has to start/end in a start-/endpoint of
-		 * the curves.
-		 */
-
-		if (PrecisionUtils.equal(overlap.pi.a, 0)
-				&& PrecisionUtils.equal(overlap.pi.b, 1)
-				|| PrecisionUtils.equal(overlap.qi.a, 0)
-				&& PrecisionUtils.equal(overlap.qi.b, 1)
-				|| (PrecisionUtils.equal(overlap.pi.a, 0) || PrecisionUtils
-						.equal(overlap.pi.b, 1))
-				&& (PrecisionUtils.equal(overlap.qi.a, 0) || PrecisionUtils
-						.equal(overlap.qi.b, 1))) {
-			// it overlaps
-
-			if (PrecisionUtils.equal(overlap.pi.a, 0, CHUNK_SHIFT - 1)
-					&& PrecisionUtils.equal(overlap.pi.b, 0, CHUNK_SHIFT - 1)
-					|| PrecisionUtils.equal(overlap.pi.a, 1, CHUNK_SHIFT - 1)
-					&& PrecisionUtils.equal(overlap.pi.b, 1, CHUNK_SHIFT - 1)
-					|| PrecisionUtils.equal(overlap.qi.a, 0, CHUNK_SHIFT - 1)
-					&& PrecisionUtils.equal(overlap.qi.b, 0, CHUNK_SHIFT - 1)
-					|| PrecisionUtils.equal(overlap.qi.a, 1, CHUNK_SHIFT - 1)
-					&& PrecisionUtils.equal(overlap.qi.b, 1, CHUNK_SHIFT - 1)) {
-				// end-point-intersection
-				return new IntervalPair(null, null, null, null);
-			}
-
-			return overlap;
-		}
-
-		return new IntervalPair(null, null, null, null);
+	private static boolean isNextTo(IntervalPair a, IntervalPair b, int shift) {
+		return isNextTo(a.pi, b.pi, shift) && isNextTo(a.qi, b.qi, shift);
 	}
 
 	private static void normalizeIntervalPairs(IntervalPair[] intervalPairs) {
@@ -619,6 +643,79 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	private static boolean pointsEquals(Point p1, Point p2, int shift) {
 		return PrecisionUtils.equal(p1.x, p2.x, shift)
 				&& PrecisionUtils.equal(p1.y, p2.y, shift);
+	}
+
+	/**
+	 * Binary search from the intervals' limits to the intervals' inner values.
+	 * 
+	 * @param overlap
+	 *            {@link IntervalPair} representing the overlap of two
+	 *            {@link BezierCurve}s
+	 * @return refined overlap
+	 */
+	private static IntervalPair refineOverlap(IntervalPair overlap) {
+		Interval piLo = refineOverlapLo(overlap.p, overlap.pi.a,
+				overlap.pi.getMid(), overlap.q);
+		Interval piHi = refineOverlapHi(overlap.p, overlap.pi.getMid(),
+				overlap.pi.b, overlap.q);
+		Interval qiLo = refineOverlapLo(overlap.q, overlap.qi.a,
+				overlap.qi.getMid(), overlap.p);
+		Interval qiHi = refineOverlapHi(overlap.q, overlap.qi.getMid(),
+				overlap.qi.b, overlap.p);
+		overlap.pi.a = piLo.b;
+		overlap.pi.b = piHi.a;
+		overlap.qi.a = qiLo.b;
+		overlap.qi.b = qiHi.a;
+		return overlap;
+	}
+
+	private static Interval refineOverlapHi(BezierCurve p, double mid,
+			double b, BezierCurve q) {
+		Interval i = new Interval(Math.max(mid, 0), Math.min(b, 1));
+		double prevLo;
+		Point pLo;
+		int c = 0;
+
+		while (c++ < 30 && !i.converges()) {
+			prevLo = i.a;
+			i.a = i.getMid();
+			pLo = p.get(i.a);
+
+			if (!q.contains(pLo)) {
+				i.b = i.a;
+				i.a = prevLo;
+			}
+		}
+
+		return i;
+	}
+
+	/**
+	 * @param p
+	 * @param a
+	 * @param mid
+	 * @param q
+	 * @return
+	 */
+	private static Interval refineOverlapLo(BezierCurve p, double a,
+			double mid, BezierCurve q) {
+		Interval i = new Interval(Math.max(a, 0), Math.min(mid, 1));
+		double prevHi;
+		Point pHi;
+		int c = 0;
+
+		while (c++ < 30 && !i.converges()) {
+			prevHi = i.b;
+			i.b = i.getMid();
+			pHi = p.get(i.b);
+
+			if (!q.contains(pHi)) {
+				i.a = i.b;
+				i.b = prevHi;
+			}
+		}
+
+		return i;
 	}
 
 	private Vector3D[] points;
@@ -816,6 +913,27 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	}
 
 	/**
+	 * <p>
+	 * Tests if this {@link BezierCurve} contains the given other
+	 * {@link BezierCurve}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The other {@link BezierCurve} is regarded to be contained if its start
+	 * and end {@link Point} lie on this {@link BezierCurve} and an overlapping
+	 * segment of the two curves can be detected.
+	 * </p>
+	 * 
+	 * @param o
+	 * @return <code>true</code> if the given {@link BezierCurve} is contained
+	 *         by this {@link BezierCurve}, otherwise <code>false</code>
+	 */
+	public boolean contains(BezierCurve o) {
+		return contains(o.getP1()) && contains(o.getP2())
+				&& getOverlap(o) != null;
+	}
+
+	/**
 	 * Returns true if the given {@link Point} lies on this {@link BezierCurve}.
 	 * Returns false, otherwise.
 	 * 
@@ -829,6 +947,23 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		}
 
 		return containmentParameter(this, new double[] { 0, 1 }, p);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof BezierCurve) {
+			BezierCurve o = (BezierCurve) obj;
+			BezierCurve t = this;
+			while (o.points.length < t.points.length)
+				o = o.getElevated();
+			while (t.points.length < o.points.length)
+				t = t.getElevated();
+			Point[] oPoints = o.getPoints();
+			Point[] tPoints = t.getPoints();
+			return PointListUtils.equals(oPoints, tPoints)
+					|| PointListUtils.equalsReverse(oPoints, tPoints);
+		}
+		return false;
 	}
 
 	private void findEndPointIntersections(IntervalPair ip,
@@ -954,8 +1089,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		if (L1 == null || L2 == null) {
 			// q is degenerated
 			Point poi = ip.q.getHC(ip.qi.getMid()).toPoint();
-			if (ip.p.contains(poi)) {
+			double[] interval = new double[] { 0, 1 };
+			if (poi != null && containmentParameter(ip.p, interval, poi)) {
 				intersections.add(poi);
+				// intervalPairs.add(new IntervalPair(ip.p,
+				// new Interval(interval), ip.q, new Interval(ip.qi
+				// .getMid(), ip.qi.getMid())));
 			}
 			return;
 		}
@@ -1195,6 +1334,25 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	}
 
 	/**
+	 * Computes a {@link BezierCurve} with a degree of one higher than this
+	 * {@link BezierCurve}'s degree but of the same shape.
+	 * 
+	 * @return a {@link BezierCurve} of the same shape as this
+	 *         {@link BezierCurve} but with one more control {@link Point}
+	 */
+	public BezierCurve getElevated() {
+		Point[] p = getPoints();
+		Point[] q = new Point[p.length + 1];
+		q[0] = p[0];
+		q[p.length] = p[p.length - 1];
+		for (int i = 1; i < p.length; i++) {
+			double c = (double) i / (double) (p.length);
+			q[i] = p[i - 1].getScaled(c).getTranslated(p[i].getScaled(1 - c));
+		}
+		return new BezierCurve(q);
+	}
+
+	/**
 	 * Returns the {@link Point} at the given parameter value t.
 	 * 
 	 * @param t
@@ -1259,29 +1417,43 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		IntervalPair[] clusters = clusterChunks(
 				intervalPairs.toArray(new IntervalPair[] {}), 0);
 
-		if (isOverlap(clusters,
-				endPointIntervalPairs.toArray(new IntervalPair[] {})).p != null) {
-			return new HashSet<IntervalPair>(0);
-		}
+		IntervalPair overlapIntervalPair = extractOverlap(clusters,
+				endPointIntervalPairs.toArray(new IntervalPair[] {}));
+		BezierCurve overlap = overlapIntervalPair == null ? null
+				: overlapIntervalPair.getPClipped();
 
 		Set<IntervalPair> results = new HashSet<IntervalPair>();
-		results.addAll(endPointIntervalPairs);
 
-		outer: for (IntervalPair cluster : clusters) {
-			for (IntervalPair epip : endPointIntervalPairs) {
-				if (isNextTo(cluster, epip, CHUNK_SHIFT)) {
-					continue outer;
+		for (IntervalPair epip : endPointIntervalPairs) {
+			if (overlapIntervalPair == null
+					|| !isNextTo(overlapIntervalPair, epip, CHUNK_SHIFT)) {
+				results.add(epip);
+			} else {
+				for (Iterator<Point> iterator = intersections.iterator(); iterator
+						.hasNext();) {
+					if (overlap.contains(iterator.next())) {
+						iterator.remove();
+					}
 				}
 			}
+		}
+
+		outer: for (IntervalPair cluster : clusters) {
+			if (overlapIntervalPair != null)
+				if (isNextTo(overlapIntervalPair, cluster, CHUNK_SHIFT))
+					continue outer;
+
+			for (IntervalPair epip : endPointIntervalPairs)
+				if (isNextTo(cluster, epip, CHUNK_SHIFT))
+					continue outer;
 
 			// a.t.m. assume for every cluster just a single point of
 			// intersection:
 			Point poi = findSinglePreciseIntersection(cluster);
 			if (poi != null) {
+				intersections.add(poi);
 				if (cluster.converges()) {
 					results.add(cluster.getCopy());
-				} else {
-					intersections.add(poi);
 				}
 			}
 		}
@@ -1299,38 +1471,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	 */
 	public Point[] getIntersections(BezierCurve other) {
 		Set<Point> intersections = new HashSet<Point>();
-		Set<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
-		Set<IntervalPair> endPointIntervalPairs = new HashSet<IntervalPair>();
-
-		IntervalPair ip = new IntervalPair(this, Interval.getFull(), other,
-				Interval.getFull());
-
-		findEndPointIntersections(ip, endPointIntervalPairs, intersections);
-		findIntersectionChunks(ip, intervalPairs, intersections);
-		normalizeIntervalPairs(intervalPairs.toArray(new IntervalPair[] {}));
-		IntervalPair[] clusters = clusterChunks(
-				intervalPairs.toArray(new IntervalPair[] {}), 0);
-
-		if (isOverlap(clusters,
-				endPointIntervalPairs.toArray(new IntervalPair[] {})).p != null) {
-			return new Point[] {};
-		}
-
-		outer: for (IntervalPair cluster : clusters) {
-			for (IntervalPair epip : endPointIntervalPairs) {
-				if (isNextTo(cluster, epip, CHUNK_SHIFT)) {
-					continue outer;
-				}
-			}
-
-			// a.t.m. assume for every cluster just a single point of
-			// intersection:
-			Point poi = findSinglePreciseIntersection(cluster);
-			if (poi != null) {
-				intersections.add(poi);
-			}
-		}
-
+		getIntersectionIntervalPairs(other, intersections);
 		return intersections.toArray(new Point[] {});
 	}
 
@@ -1366,16 +1507,14 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 
 		findEndPointIntersections(ip, endPointIntervalPairs, intersections);
 		findIntersectionChunks(ip, intervalPairs, intersections);
-		IntervalPair[] clusters = clusterChunks(
-				intervalPairs.toArray(new IntervalPair[] {}), 0);
+		IntervalPair[] intervalPairs2 = intervalPairs
+				.toArray(new IntervalPair[] {});
+		normalizeIntervalPairs(intervalPairs2);
+		IntervalPair[] clusters = clusterChunks(intervalPairs2, 0);
 
-		IntervalPair overlap = isOverlap(clusters,
+		IntervalPair overlap = extractOverlap(clusters,
 				endPointIntervalPairs.toArray(new IntervalPair[] {}));
-
-		if (overlap.p != null) {
-			return overlap.getPClipped();
-		}
-		return null;
+		return overlap == null ? null : overlap.getPClipped();
 	}
 
 	public Point getP1() {
@@ -1455,22 +1594,60 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		return copy;
 	}
 
-	/**
-	 * Creates a new {@link BezierCurve} with all points translated by the given
-	 * {@link Point}.
-	 * 
-	 * @param p
-	 * @return a new {@link BezierCurve} with all points translated by the given
-	 *         {@link Point}
-	 */
-	public BezierCurve getTranslated(Point p) {
-		Point[] translated = new Point[points.length];
+	public BezierCurve getRotatedCCW(Angle angle) {
+		return getCopy().rotateCCW(angle);
+	}
 
-		for (int i = 0; i < translated.length; i++) {
-			translated[i] = points[i].toPoint().getTranslated(p);
-		}
+	public BezierCurve getRotatedCCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCCW(angle, cx, cy);
+	}
 
-		return new BezierCurve(translated);
+	public BezierCurve getRotatedCCW(Angle angle, Point center) {
+		return getCopy().rotateCCW(angle, center);
+	}
+
+	public BezierCurve getRotatedCW(Angle angle) {
+		return getCopy().rotateCW(angle);
+	}
+
+	public BezierCurve getRotatedCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCW(angle, cx, cy);
+	}
+
+	public BezierCurve getRotatedCW(Angle angle, Point center) {
+		return getCopy().rotateCW(angle, center);
+	}
+
+	public BezierCurve getScaled(double factor) {
+		return getCopy().getScaled(factor);
+	}
+
+	public BezierCurve getScaled(double fx, double fy) {
+		return getCopy().getScaled(fx, fy);
+	}
+
+	public BezierCurve getScaled(double factor, double cx, double cy) {
+		return getCopy().getScaled(factor, cx, cy);
+	}
+
+	public BezierCurve getScaled(double fx, double fy, double cx, double cy) {
+		return getCopy().getScaled(fx, fy, cx, cy);
+	}
+
+	public BezierCurve getScaled(double fx, double fy, Point center) {
+		return getCopy().getScaled(fx, fy, center);
+	}
+
+	public BezierCurve getScaled(double factor, Point center) {
+		return getCopy().getScaled(factor, center);
+	}
+
+	public BezierCurve getTranslated(double dx, double dy) {
+		return getCopy().translate(dx, dy);
+	}
+
+	public BezierCurve getTranslated(Point d) {
+		return getCopy().translate(d.x, d.y);
 	}
 
 	public double getX1() {
@@ -1520,20 +1697,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	 *         overlap, otherwise <code>false</code>
 	 */
 	public boolean overlaps(BezierCurve other) {
-		Set<Point> intersections = new HashSet<Point>();
-		Set<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
-		Set<IntervalPair> endPointIntervalPairs = new HashSet<IntervalPair>();
-
-		IntervalPair ip = new IntervalPair(this, Interval.getFull(), other,
-				Interval.getFull());
-
-		findEndPointIntersections(ip, endPointIntervalPairs, intersections);
-		findIntersectionChunks(ip, intervalPairs, intersections);
-		IntervalPair[] clusters = clusterChunks(
-				intervalPairs.toArray(new IntervalPair[] {}), 0);
-
-		return isOverlap(clusters,
-				endPointIntervalPairs.toArray(new IntervalPair[] {})).p != null;
+		return getOverlap(other) != null;
 	}
 
 	public final boolean overlaps(ICurve c) {
@@ -1545,16 +1709,75 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		return false;
 	}
 
-	/**
-	 * @param alpha
-	 * @param center
-	 */
-	public void rotateCCW(Angle alpha, Point center) {
+	public BezierCurve rotateCCW(Angle angle) {
+		Point centroid = PointListUtils.computeCentroid(getPoints());
+		return rotateCCW(angle, centroid.x, centroid.y);
+	}
+
+	public BezierCurve rotateCCW(Angle angle, double cx, double cy) {
+		Point[] realPoints = getPoints();
+		PointListUtils.rotateCCW(realPoints, angle, cx, cy);
+		for (int i = 0; i < realPoints.length; i++) {
+			setPoint(i, realPoints[i]);
+		}
+		return this;
+	}
+
+	public BezierCurve rotateCCW(Angle alpha, Point center) {
 		for (int i = 0; i < points.length; i++) {
 			points[i] = new Vector3D(new Vector(points[i].toPoint()
 					.getTranslated(center.getNegated())).getRotatedCCW(alpha)
 					.toPoint().getTranslated(center));
 		}
+		return this;
+	}
+
+	public BezierCurve rotateCW(Angle angle) {
+		Point centroid = PointListUtils.computeCentroid(getPoints());
+		return rotateCW(angle, centroid.x, centroid.y);
+	}
+
+	public BezierCurve rotateCW(Angle angle, double cx, double cy) {
+		Point[] realPoints = getPoints();
+		PointListUtils.rotateCW(realPoints, angle, cx, cy);
+		for (int i = 0; i < realPoints.length; i++) {
+			setPoint(i, realPoints[i]);
+		}
+		return this;
+	}
+
+	public BezierCurve rotateCW(Angle angle, Point center) {
+		return rotateCW(angle, center.x, center.y);
+	}
+
+	public BezierCurve scale(double factor) {
+		return scale(factor, factor);
+	}
+
+	public BezierCurve scale(double fx, double fy) {
+		Point centroid = PointListUtils.computeCentroid(getPoints());
+		return scale(fx, fy, centroid.x, centroid.y);
+	}
+
+	public BezierCurve scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
+	}
+
+	public BezierCurve scale(double fx, double fy, double cx, double cy) {
+		Point[] realPoints = getPoints();
+		PointListUtils.scale(realPoints, fx, fy, cx, cy);
+		for (int i = 0; i < realPoints.length; i++) {
+			setPoint(i, realPoints[i]);
+		}
+		return this;
+	}
+
+	public BezierCurve scale(double fx, double fy, Point center) {
+		return scale(fx, fy, center.x, center.y);
+	}
+
+	public BezierCurve scale(double factor, Point center) {
+		return scale(factor, factor, center.x, center.y);
 	}
 
 	/**
@@ -1641,15 +1864,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	/**
 	 * Returns a hard approximation of this {@link BezierCurve} as a
 	 * {@link CubicCurve}. The new {@link CubicCurve} is constructed from the
-	 * first four {@link Point}s in this {@link BezierCurve}'s {@link Point}s
-	 * array. If this {@link BezierCurve} is not of degree four or higher, i.e.
-	 * it does not have four or more control {@link Point}s (including start and
-	 * end {@link Point}), <code>null</code> is returned.
+	 * first three {@link Point}s in this {@link BezierCurve}'s {@link Point}s
+	 * array and the end {@link Point} of this {@link BezierCurve}. If this
+	 * {@link BezierCurve} is not of degree four or higher, i.e. it does not
+	 * have four or more control {@link Point}s (including start and end
+	 * {@link Point}), <code>null</code> is returned.
 	 * 
-	 * @return a new {@link CubicCurve} that is constructed by the first four
-	 *         control {@link Point}s of this {@link BezierCurve} or
-	 *         <code>null</code> if this {@link BezierCurve} does not have at
-	 *         least four control {@link Point}s
+	 * @return a new {@link CubicCurve} that is constructed by the first three
+	 *         {@link Point}s and the end {@link Point} of this
+	 *         {@link BezierCurve} or <code>null</code> if this
+	 *         {@link BezierCurve} does not have at least four control
+	 *         {@link Point}s
 	 */
 	public CubicCurve toCubic() {
 		if (points.length > 3) {
@@ -1819,15 +2044,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 	/**
 	 * Returns a hard approximation of this {@link BezierCurve} as a
 	 * {@link QuadraticCurve}. The new {@link QuadraticCurve} is constructed
-	 * from the first three {@link Point}s in this {@link BezierCurve}'s
-	 * {@link Point}s array. If this {@link BezierCurve} is not of degree three
+	 * from the first two {@link Point}s in this {@link BezierCurve}'s
+	 * {@link Point}s array and the end {@link Point} of this
+	 * {@link BezierCurve}. If this {@link BezierCurve} is not of degree three
 	 * or higher, i.e. it does not have three or more control {@link Point}s
 	 * (including start and end {@link Point}), <code>null</code> is returned.
 	 * 
-	 * @return a new {@link QuadraticCurve} that is constructed by the first
-	 *         three control {@link Point}s of this {@link BezierCurve} or
-	 *         <code>null</code> if this {@link BezierCurve} does not have at
-	 *         least three control {@link Point}s
+	 * @return a new {@link QuadraticCurve} that is constructed by the first two
+	 *         {@link Point}s and the end {@link Point} of this
+	 *         {@link BezierCurve} or <code>null</code> if this
+	 *         {@link BezierCurve} does not have at least three control
+	 *         {@link Point}s
 	 */
 	public QuadraticCurve toQuadratic() {
 		if (points.length > 2) {
@@ -1837,261 +2064,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve {
 		return null;
 	}
 
-	// double x1;
-	// double y1;
-	// double x2;
-	// double y2;
-	//
-	// // TODO: use point array instead
-	// double[] ctrlCoordinates = null;
-	//
-	// public BezierCurve(double... coordinates) {
-	// if (coordinates.length < 4) {
-	// throw new IllegalArgumentException(
-	// "A bezier curve needs at least a start and an end point");
-	// }
-	// this.x1 = coordinates[0];
-	// this.y1 = coordinates[1];
-	// this.x2 = coordinates[coordinates.length - 2];
-	// this.y2 = coordinates[coordinates.length - 1];
-	// if (coordinates.length > 4) {
-	// this.ctrlCoordinates = new double[coordinates.length - 4];
-	// System.arraycopy(coordinates, 2, ctrlCoordinates, 0,
-	// coordinates.length - 4);
-	// }
-	// }
-	//
-	// public BezierCurve(Point... points) {
-	// this(PointListUtils.toCoordinatesArray(points));
-	// }
-	//
-	// public final boolean contains(Rectangle r) {
-	// // TODO: may contain the rectangle only in case the rectangle is
-	// // degenerated...
-	// return false;
-	// }
-	//
-	// public Point getCtrl(int i) {
-	// return new Point(getCtrlX(i), getCtrlY(i));
-	// }
-	//
-	// /**
-	// * Returns the point-wise coordinates (i.e. x1, y1, x2, y2, etc.) of the
-	// * inner control points of this {@link BezierCurve}, i.e. exclusive of the
-	// * start and end points.
-	// *
-	// * @see BezierCurve#getCtrls()
-	// *
-	// * @return an array containing the inner control points' coordinates
-	// */
-	// public double[] getCtrlCoordinates() {
-	// return PointListUtils.getCopy(ctrlCoordinates);
-	//
-	// }
-	//
-	// /**
-	// * Returns an array of points representing the inner control points of
-	// this
-	// * curve, i.e. excluding the start and end points. In case of s linear
-	// * curve, no control points will be returned, in case of a quadratic
-	// curve,
-	// * one control point, and so on.
-	// *
-	// * @return an array of points with the coordinates of the inner control
-	// * points of this {@link BezierCurve}, i.e. exclusive of the start
-	// * and end point. The number of control points will depend on the
-	// * degree ({@link #getDegree()}) of the curve, so in case of a line
-	// * (linear curve) the array will be empty, in case of a quadratic
-	// * curve, it will be of size <code>1</code>, in case of a cubic
-	// * curve of size <code>2</code>, etc..
-	// */
-	// public Point[] getCtrls() {
-	// return PointListUtils.toPointsArray(ctrlCoordinates);
-	// }
-	//
-	// public double getCtrlX(int i) {
-	// return ctrlCoordinates[2 * i];
-	// }
-	//
-	// public double getCtrlY(int i) {
-	// return ctrlCoordinates[2 * i + 1];
-	// }
-	//
-	// /**
-	// * Returns the degree of this curve which corresponds to the number of
-	// * overall control points (including start and end point) used to define
-	// the
-	// * curve. The degree is zero-based, so a line (linear curve) will have
-	// * degree <code>1</code>, a quadratic curve will have degree
-	// <code>2</code>,
-	// * and so on. <code>1</code> in case of a
-	// *
-	// * @return The degree of this {@link ICurve}, which corresponds to the
-	// * zero-based overall number of control points (including start and
-	// * end point) used to define this {@link ICurve}.
-	// */
-	// public int getDegree() {
-	// return getCtrls().length + 1;
-	// }
-	//
-	// /**
-	// * Returns an array of points that represent this {@link BezierCurve},
-	// i.e.
-	// * the start point, the inner control points, and the end points.
-	// *
-	// * @return an array of points representing the control points (including
-	// * start and end point) of this {@link BezierCurve}
-	// */
-	// public Point[] getPoints() {
-	// Point[] points = new Point[ctrlCoordinates.length / 2 + 2];
-	// points[0] = new Point(x1, y1);
-	// points[points.length - 1] = new Point(x2, y2);
-	// for (int i = 1; i < points.length - 1; i++) {
-	// points[i] = new Point(ctrlCoordinates[2 * i - 2],
-	// ctrlCoordinates[2 * i - 1]);
-	// }
-	// return points;
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getP1()
-	// */
-	// public Point getP1() {
-	// return new Point(x1, y1);
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getP2()
-	// */
-	// public Point getP2() {
-	// return new Point(x2, y2);
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getX1()
-	// */
-	// public double getX1() {
-	// return x1;
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getX2()
-	// */
-	// public double getX2() {
-	// return x2;
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getY1()
-	// */
-	// public double getY1() {
-	// return y1;
-	// }
-	//
-	// /**
-	// * {@inheritDoc}
-	// *
-	// * @see org.eclipse.gef4.geometry.planar.ICurve#getY2()
-	// */
-	// public double getY2() {
-	// return y2;
-	// }
-	//
-	// protected void setCtrl(int i, Point p) {
-	// setCtrlX(i, p.x);
-	// setCtrlY(i, p.y);
-	// }
-	//
-	// public void setCtrls(Point... ctrls) {
-	// ctrlCoordinates = PointListUtils.toCoordinatesArray(ctrls);
-	// }
-	//
-	// protected void setCtrlX(int i, double x) {
-	// // TODO: enlarge array if its too small
-	// ctrlCoordinates[2 * i] = x;
-	// }
-	//
-	// protected void setCtrlY(int i, double y) {
-	// // TODO: enlarge array if its too small
-	// ctrlCoordinates[2 * i + 1] = y;
-	// }
-	//
-	// /**
-	// * Sets the start {@link Point} of this {@link BezierCurve} to the given
-	// * {@link Point} p1.
-	// *
-	// * @param p1
-	// * the new start {@link Point}
-	// */
-	// public void setP1(Point p1) {
-	// this.x1 = p1.x;
-	// this.y1 = p1.y;
-	// }
-	//
-	// /**
-	// * Sets the end {@link Point} of this {@link BezierCurve} to the given
-	// * {@link Point} p2.
-	// *
-	// * @param p2
-	// * the new end {@link Point}
-	// */
-	// public void setP2(Point p2) {
-	// this.x2 = p2.x;
-	// this.y2 = p2.y;
-	// }
-	//
-	// /**
-	// * Sets the x-coordinate of the start {@link Point} of this
-	// * {@link BezierCurve} to x1.
-	// *
-	// * @param x1
-	// * the new start {@link Point}'s x-coordinate
-	// */
-	// public void setX1(double x1) {
-	// this.x1 = x1;
-	// }
-	//
-	// /**
-	// * Sets the x-coordinate of the end {@link Point} of this
-	// * {@link BezierCurve} to x2.
-	// *
-	// * @param x2
-	// * the new end {@link Point}'s x-coordinate
-	// */
-	// public void setX2(double x2) {
-	// this.x2 = x2;
-	// }
-	//
-	// /**
-	// * Sets the y-coordinate of the start {@link Point} of this
-	// * {@link BezierCurve} to y1.
-	// *
-	// * @param y1
-	// * the new start {@link Point}'s y-coordinate
-	// */
-	// public void setY1(double y1) {
-	// this.y1 = y1;
-	// }
-	//
-	// /**
-	// * Sets the y-coordinate of the end {@link Point} of this
-	// * {@link BezierCurve} to y2.
-	// *
-	// * @param y2
-	// * the new end {@link Point}'s y-coordinate
-	// */
-	// public void setY2(double y2) {
-	// this.y2 = y2;
-	// }
+	public BezierCurve translate(double dx, double dy) {
+		Point[] realPoints = getPoints();
+		PointListUtils.translate(realPoints, dx, dy);
+		for (int i = 0; i < realPoints.length; i++) {
+			setPoint(i, realPoints[i]);
+		}
+		return this;
+	}
+
+	public BezierCurve translate(Point d) {
+		return translate(d.x, d.y);
+	}
 
 }

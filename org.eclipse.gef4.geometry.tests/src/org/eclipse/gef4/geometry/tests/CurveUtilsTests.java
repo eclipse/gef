@@ -154,7 +154,7 @@ public class CurveUtilsTests {
 	}
 
 	@Test
-	public void test_clip_with_QuadraticCurve() {
+	public void test_getClipped_with_QuadraticCurve() {
 		final int numPoints = 4;
 		final double step = 0.123456789;
 
@@ -169,7 +169,7 @@ public class CurveUtilsTests {
 			QuadraticCurve c = new QuadraticCurve(points);
 			for (double t1 = 0; t1 <= 1; t1 += step) {
 				for (double t2 = 0; t2 <= 1; t2 += step) {
-					QuadraticCurve cc = c.clip(t1, t2);
+					QuadraticCurve cc = c.getClipped(t1, t2);
 					assertEquals(c.get(t1), cc.get(0));
 					assertEquals(c.get(t2), cc.get(1));
 				}

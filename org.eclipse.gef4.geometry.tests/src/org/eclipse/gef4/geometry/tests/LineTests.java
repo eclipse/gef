@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -224,6 +225,7 @@ public class LineTests {
 		// intersection within precision, no real intersection
 		Line close = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
 				new Point(5, UNRECOGNIZABLE_FRACTION));
+
 		// parallel so we do not return an intersection point
 		assertNull(normal.getIntersection(close));
 		assertNull(close.getIntersection(normal));
@@ -254,6 +256,12 @@ public class LineTests {
 		Line elsewhere = new Line(new Point(-5, 1), new Point(5, 10));
 		assertNull(normal.getIntersection(elsewhere));
 		assertNull(elsewhere.getIntersection(normal));
+
+		// single end point intersection with parallel lines:
+		// X-------X-------X
+		Line l1 = new Line(400.0, 102.48618784530387, 399.99999999999994, 100.0);
+		Line l2 = new Line(400.0, 51.10497237569061, 399.99999999999994, 100.0);
+		assertNotNull(l1.getIntersection(l2));
 	}
 
 	@Test

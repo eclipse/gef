@@ -7,7 +7,9 @@ Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.gef4.geometry,
+ org.eclipse.gef4.geometry.convert,
  org.eclipse.gef4.geometry.euclidean,
  org.eclipse.gef4.geometry.planar,
+ org.eclipse.gef4.geometry.projective,
  org.eclipse.gef4.geometry.transform,
  org.eclipse.gef4.geometry.utils;x-friends:="org.eclipse.gef4.geometry.tests"

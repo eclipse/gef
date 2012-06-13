@@ -9,23 +9,25 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.examples.intersection;
+package org.eclipse.gef4.geometry.examples.demos;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
+import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample.AbstractControllableShape;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
-import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Polygon;
+import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-public class BezierApproximationExample extends AbstractIntersectionExample {
+public class ConvexHullExample extends AbstractIntersectionExample {
 	public static void main(String[] args) {
-		new BezierApproximationExample("Bezier Approximation Example");
+		new ConvexHullExample("Convex Hull Example");
 	}
 
-	public BezierApproximationExample(String title) {
+	public ConvexHullExample(String title) {
 		super(title);
 	}
 
@@ -44,14 +46,16 @@ public class BezierApproximationExample extends AbstractIntersectionExample {
 
 			@Override
 			public IGeometry createGeometry() {
-				return new BezierCurve(getControlPoints()).toPath();
+				Polygon convexHull = new Polygon(
+						PointListUtils.getConvexHull(getControlPoints()));
+				return convexHull;
 			}
 
 			@Override
 			public void drawShape(GC gc) {
-				Path curve = (Path) createGeometry();
+				Polygon convexHull = (Polygon) createGeometry();
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), curve.toSWTPathData()));
+						.getCurrent(), convexHull.toPath().toSWTPathData()));
 			}
 		};
 	}
@@ -64,7 +68,7 @@ public class BezierApproximationExample extends AbstractIntersectionExample {
 
 			@Override
 			public IGeometry createGeometry() {
-				return new Line(new Point(), new Point(1, 1));
+				return new Line(-10, -10, -10, -10);
 			}
 
 			@Override

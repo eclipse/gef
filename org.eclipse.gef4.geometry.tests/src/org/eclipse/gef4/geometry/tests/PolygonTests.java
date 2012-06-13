@@ -90,6 +90,11 @@ public class PolygonTests {
 		assertFalse(new Polygon(new Point(), new Point(0, 5), new Point(5, 5),
 				new Point(5, 0), new Point(2.5, 2.5)).contains(new Line(1, 2,
 				4, 2)));
+
+		Polygon mouth = new Polygon(new Point(0, 5), new Point(2, 1),
+				new Point(4, 1), new Point(6, 5), new Point(4, 6), new Point(6,
+						7), new Point(4, 10), new Point(2, 10));
+		assertFalse(mouth.contains(new Line(6, 5, 6, 7)));
 	}
 
 	/**
@@ -493,6 +498,24 @@ public class PolygonTests {
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(9, RECOGNIZABLE_FRACTION)));
 		assertFalse(RHOMB.equals(RHOMB.getTranslated(RECOGNIZABLE_FRACTION,
 				RECOGNIZABLE_FRACTION)));
+	}
+
+	@Test
+	public void test_getTriangulation() {
+		Polygon p = new Polygon(150.0, 50.0, 50.0, 100.0, 23.0, 165.0, 50.0,
+				250.0, 135.0, 294.0, 250.0, 300.0, 137.0, 260.0, 63.0, 168.0,
+				113.0, 105.0, 136.0, 206.0, 150.0, 50.0);
+
+		// test that it does not throw a NullPointerException
+		p.getTriangulation();
+		assertTrue(true);
+		// TODO: test that the triangulation is correct
+
+		p = new Polygon(150.0, 50.0, 50.0, 100.0, 32.0, 168.0, 50.0, 250.0,
+				136.0, 298.0, 250.0, 300.0, 122.0, 252.0, 67.0, 180.0, 114.0,
+				95.0, 136.0, 194.0, 150.0, 50.0);
+		p.getTriangulation();
+		assertTrue(true);
 	}
 
 	@Test

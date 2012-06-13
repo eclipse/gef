@@ -80,8 +80,8 @@ public final class PolynomCalculationUtils {
 	public static final double[] getCubicRoots(double A, double B, double C,
 			double D) {
 		// TODO: use an algorithm that abstracts the polynom's order. A
-		// possibility would be to use the CurveUtils$BezierCurve#contains(Point
-		// p) method.
+		// possibility would be to use the BezierCurve#contains(Point p)
+		// method.
 
 		if (A == 0) {
 			return getQuadraticRoots(B, C, D);

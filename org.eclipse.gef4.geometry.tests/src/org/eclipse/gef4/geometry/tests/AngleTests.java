@@ -74,6 +74,7 @@ public class AngleTests {
 		assertFalse(alpha.equals(delta));
 		assertTrue(gamma.equals(delta));
 		assertTrue(delta.equals(gamma));
+		assertFalse(alpha.equals(null));
 		assertFalse(alpha.equals(new Point()));
 
 		alpha = new Angle(UNRECOGNIZABLE_FRACTION / 2, AngleUnit.RAD);
@@ -81,6 +82,7 @@ public class AngleTests {
 				AngleUnit.RAD);
 		assertTrue(alpha.equals(beta));
 		assertTrue(beta.equals(alpha));
+
 	}
 
 	@Test

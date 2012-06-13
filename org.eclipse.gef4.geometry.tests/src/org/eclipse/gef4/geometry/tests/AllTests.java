@@ -17,12 +17,14 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AngleTests.class, CubicCurveTests.class, CurveUtilsTests.class,
-		DimensionTests.class, EllipseTests.class, LineTests.class,
-		PointListUtilsTests.class, PointTests.class, PolygonTests.class,
-		PolylineTests.class, PolynomCalculationUtilsTests.class,
-		PrecisionUtilsTests.class, QuadraticCurveTests.class,
-		RectangleTests.class, StraightTests.class, VectorTests.class })
+@SuiteClasses({ AngleTests.class, BezierCurveTests.class,
+		CubicCurveTests.class, CurveUtilsTests.class, DimensionTests.class,
+		EllipseTests.class, LineTests.class, PointListUtilsTests.class,
+		PointTests.class, PolygonTests.class, PolylineTests.class,
+		PolynomCalculationUtilsTests.class, PrecisionUtilsTests.class,
+		QuadraticCurveTests.class, RectangleTests.class, RegionTests.class,
+		RingTests.class, RoundedRectangleTests.class, StraightTests.class,
+		VectorTests.class, Vector3DTests.class })
 public class AllTests {
 
 }

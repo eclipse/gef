@@ -7,28 +7,110 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.utils.CurveUtils;
+import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
-public class Pie extends AbstractGeometry implements IGeometry {
+/**
+ * The {@link Pie} is a closed {@link AbstractArcBasedGeometry}. It is the
+ * complement of the {@link Arc}, which is an open
+ * {@link AbstractArcBasedGeometry}.
+ * 
+ * The {@link Pie} covers an area, therefore it implements the {@link IShape}
+ * interface.
+ */
+public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
 
-	public boolean contains(Point p) {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Constructs a new {@link Pie} from the given values.
+	 * 
+	 * @see AbstractArcBasedGeometry#AbstractArcBasedGeometry(double, double,
+	 *      double, double, Angle, Angle)
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param startAngle
+	 * @param angularExtent
+	 */
+	public Pie(double x, double y, double width, double height,
+			Angle startAngle, Angle angularExtent) {
+		super(x, y, width, height, startAngle, angularExtent);
 	}
 
-	public Rectangle getBounds() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Pie getCopy() {
+		return new Pie(x, y, width, height, startAngle, angularExtent);
+	}
+
+	public PolyBezier getOutline() {
+		return new PolyBezier(computeBezierApproximation());
+	}
+
+	public CubicCurve[] getOutlineSegments() {
+		return computeBezierApproximation();
+	}
+
+	public boolean contains(Point p) {
+		// check if the point is in the arc's angle
+		Angle pAngle = new Vector(1, 0)
+				.getAngleCCW(new Vector(getCentroid(), p));
+		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad()) && PrecisionUtils
+				.smaller(pAngle.rad(), startAngle.getAdded(angularExtent).rad()))) {
+			return false;
+		}
+
+		// angle is correct, check if the point is inside the bounding ellipse
+		return new Ellipse(x, y, width, height).contains(p);
+	}
+
+	public boolean contains(IGeometry g) {
+		return CurveUtils.contains(this, g);
 	}
 
 	public Path toPath() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+		CubicCurve[] arc = computeBezierApproximation();
+		Line endToMid = new Line(arc[arc.length - 1].getP2(), getCentroid());
+		Line midToStart = new Line(getCentroid(), arc[0].getP1());
+		ICurve[] curves = new ICurve[arc.length + 2];
+		for (int i = 0; i < arc.length; i++) {
+			curves[i] = arc[i];
+		}
+		curves[arc.length] = endToMid;
+		curves[arc.length + 1] = midToStart;
+		return CurveUtils.toPath(curves);
 	}
 
-	public IGeometry getCopy() {
-		throw new UnsupportedOperationException("Not yet implemented.");
+	public Path getRotatedCCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
+				cx, cy).toPath();
+	}
+
+	public Path getRotatedCCW(Angle angle, Point center) {
+		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
+				center).toPath();
+	}
+
+	public Path getRotatedCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
+				cy).toPath();
+	}
+
+	public Path getRotatedCW(Angle angle, Point center) {
+		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
+				center).toPath();
 	}
 
 }

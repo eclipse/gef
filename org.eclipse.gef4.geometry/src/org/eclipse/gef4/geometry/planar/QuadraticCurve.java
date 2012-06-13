@@ -13,7 +13,6 @@
 package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.utils.PolynomCalculationUtils;
 
 /**
  * Represents the geometric shape of a quadratic Bézier curve.
@@ -88,19 +87,6 @@ public class QuadraticCurve extends BezierCurve {
 		this(p1.x, p1.y, pCtrl.x, pCtrl.y, p2.x, p2.y);
 	}
 
-	/**
-	 * Clips this {@link QuadraticCurve} at parameter values t1 and t2 so that
-	 * the resulting {@link QuadraticCurve} is the section of the original
-	 * {@link QuadraticCurve} for the parameter interval [t1, t2].
-	 * 
-	 * @param t1
-	 * @param t2
-	 * @return the {@link QuadraticCurve} on the interval [t1, t2]
-	 */
-	public QuadraticCurve clip(double t1, double t2) {
-		return super.getClipped(t1, t2).toQuadratic();
-	}
-
 	@Override
 	public boolean equals(Object other) {
 		QuadraticCurve o = (QuadraticCurve) other;
@@ -112,68 +98,45 @@ public class QuadraticCurve extends BezierCurve {
 	}
 
 	/**
+	 * Erroneous getBounds() implementation... use the generic one instead.
+	 * 
+	 * TODO: find out why the mathematical solution is erroneous in some cases.
+	 * 
 	 * Returns the bounds of this QuadraticCurve. The bounds are calculated by
 	 * examining the extreme points of the x(t) and y(t) function
 	 * representations of this QuadraticCurve.
 	 * 
 	 * @return the bounds {@link Rectangle}
 	 */
+	/*
+	 * public Rectangle getBounds() { // extremes of the x(t) and y(t)
+	 * functions: double[] xts; try { xts =
+	 * PolynomCalculationUtils.getLinearRoots(2 * (getX1() - 2 getCtrlX() +
+	 * getX2()), 2 * (getCtrlX() - getX1())); } catch (ArithmeticException x) {
+	 * return new Rectangle(getP1(), getP2()); }
+	 * 
+	 * double xmin = getX1(), xmax = getX1(); if (getX2() < xmin) { xmin =
+	 * getX2(); } else { xmax = getX2(); }
+	 * 
+	 * for (double t : xts) { if (t >= 0 && t <= 1) { double x = get(t).x; if (x
+	 * < xmin) { xmin = x; } else if (x > xmax) { xmax = x; } } }
+	 * 
+	 * double[] yts; try { yts = PolynomCalculationUtils.getLinearRoots(2 *
+	 * (getY1() - 2 getCtrlY() + getY2()), 2 * (getCtrlY() - getY1())); } catch
+	 * (ArithmeticException x) { return new Rectangle(getP1(), getP2()); }
+	 * 
+	 * double ymin = getY1(), ymax = getY1(); if (getY2() < ymin) { ymin =
+	 * getY2(); } else { ymax = getY2(); }
+	 * 
+	 * for (double t : yts) { if (t >= 0 && t <= 1) { double y = get(t).y; if (y
+	 * < ymin) { ymin = y; } else if (y > ymax) { ymax = y; } } }
+	 * 
+	 * return new Rectangle(new Point(xmin, ymin), new Point(xmax, ymax)); }
+	 */
+
 	@Override
-	public Rectangle getBounds() {
-		// extremes of the x(t) and y(t) functions:
-		double[] xts;
-		try {
-			xts = PolynomCalculationUtils.getLinearRoots(2 * (getX1() - 2
-					* getCtrlX() + getX2()), 2 * (getCtrlX() - getX1()));
-		} catch (ArithmeticException x) {
-			return new Rectangle(getP1(), getP2());
-		}
-
-		double xmin = getX1(), xmax = getX1();
-		if (getX2() < xmin) {
-			xmin = getX2();
-		} else {
-			xmax = getX2();
-		}
-
-		for (double t : xts) {
-			if (t >= 0 && t <= 1) {
-				double x = get(t).x;
-				if (x < xmin) {
-					xmin = x;
-				} else if (x > xmax) {
-					xmax = x;
-				}
-			}
-		}
-
-		double[] yts;
-		try {
-			yts = PolynomCalculationUtils.getLinearRoots(2 * (getY1() - 2
-					* getCtrlY() + getY2()), 2 * (getCtrlY() - getY1()));
-		} catch (ArithmeticException x) {
-			return new Rectangle(getP1(), getP2());
-		}
-
-		double ymin = getY1(), ymax = getY1();
-		if (getY2() < ymin) {
-			ymin = getY2();
-		} else {
-			ymax = getY2();
-		}
-
-		for (double t : yts) {
-			if (t >= 0 && t <= 1) {
-				double y = get(t).y;
-				if (y < ymin) {
-					ymin = y;
-				} else if (y > ymax) {
-					ymax = y;
-				}
-			}
-		}
-
-		return new Rectangle(new Point(xmin, ymin), new Point(xmax, ymax));
+	public QuadraticCurve getClipped(double t1, double t2) {
+		return super.getClipped(t1, t2).toQuadratic();
 	}
 
 	private Polygon getControlPolygon() {

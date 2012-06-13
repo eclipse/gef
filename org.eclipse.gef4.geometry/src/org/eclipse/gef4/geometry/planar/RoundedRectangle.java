@@ -29,7 +29,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  */
 public final class RoundedRectangle extends
-		AbstractRectangleBasedGeometry<Rectangle> implements IShape {
+		AbstractRectangleBasedGeometry<RoundedRectangle, PolyBezier> implements
+		IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -85,6 +86,10 @@ public final class RoundedRectangle extends
 				arcHeight);
 	}
 
+	public boolean contains(IGeometry g) {
+		return CurveUtils.contains(this, g);
+	}
+
 	/**
 	 * @see IGeometry#contains(Point)
 	 */
@@ -126,6 +131,19 @@ public final class RoundedRectangle extends
 		return false;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof RoundedRectangle)) {
+			return false;
+		}
+		RoundedRectangle o = (RoundedRectangle) obj;
+		return PrecisionUtils.equal(x, o.x) && PrecisionUtils.equal(y, o.y)
+				&& PrecisionUtils.equal(width, o.width)
+				&& PrecisionUtils.equal(height, o.height)
+				&& PrecisionUtils.equal(arcWidth, o.arcWidth)
+				&& PrecisionUtils.equal(arcHeight, o.arcHeight);
+	}
+
 	/**
 	 * Returns the arc height of this {@link RoundedRectangle}, which is the
 	 * height of the arc used to define its rounded corners.
@@ -144,6 +162,147 @@ public final class RoundedRectangle extends
 	 */
 	public double getArcWidth() {
 		return arcWidth;
+	}
+
+	/**
+	 * Returns the bottom edge of this {@link RoundedRectangle}.
+	 * 
+	 * @return the bottom edge of this {@link RoundedRectangle}.
+	 */
+	public Line getBottom() {
+		return new Line(x + arcWidth, y + height, x + width - arcWidth, y
+				+ height);
+	}
+
+	/**
+	 * Returns the bottom left {@link Arc} of this {@link RoundedRectangle}.
+	 * 
+	 * @return the bottom left {@link Arc} of this {@link RoundedRectangle}.
+	 */
+	public Arc getBottomLeftArc() {
+		return new Arc(x, y + height - 2 * arcHeight, 2 * arcWidth,
+				2 * arcHeight, Angle.fromDeg(180), Angle.fromDeg(90));
+	}
+
+	/**
+	 * Returns the bottom right {@link Arc} of this {@link RoundedRectangle}.
+	 * 
+	 * @return the bottom right {@link Arc} of this {@link RoundedRectangle}.
+	 */
+	public Arc getBottomRightArc() {
+		return new Arc(x + width - 2 * arcWidth, y + height - 2 * arcHeight,
+				2 * arcWidth, 2 * arcHeight, Angle.fromDeg(270),
+				Angle.fromDeg(90));
+	}
+
+	/**
+	 * @see IGeometry#getCopy()
+	 */
+	public RoundedRectangle getCopy() {
+		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
+	}
+
+	/**
+	 * Returns the left edge of this {@link RoundedRectangle}.
+	 * 
+	 * @return the left edge of this {@link RoundedRectangle}.
+	 */
+	public Line getLeft() {
+		return new Line(x, y + arcHeight, x, y + height - arcHeight);
+	}
+
+	public PolyBezier getOutline() {
+		return CurveUtils.getOutline(this);
+	}
+
+	/**
+	 * @see org.eclipse.gef4.geometry.planar.IShape#getOutlineSegments()
+	 */
+	public ICurve[] getOutlineSegments() {
+		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
+		// on the approximation used here
+		return new ICurve[] {
+				CurveUtils.computeEllipticalArcApproximation(x + width - 2
+						* arcWidth, y, 2 * arcWidth, 2 * arcHeight,
+						Angle.fromDeg(0), Angle.fromDeg(90)),
+				new Line(x + width - arcWidth, y, x + arcWidth, y),
+				CurveUtils.computeEllipticalArcApproximation(x, y,
+						2 * arcWidth, 2 * arcHeight, Angle.fromDeg(90),
+						Angle.fromDeg(180)),
+				new Line(x, y + arcHeight, x, y + height - arcHeight),
+				CurveUtils.computeEllipticalArcApproximation(x, y + height - 2
+						* arcHeight, 2 * arcWidth, 2 * arcHeight,
+						Angle.fromDeg(180), Angle.fromDeg(270)),
+				new Line(x + arcWidth, y + height, x + width - arcWidth, y
+						+ height),
+				CurveUtils.computeEllipticalArcApproximation(x + width - 2
+						* arcWidth, y + height - 2 * arcHeight, 2 * arcWidth,
+						2 * arcHeight, Angle.fromDeg(270), Angle.fromDeg(360)),
+				new Line(x + width, y + height - arcHeight, x + width, y
+						+ arcHeight) };
+	}
+
+	/**
+	 * Returns the right edge of this {@link RoundedRectangle}.
+	 * 
+	 * @return the right edge of this {@link RoundedRectangle}.
+	 */
+	public Line getRight() {
+		return new Line(x + width, y + arcHeight, x + width, y + height
+				- arcHeight);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle) {
+		return getOutline().rotateCCW(angle);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
+		return getOutline().rotateCCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, Point center) {
+		return getOutline().rotateCCW(angle, center);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle) {
+		return getOutline().rotateCW(angle);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
+		return getOutline().rotateCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, Point center) {
+		return getOutline().rotateCW(angle, center);
+	}
+
+	/**
+	 * Returns the top edge of this {@link RoundedRectangle}.
+	 * 
+	 * @return the top edge of this {@link RoundedRectangle}.
+	 */
+	public Line getTop() {
+		return new Line(x + arcWidth, y, x + width - arcWidth, y);
+	}
+
+	/**
+	 * Returns the top left {@link Arc} of this {@link RoundedRectangle}.
+	 * 
+	 * @return the top left {@link Arc} of this {@link RoundedRectangle}.
+	 */
+	public Arc getTopLeftArc() {
+		return new Arc(x, y, 2 * arcWidth, 2 * arcHeight, Angle.fromDeg(90),
+				Angle.fromDeg(90));
+	}
+
+	/**
+	 * Returns the top right {@link Arc} of this {@link RoundedRectangle}.
+	 * 
+	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
+	 */
+	public Arc getTopRightArc() {
+		return new Arc(x + width - 2 * arcWidth, y, 2 * arcWidth,
+				2 * arcHeight, Angle.fromDeg(0), Angle.fromDeg(90));
 	}
 
 	/**
@@ -172,136 +331,26 @@ public final class RoundedRectangle extends
 	 * @see IGeometry#toPath()
 	 */
 	public Path toPath() {
+		// return CurveUtils.toPath(getOutlineSegments());
+		// TODO: use cubic curves instead of quadratic curves here!
 		// overwritten to optimize w.r.t. object creation (could otherwise use
 		// the segments)
 		Path path = new Path();
-		path.moveTo(x, y - arcHeight);
-		path.quadTo(x + arcWidth, y, x, y);
-		path.lineTo(x + width - arcWidth * 2, y);
-		path.quadTo(x + width, y + arcHeight, x + width, y);
-		path.lineTo(x + width, y + height - arcHeight * 2);
-		path.quadTo(x + width - arcWidth * 2, y + height, x + width, y + width);
+		path.moveTo(x, y + arcHeight);
+		path.quadTo(x, y, x + arcWidth, y);
+		path.lineTo(x + width - arcWidth, y);
+		path.quadTo(x + width, y, x + width, y + arcHeight);
+		path.lineTo(x + width, y + height - arcHeight);
+		path.quadTo(x + width, y + height, x + width - arcWidth, y + height);
 		path.lineTo(x + arcWidth, y + height);
-		path.quadTo(x, y + height - arcHeight * 2, x, y + height);
+		path.quadTo(x, y + height, x, y + height - arcHeight);
 		path.close();
 		return path;
 	}
 
-	/**
-	 * Returns the top edge of this {@link RoundedRectangle}.
-	 * 
-	 * @return the top edge of this {@link RoundedRectangle}.
-	 */
-	public Line getTop() {
-		return new Line(x + arcWidth, y, x + width - arcWidth, y);
-	}
-
-	/**
-	 * Returns the bottom edge of this {@link RoundedRectangle}.
-	 * 
-	 * @return the bottom edge of this {@link RoundedRectangle}.
-	 */
-	public Line getBottom() {
-		return new Line(x + arcWidth, y + height - arcHeight, x + width
-				- arcWidth, y + height - arcHeight);
-	}
-
-	/**
-	 * Returns the right edge of this {@link RoundedRectangle}.
-	 * 
-	 * @return the right edge of this {@link RoundedRectangle}.
-	 */
-	public Line getRight() {
-		return new Line(x + width, y + arcHeight, x + width, y + height
-				- arcHeight);
-	}
-
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IShape#getOutlineSegments()
-	 */
-	public ICurve[] getOutlineSegments() {
-		return new ICurve[] {
-				new QuadraticCurve(x, y - arcHeight, x + arcWidth, y, x, y),
-				new Line(x, y, x + width - arcWidth * 2, y),
-				new QuadraticCurve(x + width - arcWidth * 2, y, x + width, y
-						+ arcHeight, x + width, y),
-				new Line(x + width, y, x + width, y + height - arcHeight * 2),
-				new QuadraticCurve(x + width, y + height - arcHeight * 2, x
-						+ width - arcWidth * 2, y + height, x + width, y
-						+ width),
-				new Line(x + width, y + width, x + arcWidth, y + height),
-				new QuadraticCurve(x + arcWidth, y + height, x, y + height
-						- arcHeight * 2, x, y + height),
-				new Line(x, y + height, x, y - arcHeight) };
-	}
-
-	/**
-	 * Returns the left edge of this {@link RoundedRectangle}.
-	 * 
-	 * @return the left edge of this {@link RoundedRectangle}.
-	 */
-	public Line getLeft() {
-		return new Line(x, y + arcHeight, x, y + height - arcHeight);
-	}
-
-	/**
-	 * Returns the top left {@link Arc} of this {@link RoundedRectangle}.
-	 * 
-	 * @return the top left {@link Arc} of this {@link RoundedRectangle}.
-	 */
-	public Arc getTopLeftArc() {
-		return new Arc(x, y, arcWidth, arcHeight, Angle.fromDeg(90),
-				Angle.fromDeg(90));
-	}
-
-	/**
-	 * Returns the top right {@link Arc} of this {@link RoundedRectangle}.
-	 * 
-	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
-	 */
-	public Arc getTopRightArc() {
-		return new Arc(x + width - arcWidth, y, arcWidth, arcHeight,
-				Angle.fromDeg(0), Angle.fromDeg(90));
-	}
-
-	/**
-	 * Returns the bottom left {@link Arc} of this {@link RoundedRectangle}.
-	 * 
-	 * @return the bottom left {@link Arc} of this {@link RoundedRectangle}.
-	 */
-	public Arc getBottomLeftArc() {
-		return new Arc(x, y + height - arcHeight, arcWidth, arcHeight,
-				Angle.fromDeg(180), Angle.fromDeg(90));
-	}
-
-	/**
-	 * Returns the bottom right {@link Arc} of this {@link RoundedRectangle}.
-	 * 
-	 * @return the bottom right {@link Arc} of this {@link RoundedRectangle}.
-	 */
-	public Arc getBottomRightArc() {
-		return new Arc(x + width - arcWidth, y + height - arcHeight, arcWidth,
-				arcHeight, Angle.fromDeg(270), Angle.fromDeg(90));
-	}
-
 	@Override
 	public String toString() {
-		return "RoundedRectangle: (" + x + ", " + y + ", " + width + ", " + height + ", " + arcWidth + ", " + arcHeight; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-	}
-
-	/**
-	 * @see IGeometry#getCopy()
-	 */
-	public RoundedRectangle getCopy() {
-		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
-	}
-
-	public IPolyCurve getOutline() {
-		return CurveUtils.getOutline(this);
-	}
-
-	public boolean contains(IGeometry g) {
-		return CurveUtils.contains(this, g);
+		return "RoundedRectangle(" + x + ", " + y + ", " + width + ", " + height + ", " + arcWidth + ", " + arcHeight + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 
 }

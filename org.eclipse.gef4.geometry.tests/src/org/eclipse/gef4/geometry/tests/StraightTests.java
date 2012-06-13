@@ -328,6 +328,10 @@ public class StraightTests {
 		assertTrue(s1.getPointAt(0).equals(new Point()));
 		assertTrue(s1.getPointAt(1).equals(new Point(1, 0)));
 		assertTrue(s1.getPointAt(-1).equals(new Point(-1, 0)));
+
+		// test 0/0 straight (not a straight anymore)
+		s1 = new Straight(new Point(), new Point());
+		assertTrue(PrecisionUtils.equal(0, s1.getParameterAt(new Point())));
 	}
 
 	@Test

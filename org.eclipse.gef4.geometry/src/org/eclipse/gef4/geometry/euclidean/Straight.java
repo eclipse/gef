@@ -297,7 +297,7 @@ public class Straight implements Cloneable, Serializable {
 	 *         {@link Point} p
 	 */
 	public double getParameterAt(Point p) {
-		if (direction.x != 0) {
+		if (Math.abs(direction.x) > Math.abs(direction.y)) {
 			return (p.x - position.x) / direction.x;
 		}
 		if (direction.y != 0) {

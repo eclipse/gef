@@ -25,6 +25,30 @@ public interface IPolyShape extends IGeometry {
 	 */
 	IShape[] getShapes();
 
-	// contains()
+	/**
+	 * <p>
+	 * Computes the outline segments of this {@link IPolyShape}.
+	 * </p>
+	 * 
+	 * <p>
+	 * Each {@link ICurve} segment of the outline of the internal {@link IShape}
+	 * s can be either an inner segment or an outer segment. This method
+	 * extracts only the outer segments. The segments bordering voids are
+	 * considered to be outer segments, too.
+	 * </p>
+	 * 
+	 * @return the outline segments of this {@link IPolyShape}
+	 */
+	public ICurve[] getOutlineSegments();
+
+	/**
+	 * Checks if the given {@link IGeometry} is fully contained by this
+	 * {@link IPolyShape}.
+	 * 
+	 * @param g
+	 * @return <code>true</code> if the {@link IGeometry} is contained by this
+	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 */
+	public boolean contains(final IGeometry g);
 
 }

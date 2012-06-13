@@ -15,10 +15,14 @@ package org.eclipse.gef4.geometry.planar;
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.transform.IRotatable;
+import org.eclipse.gef4.geometry.transform.IScalable;
+import org.eclipse.gef4.geometry.transform.ITranslatable;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 
 abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGeometry<?>>
-		extends AbstractGeometry {
+		extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
+		IRotatable<T> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,28 +58,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 *         {@link AbstractPointListBasedGeometry}
 	 */
 	public Point getCentroid() {
-		if (points.length == 0) {
-			return null;
-		} else if (points.length == 1) {
-			return points[0].getCopy();
-		}
-
-		double cx = 0, cy = 0, a, sa = 0;
-		for (int i = 0; i < points.length - 1; i++) {
-			a = points[i].x * points[i + 1].y - points[i].y * points[i + 1].x;
-			sa += a;
-			cx += (points[i].x + points[i + 1].x) * a;
-			cy += (points[i].y + points[i + 1].y) * a;
-		}
-
-		// closing segment
-		a = points[points.length - 2].x * points[points.length - 1].y
-				- points[points.length - 2].y * points[points.length - 1].x;
-		sa += a;
-		cx += (points[points.length - 2].x + points[points.length - 1].x) * a;
-		cy += (points[points.length - 2].x + points[points.length - 1].x) * a;
-
-		return new Point(cx / (3 * sa), cy / (3 * sa));
+		return PointListUtils.computeCentroid(points);
 	}
 
 	/**
@@ -116,6 +99,10 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 		return getRotatedCCW(alpha, getCentroid());
 	}
 
+	public T getRotatedCCW(Angle angle, double cx, double cy) {
+		return getRotatedCCW(angle, new Point(cx, cy));
+	}
+
 	/**
 	 * Returns a new {@link AbstractPointListBasedGeometry} which is rotated
 	 * counter-clock-wise by the given {@link Angle} around the given
@@ -147,6 +134,10 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 */
 	public T getRotatedCW(Angle alpha) {
 		return getRotatedCW(alpha, getCentroid());
+	}
+
+	public T getRotatedCW(Angle angle, double cx, double cy) {
+		return getRotatedCW(angle, new Point(cx, cy));
 	}
 
 	/**
@@ -185,6 +176,14 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factorX, double factorY) {
 		return (T) ((T) getCopy()).scale(factorX, factorY);
+	}
+
+	public T getScaled(double factor, double cx, double cy) {
+		return getScaled(factor, factor, new Point(cx, cy));
+	}
+
+	public T getScaled(double fx, double fy, double cx, double cy) {
+		return getScaled(fx, fy, new Point(cx, cy));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -238,6 +237,10 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 		return rotateCCW(alpha, getCentroid());
 	}
 
+	public T rotateCCW(Angle angle, double cx, double cy) {
+		return rotateCCW(angle, new Point(cx, cy));
+	}
+
 	/**
 	 * Rotates this {@link AbstractPointListBasedGeometry} counter-clock-wise by
 	 * the given {@link Angle} around the given {@link Point}.
@@ -281,7 +284,11 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 * @see #rotateCW(Angle, Point)
 	 */
 	public T rotateCW(Angle alpha) {
-		return rotateCW(alpha, getCentroid());
+		return (T) rotateCW(alpha, getCentroid());
+	}
+
+	public T rotateCW(Angle angle, double cx, double cy) {
+		return rotateCW(angle, new Point(cx, cy));
 	}
 
 	/**
@@ -331,14 +338,22 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 		return scale(factor, factor);
 	}
 
-	public T scale(double factorX, double factorY) {
-		return scale(factorX, factorY, getCentroid());
+	public T scale(double fx, double fy) {
+		return scale(fx, fy, getCentroid());
+	}
+
+	public T scale(double factor, double cx, double cy) {
+		return scale(factor, factor, new Point(cx, cy));
+	}
+
+	public T scale(double fx, double fy, double cx, double cy) {
+		return scale(fx, fy, new Point(cx, cy));
 	}
 
 	@SuppressWarnings("unchecked")
-	public T scale(double factorX, double factorY, Point center) {
+	public T scale(double fx, double fy, Point center) {
 		for (Point p : points) {
-			Point np = p.getScaled(factorX, factorY, center);
+			Point np = p.getScaled(fx, fy, center);
 			p.x = np.x;
 			p.y = np.y;
 		}

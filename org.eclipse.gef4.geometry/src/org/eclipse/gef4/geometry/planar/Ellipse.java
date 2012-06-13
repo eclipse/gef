@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.CurveUtils;
@@ -34,8 +35,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author anyssen
  * @author Matthias Wienand
  */
-public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse> implements
-		IShape {
+public class Ellipse extends
+		AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -344,40 +345,15 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse> implements
 	 * @return border-segments
 	 */
 	public CubicCurve[] getOutlineSegments() {
-		CubicCurve[] segs = new CubicCurve[4];
-		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
-		// on the approximation used here
-		final double kappa = 4.0d * (Math.sqrt(2.0d) - 1.0d) / 3.0d;
-		double a = width / 2;
-		double b = height / 2;
-
-		double ox = x + a;
-		double oy = y;
-
-		segs[0] = new CubicCurve(ox, oy, x + a + kappa * a, y, x + width, y + b
-				- kappa * b, x + width, y + b);
-
-		ox = x + width;
-		oy = y + b;
-
-		segs[1] = new CubicCurve(ox, oy, x + width, y + b + kappa * b, x + a
-				+ kappa * a, y + height, x + a, y + height);
-
-		ox = x + a;
-		oy = y + height;
-
-		segs[2] = new CubicCurve(ox, oy, x + width / 2 - kappa * width / 2, y
-				+ height, x, y + height / 2 + kappa * height / 2, x, y + height
-				/ 2);
-
-		ox = x;
-		oy = y + height / 2;
-
-		segs[3] = new CubicCurve(ox, oy, x,
-				y + height / 2 - kappa * height / 2, x + width / 2 - kappa
-						* width / 2, y, x + width / 2, y);
-
-		return segs;
+		return new CubicCurve[] {
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(0), Angle.fromDeg(90)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(90), Angle.fromDeg(180)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(180), Angle.fromDeg(270)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
 	/**
@@ -398,26 +374,44 @@ public class Ellipse extends AbstractRectangleBasedGeometry<Ellipse> implements
 	public Path toPath() {
 		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
 		// on the approximation used here
-		final double kappa = 4.0d * (Math.sqrt(2.0d) - 1.0d) / 3.0d;
-		final Path p = new Path();
-		double a = width / 2;
-		double b = height / 2;
-		p.moveTo(x + a, y);
-		p.curveTo(x + a + kappa * a, y, x + width, y + b - kappa * b,
-				x + width, y + b);
-		p.curveTo(x + width, y + b + kappa * b, x + a + kappa * a, y + height,
-				x + a, y + height);
-		p.curveTo(x + width / 2 - kappa * width / 2, y + height, x, y + height
-				/ 2 + kappa * height / 2, x, y + height / 2);
-		p.curveTo(x, y + height / 2 - kappa * height / 2, x + width / 2 - kappa
-				* width / 2, y, x + width / 2, y);
-		return p;
+		return CurveUtils.toPath(CurveUtils.computeEllipticalArcApproximation(
+				x, y, width, height, Angle.fromDeg(0), Angle.fromDeg(90)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(90), Angle.fromDeg(180)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(180), Angle.fromDeg(270)),
+				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+						height, Angle.fromDeg(270), Angle.fromDeg(360)));
 	}
 
 	@Override
 	public String toString() {
-		return "Ellipse: (" + x + ", " + y + ", " + //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+		return "Ellipse (" + x + ", " + y + ", " + //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 				width + ", " + height + ")";//$NON-NLS-2$//$NON-NLS-1$
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, Point center) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, center);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, Point center) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle, center);
 	}
 
 }
