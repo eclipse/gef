@@ -26,7 +26,7 @@ import org.eclipse.gef4.geometry.utils.CurveUtils;
  * @param <T>
  *            type of the inheriting class
  */
-public abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?>>
+abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?>>
 		extends AbstractRectangleBasedGeometry<T, IGeometry> {
 
 	private static final long serialVersionUID = 1L;

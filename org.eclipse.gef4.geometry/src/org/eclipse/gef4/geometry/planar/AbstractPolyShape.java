@@ -25,8 +25,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * segments of an object of an inheriting class.
  * 
  */
-public abstract class AbstractPolyShape extends AbstractGeometry implements
-		IPolyShape {
+abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape {
 
 	private static final long serialVersionUID = 1L;
 
