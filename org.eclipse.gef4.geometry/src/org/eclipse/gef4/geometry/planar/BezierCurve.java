@@ -26,9 +26,6 @@ import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Straight3D;
 import org.eclipse.gef4.geometry.projective.Vector3D;
-import org.eclipse.gef4.geometry.transform.IRotatable;
-import org.eclipse.gef4.geometry.transform.IScalable;
-import org.eclipse.gef4.geometry.transform.ITranslatable;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 

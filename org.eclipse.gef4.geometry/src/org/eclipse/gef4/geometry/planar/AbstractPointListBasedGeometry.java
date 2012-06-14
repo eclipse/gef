@@ -15,9 +15,6 @@ package org.eclipse.gef4.geometry.planar;
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.transform.IRotatable;
-import org.eclipse.gef4.geometry.transform.IScalable;
-import org.eclipse.gef4.geometry.transform.ITranslatable;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 
 abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGeometry<?>>

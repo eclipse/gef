@@ -9,15 +9,10 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *          
  *******************************************************************************/
-package org.eclipse.gef4.geometry.transform;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.planar.Ellipse;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.geometry.planar.Region;
-import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 /**
  * <p>

@@ -14,9 +14,6 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Dimension;
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.transform.IRotatable;
-import org.eclipse.gef4.geometry.transform.IScalable;
-import org.eclipse.gef4.geometry.transform.ITranslatable;
 
 /**
  * <p>

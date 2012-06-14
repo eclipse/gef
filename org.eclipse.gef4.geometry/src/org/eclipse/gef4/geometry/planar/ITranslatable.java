@@ -9,10 +9,9 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *          
  *******************************************************************************/
-package org.eclipse.gef4.geometry.transform;
+package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Point;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 
 /**
  * <p>
