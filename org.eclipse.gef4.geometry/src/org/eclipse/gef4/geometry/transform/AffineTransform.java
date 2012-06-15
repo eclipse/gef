@@ -13,9 +13,9 @@ package org.eclipse.gef4.geometry.transform;
 
 import java.awt.geom.NoninvertibleTransformException;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.convert.AWT2Geometry;
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * TODO

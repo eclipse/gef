@@ -14,9 +14,9 @@ package org.eclipse.gef4.geometry.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.junit.Test;
 
 public class CubicCurveTests {

@@ -12,7 +12,6 @@
 package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
 
 /**
  * <p>

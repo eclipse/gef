@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.junit.Test;
 

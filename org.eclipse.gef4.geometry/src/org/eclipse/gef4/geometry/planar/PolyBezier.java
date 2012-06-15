@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 

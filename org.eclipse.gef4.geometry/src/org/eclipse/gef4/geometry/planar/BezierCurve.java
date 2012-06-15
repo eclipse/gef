@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Straight3D;
 import org.eclipse.gef4.geometry.projective.Vector3D;

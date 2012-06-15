@@ -14,7 +14,6 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.io.Serializable;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 
 /**

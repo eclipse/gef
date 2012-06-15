@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.projective;
 
-import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * <p>

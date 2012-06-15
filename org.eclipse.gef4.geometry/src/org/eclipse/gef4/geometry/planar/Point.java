@@ -11,7 +11,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry;
+package org.eclipse.gef4.geometry.planar;
 
 import java.io.Serializable;
 

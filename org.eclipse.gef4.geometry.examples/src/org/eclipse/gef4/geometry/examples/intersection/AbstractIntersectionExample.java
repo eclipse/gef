@@ -13,9 +13,9 @@ package org.eclipse.gef4.geometry.examples.intersection;
 
 import java.util.ArrayList;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;

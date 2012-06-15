@@ -16,7 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.projective.Vector3D;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;

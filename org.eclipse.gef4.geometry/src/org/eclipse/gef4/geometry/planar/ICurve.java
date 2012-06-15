@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import org.eclipse.gef4.geometry.Point;
 
 /**
  * Abstraction over all curve shapes, i.e. lines (linear curves) as well as

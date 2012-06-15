@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.utils.CurveUtils;
 
 /**

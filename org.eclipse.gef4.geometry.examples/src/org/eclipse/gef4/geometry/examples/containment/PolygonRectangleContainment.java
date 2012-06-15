@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.graphics.GC;

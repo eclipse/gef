@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -31,6 +30,7 @@ import org.eclipse.gef4.geometry.planar.IPolyShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 

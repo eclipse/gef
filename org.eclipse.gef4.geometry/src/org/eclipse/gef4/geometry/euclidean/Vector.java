@@ -16,7 +16,7 @@ package org.eclipse.gef4.geometry.euclidean;
 import java.io.Serializable;
 
 import org.eclipse.gef4.geometry.Angle;
-import org.eclipse.gef4.geometry.Point;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**

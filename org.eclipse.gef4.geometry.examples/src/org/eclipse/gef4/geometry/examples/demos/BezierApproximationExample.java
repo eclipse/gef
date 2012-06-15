@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;

@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import org.eclipse.gef4.geometry.Dimension;
-import org.eclipse.gef4.geometry.Point;
 
 /**
  * <p>

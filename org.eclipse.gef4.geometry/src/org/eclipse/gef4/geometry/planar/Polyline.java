@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PointListUtils;

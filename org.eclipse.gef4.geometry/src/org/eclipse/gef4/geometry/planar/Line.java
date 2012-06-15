@@ -15,7 +15,6 @@ package org.eclipse.gef4.geometry.planar;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Vector3D;

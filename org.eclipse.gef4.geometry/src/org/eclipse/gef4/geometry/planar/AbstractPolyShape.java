@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
-import org.eclipse.gef4.geometry.Point;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**

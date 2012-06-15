@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-import org.eclipse.gef4.geometry.Point;
 
 /**
  * Represents the geometric shape of a quadratic Bézier curve.
