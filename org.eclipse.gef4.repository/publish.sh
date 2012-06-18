@@ -99,8 +99,8 @@ cd $tmpDir
 if [ "$merge" = y ];
         then
                 echo "Downloading eclipse to $PWD"
-                cp /home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.7.1-201109091335/eclipse-SDK-3.7.1-linux-gtk-x86_64.tar.gz .
-                tar -xvzf eclipse-SDK-3.7.1-linux-gtk-x86_64.tar.gz
+                cp /home/data/httpd/download.eclipse.org/eclipse/downloads/drops/R-3.7.2-201202080800/eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz .
+                tar -xvzf eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz
                 cd eclipse
                 chmod 700 eclipse
                 cd ..
