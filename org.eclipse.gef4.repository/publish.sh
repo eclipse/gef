@@ -126,6 +126,15 @@ else
         echo "Copied $localUpdateSite to local directory update-site."
 fi
 
+# Create p2.index file
+if [ ! -e "update-site/p2.index" ];
+    then
+        echo "Creating p2.index file"
+        echo "version = 1" > update-site/p2.index
+        echo "metadata.repository.factory.order = content.xml,\!" >> update-site/p2.index
+        echo "artifact.repository.factory.order = artifacts.xml,\!" >> update-site/p2.index
+fi
+
 # Backup then clean remote update site
 echo "Creating backup of remote update site."
 if [ -d "$remoteUpdateSite" ];
