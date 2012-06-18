@@ -104,6 +104,11 @@ if [ "$merge" = y ];
                 cd eclipse
                 chmod 700 eclipse
                 cd ..
+                if [ ! -d "eclipse" ];
+                    then
+                        echo "Failed to download an Eclipse SDK, being needed for provisioning."
+                        exit 1
+                fi
 fi
 
 # Prepare local update site (merge if required)
