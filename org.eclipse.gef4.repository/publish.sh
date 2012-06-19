@@ -132,7 +132,7 @@ fi
 
 # Ensure p2.mirrorURLs property is used in update site
 echo "Setting p2.mirrorsURL to http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
-./eclipse/eclipse -nosplash -consoleLog --launcher.suppressErrors -application org.eclipse.wtp.releng.tools.addRepoProperties -console -vmargs "-DartifactRepoDirectory=update-site -Dp2MirrorsURL=http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
+./eclipse/eclipse -nosplash -consoleLog --launcher.suppressErrors -application org.eclipse.wtp.releng.tools.addRepoProperties -console -vmargs -DartifactRepoDirectory=update-site -Dp2MirrorsURL=http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase
 
 # Create p2.index file
 if [ ! -e "update-site/p2.index" ];
