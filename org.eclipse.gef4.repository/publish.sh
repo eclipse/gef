@@ -110,7 +110,7 @@ if [ ! -d "eclipse" ];
 fi
 # Prepare Eclipse SDK to provide WTP releng tools (used to postprocess repository, i.e set p2.mirrorsURL property)
 echo "Installing WTP Releng tools"
-./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.director -debug -console -repository http://download.eclipse.org/webtools/releng/repository/ -installIUs org.eclipse.wtp.releng.tools.feature.feature.group
+./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.director -repository http://download.eclipse.org/webtools/releng/repository/ -installIUs org.eclipse.wtp.releng.tools.feature.feature.group
 # Clean up
 echo "Cleaning up"
 rm eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz
@@ -119,10 +119,10 @@ rm eclipse-SDK-3.7.2-linux-gtk-x86_64.tar.gz
 if [ "$merge" = y ];
         then
         echo "Merging existing site into local one."
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
-        ./eclipse/eclipse -nosplash -consoleLog -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$remoteUpdateSite -destination file:update-site
+        ./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source file:$localUpdateSite -destination file:update-site
         echo "Merged $localUpdateSite and $remoteUpdateSite into local directory update-site."
 else
         echo "Skipping merge operation."
@@ -132,7 +132,7 @@ fi
 
 # Ensure p2.mirrorURLs property is used in update site
 echo "Setting p2.mirrorsURL to http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
-./eclipse/eclipse -nosplash -consoleLog --launcher.suppressErrors -application org.eclipse.wtp.releng.tools.addRepoProperties -console -vmargs -DartifactRepoDirectory=update-site -Dp2MirrorsURL=http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase
+./eclipse/eclipse -nosplash --launcher.suppressErrors -clean -debug -application org.eclipse.wtp.releng.tools.addRepoProperties -vmargs -DartifactRepoDirectory=$PWD/update-site -Dp2MirrorsURL="http://www.eclipse.org/downloads/download.php?format=xml&file=/$remoteUpdateSiteBase"
 
 # Create p2.index file
 if [ ! -e "update-site/p2.index" ];
