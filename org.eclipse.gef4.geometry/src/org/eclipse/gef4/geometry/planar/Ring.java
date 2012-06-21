@@ -423,11 +423,34 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return getCopy().rotateCW(angle, center);
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} counter-clock-wise around its center
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCCW(Angle angle) {
 		Point centroid = getBounds().getCenter();
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} counter-clock-wise around the given
+	 * point (specified by cx and cy) by the given {@link Angle}. Direct
+	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
+	 * in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCCW(Angle angle, double cx, double cy) {
 		for (Polygon p : triangles) {
 			p.rotateCCW(angle, cx, cy);
@@ -435,15 +458,48 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} counter-clock-wise around the given
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCCW(Angle angle, Point center) {
 		return rotateCCW(angle, center.x, center.y);
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} clock-wise around its center
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCW(Angle angle) {
 		Point centroid = getBounds().getCenter();
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} clock-wise around the given point
+	 * (specified by cx and cy) by the given {@link Angle}. Direct adaptation
+	 * means, that <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCW(Angle angle, double cx, double cy) {
 		for (Polygon p : triangles) {
 			p.rotateCW(angle, cx, cy);
@@ -451,6 +507,17 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link Ring} clock-wise around the given
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public Ring rotateCW(Angle angle, Point center) {
 		return rotateCW(angle, center.x, center.y);
 	}

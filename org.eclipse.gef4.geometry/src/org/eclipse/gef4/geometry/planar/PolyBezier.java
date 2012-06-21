@@ -171,6 +171,15 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		return CurveUtils.overlaps(c, this);
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} counter-clock-wise around its
+	 * center {@link Point} by the given {@link Angle}. Direct adaptation means,
+	 * that <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCCW(Angle angle) {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (BezierCurve c : beziers) {
@@ -181,6 +190,20 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} counter-clock-wise around the
+	 * given point (specified by cx and cy) by the given {@link Angle}. Direct
+	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
+	 * in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCCW(Angle angle, double cx, double cy) {
 		for (BezierCurve c : beziers) {
 			c.rotateCCW(angle, cx, cy);
@@ -188,10 +211,30 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} counter-clock-wise around the
+	 * given {@link Point} by the given {@link Angle}. Direct adaptation means,
+	 * that <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCCW(Angle angle, Point center) {
 		return rotateCCW(angle, center.x, center.y);
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} clock-wise around its center
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCW(Angle angle) {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (BezierCurve c : beziers) {
@@ -202,6 +245,20 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} clock-wise around the given
+	 * point (specified by cx and cy) by the given {@link Angle}. Direct
+	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
+	 * in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCW(Angle angle, double cx, double cy) {
 		for (BezierCurve c : beziers) {
 			c.rotateCW(angle, cx, cy);
@@ -209,6 +266,17 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link PolyBezier} clock-wise around the given
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public PolyBezier rotateCW(Angle angle, Point center) {
 		return rotateCW(angle, center.x, center.y);
 	}
