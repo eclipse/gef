@@ -50,7 +50,7 @@ public final class Straight3D {
 	public static Straight3D through(Vector3D start, Vector3D end) {
 		Straight3D self = new Straight3D();
 		self.sp = start;
-		self.line = self.sp.getCrossed(end);
+		self.line = self.sp.getCrossProduct(end);
 
 		self.f = Math.sqrt(self.line.x * self.line.x + self.line.y
 				* self.line.y);
@@ -110,7 +110,7 @@ public final class Straight3D {
 	 *         {@link Straight3D}
 	 */
 	public Vector3D getIntersection(Straight3D other) {
-		return line.getCrossed(other.line);
+		return line.getCrossProduct(other.line);
 	}
 
 }

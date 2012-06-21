@@ -141,13 +141,13 @@ public class Straight implements Cloneable, Serializable {
 	 */
 	public Vector getIntersection(Straight other) {
 		Vector3D l1 = new Vector3D(this.position.toPoint())
-				.getCrossed(new Vector3D(this.position.getAdded(this.direction)
+				.getCrossProduct(new Vector3D(this.position.getAdded(this.direction)
 						.toPoint()));
 		Vector3D l2 = new Vector3D(other.position.toPoint())
-				.getCrossed(new Vector3D(other.position.getAdded(
+				.getCrossProduct(new Vector3D(other.position.getAdded(
 						other.direction).toPoint()));
 
-		Point poi = l1.getCrossed(l2).toPoint();
+		Point poi = l1.getCrossProduct(l2).toPoint();
 
 		return poi == null ? null : new Vector(poi);
 	}

@@ -152,7 +152,7 @@ public final class Vector3D {
 	 * @return a new {@link Vector3D} object that is the cross product of this
 	 *         and the given other {@link Vector3D}
 	 */
-	public Vector3D getCrossed(Vector3D other) {
+	public Vector3D getCrossProduct(Vector3D other) {
 		return new Vector3D(this.y * other.z - this.z * other.y, this.z
 				* other.x - this.x * other.z, this.x * other.y - this.y
 				* other.x);
@@ -164,7 +164,7 @@ public final class Vector3D {
 	 * @param other
 	 * @return the dot-product of this and the given other {@link Vector3D}
 	 */
-	public double getDot(Vector3D other) {
+	public double getDotProduct(Vector3D other) {
 		return this.x * other.x + this.y * other.y + this.z * other.z;
 	}
 

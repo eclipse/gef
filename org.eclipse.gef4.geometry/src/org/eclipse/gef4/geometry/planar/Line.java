@@ -332,8 +332,8 @@ public class Line extends BezierCurve {
 		if (touches || lp1.equals(lp2)) {
 			return touches;
 		}
-		Vector3D l1 = new Vector3D(p1).getCrossed(new Vector3D(p2));
-		Vector3D l2 = new Vector3D(lp1).getCrossed(new Vector3D(lp2));
+		Vector3D l1 = new Vector3D(p1).getCrossProduct(new Vector3D(p2));
+		Vector3D l2 = new Vector3D(lp1).getCrossProduct(new Vector3D(lp2));
 
 		/*
 		 * 2) non-degenerated case. If the two respective straight lines
@@ -342,7 +342,7 @@ public class Line extends BezierCurve {
 		 * do not intersect, because they are parallel, the getIntersection()
 		 * method returns null.
 		 */
-		Point intersection = l1.getCrossed(l2).toPoint();
+		Point intersection = l1.getCrossProduct(l2).toPoint();
 		return intersection != null && contains(intersection)
 				&& l.contains(intersection);
 	}

@@ -87,21 +87,21 @@ public class Vector3DTests {
 	public void test_getDot() {
 		Vector3D v0 = new Vector3D(1, 0, 1);
 		Vector3D v1 = new Vector3D(0, 1, 1);
-		assertTrue(PrecisionUtils.equal(1, v0.getDot(v1)));
-		assertTrue(PrecisionUtils.equal(1, v1.getDot(v0)));
+		assertTrue(PrecisionUtils.equal(1, v0.getDotProduct(v1)));
+		assertTrue(PrecisionUtils.equal(1, v1.getDotProduct(v0)));
 
 		v0 = new Vector3D(1, 2, 3);
 		v1 = new Vector3D(3, 2, 1);
-		assertTrue(PrecisionUtils.equal(10, v0.getDot(v1)));
-		assertTrue(PrecisionUtils.equal(10, v1.getDot(v0)));
+		assertTrue(PrecisionUtils.equal(10, v0.getDotProduct(v1)));
+		assertTrue(PrecisionUtils.equal(10, v1.getDotProduct(v0)));
 	}
 
 	@Test
 	public void test_getCrossed() {
 		Vector3D v0 = new Vector3D(1, 0, 1);
 		Vector3D v1 = new Vector3D(0, 1, 1);
-		assertEquals(new Vector3D(-1, -1, 1), v0.getCrossed(v1));
-		assertEquals(new Vector3D(1, 1, -1), v1.getCrossed(v0));
+		assertEquals(new Vector3D(-1, -1, 1), v0.getCrossProduct(v1));
+		assertEquals(new Vector3D(1, 1, -1), v1.getCrossProduct(v0));
 	}
 
 	@Test
