@@ -29,7 +29,11 @@ import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
- * Abstract base class of Bezier Curves.
+ * <p>
+ * Representation of arbitrary Bezier curves. This is the base class of the
+ * special quadratic and cubic Bezier curve classes ({@link QuadraticCurve} and
+ * {@link CubicCurve}).
+ * </p>
  * 
  * @author anyssen
  */
@@ -79,8 +83,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Representation of an interval [a;b]. It is used to represent sub-curves
 	 * of a {@link BezierCurve}.
-	 * 
-	 * @author wienand
 	 */
 	public static final class Interval {
 		/**
@@ -444,6 +446,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
 			.calculateFraction(0) / 10;
 
+	
 	private static IntervalPair[] clusterChunks(IntervalPair[] intervalPairs,
 			int shift) {
 		ArrayList<IntervalPair> ips = new ArrayList<IntervalPair>();
@@ -497,6 +500,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		a.pi = b.pi;
 		a.qi = b.qi;
 	}
+
 
 	private static IntervalPair extractOverlap(
 			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
@@ -560,24 +564,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
-	 * Returns the convex hull of the given {@link Vector3D}s.
-	 * 
-	 * The {@link PointListUtils#getConvexHull(Point[])} method is used to
-	 * calculate the convex hull. This method does only accept {@link Point} s
-	 * for input.
-	 * 
-	 * @param vectors
-	 * @return
-	 */
-	private static Point[] getConvexHull(Vector3D[] vectors) {
-		Point[] points = new Point[vectors.length];
-		for (int i = 0; i < vectors.length; i++) {
-			points[i] = vectors[i].toPoint();
-		}
-		return PointListUtils.getConvexHull(points);
-	}
-
-	/**
 	 * Computes the intersection of the line from {@link Point} p to
 	 * {@link Point} q with the x-axis-parallel line f(x) = y.
 	 * 
@@ -611,10 +597,30 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 				&& PrecisionUtils.greaterEqual(j.b, i.a, shift);
 	}
 
+	/**
+	 * Checks if the two {@link IntervalPair}s are next to each other. The
+	 * {@link IntervalPair}s are regarded to be normalized. Returns
+	 * <code>true</code> if the individual p- and q-{@link Interval}s are
+	 * {@link #isNextTo(Interval, Interval, int)} each other using the given
+	 * shift. Otherwise, returns <code>false</code>.
+	 * 
+	 * @param a
+	 * @param b
+	 * @param shift
+	 * @return <code>true</code> if the {@link IntervalPair}s are
+	 *         touching/overlapping, otherwise <code>false</code>
+	 */
 	private static boolean isNextTo(IntervalPair a, IntervalPair b, int shift) {
 		return isNextTo(a.pi, b.pi, shift) && isNextTo(a.qi, b.qi, shift);
 	}
 
+	/**
+	 * Normalizes the given {@link IntervalPair}s so that the
+	 * {@link BezierCurve}s associated with <code>.p</code> and <code>.q</code>
+	 * are the same.
+	 * 
+	 * @param intervalPairs
+	 */
 	private static void normalizeIntervalPairs(IntervalPair[] intervalPairs) {
 		// in every interval, p and q have to be the same curves
 		if (intervalPairs.length == 0) {
@@ -665,6 +671,19 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return overlap;
 	}
 
+	/**
+	 * Binary search from the intervals' limits to the intervals' inner values
+	 * of the first given {@link BezierCurve} p for the outer-most intersection
+	 * {@link Point}.
+	 * 
+	 * @param p
+	 * @param mid
+	 *            interval's start value (<code>mid > 0 ? mid : 0</code>)
+	 * @param b
+	 *            interval's end value (<code>b < 1 ? b : 1</code>)
+	 * @param q
+	 * @return
+	 */
 	private static Interval refineOverlapHi(BezierCurve p, double mid,
 			double b, BezierCurve q) {
 		Interval i = new Interval(Math.max(mid, 0), Math.min(b, 1));
@@ -687,9 +706,15 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
+	 * Binary search from the intervals' limits to the intervals' inner values
+	 * of the first given {@link BezierCurve} p for the outer-most intersection
+	 * {@link Point}.
+	 * 
 	 * @param p
 	 * @param a
+	 *            interval's start value (<code>a > 0 ? a : 0</code>)
 	 * @param mid
+	 *            interval's end value (<code>mid < 1 ? mid : 1</code>)
 	 * @param q
 	 * @return
 	 */
@@ -740,6 +765,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		}
 	};
 
+	/**
+	 * <p>
+	 * Searches the parameter value for the {@link Point} p on the
+	 * {@link BezierCurve} c using de Casteljau subdivision.
+	 * </p>
+	 * 
+	 * @param c
+	 * @param interval
+	 * @param p
+	 * @return
+	 */
 	private static boolean containmentParameter(BezierCurve c,
 			double[] interval, Point p) {
 		Stack<Interval> parts = new Stack<Interval>();
@@ -884,15 +920,39 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	private double[] clipTo(FatLine L) {
 		double[] interval = new double[] { 1, 0 };
 
-		Point[] D = getConvexHull(genDifferencePoints(L.line));
+		Vector3D[] differenceVectors = genDifferencePoints(L.line);
 
-		for (Point p : D) {
+		Point[] differencePoints = new Point[differenceVectors.length];
+		for (int i = 0; i < differenceVectors.length; i++) {
+			differencePoints[i] = differenceVectors[i].toPoint();
+		}
+
+		// inside fat line check
+		for (Point p : differencePoints) {
 			if (Double.isNaN(p.y) || L.dmin <= p.y && p.y <= L.dmax) {
 				moveInterval(interval, p.x);
 			}
 		}
 
-		for (Line seg : PointListUtils.toSegmentsArray(D, true)) {
+		// intersections from start
+		for (int i = 1; i < differencePoints.length; i++) {
+			Line seg = new Line(differencePoints[0], differencePoints[i]);
+			if (seg.getP1().y < L.dmin != seg.getP2().y < L.dmin) {
+				double x = intersectXAxisParallel(seg.getP1(), seg.getP2(),
+						L.dmin);
+				moveInterval(interval, x);
+			}
+			if (seg.getP1().y < L.dmax != seg.getP2().y < L.dmax) {
+				double x = intersectXAxisParallel(seg.getP1(), seg.getP2(),
+						L.dmax);
+				moveInterval(interval, x);
+			}
+		}
+
+		// intersections from end
+		for (int i = 0; i < differencePoints.length - 1; i++) {
+			Line seg = new Line(differencePoints[i],
+					differencePoints[differencePoints.length - 1]);
 			if (seg.getP1().y < L.dmin != seg.getP2().y < L.dmin) {
 				double x = intersectXAxisParallel(seg.getP1(), seg.getP2(),
 						L.dmin);
@@ -930,12 +990,13 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
-	 * Returns true if the given {@link Point} lies on this {@link BezierCurve}.
-	 * Returns false, otherwise.
+	 * Returns <code>true</code> if the given {@link Point} lies on this
+	 * {@link BezierCurve}. Otherwise, returns <code>false</code>.
 	 * 
 	 * @param p
 	 *            the {@link Point} to test for containment
-	 * @return true if the {@link Point} is contained, false otherwise
+	 * @return <code>true</code> if the {@link Point} is contained, otherwise
+	 *         <code>false</code>
 	 */
 	public boolean contains(final Point p) {
 		if (p == null) {
@@ -962,6 +1023,18 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return false;
 	}
 
+	/**
+	 * Checks all end {@link Point}s of the two {@link BezierCurve}s if they are
+	 * {@link Point}s of intersection.
+	 * 
+	 * @param ip
+	 *            {@link IntervalPair} describing both curves
+	 * @param endPointIntervalPairs
+	 *            set of {@link IntervalPair}s to store the results
+	 * @param intersections
+	 *            set of {@link Point}s to additionally store the associated
+	 *            intersection {@link Point}s
+	 */
 	private void findEndPointIntersections(IntervalPair ip,
 			Set<IntervalPair> endPointIntervalPairs, Set<Point> intersections) {
 		final double CHUNK_SHIFT_EPSILON = PrecisionUtils
@@ -1023,6 +1096,21 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return findExtreme(cmp, Interval.getFull());
 	}
 
+	/**
+	 * <p>
+	 * Searches for an extreme {@link Point} on this {@link BezierCurve}.
+	 * </p>
+	 * 
+	 * <p>
+	 * TODO: limit the maximum number of iterations
+	 * </p>
+	 * 
+	 * @param cmp
+	 *            comparator to find the extreme {@link Point}
+	 * @param iStart
+	 *            start {@link Interval}
+	 * @return the extreme {@link Point}
+	 */
 	private Point findExtreme(IPointCmp cmp, Interval iStart) {
 		Stack<Interval> parts = new Stack<Interval>();
 		parts.push(iStart);
@@ -1063,9 +1151,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Find intersection interval chunks. The chunks are not very precise. We
 	 * will refine them later.
 	 * 
+	 * Searches for (imprecise) intersection intervals using the Bezier clipping
+	 * algorithm. An intersection interval is a parameter interval on two curves
+	 * that bounds a possible point of intersection.
+	 * 
 	 * @param ip
+	 *            {@link IntervalPair} that is currently processed
 	 * @param intervalPairs
+	 *            set of {@link IntervalPair}s to store the results
 	 * @param intersections
+	 *            set of intersection {@link Point}s to store those in case of a
+	 *            degenerated Bezier curve (or a degenerated sub-curve)
 	 */
 	private void findIntersectionChunks(IntervalPair ip,
 			Set<IntervalPair> intervalPairs, Set<Point> intersections) {
@@ -1278,7 +1374,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
-	 * Returns the bounds of the control polygon of this {@link BezierCurve} .
+	 * Returns the bounds of the control polygon of this {@link BezierCurve}.
 	 * 
 	 * @return a {@link Rectangle} representing the bounds of the control
 	 *         polygon of this {@link BezierCurve}
@@ -1349,11 +1445,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
-	 * Returns the {@link Point} at the given parameter value t.
+	 * Returns a {@link Vector3D} representing the {@link Point} at the given
+	 * parameter value.
 	 * 
 	 * @param t
-	 *            Parameter value
-	 * @return {@link Point} at parameter value t
+	 *            parameter value
+	 * @return {@link Vector3D} at parameter value t
 	 */
 	private Vector3D getHC(double t) {
 		if (t < 0 || t > 1) {
@@ -1522,6 +1619,9 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
+	 * Returns the parameter value of this {@link BezierCurve} for the given
+	 * {@link Point}.
+	 * 
 	 * @param p
 	 * @return -1 if p not on curve, otherwise the corresponding parameter
 	 *         value.
@@ -1676,6 +1776,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @param x
 	 */
 	private void moveInterval(double[] interval, double x) {
+		if (x < 0) {
+			x = 0;
+		} else if (x > 1) {
+			x = 1;
+		}
+
 		if (interval[0] > x) {
 			interval[0] = x;
 		}
@@ -1705,11 +1811,34 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return false;
 	}
 
+	/**
+	 * Directly rotates this {@link BezierCurve} counter-clock-wise around its
+	 * center {@link Point} by the given {@link Angle}. Direct adaptation means,
+	 * that <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public BezierCurve rotateCCW(Angle angle) {
 		Point centroid = PointListUtils.computeCentroid(getPoints());
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link BezierCurve} counter-clock-wise around the
+	 * given point (specified by cx and cy) by the given {@link Angle}. Direct
+	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
+	 * in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public BezierCurve rotateCCW(Angle angle, double cx, double cy) {
 		Point[] realPoints = getPoints();
 		PointListUtils.rotateCCW(realPoints, angle, cx, cy);
@@ -1719,20 +1848,54 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
-	public BezierCurve rotateCCW(Angle alpha, Point center) {
+	/**
+	 * Directly rotates this {@link BezierCurve} counter-clock-wise around the
+	 * given {@link Point} by the given {@link Angle}. Direct adaptation means,
+	 * that <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
+	public BezierCurve rotateCCW(Angle angle, Point center) {
 		for (int i = 0; i < points.length; i++) {
 			points[i] = new Vector3D(new Vector(points[i].toPoint()
-					.getTranslated(center.getNegated())).getRotatedCCW(alpha)
+					.getTranslated(center.getNegated())).getRotatedCCW(angle)
 					.toPoint().getTranslated(center));
 		}
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link BezierCurve} clock-wise around its center
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
 	public BezierCurve rotateCW(Angle angle) {
 		Point centroid = PointListUtils.computeCentroid(getPoints());
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
+	/**
+	 * Directly rotates this {@link BezierCurve} clock-wise around the given
+	 * point (specified by cx and cy) by the given {@link Angle}. Direct
+	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
+	 * in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param cx
+	 *            x-coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            y-coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public BezierCurve rotateCW(Angle angle, double cx, double cy) {
 		Point[] realPoints = getPoints();
 		PointListUtils.rotateCW(realPoints, angle, cx, cy);
@@ -1742,6 +1905,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
+	/**
+	 * Directly rotates this {@link BezierCurve} clock-wise around the given
+	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
+	 * <code>this</code> {@link PolyBezier} is modified in-place.
+	 * 
+	 * @param angle
+	 *            rotation {@link Angle}
+	 * @param center
+	 *            {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
 	public BezierCurve rotateCW(Angle angle, Point center) {
 		return rotateCW(angle, center.x, center.y);
 	}

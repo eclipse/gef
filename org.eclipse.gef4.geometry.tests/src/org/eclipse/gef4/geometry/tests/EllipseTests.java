@@ -361,6 +361,10 @@ public class EllipseTests {
 
 		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
 		assertEquals(3, e1.getIntersections(e2).length);
+
+		e1 = new Ellipse(126.0, 90.0, 378.0, 270.0);
+		e2 = new Ellipse(397.0, 327.0, 26.0, 22.0);
+		assertEquals(2, e1.getIntersections(e2).length);
 	}
 
 	@Test

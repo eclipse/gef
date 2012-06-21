@@ -16,7 +16,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.junit.Test;
 
 public class CubicCurveTests {
@@ -166,6 +168,17 @@ public class CubicCurveTests {
 		assertEquals(6, cc1.getIntersections(cc2).length);
 		assertEquals(6, cc2.getIntersections(cc1).length);
 
+		cc1 = new CubicCurve(187.0, 315.0, 345.0, 315.0, 515.0, 234.0, 519.0,
+				133.0);
+		cc2 = new CubicCurve(426.0, 227.0, 416.0, 245.0, 435.0, 256.0, 453.0,
+				256.0);
+		assertEquals(1, cc1.getIntersections(cc2).length);
+
+		cc1 = new CubicCurve(164.0, 143.0, 78.0, 122.0, 124.0, 131.0, 126.0,
+				113.0);
+		cc2 = new CubicCurve(350.0, 61.0, 227.0, 62.0, 78.0, 145.0, 76.0, 242.0);
+		assertEquals(1, cc1.getIntersections(cc2).length);
+
 		// not sure about these: (getIntersections() returns 3)
 		// cc1 = new CubicCurve(315.748, 312.84, 312.644, 318.134, 305.836,
 		// 319.909, 300.542, 316.804);
@@ -193,6 +206,35 @@ public class CubicCurveTests {
 	@Test
 	public void test_getIntersections_containment() {
 		// TODO
+	}
+
+	@Test
+	public void test_getIntersections_Line() {
+		Line l = new Line(100.0, 150.0, 550.0, 150.0);
+		CubicCurve c = new CubicCurve(504.0, 225.0, 504.0, 150.94119100209343,
+				418.68233259706915, 90.0, 315.0, 90.0);
+		Point[] inters = c.getIntersections(l);
+		assertEquals(1, inters.length);
+	}
+
+	@Test
+	public void test_getIntersections_linear_QuadraticCurve() {
+		QuadraticCurve qc = new QuadraticCurve(100.0, 150.0, 300, 150, 550.0,
+				150.0);
+		CubicCurve c = new CubicCurve(504.0, 225.0, 504.0, 150.94119100209343,
+				418.68233259706915, 90.0, 315.0, 90.0);
+		Point[] inters = c.getIntersections(qc);
+		assertEquals(1, inters.length);
+	}
+
+	@Test
+	public void test_getIntersections_linear_CubicCurve() {
+		CubicCurve cc = new CubicCurve(100.0, 150.0, 200, 150, 300, 150, 550.0,
+				150.0);
+		CubicCurve c = new CubicCurve(504.0, 225.0, 504.0, 150.94119100209343,
+				418.68233259706915, 90.0, 315.0, 90.0);
+		Point[] inters = c.getIntersections(cc);
+		assertEquals(1, inters.length);
 	}
 
 }

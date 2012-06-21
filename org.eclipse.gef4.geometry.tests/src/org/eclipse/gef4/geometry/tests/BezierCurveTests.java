@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
@@ -340,6 +341,14 @@ public class BezierCurveTests {
 		assertEquals(linear.toLine(), lines[0]);
 
 		// TODO: check complicated curves, too
+	}
+
+	@Test
+	public void test_getIntersections_Rectangle() {
+		Rectangle r = new Rectangle(new Point(100, 150), new Point(550, 300));
+		Ellipse e = new Ellipse(126.0, 90.0, 378.0, 270.0);
+		Point[] inters = e.getIntersections(r.getOutline());
+		assertEquals(4, inters.length);
 	}
 
 }

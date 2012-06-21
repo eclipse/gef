@@ -158,12 +158,10 @@ public class PointListUtils {
 		final Point p0 = points[0];
 		Arrays.sort(points, 1, points.length, new Comparator<Point>() {
 			public int compare(Point p1, Point p2) {
-				double m1 = (p1.x - p0.x) / (-p1.y + p0.y);
-				double m2 = (p2.x - p0.x) / (-p2.y + p0.y);
-				if (m1 < m2) {
-					return -1;
-				}
-				return 1;
+				Vector v1 = new Vector(p0, p1);
+				Vector v2 = new Vector(p0, p2);
+				double angleInDeg = v1.getAngleCCW(v2).deg();
+				return angleInDeg > 180 ? -1 : 1;
 			}
 		});
 	}

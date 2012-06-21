@@ -12,6 +12,7 @@
 
 package org.eclipse.gef4.geometry.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -206,5 +207,25 @@ public class PointListUtilsTests {
 				0.4754929463150845, 0.4932166845474547, 0.4928094162538735,
 				0.4916198379282093, -0.345391701297268, 0.4823896228171788,
 				-0.4776170002088109 })).equals(new Polygon(convexHull)));
+
+		convexHull = PointListUtils.getConvexHull(new Point[] {
+				new Point(0.0, 75.0),
+				new Point(0.3333333333333333, 0.9411910020934172),
+				new Point(0.6666666666666666, -60.0), new Point(1.0, -60.0) });
+
+		assertEquals(
+				new Polygon(PointListUtils.toPointsArray(new double[] { 0, 75,
+						0.3333333333333333, 0.9411910020934172,
+						0.6666666666666666, -60, 1, -60 })), new Polygon(
+						convexHull));
+
+		convexHull = PointListUtils.getConvexHull(new Point[] {
+				new Point(0.0, -1.8277675577160887E-4),
+				new Point(0.3333333333333333, -1.1294769632887472E-4),
+				new Point(0.6666666666666666, -4.311817922240293E-5),
+				new Point(1.0, 2.671179560675793E-5) });
+
+		// TODO
+		assertTrue(convexHull.length == 3);
 	}
 }
