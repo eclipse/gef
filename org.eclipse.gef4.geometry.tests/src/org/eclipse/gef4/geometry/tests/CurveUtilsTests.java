@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
 
-import org.eclipse.gef4.geometry.Angle;
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;

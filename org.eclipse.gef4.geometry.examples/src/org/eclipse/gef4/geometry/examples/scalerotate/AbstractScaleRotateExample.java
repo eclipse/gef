@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.scalerotate;
 
-import org.eclipse.gef4.geometry.Angle;
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;

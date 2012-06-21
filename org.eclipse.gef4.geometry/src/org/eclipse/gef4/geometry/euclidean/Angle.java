@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry;
+package org.eclipse.gef4.geometry.euclidean;
 
 import java.io.Serializable;
 
