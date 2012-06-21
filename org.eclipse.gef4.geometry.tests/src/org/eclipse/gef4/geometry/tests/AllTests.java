@@ -21,10 +21,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		CubicCurveTests.class, CurveUtilsTests.class, DimensionTests.class,
 		EllipseTests.class, LineTests.class, PointListUtilsTests.class,
 		PointTests.class, PolygonTests.class, PolylineTests.class,
-		PolynomCalculationUtilsTests.class, PrecisionUtilsTests.class,
-		QuadraticCurveTests.class, RectangleTests.class, RegionTests.class,
-		RingTests.class, RoundedRectangleTests.class, StraightTests.class,
-		VectorTests.class, Vector3DTests.class })
+		PrecisionUtilsTests.class, QuadraticCurveTests.class,
+		RectangleTests.class, RegionTests.class, RingTests.class,
+		RoundedRectangleTests.class, StraightTests.class, VectorTests.class,
+		Vector3DTests.class })
 public class AllTests {
 
 }
