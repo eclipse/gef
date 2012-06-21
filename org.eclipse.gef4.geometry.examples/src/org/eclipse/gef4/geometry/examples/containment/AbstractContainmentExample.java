@@ -189,7 +189,6 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			return p;
 		}
 
-		@Override
 		public void handleEvent(Event e) {
 			switch (e.type) {
 			case SWT.Resize:
@@ -212,18 +211,15 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			return value;
 		}
 
-		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
 
-		@Override
 		public void mouseDown(MouseEvent e) {
 			if (ellipse.contains(new Point(e.x, e.y))) {
 				isDragged = true;
 			}
 		}
 
-		@Override
 		public void mouseMove(MouseEvent e) {
 			if (isDragged) {
 				relX = e.x - p.x;
@@ -235,7 +231,6 @@ public abstract class AbstractContainmentExample implements PaintListener {
 			}
 		}
 
-		@Override
 		public void mouseUp(MouseEvent e) {
 			isDragged = false;
 		}
@@ -339,7 +334,6 @@ public abstract class AbstractContainmentExample implements PaintListener {
 	protected abstract AbstractControllableShape createControllableShape2(
 			Canvas canvas);
 
-	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
 

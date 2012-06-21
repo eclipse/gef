@@ -102,7 +102,6 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 
 	protected abstract AbstractScaleRotateShape createShape(Canvas canvas);
 
-	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
 		e.gc.setBackground(Display.getCurrent().getSystemColor(
@@ -110,13 +109,11 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		shape.draw(e.gc);
 	}
 
-	@Override
 	public void mouseScrolled(MouseEvent e) {
 		shape.zoomFactor += (double) e.count / 30;
 		shell.redraw();
 	}
 
-	@Override
 	public void mouseDown(MouseEvent e) {
 		if (shape.contains(new Point(e.x, e.y))) {
 			dragBegin = new Vector(shape.getCenter(), new Point(e.x, e.y));
@@ -126,13 +123,11 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 			// }
 	}
 
-	@Override
 	public void mouseUp(MouseEvent e) {
 		dragBeginAngle = shape.rotationAngle;
 		dragBegin = null;
 	}
 
-	@Override
 	public void mouseMove(MouseEvent e) {
 		if (dragBegin != null) {
 			Point center = shape.getCenter();
@@ -143,13 +138,11 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		}
 	}
 
-	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		shape.zoomFactor += 0.1;
 		shell.redraw();
 	}
 
-	@Override
 	public void handleEvent(Event e) {
 		switch (e.type) {
 		case SWT.Resize:
