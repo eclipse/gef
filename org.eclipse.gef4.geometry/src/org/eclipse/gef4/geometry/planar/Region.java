@@ -274,7 +274,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public Ring getRotatedCCW(Angle angle) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return getRotatedCCW(angle, centroid.x, centroid.y);
 	}
 
@@ -290,7 +290,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public Ring getRotatedCW(Angle angle) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return getRotatedCW(angle, centroid.x, centroid.y);
 	}
 
@@ -318,7 +318,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public Region scale(double fx, double fy) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 

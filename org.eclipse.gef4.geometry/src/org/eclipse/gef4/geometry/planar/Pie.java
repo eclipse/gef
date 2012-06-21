@@ -25,7 +25,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * The {@link Pie} covers an area, therefore it implements the {@link IShape}
  * interface.
  */
-public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
+public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,6 +48,32 @@ public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
 	}
 
 	/**
+	 * Constructs a new {@link Pie} from the given values.
+	 * 
+	 * @param r
+	 * @param startAngle
+	 * @param angularExtent
+	 */
+	public Pie(AbstractRectangleBasedGeometry<?, ?> r, Angle startAngle,
+			Angle angularExtent) {
+		super(r.x, r.y, r.width, r.height, startAngle, angularExtent);
+	}
+
+	/**
+	 * Constructs a new {@link Pie} from the given {@link Arc}.
+	 * 
+	 * @param arc
+	 */
+	public Pie(Arc arc) {
+		super(arc.x, arc.y, arc.width, arc.height, arc.startAngle,
+				arc.angularExtent);
+	}
+
+	/*
+	 * TODO: Add additional methods to rotate a Pie so that it remains a Pie.
+	 */
+
+	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
 	public Pie getCopy() {
@@ -64,8 +90,7 @@ public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
 
 	public boolean contains(Point p) {
 		// check if the point is in the arc's angle
-		Angle pAngle = new Vector(1, 0)
-				.getAngleCCW(new Vector(getCentroid(), p));
+		Angle pAngle = new Vector(1, 0).getAngleCCW(new Vector(getCenter(), p));
 		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad()) && PrecisionUtils
 				.smaller(pAngle.rad(), startAngle.getAdded(angularExtent).rad()))) {
 			return false;
@@ -81,8 +106,8 @@ public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
 
 	public Path toPath() {
 		CubicCurve[] arc = computeBezierApproximation();
-		Line endToMid = new Line(arc[arc.length - 1].getP2(), getCentroid());
-		Line midToStart = new Line(getCentroid(), arc[0].getP1());
+		Line endToMid = new Line(arc[arc.length - 1].getP2(), getCenter());
+		Line midToStart = new Line(getCenter(), arc[0].getP1());
 		ICurve[] curves = new ICurve[arc.length + 2];
 		for (int i = 0; i < arc.length; i++) {
 			curves[i] = arc[i];
@@ -110,6 +135,14 @@ public class Pie extends AbstractArcBasedGeometry<Pie> implements IShape {
 	public Path getRotatedCW(Angle angle, Point center) {
 		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
 				center).toPath();
+	}
+
+	public Path getRotatedCCW(Angle angle) {
+		return getRotatedCCW(angle, getCenter());
+	}
+
+	public Path getRotatedCW(Angle angle) {
+		return getRotatedCW(angle, getCenter());
 	}
 
 }

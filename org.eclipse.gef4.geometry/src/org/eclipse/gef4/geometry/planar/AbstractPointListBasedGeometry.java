@@ -362,10 +362,12 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 
 	/**
 	 * Returns an integer array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this {@link Polygon}.
+	 * the {@link Point}s that make up this
+	 * {@link AbstractPointListBasedGeometry}.
 	 * 
 	 * @return an array containing integer values, which are obtained by casting
-	 *         the x- and y-coordinates of this {@link Polygon}.
+	 *         the x- and y-coordinates of this
+	 *         {@link AbstractPointListBasedGeometry}.
 	 */
 	public final int[] toSWTPointArray() {
 		return PointListUtils.toIntegerArray(PointListUtils

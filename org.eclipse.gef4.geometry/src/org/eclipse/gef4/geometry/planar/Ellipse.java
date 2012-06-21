@@ -166,15 +166,6 @@ public class Ellipse extends
 	}
 
 	/**
-	 * Returns the center location of this {@link Ellipse}.
-	 * 
-	 * @return a {@link Point}, representing the center of this {@link Ellipse}.
-	 */
-	public Point getCenter() {
-		return new Point(x + width / 2, y + height / 2);
-	}
-
-	/**
 	 * Returns a new {@link Ellipse} with the same location and size than this
 	 * one.
 	 * 

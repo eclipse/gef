@@ -51,7 +51,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return new Rectangle(x, y, width, height);
 	}
 
-	public Point getCentroid() {
+	public Point getCenter() {
 		return new Point(x + width / 2, y + height / 2);
 	}
 
@@ -164,7 +164,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	public T scale(double fx, double fy) {
-		return scale(fx, fy, getCentroid());
+		return scale(fx, fy, getCenter());
 	}
 
 	public T scale(double factor) {

@@ -424,7 +424,7 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Ring rotateCCW(Angle angle) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
@@ -440,7 +440,7 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Ring rotateCW(Angle angle) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
@@ -468,7 +468,7 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Ring scale(double fx, double fy) {
-		Point centroid = getBounds().getCentroid();
+		Point centroid = getBounds().getCenter();
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 

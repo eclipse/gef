@@ -25,8 +25,8 @@ import org.eclipse.gef4.geometry.utils.CurveUtils;
  * @param <T>
  *            type of the inheriting class
  */
-abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?>>
-		extends AbstractRectangleBasedGeometry<T, IGeometry> {
+abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>, S extends IGeometry>
+		extends AbstractRectangleBasedGeometry<T, S> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -256,44 +256,6 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?>>
 	 */
 	public Path toPath() {
 		return CurveUtils.toPath(computeBezierApproximation());
-	}
-
-	@SuppressWarnings("unchecked")
-	public T getRotatedCCW(Angle angle) {
-		return (T) ((T) getCopy()).rotateCCW(angle);
-	}
-
-	/**
-	 * Rotates this {@link AbstractArcBasedGeometry} counter-clock-wise (CCW) by
-	 * the given {@link Angle} around its center {@link Point}.
-	 * 
-	 * @param angle
-	 *            the rotation {@link Angle}
-	 * @return <code>this</code> for convenience
-	 */
-	@SuppressWarnings("unchecked")
-	public T rotateCCW(Angle angle) {
-		startAngle.setRad(startAngle.getAdded(angle).rad());
-		return (T) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public T getRotatedCW(Angle angle) {
-		return (T) ((T) getCopy()).rotateCW(angle);
-	}
-
-	/**
-	 * Rotates this {@link AbstractArcBasedGeometry} clock-wise (CW) by the
-	 * given {@link Angle} around its center {@link Point}.
-	 * 
-	 * @param angle
-	 *            the rotation {@link Angle}
-	 * @return <code>this</code> for convenience
-	 */
-	@SuppressWarnings("unchecked")
-	public T rotateCW(Angle angle) {
-		startAngle.setRad(startAngle.getAdded(angle.getOppositeFull()).rad());
-		return (T) this;
 	}
 
 }

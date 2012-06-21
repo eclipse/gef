@@ -673,7 +673,7 @@ public class RectangleTests {
 				assertEquals(bl, rect.getBottomLeft());
 				assertEquals(bo, rect.getBottom());
 				assertEquals(br, rect.getBottomRight());
-				assertEquals(ce, rect.getCentroid());
+				assertEquals(ce, rect.getCenter());
 			}
 		});
 	}

@@ -445,14 +445,14 @@ public final class Rectangle extends
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
 	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}
-	 * (see {@link #getCentroid()}).
+	 * (see {@link #getCenter()}).
 	 * 
 	 * @see #getRotatedCCW(Angle, Point)
 	 * @param alpha
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCCW(Angle alpha) {
-		Point centroid = getCentroid();
+		Point centroid = getCenter();
 		return toPolygon().rotateCCW(alpha, centroid.x, centroid.y);
 	}
 
@@ -496,7 +496,7 @@ public final class Rectangle extends
 
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * around the center ({@link #getCentroid()}) of this {@link Rectangle}.
+	 * around the center ({@link #getCenter()}) of this {@link Rectangle}.
 	 * 
 	 * @see #getRotatedCW(Angle, Point)
 	 * @param alpha
@@ -504,7 +504,7 @@ public final class Rectangle extends
 	 * @return the resulting {@link Polygon}
 	 */
 	public Polygon getRotatedCW(Angle alpha) {
-		Point centroid = getCentroid();
+		Point centroid = getCenter();
 		return toPolygon().rotateCW(alpha, centroid.x, centroid.y);
 	}
 

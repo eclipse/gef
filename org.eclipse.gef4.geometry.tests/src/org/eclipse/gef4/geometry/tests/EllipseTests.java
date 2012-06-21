@@ -83,7 +83,7 @@ public class EllipseTests {
 		assertFalse(g.contains(r.getBottomLeft()));
 		assertFalse(g.contains(r.getBottomRight()));
 
-		assertTrue(g.contains(r.getCentroid()));
+		assertTrue(g.contains(r.getCenter()));
 
 		assertTrue(g.contains(r.getLeft()));
 		assertTrue(g.contains(r.getLeft().getTranslated(PRECISION_FRACTION * 1,
