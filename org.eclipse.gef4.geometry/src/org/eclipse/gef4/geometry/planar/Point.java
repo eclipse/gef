@@ -198,6 +198,32 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Creates a new Point representing the MAX of two provided Points.
+	 * 
+	 * @param p1
+	 *            first point
+	 * @param p2
+	 *            second point
+	 * @return A new Point representing the Max()
+	 */
+	public static Point max(Point p1, Point p2) {
+		return new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+	}
+
+	/**
+	 * Creates a new Point representing the MIN of two provided Points.
+	 * 
+	 * @param p1
+	 *            first point
+	 * @param p2
+	 *            second point
+	 * @return A new Point representing the Min()
+	 */
+	public static Point min(Point p1, Point p2) {
+		return new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
+	}
+
+	/**
 	 * Rotates (in-place) the given {@link Point}s counter-clock-wise (CCW) by
 	 * the specified {@link Angle} around the given center {@link Point}.
 	 * 
@@ -272,32 +298,6 @@ public class Point implements Cloneable, Serializable {
 			points[i].x += dx;
 			points[i].y += dy;
 		}
-	}
-
-	/**
-	 * Creates a new Point representing the MAX of two provided Points.
-	 * 
-	 * @param p1
-	 *            first point
-	 * @param p2
-	 *            second point
-	 * @return A new Point representing the Max()
-	 */
-	public static Point max(Point p1, Point p2) {
-		return new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
-	}
-
-	/**
-	 * Creates a new Point representing the MIN of two provided Points.
-	 * 
-	 * @param p1
-	 *            first point
-	 * @param p2
-	 *            second point
-	 * @return A new Point representing the Min()
-	 */
-	public static Point min(Point p1, Point p2) {
-		return new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
 	}
 
 	/**
