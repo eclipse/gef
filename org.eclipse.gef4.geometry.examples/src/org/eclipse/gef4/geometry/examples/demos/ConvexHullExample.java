@@ -12,7 +12,6 @@
 package org.eclipse.gef4.geometry.examples.demos;
 
 import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
-import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample.AbstractControllableShape;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -22,6 +21,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
+@SuppressWarnings("restriction")
 public class ConvexHullExample extends AbstractIntersectionExample {
 	public static void main(String[] args) {
 		new ConvexHullExample("Convex Hull Example");
@@ -45,15 +45,14 @@ public class ConvexHullExample extends AbstractIntersectionExample {
 			}
 
 			@Override
-			public IGeometry createGeometry() {
-				Polygon convexHull = new Polygon(
+			public Polygon createGeometry() {
+				return new Polygon(
 						PointListUtils.getConvexHull(getControlPoints()));
-				return convexHull;
 			}
 
 			@Override
 			public void drawShape(GC gc) {
-				Polygon convexHull = (Polygon) createGeometry();
+				Polygon convexHull = createGeometry();
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
 						.getCurrent(), convexHull.toPath().toSWTPathData()));
 			}

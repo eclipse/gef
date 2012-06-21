@@ -12,7 +12,6 @@
 package org.eclipse.gef4.geometry.examples.demos;
 
 import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
-import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample.AbstractControllableShape;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -43,18 +42,13 @@ public class CubicCurveDeCasteljauExample extends AbstractIntersectionExample {
 			}
 
 			@Override
-			public IGeometry createGeometry() {
-				Point[] points = getControlPoints();
-
-				CubicCurve curve = new CubicCurve(points[0], points[1],
-						points[2], points[3]);
-
-				return curve;
+			public CubicCurve createGeometry() {
+				return new CubicCurve(getControlPoints());
 			}
 
 			@Override
 			public void drawShape(GC gc) {
-				CubicCurve curve = (CubicCurve) createGeometry();
+				CubicCurve curve = createGeometry();
 
 				// draw curve
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
