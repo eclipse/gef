@@ -19,7 +19,6 @@ import java.util.Stack;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 
 /**
  * 
@@ -292,7 +291,7 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public boolean contains(IGeometry g) {
-		return CurveUtils.contains(this, g);
+		return ShapeUtils.contains(this, g);
 	}
 
 	private boolean findSharedAndOuterVertices(Polygon t1, Polygon t2,
@@ -535,8 +534,8 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Ring scale(double fx, double fy) {
-		Point centroid = getBounds().getCenter();
-		return scale(fx, fy, centroid.x, centroid.y);
+		Point center = getBounds().getCenter();
+		return scale(fx, fy, center.x, center.y);
 	}
 
 	public Ring scale(double fx, double fy, double cx, double cy) {

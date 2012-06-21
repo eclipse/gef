@@ -14,7 +14,6 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -101,7 +100,7 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 	}
 
 	public boolean contains(IGeometry g) {
-		return CurveUtils.contains(this, g);
+		return ShapeUtils.contains(this, g);
 	}
 
 	public Path toPath() {

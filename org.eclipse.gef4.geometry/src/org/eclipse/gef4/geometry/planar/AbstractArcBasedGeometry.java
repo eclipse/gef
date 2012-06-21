@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 
 /**
  * An {@link AbstractArcBasedGeometry} describes the arc of an {@link Ellipse}.
@@ -209,39 +208,39 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 		// split the arc into up to 4 cubic curves
 		List<CubicCurve> segments = new ArrayList<CubicCurve>();
 		if (angularExtent.deg() <= 90.0) {
-			segments.add(CurveUtils.computeEllipticalArcApproximation(x, y,
+			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
 					width, height, Angle.fromRad(start), Angle.fromRad(end)));
 		} else {
 			// two or more segments, the first will be an ellipse segment
 			// approximation
-			segments.add(CurveUtils.computeEllipticalArcApproximation(x, y,
+			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
 					width, height, Angle.fromRad(start),
 					Angle.fromRad(start + Math.PI / 2)));
 			if (angularExtent.deg() <= 180.0) {
 				// two segments, calculate the second (which is below 90
 				// degrees)
-				segments.add(CurveUtils.computeEllipticalArcApproximation(x, y,
+				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
 						width, height, Angle.fromRad(start + Math.PI / 2),
 						Angle.fromRad(end)));
 			} else {
 				// three or more segments, so calculate the second one
-				segments.add(CurveUtils.computeEllipticalArcApproximation(x, y,
+				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
 						width, height, Angle.fromRad(start + Math.PI / 2),
 						Angle.fromRad(start + Math.PI)));
 				if (angularExtent.deg() <= 270.0) {
 					// three segments, calculate the third (which is below 90
 					// degrees)
-					segments.add(CurveUtils.computeEllipticalArcApproximation(
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
 							x, y, width, height,
 							Angle.fromRad(start + Math.PI), Angle.fromRad(end)));
 				} else {
 					// four segments (fourth below 90 degrees), so calculate the
 					// third and fourth
-					segments.add(CurveUtils.computeEllipticalArcApproximation(
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
 							x, y, width, height,
 							Angle.fromRad(start + Math.PI),
 							Angle.fromRad(start + 3 * Math.PI / 2)));
-					segments.add(CurveUtils.computeEllipticalArcApproximation(
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
 							x, y, width, height,
 							Angle.fromRad(start + 3 * Math.PI / 2),
 							Angle.fromRad(end)));

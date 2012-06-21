@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -119,7 +118,7 @@ public class Ellipse extends
 	 * @see IShape#contains(IGeometry)
 	 */
 	public boolean contains(IGeometry g) {
-		return CurveUtils.contains(this, g);
+		return ShapeUtils.contains(this, g);
 	}
 
 	/**
@@ -324,7 +323,7 @@ public class Ellipse extends
 	}
 
 	public IPolyCurve getOutline() {
-		return CurveUtils.getOutline(this);
+		return ShapeUtils.getOutline(this);
 	}
 
 	/**
@@ -336,13 +335,13 @@ public class Ellipse extends
 	 */
 	public CubicCurve[] getOutlineSegments() {
 		return new CubicCurve[] {
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(0), Angle.fromDeg(90)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(90), Angle.fromDeg(180)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(180), Angle.fromDeg(270)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
@@ -364,13 +363,13 @@ public class Ellipse extends
 	public Path toPath() {
 		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
 		// on the approximation used here
-		return CurveUtils.toPath(CurveUtils.computeEllipticalArcApproximation(
+		return CurveUtils.toPath(ShapeUtils.computeEllipticalArcApproximation(
 				x, y, width, height, Angle.fromDeg(0), Angle.fromDeg(90)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(90), Angle.fromDeg(180)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(180), Angle.fromDeg(270)),
-				CurveUtils.computeEllipticalArcApproximation(x, y, width,
+				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(270), Angle.fromDeg(360)));
 	}
 

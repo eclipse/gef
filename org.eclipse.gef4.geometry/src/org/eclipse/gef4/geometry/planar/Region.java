@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.utils.CurveUtils;
 
 /**
  * A combination of {@link Rectangle}s. The {@link Rectangle}s that build up a
@@ -174,7 +173,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public boolean contains(IGeometry g) {
-		return CurveUtils.contains(this, g);
+		return ShapeUtils.contains(this, g);
 	}
 
 	/**
