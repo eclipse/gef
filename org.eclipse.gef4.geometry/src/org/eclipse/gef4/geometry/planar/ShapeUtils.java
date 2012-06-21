@@ -336,7 +336,7 @@ class ShapeUtils {
 	 * A {@link IPolyCurve} is contained by a {@link IShape} if all of its sub-
 	 * {@link ICurve}s are contained by the shape (see
 	 * {@link IPolyCurve#getCurves()} and
-	 * {@link CurveUtils#ShapeUtils(IShape, ICurve)}).
+	 * {@link ShapeUtils#contains(IShape, ICurve)}).
 	 * 
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
@@ -363,7 +363,7 @@ class ShapeUtils {
 	 * A {@link IPolyShape} is contained by a {@link IShape} if all of its sub-
 	 * {@link IShape}s are contained by the {@link IShape} (see
 	 * {@link IPolyShape#getShapes()} and
-	 * {@link CurveUtils#ShapeUtils(IShape, IShape)}).
+	 * {@link ShapeUtils#contains(IShape, IShape)}).
 	 * 
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
