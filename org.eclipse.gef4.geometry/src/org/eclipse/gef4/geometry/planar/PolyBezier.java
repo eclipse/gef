@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
+import org.eclipse.gef4.geometry.utils.PointListUtils;
 
 /**
  * A {@link PolyBezier} is an {@link IPolyCurve} which consists of one or more
@@ -24,6 +25,7 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
 
+	private static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
 	private static final long serialVersionUID = 1L;
 
 	private static BezierCurve[] copy(BezierCurve... beziers) {
@@ -48,6 +50,87 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 	 */
 	public PolyBezier(BezierCurve... beziers) {
 		this.beziers = copy(beziers);
+	}
+
+	/**
+	 * @see #interpolateCubic(double, Point...)
+	 * @param points
+	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 *         through the given {@link Point}s.
+	 */
+	public static PolyBezier interpolateCubic(Point... points) {
+		return interpolateCubic(INTERPOLATION_CURVE_WIDTH_COEFFICIENT, points);
+	}
+
+	/**
+	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 * through the given {@link Point}s.
+	 * 
+	 * @param curveWidthCoefficient
+	 *            value in the range <code>]0;+Inf[</code> that adjusts the
+	 *            width of the curve. A value smaller than one sharpens the
+	 *            curve and a value greater than one thickens the curve.
+	 * @param points
+	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 *         through the given {@link Point}s.
+	 */
+	public static PolyBezier interpolateCubic(double curveWidthCoefficient,
+			Point... points) {
+		if (points == null || points.length < 2) {
+			// System.out.println("  interpolateQuadratic() => ()");
+			// TODO: throw exception instead?
+			return new PolyBezier();
+		} else if (points.length == 2) {
+			Point mid = points[0].getTranslated(points[1]).getScaled(0.5);
+			return new PolyBezier(
+					new CubicCurve(points[0], mid, mid, points[1]));
+		}
+
+		/*
+		 * Computes the control points for the cubic bezier curve. The algorithm
+		 * is based on what has been published by Maxim Shemanarev for Polygons
+		 * (http://www.antigrain.com/research/bezier_interpolation/index.html)
+		 * with a modified calculation of the first and the last control points,
+		 * so that it can be applied to Polylines.
+		 */
+		Point[] mids = new Point[points.length - 1];
+		for (int i = 0; i < mids.length; i++) {
+			mids[i] = points[i].getTranslated(points[i + 1]).getScaled(0.5);
+		}
+
+		Line[] lines = PointListUtils.toSegmentsArray(points, true);
+		Line[] handleLines = PointListUtils.toSegmentsArray(mids, true);
+
+		Point[] handleAnchors = new Point[handleLines.length];
+		for (int i = 0; i < handleLines.length; i++) {
+			double d0 = lines[i].getP1().getDistance(lines[i].getP2());
+			double d1 = lines[i + 1].getP1().getDistance(lines[i + 1].getP2());
+			handleAnchors[i] = handleLines[i].get(d0 / (d0 + d1));
+		}
+
+		for (int i = 0; i < handleLines.length; i++) {
+			handleLines[i].scale(curveWidthCoefficient, handleAnchors[i]);
+			handleLines[i].translate(points[i + 1].x - handleAnchors[i].x,
+					points[i + 1].y - handleAnchors[i].y);
+		}
+
+		CubicCurve[] interpolation = new CubicCurve[handleLines.length];
+
+		interpolation[0] = new CubicCurve(points[0], handleLines[0].getP1(),
+				points[1], points[1]);
+
+		interpolation[interpolation.length - 1] = new CubicCurve(
+				points[points.length - 2],
+				handleLines[handleLines.length - 2].getP2(),
+				points[points.length - 1], points[points.length - 1]);
+
+		for (int i = 1; i < interpolation.length - 1; i++) {
+			interpolation[i] = new CubicCurve(points[i],
+					handleLines[i - 1].getP2(), handleLines[i].getP1(),
+					points[i + 1]);
+		}
+
+		return new PolyBezier(interpolation);
 	}
 
 	public boolean contains(Point p) {
