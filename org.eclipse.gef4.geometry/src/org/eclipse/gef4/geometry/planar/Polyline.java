@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import java.util.Arrays;
+
 import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -127,8 +129,8 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		if (points.length != this.points.length) {
 			return false;
 		}
-		return PointListUtils.equals(this.points, points)
-				|| PointListUtils.equalsReverse(this.points, points);
+		return Arrays.equals(this.points, points)
+				|| Arrays.equals(this.points, Point.getReverseCopy(points));
 	}
 
 	/**

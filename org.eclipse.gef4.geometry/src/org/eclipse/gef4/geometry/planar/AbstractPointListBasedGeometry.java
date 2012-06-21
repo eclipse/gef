@@ -32,14 +32,14 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	}
 
 	public AbstractPointListBasedGeometry(Point... points) {
-		this.points = PointListUtils.copy(points);
+		this.points = Point.getCopy(points);
 	}
 
 	/**
 	 * @see IGeometry#getBounds()
 	 */
 	public final Rectangle getBounds() {
-		return PointListUtils.getBounds(points);
+		return Point.getBounds(points);
 	}
 
 	/**
@@ -54,7 +54,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 *         {@link AbstractPointListBasedGeometry}
 	 */
 	public Point getCentroid() {
-		return PointListUtils.computeCentroid(points);
+		return Point.getCentroid(points);
 	}
 
 	/**
@@ -77,7 +77,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 *         this {@link Polygon}
 	 */
 	public final Point[] getPoints() {
-		return PointListUtils.copy(points);
+		return Point.getCopy(points);
 	}
 
 	/**
@@ -387,7 +387,7 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 */
 	@SuppressWarnings("unchecked")
 	public T translate(double dx, double dy) {
-		PointListUtils.translate(points, dx, dy);
+		Point.translate(points, dx, dy);
 		return (T) this;
 	}
 

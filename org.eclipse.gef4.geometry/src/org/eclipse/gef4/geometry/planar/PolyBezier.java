@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
 
 /**
  * A {@link PolyBezier} is an {@link IPolyCurve} which consists of one or more
@@ -184,8 +183,7 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}
-		Point centroid = PointListUtils.computeCentroid(points
-				.toArray(new Point[] {}));
+		Point centroid = Point.getCentroid(points.toArray(new Point[] {}));
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
@@ -239,8 +237,7 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}
-		Point centroid = PointListUtils.computeCentroid(points
-				.toArray(new Point[] {}));
+		Point centroid = Point.getCentroid(points.toArray(new Point[] {}));
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
@@ -289,8 +286,7 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		for (BezierCurve c : beziers) {
 			points.addAll(Arrays.asList(c.getPoints()));
 		}
-		Point centroid = PointListUtils.computeCentroid(points
-				.toArray(new Point[] {}));
+		Point centroid = Point.getCentroid(points.toArray(new Point[] {}));
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 

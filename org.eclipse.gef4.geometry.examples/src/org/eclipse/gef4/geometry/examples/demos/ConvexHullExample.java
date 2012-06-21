@@ -16,7 +16,6 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -46,8 +45,7 @@ public class ConvexHullExample extends AbstractIntersectionExample {
 
 			@Override
 			public Polygon createGeometry() {
-				return new Polygon(
-						PointListUtils.getConvexHull(getControlPoints()));
+				return new Polygon(Point.getConvexHull(getControlPoints()));
 			}
 
 			@Override

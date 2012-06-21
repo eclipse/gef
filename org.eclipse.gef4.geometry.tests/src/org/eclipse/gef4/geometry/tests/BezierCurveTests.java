@@ -17,6 +17,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.Ellipse;
@@ -24,7 +26,6 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
@@ -188,7 +189,7 @@ public class BezierCurveTests {
 		assertTrue(PrecisionUtils.equal(p2.x, c.getX2()));
 		assertTrue(PrecisionUtils.equal(p2.y, c.getY2()));
 
-		assertTrue(PointListUtils.equals(c.getPoints(), points));
+		assertTrue(Arrays.equals(c.getPoints(), points));
 
 		for (int i = 0; i < points.length; i++)
 			assertEquals(points[i], c.getPoint(i));

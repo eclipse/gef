@@ -226,5 +226,33 @@ class CurveUtils {
 		}
 		return p;
 	}
+	
+	/**
+	 * Transforms a sequence of {@link Point} coordinates into a sequence of
+	 * {@link Line} segments, by creating a {@link Line} segment for each two
+	 * adjacent points in the array. In case it is specified to close the
+	 * segment list, a {@link Line} segment is furthermore created between the
+	 * last and the first point in the list.
+	 * 
+	 * @param points
+	 *            the array of {@link Point}s to convert
+	 * @param close
+	 *            a flag indicating whether a line segment will be created from
+	 *            the last point in the list back to the first one
+	 * @return an array of {@link Line} segments, which is created by creating a
+	 *         {@link Line} for each two adjacent {@link Point}s in the given
+	 *         array, which includes a {@link Line} segment between the last
+	 *         point in the given array in the first one, if and only if the
+	 *         parameter close is given as <code>true</code>
+	 */
+	public static Line[] toSegmentsArray(Point[] points, boolean close) {
+		int segmentCount = close ? points.length : points.length - 1;
+		Line[] segments = new Line[segmentCount];
+		for (int i = 0; i < segmentCount; i++) {
+			segments[i] = new Line(points[i],
+					points[i + 1 < points.length ? i + 1 : 0]);
+		}
+		return segments;
+	}
 
 }

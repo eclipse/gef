@@ -446,7 +446,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
 			.calculateFraction(0) / 10;
 
-	
 	private static IntervalPair[] clusterChunks(IntervalPair[] intervalPairs,
 			int shift) {
 		ArrayList<IntervalPair> ips = new ArrayList<IntervalPair>();
@@ -500,7 +499,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		a.pi = b.pi;
 		a.qi = b.qi;
 	}
-
 
 	private static IntervalPair extractOverlap(
 			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
@@ -1017,8 +1015,8 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 				t = t.getElevated();
 			Point[] oPoints = o.getPoints();
 			Point[] tPoints = t.getPoints();
-			return PointListUtils.equals(oPoints, tPoints)
-					|| PointListUtils.equalsReverse(oPoints, tPoints);
+			return Arrays.equals(oPoints, tPoints)
+					|| Arrays.equals(oPoints, Point.getReverseCopy(tPoints));
 		}
 		return false;
 	}
@@ -1821,7 +1819,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @return <code>this</code> for convenience
 	 */
 	public BezierCurve rotateCCW(Angle angle) {
-		Point centroid = PointListUtils.computeCentroid(getPoints());
+		Point centroid = Point.getCentroid(getPoints());
 		return rotateCCW(angle, centroid.x, centroid.y);
 	}
 
@@ -1841,7 +1839,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 */
 	public BezierCurve rotateCCW(Angle angle, double cx, double cy) {
 		Point[] realPoints = getPoints();
-		PointListUtils.rotateCCW(realPoints, angle, cx, cy);
+		Point.rotateCCW(realPoints, angle, cx, cy);
 		for (int i = 0; i < realPoints.length; i++) {
 			setPoint(i, realPoints[i]);
 		}
@@ -1878,7 +1876,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @return <code>this</code> for convenience
 	 */
 	public BezierCurve rotateCW(Angle angle) {
-		Point centroid = PointListUtils.computeCentroid(getPoints());
+		Point centroid = Point.getCentroid(getPoints());
 		return rotateCW(angle, centroid.x, centroid.y);
 	}
 
@@ -1898,7 +1896,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 */
 	public BezierCurve rotateCW(Angle angle, double cx, double cy) {
 		Point[] realPoints = getPoints();
-		PointListUtils.rotateCW(realPoints, angle, cx, cy);
+		Point.rotateCW(realPoints, angle, cx, cy);
 		for (int i = 0; i < realPoints.length; i++) {
 			setPoint(i, realPoints[i]);
 		}
@@ -1925,7 +1923,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	public BezierCurve scale(double fx, double fy) {
-		Point centroid = PointListUtils.computeCentroid(getPoints());
+		Point centroid = Point.getCentroid(getPoints());
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 
@@ -1935,7 +1933,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	public BezierCurve scale(double fx, double fy, double cx, double cy) {
 		Point[] realPoints = getPoints();
-		PointListUtils.scale(realPoints, fx, fy, cx, cy);
+		Point.scale(realPoints, fx, fy, cx, cy);
 		for (int i = 0; i < realPoints.length; i++) {
 			setPoint(i, realPoints[i]);
 		}
@@ -2236,7 +2234,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	public BezierCurve translate(double dx, double dy) {
 		Point[] realPoints = getPoints();
-		PointListUtils.translate(realPoints, dx, dy);
+		Point.translate(realPoints, dx, dy);
 		for (int i = 0; i < realPoints.length; i++) {
 			setPoint(i, realPoints[i]);
 		}

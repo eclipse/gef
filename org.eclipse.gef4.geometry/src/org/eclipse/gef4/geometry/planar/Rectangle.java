@@ -15,7 +15,6 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.transform.AffineTransform;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -755,7 +754,7 @@ public final class Rectangle extends
 	 * @return A {@link Polygon} representation for this {@link Rectangle}
 	 */
 	public Polygon toPolygon() {
-		return new Polygon(PointListUtils.copy(getPoints()));
+		return new Polygon(Point.getCopy(getPoints()));
 	}
 
 	@Override
