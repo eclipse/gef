@@ -49,7 +49,6 @@ public class TriangulationExample extends AbstractIntersectionExample {
 
 			@Override
 			public Polygon createGeometry() {
-				Point[] cp = getControlPoints();
 				Polygon p = new Polygon(getControlPoints());
 				return p;
 			}
