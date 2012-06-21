@@ -24,6 +24,10 @@ import java.util.Set;
  */
 class CurveUtils {
 
+	private CurveUtils() {
+		// this class should not be instantiated by clients
+	}
+
 	/**
 	 * Delegates to the BezierCurve.getIntersections(ICurve) method.
 	 * 

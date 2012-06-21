@@ -29,6 +29,10 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  */
 class ShapeUtils {
 
+	private ShapeUtils() {
+		// this class should not be instantiated by clients
+	}
+
 	/**
 	 * <p>
 	 * Tests if the given {@link BezierCurve} is fully contained by the given
