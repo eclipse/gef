@@ -351,9 +351,9 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 					continue;
 				}
 
-				Line link = new Line(p1, p2);
+				Line segment = new Line(p1, p2);
 
-				if (link.contains(p)) {
+				if (segment.contains(p)) {
 					return true;
 				}
 
@@ -390,9 +390,16 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 				/*
 				 * check the current link for an intersection with the test
 				 * line. if there is an intersection, change state.
+				 * 
+				 * Special case error prevention: If the point in question (p)
+				 * is very near to an edge of and inside the polygon, it can
+				 * happen, that the edge.contains(p) is false, but an
+				 * intersection can be found, although p is right to the edge.
+				 * To prevent a wrong state change, the intersection has to be
+				 * right-of p.
 				 */
-				Point poi = testLine.getIntersection(link);
-				if (poi != null) {
+				Point poi = testLine.getIntersection(segment);
+				if (poi != null && poi.x >= p.x) {
 					odd = !odd;
 				}
 			}

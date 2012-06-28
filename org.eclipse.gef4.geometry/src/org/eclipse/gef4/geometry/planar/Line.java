@@ -69,6 +69,9 @@ public class Line extends BezierCurve {
 		if (p == null) {
 			return false;
 		}
+		if (getP1().equals(p) || getP2().equals(p)) {
+			return true;
+		}
 
 		double distance = Math.abs(new Straight(getP1(), getP2())
 				.getSignedDistanceCCW(new Vector(p)));
