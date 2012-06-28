@@ -4,4 +4,4 @@ Bundle-Name: GEF4 Geometry Documentation
 Bundle-SymbolicName: org.eclipse.gef4.geometry.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
-Require-Bundle: org.eclipse.swt;bundle-version="3.7.1"
+Require-Bundle: org.eclipse.swt;bundle-version="3.7.1";resolution:=optional
