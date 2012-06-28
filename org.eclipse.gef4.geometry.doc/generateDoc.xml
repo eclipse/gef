@@ -8,11 +8,11 @@
 		</fileset>
 	</path>
 	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
-	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties"/>
-	
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties" />
+
 	<target name="all">
 		<antcall target="generate.api" />
-		<antcall target="generate.doc" />
+		<antcall target="generate.wiki" />
 	</target>
 
 	<target name="generate.api">
@@ -50,22 +50,28 @@
 		</pathconvert>
 		<echo message="Done: ${api.context.libs.classpath}" />
 
+		<echo message="Preparing offline link target" />
+		<property name="linkoffline-target" value="linkoffline-target" />
+		<unzip src="${linkoffline-target}/org.eclipse.platform.doc.isv.jar" dest="${linkoffline-target}/org.eclipse.platform.doc.isv/" />
+		<echo message="Done: ${linkoffline-target} contains unzipped offline link target." />
+
 		<property name="tmp.options.file" value="javadocOptions.tmp.txt" />
 		<echo message="Preparing temporary options file ${tmp.options.file}" />
 		<copy file="javadocOptions.txt" tofile="${tmp.options.file}" overwrite="true" />
 		<replaceregexp file="${basedir}/${tmp.options.file}" flags="g" match="(\r\n?|\n);" replace="${args.list.delimiter}" />
 		<replace file="${basedir}/${tmp.options.file}" token="@context@" value="${api.context.libs.classpath}" />
 		<replace file="${basedir}/${tmp.options.file}" token="@rt@" value="${bootclasspath}" />
+		<replace file="${basedir}/${tmp.options.file}" token="@linkoffline-target@" value="${linkoffline-target}" />
 		<echo message="Done." />
 
 		<echo message="Generating javadoc..." />
-		<exec dir="." executable="${javadoc}" output="doc.bin.log">
+		<exec dir="." executable="${javadoc}" output="doc.bin.log" failonerror="true">
 			<arg line="@${basedir}/${tmp.options.file} -J-Xmx1000M" />
 		</exec>
 		<echo message="Done." />
 	</target>
 
-	<target name="generate.doc">
+	<target name="generate.wiki">
 		<!-- Set up the base wiki location to pull content from: -->
 		<mediawiki-to-eclipse-help wikiBaseUrl="http://wiki.eclipse.org" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" title="GEF4 Geometry" generateUnifiedToc="false">
 			<!-- Set up which wiki pages to pull from: -->

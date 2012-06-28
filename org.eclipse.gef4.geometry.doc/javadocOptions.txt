@@ -1,24 +1,18 @@
--quiet
+-verbose
 -encoding "UTF-8"
 -charset "UTF-8"
 -sourcepath "../org.eclipse.gef4.geometry/src"
 -d reference/api
 -classpath "@rt@:@context@"
--breakiterator
 -use
+-breakiterator
 -splitIndex
 -windowtitle "GEF4 Geometry API Reference"
 -doctitle "GEF4 Geometry API Reference"
--header "<b>GEF4 Geometry</b><br>Release @build@"
--bottom 'Copyright (c) 2000, 2011 IBM Corporation, itemis AG, and others. All rights reserved.</font>'
--link http://download.oracle.com/javase/1.5.0/docs/api/
--link http://help.eclipse.org/indigo/topic/org.eclipse.platform.doc.isv/reference/api/
--tag 'noimplement:a:Restriction:'
--tag 'noextend:a:Restriction:'
--tag 'noreference:a:Restriction:'
--tag 'noinstantiate:a:Restriction:'
--tag 'nooverride:a:Restriction:'
--tag 'category:a:Category:'
+-header "<b>GEF4 Geometry</b><br>Release 0.1.0.201206281525"
+-bottom "Copyright (c) 2000, 2011 IBM Corporation, itemis AG, and others. All rights reserved."
+-link http://docs.oracle.com/javase/1.5.0/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
 org.eclipse.gef4.geometry.convert
 org.eclipse.gef4.geometry.euclidean

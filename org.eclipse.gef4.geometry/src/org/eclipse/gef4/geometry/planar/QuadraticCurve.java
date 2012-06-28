@@ -187,6 +187,7 @@ public class QuadraticCurve extends BezierCurve {
 	 * 
 	 * @return A {@link CubicCurve} that represents this {@link QuadraticCurve}.
 	 */
+	@Override
 	public CubicCurve getElevated() {
 		Point[] controlPoints = new Point[4];
 

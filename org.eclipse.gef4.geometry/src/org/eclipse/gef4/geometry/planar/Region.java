@@ -181,6 +181,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	 * 
 	 * @return all the outline segments of the internal {@link Rectangle}s
 	 */
+	@Override
 	protected Line[] getAllEdges() {
 		Stack<Line> edges = new Stack<Line>();
 

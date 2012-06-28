@@ -229,6 +229,7 @@ public class Line extends BezierCurve {
 		return new HashSet<IntervalPair>();
 	}
 
+	@Override
 	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
 			Set<Point> intersections) {
 		if (other instanceof Line) {

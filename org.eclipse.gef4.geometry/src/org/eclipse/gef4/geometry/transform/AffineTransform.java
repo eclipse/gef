@@ -26,55 +26,25 @@ public class AffineTransform {
 
 	private java.awt.geom.AffineTransform delegate = new java.awt.geom.AffineTransform();
 
-	/**
-	 * TODO
-	 * 
-	 * @return
-	 */
 	public double[] getMatrix() {
 		double[] flatmatrix = new double[6];
 		delegate.getMatrix(flatmatrix);
 		return flatmatrix;
 	}
 
-	/**
-	 * TODO
-	 */
 	public AffineTransform() {
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param m00
-	 * @param m10
-	 * @param m01
-	 * @param m11
-	 * @param m02
-	 * @param m12
-	 */
 	public AffineTransform(double m00, double m10, double m01, double m11,
 			double m02, double m12) {
 		delegate = new java.awt.geom.AffineTransform(m00, m10, m01, m11, m02,
 				m12);
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @param flatmatrix
-	 */
 	public AffineTransform(double[] flatmatrix) {
 		delegate = new java.awt.geom.AffineTransform(flatmatrix);
 	}
 
-	/**
-	 * TODO
-	 * 
-	 * @see java.awt.geom.AffineTransform#getType()
-	 * 
-	 * @return
-	 */
 	public int getType() {
 		return delegate.getType();
 	}

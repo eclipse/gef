@@ -103,6 +103,7 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 		return ShapeUtils.contains(this, g);
 	}
 
+	@Override
 	public Path toPath() {
 		CubicCurve[] arc = computeBezierApproximation();
 		Line endToMid = new Line(arc[arc.length - 1].getP2(), getCenter());

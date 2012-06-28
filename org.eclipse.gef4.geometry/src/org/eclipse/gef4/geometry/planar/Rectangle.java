@@ -442,10 +442,9 @@ public final class Rectangle extends
 
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
-	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}
-	 * (see {@link #getCenter()}).
+	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}.
 	 * 
-	 * @see #getRotatedCCW(Angle, Point)
+	 * @see IRotatable#getRotatedCCW(Angle, Point)
 	 * @param alpha
 	 * @return the resulting {@link Polygon}
 	 */
@@ -494,9 +493,9 @@ public final class Rectangle extends
 
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * around the center ({@link #getCenter()}) of this {@link Rectangle}.
+	 * around the center of this {@link Rectangle}.
 	 * 
-	 * @see #getRotatedCW(Angle, Point)
+	 * @see IRotatable#getRotatedCW(Angle, Point)
 	 * @param alpha
 	 *            the rotation {@link Angle}
 	 * @return the resulting {@link Polygon}
@@ -781,6 +780,7 @@ public final class Rectangle extends
 				(int) Math.ceil(height + y - Math.floor(y)));
 	}
 
+	@Override
 	public boolean touches(IGeometry g) {
 		if (g instanceof Line) {
 			return touches((Line) g);
