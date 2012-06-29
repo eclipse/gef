@@ -73,7 +73,7 @@
 
 	<target name="generate.wiki">
 		<!-- Set up the base wiki location to pull content from: -->
-		<mediawiki-to-eclipse-help wikiBaseUrl="http://wiki.eclipse.org" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" title="GEF4 Geometry" generateUnifiedToc="false">
+		<mediawiki-to-eclipse-help markuplanguage="MediaWiki" wikiBaseUrl="http://wiki.eclipse.org" navigationImages="true" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" helpPrefix="reference/wiki" title="GEF4 Geometry" generateUnifiedToc="false">
 			<!-- Set up which wiki pages to pull from: -->
 			<path name="GEF/GEF4/Geometry" title="GEF4 Geometry Documentation" generateToc="true" />
 		</mediawiki-to-eclipse-help>

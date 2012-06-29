@@ -17,7 +17,13 @@
             file="toc.xml"
             primary="true">
       </toc>
+      <toc
+            file="reference/wiki/GEF-GEF4-Geometry-toc.xml"
+            primary="false">
+      </toc>
    </extension>
+	
+     
 
    <!--<extension point="org.eclipse.pde.core.javadoc">
       <javadoc path="reference/api">
