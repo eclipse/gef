@@ -1,10 +1,10 @@
-<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+<class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="false" dependencies="false" nesting-relationships="false">  
   <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IGeometry" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IGeometry.java" binary="false">    
     <position height="-1" width="-1" x="722" y="32"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -13,7 +13,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IPolyCurve.java" binary="false">    
     <position height="-1" width="-1" x="531" y="320"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -22,7 +22,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IPolyShape.java" binary="false">    
     <position height="-1" width="-1" x="930" y="344"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -31,7 +31,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IShape.java" binary="false">    
     <position height="-1" width="-1" x="930" y="178"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -40,7 +40,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/ICurve.java" binary="false">    
     <position height="-1" width="-1" x="531" y="175"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -49,7 +49,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Ellipse.java" binary="false">    
     <position height="-1" width="-1" x="1132" y="71"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -58,7 +58,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Rectangle.java" binary="false">    
     <position height="-1" width="-1" x="1132" y="123"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -67,7 +67,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Region.java" binary="false">    
     <position height="-1" width="-1" x="1132" y="426"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -76,7 +76,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/RoundedRectangle.java" binary="false">    
     <position height="-1" width="-1" x="1132" y="281"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -85,7 +85,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/QuadraticCurve.java" binary="false">    
     <position height="-1" width="-1" x="91" y="120"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -94,7 +94,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Polyline.java" binary="false">    
     <position height="-1" width="-1" x="315" y="296"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -103,7 +103,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Polygon.java" binary="false">    
     <position height="-1" width="-1" x="1132" y="228"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -112,7 +112,7 @@
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Path.java" 
     binary="false">    
     <position height="-1" width="-1" x="723" y="259"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -121,7 +121,7 @@
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Line.java" 
     binary="false">    
     <position height="-1" width="-1" x="91" y="64"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -130,7 +130,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/CubicCurve.java" binary="false">    
     <position height="-1" width="-1" x="91" y="176"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -139,7 +139,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/BezierCurve.java" binary="false">    
     <position height="-1" width="-1" x="315" y="119"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -148,7 +148,7 @@
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Arc.java" 
     binary="false">    
     <position height="-1" width="-1" x="315" y="227"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -157,7 +157,7 @@
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Pie.java" 
     binary="false">    
     <position height="-1" width="-1" x="1132" y="176"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -166,7 +166,7 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/PolyBezier.java" binary="false">    
     <position height="-1" width="-1" x="315" y="351"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
@@ -175,89 +175,84 @@
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Ring.java" 
     binary="false">    
     <position height="-1" width="-1" x="1132" y="370"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
   <realization id="21">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="5"/>  
-  </generalization>  
-  <realization id="23">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="5"/>  
-  </realization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="25">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="1"/>  
-  </realization>  
-  <realization id="26">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <realization id="28">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
-  <realization id="29">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="31">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="4"/>  
-  </realization>  
-  <realization id="32">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="4"/>  
-  </realization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="34">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="5"/>  
-  </realization>  
-  <realization id="35">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="4"/>  
   </realization>  
-  <realization id="36">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="4"/>  
-  </realization>  
-  <generalization id="37">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <generalization id="38">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="16"/>  
-  </generalization>  
-  <realization id="39">    
+  <realization id="22">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="4"/>  
   </realization>  
-  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
-    visibility="true">    
+  <generalization id="23">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="24">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <realization id="25">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <realization id="26">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <generalization id="27">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <dependency id="28">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="20"/>  
+  </dependency>  
+  <realization id="29">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="1"/>  
+  </realization>  
+  <realization id="30">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <generalization id="32">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="35">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="4"/>  
+  </realization>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="16"/>  
+  </generalization>  
+  <realization id="37">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <realization id="38">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false"/>    
     <operations public="false" package="false" protected="false" private="false"/>  
   </classifier-display>  
