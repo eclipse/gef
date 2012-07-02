@@ -17,7 +17,6 @@ import org.eclipse.gef4.geometry.convert.AWT2Geometry;
 import org.eclipse.gef4.geometry.convert.AWT2SWT;
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
 import org.eclipse.gef4.geometry.convert.SWT2AWT;
-import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.PathData;

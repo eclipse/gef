@@ -14,7 +14,6 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.util.Arrays;
 
-import org.eclipse.gef4.geometry.transform.AffineTransform;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 

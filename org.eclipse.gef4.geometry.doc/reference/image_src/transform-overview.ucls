@@ -1,8 +1,8 @@
 <class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.transform.AffineTransform" 
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.AffineTransform" 
     project="org.eclipse.gef4.geometry" 
-    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/transform/AffineTransform.java" binary="false">    
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/AffineTransform.java" binary="false">    
     <position height="-1" width="-1" x="169" y="127"/>    
     <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      

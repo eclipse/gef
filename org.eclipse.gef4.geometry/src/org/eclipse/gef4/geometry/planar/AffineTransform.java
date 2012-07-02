@@ -9,13 +9,12 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.transform;
+package org.eclipse.gef4.geometry.planar;
 
 import java.awt.geom.NoninvertibleTransformException;
 
 import org.eclipse.gef4.geometry.convert.AWT2Geometry;
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
-import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * TODO
