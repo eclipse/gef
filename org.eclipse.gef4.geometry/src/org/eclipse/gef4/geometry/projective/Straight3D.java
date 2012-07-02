@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.projective;
 
+import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
@@ -111,6 +112,16 @@ public final class Straight3D {
 	 */
 	public Vector3D getIntersection(Straight3D other) {
 		return line.getCrossProduct(other.line);
+	}
+
+	/**
+	 * Transfer this {@link Straight3D} into a representative {@link Straight}.
+	 * 
+	 * @return a representative {@link Straight}
+	 */
+	public Straight toStraight() {
+		return new Straight(sp.toPoint(), sp.toPoint().getTranslated(
+				new Point(line.y, -line.x)));
 	}
 
 }
