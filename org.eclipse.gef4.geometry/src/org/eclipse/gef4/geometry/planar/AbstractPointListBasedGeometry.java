@@ -322,8 +322,15 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 	 *         {@link AbstractPointListBasedGeometry}
 	 */
 	public final int[] toSWTPointArray() {
-		return PointListUtils.toIntegerArray(PointListUtils
-				.toCoordinatesArray(points));
+		Point centroid = getCentroid();
+		int[] SWTPointArray = new int[points.length * 2];
+		for (int i = 0; i < points.length; i++) {
+			SWTPointArray[2 * i] = (int) (points[i].x < centroid.x ? Math
+					.floor(points[i].x) : Math.ceil(points[i].x));
+			SWTPointArray[2 * i + 1] = (int) (points[i].y < centroid.y ? Math
+					.floor(points[i].y) : Math.ceil(points[i].y));
+		}
+		return SWTPointArray;
 	}
 
 	@SuppressWarnings("unchecked")
