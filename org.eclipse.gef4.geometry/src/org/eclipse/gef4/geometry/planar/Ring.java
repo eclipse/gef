@@ -99,7 +99,8 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 
 		if (inters[0] == null || inters[1] == null) {
 			throw new IllegalStateException(
-					"The determined points of intersection do not lie on the polygon.");
+					"The determined points of intersection do not lie on the polygon. Call: triangulate("
+							+ p + ", " + l + ")");
 		}
 
 		return triangulate(p, inters[0], inters[1]);
