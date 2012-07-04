@@ -64,6 +64,16 @@ public class Line extends BezierCurve {
 		this(p1.x, p1.y, p2.x, p2.y);
 	}
 
+	/**
+	 * Constructs a new {@link Line} from the given coordinate values.
+	 * 
+	 * @param coordsLine
+	 * @see BezierCurve#BezierCurve(double[])
+	 */
+	public Line(double... coordsLine) {
+		super(coordsLine);
+	}
+
 	@Override
 	public boolean contains(Point p) {
 		if (p == null) {
