@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-
 abstract class AbstractGeometry implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
@@ -48,7 +47,6 @@ abstract class AbstractGeometry implements IGeometry {
 		return toPath().getTransformed(t);
 	}
 
-	// TODO: implement IPolyShape semantic
 	public boolean touches(final IGeometry g) {
 		if (this instanceof ICurve) {
 			if (g instanceof ICurve) {
@@ -57,8 +55,16 @@ abstract class AbstractGeometry implements IGeometry {
 			} else if (g instanceof IShape) {
 				return ((IShape) g).contains(this)
 						|| this.touches(((IShape) g).getOutline());
+			} else if (g instanceof IPolyShape) {
+				if (((IPolyShape) g).contains(this))
+					return true;
+				for (ICurve c : ((IPolyShape) g).getOutlineSegments())
+					if (this.touches(c))
+						return true;
+				return false;
 			} else {
-				throw new UnsupportedOperationException("Not yet implemented.");
+				throw new UnsupportedOperationException(
+						"Not yet implemented: touches(" + this + ", " + g + ")");
 			}
 		} else if (this instanceof IShape) {
 			if (g instanceof ICurve) {
@@ -69,11 +75,57 @@ abstract class AbstractGeometry implements IGeometry {
 						|| ((IShape) g).contains(this)
 						|| ((IShape) this).getOutline().touches(
 								((IShape) g).getOutline());
+			} else if (g instanceof IPolyShape) {
+				if (((IShape) this).contains((IPolyShape) g))
+					return true;
+				if (((IPolyShape) g).contains((IShape) this))
+					return true;
+				IPolyCurve thisOutline = ((IShape) this).getOutline();
+				for (ICurve c : ((IPolyShape) g).getOutlineSegments())
+					if (thisOutline.touches(c))
+						return true;
+				return false;
 			} else {
-				throw new UnsupportedOperationException("Not yet implemented.");
+				throw new UnsupportedOperationException(
+						"Not yet implemented: touches(" + this + ", " + g + ")");
+			}
+		} else if (this instanceof IPolyShape) {
+			IPolyShape thisPolyShape = (IPolyShape) this;
+			if (g instanceof ICurve) {
+				ICurve gCurve = (ICurve) g;
+				if (thisPolyShape.contains(gCurve))
+					return true;
+				for (ICurve c : thisPolyShape.getOutlineSegments())
+					if (gCurve.touches(c))
+						return true;
+				return false;
+			} else if (g instanceof IShape) {
+				IShape gShape = (IShape) g;
+				if (thisPolyShape.contains(gShape)
+						|| gShape.contains(thisPolyShape))
+					return true;
+				IPolyCurve gOutline = gShape.getOutline();
+				for (ICurve c : thisPolyShape.getOutlineSegments())
+					if (gOutline.touches(c))
+						return true;
+				return false;
+			} else if (g instanceof IPolyShape) {
+				IPolyShape gPolyShape = (IPolyShape) g;
+				if (thisPolyShape.contains(gPolyShape)
+						|| gPolyShape.contains(thisPolyShape))
+					return true;
+				for (ICurve thisOutlineSeg : thisPolyShape.getOutlineSegments())
+					for (ICurve gOutlineSeg : gPolyShape.getOutlineSegments())
+						if (thisOutlineSeg.touches(gOutlineSeg))
+							return true;
+				return false;
+			} else {
+				throw new UnsupportedOperationException(
+						"Not yet implemented: touches(" + this + ", " + g + ")");
 			}
 		} else {
-			throw new UnsupportedOperationException("Not yet implemented.");
+			throw new UnsupportedOperationException(
+					"Not yet implemented: touches(" + this + ", " + g + ")");
 		}
 	}
 
