@@ -224,21 +224,22 @@ public class Line extends BezierCurve {
 	 */
 	public Set<IntervalPair> getIntersectionIntervalPairs(Line other,
 			Set<Point> intersections) {
+		HashSet<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
 		Straight s1 = new Straight(this);
 		Straight s2 = new Straight(other);
 		Vector vi = s1.getIntersection(s2);
 		if (vi != null) {
-			Point pi = vi.toPoint();
-			if (contains(pi)) {
-				double param1 = s1.getParameterAt(pi);
-				double param2 = s2.getParameterAt(pi);
-				HashSet<IntervalPair> intervalPairs = new HashSet<IntervalPair>();
+			Point poi = vi.toPoint();
+			if (contains(poi) && other.contains(poi)) {
+				double param1 = s1.getParameterAt(poi);
+				double param2 = s2.getParameterAt(poi);
+				param1 = param1 < 0 ? 0 : param1 > 1 ? 1 : param1;
+				param2 = param2 < 0 ? 0 : param2 > 1 ? 1 : param2;
 				intervalPairs.add(new IntervalPair(this, new Interval(param1,
 						param1), other, new Interval(param2, param2)));
-				return intervalPairs;
 			}
 		}
-		return new HashSet<IntervalPair>();
+		return intervalPairs;
 	}
 
 	@Override
