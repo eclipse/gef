@@ -190,10 +190,12 @@ public class Line extends BezierCurve {
 		Straight s2 = new Straight(lp1, lp2);
 
 		if (s1.isParallelTo(s2)) {
-			if (s1.contains(new Vector(lp1))) {
+			Vector vlp1 = new Vector(lp1);
+			Vector vlp2 = new Vector(lp2);
+			if (s1.contains(vlp1) && s1.contains(vlp2)) {
 				// end-point-intersection? (no overlap)
-				double u1 = s1.getParameterAt(lp1);
-				double u2 = s1.getParameterAt(lp2);
+				double u1 = s1.getParameterAt(vlp1);
+				double u2 = s1.getParameterAt(vlp2);
 
 				if (PrecisionUtils.equal(u1, 0) && u2 < u1
 						|| PrecisionUtils.equal(u1, 1) && u2 > u1) {
@@ -231,8 +233,8 @@ public class Line extends BezierCurve {
 		if (vi != null) {
 			Point poi = vi.toPoint();
 			if (contains(poi) && other.contains(poi)) {
-				double param1 = s1.getParameterAt(poi);
-				double param2 = s2.getParameterAt(poi);
+				double param1 = s1.getParameterAt(vi);
+				double param2 = s2.getParameterAt(vi);
 				param1 = param1 < 0 ? 0 : param1 > 1 ? 1 : param1;
 				param2 = param2 < 0 ? 0 : param2 > 1 ? 1 : param2;
 				intervalPairs.add(new IntervalPair(this, new Interval(param1,

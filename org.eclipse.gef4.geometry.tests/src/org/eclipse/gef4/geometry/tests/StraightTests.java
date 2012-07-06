@@ -310,28 +310,38 @@ public class StraightTests {
 		// parameter's value
 		Straight s1 = new Straight(new Point(), new Point(0, -1));
 
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Point()), 0));
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Point(0, -1)), 1));
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Point(0, 1)), -1));
+		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
+		assertTrue(PrecisionUtils
+				.equal(s1.getParameterAt(new Vector(0, -1)), 1));
+		assertTrue(PrecisionUtils
+				.equal(s1.getParameterAt(new Vector(0, 1)), -1));
 
-		assertTrue(s1.getPointAt(0).equals(new Point()));
-		assertTrue(s1.getPointAt(2).equals(new Point(0, -2)));
-		assertTrue(s1.getPointAt(-2).equals(new Point(0, 2)));
+		assertTrue(s1.getPositionVectorAt(0).equals(new Vector(0, 0)));
+		assertTrue(s1.getPositionVectorAt(2).equals(new Vector(0, -2)));
+		assertTrue(s1.getPositionVectorAt(-2).equals(new Vector(0, 2)));
 
 		s1 = new Straight(new Point(), new Point(1, 0));
 
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Point()), 0));
-		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Point(2, 0)), 2));
-		assertTrue(PrecisionUtils
-				.equal(s1.getParameterAt(new Point(-2, 0)), -2));
+		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(0, 0)), 0));
+		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(2, 0)), 2));
+		assertTrue(PrecisionUtils.equal(s1.getParameterAt(new Vector(-2, 0)),
+				-2));
 
-		assertTrue(s1.getPointAt(0).equals(new Point()));
-		assertTrue(s1.getPointAt(1).equals(new Point(1, 0)));
-		assertTrue(s1.getPointAt(-1).equals(new Point(-1, 0)));
+		assertTrue(s1.getPositionVectorAt(0).equals(new Vector(0, 0)));
+		assertTrue(s1.getPositionVectorAt(1).equals(new Vector(1, 0)));
+		assertTrue(s1.getPositionVectorAt(-1).equals(new Vector(-1, 0)));
 
 		// test 0/0 straight (not a straight anymore)
 		s1 = new Straight(new Point(), new Point());
-		assertTrue(PrecisionUtils.equal(0, s1.getParameterAt(new Point())));
+		boolean thrown = false;
+		try {
+			s1.getParameterAt(new Vector(0, 0));
+		} catch (IllegalArgumentException x) {
+			thrown = true;
+		} catch (IllegalStateException x) {
+			thrown = true;
+		}
+		assertTrue(thrown);
 	}
 
 	@Test

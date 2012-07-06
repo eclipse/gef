@@ -309,52 +309,59 @@ public class Straight implements Cloneable, Serializable {
 	/**
 	 * <p>
 	 * Returns this {@link Straight}'s parameter value for the given
-	 * {@link Point}. TODO: should it really be a position {@link Vector}?
+	 * {@link Vector}. If the given {@link Vector} is not on this
+	 * {@link Straight} an {@link IllegalArgumentException} is thrown.
 	 * </p>
 	 * <p>
-	 * This method is the reverse of the {@link Straight#getPointAt(double)}
-	 * method.
+	 * This method is the reverse of the
+	 * {@link Straight#getPositionVectorAt(double)} method.
 	 * </p>
 	 * 
-	 * @param p
-	 *            a {@link Point} on this {@link Straight} for which the
+	 * @param vp
+	 *            a {@link Vector} on this {@link Straight} for which the
 	 *            parameter value is to be calculated
 	 * @return this {@link Straight}'s parameter value for the given
-	 *         {@link Point}, TODO: which value is returned, if the Point is not
-	 *         on the Straight?
+	 *         {@link Vector}
 	 */
-	public double getParameterAt(Point p) {
+	public double getParameterAt(Vector vp) {
+		if (!contains(vp))
+			throw new IllegalArgumentException(
+					"The given position Vector has to be on this Straight: getParameterAt("
+							+ vp + "), this = " + this);
+
 		if (Math.abs(direction.x) > Math.abs(direction.y)) {
-			return (p.x - position.x) / direction.x;
+			return (vp.x - position.x) / direction.x;
 		}
 		if (direction.y != 0) {
-			return (p.y - position.y) / direction.y;
+			return (vp.y - position.y) / direction.y;
 		}
-		// get here if direction is (0, 0), TODO: what to return here?!
-		return 0;
+
+		throw new IllegalStateException(
+				"The direction Vector of this Straight may not be (0, 0) for this computation: getParameterAt("
+						+ vp + "), this = " + this);
 	}
 
 	/**
 	 * <p>
-	 * Returns the {@link Point} on this {@link Straight} at parameter p. The
-	 * {@link Point} that you get is calculated by multiplying this
-	 * {@link Straight}'s direction {@link Vector} by the parameter value and
-	 * translating that {@link Vector} by this {@link Straight}'s position
-	 * {@link Vector}.
+	 * Returns the {@link Vector} on this {@link Straight} at the given
+	 * parameter value. The {@link Vector} that you get is calculated by
+	 * multiplying this {@link Straight}'s direction {@link Vector} by the
+	 * parameter value and translating that {@link Vector} by this
+	 * {@link Straight}'s position {@link Vector}.
 	 * </p>
 	 * <p>
-	 * This method is the reverse of the {@link Straight#getPointAt(double)}
+	 * This method is the reverse of the {@link Straight#getParameterAt(Vector)}
 	 * method.
 	 * </p>
 	 * 
 	 * @param parameter
-	 *            the parameter value for which the corresponding {@link Point}
+	 *            the parameter value for which the corresponding {@link Vector}
 	 *            on this {@link Straight} is to be calculated
-	 * @return the {@link Point} on this {@link Straight} at the passed-in
+	 * @return the {@link Vector} on this {@link Straight} at the passed-in
 	 *         parameter value
 	 */
-	public Point getPointAt(double parameter) {
-		return new Point(position.x + direction.x * parameter, position.y
+	public Vector getPositionVectorAt(double parameter) {
+		return new Vector(position.x + direction.x * parameter, position.y
 				+ direction.y * parameter);
 	}
 
