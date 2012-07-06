@@ -90,13 +90,11 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 			return false;
 		}
 		Arc o = (Arc) obj;
-		return PrecisionUtils.equal(x, o.x)
-				&& PrecisionUtils.equal(y, o.y)
+		return PrecisionUtils.equal(x, o.x) && PrecisionUtils.equal(y, o.y)
 				&& PrecisionUtils.equal(width, o.width)
 				&& PrecisionUtils.equal(height, o.height)
-				&& PrecisionUtils.equal(angularExtent.rad(),
-						o.angularExtent.rad())
-				&& PrecisionUtils.equal(startAngle.rad(), o.startAngle.rad());
+				&& angularExtent.equals(o.angularExtent)
+				&& startAngle.equals(o.startAngle);
 	}
 
 	public Arc getCopy() {
