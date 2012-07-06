@@ -1800,25 +1800,29 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	/**
 	 * Returns the parameter value of this {@link BezierCurve} for the given
-	 * {@link Point}.
+	 * {@link Point}. If the given {@link Point} is not on this
+	 * {@link BezierCurve} an {@link IllegalArgumentException} is thrown.
 	 * 
 	 * @param p
-	 * @return -1 if p not on curve, otherwise the corresponding parameter
-	 *         value.
+	 *            the {@link Point} for which the parameter value on this
+	 *            {@link BezierCurve} is to be found
+	 * @return the corresponding parameter value of the given {@link Point} on
+	 *         this {@link BezierCurve}
 	 */
 	public double getParameterAt(Point p) {
 		if (p == null) {
-			// return -1;
-			throw new NullPointerException("Point may not be null.");
+			throw new IllegalArgumentException(
+					"The passed-in Point may not be null: getParameterAt(" + p
+							+ "), this = " + this);
 		}
 
 		double[] interval = new double[] { 0, 1 };
 		if (containmentParameter(this, interval, p)) {
 			return (interval[0] + interval[1]) / 2;
 		} else {
-			// return -1;
 			throw new IllegalArgumentException(
-					"The given point does not lie on the curve.");
+					"The given Point does not lie on this BezierCurve: getParameterAt("
+							+ p + "), this = " + this);
 		}
 	}
 

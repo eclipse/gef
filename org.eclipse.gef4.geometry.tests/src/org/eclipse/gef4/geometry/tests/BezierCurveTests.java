@@ -237,7 +237,7 @@ public class BezierCurveTests {
 		boolean thrown = false;
 		try {
 			c0.getParameterAt(null);
-		} catch (NullPointerException x) {
+		} catch (IllegalArgumentException x) {
 			thrown = true;
 		}
 		assertTrue(thrown);
