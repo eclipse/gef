@@ -603,10 +603,9 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	public Region toSWTRegion() {
 		Region region = new org.eclipse.swt.graphics.Region();
 
-		// TODO: error due to toIntegerArray not considering SWT's strange +1/-1
-		// pixel behavior
-		for (Polygon p : triangles)
+		for (Polyline p : getOutline()) {
 			region.add(p.toSWTPointArray());
+		}
 
 		return region;
 	}
