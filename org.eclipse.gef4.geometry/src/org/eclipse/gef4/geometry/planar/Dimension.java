@@ -154,7 +154,8 @@ public class Dimension implements Cloneable, Serializable {
 	 *         {@link Dimension}
 	 */
 	public boolean contains(Dimension d) {
-		return width >= d.width && height >= d.height;
+		return PrecisionUtils.greaterEqual(width, d.width)
+				&& PrecisionUtils.greaterEqual(height, d.height);
 	}
 
 	/**

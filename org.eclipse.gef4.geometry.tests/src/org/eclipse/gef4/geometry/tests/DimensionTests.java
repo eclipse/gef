@@ -51,6 +51,12 @@ public class DimensionTests {
 		assertFalse(d1.contains(d2));
 		assertFalse(d2.contains(d3));
 		assertTrue(d3.contains(d1));
+
+		d1 = new Dimension(1, 1);
+		d2 = new Dimension(1 + TestUtils.getPrecisionFraction() / 10d,
+				1 + TestUtils.getPrecisionFraction() / 10d);
+
+		assertTrue(d1.contains(d2));
 	}
 
 	@Test

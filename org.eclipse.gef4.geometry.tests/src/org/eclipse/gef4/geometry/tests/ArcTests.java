@@ -15,4 +15,5 @@ public class ArcTests {
 				.getPrecisionFraction() / 10d), Angle.fromDeg(100));
 		assertEquals(a1, a2);
 	}
+
 }
