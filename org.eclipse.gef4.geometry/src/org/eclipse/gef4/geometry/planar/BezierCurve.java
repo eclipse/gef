@@ -2412,6 +2412,19 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		String str = "BezierCurve(";
+		for (int i = 0; i < points.length; i++) {
+			Vector3D v = points[i];
+			str = str + v;
+			if (i < points.length - 1) {
+				str = str + ", ";
+			}
+		}
+		return str + ")";
+	}
+
 	public BezierCurve translate(double dx, double dy) {
 		Point[] realPoints = getPoints();
 		Point.translate(realPoints, dx, dy);

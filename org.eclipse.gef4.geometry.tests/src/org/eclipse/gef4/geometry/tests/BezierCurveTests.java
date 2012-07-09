@@ -352,4 +352,12 @@ public class BezierCurveTests {
 		assertEquals(4, inters.length);
 	}
 
+	@Test
+	public void test_toString() {
+		BezierCurve c = new BezierCurve(10, 10, 5, 5, 20, 5, 15, 10);
+		assertEquals(
+				"BezierCurve(Vector3D(10.0, 10.0, 1.0), Vector3D(5.0, 5.0, 1.0), Vector3D(20.0, 5.0, 1.0), Vector3D(15.0, 10.0, 1.0))",
+				c.toString());
+	}
+
 }
