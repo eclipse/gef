@@ -101,19 +101,6 @@ public class CubicCurve extends BezierCurve {
 		this(start.x, start.y, ctrl1.x, ctrl1.y, ctrl2.x, ctrl2.y, end.x, end.y);
 	}
 
-	/**
-	 * Clips this {@link CubicCurve} at parameter values t1 and t2 so that the
-	 * resulting {@link CubicCurve} is the section of the original
-	 * {@link CubicCurve} for the parameter interval [t1, t2].
-	 * 
-	 * @param t1
-	 * @param t2
-	 * @return the {@link CubicCurve} on the interval [t1, t2]
-	 */
-	public CubicCurve clip(double t1, double t2) {
-		return super.getClipped(t1, t2).toCubic();
-	}
-
 	@Override
 	public boolean equals(Object other) {
 		CubicCurve o = (CubicCurve) other;

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-
 /**
  * Represents the geometric shape of a quadratic Bézier curve.
  * 
@@ -107,36 +106,6 @@ public class QuadraticCurve extends BezierCurve {
 	 * 
 	 * @return the bounds {@link Rectangle}
 	 */
-	/*
-	 * public Rectangle getBounds() { // extremes of the x(t) and y(t)
-	 * functions: double[] xts; try { xts =
-	 * PolynomCalculationUtils.getLinearRoots(2 * (getX1() - 2 getCtrlX() +
-	 * getX2()), 2 * (getCtrlX() - getX1())); } catch (ArithmeticException x) {
-	 * return new Rectangle(getP1(), getP2()); }
-	 * 
-	 * double xmin = getX1(), xmax = getX1(); if (getX2() < xmin) { xmin =
-	 * getX2(); } else { xmax = getX2(); }
-	 * 
-	 * for (double t : xts) { if (t >= 0 && t <= 1) { double x = get(t).x; if (x
-	 * < xmin) { xmin = x; } else if (x > xmax) { xmax = x; } } }
-	 * 
-	 * double[] yts; try { yts = PolynomCalculationUtils.getLinearRoots(2 *
-	 * (getY1() - 2 getCtrlY() + getY2()), 2 * (getCtrlY() - getY1())); } catch
-	 * (ArithmeticException x) { return new Rectangle(getP1(), getP2()); }
-	 * 
-	 * double ymin = getY1(), ymax = getY1(); if (getY2() < ymin) { ymin =
-	 * getY2(); } else { ymax = getY2(); }
-	 * 
-	 * for (double t : yts) { if (t >= 0 && t <= 1) { double y = get(t).y; if (y
-	 * < ymin) { ymin = y; } else if (y > ymax) { ymax = y; } } }
-	 * 
-	 * return new Rectangle(new Point(xmin, ymin), new Point(xmax, ymax)); }
-	 */
-
-	@Override
-	public QuadraticCurve getClipped(double t1, double t2) {
-		return super.getClipped(t1, t2).toQuadratic();
-	}
 
 	private Polygon getControlPolygon() {
 		return new Polygon(getP1(), getCtrl(), getP2());

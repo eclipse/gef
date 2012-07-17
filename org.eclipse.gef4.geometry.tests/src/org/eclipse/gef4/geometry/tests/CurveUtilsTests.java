@@ -169,9 +169,11 @@ public class CurveUtilsTests {
 			QuadraticCurve c = new QuadraticCurve(points);
 			for (double t1 = 0; t1 <= 1; t1 += step) {
 				for (double t2 = 0; t2 <= 1; t2 += step) {
-					QuadraticCurve cc = c.getClipped(t1, t2);
-					assertEquals(c.get(t1), cc.get(0));
-					assertEquals(c.get(t2), cc.get(1));
+					QuadraticCurve cc = c.getClipped(t1, t2).toQuadratic();
+					if (cc != null) {
+						assertEquals(c.get(t1), cc.get(0));
+						assertEquals(c.get(t2), cc.get(1));
+					}
 				}
 			}
 		}
@@ -217,9 +219,11 @@ public class CurveUtilsTests {
 			CubicCurve c = new CubicCurve(points);
 			for (double t1 = 0; t1 <= 1; t1 += step) {
 				for (double t2 = 0; t2 <= 1; t2 += step) {
-					CubicCurve cc = c.clip(t1, t2);
-					assertEquals(c.get(t1), cc.get(0));
-					assertEquals(c.get(t2), cc.get(1));
+					CubicCurve cc = c.getClipped(t1, t2).toCubic();
+					if (cc != null) {
+						assertEquals(c.get(t1), cc.get(0));
+						assertEquals(c.get(t2), cc.get(1));
+					}
 				}
 			}
 		}
@@ -368,19 +372,19 @@ public class CurveUtilsTests {
 		CubicCurve baseCurve = new CubicCurve(new Point(), new Point(.1, 0),
 				new Point(0, .1), new Point(.1, .1));
 
-		CubicCurve c1 = baseCurve.clip(0, 0.75);
-		CubicCurve c2 = baseCurve.clip(0.25, 1);
+		CubicCurve c1 = baseCurve.getClipped(0, 0.75).toCubic();
+		CubicCurve c2 = baseCurve.getClipped(0.25, 1).toCubic();
 
 		assertEquals(0, c1.getIntersections(c2).length);
 		assertEquals(0, c2.getIntersections(c1).length);
 
 		// c1 contains c2, c2 is contained by c1
-		c2 = c1.clip(0.25, 0.75);
+		c2 = c1.getClipped(0.25, 0.75).toCubic();
 		assertEquals(0, c1.getIntersections(c2).length);
 		assertEquals(0, c2.getIntersections(c1).length);
 
 		// single end-point-intersection
-		c2 = baseCurve.clip(0.75, 1);
+		c2 = baseCurve.getClipped(0.75, 1).toCubic();
 		assertEquals(1, c1.getIntersections(c2).length);
 		assertEquals(1, c2.getIntersections(c1).length);
 	}
