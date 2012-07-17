@@ -274,4 +274,18 @@ class CurveUtils {
 		return segments;
 	}
 
+	/**
+	 * Creates copies of the given {@link BezierCurve}s.
+	 * 
+	 * @param curves
+	 *            the {@link BezierCurve}s to copy
+	 * @return an array containing the copies
+	 */
+	public static BezierCurve[] getCopy(BezierCurve... curves) {
+		BezierCurve[] copies = new BezierCurve[curves.length];
+		for (int i = 0; i < curves.length; i++)
+			copies[i] = curves[i].getCopy();
+		return copies;
+	}
+
 }

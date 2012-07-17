@@ -18,10 +18,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AngleTests.class, ArcTests.class, BezierCurveTests.class,
-		CubicCurveTests.class, CurveUtilsTests.class, DimensionTests.class,
-		EllipseTests.class, IGeometryTests.class, LineTests.class,
-		PointListUtilsTests.class, PointTests.class, PolygonTests.class,
-		PolylineTests.class, PrecisionUtilsTests.class,
+		CubicCurveTests.class, CurvedPolygonTests.class, CurveUtilsTests.class,
+		DimensionTests.class, EllipseTests.class, IGeometryTests.class,
+		LineTests.class, PointListUtilsTests.class, PointTests.class,
+		PolygonTests.class, PolylineTests.class, PrecisionUtilsTests.class,
 		QuadraticCurveTests.class, RectangleTests.class, RegionTests.class,
 		RingTests.class, RoundedRectangleTests.class, StraightTests.class,
 		VectorTests.class, Vector3DTests.class })
