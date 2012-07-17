@@ -601,12 +601,19 @@ public class AffineTransform {
 		return result;
 	}
 
-	public Point inverseTransform(Point ptSrc, Point ptDst)
+	/**
+	 * Inverse transforms the given {@link Point} with this
+	 * {@link AffineTransform}.
+	 * 
+	 * @param pt
+	 *            the {@link Point} to inverse transform
+	 * @return a new, inverse transformed {@link Point}
+	 * @throws NoninvertibleTransformException
+	 */
+	public Point inverseTransform(Point pt)
 			throws NoninvertibleTransformException {
-		return AWT2Geometry
-				.toPoint(delegate.inverseTransform(
-						Geometry2AWT.toAWTPoint(ptSrc),
-						Geometry2AWT.toAWTPoint(ptDst)));
+		return AWT2Geometry.toPoint(delegate.inverseTransform(
+				Geometry2AWT.toAWTPoint(pt), null));
 	}
 
 	/**
@@ -634,11 +641,18 @@ public class AffineTransform {
 		delegate.inverseTransform(srcPts, srcOff, dstPts, dstOff, numPts);
 	}
 
-	public Point deltaTransform(Point ptSrc, Point ptDst) {
-		return AWT2Geometry
-				.toPoint(delegate.deltaTransform(
-						Geometry2AWT.toAWTPoint(ptSrc),
-						Geometry2AWT.toAWTPoint(ptDst)));
+	/**
+	 * Transforms the given {@link Point} with this {@link AffineTransform}
+	 * without applying the translation components of the transformation matrix
+	 * of this {@link AffineTransform}.
+	 * 
+	 * @param pt
+	 *            the {@link Point} to transform
+	 * @return a new, transformed {@link Point}
+	 */
+	public Point deltaTransform(Point pt) {
+		return AWT2Geometry.toPoint(delegate.deltaTransform(
+				Geometry2AWT.toAWTPoint(pt), null));
 	}
 
 	/**
