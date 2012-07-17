@@ -656,20 +656,4 @@ public class PolygonTests {
 		assertTrue(poly.contains(p));
 	}
 
-	@Test
-	public void test_contains_Point_special_cases() {
-		/*
-		 * TODO: special cases are impossible to test without knowing how the
-		 * algorithm counts intersections. The special cases are:
-		 * 
-		 * 1) the point is inside the polygon. the scan line intersects the
-		 * polygon in a vertex of the polygon. this is a double intersection in
-		 * the same point.
-		 * 
-		 * 2) the point is inside the polygon. the scan line intersects the
-		 * polygon in a vertex of the polygon and somewhere else. the vertex
-		 * intersection is a double intersection in the same point.
-		 */
-	}
-
 }
