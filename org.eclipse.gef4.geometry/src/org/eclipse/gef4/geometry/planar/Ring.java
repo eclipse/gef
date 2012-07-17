@@ -19,6 +19,7 @@ import java.util.Stack;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.swt.graphics.Region;
 
 /**
  * 
@@ -590,6 +591,24 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 
 	public Ring getTranslated(Point d) {
 		return getCopy().translate(d.x, d.y);
+	}
+
+	/**
+	 * Constructs a new {@link org.eclipse.swt.graphics.Region} from this
+	 * {@link Ring}. The SWT {@link Region} can be used as a clipping area as
+	 * follows: <code>gc.setClipping(ring.toSWTRegion());</code>
+	 * 
+	 * @return SWT {@link Region} representation of this {@link Ring}
+	 */
+	public Region toSWTRegion() {
+		Region region = new org.eclipse.swt.graphics.Region();
+
+		// TODO: error due to toIntegerArray not considering SWT's strange +1/-1
+		// pixel behavior
+		for (Polygon p : triangles)
+			region.add(p.toSWTPointArray());
+
+		return region;
 	}
 
 }
