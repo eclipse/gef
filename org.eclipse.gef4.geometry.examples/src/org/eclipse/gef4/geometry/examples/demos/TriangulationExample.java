@@ -11,18 +11,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
-import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.examples.AbstractExample;
+import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Polygon.NonSimplePolygonException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-public class TriangulationExample extends AbstractIntersectionExample {
+public class TriangulationExample extends AbstractExample {
 	public static void main(String[] args) {
 		new TriangulationExample("Triangulation Example");
 	}
@@ -31,31 +29,30 @@ public class TriangulationExample extends AbstractIntersectionExample {
 		super(title);
 	}
 
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-				addControlPoint(new Point(300 / 2, 100 / 2));
-				addControlPoint(new Point(100 / 2, 200 / 2));
-				addControlPoint(new Point(200 / 2, 300 / 2));
-				addControlPoint(new Point(100 / 2, 500 / 2));
-				addControlPoint(new Point(300 / 2, 400 / 2));
-				addControlPoint(new Point(500 / 2, 600 / 2));
-				addControlPoint(new Point(600 / 2, 300 / 2));
-				addControlPoint(new Point(500 / 2, 400 / 2));
-				addControlPoint(new Point(500 / 2, 200 / 2));
-				addControlPoint(new Point(300 / 2, 200 / 2));
+	@Override
+	protected ControllableShape[] getControllableShapes() {
+		return new ControllableShape[] { new ControllableShape() {
+			{
+				addControlPoints(new Point(300 / 2, 100 / 2), new Point(
+						100 / 2, 200 / 2), new Point(200 / 2, 300 / 2),
+						new Point(100 / 2, 500 / 2),
+						new Point(300 / 2, 400 / 2),
+						new Point(500 / 2, 600 / 2),
+						new Point(600 / 2, 300 / 2),
+						new Point(500 / 2, 400 / 2),
+						new Point(500 / 2, 200 / 2),
+						new Point(300 / 2, 200 / 2));
 			}
 
 			@Override
-			public Polygon createGeometry() {
-				Polygon p = new Polygon(getControlPoints());
+			public Polygon getShape() {
+				Polygon p = new Polygon(getPoints());
 				return p;
 			}
 
 			@Override
-			public void drawShape(GC gc) {
-				Polygon p = createGeometry();
+			public void onDraw(GC gc) {
+				Polygon p = getShape();
 
 				// System.out.println("p = " + p);
 
@@ -81,28 +78,7 @@ public class TriangulationExample extends AbstractIntersectionExample {
 
 				gc.setLineWidth(lineWidth);
 			}
-		};
+		} };
 	}
 
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-			}
-
-			@Override
-			public IGeometry createGeometry() {
-				return new Line(-10, -10, -10, -10);
-			}
-
-			@Override
-			public void drawShape(GC gc) {
-			}
-		};
-	}
-
-	@Override
-	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return new Point[] {};
-	}
 }

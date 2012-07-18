@@ -11,71 +11,53 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
-import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.examples.AbstractExample;
+import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
-@SuppressWarnings("restriction")
-public class ConvexHullExample extends AbstractIntersectionExample {
+public class ConvexHullExample extends AbstractExample {
+
 	public static void main(String[] args) {
 		new ConvexHullExample("Convex Hull Example");
 	}
 
 	public ConvexHullExample(String title) {
-		super(title);
-	}
-
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-				addControlPoint(new Point(100, 100));
-				addControlPoint(new Point(150, 400));
-				addControlPoint(new Point(200, 300));
-				addControlPoint(new Point(250, 150));
-				addControlPoint(new Point(300, 250));
-				addControlPoint(new Point(350, 200));
-				addControlPoint(new Point(400, 350));
-			}
-
-			@Override
-			public Polygon createGeometry() {
-				return new Polygon(Point.getConvexHull(getControlPoints()));
-			}
-
-			@Override
-			public void drawShape(GC gc) {
-				Polygon convexHull = createGeometry();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), convexHull.toPath().toSWTPathData()));
-			}
-		};
-	}
-
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-			}
-
-			@Override
-			public IGeometry createGeometry() {
-				return new Line(-10, -10, -10, -10);
-			}
-
-			@Override
-			public void drawShape(GC gc) {
-			}
-		};
+		super(title); // creates the UI for us
 	}
 
 	@Override
-	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return new Point[] {};
+	protected ControllableShape[] getControllableShapes() {
+		return new ControllableShape[] { new ControllableShape() {
+			{
+				// These are the points which are displayed on the screen.
+				// We will compute their convex hull later.
+				addControlPoints(new Point(100, 100), new Point(150, 400),
+						new Point(200, 300), new Point(250, 150), new Point(
+								300, 250), new Point(350, 200), new Point(400,
+								350));
+			}
+
+			@Override
+			public Polygon getShape() {
+				// Compute the convex hull of the defined point list.
+				// We return the convex hull as a Polygon.
+				return new Polygon(Point.getConvexHull(getPoints()));
+			}
+
+			@Override
+			public void onDraw(GC gc) {
+				// This is the code to display the computed convex hull.
+
+				// Compute the convex hull.
+				Polygon convexHull = getShape();
+
+				// Display the convex hull as an SWT Path.
+				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
+						.getCurrent(), convexHull.toPath().toSWTPathData()));
+			}
+		} };
 	}
 }

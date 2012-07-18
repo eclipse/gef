@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2012 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,19 @@ import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.geometry.planar.Region;
+import org.eclipse.gef4.geometry.planar.Polygon;
+import org.eclipse.gef4.geometry.planar.Ring;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
-public class RegionOutlineExample extends AbstractExample {
+public class RingOutlineExample extends AbstractExample {
+
 	public static void main(String[] args) {
-		new RegionOutlineExample("Region Example");
+		new RingOutlineExample("Ring Example");
 	}
 
-	public RegionOutlineExample(String title) {
+	public RingOutlineExample(String title) {
 		super(title);
 	}
 
@@ -34,46 +35,55 @@ public class RegionOutlineExample extends AbstractExample {
 	protected ControllableShape[] getControllableShapes() {
 		return new ControllableShape[] { new ControllableShape() {
 			{
-				addControlPoints(new Point(100, 50), new Point(300, 100));
-				addControlPoints(new Point(250, 200), new Point(350, 330));
-				addControlPoints(new Point(100, 200), new Point(190, 325));
-				addControlPoints(new Point(150, 300), new Point(280, 380));
+				addControlPoints(new Point(100, 100), new Point(400, 100),
+						new Point(400, 200));
+				addControlPoints(new Point(400, 100), new Point(400, 400),
+						new Point(300, 400));
+				addControlPoints(new Point(400, 400), new Point(100, 400),
+						new Point(100, 300));
+				addControlPoints(new Point(100, 400), new Point(100, 100),
+						new Point(200, 100));
 			}
 
 			@Override
-			public Region getShape() {
+			public Ring getShape() {
 				Point[] cp = getPoints();
 
-				Rectangle[] rectangles = new Rectangle[cp.length / 2];
-				for (int i = 0; i < rectangles.length; i++)
-					rectangles[i] = new Rectangle(cp[2 * i], cp[2 * i + 1]);
+				Polygon[] polygons = new Polygon[cp.length / 3];
+				for (int i = 0; i < polygons.length; i++)
+					polygons[i] = new Polygon(cp[3 * i], cp[3 * i + 1],
+							cp[3 * i + 2]);
 
-				return new Region(rectangles);
+				return new Ring(polygons);
 			}
 
 			@Override
 			public void onDraw(GC gc) {
-				Region region = getShape();
+				Ring ring = getShape();
 
-				gc.setAlpha(128);
+				gc.setAlpha(64);
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLUE));
-				for (Rectangle r : region.getShapes()) {
-					gc.fillRectangle(r.toSWTRectangle());
+				for (Polygon p : ring.getShapes()) {
+					gc.fillPolygon(p.toSWTPointArray());
 				}
 
 				gc.setAlpha(255);
 				// gc.setForeground(Display.getCurrent().getSystemColor(
 				// SWT.COLOR_RED));
-				// for (Rectangle r : region.getShapes()) {
-				// gc.drawRectangle(r.toSWTRectangle());
+				// for (Polygon p : ring.getShapes()) {
+				// gc.drawPolygon(p.toSWTPointArray());
 				// }
+
 				gc.setForeground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLACK));
-				for (Line l : region.getOutlineSegments()) {
+				int lineWidth = gc.getLineWidth();
+				gc.setLineWidth(lineWidth + 2);
+				for (Line l : ring.getOutlineSegments()) {
 					gc.drawLine((int) (l.getX1()), (int) (l.getY1()),
 							(int) (l.getX2()), (int) (l.getY2()));
 				}
+				gc.setLineWidth(lineWidth);
 			}
 		} };
 	}

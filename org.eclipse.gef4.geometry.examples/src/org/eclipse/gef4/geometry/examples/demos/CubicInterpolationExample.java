@@ -11,71 +11,91 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
-import org.eclipse.gef4.geometry.examples.intersection.AbstractIntersectionExample;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Line;
-import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.examples.AbstractExample;
+import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Slider;
 
-public class CubicInterpolationExample extends AbstractIntersectionExample {
+public class CubicInterpolationExample extends AbstractExample {
+
+	private double curveWidthCoefficient;
+
 	public static void main(String[] args) {
 		new CubicInterpolationExample("Cubic Interpolation Example");
 	}
 
 	public CubicInterpolationExample(String title) {
-		super(title);
-	}
-
-	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-				addControlPoint(new Point(100, 200));
-				addControlPoint(new Point(150, 250));
-				addControlPoint(new Point(200, 150));
-				addControlPoint(new Point(250, 250));
-				addControlPoint(new Point(300, 150));
-				addControlPoint(new Point(350, 250));
-				addControlPoint(new Point(400, 200));
-			}
-
-			@Override
-			public PolyBezier createGeometry() {
-				return PolyBezier.interpolateCubic(getControlPoints());
-			}
-
-			@Override
-			public void drawShape(GC gc) {
-				Path curve = createGeometry().toPath();
-				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), curve.toSWTPathData()));
-			}
-		};
-	}
-
-	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
-		return new AbstractControllableShape(canvas) {
-			@Override
-			public void createControlPoints() {
-			}
-
-			@Override
-			public IGeometry createGeometry() {
-				return new Line(new Point(), new Point(1, 1));
-			}
-
-			@Override
-			public void drawShape(GC gc) {
-			}
-		};
+		super(title); // Creates the UI for us.
 	}
 
 	@Override
-	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return new Point[] {};
+	public void onInit() {
+		/*
+		 * Creates the slider to be able to change the curve width coefficient
+		 * used to construct the cubic Bezier interpolation through the later-on
+		 * defined anchor points. (Just SWT buzz.)
+		 */
+		curveWidthCoefficient = 1;
+
+		// add slider
+		final Slider slider = new Slider(shell, SWT.HORIZONTAL);
+		slider.setBounds(0, 0, 200, 20);
+		slider.setValues(25, 0, 101, 1, 1, 1);
+		slider.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				curveWidthCoefficient = (double) slider.getSelection() / 25d;
+				shell.redraw();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
+
+	@Override
+	protected ControllableShape[] getControllableShapes() {
+		return new ControllableShape[] { new ControllableShape() {
+			{
+				/*
+				 * These are the anchor points for the cubic Bezier
+				 * interpolation.
+				 */
+				addControlPoints(new Point(100, 200), new Point(150, 250),
+						new Point(200, 150), new Point(250, 250), new Point(
+								300, 150), new Point(350, 250), new Point(400,
+								200));
+			}
+
+			@Override
+			public PolyBezier getShape() {
+				/*
+				 * Constructs the cubic Bezier interpolation through the defined
+				 * anchor points as a PolyBezier.
+				 */
+				return PolyBezier.interpolateCubic(curveWidthCoefficient,
+						getPoints());
+			}
+
+			@Override
+			public void onDraw(GC gc) {
+				/*
+				 * Displays the cubic Bezier interpolation.
+				 */
+
+				// compute the interpolation
+				PolyBezier curve = getShape();
+
+				// display it as an SWT Path
+				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
+						.getCurrent(), curve.toPath().toSWTPathData()));
+			}
+		} };
+	}
+
 }
