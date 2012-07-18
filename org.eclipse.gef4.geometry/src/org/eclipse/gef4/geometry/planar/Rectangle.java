@@ -248,48 +248,6 @@ public final class Rectangle extends
 	}
 
 	/**
-	 * Expands the horizontal and vertical sides of this Rectangle with the
-	 * values provided as input, and returns this for convenience. The location
-	 * of its center is kept constant.
-	 * 
-	 * @param h
-	 *            Horizontal increment
-	 * @param v
-	 *            Vertical increment
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle expand(double h, double v) {
-		x -= h;
-		width += h + h;
-		y -= v;
-		height += v + v;
-		return this;
-	}
-
-	/**
-	 * Expands the horizontal and vertical sides of this Rectangle by the width
-	 * and height of the given Insets, and returns this for convenience.
-	 * 
-	 * @param left
-	 *            - the amount to expand the left side
-	 * @param top
-	 *            - the amount to expand the top side
-	 * @param right
-	 *            - the amount to expand the right side
-	 * @param bottom
-	 *            - the amount to expand the bottom side
-	 * @return <code>this</code> Rectangle for convenience
-	 * 
-	 */
-	public Rectangle expand(double left, double top, double right, double bottom) {
-		x -= left;
-		y -= top;
-		width += left + right;
-		height += top + bottom;
-		return this;
-	}
-
-	/**
 	 * Returns the area of this {@link Rectangle}, i.e. the product of its width
 	 * and height.
 	 * 
@@ -336,42 +294,6 @@ public final class Rectangle extends
 	 */
 	public Rectangle getCopy() {
 		return new Rectangle(x, y, width, height);
-	}
-
-	/**
-	 * Returns a new incremented Rectangle, where the sides are expanded by the
-	 * horizontal and vertical values provided. The center of the Rectangle is
-	 * maintained constant.
-	 * 
-	 * @param h
-	 *            Horizontal increment
-	 * @param v
-	 *            Vertical increment
-	 * @return A new expanded Rectangle
-	 */
-	public Rectangle getExpanded(double h, double v) {
-		return getCopy().expand(h, v);
-	}
-
-	/**
-	 * Creates and returns a new Rectangle with the bounds of <code>this</code>
-	 * Rectangle, expanded by the given insets.
-	 * 
-	 * @param left
-	 *            - the amount to expand the left side
-	 * @param top
-	 *            - the amount to expand the top side
-	 * @param right
-	 *            - the amount to expand the right side
-	 * @param bottom
-	 *            - the amount to expand the bottom side
-	 * 
-	 * @return A new expanded Rectangle
-	 * 
-	 */
-	public Rectangle getExpanded(double left, double top, double right,
-			double bottom) {
-		return getCopy().expand(left, top, right, bottom);
 	}
 
 	/**
@@ -545,40 +467,6 @@ public final class Rectangle extends
 	}
 
 	/**
-	 * Returns a new Rectangle, where the sides are shrinked by the horizontal
-	 * and vertical values supplied. The center of this Rectangle is kept
-	 * constant.
-	 * 
-	 * @param h
-	 *            Horizontal reduction amount
-	 * @param v
-	 *            Vertical reduction amount
-	 * @return the new, shrinked {@link Rectangle}
-	 */
-	public Rectangle getShrinked(double h, double v) {
-		return getCopy().shrink(h, v);
-	}
-
-	/**
-	 * Returns a new Rectangle shrinked by the specified insets.
-	 * 
-	 * @param left
-	 *            - the amount to shrink the left side
-	 * @param top
-	 *            - the amount to shrink the top side
-	 * @param right
-	 *            - the amount to shrink the right side
-	 * @param bottom
-	 *            - the amount to shrink the bottom side
-	 * 
-	 * @return shrinked new Rectangle
-	 */
-	public Rectangle getShrinked(double left, double top, double right,
-			double bottom) {
-		return getCopy().shrink(left, top, right, bottom);
-	}
-
-	/**
 	 * Returns a new Point which represents the middle point of the top side of
 	 * this Rectangle.
 	 * 
@@ -691,46 +579,6 @@ public final class Rectangle extends
 	public boolean isEmpty() {
 		return PrecisionUtils.smallerEqual(width, 0)
 				|| PrecisionUtils.smallerEqual(height, 0);
-	}
-
-	/**
-	 * Shrinks the sides of this Rectangle by the horizontal and vertical values
-	 * provided as input, and returns this Rectangle for convenience. The center
-	 * of this Rectangle is kept constant.
-	 * 
-	 * @param h
-	 *            Horizontal reduction amount
-	 * @param v
-	 *            Vertical reduction amount
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle shrink(double h, double v) {
-		x += h;
-		width -= h + h;
-		y += v;
-		height -= v + v;
-		return this;
-	}
-
-	/**
-	 * Shrinks this rectangle by the amount specified in <code>insets</code>.
-	 * 
-	 * @param left
-	 *            - the amount to shrink the left side
-	 * @param top
-	 *            - the amount to shrink the top side
-	 * @param right
-	 *            - the amount to shrink the right side
-	 * @param bottom
-	 *            - the amount to shrink the bottom side
-	 * @return <code>this</code> Rectangle for convenience
-	 */
-	public Rectangle shrink(double top, double left, double bottom, double right) {
-		x += left;
-		y += top;
-		width -= (left + right);
-		height -= (top + bottom);
-		return this;
 	}
 
 	/**

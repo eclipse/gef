@@ -50,6 +50,50 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		super();
 	}
 
+	/**
+	 * Expands the horizontal and vertical sides of this
+	 * {@link AbstractRectangleBasedGeometry} with the values provided as input,
+	 * and returns <code>this</code> for convenience. The location of its center
+	 * is kept constant.
+	 * 
+	 * @param h
+	 *            horizontal increment
+	 * @param v
+	 *            vertical increment
+	 * @return <code>this</code> for convenience
+	 */
+	@SuppressWarnings("unchecked")
+	public T expand(double h, double v) {
+		x -= h;
+		width += h + h;
+		y -= v;
+		height += v + v;
+		return (T) this;
+	}
+
+	/**
+	 * Expands this {@link AbstractRectangleBasedGeometry} by the given amounts,
+	 * and returns this for convenience.
+	 * 
+	 * @param left
+	 *            the amount to expand the left side
+	 * @param top
+	 *            the amount to expand the top side
+	 * @param right
+	 *            the amount to expand the right side
+	 * @param bottom
+	 *            the amount to expand the bottom side
+	 * @return <code>this</code> for convenience
+	 */
+	@SuppressWarnings("unchecked")
+	public T expand(double left, double top, double right, double bottom) {
+		x -= left;
+		y -= top;
+		width += left + right;
+		height += top + bottom;
+		return (T) this;
+	}
+
 	public final Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
@@ -63,6 +107,44 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 */
 	public Point getCenter() {
 		return new Point(x + width / 2, y + height / 2);
+	}
+
+	/**
+	 * Returns a new expanded {@link AbstractRectangleBasedGeometry}, where the
+	 * sides are incremented by the horizontal and vertical values provided. The
+	 * center of the {@link AbstractRectangleBasedGeometry} is maintained
+	 * constant.
+	 * 
+	 * @param h
+	 *            horizontal increment
+	 * @param v
+	 *            vertical increment
+	 * @return a new expanded {@link AbstractRectangleBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getExpanded(double h, double v) {
+		return (T) ((T) getCopy()).expand(h, v);
+	}
+
+	/**
+	 * Creates and returns a new {@link AbstractRectangleBasedGeometry} with the
+	 * bounds of this {@link AbstractRectangleBasedGeometry} expanded by the
+	 * given insets.
+	 * 
+	 * @param left
+	 *            the amount to expand the left side
+	 * @param top
+	 *            the amount to expand the top side
+	 * @param right
+	 *            the amount to expand the right side
+	 * @param bottom
+	 *            the amount to expand the bottom side
+	 * 
+	 * @return a new expanded {@link AbstractRectangleBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getExpanded(double left, double top, double right, double bottom) {
+		return (T) ((T) getCopy()).expand(left, top, right, bottom);
 	}
 
 	/**
@@ -117,37 +199,57 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	/**
-	 * Returns the size of this {@link Rectangle}.
+	 * Returns a new {@link AbstractRectangleBasedGeometry}, where the sides are
+	 * shrinked by the horizontal and vertical values supplied. The center of
+	 * this {@link AbstractRectangleBasedGeometry} is kept constant.
 	 * 
-	 * @return The current size
+	 * @param h
+	 *            horizontal reduction amount
+	 * @param v
+	 *            vertical reduction amount
+	 * @return a new, shrinked {@link AbstractRectangleBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getShrinked(double h, double v) {
+		return (T) ((T) getCopy()).shrink(h, v);
+	}
+
+	/**
+	 * Returns a new {@link AbstractRectangleBasedGeometry} shrinked by the
+	 * specified insets.
+	 * 
+	 * @param left
+	 *            the amount to shrink the left side
+	 * @param top
+	 *            the amount to shrink the top side
+	 * @param right
+	 *            the amount to shrink the right side
+	 * @param bottom
+	 *            the amount to shrink the bottom side
+	 * 
+	 * @return a new, shrinked {@link AbstractRectangleBasedGeometry}
+	 */
+	@SuppressWarnings("unchecked")
+	public T getShrinked(double left, double top, double right, double bottom) {
+		return (T) ((T) getCopy()).shrink(left, top, right, bottom);
+	}
+
+	/**
+	 * Returns a {@link Dimension} that records the width and height of this
+	 * {@link AbstractRectangleBasedGeometry}.
+	 * 
+	 * @return a {@link Dimension} that records the width and height of this
+	 *         {@link AbstractRectangleBasedGeometry}
 	 */
 	public final Dimension getSize() {
 		return new Dimension(width, height);
 	}
 
-	/**
-	 * Returns a new {@link AbstractPointListBasedGeometry} which is shifted
-	 * along each axis by the passed values.
-	 * 
-	 * @param dx
-	 *            Displacement along X axis
-	 * @param dy
-	 *            Displacement along Y axis
-	 * @return The new translated {@link AbstractPointListBasedGeometry}
-	 */
 	@SuppressWarnings("unchecked")
 	public T getTranslated(double dx, double dy) {
 		return (T) ((T) getCopy()).translate(dx, dy);
 	}
 
-	/**
-	 * Returns a new {@link AbstractPointListBasedGeometry} which is shifted by
-	 * the position of the given {@link Point}.
-	 * 
-	 * @param pt
-	 *            {@link Point} providing the amount of shift along each axis
-	 * @return The new translated {@link AbstractPointListBasedGeometry}
-	 */
 	@SuppressWarnings("unchecked")
 	public T getTranslated(Point pt) {
 		return (T) ((T) getCopy()).translate(pt);
@@ -387,16 +489,49 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	/**
-	 * Moves this {@link AbstractPointListBasedGeometry} horizontally by dx and
-	 * vertically by dy, then returns this
-	 * {@link AbstractPointListBasedGeometry} for convenience.
+	 * Shrinks the sides of this {@link AbstractRectangleBasedGeometry} by the
+	 * horizontal and vertical values provided as input, and returns this
+	 * {@link AbstractRectangleBasedGeometry} for convenience. The center of
+	 * this {@link AbstractRectangleBasedGeometry} is kept constant.
 	 * 
-	 * @param dx
-	 *            Shift along X axis
-	 * @param dy
-	 *            Shift along Y axis
+	 * @param h
+	 *            horizontal reduction amount
+	 * @param v
+	 *            vertical reduction amount
 	 * @return <code>this</code> for convenience
 	 */
+	@SuppressWarnings("unchecked")
+	public T shrink(double h, double v) {
+		x += h;
+		width -= h + h;
+		y += v;
+		height -= v + v;
+		return (T) this;
+	}
+
+	/**
+	 * Shrinks this {@link AbstractRectangleBasedGeometry} by the specified
+	 * amounts.
+	 * 
+	 * @param left
+	 *            the amount to shrink the left side
+	 * @param top
+	 *            the amount to shrink the top side
+	 * @param right
+	 *            the amount to shrink the right side
+	 * @param bottom
+	 *            the amount to shrink the bottom side
+	 * @return <code>this</code> for convenience
+	 */
+	@SuppressWarnings("unchecked")
+	public T shrink(double top, double left, double bottom, double right) {
+		x += left;
+		y += top;
+		width -= (left + right);
+		height -= (top + bottom);
+		return (T) this;
+	}
+
 	@SuppressWarnings("unchecked")
 	public T translate(double dx, double dy) {
 		x += dx;
@@ -404,16 +539,6 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
-	/**
-	 * Moves this {@link AbstractPointListBasedGeometry} horizontally by the x
-	 * value of the given {@link Point} and vertically by the y value of the
-	 * given {@link Point}, then returns this
-	 * {@link AbstractPointListBasedGeometry} for convenience.
-	 * 
-	 * @param p
-	 *            {@link Point} which provides translation information
-	 * @return <code>this</code> for convenience
-	 */
 	public T translate(Point p) {
 		return translate(p.x, p.y);
 	}
