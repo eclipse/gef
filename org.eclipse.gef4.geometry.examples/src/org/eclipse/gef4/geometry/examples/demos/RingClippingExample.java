@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2011 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,13 +21,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
-public class RingOutlineExample extends AbstractExample {
-
+public class RingClippingExample extends AbstractExample {
 	public static void main(String[] args) {
-		new RingOutlineExample("Ring Example");
+		new RingClippingExample("Ring Clipping Example");
 	}
 
-	public RingOutlineExample(String title) {
+	public RingClippingExample(String title) {
 		super(title);
 	}
 
@@ -35,45 +34,46 @@ public class RingOutlineExample extends AbstractExample {
 	protected ControllableShape[] getControllableShapes() {
 		return new ControllableShape[] { new ControllableShape() {
 			{
-				addControlPoints(new Point(100, 100), new Point(400, 100),
-						new Point(400, 200));
-				addControlPoints(new Point(400, 100), new Point(400, 400),
-						new Point(300, 400));
-				addControlPoints(new Point(400, 400), new Point(100, 400),
-						new Point(100, 300));
-				addControlPoints(new Point(100, 400), new Point(100, 100),
-						new Point(200, 100));
+				addControlPoints(new Point(100, 100), new Point(200, 100),
+						new Point(100, 200));
+				addControlPoints(new Point(300, 300), new Point(400, 200),
+						new Point(400, 300));
+				addControlPoints(new Point(250, 50), new Point(450, 75),
+						new Point(300, 125));
 			}
 
 			@Override
 			public Ring getShape() {
 				Point[] cp = getPoints();
-
-				Polygon[] polygons = new Polygon[cp.length / 3];
-				for (int i = 0; i < polygons.length; i++)
-					polygons[i] = new Polygon(cp[3 * i], cp[3 * i + 1],
-							cp[3 * i + 2]);
-
-				return new Ring(polygons);
+				Ring ring = new Ring(new Polygon(cp[0], cp[1], cp[2]),
+						new Polygon(cp[3], cp[4], cp[5]), new Polygon(cp[6],
+								cp[7], cp[8]));
+				return ring;
 			}
 
 			@Override
 			public void onDraw(GC gc) {
 				Ring ring = getShape();
 
-				gc.setForeground(Display.getCurrent().getSystemColor(
-						SWT.COLOR_BLACK));
-				int lineWidth = gc.getLineWidth();
-				gc.setLineWidth(1);
-
-				for (Polyline outline : ring.getOutline()) {
-					gc.drawPolyline(outline.toSWTPointArray());
-					gc.setLineWidth(gc.getLineWidth() + 1);
+				gc.setClipping(ring.toSWTRegion());
+				gc.setBackground(Display.getCurrent().getSystemColor(
+						SWT.COLOR_WIDGET_BACKGROUND));
+				for (int y = 0; y < 800; y += 20) {
+					gc.drawString(
+							"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+							20, y);
 				}
 
-				gc.setLineWidth(lineWidth);
+				gc.setClipping((org.eclipse.swt.graphics.Region) null);
+				gc.setAlpha(128);
+				gc.setBackground(Display.getCurrent().getSystemColor(
+						SWT.COLOR_BLUE));
+				for (Polyline p : ring.getOutline()) {
+					gc.fillPolygon(p.toSWTPointArray());
+				}
+
+				gc.setAlpha(255);
 			}
 		} };
 	}
-
 }

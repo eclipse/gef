@@ -396,7 +396,7 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Path toPath() {
-		return getOutline().toPath();
+		return CurveUtils.toPath(getOutlineSegments());
 	}
 
 	public Ring getRotatedCCW(Angle angle) {

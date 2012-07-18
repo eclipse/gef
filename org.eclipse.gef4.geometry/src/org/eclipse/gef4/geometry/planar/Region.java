@@ -230,7 +230,7 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public Path toPath() {
-		return getOutline().toPath();
+		return CurveUtils.toPath(getOutlineSegments());
 	}
 
 	/**
