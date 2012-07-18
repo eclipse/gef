@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - IPolyShape semantics for touches()
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -17,8 +18,8 @@ abstract class AbstractGeometry implements IGeometry {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Overwritten with public visibility as recommended within
-	 * {@link Cloneable}.
+	 * Overridden with public visibility as recommended within {@link Cloneable}
+	 * .
 	 */
 	@Override
 	public Object clone() {
@@ -37,8 +38,8 @@ abstract class AbstractGeometry implements IGeometry {
 
 	/**
 	 * Default implementation returning a transformed {@link Path}
-	 * representation of this Geometry. Subclasses may overwrite to return a
-	 * more appropriate representation.
+	 * representation of this {@link IGeometry}. Subclasses may override this
+	 * method to return a more specific representation.
 	 * 
 	 * @return a transformed {@link Path} representation of this
 	 *         {@link IGeometry}

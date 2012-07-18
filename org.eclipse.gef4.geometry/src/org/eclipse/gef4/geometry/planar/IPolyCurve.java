@@ -12,8 +12,12 @@
 package org.eclipse.gef4.geometry.planar;
 
 /**
- * An {@link IPolyCurve} is an {@link ICurve} that is constituted by multiple
- * connected {@link ICurve} segments.
+ * <p>
+ * The IPolyCurve interface semantically differentiates a single ICurve from a
+ * sequence of ICurves. The only addition to the interface methods therefore is
+ * the getCurves() method which returns an array of ICurves that compose the
+ * IPolyCurve.
+ * </p>
  */
 public interface IPolyCurve extends ICurve {
 

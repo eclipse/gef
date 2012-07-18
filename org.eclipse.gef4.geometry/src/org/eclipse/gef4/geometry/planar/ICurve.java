@@ -12,10 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
-
 /**
- * Abstraction over all curve shapes, i.e. lines (linear curves) as well as
- * quadratic, cubic, and arbitrary Bezier curves.
+ * <p>
+ * The {@link ICurve} interface provides operations that allow the analysis of
+ * linear geometric objects and the transfer to {@link BezierCurve} segments (
+ * {@link #toBezier()}). The start and end {@link Point} of an {@link ICurve}
+ * can be retrieved using its {@link #getP1()} and {@link #getP2()} methods.
+ * Furthermore, you can search for {@link Point}s of intersection using the
+ * {@link #getIntersections(ICurve)} method. If you do only need to know if
+ * there are any intersections, and you are not interested in their exact
+ * locations, then you can use the {@link #intersects(ICurve)} method, instead.
+ * To test for an overlap, i.e. an identical segment of two {@link ICurve}s, use
+ * the {@link #overlaps(ICurve)} method. One may think that an overlap is a very
+ * rare case. But in practical application, objects are usually aligned to a
+ * grid, which extremely increases the probability of an overlap.
+ * </p>
  * 
  * @author anyssen
  * 

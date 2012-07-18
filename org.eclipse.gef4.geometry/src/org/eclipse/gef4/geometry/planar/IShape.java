@@ -13,8 +13,17 @@
 package org.eclipse.gef4.geometry.planar;
 
 /**
- * An {@link IShape} is an {@link IGeometry} with a closed outline consisting of
- * multiple {@link ICurve} segments.
+ * <p>
+ * The IShape interface is the counterpart of the ICurve interface, in that it
+ * brings together operations to be used on areal geometric objects, such as
+ * Polygons. An IShape allows to test if an IGeometry is fully contained by the
+ * IShape using the contains(IGeometry) method. An IGeometry is considered to be
+ * fully contained by an IShape if the IShape contains all the Points that
+ * constitute the IGeometry in question. Moreover, the closed outline of an
+ * IShape can be retrieved via the getOutline() method. It is defined to be an
+ * IPolyCurve. If you want to process the outline segments individually, you can
+ * use the getOutlineSegments() method, instead.
+ * </p>
  */
 public interface IShape extends IGeometry {
 

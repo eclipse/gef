@@ -17,9 +17,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * An {@link Angle} object abstracts the angle's unit. It provides a simple
- * interface to construct it from degrees or from radians. Additionally, some
- * useful calculations are implemented, but for sine/cosine/tangent calculations
- * you may use the Math package.
+ * interface to construct it from degrees or radians. Additionally, some useful
+ * calculations are implemented. But for sine/cosine/tangent calculations you
+ * may use the Math package.
  * 
  * The {@link AngleUnit} enumeration is used to differentiate between degrees
  * and radians. For the sake of simplicity, the methods that need to
@@ -27,22 +27,19 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * or radians.
  * 
  * Every {@link Angle} object is normalized. That means, you will never
- * encounter an {@link Angle} object beyond 360\u00b0/2pi or below 0\u00b0/0.
- * 
- * @author Matthias Wienand
+ * encounter an {@link Angle} object beyond 360/2pi or below 0/0
+ * (degrees/radians).
  */
 public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * The {@link Angle#Angle(double, AngleUnit)} constructor uses this
 	 * enumeration to differentiate the unit of its first argument.
-	 * 
-	 * @author wienand
 	 */
 	public enum AngleUnit {
 		/**
 		 * Specifies that the angle is given in degrees. The range of an angle
-		 * in degrees is from 0\u00b0 to 360\u00b0.
+		 * in degrees is from 0deg to 360deg.
 		 */
 		DEG,
 
@@ -64,8 +61,9 @@ public class Angle implements Cloneable, Serializable {
 	 * value is interpreted as being in degrees.
 	 * 
 	 * @param degrees
-	 *            The angle in degrees.
-	 * @return An {@link Angle} object representing the given degrees-angle.
+	 *            the angle in degrees
+	 * @return an {@link Angle} object representing the passed-in angle given in
+	 *         degrees
 	 */
 	public static Angle fromDeg(double degrees) {
 		return new Angle(degrees, AngleUnit.DEG);
@@ -76,8 +74,9 @@ public class Angle implements Cloneable, Serializable {
 	 * value is interpreted as being in radians.
 	 * 
 	 * @param radians
-	 *            The angle in radians.
-	 * @return An {@link Angle} object representing the given radians-angle.
+	 *            the angle in radians
+	 * @return an {@link Angle} object representing the passed-in angle given in
+	 *         radians
 	 */
 	public static Angle fromRad(double radians) {
 		return new Angle(radians, AngleUnit.RAD);
@@ -90,9 +89,9 @@ public class Angle implements Cloneable, Serializable {
 	 * {@link AngleUnit} u is used to differentiate the value's unit.
 	 * 
 	 * @param v
-	 *            The angle's value.
+	 *            the angle's value
 	 * @param u
-	 *            The angle's unit.
+	 *            the angle's unit ({@link AngleUnit})
 	 */
 	public Angle(double v, AngleUnit u) {
 		if (u == AngleUnit.DEG) {
@@ -108,7 +107,7 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Overwritten with public visibility as proposed in {@link Cloneable}.
+	 * Overridden with public visibility as proposed in {@link Cloneable}.
 	 */
 	@Override
 	public Angle clone() {
@@ -118,7 +117,7 @@ public class Angle implements Cloneable, Serializable {
 	/**
 	 * Returns the value of this {@link Angle} object in degrees.
 	 * 
-	 * @return This {@link Angle}'s value in degrees.
+	 * @return this {@link Angle}'s value in degrees.
 	 */
 	public double deg() {
 		return rad * RAD_TO_DEG;
@@ -151,21 +150,22 @@ public class Angle implements Cloneable, Serializable {
 	 * {@link Angle} object.
 	 * 
 	 * @param other
-	 * @return The sum of this and the given other {@link Angle} object as a new
-	 *         {@link Angle} object.
+	 *            the {@link Angle} to add
+	 * @return the sum of this and the given other {@link Angle} as a new
+	 *         {@link Angle} object
 	 */
 	public Angle getAdded(Angle other) {
 		return Angle.fromRad(this.rad + other.rad);
 	}
 
 	/**
-	 * Returns a new {@link Angle} object representing this angle multiplied by
-	 * the given factor.
+	 * Returns a new {@link Angle} object representing this {@link Angle}
+	 * multiplied by the given factor.
 	 * 
 	 * @param factor
-	 *            The multiplication factor.
-	 * @return a new {@link Angle} object representing this angle multiplied by
-	 *         the given factor.
+	 *            the multiplication factor
+	 * @return a new {@link Angle} object representing this {@link Angle}
+	 *         multiplied by the given factor
 	 */
 	public Angle getMultiplied(double factor) {
 		return Angle.fromRad(rad * factor);
@@ -184,8 +184,8 @@ public class Angle implements Cloneable, Serializable {
 	 * Returns the opposite {@link Angle} of this {@link Angle} in a full circle
 	 * as a new {@link Angle} object.
 	 * 
-	 * @return The opposite {@link Angle} of this {@link Angle} in a full circle
-	 *         as a new {@link Angle} object.
+	 * @return the opposite {@link Angle} of this {@link Angle} in a full circle
+	 *         as a new {@link Angle} object
 	 */
 	public Angle getOppositeFull() {
 		return Angle.fromRad(RAD_360 - rad);
@@ -195,8 +195,8 @@ public class Angle implements Cloneable, Serializable {
 	 * Returns the opposite {@link Angle} of this {@link Angle} in a semi-circle
 	 * as a new {@link Angle} object.
 	 * 
-	 * @return The opposite {@link Angle} of this {@link Angle} in a semi-circle
-	 *         as a new {@link Angle} object.
+	 * @return the opposite {@link Angle} of this {@link Angle} in a semi-circle
+	 *         as a new {@link Angle} object
 	 */
 	public Angle getOppositeSemi() {
 		return Angle.fromRad(RAD_180 - rad);
@@ -214,7 +214,7 @@ public class Angle implements Cloneable, Serializable {
 
 	/**
 	 * Normalizes this {@link Angle} to the range from 0deg to 360deg or rather
-	 * from 0 to 2pi.
+	 * from 0 to 2pi (radians).
 	 */
 	private Angle normalize() {
 		rad -= RAD_360 * Math.floor(rad / RAD_360);
@@ -231,10 +231,10 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Sets this {@link Angle}'s value to the given angle in degrees.
+	 * Sets this {@link Angle}'s value to the passed-in value in degrees.
 	 * 
 	 * @param degrees
-	 *            The angle in degrees.
+	 *            the angle's value in degrees
 	 */
 	public void setDeg(double degrees) {
 		rad = degrees * DEG_TO_RAD;
@@ -242,10 +242,10 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Sets this {@link Angle}'s value to the given angle in radians.
+	 * Sets this {@link Angle}'s value to the passed-in value in radians.
 	 * 
 	 * @param radians
-	 *            The angle value in radians.
+	 *            the angle's value in radians
 	 */
 	public void setRad(double radians) {
 		rad = radians;
@@ -260,4 +260,5 @@ public class Angle implements Cloneable, Serializable {
 		return "Angle(" + Double.toString(rad) + "rad ("
 				+ Double.toString(deg()) + "deg))";
 	}
+
 }

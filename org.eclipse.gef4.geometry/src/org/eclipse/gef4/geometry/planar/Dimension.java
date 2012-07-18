@@ -18,9 +18,9 @@ import java.io.Serializable;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
- * Represents a dimension (width, height) in 2-dimensional space. This class
- * provides various methods for manipulating this Dimension or creating new
- * derived Objects.
+ * A {@link Dimension} represents a width and a height in 2-dimensional space.
+ * It provides various methods for manipulating the {@link Dimension} or
+ * creating new derived objects.
  * 
  * @author ebordeau
  * @author rhudson
@@ -33,14 +33,15 @@ public class Dimension implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Creates a new {@link Dimension} representing the maximum of two provided
-	 * {@link Dimension}s.
+	 * Creates a new {@link Dimension} representing the maximum of the two
+	 * provided {@link Dimension}s.
 	 * 
 	 * @param d1
-	 *            first dimension
+	 *            the first {@link Dimension}
 	 * @param d2
-	 *            second dimension
-	 * @return A new Dimension representing the maximum of the given dimensions
+	 *            the second {@link Dimension}
+	 * @return a new {@link Dimension} representing the maximum of the given
+	 *         {@link Dimension}s
 	 */
 	public static Dimension max(Dimension d1, Dimension d2) {
 		return new Dimension(Math.max(d1.width, d2.width), Math.max(d1.height,
@@ -48,14 +49,15 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new {@link Dimension} representing the minimum of two provided
-	 * {@link Dimension}s.
+	 * Creates a new {@link Dimension} representing the minimum of the two
+	 * provided {@link Dimension}s.
 	 * 
 	 * @param d1
-	 *            first dimension
+	 *            the first {@link Dimension}
 	 * @param d2
-	 *            second dimension
-	 * @return A new {@link Dimension} representing the minimum
+	 *            the second {@link Dimension}
+	 * @return a new {@link Dimension} representing the minimum of the two
+	 *         provided {@link Dimension}s
 	 */
 	public static Dimension min(Dimension d1, Dimension d2) {
 		return new Dimension(Math.min(d1.width, d2.width), Math.min(d1.height,
@@ -63,29 +65,30 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
-	 * The width.
+	 * This {@link Dimension}'s width. It is the distance on the x-axis that is
+	 * stored in this {@link Dimension}.
 	 */
 	public double width;
 
 	/**
-	 * The height.
+	 * This {@link Dimension}'s height. It is the distance of the y-axis that is
+	 * stored in this {@link Dimension}.
 	 */
 	public double height;
 
 	/**
 	 * Constructs a {@link Dimension} of zero width and height.
-	 * 
 	 */
 	public Dimension() {
 	}
 
 	/**
-	 * Constructs a {@link Dimension} with the width and height of the passed
+	 * Constructs a {@link Dimension} with the width and height of the passed-in
 	 * {@link Dimension}.
 	 * 
 	 * @param d
-	 *            The {@link Dimension} supplying the initial values for width
-	 *            and height
+	 *            the {@link Dimension} supplying the initial width and height
+	 *            values
 	 */
 	public Dimension(Dimension d) {
 		width = d.width;
@@ -96,9 +99,9 @@ public class Dimension implements Cloneable, Serializable {
 	 * Constructs a {@link Dimension} with the supplied width and height values.
 	 * 
 	 * @param w
-	 *            The width
+	 *            the width of the new {@link Dimension}
 	 * @param h
-	 *            The height
+	 *            the height of the new {@link Dimension}
 	 */
 	public Dimension(double w, double h) {
 		width = w;
@@ -107,11 +110,12 @@ public class Dimension implements Cloneable, Serializable {
 
 	/**
 	 * Constructs a {@link Dimension} where the width and height are the x and y
-	 * distances of the input point from the origin.
+	 * coordinates of the passed-in {@link org.eclipse.swt.graphics.Point},
+	 * respectively.
 	 * 
 	 * @param p
-	 *            The {@link org.eclipse.swt.graphics.Point} whose x and y
-	 *            values will be used to infer width and height
+	 *            the {@link org.eclipse.swt.graphics.Point} whose x and y
+	 *            values will be used as width and height
 	 */
 	public Dimension(org.eclipse.swt.graphics.Point p) {
 		width = p.x;
@@ -119,20 +123,35 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Overwritten with public visibility as proposed in {@link Cloneable}.
+	 * Constructs a {@link Dimension} where the width and height are the x and y
+	 * coordinates of the passed-in {@link Point}, respectively.
+	 * 
+	 * @param p
+	 *            the {@link Point} whose x and y values will be used as width
+	 *            and height
 	 */
+	public Dimension(Point p) {
+		width = p.x;
+		height = p.y;
+	}
+
 	@Override
 	public Dimension clone() {
 		return getCopy();
 	}
 
 	/**
-	 * Returns <code>true</code> if the input Dimension fits into this
-	 * Dimension. A Dimension of the same size is considered to "fit".
+	 * Checks if the given {@link Dimension} fits into this {@link Dimension}.
+	 * In order to fit into this {@link Dimension}, the passed-in
+	 * {@link Dimension}'s width and height have to be smaller than this
+	 * {@link Dimension}'s width and height, within the default imprecision (see
+	 * {@link PrecisionUtils}).
 	 * 
 	 * @param d
-	 *            the dimension being tested
-	 * @return <code>true</code> if this Dimension contains <i>d</i>
+	 *            the {@link Dimension} that is checked if it fits into this
+	 *            {@link Dimension}
+	 * @return <code>true</code> if this {@link Dimension} contains the given
+	 *         {@link Dimension}
 	 */
 	public boolean contains(Dimension d) {
 		return width >= d.width && height >= d.height;

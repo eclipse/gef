@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 public class AWT2Geometry {
 
 	/**
-	 * Converts a AWT {@link java.awt.geom.AffineTransform} into a GEF4
+	 * Converts an AWT {@link java.awt.geom.AffineTransform} into a GEF4
 	 * {@link AffineTransform}
 	 * 
 	 * @param t
@@ -48,13 +48,13 @@ public class AWT2Geometry {
 	}
 
 	/**
-	 * Converts a AWT {@link Line2D} into a GEF4 {@link Line}.
+	 * Converts an AWT {@link Line2D} into a GEF4 {@link Line}.
 	 * 
 	 * @param l
 	 *            the {@link Line2D} to transform
 	 * @return a new {@link Line}, which is constructed by using the start (
 	 *         {@link Line2D#getP1()}) and end ({@link Line2D#getP2()}) points
-	 *         of the passed in {@link Line2D}
+	 *         of the passed-in {@link Line2D}
 	 */
 	public static final Line toLine(Line2D l) {
 		return new Line(AWT2Geometry.toPoint(l.getP1()), AWT2Geometry.toPoint(l
@@ -62,12 +62,12 @@ public class AWT2Geometry {
 	}
 
 	/**
-	 * Converts a AWT {@link Point2D} into a GEF4 {@link Point}.
+	 * Converts an AWT {@link Point2D} into a GEF4 {@link Point}.
 	 * 
 	 * @param p
 	 *            the {@link Point2D} to transform
 	 * @return a new {@link Point}, which is constructed using the x and y
-	 *         values of the passed in {@link Point2D}
+	 *         coordinates of the passed-in {@link Point2D}
 	 */
 	public static final Point toPoint(Point2D p) {
 		return new Point(p.getX(), p.getY());
@@ -80,7 +80,7 @@ public class AWT2Geometry {
 	 * @param pts
 	 *            the array of {@link Point2D}s to transform
 	 * @return an array containing new {@link Point}s, which are constructed by
-	 *         using the x and y values of the passed in {@link Point2D}s
+	 *         using the x and y coordinates of the passed-in {@link Point2D}s
 	 */
 	public static Point[] toPoints(Point2D[] pts) {
 		Point[] points = new Point[pts.length];
@@ -91,16 +91,30 @@ public class AWT2Geometry {
 	}
 
 	/**
-	 * Converts a AWT {@link Rectangle2D} into a GEF4 {@link Rectangle}. Note
+	 * <p>
+	 * Converts an AWT {@link Rectangle2D} into a GEF4 {@link Rectangle}. Note
 	 * that the new {@link Rectangle} is simply constructed by using the values
-	 * of the passed in {@link Rectangle2D}, not compensating the fact that the
+	 * of the passed-in {@link Rectangle2D}, not compensating the fact that the
 	 * width and height of a rectangle are interpreted differently in Java2D and
 	 * GEF4.
+	 * </p>
+	 * <p>
+	 * In Java2D, the width and height of a {@link Rectangle2D} are oversized by
+	 * exactly 1, i.e. the right and bottom edges of a {@link Rectangle2D} are
+	 * not regarded to belong to the visual object.
+	 * </p>
+	 * <p>
+	 * If you wish to retain this interpretation, you have to modify the
+	 * resulting GEF4 {@link Rectangle} object as follows:<br>
+	 * <code>rectangle.shrink(0, 0, 1, 1);</code><br>
+	 * (see also {@link Rectangle#shrink(double, double, double, double)},
+	 * {@link Rectangle#getShrinked(double, double, double, double)})
+	 * </p>
 	 * 
 	 * @param r
 	 *            the {@link Rectangle2D} to convert
 	 * @return a new {@link Rectangle}, which is constructed using the x, y,
-	 *         width, and height values of the passed in {@link Rectangle2D}.
+	 *         width, and height values of the passed-in {@link Rectangle2D}.
 	 * 
 	 * 
 	 */
@@ -109,11 +123,24 @@ public class AWT2Geometry {
 	}
 
 	/**
-	 * Converts a AWT {@link RoundRectangle2D} into a GEF4
+	 * <p>
+	 * Converts an AWT {@link RoundRectangle2D} into a GEF4
 	 * {@link RoundedRectangle}. Note that the new {@link RoundedRectangle} is
-	 * simply constructed by using the values of the passed in
+	 * simply constructed by using the values of the passed-in
 	 * {@link RoundRectangle2D}, not compensating the fact that the width and
 	 * height of a rectangle are interpreted differently in Java2D and GEF4.
+	 * </p>
+	 * <p>
+	 * In Java2D, the width and height of a {@link RoundRectangle2D} are
+	 * oversized by exactly 1, i.e. the right and bottom edges of a
+	 * {@link RoundRectangle2D} are not regarded to belong to the visual object.
+	 * </p>
+	 * <p>
+	 * If you wish to retain this interpretation, you have to modify the
+	 * resulting GEF4 {@link RoundedRectangle} object as follows:<br>
+	 * <code>roundedRectangle.shrink(0, 0, 1, 1);</code><br>
+	 * (see also {@link RoundedRectangle#shrink(double, double, double, double)}, {@link RoundedRectangle#getShrinked(double, double, double, double)})
+	 * </p>
 	 * 
 	 * @param r
 	 *            the {@link RoundRectangle2D} to convert

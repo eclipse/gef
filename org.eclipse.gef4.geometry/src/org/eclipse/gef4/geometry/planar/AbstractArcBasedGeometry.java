@@ -17,12 +17,15 @@ import java.util.List;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 
 /**
- * An {@link AbstractArcBasedGeometry} describes the arc of an {@link Ellipse}.
- * It provides functionality to modify and query attributes of the arc and to
- * compute a Bezier approximation of the arc (the outline).
+ * An {@link AbstractArcBasedGeometry} describes the {@link Arc} of an
+ * {@link Ellipse}. It provides functionality to modify and query attributes of
+ * the {@link Arc} and to compute a {@link BezierCurve} approximation of the
+ * {@link Arc}.
  * 
  * @param <T>
- *            type of the inheriting class
+ *            the type of the inheriting class
+ * @param <S>
+ *            the type of rotated objects (see {@link IRotatable})
  */
 abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>, S extends IGeometry>
 		extends AbstractRectangleBasedGeometry<T, S> {
@@ -30,31 +33,37 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The CCW (counter-clock-wise) {@link Angle} to the x-axis at which this
+	 * The counter-clockwise (CCW) {@link Angle} to the x-axis at which this
 	 * {@link AbstractArcBasedGeometry} begins.
 	 */
 	protected Angle startAngle;
 
 	/**
-	 * The CCW (counter-clock-wise) {@link Angle} that spans this
+	 * The counter-clockwise (CCW) {@link Angle} that spans this
 	 * {@link AbstractArcBasedGeometry}.
 	 */
 	protected Angle angularExtent;
 
 	/**
 	 * Constructs a new {@link AbstractArcBasedGeometry} so that it is fully
-	 * contained within the framing rectangle defined by (x, y, width, height),
-	 * spanning the given extend (in CCW direction) from the given start angle
-	 * (relative to the x-axis).
+	 * contained within the framing {@link Rectangle} defined by x, y, width,
+	 * and height, spanning the given extend (in CCW direction) from the given
+	 * start angle (relative to the x-axis).
 	 * 
 	 * @param x
-	 *            the x-coordinate of the framing rectangle
+	 *            the x coordinate of the framing {@link Rectangle}
 	 * @param y
-	 *            the y-coordinate of the framing rectangle
+	 *            the y coordinate of the framing {@link Rectangle}
 	 * @param width
+	 *            the width of the framing {@link Rectangle}
 	 * @param height
+	 *            the height of the framing {@link Rectangle}
 	 * @param startAngle
+	 *            the CCW {@link Angle} to the x-axis at which this
+	 *            {@link AbstractArcBasedGeometry} begins
 	 * @param angularExtent
+	 *            the CCW {@link Angle} that spans this
+	 *            {@link AbstractArcBasedGeometry}
 	 */
 	public AbstractArcBasedGeometry(double x, double y, double width,
 			double height, Angle startAngle, Angle angularExtent) {
@@ -79,8 +88,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns a {@link Point} representing the start {@link Point} of this
-	 * {@link AbstractArcBasedGeometry}.
+	 * Returns the start {@link Point} of this {@link AbstractArcBasedGeometry}.
 	 * 
 	 * @return the start {@link Point} of this {@link AbstractArcBasedGeometry}
 	 */
@@ -89,8 +97,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns a {@link Point} representing the end {@link Point} of this
-	 * {@link AbstractArcBasedGeometry}.
+	 * Returns the end {@link Point} of this {@link AbstractArcBasedGeometry}.
 	 * 
 	 * @return the end {@link Point} of this {@link AbstractArcBasedGeometry}
 	 */
@@ -101,17 +108,17 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Computes a {@link Point} on this {@link AbstractArcBasedGeometry}. The
 	 * {@link Point}'s coordinates are calculated by moving the given
-	 * {@link Angle} on this {@link AbstractArcBasedGeometry} starting at the
+	 * {@link Angle} on this {@link AbstractArcBasedGeometry} starting at this
 	 * {@link AbstractArcBasedGeometry}'s start {@link Point}.
 	 * 
 	 * @param angularExtent
-	 * @return the {@link Point} at the given {@link Angle}
+	 *            the {@link Angle} to move from the start {@link Point} of this
+	 *            {@link AbstractArcBasedGeometry}
+	 * @return the {@link Point} at the given extension {@link Angle}
 	 */
 	public Point getPoint(Angle angularExtent) {
 		double a = width / 2;
 		double b = height / 2;
-
-		// // calculate start and end points of the arc from start to end
 		return new Point(x + a + a
 				* Math.cos(startAngle.rad() + angularExtent.rad()), y + b - b
 				* Math.sin(startAngle.rad() + angularExtent.rad()));
@@ -127,10 +134,10 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns the x-coordinate of the start {@link Point} of this
+	 * Returns the x coordinate of the start {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
 	 * 
-	 * @return the x-coordinate of the start {@link Point} of this
+	 * @return the x coordinate of the start {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
 	public double getX1() {
@@ -138,10 +145,10 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns the x-coordinate of the end {@link Point} of this
+	 * Returns the x coordinate of the end {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
 	 * 
-	 * @return the x-coordinate of the end {@link Point} of this
+	 * @return the x coordinate of the end {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
 	public double getX2() {
@@ -149,10 +156,10 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns the y-coordinate of the start {@link Point} of this
+	 * Returns the y coordinate of the start {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
 	 * 
-	 * @return the y-coordinate of the start {@link Point} of this
+	 * @return the y coordinate of the start {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
 	public double getY1() {
@@ -160,10 +167,10 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Returns the y-coordinate of the end {@link Point} of this
+	 * Returns the y coordinate of the end {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
 	 * 
-	 * @return the y-coordinate of the end {@link Point} of this
+	 * @return the y coordinate of the end {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
 	public double getY2() {
@@ -194,11 +201,12 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	}
 
 	/**
-	 * Computes a Bezier approximation for this {@link AbstractArcBasedGeometry}
-	 * . It is approximated by at most four {@link CubicCurve}s which span at
-	 * most 90 degrees.
+	 * Computes a {@link CubicCurve} approximation for this
+	 * {@link AbstractArcBasedGeometry}. It is approximated by a maximum of four
+	 * {@link CubicCurve}s, each of which covers a maximum of 90 degrees.
 	 * 
-	 * @return a Bezier approximation for this {@link AbstractArcBasedGeometry}
+	 * @return a {@link CubicCurve} approximation for this
+	 *         {@link AbstractArcBasedGeometry}
 	 */
 	protected CubicCurve[] computeBezierApproximation() {
 		double start = getStartAngle().rad();

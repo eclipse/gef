@@ -12,8 +12,13 @@
 package org.eclipse.gef4.geometry.planar;
 
 /**
- * An {@link IPolyShape} is the common abstraction over all {@link IGeometry}s
- * that are constituted by several {@link IShape} parts.
+ * <p>
+ * In contradiction to the relation of the IPolyCurve to the ICurve interfaces,
+ * the IPolyShape interface does not extend the IShape interface. Anyhow, they
+ * share their interface methods. You can test an IGeometry for containment
+ * using the contains(IGeometry) method and the outline segments can be
+ * retrieved via the getOutlineSegments() method.
+ * </p>
  */
 public interface IPolyShape extends IGeometry {
 
@@ -40,6 +45,21 @@ public interface IPolyShape extends IGeometry {
 	 * @return the outline segments of this {@link IPolyShape}
 	 */
 	public ICurve[] getOutlineSegments();
+
+	// /**
+	// * <p>
+	// * Computes the outline of this {@link IPolyShape}.
+	// * </p>
+	// *
+	// * <p>
+	// * The outline is returned as an array of {@link IPolyCurve}s. For every
+	// * closed outline of this {@link IPolyShape}, one {@link IPolyCurve} is
+	// * returned.
+	// * </p>
+	// *
+	// * @return array of {@link IPolyCurve}s, one for each closed outline
+	// */
+	// public IPolyCurve[] getOutline();
 
 	/**
 	 * Checks if the given {@link IGeometry} is fully contained by this

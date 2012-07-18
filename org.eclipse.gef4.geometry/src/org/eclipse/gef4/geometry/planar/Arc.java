@@ -16,12 +16,11 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
- * Represents the geometric shape of an arc, which is defined by its enclosing
- * framing rectangle, a start angle (relative to the x-axis), and an angular
- * extend (in CCW direction).
+ * Represents the geometric shape of an {@link Arc}, which is defined by its
+ * enclosing framing {@link Rectangle}, a start {@link Angle} (relative to the
+ * x-axis), and an angular extend in counter-clockwise (CCW) direction.
  * 
  * @author anyssen
- * 
  */
 public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 		implements ICurve {
@@ -30,24 +29,28 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 
 	/**
 	 * Constructs a new {@link Arc} of the given values. An {@link Arc} is cut
-	 * out of an Ellipse. The start {@link Angle} is the CCW
-	 * (counter-clock-wise) {@link Angle} to the x-axis at which the {@link Arc}
-	 * begins. The angular extent is the CCW {@link Angle} that spans the
-	 * {@link Arc}, i.e. the resulting end {@link Angle} of the {@link Arc} is
-	 * the sum of the start {@link Angle} and the angular extent.
+	 * out of an {@link Ellipse}. The start {@link Angle} is the
+	 * counter-clockwise (CCW) {@link Angle} to the x-axis at which the
+	 * {@link Arc} begins. The angular extent is the CCW {@link Angle} that
+	 * spans the {@link Arc}, i.e. the resulting end {@link Angle} of the
+	 * {@link Arc} is the sum of the start {@link Angle} and the angular extent.
 	 * 
 	 * @param x
-	 *            x-coordinate of the {@link Ellipse} bounds
+	 *            the x coordinate of the bounds of the {@link Ellipse} of which
+	 *            the {@link Arc} is cut out
 	 * @param y
-	 *            y-coordinate of the {@link Ellipse} bounds
+	 *            the y coordinate of the bounds of the {@link Ellipse} of which
+	 *            the {@link Arc} is cut out
 	 * @param width
-	 *            width of the {@link Ellipse} bounds
+	 *            the width of the bounds of the {@link Ellipse} of which the
+	 *            {@link Arc} is cut out
 	 * @param height
-	 *            height of the {@link Ellipse} bounds
+	 *            the height of the bounds of the {@link Ellipse} of which the
+	 *            {@link Arc} is cut out
 	 * @param startAngle
-	 *            CCW {@link Angle} at which the {@link Arc} begins
+	 *            the CCW {@link Angle} at which the {@link Arc} begins
 	 * @param angularExtent
-	 *            CCW {@link Angle} that spans the {@link Arc}
+	 *            the CCW {@link Angle} that spans the {@link Arc}
 	 */
 	public Arc(double x, double y, double width, double height,
 			Angle startAngle, Angle angularExtent) {
@@ -56,19 +59,20 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 
 	/**
 	 * Constructs a new {@link Arc} of the given values. An {@link Arc} is cut
-	 * out of an Ellipse. The start {@link Angle} is the CCW
-	 * (counter-clock-wise) {@link Angle} to the x-axis at which the {@link Arc}
-	 * begins. The angular extent is the CCW {@link Angle} that spans the
-	 * {@link Arc}, i.e. the resulting end {@link Angle} of the {@link Arc} is
-	 * the sum of the start {@link Angle} and the angular extent.
+	 * out of an {@link Ellipse}. The start {@link Angle} is the
+	 * counter-clockwise (CCW) {@link Angle} to the x-axis at which the
+	 * {@link Arc} begins. The angular extent is the CCW {@link Angle} that
+	 * spans the {@link Arc}, i.e. the resulting end {@link Angle} of the
+	 * {@link Arc} is the sum of the start {@link Angle} and the angular extent.
 	 * 
 	 * @param r
 	 *            the {@link AbstractRectangleBasedGeometry} describing the
-	 *            {@link Ellipse} bounds
+	 *            bounds of the {@link Ellipse} of which the {@link Arc} is cut
+	 *            out
 	 * @param startAngle
-	 *            CCW {@link Angle} at which the {@link Arc} begins
+	 *            the CCW {@link Angle} at which the {@link Arc} begins
 	 * @param angularExtent
-	 *            CCW {@link Angle} that spans the {@link Arc}
+	 *            the CCW {@link Angle} that spans the {@link Arc}
 	 */
 	public Arc(AbstractRectangleBasedGeometry<?, ?> r, Angle startAngle,
 			Angle angularExtent) {
@@ -95,16 +99,10 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 				&& PrecisionUtils.equal(startAngle.rad(), o.startAngle.rad());
 	}
 
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
-	 */
 	public Arc getCopy() {
 		return new Arc(x, y, width, height, startAngle, angularExtent);
 	}
 
-	/**
-	 * @see IGeometry#contains(Point)
-	 */
 	public boolean contains(Point p) {
 		for (CubicCurve c : computeBezierApproximation()) {
 			if (c.contains(p)) {
@@ -114,13 +112,6 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 		return false;
 	}
 
-	/**
-	 * Computes the {@link Point}s of intersection of this {@link Arc} and the
-	 * given {@link ICurve}.
-	 * 
-	 * @param c
-	 * @return the intersection {@link Point}s
-	 */
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(this, c);
 	}

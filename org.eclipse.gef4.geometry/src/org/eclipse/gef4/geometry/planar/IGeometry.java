@@ -16,7 +16,21 @@ import java.io.Serializable;
 
 
 /**
- * Common abstraction over all geometries (shapes, curves, paths).
+ * <p>
+ * A glance at the list of implementing classes reveals that the
+ * {@link IGeometry} interface bundles all the basic common methods for planar
+ * geometric objects. These methods enable you to test if a {@link Point}
+ * belongs to an {@link IGeometry} using the {@link #contains(Point)} method.
+ * The {@link #getBounds()} method returns a bounding box of the
+ * {@link IGeometry} that you call that method on. Moreover, you can bake a copy
+ * of an {@link IGeometry} using its {@link #getCopy()} method. To apply an
+ * {@link AffineTransform} to an {@link IGeometry}, use the
+ * {@link #getTransformed(AffineTransform)} method. Additionally, every
+ * {@link IGeometry} can be transfered into a {@link Path} by using the
+ * {@link #toPath()} method. And you can check if two {@link IGeometry}s are
+ * touching each other, i.e. they have at least one {@link Point} in common, via
+ * the {@link #touches(IGeometry)} method.
+ * </p>
  * 
  * @author anyssen
  * 

@@ -33,8 +33,8 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 public class Geometry2AWT {
 
 	/**
-	 * Converts a GEF {@link AffineTransform} into a AWT
-	 * {@link java.awt.geom.AffineTransform}
+	 * Converts a GEF {@link AffineTransform} into an AWT
+	 * {@link java.awt.geom.AffineTransform}.
 	 * 
 	 * @param t
 	 *            the {@link AffineTransform} to transform
@@ -49,26 +49,27 @@ public class Geometry2AWT {
 	}
 
 	/**
-	 * Converts a GEF4 {@link Line} into a AWT {@link Line2D}.
+	 * Converts a GEF4 {@link Line} into an AWT {@link Line2D}.
 	 * 
 	 * @param l
 	 *            the {@link Line} to transform
 	 * @return a new {@link Line2D}, which is constructed by using the start (
-	 *         {@link Line#getP1()}) and end ({@link Line#getP2()}) points of
-	 *         the passed in {@link Line}
+	 *         {@link Line#getP1()}) and end ({@link Line#getP2()})
+	 *         {@link Point}s of the passed-in {@link Line}
 	 */
 	public static Line2D.Double toAWTLine(Line l) {
 		return new Line2D.Double(l.getX1(), l.getY1(), l.getX2(), l.getY2());
 	}
 
 	/**
-	 * Converts a GEF4 {@link Point} into a AWT {@link Point2D} with double
-	 * precision.
+	 * Converts a GEF4 {@link Point} into an AWT {@link Point2D} with double
+	 * precision ({@link java.awt.geom.Point2D.Double}).
 	 * 
 	 * @param p
 	 *            the {@link Point} to convert
-	 * @return a new {@link Point2D}, which is constructed using the x and y
-	 *         values of the provided {@link Point}
+	 * @return a new {@link Point2D} with double precision (
+	 *         {@link java.awt.geom.Point2D.Double}), which is constructed using
+	 *         the x and y coordinates of the provided {@link Point}
 	 */
 	public static final Point2D.Double toAWTPoint(Point p) {
 		return new Point2D.Double(p.x, p.y);
@@ -76,12 +77,14 @@ public class Geometry2AWT {
 
 	/**
 	 * Converts a given array of GEF4 {@link Point}s into an array of AWT
-	 * {@link Point2D}s.
+	 * {@link Point2D}s with double precision (
+	 * {@link java.awt.geom.Point2D.Double}).
 	 * 
 	 * @param pts
 	 *            the array of {@link Point}s to convert
-	 * @return an array of new {@link Point2D}s, which are constructed using the
-	 *         x and y values of the provided {@link Point}s
+	 * @return an array of new {@link Point2D}s with double precision (
+	 *         {@link java.awt.geom.Point2D.Double}), which are constructed
+	 *         using the x and y coordinates of the provided {@link Point}s
 	 */
 	public static Point2D.Double[] toAWTPoints(Point[] pts) {
 		Point2D.Double[] points = new Point2D.Double[pts.length];
@@ -92,18 +95,30 @@ public class Geometry2AWT {
 	}
 
 	/**
-	 * Converts a GEF4 {@link Rectangle} into a AWT {@link Rectangle2D}. Note
+	 * <p>
+	 * Converts a GEF4 {@link Rectangle} into an AWT {@link Rectangle2D}. Note
 	 * that the new {@link Rectangle2D} is simply constructed by using the
-	 * values of the passed in {@link Rectangle}, not compensating the fact that
+	 * values of the passed-in {@link Rectangle}, not compensating the fact that
 	 * the width and height of a rectangle are interpreted differently in Java2D
 	 * and GEF4.
+	 * </p>
+	 * <p>
+	 * In Java2D, the width and height of a {@link Rectangle2D} are oversized by
+	 * exactly 1, i.e. the right and bottom edges of a {@link Rectangle2D} are
+	 * not regarded to belong to the visual object.
+	 * </p>
+	 * <p>
+	 * If you wish to retain this interpretation, you have to modify the
+	 * passed-in {@link Rectangle} object as follows:<br>
+	 * <code>rectangle2d = Geometry2AWT.toAWTRectangle(rectangle.getExpanded(0, 0, 1, 1));</code>
+	 * <br>
+	 * (see also {@link Rectangle#getExpanded(double, double, double, double)})
+	 * </p>
 	 * 
 	 * @param r
 	 *            the {@link Rectangle} to convert
 	 * @return a new {@link Rectangle2D}, which is constructed using the x, y,
-	 *         width, and height values of the passed in {@link Rectangle}.
-	 * 
-	 * 
+	 *         width, and height values of the passed-in {@link Rectangle}.
 	 */
 	public static final Rectangle2D.Double toAWTRectangle(Rectangle r) {
 		return new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(),
@@ -111,11 +126,26 @@ public class Geometry2AWT {
 	}
 
 	/**
-	 * Converts a GEF4 {@link RoundedRectangle} into a AWT
+	 * <p>
+	 * Converts a GEF4 {@link RoundedRectangle} into an AWT
 	 * {@link RoundRectangle2D}. Note that the new {@link RoundRectangle2D} is
 	 * simply constructed by using the values of the passed in
 	 * {@link RoundedRectangle}, not compensating the fact that the width and
 	 * height of a rectangle are interpreted differently in Java2D and GEF4.
+	 * </p>
+	 * <p>
+	 * In Java2D, the width and height of a {@link RoundRectangle2D} are
+	 * oversized by exactly 1, i.e. the right and bottom edges of a
+	 * {@link RoundRectangle2D} are not regarded to belong to the visual object.
+	 * </p>
+	 * <p>
+	 * If you wish to retain this interpretation, you have to modify the
+	 * passed-in {@link RoundedRectangle} object as follows:<br>
+	 * <code>roundRectangle2d = Geometry2AWT.toAWTRoundRectangle(roundedRectangle.getExpanded(0, 0, 1, 1));</code>
+	 * <br>
+	 * (see also
+	 * {@link RoundedRectangle#getExpanded(double, double, double, double)})
+	 * </p>
 	 * 
 	 * @param r
 	 *            the {@link RoundedRectangle} to convert

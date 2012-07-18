@@ -18,9 +18,6 @@ import java.util.Set;
 /**
  * The {@link CurveUtils} class provides functionality that can be used for all
  * {@link ICurve}s, independent on their construction kind.
- * 
- * @author wienand
- * 
  */
 class CurveUtils {
 
@@ -29,11 +26,13 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the BezierCurve.getIntersections(ICurve) method.
+	 * Delegates to the {@link BezierCurve#getIntersections(ICurve)} method.
 	 * 
 	 * @param curve1
+	 *            the first {@link ICurve} to intersect
 	 * @param curve2
-	 * @return points of intersection
+	 *            the second {@link ICurve} to intersect
+	 * @return an array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve1, ICurve curve2) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -47,11 +46,13 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the getIntersections(ICurve, ICurve) method.
+	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
 	 * 
 	 * @param curve
+	 *            the {@link ICurve} to intersect
 	 * @param shape
-	 * @return points of intersection
+	 *            the {@link IShape} of which the outline is intersected
+	 * @return an array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve, IShape shape) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -65,11 +66,13 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the getIntersections(ICurve, ICurve) method.
+	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
 	 * 
 	 * @param curve
+	 *            the {@link ICurve} to intersect
 	 * @param polyCurve
-	 * @return points of intersection
+	 *            the {@link IPolyCurve} to intersect
+	 * @return an array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve, IPolyCurve polyCurve) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -83,11 +86,13 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the getIntersections(ICurve, IShape) method.
+	 * Delegates to the {@link #getIntersections(ICurve, IShape)} method.
 	 * 
 	 * @param curve
+	 *            the {@link ICurve} to intersect
 	 * @param polyShape
-	 * @return points of intersection
+	 *            the {@link IPolyShape} of which the outline is intersected
+	 * @return an array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve, IPolyShape polyShape) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -100,11 +105,18 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to one of the above getIntersections() methods.
+	 * Delegates to the appropriate getIntersections() method for the passed-in
+	 * {@link IGeometry} depending on its type.
 	 * 
 	 * @param curve
+	 *            the {@link ICurve} to intersect
 	 * @param geom
+	 *            the {@link IGeometry} to intersect
 	 * @return points of intersection
+	 * @see #getIntersections(ICurve, ICurve)
+	 * @see #getIntersections(ICurve, IPolyCurve)
+	 * @see #getIntersections(ICurve, IShape)
+	 * @see #getIntersections(ICurve, IPolyShape)
 	 */
 	public static Point[] getIntersections(ICurve curve, IGeometry geom) {
 		if (geom instanceof ICurve) {
@@ -121,10 +133,12 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to one of the above getIntersections() methods.
+	 * Delegates to the {@link #getIntersections(ICurve, IGeometry)} method.
 	 * 
 	 * @param geom1
+	 *            the first {@link IGeometry} to intersect
 	 * @param geom2
+	 *            the second {@link IGeometry} to intersect
 	 * @return points of intersection
 	 */
 	public static Point[] getIntersections(IGeometry geom1, IGeometry geom2) {
@@ -159,37 +173,39 @@ class CurveUtils {
 	}
 
 	/**
-	 * Tests the given {@link ICurve}s for a finite number of intersections.
-	 * Returns <code>true</code> if the given {@link ICurve}s have a finite
-	 * number of intersection points. Otherwise, returns <code>false</code>.
+	 * Checks if the given {@link ICurve}s intersect in a finite number of
+	 * {@link Point}s.
 	 * 
 	 * @param c1
+	 *            the first {@link ICurve} to check for intersection
+	 *            {@link Point}s
 	 * @param c2
+	 *            the second {@link ICurve} to check for intersection
+	 *            {@link Point}s
 	 * @return <code>true</code> if both {@link ICurve}s have a finite set of
-	 *         intersection points, otherwise <code>false</code>
+	 *         intersection {@link Point}s, otherwise <code>false</code>
 	 */
 	public static boolean intersects(ICurve c1, ICurve c2) {
 		return getIntersections(c1, c2).length > 0;
 	}
 
 	/**
-	 * Tests the given {@link ICurve}s for an infinite number of intersections.
-	 * Returns <code>true</code> if the given {@link ICurve}s have an infinite
-	 * number of intersection points. Otherwise, returns <code>false</code>.
+	 * Checks if the given {@link ICurve}s overlap, i.e. both {@link ICurve}s
+	 * have an infinite number of intersection {@link Point}s.
 	 * 
 	 * @param c1
+	 *            the first {@link ICurve} to check for overlap
 	 * @param c2
-	 * @return <code>true</code> if both {@link ICurve}s have an infinite set of
-	 *         intersection points, otherwise <code>false</code>
+	 *            the second {@link ICurve} to check for overlap
+	 * @return <code>true</code> if both {@link ICurve}s overlap, otherwise
+	 *         <code>false</code>
 	 */
 	public static boolean overlaps(ICurve c1, ICurve c2) {
-		for (BezierCurve seg1 : c1.toBezier()) {
-			for (BezierCurve seg2 : c2.toBezier()) {
-				if (seg1.overlaps(seg2)) {
+		for (BezierCurve seg1 : c1.toBezier())
+			for (BezierCurve seg2 : c2.toBezier())
+				if (seg1.overlaps(seg2))
 					return true;
-				}
-			}
-		}
+
 		return false;
 	}
 
@@ -199,15 +215,16 @@ class CurveUtils {
 	 * be integrated into the constructed {@link Path}.
 	 * 
 	 * @param curves
-	 * @return a {@link Path} representing the given {@link ICurve}s
+	 *            the {@link ICurve}s from which the {@link Path} is constructed
+	 * @return a new {@link Path} representing the given {@link ICurve}s
 	 */
 	public static final Path toPath(ICurve... curves) {
 		Path p = new Path();
 		for (int i = 0; i < curves.length; i++) {
-			if (i == 0) {
-				p.moveTo(curves[i].getX1(), curves[i].getY1());
-			}
 			ICurve c = curves[i];
+			if (i == 0) {
+				p.moveTo(c.getX1(), c.getY1());
+			}
 			if (c instanceof Line) {
 				p.lineTo(c.getX2(), c.getY2());
 			} else if (c instanceof QuadraticCurve) {
@@ -221,29 +238,31 @@ class CurveUtils {
 						((CubicCurve) c).getY2());
 			} else {
 				throw new UnsupportedOperationException(
-						"This type of ICurve is not yet implemented.");
+						"This type of ICurve is not yet implemented: toPath("
+								+ curves + ")");
 			}
 		}
 		return p;
 	}
-	
+
 	/**
-	 * Transforms a sequence of {@link Point} coordinates into a sequence of
-	 * {@link Line} segments, by creating a {@link Line} segment for each two
-	 * adjacent points in the array. In case it is specified to close the
-	 * segment list, a {@link Line} segment is furthermore created between the
-	 * last and the first point in the list.
+	 * Transforms a sequence of {@link Point}s into a sequence of {@link Line}
+	 * segments, by creating a {@link Line} segment for each two adjacent
+	 * {@link Point}s in the given array. In case it is specified to close the
+	 * segment list, another {@link Line} segment is created that connects the
+	 * last and the first {@link Point} in the array.
 	 * 
 	 * @param points
 	 *            the array of {@link Point}s to convert
 	 * @param close
-	 *            a flag indicating whether a line segment will be created from
-	 *            the last point in the list back to the first one
+	 *            a flag indicating whether a {@link Line} segment will be
+	 *            created from the last {@link Point} in the list back to the
+	 *            first one
 	 * @return an array of {@link Line} segments, which is created by creating a
 	 *         {@link Line} for each two adjacent {@link Point}s in the given
-	 *         array, which includes a {@link Line} segment between the last
-	 *         point in the given array in the first one, if and only if the
-	 *         parameter close is given as <code>true</code>
+	 *         array, which includes a {@link Line} segment from the last
+	 *         {@link Point} in the given array to the first one if the
+	 *         <i>close</i> flag is set to <code>true</code>
 	 */
 	public static Line[] toSegmentsArray(Point[] points, boolean close) {
 		int segmentCount = close ? points.length : points.length - 1;

@@ -43,10 +43,9 @@ public class AWT2SWT {
 	 * will not contain any information about the winding rule that was
 	 * specified in the passed in {@link PathIterator}.
 	 * 
-	 * 
 	 * @param iterator
 	 *            the {@link PathIterator} to transform
-	 * @return a new {@link PathData} representing the same geometric path.
+	 * @return a new {@link PathData} representing the same geometric path
 	 */
 	public static PathData toSWTPathData(PathIterator iterator) {
 		byte[] types = new byte[0];

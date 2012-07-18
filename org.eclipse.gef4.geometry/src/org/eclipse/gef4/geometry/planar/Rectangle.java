@@ -441,11 +441,12 @@ public final class Rectangle extends
 
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
-	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}.
+	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}
+	 * (see {@link AbstractRectangleBasedGeometry#getCenter()}).
 	 * 
-	 * @see IRotatable#getRotatedCCW(Angle, Point)
 	 * @param alpha
 	 * @return the resulting {@link Polygon}
+	 * @see IRotatable#getRotatedCCW(Angle, Point)
 	 */
 	public Polygon getRotatedCCW(Angle alpha) {
 		Point centroid = getCenter();
@@ -492,12 +493,13 @@ public final class Rectangle extends
 
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
-	 * around the center of this {@link Rectangle}.
+	 * around the center ({@link AbstractRectangleBasedGeometry#getCenter()}) of
+	 * this {@link Rectangle}.
 	 * 
-	 * @see IRotatable#getRotatedCW(Angle, Point)
 	 * @param alpha
 	 *            the rotation {@link Angle}
 	 * @return the resulting {@link Polygon}
+	 * @see IRotatable#getRotatedCW(Angle, Point)
 	 */
 	public Polygon getRotatedCW(Angle alpha) {
 		Point centroid = getCenter();

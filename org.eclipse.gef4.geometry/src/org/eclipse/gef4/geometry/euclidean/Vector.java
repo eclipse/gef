@@ -19,7 +19,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
- * Represents a vector within 2-dimensional Euclidean space.
+ * Represents a {@link Vector} within 2-dimensional Euclidean space.
  * 
  * @author ebordeau
  * @author rhudson
@@ -31,21 +31,21 @@ public class Vector implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	/** the X value */
+	/** The x coordinate of this {@link Vector}. */
 	public double x;
-	/** the Y value */
+	/** The y coordinate of this {@link Vector}. */
 	public double y;
 
 	// internal constant used for comparisons.
 	private static final Vector NULL = new Vector(0, 0);
 
 	/**
-	 * Constructs a Vector pointed in the specified direction.
+	 * Constructs a {@link Vector} that points in the specified direction.
 	 * 
 	 * @param x
-	 *            X value.
+	 *            x coordinate
 	 * @param y
-	 *            Y value.
+	 *            y coordinate
 	 */
 	public Vector(double x, double y) {
 		this.x = x;
@@ -53,10 +53,11 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a Vector pointed in the direction specified by a Point.
+	 * Constructs a {@link Vector} that is the position {@link Vector} of the
+	 * given {@link Point}.
 	 * 
 	 * @param p
-	 *            the point
+	 *            the {@link Point} to construct a position {@link Vector} for
 	 */
 	public Vector(Point p) {
 		x = p.x;
@@ -64,13 +65,13 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a Vector representing the direction and magnitude between to
-	 * provided Points.
+	 * Constructs a {@link Vector} representing the direction and magnitude
+	 * between to provided {@link Point}s.
 	 * 
 	 * @param start
-	 *            starting point
+	 *            the start {@link Point}
 	 * @param end
-	 *            End Point
+	 *            the end {@link Point}
 	 */
 	public Vector(Point start, Point end) {
 		x = end.x - start.x;
@@ -78,13 +79,13 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a Vector representing the difference between two provided
-	 * Vectors.
+	 * Constructs a {@link Vector} representing the difference between two
+	 * provided {@link Vector}s.
 	 * 
 	 * @param start
-	 *            The start {@link Vector}
+	 *            the start {@link Vector}
 	 * @param end
-	 *            The end {@link Vector}
+	 *            the end {@link Vector}
 	 */
 	public Vector(Vector start, Vector end) {
 		x = end.x - start.x;
@@ -94,7 +95,7 @@ public class Vector implements Cloneable, Serializable {
 	/**
 	 * Clones the given {@link Vector} using {@link Vector#getCopy()}.
 	 * 
-	 * @return a copy of this {@link Vector} object.
+	 * @return a copy of this {@link Vector} object
 	 */
 	@Override
 	public Vector clone() {
@@ -104,7 +105,7 @@ public class Vector implements Cloneable, Serializable {
 	/**
 	 * Returns a copy of this {@link Vector} object.
 	 * 
-	 * @return a copy of this {@link Vector} object.
+	 * @return a copy of this {@link Vector} object
 	 */
 	public Vector getCopy() {
 		return new Vector(x, y);
@@ -112,26 +113,28 @@ public class Vector implements Cloneable, Serializable {
 
 	/**
 	 * Calculates the magnitude of the cross product of this {@link Vector} with
-	 * another. Normalizes the {@link Vector}s before calculating the cross
-	 * product. Represents the amount by which two {@link Vector}s are
-	 * directionally different. Parallel {@link Vector}s return a value of 0.
+	 * the given other {@link Vector}. This method normalizes both
+	 * {@link Vector}s before calculating the cross product. The resulting
+	 * dissimilarity value represents the amount by which two {@link Vector}s
+	 * are directionally different. For parallel {@link Vector}s 0 is returned.
 	 * 
 	 * @param other
-	 *            The {@link Vector} being compared
-	 * @return The dissimilarity
+	 *            the {@link Vector} to compare to this {@link Vector}
+	 * @return the dissimilarity of both {@link Vector}s
 	 */
 	public double getDissimilarity(Vector other) {
 		return Math.abs(getNormalized().getCrossProduct(other.getNormalized()));
 	}
 
 	/**
-	 * Calculates whether this {@link Vector} and the provided one are parallel
-	 * to each other.
+	 * Checks if this {@link Vector} and the provided one are parallel to each
+	 * other.
 	 * 
 	 * @param other
-	 *            The {@link Vector} to test for parallelism
-	 * @return true if this Vector and the provided one are parallel, false
-	 *         otherwise.
+	 *            the {@link Vector} that is checked to be parallel to this
+	 *            {@link Vector}
+	 * @return <code>true</code> if this {@link Vector} and the provided one are
+	 *         parallel, otherwise <code>false</code>
 	 */
 	public boolean isParallelTo(Vector other) {
 		Angle alpha = getAngle(other);
@@ -140,45 +143,53 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Calculates the dot product of this Vector with another.
+	 * Calculates the dot product of this {@link Vector} and the given other
+	 * {@link Vector}.
 	 * 
 	 * @param other
-	 *            the Vector used to calculate the dot product
-	 * @return The dot product
+	 *            the {@link Vector} for which the dot product with this
+	 *            {@link Vector} is calculated
+	 * @return the dot product of the two {@link Vector}s
 	 */
 	public double getDotProduct(Vector other) {
 		return x * other.x + y * other.y;
 	}
 
 	/**
-	 * Calculates the cross product of this Vector with another.
+	 * Calculates the cross product of this {@link Vector} (lhs) and the given
+	 * other {@link Vector} (rhs).
 	 * 
 	 * @param other
-	 *            the Vector used to calculate the cross product
-	 * @return The cross product.
+	 *            the rhs {@link Vector} for which the cross product with this
+	 *            {@link Vector} is calculated
+	 * @return the cross product of this {@link Vector} (lhs) and the given
+	 *         other {@link Vector} (rhs)
 	 */
 	public double getCrossProduct(Vector other) {
 		return x * other.y - y * other.x;
 	}
 
 	/**
-	 * Creates a new Vector which is the sum of this Vector with another.
+	 * Returns a new {@link Vector} that represents the sum of this
+	 * {@link Vector} and the given other {@link Vector}.
 	 * 
 	 * @param other
-	 *            Vector to be added to this Vector
-	 * @return a new Vector representing the sum
+	 *            the {@link Vector} that is added to this {@link Vector}
+	 * @return a new {@link Vector} representing the sum of this {@link Vector}
+	 *         and the given other {@link Vector}
 	 */
 	public Vector getAdded(Vector other) {
 		return new Vector(x + other.x, y + other.y);
 	}
 
 	/**
-	 * Creates a new Vector which is the difference of this Vector with the
-	 * provided Vector.
+	 * Returns a new {@link Vector} that represents the difference of this
+	 * {@link Vector} and the provided one.
 	 * 
 	 * @param other
-	 *            Vector to be subtracted from this Vector
-	 * @return a new Vector representing the difference.
+	 *            the {@link Vector} that is subtracted from this {@link Vector}
+	 * @return a new {@link Vector} representing the difference of this
+	 *         {@link Vector} and the provided one
 	 */
 	public Vector getSubtracted(Vector other) {
 		return new Vector(x - other.x, y - other.y);
@@ -186,11 +197,13 @@ public class Vector implements Cloneable, Serializable {
 
 	/**
 	 * Returns the smallest {@link Angle} between this {@link Vector} and the
-	 * provided {@link Vector}.
+	 * provided one.
 	 * 
 	 * @param other
-	 *            {@link Vector} to calculate the {@link Angle}.
-	 * @return the smallest {@link Angle} between the two Vectors.
+	 *            the {@link Vector} for which the smallest {@link Angle} to
+	 *            this {@link Vector} is calculated
+	 * @return the smallest {@link Angle} between this {@link Vector} and the
+	 *         provided one
 	 */
 	public Angle getAngle(Vector other) {
 		double length = getLength() * other.getLength();
@@ -211,24 +224,28 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Returns the clock-wise (mathematical negative) {@link Angle} between this
-	 * {@link Vector} and the provided {@link Vector}.
+	 * Returns the clockwise (CW) {@link Angle} between this {@link Vector} and
+	 * the provided one.
 	 * 
 	 * @param other
-	 *            {@link Vector} to calculate the {@link Angle}.
-	 * @return the clock-wise {@link Angle} between the two Vectors.
+	 *            the {@link Vector} for which the CW {@link Angle} to this
+	 *            {@link Vector} is calculated
+	 * @return the clockwise {@link Angle} between this {@link Vector} and the
+	 *         provided one
 	 */
 	public Angle getAngleCW(Vector other) {
 		return getAngleCCW(other).getOppositeFull();
 	}
 
 	/**
-	 * Returns the counter-clock-wise (mathematical positive) {@link Angle}
-	 * between this {@link Vector} and the provided {@link Vector}.
+	 * Returns the counter-clockwise (CCW) {@link Angle} between this
+	 * {@link Vector} and the provided one.
 	 * 
 	 * @param other
-	 *            {@link Vector} to calculate the {@link Angle}.
-	 * @return the counter-clock-wise {@link Angle} between the two Vectors.
+	 *            the {@link Vector} for which the CCW {@link Angle} to this
+	 *            {@link Vector} is calculated
+	 * @return the counter-clockwise {@link Angle} between this {@link Vector}
+	 *         and the provided one
 	 */
 	public Angle getAngleCCW(Vector other) {
 		Angle angle = getAngle(other);
@@ -239,145 +256,158 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new Vector which represents the average of this Vector with
-	 * another.
+	 * Creates a new {@link Vector} which represents the average of this
+	 * {@link Vector} with the provided one.
 	 * 
 	 * @param other
-	 *            Vector to calculate the average.
-	 * @return a new Vector
+	 *            the {@link Vector} for which the average with this
+	 *            {@link Vector} is calculated
+	 * @return a new {@link Vector} which represents the average of this
+	 *         {@link Vector} and the provided one
 	 */
 	public Vector getAveraged(Vector other) {
 		return new Vector((x + other.x) / 2, (y + other.y) / 2);
 	}
 
 	/**
-	 * Creates a new Vector which represents this Vector multiplied by the
-	 * provided scalar factor.
+	 * Creates a new {@link Vector} which represents this {@link Vector}
+	 * multiplied by the provided scalar value.
 	 * 
 	 * @param factor
-	 *            Value providing the amount to scale.
-	 * @return a new Vector
+	 *            the scalar multiplication factor to scale this {@link Vector}
+	 * @return a new {@link Vector} which represents this {@link Vector}
+	 *         multiplied by the provided scalar value
 	 */
 	public Vector getMultiplied(double factor) {
 		return new Vector(x * factor, y * factor);
 	}
 
 	/**
-	 * Creates a new Vector which represents this Vector divided by the provided
-	 * scalar factor.
+	 * Creates a new {@link Vector} which represents this {@link Vector} divided
+	 * by the provided scalar value.
 	 * 
 	 * @param factor
-	 *            Value providing the amount to scale.
-	 * @return a new Vector
+	 *            the divisor
+	 * @return a new {@link Vector} which represents this {@link Vector} divided
+	 *         by the provided scalar value
 	 */
 	public Vector getDivided(double factor) {
 		if (factor == 0) {
-			throw new ArithmeticException("division by zero");
+			throw new ArithmeticException("Division by zero.");
 		}
 		return new Vector(x / factor, y / factor);
 	}
 
 	/**
-	 * Returns the orthogonal complement of this Vector, which is defined to be
-	 * (-y, x).
+	 * Returns the orthogonal complement of this {@link Vector}, which is
+	 * defined to be (-y, x).
 	 * 
-	 * @return the orthogonal complement of this Vector
+	 * @return the orthogonal complement of this {@link Vector}
 	 */
 	public Vector getOrthogonalComplement() {
 		return new Vector(-y, x);
 	}
 
 	/**
-	 * Returns a fresh rotated Vector object. The rotation is clock-wise (CW) by
-	 * the given angle.
+	 * Returns a new {@link Vector} which corresponds to this {@link Vector}
+	 * after rotating it clockwise (CW) by the given {@link Angle}.
 	 * 
 	 * @param angle
-	 *            the rotation angle
-	 * @return the new rotated Vector
+	 *            the rotation {@link Angle}
+	 * @return a new {@link Vector} which represents the result of the CW
+	 *         rotation of this {@link Vector}
 	 */
 	public Vector getRotatedCW(Angle angle) {
 		return clone().rotateCW(angle);
 	}
 
 	/**
-	 * Returns a fresh rotated Vector object. The rotation is counter-clock-wise
-	 * (CCW) by the given angle.
+	 * Returns a new {@link Vector} which corresponds to this {@link Vector}
+	 * after rotating it counter-clockwise (CCW) by the given {@link Angle}.
 	 * 
 	 * @param angle
-	 *            the rotation angle
-	 * @return the new rotated Vector
+	 *            the rotation {@link Angle}
+	 * @return a new {@link Vector} which represents the result of the CCW
+	 *         rotation of this {@link Vector}
 	 */
 	public Vector getRotatedCCW(Angle angle) {
 		return clone().rotateCCW(angle);
 	}
 
 	/**
-	 * Returns the length of this Vector.
+	 * Returns the length of this {@link Vector}.
 	 * 
-	 * @return Length of this Vector
+	 * @return the length of this {@link Vector}
 	 */
 	public double getLength() {
 		return Math.sqrt(getDotProduct(this));
 	}
 
 	/**
-	 * Calculates the similarity of this Vector with another. Similarity is
-	 * defined as the absolute value of the dotProduct(). Orthogonal vectors
-	 * return a value of 0.
+	 * Calculates the similarity of this {@link Vector} and the provided one.
+	 * The similarity is defined as the absolute value of the dotProduct(). For
+	 * orthogonal {@link Vector}s, 0 is returned.
 	 * 
 	 * @param other
-	 *            Vector being tested for similarity
-	 * @return the Similarity
-	 * @see #getDissimilarity(Vector)
+	 *            the {@link Vector} for which the similarity to this
+	 *            {@link Vector} is calculated
+	 * @return the similarity of this {@link Vector} and the provided one
+	 * @see Vector#getDissimilarity(Vector)
 	 */
 	public double getSimilarity(Vector other) {
 		return Math.abs(getDotProduct(other));
 	}
 
 	/**
-	 * Calculates whether this Vector and the provided one are orthogonal to
-	 * each other.
+	 * Checks if this {@link Vector} and the provided one are orthogonal to each
+	 * other.
 	 * 
 	 * @param other
-	 *            Vector being tested for orthogonality
-	 * @return true, if this Vector and the provide one are orthogonal, false
-	 *         otherwise
+	 *            the {@link Vector} which is checked for orthogonality to this
+	 *            {@link Vector}
+	 * @return <code>true</code> if this {@link Vector} and the provided one are
+	 *         orthogonal to each other, otherwise <code>false</code>
 	 */
 	public boolean isOrthogonalTo(Vector other) {
 		return PrecisionUtils.equal(getSimilarity(other), 0);
 	}
 
 	/**
-	 * Checks whether this vector has a horizontal component.
+	 * Checks if this {@link Vector}'s horizontal component (the x coordinate)
+	 * does not equal 0.
 	 * 
-	 * @return true if x != 0, false otherwise.
+	 * @return <code>true</code> if this {@link Vector}'s x coordinate does not
+	 *         equal 0, otherwise <code>false</code>
 	 */
 	public boolean isHorizontal() {
 		return !PrecisionUtils.equal(x, 0);
 	}
 
 	/**
-	 * Checks whether this vector has a vertical component.
+	 * Checks if this {@link Vector}'s vertical component (the y coordinate)
+	 * does not equal 0.
 	 * 
-	 * @return true if y != 0, false otherwise.
+	 * @return <code>true</code> if this {@link Vector}'s y coordinate does not
+	 *         equal 0, otherwise <code>false</code>
 	 */
 	public boolean isVertical() {
 		return !PrecisionUtils.equal(y, 0);
 	}
 
 	/**
-	 * Checks whether this vector equals (0,0);
+	 * Checks if this {@link Vector}'s x and y coordinates are equal to 0.
 	 * 
-	 * @return true if x == 0 and y == 0.
+	 * @return <code>true</code> if this {@link Vector}'s x and y coordinates
+	 *         are equal to 0, otherwise <code>false</code>
 	 */
 	public boolean isNull() {
 		return equals(NULL);
 	}
 
 	/**
-	 * Returns a point representation of this Vector.
+	 * Returns a {@link Point} representing this {@link Vector}.
 	 * 
-	 * @return a PrecisionPoint representation
+	 * @return a {@link Point} representing this {@link Vector}
 	 */
 	public Point toPoint() {
 		return new Point(x, y);
@@ -417,23 +447,23 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Rotates this {@link Vector} counter-clock-wise by the given {@link Angle}
-	 * .
+	 * Rotates this {@link Vector} counter-clockwise (CCW) by the given
+	 * {@link Angle}.
 	 * 
 	 * @param angle
-	 *            The rotation {@link Angle}.
-	 * @return This (rotated) {@link Vector} object.
+	 *            the rotation {@link Angle}
+	 * @return <code>this</code> for convenience
 	 */
 	public Vector rotateCCW(Angle angle) {
 		return rotateCW(angle.getOppositeFull());
 	}
 
 	/**
-	 * Rotates this {@link Vector} clock-wise by the given {@link Angle}.
+	 * Rotates this {@link Vector} clockwise (CW) by the given {@link Angle}.
 	 * 
 	 * @param angle
-	 *            The rotation {@link Angle}.
-	 * @return This (rotated) {@link Vector} object.
+	 *            the rotation {@link Angle}
+	 * @return <code>this</code> for convenience
 	 */
 	public Vector rotateCW(Angle angle) {
 		double alpha = angle.rad();
@@ -445,10 +475,11 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new normalized {@link Vector} that has the same direction as
-	 * this {@link Vector} but a length of 1.
+	 * Creates a new {@link Vector} that has the same direction as this
+	 * {@link Vector} and a length of 1.
 	 * 
-	 * @return The normalized {@link Vector}.
+	 * @return a new {@link Vector} with the same direction as this
+	 *         {@link Vector} and a length of 1
 	 */
 	public Vector getNormalized() {
 		return clone().getMultiplied(1 / getLength());
