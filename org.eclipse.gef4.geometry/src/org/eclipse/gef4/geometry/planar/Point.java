@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Straight;
@@ -116,6 +117,10 @@ public class Point implements Cloneable, Serializable {
 			return Point.getCopy(points);
 		}
 
+		// Remove duplicate points from the given point list in orde to be able
+		// to apply the Graham scan.
+		points = eliminateDuplicates(points);
+
 		// do a graham scan to find the convex hull of the given set of points
 
 		// move point with lowest y coordinate to first position
@@ -162,6 +167,27 @@ public class Point implements Cloneable, Serializable {
 		}
 
 		return convexHull.toArray(new Point[] {});
+	}
+
+	private static Point[] eliminateDuplicates(Point... points) {
+		// sort points by x and y
+		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
+			public int compare(Point p1, Point p2) {
+				if (p1.x < p2.x)
+					return -1;
+				if (p1.x == p2.x && p1.y < p2.y)
+					return -1;
+				return 1;
+			}
+		});
+
+		// filter points
+		List<Point> uniquePoints = new ArrayList<Point>(points.length);
+		for (int i = 0; i < points.length - 1; i++)
+			if (!points[i].equals(points[i + 1]))
+				uniquePoints.add(points[i]);
+		uniquePoints.add(points[points.length - 1]);
+		return uniquePoints.toArray(new Point[] {});
 	}
 
 	/**

@@ -313,7 +313,6 @@ public class PointTests {
 				0.1531837672490476, -0.4404289572876217, -0.2894855991839297 });
 
 		Point[] convexHull = Point.getConvexHull(points);
-
 		assertTrue(new Polygon(PointListUtils.toPointsArray(new double[] {
 				-0.161920957418085, -0.4055339716426413, -0.4404289572876217,
 				-0.2894855991839297, -0.4907368011686362, 0.1865826865533206,
@@ -325,7 +324,6 @@ public class PointTests {
 		convexHull = Point.getConvexHull(new Point[] { new Point(0.0, 75.0),
 				new Point(0.3333333333333333, 0.9411910020934172),
 				new Point(0.6666666666666666, -60.0), new Point(1.0, -60.0) });
-
 		assertEquals(
 				new Polygon(PointListUtils.toPointsArray(new double[] { 0, 75,
 						0.3333333333333333, 0.9411910020934172,
@@ -337,8 +335,31 @@ public class PointTests {
 				new Point(0.3333333333333333, -1.1294769632887472E-4),
 				new Point(0.6666666666666666, -4.311817922240293E-5),
 				new Point(1.0, 2.671179560675793E-5) });
-
-		// TODO
 		assertTrue(convexHull.length == 3);
+
+		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+				new Point(0, 0), new Point(10, 0), new Point(10, 10),
+				new Point(0, 10) });
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
+				convexHull));
+
+		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+				new Point(10, 0), new Point(10, 10), new Point(0, 0),
+				new Point(0, 10) });
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
+				convexHull));
+
+		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+				new Point(10, 0), new Point(), new Point(10, 10), new Point(),
+				new Point(0, 10), new Point(), new Point(10, 10) });
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
+				convexHull));
+
+		convexHull = Point.getConvexHull(new Point[] { new Point(10, 10),
+				new Point(5, 5), new Point(0, 0), new Point(10, 10),
+				new Point(5, 5), new Point(10, 0), new Point(10, 10),
+				new Point(0, 10), new Point(10, 10) });
+		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
+				convexHull));
 	}
 }

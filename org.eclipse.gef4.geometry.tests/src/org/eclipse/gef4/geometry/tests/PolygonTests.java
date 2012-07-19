@@ -516,6 +516,18 @@ public class PolygonTests {
 				95.0, 136.0, 194.0, 150.0, 50.0);
 		p.getTriangulation();
 		assertTrue(true);
+
+		// test special cases
+
+		// point inside and very near to edge, but not on edge, intersection can
+		// be found
+		p = new Polygon(150.0, 200.0, 300.0, 150.0, 226.0, 29.0, 232.0, 114.0);
+		p.getTriangulation();
+		assertTrue(true);
+
+		p = new Polygon(150.0, 200.0, 300.0, 150.0, 241.0, 17.0, 233.0, 88.0);
+		p.getTriangulation();
+		assertTrue(true);
 	}
 
 	@Test
