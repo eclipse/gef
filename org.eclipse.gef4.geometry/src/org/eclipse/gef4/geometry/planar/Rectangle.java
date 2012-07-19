@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation 
  *     Alexander Nyßen (itemis AG) - migration to double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *    
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -33,6 +34,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author sshaw
  * @author ahunter
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public final class Rectangle extends
 		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
@@ -238,8 +241,9 @@ public final class Rectangle extends
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof Rectangle) {
 			Rectangle r = (Rectangle) o;
 			return equals(r.x, r.y, r.width, r.height);

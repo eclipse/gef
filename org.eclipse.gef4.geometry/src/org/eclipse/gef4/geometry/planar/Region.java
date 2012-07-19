@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -34,7 +35,8 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * They are defined to not share any area, so that only their borders can be
  * overlapping.
  * 
- * @author nyssen
+ * @author anyssen
+ * @author mwienand
  * 
  */
 public class Region extends AbstractPolyShape implements ITranslatable<Region>,
@@ -194,12 +196,14 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 	}
 
 	public Rectangle getBounds() {
-		if (rects.size() == 0)
+		if (rects.size() == 0) {
 			return null;
+		}
 
 		Rectangle bounds = rects.get(0).getBounds();
-		for (int i = 1; i < rects.size(); i++)
+		for (int i = 1; i < rects.size(); i++) {
 			bounds.union(rects.get(i).getBounds());
+		}
 
 		return bounds;
 	}
@@ -225,8 +229,102 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 		return intersections.toArray(new Point[] {});
 	}
 
+	public Ring getRotatedCCW(Angle angle) {
+		Point centroid = getBounds().getCenter();
+		return getRotatedCCW(angle, centroid.x, centroid.y);
+	}
+
+	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
+		Polygon[] polys = new Polygon[rects.size()];
+		for (int i = 0; i < polys.length; i++) {
+			polys[i] = rects.get(i).getRotatedCCW(angle, cx, cy);
+		}
+		return new Ring(polys);
+	}
+
+	public Ring getRotatedCCW(Angle angle, Point center) {
+		return getRotatedCCW(angle, center.x, center.y);
+	}
+
+	public Ring getRotatedCW(Angle angle) {
+		Point centroid = getBounds().getCenter();
+		return getRotatedCW(angle, centroid.x, centroid.y);
+	}
+
+	public Ring getRotatedCW(Angle angle, double cx, double cy) {
+		Polygon[] polys = new Polygon[rects.size()];
+		for (int i = 0; i < polys.length; i++) {
+			polys[i] = rects.get(i).getRotatedCW(angle, cx, cy);
+		}
+		return new Ring(polys);
+	}
+
+	public Ring getRotatedCW(Angle angle, Point center) {
+		return getRotatedCW(angle, center.x, center.y);
+	}
+
+	public Region getScaled(double factor) {
+		return getCopy().scale(factor);
+	}
+
+	public Region getScaled(double fx, double fy) {
+		return getCopy().scale(fx, fy);
+	}
+
+	public Region getScaled(double factor, double cx, double cy) {
+		return getCopy().scale(factor, cx, cy);
+	}
+
+	public Region getScaled(double fx, double fy, double cx, double cy) {
+		return getCopy().scale(fx, fy, cx, cy);
+	}
+
+	public Region getScaled(double fx, double fy, Point center) {
+		return getCopy().scale(fx, fy, center);
+	}
+
+	public Region getScaled(double factor, Point center) {
+		return getCopy().scale(factor, center);
+	}
+
 	public Rectangle[] getShapes() {
 		return rects.toArray(new Rectangle[] {});
+	}
+
+	public Region getTranslated(double dx, double dy) {
+		return getCopy().translate(dx, dy);
+	}
+
+	public Region getTranslated(Point d) {
+		return getCopy().translate(d.x, d.y);
+	}
+
+	public Region scale(double factor) {
+		return scale(factor, factor);
+	}
+
+	public Region scale(double fx, double fy) {
+		Point centroid = getBounds().getCenter();
+		return scale(fx, fy, centroid.x, centroid.y);
+	}
+
+	public Region scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
+	}
+
+	public Region scale(double fx, double fy, double cx, double cy) {
+		for (Rectangle r : rects) {
+			r.scale(fx, fy, cx, cy);
+		}
+		return this;
+	}
+
+	public Region scale(double fx, double fy, Point center) {
+		return scale(fx, fy, center.x, center.y);
+	}
+
+	public Region scale(double factor, Point center) {
+		return scale(factor, factor, center.x, center.y);
 	}
 
 	public Path toPath() {
@@ -273,90 +371,6 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 		return swtRegion;
 	}
 
-	public Ring getRotatedCCW(Angle angle) {
-		Point centroid = getBounds().getCenter();
-		return getRotatedCCW(angle, centroid.x, centroid.y);
-	}
-
-	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
-		Polygon[] polys = new Polygon[rects.size()];
-		for (int i = 0; i < polys.length; i++)
-			polys[i] = rects.get(i).getRotatedCCW(angle, cx, cy);
-		return new Ring(polys);
-	}
-
-	public Ring getRotatedCCW(Angle angle, Point center) {
-		return getRotatedCCW(angle, center.x, center.y);
-	}
-
-	public Ring getRotatedCW(Angle angle) {
-		Point centroid = getBounds().getCenter();
-		return getRotatedCW(angle, centroid.x, centroid.y);
-	}
-
-	public Ring getRotatedCW(Angle angle, double cx, double cy) {
-		Polygon[] polys = new Polygon[rects.size()];
-		for (int i = 0; i < polys.length; i++)
-			polys[i] = rects.get(i).getRotatedCW(angle, cx, cy);
-		return new Ring(polys);
-	}
-
-	public Ring getRotatedCW(Angle angle, Point center) {
-		return getRotatedCW(angle, center.x, center.y);
-	}
-
-	public Region scale(double factor) {
-		return scale(factor, factor);
-	}
-
-	public Region scale(double factor, double cx, double cy) {
-		return scale(factor, factor, cx, cy);
-	}
-
-	public Region scale(double factor, Point center) {
-		return scale(factor, factor, center.x, center.y);
-	}
-
-	public Region scale(double fx, double fy) {
-		Point centroid = getBounds().getCenter();
-		return scale(fx, fy, centroid.x, centroid.y);
-	}
-
-	public Region scale(double fx, double fy, double cx, double cy) {
-		for (Rectangle r : rects) {
-			r.scale(fx, fy, cx, cy);
-		}
-		return this;
-	}
-
-	public Region scale(double fx, double fy, Point center) {
-		return scale(fx, fy, center.x, center.y);
-	}
-
-	public Region getScaled(double factor) {
-		return getCopy().scale(factor);
-	}
-
-	public Region getScaled(double factor, double cx, double cy) {
-		return getCopy().scale(factor, cx, cy);
-	}
-
-	public Region getScaled(double factor, Point center) {
-		return getCopy().scale(factor, center);
-	}
-
-	public Region getScaled(double fx, double fy) {
-		return getCopy().scale(fx, fy);
-	}
-
-	public Region getScaled(double fx, double fy, double cx, double cy) {
-		return getCopy().scale(fx, fy, cx, cy);
-	}
-
-	public Region getScaled(double fx, double fy, Point center) {
-		return getCopy().scale(fx, fy, center);
-	}
-
 	public Region translate(double dx, double dy) {
 		for (Rectangle r : rects) {
 			r.translate(dx, dy);
@@ -366,14 +380,6 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 
 	public Region translate(Point d) {
 		return translate(d.x, d.y);
-	}
-
-	public Region getTranslated(double dx, double dy) {
-		return getCopy().translate(dx, dy);
-	}
-
-	public Region getTranslated(Point d) {
-		return getCopy().translate(d.x, d.y);
 	}
 
 }

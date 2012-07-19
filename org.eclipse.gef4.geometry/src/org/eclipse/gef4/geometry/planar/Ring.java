@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -22,10 +23,10 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.swt.graphics.Region;
 
 /**
- * 
  * A combination of Polygons....
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
@@ -87,14 +88,17 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 			Vector vi = s.getIntersection(new Straight(e));
 			if (vi != null) {
 				Point poi = vi.toPoint();
-				if (e.contains(poi))
-					if (i > 0 && inters[0].equals(poi))
+				if (e.contains(poi)) {
+					if (i > 0 && inters[0].equals(poi)) {
 						continue;
-					else
+					} else {
 						inters[i++] = poi;
+					}
+				}
 			}
-			if (i > 1)
+			if (i > 1) {
 				break;
+			}
 		}
 
 		if (inters[0] == null || inters[1] == null) {
@@ -260,8 +264,9 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	 */
 	public Ring add(Polygon p) {
 		Stack<Polygon> toAdd = new Stack<Polygon>();
-		for (Polygon triangleToAdd : p.getTriangulation())
+		for (Polygon triangleToAdd : p.getTriangulation()) {
 			toAdd.push(triangleToAdd);
+		}
 
 		while (!toAdd.empty()) {
 			Polygon triangleToAdd = toAdd.pop();
@@ -274,10 +279,12 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 							.hasNext();) {
 						Polygon addend = i.next();
 						i.remove();
-						for (Polygon subTriangleToAdd : triangulate(addend, e))
+						for (Polygon subTriangleToAdd : triangulate(addend, e)) {
 							if (!triangleAlreadyThere
-									.contains(subTriangleToAdd))
+									.contains(subTriangleToAdd)) {
 								nextAddends.push(subTriangleToAdd);
+							}
+						}
 					}
 					localAddends = nextAddends;
 				}
@@ -347,12 +354,14 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 	}
 
 	public Rectangle getBounds() {
-		if (triangles.size() == 0)
+		if (triangles.size() == 0) {
 			return null;
+		}
 
 		Rectangle bounds = triangles.get(0).getBounds();
-		for (int i = 1; i < triangles.size(); i++)
+		for (int i = 1; i < triangles.size(); i++) {
 			bounds.union(triangles.get(i).getBounds());
+		}
 
 		return bounds;
 	}
@@ -361,8 +370,64 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return new Ring(this);
 	}
 
+	public Ring getRotatedCCW(Angle angle) {
+		return getCopy().rotateCCW(angle);
+	}
+
+	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCCW(angle, cx, cy);
+	}
+
+	public Ring getRotatedCCW(Angle angle, Point center) {
+		return getCopy().rotateCCW(angle, center);
+	}
+
+	public Ring getRotatedCW(Angle angle) {
+		return getCopy().rotateCW(angle);
+	}
+
+	public Ring getRotatedCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCW(angle, cx, cy);
+	}
+
+	public Ring getRotatedCW(Angle angle, Point center) {
+		return getCopy().rotateCW(angle, center);
+	}
+
+	public Ring getScaled(double factor) {
+		return getCopy().scale(factor);
+	}
+
+	public Ring getScaled(double fx, double fy) {
+		return getCopy().scale(fx, fy);
+	}
+
+	public Ring getScaled(double factor, double cx, double cy) {
+		return getCopy().scale(factor, cx, cy);
+	}
+
+	public Ring getScaled(double fx, double fy, double cx, double cy) {
+		return getCopy().scale(fx, fy, cx, cy);
+	}
+
+	public Ring getScaled(double fx, double fy, Point center) {
+		return getCopy().scale(fx, fy, center);
+	}
+
+	public Ring getScaled(double factor, Point center) {
+		return getCopy().scale(factor, center);
+	}
+
 	public Polygon[] getShapes() {
 		return triangles.toArray(new Polygon[] {});
+	}
+
+	public Ring getTranslated(double dx, double dy) {
+		return getCopy().translate(dx, dy);
+	}
+
+	public Ring getTranslated(Point d) {
+		return getCopy().translate(d.x, d.y);
 	}
 
 	private Polygon mergeTriangles(Polygon t1, Polygon t2) {
@@ -394,34 +459,6 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 				}
 			}
 		}
-	}
-
-	public Path toPath() {
-		return CurveUtils.toPath(getOutlineSegments());
-	}
-
-	public Ring getRotatedCCW(Angle angle) {
-		return getCopy().rotateCCW(angle);
-	}
-
-	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
-		return getCopy().rotateCCW(angle, cx, cy);
-	}
-
-	public Ring getRotatedCCW(Angle angle, Point center) {
-		return getCopy().rotateCCW(angle, center);
-	}
-
-	public Ring getRotatedCW(Angle angle) {
-		return getCopy().rotateCW(angle);
-	}
-
-	public Ring getRotatedCW(Angle angle, double cx, double cy) {
-		return getCopy().rotateCW(angle, cx, cy);
-	}
-
-	public Ring getRotatedCW(Angle angle, Point center) {
-		return getCopy().rotateCW(angle, center);
 	}
 
 	/**
@@ -527,17 +564,13 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return scale(factor, factor);
 	}
 
-	public Ring scale(double factor, double cx, double cy) {
-		return scale(factor, factor, cx, cy);
-	}
-
-	public Ring scale(double factor, Point center) {
-		return scale(factor, factor, center.x, center.y);
-	}
-
 	public Ring scale(double fx, double fy) {
 		Point center = getBounds().getCenter();
 		return scale(fx, fy, center.x, center.y);
+	}
+
+	public Ring scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
 	}
 
 	public Ring scale(double fx, double fy, double cx, double cy) {
@@ -551,47 +584,12 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return scale(fx, fy, center.x, center.y);
 	}
 
-	public Ring getScaled(double factor) {
-		return getCopy().scale(factor);
+	public Ring scale(double factor, Point center) {
+		return scale(factor, factor, center.x, center.y);
 	}
 
-	public Ring getScaled(double factor, double cx, double cy) {
-		return getCopy().scale(factor, cx, cy);
-	}
-
-	public Ring getScaled(double factor, Point center) {
-		return getCopy().scale(factor, center);
-	}
-
-	public Ring getScaled(double fx, double fy) {
-		return getCopy().scale(fx, fy);
-	}
-
-	public Ring getScaled(double fx, double fy, double cx, double cy) {
-		return getCopy().scale(fx, fy, cx, cy);
-	}
-
-	public Ring getScaled(double fx, double fy, Point center) {
-		return getCopy().scale(fx, fy, center);
-	}
-
-	public Ring translate(double dx, double dy) {
-		for (Polygon p : triangles) {
-			p.translate(dx, dy);
-		}
-		return this;
-	}
-
-	public Ring translate(Point d) {
-		return translate(d.x, d.y);
-	}
-
-	public Ring getTranslated(double dx, double dy) {
-		return getCopy().translate(dx, dy);
-	}
-
-	public Ring getTranslated(Point d) {
-		return getCopy().translate(d.x, d.y);
+	public Path toPath() {
+		return CurveUtils.toPath(getOutlineSegments());
 	}
 
 	/**
@@ -609,6 +607,17 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		}
 
 		return region;
+	}
+
+	public Ring translate(double dx, double dy) {
+		for (Polygon p : triangles) {
+			p.translate(dx, dy);
+		}
+		return this;
+	}
+
+	public Ring translate(Point d) {
+		return translate(d.x, d.y);
 	}
 
 }

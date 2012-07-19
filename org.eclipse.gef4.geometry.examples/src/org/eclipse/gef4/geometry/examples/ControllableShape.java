@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.examples;
 
 import java.util.ArrayList;
@@ -25,16 +37,8 @@ abstract public class ControllableShape {
 		active = true;
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-
 	public void activate() {
 		active = true;
-	}
-
-	public void deactivate() {
-		active = false;
 	}
 
 	public void addControlPoints(Point... points) {
@@ -43,9 +47,8 @@ abstract public class ControllableShape {
 		}
 	}
 
-	public void onResize(Rectangle bounds) {
-		for (ControlPoint cp : controlPoints)
-			cp.onResize(bounds);
+	public void deactivate() {
+		active = false;
 	}
 
 	public Point[] getPoints() {
@@ -58,9 +61,19 @@ abstract public class ControllableShape {
 
 	abstract public IGeometry getShape();
 
+	public boolean isActive() {
+		return active;
+	}
+
 	abstract public void onDraw(GC gc);
 
 	public void onMove(int dragPointIndex, double oldX, double oldY) {
+	}
+
+	public void onResize(Rectangle bounds) {
+		for (ControlPoint cp : controlPoints) {
+			cp.onResize(bounds);
+		}
 	}
 
 }

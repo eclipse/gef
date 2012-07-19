@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -31,13 +32,13 @@ public class PolygonPolylineContainment extends
 	}
 
 	@Override
-	protected boolean computeIntersects(IGeometry g1, IGeometry g2) {
-		return ((Polygon) g1).touches((Polyline) g2);
+	protected boolean computeContains(IGeometry g1, IGeometry g2) {
+		return ((Polygon) g1).contains((Polyline) g2);
 	}
 
 	@Override
-	protected boolean computeContains(IGeometry g1, IGeometry g2) {
-		return ((Polygon) g1).contains((Polyline) g2);
+	protected boolean computeIntersects(IGeometry g1, IGeometry g2) {
+		return ((Polygon) g1).touches(g2);
 	}
 
 	@Override

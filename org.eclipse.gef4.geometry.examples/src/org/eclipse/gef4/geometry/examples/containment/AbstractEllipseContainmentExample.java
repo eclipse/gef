@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -22,6 +23,7 @@ public abstract class AbstractEllipseContainmentExample extends
 		super(title);
 	}
 
+	@Override
 	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
 		return new AbstractControllableShape(canvas) {
 			@Override
@@ -38,7 +40,7 @@ public abstract class AbstractEllipseContainmentExample extends
 
 			@Override
 			public void drawShape(GC gc) {
-				Ellipse ellipse = (Ellipse) createGeometry();
+				Ellipse ellipse = createGeometry();
 				gc.drawOval((int) ellipse.getX(), (int) ellipse.getY(),
 						(int) ellipse.getWidth(), (int) ellipse.getHeight());
 			}

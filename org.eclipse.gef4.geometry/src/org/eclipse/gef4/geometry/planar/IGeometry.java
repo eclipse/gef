@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -13,7 +14,6 @@
 package org.eclipse.gef4.geometry.planar;
 
 import java.io.Serializable;
-
 
 /**
  * <p>
@@ -33,6 +33,7 @@ import java.io.Serializable;
  * </p>
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public interface IGeometry extends Cloneable, Serializable {
@@ -61,15 +62,11 @@ public interface IGeometry extends Cloneable, Serializable {
 	// TODO: getTightBounds() : Polygon
 
 	/**
-	 * Returns <code>true</code> if the input {@link IGeometry} touches this
-	 * {@link IGeometry}, i.e. there is at least one common point.
+	 * Returns a new identical copy of this {@link IGeometry}.
 	 * 
-	 * @param g
-	 *            The {@link IGeometry} for the intersection test
-	 * @return <code>true</code> if the input {@link IGeometry} and this
-	 *         {@link IGeometry} have at least one common point.
+	 * @return a copy identical to this {@link IGeometry}
 	 */
-	boolean touches(IGeometry g);
+	IGeometry getCopy();
 
 	/**
 	 * Returns a new {@link IGeometry}, which represents the given
@@ -94,10 +91,14 @@ public interface IGeometry extends Cloneable, Serializable {
 	Path toPath();
 
 	/**
-	 * Returns a new identical copy of this {@link IGeometry}.
+	 * Returns <code>true</code> if the input {@link IGeometry} touches this
+	 * {@link IGeometry}, i.e. there is at least one common point.
 	 * 
-	 * @return a copy identical to this {@link IGeometry}
+	 * @param g
+	 *            The {@link IGeometry} for the intersection test
+	 * @return <code>true</code> if the input {@link IGeometry} and this
+	 *         {@link IGeometry} have at least one common point.
 	 */
-	IGeometry getCopy();
+	boolean touches(IGeometry g);
 
 }

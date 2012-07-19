@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -22,12 +23,10 @@ import org.eclipse.gef4.geometry.planar.Polyline;
  * {@link Polygon} and {@link Polyline}.
  * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class PointListUtils {
-
-	private PointListUtils() {
-		// this class should not be instantiated by clients
-	}
 
 	/**
 	 * Converts a given array of {@link Point} into an array of doubles
@@ -143,5 +142,9 @@ public class PointListUtils {
 					points[i + 1 < points.length ? i + 1 : 0]);
 		}
 		return segments;
+	}
+
+	private PointListUtils() {
+		// this class should not be instantiated by clients
 	}
 }

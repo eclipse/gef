@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -30,10 +31,22 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
  * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class Line extends BezierCurve {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Constructs a new {@link Line} from the given coordinate values.
+	 * 
+	 * @param coordsLine
+	 * @see BezierCurve#BezierCurve(double[])
+	 */
+	public Line(double... coordsLine) {
+		super(coordsLine);
+	}
 
 	/**
 	 * Constructs a new {@link Line}, which connects the two {@link Point}s
@@ -62,16 +75,6 @@ public class Line extends BezierCurve {
 	 */
 	public Line(Point p1, Point p2) {
 		this(p1.x, p1.y, p2.x, p2.y);
-	}
-
-	/**
-	 * Constructs a new {@link Line} from the given coordinate values.
-	 * 
-	 * @param coordsLine
-	 * @see BezierCurve#BezierCurve(double[])
-	 */
-	public Line(double... coordsLine) {
-		super(coordsLine);
 	}
 
 	@Override
@@ -117,8 +120,9 @@ public class Line extends BezierCurve {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof Line) {
 			Line l = (Line) o;
 			return equals(l.getX1(), l.getY1(), l.getX2(), l.getY2());
@@ -214,6 +218,15 @@ public class Line extends BezierCurve {
 				: null;
 	}
 
+	@Override
+	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
+			Set<Point> intersections) {
+		if (other instanceof Line) {
+			return getIntersectionIntervalPairs((Line) other, intersections);
+		}
+		return super.getIntersectionIntervalPairs(other, intersections);
+	}
+
 	/**
 	 * Provides an optimized version of the
 	 * {@link BezierCurve#getIntersectionIntervalPairs(BezierCurve, Set)}
@@ -242,15 +255,6 @@ public class Line extends BezierCurve {
 			}
 		}
 		return intervalPairs;
-	}
-
-	@Override
-	public Set<IntervalPair> getIntersectionIntervalPairs(BezierCurve other,
-			Set<Point> intersections) {
-		if (other instanceof Line) {
-			return getIntersectionIntervalPairs((Line) other, intersections);
-		}
-		return super.getIntersectionIntervalPairs(other, intersections);
 	}
 
 	@Override
@@ -288,6 +292,14 @@ public class Line extends BezierCurve {
 		return new Line(transformed[0], transformed[1]);
 	}
 
+	@Override
+	public boolean intersects(ICurve c) {
+		if (c instanceof Line) {
+			return intersects((Line) c);
+		}
+		return super.intersects(c);
+	}
+
 	/**
 	 * Provides an optimized version of the
 	 * {@link BezierCurve#intersects(ICurve)} method.
@@ -297,85 +309,6 @@ public class Line extends BezierCurve {
 	 */
 	public boolean intersects(Line l) {
 		return getIntersection(l) != null;
-	}
-
-	@Override
-	public boolean intersects(ICurve c) {
-		if (c instanceof Line) {
-			return intersects((Line) c);
-		}
-		return super.intersects(c);
-	}
-
-	@Override
-	public boolean touches(IGeometry g) {
-		if (g instanceof Line) {
-			return touches((Line) g);
-		}
-		return super.touches(g);
-	}
-
-	/**
-	 * Tests whether this {@link Line} and the given one share at least one
-	 * common point.
-	 * 
-	 * @param l
-	 *            The {@link Line} to test.
-	 * @return <code>true</code> if this {@link Line} and the given one share at
-	 *         least one common point, <code>false</code> otherwise.
-	 */
-	public boolean touches(Line l) {
-		// TODO: optimize w.r.t. object creation
-
-		/*
-		 * 1) check degenerated (the start and end point imprecisely fall
-		 * together) and special cases where the lines have to be regarded as
-		 * intersecting, because they touch within the used imprecision, though
-		 * they would not intersect with absolute precision.
-		 */
-		Point p1 = getP1();
-		Point p2 = getP2();
-
-		boolean touches = l.contains(p1) || l.contains(p2);
-		if (touches || p1.equals(p2)) {
-			return touches;
-		}
-
-		Point lp1 = l.getP1();
-		Point lp2 = l.getP2();
-
-		touches = contains(lp1) || contains(lp2);
-		if (touches || lp1.equals(lp2)) {
-			return touches;
-		}
-		Vector3D l1 = new Vector3D(p1).getCrossProduct(new Vector3D(p2));
-		Vector3D l2 = new Vector3D(lp1).getCrossProduct(new Vector3D(lp2));
-
-		/*
-		 * 2) non-degenerated case. If the two respective straight lines
-		 * intersect, the intersection has to be contained by both line segments
-		 * for the segments to intersect. If the two respective straight lines
-		 * do not intersect, because they are parallel, the getIntersection()
-		 * method returns null.
-		 */
-		Point intersection = l1.getCrossProduct(l2).toPoint();
-		return intersection != null && contains(intersection)
-				&& l.contains(intersection);
-	}
-
-	/**
-	 * Tests whether this {@link Line} and the given other {@link Line} overlap,
-	 * i.e. they share an infinite number of {@link Point}s.
-	 * 
-	 * @param l
-	 *            the other {@link Line} to test for overlap with this
-	 *            {@link Line}
-	 * @return <code>true</code> if this {@link Line} and the other {@link Line}
-	 *         overlap, otherwise <code>false</code>
-	 * @see ICurve#overlaps(ICurve)
-	 */
-	public boolean overlaps(Line l) {
-		return touches(l) && !intersects(l);
 	}
 
 	@Override
@@ -402,6 +335,21 @@ public class Line extends BezierCurve {
 			// handle points are outside the base line of the Bezier curve.
 			return super.touches(c);
 		}
+	}
+
+	/**
+	 * Tests whether this {@link Line} and the given other {@link Line} overlap,
+	 * i.e. they share an infinite number of {@link Point}s.
+	 * 
+	 * @param l
+	 *            the other {@link Line} to test for overlap with this
+	 *            {@link Line}
+	 * @return <code>true</code> if this {@link Line} and the other {@link Line}
+	 *         overlap, otherwise <code>false</code>
+	 * @see ICurve#overlaps(ICurve)
+	 */
+	public boolean overlaps(Line l) {
+		return touches(l) && !intersects(l);
 	}
 
 	/**
@@ -460,16 +408,6 @@ public class Line extends BezierCurve {
 	}
 
 	/**
-	 * Sets the y-coordinate of the start {@link Point} of this {@link Line} to
-	 * the given value.
-	 * 
-	 * @param y1
-	 */
-	public void setY1(double y1) {
-		setP1(new Point(getX1(), y1));
-	}
-
-	/**
 	 * Sets the x-coordinate of the end {@link Point} of this {@link Line} to
 	 * the given value.
 	 * 
@@ -477,6 +415,16 @@ public class Line extends BezierCurve {
 	 */
 	public void setX2(double x2) {
 		setP2(new Point(x2, getY2()));
+	}
+
+	/**
+	 * Sets the y-coordinate of the start {@link Point} of this {@link Line} to
+	 * the given value.
+	 * 
+	 * @param y1
+	 */
+	public void setY1(double y1) {
+		setP1(new Point(getX1(), y1));
 	}
 
 	/**
@@ -515,6 +463,62 @@ public class Line extends BezierCurve {
 	public int[] toSWTPointArray() {
 		return PointListUtils.toIntegerArray(PointListUtils
 				.toCoordinatesArray(getPoints()));
+	}
+
+	@Override
+	public boolean touches(IGeometry g) {
+		if (g instanceof Line) {
+			return touches((Line) g);
+		}
+		return super.touches(g);
+	}
+
+	/**
+	 * Tests whether this {@link Line} and the given one share at least one
+	 * common point.
+	 * 
+	 * @param l
+	 *            The {@link Line} to test.
+	 * @return <code>true</code> if this {@link Line} and the given one share at
+	 *         least one common point, <code>false</code> otherwise.
+	 */
+	public boolean touches(Line l) {
+		// TODO: optimize w.r.t. object creation
+
+		/*
+		 * 1) check degenerated (the start and end point imprecisely fall
+		 * together) and special cases where the lines have to be regarded as
+		 * intersecting, because they touch within the used imprecision, though
+		 * they would not intersect with absolute precision.
+		 */
+		Point p1 = getP1();
+		Point p2 = getP2();
+
+		boolean touches = l.contains(p1) || l.contains(p2);
+		if (touches || p1.equals(p2)) {
+			return touches;
+		}
+
+		Point lp1 = l.getP1();
+		Point lp2 = l.getP2();
+
+		touches = contains(lp1) || contains(lp2);
+		if (touches || lp1.equals(lp2)) {
+			return touches;
+		}
+		Vector3D l1 = new Vector3D(p1).getCrossProduct(new Vector3D(p2));
+		Vector3D l2 = new Vector3D(lp1).getCrossProduct(new Vector3D(lp2));
+
+		/*
+		 * 2) non-degenerated case. If the two respective straight lines
+		 * intersect, the intersection has to be contained by both line segments
+		 * for the segments to intersect. If the two respective straight lines
+		 * do not intersect, because they are parallel, the getIntersection()
+		 * method returns null.
+		 */
+		Point intersection = l1.getCrossProduct(l2).toPoint();
+		return intersection != null && contains(intersection)
+				&& l.contains(intersection);
 	}
 
 }

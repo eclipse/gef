@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +10,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (Research Group Software Construction, RWTH Aachen University) - contribution for Bugzilla #245182
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.euclidean;
 
@@ -26,6 +27,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author pshah
  * @author ahunter
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class Vector implements Cloneable, Serializable {
 
@@ -103,70 +106,19 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Returns a copy of this {@link Vector} object.
-	 * 
-	 * @return a copy of this {@link Vector} object
+	 * @see java.lang.Object#equals(Object)
 	 */
-	public Vector getCopy() {
-		return new Vector(x, y);
-	}
-
-	/**
-	 * Calculates the magnitude of the cross product of this {@link Vector} with
-	 * the given other {@link Vector}. This method normalizes both
-	 * {@link Vector}s before calculating the cross product. The resulting
-	 * dissimilarity value represents the amount by which two {@link Vector}s
-	 * are directionally different. For parallel {@link Vector}s 0 is returned.
-	 * 
-	 * @param other
-	 *            the {@link Vector} to compare to this {@link Vector}
-	 * @return the dissimilarity of both {@link Vector}s
-	 */
-	public double getDissimilarity(Vector other) {
-		return Math.abs(getNormalized().getCrossProduct(other.getNormalized()));
-	}
-
-	/**
-	 * Checks if this {@link Vector} and the provided one are parallel to each
-	 * other.
-	 * 
-	 * @param other
-	 *            the {@link Vector} that is checked to be parallel to this
-	 *            {@link Vector}
-	 * @return <code>true</code> if this {@link Vector} and the provided one are
-	 *         parallel, otherwise <code>false</code>
-	 */
-	public boolean isParallelTo(Vector other) {
-		Angle alpha = getAngle(other);
-		alpha.setRad(2d * alpha.rad());
-		return alpha.equals(Angle.fromRad(0d));
-	}
-
-	/**
-	 * Calculates the dot product of this {@link Vector} and the given other
-	 * {@link Vector}.
-	 * 
-	 * @param other
-	 *            the {@link Vector} for which the dot product with this
-	 *            {@link Vector} is calculated
-	 * @return the dot product of the two {@link Vector}s
-	 */
-	public double getDotProduct(Vector other) {
-		return x * other.x + y * other.y;
-	}
-
-	/**
-	 * Calculates the cross product of this {@link Vector} (lhs) and the given
-	 * other {@link Vector} (rhs).
-	 * 
-	 * @param other
-	 *            the rhs {@link Vector} for which the cross product with this
-	 *            {@link Vector} is calculated
-	 * @return the cross product of this {@link Vector} (lhs) and the given
-	 *         other {@link Vector} (rhs)
-	 */
-	public double getCrossProduct(Vector other) {
-		return x * other.y - y * other.x;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Vector) {
+			Vector r = (Vector) obj;
+			return PrecisionUtils.equal(this.x, r.x)
+					&& PrecisionUtils.equal(this.y, r.y);
+		}
+		return false;
 	}
 
 	/**
@@ -180,19 +132,6 @@ public class Vector implements Cloneable, Serializable {
 	 */
 	public Vector getAdded(Vector other) {
 		return new Vector(x + other.x, y + other.y);
-	}
-
-	/**
-	 * Returns a new {@link Vector} that represents the difference of this
-	 * {@link Vector} and the provided one.
-	 * 
-	 * @param other
-	 *            the {@link Vector} that is subtracted from this {@link Vector}
-	 * @return a new {@link Vector} representing the difference of this
-	 *         {@link Vector} and the provided one
-	 */
-	public Vector getSubtracted(Vector other) {
-		return new Vector(x - other.x, y - other.y);
 	}
 
 	/**
@@ -224,20 +163,6 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Returns the clockwise (CW) {@link Angle} between this {@link Vector} and
-	 * the provided one.
-	 * 
-	 * @param other
-	 *            the {@link Vector} for which the CW {@link Angle} to this
-	 *            {@link Vector} is calculated
-	 * @return the clockwise {@link Angle} between this {@link Vector} and the
-	 *         provided one
-	 */
-	public Angle getAngleCW(Vector other) {
-		return getAngleCCW(other).getOppositeFull();
-	}
-
-	/**
 	 * Returns the counter-clockwise (CCW) {@link Angle} between this
 	 * {@link Vector} and the provided one.
 	 * 
@@ -256,6 +181,20 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the clockwise (CW) {@link Angle} between this {@link Vector} and
+	 * the provided one.
+	 * 
+	 * @param other
+	 *            the {@link Vector} for which the CW {@link Angle} to this
+	 *            {@link Vector} is calculated
+	 * @return the clockwise {@link Angle} between this {@link Vector} and the
+	 *         provided one
+	 */
+	public Angle getAngleCW(Vector other) {
+		return getAngleCCW(other).getOppositeFull();
+	}
+
+	/**
 	 * Creates a new {@link Vector} which represents the average of this
 	 * {@link Vector} with the provided one.
 	 * 
@@ -270,16 +209,41 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new {@link Vector} which represents this {@link Vector}
-	 * multiplied by the provided scalar value.
+	 * Returns a copy of this {@link Vector} object.
 	 * 
-	 * @param factor
-	 *            the scalar multiplication factor to scale this {@link Vector}
-	 * @return a new {@link Vector} which represents this {@link Vector}
-	 *         multiplied by the provided scalar value
+	 * @return a copy of this {@link Vector} object
 	 */
-	public Vector getMultiplied(double factor) {
-		return new Vector(x * factor, y * factor);
+	public Vector getCopy() {
+		return new Vector(x, y);
+	}
+
+	/**
+	 * Calculates the cross product of this {@link Vector} (lhs) and the given
+	 * other {@link Vector} (rhs).
+	 * 
+	 * @param other
+	 *            the rhs {@link Vector} for which the cross product with this
+	 *            {@link Vector} is calculated
+	 * @return the cross product of this {@link Vector} (lhs) and the given
+	 *         other {@link Vector} (rhs)
+	 */
+	public double getCrossProduct(Vector other) {
+		return x * other.y - y * other.x;
+	}
+
+	/**
+	 * Calculates the magnitude of the cross product of this {@link Vector} with
+	 * the given other {@link Vector}. This method normalizes both
+	 * {@link Vector}s before calculating the cross product. The resulting
+	 * dissimilarity value represents the amount by which two {@link Vector}s
+	 * are directionally different. For parallel {@link Vector}s 0 is returned.
+	 * 
+	 * @param other
+	 *            the {@link Vector} to compare to this {@link Vector}
+	 * @return the dissimilarity of both {@link Vector}s
+	 */
+	public double getDissimilarity(Vector other) {
+		return Math.abs(getNormalized().getCrossProduct(other.getNormalized()));
 	}
 
 	/**
@@ -299,6 +263,52 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Calculates the dot product of this {@link Vector} and the given other
+	 * {@link Vector}.
+	 * 
+	 * @param other
+	 *            the {@link Vector} for which the dot product with this
+	 *            {@link Vector} is calculated
+	 * @return the dot product of the two {@link Vector}s
+	 */
+	public double getDotProduct(Vector other) {
+		return x * other.x + y * other.y;
+	}
+
+	/**
+	 * Returns the length of this {@link Vector}.
+	 * 
+	 * @return the length of this {@link Vector}
+	 */
+	public double getLength() {
+		return Math.sqrt(getDotProduct(this));
+	}
+
+	/**
+	 * Creates a new {@link Vector} which represents this {@link Vector}
+	 * multiplied by the provided scalar value.
+	 * 
+	 * @param factor
+	 *            the scalar multiplication factor to scale this {@link Vector}
+	 * @return a new {@link Vector} which represents this {@link Vector}
+	 *         multiplied by the provided scalar value
+	 */
+	public Vector getMultiplied(double factor) {
+		return new Vector(x * factor, y * factor);
+	}
+
+	/**
+	 * Creates a new {@link Vector} that has the same direction as this
+	 * {@link Vector} and a length of 1.
+	 * 
+	 * @return a new {@link Vector} with the same direction as this
+	 *         {@link Vector} and a length of 1
+	 */
+	public Vector getNormalized() {
+		return clone().getMultiplied(1 / getLength());
+	}
+
+	/**
 	 * Returns the orthogonal complement of this {@link Vector}, which is
 	 * defined to be (-y, x).
 	 * 
@@ -306,19 +316,6 @@ public class Vector implements Cloneable, Serializable {
 	 */
 	public Vector getOrthogonalComplement() {
 		return new Vector(-y, x);
-	}
-
-	/**
-	 * Returns a new {@link Vector} which corresponds to this {@link Vector}
-	 * after rotating it clockwise (CW) by the given {@link Angle}.
-	 * 
-	 * @param angle
-	 *            the rotation {@link Angle}
-	 * @return a new {@link Vector} which represents the result of the CW
-	 *         rotation of this {@link Vector}
-	 */
-	public Vector getRotatedCW(Angle angle) {
-		return clone().rotateCW(angle);
 	}
 
 	/**
@@ -335,12 +332,16 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Returns the length of this {@link Vector}.
+	 * Returns a new {@link Vector} which corresponds to this {@link Vector}
+	 * after rotating it clockwise (CW) by the given {@link Angle}.
 	 * 
-	 * @return the length of this {@link Vector}
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @return a new {@link Vector} which represents the result of the CW
+	 *         rotation of this {@link Vector}
 	 */
-	public double getLength() {
-		return Math.sqrt(getDotProduct(this));
+	public Vector getRotatedCW(Angle angle) {
+		return clone().rotateCW(angle);
 	}
 
 	/**
@@ -359,17 +360,26 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Checks if this {@link Vector} and the provided one are orthogonal to each
-	 * other.
+	 * Returns a new {@link Vector} that represents the difference of this
+	 * {@link Vector} and the provided one.
 	 * 
 	 * @param other
-	 *            the {@link Vector} which is checked for orthogonality to this
-	 *            {@link Vector}
-	 * @return <code>true</code> if this {@link Vector} and the provided one are
-	 *         orthogonal to each other, otherwise <code>false</code>
+	 *            the {@link Vector} that is subtracted from this {@link Vector}
+	 * @return a new {@link Vector} representing the difference of this
+	 *         {@link Vector} and the provided one
 	 */
-	public boolean isOrthogonalTo(Vector other) {
-		return PrecisionUtils.equal(getSimilarity(other), 0);
+	public Vector getSubtracted(Vector other) {
+		return new Vector(x - other.x, y - other.y);
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		// calculating a better hashCode is not possible, because due to the
+		// imprecision, equals() is no longer transitive
+		return 0;
 	}
 
 	/**
@@ -384,17 +394,6 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Checks if this {@link Vector}'s vertical component (the y coordinate)
-	 * does not equal 0.
-	 * 
-	 * @return <code>true</code> if this {@link Vector}'s y coordinate does not
-	 *         equal 0, otherwise <code>false</code>
-	 */
-	public boolean isVertical() {
-		return !PrecisionUtils.equal(y, 0);
-	}
-
-	/**
 	 * Checks if this {@link Vector}'s x and y coordinates are equal to 0.
 	 * 
 	 * @return <code>true</code> if this {@link Vector}'s x and y coordinates
@@ -405,45 +404,44 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Returns a {@link Point} representing this {@link Vector}.
+	 * Checks if this {@link Vector} and the provided one are orthogonal to each
+	 * other.
 	 * 
-	 * @return a {@link Point} representing this {@link Vector}
+	 * @param other
+	 *            the {@link Vector} which is checked for orthogonality to this
+	 *            {@link Vector}
+	 * @return <code>true</code> if this {@link Vector} and the provided one are
+	 *         orthogonal to each other, otherwise <code>false</code>
 	 */
-	public Point toPoint() {
-		return new Point(x, y);
+	public boolean isOrthogonalTo(Vector other) {
+		return PrecisionUtils.equal(getSimilarity(other), 0);
 	}
 
 	/**
-	 * @see java.lang.Object#toString()
+	 * Checks if this {@link Vector} and the provided one are parallel to each
+	 * other.
+	 * 
+	 * @param other
+	 *            the {@link Vector} that is checked to be parallel to this
+	 *            {@link Vector}
+	 * @return <code>true</code> if this {@link Vector} and the provided one are
+	 *         parallel, otherwise <code>false</code>
 	 */
-	@Override
-	public String toString() {
-		return "Vector: [" + x + "," + y + "]";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+	public boolean isParallelTo(Vector other) {
+		Angle alpha = getAngle(other);
+		alpha.setRad(2d * alpha.rad());
+		return alpha.equals(Angle.fromRad(0d));
 	}
 
 	/**
-	 * @see java.lang.Object#equals(Object)
+	 * Checks if this {@link Vector}'s vertical component (the y coordinate)
+	 * does not equal 0.
+	 * 
+	 * @return <code>true</code> if this {@link Vector}'s y coordinate does not
+	 *         equal 0, otherwise <code>false</code>
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this)
-			return true;
-		if (obj instanceof Vector) {
-			Vector r = (Vector) obj;
-			return PrecisionUtils.equal(this.x, r.x)
-					&& PrecisionUtils.equal(this.y, r.y);
-		}
-		return false;
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// calculating a better hashCode is not possible, because due to the
-		// imprecision, equals() is no longer transitive
-		return 0;
+	public boolean isVertical() {
+		return !PrecisionUtils.equal(y, 0);
 	}
 
 	/**
@@ -475,14 +473,20 @@ public class Vector implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new {@link Vector} that has the same direction as this
-	 * {@link Vector} and a length of 1.
+	 * Returns a {@link Point} representing this {@link Vector}.
 	 * 
-	 * @return a new {@link Vector} with the same direction as this
-	 *         {@link Vector} and a length of 1
+	 * @return a {@link Point} representing this {@link Vector}
 	 */
-	public Vector getNormalized() {
-		return clone().getMultiplied(1 / getLength());
+	public Point toPoint() {
+		return new Point(x, y);
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Vector: [" + x + "," + y + "]";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 	}
 
 }

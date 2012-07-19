@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -43,8 +44,19 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 			canvas = c;
 		}
 
+		public abstract boolean contains(Point p);
+
+		public abstract IGeometry createGeometry();
+
+		public abstract void draw(GC gc);
+
 		public Canvas getCanvas() {
 			return canvas;
+		}
+
+		public Point getCenter() {
+			return new Point(canvas.getClientArea().width / 2,
+					canvas.getClientArea().height / 2);
 		}
 
 		public Angle getRotationAngle() {
@@ -54,17 +66,6 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		public double getZoomFactor() {
 			return zoomFactor;
 		}
-
-		public Point getCenter() {
-			return new Point(canvas.getClientArea().width / 2,
-					canvas.getClientArea().height / 2);
-		}
-
-		public abstract boolean contains(Point p);
-
-		public abstract IGeometry createGeometry();
-
-		public abstract void draw(GC gc);
 	}
 
 	private final int GEOMETRY_FILL_COLOR = SWT.COLOR_WHITE;
@@ -102,15 +103,16 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 
 	protected abstract AbstractScaleRotateShape createShape(Canvas canvas);
 
-	public void paintControl(PaintEvent e) {
-		e.gc.setAntialias(SWT.ON);
-		e.gc.setBackground(Display.getCurrent().getSystemColor(
-				GEOMETRY_FILL_COLOR));
-		shape.draw(e.gc);
+	public void handleEvent(Event e) {
+		switch (e.type) {
+		case SWT.Resize:
+			shell.redraw();
+			break;
+		}
 	}
 
-	public void mouseScrolled(MouseEvent e) {
-		shape.zoomFactor += (double) e.count / 30;
+	public void mouseDoubleClick(MouseEvent e) {
+		shape.zoomFactor += 0.1;
 		shell.redraw();
 	}
 
@@ -123,11 +125,6 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 			// }
 	}
 
-	public void mouseUp(MouseEvent e) {
-		dragBeginAngle = shape.rotationAngle;
-		dragBegin = null;
-	}
-
 	public void mouseMove(MouseEvent e) {
 		if (dragBegin != null) {
 			Point center = shape.getCenter();
@@ -138,16 +135,20 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		}
 	}
 
-	public void mouseDoubleClick(MouseEvent e) {
-		shape.zoomFactor += 0.1;
+	public void mouseScrolled(MouseEvent e) {
+		shape.zoomFactor += (double) e.count / 30;
 		shell.redraw();
 	}
 
-	public void handleEvent(Event e) {
-		switch (e.type) {
-		case SWT.Resize:
-			shell.redraw();
-			break;
-		}
+	public void mouseUp(MouseEvent e) {
+		dragBeginAngle = shape.rotationAngle;
+		dragBegin = null;
+	}
+
+	public void paintControl(PaintEvent e) {
+		e.gc.setAntialias(SWT.ON);
+		e.gc.setBackground(Display.getCurrent().getSystemColor(
+				GEOMETRY_FILL_COLOR));
+		shape.draw(e.gc);
 	}
 }

@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - javadoc comment enhancements
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -26,6 +28,10 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
  * <p>
  * It delegates to the {@link java.awt.geom.AffineTransform} functionality.
  * </p>
+ * 
+ * @author anyssen
+ * @author mwienand
+ * 
  */
 public class AffineTransform {
 
@@ -33,17 +39,6 @@ public class AffineTransform {
 	// awt.geom.
 
 	private java.awt.geom.AffineTransform delegate = new java.awt.geom.AffineTransform();
-
-	/**
-	 * Returns the transformation matrix of this {@link AffineTransform}.
-	 * 
-	 * @return the transformation matrix of this {@link AffineTransform}
-	 */
-	public double[] getMatrix() {
-		double[] flatmatrix = new double[6];
-		delegate.getMatrix(flatmatrix);
-		return flatmatrix;
-	}
 
 	/**
 	 * Creates a new {@link AffineTransform} with its transformation matrix set
@@ -98,17 +93,80 @@ public class AffineTransform {
 		delegate = new java.awt.geom.AffineTransform(flatmatrix);
 	}
 
+	@Override
+	public Object clone() {
+		return delegate.clone();
+	}
+
 	/**
-	 * Returns the type of transformation represented by this
-	 * {@link AffineTransform}. See the
-	 * {@link java.awt.geom.AffineTransform#getType()} method for a
-	 * specification of the return type of this method.
+	 * Concatenates this {@link AffineTransform} and the given
+	 * {@link AffineTransform}, multiplying the transformation matrix of this
+	 * {@link AffineTransform} from the left with the transformation matrix of
+	 * the other {@link AffineTransform}.
 	 * 
-	 * @return the type of transformation represented by this
-	 *         {@link AffineTransform}
+	 * @param Tx
+	 *            the {@link AffineTransform} that is concatenated with this
+	 *            {@link AffineTransform}
 	 */
-	public int getType() {
-		return delegate.getType();
+	public void concatenate(AffineTransform Tx) {
+		delegate.concatenate(Tx.delegate);
+	}
+
+	/**
+	 * Creates a new {@link AffineTransform} that represents the inverse
+	 * transformation of this {@link AffineTransform}.
+	 * 
+	 * @return a new {@link AffineTransform} that represents the inverse
+	 *         transformation of this {@link AffineTransform}
+	 * @throws NoninvertibleTransformException
+	 */
+	public java.awt.geom.AffineTransform createInverse()
+			throws NoninvertibleTransformException {
+		return delegate.createInverse();
+	}
+
+	/**
+	 * Transforms an array of {@link Point}s specified by their coordinate
+	 * values with this {@link AffineTransform} without applying the translation
+	 * components of the transformation matrix of this {@link AffineTransform}.
+	 * 
+	 * @param srcPts
+	 *            the array of x and y coordinates specifying the {@link Point}s
+	 *            that are transformed
+	 * @param srcOff
+	 *            the index of the <i>srcPts</i> array where the x coordinate of
+	 *            the first {@link Point} to transform is found
+	 * @param dstPts
+	 *            the destination array of x and y coordinates for the result of
+	 *            the transformation
+	 * @param dstOff
+	 *            the index of the <i>dstPts</i> array where the x coordinate of
+	 *            the first transformed {@link Point} is stored
+	 * @param numPts
+	 *            the number of {@link Point}s to transform
+	 */
+	public void deltaTransform(double[] srcPts, int srcOff, double[] dstPts,
+			int dstOff, int numPts) {
+		delegate.deltaTransform(srcPts, srcOff, dstPts, dstOff, numPts);
+	}
+
+	/**
+	 * Transforms the given {@link Point} with this {@link AffineTransform}
+	 * without applying the translation components of the transformation matrix
+	 * of this {@link AffineTransform}.
+	 * 
+	 * @param pt
+	 *            the {@link Point} to transform
+	 * @return a new, transformed {@link Point}
+	 */
+	public Point deltaTransform(Point pt) {
+		return AWT2Geometry.toPoint(delegate.deltaTransform(
+				Geometry2AWT.toAWTPoint(pt), null));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return delegate.equals(obj);
 	}
 
 	/**
@@ -120,6 +178,17 @@ public class AffineTransform {
 	 */
 	public double getDeterminant() {
 		return delegate.getDeterminant();
+	}
+
+	/**
+	 * Returns the transformation matrix of this {@link AffineTransform}.
+	 * 
+	 * @return the transformation matrix of this {@link AffineTransform}
+	 */
+	public double[] getMatrix() {
+		double[] flatmatrix = new double[6];
+		delegate.getMatrix(flatmatrix);
+		return flatmatrix;
 	}
 
 	/**
@@ -167,6 +236,49 @@ public class AffineTransform {
 	}
 
 	/**
+	 * Transforms the given {@link Point} with this {@link AffineTransform} by
+	 * multiplying the transformation matrix of this {@link AffineTransform}
+	 * with the given {@link Point}.
+	 * 
+	 * @param ptSrc
+	 *            the {@link Point} to transform
+	 * @return a new, transformed {@link Point}
+	 */
+	public Point getTransformed(Point ptSrc) {
+		return AWT2Geometry.toPoint(delegate.transform(
+				Geometry2AWT.toAWTPoint(ptSrc), null));
+	}
+
+	/**
+	 * Transforms the given array of {@link Point}s with this
+	 * {@link AffineTransform} by multiplying the transformation matrix of this
+	 * {@link AffineTransform} individually with each of the given {@link Point}
+	 * s.
+	 * 
+	 * @param points
+	 *            array of {@link Point}s to transform
+	 * @return an array of new, transformed {@link Point}s
+	 */
+	public Point[] getTransformed(Point[] points) {
+		Point[] result = new Point[points.length];
+
+		System.out.println("Points before transformation:");
+		for (int i = 0; i < points.length; i++) {
+			System.out.println("... " + points[i]);
+		}
+
+		for (int i = 0; i < points.length; i++) {
+			result[i] = getTransformed(points[i]);
+		}
+
+		System.out.println("Points after transformation:");
+		for (int i = 0; i < result.length; i++) {
+			System.out.println("... " + result[i]);
+		}
+		return result;
+	}
+
+	/**
 	 * Returns the x coordinate translation of this {@link AffineTransform}'s
 	 * transformation matrix.
 	 * 
@@ -189,80 +301,96 @@ public class AffineTransform {
 	}
 
 	/**
-	 * Sets the translation values of the x and y coordinates of the
-	 * transformation matrix of this {@link AffineTransform}.
+	 * Returns the type of transformation represented by this
+	 * {@link AffineTransform}. See the
+	 * {@link java.awt.geom.AffineTransform#getType()} method for a
+	 * specification of the return type of this method.
 	 * 
-	 * @param tx
-	 *            the x coordinate translation
-	 * @param ty
-	 *            the y coordinate translation
+	 * @return the type of transformation represented by this
+	 *         {@link AffineTransform}
 	 */
-	public void translate(double tx, double ty) {
-		delegate.translate(tx, ty);
+	public int getType() {
+		return delegate.getType();
+	}
+
+	@Override
+	public int hashCode() {
+		return delegate.hashCode();
 	}
 
 	/**
-	 * Adds a rotation with the given angle (in radians) to the transformation
-	 * matrix of this {@link AffineTransform}.
+	 * Inverse transforms an array of {@link Point}s specified by their
+	 * coordinate values with this {@link AffineTransform}.
 	 * 
-	 * @param theta
-	 *            the rotation angle in radians
+	 * @param srcPts
+	 *            the array of x and y coordinates specifying the {@link Point}s
+	 *            that are inverse transformed
+	 * @param srcOff
+	 *            the index of the <i>srcPts</i> array where the x coordinate of
+	 *            the first {@link Point} to inverse transform is found
+	 * @param dstPts
+	 *            the destination array of x and y coordinates for the result of
+	 *            the inverse transformation
+	 * @param dstOff
+	 *            the index of the <i>dstPts</i> array where the x coordinate of
+	 *            the first inverse transformed {@link Point} is stored
+	 * @param numPts
+	 *            the number of {@link Point}s to inverse transform
+	 * @throws NoninvertibleTransformException
 	 */
-	public void rotate(double theta) {
-		delegate.rotate(theta);
+	public void inverseTransform(double[] srcPts, int srcOff, double[] dstPts,
+			int dstOff, int numPts) throws NoninvertibleTransformException {
+		delegate.inverseTransform(srcPts, srcOff, dstPts, dstOff, numPts);
 	}
 
 	/**
-	 * Adds a rotation with the given angle (in radians) around the
-	 * {@link Point} specified by the given x and y coordinates to the
-	 * transformation matrix of this {@link AffineTransform}.
+	 * Inverse transforms the given {@link Point} with this
+	 * {@link AffineTransform}.
 	 * 
-	 * @param theta
-	 *            the rotation angle in radians
-	 * @param anchorx
-	 *            the x coordinate of the {@link Point} to rotate around
-	 * @param anchory
-	 *            the y coordinate of the {@link Point} to rotate around
+	 * @param pt
+	 *            the {@link Point} to inverse transform
+	 * @return a new, inverse transformed {@link Point}
+	 * @throws NoninvertibleTransformException
 	 */
-	public void rotate(double theta, double anchorx, double anchory) {
-		delegate.rotate(theta, anchorx, anchory);
+	public Point inverseTransform(Point pt)
+			throws NoninvertibleTransformException {
+		return AWT2Geometry.toPoint(delegate.inverseTransform(
+				Geometry2AWT.toAWTPoint(pt), null));
 	}
 
 	/**
-	 * Adds a rotation to the transformation matrix of this
-	 * {@link AffineTransform}. The given coordinates specify a {@link Vector}
-	 * whose {@link Angle} to the x-axis is the applied rotation {@link Angle}.
+	 * Inverts this {@link AffineTransform}.
 	 * 
-	 * @param vecx
-	 *            the x coordinate of the {@link Vector} specifying the rotation
-	 *            {@link Angle}
-	 * @param vecy
-	 *            the y coordinate of the {@link Vector} specifying the rotation
-	 *            {@link Angle}
+	 * @throws NoninvertibleTransformException
 	 */
-	public void rotate(double vecx, double vecy) {
-		delegate.rotate(vecx, vecy);
+	public void invert() throws NoninvertibleTransformException {
+		delegate.invert();
 	}
 
 	/**
-	 * Adds a rotation around a {@link Point} to the transformation matrix of
-	 * this {@link AffineTransform}. The given coordinates specify a
-	 * {@link Vector} whose {@link Angle} to the x-axis is the applied rotation
-	 * {@link Angle} and the anchor {@link Point} for the rotation.
+	 * Checks if the transformation matrix of this {@link AffineTransform}
+	 * equals the identity matrix.
 	 * 
-	 * @param vecx
-	 *            the x coordinate of the {@link Vector} specifying the rotation
-	 *            {@link Angle}
-	 * @param vecy
-	 *            the y coordinate of the {@link Vector} specifying the rotation
-	 *            {@link Angle}
-	 * @param anchorx
-	 *            the x coordinate of the {@link Point} to rotate around
-	 * @param anchory
-	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>true</code> if the transformation matrix of this
+	 *         {@link AffineTransform} equals the identity matrix, otherwise
+	 *         <code>false</code>
 	 */
-	public void rotate(double vecx, double vecy, double anchorx, double anchory) {
-		delegate.rotate(vecx, vecy, anchorx, anchory);
+	public boolean isIdentity() {
+		return delegate.isIdentity();
+	}
+
+	/**
+	 * Concatenates this {@link AffineTransform} and the given
+	 * {@link AffineTransform} in reverse order, multiplying the transformation
+	 * matrix of this {@link AffineTransform} from the right with the
+	 * transformation matrix of the other {@link AffineTransform}.
+	 * 
+	 * @param Tx
+	 *            the {@link AffineTransform} that is concatenated with this
+	 *            {@link AffineTransform} in reverse order
+	 */
+	public void preConcatenate(AffineTransform Tx) {
+		delegate.preConcatenate(Tx.delegate);
 	}
 
 	/**
@@ -294,6 +422,70 @@ public class AffineTransform {
 	}
 
 	/**
+	 * Adds a rotation with the given angle (in radians) to the transformation
+	 * matrix of this {@link AffineTransform}.
+	 * 
+	 * @param theta
+	 *            the rotation angle in radians
+	 */
+	public void rotate(double theta) {
+		delegate.rotate(theta);
+	}
+
+	/**
+	 * Adds a rotation to the transformation matrix of this
+	 * {@link AffineTransform}. The given coordinates specify a {@link Vector}
+	 * whose {@link Angle} to the x-axis is the applied rotation {@link Angle}.
+	 * 
+	 * @param vecx
+	 *            the x coordinate of the {@link Vector} specifying the rotation
+	 *            {@link Angle}
+	 * @param vecy
+	 *            the y coordinate of the {@link Vector} specifying the rotation
+	 *            {@link Angle}
+	 */
+	public void rotate(double vecx, double vecy) {
+		delegate.rotate(vecx, vecy);
+	}
+
+	/**
+	 * Adds a rotation with the given angle (in radians) around the
+	 * {@link Point} specified by the given x and y coordinates to the
+	 * transformation matrix of this {@link AffineTransform}.
+	 * 
+	 * @param theta
+	 *            the rotation angle in radians
+	 * @param anchorx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param anchory
+	 *            the y coordinate of the {@link Point} to rotate around
+	 */
+	public void rotate(double theta, double anchorx, double anchory) {
+		delegate.rotate(theta, anchorx, anchory);
+	}
+
+	/**
+	 * Adds a rotation around a {@link Point} to the transformation matrix of
+	 * this {@link AffineTransform}. The given coordinates specify a
+	 * {@link Vector} whose {@link Angle} to the x-axis is the applied rotation
+	 * {@link Angle} and the anchor {@link Point} for the rotation.
+	 * 
+	 * @param vecx
+	 *            the x coordinate of the {@link Vector} specifying the rotation
+	 *            {@link Angle}
+	 * @param vecy
+	 *            the y coordinate of the {@link Vector} specifying the rotation
+	 *            {@link Angle}
+	 * @param anchorx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param anchory
+	 *            the y coordinate of the {@link Point} to rotate around
+	 */
+	public void rotate(double vecx, double vecy, double anchorx, double anchory) {
+		delegate.rotate(vecx, vecy, anchorx, anchory);
+	}
+
+	/**
 	 * Adds an x and y scaling to the transformation matrix of this
 	 * {@link AffineTransform}.
 	 * 
@@ -309,107 +501,11 @@ public class AffineTransform {
 	}
 
 	/**
-	 * Adds an x and y shearing to the transformation matrix of this
-	 * {@link AffineTransform}.
-	 * 
-	 * @param shx
-	 *            the x shearing factor added to the transformation matrix of
-	 *            this {@link AffineTransform}
-	 * @param shy
-	 *            the y shearing factor added to the transformation matrix of
-	 *            this {@link AffineTransform}
-	 */
-	public void shear(double shx, double shy) {
-		delegate.shear(shx, shy);
-	}
-
-	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to the
 	 * identity matrix.
 	 */
 	public void setToIdentity() {
 		delegate.setToIdentity();
-	}
-
-	/**
-	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
-	 * translation matrix that translates {@link Point}s by the given x and y
-	 * values.
-	 * 
-	 * @param tx
-	 *            the x translation value
-	 * @param ty
-	 *            the y translation value
-	 */
-	public void setToTranslation(double tx, double ty) {
-		delegate.setToTranslation(tx, ty);
-	}
-
-	/**
-	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
-	 * rotation matrix by the given angle specified in radians.
-	 * 
-	 * @param theta
-	 *            the rotation angle (in radians)
-	 */
-	public void setToRotation(double theta) {
-		delegate.setToRotation(theta);
-	}
-
-	/**
-	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
-	 * rotation and translation matrix. Thus, the resulting transformation
-	 * matrix rotates {@link Point}s by the given angle (in radians) around the
-	 * {@link Point} specified by the given x and y coordinates.
-	 * 
-	 * @param theta
-	 *            the rotation angle (in radians)
-	 * @param anchorx
-	 *            the x coordinate of the {@link Point} to rotate around
-	 * @param anchory
-	 *            the y coordinate of the {@link Point} to rotate around
-	 */
-	public void setToRotation(double theta, double anchorx, double anchory) {
-		delegate.setToRotation(theta, anchorx, anchory);
-	}
-
-	/**
-	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
-	 * rotation matrix. The given x and y coordinates specify a {@link Vector}
-	 * whose {@link Angle} to the x-axis defines the rotation {@link Angle}.
-	 * 
-	 * @param vecx
-	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
-	 *            the x-axis defines the rotation {@link Angle}
-	 * @param vecy
-	 *            the y coordinate of the {@link Vector} whose {@link Angle} to
-	 *            the x-axis defines the rotation {@link Angle}
-	 */
-	public void setToRotation(double vecx, double vecy) {
-		delegate.setToRotation(vecx, vecy);
-	}
-
-	/**
-	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
-	 * rotation and translation matrix. The firstly given x and y coordinates
-	 * specify a {@link Vector} whose {@link Angle} to the x-axis defines the
-	 * rotation {@link Angle}. The secondly given x and y coordinates specify
-	 * the {@link Point} to rotate around.
-	 * 
-	 * @param vecx
-	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
-	 *            the x-axis defines the rotation {@link Angle}
-	 * @param vecy
-	 *            the y coordinate of the {@link Vector} whose {@link Angle} to
-	 *            the x-axis defines the rotation {@link Angle}
-	 * @param anchorx
-	 *            the x coordinate of the {@link Point} to rotate around
-	 * @param anchory
-	 *            the y coordinate of the {@link Point} to rotate around
-	 */
-	public void setToRotation(double vecx, double vecy, double anchorx,
-			double anchory) {
-		delegate.setToRotation(vecx, vecy, anchorx, anchory);
 	}
 
 	/**
@@ -443,6 +539,73 @@ public class AffineTransform {
 
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
+	 * rotation matrix by the given angle specified in radians.
+	 * 
+	 * @param theta
+	 *            the rotation angle (in radians)
+	 */
+	public void setToRotation(double theta) {
+		delegate.setToRotation(theta);
+	}
+
+	/**
+	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
+	 * rotation matrix. The given x and y coordinates specify a {@link Vector}
+	 * whose {@link Angle} to the x-axis defines the rotation {@link Angle}.
+	 * 
+	 * @param vecx
+	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
+	 *            the x-axis defines the rotation {@link Angle}
+	 * @param vecy
+	 *            the y coordinate of the {@link Vector} whose {@link Angle} to
+	 *            the x-axis defines the rotation {@link Angle}
+	 */
+	public void setToRotation(double vecx, double vecy) {
+		delegate.setToRotation(vecx, vecy);
+	}
+
+	/**
+	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
+	 * rotation and translation matrix. Thus, the resulting transformation
+	 * matrix rotates {@link Point}s by the given angle (in radians) around the
+	 * {@link Point} specified by the given x and y coordinates.
+	 * 
+	 * @param theta
+	 *            the rotation angle (in radians)
+	 * @param anchorx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param anchory
+	 *            the y coordinate of the {@link Point} to rotate around
+	 */
+	public void setToRotation(double theta, double anchorx, double anchory) {
+		delegate.setToRotation(theta, anchorx, anchory);
+	}
+
+	/**
+	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
+	 * rotation and translation matrix. The firstly given x and y coordinates
+	 * specify a {@link Vector} whose {@link Angle} to the x-axis defines the
+	 * rotation {@link Angle}. The secondly given x and y coordinates specify
+	 * the {@link Point} to rotate around.
+	 * 
+	 * @param vecx
+	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
+	 *            the x-axis defines the rotation {@link Angle}
+	 * @param vecy
+	 *            the y coordinate of the {@link Vector} whose {@link Angle} to
+	 *            the x-axis defines the rotation {@link Angle}
+	 * @param anchorx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param anchory
+	 *            the y coordinate of the {@link Point} to rotate around
+	 */
+	public void setToRotation(double vecx, double vecy, double anchorx,
+			double anchory) {
+		delegate.setToRotation(vecx, vecy, anchorx, anchory);
+	}
+
+	/**
+	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * scaling matrix.
 	 * 
 	 * @param sx
@@ -465,6 +628,20 @@ public class AffineTransform {
 	 */
 	public void setToShear(double shx, double shy) {
 		delegate.setToShear(shx, shy);
+	}
+
+	/**
+	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
+	 * translation matrix that translates {@link Point}s by the given x and y
+	 * values.
+	 * 
+	 * @param tx
+	 *            the x translation value
+	 * @param ty
+	 *            the y translation value
+	 */
+	public void setToTranslation(double tx, double ty) {
+		delegate.setToTranslation(tx, ty);
 	}
 
 	/**
@@ -509,175 +686,18 @@ public class AffineTransform {
 	}
 
 	/**
-	 * Concatenates this {@link AffineTransform} and the given
-	 * {@link AffineTransform}, multiplying the transformation matrix of this
-	 * {@link AffineTransform} from the left with the transformation matrix of
-	 * the other {@link AffineTransform}.
-	 * 
-	 * @param Tx
-	 *            the {@link AffineTransform} that is concatenated with this
-	 *            {@link AffineTransform}
-	 */
-	public void concatenate(AffineTransform Tx) {
-		delegate.concatenate(Tx.delegate);
-	}
-
-	/**
-	 * Concatenates this {@link AffineTransform} and the given
-	 * {@link AffineTransform} in reverse order, multiplying the transformation
-	 * matrix of this {@link AffineTransform} from the right with the
-	 * transformation matrix of the other {@link AffineTransform}.
-	 * 
-	 * @param Tx
-	 *            the {@link AffineTransform} that is concatenated with this
-	 *            {@link AffineTransform} in reverse order
-	 */
-	public void preConcatenate(AffineTransform Tx) {
-		delegate.preConcatenate(Tx.delegate);
-	}
-
-	/**
-	 * Creates a new {@link AffineTransform} that represents the inverse
-	 * transformation of this {@link AffineTransform}.
-	 * 
-	 * @return a new {@link AffineTransform} that represents the inverse
-	 *         transformation of this {@link AffineTransform}
-	 * @throws NoninvertibleTransformException
-	 */
-	public java.awt.geom.AffineTransform createInverse()
-			throws NoninvertibleTransformException {
-		return delegate.createInverse();
-	}
-
-	/**
-	 * Inverts this {@link AffineTransform}.
-	 * 
-	 * @throws NoninvertibleTransformException
-	 */
-	public void invert() throws NoninvertibleTransformException {
-		delegate.invert();
-	}
-
-	/**
-	 * Transforms the given {@link Point} with this {@link AffineTransform} by
-	 * multiplying the transformation matrix of this {@link AffineTransform}
-	 * with the given {@link Point}.
-	 * 
-	 * @param ptSrc
-	 *            the {@link Point} to transform
-	 * @return a new, transformed {@link Point}
-	 */
-	public Point getTransformed(Point ptSrc) {
-		return AWT2Geometry.toPoint(delegate.transform(
-				Geometry2AWT.toAWTPoint(ptSrc), null));
-	}
-
-	/**
-	 * Transforms the given array of {@link Point}s with this
-	 * {@link AffineTransform} by multiplying the transformation matrix of this
-	 * {@link AffineTransform} individually with each of the given {@link Point}
-	 * s.
-	 * 
-	 * @param points
-	 *            array of {@link Point}s to transform
-	 * @return an array of new, transformed {@link Point}s
-	 */
-	public Point[] getTransformed(Point[] points) {
-		Point[] result = new Point[points.length];
-
-		System.out.println("Points before transformation:");
-		for (int i = 0; i < points.length; i++) {
-			System.out.println("... " + points[i]);
-		}
-
-		for (int i = 0; i < points.length; i++) {
-			result[i] = getTransformed(points[i]);
-		}
-
-		System.out.println("Points after transformation:");
-		for (int i = 0; i < result.length; i++) {
-			System.out.println("... " + result[i]);
-		}
-		return result;
-	}
-
-	/**
-	 * Inverse transforms the given {@link Point} with this
+	 * Adds an x and y shearing to the transformation matrix of this
 	 * {@link AffineTransform}.
 	 * 
-	 * @param pt
-	 *            the {@link Point} to inverse transform
-	 * @return a new, inverse transformed {@link Point}
-	 * @throws NoninvertibleTransformException
+	 * @param shx
+	 *            the x shearing factor added to the transformation matrix of
+	 *            this {@link AffineTransform}
+	 * @param shy
+	 *            the y shearing factor added to the transformation matrix of
+	 *            this {@link AffineTransform}
 	 */
-	public Point inverseTransform(Point pt)
-			throws NoninvertibleTransformException {
-		return AWT2Geometry.toPoint(delegate.inverseTransform(
-				Geometry2AWT.toAWTPoint(pt), null));
-	}
-
-	/**
-	 * Inverse transforms an array of {@link Point}s specified by their
-	 * coordinate values with this {@link AffineTransform}.
-	 * 
-	 * @param srcPts
-	 *            the array of x and y coordinates specifying the {@link Point}s
-	 *            that are inverse transformed
-	 * @param srcOff
-	 *            the index of the <i>srcPts</i> array where the x coordinate of
-	 *            the first {@link Point} to inverse transform is found
-	 * @param dstPts
-	 *            the destination array of x and y coordinates for the result of
-	 *            the inverse transformation
-	 * @param dstOff
-	 *            the index of the <i>dstPts</i> array where the x coordinate of
-	 *            the first inverse transformed {@link Point} is stored
-	 * @param numPts
-	 *            the number of {@link Point}s to inverse transform
-	 * @throws NoninvertibleTransformException
-	 */
-	public void inverseTransform(double[] srcPts, int srcOff, double[] dstPts,
-			int dstOff, int numPts) throws NoninvertibleTransformException {
-		delegate.inverseTransform(srcPts, srcOff, dstPts, dstOff, numPts);
-	}
-
-	/**
-	 * Transforms the given {@link Point} with this {@link AffineTransform}
-	 * without applying the translation components of the transformation matrix
-	 * of this {@link AffineTransform}.
-	 * 
-	 * @param pt
-	 *            the {@link Point} to transform
-	 * @return a new, transformed {@link Point}
-	 */
-	public Point deltaTransform(Point pt) {
-		return AWT2Geometry.toPoint(delegate.deltaTransform(
-				Geometry2AWT.toAWTPoint(pt), null));
-	}
-
-	/**
-	 * Transforms an array of {@link Point}s specified by their coordinate
-	 * values with this {@link AffineTransform} without applying the translation
-	 * components of the transformation matrix of this {@link AffineTransform}.
-	 * 
-	 * @param srcPts
-	 *            the array of x and y coordinates specifying the {@link Point}s
-	 *            that are transformed
-	 * @param srcOff
-	 *            the index of the <i>srcPts</i> array where the x coordinate of
-	 *            the first {@link Point} to transform is found
-	 * @param dstPts
-	 *            the destination array of x and y coordinates for the result of
-	 *            the transformation
-	 * @param dstOff
-	 *            the index of the <i>dstPts</i> array where the x coordinate of
-	 *            the first transformed {@link Point} is stored
-	 * @param numPts
-	 *            the number of {@link Point}s to transform
-	 */
-	public void deltaTransform(double[] srcPts, int srcOff, double[] dstPts,
-			int dstOff, int numPts) {
-		delegate.deltaTransform(srcPts, srcOff, dstPts, dstOff, numPts);
+	public void shear(double shx, double shy) {
+		delegate.shear(shx, shy);
 	}
 
 	@Override
@@ -686,30 +706,16 @@ public class AffineTransform {
 	}
 
 	/**
-	 * Checks if the transformation matrix of this {@link AffineTransform}
-	 * equals the identity matrix.
+	 * Sets the translation values of the x and y coordinates of the
+	 * transformation matrix of this {@link AffineTransform}.
 	 * 
-	 * @return <code>true</code> if the transformation matrix of this
-	 *         {@link AffineTransform} equals the identity matrix, otherwise
-	 *         <code>false</code>
+	 * @param tx
+	 *            the x coordinate translation
+	 * @param ty
+	 *            the y coordinate translation
 	 */
-	public boolean isIdentity() {
-		return delegate.isIdentity();
-	}
-
-	@Override
-	public Object clone() {
-		return delegate.clone();
-	}
-
-	@Override
-	public int hashCode() {
-		return delegate.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return delegate.equals(obj);
+	public void translate(double tx, double ty) {
+		delegate.translate(tx, ty);
 	}
 
 }

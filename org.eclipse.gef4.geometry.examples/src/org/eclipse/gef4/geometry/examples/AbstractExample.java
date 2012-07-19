@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.examples;
 
 import org.eclipse.swt.SWT;
@@ -14,8 +26,6 @@ abstract public class AbstractExample implements PaintListener {
 
 	public ControllableShapeViewer viewer;
 	public Shell shell;
-
-	abstract protected ControllableShape[] getControllableShapes();
 
 	public AbstractExample(String title, String... infos) {
 		Display display = new Display();
@@ -44,8 +54,9 @@ abstract public class AbstractExample implements PaintListener {
 		shell.open();
 
 		viewer = new ControllableShapeViewer(shell);
-		for (ControllableShape cs : getControllableShapes())
+		for (ControllableShape cs : getControllableShapes()) {
 			viewer.addShape(cs);
+		}
 
 		shell.addPaintListener(this);
 
@@ -58,10 +69,12 @@ abstract public class AbstractExample implements PaintListener {
 		}
 	}
 
-	public void paintControl(PaintEvent e) {
-	}
+	abstract protected ControllableShape[] getControllableShapes();
 
 	public void onInit() {
+	}
+
+	public void paintControl(PaintEvent e) {
 	}
 
 }

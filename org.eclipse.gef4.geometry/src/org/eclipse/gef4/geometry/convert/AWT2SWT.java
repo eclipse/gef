@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
@@ -27,8 +28,19 @@ import org.eclipse.swt.graphics.PathData;
  */
 public class AWT2SWT {
 
-	private AWT2SWT() {
-		// this class should not be instantiated by clients
+	private static float[] getPointAppended(float[] points, float x, float y) {
+		float[] pointsTmp = new float[points.length + 2];
+		System.arraycopy(points, 0, pointsTmp, 0, points.length);
+		pointsTmp[points.length] = x;
+		pointsTmp[points.length + 1] = y;
+		return pointsTmp;
+	}
+
+	private static byte[] getTypeAppended(byte[] types, byte type) {
+		byte[] typesTmp = new byte[types.length + 1];
+		System.arraycopy(types, 0, typesTmp, 0, types.length);
+		typesTmp[types.length] = type;
+		return typesTmp;
 	}
 
 	/**
@@ -85,19 +97,8 @@ public class AWT2SWT {
 		return pathData;
 	}
 
-	private static float[] getPointAppended(float[] points, float x, float y) {
-		float[] pointsTmp = new float[points.length + 2];
-		System.arraycopy(points, 0, pointsTmp, 0, points.length);
-		pointsTmp[points.length] = x;
-		pointsTmp[points.length + 1] = y;
-		return pointsTmp;
-	}
-
-	private static byte[] getTypeAppended(byte[] types, byte type) {
-		byte[] typesTmp = new byte[types.length + 1];
-		System.arraycopy(types, 0, typesTmp, 0, types.length);
-		typesTmp[types.length] = type;
-		return typesTmp;
+	private AWT2SWT() {
+		// this class should not be instantiated by clients
 	}
 
 }

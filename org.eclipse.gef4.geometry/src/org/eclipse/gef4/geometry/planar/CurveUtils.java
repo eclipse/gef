@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -18,11 +19,25 @@ import java.util.Set;
 /**
  * The {@link CurveUtils} class provides functionality that can be used for all
  * {@link ICurve}s, independent on their construction kind.
+ * 
+ * @author mwienand
+ * 
  */
 class CurveUtils {
 
-	private CurveUtils() {
-		// this class should not be instantiated by clients
+	/**
+	 * Creates copies of the given {@link BezierCurve}s.
+	 * 
+	 * @param curves
+	 *            the {@link BezierCurve}s to copy
+	 * @return an array containing the copies
+	 */
+	public static BezierCurve[] getCopy(BezierCurve... curves) {
+		BezierCurve[] copies = new BezierCurve[curves.length];
+		for (int i = 0; i < curves.length; i++) {
+			copies[i] = curves[i].getCopy();
+		}
+		return copies;
 	}
 
 	/**
@@ -46,23 +61,31 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
+	 * Delegates to the appropriate getIntersections() method for the passed-in
+	 * {@link IGeometry} depending on its type.
 	 * 
 	 * @param curve
 	 *            the {@link ICurve} to intersect
-	 * @param shape
-	 *            the {@link IShape} of which the outline is intersected
-	 * @return an array of intersection {@link Point}s
+	 * @param geom
+	 *            the {@link IGeometry} to intersect
+	 * @return points of intersection
+	 * @see #getIntersections(ICurve, ICurve)
+	 * @see #getIntersections(ICurve, IPolyCurve)
+	 * @see #getIntersections(ICurve, IShape)
+	 * @see #getIntersections(ICurve, IPolyShape)
 	 */
-	public static Point[] getIntersections(ICurve curve, IShape shape) {
-		Set<Point> intersections = new HashSet<Point>();
-
-		for (ICurve curve2 : shape.getOutlineSegments()) {
-			intersections
-					.addAll(Arrays.asList(getIntersections(curve, curve2)));
+	public static Point[] getIntersections(ICurve curve, IGeometry geom) {
+		if (geom instanceof ICurve) {
+			return getIntersections(curve, (ICurve) geom);
+		} else if (geom instanceof IShape) {
+			return getIntersections(curve, (IShape) geom);
+		} else if (geom instanceof IPolyCurve) {
+			return getIntersections(curve, (IPolyCurve) geom);
+		} else if (geom instanceof IPolyShape) {
+			return getIntersections(curve, (IPolyShape) geom);
+		} else {
+			throw new UnsupportedOperationException("Not yet implemented.");
 		}
-
-		return intersections.toArray(new Point[] {});
 	}
 
 	/**
@@ -105,31 +128,23 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the appropriate getIntersections() method for the passed-in
-	 * {@link IGeometry} depending on its type.
+	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
 	 * 
 	 * @param curve
 	 *            the {@link ICurve} to intersect
-	 * @param geom
-	 *            the {@link IGeometry} to intersect
-	 * @return points of intersection
-	 * @see #getIntersections(ICurve, ICurve)
-	 * @see #getIntersections(ICurve, IPolyCurve)
-	 * @see #getIntersections(ICurve, IShape)
-	 * @see #getIntersections(ICurve, IPolyShape)
+	 * @param shape
+	 *            the {@link IShape} of which the outline is intersected
+	 * @return an array of intersection {@link Point}s
 	 */
-	public static Point[] getIntersections(ICurve curve, IGeometry geom) {
-		if (geom instanceof ICurve) {
-			return getIntersections(curve, (ICurve) geom);
-		} else if (geom instanceof IShape) {
-			return getIntersections(curve, (IShape) geom);
-		} else if (geom instanceof IPolyCurve) {
-			return getIntersections(curve, (IPolyCurve) geom);
-		} else if (geom instanceof IPolyShape) {
-			return getIntersections(curve, (IPolyShape) geom);
-		} else {
-			throw new UnsupportedOperationException("Not yet implemented.");
+	public static Point[] getIntersections(ICurve curve, IShape shape) {
+		Set<Point> intersections = new HashSet<Point>();
+
+		for (ICurve curve2 : shape.getOutlineSegments()) {
+			intersections
+					.addAll(Arrays.asList(getIntersections(curve, curve2)));
 		}
+
+		return intersections.toArray(new Point[] {});
 	}
 
 	/**
@@ -201,10 +216,13 @@ class CurveUtils {
 	 *         <code>false</code>
 	 */
 	public static boolean overlaps(ICurve c1, ICurve c2) {
-		for (BezierCurve seg1 : c1.toBezier())
-			for (BezierCurve seg2 : c2.toBezier())
-				if (seg1.overlaps(seg2))
+		for (BezierCurve seg1 : c1.toBezier()) {
+			for (BezierCurve seg2 : c2.toBezier()) {
+				if (seg1.overlaps(seg2)) {
 					return true;
+				}
+			}
+		}
 
 		return false;
 	}
@@ -274,18 +292,8 @@ class CurveUtils {
 		return segments;
 	}
 
-	/**
-	 * Creates copies of the given {@link BezierCurve}s.
-	 * 
-	 * @param curves
-	 *            the {@link BezierCurve}s to copy
-	 * @return an array containing the copies
-	 */
-	public static BezierCurve[] getCopy(BezierCurve... curves) {
-		BezierCurve[] copies = new BezierCurve[curves.length];
-		for (int i = 0; i < curves.length; i++)
-			copies[i] = curves[i].getCopy();
-		return copies;
+	private CurveUtils() {
+		// this class should not be instantiated by clients
 	}
 
 }

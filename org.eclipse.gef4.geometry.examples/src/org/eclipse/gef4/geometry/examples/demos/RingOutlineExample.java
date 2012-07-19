@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -50,9 +51,10 @@ public class RingOutlineExample extends AbstractExample {
 				Point[] cp = getPoints();
 
 				Polygon[] polygons = new Polygon[cp.length / 3];
-				for (int i = 0; i < polygons.length; i++)
+				for (int i = 0; i < polygons.length; i++) {
 					polygons[i] = new Polygon(cp[3 * i], cp[3 * i + 1],
 							cp[3 * i + 2]);
+				}
 
 				return new Ring(polygons);
 			}

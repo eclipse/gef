@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -30,6 +31,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
@@ -130,12 +132,14 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		Point[] rest = new Point[points.length - indicesToRemove.length];
 		Arrays.sort(indicesToRemove);
 		for (int i = 0, j = 0; i < indicesToRemove.length; i++) {
-			for (int r = j; r < indicesToRemove[i]; r++)
+			for (int r = j; r < indicesToRemove[i]; r++) {
 				rest[r - i] = points[r];
+			}
 			j = indicesToRemove[i] + 1;
 		}
-		for (int i = indicesToRemove[indicesToRemove.length - 1] + 1; i < points.length; i++)
+		for (int i = indicesToRemove[indicesToRemove.length - 1] + 1; i < points.length; i++) {
 			rest[i - indicesToRemove.length] = points[i];
+		}
 		return rest;
 	}
 
@@ -214,19 +218,24 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * thrown.
 	 */
 	private void assureSimplicity() throws NonSimplePolygonException {
-		if (points.length < 3)
+		if (points.length < 3) {
 			throw new NonSimplePolygonException(
 					"A polygon can only be constructed of at least 3 vertices.");
+		}
 
-		for (Line e1 : getOutlineSegments())
-			for (Line e2 : getOutlineSegments())
+		for (Line e1 : getOutlineSegments()) {
+			for (Line e2 : getOutlineSegments()) {
 				if (!e1.getP1().equals(e2.getP1())
 						&& !e1.getP2().equals(e2.getP1())
 						&& !e1.getP1().equals(e2.getP2())
-						&& !e1.getP2().equals(e2.getP2()))
-					if (e1.touches(e2))
+						&& !e1.getP2().equals(e2.getP2())) {
+					if (e1.touches(e2)) {
 						throw new NonSimplePolygonException(
 								"Only simple polygons allowed. A polygon without any self-intersections is considered to be simple. This polygon is not simple.");
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -278,8 +287,9 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 		for (Line seg : getOutlineSegments()) {
 			Point poi = seg.getIntersection(line);
-			if (poi != null)
+			if (poi != null) {
 				intersectionParams.add(line.getParameterAt(poi));
+			}
 		}
 
 		if (intersectionParams.size() <= 1) {
@@ -460,8 +470,9 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof Polygon) {
 			Polygon p = (Polygon) o;
 			return equals(p.getPoints());

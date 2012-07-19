@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -25,44 +26,14 @@ import org.eclipse.swt.widgets.Slider;
 
 public class CubicCurveDeCasteljauExample extends AbstractExample {
 
-	private double parameterValue;
-
 	public static void main(String[] args) {
 		new CubicCurveDeCasteljauExample("Cubic Bezier Curve Example");
 	}
 
+	private double parameterValue;
+
 	public CubicCurveDeCasteljauExample(String title) {
 		super(title);
-	}
-
-	@Override
-	public void onInit() {
-		/*
-		 * Creates the slider to be able to change the parameter value for which
-		 * the de Casteljau algorithm is demonstrated. (Just SWT buzz.)
-		 */
-
-		// default value for t
-		parameterValue = 0.5;
-
-		// add slider
-		final Slider slider = new Slider(shell, SWT.HORIZONTAL);
-		slider.setBounds(0, 0, 200, 20);
-		slider.setValues(50, 0, 101, 1, 1, 1);
-		slider.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				parameterValue = (double) slider.getSelection() / 100;
-				if (parameterValue < 0)
-					parameterValue = 0;
-				if (parameterValue > 1)
-					parameterValue = 1;
-
-				shell.redraw();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 	}
 
 	@Override
@@ -140,5 +111,37 @@ public class CubicCurveDeCasteljauExample extends AbstractExample {
 				}
 			}
 		} };
+	}
+
+	@Override
+	public void onInit() {
+		/*
+		 * Creates the slider to be able to change the parameter value for which
+		 * the de Casteljau algorithm is demonstrated. (Just SWT buzz.)
+		 */
+
+		// default value for t
+		parameterValue = 0.5;
+
+		// add slider
+		final Slider slider = new Slider(shell, SWT.HORIZONTAL);
+		slider.setBounds(0, 0, 200, 20);
+		slider.setValues(50, 0, 101, 1, 1, 1);
+		slider.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				parameterValue = (double) slider.getSelection() / 100;
+				if (parameterValue < 0) {
+					parameterValue = 0;
+				}
+				if (parameterValue > 1) {
+					parameterValue = 1;
+				}
+
+				shell.redraw();
+			}
+		});
 	}
 }

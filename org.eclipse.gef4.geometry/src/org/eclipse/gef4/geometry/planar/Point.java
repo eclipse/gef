@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration do double precision
@@ -34,10 +35,37 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author pshah
  * @author ahunter
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class Point implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static Point[] eliminateDuplicates(Point... points) {
+		// sort points by x and y
+		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
+			public int compare(Point p1, Point p2) {
+				if (p1.x < p2.x) {
+					return -1;
+				}
+				if (p1.x == p2.x && p1.y < p2.y) {
+					return -1;
+				}
+				return 1;
+			}
+		});
+
+		// filter points
+		List<Point> uniquePoints = new ArrayList<Point>(points.length);
+		for (int i = 0; i < points.length - 1; i++) {
+			if (!points[i].equals(points[i + 1])) {
+				uniquePoints.add(points[i]);
+			}
+		}
+		uniquePoints.add(points[points.length - 1]);
+		return uniquePoints.toArray(new Point[] {});
+	}
 
 	/**
 	 * Returns the smallest {@link Rectangle} that encloses all {@link Point}s
@@ -167,27 +195,6 @@ public class Point implements Cloneable, Serializable {
 		}
 
 		return convexHull.toArray(new Point[] {});
-	}
-
-	private static Point[] eliminateDuplicates(Point... points) {
-		// sort points by x and y
-		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
-			public int compare(Point p1, Point p2) {
-				if (p1.x < p2.x)
-					return -1;
-				if (p1.x == p2.x && p1.y < p2.y)
-					return -1;
-				return 1;
-			}
-		});
-
-		// filter points
-		List<Point> uniquePoints = new ArrayList<Point>(points.length);
-		for (int i = 0; i < points.length - 1; i++)
-			if (!points[i].equals(points[i + 1]))
-				uniquePoints.add(points[i]);
-		uniquePoints.add(points[points.length - 1]);
-		return uniquePoints.toArray(new Point[] {});
 	}
 
 	/**

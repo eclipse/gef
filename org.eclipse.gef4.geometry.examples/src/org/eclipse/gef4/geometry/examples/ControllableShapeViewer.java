@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.examples;
 
 import java.util.ArrayList;
@@ -34,16 +46,64 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 		shapes.add(shape);
 	}
 
-	public ControllableShape[] getShapes() {
-		return shapes.toArray(new ControllableShape[] {});
-	}
-
 	public void clearShapes() {
 		shapes.clear();
 	}
 
-	public void removeShape(int index) {
-		shapes.remove(index);
+	public ControllableShape[] getShapes() {
+		return shapes.toArray(new ControllableShape[] {});
+	}
+
+	public void handleEvent(Event e) {
+		switch (e.type) {
+		case SWT.Resize:
+			Rectangle bounds = new Rectangle(canvas.getBounds());
+
+			for (ControllableShape cs : shapes) {
+				cs.onResize(bounds);
+			}
+
+			canvas.redraw();
+			break;
+		}
+	}
+
+	public void mouseDoubleClick(MouseEvent e) {
+	}
+
+	public void mouseDown(MouseEvent e) {
+		for (ControllableShape cs : shapes) {
+			if (cs.isActive()) {
+				for (int i = 0; i < cs.controlPoints.size(); i++) {
+					ControlPoint cp = cs.controlPoints.get(i);
+					double dx = cp.getX() - e.x;
+					double dy = cp.getY() - e.y;
+					if (dx * dx + dy * dy < cs.controlRadius * cs.controlRadius) {
+						isDragging = true;
+						draggedShape = cs;
+						dragPointIndex = i;
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	public void mouseMove(MouseEvent e) {
+		if (isDragging) {
+			double oldX = draggedShape.controlPoints.get(dragPointIndex).getX();
+			double oldY = draggedShape.controlPoints.get(dragPointIndex).getY();
+			draggedShape.controlPoints.get(dragPointIndex).setX(e.x);
+			draggedShape.controlPoints.get(dragPointIndex).setY(e.y);
+
+			draggedShape.onMove(dragPointIndex, oldX, oldY);
+
+			canvas.redraw();
+		}
+	}
+
+	public void mouseUp(MouseEvent e) {
+		isDragging = false;
 	}
 
 	public void paintControl(PaintEvent e) {
@@ -71,55 +131,8 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 		}
 	}
 
-	public void mouseMove(MouseEvent e) {
-		if (isDragging) {
-			double oldX = draggedShape.controlPoints.get(dragPointIndex).getX();
-			double oldY = draggedShape.controlPoints.get(dragPointIndex).getY();
-			draggedShape.controlPoints.get(dragPointIndex).setX(e.x);
-			draggedShape.controlPoints.get(dragPointIndex).setY(e.y);
-
-			draggedShape.onMove(dragPointIndex, oldX, oldY);
-
-			canvas.redraw();
-		}
-	}
-
-	public void mouseDoubleClick(MouseEvent e) {
-	}
-
-	public void mouseDown(MouseEvent e) {
-		for (ControllableShape cs : shapes) {
-			if (cs.isActive()) {
-				for (int i = 0; i < cs.controlPoints.size(); i++) {
-					ControlPoint cp = cs.controlPoints.get(i);
-					double dx = cp.getX() - e.x;
-					double dy = cp.getY() - e.y;
-					if (dx * dx + dy * dy < cs.controlRadius * cs.controlRadius) {
-						isDragging = true;
-						draggedShape = cs;
-						dragPointIndex = i;
-						return;
-					}
-				}
-			}
-		}
-	}
-
-	public void mouseUp(MouseEvent e) {
-		isDragging = false;
-	}
-
-	public void handleEvent(Event e) {
-		switch (e.type) {
-		case SWT.Resize:
-			Rectangle bounds = new Rectangle(canvas.getBounds());
-
-			for (ControllableShape cs : shapes)
-				cs.onResize(bounds);
-
-			canvas.redraw();
-			break;
-		}
+	public void removeShape(int index) {
+		shapes.remove(index);
 	}
 
 }

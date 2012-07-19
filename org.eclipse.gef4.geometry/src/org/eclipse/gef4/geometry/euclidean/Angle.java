@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -29,6 +30,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * Every {@link Angle} object is normalized. That means, you will never
  * encounter an {@link Angle} object beyond 360/2pi or below 0/0
  * (degrees/radians).
+ * 
+ * @author mwienand
+ * 
  */
 public class Angle implements Cloneable, Serializable {
 
@@ -85,6 +89,12 @@ public class Angle implements Cloneable, Serializable {
 	private double rad = 0d;
 
 	/**
+	 * Constructs a new {@link Angle} object initialized with 0deg/0rad.
+	 */
+	public Angle() {
+	}
+
+	/**
 	 * Constructs a new {@link Angle} object with the given value. The
 	 * {@link AngleUnit} u is used to differentiate the value's unit.
 	 * 
@@ -98,12 +108,6 @@ public class Angle implements Cloneable, Serializable {
 			v *= DEG_TO_RAD;
 		}
 		setRad(v);
-	}
-
-	/**
-	 * Constructs a new {@link Angle} object initialized with 0deg/0rad.
-	 */
-	public Angle() {
 	}
 
 	/**
@@ -159,6 +163,15 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Creates and returns a copy of this {@link Angle}.
+	 * 
+	 * @return a copy of this {@link Angle}
+	 */
+	public Angle getCopy() {
+		return Angle.fromRad(this.rad);
+	}
+
+	/**
 	 * Returns a new {@link Angle} object representing this {@link Angle}
 	 * multiplied by the given factor.
 	 * 
@@ -169,15 +182,6 @@ public class Angle implements Cloneable, Serializable {
 	 */
 	public Angle getMultiplied(double factor) {
 		return Angle.fromRad(rad * factor);
-	}
-
-	/**
-	 * Creates and returns a copy of this {@link Angle}.
-	 * 
-	 * @return a copy of this {@link Angle}
-	 */
-	public Angle getCopy() {
-		return Angle.fromRad(this.rad);
 	}
 
 	/**

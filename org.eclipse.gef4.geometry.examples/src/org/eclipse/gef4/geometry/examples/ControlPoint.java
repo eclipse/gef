@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.examples;
 
 import org.eclipse.gef4.geometry.planar.Point;
@@ -12,12 +24,27 @@ public class ControlPoint {
 		p = new Point();
 	}
 
+	public ControlPoint(double x, double y) {
+		p = new Point(x, y);
+	}
+
 	public ControlPoint(Point p) {
 		this.p = p.getCopy();
 	}
 
-	public ControlPoint(double x, double y) {
-		p = new Point(x, y);
+	private void boundsCheck() {
+		if (bounds != null) {
+			if (p.x < 0) {
+				p.x = 0;
+			} else if (p.x > bounds.getWidth()) {
+				p.x = bounds.getWidth();
+			}
+			if (p.y < 0) {
+				p.y = 0;
+			} else if (p.y > bounds.getHeight()) {
+				p.y = bounds.getHeight();
+			}
+		}
 	}
 
 	public double getX() {
@@ -28,6 +55,11 @@ public class ControlPoint {
 		return p.y;
 	}
 
+	public void onResize(Rectangle bounds) {
+		this.bounds = bounds;
+		boundsCheck();
+	}
+
 	public void setX(double x) {
 		p.x = x;
 		boundsCheck();
@@ -36,24 +68,6 @@ public class ControlPoint {
 	public void setY(double y) {
 		p.y = y;
 		boundsCheck();
-	}
-
-	public void onResize(Rectangle bounds) {
-		this.bounds = bounds;
-		boundsCheck();
-	}
-
-	private void boundsCheck() {
-		if (bounds != null) {
-			if (p.x < 0)
-				p.x = 0;
-			else if (p.x > bounds.getWidth())
-				p.x = bounds.getWidth();
-			if (p.y < 0)
-				p.y = 0;
-			else if (p.y > bounds.getHeight())
-				p.y = bounds.getHeight();
-		}
 	}
 
 	public Point toPoint() {

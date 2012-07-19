@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -31,15 +32,10 @@ import org.eclipse.gef4.geometry.planar.Point;
  * {@link Point} with a third, homogeneous coordinate.
  * </p>
  * 
- * @author wienand
+ * @author mwienand
+ * 
  */
 public final class Straight3D {
-	private Vector3D sp, line;
-	private double f;
-
-	private Straight3D() {
-	}
-
 	/**
 	 * Constructs a new {@link Straight3D} through the given start and end
 	 * {@link Vector3D}s.
@@ -60,6 +56,26 @@ public final class Straight3D {
 		}
 
 		return self;
+	}
+
+	private Vector3D sp, line;
+
+	private double f;
+
+	private Straight3D() {
+	}
+
+	/**
+	 * Returns the intersection between this and the given other
+	 * {@link Straight3D}. The intersection is the cross product of both
+	 * {@link Vector3D}s.
+	 * 
+	 * @param other
+	 * @return the intersection between this and the given other
+	 *         {@link Straight3D}
+	 */
+	public Vector3D getIntersection(Straight3D other) {
+		return line.getCrossProduct(other.line);
 	}
 
 	/**
@@ -99,19 +115,6 @@ public final class Straight3D {
 	public double getSignedDistanceCW(Vector3D vp) {
 		Point p = vp.toPoint();
 		return (line.x * p.x + line.y * p.y + line.z) / f;
-	}
-
-	/**
-	 * Returns the intersection between this and the given other
-	 * {@link Straight3D}. The intersection is the cross product of both
-	 * {@link Vector3D}s.
-	 * 
-	 * @param other
-	 * @return the intersection between this and the given other
-	 *         {@link Straight3D}
-	 */
-	public Vector3D getIntersection(Straight3D other) {
-		return line.getCrossProduct(other.line);
 	}
 
 	/**
