@@ -97,6 +97,13 @@ public class PointTests {
 	}
 
 	@Test
+	public void test_getCentroid() {
+		Point[] quad = new Point[] { new Point(0, 0), new Point(1, 0),
+				new Point(1, 1), new Point(0, 1) };
+		assertEquals(new Point(0.5, 0.5), Point.getCentroid(quad));
+	}
+
+	@Test
 	public void test_translate_static() {
 		Point[] points = new Point[5];
 

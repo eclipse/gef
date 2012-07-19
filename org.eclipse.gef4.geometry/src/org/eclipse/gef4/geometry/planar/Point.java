@@ -92,11 +92,11 @@ public class Point implements Cloneable, Serializable {
 		}
 
 		// closing segment
-		a = points[points.length - 2].x * points[points.length - 1].y
-				- points[points.length - 2].y * points[points.length - 1].x;
+		a = points[points.length - 1].x * points[0].y
+				- points[points.length - 1].y * points[0].x;
 		sa += a;
-		cx += (points[points.length - 2].x + points[points.length - 1].x) * a;
-		cy += (points[points.length - 2].x + points[points.length - 1].x) * a;
+		cx += (points[points.length - 1].x + points[0].x) * a;
+		cy += (points[points.length - 1].y + points[0].y) * a;
 
 		return new Point(cx / (3 * sa), cy / (3 * sa));
 	}
