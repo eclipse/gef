@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -26,6 +26,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
  * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		implements IPolyCurve {
@@ -40,7 +42,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * @param coordinates
 	 *            an alternating, even-numbered sequence of x- and
 	 *            y-coordinates, representing the points from which the
-	 *            {@link Polyline} is to be created .
+	 *            {@link Polyline} is to be created
 	 */
 	public Polyline(double... coordinates) {
 		super(coordinates);
@@ -65,7 +67,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * 
 	 * @param points
 	 *            a sequence of points, from which the {@link Polyline} is to be
-	 *            created.
+	 *            created
 	 */
 	public Polyline(Point... points) {
 		super(points);
@@ -76,20 +78,17 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * is contained within this {@link Polyline}.
 	 * 
 	 * @param x
-	 *            the x-coordinate of the point to test
+	 *            the x coordinate of the point to test
 	 * @param y
-	 *            the y-coordinate of the point to test
+	 *            the y coordinate of the point to test
 	 * @return <code>true</code> if the point represented by its coordinates if
-	 *         contained within this {@link Polyline}, <code>false</code>
-	 *         otherwise
+	 *         contained within this {@link Polyline}, otherwise
+	 *         <code>false</code>
 	 */
 	public boolean contains(double x, double y) {
 		return contains(new Point(x, y));
 	}
 
-	/**
-	 * @see IGeometry#contains(Point)
-	 */
 	public boolean contains(Point p) {
 		for (int i = 0; i + 1 < points.length; i++) {
 			Point p1 = points[i];
@@ -103,8 +102,9 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof Polyline) {
 			Polyline p = (Polyline) o;
 			return equals(p.getPoints());
@@ -122,7 +122,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 *            be checked for equality
 	 * @return <code>true</code> if the sequence of points that characterize
 	 *         this {@link Polyline} and the {@link Polyline} indirectly given
-	 *         via the array of points are regarded to form the same segments.
+	 *         via the array of points are regarded to form the same segments
 	 */
 	public boolean equals(Point... points) {
 		if (points.length != this.points.length) {
@@ -132,9 +132,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 				|| Arrays.equals(this.points, Point.getReverseCopy(points));
 	}
 
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
-	 */
 	public Polyline getCopy() {
 		return new Polyline(getPoints());
 	}
@@ -163,9 +160,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return points[points.length - 1].getCopy();
 	}
 
-	/**
-	 * @see IGeometry#getTransformed(AffineTransform)
-	 */
 	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		return new Polyline(t.getTransformed(points));
@@ -199,9 +193,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return PointListUtils.toSegmentsArray(points, false);
 	}
 
-	/**
-	 * @see IGeometry#toPath()
-	 */
 	public Path toPath() {
 		Path path = new Path();
 		if (points.length > 0) {
@@ -238,20 +229,6 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 			stringBuffer.append("<no points>");
 		}
 		return stringBuffer.toString();
-	}
-
-	/**
-	 * Tests whether this {@link Polyline} and the given {@link Rectangle}
-	 * touch, i.e. they have at least one {@link Point} in common.
-	 * 
-	 * @param rect
-	 *            the {@link Rectangle} to test
-	 * @return <code>true</code> if this {@link Polyline} and the
-	 *         {@link Rectangle} touch, otherwise <code>false</code>
-	 * @see IGeometry#touches(IGeometry)
-	 */
-	public boolean touches(Rectangle rect) {
-		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 }
