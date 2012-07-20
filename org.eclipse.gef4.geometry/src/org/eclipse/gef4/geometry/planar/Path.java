@@ -142,6 +142,13 @@ public class Path extends AbstractGeometry implements IGeometry {
 									+ type + ", " + points + ")");
 				}
 				break;
+			case CLOSE:
+				if (points != null && points.length != 0) {
+					throw new IllegalArgumentException(
+							"A Segment of type CLOSE is not to be associated with any points: new Segment("
+									+ type + ", " + points + ")");
+				}
+				break;
 			default:
 				throw new IllegalArgumentException(
 						"You can only create Segments of types MOVE_TO, LINE_TO, QUAD_TO, or CUBIC_TO: new Segment("
