@@ -36,21 +36,118 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
-	 * Representation for different types of segments.
+	 * Representation for different types of {@link Segment}s.
 	 * 
+	 * @see #MOVE_TO
+	 * @see #LINE_TO
+	 * @see #QUAD_TO
+	 * @see #CUBIC_TO
 	 */
 	public class Segment {
 
+		/**
+		 * A {@link #MOVE_TO} {@link Segment} represents a change of position
+		 * while piecewise building a {@link Path}, without inserting a new
+		 * curve.
+		 * 
+		 * @see Path#moveTo(double, double)
+		 */
 		public static final int MOVE_TO = 0;
+
+		/**
+		 * A {@link #LINE_TO} {@link Segment} represents a {@link Line} from the
+		 * previous position of a {@link Path} to the {@link Point} at index 0
+		 * associated with the {@link Segment}.
+		 * 
+		 * @see Path#lineTo(double, double)
+		 */
 		public static final int LINE_TO = 1;
+
+		/**
+		 * A {@link #QUAD_TO} {@link Segment} represents a
+		 * {@link QuadraticCurve} from the previous position of a {@link Path}
+		 * to the {@link Point} at index 1 associated with the {@link Segment}.
+		 * The {@link Point} at index 0 is used as the handle {@link Point} of
+		 * the {@link QuadraticCurve}.
+		 * 
+		 * @see Path#quadTo(double, double, double, double)
+		 */
 		public static final int QUAD_TO = 2;
+
+		/**
+		 * A {@link #CUBIC_TO} {@link Segment} represents a {@link CubicCurve}
+		 * from the previous position of a {@link Path} to the {@link Point} at
+		 * index 2 associated with the {@link Segment}. The {@link Point}s at
+		 * indices 0 and 1 are used as the handle {@link Point}s of the
+		 * {@link CubicCurve}.
+		 * 
+		 * @see Path#cubicTo(double, double, double, double, double, double)
+		 */
 		public static final int CUBIC_TO = 3;
+
+		/**
+		 * A {@link #CLOSE} {@link Segment} represents the link from the current
+		 * position of a {@link Path} to the position of the last
+		 * {@link #MOVE_TO} {@link Segment}.
+		 * 
+		 * @see Path#close()
+		 */
 		public static final int CLOSE = 4;
 
 		private int type;
 		private Point[] points;
 
+		/**
+		 * Constructs a new {@link Segment} of the given type. The passed-in
+		 * {@link Point}s are associated with this {@link Segment}.
+		 * 
+		 * @param type
+		 *            The type of the new {@link Segment}. It is one of
+		 *            <ul>
+		 *            <li>{@link #MOVE_TO}</li>
+		 *            <li>{@link #LINE_TO}</li>
+		 *            <li>{@link #QUAD_TO}</li>
+		 *            <li>{@link #CUBIC_TO}</li>
+		 *            </ul>
+		 * @param points
+		 *            the {@link Point}s to associate with this {@link Segment}
+		 */
 		public Segment(int type, Point... points) {
+			switch (type) {
+			case MOVE_TO:
+				if (points == null || points.length != 1) {
+					throw new IllegalArgumentException(
+							"A Segment of type MOVE_TO has to be associate with exactly 1 point: new Segment("
+									+ type + ", " + points + ")");
+				}
+				break;
+			case LINE_TO:
+				if (points == null || points.length != 1) {
+					throw new IllegalArgumentException(
+							"A Segment of type LINE_TO has to be associate with exactly 1 point: new Segment("
+									+ type + ", " + points + ")");
+				}
+				break;
+			case QUAD_TO:
+				if (points == null || points.length != 2) {
+					throw new IllegalArgumentException(
+							"A Segment of type QUAD_TO has to be associate with exactly 2 points: new Segment("
+									+ type + ", " + points + ")");
+				}
+				break;
+			case CUBIC_TO:
+				if (points == null || points.length != 3) {
+					throw new IllegalArgumentException(
+							"A Segment of type CUBIC_TO has to be associate with exactly 3 point: new Segment("
+									+ type + ", " + points + ")");
+				}
+				break;
+			default:
+				throw new IllegalArgumentException(
+						"You can only create Segments of types MOVE_TO, LINE_TO, QUAD_TO, or CUBIC_TO: new Segment("
+								+ type + ", " + points + ")");
+			}
+
 			this.type = type;
 			this.points = Point.getCopy(points);
 		}
@@ -66,14 +163,36 @@ public class Path extends AbstractGeometry implements IGeometry {
 			return false;
 		}
 
+		/**
+		 * Returns a copy of this {@link Segment}. The associated {@link Point}s
+		 * are copied, too.
+		 * 
+		 * @return a copy of this {@link Segment}
+		 */
 		public Segment getCopy() {
 			return new Segment(type, getPoints());
 		}
 
+		/**
+		 * Returns a copy of the {@link Point}s associated with this
+		 * {@link Segment}.
+		 * 
+		 * @return a copy of the {@link Point}s associated with this
+		 *         {@link Segment}.
+		 */
 		public Point[] getPoints() {
 			return Point.getCopy(points);
 		}
 
+		/**
+		 * Returns the type of this {@link Segment}.
+		 * 
+		 * @return the type of this {@link Segment}
+		 * @see #MOVE_TO
+		 * @see #LINE_TO
+		 * @see #QUAD_TO
+		 * @see #CUBIC_TO
+		 */
 		public int getType() {
 			return type;
 		}
@@ -82,22 +201,23 @@ public class Path extends AbstractGeometry implements IGeometry {
 		public int hashCode() {
 			return type;
 		}
+
 	}
 
 	/**
-	 * Winding rule for determining the interior of the path. Indicates that a
-	 * point is regarded to lie inside the path, if any ray starting in that
-	 * point and pointing to infinity crosses the segments of the path an odd
-	 * number of times.
+	 * Winding rule for determining the interior of the {@link Path}. Indicates
+	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
+	 * ray starting in that {@link Point} and pointing to infinity crosses the
+	 * {@link Segment}s of the {@link Path} an odd number of times.
 	 */
 	public static final int WIND_EVEN_ODD = 0;
 
 	/**
-	 * Winding rule for determining the interior of the path. Indicates that a
-	 * point is regarded to lie inside the path, if any ray starting from that
-	 * point and pointing to infinity is crossed by path segments a different
-	 * number of times in the counter-clockwise direction than in the clockwise
-	 * direction.
+	 * Winding rule for determining the interior of the {@link Path}. Indicates
+	 * that a {@link Point} is regarded to lie inside the {@link Path}, if any
+	 * ray starting from that {@link Point} and pointing to infinity is crossed
+	 * by {@link Path} {@link Segment}s a different number of times in the
+	 * counter-clockwise direction than in the clockwise direction.
 	 */
 	public static final int WIND_NON_ZERO = 1;
 
