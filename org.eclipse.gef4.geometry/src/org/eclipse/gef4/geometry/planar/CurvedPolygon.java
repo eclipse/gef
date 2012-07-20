@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
@@ -20,7 +21,9 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author mwienand
  * 
  */
-public class CurvedPolygon extends AbstractGeometry implements IShape {
+public class CurvedPolygon extends AbstractGeometry implements IShape,
+		ITranslatable<CurvedPolygon>, IRotatable<CurvedPolygon>,
+		IScalable<CurvedPolygon> {
 
 	private static final long serialVersionUID = 1L;
 	private BezierCurve[] edges;
@@ -177,6 +180,21 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 		return bounds;
 	}
 
+	/**
+	 * Returns an approximated center {@link Point} of this
+	 * {@link CurvedPolygon}.
+	 * 
+	 * @return an approximated center {@link Point} of this
+	 *         {@link CurvedPolygon}
+	 */
+	public Point getCenter() {
+		Point[] edgeCenters = new Point[edges.length];
+		for (int i = 0; i < edges.length; i++) {
+			edgeCenters[i] = Point.getCentroid(edges[i].getPoints());
+		}
+		return Point.getCentroid(edgeCenters);
+	}
+
 	public CurvedPolygon getCopy() {
 		return new CurvedPolygon(edges);
 	}
@@ -187,6 +205,66 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 
 	public BezierCurve[] getOutlineSegments() {
 		return CurveUtils.getCopy(edges);
+	}
+
+	public CurvedPolygon getRotatedCCW(Angle angle) {
+		Point c = getCenter();
+		return getRotatedCCW(angle, c.x, c.y);
+	}
+
+	public CurvedPolygon getRotatedCCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCCW(angle, cx, cy);
+	}
+
+	public CurvedPolygon getRotatedCCW(Angle angle, Point center) {
+		return getRotatedCCW(angle, center.x, center.y);
+	}
+
+	public CurvedPolygon getRotatedCW(Angle angle) {
+		Point c = getCenter();
+		return getRotatedCW(angle, c.x, c.y);
+	}
+
+	public CurvedPolygon getRotatedCW(Angle angle, double cx, double cy) {
+		return getCopy().rotateCW(angle, cx, cy);
+	}
+
+	public CurvedPolygon getRotatedCW(Angle angle, Point center) {
+		return getRotatedCW(angle, center.x, center.y);
+	}
+
+	public CurvedPolygon getScaled(double factor) {
+		Point c = getCenter();
+		return getScaled(factor, factor, c.x, c.y);
+	}
+
+	public CurvedPolygon getScaled(double fx, double fy) {
+		Point c = getCenter();
+		return getScaled(fx, fy, c.x, c.y);
+	}
+
+	public CurvedPolygon getScaled(double factor, double cx, double cy) {
+		return getScaled(factor, factor, cx, cy);
+	}
+
+	public CurvedPolygon getScaled(double fx, double fy, double cx, double cy) {
+		return getCopy().scale(fx, fy, cx, cy);
+	}
+
+	public CurvedPolygon getScaled(double fx, double fy, Point center) {
+		return getScaled(fx, fy, center.x, center.y);
+	}
+
+	public CurvedPolygon getScaled(double factor, Point center) {
+		return getScaled(factor, factor, center.x, center.y);
+	}
+
+	public CurvedPolygon getTranslated(double dx, double dy) {
+		return getCopy().translate(dx, dy);
+	}
+
+	public CurvedPolygon getTranslated(Point d) {
+		return getTranslated(d.x, d.y);
 	}
 
 	private boolean isAboveP(BezierCurve seg, Point p) {
@@ -235,6 +313,131 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 		return true;
 	}
 
+	/**
+	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
+	 * {@link Angle} around the center {@link Point} of this
+	 * {@link CurvedPolygon}.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCCW(Angle angle) {
+		Point c = getCenter();
+		return rotateCCW(angle, c.x, c.y);
+	}
+
+	/**
+	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
+	 * {@link Angle} around the {@link Point} specified by the given x and y
+	 * coordinates.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @param cx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCCW(Angle angle, double cx, double cy) {
+		for (BezierCurve c : edges) {
+			c.rotateCCW(angle, cx, cy);
+		}
+		return this;
+	}
+
+	/**
+	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
+	 * {@link Angle} around the given {@link Point}.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @param center
+	 *            the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCCW(Angle angle, Point center) {
+		return rotateCCW(angle, center.x, center.y);
+	}
+
+	/**
+	 * Rotates this {@link CurvedPolygon} counter-clockwise (CCW) by the given
+	 * {@link Angle} around the center {@link Point} of this
+	 * {@link CurvedPolygon}.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCW(Angle angle) {
+		Point c = getCenter();
+		return rotateCW(angle, c.x, c.y);
+	}
+
+	/**
+	 * Rotates this {@link CurvedPolygon} clockwise (CW) by the given
+	 * {@link Angle} around the {@link Point} specified by the given x and y
+	 * coordinates.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @param cx
+	 *            the x coordinate of the {@link Point} to rotate around
+	 * @param cy
+	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCW(Angle angle, double cx, double cy) {
+		for (BezierCurve c : edges) {
+			c.rotateCW(angle, cx, cy);
+		}
+		return this;
+	}
+
+	/**
+	 * Rotates this {@link CurvedPolygon} clockwise (CW) by the given
+	 * {@link Angle} around the given {@link Point}.
+	 * 
+	 * @param angle
+	 *            the rotation {@link Angle}
+	 * @param center
+	 *            the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
+	 */
+	public CurvedPolygon rotateCW(Angle angle, Point center) {
+		return rotateCW(angle, center.x, center.y);
+	}
+
+	public CurvedPolygon scale(double factor) {
+		Point c = getCenter();
+		return scale(factor, factor, c.x, c.y);
+	}
+
+	public CurvedPolygon scale(double fx, double fy) {
+		Point c = getCenter();
+		return scale(fx, fx, c.x, c.y);
+	}
+
+	public CurvedPolygon scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
+	}
+
+	public CurvedPolygon scale(double fx, double fy, double cx, double cy) {
+		for (BezierCurve c : edges) {
+			c.scale(fx, fy, cx, cy);
+		}
+		return this;
+	}
+
+	public CurvedPolygon scale(double fx, double fy, Point center) {
+		return scale(fx, fx, center.x, center.y);
+	}
+
+	public CurvedPolygon scale(double factor, Point center) {
+		return scale(factor, factor, center.x, center.y);
+	}
+
 	public Path toPath() {
 		return CurveUtils.toPath(edges);
 	}
@@ -250,6 +453,17 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 			}
 		}
 		return s + ")";
+	}
+
+	public CurvedPolygon translate(double dx, double dy) {
+		for (BezierCurve c : edges) {
+			c.translate(dx, dy);
+		}
+		return this;
+	}
+
+	public CurvedPolygon translate(Point d) {
+		return translate(d.x, d.y);
 	}
 
 }
