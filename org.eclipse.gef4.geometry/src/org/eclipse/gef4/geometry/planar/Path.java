@@ -83,7 +83,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The data to initialize the path with
 	 */
 	public Path(PathData pathData) {
-		delegate.append(SWT2AWT.toPathIterator(pathData, WIND_NON_ZERO), false);
+		delegate.append(SWT2AWT.toAWTPathIterator(pathData, WIND_NON_ZERO), false);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		delegate = new Path2D.Double(
 				windingRule == WIND_EVEN_ODD ? Path2D.WIND_EVEN_ODD
 						: Path2D.WIND_NON_ZERO);
-		delegate.append(SWT2AWT.toPathIterator(pathData, windingRule), false);
+		delegate.append(SWT2AWT.toAWTPathIterator(pathData, windingRule), false);
 	}
 
 	/**
