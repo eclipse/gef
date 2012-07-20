@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -229,6 +230,72 @@ public class Path extends AbstractGeometry implements IGeometry {
 	public static final int WIND_NON_ZERO = 1;
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Adds the given areas.
+	 * 
+	 * @param pa
+	 *            the first area to add
+	 * @param pb
+	 *            the second area to add
+	 * @return the sum of the areas
+	 */
+	public static Path add(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.add(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Computes the area covered by the first or the second but not both given
+	 * areas.
+	 * 
+	 * @param pa
+	 *            the first area to compute the xor for
+	 * @param pb
+	 *            the second area to compute the xor for
+	 * @return the exclusive-or of the areas
+	 */
+	public static Path exclusiveOr(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.exclusiveOr(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Intersects the given areas.
+	 * 
+	 * @param pa
+	 *            the first area to intersect
+	 * @param pb
+	 *            the second area to intersect
+	 * @return the intersection of the areas, i.e. the area covered by both
+	 *         areas
+	 */
+	public static Path intersect(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.intersect(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Subtracts the second given area from the first given area.
+	 * 
+	 * @param pa
+	 *            the area to subtract from
+	 * @param pb
+	 *            the area to subtract
+	 * @return the area covered by the first but not the second given area
+	 */
+	public static Path subtract(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.subtract(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
 
 	private int windingRule = WIND_NON_ZERO;
 

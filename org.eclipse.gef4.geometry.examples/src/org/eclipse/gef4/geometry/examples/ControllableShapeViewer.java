@@ -114,7 +114,9 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 					shape.shapeColor));
 
 			shape.onDraw(e.gc);
+		}
 
+		for (ControllableShape shape : shapes) {
 			if (shape.isActive()) {
 				e.gc.setForeground(canvas.getDisplay().getSystemColor(
 						shape.controlColor));
