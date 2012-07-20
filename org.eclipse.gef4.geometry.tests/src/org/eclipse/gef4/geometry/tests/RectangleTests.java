@@ -650,13 +650,6 @@ public class RectangleTests {
 	}
 
 	@Test
-	public void test_toSWTRectangle() {
-		org.eclipse.swt.graphics.Rectangle r = new org.eclipse.swt.graphics.Rectangle(
-				1, 2, 3, 4);
-		assertEquals(r, new Rectangle(r).toSWTRectangle());
-	}
-
-	@Test
 	public void test_union() {
 		// check union behaves like constructor
 		Point p1 = new Point(0, 0);

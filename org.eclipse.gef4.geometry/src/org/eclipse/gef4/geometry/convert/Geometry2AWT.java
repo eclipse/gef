@@ -14,6 +14,8 @@
 package org.eclipse.gef4.geometry.convert;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -21,9 +23,12 @@ import java.util.Arrays;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
+import org.eclipse.swt.graphics.PathData;
 
 /**
  * Utility class to support conversions between GEF4's geometry API and AWT
@@ -62,6 +67,44 @@ public class Geometry2AWT {
 	 */
 	public static Line2D.Double toAWTLine(Line l) {
 		return new Line2D.Double(l.getX1(), l.getY1(), l.getX2(), l.getY2());
+	}
+
+	/**
+	 * Converts an SWT {@link PathData} into an equivalent AWT
+	 * {@link PathIterator}.
+	 * 
+	 * @param p
+	 *            the {@link Path} to convert
+	 * @return a new {@link PathIterator} representing the same path
+	 */
+	public static Path2D.Double toAWTPath(Path p) {
+		Path2D.Double path = new Path2D.Double(
+				p.getWindingRule() == Path.WIND_EVEN_ODD ? Path2D.WIND_EVEN_ODD
+						: Path2D.WIND_NON_ZERO);
+		for (Segment s : p.getSegments()) {
+			Point[] points = s.getPoints();
+			switch (s.getType()) {
+			case Segment.MOVE_TO:
+				path.moveTo(points[0].x, points[0].y);
+				break;
+			case Segment.LINE_TO:
+				path.lineTo(points[0].x, points[0].y);
+				break;
+			case Segment.QUAD_TO:
+				path.quadTo(points[0].x, points[0].y, points[1].x, points[1].y);
+				break;
+			case Segment.CUBIC_TO:
+				path.curveTo(points[0].x, points[0].y, points[1].x,
+						points[1].y, points[2].x, points[2].y);
+				break;
+			case Segment.CLOSE:
+				path.closePath();
+				break;
+			default:
+				break;
+			}
+		}
+		return path;
 	}
 
 	/**

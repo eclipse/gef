@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -60,13 +61,13 @@ public class EllipseRectangleContainment extends
 			@Override
 			public void drawShape(GC gc) {
 				Rectangle rect = createGeometry();
-				gc.drawRectangle(rect.toSWTRectangle());
+				gc.drawRectangle(Geometry2SWT.toSWTRectangle(rect));
 			}
 
 			@Override
 			public void fillShape(GC gc) {
 				Rectangle rect = createGeometry();
-				gc.fillRectangle(rect.toSWTRectangle());
+				gc.fillRectangle(Geometry2SWT.toSWTRectangle(rect));
 			}
 		};
 	}

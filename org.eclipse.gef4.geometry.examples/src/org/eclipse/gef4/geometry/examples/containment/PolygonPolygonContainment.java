@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
@@ -59,13 +60,13 @@ public class PolygonPolygonContainment extends
 			@Override
 			public void drawShape(GC gc) {
 				Polygon polygon = createGeometry();
-				gc.drawPolygon(polygon.toSWTPointArray());
+				gc.drawPolygon(Geometry2SWT.toSWTPointArray(polygon));
 			}
 
 			@Override
 			public void fillShape(GC gc) {
 				Polygon polygon = createGeometry();
-				gc.fillPolygon(polygon.toSWTPointArray());
+				gc.fillPolygon(Geometry2SWT.toSWTPointArray(polygon));
 			}
 		};
 	}

@@ -249,7 +249,7 @@ class CurveUtils {
 				p.quadTo(((QuadraticCurve) c).getCtrlX(),
 						((QuadraticCurve) c).getCtrlY(), c.getX2(), c.getY2());
 			} else if (c instanceof CubicCurve) {
-				p.curveTo(((CubicCurve) c).getCtrlX1(),
+				p.cubicTo(((CubicCurve) c).getCtrlX1(),
 						((CubicCurve) c).getCtrlY1(),
 						((CubicCurve) c).getCtrlX2(),
 						((CubicCurve) c).getCtrlY2(), ((CubicCurve) c).getX2(),

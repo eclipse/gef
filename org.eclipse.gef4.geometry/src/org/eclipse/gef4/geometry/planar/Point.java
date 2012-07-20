@@ -667,16 +667,6 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Creates a new SWT {@link org.eclipse.swt.graphics.Point Point} from this
-	 * Point.
-	 * 
-	 * @return A new SWT Point
-	 */
-	public org.eclipse.swt.graphics.Point toSWTPoint() {
-		return new org.eclipse.swt.graphics.Point((int) x, (int) y);
-	}
-
-	/**
 	 * Shifts this Point by the values of the Dimension along each axis, and
 	 * returns this for convenience.
 	 * 

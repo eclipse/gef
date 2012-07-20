@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -69,7 +70,7 @@ public class RingOutlineExample extends AbstractExample {
 				gc.setLineWidth(1);
 
 				for (Polyline outline : ring.getOutline()) {
-					gc.drawPolyline(outline.toSWTPointArray());
+					gc.drawPolyline(Geometry2SWT.toSWTPointArray(outline));
 					gc.setLineWidth(gc.getLineWidth() + 1);
 				}
 

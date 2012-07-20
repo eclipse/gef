@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
@@ -68,7 +69,8 @@ public class CubicCurveDeCasteljauExample extends AbstractExample {
 
 				// Draw the CubicCurve as an SWT Path.
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), curve.toPath().toSWTPathData()));
+						.getCurrent(), Geometry2SWT.toSWTPathData(curve
+						.toPath())));
 
 				/*
 				 * Retrieve control points to compute the linear interpolations

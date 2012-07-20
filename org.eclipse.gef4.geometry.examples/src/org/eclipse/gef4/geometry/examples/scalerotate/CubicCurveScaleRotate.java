@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.scalerotate;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.swt.graphics.GC;
@@ -54,9 +55,9 @@ public class CubicCurveScaleRotate extends AbstractScaleRotateExample {
 			@Override
 			public void draw(GC gc) {
 				CubicCurve me = createGeometry();
-				gc.fillRectangle(me.getBounds().toSWTRectangle());
+				gc.fillRectangle(Geometry2SWT.toSWTRectangle(me.getBounds()));
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), me.toPath().toSWTPathData()));
+						.getCurrent(), Geometry2SWT.toSWTPathData(me.toPath())));
 			}
 		};
 	}

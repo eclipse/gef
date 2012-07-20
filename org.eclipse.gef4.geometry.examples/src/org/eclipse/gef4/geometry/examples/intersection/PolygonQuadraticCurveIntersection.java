@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.intersection;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -65,7 +66,7 @@ public class PolygonQuadraticCurveIntersection extends
 			public void drawShape(GC gc) {
 				QuadraticCurve c = createGeometry();
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), c.toPath().toSWTPathData()));
+						.getCurrent(), Geometry2SWT.toSWTPathData(c.toPath())));
 			}
 		};
 	}

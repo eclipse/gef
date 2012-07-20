@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -60,13 +61,13 @@ public class EllipsePolygonContainment extends
 			@Override
 			public void drawShape(GC gc) {
 				Polygon polygon = createGeometry();
-				gc.drawPolygon(polygon.toSWTPointArray());
+				gc.drawPolygon(Geometry2SWT.toSWTPointArray(polygon));
 			}
 
 			@Override
 			public void fillShape(GC gc) {
 				Polygon polygon = createGeometry();
-				gc.fillPolygon(polygon.toSWTPointArray());
+				gc.fillPolygon(Geometry2SWT.toSWTPointArray(polygon));
 			}
 		};
 	}

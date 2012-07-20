@@ -397,14 +397,4 @@ public class LineTests {
 		assertEquals("Line: (0.0, 0.0) -> (5.0, 0.0)", l1.toString());
 	}
 
-	@Test
-	public void test_toSWTPointArray() {
-		Line l1 = new Line(0.9, 0.1, 1.1, 2.9);
-		int[] ints = l1.toSWTPointArray();
-		assertEquals(0, ints[0]);
-		assertEquals(0, ints[1]);
-		assertEquals(1, ints[2]);
-		assertEquals(2, ints[3]);
-	}
-
 }

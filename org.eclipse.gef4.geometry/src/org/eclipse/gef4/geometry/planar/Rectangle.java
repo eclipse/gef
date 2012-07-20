@@ -615,24 +615,6 @@ public final class Rectangle extends
 				width + ", " + height + ")";//$NON-NLS-2$//$NON-NLS-1$
 	}
 
-	/**
-	 * Converts this {@link Rectangle} into an
-	 * {@link org.eclipse.swt.graphics.Rectangle}. Note that as
-	 * {@link org.eclipse.swt.graphics.Rectangle} is integer-based, this implies
-	 * a loss of precision. The returned rectangle is the smallest
-	 * integer-precision representation that fully contains this
-	 * {@link Rectangle}.
-	 * 
-	 * @return An {@link org.eclipse.swt.graphics.Rectangle} representation of
-	 *         this {@link Rectangle}.
-	 */
-	public org.eclipse.swt.graphics.Rectangle toSWTRectangle() {
-		return new org.eclipse.swt.graphics.Rectangle((int) Math.floor(x),
-				(int) Math.floor(y),
-				(int) Math.ceil(width + x - Math.floor(x)),
-				(int) Math.ceil(height + y - Math.floor(y)));
-	}
-
 	@Override
 	public boolean touches(IGeometry g) {
 		if (g instanceof Line) {

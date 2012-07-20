@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.intersection;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
@@ -56,7 +57,7 @@ public class PolygonPolylineIntersection extends
 			@Override
 			public void drawShape(GC gc) {
 				Polyline polyline = createGeometry();
-				gc.drawPolyline(polyline.toSWTPointArray());
+				gc.drawPolyline(Geometry2SWT.toSWTPointArray(polyline));
 			}
 		};
 	}

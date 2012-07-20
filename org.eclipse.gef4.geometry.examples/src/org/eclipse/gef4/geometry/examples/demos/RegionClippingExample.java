@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -50,7 +51,7 @@ public class RegionClippingExample extends AbstractExample {
 			public void onDraw(GC gc) {
 				Region region = getShape();
 
-				gc.setClipping(region.toSWTRegion());
+				gc.setClipping(Geometry2SWT.toSWTRegion(region));
 
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_WIDGET_BACKGROUND));
@@ -66,7 +67,7 @@ public class RegionClippingExample extends AbstractExample {
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLUE));
 				for (Rectangle r : region.getShapes()) {
-					gc.fillRectangle(r.toSWTRectangle());
+					gc.fillRectangle(Geometry2SWT.toSWTRectangle(r));
 				}
 				gc.setAlpha(255);
 			}

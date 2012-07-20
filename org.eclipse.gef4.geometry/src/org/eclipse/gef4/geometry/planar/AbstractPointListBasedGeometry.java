@@ -301,39 +301,6 @@ abstract class AbstractPointListBasedGeometry<T extends AbstractPointListBasedGe
 		return scale(factor, factor, center);
 	}
 
-	/**
-	 * <p>
-	 * Returns an integer array, which represents the sequence of coordinates of
-	 * the {@link Point}s that make up this
-	 * {@link AbstractPointListBasedGeometry}. The x and y coordinate values are
-	 * transfered to integer values by either applying
-	 * {@link Math#floor(double)} or {@link Math#ceil(double)} to them,
-	 * dependent on their relative position to the centroid of this
-	 * {@link AbstractPointListBasedGeometry} (see {@link #getCentroid()}).
-	 * </p>
-	 * <p>
-	 * If the x coordinate of a {@link Point} is smaller than the x coordinate
-	 * of the centroid, then the x coordinate of that {@link Point} is rounded
-	 * down. Otherwise it is rounded up. Accordingly, if the y coordinate of a
-	 * {@link Point} is smaller than the y coordinate of the centroid, it is
-	 * rounded down. Otherwise, it is rounded up.
-	 * </p>
-	 * 
-	 * @return an integer array of the x and y coordinates of this
-	 *         {@link AbstractPointListBasedGeometry}
-	 */
-	public final int[] toSWTPointArray() {
-		Point centroid = getCentroid();
-		int[] SWTPointArray = new int[points.length * 2];
-		for (int i = 0; i < points.length; i++) {
-			SWTPointArray[2 * i] = (int) (points[i].x < centroid.x ? Math
-					.floor(points[i].x) : Math.ceil(points[i].x));
-			SWTPointArray[2 * i + 1] = (int) (points[i].y < centroid.y ? Math
-					.floor(points[i].y) : Math.ceil(points[i].y));
-		}
-		return SWTPointArray;
-	}
-
 	@SuppressWarnings("unchecked")
 	public T translate(double dx, double dy) {
 		Point.translate(points, dx, dy);

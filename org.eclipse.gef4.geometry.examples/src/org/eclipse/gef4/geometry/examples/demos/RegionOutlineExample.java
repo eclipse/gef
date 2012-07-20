@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -61,7 +62,7 @@ public class RegionOutlineExample extends AbstractExample {
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLUE));
 				for (Rectangle r : region.getShapes()) {
-					gc.fillRectangle(r.toSWTRectangle());
+					gc.fillRectangle(Geometry2SWT.toSWTRectangle(r));
 				}
 
 				gc.setAlpha(255);

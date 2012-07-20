@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.containment;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -57,7 +58,7 @@ public class EllipseLineContainment extends AbstractEllipseContainmentExample {
 			@Override
 			public void drawShape(GC gc) {
 				Line line = createGeometry();
-				gc.drawPolyline(line.toSWTPointArray());
+				gc.drawPolyline(Geometry2SWT.toSWTPointArray(line));
 			}
 
 			@Override

@@ -311,15 +311,6 @@ public class PointTests {
 	}
 
 	@Test
-	public void test_toSWT() {
-		Point p = new Point();
-		assertTrue(p.equals(new Point(p.toSWTPoint())));
-
-		p = new Point(1, 2);
-		assertTrue(p.equals(new Point(p.toSWTPoint())));
-	}
-
-	@Test
 	public void test_translate() {
 		Point p1 = new Point(3, 6);
 		Point px = new Point(4711, 567);

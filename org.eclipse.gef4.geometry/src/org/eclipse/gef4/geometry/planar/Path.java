@@ -13,14 +13,13 @@
 package org.eclipse.gef4.geometry.planar;
 
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.gef4.geometry.convert.AWT2Geometry;
-import org.eclipse.gef4.geometry.convert.AWT2SWT;
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
-import org.eclipse.gef4.geometry.convert.SWT2AWT;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.PathData;
 
 /**
  * Represents the geometric shape of a path, which may consist of independent
@@ -37,12 +36,61 @@ import org.eclipse.swt.graphics.PathData;
 public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
+	 * Representation for different types of segments.
+	 * 
+	 */
+	public class Segment {
+
+		public static final int MOVE_TO = 0;
+		public static final int LINE_TO = 1;
+		public static final int QUAD_TO = 2;
+		public static final int CUBIC_TO = 3;
+		public static final int CLOSE = 4;
+
+		private int type;
+		private Point[] points;
+
+		public Segment(int type, Point... points) {
+			this.type = type;
+			this.points = Point.getCopy(points);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Segment) {
+				Segment s = (Segment) obj;
+				if (s.type == type && Arrays.equals(s.points, points)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public Segment getCopy() {
+			return new Segment(type, getPoints());
+		}
+
+		public Point[] getPoints() {
+			return Point.getCopy(points);
+		}
+
+		public int getType() {
+			return type;
+		}
+
+		@Override
+		public int hashCode() {
+			return type;
+		}
+	}
+
+	/**
 	 * Winding rule for determining the interior of the path. Indicates that a
 	 * point is regarded to lie inside the path, if any ray starting in that
 	 * point and pointing to infinity crosses the segments of the path an odd
 	 * number of times.
 	 */
-	public static final int WIND_EVEN_ODD = SWT.FILL_EVEN_ODD;
+	public static final int WIND_EVEN_ODD = 0;
 
 	/**
 	 * Winding rule for determining the interior of the path. Indicates that a
@@ -51,11 +99,13 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * number of times in the counter-clockwise direction than in the clockwise
 	 * direction.
 	 */
-	public static final int WIND_NON_ZERO = SWT.FILL_WINDING;
+	public static final int WIND_NON_ZERO = 1;
 
 	private static final long serialVersionUID = 1L;
 
-	private Path2D.Double delegate = new Path2D.Double();
+	private int windingRule = WIND_NON_ZERO;
+
+	private List<Segment> segments = new ArrayList<Segment>();
 
 	/**
 	 * Creates a new empty path with a default winding rule of
@@ -72,37 +122,34 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            {@link #WIND_NON_ZERO}
 	 */
 	public Path(int windingRule) {
-		delegate = new Path2D.Double(
-				windingRule == WIND_EVEN_ODD ? Path2D.WIND_EVEN_ODD
-						: Path2D.WIND_NON_ZERO);
+		this.windingRule = windingRule;
 	}
 
 	/**
-	 * Creates a path from the given SWT {@link PathData} using the default
-	 * winding rule {@link #WIND_NON_ZERO}.
+	 * Creates a path from the given segments, using the given winding rule.
 	 * 
-	 * @param pathData
-	 *            The data to initialize the path with
-	 */
-	public Path(PathData pathData) {
-		delegate.append(SWT2AWT.toAWTPathIterator(pathData, WIND_NON_ZERO), false);
-	}
-
-	/**
-	 * Creates a path from the given SWT {@link PathData}, using the given
-	 * winding rule.
-	 * 
-	 * @param pathData
-	 *            The data to initialize the path with
 	 * @param windingRule
 	 *            the winding rule to use; one of {@link #WIND_EVEN_ODD} or
 	 *            {@link #WIND_NON_ZERO}
+	 * @param segments
+	 *            The segments to initialize the path with
 	 */
-	public Path(PathData pathData, int windingRule) {
-		delegate = new Path2D.Double(
-				windingRule == WIND_EVEN_ODD ? Path2D.WIND_EVEN_ODD
-						: Path2D.WIND_NON_ZERO);
-		delegate.append(SWT2AWT.toAWTPathIterator(pathData, windingRule), false);
+	public Path(int windingRule, Segment... segments) {
+		this(windingRule);
+		for (Segment s : segments) {
+			this.segments.add(s.getCopy());
+		}
+	}
+
+	/**
+	 * Creates a path from the given segments, using the default winding rule
+	 * {@link #WIND_NON_ZERO}.
+	 * 
+	 * @param segments
+	 *            The segments to initialize the path with
+	 */
+	public Path(Segment... segments) {
+		this(WIND_NON_ZERO, segments);
 	}
 
 	/**
@@ -110,14 +157,15 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * location of the last move to.
 	 */
 	public final void close() {
-		delegate.closePath();
+		segments.add(new Segment(Segment.CLOSE));
 	}
 
 	/**
 	 * @see IGeometry#contains(Point)
 	 */
 	public boolean contains(Point p) {
-		return delegate.contains(Geometry2AWT.toAWTPoint(p));
+		return Geometry2AWT.toAWTPath(this)
+				.contains(Geometry2AWT.toAWTPoint(p));
 	}
 
 	/**
@@ -132,7 +180,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *         within this {@link IGeometry}
 	 */
 	public boolean contains(Rectangle r) {
-		return delegate.contains(Geometry2AWT.toAWTRectangle(r));
+		return Geometry2AWT.toAWTPath(this).contains(
+				Geometry2AWT.toAWTRectangle(r));
 	}
 
 	/**
@@ -153,23 +202,39 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * @param y
 	 *            The y-coordinate of the desired target point
 	 */
-	public final void curveTo(double control1X, double control1Y,
+	public final void cubicTo(double control1X, double control1Y,
 			double control2X, double control2Y, double x, double y) {
-		delegate.curveTo(control1X, control1Y, control2X, control2Y, x, y);
+		segments.add(new Segment(Segment.CUBIC_TO, new Point(control1X,
+				control1Y), new Point(control2X, control2Y), new Point(x, y)));
 	}
 
 	/**
 	 * @see IGeometry#getBounds()
 	 */
 	public Rectangle getBounds() {
-		return AWT2Geometry.toRectangle(delegate.getBounds2D());
+		return AWT2Geometry.toRectangle(Geometry2AWT.toAWTPath(this)
+				.getBounds2D());
 	}
 
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
 	public Path getCopy() {
-		return new Path(toSWTPathData(), getWindingRule());
+		return new Path(getWindingRule(), getSegments());
+	}
+
+	/**
+	 * Returns the segments that make up this path.
+	 * 
+	 * @return an array of {@link Segment}s representing the segments of this
+	 *         path
+	 */
+	public Segment[] getSegments() {
+		Segment[] segments = new Segment[this.segments.size()];
+		for (int i = 0; i < segments.length; i++) {
+			segments[i] = this.segments.get(i).getCopy();
+		}
+		return segments;
 	}
 
 	/**
@@ -177,8 +242,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 */
 	@Override
 	public IGeometry getTransformed(AffineTransform t) {
-		return new Path(AWT2SWT.toSWTPathData(delegate
-				.getPathIterator(Geometry2AWT.toAWTAffineTransform(t))));
+		return AWT2Geometry.toPath(new Path2D.Double(Geometry2AWT
+				.toAWTPath(this), Geometry2AWT.toAWTAffineTransform(t)));
 	}
 
 	/**
@@ -188,8 +253,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *         {@link #WIND_NON_ZERO}
 	 */
 	public int getWindingRule() {
-		return delegate.getWindingRule() == Path2D.WIND_EVEN_ODD ? WIND_EVEN_ODD
-				: WIND_NON_ZERO;
+		return windingRule;
 	}
 
 	/**
@@ -202,7 +266,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The y-coordinate of the desired target point
 	 */
 	public final void lineTo(double x, double y) {
-		delegate.lineTo(x, y);
+		segments.add(new Segment(Segment.LINE_TO, new Point(x, y)));
 	}
 
 	/**
@@ -214,7 +278,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The y-coordinate of the desired target point
 	 */
 	public final void moveTo(double x, double y) {
-		delegate.moveTo(x, y);
+		segments.add(new Segment(Segment.MOVE_TO, new Point(x, y)));
 	}
 
 	/**
@@ -233,14 +297,15 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 */
 	public final void quadTo(double controlX, double controlY, double x,
 			double y) {
-		delegate.quadTo(controlX, controlY, x, y);
+		segments.add(new Segment(Segment.QUAD_TO,
+				new Point(controlX, controlY), new Point(x, y)));
 	}
 
 	/**
 	 * Resets the path to be empty.
 	 */
 	public final void reset() {
-		delegate.reset();
+		segments.clear();
 	}
 
 	/**
@@ -248,15 +313,6 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 */
 	public Path toPath() {
 		return getCopy();
-	}
-
-	/**
-	 * Converts this path into an SWT {@link PathData} representation.
-	 * 
-	 * @return The {@link PathData} representing this path.
-	 */
-	public PathData toSWTPathData() {
-		return AWT2SWT.toSWTPathData(delegate.getPathIterator(null));
 	}
 
 	/**
@@ -271,7 +327,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * @see IGeometry#touches(IGeometry)
 	 */
 	public boolean touches(Rectangle r) {
-		return delegate.intersects(Geometry2AWT.toAWTRectangle(r));
+		return Geometry2AWT.toAWTPath(this).intersects(
+				Geometry2AWT.toAWTRectangle(r));
 	}
 
 }

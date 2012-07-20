@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -57,7 +58,8 @@ public class ConvexHullExample extends AbstractExample {
 
 				// Display the convex hull as an SWT Path.
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
-						.getCurrent(), convexHull.toPath().toSWTPathData()));
+						.getCurrent(), Geometry2SWT.toSWTPathData(convexHull
+						.toPath())));
 			}
 		} };
 	}

@@ -14,12 +14,15 @@
 package org.eclipse.gef4.geometry.convert;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
@@ -54,7 +57,7 @@ public class AWT2Geometry {
 	 * Converts an AWT {@link Line2D} into a GEF4 {@link Line}.
 	 * 
 	 * @param l
-	 *            the {@link Line2D} to transform
+	 *            the {@link Line2D} to convert
 	 * @return a new {@link Line}, which is constructed by using the start (
 	 *         {@link Line2D#getP1()}) and end ({@link Line2D#getP2()}) points
 	 *         of the passed-in {@link Line2D}
@@ -62,6 +65,45 @@ public class AWT2Geometry {
 	public static final Line toLine(Line2D l) {
 		return new Line(AWT2Geometry.toPoint(l.getP1()), AWT2Geometry.toPoint(l
 				.getP2()));
+	}
+
+	/**
+	 * Converts an AWT {@link Path2D} into a GEF4 {@link Path}.
+	 * 
+	 * @param p
+	 *            the {@link Path2D} to convert
+	 * @return a new {@link Path}, which is constructed with the same winding
+	 *         rule and segments as the passed in {@link Path2D}.
+	 */
+	public static Path toPath(Path2D p) {
+		PathIterator iterator = p.getPathIterator(null);
+		Path path = new Path(
+				p.getWindingRule() == Path2D.WIND_NON_ZERO ? Path.WIND_NON_ZERO
+						: Path.WIND_EVEN_ODD);
+		while (!iterator.isDone()) {
+			double[] segment = new double[6];
+			int type = iterator.currentSegment(segment);
+			switch (type) {
+			case PathIterator.SEG_MOVETO:
+				path.moveTo(segment[0], segment[1]);
+				break;
+			case PathIterator.SEG_LINETO:
+				path.lineTo(segment[0], segment[1]);
+				break;
+			case PathIterator.SEG_QUADTO:
+				path.quadTo(segment[0], segment[1], segment[2], segment[3]);
+				break;
+			case PathIterator.SEG_CUBICTO:
+				path.cubicTo(segment[0], segment[1], segment[2], segment[3],
+						segment[4], segment[5]);
+				break;
+			case PathIterator.SEG_CLOSE:
+				path.close();
+				break;
+			}
+			iterator.next();
+		}
+		return path;
 	}
 
 	/**

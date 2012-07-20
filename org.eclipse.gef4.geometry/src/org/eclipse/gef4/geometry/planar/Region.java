@@ -347,30 +347,6 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 		return new Ring(polys);
 	}
 
-	/**
-	 * <p>
-	 * Constructs a new {@link org.eclipse.swt.graphics.Region} that covers the
-	 * same area as this {@link Region}. This is to ease the use of a
-	 * {@link Region} for clipping:
-	 * </p>
-	 * 
-	 * <p>
-	 * <code>gc.setClipping(region.toSWTRegion());</code>
-	 * </p>
-	 * 
-	 * @return a new {@link org.eclipse.swt.graphics.Region} that covers the
-	 *         same area as this {@link Region}
-	 */
-	public org.eclipse.swt.graphics.Region toSWTRegion() {
-		org.eclipse.swt.graphics.Region swtRegion = new org.eclipse.swt.graphics.Region();
-
-		for (Rectangle r : rects) {
-			swtRegion.add(r.toSWTRectangle());
-		}
-
-		return swtRegion;
-	}
-
 	public Region translate(double dx, double dy) {
 		for (Rectangle r : rects) {
 			r.translate(dx, dy);

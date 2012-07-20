@@ -648,14 +648,4 @@ public class PolygonTests {
 				RHOMB.toString());
 	}
 
-	@Test
-	public void test_toSWTPointArray() {
-		double[] coords = RHOMB.getCoordinates();
-		int[] ints = RHOMB.toSWTPointArray();
-		assertEquals(coords.length, ints.length);
-		for (int i = 0; i < coords.length; i++) {
-			assertEquals((int) coords[i], ints[i]);
-		}
-	}
-
 }

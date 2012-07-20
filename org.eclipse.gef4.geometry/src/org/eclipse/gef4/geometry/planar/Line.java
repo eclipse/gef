@@ -453,18 +453,6 @@ public class Line extends BezierCurve {
 		return "Line: (" + getX1() + ", " + getY1() + ") -> (" + getX2() + ", " + getY2() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
-	/**
-	 * Returns an integer array of dimension 4, whose values represent the
-	 * integer-based coordinates of this {@link Line}'s start and end point.
-	 * 
-	 * @return an array containing integer values, which are obtained by casting
-	 *         x1, y1, x2, y2
-	 */
-	public int[] toSWTPointArray() {
-		return PointListUtils.toIntegerArray(PointListUtils
-				.toCoordinatesArray(getPoints()));
-	}
-
 	@Override
 	public boolean touches(IGeometry g) {
 		if (g instanceof Line) {

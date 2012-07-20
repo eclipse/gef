@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -67,7 +68,7 @@ public class TriangulationExample extends AbstractExample {
 					triangulation = new Polygon[] { p };
 				}
 				for (Polygon triangle : triangulation) {
-					gc.drawPolygon(triangle.toSWTPointArray());
+					gc.drawPolygon(Geometry2SWT.toSWTPointArray(triangle));
 				}
 
 				int lineWidth = gc.getLineWidth();
@@ -75,7 +76,7 @@ public class TriangulationExample extends AbstractExample {
 				gc.setForeground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLACK));
 
-				gc.drawPolygon(p.toSWTPointArray());
+				gc.drawPolygon(Geometry2SWT.toSWTPointArray(p));
 
 				gc.setLineWidth(lineWidth);
 			}

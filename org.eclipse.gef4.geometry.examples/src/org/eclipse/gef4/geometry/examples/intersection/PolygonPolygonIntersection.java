@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.intersection;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
@@ -55,7 +56,7 @@ public class PolygonPolygonIntersection extends
 			@Override
 			public void drawShape(GC gc) {
 				Polygon polygon = createGeometry();
-				gc.drawPolygon(polygon.toSWTPointArray());
+				gc.drawPolygon(Geometry2SWT.toSWTPointArray(polygon));
 			}
 		};
 	}

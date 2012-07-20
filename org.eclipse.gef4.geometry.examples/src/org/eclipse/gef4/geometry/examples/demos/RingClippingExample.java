@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -56,7 +57,7 @@ public class RingClippingExample extends AbstractExample {
 			public void onDraw(GC gc) {
 				Ring ring = getShape();
 
-				gc.setClipping(ring.toSWTRegion());
+				gc.setClipping(Geometry2SWT.toSWTRegion(ring));
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_WIDGET_BACKGROUND));
 				for (int y = 0; y < 800; y += 20) {
@@ -70,7 +71,7 @@ public class RingClippingExample extends AbstractExample {
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLUE));
 				for (Polyline p : ring.getOutline()) {
-					gc.fillPolygon(p.toSWTPointArray());
+					gc.fillPolygon(Geometry2SWT.toSWTPointArray(p));
 				}
 
 				gc.setAlpha(255);

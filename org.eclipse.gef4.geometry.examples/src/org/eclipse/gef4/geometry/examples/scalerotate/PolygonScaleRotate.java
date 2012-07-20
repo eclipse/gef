@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.scalerotate;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.swt.graphics.GC;
@@ -58,8 +59,8 @@ public class PolygonScaleRotate extends AbstractScaleRotateExample {
 			@Override
 			public void draw(GC gc) {
 				Polygon me = createGeometry();
-				gc.drawPolygon(me.toSWTPointArray());
-				gc.fillPolygon(me.toSWTPointArray());
+				gc.drawPolygon(Geometry2SWT.toSWTPointArray(me));
+				gc.fillPolygon(Geometry2SWT.toSWTPointArray(me));
 			}
 		};
 	}

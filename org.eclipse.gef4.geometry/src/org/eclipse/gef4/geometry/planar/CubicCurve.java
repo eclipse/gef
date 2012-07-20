@@ -294,7 +294,7 @@ public class CubicCurve extends BezierCurve {
 	public Path toPath() {
 		Path p = new Path();
 		p.moveTo(getX1(), getY1());
-		p.curveTo(getCtrlX1(), getCtrlY1(), getCtrlX2(), getCtrlY2(), getX2(),
+		p.cubicTo(getCtrlX1(), getCtrlY1(), getCtrlX2(), getCtrlY2(), getX2(),
 				getY2());
 		return p;
 	}
