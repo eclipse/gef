@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-
 package org.eclipse.gef4.geometry.tests;
 
 import static org.junit.Assert.assertEquals;
@@ -32,6 +32,7 @@ import org.junit.Test;
  * @author sshaw
  * @author ahunter
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class RectangleTests {
@@ -553,6 +554,23 @@ public class RectangleTests {
 	}
 
 	@Test
+	public void test_setSize() {
+		Rectangle r = new Rectangle();
+
+		r.setSize(new Dimension(10, 20));
+		assertEquals(new Point(), r.getTopLeft());
+		assertEquals(new Point(10, 20), r.getBottomRight());
+
+		r.setSize(5, -10);
+		assertEquals(new Point(), r.getTopLeft());
+		assertEquals(new Point(5, 0), r.getBottomRight());
+
+		r.setSize(-5, 10);
+		assertEquals(new Point(), r.getTopLeft());
+		assertEquals(new Point(0, 10), r.getBottomRight());
+	}
+
+	@Test
 	public void test_setters() {
 		Rectangle r = new Rectangle();
 
@@ -676,23 +694,6 @@ public class RectangleTests {
 				assertEquals(ce, rect.getCenter());
 			}
 		});
-	}
-
-	@Test
-	public void test_setSize() {
-		Rectangle r = new Rectangle();
-
-		r.setSize(new Dimension(10, 20));
-		assertEquals(new Point(), r.getTopLeft());
-		assertEquals(new Point(10, 20), r.getBottomRight());
-
-		r.setSize(5, -10);
-		assertEquals(new Point(), r.getTopLeft());
-		assertEquals(new Point(5, 0), r.getBottomRight());
-
-		r.setSize(-5, 10);
-		assertEquals(new Point(), r.getTopLeft());
-		assertEquals(new Point(0, 10), r.getBottomRight());
 	}
 
 }

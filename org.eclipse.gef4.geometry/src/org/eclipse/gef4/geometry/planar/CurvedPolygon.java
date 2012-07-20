@@ -1,9 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * A {@link CurvedPolygon} is an {@link IShape} with {@link BezierCurve} edges.
+ * 
+ * @author mwienand
+ * 
  */
 public class CurvedPolygon extends AbstractGeometry implements IShape {
 
@@ -49,22 +64,42 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 		}
 	}
 
-	public boolean contains(Point p) {
-		if (edges.length == 0)
-			return false;
-		else if (edges.length == 1)
-			return edges[0].contains(p);
-
-		// compute the winding number for the given Point
-		int w = 0;
-		for (BezierCurve seg : edges) {
-			if (seg.contains(p))
-				return true;
-			w += computeWindingNumber(seg, p);
+	private int computeLineWindingNumber(BezierCurve seg, Point p) {
+		// seg left of p?
+		double sx = seg.getX1();
+		double ex = seg.getX2();
+		if (sx < p.x && ex < p.x) {
+			return 0;
 		}
 
-		// the winding number is 0 if the Point is outside of this CurvedPolygon
-		return w != 0;
+		// seg below or above p?
+		double sy = seg.getY1();
+		double ey = seg.getY2();
+		if (sy < p.y && ey < p.y) {
+			return 0;
+		}
+		if (sy > p.y && ey > p.y) {
+			return 0;
+		}
+
+		// static x or y?
+		if (sx == ex) {
+			return ey >= sy ? 1 : -1;
+		}
+		if (sy == ey) {
+			return 0;
+		}
+
+		// compute intersection
+		double m = (ey - sy) / (ex - sx);
+		double xi = (p.y - sy + m * sx) / m;
+
+		// intersection left of p?
+		if (p.x > xi) {
+			return 0;
+		}
+
+		return ey >= sy ? 1 : -1;
 	}
 
 	/*
@@ -86,15 +121,18 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 
 		// if the BezierCurve is left of p, above, or below p, than we can
 		// unworried return 0
-		if (isLeftOfP(seg, p) || isAboveP(seg, p) || isBelowP(seg, p))
+		if (isLeftOfP(seg, p) || isAboveP(seg, p) || isBelowP(seg, p)) {
 			return 0;
+		}
 
 		// if the BezierCurve is right of p, we have to check for a crossing
 		if (isRightEqualP(seg, p)) {
-			if (p.y >= seg.getY1() && p.y < seg.getY2())
+			if (p.y >= seg.getY1() && p.y < seg.getY2()) {
 				return 1;
-			if (p.y < seg.getY1() && p.y >= seg.getY2())
+			}
+			if (p.y < seg.getY1() && p.y >= seg.getY2()) {
 				return -1;
+			}
 			return 0;
 		}
 
@@ -107,74 +145,28 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 				+ computeWindingNumber(split[1], p);
 	}
 
-	private boolean isLinear(BezierCurve seg) {
-		double d0 = seg.getP1().getDistance(seg.getP2());
-		double d1 = 0;
-		Point[] points = seg.getPoints();
-		for (int i = 0; i < points.length - 1; i++) {
-			d1 += points[i].getDistance(points[i + 1]);
+	public boolean contains(IGeometry g) {
+		return ShapeUtils.contains(this, g);
+	}
+
+	public boolean contains(Point p) {
+		if (edges.length == 0) {
+			return false;
+		} else if (edges.length == 1) {
+			return edges[0].contains(p);
 		}
-		return PrecisionUtils.greaterEqual(d0, d1);
-	}
 
-	private int computeLineWindingNumber(BezierCurve seg, Point p) {
-		// seg left of p?
-		double sx = seg.getX1();
-		double ex = seg.getX2();
-		if (sx < p.x && ex < p.x)
-			return 0;
+		// compute the winding number for the given Point
+		int w = 0;
+		for (BezierCurve seg : edges) {
+			if (seg.contains(p)) {
+				return true;
+			}
+			w += computeWindingNumber(seg, p);
+		}
 
-		// seg below or above p?
-		double sy = seg.getY1();
-		double ey = seg.getY2();
-		if (sy < p.y && ey < p.y)
-			return 0;
-		if (sy > p.y && ey > p.y)
-			return 0;
-
-		// static x or y?
-		if (sx == ex)
-			return ey >= sy ? 1 : -1;
-		if (sy == ey)
-			return 0;
-
-		// compute intersection
-		double m = (ey - sy) / (ex - sx);
-		double xi = (p.y - sy + m * sx) / m;
-
-		// intersection left of p?
-		if (p.x > xi)
-			return 0;
-
-		return ey >= sy ? 1 : -1;
-	}
-
-	private boolean isRightEqualP(BezierCurve seg, Point p) {
-		for (Point cp : seg.getPoints())
-			if (cp.x < p.x)
-				return false;
-		return true;
-	}
-
-	private boolean isLeftOfP(BezierCurve seg, Point p) {
-		for (Point cp : seg.getPoints())
-			if (cp.x >= p.x)
-				return false;
-		return true;
-	}
-
-	private boolean isAboveP(BezierCurve seg, Point p) {
-		for (Point cp : seg.getPoints())
-			if (cp.y >= p.y)
-				return false;
-		return true;
-	}
-
-	private boolean isBelowP(BezierCurve seg, Point p) {
-		for (Point cp : seg.getPoints())
-			if (cp.y <= p.y)
-				return false;
-		return true;
+		// the winding number is 0 if the Point is outside of this CurvedPolygon
+		return w != 0;
 	}
 
 	public Rectangle getBounds() {
@@ -183,10 +175,6 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 			bounds.union(c.getBounds());
 		}
 		return bounds;
-	}
-
-	public Path toPath() {
-		return CurveUtils.toPath(edges);
 	}
 
 	public CurvedPolygon getCopy() {
@@ -201,18 +189,65 @@ public class CurvedPolygon extends AbstractGeometry implements IShape {
 		return CurveUtils.getCopy(edges);
 	}
 
-	public boolean contains(IGeometry g) {
-		return ShapeUtils.contains(this, g);
+	private boolean isAboveP(BezierCurve seg, Point p) {
+		for (Point cp : seg.getPoints()) {
+			if (cp.y >= p.y) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isBelowP(BezierCurve seg, Point p) {
+		for (Point cp : seg.getPoints()) {
+			if (cp.y <= p.y) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isLeftOfP(BezierCurve seg, Point p) {
+		for (Point cp : seg.getPoints()) {
+			if (cp.x >= p.x) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean isLinear(BezierCurve seg) {
+		double d0 = seg.getP1().getDistance(seg.getP2());
+		double d1 = 0;
+		Point[] points = seg.getPoints();
+		for (int i = 0; i < points.length - 1; i++) {
+			d1 += points[i].getDistance(points[i + 1]);
+		}
+		return PrecisionUtils.greaterEqual(d0, d1);
+	}
+
+	private boolean isRightEqualP(BezierCurve seg, Point p) {
+		for (Point cp : seg.getPoints()) {
+			if (cp.x < p.x) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public Path toPath() {
+		return CurveUtils.toPath(edges);
 	}
 
 	@Override
 	public String toString() {
 		String s = "CurvedPolygon(";
 		for (int i = 0; i < edges.length; i++) {
-			if (i == edges.length - 1)
+			if (i == edges.length - 1) {
 				s = s + edges[i];
-			else
+			} else {
 				s = s + edges[i] + " -> ";
+			}
 		}
 		return s + ")";
 	}

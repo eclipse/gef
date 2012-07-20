@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (Research Group Software Construction, RWTH Aachen University) - contribution for Bugzilla 245182
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -30,6 +31,7 @@ import org.junit.Test;
  * Unit tests for {@link Straight}.
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class LineTests {
@@ -122,96 +124,6 @@ public class LineTests {
 	}
 
 	@Test
-	public void test_getIntersection_with_Line() {
-		// simple intersection
-		Line l1 = new Line(0, 0, 4, 4);
-		Line l2 = new Line(0, 4, 4, 0);
-		assertTrue(l1.touches(l2));
-		assertTrue(l1.getIntersection(l2).equals(new Point(2, 2)));
-		assertTrue(l2.getIntersection(l1).equals(new Point(2, 2)));
-
-		// lines touch in one point
-		Line l3 = new Line(4, 4, 7, 9);
-		assertTrue(l1.getIntersection(l3).equals(new Point(4, 4)));
-		assertTrue(l3.getIntersection(l1).equals(new Point(4, 4)));
-
-		// lines overlap
-		Line l4 = new Line(2, 2, 6, 6);
-		assertTrue(l1.getIntersection(l4) == null);
-		assertTrue(l4.getIntersection(l1) == null);
-
-		// lines overlap in one end point
-		Line l5 = new Line(4, 4, 6, 6);
-		assertTrue(l1.getIntersection(l5).equals(new Point(4, 4)));
-		assertTrue(l5.getIntersection(l1).equals(new Point(4, 4)));
-		l5 = new Line(6, 6, 4, 4);
-		assertTrue(l1.getIntersection(l5).equals(new Point(4, 4)));
-		assertTrue(l5.getIntersection(l1).equals(new Point(4, 4)));
-
-		Line l6 = new Line(-1, -1, 0, 0);
-		assertTrue(l1.getIntersection(l6).equals(new Point()));
-		assertTrue(l6.getIntersection(l1).equals(new Point()));
-		l6 = new Line(0, 0, -1, -1);
-		assertTrue(l1.getIntersection(l6).equals(new Point()));
-		assertTrue(l6.getIntersection(l1).equals(new Point()));
-
-		// lines do not intersect
-		Line l7 = new Line(4, 0, 5, 4);
-		assertNull(l1.getIntersection(l7));
-		assertNull(l7.getIntersection(l1));
-	}
-
-	@Test
-	public void test_intersects_specials() {
-		// degenerated cases
-		Line degen = new Line(new Point(), new Point());
-		Line normal = new Line(new Point(-5, 0), new Point(5, 0));
-		assertTrue(degen.touches(normal));
-		assertTrue(normal.touches(degen));
-
-		// identical
-		assertTrue(normal.touches(normal));
-
-		// intersection within precision. no real intersection
-		Line close = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
-				new Point(5, UNRECOGNIZABLE_FRACTION));
-		assertTrue(normal.touches(close));
-		assertTrue(close.touches(normal));
-
-		Line closeSp = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
-				new Point(-5, 10));
-		assertTrue(normal.touches(closeSp));
-		assertTrue(closeSp.touches(normal));
-
-		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
-				UNRECOGNIZABLE_FRACTION));
-		assertTrue(normal.touches(closeEp));
-		assertTrue(closeEp.touches(normal));
-
-		// intersection within precision, straights do intersect too, but the
-		// intersection of the straights is out of precision
-		Line slope = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
-				new Point(5, 2 * UNRECOGNIZABLE_FRACTION));
-		assertTrue(normal.touches(slope));
-		assertTrue(slope.touches(normal));
-
-		// no intersection, straights do intersect
-		Line elsewhere = new Line(new Point(-5, 1), new Point(5, 10));
-		assertTrue(!normal.touches(elsewhere));
-		assertTrue(!elsewhere.touches(normal));
-
-		// big lines, imprecisely parallel but intersecting
-		Line bigX = new Line(new Point(-1000, 0), new Point(1000, 0));
-		Line impreciselyParallel = new Line(new Point(-1000,
-				-UNRECOGNIZABLE_FRACTION), new Point(1000,
-				UNRECOGNIZABLE_FRACTION));
-		assertTrue(new Vector(bigX.getP1(), bigX.getP2())
-				.isParallelTo(new Vector(impreciselyParallel.getP1(),
-						impreciselyParallel.getP2())));
-		assertTrue(bigX.touches(impreciselyParallel));
-	}
-
-	@Test
 	public void test_getIntersection_specials() {
 		// degenerated cases
 		Line degen = new Line(new Point(), new Point());
@@ -265,6 +177,46 @@ public class LineTests {
 	}
 
 	@Test
+	public void test_getIntersection_with_Line() {
+		// simple intersection
+		Line l1 = new Line(0, 0, 4, 4);
+		Line l2 = new Line(0, 4, 4, 0);
+		assertTrue(l1.touches(l2));
+		assertTrue(l1.getIntersection(l2).equals(new Point(2, 2)));
+		assertTrue(l2.getIntersection(l1).equals(new Point(2, 2)));
+
+		// lines touch in one point
+		Line l3 = new Line(4, 4, 7, 9);
+		assertTrue(l1.getIntersection(l3).equals(new Point(4, 4)));
+		assertTrue(l3.getIntersection(l1).equals(new Point(4, 4)));
+
+		// lines overlap
+		Line l4 = new Line(2, 2, 6, 6);
+		assertTrue(l1.getIntersection(l4) == null);
+		assertTrue(l4.getIntersection(l1) == null);
+
+		// lines overlap in one end point
+		Line l5 = new Line(4, 4, 6, 6);
+		assertTrue(l1.getIntersection(l5).equals(new Point(4, 4)));
+		assertTrue(l5.getIntersection(l1).equals(new Point(4, 4)));
+		l5 = new Line(6, 6, 4, 4);
+		assertTrue(l1.getIntersection(l5).equals(new Point(4, 4)));
+		assertTrue(l5.getIntersection(l1).equals(new Point(4, 4)));
+
+		Line l6 = new Line(-1, -1, 0, 0);
+		assertTrue(l1.getIntersection(l6).equals(new Point()));
+		assertTrue(l6.getIntersection(l1).equals(new Point()));
+		l6 = new Line(0, 0, -1, -1);
+		assertTrue(l1.getIntersection(l6).equals(new Point()));
+		assertTrue(l6.getIntersection(l1).equals(new Point()));
+
+		// lines do not intersect
+		Line l7 = new Line(4, 0, 5, 4);
+		assertNull(l1.getIntersection(l7));
+		assertNull(l7.getIntersection(l1));
+	}
+
+	@Test
 	public void test_getters() {
 		for (double x1 = -2; x1 <= 2; x1 += 0.5) {
 			for (double y1 = -2; y1 <= 2; y1 += 0.5) {
@@ -305,6 +257,56 @@ public class LineTests {
 		assertTrue(l1.hashCode() == new Line(-UNRECOGNIZABLE_FRACTION,
 				-UNRECOGNIZABLE_FRACTION, 5.0 - UNRECOGNIZABLE_FRACTION,
 				-UNRECOGNIZABLE_FRACTION).hashCode());
+	}
+
+	@Test
+	public void test_intersects_specials() {
+		// degenerated cases
+		Line degen = new Line(new Point(), new Point());
+		Line normal = new Line(new Point(-5, 0), new Point(5, 0));
+		assertTrue(degen.touches(normal));
+		assertTrue(normal.touches(degen));
+
+		// identical
+		assertTrue(normal.touches(normal));
+
+		// intersection within precision. no real intersection
+		Line close = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(close));
+		assertTrue(close.touches(normal));
+
+		Line closeSp = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(-5, 10));
+		assertTrue(normal.touches(closeSp));
+		assertTrue(closeSp.touches(normal));
+
+		Line closeEp = new Line(new Point(-5, 10), new Point(-5,
+				UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(closeEp));
+		assertTrue(closeEp.touches(normal));
+
+		// intersection within precision, straights do intersect too, but the
+		// intersection of the straights is out of precision
+		Line slope = new Line(new Point(-5, UNRECOGNIZABLE_FRACTION),
+				new Point(5, 2 * UNRECOGNIZABLE_FRACTION));
+		assertTrue(normal.touches(slope));
+		assertTrue(slope.touches(normal));
+
+		// no intersection, straights do intersect
+		Line elsewhere = new Line(new Point(-5, 1), new Point(5, 10));
+		assertTrue(!normal.touches(elsewhere));
+		assertTrue(!elsewhere.touches(normal));
+
+		// big lines, imprecisely parallel but intersecting
+		Line bigX = new Line(new Point(-1000, 0), new Point(1000, 0));
+		Line impreciselyParallel = new Line(new Point(-1000,
+				-UNRECOGNIZABLE_FRACTION), new Point(1000,
+				UNRECOGNIZABLE_FRACTION));
+		assertTrue(new Vector(bigX.getP1(), bigX.getP2())
+				.isParallelTo(new Vector(impreciselyParallel.getP1(),
+						impreciselyParallel.getP2())));
+		assertTrue(bigX.touches(impreciselyParallel));
 	}
 
 	@Test

@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -28,54 +29,13 @@ import org.junit.Test;
  * Unit tests for {@link Ellipse}.
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class EllipseTests {
 
 	private static final double PRECISION_FRACTION = TestUtils
 			.getPrecisionFraction();
-
-	@Test
-	public void test_equals() {
-		Ellipse e = new Ellipse(0, 0, 100, 50);
-		assertFalse(e.equals(null));
-		assertFalse(e.equals(new Point()));
-		assertEquals(e, e);
-		assertEquals(e, new Ellipse(0, 0, 100, 50));
-		assertEquals(e, new Ellipse(new Rectangle(0, 0, 100, 50)));
-		assertEquals(e, e.getCopy());
-		assertFalse(e.equals(new Ellipse(0, 0, 100, 10)));
-		assertFalse(e.equals(new Ellipse(0, 0, 10, 50)));
-		assertFalse(e.equals(new Ellipse(10, 0, 100, 50)));
-		assertFalse(e.equals(new Ellipse(0, 10, 100, 50)));
-	}
-
-	@Test
-	public void test_contains_Point() {
-		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
-		Ellipse e = new Ellipse(r);
-
-		checkPointContainment(r, e);
-
-		// these things could not be tested in the general case, because of
-		// AWT's behavior
-		assertTrue(e.contains(r.getTop()));
-		assertTrue(e.contains(r.getRight()));
-		assertTrue(e.contains(r.getBottom()));
-
-		for (Point p : e.getIntersections(new Line(r.getTopLeft(), r
-				.getBottomRight()))) {
-			assertTrue(e.contains(p));
-		}
-		for (Point p : e.getIntersections(new Line(r.getTopRight(), r
-				.getBottomLeft()))) {
-			assertTrue(e.contains(p));
-		}
-
-		for (CubicCurve c : e.getOutlineSegments()) {
-			assertTrue(e.contains(c.get(0.5)));
-		}
-	}
 
 	private void checkPointContainment(Rectangle r, IGeometry g) {
 		assertFalse(g.contains(r.getTopLeft()));
@@ -116,37 +76,6 @@ public class EllipseTests {
 				PRECISION_FRACTION * 100)));
 	}
 
-	@Test
-	public void test_contains_Line() {
-		Ellipse e = new Ellipse(0, 0, 100, 50);
-		assertFalse(e.contains(new Line(-10, -10, 10, -10)));
-		assertFalse(e.contains(new Line(-10, -10, 50, 50)));
-		assertTrue(e.contains(new Line(1, 25, 99, 25)));
-		assertTrue(e.contains(new Line(0, 25, 100, 25)));
-	}
-
-	@Test
-	public void test_getCenter() {
-		Ellipse e = new Ellipse(0, 0, 100, 50);
-		assertEquals(new Point(50, 25), e.getCenter());
-		e.scale(2);
-		assertEquals(new Point(50, 25), e.getCenter());
-		e.scale(0.5);
-		e.scale(2, new Point());
-		assertEquals(new Point(100, 50), e.getCenter());
-		e.translate(-100, -50);
-		assertEquals(new Point(), e.getCenter());
-	}
-
-	@Test
-	public void test_intersects_Line() {
-		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
-		Ellipse e = new Ellipse(r);
-		for (Line l : r.getOutlineSegments()) {
-			assertTrue(e.touches(l)); // line touches ellipse (tangent)
-		}
-	}
-
 	private void checkPoints(Point[] expected, Point[] obtained) {
 		assertEquals(expected.length, obtained.length);
 		for (Point e : expected) {
@@ -161,27 +90,79 @@ public class EllipseTests {
 		}
 	}
 
+	private void intersectionsTolerance(Ellipse e1, Ellipse e2,
+			Point... expected) {
+		Point[] intersections = e1.getIntersections(e2);
+		boolean[] foundExpected = new boolean[expected.length];
+		for (Point poi : intersections) {
+			assertTrue(
+					"All points of intersection have to be contained by the first ellipse.",
+					e1.contains(poi));
+			assertTrue(
+					"All points of intersection have to be contained by the second ellipse.",
+					e2.contains(poi));
+			for (int i = 0; i < expected.length; i++) {
+				if (poi.equals(expected[i])) {
+					foundExpected[i] = true;
+				}
+			}
+		}
+		for (int i = 0; i < expected.length; i++) {
+			assertTrue("An expected point of intersection " + expected[i]
+					+ " not found in the list of intersections.",
+					foundExpected[i]);
+		}
+	}
+
 	@Test
-	public void test_getIntersections_Line() {
+	public void test_contains_Line() {
 		Ellipse e = new Ellipse(0, 0, 100, 50);
-		Line lh = new Line(0, 25, 100, 25);
-		Point[] is = e.getIntersections(lh);
-		checkPoints(new Point[] { new Point(0, 25), new Point(100, 25) }, is);
-		Line lv = new Line(50, 0, 50, 50);
-		is = e.getIntersections(lv);
-		checkPoints(new Point[] { new Point(50, 0), new Point(50, 50) }, is);
+		assertFalse(e.contains(new Line(-10, -10, 10, -10)));
+		assertFalse(e.contains(new Line(-10, -10, 50, 50)));
+		assertTrue(e.contains(new Line(1, 25, 99, 25)));
+		assertTrue(e.contains(new Line(0, 25, 100, 25)));
+	}
 
-		lh = lh.getTranslated(new Point(0, -25)).toLine();
-		is = e.getIntersections(lh);
-		checkPoints(new Point[] { new Point(50, 0) }, is);
+	@Test
+	public void test_contains_Point() {
+		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
+		Ellipse e = new Ellipse(r);
 
-		lv = lv.getTranslated(new Point(-50, 0)).toLine();
-		is = e.getIntersections(lv);
-		checkPoints(new Point[] { new Point(0, 25) }, is);
+		checkPointContainment(r, e);
 
-		Line li = new Line(-100, 100, 0, 50);
-		is = e.getIntersections(li);
-		assertEquals(0, is.length);
+		// these things could not be tested in the general case, because of
+		// AWT's behavior
+		assertTrue(e.contains(r.getTop()));
+		assertTrue(e.contains(r.getRight()));
+		assertTrue(e.contains(r.getBottom()));
+
+		for (Point p : e.getIntersections(new Line(r.getTopLeft(), r
+				.getBottomRight()))) {
+			assertTrue(e.contains(p));
+		}
+		for (Point p : e.getIntersections(new Line(r.getTopRight(), r
+				.getBottomLeft()))) {
+			assertTrue(e.contains(p));
+		}
+
+		for (CubicCurve c : e.getOutlineSegments()) {
+			assertTrue(e.contains(c.get(0.5)));
+		}
+	}
+
+	@Test
+	public void test_equals() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertFalse(e.equals(null));
+		assertFalse(e.equals(new Point()));
+		assertEquals(e, e);
+		assertEquals(e, new Ellipse(0, 0, 100, 50));
+		assertEquals(e, new Ellipse(new Rectangle(0, 0, 100, 50)));
+		assertEquals(e, e.getCopy());
+		assertFalse(e.equals(new Ellipse(0, 0, 100, 10)));
+		assertFalse(e.equals(new Ellipse(0, 0, 10, 50)));
+		assertFalse(e.equals(new Ellipse(10, 0, 100, 50)));
+		assertFalse(e.equals(new Ellipse(0, 10, 100, 50)));
 	}
 
 	@Test
@@ -279,28 +260,57 @@ public class EllipseTests {
 				1, equalsRight);
 	}
 
-	private void intersectionsTolerance(Ellipse e1, Ellipse e2,
-			Point... expected) {
+	@Test
+	public void test_getCenter() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		assertEquals(new Point(50, 25), e.getCenter());
+		e.scale(2);
+		assertEquals(new Point(50, 25), e.getCenter());
+		e.scale(0.5);
+		e.scale(2, new Point());
+		assertEquals(new Point(100, 50), e.getCenter());
+		e.translate(-100, -50);
+		assertEquals(new Point(), e.getCenter());
+	}
+
+	// @Ignore("This test is too strict. For a liberal test see below: test_getIntersections_with_Ellipse_Bezier_special_tolerance")
+	@Test
+	public void test_getIntersections_Ellipse_Bezier_special() {
+		// 3 nearly tangential intersections
+		Ellipse e1 = new Ellipse(126, 90, 378, 270);
+		Ellipse e2 = new Ellipse(222, 77, 200, 200);
+		assertEquals(2, e1.getIntersections(e2).length);
+
+		e2 = new Ellipse(133, 90, 2 * (315 - 133), 200);
 		Point[] intersections = e1.getIntersections(e2);
-		boolean[] foundExpected = new boolean[expected.length];
-		for (Point poi : intersections) {
-			assertTrue(
-					"All points of intersection have to be contained by the first ellipse.",
-					e1.contains(poi));
-			assertTrue(
-					"All points of intersection have to be contained by the second ellipse.",
-					e2.contains(poi));
-			for (int i = 0; i < expected.length; i++) {
-				if (poi.equals(expected[i])) {
-					foundExpected[i] = true;
-				}
-			}
-		}
-		for (int i = 0; i < expected.length; i++) {
-			assertTrue("An expected point of intersection " + expected[i]
-					+ " not found in the list of intersections.",
-					foundExpected[i]);
-		}
+		assertEquals(3, intersections.length);
+
+		e2 = new Ellipse(143, 90, 2 * (315 - 143), 200);
+		assertEquals(3, e1.getIntersections(e2).length);
+
+		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
+		assertEquals(3, e1.getIntersections(e2).length);
+
+		e1 = new Ellipse(126.0, 90.0, 378.0, 270.0);
+		e2 = new Ellipse(397.0, 327.0, 26.0, 22.0);
+		assertEquals(2, e1.getIntersections(e2).length);
+	}
+
+	@Test
+	public void test_getIntersections_Ellipse_Bezier_special_tolerance() {
+		// 3 nearly tangential intersections
+		Ellipse e1 = new Ellipse(126, 90, 378, 270);
+		Ellipse e2 = new Ellipse(222, 77, 200, 200);
+		intersectionsTolerance(e1, e2); // TODO: find out the 2 expected points
+
+		e2 = new Ellipse(133, 90, 2 * (315 - 133), 200);
+		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
+
+		e2 = new Ellipse(143, 90, 2 * (315 - 143), 200);
+		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
+
+		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
+		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
 	}
 
 	@Test
@@ -344,44 +354,36 @@ public class EllipseTests {
 		intersectionsTolerance(e1, e2, r.getLeft(), r.getRight());
 	}
 
-	// @Ignore("This test is too strict. For a liberal test see below: test_getIntersections_with_Ellipse_Bezier_special_tolerance")
 	@Test
-	public void test_getIntersections_Ellipse_Bezier_special() {
-		// 3 nearly tangential intersections
-		Ellipse e1 = new Ellipse(126, 90, 378, 270);
-		Ellipse e2 = new Ellipse(222, 77, 200, 200);
-		assertEquals(2, e1.getIntersections(e2).length);
+	public void test_getIntersections_Line() {
+		Ellipse e = new Ellipse(0, 0, 100, 50);
+		Line lh = new Line(0, 25, 100, 25);
+		Point[] is = e.getIntersections(lh);
+		checkPoints(new Point[] { new Point(0, 25), new Point(100, 25) }, is);
+		Line lv = new Line(50, 0, 50, 50);
+		is = e.getIntersections(lv);
+		checkPoints(new Point[] { new Point(50, 0), new Point(50, 50) }, is);
 
-		e2 = new Ellipse(133, 90, 2 * (315 - 133), 200);
-		Point[] intersections = e1.getIntersections(e2);
-		assertEquals(3, intersections.length);
+		lh = lh.getTranslated(new Point(0, -25)).toLine();
+		is = e.getIntersections(lh);
+		checkPoints(new Point[] { new Point(50, 0) }, is);
 
-		e2 = new Ellipse(143, 90, 2 * (315 - 143), 200);
-		assertEquals(3, e1.getIntersections(e2).length);
+		lv = lv.getTranslated(new Point(-50, 0)).toLine();
+		is = e.getIntersections(lv);
+		checkPoints(new Point[] { new Point(0, 25) }, is);
 
-		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
-		assertEquals(3, e1.getIntersections(e2).length);
-
-		e1 = new Ellipse(126.0, 90.0, 378.0, 270.0);
-		e2 = new Ellipse(397.0, 327.0, 26.0, 22.0);
-		assertEquals(2, e1.getIntersections(e2).length);
+		Line li = new Line(-100, 100, 0, 50);
+		is = e.getIntersections(li);
+		assertEquals(0, is.length);
 	}
 
 	@Test
-	public void test_getIntersections_Ellipse_Bezier_special_tolerance() {
-		// 3 nearly tangential intersections
-		Ellipse e1 = new Ellipse(126, 90, 378, 270);
-		Ellipse e2 = new Ellipse(222, 77, 200, 200);
-		intersectionsTolerance(e1, e2); // TODO: find out the 2 expected points
-
-		e2 = new Ellipse(133, 90, 2 * (315 - 133), 200);
-		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
-
-		e2 = new Ellipse(143, 90, 2 * (315 - 143), 200);
-		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
-
-		e2 = new Ellipse(145, 90, 2 * (315 - 145), 200);
-		intersectionsTolerance(e1, e2); // TODO: find out the 3 expected points
+	public void test_intersects_Line() {
+		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
+		Ellipse e = new Ellipse(r);
+		for (Line l : r.getOutlineSegments()) {
+			assertTrue(e.touches(l)); // line touches ellipse (tangent)
+		}
 	}
 
 	@Test

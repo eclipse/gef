@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
@@ -19,16 +20,21 @@ package org.eclipse.gef4.geometry.planar;
  * using the contains(IGeometry) method and the outline segments can be
  * retrieved via the getOutlineSegments() method.
  * </p>
+ * 
+ * @author anyssen
+ * 
  */
 public interface IPolyShape extends IGeometry {
 
 	/**
-	 * Returns the {@link IShape}s that constitute this {@link IPolyShape}.
+	 * Checks if the given {@link IGeometry} is fully contained by this
+	 * {@link IPolyShape}.
 	 * 
-	 * @return an array of {@link IShape}s, representing the parts that make up
-	 *         this {@link IPolyShape}.
+	 * @param g
+	 * @return <code>true</code> if the {@link IGeometry} is contained by this
+	 *         {@link IPolyShape}, otherwise <code>false</code>
 	 */
-	IShape[] getShapes();
+	public boolean contains(final IGeometry g);
 
 	/**
 	 * <p>
@@ -62,13 +68,11 @@ public interface IPolyShape extends IGeometry {
 	// public IPolyCurve[] getOutline();
 
 	/**
-	 * Checks if the given {@link IGeometry} is fully contained by this
-	 * {@link IPolyShape}.
+	 * Returns the {@link IShape}s that constitute this {@link IPolyShape}.
 	 * 
-	 * @param g
-	 * @return <code>true</code> if the {@link IGeometry} is contained by this
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 * @return an array of {@link IShape}s, representing the parts that make up
+	 *         this {@link IPolyShape}.
 	 */
-	public boolean contains(final IGeometry g);
+	IShape[] getShapes();
 
 }

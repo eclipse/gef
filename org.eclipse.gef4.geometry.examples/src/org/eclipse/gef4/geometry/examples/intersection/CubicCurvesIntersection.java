@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -25,6 +26,11 @@ public class CubicCurvesIntersection extends AbstractIntersectionExample {
 
 	public CubicCurvesIntersection(String title) {
 		super(title);
+	}
+
+	@Override
+	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
+		return ((CubicCurve) g1).getIntersections((CubicCurve) g2);
 	}
 
 	private AbstractControllableShape createControllableCubicBezierCurveShape(
@@ -58,20 +64,17 @@ public class CubicCurvesIntersection extends AbstractIntersectionExample {
 		};
 	}
 
+	@Override
 	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
 		return createControllableCubicBezierCurveShape(canvas, new Point(100,
 				100), new Point(150, 50), new Point(310, 300), new Point(400,
 				200));
 	}
 
+	@Override
 	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
 		return createControllableCubicBezierCurveShape(canvas, new Point(400,
 				100), new Point(310, 110), new Point(210, 210), new Point(100,
 				200));
-	}
-
-	@Override
-	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return ((CubicCurve) g1).getIntersections((CubicCurve) g2);
 	}
 }

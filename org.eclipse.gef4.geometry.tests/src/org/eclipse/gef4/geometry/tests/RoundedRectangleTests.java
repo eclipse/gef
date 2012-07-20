@@ -1,13 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *          
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -31,117 +32,6 @@ public class RoundedRectangleTests {
 
 	double x = 1, y = 2, w = 5, h = 6, aw = 1, ah = 2;
 	RoundedRectangle rr;
-
-	@Before
-	public void setUp() {
-		rr = new RoundedRectangle(x, y, w, h, aw, ah);
-	}
-
-	@Test
-	public void test_equals() {
-		assertEquals(rr,
-				new RoundedRectangle(new Rectangle(x, y, w, h), aw, ah));
-		assertEquals(rr, rr.getCopy());
-		assertFalse(rr.equals(null));
-		assertFalse(rr.equals(new Point()));
-
-		assertFalse(rr.equals(new RoundedRectangle(x + 10, y, w, h, aw, ah)));
-		assertFalse(rr.equals(new RoundedRectangle(x, y + 10, w, h, aw, ah)));
-		assertFalse(rr.equals(new RoundedRectangle(x, y, w + 10, h, aw, ah)));
-		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h + 10, aw, ah)));
-		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h, aw + 10, ah)));
-		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h, aw, ah + 10)));
-	}
-
-	@Test
-	public void test_getters() {
-		check_values_with_getters(rr, x, y, w, h, aw, ah);
-	}
-
-	@Test
-	public void test_setters() {
-		// TODO: change values and test if the changes are applied correctly
-		RoundedRectangle rrCopy = rr.getCopy();
-
-		double nx = 9, ny = 8, nw = 7, nh = 6, naw = 5, nah = 4;
-
-		rrCopy.setX(nx);
-		rrCopy.setY(ny);
-		rrCopy.setWidth(nw);
-		rrCopy.setHeight(nh);
-		rrCopy.setArcWidth(naw);
-		rrCopy.setArcHeight(nah);
-
-		check_values_with_getters(rrCopy, nx, ny, nw, nh, naw, nah);
-		check_values_with_getters(rr, x, y, w, h, aw, ah);
-	}
-
-	@Test
-	public void test_contains_Point() {
-		check_Point_containment(rr);
-	}
-
-	@Test
-	public void test_toPath() {
-		check_Point_containment(rr.toPath());
-	}
-
-	@Test
-	public void test_getOutlineSegments() {
-		ICurve[] outlineSegments = rr.getOutlineSegments();
-		assertEquals(8, outlineSegments.length);
-
-		// consecutive
-		for (int i = 0; i < 7; i++)
-			assertEquals(outlineSegments[i].getP2(),
-					outlineSegments[i + 1].getP1());
-		assertEquals(outlineSegments[7].getP2(), outlineSegments[0].getP1());
-
-		// position
-		assertEquals(new Point(x + w, y + ah), outlineSegments[0].getP1());
-		assertEquals(new Point(x + w - aw, y), outlineSegments[1].getP1());
-		assertEquals(new Point(x + aw, y), outlineSegments[2].getP1());
-		assertEquals(new Point(x, y + ah), outlineSegments[3].getP1());
-		assertEquals(new Point(x, y + h - ah), outlineSegments[4].getP1());
-		assertEquals(new Point(x + aw, y + h), outlineSegments[5].getP1());
-		assertEquals(new Point(x + w - aw, y + h), outlineSegments[6].getP1());
-		assertEquals(new Point(x + w, y + h - ah), outlineSegments[7].getP1());
-	}
-
-	@Test
-	public void test_toString() {
-		assertEquals("RoundedRectangle(" + x + ", " + y + ", " + w + ", " + h
-				+ ", " + aw + ", " + ah + ")", rr.toString());
-	}
-
-	@Test
-	public void test_getOutline() {
-		// coherence with getOutlineSegments
-		ICurve[] outlineSegments = rr.getOutlineSegments();
-		ICurve[] outlineCurves = rr.getOutline().getCurves();
-		assertEquals(outlineSegments.length, outlineCurves.length);
-		for (int i = 0; i < 8; i++)
-			assertEquals(outlineSegments[i], outlineCurves[i]);
-	}
-
-	@Test
-	public void test_contains_shape() {
-		// translate it by some values and test that the translated versions are
-		// not contained
-		for (double tx : new double[] { -1, 1 })
-			for (double ty : new double[] { -1, 1 })
-				assertFalse(rr.contains(rr.getTranslated(tx, ty)));
-
-		// scale it down by some values and test that the smaller versions are
-		// contained
-		for (double s = 1; s > 0; s -= 0.1)
-			assertTrue(rr.contains(rr.getScaled(s)));
-
-		// scale it up by some values and test that the greater versions are not
-		// contained
-		for (double s = 1.1; s < 2; s += 0.1)
-			assertFalse(rr.contains(rr.getScaled(s)));
-	}
 
 	private void check_Point_containment(IGeometry g) {
 		assertTrue(g.contains(new Point(3.5, 5)));
@@ -209,6 +99,123 @@ public class RoundedRectangleTests {
 		assertEquals(new Line(px, py + pah, px, py + ph - pah), r.getLeft());
 		assertEquals(new Line(px + pw, py + pah, px + pw, py + ph - pah),
 				r.getRight());
+	}
+
+	@Before
+	public void setUp() {
+		rr = new RoundedRectangle(x, y, w, h, aw, ah);
+	}
+
+	@Test
+	public void test_contains_Point() {
+		check_Point_containment(rr);
+	}
+
+	@Test
+	public void test_contains_shape() {
+		// translate it by some values and test that the translated versions are
+		// not contained
+		for (double tx : new double[] { -1, 1 }) {
+			for (double ty : new double[] { -1, 1 }) {
+				assertFalse(rr.contains(rr.getTranslated(tx, ty)));
+			}
+		}
+
+		// scale it down by some values and test that the smaller versions are
+		// contained
+		for (double s = 1; s > 0; s -= 0.1) {
+			assertTrue(rr.contains(rr.getScaled(s)));
+		}
+
+		// scale it up by some values and test that the greater versions are not
+		// contained
+		for (double s = 1.1; s < 2; s += 0.1) {
+			assertFalse(rr.contains(rr.getScaled(s)));
+		}
+	}
+
+	@Test
+	public void test_equals() {
+		assertEquals(rr,
+				new RoundedRectangle(new Rectangle(x, y, w, h), aw, ah));
+		assertEquals(rr, rr.getCopy());
+		assertFalse(rr.equals(null));
+		assertFalse(rr.equals(new Point()));
+
+		assertFalse(rr.equals(new RoundedRectangle(x + 10, y, w, h, aw, ah)));
+		assertFalse(rr.equals(new RoundedRectangle(x, y + 10, w, h, aw, ah)));
+		assertFalse(rr.equals(new RoundedRectangle(x, y, w + 10, h, aw, ah)));
+		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h + 10, aw, ah)));
+		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h, aw + 10, ah)));
+		assertFalse(rr.equals(new RoundedRectangle(x, y, w, h, aw, ah + 10)));
+	}
+
+	@Test
+	public void test_getOutline() {
+		// coherence with getOutlineSegments
+		ICurve[] outlineSegments = rr.getOutlineSegments();
+		ICurve[] outlineCurves = rr.getOutline().getCurves();
+		assertEquals(outlineSegments.length, outlineCurves.length);
+		for (int i = 0; i < 8; i++) {
+			assertEquals(outlineSegments[i], outlineCurves[i]);
+		}
+	}
+
+	@Test
+	public void test_getOutlineSegments() {
+		ICurve[] outlineSegments = rr.getOutlineSegments();
+		assertEquals(8, outlineSegments.length);
+
+		// consecutive
+		for (int i = 0; i < 7; i++) {
+			assertEquals(outlineSegments[i].getP2(),
+					outlineSegments[i + 1].getP1());
+		}
+		assertEquals(outlineSegments[7].getP2(), outlineSegments[0].getP1());
+
+		// position
+		assertEquals(new Point(x + w, y + ah), outlineSegments[0].getP1());
+		assertEquals(new Point(x + w - aw, y), outlineSegments[1].getP1());
+		assertEquals(new Point(x + aw, y), outlineSegments[2].getP1());
+		assertEquals(new Point(x, y + ah), outlineSegments[3].getP1());
+		assertEquals(new Point(x, y + h - ah), outlineSegments[4].getP1());
+		assertEquals(new Point(x + aw, y + h), outlineSegments[5].getP1());
+		assertEquals(new Point(x + w - aw, y + h), outlineSegments[6].getP1());
+		assertEquals(new Point(x + w, y + h - ah), outlineSegments[7].getP1());
+	}
+
+	@Test
+	public void test_getters() {
+		check_values_with_getters(rr, x, y, w, h, aw, ah);
+	}
+
+	@Test
+	public void test_setters() {
+		// TODO: change values and test if the changes are applied correctly
+		RoundedRectangle rrCopy = rr.getCopy();
+
+		double nx = 9, ny = 8, nw = 7, nh = 6, naw = 5, nah = 4;
+
+		rrCopy.setX(nx);
+		rrCopy.setY(ny);
+		rrCopy.setWidth(nw);
+		rrCopy.setHeight(nh);
+		rrCopy.setArcWidth(naw);
+		rrCopy.setArcHeight(nah);
+
+		check_values_with_getters(rrCopy, nx, ny, nw, nh, naw, nah);
+		check_values_with_getters(rr, x, y, w, h, aw, ah);
+	}
+
+	@Test
+	public void test_toPath() {
+		check_Point_containment(rr.toPath());
+	}
+
+	@Test
+	public void test_toString() {
+		assertEquals("RoundedRectangle(" + x + ", " + y + ", " + w + ", " + h
+				+ ", " + aw + ", " + ah + ")", rr.toString());
 	}
 
 }

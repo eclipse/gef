@@ -1,13 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *          
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -31,41 +32,22 @@ import org.junit.Test;
 
 public class BezierCurveTests {
 
-	@Test
-	public void test_equals() {
-		BezierCurve c = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
-		assertFalse(c.equals(null));
-		assertFalse(c.equals(new Rectangle(1, 2, 3, 4)));
-		assertEquals(c, c);
+	private void check_values_with_getters(BezierCurve c, Point... points) {
+		Point p1 = points[0];
+		assertEquals(p1, c.getP1());
+		assertTrue(PrecisionUtils.equal(p1.x, c.getX1()));
+		assertTrue(PrecisionUtils.equal(p1.y, c.getY1()));
 
-		BezierCurve cr = new BezierCurve(10, 10, 10, 1, 1, 10, 1, 1);
-		assertEquals(cr, cr);
-		assertEquals(c, cr);
-		assertEquals(cr, c);
+		Point p2 = points[points.length - 1];
+		assertEquals(p2, c.getP2());
+		assertTrue(PrecisionUtils.equal(p2.x, c.getX2()));
+		assertTrue(PrecisionUtils.equal(p2.y, c.getY2()));
 
-		BezierCurve ce = c.getElevated();
-		BezierCurve cre = cr.getElevated();
-		assertEquals(c, ce);
-		assertEquals(ce, c);
-		assertEquals(cr, cre);
-		assertEquals(cre, cr);
-		assertEquals(c, cre);
-		assertEquals(cre, c);
-		assertEquals(cr, ce);
-		assertEquals(ce, cr);
+		assertTrue(Arrays.equals(c.getPoints(), points));
 
-		BezierCurve c2 = new BezierCurve(1, 2, 3, 4);
-		assertFalse(c.equals(c2));
-		assertFalse(c2.equals(c));
-		c2 = new BezierCurve(1, 1, 1, 10, 2, 3);
-		assertFalse(c.equals(c2));
-		assertFalse(c2.equals(c));
-		c2 = new BezierCurve(1, 1, 1, 10, 10, 1, 2, 3);
-		assertFalse(c.equals(c2));
-		assertFalse(c2.equals(c));
-		c2 = new BezierCurve(1, 1, 2, 9, 9, 2, 10, 10);
-		assertFalse(c.equals(c2));
-		assertFalse(c2.equals(c));
+		for (int i = 0; i < points.length; i++) {
+			assertEquals(points[i], c.getPoint(i));
+		}
 	}
 
 	@Test
@@ -104,8 +86,46 @@ public class BezierCurveTests {
 
 		// evaluate curve at some parameter values and check that the returned
 		// points are contained by the curve
-		for (double t = 0; t <= 1; t += 0.02)
+		for (double t = 0; t <= 1; t += 0.02) {
 			assertTrue(c0.contains(c0.get(t)));
+		}
+	}
+
+	@Test
+	public void test_equals() {
+		BezierCurve c = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
+		assertFalse(c.equals(null));
+		assertFalse(c.equals(new Rectangle(1, 2, 3, 4)));
+		assertEquals(c, c);
+
+		BezierCurve cr = new BezierCurve(10, 10, 10, 1, 1, 10, 1, 1);
+		assertEquals(cr, cr);
+		assertEquals(c, cr);
+		assertEquals(cr, c);
+
+		BezierCurve ce = c.getElevated();
+		BezierCurve cre = cr.getElevated();
+		assertEquals(c, ce);
+		assertEquals(ce, c);
+		assertEquals(cr, cre);
+		assertEquals(cre, cr);
+		assertEquals(c, cre);
+		assertEquals(cre, c);
+		assertEquals(cr, ce);
+		assertEquals(ce, cr);
+
+		BezierCurve c2 = new BezierCurve(1, 2, 3, 4);
+		assertFalse(c.equals(c2));
+		assertFalse(c2.equals(c));
+		c2 = new BezierCurve(1, 1, 1, 10, 2, 3);
+		assertFalse(c.equals(c2));
+		assertFalse(c2.equals(c));
+		c2 = new BezierCurve(1, 1, 1, 10, 10, 1, 2, 3);
+		assertFalse(c.equals(c2));
+		assertFalse(c2.equals(c));
+		c2 = new BezierCurve(1, 1, 2, 9, 9, 2, 10, 10);
+		assertFalse(c.equals(c2));
+		assertFalse(c2.equals(c));
 	}
 
 	@Test
@@ -154,6 +174,14 @@ public class BezierCurveTests {
 	}
 
 	@Test
+	public void test_getIntersections_Rectangle() {
+		Rectangle r = new Rectangle(new Point(100, 150), new Point(550, 300));
+		Ellipse e = new Ellipse(126.0, 90.0, 378.0, 270.0);
+		Point[] inters = e.getIntersections(r.getOutline());
+		assertEquals(4, inters.length);
+	}
+
+	@Test
 	public void test_getOverlap() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		BezierCurve c1 = c0.getClipped(0, 0.5);
@@ -176,53 +204,6 @@ public class BezierCurveTests {
 		// assertEquals(c2, o02);
 
 		assertNull(c1.getOverlap(c2));
-	}
-
-	private void check_values_with_getters(BezierCurve c, Point... points) {
-		Point p1 = points[0];
-		assertEquals(p1, c.getP1());
-		assertTrue(PrecisionUtils.equal(p1.x, c.getX1()));
-		assertTrue(PrecisionUtils.equal(p1.y, c.getY1()));
-
-		Point p2 = points[points.length - 1];
-		assertEquals(p2, c.getP2());
-		assertTrue(PrecisionUtils.equal(p2.x, c.getX2()));
-		assertTrue(PrecisionUtils.equal(p2.y, c.getY2()));
-
-		assertTrue(Arrays.equals(c.getPoints(), points));
-
-		for (int i = 0; i < points.length; i++)
-			assertEquals(points[i], c.getPoint(i));
-	}
-
-	@Test
-	public void test_point_getters() {
-		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
-		check_values_with_getters(c0, new Point[] { new Point(1, 1),
-				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
-	}
-
-	@Test
-	public void test_point_setters() {
-		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
-		check_values_with_getters(c0, new Point[] { new Point(1, 1),
-				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
-
-		c0.setP1(new Point(-30, 5));
-		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
-				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
-
-		c0.setP2(new Point(31, 11));
-		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
-				new Point(1, 10), new Point(10, 1), new Point(31, 11) });
-
-		c0.setPoint(1, new Point(3, -3));
-		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
-				new Point(3, -3), new Point(10, 1), new Point(31, 11) });
-
-		c0.setPoint(2, new Point(-3, 3));
-		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
-				new Point(3, -3), new Point(-3, 3), new Point(31, 11) });
 	}
 
 	@Test
@@ -272,6 +253,36 @@ public class BezierCurveTests {
 	}
 
 	@Test
+	public void test_point_getters() {
+		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
+		check_values_with_getters(c0, new Point[] { new Point(1, 1),
+				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
+	}
+
+	@Test
+	public void test_point_setters() {
+		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
+		check_values_with_getters(c0, new Point[] { new Point(1, 1),
+				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
+
+		c0.setP1(new Point(-30, 5));
+		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
+				new Point(1, 10), new Point(10, 1), new Point(10, 10) });
+
+		c0.setP2(new Point(31, 11));
+		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
+				new Point(1, 10), new Point(10, 1), new Point(31, 11) });
+
+		c0.setPoint(1, new Point(3, -3));
+		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
+				new Point(3, -3), new Point(10, 1), new Point(31, 11) });
+
+		c0.setPoint(2, new Point(-3, 3));
+		check_values_with_getters(c0, new Point[] { new Point(-30, 5),
+				new Point(3, -3), new Point(-3, 3), new Point(31, 11) });
+	}
+
+	@Test
 	public void test_split() {
 		BezierCurve c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 10, 10);
 		BezierCurve c1 = c0.getClipped(0, 0.5);
@@ -306,20 +317,6 @@ public class BezierCurveTests {
 	}
 
 	@Test
-	public void test_toQuadratic() {
-		BezierCurve c0 = new BezierCurve(1, 1);
-		assertNull(c0.toQuadratic());
-		c0 = new BezierCurve(1, 1, 1, 10);
-		assertNull(c0.toQuadratic());
-		c0 = new BezierCurve(1, 1, 1, 10, 10, 1);
-		assertEquals(new QuadraticCurve(1, 1, 1, 10, 10, 1), c0.toQuadratic());
-		c0 = new BezierCurve(1, 1, 1, 10, 67, 89, 10, 1);
-		assertEquals(new QuadraticCurve(1, 1, 1, 10, 10, 1), c0.toQuadratic());
-		c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 98, 76);
-		assertEquals(new QuadraticCurve(1, 1, 1, 10, 98, 76), c0.toQuadratic());
-	}
-
-	@Test
 	public void test_toLine() {
 		BezierCurve c0 = new BezierCurve(1, 1);
 		assertNull(c0.toCubic());
@@ -345,11 +342,17 @@ public class BezierCurveTests {
 	}
 
 	@Test
-	public void test_getIntersections_Rectangle() {
-		Rectangle r = new Rectangle(new Point(100, 150), new Point(550, 300));
-		Ellipse e = new Ellipse(126.0, 90.0, 378.0, 270.0);
-		Point[] inters = e.getIntersections(r.getOutline());
-		assertEquals(4, inters.length);
+	public void test_toQuadratic() {
+		BezierCurve c0 = new BezierCurve(1, 1);
+		assertNull(c0.toQuadratic());
+		c0 = new BezierCurve(1, 1, 1, 10);
+		assertNull(c0.toQuadratic());
+		c0 = new BezierCurve(1, 1, 1, 10, 10, 1);
+		assertEquals(new QuadraticCurve(1, 1, 1, 10, 10, 1), c0.toQuadratic());
+		c0 = new BezierCurve(1, 1, 1, 10, 67, 89, 10, 1);
+		assertEquals(new QuadraticCurve(1, 1, 1, 10, 10, 1), c0.toQuadratic());
+		c0 = new BezierCurve(1, 1, 1, 10, 10, 1, 98, 76);
+		assertEquals(new QuadraticCurve(1, 1, 1, 10, 98, 76), c0.toQuadratic());
 	}
 
 	@Test

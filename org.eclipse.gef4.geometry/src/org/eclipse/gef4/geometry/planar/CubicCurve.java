@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -18,6 +19,8 @@ package org.eclipse.gef4.geometry.planar;
  * {@link Point}s.
  * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class CubicCurve extends BezierCurve {
 
@@ -140,24 +143,6 @@ public class CubicCurve extends BezierCurve {
 	}
 
 	/**
-	 * Returns the first handle {@link Point}'s x coordinate.
-	 * 
-	 * @return the first handle {@link Point}'s x coordinate
-	 */
-	public double getCtrlX1() {
-		return getPoint(1).x;
-	}
-
-	/**
-	 * Returns the first handle {@link Point}'s y coordinate.
-	 * 
-	 * @return the first handle {@link Point}'s y coordinate
-	 */
-	public double getCtrlY1() {
-		return getPoint(1).y;
-	}
-
-	/**
 	 * Returns the second handle {@link Point}.
 	 * 
 	 * @return the second handle {@link Point}
@@ -167,12 +152,30 @@ public class CubicCurve extends BezierCurve {
 	}
 
 	/**
+	 * Returns the first handle {@link Point}'s x coordinate.
+	 * 
+	 * @return the first handle {@link Point}'s x coordinate
+	 */
+	public double getCtrlX1() {
+		return getPoint(1).x;
+	}
+
+	/**
 	 * Returns the second handle {@link Point}'s x coordinate.
 	 * 
 	 * @return the second handle {@link Point}'s x coordinate
 	 */
 	public double getCtrlX2() {
 		return getPoint(2).x;
+	}
+
+	/**
+	 * Returns the first handle {@link Point}'s y coordinate.
+	 * 
+	 * @return the first handle {@link Point}'s y coordinate
+	 */
+	public double getCtrlY1() {
+		return getPoint(1).y;
 	}
 
 	/**

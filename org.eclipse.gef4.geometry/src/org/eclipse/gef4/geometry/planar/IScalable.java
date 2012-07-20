@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *          
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
-
 
 /**
  * <p>
@@ -43,8 +43,89 @@ package org.eclipse.gef4.geometry.planar;
  * 
  * @param <T>
  *            the implementing type
+ * 
+ * @author mwienand
+ * 
  */
 public interface IScalable<T extends IGeometry> {
+
+	/**
+	 * Scales a copy of the calling object by the given factor relative to its
+	 * center {@link Point}.
+	 * 
+	 * @param factor
+	 *            scale-factor
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double factor);
+
+	/**
+	 * Scales a copy of the calling object by the given factors relative to its
+	 * center {@link Point}.
+	 * 
+	 * @param fx
+	 *            x-scale-factor
+	 * @param fy
+	 *            y-scale-factor
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double fx, double fy);
+
+	/**
+	 * Scales a copy of the calling object by the given factor relative to the
+	 * given center {@link Point} (cx, cy).
+	 * 
+	 * @param factor
+	 *            scale-factor
+	 * @param cx
+	 *            x-coordinate of the relative {@link Point} for the scaling
+	 * @param cy
+	 *            y-coordinate of the relative {@link Point} for the scaling
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double factor, double cx, double cy);
+
+	/**
+	 * Scales a copy of the calling object by the given factors relative to the
+	 * given center {@link Point} (cx, cy).
+	 * 
+	 * @param fx
+	 *            x-scale-factor
+	 * @param fy
+	 *            y-scale-factor
+	 * @param cx
+	 *            x-coordinate of the relative {@link Point} for the scaling
+	 * @param cy
+	 *            y-coordinate of the relative {@link Point} for the scaling
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double fx, double fy, double cx, double cy);
+
+	/**
+	 * Scales a copy of the calling object by the given factors relative to the
+	 * given center {@link Point}.
+	 * 
+	 * @param fx
+	 *            x-scale-factor
+	 * @param fy
+	 *            y-scale-factor
+	 * @param center
+	 *            relative {@link Point} for the scaling
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double fx, double fy, Point center);
+
+	/**
+	 * Scales a copy of the calling object by the given factor relative to the
+	 * given center {@link Point}.
+	 * 
+	 * @param factor
+	 *            scale-factor
+	 * @param center
+	 *            relative {@link Point} for the scaling
+	 * @return the new, scaled object
+	 */
+	public T getScaled(double factor, Point center);
 
 	/**
 	 * Scales the calling object by the given factor relative to its center
@@ -55,6 +136,18 @@ public interface IScalable<T extends IGeometry> {
 	 * @return <code>this</code> for convenience
 	 */
 	public T scale(double factor);
+
+	/**
+	 * Scales the calling object by the given factors relative to the given
+	 * center {@link Point}.
+	 * 
+	 * @param fx
+	 *            x-scale-factor
+	 * @param fy
+	 *            y-scale-factor
+	 * @return <code>this</code> for convenience
+	 */
+	public T scale(double fx, double fy);
 
 	/**
 	 * Scales the calling object by the given factor relative to the given
@@ -69,30 +162,6 @@ public interface IScalable<T extends IGeometry> {
 	 * @return <code>this</code> for convenience
 	 */
 	public T scale(double factor, double cx, double cy);
-
-	/**
-	 * Scales the calling object by the given factor relative to the given
-	 * center {@link Point}.
-	 * 
-	 * @param factor
-	 *            scale-factor
-	 * @param center
-	 *            relative {@link Point} for the scaling
-	 * @return <code>this</code> for convenience
-	 */
-	public T scale(double factor, Point center);
-
-	/**
-	 * Scales the calling object by the given factors relative to the given
-	 * center {@link Point}.
-	 * 
-	 * @param fx
-	 *            x-scale-factor
-	 * @param fy
-	 *            y-scale-factor
-	 * @return <code>this</code> for convenience
-	 */
-	public T scale(double fx, double fy);
 
 	/**
 	 * Scales the calling object by the given factors relative to the given
@@ -125,81 +194,15 @@ public interface IScalable<T extends IGeometry> {
 	public T scale(double fx, double fy, Point center);
 
 	/**
-	 * Scales a copy of the calling object by the given factor relative to its
+	 * Scales the calling object by the given factor relative to the given
 	 * center {@link Point}.
-	 * 
-	 * @param factor
-	 *            scale-factor
-	 * @return the new, scaled object
-	 */
-	public T getScaled(double factor);
-
-	/**
-	 * Scales a copy of the calling object by the given factor relative to the
-	 * given center {@link Point} (cx, cy).
-	 * 
-	 * @param factor
-	 *            scale-factor
-	 * @param cx
-	 *            x-coordinate of the relative {@link Point} for the scaling
-	 * @param cy
-	 *            y-coordinate of the relative {@link Point} for the scaling
-	 * @return the new, scaled object
-	 */
-	public T getScaled(double factor, double cx, double cy);
-
-	/**
-	 * Scales a copy of the calling object by the given factor relative to the
-	 * given center {@link Point}.
 	 * 
 	 * @param factor
 	 *            scale-factor
 	 * @param center
 	 *            relative {@link Point} for the scaling
-	 * @return the new, scaled object
+	 * @return <code>this</code> for convenience
 	 */
-	public T getScaled(double factor, Point center);
-
-	/**
-	 * Scales a copy of the calling object by the given factors relative to its
-	 * center {@link Point}.
-	 * 
-	 * @param fx
-	 *            x-scale-factor
-	 * @param fy
-	 *            y-scale-factor
-	 * @return the new, scaled object
-	 */
-	public T getScaled(double fx, double fy);
-
-	/**
-	 * Scales a copy of the calling object by the given factors relative to the
-	 * given center {@link Point} (cx, cy).
-	 * 
-	 * @param fx
-	 *            x-scale-factor
-	 * @param fy
-	 *            y-scale-factor
-	 * @param cx
-	 *            x-coordinate of the relative {@link Point} for the scaling
-	 * @param cy
-	 *            y-coordinate of the relative {@link Point} for the scaling
-	 * @return the new, scaled object
-	 */
-	public T getScaled(double fx, double fy, double cx, double cy);
-
-	/**
-	 * Scales a copy of the calling object by the given factors relative to the
-	 * given center {@link Point}.
-	 * 
-	 * @param fx
-	 *            x-scale-factor
-	 * @param fy
-	 *            y-scale-factor
-	 * @param center
-	 *            relative {@link Point} for the scaling
-	 * @return the new, scaled object
-	 */
-	public T getScaled(double fx, double fy, Point center);
+	public T scale(double factor, Point center);
 
 }

@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
@@ -26,6 +27,9 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  *            the type of the inheriting class
  * @param <S>
  *            the type of rotated objects (see {@link IRotatable})
+ * 
+ * @author mwienand
+ * 
  */
 abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>, S extends IGeometry>
 		extends AbstractRectangleBasedGeometry<T, S> {
@@ -73,6 +77,64 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 		this.height = height;
 		this.startAngle = startAngle;
 		this.angularExtent = angularExtent;
+	}
+
+	/**
+	 * Computes a {@link CubicCurve} approximation for this
+	 * {@link AbstractArcBasedGeometry}. It is approximated by a maximum of four
+	 * {@link CubicCurve}s, each of which covers a maximum of 90 degrees.
+	 * 
+	 * @return a {@link CubicCurve} approximation for this
+	 *         {@link AbstractArcBasedGeometry}
+	 */
+	protected CubicCurve[] computeBezierApproximation() {
+		double start = getStartAngle().rad();
+		double end = getStartAngle().rad() + getAngularExtent().rad();
+
+		// approximation is for arcs with angle < 90 degrees, so we may have to
+		// split the arc into up to 4 cubic curves
+		List<CubicCurve> segments = new ArrayList<CubicCurve>();
+		if (angularExtent.deg() <= 90.0) {
+			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
+					width, height, Angle.fromRad(start), Angle.fromRad(end)));
+		} else {
+			// two or more segments, the first will be an ellipse segment
+			// approximation
+			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
+					width, height, Angle.fromRad(start),
+					Angle.fromRad(start + Math.PI / 2)));
+			if (angularExtent.deg() <= 180.0) {
+				// two segments, calculate the second (which is below 90
+				// degrees)
+				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
+						width, height, Angle.fromRad(start + Math.PI / 2),
+						Angle.fromRad(end)));
+			} else {
+				// three or more segments, so calculate the second one
+				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
+						width, height, Angle.fromRad(start + Math.PI / 2),
+						Angle.fromRad(start + Math.PI)));
+				if (angularExtent.deg() <= 270.0) {
+					// three segments, calculate the third (which is below 90
+					// degrees)
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
+							x, y, width, height,
+							Angle.fromRad(start + Math.PI), Angle.fromRad(end)));
+				} else {
+					// four segments (fourth below 90 degrees), so calculate the
+					// third and fourth
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
+							x, y, width, height,
+							Angle.fromRad(start + Math.PI),
+							Angle.fromRad(start + 3 * Math.PI / 2)));
+					segments.add(ShapeUtils.computeEllipticalArcApproximation(
+							x, y, width, height,
+							Angle.fromRad(start + 3 * Math.PI / 2),
+							Angle.fromRad(end)));
+				}
+			}
+		}
+		return segments.toArray(new CubicCurve[] {});
 	}
 
 	/**
@@ -198,64 +260,6 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 */
 	public void setStartAngle(Angle startAngle) {
 		this.startAngle = startAngle;
-	}
-
-	/**
-	 * Computes a {@link CubicCurve} approximation for this
-	 * {@link AbstractArcBasedGeometry}. It is approximated by a maximum of four
-	 * {@link CubicCurve}s, each of which covers a maximum of 90 degrees.
-	 * 
-	 * @return a {@link CubicCurve} approximation for this
-	 *         {@link AbstractArcBasedGeometry}
-	 */
-	protected CubicCurve[] computeBezierApproximation() {
-		double start = getStartAngle().rad();
-		double end = getStartAngle().rad() + getAngularExtent().rad();
-
-		// approximation is for arcs with angle < 90 degrees, so we may have to
-		// split the arc into up to 4 cubic curves
-		List<CubicCurve> segments = new ArrayList<CubicCurve>();
-		if (angularExtent.deg() <= 90.0) {
-			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
-					width, height, Angle.fromRad(start), Angle.fromRad(end)));
-		} else {
-			// two or more segments, the first will be an ellipse segment
-			// approximation
-			segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
-					width, height, Angle.fromRad(start),
-					Angle.fromRad(start + Math.PI / 2)));
-			if (angularExtent.deg() <= 180.0) {
-				// two segments, calculate the second (which is below 90
-				// degrees)
-				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
-						width, height, Angle.fromRad(start + Math.PI / 2),
-						Angle.fromRad(end)));
-			} else {
-				// three or more segments, so calculate the second one
-				segments.add(ShapeUtils.computeEllipticalArcApproximation(x, y,
-						width, height, Angle.fromRad(start + Math.PI / 2),
-						Angle.fromRad(start + Math.PI)));
-				if (angularExtent.deg() <= 270.0) {
-					// three segments, calculate the third (which is below 90
-					// degrees)
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
-							Angle.fromRad(start + Math.PI), Angle.fromRad(end)));
-				} else {
-					// four segments (fourth below 90 degrees), so calculate the
-					// third and fourth
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
-							Angle.fromRad(start + Math.PI),
-							Angle.fromRad(start + 3 * Math.PI / 2)));
-					segments.add(ShapeUtils.computeEllipticalArcApproximation(
-							x, y, width, height,
-							Angle.fromRad(start + 3 * Math.PI / 2),
-							Angle.fromRad(end)));
-				}
-			}
-		}
-		return segments.toArray(new CubicCurve[] {});
 	}
 
 	/**

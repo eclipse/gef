@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -29,46 +30,20 @@ package org.eclipse.gef4.geometry.planar;
  * </p>
  * 
  * @author anyssen
+ * @author mwienand
  * 
  */
 public interface ICurve extends IGeometry {
 
 	/**
-	 * Returns the end {@link Point}'s y coordinate.
+	 * Returns the points of intersection between this {@link ICurve} and the
+	 * given {@link ICurve}.
 	 * 
-	 * @return the end {@link Point}'s y coordinate.
+	 * @param c
+	 *            the {@link ICurve} to compute intersection points for
+	 * @return the points of intersection.
 	 */
-	public double getY2();
-
-	/**
-	 * Returns the start {@link Point}'s y coordinate.
-	 * 
-	 * @return the start {@link Point}'s y coordinate.
-	 */
-	public double getY1();
-
-	/**
-	 * Returns the end {@link Point}'s x coordinate.
-	 * 
-	 * @return the end {@link Point}'s x coordinate.
-	 */
-	public double getX2();
-
-	/**
-	 * Returns the start {@link Point}'s x coordinate.
-	 * 
-	 * @return the start {@link Point}'s x coordinate.
-	 */
-	public double getX1();
-
-	/**
-	 * Returns a {@link Point} representing the end point of this {@link ICurve}
-	 * .
-	 * 
-	 * @return a new {@link Point} with the coordinates of the {@link ICurve}'s
-	 *         end point.
-	 */
-	public Point getP2();
+	public Point[] getIntersections(final ICurve c);
 
 	/**
 	 * Returns a {@link Point} representing the start point of this
@@ -80,26 +55,41 @@ public interface ICurve extends IGeometry {
 	public Point getP1();
 
 	/**
-	 * A list of {@link BezierCurve}s that approximate the {@link ICurve}. For
-	 * example, a {@link Line} or a {@link BezierCurve} in general, could return
-	 * a list with the curve itself as its only element. But an {@link Ellipse}
-	 * or an {@link Arc} may return a list of consecutive {@link BezierCurve}s
-	 * which approximate the curve.
+	 * Returns a {@link Point} representing the end point of this {@link ICurve}
+	 * .
 	 * 
-	 * @return a list of {@link BezierCurve}s that approximate the
-	 *         {@link ICurve}
+	 * @return a new {@link Point} with the coordinates of the {@link ICurve}'s
+	 *         end point.
 	 */
-	public BezierCurve[] toBezier();
+	public Point getP2();
 
 	/**
-	 * Returns the points of intersection between this {@link ICurve} and the
-	 * given {@link ICurve}.
+	 * Returns the start {@link Point}'s x coordinate.
 	 * 
-	 * @param c
-	 *            the {@link ICurve} to compute intersection points for
-	 * @return the points of intersection.
+	 * @return the start {@link Point}'s x coordinate.
 	 */
-	public Point[] getIntersections(final ICurve c);
+	public double getX1();
+
+	/**
+	 * Returns the end {@link Point}'s x coordinate.
+	 * 
+	 * @return the end {@link Point}'s x coordinate.
+	 */
+	public double getX2();
+
+	/**
+	 * Returns the start {@link Point}'s y coordinate.
+	 * 
+	 * @return the start {@link Point}'s y coordinate.
+	 */
+	public double getY1();
+
+	/**
+	 * Returns the end {@link Point}'s y coordinate.
+	 * 
+	 * @return the end {@link Point}'s y coordinate.
+	 */
+	public double getY2();
 
 	/**
 	 * Tests if this {@link ICurve} and the given {@link ICurve} intersect, i.e.
@@ -124,6 +114,18 @@ public interface ICurve extends IGeometry {
 	 * @return <code>true</code> if they overlap, <code>false</code> otherwise
 	 */
 	boolean overlaps(final ICurve c);
+
+	/**
+	 * A list of {@link BezierCurve}s that approximate the {@link ICurve}. For
+	 * example, a {@link Line} or a {@link BezierCurve} in general, could return
+	 * a list with the curve itself as its only element. But an {@link Ellipse}
+	 * or an {@link Arc} may return a list of consecutive {@link BezierCurve}s
+	 * which approximate the curve.
+	 * 
+	 * @return a list of {@link BezierCurve}s that approximate the
+	 *         {@link ICurve}
+	 */
+	public BezierCurve[] toBezier();
 
 	// start point, end point, control points (optional)
 	// TODO: need to elevate

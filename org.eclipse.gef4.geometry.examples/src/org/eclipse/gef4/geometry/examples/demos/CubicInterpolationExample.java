@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -24,38 +25,14 @@ import org.eclipse.swt.widgets.Slider;
 
 public class CubicInterpolationExample extends AbstractExample {
 
-	private double curveWidthCoefficient;
-
 	public static void main(String[] args) {
 		new CubicInterpolationExample("Cubic Interpolation Example");
 	}
 
+	private double curveWidthCoefficient;
+
 	public CubicInterpolationExample(String title) {
 		super(title); // Creates the UI for us.
-	}
-
-	@Override
-	public void onInit() {
-		/*
-		 * Creates the slider to be able to change the curve width coefficient
-		 * used to construct the cubic Bezier interpolation through the later-on
-		 * defined anchor points. (Just SWT buzz.)
-		 */
-		curveWidthCoefficient = 1;
-
-		// add slider
-		final Slider slider = new Slider(shell, SWT.HORIZONTAL);
-		slider.setBounds(0, 0, 200, 20);
-		slider.setValues(25, 0, 101, 1, 1, 1);
-		slider.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				curveWidthCoefficient = (double) slider.getSelection() / 25d;
-				shell.redraw();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 	}
 
 	@Override
@@ -96,6 +73,30 @@ public class CubicInterpolationExample extends AbstractExample {
 						.getCurrent(), curve.toPath().toSWTPathData()));
 			}
 		} };
+	}
+
+	@Override
+	public void onInit() {
+		/*
+		 * Creates the slider to be able to change the curve width coefficient
+		 * used to construct the cubic Bezier interpolation through the later-on
+		 * defined anchor points. (Just SWT buzz.)
+		 */
+		curveWidthCoefficient = 1;
+
+		// add slider
+		final Slider slider = new Slider(shell, SWT.HORIZONTAL);
+		slider.setBounds(0, 0, 200, 20);
+		slider.setValues(25, 0, 101, 1, 1, 1);
+		slider.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				curveWidthCoefficient = slider.getSelection() / 25d;
+				shell.redraw();
+			}
+		});
 	}
 
 }

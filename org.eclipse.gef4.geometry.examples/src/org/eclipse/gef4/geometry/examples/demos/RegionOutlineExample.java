@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -45,8 +46,9 @@ public class RegionOutlineExample extends AbstractExample {
 				Point[] cp = getPoints();
 
 				Rectangle[] rectangles = new Rectangle[cp.length / 2];
-				for (int i = 0; i < rectangles.length; i++)
+				for (int i = 0; i < rectangles.length; i++) {
 					rectangles[i] = new Rectangle(cp[2 * i], cp[2 * i + 1]);
+				}
 
 				return new Region(rectangles);
 			}

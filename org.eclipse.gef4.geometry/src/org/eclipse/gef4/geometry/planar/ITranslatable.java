@@ -4,13 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *          
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
-
 
 /**
  * <p>
@@ -32,28 +31,11 @@ package org.eclipse.gef4.geometry.planar;
  * 
  * @param <T>
  *            the implementing type
+ * 
+ * @author mwienand
+ * 
  */
 public interface ITranslatable<T extends IGeometry> {
-
-	/**
-	 * Translates the object by the given values in x and y direction.
-	 * 
-	 * @param dx
-	 *            x-translation
-	 * @param dy
-	 *            y-translation
-	 * @return <code>this</code> for convenience
-	 */
-	public T translate(double dx, double dy);
-
-	/**
-	 * Translates the object by the given {@link Point}.
-	 * 
-	 * @param d
-	 *            translation {@link Point}
-	 * @return <code>this</code> for convenience
-	 */
-	public T translate(Point d);
 
 	/**
 	 * Translates a copy of this object by the given values in x and y
@@ -75,5 +57,25 @@ public interface ITranslatable<T extends IGeometry> {
 	 * @return a new, translated object
 	 */
 	public T getTranslated(Point d);
+
+	/**
+	 * Translates the object by the given values in x and y direction.
+	 * 
+	 * @param dx
+	 *            x-translation
+	 * @param dy
+	 *            y-translation
+	 * @return <code>this</code> for convenience
+	 */
+	public T translate(double dx, double dy);
+
+	/**
+	 * Translates the object by the given {@link Point}.
+	 * 
+	 * @param d
+	 *            translation {@link Point}
+	 * @return <code>this</code> for convenience
+	 */
+	public T translate(Point d);
 
 }

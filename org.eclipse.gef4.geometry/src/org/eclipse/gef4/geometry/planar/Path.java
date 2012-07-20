@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +32,7 @@ import org.eclipse.swt.graphics.PathData;
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
  * 
  * @author anyssen
+ * 
  */
 public class Path extends AbstractGeometry implements IGeometry {
 
@@ -164,6 +166,13 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
+	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 */
+	public Path getCopy() {
+		return new Path(toSWTPathData(), getWindingRule());
+	}
+
+	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
@@ -181,21 +190,6 @@ public class Path extends AbstractGeometry implements IGeometry {
 	public int getWindingRule() {
 		return delegate.getWindingRule() == Path2D.WIND_EVEN_ODD ? WIND_EVEN_ODD
 				: WIND_NON_ZERO;
-	}
-
-	/**
-	 * Tests whether this {@link Path} and the given {@link Rectangle} touch,
-	 * i.e. they have at least one {@link Point} in common.
-	 * 
-	 * @param r
-	 *            the {@link Rectangle} to test for at least one {@link Point}
-	 *            in common with this {@link Path}
-	 * @return <code>true</code> if this {@link Path} and the {@link Rectangle}
-	 *         touch, otherwise <code>false</code>
-	 * @see IGeometry#touches(IGeometry)
-	 */
-	public boolean touches(Rectangle r) {
-		return delegate.intersects(Geometry2AWT.toAWTRectangle(r));
 	}
 
 	/**
@@ -266,10 +260,18 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
+	 * Tests whether this {@link Path} and the given {@link Rectangle} touch,
+	 * i.e. they have at least one {@link Point} in common.
+	 * 
+	 * @param r
+	 *            the {@link Rectangle} to test for at least one {@link Point}
+	 *            in common with this {@link Path}
+	 * @return <code>true</code> if this {@link Path} and the {@link Rectangle}
+	 *         touch, otherwise <code>false</code>
+	 * @see IGeometry#touches(IGeometry)
 	 */
-	public Path getCopy() {
-		return new Path(toSWTPathData(), getWindingRule());
+	public boolean touches(Rectangle r) {
+		return delegate.intersects(Geometry2AWT.toAWTRectangle(r));
 	}
 
 }

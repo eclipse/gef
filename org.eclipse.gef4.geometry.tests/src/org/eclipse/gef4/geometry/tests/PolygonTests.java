@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *    Alexander Shatalin (Borland) - initial API and implementation
  *    Alexander Nyssen (itemis AG) - contribution for Bugzilla #162082
@@ -31,6 +32,7 @@ import org.junit.Test;
  * 
  * @author ahunter
  * @author anyssen
+ * @author mwienand
  * 
  */
 public class PolygonTests {
@@ -73,6 +75,17 @@ public class PolygonTests {
 	public void test_contains_Ellipse() {
 		assertTrue(RHOMB.contains(new Ellipse(1, 1, 2, 2)));
 		assertFalse(RHOMB.contains(new Ellipse(0, 0, 4, 4)));
+	}
+
+	@Test
+	public void test_contains_imprecision() {
+		Polygon poly = new Polygon(new Point(0.16384889386958243,
+				0.5199137157713366), new Point(0.16388083282075672,
+				0.5199518598437528), new Point(0.1639056804775328,
+				0.5199687901987595), new Point(0.16381011945655763,
+				0.5198551130149273));
+		Point p = new Point(0.16383865075635337, 0.5198962222767928);
+		assertTrue(poly.contains(p));
 	}
 
 	@Test
@@ -643,17 +656,6 @@ public class PolygonTests {
 		for (int i = 0; i < coords.length; i++) {
 			assertEquals((int) coords[i], ints[i]);
 		}
-	}
-
-	@Test
-	public void test_contains_imprecision() {
-		Polygon poly = new Polygon(new Point(0.16384889386958243,
-				0.5199137157713366), new Point(0.16388083282075672,
-				0.5199518598437528), new Point(0.1639056804775328,
-				0.5199687901987595), new Point(0.16381011945655763,
-				0.5198551130149273));
-		Point p = new Point(0.16383865075635337, 0.5198962222767928);
-		assertTrue(poly.contains(p));
 	}
 
 }

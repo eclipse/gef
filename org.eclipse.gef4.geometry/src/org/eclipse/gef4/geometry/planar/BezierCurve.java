@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +37,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * </p>
  * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class BezierCurve extends AbstractGeometry implements ICurve,
 		ITranslatable<BezierCurve>, IScalable<BezierCurve>,
@@ -54,14 +57,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * </p>
 	 */
 	private static class FatLine {
-
-		public Straight3D line;
-		public double dmin, dmax;
-
-		private FatLine() {
-			line = null;
-			dmin = dmax = 0;
-		}
 
 		public static FatLine from(BezierCurve c, boolean ortho) {
 			FatLine L = new FatLine();
@@ -82,13 +77,23 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 			for (int i = 0; i < c.points.length; i++) {
 				double d = L.line.getSignedDistanceCW(c.points[i]);
-				if (d < L.dmin)
+				if (d < L.dmin) {
 					L.dmin = d;
-				else if (d > L.dmax)
+				} else if (d > L.dmax) {
 					L.dmax = d;
+				}
 			}
 
 			return L;
+		}
+
+		public Straight3D line;
+
+		public double dmin, dmax;
+
+		private FatLine() {
+			line = null;
+			dmin = dmax = 0;
 		}
 
 	}
@@ -212,10 +217,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * @param i
 		 */
 		public void expand(Interval i) {
-			if (i.a < a)
+			if (i.a < a) {
 				a = i.a;
-			if (i.b > b)
+			}
+			if (i.b > b) {
 				b = i.b;
+			}
 		}
 
 		/**
@@ -838,7 +845,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * An array of {@link Vector3D}s which represent the control points of this
 	 * {@link BezierCurve}.
 	 */
-	private Vector3D[] points;
+	private final Vector3D[] points;
 
 	/**
 	 * An {@link IPointCmp} implementation to find the {@link Point} with the
@@ -1166,10 +1173,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		if (obj instanceof BezierCurve) {
 			BezierCurve o = (BezierCurve) obj;
 			BezierCurve t = this;
-			while (o.points.length < t.points.length)
+			while (o.points.length < t.points.length) {
 				o = o.getElevated();
-			while (t.points.length < o.points.length)
+			}
+			while (t.points.length < o.points.length) {
 				t = t.getElevated();
+			}
 			Point[] oPoints = o.getPoints();
 			Point[] tPoints = t.getPoints();
 			return Arrays.equals(oPoints, tPoints)
@@ -1707,13 +1716,17 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		}
 
 		outer: for (IntervalPair cluster : clusters) {
-			if (overlapIntervalPair != null)
-				if (isNextTo(overlapIntervalPair, cluster, CHUNK_SHIFT))
+			if (overlapIntervalPair != null) {
+				if (isNextTo(overlapIntervalPair, cluster, CHUNK_SHIFT)) {
 					continue outer;
+				}
+			}
 
-			for (IntervalPair epip : endPointIntervalPairs)
-				if (isNextTo(cluster, epip, CHUNK_SHIFT))
+			for (IntervalPair epip : endPointIntervalPairs) {
+				if (isNextTo(cluster, epip, CHUNK_SHIFT)) {
 					continue outer;
+				}
+			}
 
 			// a.t.m. assume for every cluster just a single point of
 			// intersection:
@@ -1962,15 +1975,18 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 */
 	private void moveInterval(double[] interval, double x) {
 		// assure that 0 <= x <= 1 to prevent invalid parameter values
-		if (x < 0)
+		if (x < 0) {
 			x = 0;
-		else if (x > 1)
+		} else if (x > 1) {
 			x = 1;
+		}
 
-		if (interval[0] > x)
+		if (interval[0] > x) {
 			interval[0] = x;
-		if (interval[1] < x)
+		}
+		if (interval[1] < x) {
 			interval[1] = x;
+		}
 	}
 
 	/**

@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -23,28 +24,13 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  * The {@link Pie} covers an area, therefore it implements the {@link IShape}
  * interface.
+ * 
+ * @author anyssen
+ * @author mwienand
  */
 public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Constructs a new {@link Pie} from the given values.
-	 * 
-	 * @see AbstractArcBasedGeometry#AbstractArcBasedGeometry(double, double,
-	 *      double, double, Angle, Angle)
-	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param startAngle
-	 * @param angularExtent
-	 */
-	public Pie(double x, double y, double width, double height,
-			Angle startAngle, Angle angularExtent) {
-		super(x, y, width, height, startAngle, angularExtent);
-	}
 
 	/**
 	 * Constructs a new {@link Pie} from the given values.
@@ -68,9 +54,43 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 				arc.angularExtent);
 	}
 
+	/**
+	 * Constructs a new {@link Pie} from the given values.
+	 * 
+	 * @see AbstractArcBasedGeometry#AbstractArcBasedGeometry(double, double,
+	 *      double, double, Angle, Angle)
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param startAngle
+	 * @param angularExtent
+	 */
+	public Pie(double x, double y, double width, double height,
+			Angle startAngle, Angle angularExtent) {
+		super(x, y, width, height, startAngle, angularExtent);
+	}
+
 	/*
 	 * TODO: Add additional methods to rotate a Pie so that it remains a Pie.
 	 */
+
+	public boolean contains(IGeometry g) {
+		return ShapeUtils.contains(this, g);
+	}
+
+	public boolean contains(Point p) {
+		// check if the point is in the arc's angle
+		Angle pAngle = new Vector(1, 0).getAngleCCW(new Vector(getCenter(), p));
+		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad()) && PrecisionUtils
+				.smaller(pAngle.rad(), startAngle.getAdded(angularExtent).rad()))) {
+			return false;
+		}
+
+		// angle is correct, check if the point is inside the bounding ellipse
+		return new Ellipse(x, y, width, height).contains(p);
+	}
 
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
@@ -87,20 +107,32 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 		return computeBezierApproximation();
 	}
 
-	public boolean contains(Point p) {
-		// check if the point is in the arc's angle
-		Angle pAngle = new Vector(1, 0).getAngleCCW(new Vector(getCenter(), p));
-		if (!(PrecisionUtils.greater(pAngle.rad(), startAngle.rad()) && PrecisionUtils
-				.smaller(pAngle.rad(), startAngle.getAdded(angularExtent).rad()))) {
-			return false;
-		}
-
-		// angle is correct, check if the point is inside the bounding ellipse
-		return new Ellipse(x, y, width, height).contains(p);
+	public Path getRotatedCCW(Angle angle) {
+		return getRotatedCCW(angle, getCenter());
 	}
 
-	public boolean contains(IGeometry g) {
-		return ShapeUtils.contains(this, g);
+	public Path getRotatedCCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
+				cx, cy).toPath();
+	}
+
+	public Path getRotatedCCW(Angle angle, Point center) {
+		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
+				center).toPath();
+	}
+
+	public Path getRotatedCW(Angle angle) {
+		return getRotatedCW(angle, getCenter());
+	}
+
+	public Path getRotatedCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
+				cy).toPath();
+	}
+
+	public Path getRotatedCW(Angle angle, Point center) {
+		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
+				center).toPath();
 	}
 
 	@Override
@@ -115,34 +147,6 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 		curves[arc.length] = endToMid;
 		curves[arc.length + 1] = midToStart;
 		return CurveUtils.toPath(curves);
-	}
-
-	public Path getRotatedCCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
-				cx, cy).toPath();
-	}
-
-	public Path getRotatedCCW(Angle angle, Point center) {
-		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
-				center).toPath();
-	}
-
-	public Path getRotatedCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
-				cy).toPath();
-	}
-
-	public Path getRotatedCW(Angle angle, Point center) {
-		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
-				center).toPath();
-	}
-
-	public Path getRotatedCCW(Angle angle) {
-		return getRotatedCCW(angle, getCenter());
-	}
-
-	public Path getRotatedCW(Angle angle) {
-		return getRotatedCW(angle, getCenter());
 	}
 
 }

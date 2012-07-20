@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -30,7 +31,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
  * 
  * @author anyssen
- * @author Matthias Wienand
+ * @author mwienand
+ * 
  */
 public class Ellipse extends
 		AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
@@ -67,6 +69,13 @@ public class Ellipse extends
 	 */
 	public Ellipse(Rectangle r) {
 		this(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+	}
+
+	/**
+	 * @see IShape#contains(IGeometry)
+	 */
+	public boolean contains(IGeometry g) {
+		return ShapeUtils.contains(this, g);
 	}
 
 	/**
@@ -114,13 +123,6 @@ public class Ellipse extends
 	}
 
 	/**
-	 * @see IShape#contains(IGeometry)
-	 */
-	public boolean contains(IGeometry g) {
-		return ShapeUtils.contains(this, g);
-	}
-
-	/**
 	 * Tests whether this {@link Ellipse} and the ellipse defined by the given
 	 * bounds are equal.
 	 * 
@@ -154,8 +156,9 @@ public class Ellipse extends
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 		if (o instanceof Ellipse) {
 			Ellipse e = (Ellipse) o;
 			return equals(e.getX(), e.getY(), e.getWidth(), e.getHeight());
@@ -172,20 +175,6 @@ public class Ellipse extends
 	 */
 	public Ellipse getCopy() {
 		return new Ellipse(x, y, width, height);
-	}
-
-	/**
-	 * Calculates the intersections of this {@link Ellipse} with the given
-	 * {@link ICurve}.
-	 * 
-	 * @param c
-	 * @return {@link Point}s of intersection
-	 */
-	public Point[] getIntersections(ICurve c) {
-		if (c instanceof Line) {
-			return getIntersections((Line) c);
-		}
-		return CurveUtils.getIntersections(c, this);
 	}
 
 	/**
@@ -207,6 +196,20 @@ public class Ellipse extends
 		}
 
 		return intersections.toArray(new Point[] {});
+	}
+
+	/**
+	 * Calculates the intersections of this {@link Ellipse} with the given
+	 * {@link ICurve}.
+	 * 
+	 * @param c
+	 * @return {@link Point}s of intersection
+	 */
+	public Point[] getIntersections(ICurve c) {
+		if (c instanceof Line) {
+			return getIntersections((Line) c);
+		}
+		return CurveUtils.getIntersections(c, this);
 	}
 
 	/**
@@ -344,6 +347,30 @@ public class Ellipse extends
 						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
+	public PolyBezier getRotatedCCW(Angle angle) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCCW(Angle angle, Point center) {
+		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, center);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle, cx, cy);
+	}
+
+	public PolyBezier getRotatedCW(Angle angle, Point center) {
+		return new PolyBezier(getOutlineSegments()).rotateCW(angle, center);
+	}
+
 	/**
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
@@ -376,30 +403,6 @@ public class Ellipse extends
 	public String toString() {
 		return "Ellipse (" + x + ", " + y + ", " + //$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 				width + ", " + height + ")";//$NON-NLS-2$//$NON-NLS-1$
-	}
-
-	public PolyBezier getRotatedCCW(Angle angle) {
-		return new PolyBezier(getOutlineSegments()).rotateCCW(angle);
-	}
-
-	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, cx, cy);
-	}
-
-	public PolyBezier getRotatedCCW(Angle angle, Point center) {
-		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, center);
-	}
-
-	public PolyBezier getRotatedCW(Angle angle) {
-		return new PolyBezier(getOutlineSegments()).rotateCW(angle);
-	}
-
-	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
-		return new PolyBezier(getOutlineSegments()).rotateCW(angle, cx, cy);
-	}
-
-	public PolyBezier getRotatedCW(Angle angle, Point center) {
-		return new PolyBezier(getOutlineSegments()).rotateCW(angle, center);
 	}
 
 }

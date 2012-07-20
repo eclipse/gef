@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *    Alexander Shatalin (Borland) - initial API and implementation
  *    Alexander Nyssen (itemis) - Bugzilla #162082: testLinesIntersect()
@@ -32,17 +33,6 @@ public class PolylineTests {
 	private static final Polyline POLYLINE = new Polyline(POINTS);
 
 	@Test
-	public void test_equals() {
-		assertEquals(POLYLINE, POLYLINE);
-		assertFalse(POLYLINE.equals((Object) null));
-		assertFalse(POLYLINE.equals(new Line(1, 2, 3, 4)));
-
-		List<Point> points = Arrays.asList(POINTS);
-		Collections.reverse(points);
-		assertEquals(POLYLINE, new Polyline(points.toArray(new Point[] {})));
-	}
-
-	@Test
 	public void test_contains_with_Point() {
 		// points are not on polyline
 		assertFalse(POLYLINE.contains(new Point(9, 5)));
@@ -52,6 +42,17 @@ public class PolylineTests {
 		assertTrue(POLYLINE.contains(new Point(0, 0)));
 		assertTrue(POLYLINE.contains(new Point(1, 0)));
 		assertTrue(POLYLINE.contains(new Point(2, 1)));
+	}
+
+	@Test
+	public void test_equals() {
+		assertEquals(POLYLINE, POLYLINE);
+		assertFalse(POLYLINE.equals((Object) null));
+		assertFalse(POLYLINE.equals(new Line(1, 2, 3, 4)));
+
+		List<Point> points = Arrays.asList(POINTS);
+		Collections.reverse(points);
+		assertEquals(POLYLINE, new Polyline(points.toArray(new Point[] {})));
 	}
 
 }

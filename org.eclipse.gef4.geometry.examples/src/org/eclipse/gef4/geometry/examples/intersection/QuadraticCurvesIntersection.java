@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -26,6 +27,11 @@ public class QuadraticCurvesIntersection extends AbstractIntersectionExample {
 
 	public QuadraticCurvesIntersection(String title) {
 		super(title);
+	}
+
+	@Override
+	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
+		return ((QuadraticCurve) g1).getIntersections((QuadraticCurve) g2);
 	}
 
 	private AbstractControllableShape createControllableQuadraticBezierCurveShape(
@@ -57,18 +63,15 @@ public class QuadraticCurvesIntersection extends AbstractIntersectionExample {
 		};
 	}
 
+	@Override
 	protected AbstractControllableShape createControllableShape1(Canvas canvas) {
 		return createControllableQuadraticBezierCurveShape(canvas, new Point(
 				100, 100), new Point(300, 150), new Point(400, 400));
 	}
 
+	@Override
 	protected AbstractControllableShape createControllableShape2(Canvas canvas) {
 		return createControllableQuadraticBezierCurveShape(canvas, new Point(
 				400, 100), new Point(310, 290), new Point(100, 400));
-	}
-
-	@Override
-	protected Point[] computeIntersections(IGeometry g1, IGeometry g2) {
-		return ((QuadraticCurve) g1).getIntersections((QuadraticCurve) g2);
 	}
 }

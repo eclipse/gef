@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -34,10 +35,48 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * Moreover, an algorithm to create closed outline objects for an
  * {@link IPolyShape} is provided. (see {@link #getOutline()})
  * </p>
+ * 
+ * @author mwienand
+ * 
  */
 abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * <p>
+	 * Compares two {@link Point}s by their coordinate values. A {@link Point}
+	 * is regarded to be "lower" than another {@link Point} if the first
+	 * {@link Point}'s x coordinate is smaller than the x coordinate of the
+	 * other {@link Point}. In case of equal x coordinates, the y coordinates
+	 * are compared.
+	 * </p>
+	 * <p>
+	 * Returns 0 if the {@link Point}s are equal to each other (see
+	 * {@link Point#equals(Object)}).
+	 * </p>
+	 * 
+	 * @param o1
+	 * @param o2
+	 * @return <code>0</code> if the {@link Point}s are equal (Point
+	 *         {@link #equals(Object)}), <code>-1</code> if the first
+	 *         {@link Point} is "lower" than the second {@link Point}, otherwise
+	 *         <code>1</code>
+	 */
+	private static int comparePoints(Point o1, Point o2) {
+		if (o1.equals(o2)) {
+			return 0;
+		}
+		if (o1.x < o2.x) {
+			return -1;
+		}
+		if (o1.x == o2.x) {
+			if (o1.y < o2.y) {
+				return -1;
+			}
+		}
+		return 1;
+	}
 
 	private void assignRemainingSegment(HashMap<Line, Integer> seen,
 			Stack<Line> addends, Line toAdd, Point start, Point end) {
@@ -72,115 +111,6 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 				seen.remove(seg);
 			}
 		}
-	}
-
-	/**
-	 * Collects all edges of the internal {@link IShape}s. For a {@link Region}
-	 * the internal {@link IShape}s are {@link Rectangle}s. For a {@link Ring}
-	 * the internal {@link IShape}s are {@link Polygon}s (triangles).
-	 * 
-	 * The internal edges are needed to determine inner and outer segments of
-	 * the {@link IPolyShape}. Based on the outline of the {@link IPolyShape},
-	 * the outline intersections can be computed. These outline intersections
-	 * are required to test if an {@link ICurve} is fully-contained by the
-	 * {@link IPolyShape}.
-	 * 
-	 * @return the edges of all internal {@link IShape}s
-	 */
-	abstract protected Line[] getAllEdges();
-
-	/**
-	 * <p>
-	 * Compares two {@link Point}s by their coordinate values. A {@link Point}
-	 * is regarded to be "lower" than another {@link Point} if the first
-	 * {@link Point}'s x coordinate is smaller than the x coordinate of the
-	 * other {@link Point}. In case of equal x coordinates, the y coordinates
-	 * are compared.
-	 * </p>
-	 * <p>
-	 * Returns 0 if the {@link Point}s are equal to each other (see
-	 * {@link Point#equals(Object)}).
-	 * </p>
-	 * 
-	 * @param o1
-	 * @param o2
-	 * @return <code>0</code> if the {@link Point}s are equal (Point
-	 *         {@link #equals(Object)}), <code>-1</code> if the first
-	 *         {@link Point} is "lower" than the second {@link Point}, otherwise
-	 *         <code>1</code>
-	 */
-	private static int comparePoints(Point o1, Point o2) {
-		if (o1.equals(o2)) {
-			return 0;
-		}
-		if (o1.x < o2.x)
-			return -1;
-		if (o1.x == o2.x) {
-			if (o1.y < o2.y)
-				return -1;
-		}
-		return 1;
-	}
-
-	/**
-	 * Computes closed outlines for this {@link AbstractPolyShape}.
-	 * 
-	 * TODO!
-	 * 
-	 * @return closed outlines for this {@link AbstractPolyShape}
-	 */
-	public Polyline[] getOutline() {
-		List<Polyline> outlines = new ArrayList<Polyline>();
-		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<Point, List<Line>>();
-		Set<Line> outlineSegments = new HashSet<Line>();
-
-		for (Line seg : getOutlineSegments()) {
-			// if (comparePoints(seg.getP1(), seg.getP2()) == 1) {
-			// seg = new Line(seg.getP2(), seg.getP1());
-			// }
-			outlineSegments.add(seg);
-		}
-
-		// constructs segments tree
-		for (Line seg : outlineSegments) {
-			if (!segmentsByEndPoints.containsKey(seg.getP1())) {
-				ArrayList<Line> segList = new ArrayList<Line>();
-				segmentsByEndPoints.put(seg.getP1(), segList);
-			}
-			if (!segmentsByEndPoints.containsKey(seg.getP2())) {
-				ArrayList<Line> segList = new ArrayList<Line>();
-				segmentsByEndPoints.put(seg.getP2(), segList);
-			}
-			segmentsByEndPoints.get(seg.getP1()).add(seg);
-			segmentsByEndPoints.get(seg.getP2()).add(seg);
-		}
-
-		for (List<Line> segments : segmentsByEndPoints.values()) {
-			if (segments.size() < 2) {
-				throw new IllegalStateException("error");
-			}
-		}
-
-		while (!outlineSegments.isEmpty()) {
-			Polyline outline = findOutline(outlineSegments, segmentsByEndPoints);
-			// System.out.println("outline: " + outline);
-			outlines.add(outline);
-
-			// Remove the segments of the previously found outline from the set
-			// of remaining outline segments.
-			for (Line outlineSeg : CurveUtils.toSegmentsArray(
-					outline.getPoints(), false)) {
-				if (comparePoints(outlineSeg.getP1(), outlineSeg.getP2()) == 1) {
-					outlineSeg = new Line(outlineSeg.getP2(),
-							outlineSeg.getP1());
-				}
-				outlineSegments.remove(outlineSeg);
-			}
-		}
-
-		// System.out.println("Found " + outlines.size() + " outlines.");
-
-		return outlines.toArray(new Polyline[] {});
 	}
 
 	private Polyline findOutline(Set<Line> outlineSegments,
@@ -259,8 +189,9 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 					: nextSeg.getP1();
 			List<Point> way = findWay(segmentsByEndPoints, visited, nextPoint,
 					end, indent + 1);
-			if (way != null)
+			if (way != null) {
 				way.add(0, nextPoint);
+			}
 			return way;
 		}
 
@@ -292,6 +223,82 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 	}
 
 	/**
+	 * Collects all edges of the internal {@link IShape}s. For a {@link Region}
+	 * the internal {@link IShape}s are {@link Rectangle}s. For a {@link Ring}
+	 * the internal {@link IShape}s are {@link Polygon}s (triangles).
+	 * 
+	 * The internal edges are needed to determine inner and outer segments of
+	 * the {@link IPolyShape}. Based on the outline of the {@link IPolyShape},
+	 * the outline intersections can be computed. These outline intersections
+	 * are required to test if an {@link ICurve} is fully-contained by the
+	 * {@link IPolyShape}.
+	 * 
+	 * @return the edges of all internal {@link IShape}s
+	 */
+	abstract protected Line[] getAllEdges();
+
+	/**
+	 * Computes closed outlines for this {@link AbstractPolyShape}.
+	 * 
+	 * TODO!
+	 * 
+	 * @return closed outlines for this {@link AbstractPolyShape}
+	 */
+	public Polyline[] getOutline() {
+		List<Polyline> outlines = new ArrayList<Polyline>();
+		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<Point, List<Line>>();
+		Set<Line> outlineSegments = new HashSet<Line>();
+
+		for (Line seg : getOutlineSegments()) {
+			// if (comparePoints(seg.getP1(), seg.getP2()) == 1) {
+			// seg = new Line(seg.getP2(), seg.getP1());
+			// }
+			outlineSegments.add(seg);
+		}
+
+		// constructs segments tree
+		for (Line seg : outlineSegments) {
+			if (!segmentsByEndPoints.containsKey(seg.getP1())) {
+				ArrayList<Line> segList = new ArrayList<Line>();
+				segmentsByEndPoints.put(seg.getP1(), segList);
+			}
+			if (!segmentsByEndPoints.containsKey(seg.getP2())) {
+				ArrayList<Line> segList = new ArrayList<Line>();
+				segmentsByEndPoints.put(seg.getP2(), segList);
+			}
+			segmentsByEndPoints.get(seg.getP1()).add(seg);
+			segmentsByEndPoints.get(seg.getP2()).add(seg);
+		}
+
+		for (List<Line> segments : segmentsByEndPoints.values()) {
+			if (segments.size() < 2) {
+				throw new IllegalStateException("error");
+			}
+		}
+
+		while (!outlineSegments.isEmpty()) {
+			Polyline outline = findOutline(outlineSegments, segmentsByEndPoints);
+			// System.out.println("outline: " + outline);
+			outlines.add(outline);
+
+			// Remove the segments of the previously found outline from the set
+			// of remaining outline segments.
+			for (Line outlineSeg : CurveUtils.toSegmentsArray(
+					outline.getPoints(), false)) {
+				if (comparePoints(outlineSeg.getP1(), outlineSeg.getP2()) == 1) {
+					outlineSeg = new Line(outlineSeg.getP2(),
+							outlineSeg.getP1());
+				}
+				outlineSegments.remove(outlineSeg);
+			}
+		}
+
+		// System.out.println("Found " + outlines.size() + " outlines.");
+
+		return outlines.toArray(new Polyline[] {});
+	}
+
+	/**
 	 * <p>
 	 * Computes the outline segments of this {@link AbstractPolyShape}.
 	 * </p>
@@ -305,8 +312,9 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 	public Line[] getOutlineSegments() {
 		HashMap<Line, Integer> seen = new HashMap<Line, Integer>();
 		Stack<Line> elementsToAdd = new Stack<Line>();
-		for (Line e : getAllEdges())
+		for (Line e : getAllEdges()) {
 			elementsToAdd.push(e);
+		}
 
 		addingElements: while (!elementsToAdd.empty()) {
 			Line toAdd = elementsToAdd.pop();

@@ -1,10 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -25,23 +26,6 @@ public class QuadraticCurveTests {
 	private static final int SEED = 123;
 	private final Point p = new Point(-10, -10), c = new Point(10, 0),
 			q = new Point(0, 10);
-
-	@Test
-	public void test_getters_and_setters() {
-		QuadraticCurve curve = new QuadraticCurve(p, c, q);
-		assertEquals(curve.getP1(), p);
-		assertEquals(curve.getP2(), q);
-		assertEquals(curve.getCtrl(), c);
-		Point newP = new Point(-5, -5);
-		Point newC = new Point(5, -5);
-		Point newQ = new Point(-5, 5);
-		curve.setP1(newP);
-		curve.setP2(newQ);
-		curve.setCtrl(newC);
-		assertEquals(curve.getP1(), newP);
-		assertEquals(curve.getP2(), newQ);
-		assertEquals(curve.getCtrl(), newC);
-	}
 
 	@Test
 	public void test_contains_Point() {
@@ -95,6 +79,25 @@ public class QuadraticCurveTests {
 
 		// p is the top-left point: (y-coordinates are inverted)
 		assertEquals(curve.getBounds().getTopLeft(), p);
+	}
+
+	@Test
+	public void test_getElevated() {
+		Random rng = new Random(SEED);
+
+		for (int i = 0; i < 100; i++) {
+			Point[] points = new Point[3];
+			for (int j = 0; j < 3; j++) {
+				points[j] = new Point(rng.nextDouble(), rng.nextDouble());
+			}
+			QuadraticCurve qc = new QuadraticCurve(points);
+			CubicCurve cc = qc.getElevated();
+
+			for (double t = 0; t <= 1; t += 0.0123456789) {
+				assertTrue(cc.contains(qc.get(t)));
+				assertTrue(qc.contains(cc.get(t)));
+			}
+		}
 	}
 
 	@Test
@@ -212,31 +215,29 @@ public class QuadraticCurveTests {
 		// special
 	}
 
+	@Test
+	public void test_getters_and_setters() {
+		QuadraticCurve curve = new QuadraticCurve(p, c, q);
+		assertEquals(curve.getP1(), p);
+		assertEquals(curve.getP2(), q);
+		assertEquals(curve.getCtrl(), c);
+		Point newP = new Point(-5, -5);
+		Point newC = new Point(5, -5);
+		Point newQ = new Point(-5, 5);
+		curve.setP1(newP);
+		curve.setP2(newQ);
+		curve.setCtrl(newC);
+		assertEquals(curve.getP1(), newP);
+		assertEquals(curve.getP2(), newQ);
+		assertEquals(curve.getCtrl(), newC);
+	}
+
 	public void test_intersects_Line() {
 		// TODO!
 	}
 
 	public void test_intersects_Rectangle() {
 		// TODO!
-	}
-
-	@Test
-	public void test_getElevated() {
-		Random rng = new Random(SEED);
-
-		for (int i = 0; i < 100; i++) {
-			Point[] points = new Point[3];
-			for (int j = 0; j < 3; j++) {
-				points[j] = new Point(rng.nextDouble(), rng.nextDouble());
-			}
-			QuadraticCurve qc = new QuadraticCurve(points);
-			CubicCurve cc = qc.getElevated();
-
-			for (double t = 0; t <= 1; t += 0.0123456789) {
-				assertTrue(cc.contains(qc.get(t)));
-				assertTrue(qc.contains(cc.get(t)));
-			}
-		}
 	}
 
 }

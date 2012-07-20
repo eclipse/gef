@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
@@ -33,7 +34,10 @@ package org.eclipse.gef4.geometry.planar;
  * @param <S>
  *            specifies the result type of all rotation short-cut methods (see
  *            {@link IRotatable})
+ * 
  * @author anyssen
+ * @author mwienand
+ * 
  */
 abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
 		extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
@@ -173,8 +177,8 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getScaled(double factor, Point center) {
-		return (T) ((T) getCopy()).scale(factor, center);
+	public T getScaled(double factorX, double factorY) {
+		return (T) ((T) getCopy()).scale(factorX, factorY);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -183,8 +187,9 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getScaled(double factorX, double factorY) {
-		return (T) ((T) getCopy()).scale(factorX, factorY);
+	public T getScaled(double factorX, double factorY, double centerX,
+			double centerY) {
+		return (T) ((T) getCopy()).scale(factorX, factorY, centerX, centerY);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -193,9 +198,8 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	}
 
 	@SuppressWarnings("unchecked")
-	public T getScaled(double factorX, double factorY, double centerX,
-			double centerY) {
-		return (T) ((T) getCopy()).scale(factorX, factorY, centerX, centerY);
+	public T getScaled(double factor, Point center) {
+		return (T) ((T) getCopy()).scale(factor, center);
 	}
 
 	/**
@@ -282,6 +286,18 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return y;
 	}
 
+	public T scale(double factor) {
+		return scale(factor, factor);
+	}
+
+	public T scale(double fx, double fy) {
+		return scale(fx, fy, getCenter());
+	}
+
+	public T scale(double factor, double cx, double cy) {
+		return scale(factor, factor, cx, cy);
+	}
+
 	@SuppressWarnings("unchecked")
 	public T scale(double fx, double fy, double cx, double cy) {
 		x = (x - cx) * fx + cx;
@@ -295,20 +311,8 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return scale(fx, fy, center.x, center.y);
 	}
 
-	public T scale(double fx, double fy) {
-		return scale(fx, fy, getCenter());
-	}
-
-	public T scale(double factor) {
-		return scale(factor, factor);
-	}
-
 	public T scale(double factor, Point center) {
 		return scale(factor, center.x, center.y);
-	}
-
-	public T scale(double factor, double cx, double cy) {
-		return scale(factor, factor, cx, cy);
 	}
 
 	/**

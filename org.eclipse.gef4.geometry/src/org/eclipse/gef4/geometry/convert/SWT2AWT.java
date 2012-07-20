@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2011 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +21,10 @@ import org.eclipse.swt.graphics.PathData;
 /**
  * A utility class to convert geometric objects from SWT to AWT, i.e. Java2D.
  * 
- * @author nyssen
+ * @author anyssen
  * 
  */
 public class SWT2AWT {
-
-	private SWT2AWT() {
-		// this class should not be instantiated by clients
-	}
 
 	/**
 	 * Converts an SWT {@link PathData} into an equivalent AWT
@@ -90,6 +87,10 @@ public class SWT2AWT {
 			}
 		}
 		return path.getPathIterator(new java.awt.geom.AffineTransform());
+	}
+
+	private SWT2AWT() {
+		// this class should not be instantiated by clients
 	}
 
 }

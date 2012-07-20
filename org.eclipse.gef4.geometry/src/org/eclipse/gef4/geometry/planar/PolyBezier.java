@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2012 itemis AG and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
@@ -20,6 +21,9 @@ import org.eclipse.gef4.geometry.utils.PointListUtils;
 /**
  * A {@link PolyBezier} is an {@link IPolyCurve} which consists of one or more
  * connected {@link BezierCurve}s.
+ * 
+ * @author mwienand
+ * 
  */
 public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
@@ -36,30 +40,6 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		}
 
 		return copy;
-	}
-
-	private BezierCurve[] beziers;
-
-	/**
-	 * Constructs a new {@link PolyBezier} of the given {@link BezierCurve}s.
-	 * The {@link BezierCurve}s are expected to be connected with each other.
-	 * 
-	 * @param beziers
-	 *            the {@link BezierCurve}s which will constitute this
-	 *            {@link PolyBezier}
-	 */
-	public PolyBezier(BezierCurve... beziers) {
-		this.beziers = copy(beziers);
-	}
-
-	/**
-	 * @see #interpolateCubic(double, Point...)
-	 * @param points
-	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
-	 *         through the given {@link Point}s.
-	 */
-	public static PolyBezier interpolateCubic(Point... points) {
-		return interpolateCubic(INTERPOLATION_CURVE_WIDTH_COEFFICIENT, points);
 	}
 
 	/**
@@ -131,6 +111,30 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 		}
 
 		return new PolyBezier(interpolation);
+	}
+
+	/**
+	 * @see #interpolateCubic(double, Point...)
+	 * @param points
+	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 *         through the given {@link Point}s.
+	 */
+	public static PolyBezier interpolateCubic(Point... points) {
+		return interpolateCubic(INTERPOLATION_CURVE_WIDTH_COEFFICIENT, points);
+	}
+
+	private BezierCurve[] beziers;
+
+	/**
+	 * Constructs a new {@link PolyBezier} of the given {@link BezierCurve}s.
+	 * The {@link BezierCurve}s are expected to be connected with each other.
+	 * 
+	 * @param beziers
+	 *            the {@link BezierCurve}s which will constitute this
+	 *            {@link PolyBezier}
+	 */
+	public PolyBezier(BezierCurve... beziers) {
+		this.beziers = copy(beziers);
 	}
 
 	public boolean contains(Point p) {

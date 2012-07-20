@@ -1,10 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration to double precision
@@ -27,6 +28,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author pshah
  * @author ahunter
  * @author anyssen
+ * @author mwienand
+ * 
  */
 public class Dimension implements Cloneable, Serializable {
 
@@ -255,6 +258,15 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the height of this dimension.
+	 * 
+	 * @return The current height
+	 */
+	public double getHeight() {
+		return height;
+	}
+
+	/**
 	 * Creates and returns a new Dimension representing the intersection of this
 	 * Dimension and the one specified.
 	 * 
@@ -351,6 +363,15 @@ public class Dimension implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Returns the width of this dimension
+	 * 
+	 * @return the current width of this dimension
+	 */
+	public double getWidth() {
+		return width;
+	}
+
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -358,15 +379,6 @@ public class Dimension implements Cloneable, Serializable {
 		// calculating a better hashCode is not possible, because due to the
 		// imprecision, equals() is no longer transitive
 		return 0;
-	}
-
-	/**
-	 * Returns the height of this dimension.
-	 * 
-	 * @return The current height
-	 */
-	public double getHeight() {
-		return height;
 	}
 
 	/**
@@ -546,15 +558,6 @@ public class Dimension implements Cloneable, Serializable {
 		width = Math.max(width, d.width);
 		height = Math.max(height, d.height);
 		return this;
-	}
-
-	/**
-	 * Returns the width of this dimension
-	 * 
-	 * @return the current width of this dimension
-	 */
-	public double getWidth() {
-		return width;
 	}
 
 }
