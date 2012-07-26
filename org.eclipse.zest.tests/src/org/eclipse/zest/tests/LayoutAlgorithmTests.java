@@ -22,6 +22,7 @@ import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.LayoutFilter;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
+import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.zest.layouts.interfaces.LayoutContext;
 
 /**
@@ -129,5 +130,16 @@ public class LayoutAlgorithmTests extends TestCase {
 			public void applyLayout(boolean clean) {
 			}
 		}, true);
+	}
+
+	/**
+	 * Attempt to reproduce an infinite loop with GridLayoutAlgorithm on an
+	 * empty graph (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=382791)
+	 */
+	public void testGridLayoutAlgorithmEmptyGraph() {
+		Graph graph = new Graph(new Shell(), SWT.NONE);
+		graph.setLayoutAlgorithm(new GridLayoutAlgorithm(), true);
+		Assert.assertEquals(GridLayoutAlgorithm.class, graph
+				.getLayoutAlgorithm().getClass());
 	}
 }
