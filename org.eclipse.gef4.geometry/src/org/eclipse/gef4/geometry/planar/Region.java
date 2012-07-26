@@ -327,10 +327,6 @@ public class Region extends AbstractPolyShape implements ITranslatable<Region>,
 		return scale(factor, factor, center.x, center.y);
 	}
 
-	public Path toPath() {
-		return CurveUtils.toPath(getOutlineSegments());
-	}
-
 	/**
 	 * Constructs a new {@link Ring} that covers the same area as this
 	 * {@link Region}.

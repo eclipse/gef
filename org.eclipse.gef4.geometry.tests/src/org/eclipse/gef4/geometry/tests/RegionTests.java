@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Region;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -101,4 +103,33 @@ public class RegionTests {
 		assertFalse(region.contains(new Rectangle(25, 25, 50, 50)));
 	}
 
+	@Test
+	public void test_toPath_with_void() {
+		Region r = new Region(new Rectangle(0, 0, 200, 50), new Rectangle(0, 0,
+				50, 150), new Rectangle(0, 100, 200, 50), new Rectangle(150, 0,
+				50, 150));
+
+		Path p = r.toPath();
+
+		// obviously outside
+		assertFalse(p.contains(new Point(-10, -10)));
+		assertFalse(p.contains(new Point(-10, 75)));
+		assertFalse(p.contains(new Point(-10, 160)));
+		assertFalse(p.contains(new Point(100, -10)));
+		assertFalse(p.contains(new Point(100, 160)));
+		assertFalse(p.contains(new Point(210, -10)));
+		assertFalse(p.contains(new Point(210, 75)));
+		assertFalse(p.contains(new Point(210, 160)));
+
+		// obviously inside
+		assertTrue(p.contains(new Point(25, 25)));
+		assertTrue(p.contains(new Point(25, 125)));
+		assertTrue(p.contains(new Point(100, 25)));
+		assertTrue(p.contains(new Point(100, 125)));
+		assertTrue(p.contains(new Point(175, 25)));
+		assertTrue(p.contains(new Point(175, 125)));
+
+		// the void
+		assertFalse(p.contains(new Point(100, 75)));
+	}
 }

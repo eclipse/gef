@@ -587,10 +587,6 @@ public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
 		return scale(factor, factor, center.x, center.y);
 	}
 
-	public Path toPath() {
-		return CurveUtils.toPath(getOutlineSegments());
-	}
-
 	public Ring translate(double dx, double dy) {
 		for (Polygon p : triangles) {
 			p.translate(dx, dy);

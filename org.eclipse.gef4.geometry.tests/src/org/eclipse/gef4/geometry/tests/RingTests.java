@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import java.lang.reflect.Method;
 
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Ring;
@@ -80,6 +81,41 @@ public class RingTests {
 			assertTrue(ring.contains(p1));
 			assertTrue(ring.contains(p2));
 			assertTrue(ring.contains(new Polygon(2, 2, 2, 3, 3, 3, 3, 2)));
+		}
+
+	}
+
+	public static class ToPathTests {
+
+		@Test
+		public void toPath_with_void() {
+			Ring r = new Ring(new Polygon(0, 0, 100, 0, 100, 50, 50, 50, 50,
+					100, 100, 100, 100, 150, 0, 150),
+					new Polygon(100, 0, 200, 0, 200, 150, 100, 150, 100, 100,
+							150, 100, 150, 50, 100, 50));
+
+			Path p = r.toPath();
+
+			// obviously outside
+			assertFalse(p.contains(new Point(-10, -10)));
+			assertFalse(p.contains(new Point(-10, 75)));
+			assertFalse(p.contains(new Point(-10, 160)));
+			assertFalse(p.contains(new Point(100, -10)));
+			assertFalse(p.contains(new Point(100, 160)));
+			assertFalse(p.contains(new Point(210, -10)));
+			assertFalse(p.contains(new Point(210, 75)));
+			assertFalse(p.contains(new Point(210, 160)));
+
+			// obviously inside
+			assertTrue(p.contains(new Point(25, 25)));
+			assertTrue(p.contains(new Point(25, 125)));
+			assertTrue(p.contains(new Point(100, 25)));
+			assertTrue(p.contains(new Point(100, 125)));
+			assertTrue(p.contains(new Point(175, 25)));
+			assertTrue(p.contains(new Point(175, 125)));
+
+			// the void
+			assertFalse(p.contains(new Point(100, 75)));
 		}
 
 	}

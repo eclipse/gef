@@ -378,4 +378,16 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 		}
 	}
 
+	public Path toPath() {
+		Polyline[] outlines = getOutline();
+		if (outlines == null || outlines.length < 1) {
+			return new Path();
+		}
+		Path path = outlines[0].toPath();
+		for (int i = 1; i < outlines.length; i++) {
+			path = Path.exclusiveOr(path, outlines[i].toPath());
+		}
+		return path;
+	}
+
 }
