@@ -69,7 +69,7 @@ public class RingOutlineExample extends AbstractExample {
 				int lineWidth = gc.getLineWidth();
 				gc.setLineWidth(1);
 
-				for (Polyline outline : ring.getOutline()) {
+				for (Polyline outline : ring.getOutlines()) {
 					gc.drawPolyline(Geometry2SWT.toSWTPointArray(outline));
 					gc.setLineWidth(gc.getLineWidth() + 1);
 				}

@@ -72,7 +72,7 @@ class CurveUtils {
 	 * @see #getIntersections(ICurve, ICurve)
 	 * @see #getIntersections(ICurve, IPolyCurve)
 	 * @see #getIntersections(ICurve, IShape)
-	 * @see #getIntersections(ICurve, IPolyShape)
+	 * @see #getIntersections(ICurve, IMultiShape)
 	 */
 	public static Point[] getIntersections(ICurve curve, IGeometry geom) {
 		if (geom instanceof ICurve) {
@@ -81,8 +81,8 @@ class CurveUtils {
 			return getIntersections(curve, (IShape) geom);
 		} else if (geom instanceof IPolyCurve) {
 			return getIntersections(curve, (IPolyCurve) geom);
-		} else if (geom instanceof IPolyShape) {
-			return getIntersections(curve, (IPolyShape) geom);
+		} else if (geom instanceof IMultiShape) {
+			return getIntersections(curve, (IMultiShape) geom);
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
@@ -113,14 +113,14 @@ class CurveUtils {
 	 * 
 	 * @param curve
 	 *            the {@link ICurve} to intersect
-	 * @param polyShape
-	 *            the {@link IPolyShape} of which the outline is intersected
+	 * @param multiShape
+	 *            the {@link IMultiShape} of which the outline is intersected
 	 * @return an array of intersection {@link Point}s
 	 */
-	public static Point[] getIntersections(ICurve curve, IPolyShape polyShape) {
+	public static Point[] getIntersections(ICurve curve, IMultiShape multiShape) {
 		Set<Point> intersections = new HashSet<Point>();
 
-		for (IShape shape : polyShape.getShapes()) {
+		for (IShape shape : multiShape.getShapes()) {
 			intersections.addAll(Arrays.asList(getIntersections(curve, shape)));
 		}
 
@@ -172,8 +172,8 @@ class CurveUtils {
 					intersections.addAll(Arrays.asList(getIntersections(curve,
 							geom2)));
 				}
-			} else if (geom1 instanceof IPolyShape) {
-				for (IShape shape : ((IPolyShape) geom1).getShapes()) {
+			} else if (geom1 instanceof IMultiShape) {
+				for (IShape shape : ((IMultiShape) geom1).getShapes()) {
 					for (ICurve curve : shape.getOutlineSegments()) {
 						intersections.addAll(Arrays.asList(getIntersections(
 								curve, geom2)));

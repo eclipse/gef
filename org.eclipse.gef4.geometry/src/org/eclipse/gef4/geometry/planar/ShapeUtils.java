@@ -107,29 +107,29 @@ class ShapeUtils {
 	public static boolean contains(IGeometry geom1, IGeometry geom2) {
 		if (geom1 instanceof IShape) {
 			return contains((IShape) geom1, geom2);
-		} else if (geom1 instanceof IPolyShape) {
-			return contains((IPolyShape) geom1, geom2);
+		} else if (geom1 instanceof IMultiShape) {
+			return contains((IMultiShape) geom1, geom2);
 		} else {
 			return false;
 		}
 	}
 
 	/**
-	 * TODO: generalize the contains() method for IShape and IPolyShape.
+	 * TODO: generalize the contains() method for IShape and IMultiShape.
 	 * 
-	 * @param polyShape
+	 * @param multiShape
 	 * @param c
 	 * @return <code>true</code> if the {@link BezierCurve} is contained by the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape polyShape, BezierCurve c) {
-		if (!(polyShape.contains(c.getP1()) && polyShape.contains(c.getP2()))) {
+	public static boolean contains(IMultiShape multiShape, BezierCurve c) {
+		if (!(multiShape.contains(c.getP1()) && multiShape.contains(c.getP2()))) {
 			return false;
 		}
 
 		Set<Double> intersectionParams = new HashSet<Double>();
 
-		for (ICurve segC : polyShape.getOutlineSegments()) {
+		for (ICurve segC : multiShape.getOutlineSegments()) {
 			for (BezierCurve seg : segC.toBezier()) {
 				Set<Point> inters = new HashSet<Point>();
 				Set<IntervalPair> ips = c.getIntersectionIntervalPairs(seg,
@@ -146,7 +146,7 @@ class ShapeUtils {
 
 		/*
 		 * Start and end point of the curve are guaranteed to lie inside the
-		 * IPolyShape. If the curve would not be contained by the shape, at
+		 * IMultiShape. If the curve would not be contained by the shape, at
 		 * least two intersections could be found.
 		 * 
 		 * TODO: Special case! There is a special case where the Bezier curve
@@ -166,29 +166,29 @@ class ShapeUtils {
 		});
 
 		// check the points between the intersections for containment
-		if (!polyShape.contains(c.get(poiParams[0] / 2))) {
+		if (!multiShape.contains(c.get(poiParams[0] / 2))) {
 			return false;
 		}
 		for (int i = 0; i < poiParams.length - 1; i++) {
-			if (!polyShape.contains(c
+			if (!multiShape.contains(c
 					.get((poiParams[i] + poiParams[i + 1]) / 2))) {
 				return false;
 			}
 		}
-		return polyShape.contains(c
+		return multiShape.contains(c
 				.get((poiParams[poiParams.length - 1] + 1) / 2));
 	}
 
 	/**
 	 * Checks if the given {@link ICurve} is contained by the given
-	 * {@link IPolyShape}.
+	 * {@link IMultiShape}.
 	 * 
 	 * @param ps
 	 * @param c
 	 * @return <code>true</code> if the {@link ICurve} is contained by the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape ps, ICurve c) {
+	public static boolean contains(IMultiShape ps, ICurve c) {
 		for (BezierCurve bc : c.toBezier()) {
 			if (!contains(ps, bc)) {
 				return false;
@@ -198,36 +198,36 @@ class ShapeUtils {
 	}
 
 	/**
-	 * Checks if the {@link IGeometry} is contained by the {@link IPolyShape}.
+	 * Checks if the {@link IGeometry} is contained by the {@link IMultiShape}.
 	 * 
 	 * @param ps
 	 * @param g
 	 * @return <code>true</code> if the {@link IGeometry} is contained by the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape ps, IGeometry g) {
+	public static boolean contains(IMultiShape ps, IGeometry g) {
 		if (g instanceof ICurve) {
 			return contains(ps, (ICurve) g);
 		} else if (g instanceof IShape) {
 			return contains(ps, (IShape) g);
 		} else if (g instanceof IPolyCurve) {
 			return contains(ps, (IPolyCurve) g);
-		} else if (g instanceof IPolyShape) {
-			return contains(ps, (IPolyShape) g);
+		} else if (g instanceof IMultiShape) {
+			return contains(ps, (IMultiShape) g);
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
 	}
 
 	/**
-	 * Checks if the {@link IPolyCurve} is contained by the {@link IPolyShape}.
+	 * Checks if the {@link IPolyCurve} is contained by the {@link IMultiShape}.
 	 * 
 	 * @param ps
 	 * @param pc
 	 * @return <code>true</code> if the {@link IPolyCurve} is contained by the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape ps, IPolyCurve pc) {
+	public static boolean contains(IMultiShape ps, IPolyCurve pc) {
 		for (ICurve c : pc.getCurves()) {
 			if (!contains(ps, c)) {
 				return false;
@@ -237,15 +237,15 @@ class ShapeUtils {
 	}
 
 	/**
-	 * Checks if the second {@link IPolyShape} is contained by the first
-	 * {@link IPolyShape}.
+	 * Checks if the second {@link IMultiShape} is contained by the first
+	 * {@link IMultiShape}.
 	 * 
 	 * @param ps
 	 * @param ps2
-	 * @return <code>true</code> if the second {@link IPolyShape} is contained
-	 *         by the first {@link IPolyShape}, otherwise <code>false</code>
+	 * @return <code>true</code> if the second {@link IMultiShape} is contained
+	 *         by the first {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape ps, IPolyShape ps2) {
+	public static boolean contains(IMultiShape ps, IMultiShape ps2) {
 		for (IShape s : ps2.getShapes()) {
 			if (!contains(ps, s)) {
 				return false;
@@ -255,14 +255,14 @@ class ShapeUtils {
 	}
 
 	/**
-	 * Checks if the {@link IShape} is contained by the {@link IPolyShape}.
+	 * Checks if the {@link IShape} is contained by the {@link IMultiShape}.
 	 * 
 	 * @param ps
 	 * @param s
 	 * @return <code>true</code> if the {@link IShape} is contained by the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IPolyShape ps, IShape s) {
+	public static boolean contains(IMultiShape ps, IShape s) {
 		for (ICurve c : s.getOutlineSegments()) {
 			if (!contains(ps, c)) {
 				return false;
@@ -400,7 +400,7 @@ class ShapeUtils {
 	 * @see ShapeUtils#contains(IShape, ICurve)
 	 * @see ShapeUtils#contains(IShape, IPolyCurve)
 	 * @see ShapeUtils#contains(IShape, IShape)
-	 * @see ShapeUtils#contains(IShape, IPolyShape)
+	 * @see ShapeUtils#contains(IShape, IMultiShape)
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
 	 *            {@link IGeometry}
@@ -417,8 +417,8 @@ class ShapeUtils {
 			return contains(shape, (IPolyCurve) geom);
 		} else if (geom instanceof IShape) {
 			return contains(shape, (IShape) geom);
-		} else if (geom instanceof IPolyShape) {
-			return contains(shape, (IPolyShape) geom);
+		} else if (geom instanceof IMultiShape) {
+			return contains(shape, (IMultiShape) geom);
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
@@ -454,24 +454,24 @@ class ShapeUtils {
 
 	/**
 	 * Returns <code>true</code> if the given {@link IShape} fully contains the
-	 * given {@link IPolyShape}. Otherwise, <code>false</code> is returned.
+	 * given {@link IMultiShape}. Otherwise, <code>false</code> is returned.
 	 * 
-	 * A {@link IPolyShape} is contained by a {@link IShape} if all of its sub-
+	 * A {@link IMultiShape} is contained by a {@link IShape} if all of its sub-
 	 * {@link IShape}s are contained by the {@link IShape} (see
-	 * {@link IPolyShape#getShapes()} and
+	 * {@link IMultiShape#getShapes()} and
 	 * {@link ShapeUtils#contains(IShape, IShape)}).
 	 * 
 	 * @param shape
 	 *            the {@link IShape} that is tested to contain the
-	 *            {@link IPolyShape}
-	 * @param polyShape
-	 *            the {@link IPolyShape} that is tested to be contained by the
+	 *            {@link IMultiShape}
+	 * @param multiShape
+	 *            the {@link IMultiShape} that is tested to be contained by the
 	 *            {@link IShape}
 	 * @return <code>true</code> if the {@link IShape} contains the
-	 *         {@link IPolyShape}, otherwise <code>false</code>
+	 *         {@link IMultiShape}, otherwise <code>false</code>
 	 */
-	public static boolean contains(IShape shape, IPolyShape polyShape) {
-		for (IShape seg : polyShape.getShapes()) {
+	public static boolean contains(IShape shape, IMultiShape multiShape) {
+		for (IShape seg : multiShape.getShapes()) {
 			if (!contains(shape, seg)) {
 				return false;
 			}

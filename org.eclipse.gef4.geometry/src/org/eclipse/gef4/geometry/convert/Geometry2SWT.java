@@ -223,7 +223,9 @@ public class Geometry2SWT {
 	public static org.eclipse.swt.graphics.Region toSWTRegion(Ring r) {
 		org.eclipse.swt.graphics.Region region = new org.eclipse.swt.graphics.Region();
 
-		for (Polyline p : r.getOutline()) {
+		// TODO: Add the individual outlines in xor mode to the SWT Region so
+		// that voids are correctly converted, too.
+		for (Polyline p : r.getOutlines()) {
 			region.add(toSWTPointArray(p));
 		}
 

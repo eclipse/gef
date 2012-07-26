@@ -27,19 +27,21 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * <p>
- * The {@link AbstractPolyShape} class contains an algorithm to find the outer
+ * The {@link AbstractMultiShape} class contains an algorithm to find the outer
  * segments of all outline segments of all the outlines of the internal
- * {@link IShape}s of an {@link IPolyShape}. (see {@link #getOutlineSegments()})
+ * {@link IShape}s of an {@link IMultiShape}. (see {@link #getOutlineSegments()}
+ * )
  * </p>
  * <p>
  * Moreover, an algorithm to create closed outline objects for an
- * {@link IPolyShape} is provided. (see {@link #getOutline()})
+ * {@link IMultiShape} is provided. (see {@link #getOutline()})
  * </p>
  * 
  * @author mwienand
  * 
  */
-abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape {
+abstract class AbstractMultiShape extends AbstractGeometry implements
+		IMultiShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -228,23 +230,16 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 	 * the internal {@link IShape}s are {@link Polygon}s (triangles).
 	 * 
 	 * The internal edges are needed to determine inner and outer segments of
-	 * the {@link IPolyShape}. Based on the outline of the {@link IPolyShape},
+	 * the {@link IMultiShape}. Based on the outline of the {@link IMultiShape},
 	 * the outline intersections can be computed. These outline intersections
 	 * are required to test if an {@link ICurve} is fully-contained by the
-	 * {@link IPolyShape}.
+	 * {@link IMultiShape}.
 	 * 
 	 * @return the edges of all internal {@link IShape}s
 	 */
 	abstract protected Line[] getAllEdges();
 
-	/**
-	 * Computes closed outlines for this {@link AbstractPolyShape}.
-	 * 
-	 * TODO!
-	 * 
-	 * @return closed outlines for this {@link AbstractPolyShape}
-	 */
-	public Polyline[] getOutline() {
+	public Polyline[] getOutlines() {
 		List<Polyline> outlines = new ArrayList<Polyline>();
 		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<Point, List<Line>>();
 		Set<Line> outlineSegments = new HashSet<Line>();
@@ -300,14 +295,14 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 
 	/**
 	 * <p>
-	 * Computes the outline segments of this {@link AbstractPolyShape}.
+	 * Computes the outline segments of this {@link AbstractMultiShape}.
 	 * </p>
 	 * <p>
-	 * The outline segments of this {@link AbstractPolyShape} are those outline
+	 * The outline segments of this {@link AbstractMultiShape} are those outline
 	 * segments of the internal {@link IShape}s that only exist once.
 	 * </p>
 	 * 
-	 * @return the outline segments of this {@link AbstractPolyShape}
+	 * @return the outline segments of this {@link AbstractMultiShape}
 	 */
 	public Line[] getOutlineSegments() {
 		HashMap<Line, Integer> seen = new HashMap<Line, Integer>();
@@ -379,7 +374,7 @@ abstract class AbstractPolyShape extends AbstractGeometry implements IPolyShape 
 	}
 
 	public Path toPath() {
-		Polyline[] outlines = getOutline();
+		Polyline[] outlines = getOutlines();
 		if (outlines == null || outlines.length < 1) {
 			return new Path();
 		}

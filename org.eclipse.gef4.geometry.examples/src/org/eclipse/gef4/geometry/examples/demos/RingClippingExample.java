@@ -70,7 +70,7 @@ public class RingClippingExample extends AbstractExample {
 				gc.setAlpha(128);
 				gc.setBackground(Display.getCurrent().getSystemColor(
 						SWT.COLOR_BLUE));
-				for (Polyline p : ring.getOutline()) {
+				for (Polyline p : ring.getOutlines()) {
 					gc.fillPolygon(Geometry2SWT.toSWTPointArray(p));
 				}
 

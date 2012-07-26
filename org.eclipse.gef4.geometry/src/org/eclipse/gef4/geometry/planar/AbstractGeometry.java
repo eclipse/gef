@@ -8,7 +8,7 @@
  * 
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     Matthias Wienand (itemis AG) - IPolyShape semantics for touches()
+ *     Matthias Wienand (itemis AG) - IMultiShape semantics for touches()
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
@@ -56,11 +56,11 @@ abstract class AbstractGeometry implements IGeometry {
 			} else if (g instanceof IShape) {
 				return ((IShape) g).contains(this)
 						|| this.touches(((IShape) g).getOutline());
-			} else if (g instanceof IPolyShape) {
-				if (((IPolyShape) g).contains(this)) {
+			} else if (g instanceof IMultiShape) {
+				if (((IMultiShape) g).contains(this)) {
 					return true;
 				}
-				for (ICurve c : ((IPolyShape) g).getOutlineSegments()) {
+				for (ICurve c : ((IMultiShape) g).getOutlineSegments()) {
 					if (this.touches(c)) {
 						return true;
 					}
@@ -79,15 +79,15 @@ abstract class AbstractGeometry implements IGeometry {
 						|| ((IShape) g).contains(this)
 						|| ((IShape) this).getOutline().touches(
 								((IShape) g).getOutline());
-			} else if (g instanceof IPolyShape) {
+			} else if (g instanceof IMultiShape) {
 				if (((IShape) this).contains(g)) {
 					return true;
 				}
-				if (((IPolyShape) g).contains(this)) {
+				if (((IMultiShape) g).contains(this)) {
 					return true;
 				}
 				IPolyCurve thisOutline = ((IShape) this).getOutline();
-				for (ICurve c : ((IPolyShape) g).getOutlineSegments()) {
+				for (ICurve c : ((IMultiShape) g).getOutlineSegments()) {
 					if (thisOutline.touches(c)) {
 						return true;
 					}
@@ -97,8 +97,8 @@ abstract class AbstractGeometry implements IGeometry {
 				throw new UnsupportedOperationException(
 						"Not yet implemented: touches(" + this + ", " + g + ")");
 			}
-		} else if (this instanceof IPolyShape) {
-			IPolyShape thisPolyShape = (IPolyShape) this;
+		} else if (this instanceof IMultiShape) {
+			IMultiShape thisPolyShape = (IMultiShape) this;
 			if (g instanceof ICurve) {
 				ICurve gCurve = (ICurve) g;
 				if (thisPolyShape.contains(gCurve)) {
@@ -123,14 +123,14 @@ abstract class AbstractGeometry implements IGeometry {
 					}
 				}
 				return false;
-			} else if (g instanceof IPolyShape) {
-				IPolyShape gPolyShape = (IPolyShape) g;
-				if (thisPolyShape.contains(gPolyShape)
-						|| gPolyShape.contains(thisPolyShape)) {
+			} else if (g instanceof IMultiShape) {
+				IMultiShape gMultiShape = (IMultiShape) g;
+				if (thisPolyShape.contains(gMultiShape)
+						|| gMultiShape.contains(thisPolyShape)) {
 					return true;
 				}
 				for (ICurve thisOutlineSeg : thisPolyShape.getOutlineSegments()) {
-					for (ICurve gOutlineSeg : gPolyShape.getOutlineSegments()) {
+					for (ICurve gOutlineSeg : gMultiShape.getOutlineSegments()) {
 						if (thisOutlineSeg.touches(gOutlineSeg)) {
 							return true;
 						}

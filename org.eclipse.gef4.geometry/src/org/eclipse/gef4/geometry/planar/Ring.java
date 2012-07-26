@@ -28,7 +28,7 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
  * @author mwienand
  * 
  */
-public class Ring extends AbstractPolyShape implements ITranslatable<Ring>,
+public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		IScalable<Ring>, IRotatable<Ring> {
 
 	private static final long serialVersionUID = 1L;
