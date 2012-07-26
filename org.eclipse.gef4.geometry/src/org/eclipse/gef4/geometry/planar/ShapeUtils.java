@@ -210,30 +210,11 @@ class ShapeUtils {
 			return contains(ps, (ICurve) g);
 		} else if (g instanceof IShape) {
 			return contains(ps, (IShape) g);
-		} else if (g instanceof IPolyCurve) {
-			return contains(ps, (IPolyCurve) g);
 		} else if (g instanceof IMultiShape) {
 			return contains(ps, (IMultiShape) g);
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
-	}
-
-	/**
-	 * Checks if the {@link IPolyCurve} is contained by the {@link IMultiShape}.
-	 * 
-	 * @param ps
-	 * @param pc
-	 * @return <code>true</code> if the {@link IPolyCurve} is contained by the
-	 *         {@link IMultiShape}, otherwise <code>false</code>
-	 */
-	public static boolean contains(IMultiShape ps, IPolyCurve pc) {
-		for (ICurve c : pc.getCurves()) {
-			if (!contains(ps, c)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -398,7 +379,6 @@ class ShapeUtils {
 	 * An <code>instanceof</code> test delegates to the appropriate method.
 	 * 
 	 * @see ShapeUtils#contains(IShape, ICurve)
-	 * @see ShapeUtils#contains(IShape, IPolyCurve)
 	 * @see ShapeUtils#contains(IShape, IShape)
 	 * @see ShapeUtils#contains(IShape, IMultiShape)
 	 * @param shape
@@ -413,8 +393,6 @@ class ShapeUtils {
 	public static boolean contains(IShape shape, IGeometry geom) {
 		if (geom instanceof ICurve) {
 			return contains(shape, (ICurve) geom);
-		} else if (geom instanceof IPolyCurve) {
-			return contains(shape, (IPolyCurve) geom);
 		} else if (geom instanceof IShape) {
 			return contains(shape, (IShape) geom);
 		} else if (geom instanceof IMultiShape) {
@@ -422,34 +400,6 @@ class ShapeUtils {
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
-	}
-
-	/**
-	 * Returns <code>true</code> if the given {@link IPolyCurve} is fully
-	 * contained by the given {@link IShape}. Otherwise, <code>false</code> is
-	 * returned.
-	 * 
-	 * A {@link IPolyCurve} is contained by a {@link IShape} if all of its sub-
-	 * {@link ICurve}s are contained by the shape (see
-	 * {@link IPolyCurve#getCurves()} and
-	 * {@link ShapeUtils#contains(IShape, ICurve)}).
-	 * 
-	 * @param shape
-	 *            the {@link IShape} that is tested to contain the
-	 *            {@link IPolyCurve}
-	 * @param polyCurve
-	 *            the {@link IPolyCurve} that is tested to be contained by the
-	 *            {@link IShape}
-	 * @return <code>true</code> if the {@link IShape} contains the
-	 *         {@link IPolyCurve}, otherwise <code>false</code>
-	 */
-	public static boolean contains(IShape shape, IPolyCurve polyCurve) {
-		for (ICurve seg : polyCurve.getCurves()) {
-			if (!contains(shape, seg)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

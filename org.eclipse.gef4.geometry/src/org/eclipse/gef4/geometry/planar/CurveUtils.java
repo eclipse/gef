@@ -70,7 +70,6 @@ class CurveUtils {
 	 *            the {@link IGeometry} to intersect
 	 * @return points of intersection
 	 * @see #getIntersections(ICurve, ICurve)
-	 * @see #getIntersections(ICurve, IPolyCurve)
 	 * @see #getIntersections(ICurve, IShape)
 	 * @see #getIntersections(ICurve, IMultiShape)
 	 */
@@ -79,33 +78,11 @@ class CurveUtils {
 			return getIntersections(curve, (ICurve) geom);
 		} else if (geom instanceof IShape) {
 			return getIntersections(curve, (IShape) geom);
-		} else if (geom instanceof IPolyCurve) {
-			return getIntersections(curve, (IPolyCurve) geom);
 		} else if (geom instanceof IMultiShape) {
 			return getIntersections(curve, (IMultiShape) geom);
 		} else {
 			throw new UnsupportedOperationException("Not yet implemented.");
 		}
-	}
-
-	/**
-	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
-	 * 
-	 * @param curve
-	 *            the {@link ICurve} to intersect
-	 * @param polyCurve
-	 *            the {@link IPolyCurve} to intersect
-	 * @return an array of intersection {@link Point}s
-	 */
-	public static Point[] getIntersections(ICurve curve, IPolyCurve polyCurve) {
-		Set<Point> intersections = new HashSet<Point>();
-
-		for (ICurve curve2 : polyCurve.getCurves()) {
-			intersections
-					.addAll(Arrays.asList(getIntersections(curve, curve2)));
-		}
-
-		return intersections.toArray(new Point[] {});
 	}
 
 	/**
@@ -162,12 +139,7 @@ class CurveUtils {
 		} else {
 			Set<Point> intersections = new HashSet<Point>();
 
-			if (geom1 instanceof IPolyCurve) {
-				for (ICurve curve : ((IPolyCurve) geom1).getCurves()) {
-					intersections.addAll(Arrays.asList(getIntersections(curve,
-							geom2)));
-				}
-			} else if (geom1 instanceof IShape) {
+			if (geom1 instanceof IShape) {
 				for (ICurve curve : ((IShape) geom1).getOutlineSegments()) {
 					intersections.addAll(Arrays.asList(getIntersections(curve,
 							geom2)));

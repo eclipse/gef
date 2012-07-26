@@ -19,13 +19,13 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
 
 /**
- * A {@link PolyBezier} is an {@link IPolyCurve} which consists of one or more
+ * A {@link PolyBezier} is an {@link ICurve} which consists of one or more
  * connected {@link BezierCurve}s.
  * 
  * @author mwienand
  * 
  */
-public class PolyBezier extends AbstractGeometry implements IPolyCurve,
+public class PolyBezier extends AbstractGeometry implements ICurve,
 		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
 
@@ -158,10 +158,6 @@ public class PolyBezier extends AbstractGeometry implements IPolyCurve,
 
 	public PolyBezier getCopy() {
 		return new PolyBezier(beziers);
-	}
-
-	public BezierCurve[] getCurves() {
-		return copy(beziers);
 	}
 
 	public Point[] getIntersections(ICurve g) {

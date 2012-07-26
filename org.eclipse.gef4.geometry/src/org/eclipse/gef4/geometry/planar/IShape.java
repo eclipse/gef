@@ -44,12 +44,12 @@ public interface IShape extends IGeometry {
 	public boolean contains(final IGeometry g);
 
 	/**
-	 * Returns an {@link IPolyCurve} representing the outline of this
-	 * {@link IShape}.
+	 * Returns an {@link ICurve} representing the outline of this {@link IShape}
+	 * .
 	 * 
-	 * @return an {@link IPolyCurve} representing the outline
+	 * @return an {@link ICurve} representing the outline
 	 */
-	public IPolyCurve getOutline();
+	public ICurve getOutline();
 
 	/**
 	 * Returns the individual {@link ICurve} segments, which constitute the

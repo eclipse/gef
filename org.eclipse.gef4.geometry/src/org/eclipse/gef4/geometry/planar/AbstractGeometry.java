@@ -86,7 +86,7 @@ abstract class AbstractGeometry implements IGeometry {
 				if (((IMultiShape) g).contains(this)) {
 					return true;
 				}
-				IPolyCurve thisOutline = ((IShape) this).getOutline();
+				ICurve thisOutline = ((IShape) this).getOutline();
 				for (ICurve c : ((IMultiShape) g).getOutlineSegments()) {
 					if (thisOutline.touches(c)) {
 						return true;
@@ -116,7 +116,7 @@ abstract class AbstractGeometry implements IGeometry {
 						|| gShape.contains(thisPolyShape)) {
 					return true;
 				}
-				IPolyCurve gOutline = gShape.getOutline();
+				ICurve gOutline = gShape.getOutline();
 				for (ICurve c : thisPolyShape.getOutlineSegments()) {
 					if (gOutline.touches(c)) {
 						return true;

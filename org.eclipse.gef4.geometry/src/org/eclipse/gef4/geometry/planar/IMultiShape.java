@@ -42,14 +42,14 @@ public interface IMultiShape extends IGeometry {
 	 * </p>
 	 * 
 	 * <p>
-	 * The outlines are returned as an array of {@link IPolyCurve}s. For every
-	 * closed outline of this {@link IMultiShape} one {@link IPolyCurve} is
+	 * The outlines are returned as an array of {@link ICurve}s. For every
+	 * closed outline of this {@link IMultiShape} one {@link ICurve} is
 	 * returned.
 	 * </p>
 	 * 
-	 * @return an array of {@link IPolyCurve}s, one for each closed outline
+	 * @return an array of {@link ICurve}s, one for each closed outline
 	 */
-	public IPolyCurve[] getOutlines();
+	public ICurve[] getOutlines();
 
 	/**
 	 * <p>

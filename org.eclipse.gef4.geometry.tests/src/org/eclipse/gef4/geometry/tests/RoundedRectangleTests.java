@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Arc;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -154,10 +155,10 @@ public class RoundedRectangleTests {
 	public void test_getOutline() {
 		// coherence with getOutlineSegments
 		ICurve[] outlineSegments = rr.getOutlineSegments();
-		ICurve[] outlineCurves = rr.getOutline().getCurves();
-		assertEquals(outlineSegments.length, outlineCurves.length);
+		BezierCurve[] outlineBeziers = rr.getOutline().toBezier();
+		assertEquals(outlineSegments.length, outlineBeziers.length);
 		for (int i = 0; i < 8; i++) {
-			assertEquals(outlineSegments[i], outlineCurves[i]);
+			assertEquals(outlineSegments[i], outlineBeziers[i]);
 		}
 	}
 

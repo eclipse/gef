@@ -324,7 +324,7 @@ public class Ellipse extends
 		return intersections.toArray(new Point[] {});
 	}
 
-	public IPolyCurve getOutline() {
+	public ICurve getOutline() {
 		return ShapeUtils.getOutline(this);
 	}
 

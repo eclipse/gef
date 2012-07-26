@@ -30,7 +30,7 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * 
  */
 public class Polyline extends AbstractPointListBasedGeometry<Polyline>
-		implements IPolyCurve {
+		implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
