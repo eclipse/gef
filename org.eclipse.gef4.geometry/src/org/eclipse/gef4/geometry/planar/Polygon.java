@@ -179,13 +179,13 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 	/**
 	 * Constructs a new {@link Polygon} from a even-numbered sequence of
-	 * coordinates. Similar to {@link Polygon#Polygon(Point...)}, only that
-	 * coordinates of points rather than {@link Point}s are provided.
+	 * coordinates.
 	 * 
 	 * @param coordinates
-	 *            an alternating, even-numbered sequence of x- and
-	 *            y-coordinates, representing the points from which the
-	 *            {@link Polygon} is to be created .
+	 *            an alternating, even-numbered sequence of x and y coordinates,
+	 *            representing the {@link Point}s from which the {@link Polygon}
+	 *            is to be created
+	 * @see #Polygon(Point[])
 	 */
 	public Polygon(double... coordinates) {
 		super(coordinates);

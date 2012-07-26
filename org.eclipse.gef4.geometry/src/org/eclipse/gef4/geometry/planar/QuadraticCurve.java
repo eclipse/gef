@@ -178,28 +178,34 @@ public class QuadraticCurve extends BezierCurve {
 	 * Sets the curve's control point.
 	 * 
 	 * @param ctrl
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl(Point ctrl) {
+	public QuadraticCurve setCtrl(Point ctrl) {
 		setCtrlX(ctrl.x);
 		setCtrlY(ctrl.y);
+		return this;
 	}
 
 	/**
 	 * Sets the x-coordinate of the curve's control point.
 	 * 
 	 * @param ctrlX
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrlX(double ctrlX) {
+	public QuadraticCurve setCtrlX(double ctrlX) {
 		setPoint(1, new Point(ctrlX, getCtrlY()));
+		return this;
 	}
 
 	/**
 	 * Sets the y-coordinate of the curve's control point.
 	 * 
 	 * @param ctrlY
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrlY(double ctrlY) {
+	public QuadraticCurve setCtrlY(double ctrlY) {
 		setPoint(1, new Point(getCtrlX(), ctrlY));
+		return this;
 	}
 
 	/**

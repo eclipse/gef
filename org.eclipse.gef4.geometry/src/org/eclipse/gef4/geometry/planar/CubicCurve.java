@@ -187,21 +187,18 @@ public class CubicCurve extends BezierCurve {
 		return getPoint(2).y;
 	}
 
-	@Override
-	public IGeometry getTransformed(AffineTransform t) {
-		return null;
-	}
-
 	/**
 	 * Sets the first handle {@link Point} of this {@link CubicCurve} to the
 	 * given {@link Point}.
 	 * 
 	 * @param ctrl1
 	 *            the new first handle {@link Point}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl1(Point ctrl1) {
+	public CubicCurve setCtrl1(Point ctrl1) {
 		setCtrl1X(ctrl1.x);
 		setCtrl1Y(ctrl1.y);
+		return this;
 	}
 
 	/**
@@ -211,9 +208,11 @@ public class CubicCurve extends BezierCurve {
 	 * @param ctrl1x
 	 *            the new x coordinate of the first handle {@link Point} of this
 	 *            {@link CubicCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl1X(double ctrl1x) {
+	public CubicCurve setCtrl1X(double ctrl1x) {
 		setPoint(1, new Point(ctrl1x, getCtrlY1()));
+		return this;
 	}
 
 	/**
@@ -223,9 +222,11 @@ public class CubicCurve extends BezierCurve {
 	 * @param ctrl1y
 	 *            the new y coordinate of the first handle {@link Point} of this
 	 *            {@link CubicCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl1Y(double ctrl1y) {
+	public CubicCurve setCtrl1Y(double ctrl1y) {
 		setPoint(1, new Point(getCtrlX1(), ctrl1y));
+		return this;
 	}
 
 	/**
@@ -234,10 +235,12 @@ public class CubicCurve extends BezierCurve {
 	 * 
 	 * @param ctrl2
 	 *            the new second handle {@link Point} of this {@link CubicCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl2(Point ctrl2) {
+	public CubicCurve setCtrl2(Point ctrl2) {
 		setCtrl2X(ctrl2.x);
 		setCtrl2Y(ctrl2.y);
+		return this;
 	}
 
 	/**
@@ -247,9 +250,11 @@ public class CubicCurve extends BezierCurve {
 	 * @param ctrl2x
 	 *            the new x coordinate of the second handle {@link Point} of
 	 *            this {@link CubicCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl2X(double ctrl2x) {
+	public CubicCurve setCtrl2X(double ctrl2x) {
 		setPoint(2, new Point(ctrl2x, getCtrlY2()));
+		return this;
 	}
 
 	/**
@@ -259,9 +264,11 @@ public class CubicCurve extends BezierCurve {
 	 * @param ctrl2y
 	 *            the new y coordinate of the second handle {@link Point} of
 	 *            this {@link CubicCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCtrl2Y(double ctrl2y) {
+	public CubicCurve setCtrl2Y(double ctrl2y) {
 		setPoint(2, new Point(getCtrlX2(), ctrl2y));
+		return this;
 	}
 
 	/**
@@ -276,12 +283,14 @@ public class CubicCurve extends BezierCurve {
 	 *            the new second control {@link Point}
 	 * @param p2
 	 *            the new end {@link Point}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setCurve(Point p1, Point ctrl1, Point ctrl2, Point p2) {
+	public CubicCurve setCurve(Point p1, Point ctrl1, Point ctrl2, Point p2) {
 		setP1(p1);
 		setCtrl1(ctrl1);
 		setCtrl2(ctrl2);
 		setP2(p2);
+		return this;
 	}
 
 	@Override

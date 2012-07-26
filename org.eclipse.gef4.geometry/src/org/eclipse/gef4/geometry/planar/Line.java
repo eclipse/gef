@@ -364,10 +364,12 @@ public class Line extends BezierCurve {
 	 *            the x-coordinate of the end point
 	 * @param y2
 	 *            the y-coordinate of the end point
+	 * @return <code>this</code> for convenience
 	 */
-	public void setLine(double x1, double y1, double x2, double y2) {
+	public Line setLine(double x1, double y1, double x2, double y2) {
 		setP1(new Point(x1, y1));
 		setP2(new Point(x2, y2));
+		return this;
 	}
 
 	/**
@@ -377,9 +379,11 @@ public class Line extends BezierCurve {
 	 * @param l
 	 *            the {@link Line} whose start and end point coordinates should
 	 *            be used for initialization
+	 * @return <code>this</code> for convenience
 	 */
-	public void setLine(Line l) {
+	public Line setLine(Line l) {
 		setLine(l.getX1(), l.getY1(), l.getX2(), l.getY2());
+		return this;
 	}
 
 	/**
@@ -392,9 +396,11 @@ public class Line extends BezierCurve {
 	 * @param p2
 	 *            the Point whose coordinates should be used as the end point
 	 *            coordinates of this {@link Line}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setLine(Point p1, Point p2) {
+	public Line setLine(Point p1, Point p2) {
 		setLine(p1.x, p1.y, p2.x, p2.y);
+		return this;
 	}
 
 	/**
@@ -402,9 +408,11 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 * 
 	 * @param x1
+	 * @return <code>this</code> for convenience
 	 */
-	public void setX1(double x1) {
+	public Line setX1(double x1) {
 		setP1(new Point(x1, getY1()));
+		return this;
 	}
 
 	/**
@@ -412,9 +420,11 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 * 
 	 * @param x2
+	 * @return <code>this</code> for convenience
 	 */
-	public void setX2(double x2) {
+	public Line setX2(double x2) {
 		setP2(new Point(x2, getY2()));
+		return this;
 	}
 
 	/**
@@ -422,9 +432,11 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 * 
 	 * @param y1
+	 * @return <code>this</code> for convenience
 	 */
-	public void setY1(double y1) {
+	public Line setY1(double y1) {
 		setP1(new Point(getX1(), y1));
+		return this;
 	}
 
 	/**
@@ -432,14 +444,13 @@ public class Line extends BezierCurve {
 	 * the given value.
 	 * 
 	 * @param y2
+	 * @return <code>this</code> for convenience
 	 */
-	public void setY2(double y2) {
+	public Line setY2(double y2) {
 		setP2(new Point(getX2(), y2));
+		return this;
 	}
 
-	/**
-	 * @see IGeometry#toPath()
-	 */
 	@Override
 	public Path toPath() {
 		Path path = new Path();

@@ -349,14 +349,14 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Closes the current sub-path by drawing a straight line (line-to) to the
 	 * location of the last move to.
+	 * 
+	 * @return <code>this</code> for convenience
 	 */
-	public final void close() {
+	public final Path close() {
 		segments.add(new Segment(Segment.CLOSE));
+		return this;
 	}
 
-	/**
-	 * @see IGeometry#contains(Point)
-	 */
 	public boolean contains(Point p) {
 		return Geometry2AWT.toAWTPath(this)
 				.contains(Geometry2AWT.toAWTPoint(p));
@@ -395,24 +395,33 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The x-coordinate of the desired target point
 	 * @param y
 	 *            The y-coordinate of the desired target point
+	 * @return <code>this</code> for convenience
 	 */
-	public final void cubicTo(double control1X, double control1Y,
+	public final Path cubicTo(double control1X, double control1Y,
 			double control2X, double control2Y, double x, double y) {
 		segments.add(new Segment(Segment.CUBIC_TO, new Point(control1X,
 				control1Y), new Point(control2X, control2Y), new Point(x, y)));
+		return this;
 	}
 
-	/**
-	 * @see IGeometry#getBounds()
-	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Path) {
+			// test if they are composed by the same segments
+			// TODO: Even if the segments are not identical, the two Path
+			// objects can be equal to each other.
+			Segment[] thisSegments = getSegments();
+			Segment[] objSegments = ((Path) obj).getSegments();
+			return Arrays.equals(thisSegments, objSegments);
+		}
+		return false;
+	}
+
 	public Rectangle getBounds() {
 		return AWT2Geometry.toRectangle(Geometry2AWT.toAWTPath(this)
 				.getBounds2D());
 	}
 
-	/**
-	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
-	 */
 	public Path getCopy() {
 		return new Path(getWindingRule(), getSegments());
 	}
@@ -431,9 +440,6 @@ public class Path extends AbstractGeometry implements IGeometry {
 		return segments;
 	}
 
-	/**
-	 * @see IGeometry#getTransformed(AffineTransform)
-	 */
 	@Override
 	public IGeometry getTransformed(AffineTransform t) {
 		return AWT2Geometry.toPath(new Path2D.Double(Geometry2AWT
@@ -458,9 +464,11 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The x-coordinate of the desired target point
 	 * @param y
 	 *            The y-coordinate of the desired target point
+	 * @return <code>this</code> for convenience
 	 */
-	public final void lineTo(double x, double y) {
+	public final Path lineTo(double x, double y) {
 		segments.add(new Segment(Segment.LINE_TO, new Point(x, y)));
+		return this;
 	}
 
 	/**
@@ -470,9 +478,11 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The x-coordinate of the desired target point
 	 * @param y
 	 *            The y-coordinate of the desired target point
+	 * @return <code>this</code> for convenience
 	 */
-	public final void moveTo(double x, double y) {
+	public final Path moveTo(double x, double y) {
 		segments.add(new Segment(Segment.MOVE_TO, new Point(x, y)));
+		return this;
 	}
 
 	/**
@@ -488,18 +498,40 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 *            The x-coordinate of the desired target point
 	 * @param y
 	 *            The y-coordinate of the desired target point
+	 * @return <code>this</code> for convenience
 	 */
-	public final void quadTo(double controlX, double controlY, double x,
+	public final Path quadTo(double controlX, double controlY, double x,
 			double y) {
 		segments.add(new Segment(Segment.QUAD_TO,
 				new Point(controlX, controlY), new Point(x, y)));
+		return this;
 	}
 
 	/**
 	 * Resets the path to be empty.
+	 * 
+	 * @return <code>this</code> for convenience
 	 */
-	public final void reset() {
+	public final Path reset() {
 		segments.clear();
+		return this;
+	}
+
+	/**
+	 * Sets the winding rule of this {@link Path} to the passed-in integer
+	 * constant which is either of:
+	 * <ul>
+	 * <li>{@link #WIND_NON_ZERO} (default)</li>
+	 * <li>{@link #WIND_EVEN_ODD}</li>
+	 * </ul>
+	 * 
+	 * @param windingRule
+	 *            the new winding rule of this {@link Path}
+	 * @return <code>this</code> for convenience
+	 */
+	public Path setWindingRule(int windingRule) {
+		this.windingRule = windingRule;
+		return this;
 	}
 
 	/**

@@ -246,9 +246,12 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * @param angularExtent
 	 *            the new extension {@link Angle} for this
 	 *            {@link AbstractArcBasedGeometry}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setAngularExtent(Angle angularExtent) {
+	@SuppressWarnings("unchecked")
+	public T setAngularExtent(Angle angularExtent) {
 		this.angularExtent = angularExtent;
+		return (T) this;
 	}
 
 	/**
@@ -257,9 +260,12 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * @param startAngle
 	 *            the new start {@link Angle} for this
 	 *            {@link AbstractArcBasedGeometry}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setStartAngle(Angle startAngle) {
+	@SuppressWarnings("unchecked")
+	public T setStartAngle(Angle startAngle) {
 		this.startAngle = startAngle;
+		return (T) this;
 	}
 
 	/**

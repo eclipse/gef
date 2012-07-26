@@ -2158,9 +2158,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * 
 	 * @param p1
 	 *            the new start {@link Point} of this {@link BezierCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setP1(Point p1) {
+	public BezierCurve setP1(Point p1) {
 		setPoint(0, p1);
+		return this;
 	}
 
 	/**
@@ -2169,9 +2171,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * 
 	 * @param p2
 	 *            the new end {@link Point} of this {@link BezierCurve}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setP2(Point p2) {
+	public BezierCurve setP2(Point p2) {
 		setPoint(points.length - 1, p2);
+		return this;
 	}
 
 	/**
@@ -2184,8 +2188,9 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 *            {@link BezierCurve} to set
 	 * @param p
 	 *            the new control {@link Point} at the given index
+	 * @return <code>this</code> for convenience
 	 */
-	public void setPoint(int i, Point p) {
+	public BezierCurve setPoint(int i, Point p) {
 		if (i < 0 || i >= points.length) {
 			throw new IllegalArgumentException(
 					"setPoint("
@@ -2196,6 +2201,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 							+ (points.length - 1) + ".");
 		}
 		points[i] = new Vector3D(p);
+		return this;
 	}
 
 	/**

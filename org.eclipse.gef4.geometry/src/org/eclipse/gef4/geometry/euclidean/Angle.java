@@ -206,9 +206,6 @@ public class Angle implements Cloneable, Serializable {
 		return Angle.fromRad(RAD_180 - rad);
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		// calculating a better hashCode is not possible, because due to the
@@ -239,10 +236,12 @@ public class Angle implements Cloneable, Serializable {
 	 * 
 	 * @param degrees
 	 *            the angle's value in degrees
+	 * @return <code>this</code> for convenience
 	 */
-	public void setDeg(double degrees) {
+	public Angle setDeg(double degrees) {
 		rad = degrees * DEG_TO_RAD;
 		normalize();
+		return this;
 	}
 
 	/**
@@ -250,15 +249,14 @@ public class Angle implements Cloneable, Serializable {
 	 * 
 	 * @param radians
 	 *            the angle's value in radians
+	 * @return <code>this</code> for convenience
 	 */
-	public void setRad(double radians) {
+	public Angle setRad(double radians) {
 		rad = radians;
 		normalize();
+		return this;
 	}
 
-	/**
-	 * @see Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Angle(" + Double.toString(rad) + "rad ("

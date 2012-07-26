@@ -107,9 +107,11 @@ public class AffineTransform {
 	 * @param Tx
 	 *            the {@link AffineTransform} that is concatenated with this
 	 *            {@link AffineTransform}
+	 * @return <code>this</code> for convenience
 	 */
-	public void concatenate(AffineTransform Tx) {
+	public AffineTransform concatenate(AffineTransform Tx) {
 		delegate.concatenate(Tx.delegate);
+		return this;
 	}
 
 	/**
@@ -167,6 +169,15 @@ public class AffineTransform {
 	@Override
 	public boolean equals(Object obj) {
 		return delegate.equals(obj);
+	}
+
+	/**
+	 * Returns a copy of this {@link AffineTransform}.
+	 * 
+	 * @return a copy of this {@link AffineTransform}
+	 */
+	public AffineTransform getCopy() {
+		return new AffineTransform(getMatrix());
 	}
 
 	/**
@@ -361,10 +372,12 @@ public class AffineTransform {
 	/**
 	 * Inverts this {@link AffineTransform}.
 	 * 
+	 * @return <code>this</code> for convenience
 	 * @throws NoninvertibleTransformException
 	 */
-	public void invert() throws NoninvertibleTransformException {
+	public AffineTransform invert() throws NoninvertibleTransformException {
 		delegate.invert();
+		return this;
 	}
 
 	/**
@@ -388,9 +401,11 @@ public class AffineTransform {
 	 * @param Tx
 	 *            the {@link AffineTransform} that is concatenated with this
 	 *            {@link AffineTransform} in reverse order
+	 * @return <code>this</code> for convenience
 	 */
-	public void preConcatenate(AffineTransform Tx) {
+	public AffineTransform preConcatenate(AffineTransform Tx) {
 		delegate.preConcatenate(Tx.delegate);
+		return this;
 	}
 
 	/**
@@ -400,9 +415,11 @@ public class AffineTransform {
 	 * 
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
+	 * @return <code>this</code> for convenience
 	 */
-	public void quadrantRotate(int numquadrants) {
+	public AffineTransform quadrantRotate(int numquadrants) {
 		delegate.quadrantRotate(numquadrants);
+		return this;
 	}
 
 	/**
@@ -416,9 +433,12 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void quadrantRotate(int numquadrants, double anchorx, double anchory) {
+	public AffineTransform quadrantRotate(int numquadrants, double anchorx,
+			double anchory) {
 		delegate.quadrantRotate(numquadrants, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -427,9 +447,11 @@ public class AffineTransform {
 	 * 
 	 * @param theta
 	 *            the rotation angle in radians
+	 * @return <code>this</code> for convenience
 	 */
-	public void rotate(double theta) {
+	public AffineTransform rotate(double theta) {
 		delegate.rotate(theta);
+		return this;
 	}
 
 	/**
@@ -443,9 +465,11 @@ public class AffineTransform {
 	 * @param vecy
 	 *            the y coordinate of the {@link Vector} specifying the rotation
 	 *            {@link Angle}
+	 * @return <code>this</code> for convenience
 	 */
-	public void rotate(double vecx, double vecy) {
+	public AffineTransform rotate(double vecx, double vecy) {
 		delegate.rotate(vecx, vecy);
+		return this;
 	}
 
 	/**
@@ -459,9 +483,11 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void rotate(double theta, double anchorx, double anchory) {
+	public AffineTransform rotate(double theta, double anchorx, double anchory) {
 		delegate.rotate(theta, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -480,9 +506,12 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void rotate(double vecx, double vecy, double anchorx, double anchory) {
+	public AffineTransform rotate(double vecx, double vecy, double anchorx,
+			double anchory) {
 		delegate.rotate(vecx, vecy, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -495,17 +524,22 @@ public class AffineTransform {
 	 * @param sy
 	 *            the y scaling factor added to the transformation matrix of
 	 *            this {@link AffineTransform}
+	 * @return <code>this</code> for convenience
 	 */
-	public void scale(double sx, double sy) {
+	public AffineTransform scale(double sx, double sy) {
 		delegate.scale(sx, sy);
+		return this;
 	}
 
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to the
 	 * identity matrix.
+	 * 
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToIdentity() {
+	public AffineTransform setToIdentity() {
 		delegate.setToIdentity();
+		return this;
 	}
 
 	/**
@@ -514,9 +548,11 @@ public class AffineTransform {
 	 * 
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToQuadrantRotation(int numquadrants) {
+	public AffineTransform setToQuadrantRotation(int numquadrants) {
 		delegate.setToQuadrantRotation(numquadrants);
+		return this;
 	}
 
 	/**
@@ -531,10 +567,12 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToQuadrantRotation(int numquadrants, double anchorx,
-			double anchory) {
+	public AffineTransform setToQuadrantRotation(int numquadrants,
+			double anchorx, double anchory) {
 		delegate.setToQuadrantRotation(numquadrants, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -543,9 +581,11 @@ public class AffineTransform {
 	 * 
 	 * @param theta
 	 *            the rotation angle (in radians)
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToRotation(double theta) {
+	public AffineTransform setToRotation(double theta) {
 		delegate.setToRotation(theta);
+		return this;
 	}
 
 	/**
@@ -559,9 +599,11 @@ public class AffineTransform {
 	 * @param vecy
 	 *            the y coordinate of the {@link Vector} whose {@link Angle} to
 	 *            the x-axis defines the rotation {@link Angle}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToRotation(double vecx, double vecy) {
+	public AffineTransform setToRotation(double vecx, double vecy) {
 		delegate.setToRotation(vecx, vecy);
+		return this;
 	}
 
 	/**
@@ -576,9 +618,12 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToRotation(double theta, double anchorx, double anchory) {
+	public AffineTransform setToRotation(double theta, double anchorx,
+			double anchory) {
 		delegate.setToRotation(theta, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -598,10 +643,12 @@ public class AffineTransform {
 	 *            the x coordinate of the {@link Point} to rotate around
 	 * @param anchory
 	 *            the y coordinate of the {@link Point} to rotate around
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToRotation(double vecx, double vecy, double anchorx,
-			double anchory) {
+	public AffineTransform setToRotation(double vecx, double vecy,
+			double anchorx, double anchory) {
 		delegate.setToRotation(vecx, vecy, anchorx, anchory);
+		return this;
 	}
 
 	/**
@@ -612,9 +659,11 @@ public class AffineTransform {
 	 *            the x scaling factor
 	 * @param sy
 	 *            the y scaling factor
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToScale(double sx, double sy) {
+	public AffineTransform setToScale(double sx, double sy) {
 		delegate.setToScale(sx, sy);
+		return this;
 	}
 
 	/**
@@ -625,9 +674,11 @@ public class AffineTransform {
 	 *            the x shearing factor
 	 * @param shy
 	 *            the y shearing factor
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToShear(double shx, double shy) {
+	public AffineTransform setToShear(double shx, double shy) {
 		delegate.setToShear(shx, shy);
+		return this;
 	}
 
 	/**
@@ -639,9 +690,11 @@ public class AffineTransform {
 	 *            the x translation value
 	 * @param ty
 	 *            the y translation value
+	 * @return <code>this</code> for convenience
 	 */
-	public void setToTranslation(double tx, double ty) {
+	public AffineTransform setToTranslation(double tx, double ty) {
 		delegate.setToTranslation(tx, ty);
+		return this;
 	}
 
 	/**
@@ -651,9 +704,11 @@ public class AffineTransform {
 	 * @param Tx
 	 *            the {@link AffineTransform} specifying the new transformation
 	 *            matrix of this {@link AffineTransform}
+	 * @return <code>this</code> for convenience
 	 */
-	public void setTransform(AffineTransform Tx) {
+	public AffineTransform setTransform(AffineTransform Tx) {
 		delegate.setTransform(Tx.delegate);
+		return this;
 	}
 
 	/**
@@ -679,10 +734,12 @@ public class AffineTransform {
 	 * @param m12
 	 *            the value of the transformation matrix in row 1 and column 2
 	 *            (y coordinate translation)
+	 * @return <code>this</code> for convenience
 	 */
-	public void setTransform(double m00, double m10, double m01, double m11,
-			double m02, double m12) {
+	public AffineTransform setTransform(double m00, double m10, double m01,
+			double m11, double m02, double m12) {
 		delegate.setTransform(m00, m10, m01, m11, m02, m12);
+		return this;
 	}
 
 	/**
@@ -695,9 +752,11 @@ public class AffineTransform {
 	 * @param shy
 	 *            the y shearing factor added to the transformation matrix of
 	 *            this {@link AffineTransform}
+	 * @return <code>this</code> for convenience
 	 */
-	public void shear(double shx, double shy) {
+	public AffineTransform shear(double shx, double shy) {
 		delegate.shear(shx, shy);
+		return this;
 	}
 
 	@Override
@@ -713,9 +772,11 @@ public class AffineTransform {
 	 *            the x coordinate translation
 	 * @param ty
 	 *            the y coordinate translation
+	 * @return <code>this</code> for convenience
 	 */
-	public void translate(double tx, double ty) {
+	public AffineTransform translate(double tx, double ty) {
 		delegate.translate(tx, ty);
+		return this;
 	}
 
 }

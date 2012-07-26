@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		PolygonTests.class, PolylineTests.class, PrecisionUtilsTests.class,
 		QuadraticCurveTests.class, RectangleTests.class, RegionTests.class,
 		RingTests.class, RoundedRectangleTests.class, StraightTests.class,
-		VectorTests.class, Vector3DTests.class })
+		SWTConversionTests.class, VectorTests.class, Vector3DTests.class })
 public class AllTests {
 
 }

@@ -312,9 +312,11 @@ public final class RoundedRectangle extends
 	 * 
 	 * @param arcHeight
 	 *            the new arc height
+	 * @return <code>this</code> for convenience
 	 */
-	public void setArcHeight(double arcHeight) {
+	public RoundedRectangle setArcHeight(double arcHeight) {
 		this.arcHeight = arcHeight;
+		return this;
 	}
 
 	/**
@@ -323,14 +325,13 @@ public final class RoundedRectangle extends
 	 * 
 	 * @param arcWidth
 	 *            the new arc width
+	 * @return <code>this</code> for convenience
 	 */
-	public void setArcWidth(double arcWidth) {
+	public RoundedRectangle setArcWidth(double arcWidth) {
 		this.arcWidth = arcWidth;
+		return this;
 	}
 
-	/**
-	 * @see IGeometry#toPath()
-	 */
 	public Path toPath() {
 		// return CurveUtils.toPath(getOutlineSegments());
 		// TODO: use cubic curves instead of quadratic curves here!
