@@ -1,10 +1,10 @@
-<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+<class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.AWT2Geometry" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/AWT2Geometry.java" binary="false">    
     <position height="-1" width="-1" x="167" y="82"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
@@ -12,8 +12,8 @@
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.AWT2SWT" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/AWT2SWT.java" binary="false">    
-    <position height="-1" width="-1" x="485" y="124"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="54" width="334" x="337" y="357"/>    
+    <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
@@ -21,8 +21,8 @@
   <class id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.Geometry2AWT" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/Geometry2AWT.java" binary="false">    
-    <position height="-1" width="-1" x="812" y="81"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="503" y="82"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
@@ -30,14 +30,31 @@
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.SWT2AWT" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/SWT2AWT.java" binary="false">    
-    <position height="-1" width="-1" x="486" y="39"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="54" width="320" x="7" y="358"/>    
+    <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
   </class>  
-  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
-    visibility="true">    
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.SWT2Geometry" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/SWT2Geometry.java" binary="false">    
+    <position height="170" width="322" x="7" y="173"/>    
+    <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.convert.Geometry2SWT" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/convert/Geometry2SWT.java" binary="false">    
+    <position height="169" width="333" x="337" y="174"/>    
+    <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="false" protected="false" private="false"/>      
+      <operations public="true" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
+  <classifier-display autosize="true" package="false" initial-value="false" signature="true" visibility="true">    
     <attributes public="true" package="false" protected="false" private="false"/>    
     <operations public="true" package="false" protected="false" private="false"/>  
   </classifier-display>  

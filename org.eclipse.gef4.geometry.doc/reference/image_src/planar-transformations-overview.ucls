@@ -1,10 +1,10 @@
-<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+<class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
   <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IRotatable" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IRotatable.java" binary="false">    
-    <position height="-1" width="-1" x="589" y="85"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="535" y="84"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
@@ -12,8 +12,8 @@
   <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IScalable" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IScalable.java" binary="false">    
-    <position height="-1" width="-1" x="335" y="136"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="308" y="132"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
@@ -22,13 +22,12 @@
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/ITranslatable.java" binary="false">    
     <position height="-1" width="-1" x="105" y="68"/>    
-    <display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" visibility="true">      
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
   </interface>  
-  <classifier-display autosize="true" stereotype="false" package="true" initial-value="false" signature="true" 
-    visibility="true">    
+  <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
     <attributes public="true" package="false" protected="false" private="false"/>    
     <operations public="true" package="false" protected="false" private="false"/>  
   </classifier-display>  

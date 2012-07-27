@@ -3,8 +3,8 @@
   <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IGeometry" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IGeometry.java" binary="false">    
-    <position height="-1" width="-1" x="443" y="96"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="442" y="81"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
@@ -12,66 +12,53 @@
   <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.ICurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/ICurve.java" binary="false">    
-    <position height="-1" width="-1" x="141" y="234"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="146" y="245"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </interface>  
-  <interface id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IPolyCurve" 
-    project="org.eclipse.gef4.geometry" 
-    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IPolyCurve.java" binary="false">    
-    <position height="66" width="189" x="47" y="392"/>    
-    <display autosize="false" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true"/>      
-      <operations public="true" package="true" protected="true" private="true"/>    
-    </display>  
-  </interface>  
-  <interface id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IShape" 
+  <interface id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IShape" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IShape.java" binary="false">    
-    <position height="-1" width="-1" x="749" y="189"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="728" y="189"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </interface>  
-  <interface id="5" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IPolyShape" 
-    project="org.eclipse.gef4.geometry" 
-    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IPolyShape.java" binary="false">    
-    <position height="66" width="184" x="657" y="291"/>    
-    <display autosize="false" package="true" initial-value="false" signature="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true"/>      
-      <operations public="true" package="true" protected="true" private="true"/>    
-    </display>  
-  </interface>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Path" 
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Path" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Path.java" 
     binary="false">    
-    <position height="-1" width="-1" x="440" y="451"/>    
-    <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
+    <position height="-1" width="-1" x="441" y="451"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="true" private="false"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <generalization id="7">    
+  <interface id="5" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IMultiShape" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IMultiShape.java" binary="false">    
+    <position height="-1" width="-1" x="728" y="327"/>    
+    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <realization id="6">    
     <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </realization>  
+  <generalization id="7">    
+    <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <generalization id="8">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="2"/>  
-  </generalization>  
-  <realization id="9">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="1"/>  
-  </realization>  
-  <generalization id="10">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <generalization id="11">    
-    <end type="SOURCE" refId="5"/>    
+  <generalization id="9">    
+    <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
   <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    

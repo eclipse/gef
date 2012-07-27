@@ -39,8 +39,8 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * @author mwienand
  * 
  */
-public class Region extends AbstractMultiShape implements ITranslatable<Region>,
-		IScalable<Region>, IRotatable<Ring> {
+public class Region extends AbstractMultiShape implements
+		ITranslatable<Region>, IScalable<Region>, IRotatable<Ring> {
 
 	private static final long serialVersionUID = 1L;
 
