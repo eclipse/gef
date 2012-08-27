@@ -43,7 +43,7 @@ import org.eclipse.zest.layouts.interfaces.NodeLayout;
  * {@link ZestStyles.CONNECTIONS_DIRECTED}) - graphs without cycles (otherwise
  * an appropriate RuntimeException is thrown)
  * 
- * @version 1.0
+ * @version 1.2
  * @author Rene Kuhlemann
  */
 public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
@@ -54,7 +54,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 
 	// Internal constants
 	private static final int MAX_LAYERS = 10;
-	private static final int MAX_SWEEPS = 50;
+	private static final int MAX_SWEEPS = 35;
 	private static final int PADDING = -1;
 
 	private class NodeWrapper {
@@ -93,6 +93,19 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 			return ((node == null) && (layer == PADDING));
 		}
 
+		int getBaryCenter(List<NodeWrapper> list) {
+			if (list.isEmpty())
+				return (this.index);
+			if (list.size() == 1)
+				return (list.get(0).index);
+			double barycenter = 0;
+			for (NodeWrapper node : list)
+				barycenter += node.index;
+			return ((int) (barycenter / list.size())); // always rounding off to
+														// avoid wrap around in
+														// position refining!!!
+		}
+
 		int getPriorityDown() {
 			if (isPadding())
 				return (0);
@@ -126,7 +139,8 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	private final Dimension dimension;
 
 	private LayoutContext context;
-	private int size; // size of the biggest layer for various purposes
+	private int last; // index of the last element in a layer after padding
+						// process
 
 	/**
 	 * Constructs a tree-like, layered layout of a directed graph.
@@ -177,14 +191,19 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		layers.clear();
 		map.clear();
 		createLayers();
-		reduceCrossings();
 		padLayers();
-		refineLayers();
+		for (int i = 0; i < layers.size(); i++) { // reduce and refine
+													// iteratively, depending on
+													// the depth of the graph
+			reduceCrossings();
+			refineLayers();
+		}
+		reduceCrossings();
 		calculatePositions();
 	}
 
 	private void createLayers() {
-		List<NodeLayout> nodes = new ArrayList<NodeLayout>(
+		List<NodeLayout> nodes = new LinkedList<NodeLayout>(
 				Arrays.asList(context.getNodes()));
 		List<NodeLayout> predecessors = findRoots(nodes);
 		nodes.removeAll(predecessors); // nodes now contains only nodes that are
@@ -271,7 +290,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	private static void reduceCrossingsDown(ArrayList<NodeWrapper> layer) {
 		// DOWN: scan PREDECESSORS
 		for (NodeWrapper node : layer)
-			node.index = getBaryCenter(node.pred);
+			node.index = node.getBaryCenter(node.pred);
 		Collections.sort(layer, new Comparator<NodeWrapper>() {
 			public int compare(NodeWrapper node1, NodeWrapper node2) {
 				return (node1.index - node2.index);
@@ -283,7 +302,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	private static void reduceCrossingsUp(ArrayList<NodeWrapper> layer) {
 		// UP: scan SUCCESSORS
 		for (NodeWrapper node : layer)
-			node.index = getBaryCenter(node.succ);
+			node.index = node.getBaryCenter(node.succ);
 		Collections.sort(layer, new Comparator<NodeWrapper>() {
 			public int compare(NodeWrapper node1, NodeWrapper node2) {
 				return (node1.index - node2.index);
@@ -297,13 +316,14 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 * equidistant grid
 	 */
 	private void padLayers() {
-		size = 0;
+		last = 0;
 		for (List<NodeWrapper> iter : layers)
-			if (iter.size() > size)
-				size = iter.size();
+			if (iter.size() > last)
+				last = iter.size();
+		last--; // index of the last element of any layer
 		for (List<NodeWrapper> iter : layers) { // padding is always added at
 												// the END of each layer!
-			for (int i = size - iter.size(); i > 0; i--)
+			for (int i = iter.size(); i <= last; i++)
 				iter.add(new NodeWrapper());
 			updateIndex(iter);
 		}
@@ -313,14 +333,13 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 									// again yields best results, wonder why...
 		for (int index = 1; index < layers.size(); index++)
 			refineLayersDown(layers.get(index));
-		for (int index = layers.size() - 1; index > 0; index--)
+		for (int index = layers.size() - 2; index >= 0; index--)
 			refineLayersUp(layers.get(index));
 		for (int index = 1; index < layers.size(); index++)
 			refineLayersDown(layers.get(index));
 	}
 
 	private void refineLayersDown(List<NodeWrapper> layer) {
-		final int end = layer.size() - 1;
 		// first, get a priority list
 		List<NodeWrapper> list = new ArrayList<NodeWrapper>(layer);
 		Collections.sort(list, new Comparator<NodeWrapper>() {
@@ -334,16 +353,16 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		for (NodeWrapper iter : list) {
 			if (iter.isPadding())
 				break; // break, if there are no more "real" nodes
-			int delta = getBaryCenter(iter.pred) - iter.index; // distance to
-																// new position
+			int delta = iter.getBaryCenter(iter.pred) - iter.index; // distance
+																	// to new
+																	// position
 			for (int i = 0; i < delta; i++)
-				layer.add(iter.index, layer.remove(end));
+				layer.add(iter.index, layer.remove(last));
 		}
 		updateIndex(layer);
 	}
 
 	private void refineLayersUp(List<NodeWrapper> layer) {
-		final int end = layer.size() - 1;
 		// first, get a priority list
 		List<NodeWrapper> list = new ArrayList<NodeWrapper>(layer);
 		Collections.sort(list, new Comparator<NodeWrapper>() {
@@ -357,28 +376,32 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		for (NodeWrapper iter : list) {
 			if (iter.isPadding())
 				break; // break, if there are no more "real" nodes
-			int delta = getBaryCenter(iter.succ) - iter.index; // distance to
-																// new position
+			int delta = iter.getBaryCenter(iter.succ) - iter.index; // distance
+																	// to new
+																	// position
 			for (int i = 0; i < delta; i++)
-				layer.add(iter.index, layer.remove(end));
+				layer.add(iter.index, layer.remove(last));
 		}
 		updateIndex(layer);
 	}
 
 	private void calculatePositions() {
-		DisplayIndependentRectangle bound = context.getBounds();
+		DisplayIndependentRectangle boundary = context.getBounds();
 		if (dimension != null)
-			bound = new DisplayIndependentRectangle(0, 0,
+			boundary = new DisplayIndependentRectangle(0, 0,
 					dimension.preciseWidth(), dimension.preciseHeight());
-		double dx = bound.width / layers.size();
-		double dy = bound.height / size;
-		for (NodeLayout node : context.getNodes()) {
-			NodeWrapper nw = map.get(node);
-			if (direction == HORIZONTAL)
+		double dx = boundary.width / layers.size();
+		double dy = boundary.height / (last + 1);
+		if (direction == HORIZONTAL)
+			for (NodeLayout node : context.getNodes()) {
+				NodeWrapper nw = map.get(node);
 				node.setLocation((nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
-			else
+			}
+		else
+			for (NodeLayout node : context.getNodes()) {
+				NodeWrapper nw = map.get(node);
 				node.setLocation((nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
-		}
+			}
 	}
 
 	private static List<NodeLayout> findRoots(List<NodeLayout> list) {
@@ -389,19 +412,6 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 				roots.add(iter);
 		}
 		return (roots);
-	}
-
-	private static int getBaryCenter(List<NodeWrapper> list) {
-		if (list.isEmpty())
-			return (0);
-		if (list.size() == 1)
-			return (list.get(0).index);
-		double barycenter = 0;
-		for (NodeWrapper node : list)
-			barycenter += node.index;
-		return ((int) (barycenter / list.size())); // always rounding off to
-													// avoid wrap around in
-													// position refining!!!
 	}
 
 	private static void updateIndex(List<NodeWrapper> list) {
