@@ -13,4 +13,17 @@
       <category name="GEF4 Geometry"/>
    </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
+   <feature url="features/org.eclipse.gef4.graphics_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics" version="0.1.0.qualifier">
+      <category name="GEF4 Graphics"/>
+   </feature>
+   <!-- <feature url="features/org.eclipse.gef4.graphics.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.doc" version="0.1.0.qualifier">
+      <category name="GEF4 Graphics"/>
+   </feature> -->
+   <feature url="features/org.eclipse.gef4.graphics.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 Graphics"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.graphics.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.tests" version="0.1.0.qualifier">
+      <category name="GEF4 Graphics"/>
+   </feature>
+   <category-def name="GEF4 Graphics" label="GEF4 Graphics"/>
 </site>
