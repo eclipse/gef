@@ -49,7 +49,7 @@ public abstract class AbstractCanvasProperties implements ICanvasProperties {
 	}
 
 	public AffineTransform getAffineTransform() {
-		return affineTransform;
+		return affineTransform.getCopy();
 	}
 
 	public Ring getClippingArea() {

@@ -56,12 +56,16 @@ public class SimpleExampleUtil {
 		g.draw(rectangle.getOutline());
 
 		g.pushState();
-		g.getCanvasProperties().getAffineTransform().translate(270, 50);
+		g.getCanvasProperties()
+				.setAffineTransform(
+						g.getCanvasProperties().getAffineTransform()
+								.translate(270, 50));
 		g.write("This is a first test example.");
 		g.pushState();
 		AffineTransform at = g.getCanvasProperties().getAffineTransform();
 		at.translate(50, 50);
 		at.rotate(0.3);
+		g.getCanvasProperties().setAffineTransform(at);
 		g.blit(new Image(imageFile));
 		g.popState();
 		g.popState();
