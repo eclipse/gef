@@ -188,6 +188,15 @@ public class Color {
 		a = alpha;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Color) {
+			Color o = (Color) obj;
+			return o.hashCode() == hashCode();
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the alpha component of this {@link Color} in the range
 	 * <code>[0;255]</code> where <code>0</code> signifies a fully transparent
@@ -252,6 +261,11 @@ public class Color {
 	 */
 	public int getRed() {
 		return r;
+	}
+
+	@Override
+	public int hashCode() {
+		return (r << 24) + (g << 16) + (b << 8) + a;
 	}
 
 	/**
@@ -342,6 +356,6 @@ public class Color {
 	public String toString() {
 		return "Color(r = " + r + ", g = " + g + ", b = " + b + ", a = " + a
 				+ ")";
-	}
+	};
 
 }

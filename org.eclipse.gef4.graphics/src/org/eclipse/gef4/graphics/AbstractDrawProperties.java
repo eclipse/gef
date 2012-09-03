@@ -57,7 +57,8 @@ public abstract class AbstractDrawProperties implements IDrawProperties {
 	protected double lineWidth = DEFAULT_LINE_WIDTH;
 
 	public double[] getDashArray() {
-		return Arrays.copyOf(dashArray, dashArray.length);
+		return dashArray == null ? null : Arrays.copyOf(dashArray,
+				dashArray.length);
 	}
 
 	public LineCap getLineCap() {
