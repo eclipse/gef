@@ -168,7 +168,10 @@ public class AffineTransform {
 
 	@Override
 	public boolean equals(Object obj) {
-		return delegate.equals(obj);
+		if (obj instanceof AffineTransform) {
+			return delegate.equals(((AffineTransform) obj).delegate);
+		}
+		return false;
 	}
 
 	/**
