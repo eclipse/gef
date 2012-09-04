@@ -302,6 +302,16 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return ShapeUtils.contains(this, g);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		// TODO: Invent a better algorithm.
+		if (obj instanceof Ring) {
+			Ring o = (Ring) obj;
+			return contains(o) && o.contains(this);
+		}
+		return false;
+	}
+
 	private boolean findSharedAndOuterVertices(Polygon t1, Polygon t2,
 			Point[] shared, Point[] outer) {
 		Point[] t1Points = t1.getPoints();

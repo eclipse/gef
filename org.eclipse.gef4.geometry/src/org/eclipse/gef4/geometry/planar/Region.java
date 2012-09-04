@@ -178,6 +178,16 @@ public class Region extends AbstractMultiShape implements
 		return ShapeUtils.contains(this, g);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		// TODO: Invent a better algorithm.
+		if (obj instanceof Region) {
+			Region o = (Region) obj;
+			return contains(o) && o.contains(this);
+		}
+		return false;
+	}
+
 	/**
 	 * Collects all outline segments of the internal {@link Rectangle}s.
 	 * 

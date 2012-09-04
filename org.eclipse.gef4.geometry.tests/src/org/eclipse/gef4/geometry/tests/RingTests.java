@@ -83,6 +83,24 @@ public class RingTests {
 			assertTrue(ring.contains(new Polygon(2, 2, 2, 3, 3, 3, 3, 2)));
 		}
 
+		@Test
+		public void equals() {
+			Ring r0 = new Ring(new Polygon(0, 0, 100, 100, 0, 100));
+			Ring r1 = new Ring(new Polygon(0, 0, 50, 50, 0, 100), new Polygon(
+					50, 50, 0, 100, 100, 100));
+			assertEquals(r0, r1);
+			assertEquals(r1, r0);
+			r0 = new Ring(new Polygon(0, 0, 100, 100, 0, 50), new Polygon(0,
+					50, 0, 100, 100, 100));
+			assertEquals(r0, r1);
+			assertEquals(r1, r0);
+
+			r1 = new Ring(new Polygon(0, 0, 100, 100, 0, 100), new Polygon(50,
+					50, 100, 100, 100, 50));
+			assertFalse(r0.equals(r1));
+			assertFalse(r1.equals(r0));
+		}
+
 	}
 
 	public static class ToPathTests {
