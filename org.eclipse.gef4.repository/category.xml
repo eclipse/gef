@@ -16,9 +16,9 @@
    <feature url="features/org.eclipse.gef4.graphics_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics" version="0.1.0.qualifier">
       <category name="GEF4 Graphics"/>
    </feature>
-   <!-- <feature url="features/org.eclipse.gef4.graphics.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.doc" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.graphics.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.doc" version="0.1.0.qualifier">
       <category name="GEF4 Graphics"/>
-   </feature> -->
+   </feature>
    <feature url="features/org.eclipse.gef4.graphics.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Graphics"/>
    </feature>

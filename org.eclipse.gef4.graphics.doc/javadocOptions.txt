@@ -1,0 +1,19 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef4.graphics/src"
+-d reference/api
+-classpath "@rt@:@context@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF4 Graphics API Reference"
+-doctitle "GEF4 Graphics API Reference"
+-header "<b>GEF4 Graphics</b><br>Release 0.1.0.201206281525"
+-bottom "Copyright (c) 2000, 2011 IBM Corporation, itemis AG, and others. All rights reserved."
+-link http://docs.oracle.com/javase/1.5.0/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+
+org.eclipse.gef4.graphics
+org.eclipse.gef4.graphics.awt
+org.eclipse.gef4.graphics.swt

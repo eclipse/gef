@@ -30,8 +30,8 @@
          id="org.eclipse.gef4.graphics.source"
          version="0.0.0"/>
 
-<!--   <includes
+   <includes
          id="org.eclipse.gef4.geometry.doc"
-         version="0.0.0"/> -->
+         version="0.0.0"/>
 
 </feature>
