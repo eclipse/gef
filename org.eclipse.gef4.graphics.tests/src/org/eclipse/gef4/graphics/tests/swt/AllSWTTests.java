@@ -25,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ SWTBlitPropertiesTests.class, SWTCanvasPropertiesTests.class,
-		SWTDrawPropertiesTests.class })
+		SWTDrawPropertiesTests.class, SWTFillPropertiesTests.class,
+		SWTWritePropertiesTests.class })
 public class AllSWTTests {
 }

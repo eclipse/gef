@@ -34,20 +34,20 @@ public class SimpleExampleUtil {
 				50, 300), new Point(150, 350), new Point(150, 200), new Point(
 				200, 75), new Point(300, 100), new Point(150, 400));
 
-		g.getDrawProperties().setColor(RED);
-		g.getFillProperties().setColor(YELLOW);
+		g.drawProperties().setColor(RED);
+		g.fillProperties().setColor(YELLOW);
 
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
 		g.fill(rectangle);
 		g.draw(rectangle.getOutline());
 
 		g.pushState();
-		g.getFillProperties().setColor(BLUE);
+		g.fillProperties().setColor(BLUE);
 		g.fill(cubicInterpolation.toPath());
 		g.popState();
 
 		g.pushState();
-		g.getDrawProperties().setColor(BLACK).setLineWidth(3);
+		g.drawProperties().setColor(BLACK).setLineWidth(3);
 		g.draw(cubicInterpolation);
 		g.popState();
 
@@ -56,16 +56,16 @@ public class SimpleExampleUtil {
 		g.draw(rectangle.getOutline());
 
 		g.pushState();
-		g.getCanvasProperties()
+		g.canvasProperties()
 				.setAffineTransform(
-						g.getCanvasProperties().getAffineTransform()
+						g.canvasProperties().getAffineTransform()
 								.translate(270, 50));
 		g.write("This is a first test example.");
 		g.pushState();
-		AffineTransform at = g.getCanvasProperties().getAffineTransform();
+		AffineTransform at = g.canvasProperties().getAffineTransform();
 		at.translate(50, 50);
 		at.rotate(0.3);
-		g.getCanvasProperties().setAffineTransform(at);
+		g.canvasProperties().setAffineTransform(at);
 		g.blit(new Image(imageFile));
 		g.popState();
 		g.popState();

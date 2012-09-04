@@ -17,47 +17,50 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.graphics.IBlitProperties;
 import org.eclipse.gef4.graphics.IBlitProperties.InterpolationHint;
+import org.eclipse.gef4.graphics.IGraphics;
 import org.junit.Test;
 
-public abstract class AbstractBlitPropertiesTests extends AbstractGraphicsTests {
+public abstract class AbstractBlitPropertiesTests extends
+		AbstractGraphicsPropertiesTests<IBlitProperties> {
 
 	@Test
 	public void getCopy() {
-		IBlitProperties gbp = graphics.getBlitProperties();
-		IBlitProperties bp = gbp.getCopy();
+		assertEquals(properties.getInterpolationHint(),
+				propertiesCopy.getInterpolationHint());
 
-		assertTrue(bp != gbp);
-		assertEquals(gbp.getInterpolationHint(), bp.getInterpolationHint());
+		propertiesCopy.setInterpolationHint(InterpolationHint.SPEED);
+		IBlitProperties speedy = propertiesCopy.getCopy();
+		propertiesCopy.setInterpolationHint(InterpolationHint.QUALITY);
 
-		bp.setInterpolationHint(InterpolationHint.SPEED);
-		IBlitProperties speedy = bp.getCopy();
-		bp.setInterpolationHint(InterpolationHint.QUALITY);
-
-		assertTrue(bp != speedy);
-		assertEquals(InterpolationHint.QUALITY, bp.getInterpolationHint());
+		assertTrue(propertiesCopy != speedy);
+		assertEquals(InterpolationHint.QUALITY,
+				propertiesCopy.getInterpolationHint());
 		assertEquals(InterpolationHint.SPEED, speedy.getInterpolationHint());
 	}
 
 	@Test
 	public void getInterpolationHint_default() {
-		IBlitProperties bp = graphics.getBlitProperties().getCopy();
-
 		assertEquals(IBlitProperties.DEFAULT_INTERPOLATION_HINT,
-				bp.getInterpolationHint());
+				propertiesCopy.getInterpolationHint());
+	}
+
+	@Override
+	public IBlitProperties getProperties(IGraphics g) {
+		return g.blitProperties();
 	}
 
 	@Test
 	public void setInterpolationHint() {
-		IBlitProperties bp = graphics.getBlitProperties().getCopy();
+		InterpolationHint hint = propertiesCopy.getInterpolationHint();
+		assertEquals(hint, propertiesCopy.getInterpolationHint());
 
-		InterpolationHint hint = bp.getInterpolationHint();
-		assertEquals(hint, bp.getInterpolationHint());
+		propertiesCopy.setInterpolationHint(InterpolationHint.SPEED);
+		assertEquals(InterpolationHint.SPEED,
+				propertiesCopy.getInterpolationHint());
 
-		bp.setInterpolationHint(InterpolationHint.SPEED);
-		assertEquals(InterpolationHint.SPEED, bp.getInterpolationHint());
-
-		bp.setInterpolationHint(InterpolationHint.QUALITY);
-		assertEquals(InterpolationHint.QUALITY, bp.getInterpolationHint());
+		propertiesCopy.setInterpolationHint(InterpolationHint.QUALITY);
+		assertEquals(InterpolationHint.QUALITY,
+				propertiesCopy.getInterpolationHint());
 	}
 
 }

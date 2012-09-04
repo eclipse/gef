@@ -40,11 +40,6 @@ public interface IFillProperties extends IGraphicsProperties {
 	 */
 	Color getColor();
 
-	/**
-	 * Returns a copy of this {@link IFillProperties}.
-	 * 
-	 * @return a copy of this {@link IFillProperties}
-	 */
 	IFillProperties getCopy();
 
 	/**

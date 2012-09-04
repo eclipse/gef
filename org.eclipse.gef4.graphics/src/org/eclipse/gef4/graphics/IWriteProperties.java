@@ -77,11 +77,6 @@ public interface IWriteProperties extends IGraphicsProperties {
 	 */
 	Color getBackgroundColor();
 
-	/**
-	 * Returns a copy of this {@link IWriteProperties}.
-	 * 
-	 * @return a copy of this {@link IWriteProperties}
-	 */
 	IWriteProperties getCopy();
 
 	/**

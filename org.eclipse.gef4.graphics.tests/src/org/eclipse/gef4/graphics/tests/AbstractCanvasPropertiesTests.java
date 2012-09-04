@@ -16,47 +16,52 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.Region;
 import org.eclipse.gef4.graphics.ICanvasProperties;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.eclipse.gef4.graphics.IGraphics;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 
-@RunWith(Enclosed.class)
 public abstract class AbstractCanvasPropertiesTests extends
-		AbstractGraphicsTests {
+		AbstractGraphicsPropertiesTests<ICanvasProperties> {
 
-	public static class getCopy {
+	@Test
+	public void getAffineTransform() {
+		assertEquals(properties.getAffineTransform(),
+				propertiesCopy.getAffineTransform());
+		properties.setAffineTransform(new AffineTransform(1, 0, 0, 1, 0, 0));
+		propertiesCopy.setAffineTransform(new AffineTransform(1, 0, 0, 1, 10,
+				10));
+		assertFalse(properties.getAffineTransform().equals(
+				propertiesCopy.getAffineTransform()));
+		properties.setAffineTransform(new AffineTransform(1, 0, 0, 1, 5, 5));
+		assertFalse(properties.getAffineTransform().equals(
+				propertiesCopy.getAffineTransform()));
+		properties.setAffineTransform(new AffineTransform(1, 0, 0, 1, 10, 10));
+		assertEquals(properties.getAffineTransform(),
+				propertiesCopy.getAffineTransform());
+	}
 
-		protected static ICanvasProperties gp, p, pc;
+	@Test
+	public void getClippingArea() {
+		assertEquals(properties.getClippingArea(),
+				propertiesCopy.getClippingArea());
+		properties.setClippingArea(new Region(new Rectangle(0, 0, 100, 100)));
+		propertiesCopy
+				.setClippingArea(new Region(new Rectangle(20, 20, 60, 60)));
+		assertFalse(properties.getClippingArea().equals(
+				propertiesCopy.getClippingArea()));
+		properties.setClippingArea(new Region(new Rectangle(10, 10, 80, 80)));
+		assertFalse(properties.getClippingArea().equals(
+				propertiesCopy.getClippingArea()));
+		properties.setClippingArea(new Region(new Rectangle(20, 20, 60, 60)));
+		assertEquals(properties.getClippingArea(),
+				propertiesCopy.getClippingArea());
+	}
 
-		@BeforeClass
-		public static void gobalSetUp() {
-			gp = graphics.getCanvasProperties();
-		}
-
-		@Test
-		public void getAffineTransform() {
-			assertEquals(p.getAffineTransform(), pc.getAffineTransform());
-			p.setAffineTransform(new AffineTransform(1, 0, 0, 1, 0, 0));
-			pc.setAffineTransform(new AffineTransform(1, 0, 0, 1, 10, 10));
-			assertFalse(p.getAffineTransform().equals(pc.getAffineTransform()));
-			p.setAffineTransform(new AffineTransform(1, 0, 0, 1, 5, 5));
-			assertFalse(p.getAffineTransform().equals(pc.getAffineTransform()));
-		}
-
-		@Test
-		public void getClippingArea() {
-			assertEquals(p.getClippingArea(), pc.getClippingArea());
-		}
-
-		@Before
-		public void localSetUp() {
-			p = gp.getCopy();
-			pc = p.getCopy();
-		}
-
+	@Override
+	public ICanvasProperties getProperties(IGraphics g) {
+		return g.canvasProperties();
 	}
 
 }

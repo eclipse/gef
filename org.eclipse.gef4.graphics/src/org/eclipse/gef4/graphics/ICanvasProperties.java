@@ -48,11 +48,6 @@ public interface ICanvasProperties extends IGraphicsProperties {
 	 */
 	Ring getClippingArea();
 
-	/**
-	 * Returns a copy of this {@link ICanvasProperties}.
-	 * 
-	 * @return a copy of this {@link ICanvasProperties}
-	 */
 	ICanvasProperties getCopy();
 
 	/**

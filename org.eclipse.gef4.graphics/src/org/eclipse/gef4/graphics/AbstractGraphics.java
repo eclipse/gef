@@ -104,8 +104,8 @@ public abstract class AbstractGraphics implements IGraphics {
 	protected Stack<State> states = new Stack<State>();
 
 	public void blit(Image image) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().blitProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().blitProperties.applyOn(this);
 		doBlit(image);
 	}
 
@@ -127,7 +127,7 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	private void cleanUpProperties() {
-		State state = getCurrentState();
+		State state = currentState();
 		state.blitProperties.cleanUp(this);
 		state.canvasProperties.cleanUp(this);
 		state.drawProperties.cleanUp(this);
@@ -192,41 +192,41 @@ public abstract class AbstractGraphics implements IGraphics {
 	protected abstract void doWrite(String text);
 
 	public void draw(ICurve curve) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().drawProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().drawProperties.applyOn(this);
 		doDraw(curve);
 	}
 
 	public void draw(Path path) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().drawProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().drawProperties.applyOn(this);
 		doDraw(path);
 	}
 
 	public void fill(IMultiShape multiShape) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().fillProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().fillProperties.applyOn(this);
 		doFill(multiShape);
 	}
 
 	public void fill(IShape shape) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().fillProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().fillProperties.applyOn(this);
 		doFill(shape);
 	}
 
 	public void fill(Path path) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().fillProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().fillProperties.applyOn(this);
 		doFill(path);
 	}
 
-	public IBlitProperties getBlitProperties() {
-		return getCurrentState().blitProperties;
+	public IBlitProperties blitProperties() {
+		return currentState().blitProperties;
 	}
 
-	public ICanvasProperties getCanvasProperties() {
-		return getCurrentState().canvasProperties;
+	public ICanvasProperties canvasProperties() {
+		return currentState().canvasProperties;
 	}
 
 	/**
@@ -234,24 +234,24 @@ public abstract class AbstractGraphics implements IGraphics {
 	 * 
 	 * @return the current state of this {@link AbstractGraphics}
 	 */
-	protected State getCurrentState() {
+	protected State currentState() {
 		return states.peek();
 	}
 
-	public IDrawProperties getDrawProperties() {
-		return getCurrentState().drawProperties;
+	public IDrawProperties drawProperties() {
+		return currentState().drawProperties;
 	}
 
-	public IFillProperties getFillProperties() {
-		return getCurrentState().fillProperties;
+	public IFillProperties fillProperties() {
+		return currentState().fillProperties;
 	}
 
-	public IWriteProperties getWriteProperties() {
-		return getCurrentState().writeProperties;
+	public IWriteProperties writeProperties() {
+		return currentState().writeProperties;
 	}
 
 	private void initProperties() {
-		State state = getCurrentState();
+		State state = currentState();
 		state.blitProperties.init(this);
 		state.canvasProperties.init(this);
 		state.drawProperties.init(this);
@@ -292,13 +292,13 @@ public abstract class AbstractGraphics implements IGraphics {
 			throw new IllegalStateException(
 					"You have to push an initial State when constructing the IGraphics.");
 		}
-		states.push(getCurrentState().getCopy());
+		states.push(currentState().getCopy());
 		initProperties();
 	}
 
 	public void write(String text) {
-		getCurrentState().canvasProperties.applyOn(this);
-		getCurrentState().writeProperties.applyOn(this);
+		currentState().canvasProperties.applyOn(this);
+		currentState().writeProperties.applyOn(this);
 		doWrite(text);
 	}
 

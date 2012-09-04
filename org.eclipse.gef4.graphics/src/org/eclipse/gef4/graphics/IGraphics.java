@@ -61,11 +61,11 @@ import org.eclipse.gef4.geometry.planar.Path;
  * <p>
  * The properties are classified into different categories:
  * <ul>
- * <li><code>{@link IBlitProperties} {@link #getBlitProperties()}</code></li>
- * <li><code>{@link ICanvasProperties} {@link #getCanvasProperties()}</code></li>
- * <li><code>{@link IDrawProperties} {@link #getDrawProperties()}</code></li>
- * <li><code>{@link IFillProperties} {@link #getFillProperties()}</code></li>
- * <li><code>{@link IWriteProperties} {@link #getWriteProperties()}</code></li>
+ * <li><code>{@link IBlitProperties} {@link #blitProperties()}</code></li>
+ * <li><code>{@link ICanvasProperties} {@link #canvasProperties()}</code></li>
+ * <li><code>{@link IDrawProperties} {@link #drawProperties()}</code></li>
+ * <li><code>{@link IFillProperties} {@link #fillProperties()}</code></li>
+ * <li><code>{@link IWriteProperties} {@link #writeProperties()}</code></li>
  * </ul>
  * </p>
  * 
@@ -144,35 +144,35 @@ public interface IGraphics {
 	 * 
 	 * @return the current states {@link IBlitProperties}
 	 */
-	IBlitProperties getBlitProperties();
+	IBlitProperties blitProperties();
 
 	/**
 	 * Returns the current states {@link ICanvasProperties}.
 	 * 
 	 * @return the current states {@link ICanvasProperties}
 	 */
-	ICanvasProperties getCanvasProperties();
+	ICanvasProperties canvasProperties();
 
 	/**
 	 * Returns the current states {@link IDrawProperties}.
 	 * 
 	 * @return the current states {@link IDrawProperties}
 	 */
-	IDrawProperties getDrawProperties();
+	IDrawProperties drawProperties();
 
 	/**
 	 * Returns the current states {@link IFillProperties}.
 	 * 
 	 * @return the current states {@link IFillProperties}
 	 */
-	IFillProperties getFillProperties();
+	IFillProperties fillProperties();
 
 	/**
 	 * Returns the current states {@link IWriteProperties}.
 	 * 
 	 * @return the current states {@link IWriteProperties}
 	 */
-	IWriteProperties getWriteProperties();
+	IWriteProperties writeProperties();
 
 	/**
 	 * Restores the prior set of properties saved.

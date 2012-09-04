@@ -18,7 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AWTBlitPropertiesTests.class, AWTCanvasPropertiesTests.class,
-		AWTDrawPropertiesTests.class })
+		AWTDrawPropertiesTests.class, AWTFillPropertiesTests.class,
+		AWTWritePropertiesTests.class })
 public class AllAWTTests {
 
 }

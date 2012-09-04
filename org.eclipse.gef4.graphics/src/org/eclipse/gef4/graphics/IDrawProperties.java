@@ -160,11 +160,6 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 */
 	Color getColor();
 
-	/**
-	 * Returns a copy of this {@link IDrawProperties}.
-	 * 
-	 * @return a copy of this {@link IDrawProperties}
-	 */
 	IDrawProperties getCopy();
 
 	/**

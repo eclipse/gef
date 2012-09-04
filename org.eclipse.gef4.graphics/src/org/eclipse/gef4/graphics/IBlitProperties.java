@@ -52,11 +52,6 @@ public interface IBlitProperties extends IGraphicsProperties {
 	 */
 	static final InterpolationHint DEFAULT_INTERPOLATION_HINT = InterpolationHint.QUALITY;
 
-	/**
-	 * Returns a copy of this {@link IBlitProperties}.
-	 * 
-	 * @return a copy of this {@link IBlitProperties}
-	 */
 	IBlitProperties getCopy();
 
 	/**

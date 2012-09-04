@@ -73,6 +73,13 @@ public interface IGraphicsProperties {
 	void cleanUp(IGraphics g);
 
 	/**
+	 * Returns a deep copy of this {@link IGraphicsProperties} object.
+	 * 
+	 * @return a deep copy of this {@link IGraphicsProperties}
+	 */
+	IGraphicsProperties getCopy();
+
+	/**
 	 * Reads out any properties that may be modified by this
 	 * {@link IGraphicsProperties} during {@link #applyOn(IGraphics)} to be able
 	 * to reset them later when {@link #cleanUp(IGraphics)} is called.

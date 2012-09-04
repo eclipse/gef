@@ -52,7 +52,7 @@ public class SWTGraphicsExample implements PaintListener {
 	}
 
 	public void renderScene(IGraphics g) {
-		g.getFillProperties().setColor(new Color(255, 0, 0, 255));
+		g.fillProperties().setColor(new Color(255, 0, 0, 255));
 		g.fill(new Ellipse(50, 50, 350, 200));
 	}
 

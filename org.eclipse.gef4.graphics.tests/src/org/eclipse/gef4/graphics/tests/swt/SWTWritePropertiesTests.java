@@ -10,12 +10,12 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.graphics.tests.awt;
+package org.eclipse.gef4.graphics.tests.swt;
 
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.tests.AbstractDrawPropertiesTests;
+import org.eclipse.gef4.graphics.tests.AbstractWritePropertiesTests;
 
-public class AWTDrawPropertiesTests extends AbstractDrawPropertiesTests {
+public class SWTWritePropertiesTests extends AbstractWritePropertiesTests {
 
 	@Override
 	public IGraphics createGraphics() {

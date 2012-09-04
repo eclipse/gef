@@ -13,9 +13,9 @@
 package org.eclipse.gef4.graphics.tests.awt;
 
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.tests.AbstractDrawPropertiesTests;
+import org.eclipse.gef4.graphics.tests.AbstractFillPropertiesTests;
 
-public class AWTDrawPropertiesTests extends AbstractDrawPropertiesTests {
+public class AWTFillPropertiesTests extends AbstractFillPropertiesTests {
 
 	@Override
 	public IGraphics createGraphics() {

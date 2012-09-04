@@ -81,7 +81,7 @@ public class DisplayGraphics extends AbstractGraphics {
 
 	@Override
 	protected void doWrite(String text) {
-		boolean transparentBackground = getWriteProperties()
+		boolean transparentBackground = writeProperties()
 				.getBackgroundColor().getAlpha() < 128;
 		gc.drawText(text, 0, 0, transparentBackground);
 	}

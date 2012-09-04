@@ -117,6 +117,16 @@ public class Font {
 		setStyle(style);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Font) {
+			Font o = (Font) obj;
+			return style == o.style && size == o.size
+					&& family.equals(o.family);
+		}
+		return false;
+	}
+
 	/**
 	 * Returns a copy of this {@link Font}.
 	 * 
