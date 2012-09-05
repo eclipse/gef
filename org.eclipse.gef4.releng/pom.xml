@@ -280,11 +280,11 @@
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
 		<module>../org.eclipse.gef4.graphics</module>
 		<module>../org.eclipse.gef4.graphics.tests</module>
-		<module>../org.eclipse.gef4.geometry.doc</module>
+		<module>../org.eclipse.gef4.graphics.doc</module>
 		<module>../org.eclipse.gef4.graphics-feature</module>
 		<module>../org.eclipse.gef4.graphics.source-feature</module>
 		<module>../org.eclipse.gef4.graphics.tests-feature</module>
-		<module>../org.eclipse.gef4.geometry.doc-feature</module>
+		<module>../org.eclipse.gef4.graphics.doc-feature</module>
 		<module>../org.eclipse.gef4.graphics.sdk-feature</module>
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
