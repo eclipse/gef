@@ -13,6 +13,7 @@
 package org.eclipse.gef4.graphics.swt;
 
 import org.eclipse.gef4.geometry.convert.Geometry2SWT;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -21,6 +22,7 @@ import org.eclipse.gef4.graphics.AbstractGraphics;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 public class DisplayGraphics extends AbstractGraphics {
@@ -94,5 +96,16 @@ public class DisplayGraphics extends AbstractGraphics {
 	public GC getGC() {
 		return gc;
 	}
+
+	public Dimension getTextDimension(String text) {
+		writeProperties().applyOn(this);
+		Point stringExtent = gc.stringExtent(text);
+		return new Dimension(stringExtent.x, stringExtent.y);
+	}
+
+	// public double getTextWidth(String text) {
+	// writeProperties().applyOn(this);
+	// return gc.stringExtent(text).x;
+	// }
 
 }

@@ -64,6 +64,20 @@ public abstract class AbstractDrawPropertiesTests extends
 	}
 
 	@Test
+	public void getDashBegin() {
+		assertEquals(properties.getDashBegin(), propertiesCopy.getDashBegin(),
+				DELTA);
+		properties.setDashBegin(1);
+		propertiesCopy.setDashBegin(10);
+		assertFalse(properties.getDashBegin() == propertiesCopy.getDashBegin());
+		properties.setDashBegin(5);
+		assertFalse(properties.getDashBegin() == propertiesCopy.getDashBegin());
+		properties.setDashBegin(10);
+		assertEquals(properties.getDashBegin(), propertiesCopy.getDashBegin(),
+				DELTA);
+	}
+
+	@Test
 	public void getLineCap() {
 		assertEquals(properties.getLineCap(), propertiesCopy.getLineCap());
 		properties.setLineCap(LineCap.FLAT);

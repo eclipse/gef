@@ -146,9 +146,9 @@ public class Font {
 	}
 
 	/**
-	 * Returns the font size associated with this {@link Font}.
+	 * Returns the font size (in points) associated with this {@link Font}.
 	 * 
-	 * @return the font size associated with this {@link Font}
+	 * @return the font size (in points) associated with this {@link Font}
 	 */
 	public double getSize() {
 		return size;

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
@@ -92,6 +93,20 @@ public interface IGraphics {
 	void blit(Image image);
 
 	/**
+	 * Returns the current states {@link IBlitProperties}.
+	 * 
+	 * @return the current states {@link IBlitProperties}
+	 */
+	IBlitProperties blitProperties();
+
+	/**
+	 * Returns the current states {@link ICanvasProperties}.
+	 * 
+	 * @return the current states {@link ICanvasProperties}
+	 */
+	ICanvasProperties canvasProperties();
+
+	/**
 	 * Draws the given {@link ICurve} on this {@link IGraphics} using the
 	 * associated {@link ICanvasProperties} and {@link IDrawProperties}.
 	 * 
@@ -108,6 +123,13 @@ public interface IGraphics {
 	 *            the {@link Path} to draw
 	 */
 	void draw(Path path);
+
+	/**
+	 * Returns the current states {@link IDrawProperties}.
+	 * 
+	 * @return the current states {@link IDrawProperties}
+	 */
+	IDrawProperties drawProperties();
 
 	/**
 	 * Fills the interior of the given {@link IMultiShape} on this
@@ -140,27 +162,6 @@ public interface IGraphics {
 	void fill(Path path);
 
 	/**
-	 * Returns the current states {@link IBlitProperties}.
-	 * 
-	 * @return the current states {@link IBlitProperties}
-	 */
-	IBlitProperties blitProperties();
-
-	/**
-	 * Returns the current states {@link ICanvasProperties}.
-	 * 
-	 * @return the current states {@link ICanvasProperties}
-	 */
-	ICanvasProperties canvasProperties();
-
-	/**
-	 * Returns the current states {@link IDrawProperties}.
-	 * 
-	 * @return the current states {@link IDrawProperties}
-	 */
-	IDrawProperties drawProperties();
-
-	/**
 	 * Returns the current states {@link IFillProperties}.
 	 * 
 	 * @return the current states {@link IFillProperties}
@@ -168,11 +169,26 @@ public interface IGraphics {
 	IFillProperties fillProperties();
 
 	/**
-	 * Returns the current states {@link IWriteProperties}.
+	 * Returns the width and height required to display the given {@link String}
+	 * with the current {@link IWriteProperties#getFont() font} as a
+	 * {@link Dimension}.
 	 * 
-	 * @return the current states {@link IWriteProperties}
+	 * @param text
+	 * @return a {@link Dimension} representing the width and height required to
+	 *         display the given {@link String} with the current
+	 *         {@link IWriteProperties#getFont() font}
 	 */
-	IWriteProperties writeProperties();
+	Dimension getTextDimension(String text);
+
+	/**
+	 * Returns the width required to display the given {@link String} with the
+	 * current {@link IWriteProperties#getFont() font}.
+	 * 
+	 * @param text
+	 * @return the width required to display the given {@link String} with the
+	 *         current {@link IWriteProperties#getFont() font}
+	 */
+	// double getTextWidth(String text);
 
 	/**
 	 * Restores the prior set of properties saved.
@@ -192,5 +208,12 @@ public interface IGraphics {
 	 *            the text to draw
 	 */
 	void write(String text);
+
+	/**
+	 * Returns the current states {@link IWriteProperties}.
+	 * 
+	 * @return the current states {@link IWriteProperties}
+	 */
+	IWriteProperties writeProperties();
 
 }

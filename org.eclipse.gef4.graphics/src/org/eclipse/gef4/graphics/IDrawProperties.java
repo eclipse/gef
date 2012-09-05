@@ -127,6 +127,12 @@ public interface IDrawProperties extends IGraphicsProperties {
 	static final double[] DEFAULT_DASH_ARRAY = null;
 
 	/**
+	 * The default initially assumed covered distance when applying the current
+	 * {@link #getDashArray() dash-array} is set to <code>0d</code>.
+	 */
+	static final double DEFAULT_DASH_BEGIN = 0d;
+
+	/**
 	 * The default {@link LineCap} is set to {@link LineCap#FLAT FLAT}.
 	 */
 	static final LineCap DEFAULT_LINE_CAP = LineCap.FLAT;
@@ -175,6 +181,15 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 * @return the current dash-array
 	 */
 	double[] getDashArray();
+
+	/**
+	 * Returns the initially assumed covered distance when applying the
+	 * {@link #getDashArray() dash-array}.
+	 * 
+	 * @return the initially assumed covered distance when applying the
+	 *         {@link #getDashArray() dash-array}
+	 */
+	double getDashBegin();
 
 	/**
 	 * Returns the {@link LineCap} associated with this {@link IDrawProperties}.
@@ -264,6 +279,16 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 * @return <code>this</code> for convenience
 	 */
 	IDrawProperties setDashArray(double... dashes);
+
+	/**
+	 * Sets the initially assumed covered distance when applying the current
+	 * {@link #getDashArray() dash-array}.
+	 * 
+	 * @param distance
+	 *            the initially assumed covered distance
+	 * @return <code>this</code> for convenience
+	 */
+	IDrawProperties setDashBegin(double distance);
 
 	/**
 	 * Sets the {@link LineCap} associated with this {@link IDrawProperties} to

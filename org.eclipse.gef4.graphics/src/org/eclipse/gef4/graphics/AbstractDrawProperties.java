@@ -35,6 +35,12 @@ public abstract class AbstractDrawProperties implements IDrawProperties {
 	protected double[] dashArray = DEFAULT_DASH_ARRAY;
 
 	/**
+	 * The initially assumed covered distance when applying the current
+	 * {@link #dashArray}.
+	 */
+	protected double dashBegin = DEFAULT_DASH_BEGIN;
+
+	/**
 	 * The {@link IDrawProperties.LineCap} associated with this
 	 * {@link AbstractDrawProperties}.
 	 */
@@ -61,6 +67,10 @@ public abstract class AbstractDrawProperties implements IDrawProperties {
 				dashArray.length);
 	}
 
+	public double getDashBegin() {
+		return dashBegin;
+	}
+
 	public LineCap getLineCap() {
 		return lineCap;
 	}
@@ -81,33 +91,38 @@ public abstract class AbstractDrawProperties implements IDrawProperties {
 		return antialiasing;
 	}
 
-	public IDrawProperties setAntialiasing(boolean antialiasing) {
+	public AbstractDrawProperties setAntialiasing(boolean antialiasing) {
 		this.antialiasing = antialiasing;
 		return this;
 	}
 
-	public IDrawProperties setDashArray(double... dashes) {
+	public AbstractDrawProperties setDashArray(double... dashes) {
 		dashArray = dashes == null ? null : Arrays
 				.copyOf(dashes, dashes.length);
 		return this;
 	}
 
-	public IDrawProperties setLineCap(LineCap lineCap) {
+	public AbstractDrawProperties setDashBegin(double distance) {
+		dashBegin = distance;
+		return this;
+	}
+
+	public AbstractDrawProperties setLineCap(LineCap lineCap) {
 		this.lineCap = lineCap;
 		return this;
 	}
 
-	public IDrawProperties setLineJoin(LineJoin lineJoin) {
+	public AbstractDrawProperties setLineJoin(LineJoin lineJoin) {
 		this.lineJoin = lineJoin;
 		return this;
 	}
 
-	public IDrawProperties setLineWidth(double lineWidth) {
+	public AbstractDrawProperties setLineWidth(double lineWidth) {
 		this.lineWidth = lineWidth;
 		return this;
 	}
 
-	public IDrawProperties setMiterLimit(double limit) {
+	public AbstractDrawProperties setMiterLimit(double limit) {
 		miterLimit = limit;
 		return this;
 	}

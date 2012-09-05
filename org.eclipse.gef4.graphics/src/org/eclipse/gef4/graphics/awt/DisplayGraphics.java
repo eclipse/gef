@@ -19,6 +19,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -107,5 +108,16 @@ public class DisplayGraphics extends AbstractGraphics {
 	public Graphics2D getGraphics2D() {
 		return g;
 	}
+
+	public Dimension getTextDimension(String text) {
+		writeProperties().applyOn(this);
+		FontMetrics fontMetrics = g.getFontMetrics();
+		return new Dimension(fontMetrics.stringWidth(text), fontMetrics.getHeight());
+	}
+
+	// public double getTextWidth(String text) {
+	// writeProperties().applyOn(this);
+	// return g.getFontMetrics().stringWidth(text);
+	// }
 
 }

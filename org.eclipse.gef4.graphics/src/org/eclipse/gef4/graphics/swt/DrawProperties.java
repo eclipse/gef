@@ -83,7 +83,8 @@ public class DrawProperties extends AbstractDrawProperties {
 								: SWT.CAP_SQUARE,
 								lineJoin == LineJoin.BEVEL ? SWT.JOIN_BEVEL
 										: lineJoin == LineJoin.ROUND ? SWT.JOIN_ROUND
-												: SWT.JOIN_MITER, SWT.LINE_CUSTOM, dashes, 0,
+												: SWT.JOIN_MITER, SWT.LINE_CUSTOM, dashes,
+												(float) dashBegin,
 												(float) miterLimit);
 	}
 

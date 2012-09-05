@@ -36,9 +36,8 @@ public class DrawProperties extends AbstractDrawProperties {
 	protected Color drawColor;
 
 	/**
-	 * Creates a new {@link DrawProperties} with the
-	 * {@link AbstractDrawProperties#drawColor} set to the default color
-	 * specified by the {@link IDrawProperties} interface.
+	 * Creates a new {@link DrawProperties} with the {@link #drawColor} set to
+	 * the default color specified by the {@link IDrawProperties} interface.
 	 */
 	public DrawProperties() {
 		drawColor = new Color();
@@ -75,10 +74,10 @@ public class DrawProperties extends AbstractDrawProperties {
 				lineCap == LineCap.FLAT ? BasicStroke.CAP_BUTT
 						: lineCap == LineCap.ROUND ? BasicStroke.CAP_ROUND
 								: BasicStroke.CAP_SQUARE,
-				lineJoin == LineJoin.BEVEL ? BasicStroke.JOIN_BEVEL
-						: lineJoin == LineJoin.MITER ? BasicStroke.JOIN_MITER
-								: BasicStroke.JOIN_ROUND, (float) miterLimit,
-				dashes, 0);
+								lineJoin == LineJoin.BEVEL ? BasicStroke.JOIN_BEVEL
+										: lineJoin == LineJoin.MITER ? BasicStroke.JOIN_MITER
+												: BasicStroke.JOIN_ROUND, (float) miterLimit,
+												dashes, (float) dashBegin);
 	}
 
 	public Color getColor() {
@@ -88,8 +87,9 @@ public class DrawProperties extends AbstractDrawProperties {
 	public DrawProperties getCopy() {
 		DrawProperties copy = new DrawProperties();
 		copy.antialiasing = antialiasing;
-		copy.drawColor = drawColor.getCopy();
+		copy.setColor(drawColor);
 		copy.setDashArray(dashArray);
+		copy.setDashBegin(dashBegin);
 		copy.setLineCap(lineCap);
 		copy.setLineJoin(lineJoin);
 		copy.setMiterLimit(miterLimit);
