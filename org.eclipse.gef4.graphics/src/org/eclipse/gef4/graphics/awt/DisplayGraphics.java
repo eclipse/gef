@@ -14,18 +14,16 @@ package org.eclipse.gef4.graphics.awt;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import org.eclipse.gef4.geometry.convert.Geometry2AWT;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.AbstractGraphics;
+import org.eclipse.gef4.graphics.IFontUtils;
 import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.IImageUtils;
 import org.eclipse.gef4.graphics.Image;
 
 /**
@@ -57,13 +55,8 @@ public class DisplayGraphics extends AbstractGraphics {
 
 	@Override
 	protected void doBlit(Image image) {
-		java.awt.Image awtImage = null;
-		try {
-			awtImage = ImageIO.read(image.getImageFile());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		java.awt.Image awtImage = Utils.applyImageFilters(image,
+				blitProperties());
 		g.drawImage(awtImage, 0, 0, null);
 	}
 
@@ -98,6 +91,10 @@ public class DisplayGraphics extends AbstractGraphics {
 		g.drawString(text, 0, fontMetrics.getMaxAscent());
 	}
 
+	public IFontUtils fontUtils() {
+		return new FontUtils(this);
+	}
+
 	/**
 	 * Returns the {@link Graphics2D} that is associated with this
 	 * {@link DisplayGraphics}.
@@ -109,15 +106,8 @@ public class DisplayGraphics extends AbstractGraphics {
 		return g;
 	}
 
-	public Dimension getTextDimension(String text) {
-		writeProperties().applyOn(this);
-		FontMetrics fontMetrics = g.getFontMetrics();
-		return new Dimension(fontMetrics.stringWidth(text), fontMetrics.getHeight());
+	public IImageUtils imageUtils() {
+		return new ImageUtils();
 	}
-
-	// public double getTextWidth(String text) {
-	// writeProperties().applyOn(this);
-	// return g.getFontMetrics().stringWidth(text);
-	// }
 
 }

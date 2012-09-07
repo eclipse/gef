@@ -127,13 +127,25 @@ public class Color {
 		IHSV setValue(double value);
 	}
 
-	private static final int DEFAULT_ALPHA = 255;
+	/**
+	 * The <i>alpha</i> value used in the {@link #Color() default constructor}.
+	 */
+	public static final int DEFAULT_ALPHA = 255;
 
-	private static final int DEFAULT_BLUE = 0;
+	/**
+	 * The <i>blue</i> value used in the {@link #Color() default constructor}.
+	 */
+	public static final int DEFAULT_BLUE = 0;
 
-	private static final int DEFAULT_GREEN = 0;
+	/**
+	 * The <i>green</i> value used in the {@link #Color() default constructor}.
+	 */
+	public static final int DEFAULT_GREEN = 0;
 
-	private static final int DEFAULT_RED = 0;
+	/**
+	 * The <i>red</i> value used in the {@link #Color() default constructor}.
+	 */
+	public static final int DEFAULT_RED = 0;
 
 	/**
 	 * The red component of this {@link Color} in the range <code>[0;255]</code>
@@ -182,10 +194,10 @@ public class Color {
 	 *            the {@link #a alpha} component of this {@link Color}
 	 */
 	public Color(int red, int green, int blue, int alpha) {
-		r = red;
-		g = green;
-		b = blue;
-		a = alpha;
+		setRed(red);
+		setGreen(green);
+		setBlue(blue);
+		setAlpha(alpha);
 	}
 
 	@Override
@@ -279,6 +291,11 @@ public class Color {
 	 * @return <code>this</code> for convenience
 	 */
 	public Color setAlpha(int alpha) {
+		if (alpha < 0 || alpha > 255) {
+			throw new IllegalArgumentException(
+					"The given alpha component (alpha = " + alpha
+					+ ") is not in the range [0;255]!");
+		}
 		a = alpha;
 		return this;
 	}
@@ -293,6 +310,11 @@ public class Color {
 	 * @return <code>this</code> for convenience
 	 */
 	public Color setBlue(int blue) {
+		if (blue < 0 || blue > 255) {
+			throw new IllegalArgumentException(
+					"The given alpha component (alpha = " + blue
+					+ ") is not in the range [0;255]!");
+		}
 		b = blue;
 		return this;
 	}
@@ -307,6 +329,11 @@ public class Color {
 	 * @return <code>this</code> for convenience
 	 */
 	public Color setGreen(int green) {
+		if (green < 0 || green > 255) {
+			throw new IllegalArgumentException(
+					"The given alpha component (alpha = " + green
+					+ ") is not in the range [0;255]!");
+		}
 		g = green;
 		return this;
 	}
@@ -333,6 +360,11 @@ public class Color {
 	 * @return <code>this</code> for convenience
 	 */
 	public Color setRed(int red) {
+		if (red < 0 || red > 255) {
+			throw new IllegalArgumentException(
+					"The given alpha component (alpha = " + red
+					+ ") is not in the range [0;255]!");
+		}
 		r = red;
 		return this;
 	}

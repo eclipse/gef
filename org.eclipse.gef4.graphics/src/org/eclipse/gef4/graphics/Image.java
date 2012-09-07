@@ -46,4 +46,9 @@ public class Image {
 		return imageFile;
 	}
 
+	@Override
+	public String toString() {
+		return "Image(imageFile = " + imageFile + ")";
+	}
+
 }

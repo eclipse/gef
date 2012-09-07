@@ -32,7 +32,9 @@ public class DrawProperties extends AbstractDrawProperties {
 			gc.setForeground(val);
 		}
 	};
+
 	private org.eclipse.swt.graphics.Color initialColor;
+	private int initialAlpha;
 
 	public DrawProperties() {
 		drawColorProperty.set(new Color());
@@ -42,6 +44,7 @@ public class DrawProperties extends AbstractDrawProperties {
 		GC gc = ((DisplayGraphics) g).getGC();
 
 		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
+		gc.setAlpha(drawColorProperty.data.getAlpha());
 		gc.setLineAttributes(getSWTLineAttributes());
 
 		drawColorProperty.apply(gc);
@@ -49,6 +52,7 @@ public class DrawProperties extends AbstractDrawProperties {
 
 	public void cleanUp(IGraphics g) {
 		GC gc = ((DisplayGraphics) g).getGC();
+		gc.setAlpha(initialAlpha);
 		gc.setForeground(initialColor);
 		drawColorProperty.clean();
 	}
@@ -59,7 +63,7 @@ public class DrawProperties extends AbstractDrawProperties {
 
 	public DrawProperties getCopy() {
 		DrawProperties copy = new DrawProperties();
-		copy.antialiasing = antialiasing;
+		copy.setAntialiasing(antialiasing);
 		copy.setColor(drawColorProperty.data);
 		copy.setDashArray(dashArray);
 		copy.setLineCap(lineCap);
@@ -94,6 +98,7 @@ public class DrawProperties extends AbstractDrawProperties {
 
 		// read out initial values
 		initialColor = gc.getForeground();
+		initialAlpha = gc.getAlpha();
 	}
 
 	public DrawProperties setColor(Color drawColor) {

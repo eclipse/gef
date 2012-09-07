@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
+import java.util.List;
+
+import org.eclipse.gef4.graphics.filters.IImageFilter;
+
 /**
  * <p>
  * An {@link IBlitProperties} manages the {@link IGraphics} properties used when
@@ -51,6 +55,16 @@ public interface IBlitProperties extends IGraphicsProperties {
 	 * The {@link InterpolationHint} used if the user does not specify it.
 	 */
 	static final InterpolationHint DEFAULT_INTERPOLATION_HINT = InterpolationHint.QUALITY;
+
+	/**
+	 * Returns the list of {@link IImageFilter}s that are going to be applied
+	 * before {@link IGraphics#blit(Image) blitting} an {@link Image}. The
+	 * {@link IImageFilter}s in the list are applied sequentially.
+	 * 
+	 * @return the stack of {@link IImageFilter}s that are going to be applied
+	 *         before {@link IGraphics#blit(Image) blitting} an {@link Image}
+	 */
+	List<IImageFilter> filters();
 
 	IBlitProperties getCopy();
 

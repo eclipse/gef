@@ -15,6 +15,7 @@ package org.eclipse.gef4.graphics.examples;
 import java.net.URL;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -25,7 +26,7 @@ import org.eclipse.gef4.graphics.Image;
 public class SimpleExampleUtil {
 
 	protected static final Color RED = new Color(255, 0, 0, 255),
-			YELLOW = new Color(255, 255, 0, 255), BLUE = new Color(0, 0, 255,
+			YELLOW = new Color(255, 255, 0, 128), BLUE = new Color(0, 0, 255,
 					255), BLACK = new Color(0, 0, 0, 255);
 
 	protected static void draw(IGraphics g, URL imageFile) {
@@ -56,15 +57,16 @@ public class SimpleExampleUtil {
 		g.draw(rectangle.getOutline());
 
 		g.pushState();
-		g.canvasProperties()
-				.setAffineTransform(
-						g.canvasProperties().getAffineTransform()
-								.translate(270, 50));
-		g.write("This is a first test example.");
+		g.canvasProperties().setAffineTransform(
+				g.canvasProperties().getAffineTransform().translate(270, 50));
+		String text = "This is a first test example.";
+		g.write(text);
+		Dimension textDimension = g.fontUtils().getTextDimension(text);
+		g.draw(new Rectangle(0, 0, textDimension.width, textDimension.height)
+				.getOutline());
 		g.pushState();
 		AffineTransform at = g.canvasProperties().getAffineTransform();
-		at.translate(50, 50);
-		at.rotate(0.3);
+		at.translate(50, 50).rotate(0.3);
 		g.canvasProperties().setAffineTransform(at);
 		g.blit(new Image(imageFile));
 		g.popState();

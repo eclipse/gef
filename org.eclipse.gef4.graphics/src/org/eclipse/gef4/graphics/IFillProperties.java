@@ -43,6 +43,14 @@ public interface IFillProperties extends IGraphicsProperties {
 	IFillProperties getCopy();
 
 	/**
+	 * Returns the {@link Image} associated with this {@link IFillProperties}.
+	 * This {@link Image} is used when filling a geometry object using the...
+	 * 
+	 * @return the {@link Image} associated with this {@link IFillProperties}
+	 */
+	// Image getTexture();
+
+	/**
 	 * Returns <code>true</code> if anti-aliasing is enabled. Otherwise,
 	 * <code>false</code> is returned.
 	 * 
@@ -71,5 +79,7 @@ public interface IFillProperties extends IGraphicsProperties {
 	 * @return <code>this</code> for convenience
 	 */
 	IFillProperties setColor(Color fillColor);
+
+	// IFillProperties setTexture(Image texture);
 
 }

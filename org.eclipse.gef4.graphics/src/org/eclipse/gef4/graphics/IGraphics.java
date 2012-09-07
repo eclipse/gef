@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
@@ -107,6 +106,14 @@ public interface IGraphics {
 	ICanvasProperties canvasProperties();
 
 	/**
+	 * Walks backwards through the states-stack using the {@link #popState()}
+	 * method. For every state, the corresponding {@link IGraphicsProperties}
+	 * objects' {@link IGraphicsProperties#cleanUp(IGraphics)} methods are
+	 * called.
+	 */
+	void cleanUp();
+
+	/**
 	 * Draws the given {@link ICurve} on this {@link IGraphics} using the
 	 * associated {@link ICanvasProperties} and {@link IDrawProperties}.
 	 * 
@@ -169,29 +176,23 @@ public interface IGraphics {
 	IFillProperties fillProperties();
 
 	/**
-	 * Returns the width and height required to display the given {@link String}
-	 * with the current {@link IWriteProperties#getFont() font} as a
-	 * {@link Dimension}.
+	 * Returns an {@link IFontUtils} implementation for this specific
+	 * {@link IGraphics} implementation.
 	 * 
-	 * @param text
-	 * @return a {@link Dimension} representing the width and height required to
-	 *         display the given {@link String} with the current
-	 *         {@link IWriteProperties#getFont() font}
+	 * @return an {@link IFontUtils} for this specific {@link IGraphics}
 	 */
-	Dimension getTextDimension(String text);
+	IFontUtils fontUtils();
 
 	/**
-	 * Returns the width required to display the given {@link String} with the
-	 * current {@link IWriteProperties#getFont() font}.
+	 * Returns an {@link IImageUtils} implementation for this specific
+	 * {@link IGraphics} implementation.
 	 * 
-	 * @param text
-	 * @return the width required to display the given {@link String} with the
-	 *         current {@link IWriteProperties#getFont() font}
+	 * @return an {@link IImageUtils} for this specific {@link IGraphics}
 	 */
-	// double getTextWidth(String text);
+	IImageUtils imageUtils();
 
 	/**
-	 * Restores the prior set of properties saved.
+	 * Restores the set of properties that was saved last.
 	 */
 	void popState();
 

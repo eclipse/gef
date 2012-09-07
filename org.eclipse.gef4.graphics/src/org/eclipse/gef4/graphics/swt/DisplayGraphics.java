@@ -13,16 +13,16 @@
 package org.eclipse.gef4.graphics.swt;
 
 import org.eclipse.gef4.geometry.convert.Geometry2SWT;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.AbstractGraphics;
+import org.eclipse.gef4.graphics.IFontUtils;
+import org.eclipse.gef4.graphics.IImageUtils;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 public class DisplayGraphics extends AbstractGraphics {
@@ -88,6 +88,10 @@ public class DisplayGraphics extends AbstractGraphics {
 		gc.drawText(text, 0, 0, transparentBackground);
 	}
 
+	public IFontUtils fontUtils() {
+		return new FontUtils(this);
+	}
+
 	/**
 	 * Returns the {@link GC} associated with this {@link DisplayGraphics}.
 	 * 
@@ -97,10 +101,8 @@ public class DisplayGraphics extends AbstractGraphics {
 		return gc;
 	}
 
-	public Dimension getTextDimension(String text) {
-		writeProperties().applyOn(this);
-		Point stringExtent = gc.stringExtent(text);
-		return new Dimension(stringExtent.x, stringExtent.y);
+	public IImageUtils imageUtils() {
+		return new ImageUtils();
 	}
 
 	// public double getTextWidth(String text) {

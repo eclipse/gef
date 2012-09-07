@@ -81,6 +81,10 @@ public class WriteProperties extends AbstractWriteProperties {
 
 	public WriteProperties getCopy() {
 		WriteProperties copy = new WriteProperties();
+		copy.setAntialiasing(antialiasing);
+		copy.setBackgroundColor(backgroundColor);
+		copy.setForegroundColor(foregroundColor);
+		copy.setFont(font);
 		return copy;
 	}
 

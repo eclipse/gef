@@ -12,6 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.swt;
 
-public class OffScreenGraphics {
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+
+public class OffScreenGraphics extends DisplayGraphics {
+
+	public OffScreenGraphics(Image image) {
+		super(new GC(image));
+	}
+
+	@Override
+	public void cleanUp() {
+		super.cleanUp();
+		gc.dispose();
+	}
 
 }

@@ -16,20 +16,23 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.IGraphicsProperties;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * The AbstractGraphicsPropertiesTests class defines two attributes {@link #properties}
- * and {@link #propertiesCopy} which store copies of the specific
- * {@link IGraphicsProperties} returned by the {@link #getProperties(IGraphics)}
- * method for the igraphics implementation returned by the
- * {@link #createGraphics()} method.
+ * The AbstractGraphicsPropertiesTests class defines two attributes
+ * {@link #properties} and {@link #propertiesCopy} which store copies of the
+ * specific {@link IGraphicsProperties} returned by the
+ * {@link #getProperties(IGraphics)} method for the igraphics implementation
+ * returned by the {@link #createGraphics()} method.
  * 
  * @author mwienand
  * 
  */
 public abstract class AbstractGraphicsPropertiesTests<T extends IGraphicsProperties> {
+
+	protected IGraphics graphics;
 
 	/**
 	 * Stores a copy of the {@link IGraphicsProperties} returned by the
@@ -42,6 +45,11 @@ public abstract class AbstractGraphicsPropertiesTests<T extends IGraphicsPropert
 	 * Stores a copy of the {@link #properties} attribute.
 	 */
 	protected T propertiesCopy;
+
+	@After
+	public void cleanUp() {
+		graphics.cleanUp();
+	}
 
 	/**
 	 * Returns a specific {@link IGraphics} implementation to be tested.
@@ -76,7 +84,8 @@ public abstract class AbstractGraphicsPropertiesTests<T extends IGraphicsPropert
 	@SuppressWarnings("unchecked")
 	@Before
 	public void localSetUp() {
-		properties = (T) getProperties(createGraphics()).getCopy();
+		graphics = createGraphics();
+		properties = (T) getProperties(graphics).getCopy();
 		propertiesCopy = (T) properties.getCopy();
 	}
 

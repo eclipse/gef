@@ -14,6 +14,7 @@ package org.eclipse.gef4.graphics.awt;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.Collections;
 
 import org.eclipse.gef4.graphics.AbstractBlitProperties;
 import org.eclipse.gef4.graphics.IBlitProperties;
@@ -37,6 +38,7 @@ public class BlitProperties extends AbstractBlitProperties {
 
 	public void applyOn(IGraphics g) {
 		Graphics2D g2d = ((DisplayGraphics) g).getGraphics2D();
+
 		switch (interpolationHint) {
 		case SPEED:
 			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -57,12 +59,11 @@ public class BlitProperties extends AbstractBlitProperties {
 	public BlitProperties getCopy() {
 		BlitProperties copy = new BlitProperties();
 		copy.setInterpolationHint(interpolationHint);
+		Collections.copy(filters, copy.filters);
 		return copy;
 	}
 
 	public void init(IGraphics g) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

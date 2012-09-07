@@ -14,10 +14,12 @@ package org.eclipse.gef4.graphics.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Region;
+import org.eclipse.gef4.geometry.planar.Ring;
 import org.eclipse.gef4.graphics.ICanvasProperties;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.junit.Test;
@@ -43,7 +45,7 @@ public abstract class AbstractCanvasPropertiesTests extends
 	}
 
 	@Test
-	public void getClippingArea() {
+	public void getClippingArea_with_Region() {
 		assertEquals(properties.getClippingArea(),
 				propertiesCopy.getClippingArea());
 		properties.setClippingArea(new Region(new Rectangle(0, 0, 100, 100)));
@@ -55,6 +57,30 @@ public abstract class AbstractCanvasPropertiesTests extends
 		assertFalse(properties.getClippingArea().equals(
 				propertiesCopy.getClippingArea()));
 		properties.setClippingArea(new Region(new Rectangle(20, 20, 60, 60)));
+		assertEquals(properties.getClippingArea(),
+				propertiesCopy.getClippingArea());
+		properties.setClippingArea((Region) null);
+		propertiesCopy.setClippingArea((Ring) null);
+		assertNull(properties.getClippingArea());
+		assertNull(propertiesCopy.getClippingArea());
+	}
+
+	@Test
+	public void getClippingArea_with_Ring() {
+		assertEquals(properties.getClippingArea(),
+				propertiesCopy.getClippingArea());
+		properties.setClippingArea(new Ring(new Rectangle(0, 0, 100, 100)
+				.toPolygon()));
+		propertiesCopy.setClippingArea(new Ring(new Rectangle(20, 20, 60, 60)
+				.toPolygon()));
+		assertFalse(properties.getClippingArea().equals(
+				propertiesCopy.getClippingArea()));
+		properties.setClippingArea(new Ring(new Rectangle(10, 10, 80, 80)
+				.toPolygon()));
+		assertFalse(properties.getClippingArea().equals(
+				propertiesCopy.getClippingArea()));
+		properties.setClippingArea(new Ring(new Rectangle(20, 20, 60, 60)
+				.toPolygon()));
 		assertEquals(properties.getClippingArea(),
 				propertiesCopy.getClippingArea());
 	}

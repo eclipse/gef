@@ -109,12 +109,14 @@ public abstract class AbstractGraphics implements IGraphics {
 		doBlit(image);
 	}
 
-	/**
-	 * <p>
-	 * Cleans up this {@link AbstractGraphics} so that all the
-	 * {@link IGraphicsProperties#cleanUp(IGraphics)} method is called.
-	 * </p>
-	 */
+	public IBlitProperties blitProperties() {
+		return currentState().blitProperties;
+	}
+
+	public ICanvasProperties canvasProperties() {
+		return currentState().canvasProperties;
+	}
+
 	public void cleanUp() {
 		// clear states stack
 		while (states.size() > 1) {
@@ -133,6 +135,15 @@ public abstract class AbstractGraphics implements IGraphics {
 		state.drawProperties.cleanUp(this);
 		state.fillProperties.cleanUp(this);
 		state.writeProperties.cleanUp(this);
+	}
+
+	/**
+	 * Returns the current state of this {@link AbstractGraphics}.
+	 * 
+	 * @return the current state of this {@link AbstractGraphics}
+	 */
+	protected State currentState() {
+		return states.peek();
 	}
 
 	/**
@@ -203,6 +214,10 @@ public abstract class AbstractGraphics implements IGraphics {
 		doDraw(path);
 	}
 
+	public IDrawProperties drawProperties() {
+		return currentState().drawProperties;
+	}
+
 	public void fill(IMultiShape multiShape) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().fillProperties.applyOn(this);
@@ -221,33 +236,8 @@ public abstract class AbstractGraphics implements IGraphics {
 		doFill(path);
 	}
 
-	public IBlitProperties blitProperties() {
-		return currentState().blitProperties;
-	}
-
-	public ICanvasProperties canvasProperties() {
-		return currentState().canvasProperties;
-	}
-
-	/**
-	 * Returns the current state of this {@link AbstractGraphics}.
-	 * 
-	 * @return the current state of this {@link AbstractGraphics}
-	 */
-	protected State currentState() {
-		return states.peek();
-	}
-
-	public IDrawProperties drawProperties() {
-		return currentState().drawProperties;
-	}
-
 	public IFillProperties fillProperties() {
 		return currentState().fillProperties;
-	}
-
-	public IWriteProperties writeProperties() {
-		return currentState().writeProperties;
 	}
 
 	private void initProperties() {
@@ -290,7 +280,7 @@ public abstract class AbstractGraphics implements IGraphics {
 	public void pushState() {
 		if (states.isEmpty()) {
 			throw new IllegalStateException(
-					"You have to push an initial State when constructing the IGraphics.");
+					"No initial State pushed! The IGraphics is responsible for pushing an initial State on construction.");
 		}
 		states.push(currentState().getCopy());
 		initProperties();
@@ -300,6 +290,10 @@ public abstract class AbstractGraphics implements IGraphics {
 		currentState().canvasProperties.applyOn(this);
 		currentState().writeProperties.applyOn(this);
 		doWrite(text);
+	}
+
+	public IWriteProperties writeProperties() {
+		return currentState().writeProperties;
 	}
 
 }

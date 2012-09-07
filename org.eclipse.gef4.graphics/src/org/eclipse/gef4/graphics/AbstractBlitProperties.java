@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.gef4.graphics.filters.IImageFilter;
+
 /**
  * The AbstractBlitProperties partially implements the {@link IBlitProperties}
  * interface.
@@ -27,6 +32,8 @@ public abstract class AbstractBlitProperties implements IBlitProperties {
 	 */
 	protected InterpolationHint interpolationHint = IBlitProperties.DEFAULT_INTERPOLATION_HINT;
 
+	protected List<IImageFilter> filters = new ArrayList<IImageFilter>();
+
 	/**
 	 * Default constructor, setting the
 	 * {@link IBlitProperties.InterpolationHint} of this
@@ -34,6 +41,10 @@ public abstract class AbstractBlitProperties implements IBlitProperties {
 	 * {@link IBlitProperties#DEFAULT_INTERPOLATION_HINT}.
 	 */
 	protected AbstractBlitProperties() {
+	}
+
+	public List<IImageFilter> filters() {
+		return filters;
 	}
 
 	public InterpolationHint getInterpolationHint() {

@@ -13,11 +13,43 @@
 package org.eclipse.gef4.graphics.awt;
 
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Font;
+import org.eclipse.gef4.graphics.IBlitProperties;
+import org.eclipse.gef4.graphics.Image;
+import org.eclipse.gef4.graphics.filters.ConvolutionFilter;
+import org.eclipse.gef4.graphics.filters.IImageFilter;
 
 class Utils {
+
+	public static BufferedImage applyImageFilters(Image image,
+			IBlitProperties blitProperties) {
+		BufferedImage awtImage = Utils.toAWTImage(image);
+		for (IImageFilter filter : blitProperties.filters()) {
+			if (filter instanceof ConvolutionFilter) {
+				ConvolutionFilter f = (ConvolutionFilter) filter;
+				double[] kernelAsDoubles = f.getKernel();
+				float[] kernelAsFloats = new float[kernelAsDoubles.length];
+				for (int i = 0; i < kernelAsFloats.length; i++) {
+					kernelAsFloats[i] = (float) kernelAsDoubles[i];
+				}
+				Kernel kernel = new Kernel(f.getDimension(), f.getDimension(),
+						kernelAsFloats);
+				ConvolveOp op = new ConvolveOp(kernel);
+				awtImage = op.filter(awtImage, null);
+			} else {
+				throw new UnsupportedOperationException("The specified IImageFilter " + filter + " is not yet supported.");
+			}
+		}
+		return awtImage;
+	}
 
 	/**
 	 * Constructs a new {@link java.awt.Color} representation of the given
@@ -45,6 +77,17 @@ class Utils {
 				| (font.isItalic() ? java.awt.Font.ITALIC : 0);
 
 		return new java.awt.Font(font.getFamily(), awtStyle, awtSize);
+	}
+
+	public static BufferedImage toAWTImage(Image image) {
+		BufferedImage awtImage = null;
+		try {
+			awtImage = ImageIO.read(image.getImageFile());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return awtImage;
 	}
 
 }

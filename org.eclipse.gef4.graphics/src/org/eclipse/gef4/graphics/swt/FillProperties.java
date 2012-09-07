@@ -34,6 +34,7 @@ public class FillProperties extends AbstractFillProperties {
 	};
 
 	private org.eclipse.swt.graphics.Color initialColor;
+	private int initialAlpha;
 
 	public FillProperties() {
 		fillColorProperty.set(new Color());
@@ -42,12 +43,14 @@ public class FillProperties extends AbstractFillProperties {
 	public void applyOn(IGraphics g) {
 		GC gc = ((DisplayGraphics) g).getGC();
 		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
+		gc.setAlpha(fillColorProperty.data.getAlpha());
 		fillColorProperty.apply(gc);
 	}
 
 	public void cleanUp(IGraphics g) {
 		GC gc = ((DisplayGraphics) g).getGC();
 		gc.setBackground(initialColor);
+		gc.setAlpha(initialAlpha);
 		fillColorProperty.clean();
 	}
 
@@ -65,6 +68,7 @@ public class FillProperties extends AbstractFillProperties {
 	public void init(IGraphics g) {
 		GC gc = ((DisplayGraphics) g).getGC();
 		initialColor = gc.getBackground();
+		initialAlpha = gc.getAlpha();
 	}
 
 	public IFillProperties setColor(Color fillColor) {

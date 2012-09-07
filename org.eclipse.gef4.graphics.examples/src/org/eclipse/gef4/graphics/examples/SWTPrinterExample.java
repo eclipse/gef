@@ -37,13 +37,11 @@ public class SWTPrinterExample implements PaintListener {
 
 		final Canvas c = new Canvas(shell, SWT.BORDER);
 		c.addPaintListener(this);
-
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		c.setLayoutData(gridData);
 
 		final Button b = new Button(shell, SWT.PUSH | SWT.BORDER);
 		b.setText("Print");
-
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		b.setLayoutData(gridData);
 
@@ -57,14 +55,10 @@ public class SWTPrinterExample implements PaintListener {
 					Printer p = new Printer(printerData);
 					p.startJob("PrintJob");
 					p.startPage();
-
 					PrinterGraphics g = new PrinterGraphics(p);
 					renderScene(g);
-
 					p.endPage();
-
 					g.cleanUp();
-
 					p.endJob();
 					p.dispose();
 				}
