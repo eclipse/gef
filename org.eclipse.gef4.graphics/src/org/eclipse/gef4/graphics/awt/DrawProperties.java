@@ -16,6 +16,8 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.AbstractDrawProperties;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.IDrawProperties;
@@ -43,7 +45,7 @@ public class DrawProperties extends AbstractDrawProperties {
 		drawColor = new Color();
 	}
 
-	public void applyOn(IGraphics graphics) {
+	public void applyOn(IGraphics graphics, Path path) {
 		Graphics2D g = ((DisplayGraphics) graphics).getGraphics2D();
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -54,6 +56,8 @@ public class DrawProperties extends AbstractDrawProperties {
 		g.setColor(awtColor);
 
 		g.setStroke(getAWTStroke());
+
+		g.draw(Geometry2AWT.toAWTPath(path));
 	}
 
 	public void cleanUp(IGraphics g) {

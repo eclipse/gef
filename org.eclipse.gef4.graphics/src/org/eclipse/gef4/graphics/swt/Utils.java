@@ -12,13 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.swt;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Font;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.widgets.Display;
 
 class Utils {
@@ -36,13 +38,39 @@ class Utils {
 	}
 
 	static org.eclipse.swt.graphics.Image createSWTImage(Image img) {
-		InputStream is = null;
-		try {
-			is = img.getImageFile().openStream();
-		} catch (IOException e) {
-			e.printStackTrace();
+		BufferedImage bufImg = img.bufferedImage();
+		int width = bufImg.getWidth();
+		int height = bufImg.getHeight();
+		int depth = 24;
+		ImageData swtdat = new ImageData(width, height,
+				depth, new PaletteData(
+						0xFF0000, 0xFF00, 0xFF));
+		if (swtdat.alphaData == null) {
+			swtdat.alphaData = new byte[width * height];
 		}
-		return new org.eclipse.swt.graphics.Image(Display.getCurrent(), is);
+
+		Raster raster = bufImg.getData();
+		int numBands = raster.getNumBands();
+		int scanLineWidth = width * numBands;
+		int[] awtdat = raster.getPixels(0, 0, width, height, new int[height
+		                                                             * scanLineWidth]);
+
+		for (int y = 0; y < height; y++) {
+			int swtdatOffset = y * swtdat.bytesPerLine;
+			int awtdatOffset = y * scanLineWidth;
+			for (int x = 0; x < width; x++) {
+				int swtdatIdx = swtdatOffset + x * 3;
+				int awtdatIdx = awtdatOffset + x * numBands;
+				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx];
+				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx + 1];
+				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx + 2];
+				if (numBands == 4) {
+					swtdat.alphaData[y * width + x] = (byte) awtdat[awtdatIdx + 3];
+				}
+			}
+		}
+
+		return new org.eclipse.swt.graphics.Image(Display.getCurrent(), swtdat);
 	}
 
 	static void dispose(org.eclipse.swt.graphics.Resource res) {

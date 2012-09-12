@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.gef4.graphics.filters.IImageFilter;
 
 /**
  * The AbstractBlitProperties partially implements the {@link IBlitProperties}
@@ -24,15 +20,14 @@ import org.eclipse.gef4.graphics.filters.IImageFilter;
  * @author mwienand
  * 
  */
-public abstract class AbstractBlitProperties implements IBlitProperties {
+public abstract class AbstractBlitProperties extends AbstractGraphicsProperties
+		implements IBlitProperties {
 
 	/**
 	 * The current {@link IBlitProperties.InterpolationHint} associated with
 	 * this {@link AbstractBlitProperties}.
 	 */
 	protected InterpolationHint interpolationHint = IBlitProperties.DEFAULT_INTERPOLATION_HINT;
-
-	protected List<IImageFilter> filters = new ArrayList<IImageFilter>();
 
 	/**
 	 * Default constructor, setting the
@@ -43,16 +38,20 @@ public abstract class AbstractBlitProperties implements IBlitProperties {
 	protected AbstractBlitProperties() {
 	}
 
-	public List<IImageFilter> filters() {
-		return filters;
-	}
-
 	public InterpolationHint getInterpolationHint() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IBlitProperties is denied, because it is currently deactivated.");
+		}
 		return interpolationHint;
 	}
 
 	public IBlitProperties setInterpolationHint(
 			InterpolationHint interpolationHint) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IBlitProperties is denied, because it is currently deactivated.");
+		}
 		this.interpolationHint = interpolationHint;
 		return this;
 	}

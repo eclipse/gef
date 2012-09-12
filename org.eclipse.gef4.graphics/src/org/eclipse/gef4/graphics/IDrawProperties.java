@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
+import org.eclipse.gef4.geometry.planar.Path;
+
+
 
 /**
  * <p>
@@ -157,6 +160,19 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 * Anti-aliasing is enabled per default.
 	 */
 	static final boolean DEFAULT_ANTIALIASING = true;
+
+	/**
+	 * Applies the {@link IDrawProperties} stored in this object to the
+	 * underlying graphics system of the passed-in {@link IGraphics}. This
+	 * operation renders the given {@link Path}. It is called when the
+	 * {@link IGraphics#draw(Path)} method is called.
+	 * 
+	 * @param g
+	 *            the {@link IGraphics} to apply the {@link IDrawProperties} on
+	 * @param p
+	 *            the {@link Path} to render
+	 */
+	void applyOn(IGraphics g, Path p);
 
 	/**
 	 * Returns the {@link Color draw color} associated with this

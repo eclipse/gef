@@ -15,6 +15,8 @@ package org.eclipse.gef4.graphics.awt;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.AbstractFillProperties;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.IFillProperties;
@@ -43,7 +45,7 @@ public class FillProperties extends AbstractFillProperties {
 		fillColor = new Color();
 	}
 
-	public void applyOn(IGraphics graphics) {
+	public void applyOn(IGraphics graphics, Path path) {
 		Graphics2D g = ((DisplayGraphics) graphics).getGraphics2D();
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -51,6 +53,8 @@ public class FillProperties extends AbstractFillProperties {
 						: RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		g.setColor(Utils.toAWTColor(fillColor));
+
+		g.fill(Geometry2AWT.toAWTPath(path));
 	}
 
 	public void cleanUp(IGraphics g) {

@@ -14,6 +14,7 @@ package org.eclipse.gef4.graphics.swt;
 
 import org.eclipse.gef4.graphics.AbstractBlitProperties;
 import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.Image;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 
@@ -22,7 +23,7 @@ public class BlitProperties extends AbstractBlitProperties {
 	public BlitProperties() {
 	}
 
-	public void applyOn(IGraphics g) {
+	public void applyOn(IGraphics g, Image image) {
 		GC gc = ((DisplayGraphics) g).getGC();
 		switch (interpolationHint) {
 		case SPEED:
@@ -32,6 +33,10 @@ public class BlitProperties extends AbstractBlitProperties {
 			gc.setInterpolation(SWT.HIGH);
 			break;
 		}
+
+		org.eclipse.swt.graphics.Image swtImage = Utils.createSWTImage(image);
+		gc.drawImage(swtImage, 0, 0);
+		swtImage.dispose();
 	}
 
 	public void cleanUp(IGraphics g) {

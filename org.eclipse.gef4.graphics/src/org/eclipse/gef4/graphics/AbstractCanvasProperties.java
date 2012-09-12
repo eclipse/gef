@@ -24,7 +24,8 @@ import org.eclipse.gef4.geometry.planar.Ring;
  * @author mwienand
  * 
  */
-public abstract class AbstractCanvasProperties implements ICanvasProperties {
+public abstract class AbstractCanvasProperties extends
+AbstractGraphicsProperties implements ICanvasProperties {
 
 	/**
 	 * The canvas transformations ({@link AffineTransform}) associated with this
@@ -49,10 +50,18 @@ public abstract class AbstractCanvasProperties implements ICanvasProperties {
 	}
 
 	public AffineTransform getAffineTransform() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this ICanvasProperties is denied, because it is currently deactivated.");
+		}
 		return affineTransform.getCopy();
 	}
 
 	public Ring getClippingArea() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this ICanvasProperties is denied, because it is currently deactivated.");
+		}
 		if (clippingArea == null) {
 			return null;
 		}
@@ -60,16 +69,28 @@ public abstract class AbstractCanvasProperties implements ICanvasProperties {
 	}
 
 	public ICanvasProperties setAffineTransform(AffineTransform affineTransform) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this ICanvasProperties is denied, because it is currently deactivated.");
+		}
 		this.affineTransform.setTransform(affineTransform);
 		return this;
 	}
 
 	public ICanvasProperties setClippingArea(Region clippingArea) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this ICanvasProperties is denied, because it is currently deactivated.");
+		}
 		this.clippingArea = clippingArea == null ? null : clippingArea.toRing();
 		return this;
 	}
 
 	public ICanvasProperties setClippingArea(Ring clippingArea) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this ICanvasProperties is denied, because it is currently deactivated.");
+		}
 		this.clippingArea = clippingArea == null ? null : clippingArea
 				.getCopy();
 		return this;

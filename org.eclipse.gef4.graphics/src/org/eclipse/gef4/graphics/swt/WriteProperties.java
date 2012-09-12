@@ -79,7 +79,7 @@ public class WriteProperties extends AbstractWriteProperties {
 		fontProperty.set(new Font());
 	}
 
-	public void applyOn(IGraphics g) {
+	public void applyOn(IGraphics g, String text) {
 		GC gc = ((DisplayGraphics) g).getGC();
 
 		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
@@ -87,6 +87,9 @@ public class WriteProperties extends AbstractWriteProperties {
 		foregroundColorProperty.apply(gc);
 		backgroundColorProperty.apply(gc);
 		fontProperty.apply(gc);
+
+		boolean transparentBackground = getBackgroundColor().getAlpha() < 128;
+		gc.drawText(text, 0, 0, transparentBackground);
 	}
 
 	public void cleanUp(IGraphics g) {

@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.swt;
 
+import org.eclipse.gef4.geometry.convert.Geometry2SWT;
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.AbstractDrawProperties;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.LineAttributes;
+import org.eclipse.swt.widgets.Display;
 
 public class DrawProperties extends AbstractDrawProperties {
 
@@ -40,7 +43,7 @@ public class DrawProperties extends AbstractDrawProperties {
 		drawColorProperty.set(new Color());
 	}
 
-	public void applyOn(IGraphics g) {
+	public void applyOn(IGraphics g, Path path) {
 		GC gc = ((DisplayGraphics) g).getGC();
 
 		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
@@ -48,6 +51,11 @@ public class DrawProperties extends AbstractDrawProperties {
 		gc.setLineAttributes(getSWTLineAttributes());
 
 		drawColorProperty.apply(gc);
+
+		org.eclipse.swt.graphics.Path swtPath = new org.eclipse.swt.graphics.Path(
+				Display.getCurrent(), Geometry2SWT.toSWTPathData(path));
+		gc.drawPath(swtPath);
+		swtPath.dispose();
 	}
 
 	public void cleanUp(IGraphics g) {

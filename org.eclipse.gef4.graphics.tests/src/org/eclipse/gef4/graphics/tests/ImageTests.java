@@ -1,10 +1,10 @@
 package org.eclipse.gef4.graphics.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.gef4.graphics.Image;
 import org.junit.Test;
@@ -12,17 +12,19 @@ import org.junit.Test;
 public class ImageTests {
 
 	@Test
-	public void getImageFile() throws MalformedURLException {
-		URL url = new File("/test").toURI().toURL();
-		Image img = new Image(url);
-		assertEquals(url, img.getImageFile());
+	public void test_constructor() {
+		Image img = new Image(new BufferedImage(640, 480,
+				BufferedImage.TYPE_3BYTE_BGR));
+		assertEquals(640, img.bufferedImage().getWidth());
+		assertEquals(480, img.bufferedImage().getHeight());
+		assertEquals(3, img.bufferedImage().getRaster().getNumBands());
 	}
 
 	@Test
 	public void test_toString() throws MalformedURLException {
-		URL url = new File("/test").toURI().toURL();
-		Image img = new Image(url);
-		assertEquals("Image(imageFile = file:/test)", img.toString());
+		Image img = new Image(new BufferedImage(640, 480,
+				BufferedImage.TYPE_3BYTE_BGR));
+		assertTrue(img.toString().contains("Image(bufferedImage = "));
 	}
 
 }

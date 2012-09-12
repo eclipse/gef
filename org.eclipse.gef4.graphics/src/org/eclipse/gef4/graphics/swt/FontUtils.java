@@ -16,7 +16,7 @@ public class FontUtils implements IFontUtils {
 
 	public Dimension getTextDimension(String text) {
 		graphics.pushState();
-		graphics.writeProperties().applyOn(graphics);
+		graphics.writeProperties().applyOn(graphics, "");
 		GC gc = ((DisplayGraphics) graphics).getGC();
 		Point extent = gc.stringExtent(text);
 		graphics.popState();

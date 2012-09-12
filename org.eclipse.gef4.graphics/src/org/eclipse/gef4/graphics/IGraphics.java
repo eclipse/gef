@@ -52,7 +52,7 @@ import org.eclipse.gef4.geometry.planar.Path;
  * can chain method calls to set multiple attributes, as follows: <blockquote>
  * 
  * <pre>
- * graphics.getDrawProperties().setAntiAliasing(true).setLineWidth(10);
+ * graphics.drawProperties().setAntiAliasing(true).setLineWidth(10);
  * </pre>
  * 
  * </blockquote>
@@ -75,6 +75,12 @@ import org.eclipse.gef4.geometry.planar.Path;
  * The {@link #pushState()} method saves the current set of properties to a
  * stack and the {@link #popState()} method restores the prior set of
  * properties.
+ * </p>
+ * 
+ * <p>
+ * Accessing an {@link IGraphicsProperties} is only permitted when that
+ * {@link IGraphicsProperties} is currently active on an {@link IGraphics}, i.e.
+ * it will affect the next corresponding drawing operation.
  * </p>
  * 
  * @author mwienand
@@ -192,12 +198,38 @@ public interface IGraphics {
 	IImageUtils imageUtils();
 
 	/**
-	 * Restores the set of properties that was saved last.
+	 * <p>
+	 * Restores the set of {@link IGraphicsProperties} that was saved last.
+	 * </p>
+	 * 
+	 * <p>
+	 * Cleans-up the currently active set of {@link IGraphicsProperties} (see
+	 * {@link IGraphicsProperties#cleanUp(IGraphics)}).
+	 * </p>
+	 * 
+	 * <p>
+	 * Deactivates the currently active set of {@link IGraphicsProperties} (see
+	 * {@link IGraphicsProperties#deactivate()}). Activates the restored set of
+	 * {@link IGraphicsProperties} (see {@link IGraphicsProperties#activate()}).
+	 * </p>
 	 */
 	void popState();
 
 	/**
-	 * Saves the current set of properties.
+	 * <p>
+	 * Saves the current set of {@link IGraphicsProperties}.
+	 * </p>
+	 * 
+	 * <p>
+	 * Deactivates the saved set of {@link IGraphicsProperties} (see
+	 * {@link IGraphicsProperties#deactivate()}). Note that the new set of
+	 * {@link IGraphicsProperties} is expected to be active.
+	 * </p>
+	 * 
+	 * <p>
+	 * Initializes the new set of {@link IGraphicsProperties} (see
+	 * {@link IGraphicsProperties#init(IGraphics)}).
+	 * </p>
 	 */
 	void pushState();
 

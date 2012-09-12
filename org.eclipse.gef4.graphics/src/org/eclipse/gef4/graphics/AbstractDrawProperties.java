@@ -21,7 +21,8 @@ import java.util.Arrays;
  * @author mwienand
  * 
  */
-public abstract class AbstractDrawProperties implements IDrawProperties {
+public abstract class AbstractDrawProperties extends AbstractGraphicsProperties
+implements IDrawProperties {
 
 	/**
 	 * The anti-aliasing setting associated with this
@@ -63,66 +64,122 @@ public abstract class AbstractDrawProperties implements IDrawProperties {
 	protected double lineWidth = DEFAULT_LINE_WIDTH;
 
 	public double[] getDashArray() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return dashArray == null ? null : Arrays.copyOf(dashArray,
 				dashArray.length);
 	}
 
 	public double getDashBegin() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return dashBegin;
 	}
 
 	public LineCap getLineCap() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return lineCap;
 	}
 
 	public LineJoin getLineJoin() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return lineJoin;
 	}
 
 	public double getLineWidth() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return lineWidth;
 	}
 
 	public double getMiterLimit() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return miterLimit;
 	}
 
 	public boolean isAntialiasing() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		return antialiasing;
 	}
 
 	public AbstractDrawProperties setAntialiasing(boolean antialiasing) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		this.antialiasing = antialiasing;
 		return this;
 	}
 
 	public AbstractDrawProperties setDashArray(double... dashes) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		dashArray = dashes == null ? null : Arrays
 				.copyOf(dashes, dashes.length);
 		return this;
 	}
 
 	public AbstractDrawProperties setDashBegin(double distance) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		dashBegin = distance;
 		return this;
 	}
 
 	public AbstractDrawProperties setLineCap(LineCap lineCap) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		this.lineCap = lineCap;
 		return this;
 	}
 
 	public AbstractDrawProperties setLineJoin(LineJoin lineJoin) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		this.lineJoin = lineJoin;
 		return this;
 	}
 
 	public AbstractDrawProperties setLineWidth(double lineWidth) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		this.lineWidth = lineWidth;
 		return this;
 	}
 
 	public AbstractDrawProperties setMiterLimit(double limit) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IDrawProperties is denied, because it is currently deactivated.");
+		}
 		miterLimit = limit;
 		return this;
 	}

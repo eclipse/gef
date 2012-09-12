@@ -31,6 +31,16 @@ import org.eclipse.gef4.geometry.planar.Ring;
 public interface ICanvasProperties extends IGraphicsProperties {
 
 	/**
+	 * Applies the {@link ICanvasProperties} stored in this object to the
+	 * underlying graphics system of the passed-in {@link IGraphics}.
+	 * 
+	 * @param g
+	 *            the {@link IGraphics} to apply the {@link ICanvasProperties}
+	 *            on
+	 */
+	void applyOn(IGraphics g);
+
+	/**
 	 * Returns the current {@link AffineTransform} associated with this
 	 * {@link ICanvasProperties}.
 	 * 

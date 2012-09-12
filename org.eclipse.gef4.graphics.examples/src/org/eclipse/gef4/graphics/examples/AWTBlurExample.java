@@ -12,7 +12,10 @@ import javax.swing.JPanel;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.gef4.graphics.awt.DisplayGraphics;
-import org.eclipse.gef4.graphics.filters.ConvolutionFilter;
+import org.eclipse.gef4.graphics.images.AddComposite;
+import org.eclipse.gef4.graphics.images.BoxBlurFilter;
+import org.eclipse.gef4.graphics.images.ConvolutionFilter.EdgeMode;
+import org.eclipse.gef4.graphics.images.GenericMatrixFilter;
 
 public class AWTBlurExample extends JApplet {
 
@@ -55,13 +58,29 @@ class AWTBlurExamplePanel extends JPanel {
 	}
 
 	private void renderScene(IGraphics g, URL resource) {
-		g.pushState();
-		g.blitProperties()
-				.filters()
-				.add(new ConvolutionFilter(3, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1,
-						0.1, 0.1, 0.1));
-		g.blit(new Image(resource));
-		g.popState();
-	}
+		Image image = new Image(resource);
+		Image blurred = image.getFiltered(new BoxBlurFilter(5,
+				EdgeMode.EDGE_OVERLAP));
+		Image powered = image.getComposed(new AddComposite(), image, 0, 0);
+		// Image greyScaled = image.getFiltered(new GreyScaleFilter(0.33, 0.33,
+		// 0.33));
+		Image redChannel = image.getFiltered(new GenericMatrixFilter(1, 0, 0,
+				0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0));
+		// Image sharpened = image.getFiltered(new SharpenFilter());
+		// Image blursharp = blurred.getFiltered(new SharpenFilter());
+		double width = image.getWidth();
+		double height = image.getHeight();
 
+		g.pushState();
+		g.blit(blurred);
+		// g.canvasProperties().affineTransform().translate(0, height);
+		g.canvasProperties().setAffineTransform(
+				g.canvasProperties().getAffineTransform().translate(0, height));
+		g.blit(redChannel);
+		// g.canvasProperties().affineTransform().translate(0, height);
+		// g.blit(sharpened);
+		g.popState();
+		// g.canvasProperties().affineTransform().translate(width, 0);
+		// g.blit(blursharp);
+	}
 }

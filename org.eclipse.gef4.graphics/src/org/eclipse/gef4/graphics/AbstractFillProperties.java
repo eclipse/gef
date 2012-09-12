@@ -19,7 +19,8 @@ package org.eclipse.gef4.graphics;
  * @author mwienand
  * 
  */
-public abstract class AbstractFillProperties implements IFillProperties {
+public abstract class AbstractFillProperties extends AbstractGraphicsProperties
+implements IFillProperties {
 
 	/**
 	 * The anti aliasing setting associated with this
@@ -28,10 +29,18 @@ public abstract class AbstractFillProperties implements IFillProperties {
 	protected boolean antialiasing = IFillProperties.DEFAULT_ANTIALIASING;
 
 	public boolean isAntialiasing() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IFillProperties is denied, because it is currently deactivated.");
+		}
 		return antialiasing;
 	}
 
 	public IFillProperties setAntialiasing(boolean antialiasing) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IFillProperties is denied, because it is currently deactivated.");
+		}
 		this.antialiasing = antialiasing;
 		return this;
 	}

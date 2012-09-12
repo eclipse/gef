@@ -14,11 +14,12 @@ package org.eclipse.gef4.graphics.awt;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.Collections;
+import java.awt.image.BufferedImage;
 
 import org.eclipse.gef4.graphics.AbstractBlitProperties;
 import org.eclipse.gef4.graphics.IBlitProperties;
 import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.Image;
 
 /**
  * The AWT {@link IBlitProperties} implementation.
@@ -36,7 +37,7 @@ public class BlitProperties extends AbstractBlitProperties {
 	public BlitProperties() {
 	}
 
-	public void applyOn(IGraphics g) {
+	public void applyOn(IGraphics g, Image image) {
 		Graphics2D g2d = ((DisplayGraphics) g).getGraphics2D();
 
 		switch (interpolationHint) {
@@ -49,6 +50,9 @@ public class BlitProperties extends AbstractBlitProperties {
 					RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			break;
 		}
+
+		BufferedImage awtImage = Utils.toAWTImage(image);
+		g2d.drawImage(awtImage, 0, 0, null);
 	}
 
 	public void cleanUp(IGraphics g) {
@@ -59,7 +63,6 @@ public class BlitProperties extends AbstractBlitProperties {
 	public BlitProperties getCopy() {
 		BlitProperties copy = new BlitProperties();
 		copy.setInterpolationHint(interpolationHint);
-		Collections.copy(filters, copy.filters);
 		return copy;
 	}
 

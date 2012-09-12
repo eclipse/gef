@@ -19,7 +19,8 @@ package org.eclipse.gef4.graphics;
  * @author mwienand
  * 
  */
-public abstract class AbstractWriteProperties implements IWriteProperties {
+public abstract class AbstractWriteProperties extends
+AbstractGraphicsProperties implements IWriteProperties {
 
 	/**
 	 * The current anti aliasing setting associated with this
@@ -30,10 +31,18 @@ public abstract class AbstractWriteProperties implements IWriteProperties {
 	protected boolean antialiasing = IWriteProperties.DEFAULT_ANTIALIASING;
 
 	public boolean isAntialiasing() {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IWriteProperties is denied, because it is currently deactivated.");
+		}
 		return antialiasing;
 	}
 
 	public IWriteProperties setAntialiasing(boolean antialiasing) {
+		if (!isActive()) {
+			throw new IllegalStateException(
+					"Access to this IWriteProperties is denied, because it is currently deactivated.");
+		}
 		this.antialiasing = antialiasing;
 		return this;
 	}

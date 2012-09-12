@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.awt;
 
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
@@ -60,7 +61,7 @@ public class WriteProperties extends AbstractWriteProperties {
 		font = new Font();
 	}
 
-	public void applyOn(IGraphics graphics) {
+	public void applyOn(IGraphics graphics, String text) {
 		Graphics2D g = ((DisplayGraphics) graphics).getGraphics2D();
 
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -69,6 +70,9 @@ public class WriteProperties extends AbstractWriteProperties {
 		g.setColor(Utils.toAWTColor(foregroundColor));
 		g.setBackground(Utils.toAWTColor(backgroundColor));
 		g.setFont(Utils.toAWTFont(font));
+
+		FontMetrics fontMetrics = g.getFontMetrics();
+		g.drawString(text, 0, fontMetrics.getMaxAscent());
 	}
 
 	public void cleanUp(IGraphics g) {

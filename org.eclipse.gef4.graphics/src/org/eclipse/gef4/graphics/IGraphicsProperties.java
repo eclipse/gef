@@ -47,14 +47,13 @@ package org.eclipse.gef4.graphics;
 public interface IGraphicsProperties {
 
 	/**
-	 * Applies the {@link IGraphicsProperties} stored in this object to the
-	 * underlying graphics system of the passed-in {@link IGraphics}.
-	 * 
-	 * @param g
-	 *            the {@link IGraphics} to apply the {@link IGraphicsProperties}
-	 *            on
+	 * Marks this {@link IGraphicsProperties} as currently being active on an
+	 * {@link IGraphics}. Any {@link IGraphicsProperties} may only be
+	 * manipulated when being active. If the user attempts to manipulate an
+	 * {@link IGraphicsProperties} that is currently deactivated (see
+	 * {@link #deactivate()}) an {@link IllegalStateException} should be thrown.
 	 */
-	void applyOn(IGraphics g);
+	void activate();
 
 	/**
 	 * <p>
@@ -73,6 +72,15 @@ public interface IGraphicsProperties {
 	void cleanUp(IGraphics g);
 
 	/**
+	 * Marks this {@link IGraphicsProperties} as currently being inactive on an
+	 * {@link IGraphics}. Any {@link IGraphicsProperties} may only be
+	 * manipulated when being active (see {@link #activate()}). If the user
+	 * attempts to manipulate an {@link IGraphicsProperties} that is currently
+	 * deactivated an {@link IllegalStateException} should be thrown.
+	 */
+	void deactivate();
+
+	/**
 	 * Returns a deep copy of this {@link IGraphicsProperties} object.
 	 * 
 	 * @return a deep copy of this {@link IGraphicsProperties}
@@ -88,5 +96,19 @@ public interface IGraphicsProperties {
 	 *            the {@link IGraphics} for which the properties are read out
 	 */
 	void init(IGraphics g);
+
+	/**
+	 * Returns <code>true</code> if this {@link IGraphicsProperties} is
+	 * currently active on an {@link IGraphics} (see {@link #activate()}).
+	 * Returns <code>false</code> if this {@link IGraphicsProperties} is
+	 * currently inactive on an {@link IGraphics}. If the user attempts to
+	 * manipulate an {@link IGraphicsProperties} that is currently deactivated
+	 * an {@link IllegalStateException} should be thrown.
+	 * 
+	 * @return <code>true</code> if this {@link IGraphicsProperties} is
+	 *         currently active on an {@link IGraphics}, otherwise
+	 *         <code>false</code>
+	 */
+	boolean isActive();
 
 }

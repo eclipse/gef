@@ -103,10 +103,18 @@ public abstract class AbstractGraphics implements IGraphics {
 	 */
 	protected Stack<State> states = new Stack<State>();
 
+	private void activateProperties() {
+		State state = currentState();
+		state.blitProperties.activate();
+		state.canvasProperties.activate();
+		state.drawProperties.activate();
+		state.fillProperties.activate();
+		state.writeProperties.activate();
+	}
+
 	public void blit(Image image) {
 		currentState().canvasProperties.applyOn(this);
-		currentState().blitProperties.applyOn(this);
-		doBlit(image);
+		currentState().blitProperties.applyOn(this, image);
 	}
 
 	public IBlitProperties blitProperties() {
@@ -146,72 +154,21 @@ public abstract class AbstractGraphics implements IGraphics {
 		return states.peek();
 	}
 
-	/**
-	 * Does the actual drawing of the given {@link Image}, respecting the
-	 * current state of this {@link AbstractGraphics}.
-	 * 
-	 * @param image
-	 */
-	protected abstract void doBlit(Image image);
-
-	/**
-	 * Does the actual drawing of the given {@link ICurve}, respecting the
-	 * current state of this {@link AbstractGraphics}.
-	 * 
-	 * @param curve
-	 */
-	protected abstract void doDraw(ICurve curve);
-
-	/**
-	 * Does the actual drawing of the given {@link Path}, respecting the current
-	 * state of this {@link AbstractGraphics}.
-	 * 
-	 * @param path
-	 */
-	protected abstract void doDraw(Path path);
-
-	/**
-	 * Does the actual filling of the given {@link IMultiShape}, respecting the
-	 * current state of this {@link AbstractGraphics}.
-	 * 
-	 * @param multishape
-	 */
-	protected abstract void doFill(IMultiShape multishape);
-
-	/**
-	 * Does the actual filling of the given {@link IShape}, respecting the
-	 * current state of this {@link AbstractGraphics}.
-	 * 
-	 * @param shape
-	 */
-	protected abstract void doFill(IShape shape);
-
-	/**
-	 * Does the actual filling of the given {@link Path}, respecting the current
-	 * state of this {@link AbstractGraphics}.
-	 * 
-	 * @param path
-	 */
-	protected abstract void doFill(Path path);
-
-	/**
-	 * Does the actual drawing of the given {@link String}, respecting the
-	 * current state of this {@link AbstractGraphics}.
-	 * 
-	 * @param text
-	 */
-	protected abstract void doWrite(String text);
+	private void deactivateProperties(State s) {
+		s.blitProperties.deactivate();
+		s.canvasProperties.deactivate();
+		s.drawProperties.deactivate();
+		s.fillProperties.deactivate();
+		s.writeProperties.deactivate();
+	}
 
 	public void draw(ICurve curve) {
-		currentState().canvasProperties.applyOn(this);
-		currentState().drawProperties.applyOn(this);
-		doDraw(curve);
+		draw(curve.toPath());
 	}
 
 	public void draw(Path path) {
 		currentState().canvasProperties.applyOn(this);
-		currentState().drawProperties.applyOn(this);
-		doDraw(path);
+		currentState().drawProperties.applyOn(this, path);
 	}
 
 	public IDrawProperties drawProperties() {
@@ -219,21 +176,16 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	public void fill(IMultiShape multiShape) {
-		currentState().canvasProperties.applyOn(this);
-		currentState().fillProperties.applyOn(this);
-		doFill(multiShape);
+		fill(multiShape.toPath());
 	}
 
 	public void fill(IShape shape) {
-		currentState().canvasProperties.applyOn(this);
-		currentState().fillProperties.applyOn(this);
-		doFill(shape);
+		fill(shape.toPath());
 	}
 
 	public void fill(Path path) {
 		currentState().canvasProperties.applyOn(this);
-		currentState().fillProperties.applyOn(this);
-		doFill(path);
+		currentState().fillProperties.applyOn(this, path);
 	}
 
 	public IFillProperties fillProperties() {
@@ -255,13 +207,22 @@ public abstract class AbstractGraphics implements IGraphics {
 					"You have to push a State first.");
 		}
 		cleanUpProperties();
+		deactivateProperties(currentState());
 		states.pop();
+		activateProperties();
 	}
 
 	/**
+	 * <p>
 	 * Utility method that constructs an initial {@link State} object from the
 	 * given {@link IGraphicsProperties} and pushes it to the {@link #states}
 	 * stack.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method does also activate all {@link IGraphicsProperties} before
+	 * initializing them (see {@link IGraphicsProperties#activate()}.
+	 * </p>
 	 * 
 	 * @param canvasProperties
 	 * @param drawProperties
@@ -272,6 +233,7 @@ public abstract class AbstractGraphics implements IGraphics {
 	protected void pushInitialState(ICanvasProperties canvasProperties,
 			IDrawProperties drawProperties, IFillProperties fillProperties,
 			IBlitProperties blitProperties, IWriteProperties writeProperties) {
+		// push initial state
 		states.push(new State(canvasProperties, drawProperties, fillProperties,
 				blitProperties, writeProperties));
 		initProperties();
@@ -282,14 +244,15 @@ public abstract class AbstractGraphics implements IGraphics {
 			throw new IllegalStateException(
 					"No initial State pushed! The IGraphics is responsible for pushing an initial State on construction.");
 		}
-		states.push(currentState().getCopy());
+		State priorState = currentState();
+		states.push(priorState.getCopy());
+		deactivateProperties(priorState);
 		initProperties();
 	}
 
 	public void write(String text) {
 		currentState().canvasProperties.applyOn(this);
-		currentState().writeProperties.applyOn(this);
-		doWrite(text);
+		currentState().writeProperties.applyOn(this, text);
 	}
 
 	public IWriteProperties writeProperties() {

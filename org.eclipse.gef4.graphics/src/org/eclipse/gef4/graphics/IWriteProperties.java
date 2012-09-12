@@ -69,6 +69,19 @@ public interface IWriteProperties extends IGraphicsProperties {
 	static final int DEFAULT_FOREGROUND_COLOR_A = 255;
 
 	/**
+	 * Applies the {@link IWriteProperties} stored in this object to the
+	 * underlying graphics system of the passed-in {@link IGraphics}. This
+	 * operation renders the given {@link String}. It is called when the
+	 * {@link IGraphics#write(String)} method is called.
+	 * 
+	 * @param g
+	 *            the {@link IGraphics} to apply the {@link IWriteProperties} on
+	 * @param text
+	 *            the {@link String} to render
+	 */
+	void applyOn(IGraphics g, String text);
+
+	/**
 	 * Returns the {@link Color background color} that is associated with this
 	 * {@link IWriteProperties}.
 	 * 
