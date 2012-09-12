@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import org.eclipse.gef4.graphics.swt.DisplayGraphics;
+import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;

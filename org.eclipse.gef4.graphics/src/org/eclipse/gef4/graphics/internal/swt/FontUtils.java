@@ -1,4 +1,4 @@
-package org.eclipse.gef4.graphics.swt;
+package org.eclipse.gef4.graphics.internal.swt;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graphics.IFontUtils;

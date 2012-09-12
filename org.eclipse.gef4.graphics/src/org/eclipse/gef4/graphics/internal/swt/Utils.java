@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.graphics.swt;
+package org.eclipse.gef4.graphics.internal.swt;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;

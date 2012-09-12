@@ -15,7 +15,7 @@ package org.eclipse.gef4.graphics.tests.awt;
 import java.awt.image.BufferedImage;
 
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.awt.DisplayGraphics;
+import org.eclipse.gef4.graphics.internal.awt.DisplayGraphics;
 
 class Utils {
 

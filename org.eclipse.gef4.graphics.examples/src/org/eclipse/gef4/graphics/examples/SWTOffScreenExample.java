@@ -7,7 +7,7 @@ import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.IDrawProperties.LineCap;
 import org.eclipse.gef4.graphics.IDrawProperties.LineJoin;
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.swt.OffScreenGraphics;
+import org.eclipse.gef4.graphics.internal.swt.OffScreenGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;

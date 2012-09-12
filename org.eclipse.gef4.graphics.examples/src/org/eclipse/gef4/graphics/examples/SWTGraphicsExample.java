@@ -19,7 +19,7 @@ import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.IDrawProperties.LineCap;
 import org.eclipse.gef4.graphics.IDrawProperties.LineJoin;
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.swt.DisplayGraphics;
+import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;

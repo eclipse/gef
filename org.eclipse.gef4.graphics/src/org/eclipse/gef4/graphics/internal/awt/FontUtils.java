@@ -1,4 +1,4 @@
-package org.eclipse.gef4.graphics.awt;
+package org.eclipse.gef4.graphics.internal.awt;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;

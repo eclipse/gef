@@ -1,4 +1,4 @@
-package org.eclipse.gef4.graphics.awt;
+package org.eclipse.gef4.graphics.internal.awt;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.graphics.IImageUtils;

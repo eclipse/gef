@@ -10,33 +10,21 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.graphics.swt;
+package org.eclipse.gef4.graphics.internal.swt;
 
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.graphics.Image;
 
-/**
- * The PrinterGraphics is used to paint on a {@link Printer}. To construct a
- * PrinterGraphics instance, you have to provide the {@link Printer} to paint on
- * ({@link #PrinterGraphics(Printer)}).
- * 
- * @author mwienand
- * 
- */
-public class PrinterGraphics extends DisplayGraphics {
+public class OffScreenGraphics extends DisplayGraphics {
 
-	public PrinterGraphics(Printer printer) {
-		super(new GC(printer));
+	public OffScreenGraphics(Image image) {
+		super(new GC(image));
 	}
-
-	/*
-	 * TODO: Compute startPage(), endPage(), etc. calls.
-	 */
 
 	@Override
 	public void cleanUp() {
 		super.cleanUp();
-		getGC().dispose();
+		gc.dispose();
 	}
 
 }

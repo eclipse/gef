@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.graphics.awt;
+package org.eclipse.gef4.graphics.internal.awt;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;

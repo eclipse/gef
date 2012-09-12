@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.graphics.swt;
+package org.eclipse.gef4.graphics.internal.swt;
 
 import org.eclipse.gef4.geometry.convert.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Path;

@@ -20,7 +20,7 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.eclipse.gef4.graphics.awt.DisplayGraphics;
+import org.eclipse.gef4.graphics.internal.awt.DisplayGraphics;
 
 public class SimpleExampleAWT extends JApplet {
 

@@ -13,7 +13,7 @@
 package org.eclipse.gef4.graphics.tests.swt;
 
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.swt.DisplayGraphics;
+import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;

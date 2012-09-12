@@ -11,11 +11,11 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.awt.DisplayGraphics;
 import org.eclipse.gef4.graphics.images.AddComposite;
 import org.eclipse.gef4.graphics.images.BoxBlurFilter;
 import org.eclipse.gef4.graphics.images.ConvolutionFilter.EdgeMode;
 import org.eclipse.gef4.graphics.images.GenericMatrixFilter;
+import org.eclipse.gef4.graphics.internal.awt.DisplayGraphics;
 
 public class AWTBlurExample extends JApplet {
 
