@@ -26,12 +26,14 @@ package org.eclipse.gef4.graphics;
  * </p>
  * 
  * <p>
- * The {@link #applyOn(IGraphics)} method is called from an {@link IGraphics}
- * before performing the individual
+ * The individual IGraphicsProperties implementations do all provide a method to
+ * apply their set of managed attributes when performing a respective drawing
+ * operation. This method is called from an {@link IGraphics} before performing
+ * the individual
  * {@link IGraphics#draw(org.eclipse.gef4.geometry.planar.ICurve) draw},
  * {@link IGraphics#fill(org.eclipse.gef4.geometry.planar.IMultiShape) fill},
  * {@link IGraphics#blit(Image) blit}, and {@link IGraphics#write(String) write}
- * operations. It should apply properties on the passed-in {@link IGraphics}.
+ * operations.
  * </p>
  * 
  * <p>
@@ -89,8 +91,9 @@ public interface IGraphicsProperties {
 
 	/**
 	 * Reads out any properties that may be modified by this
-	 * {@link IGraphicsProperties} during {@link #applyOn(IGraphics)} to be able
-	 * to reset them later when {@link #cleanUp(IGraphics)} is called.
+	 * {@link IGraphicsProperties} during the appliance of its managed
+	 * attributes to be able to reset them later when
+	 * {@link #cleanUp(IGraphics)} is called.
 	 * 
 	 * @param g
 	 *            the {@link IGraphics} for which the properties are read out

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
+import java.io.IOException;
+
 import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -50,8 +52,12 @@ public class SimpleExampleSWT implements PaintListener {
 
 	public void paintControl(PaintEvent e) {
 		g = new DisplayGraphics(e.gc);
-		SimpleExampleUtil.draw(g,
-				this.getClass().getResource("package-explorer.png"));
+		try {
+			SimpleExampleUtil.draw(g);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 	}
 

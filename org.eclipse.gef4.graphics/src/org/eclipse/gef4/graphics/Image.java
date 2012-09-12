@@ -19,115 +19,192 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graphics.images.ICompositionRule;
-import org.eclipse.gef4.graphics.images.IImageFilter;
+import org.eclipse.gef4.graphics.images.IImageOperation;
+
+// TODO: delegate methods to BufferedImage
 
 /**
- * An {@link Image} is a lightweight object that stores a {@link URL} to an
- * image file.
+ * An {@link Image} stores color and alpha data for a rectangular pixel raster.
  * 
  * @author mwienand
  * 
  */
 public class Image {
 
-	private static void readPixel(BufferedImage img, int x, int y, int[] argb) {
-		int pixel = img.getRGB(x, y);
-		argb[0] = (pixel & 0xff000000) >>> 24;
-		argb[1] = (pixel & 0xff0000) >>> 16;
-		argb[2] = (pixel & 0xff00) >>> 8;
-		argb[3] = (pixel & 0xff);
-	}
+	/**
+	 * The number of data channels in an {@link Image}. GEF4 Graphics
+	 * {@link Image}s do always consist of three color channels (red, green, and
+	 * blue) and one alpha channel. Currently, the number of channels is kept
+	 * constant to ease computations, but this may change in a future version.
+	 */
+	public static final int NUM_CHANNELS = 4;
 
-	private static void writePixel(BufferedImage img, int x, int y, int[] argb) {
-		int pixel = argb[0] << 24;
-		pixel |= argb[1] << 16;
-		pixel |= argb[2] << 8;
-		pixel |= argb[3];
-		img.setRGB(x, y, pixel);
-	}
+	/**
+	 * Stores the image data. TODO: Delegate {@link Image}'s methods to this
+	 * {@link BufferedImage}.
+	 */
+	private BufferedImage bufferedImage = null;
 
-	// private URL imageFile;
+	// TODO: add default constructor. (What should its semantics be?)
+	// TODO: add (width, height, ?background-color?) constructor.
 
-	protected BufferedImage bufferedImage = null;
-
+	/**
+	 * Constructs a new {@link Image} from the given {@link BufferedImage}.
+	 * 
+	 * @param bufferedImage
+	 */
 	public Image(BufferedImage bufferedImage) {
-		this.bufferedImage = new BufferedImage(bufferedImage.getWidth(),
-				bufferedImage.getHeight(), bufferedImage.getType());
-		Graphics2D g2d = this.bufferedImage.createGraphics();
-		g2d.drawImage(bufferedImage, null, 0, 0);
-		g2d.dispose();
+		setTo(bufferedImage);
 	}
 
 	/**
-	 * Tries to load the given image file into a new {@link BufferedImage} using
-	 * the {@link ImageIO#read(URL)} method.
+	 * Constructs a new {@link Image} from the given image file {@link URL}.
 	 * 
 	 * @param imageFile
+	 *            a {@link URL} locating the image file to load
+	 * @throws IOException
+	 *             in case no {@link Image} can be constructed from the given
+	 *             {@link URL}
 	 */
-	public Image(URL imageFile) {
-		try {
-			bufferedImage = ImageIO.read(imageFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		// this.imageFile = imageFile;
+	public Image(URL imageFile) throws IOException {
+		BufferedImage tmp = ImageIO.read(imageFile);
+		setTo(tmp);
 	}
 
+	/**
+	 * <p>
+	 * Returns the result of the given {@link IImageOperation} on
+	 * <code>this</code> {@link Image} as a new {@link Image}. <code>this</code>
+	 * {@link Image} is not modified.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is a convenience method to apply several {@link IImageOperation}s in
+	 * a row to one {@link Image}: <blockquote>
+	 * 
+	 * <pre>
+	 * image.apply(op0).apply(op1)...;
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * </p>
+	 * 
+	 * @param op
+	 *            the {@link IImageOperation} to apply
+	 * @return the result {@link Image} of the given {@link IImageOperation} on
+	 *         <code>this</code> {@link Image}
+	 */
+	public Image apply(IImageOperation op) {
+		return op.apply(this);
+	}
+
+	/**
+	 * Returns the {@link BufferedImage} that is used to store the image data of
+	 * <code>this</code> {@link Image}.
+	 * 
+	 * TODO: add note: method name convention: start without 'get', so the
+	 * _real_ object is returned, and not just a copy of it.
+	 * 
+	 * @return the {@link BufferedImage} that is used to store the image data of
+	 *         <code>this</code> {@link Image}
+	 */
 	public BufferedImage bufferedImage() {
 		return bufferedImage;
 	}
 
-	// TODO: move the composition into a composition class, alter the interface
-	public Image getComposed(ICompositionRule rule, Image other, int offsetX,
-			int offsetY) {
-		BufferedImage imgA = this.bufferedImage;
-		BufferedImage imgB = other.bufferedImage;
-
-		Rectangle areaA = new Rectangle(0, 0, imgA.getWidth(), imgA.getHeight());
-		Rectangle areaB = new Rectangle(offsetX, offsetY, imgB.getWidth(), imgB.getHeight());
-		Rectangle areaR = areaA.getUnioned(areaB);
-		Rectangle intersection = areaA.getIntersected(areaB);
-
-		BufferedImage imgR = new BufferedImage((int) areaR.getWidth(), (int) areaR.getHeight(), this.bufferedImage.getType());
-
-		int[] a = new int[4];
-		int[] b = new int[4];
-		int[] r = new int[4];
-
-		for (int x = (int) intersection.getX(); x < (int) intersection
-				.getWidth(); x++) {
-			for (int y = (int) intersection.getY(); y < (int) intersection
-					.getHeight(); y++) {
-				readPixel(imgA, x, y, a);
-				readPixel(imgB, x, y, b);
-				rule.compose(a, b, r);
-				writePixel(imgR, x, y, r);
-			}
-		}
-
-		return new Image(imgR);
-	}
-
+	/**
+	 * Returns a copy of <code>this</code> {@link Image}.
+	 * 
+	 * @return a copy of <code>this</code> {@link Image}
+	 */
 	public Image getCopy() {
 		return new Image(this.bufferedImage);
 	}
 
-	public Image getFiltered(IImageFilter filter) {
-		return filter.apply(this);
-	}
-
+	/**
+	 * Returns the height of <code>this</code> {@link Image}.
+	 * 
+	 * TODO: add note: this is a delegation
+	 * 
+	 * @return the height of <code>this</code> {@link Image}
+	 */
 	public int getHeight() {
 		return bufferedImage.getHeight();
 	}
 
+	/**
+	 * Returns the ARGB pixel value at the given position.
+	 * 
+	 * @param x
+	 *            x-coordinate of the pixel to return
+	 * @param y
+	 *            y-coordinate of the pixel to return
+	 * @return the ARGB pixel value at the given position
+	 */
+	public int getPixel(int x, int y) {
+		if (x < 0 || x >= getWidth()) {
+			throw new IllegalArgumentException("x-coordinate (" + x
+					+ ") out of image bounds (0-" + getWidth() + ").");
+		}
+		if (y < 0 || y >= getHeight()) {
+			throw new IllegalArgumentException("y-coordinate (" + y
+					+ ") out of image bounds (0-" + getHeight() + ").");
+		}
+		return bufferedImage.getRGB(x, y);
+	}
+
+	/**
+	 * Returns the width of <code>this</code> {@link Image}.
+	 * 
+	 * TODO: add note: this is a delegation
+	 * 
+	 * @return the width of <code>this</code> {@link Image}
+	 */
 	public int getWidth() {
 		return bufferedImage.getWidth();
 	}
 
+	/**
+	 * Assigns the given ARGB value to the pixel at the passed-in position.
+	 * 
+	 * @param x
+	 *            x-coordinate of the pixel to assign a new value
+	 * @param y
+	 *            y-coordinate of the pixel to assign a new value
+	 * @param argb
+	 *            the new ARGB value for the pixel
+	 */
+	public void setPixel(int x, int y, int argb) {
+		if (x < 0 || x >= getWidth()) {
+			throw new IllegalArgumentException("x-coordinate (" + x
+					+ ") out of image bounds (0-" + getWidth() + ").");
+		}
+		if (y < 0 || y >= getHeight()) {
+			throw new IllegalArgumentException("y-coordinate (" + y
+					+ ") out of image bounds (0-" + getHeight() + ").");
+		}
+		bufferedImage.setRGB(x, y, argb);
+	}
+
+	/**
+	 * Replaces the {@link BufferedImage} that is managed by <code>this</code>
+	 * {@link Image} with the given <i>replacement</i>.
+	 * 
+	 * @param replacement
+	 *            the new {@link BufferedImage} to manage
+	 */
+	protected void setTo(BufferedImage replacement) {
+		bufferedImage = new BufferedImage(replacement.getWidth(),
+				replacement.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.drawImage(replacement, null, 0, 0);
+		g2d.dispose();
+	}
+
 	@Override
 	public String toString() {
+		// TODO: we need a smarter output, possibly containing the image's width
+		// and height, number of channels, bit depth, etc.
 		return "Image(bufferedImage = " + bufferedImage + ")";
 	}
 

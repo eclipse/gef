@@ -14,7 +14,6 @@ package org.eclipse.gef4.graphics.internal.swt;
 
 import org.eclipse.gef4.graphics.AbstractGraphics;
 import org.eclipse.gef4.graphics.IFontUtils;
-import org.eclipse.gef4.graphics.IImageUtils;
 import org.eclipse.swt.graphics.GC;
 
 public class DisplayGraphics extends AbstractGraphics {
@@ -45,14 +44,5 @@ public class DisplayGraphics extends AbstractGraphics {
 	public GC getGC() {
 		return gc;
 	}
-
-	public IImageUtils imageUtils() {
-		return new ImageUtils();
-	}
-
-	// public double getTextWidth(String text) {
-	// writeProperties().applyOn(this);
-	// return gc.stringExtent(text).x;
-	// }
 
 }

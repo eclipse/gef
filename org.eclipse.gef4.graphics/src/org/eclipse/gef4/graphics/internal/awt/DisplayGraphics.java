@@ -17,7 +17,6 @@ import java.awt.Graphics2D;
 import org.eclipse.gef4.graphics.AbstractGraphics;
 import org.eclipse.gef4.graphics.IFontUtils;
 import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.IImageUtils;
 
 /**
  * The AWT {@link IGraphics} implementation used to draw to the screen.
@@ -59,10 +58,6 @@ public class DisplayGraphics extends AbstractGraphics {
 	 */
 	public Graphics2D getGraphics2D() {
 		return g;
-	}
-
-	public IImageUtils imageUtils() {
-		return new ImageUtils();
 	}
 
 }

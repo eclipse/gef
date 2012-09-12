@@ -1,8 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.JApplet;
@@ -11,10 +24,8 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.images.AddComposite;
-import org.eclipse.gef4.graphics.images.BoxBlurFilter;
-import org.eclipse.gef4.graphics.images.ConvolutionFilter.EdgeMode;
-import org.eclipse.gef4.graphics.images.GenericMatrixFilter;
+import org.eclipse.gef4.graphics.images.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
+import org.eclipse.gef4.graphics.images.FilterOperations;
 import org.eclipse.gef4.graphics.internal.awt.DisplayGraphics;
 
 public class AWTBlurExample extends JApplet {
@@ -42,9 +53,40 @@ public class AWTBlurExample extends JApplet {
 class AWTBlurExamplePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private Image img;
+	private Image imgNoOp;
+	private Image imgConstPixel;
+	private Image imgOverlap;
+	private Image imgConstNeighbors;
 
 	public AWTBlurExamplePanel() {
 		setPreferredSize(new Dimension(640, 480));
+	}
+
+	private void initResources(URL resource) throws IOException {
+		if (img == null) {
+			img = new Image(resource);
+		}
+
+		if (imgNoOp == null) {
+			imgNoOp = FilterOperations.getGaussianBlur(2.25,
+					new EdgeMode.NoOperation()).apply(img);
+		}
+
+		if (imgConstPixel == null) {
+			imgConstPixel = FilterOperations.getGaussianBlur(2.25,
+					new EdgeMode.ConstantPixel(0x00000000)).apply(img);
+		}
+
+		if (imgOverlap == null) {
+			imgOverlap = FilterOperations.getGaussianBlur(2.25,
+					new EdgeMode.Overlap()).apply(img);
+		}
+
+		if (imgConstNeighbors == null) {
+			imgConstNeighbors = FilterOperations.getGaussianBlur(2.25,
+					new EdgeMode.ConstantPixelNeighbors(0xffffffff)).apply(img);
+		}
 	}
 
 	@Override
@@ -54,33 +96,52 @@ class AWTBlurExamplePanel extends JPanel {
 		Graphics2D g2d = (Graphics2D) graphics;
 		DisplayGraphics g = new DisplayGraphics(g2d);
 
-		renderScene(g, this.getClass().getResource("package-explorer.png"));
+		try {
+			renderScene(g, this.getClass().getResource("test.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private void renderScene(IGraphics g, URL resource) {
-		Image image = new Image(resource);
-		Image blurred = image.getFiltered(new BoxBlurFilter(5,
-				EdgeMode.EDGE_OVERLAP));
-		Image powered = image.getComposed(new AddComposite(), image, 0, 0);
-		// Image greyScaled = image.getFiltered(new GreyScaleFilter(0.33, 0.33,
-		// 0.33));
-		Image redChannel = image.getFiltered(new GenericMatrixFilter(1, 0, 0,
-				0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0));
-		// Image sharpened = image.getFiltered(new SharpenFilter());
-		// Image blursharp = blurred.getFiltered(new SharpenFilter());
-		double width = image.getWidth();
-		double height = image.getHeight();
+	private void renderScene(IGraphics g, URL resource) throws IOException {
+		initResources(resource);
 
 		g.pushState();
-		g.blit(blurred);
-		// g.canvasProperties().affineTransform().translate(0, height);
+
+		g.blit(img);
+
 		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(0, height));
-		g.blit(redChannel);
-		// g.canvasProperties().affineTransform().translate(0, height);
-		// g.blit(sharpened);
+				g.canvasProperties().getAffineTransform()
+						.translate(0, img.getHeight()));
+
+		g.blit(imgNoOp);
+
 		g.popState();
-		// g.canvasProperties().affineTransform().translate(width, 0);
-		// g.blit(blursharp);
+		g.pushState();
+
+		g.canvasProperties().setAffineTransform(
+				g.canvasProperties().getAffineTransform()
+						.translate(img.getWidth(), 0));
+
+		g.blit(imgConstPixel);
+
+		g.pushState();
+
+		g.canvasProperties().setAffineTransform(
+				g.canvasProperties().getAffineTransform()
+						.translate(0, img.getHeight()));
+
+		g.blit(imgConstNeighbors);
+
+		g.popState();
+
+		g.canvasProperties().setAffineTransform(
+				g.canvasProperties().getAffineTransform()
+						.translate(img.getWidth(), 0));
+
+		g.blit(imgOverlap);
+
+		g.popState();
 	}
 }

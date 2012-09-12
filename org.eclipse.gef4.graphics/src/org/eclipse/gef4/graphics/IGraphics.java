@@ -190,14 +190,6 @@ public interface IGraphics {
 	IFontUtils fontUtils();
 
 	/**
-	 * Returns an {@link IImageUtils} implementation for this specific
-	 * {@link IGraphics} implementation.
-	 * 
-	 * @return an {@link IImageUtils} for this specific {@link IGraphics}
-	 */
-	IImageUtils imageUtils();
-
-	/**
 	 * <p>
 	 * Restores the set of {@link IGraphicsProperties} that was saved last.
 	 * </p>

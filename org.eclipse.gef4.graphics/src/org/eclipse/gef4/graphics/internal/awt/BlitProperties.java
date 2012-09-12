@@ -52,7 +52,7 @@ public class BlitProperties extends AbstractBlitProperties {
 		}
 
 		BufferedImage awtImage = Utils.toAWTImage(image);
-		g2d.drawImage(awtImage, 0, 0, null);
+		g2d.drawImage(awtImage, null, 0, 0);
 	}
 
 	public void cleanUp(IGraphics g) {

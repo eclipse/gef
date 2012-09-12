@@ -15,6 +15,7 @@ package org.eclipse.gef4.graphics.examples;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -59,8 +60,12 @@ class SimpleExampleAWTPanel extends JPanel {
 		Graphics2D g2d = (Graphics2D) graphics;
 		DisplayGraphics g = new DisplayGraphics(g2d);
 
-		SimpleExampleUtil.draw(g,
-				this.getClass().getResource("package-explorer.png"));
+		try {
+			SimpleExampleUtil.draw(g);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

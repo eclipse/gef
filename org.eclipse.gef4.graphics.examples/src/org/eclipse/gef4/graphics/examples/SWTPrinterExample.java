@@ -1,8 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2012 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import org.eclipse.gef4.geometry.planar.Ellipse;
-import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
 import org.eclipse.gef4.graphics.internal.swt.PrinterGraphics;
 import org.eclipse.swt.SWT;
@@ -56,7 +65,7 @@ public class SWTPrinterExample implements PaintListener {
 					p.startJob("PrintJob");
 					p.startPage();
 					PrinterGraphics g = new PrinterGraphics(p);
-					renderScene(g);
+					SimpleGraphicsUtil.renderScene(g);
 					p.endPage();
 					g.cleanUp();
 					p.endJob();
@@ -78,13 +87,8 @@ public class SWTPrinterExample implements PaintListener {
 
 	public void paintControl(PaintEvent e) {
 		DisplayGraphics g = new DisplayGraphics(e.gc);
-		renderScene(g);
+		SimpleGraphicsUtil.renderScene(g);
 		g.cleanUp();
-	}
-
-	public void renderScene(IGraphics g) {
-		g.fillProperties().setColor(new Color(255, 0, 0, 255));
-		g.fill(new Ellipse(50, 50, 350, 200));
 	}
 
 }
