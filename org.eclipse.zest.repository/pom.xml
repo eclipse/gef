@@ -27,7 +27,7 @@
 	<properties>
     <signer.version>1.0.5</signer.version>
     <signer.input.directory>/home/data/httpd/download-staging.priv/tools/gef</signer.input.directory>
-    <zip.file>org.eclipse.zest.repository.zip</zip.file>
+    <zip.file>org.eclipse.zest.repository-${project.version}.zip</zip.file>
   </properties>
   <profiles>
     <profile>
