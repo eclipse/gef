@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Widget;
@@ -636,15 +637,45 @@ public abstract class AbstractStructuredGraphViewer extends
 	 */
 	public void reveal(Object element) {
 		Widget[] items = this.findItems(element);
+
+		Point location = null;
 		for (int i = 0; i < items.length; i++) {
 			Widget item = items[i];
 			if (item instanceof GraphNode) {
 				GraphNode graphModelNode = (GraphNode) item;
 				graphModelNode.highlight();
+				location = getTopLeftBoundary(graphModelNode.getLocation(),
+						location);
 			} else if (item instanceof GraphConnection) {
 				GraphConnection graphModelConnection = (GraphConnection) item;
 				graphModelConnection.highlight();
+				location = getTopLeftBoundary(graphModelConnection.getSource()
+						.getLocation(), location);
+				location = getTopLeftBoundary(graphModelConnection
+						.getDestination().getLocation(), location);
 			}
+		}
+		// Scrolling to new location
+		if (location != null) {
+			getGraphControl().scrollSmoothTo(location.x, location.y);
+		}
+	}
+
+	/**
+	 * Calculates the top left corner of the boundary of a single point or two
+	 * points.
+	 * 
+	 * @param point1
+	 *            must not be null
+	 * @param point2
+	 *            may be null - in that case, point1 is returned
+	 */
+	private Point getTopLeftBoundary(Point point1, Point point2) {
+		if (point2 != null) {
+			return new Point(Math.min(point1.x, point2.x), Math.min(point1.y,
+					point2.y));
+		} else {
+			return point1;
 		}
 	}
 
