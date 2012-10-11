@@ -43,15 +43,19 @@ public class FilterOperations {
 			final EdgeMode edgeMode) {
 		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
 			@Override
-			public int computePixel(int[] neighbors) {
-				int midIdx = neighbors.length / 2, midValue = computeValue(neighbors[midIdx]), minIdx = 0, minValue = computeValue(neighbors[minIdx]), maxIdx = 0, maxValue = computeValue(neighbors[maxIdx]);
+			public int processNeighborhood(int[] neighbors) {
+				int midIdx = neighbors.length / 2, midValue = Utils
+						.computeIntensity(neighbors[midIdx]), minIdx = 0, minValue = Utils
+						.computeIntensity(neighbors[minIdx]), maxIdx = 0, maxValue = Utils
+						.computeIntensity(neighbors[maxIdx]);
 
 				for (int i = 1; i < neighbors.length; i++) {
 					if (i == midIdx) {
 						continue;
 					}
 
-					int currentValue = computeValue(neighbors[i]);
+					int currentValue = Utils.computeIntensity(neighbors[i]);
+
 					if (currentValue > maxValue) {
 						maxValue = currentValue;
 						maxIdx = i;
@@ -64,13 +68,6 @@ public class FilterOperations {
 				return midValue < minValue ? neighbors[minIdx]
 						: midValue > maxValue ? neighbors[maxIdx]
 								: neighbors[midIdx];
-			}
-
-			// TODO: move this to utilities
-			private int computeValue(int argb) {
-				int value = (int) (0.3333 * ((argb & 0xff0000) >>> 16) + 0.3334
-						* ((argb & 0xff00) >>> 8) + 0.3333 * (argb & 0xff));
-				return Math.min(255, Math.max(0, value));
 			}
 		};
 	}
@@ -85,6 +82,10 @@ public class FilterOperations {
 
 	public static IImageOperation getGaussianBlur(double standardDeviation,
 			EdgeMode edgeMode) {
+		// TODO: do not accept a standard deviation greater than X (X may be
+		// 2.125 or something...) so that we do not run into floating point
+		// difficulties.
+
 		// TODO: Optimize Gaussian blur by applying two one-dimensional blurs
 		// sequentially, instead of one two-dimensional blur
 
@@ -121,28 +122,27 @@ public class FilterOperations {
 	public static IImageOperation getMedianBlur(int dimension, EdgeMode edgeMode) {
 		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
 			@Override
-			public int computePixel(int[] neighbors) {
-				int[] alpha = new int[neighbors.length];
+			public int processNeighborhood(int[] neighbors) {
+				int alpha = Utils.getAlpha(neighbors[neighbors.length / 2]);
 				int[] red = new int[neighbors.length];
 				int[] green = new int[neighbors.length];
 				int[] blue = new int[neighbors.length];
 
 				for (int i = 0; i < neighbors.length; i++) {
-					alpha[i] = (neighbors[i] & 0xff000000) >>> 24;
-		red[i] = (neighbors[i] & 0xff0000) >>> 16;
-		green[i] = (neighbors[i] & 0xff00) >>> 8;
-		blue[i] = (neighbors[i] & 0xff);
+					int[] argb = Utils.getARGB(neighbors[i]);
+					red[i] = argb[1];
+					green[i] = argb[2];
+					blue[i] = argb[3];
 				}
 
-				Arrays.sort(alpha);
 				Arrays.sort(red);
 				Arrays.sort(green);
 				Arrays.sort(blue);
 
-				return alpha[neighbors.length / 2] << 24
-						| red[neighbors.length / 2] << 16
-						| green[neighbors.length / 2] << 8
-						| blue[neighbors.length / 2];
+				return Utils
+						.getPixel(alpha, red[neighbors.length / 2],
+								green[neighbors.length / 2],
+								blue[neighbors.length / 2]);
 			}
 		};
 	}

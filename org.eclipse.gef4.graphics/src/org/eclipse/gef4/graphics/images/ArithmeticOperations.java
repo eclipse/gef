@@ -14,8 +14,58 @@ package org.eclipse.gef4.graphics.images;
 
 import org.eclipse.gef4.graphics.Image;
 
+/**
+ * The ArithmeticOperations class contains methods to create arithmetic and
+ * logical pixel filters.
+ * 
+ * @author mwienand
+ * 
+ */
 public class ArithmeticOperations {
 
+	/**
+	 * Creates an {@link IImageOperation} that computes the absolute difference
+	 * of the given {@link Image} and the applied one, for each color channel.
+	 * 
+	 * @param other
+	 * @return an {@link IImageOperation} that computes the absolute difference
+	 *         of the given {@link Image} and the applied one
+	 */
+	public static IImageOperation getAbsDifferenceOperation(final Image other) {
+		return new AbstractChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return i == 0 ? v : Math.abs(v - Utils.getARGB(other.getPixel(x, y))[i]);
+			}
+		};
+	}
+
+	/**
+	 * Creates an {@link IImageOperation} that computes the absolute difference
+	 * of the given constant pixel value and the applied {@link Image}.
+	 * 
+	 * @param pixelOther
+	 * @return an {@link IImageOperation} that computes the absolute difference
+	 *         of the given constant pixel value and the applied {@link Image}
+	 */
+	public static IImageOperation getAbsDifferenceOperation(final int pixelOther) {
+		final int[] argbOther = Utils.getARGB(pixelOther);
+		return new AbstractChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return i == 0 ? v : Math.abs(v - argbOther[i]);
+			}
+		};
+	}
+
+	/**
+	 * Creates an {@link IImageOperation} that computes the sum of the given
+	 * {@link Image} and the applied one, for each color channel.
+	 * 
+	 * @param addend
+	 * @return an {@link IImageOperation} that computes the sum of the given
+	 *         {@link Image} and the applied one
+	 */
 	public static IImageOperation getAddOperation(final Image addend) {
 		return new AbstractChannelFilterOperation() {
 			@Override
@@ -25,6 +75,15 @@ public class ArithmeticOperations {
 		};
 	}
 
+	/**
+	 * Creates an {@link IImageOperation} that computes the sum of the given
+	 * constant pixel value and the applied {@link Image}, for each color
+	 * channel.
+	 * 
+	 * @param pixelOffset
+	 * @return an {@link IImageOperation} that computes the absolute difference
+	 *         of the given constant pixel value and the applied {@link Image}
+	 */
 	public static IImageOperation getAddOperation(final int pixelOffset) {
 		final int[] argbOffset = Utils.getARGB(pixelOffset);
 		return new AbstractChannelFilterOperation() {
@@ -35,6 +94,14 @@ public class ArithmeticOperations {
 		};
 	}
 
+	/**
+	 * Creates an {@link IImageOperation} that computes the logical-and of the
+	 * given {@link Image} and the applied one.
+	 * 
+	 * @param other
+	 * @return an {@link IImageOperation} that computes the logical-and of the
+	 *         given {@link Image} and the applied one
+	 */
 	public static IImageOperation getAndOperation(final Image other) {
 		return new AbstractPixelFilterOperation() {
 			@Override
@@ -44,11 +111,19 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getAndOperation(final int argbOther) {
+	/**
+	 * Creates an {@link IImageOperation} that computes the logical-and of the
+	 * given constant pixel value and the applied {@link Image}.
+	 * 
+	 * @param pixelOther
+	 * @return an {@link IImageOperation} that computes the logical-and of the
+	 *         given constant pixel value and the applied {@link Image}
+	 */
+	public static IImageOperation getAndOperation(final int pixelOther) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb & argbOther;
+				return argb & pixelOther;
 			}
 		};
 	}

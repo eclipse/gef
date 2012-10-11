@@ -37,25 +37,26 @@ public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterO
 		this.kernel = Arrays.copyOf(kernel, size);
 	}
 
-	@Override
-	public int computePixel(int[] neighbors) {
-		double aAvg, rAvg, gAvg, bAvg;
-		aAvg = rAvg = gAvg = bAvg = 0d;
-
-		for (int i = 0; i < kernel.length; i++) {
-			// TODO: move channel decomposition to Utils class
-			aAvg += kernel[i] * ((neighbors[i] & 0xff000000) >> 24);
-			rAvg += kernel[i] * ((neighbors[i] & 0xff0000) >> 16);
-			gAvg += kernel[i] * ((neighbors[i] & 0xff00) >> 8);
-			bAvg += kernel[i] * (neighbors[i] & 0xff);
-		}
-
-		return (int) aAvg << 24 | (int) rAvg << 16 | (int) gAvg << 8
-				| (int) bAvg;
-	}
-
 	public double[] getKernel() {
 		return Arrays.copyOf(kernel, kernel.length);
+	}
+
+	@Override
+	public int processNeighborhood(int[] neighborhoodPixels) {
+		double alpha = Utils
+				.getAlpha(neighborhoodPixels[neighborhoodPixels.length / 2]);
+		double red = 0, green = 0, blue = 0;
+
+		for (int i = 0; i < kernel.length; i++) {
+			int[] neighborhoodPixel = Utils.getARGB(neighborhoodPixels[i]);
+			red += kernel[i] * neighborhoodPixel[1];
+			green += kernel[i] * neighborhoodPixel[2];
+			blue += kernel[i] * neighborhoodPixel[3];
+		}
+
+		return Utils.getPixel(Utils.getClamped((int) alpha),
+				Utils.getClamped((int) red), Utils.getClamped((int) green),
+				Utils.getClamped((int) blue));
 	}
 
 }

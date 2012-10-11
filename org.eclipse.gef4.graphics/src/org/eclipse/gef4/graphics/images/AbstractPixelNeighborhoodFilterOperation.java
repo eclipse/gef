@@ -16,8 +16,16 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.images.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
 
+/**
+ * The AbstractPixelNeighborhoodFilterOperation implements the
+ * {@link IImageOperation} interface as a template method ({@link #apply(Image)}
+ * ) which can be refined by the {@link #processNeighborhood(int[])} hook
+ * method.
+ * 
+ * @author mwienand
+ * 
+ */
 public abstract class AbstractPixelNeighborhoodFilterOperation implements IImageOperation {
 
 	/**
@@ -67,14 +75,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 			public ConstantPixel() {
 			}
 
-			public ConstantPixel(int argb) {
-				color = argb;
-			}
-
-			@Override
-			public int computePixel(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors
-					) {
-				return color;
+			public ConstantPixel(int pixel) {
+				color = pixel;
 			}
 
 			@Override
@@ -83,12 +85,34 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 				// we do not need to inspect the neighbors
 			}
 
+			/**
+			 * Returns the current color value that is used to compensate the
+			 * absence of neighborhood pixels.
+			 * 
+			 * @return the current color value that is used to compensate the
+			 *         absence of neighborhood pixels
+			 */
 			public int getColor() {
 				return color;
 			}
 
-			protected ConstantPixel setColor(int argb) {
-				color = argb;
+			@Override
+			public int processNeighborhodd(
+					AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
+				return color;
+			}
+
+			/**
+			 * Sets the current color value that is used to compensate the
+			 * absence of neighborhood pixels.
+			 * 
+			 * @param pixel
+			 *            the new color value that is used to compensate the
+			 *            absence of neighborhood pixels
+			 * @return <code>this</code> for convenience
+			 */
+			protected ConstantPixel setColor(int pixel) {
+				color = pixel;
 				return this;
 			}
 		}
@@ -112,13 +136,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 			public ConstantPixelNeighbors() {
 			}
 
-			public ConstantPixelNeighbors(int argb) {
-				color = argb;
-			}
-
-			@Override
-			public int computePixel(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
-				return op.computePixel(neighbors);
+			public ConstantPixelNeighbors(int pixel) {
+				color = pixel;
 			}
 
 			@Override
@@ -140,12 +159,33 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 				}
 			}
 
+			/**
+			 * Returns the current color value that is used to compensate the
+			 * absence of neighborhood pixels.
+			 * 
+			 * @return the current color value that is used to compensate the
+			 *         absence of neighborhood pixels
+			 */
 			public int getColor() {
 				return color;
 			}
 
-			protected ConstantPixelNeighbors setColor(int argb) {
-				color = argb;
+			@Override
+			public int processNeighborhodd(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
+				return op.processNeighborhood(neighbors);
+			}
+
+			/**
+			 * Sets the current color value that is used to compensate the
+			 * absence of neighborhood pixels.
+			 * 
+			 * @param pixel
+			 *            the new color value that is used to compensate the
+			 *            absence of neighborhood pixels
+			 * @return <code>this</code> for convenience
+			 */
+			protected ConstantPixelNeighbors setColor(int pixel) {
+				color = pixel;
 				return this;
 			}
 		}
@@ -159,14 +199,14 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		 */
 		public static class NoOperation extends EdgeMode {
 			@Override
-			public int computePixel(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
-				return neighbors[0];
-			}
-
-			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
 					BufferedImage src, int x, int y, int[] neighbors) {
 				neighbors[0] = src.getRGB(x, y);
+			}
+
+			@Override
+			public int processNeighborhodd(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
+				return neighbors[0];
 			}
 		}
 
@@ -180,11 +220,6 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		 * 
 		 */
 		public static class Overlap extends EdgeMode {
-			@Override
-			public int computePixel(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
-				return op.computePixel(neighbors);
-			}
-
 			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
 					BufferedImage src, int x, int y, int[] neighbors) {
@@ -200,13 +235,18 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 					}
 				}
 			}
-		}
 
-		public abstract int computePixel(AbstractPixelNeighborhoodFilterOperation op,
-				int[] neighbors);
+			@Override
+			public int processNeighborhodd(AbstractPixelNeighborhoodFilterOperation op, int[] neighbors) {
+				return op.processNeighborhood(neighbors);
+			}
+		}
 
 		public abstract void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
 				BufferedImage src, int x, int y, int[] neighbors);
+
+		public abstract int processNeighborhodd(AbstractPixelNeighborhoodFilterOperation op,
+				int[] neighbors);
 
 	}
 
@@ -257,16 +297,6 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		return new Image(res);
 	}
 
-	/**
-	 * Computes the pixel value for the passed-in neighborhood pixels.
-	 * 
-	 * @param neighbors
-	 *            an <code>int</code> array containing the neighborhood pixels
-	 *            of the currently processed pixel
-	 * @return the pixel value for the passed-in neighborhood pixels
-	 */
-	public abstract int computePixel(int[] neighbors);
-
 	protected void fillNeighbors(BufferedImage src, int x, int y) {
 		int over = dimension / 2;
 		int i = 0;
@@ -287,7 +317,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < edgeWidth; y++) {
 				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.computePixel(this, neighbors));
+				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
@@ -295,7 +325,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		for (int x = 0; x < width; x++) {
 			for (int y = height - edgeWidth; y < height; y++) {
 				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.computePixel(this, neighbors));
+				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
@@ -303,7 +333,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		for (int x = 0; x < edgeWidth; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
 				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.computePixel(this, neighbors));
+				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
@@ -311,7 +341,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		for (int x = width - edgeWidth; x < width; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
 				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.computePixel(this, neighbors));
+				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 	}
@@ -324,7 +354,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		for (int x = edgeWidth; x < width - edgeWidth; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
 				fillNeighbors(src, x, y);
-				dst.setRGB(x, y, computePixel(neighbors));
+				dst.setRGB(x, y, processNeighborhood(neighbors));
 			}
 		}
 	}
@@ -336,5 +366,15 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 	public int[] getNeighbors() {
 		return Arrays.copyOf(neighbors, neighbors.length);
 	}
+
+	/**
+	 * Computes the pixel value for the passed-in neighborhood pixels.
+	 * 
+	 * @param neighbors
+	 *            an <code>int</code> array containing the neighborhood pixels
+	 *            of the currently processed pixel
+	 * @return the pixel value for the passed-in neighborhood pixels
+	 */
+	public abstract int processNeighborhood(int[] neighbors);
 
 }
