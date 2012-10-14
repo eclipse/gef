@@ -31,7 +31,8 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the absolute difference
 	 *         of the given {@link Image} and the applied one
 	 */
-	public static IImageOperation getAbsDifferenceOperation(final Image other) {
+	public static AbstractChannelFilterOperation getAbsDifferenceOperation(
+			final Image other) {
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -48,7 +49,8 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the absolute difference
 	 *         of the given constant pixel value and the applied {@link Image}
 	 */
-	public static IImageOperation getAbsDifferenceOperation(final int pixelOther) {
+	public static AbstractChannelFilterOperation getAbsDifferenceOperation(
+			final int pixelOther) {
 		final int[] argbOther = Utils.getARGB(pixelOther);
 		return new AbstractChannelFilterOperation() {
 			@Override
@@ -66,7 +68,8 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the sum of the given
 	 *         {@link Image} and the applied one
 	 */
-	public static IImageOperation getAddOperation(final Image addend) {
+	public static AbstractChannelFilterOperation getAddOperation(
+			final Image addend) {
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -84,7 +87,8 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the absolute difference
 	 *         of the given constant pixel value and the applied {@link Image}
 	 */
-	public static IImageOperation getAddOperation(final int pixelOffset) {
+	public static AbstractChannelFilterOperation getAddOperation(
+			final int pixelOffset) {
 		final int[] argbOffset = Utils.getARGB(pixelOffset);
 		return new AbstractChannelFilterOperation() {
 			@Override
@@ -102,7 +106,7 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the logical-and of the
 	 *         given {@link Image} and the applied one
 	 */
-	public static IImageOperation getAndOperation(final Image other) {
+	public static AbstractPixelFilterOperation getAndOperation(final Image other) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -119,7 +123,8 @@ public class ArithmeticOperations {
 	 * @return an {@link IImageOperation} that computes the logical-and of the
 	 *         given constant pixel value and the applied {@link Image}
 	 */
-	public static IImageOperation getAndOperation(final int pixelOther) {
+	public static AbstractPixelFilterOperation getAndOperation(
+			final int pixelOther) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -128,7 +133,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getBlendOperation(final double xr,
+	public static AbstractChannelFilterOperation getBlendOperation(
+			final double xr,
 			final double xg, final double xb, final Image other) {
 		final double[] xs = new double[] { xr, xg, xb };
 		return new AbstractChannelFilterOperation() {
@@ -140,7 +146,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getDivideOperation(final Image divisor,
+	public static AbstractChannelFilterOperation getDivideOperation(
+			final Image divisor,
 			final double scaleFactor) {
 		return new AbstractChannelFilterOperation() {
 			@Override
@@ -151,11 +158,12 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getInvertOperation() {
+	public static AbstractPixelFilterOperation getInvertOperation() {
 		return getXorOperation(0xffffff);
 	}
 
-	public static IImageOperation getMultiplyOperation(final double f) {
+	public static AbstractChannelFilterOperation getMultiplyOperation(
+			final double f) {
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -164,7 +172,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getMultiplyOperation(final double fa,
+	public static AbstractChannelFilterOperation getMultiplyOperation(
+			final double fa,
 			final double fr, final double fg, final double fb) {
 		final double[] fs = new double[] { fa, fr, fg, fb };
 		return new AbstractChannelFilterOperation() {
@@ -175,7 +184,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getOrOperation(final Image other) {
+	public static AbstractChannelFilterOperation getOrOperation(
+			final Image other) {
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -184,7 +194,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getOrOperation(final int argbOther) {
+	public static AbstractPixelFilterOperation getOrOperation(
+			final int argbOther) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -193,7 +204,7 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getShiftLeftOperation(final int n) {
+	public static AbstractPixelFilterOperation getShiftLeftOperation(final int n) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -202,7 +213,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getShiftRightOperation(final int n) {
+	public static AbstractPixelFilterOperation getShiftRightOperation(
+			final int n) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -211,7 +223,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getSubtractOperation(final Image other) {
+	public static AbstractChannelFilterOperation getSubtractOperation(
+			final Image other) {
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -220,7 +233,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getSubtractOperation(final int pixelOther) {
+	public static AbstractChannelFilterOperation getSubtractOperation(
+			final int pixelOther) {
 		final int[] argbOther = Utils.getARGB(pixelOther);
 		return new AbstractChannelFilterOperation() {
 			@Override
@@ -230,7 +244,7 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getXorOperation(final Image other) {
+	public static AbstractPixelFilterOperation getXorOperation(final Image other) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {
@@ -239,7 +253,8 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static IImageOperation getXorOperation(final int argbOther) {
+	public static AbstractPixelFilterOperation getXorOperation(
+			final int argbOther) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int argb, int x, int y, Image input) {

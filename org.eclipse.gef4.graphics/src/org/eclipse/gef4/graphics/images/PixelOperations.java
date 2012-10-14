@@ -31,7 +31,7 @@ public class PixelOperations {
 	 * 
 	 * @return a new grayscale {@link IImageOperation}
 	 */
-	public static IImageOperation getGreyScaleOperation() {
+	public static AbstractPixelFilterOperation getGreyScaleOperation() {
 		return getGreyScaleOperation(0.3333, 0.3334, 0.3333);
 	}
 
@@ -51,7 +51,8 @@ public class PixelOperations {
 	 * @return a new grayscale {@link IImageOperation} with the provided scale
 	 *         factors
 	 */
-	public static IImageOperation getGreyScaleOperation(final double sr, final double sg, final double sb) {
+	public static AbstractPixelFilterOperation getGreyScaleOperation(
+			final double sr, final double sg, final double sb) {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int pixel, int x, int y, Image input) {
@@ -79,7 +80,7 @@ public class PixelOperations {
 	 * @param intensityThreshold
 	 * @return a new threshold {@link IImageOperation}
 	 */
-	public static IImageOperation getThresholdOperation(
+	public static AbstractPixelFilterOperation getThresholdOperation(
 			final int intensityThreshold) {
 		return new AbstractPixelFilterOperation() {
 			@Override
