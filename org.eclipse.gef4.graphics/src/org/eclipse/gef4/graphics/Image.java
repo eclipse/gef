@@ -112,6 +112,31 @@ public class Image {
 		return bufferedImage;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Image) {
+			if (obj == this) {
+				return true;
+			}
+
+			Image o = (Image) obj;
+			if (getWidth() != o.getWidth() || getHeight() != o.getHeight()) {
+				return false;
+			}
+
+			for (int x = 0; x < getWidth(); x++) {
+				for (int y = 0; y < getHeight(); y++) {
+					if (getPixel(x, y) != o.getPixel(x, y)) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Returns a copy of <code>this</code> {@link Image}.
 	 * 
