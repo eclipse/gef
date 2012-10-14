@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.gef4.graphics.Image;
@@ -41,7 +40,7 @@ public class ImageTests {
 		boolean thrown = false;
 		try {
 			new Image((URL) null);
-		} catch (IOException x) {
+		} catch (Exception x) {
 			thrown = true;
 		}
 
