@@ -28,7 +28,6 @@ import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
-import org.eclipse.swt.graphics.PathData;
 
 /**
  * Utility class to support conversions between GEF4's geometry API and AWT
@@ -70,8 +69,7 @@ public class Geometry2AWT {
 	}
 
 	/**
-	 * Converts an SWT {@link PathData} into an equivalent AWT
-	 * {@link PathIterator}.
+	 * Converts a {@link Path} into an equivalent AWT {@link Path2D}.
 	 * 
 	 * @param p
 	 *            the {@link Path} to convert
