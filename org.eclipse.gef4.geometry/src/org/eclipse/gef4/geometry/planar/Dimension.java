@@ -111,33 +111,6 @@ public class Dimension implements Cloneable, Serializable {
 		height = h;
 	}
 
-	/**
-	 * Constructs a {@link Dimension} where the width and height are the x and y
-	 * coordinates of the passed-in {@link org.eclipse.swt.graphics.Point},
-	 * respectively.
-	 * 
-	 * @param p
-	 *            the {@link org.eclipse.swt.graphics.Point} whose x and y
-	 *            values will be used as width and height
-	 */
-	public Dimension(org.eclipse.swt.graphics.Point p) {
-		width = p.x;
-		height = p.y;
-	}
-
-	/**
-	 * Constructs a {@link Dimension} where the width and height are the x and y
-	 * coordinates of the passed-in {@link Point}, respectively.
-	 * 
-	 * @param p
-	 *            the {@link Point} whose x and y values will be used as width
-	 *            and height
-	 */
-	public Dimension(Point p) {
-		width = p.x;
-		height = p.y;
-	}
-
 	@Override
 	public Dimension clone() {
 		return getCopy();

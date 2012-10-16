@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.gef4.geometry.convert.swt.tests"
+      label="GEF4 Geometry SWT Conversions Tests"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org"
+      plugin="org.eclipse.gef4.geometry.convert.swt.tests">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.gef4.geometry.convert.swt.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

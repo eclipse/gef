@@ -21,8 +21,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Image;
+import org.eclipse.gef4.graphics.render.IGraphics;
 
 public class SimpleExampleUtil {
 

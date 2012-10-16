@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import org.eclipse.gef4.graphics.internal.swt.DisplayGraphics;
-import org.eclipse.gef4.graphics.internal.swt.PrinterGraphics;
+import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -64,7 +63,7 @@ public class SWTPrinterExample implements PaintListener {
 					Printer p = new Printer(printerData);
 					p.startJob("PrintJob");
 					p.startPage();
-					PrinterGraphics g = new PrinterGraphics(p);
+					SWTGraphics g = new SWTGraphics(p);
 					SimpleGraphicsUtil.renderScene(g);
 					p.endPage();
 					g.cleanUp();
@@ -86,7 +85,7 @@ public class SWTPrinterExample implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		DisplayGraphics g = new DisplayGraphics(e.gc);
+		SWTGraphics g = new SWTGraphics(e.gc);
 		SimpleGraphicsUtil.renderScene(g);
 		g.cleanUp();
 	}

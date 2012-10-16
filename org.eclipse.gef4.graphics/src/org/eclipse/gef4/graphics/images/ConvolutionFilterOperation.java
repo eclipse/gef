@@ -43,20 +43,20 @@ public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterO
 
 	@Override
 	public int processNeighborhood(int[] neighborhoodPixels) {
-		double alpha = Utils
+		double alpha = ImageUtils
 				.getAlpha(neighborhoodPixels[neighborhoodPixels.length / 2]);
 		double red = 0, green = 0, blue = 0;
 
 		for (int i = 0; i < kernel.length; i++) {
-			int[] neighborhoodPixel = Utils.getARGB(neighborhoodPixels[i]);
+			int[] neighborhoodPixel = ImageUtils.getARGB(neighborhoodPixels[i]);
 			red += kernel[i] * neighborhoodPixel[1];
 			green += kernel[i] * neighborhoodPixel[2];
 			blue += kernel[i] * neighborhoodPixel[3];
 		}
 
-		return Utils.getPixel(Utils.getClamped((int) alpha),
-				Utils.getClamped((int) red), Utils.getClamped((int) green),
-				Utils.getClamped((int) blue));
+		return ImageUtils.getPixel(ImageUtils.getClamped((int) alpha),
+				ImageUtils.getClamped((int) red), ImageUtils.getClamped((int) green),
+				ImageUtils.getClamped((int) blue));
 	}
 
 }

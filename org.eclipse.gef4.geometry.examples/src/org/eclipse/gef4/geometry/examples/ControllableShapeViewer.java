@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.examples;
 
 import java.util.ArrayList;
 
+import org.eclipse.gef4.geometry.convert.swt.SWT2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -57,7 +58,7 @@ public class ControllableShapeViewer implements PaintListener, MouseListener,
 	public void handleEvent(Event e) {
 		switch (e.type) {
 		case SWT.Resize:
-			Rectangle bounds = new Rectangle(canvas.getBounds());
+			Rectangle bounds = SWT2Geometry.toRectangle(canvas.getBounds());
 
 			for (ControllableShape cs : shapes) {
 				cs.onResize(bounds);

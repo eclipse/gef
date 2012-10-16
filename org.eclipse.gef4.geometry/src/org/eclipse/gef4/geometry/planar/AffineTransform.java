@@ -15,8 +15,8 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.awt.geom.NoninvertibleTransformException;
 
-import org.eclipse.gef4.geometry.convert.AWT2Geometry;
-import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
+import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 

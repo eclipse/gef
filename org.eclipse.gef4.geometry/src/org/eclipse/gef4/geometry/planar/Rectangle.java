@@ -75,19 +75,6 @@ public final class Rectangle extends
 	}
 
 	/**
-	 * Constructs a new {@link Rectangle}, whose x, y, width, and height values
-	 * are initialized with those of the given
-	 * {@link org.eclipse.swt.graphics.Rectangle}.
-	 * 
-	 * @param r
-	 *            The {@link org.eclipse.swt.graphics.Rectangle}, whose values
-	 *            will be used to initialize the new {@link Rectangle}
-	 */
-	public Rectangle(org.eclipse.swt.graphics.Rectangle r) {
-		this(r.x, r.y, r.width, r.height);
-	}
-
-	/**
 	 * Constructs a new {@link Rectangle} with the given location and size.
 	 * 
 	 * @param location

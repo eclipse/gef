@@ -16,8 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.IFillProperties;
-import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.render.IFillProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
 import org.junit.Test;
 
 public abstract class AbstractFillPropertiesTests extends

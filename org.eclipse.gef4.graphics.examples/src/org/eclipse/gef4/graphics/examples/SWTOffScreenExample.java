@@ -16,7 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.eclipse.gef4.graphics.internal.swt.OffScreenGraphics;
+import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -32,7 +32,7 @@ public class SWTOffScreenExample {
 	public SWTOffScreenExample(String title) throws IOException {
 		Display display = new Display();
 		Image image = new Image(display, 640, 480);
-		OffScreenGraphics g = new OffScreenGraphics(image);
+		SWTGraphics g = new SWTGraphics(image);
 		SimpleGraphicsUtil.renderScene(g);
 		g.cleanUp();
 		ImageLoader imageLoader = new ImageLoader();

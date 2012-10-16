@@ -16,7 +16,11 @@
    <license url="%licenseURL">
       %license
    </license>
-   
+
+   <includes
+         id="org.eclipse.gef4.graphics.render.swt.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.gef4.graphics.source"
          download-size="0"

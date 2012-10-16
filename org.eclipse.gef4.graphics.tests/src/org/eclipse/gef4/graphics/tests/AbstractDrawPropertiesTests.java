@@ -21,10 +21,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.IDrawProperties;
-import org.eclipse.gef4.graphics.IDrawProperties.LineCap;
-import org.eclipse.gef4.graphics.IDrawProperties.LineJoin;
-import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.render.IDrawProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
+import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
 import org.junit.Test;
 
 public abstract class AbstractDrawPropertiesTests extends

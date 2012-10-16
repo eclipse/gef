@@ -44,12 +44,6 @@ public class PointTests {
 
 		Point p1 = new Point(10, 20);
 		assertTrue(new Point(10.0, 20.0).equals(p1));
-
-		org.eclipse.swt.graphics.Point swtPoint = new org.eclipse.swt.graphics.Point(
-				10, 20);
-		assertTrue(p1.equals(new Point(swtPoint)));
-		assertTrue(new Point(10.0, 20.0).equals(new Point(swtPoint)));
-
 	}
 
 	@Test
@@ -72,10 +66,6 @@ public class PointTests {
 		assertFalse(new Point(3, 6).equals(3, 7));
 		assertFalse(new Point(3, 6).equals(4, 6));
 		assertTrue(new Point(1.0, 2.0).equals(new Point(1, 2)));
-
-		// wrong type
-		assertFalse(new Point(1, 2).equals(new org.eclipse.swt.graphics.Point(
-				1, 2)));
 	}
 
 	@Test

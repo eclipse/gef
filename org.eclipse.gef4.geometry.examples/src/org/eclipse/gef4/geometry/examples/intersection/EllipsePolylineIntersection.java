@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.intersection;
 
-import org.eclipse.gef4.geometry.convert.Geometry2SWT;
+import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;

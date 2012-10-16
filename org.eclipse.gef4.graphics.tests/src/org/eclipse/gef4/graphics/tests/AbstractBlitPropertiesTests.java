@@ -15,9 +15,9 @@ package org.eclipse.gef4.graphics.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.gef4.graphics.IBlitProperties;
-import org.eclipse.gef4.graphics.IBlitProperties.InterpolationHint;
-import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.render.IBlitProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.render.IBlitProperties.InterpolationHint;
 import org.junit.Test;
 
 public abstract class AbstractBlitPropertiesTests extends

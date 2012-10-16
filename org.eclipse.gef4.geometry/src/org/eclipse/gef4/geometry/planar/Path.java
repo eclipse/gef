@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.convert.AWT2Geometry;
-import org.eclipse.gef4.geometry.convert.Geometry2AWT;
+import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
+import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**

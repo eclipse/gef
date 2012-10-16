@@ -22,11 +22,11 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.gef4.graphics.images.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
 import org.eclipse.gef4.graphics.images.FilterOperations;
-import org.eclipse.gef4.graphics.internal.awt.DisplayGraphics;
+import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.render.awt.AWTGraphics;
 
 public class AWTBlurExample extends JApplet {
 
@@ -94,7 +94,7 @@ class AWTBlurExamplePanel extends JPanel {
 		super.paintComponents(graphics);
 
 		Graphics2D g2d = (Graphics2D) graphics;
-		DisplayGraphics g = new DisplayGraphics(g2d);
+		AWTGraphics g = new AWTGraphics(g2d);
 
 		try {
 			renderScene(g, this.getClass().getResource("test.png"));

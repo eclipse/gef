@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.examples.containment;
 
 import java.util.ArrayList;
 
+import org.eclipse.gef4.geometry.convert.swt.SWT2Geometry;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -193,7 +194,7 @@ public abstract class AbstractContainmentExample implements PaintListener {
 		public void handleEvent(Event e) {
 			switch (e.type) {
 			case SWT.Resize:
-				Rectangle bounds = new Rectangle(canvas.getBounds());
+				Rectangle bounds = SWT2Geometry.toRectangle(canvas.getBounds());
 				p.scale(bounds.getWidth() / oldShellWidth, bounds.getHeight()
 						/ oldShellHeight);
 				oldShellWidth = bounds.getWidth();

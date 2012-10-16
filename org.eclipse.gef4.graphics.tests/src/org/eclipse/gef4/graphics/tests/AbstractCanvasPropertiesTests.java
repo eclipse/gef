@@ -20,8 +20,8 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Region;
 import org.eclipse.gef4.geometry.planar.Ring;
-import org.eclipse.gef4.graphics.ICanvasProperties;
-import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.render.ICanvasProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
 import org.junit.Test;
 
 public abstract class AbstractCanvasPropertiesTests extends

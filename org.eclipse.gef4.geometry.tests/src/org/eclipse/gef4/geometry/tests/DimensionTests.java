@@ -34,12 +34,6 @@ public class DimensionTests {
 		Dimension d0 = new Dimension();
 		assertTrue(d0.equals(new Dimension(0, 0)));
 		assertTrue(d0.equals(d0));
-		assertTrue(d0.equals(new Dimension(new org.eclipse.swt.graphics.Point(
-				0, 0))));
-
-		Dimension d1 = new Dimension(10, 10);
-		assertTrue(d1.equals(new Dimension(new org.eclipse.swt.graphics.Point(
-				10, 10))));
 	}
 
 	@Test
@@ -84,10 +78,6 @@ public class DimensionTests {
 
 		d1 = new Dimension(0.2, 0.2);
 		assertTrue(d1.equals(d2));
-
-		// wrong type
-		d1 = new Dimension(1, 1);
-		assertFalse(d1.equals(new org.eclipse.swt.graphics.Point(1, 1)));
 	}
 
 	@Test

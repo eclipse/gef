@@ -14,8 +14,8 @@ package org.eclipse.gef4.graphics.tests;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.IGraphicsProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.render.IGraphicsProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

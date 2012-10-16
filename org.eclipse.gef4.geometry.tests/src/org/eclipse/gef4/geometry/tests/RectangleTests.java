@@ -501,13 +501,6 @@ public class RectangleTests {
 		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(new Rectangle(5,
 				5, 10, -10)));
 
-		assertEquals(new Rectangle(), new Rectangle(
-				new org.eclipse.swt.graphics.Rectangle(0, 0, -10, -10)));
-		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(
-				new org.eclipse.swt.graphics.Rectangle(5, 5, -10, 10)));
-		assertEquals(new Rectangle(5, 5, 10, 0), new Rectangle(
-				new org.eclipse.swt.graphics.Rectangle(5, 5, 10, -10)));
-
 		assertEquals(new Rectangle(), new Rectangle(new Point(0, 0),
 				new Dimension(-10, -10)));
 		assertEquals(new Rectangle(5, 5, 0, 10), new Rectangle(new Point(5, 5),

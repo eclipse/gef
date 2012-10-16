@@ -44,9 +44,9 @@ public class FilterOperations {
 		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
 			@Override
 			public int processNeighborhood(int[] neighbors) {
-				int midIdx = neighbors.length / 2, midValue = Utils
-						.computeIntensity(neighbors[midIdx]), minIdx = 0, minValue = Utils
-						.computeIntensity(neighbors[minIdx]), maxIdx = 0, maxValue = Utils
+				int midIdx = neighbors.length / 2, midValue = ImageUtils
+						.computeIntensity(neighbors[midIdx]), minIdx = 0, minValue = ImageUtils
+						.computeIntensity(neighbors[minIdx]), maxIdx = 0, maxValue = ImageUtils
 						.computeIntensity(neighbors[maxIdx]);
 
 				for (int i = 1; i < neighbors.length; i++) {
@@ -54,7 +54,7 @@ public class FilterOperations {
 						continue;
 					}
 
-					int currentValue = Utils.computeIntensity(neighbors[i]);
+					int currentValue = ImageUtils.computeIntensity(neighbors[i]);
 
 					if (currentValue > maxValue) {
 						maxValue = currentValue;
@@ -123,13 +123,13 @@ public class FilterOperations {
 		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
 			@Override
 			public int processNeighborhood(int[] neighbors) {
-				int alpha = Utils.getAlpha(neighbors[neighbors.length / 2]);
+				int alpha = ImageUtils.getAlpha(neighbors[neighbors.length / 2]);
 				int[] red = new int[neighbors.length];
 				int[] green = new int[neighbors.length];
 				int[] blue = new int[neighbors.length];
 
 				for (int i = 0; i < neighbors.length; i++) {
-					int[] argb = Utils.getARGB(neighbors[i]);
+					int[] argb = ImageUtils.getARGB(neighbors[i]);
 					red[i] = argb[1];
 					green[i] = argb[2];
 					blue[i] = argb[3];
@@ -139,7 +139,7 @@ public class FilterOperations {
 				Arrays.sort(green);
 				Arrays.sort(blue);
 
-				return Utils
+				return ImageUtils
 						.getPixel(alpha, red[neighbors.length / 2],
 								green[neighbors.length / 2],
 								blue[neighbors.length / 2]);

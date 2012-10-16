@@ -364,17 +364,6 @@ public class Point implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a Point at the same location as the given SWT Point.
-	 * 
-	 * @param p
-	 *            Point from which the initial values are taken.
-	 */
-	public Point(org.eclipse.swt.graphics.Point p) {
-		x = p.x;
-		y = p.y;
-	}
-
-	/**
 	 * Constructs a Point at the same location as the given Point.
 	 * 
 	 * @param p

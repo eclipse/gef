@@ -16,9 +16,9 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.IDrawProperties.LineCap;
-import org.eclipse.gef4.graphics.IDrawProperties.LineJoin;
-import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
+import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
+import org.eclipse.gef4.graphics.render.IGraphics;
 
 public class SimpleGraphicsUtil {
 

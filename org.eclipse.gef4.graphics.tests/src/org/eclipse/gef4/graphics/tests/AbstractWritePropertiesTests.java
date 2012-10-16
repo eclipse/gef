@@ -17,8 +17,8 @@ import static org.junit.Assert.assertFalse;
 
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Font;
-import org.eclipse.gef4.graphics.IGraphics;
-import org.eclipse.gef4.graphics.IWriteProperties;
+import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.render.IWriteProperties;
 import org.junit.Test;
 
 public abstract class AbstractWritePropertiesTests extends
