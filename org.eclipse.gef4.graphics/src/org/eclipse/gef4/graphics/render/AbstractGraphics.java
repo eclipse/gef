@@ -251,6 +251,11 @@ public abstract class AbstractGraphics implements IGraphics {
 		initProperties();
 	}
 
+	public void restoreState() {
+		popState();
+		pushState();
+	}
+
 	public void write(String text) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().writeProperties.applyOn(this, text);

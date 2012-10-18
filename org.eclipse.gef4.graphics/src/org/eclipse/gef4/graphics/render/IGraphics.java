@@ -227,6 +227,26 @@ public interface IGraphics {
 	void pushState();
 
 	/**
+	 * <p>
+	 * Restores the previously {@link #pushState() pushed} state, i.e. replaces
+	 * the current state with it.
+	 * </p>
+	 * 
+	 * <p>
+	 * The method is exactly equivalent to the following sequence of operations:
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * popState();
+	 * pushState();
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * </p>
+	 */
+	void restoreState();
+
+	/**
 	 * Draws the given <i>text</i> on this {@link IGraphics} using the
 	 * associated {@link ICanvasProperties} and {@link IWriteProperties}.
 	 * 
