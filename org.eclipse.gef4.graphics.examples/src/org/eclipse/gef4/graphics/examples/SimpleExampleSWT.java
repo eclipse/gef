@@ -40,8 +40,8 @@ public class SimpleExampleSWT implements PaintListener {
 		// open the shell before creating the controllable shapes so that their
 		// default coordinates are not changed due to the resize of their canvas
 		shell.open();
-
 		shell.addPaintListener(this);
+		shell.redraw();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

@@ -58,9 +58,10 @@ abstract public class AbstractExample implements PaintListener {
 			viewer.addShape(cs);
 		}
 
-		shell.addPaintListener(this);
-
 		onInit();
+
+		shell.addPaintListener(this);
+		shell.redraw();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
