@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<session version="1.0">
+<refactoring comment="Convert member type 'org.eclipse.mylar.zest.core.internal.graphviewer.parts.GraphNodeEditPart.LoopAnchor' in 'org.eclipse.mylar.zest.core.internal.graphviewer.parts.GraphNodeEditPart' to top level type&#13;&#10;- Original element: 'org.eclipse.mylar.zest.core.internal.graphviewer.parts.GraphNodeEditPart.LoopAnchor'" description="Convert member type 'LoopAnchor' to top level" field="false" final="true" flags="786438" id="org.eclipse.jdt.ui.move.inner" input="/src&lt;org.eclipse.mylar.zest.core.internal.graphviewer.parts{GraphNodeEditPart.java[GraphNodeEditPart[LoopAnchor" mandatory="false" possible="true" stamp="1158255145718" version="1.0"/>
+</session>

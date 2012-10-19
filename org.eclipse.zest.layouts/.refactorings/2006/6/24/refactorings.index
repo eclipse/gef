@@ -1,0 +1,2 @@
+1150141460218	Rename local variable 'currentBounds' in 'org.eclipse.mylar.zest.layouts.dataStructures.DisplayIndependentPoint.convertFromPercent(...)' to 'bounds'
+1150141478562	Rename local variable 'currentBounds' in 'org.eclipse.mylar.zest.layouts.dataStructures.DisplayIndependentPoint.convertToPercent(...)' to 'bounds'

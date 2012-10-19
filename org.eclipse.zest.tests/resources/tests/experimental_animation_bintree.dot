@@ -1,0 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Fabian Steeg. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ *******************************************************************************/
+digraph ExperimentalAnimationBinTree {
+    8;3;1;6;10;14;4;7;13
+	subgraph cluster_0{ 8 -> 3[label="down"] }
+	subgraph cluster_1{ 3 -> 1[label="down"] }
+	subgraph cluster_2{ 3 -> 6[label="up"] }
+	subgraph cluster_3{ 8 -> 10[label="up"] }
+	subgraph cluster_4{ 10 -> 14[label="up"] }
+	subgraph cluster_5{ 6 -> 4[label="down"] }
+	subgraph cluster_6{ 6 -> 7[label="up"] }
+	subgraph cluster_7_end{ 14 -> 13[label="down"] }
+}

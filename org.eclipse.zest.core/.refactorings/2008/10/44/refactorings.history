@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;org.eclipse.zest.core.viewers.INestedEntityRelationshipContentProvider.java&apos; to &apos;INestedContentProvider.java&apos;&#x0D;&#x0A;- Original project: &apos;org.eclipse.zest.core&apos;&#x0D;&#x0A;- Original element: &apos;org.eclipse.zest.core.viewers.INestedEntityRelationshipContentProvider.java&apos;&#x0D;&#x0A;- Renamed element: &apos;org.eclipse.zest.core.viewers.INestedContentProvider.java&apos;" description="Rename compilation unit &apos;INestedEntityRelationshipContentProvider.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;org.eclipse.zest.core.viewers{INestedEntityRelationshipContentProvider.java" name="INestedContentProvider.java" references="false" stamp="1225253150562" version="1.0"/>
+</session>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.zest.examples.cloudio.application.ui.TagCloudViewPart"
+            id="org.eclipse.zest.cloudio.sample.tagcloud"
+            name="Tag Cloud View"
+            restorable="true">
+      </view>
+   </extension>
+      <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="File Actions"
+            visible="true"
+            id="file.actions">
+           <action
+               label="Export Image"
+               class="org.eclipse.zest.examples.cloudio.application.actions.ExportImageAction"
+               tooltip="Export image"
+               menubarPath="file/additions"
+               id="org.eclipse.zest.cloudio.export">
+               </action>
+			<action
+               label="Load Stopwords"
+               class="org.eclipse.zest.examples.cloudio.application.actions.LoadStopWordsAction"
+               tooltip="Load stop word list"
+               menubarPath="file/additions"
+               id="org.eclipse.zest.cloudio.loadwords">
+               </action>
+         <action
+               label="Load File"
+               class="org.eclipse.zest.examples.cloudio.application.actions.LoadFileAction"
+               tooltip="Load a new File"
+               menubarPath="file/additions"
+               id="org.eclipse.zest.cloudio.loadfile">
+         </action>
+      </actionSet>
+      <actionSet
+            id="edit.actions"
+            label="Edit Actions"
+            visible="true">
+         <action
+               class="org.eclipse.zest.examples.cloudio.application.actions.ZoomInAction"
+               id="org.eclipse.zest.cloudio.zoomin"
+               label="Zoom In"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.zest.examples.cloudio.application.actions.ZoomOutAction"
+               id="org.eclipse.zest.cloudio.zoomout"
+               label="Zoom Out"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.zest.examples.cloudio.application.actions.ZoomResetAction"
+               id="org.eclipse.zest.cloudio.zoomreset"
+               label="100 %"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.zest.examples.cloudio.application.actions.ZoomFitAction"
+               id="org.eclipse.zest.cloudio.zoomfit"
+               label="Fit Window"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.zest.examples.cloudio.application.actions.DeselectAllAction"
+               id="org.eclipse.zest.cloudio.deselectall"
+               label="Clear Selection"
+               menubarPath="edit/select"
+               style="push">
+         </action>
+          <action
+                class="org.eclipse.zest.examples.cloudio.application.actions.SelectAllAction"
+                id="org.eclipse.zest.cloudio.selectall"
+                label="Select All"
+                menubarPath="edit/select"
+                style="push">
+         </action>
+      </actionSet>
+   </extension>
+      
+<extension
+         id="application"
+         name="Tag Cloud"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.zest.examples.cloudio.application.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.zest.examples.cloudio.application.PerspectiveFactory"
+            id="org.eclipse.zest.cloudio.rcp.perspective"
+            name="cloudPerspective">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.zest.examples.cloudio.application"
+            name="Cloudio">
+         <property
+               name="windowImages"
+               value="eclipse.gif,eclipse32.gif,eclipse48.gif,eclipse.png,eclipse32.png">
+         </property>
+         <property
+               name="aboutText"
+               value="%productBlurb">
+         </property>
+         <property
+               name="aboutImage"
+               value="eclipse_lg.gif">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="C8D5EA">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="0,280,455,15">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="7,220,441,20">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+         <property
+               name="appName"
+               value="Cloudio">
+         </property>
+      </product>
+   </extension>
+</plugin>

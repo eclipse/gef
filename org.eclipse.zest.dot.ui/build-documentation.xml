@@ -1,0 +1,49 @@
+<!--
+/*******************************************************************************
+ * Copyright (c) 2010 Fabian Steeg. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Fabian Steeg - initial implementation; see bug 277380
+ *******************************************************************************/
+ -->
+<!-- dot4zest documentation build script -->
+<project name="Zest Documentation" default="doc" basedir=".">
+ <path id="wikitext.tasks.classpath">
+    <fileset dir=".">
+    	<!-- To build the documentation from the wiki, we need the wikitext.core 
+    	and wikitext.mediawiki Jars from the WikiText standalone distribution: -->
+        <include name="org.eclipse.mylyn.wikitext.*core*.jar"/>
+    </fileset>
+ </path>
+
+ <taskdef classpathref="wikitext.tasks.classpath" resource=
+  "org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties"/>
+ <taskdef classpathref="wikitext.tasks.classpath" resource=
+  "org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties"/>
+ 
+ <target name="doc">
+ 	 <!-- Set up the base wiki location to pull content from: -->
+     <mediawiki-to-eclipse-help wikiBaseUrl="http://wiki.eclipse.org"
+        validate="true"
+        failonvalidationerror="true"
+        prependImagePrefix="images"
+        formatoutput="true"
+        defaultAbsoluteLinkTarget="doc_external"
+        dest="${basedir}"
+        title="Zest"
+        generateUnifiedToc="false">
+     	<!-- Set up which wiki pages to pull from: -->
+     	<path name="Zest" 
+              title="Zest Basic Documentation" 
+              generateToc="true"/>     	
+      <path name="Zest/DOT" 
+              title="Zest Graphviz DOT Support" 
+              generateToc="true"/>
+     	<path name="Zest/Cloudio" 
+              title="Zest Cloudio Tag Cloud" 
+              generateToc="true"/>
+     </mediawiki-to-eclipse-help>
+ </target>
+</project>

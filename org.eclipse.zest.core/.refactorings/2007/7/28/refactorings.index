@@ -1,0 +1,7 @@
+1184004352328	Copy compilation unit
+1184018647750	Extract constant 'CONTAINER_HEIGHT'
+1184018751859	Extract constant 'CONTAINER_SCALE'
+1184097068093	Convert local variable 'layout' to field
+1184174395437	Convert local variable 'pane' to field
+1184174994562	Convert local variable 'image1' to field
+1184175016265	Convert local variable 'classImage' to field
