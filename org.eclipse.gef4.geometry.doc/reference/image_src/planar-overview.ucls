@@ -3,7 +3,7 @@
   <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IGeometry" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IGeometry.java" binary="false">    
-    <position height="-1" width="-1" x="463" y="31"/>    
+    <position height="-1" width="-1" x="500" y="27"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -12,7 +12,7 @@
   <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IShape" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IShape.java" binary="false">    
-    <position height="32" width="100" x="565" y="123"/>    
+    <position height="32" width="100" x="602" y="118"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -21,7 +21,7 @@
   <interface id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.ICurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/ICurve.java" binary="false">    
-    <position height="-1" width="-1" x="322" y="138"/>    
+    <position height="-1" width="-1" x="359" y="134"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -30,7 +30,7 @@
   <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Ellipse" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Ellipse.java" binary="false">    
-    <position height="32" width="133" x="726" y="46"/>    
+    <position height="32" width="133" x="763" y="15"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -39,7 +39,7 @@
   <class id="5" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Rectangle" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Rectangle.java" binary="false">    
-    <position height="32" width="134" x="726" y="83"/>    
+    <position height="32" width="134" x="763" y="52"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -48,7 +48,7 @@
   <class id="6" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Region" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Region.java" binary="false">    
-    <position height="-1" width="-1" x="767" y="336"/>    
+    <position height="-1" width="-1" x="804" y="332"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -57,7 +57,7 @@
   <class id="7" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.RoundedRectangle" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/RoundedRectangle.java" binary="false">    
-    <position height="32" width="134" x="726" y="207"/>    
+    <position height="32" width="134" x="763" y="176"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -66,7 +66,7 @@
   <class id="8" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.QuadraticCurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/QuadraticCurve.java" binary="false">    
-    <position height="32" width="114" x="-14" y="65"/>    
+    <position height="32" width="114" x="23" y="61"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -75,7 +75,7 @@
   <class id="9" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Polyline" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Polyline.java" binary="false">    
-    <position height="32" width="94" x="146" y="142"/>    
+    <position height="32" width="94" x="183" y="138"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -84,7 +84,7 @@
   <class id="10" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Polygon" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Polygon.java" binary="false">    
-    <position height="32" width="134" x="726" y="164"/>    
+    <position height="32" width="134" x="763" y="133"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -93,7 +93,7 @@
   <class id="11" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Path" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Path.java" 
     binary="false">    
-    <position height="-1" width="-1" x="463" y="223"/>    
+    <position height="-1" width="-1" x="500" y="219"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -102,7 +102,7 @@
   <class id="12" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Line" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Line.java" 
     binary="false">    
-    <position height="32" width="114" x="-14" y="28"/>    
+    <position height="32" width="114" x="23" y="24"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -111,7 +111,7 @@
   <class id="13" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.CubicCurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/CubicCurve.java" binary="false">    
-    <position height="32" width="114" x="-14" y="103"/>    
+    <position height="32" width="114" x="23" y="99"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -120,7 +120,7 @@
   <class id="14" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.BezierCurve" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/BezierCurve.java" binary="false">    
-    <position height="-1" width="-1" x="193" y="82"/>    
+    <position height="-1" width="-1" x="230" y="78"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -129,7 +129,7 @@
   <class id="15" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Arc" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Arc.java" 
     binary="false">    
-    <position height="32" width="94" x="146" y="104"/>    
+    <position height="32" width="94" x="183" y="100"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -138,7 +138,7 @@
   <class id="16" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Pie" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Pie.java" 
     binary="false">    
-    <position height="32" width="134" x="726" y="123"/>    
+    <position height="32" width="134" x="763" y="92"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -147,7 +147,7 @@
   <class id="17" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.PolyBezier" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/PolyBezier.java" binary="false">    
-    <position height="32" width="95" x="146" y="181"/>    
+    <position height="32" width="95" x="183" y="177"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -156,7 +156,7 @@
   <class id="18" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.Ring" 
     project="org.eclipse.gef4.geometry" file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/Ring.java" 
     binary="false">    
-    <position height="-1" width="-1" x="767" y="296"/>    
+    <position height="-1" width="-1" x="804" y="292"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
@@ -165,76 +165,95 @@
   <interface id="19" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.IMultiShape" 
     project="org.eclipse.gef4.geometry" 
     file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/IMultiShape.java" binary="false">    
-    <position height="-1" width="-1" x="614" y="311"/>    
+    <position height="-1" width="-1" x="651" y="307"/>    
     <display autosize="false" package="false" initial-value="false" signature="false" visibility="false">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="false" package="false" protected="false" private="false"/>    
     </display>  
   </interface>  
-  <realization id="20">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="1"/>  
-  </realization>  
+  <class id="20" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.geometry.planar.CurvedPolygon" 
+    project="org.eclipse.gef4.geometry" 
+    file="/org.eclipse.gef4.geometry/src/org/eclipse/gef4/geometry/planar/CurvedPolygon.java" binary="false">    
+    <position height="32" width="135" x="763" y="216"/>    
+    <display autosize="false" package="false" initial-value="false" signature="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false"/>      
+      <operations public="false" package="false" protected="false" private="false"/>    
+    </display>  
+  </class>  
   <generalization id="21">    
-    <end type="SOURCE" refId="13"/>    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="14"/>  
   </generalization>  
   <realization id="22">    
-    <end type="SOURCE" refId="7"/>    
+    <bendpoint x="737" y="149"/>    
+    <end type="SOURCE" refId="10"/>    
     <end type="TARGET" refId="2"/>  
   </realization>  
-  <generalization id="23">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
+  <realization id="23">    
+    <bendpoint x="734" y="30"/>    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <realization id="24">    
+    <bendpoint x="736" y="107"/>    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
   <realization id="25">    
     <end type="SOURCE" refId="14"/>    
     <end type="TARGET" refId="3"/>  
   </realization>  
-  <generalization id="26">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="14"/>  
-  </generalization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="28">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <realization id="29">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
-  <realization id="30">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <realization id="31">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <realization id="32">    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <realization id="34">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
-  <realization id="35">    
+  <realization id="26">    
     <end type="SOURCE" refId="17"/>    
     <end type="TARGET" refId="3"/>  
   </realization>  
+  <realization id="27">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="1"/>  
+  </realization>  
+  <realization id="28">    
+    <bendpoint x="734" y="69"/>    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <realization id="30">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="3"/>  
+  </realization>  
+  <generalization id="31">    
+    <end type="SOURCE" refId="19"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="32">    
+    <bendpoint x="738" y="191"/>    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <realization id="33">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="3"/>  
+  </realization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="35">    
+    <bendpoint x="740" y="232"/>    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="14"/>  
+  </generalization>  
+  <generalization id="37">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
   <classifier-display autosize="true" package="true" initial-value="false" signature="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false"/>    
     <operations public="false" package="false" protected="false" private="false"/>  
