@@ -50,6 +50,7 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 			this.canvas = canvas;
 			points = new ArrayList<ControlPoint>();
 			createControlPoints();
+			canvas.redraw();
 		}
 
 		public ControlPoint addControlPoint(Point p) {
