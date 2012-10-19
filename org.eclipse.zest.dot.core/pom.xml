@@ -7,6 +7,7 @@
 		<artifactId>org.eclipse.zest</artifactId>
 		<groupId>org.eclipse</groupId>
 		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.zest.parent</relativePath>
 	</parent>
 	<groupId>org.eclipse</groupId>
 	<artifactId>org.eclipse.zest.dot.core</artifactId>

@@ -297,6 +297,17 @@
 		<module>../org.eclipse.gef4.graphics.doc-feature</module>
 		<module>../org.eclipse.gef4.graphics.sdk-feature</module>
 		<module>../org.eclipse.gef4.repository</module>
+		<module>../org.eclipse.zest.cloudio</module>
+		<module>../org.eclipse.zest.core</module>
+		<module>../org.eclipse.zest.jface</module>
+		<module>../org.eclipse.zest.layouts</module>
+		<module>../org.eclipse.zest.dot.core</module>
+		<module>../org.eclipse.zest.dot.export</module>
+		<module>../org.eclipse.zest.dot.ui</module>
+		<module>../org.eclipse.zest.feature</module>
+		<module>../org.eclipse.zest.source-feature</module>
+		<module>../org.eclipse.zest.repository</module>
+		<module>../org.eclipse.zest.tests</module>
 	</modules>
 
 </project>
