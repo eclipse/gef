@@ -82,8 +82,11 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		Display display = new Display();
 		shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
 		shell.setText(title);
-
 		shell.setBounds(0, 0, 640, 480);
+
+		// open the shell before creating the controllable shapes so that their
+		// default coordinates are not changed due to the resize of their canvas
+		shell.open();
 
 		shape = createShape(shell);
 
@@ -92,7 +95,7 @@ public abstract class AbstractScaleRotateExample implements PaintListener,
 		shell.addMouseMoveListener(this);
 		shell.addMouseWheelListener(this);
 		shell.addListener(SWT.Resize, this);
-		shell.open();
+		shell.redraw(); // triggers a PaintEvent platform independently
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

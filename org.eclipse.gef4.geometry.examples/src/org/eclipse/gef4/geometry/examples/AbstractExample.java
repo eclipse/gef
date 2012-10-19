@@ -61,7 +61,7 @@ abstract public class AbstractExample implements PaintListener {
 		onInit();
 
 		shell.addPaintListener(this);
-		shell.redraw();
+		shell.redraw(); // triggers a PaintEvent platform independently
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

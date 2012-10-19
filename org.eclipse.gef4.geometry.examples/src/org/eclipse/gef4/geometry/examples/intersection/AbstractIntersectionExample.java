@@ -339,6 +339,7 @@ public abstract class AbstractIntersectionExample implements PaintListener {
 		controllableShape2 = createControllableShape2(shell);
 
 		shell.addPaintListener(this);
+		shell.redraw(); // triggers a PaintEvent platform independently
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
