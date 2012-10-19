@@ -18,6 +18,7 @@ import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
@@ -61,14 +62,16 @@ public class BezierApproximationExample extends AbstractExample {
 				// Construct the Bezier curve.
 				BezierCurve curve = getShape();
 
-				// Display the connection line of its control points.
-				gc.drawPolyline(Geometry2SWT.toSWTPointArray(new Polyline(curve
-						.getPoints())));
-
 				// Display the BezierCurve as a Path.
 				gc.drawPath(new org.eclipse.swt.graphics.Path(Display
 						.getCurrent(), Geometry2SWT.toSWTPathData(curve
 						.toPath())));
+
+				// Display the connection line of its control points.
+				gc.setLineStyle(SWT.LINE_DOT);
+				gc.drawPolyline(Geometry2SWT.toSWTPointArray(new Polyline(curve
+						.getPoints())));
+
 			}
 		} };
 	}
