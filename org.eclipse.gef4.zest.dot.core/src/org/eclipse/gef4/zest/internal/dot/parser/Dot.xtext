@@ -1,0 +1,75 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2010 Michael Clay and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *    Michael Clay - initial implementation, see bug 277380
+ *    Fabian Steeg - updates for current Xtext and minor tweaks
+ *******************************************************************************/
+grammar org.eclipse.gef4.zest.internal.dot.parser.Dot with org.eclipse.xtext.common.Terminals
+
+generate dot "http://www.eclipse.org/zest/internal/dot/parser/Dot"
+
+GraphvizModel: (graphs+=MainGraph)* ;
+
+MainGraph: (strict?="strict")? type=GraphType (name=DOT_ID)? "{" 
+	(stmts+=Stmt)* 
+"}";
+
+Stmt: ( Attribute | EdgeStmtNode |  EdgeStmtSubgraph |  NodeStmt | AttrStmt | Subgraph ) (";")?;
+
+EdgeStmtNode : node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+
+EdgeStmtSubgraph : subgraph=Subgraph  (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+
+NodeStmt   :  name=DOT_ID (attributes+=AttrList)*;
+//NodeStmt     :  name=DOT_ID (port=Port)? (attributes+=AttrList)*; // see FIXME for port
+
+Attribute: name=DOT_ID "=" value=DOT_ID;
+
+AttrStmt  	:  	type=AttributeType (attributes+=AttrList)+;
+
+AttrList : "[" {AttrList} (a_list+=AList)* "]";
+
+AList: name=DOT_ID ("=" value=DOT_ID)? (",")?;
+
+Subgraph : ( "subgraph" {Subgraph} name=DOT_ID? ) "{" (stmts+=Stmt)* "}";
+
+//FIXME: Generated portImpl class has compilation errors with Helios Xtext
+//Port : ":" name=DOT_ID ( ":" compass_pt=CompassPt )? | ":" compass_pt=CompassPt;
+
+EdgeRhs: (EdgeRhsNode | EdgeRhsSubgraph);
+
+EdgeRhsNode: op=EdgeOp node=NodeId;
+
+EdgeRhsSubgraph: op=EdgeOp subgraph=Subgraph;
+
+//NodeId  : name=DOT_ID (port=Port)?; // see FIXME for port
+NodeId  : name=DOT_ID;
+
+enum EdgeOp :
+ directed="->"|undirected="--";
+ 
+enum GraphType :
+ graph="graph"|digraph="digraph";
+ 
+enum AttributeType :
+ graph="graph"|node="node"|edge="edge";
+
+enum CompassPt: north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw";
+
+terminal DOT_ID :
+    (('^')?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*) |
+    ('\"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\') | !('\"') )* '\"') |
+    (('-')?('.'('0'..'9')+ | ('0'..'9')+('.' ('0'..'9')*)? ));
+    
+    
+    
+    
+    
+    
+    
+    
+    

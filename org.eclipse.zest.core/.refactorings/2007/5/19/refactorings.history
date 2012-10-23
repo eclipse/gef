@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<session version="1.0">
-<refactoring comment="Rename type 'org.eclipse.mylar.zest.examples.jface.RefreshDemo' to 'GraphJFaceSnippet5'&#10;- Original project: 'org.eclipse.mylar.zest.core'&#10;- Original element: 'org.eclipse.mylar.zest.examples.jface.RefreshDemo'&#10;- Renamed element: 'org.eclipse.mylar.zest.examples.jface.GraphJFaceSnippet5'&#10;- Update references to refactored element&#10;- Update textual occurrences in comments and strings" description="Rename type 'RefreshDemo'" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;org.eclipse.mylar.zest.examples.jface{RefreshDemo.java[RefreshDemo" matchStrategy="1" name="GraphJFaceSnippet5" qualified="false" references="true" similarDeclarations="false" stamp="1178566315014" textual="false" version="1.0"/>
-</session>

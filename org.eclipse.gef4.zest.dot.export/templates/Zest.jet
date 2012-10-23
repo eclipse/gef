@@ -1,0 +1,40 @@
+<%@ jet package="org.eclipse.gef4.zest.internal.dot" imports="org.eclipse.gef4.zest.core.widgets.* org.eclipse.swt.SWT import org.eclipse.gef4.zest.layouts.algorithms.* org.eclipse.gef4.zest.layouts.*" class="DotTemplate" %>
+<%/*******************************************************************************
+ * Copyright (c) 2009, 2010 Fabian Steeg. All rights reserved. This program and 
+ * the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ *******************************************************************************/%>
+<% Graph graph = (Graph) argument; %>
+<% boolean small = graph.getNodes().size() < 100; %>
+<% LayoutAlgorithm algo = graph.getLayoutAlgorithm() != null ? graph.getLayoutAlgorithm() : new TreeLayoutAlgorithm(); %>
+<% boolean digraph = graph.getConnectionStyle()==ZestStyles.CONNECTIONS_DIRECTED; %>
+<% String simpleClassName = graph.getClass().getSimpleName(); %>
+<% /* The exact name 'Graph' is not valid for rendering with Graphviz: */ %>
+<% simpleClassName = simpleClassName.equals("Graph") ? "Zest" + simpleClassName : simpleClassName; %>
+
+<%= digraph ? "digraph" : "graph" %> <%=simpleClassName%>{
+
+	/* Global settings */
+	graph[layout=<%=(algo.getClass() == RadialLayoutAlgorithm.class) ? "twopi" : (algo.getClass() == GridLayoutAlgorithm.class) ? "osage" : (algo.getClass() == SpringLayoutAlgorithm.class) ? (small ? "fdp" : "sfdp") : "dot"%>]
+	node[shape=box] //more like the Zest default node look
+	rankdir=<%=(graph.getLayoutAlgorithm() != null && graph.getLayoutAlgorithm().getClass() == TreeLayoutAlgorithm.class && ((TreeLayoutAlgorithm)graph.getLayoutAlgorithm()).getDirection() == TreeLayoutAlgorithm.LEFT_RIGHT)?"LR":"TD"%>
+	
+	/* Nodes */
+	<% for(Object nodeObject : graph.getNodes()){ GraphNode node = (GraphNode) nodeObject; %> 
+	<% if(!(node instanceof GraphContainer)) {%><%=node.hashCode()%>[label="<%=node.getText()%>"];<%}%>
+	<% if(node instanceof GraphContainer) {%> 
+	  <% for(Object o : ((GraphContainer) node ).getNodes()){ GraphNode n = (GraphNode) o; %> 
+        <%=n.hashCode()%>[label="<%=n.getText()%>"];
+      <% }%>
+	<% }%>
+	<% }%>
+	
+	/* Edges */
+	<% for(Object edgeObject : graph.getConnections()){ GraphConnection edge = (GraphConnection) edgeObject; %> 
+	<%boolean dashed = edge.getLineStyle() == SWT.LINE_DASH; boolean dotted = edge.getLineStyle() == SWT.LINE_DOT;%> 
+	<%=edge.getSource().hashCode()%> <%= digraph ? "->" : "--" %> <%=edge.getDestination().hashCode()%>[style=<%=dashed?"dashed":dotted?"dotted":"solid"%> label="<%=edge.getText()%>"];
+	<% }%>
+}

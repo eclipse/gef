@@ -3,10 +3,10 @@ target
 .refactorings
 plugin.xml_gen
 test.properties
-org.eclipse.zest.tests/resources/output/*.dot
-org.eclipse.zest.tests/resources/tests/*.png
+org.eclipse.gef4.zest.tests/resources/output/*.dot
+org.eclipse.gef4.zest.tests/resources/tests/*.png
 .DS_Store
-org.eclipse.zest.dot.ui/Graphviz_DOT_as_a_DSL_for_Zest
-org.eclipse.zest.dot.ui/Zest
-org.eclipse.zest.dot.ui/*-toc.xml
+org.eclipse.gef4.zest.dot.ui/Graphviz_DOT_as_a_DSL_for_Zest
+org.eclipse.gef4.zest.dot.ui/Zest
+org.eclipse.gef4.zest.dot.ui/*-toc.xml
 src-gen

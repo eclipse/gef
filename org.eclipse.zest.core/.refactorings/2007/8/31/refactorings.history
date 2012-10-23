@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<session version="1.0">
-<refactoring comment="Copy 1 elements(s) to 'org.eclipse.mylyn.zest.core/src/org.eclipse.mylyn.zest.examples.swt'&#13;&#10;- Original project: 'org.eclipse.mylyn.zest.core'&#13;&#10;- Destination element: 'org.eclipse.mylyn.zest.core/src/org.eclipse.mylyn.zest.examples.swt'&#13;&#10;- Original element: 'org.eclipse.mylyn.zest.examples.swt.NestedGraphSnippet.java'" description="Copy compilation unit" destination="/src&lt;org.eclipse.mylyn.zest.examples.swt" element1="/src&lt;org.eclipse.mylyn.zest.examples.swt{NestedGraphSnippet.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" log="/src&lt;org.eclipse.mylyn.zest.examples.swt{NestedGraphSnippet.java&#9;true&#9;true&#9;ZoomSnippet.java" policy="org.eclipse.jdt.ui.copyResources" stamp="1185968667656" units="1" version="1.0"/>
-</session>

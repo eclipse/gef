@@ -1,0 +1,7 @@
+h1. About
+
+This is a clone of the _org.eclipse.gef4.zest_ Git repository at "http://git.eclipse.org/c/gef/org.eclipse.gef4.zest.git":http://git.eclipse.org/c/gef/org.eclipse.gef4.zest.git
+
+h1. Resources
+
+General documentation is available on the "Eclipse wiki":http://wiki.eclipse.org/Zest. Please report issues in the "Eclipse Bugzilla":https://bugs.eclipse.org/bugs/enter_bug.cgi?component=Zest&product=GEF. You can get help in the "Eclipse community forums":http://www.eclipse.org/forums/eclipse.tools.gef or on "Stack Overflow":http://stackoverflow.com/questions/ask.
