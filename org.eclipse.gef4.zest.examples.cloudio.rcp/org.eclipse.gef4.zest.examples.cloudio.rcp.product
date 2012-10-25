@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Cloudio" uid="org.eclipse.gef4.zest.examples.cloudio.rcp.product" id="org.eclipse.gef4.zest.examples.cloudio.product" application="org.eclipse.gef4.zest.examples.cloudio.application" version="2.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Cloudio" uid="org.eclipse.gef4.zest.examples.cloudio.rcp.product" id="org.eclipse.gef4.zest.examples.cloudio.product" application="org.eclipse.gef4.zest.examples.cloudio.application" version="0.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="eclipse_lg.gif"/>
@@ -42,7 +42,7 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.gef4.zest.examples.cloudio.feature" version="2.0.0.qualifier"/>
+      <feature id="org.eclipse.gef4.zest.examples.cloudio.feature" version="0.1.0.qualifier"/>
       <feature id="org.eclipse.rcp"/>
    </features>
 

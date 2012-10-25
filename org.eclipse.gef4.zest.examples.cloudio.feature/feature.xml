@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.gef4.zest.examples.cloudio.feature"
       label="Cloudio Application Feature"
-      version="2.0.0.qualifier">
+      version="0.1.0.qualifier">
 
    <description>
       Do not install this feature - it is required for the standalone

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.gef4.zest.sdk_2.0.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="2.0.0.qualifier">
+   <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
       <category name="org.eclipse.gef4.zest"/>
    </feature>
    <category-def name="org.eclipse.gef4.zest" label="Graphical Editing Framework Zest Visualization Toolkit">

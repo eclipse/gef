@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cloudio RCP Application
 Bundle-SymbolicName: org.eclipse.gef4.zest.examples.cloudio;singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.zest.examples.cloudio.application.ui.CloudioApplicationPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.core.runtime;bundle-version="3.6.0",
- org.eclipse.gef4.zest.cloudio;bundle-version="2.0.0"
+ org.eclipse.gef4.zest.cloudio;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
