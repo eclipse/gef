@@ -34,6 +34,7 @@ public class SWTGraphicsExample implements PaintListener {
 		shell.open();
 
 		shell.addPaintListener(this);
+		shell.redraw();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

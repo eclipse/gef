@@ -15,7 +15,9 @@ package org.eclipse.gef4.graphics.examples;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.JApplet;
@@ -63,9 +65,10 @@ class AWTBlurExamplePanel extends JPanel {
 		setPreferredSize(new Dimension(640, 480));
 	}
 
-	private void initResources(URL resource) throws IOException {
+	private void initResources(URL resource) throws IOException,
+			URISyntaxException {
 		if (img == null) {
-			img = new Image(resource);
+			img = new Image(new File(resource.toURI()));
 		}
 
 		if (imgNoOp == null) {
@@ -101,10 +104,14 @@ class AWTBlurExamplePanel extends JPanel {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private void renderScene(IGraphics g, URL resource) throws IOException {
+	private void renderScene(IGraphics g, URL resource) throws IOException,
+			URISyntaxException {
 		initResources(resource);
 
 		g.pushState();

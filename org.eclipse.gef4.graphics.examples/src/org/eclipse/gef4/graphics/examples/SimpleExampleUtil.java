@@ -12,8 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URISyntaxException;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -26,44 +27,37 @@ import org.eclipse.gef4.graphics.render.IGraphics;
 
 public class SimpleExampleUtil {
 
-	protected static final Color RED = new Color(255, 0, 0, 255),
-			YELLOW = new Color(255, 255, 0, 128), BLUE = new Color(0, 0, 255,
-					255), BLACK = new Color(0, 0, 0, 255);
+	private static final String IMAGE_FILE = "test.png";
+	protected static final Color RED = new Color(255, 0, 0),
+			YELLOW = new Color(255, 255, 0, 128), BLUE = new Color(0, 0, 255),
+			BLACK = new Color(0, 0, 0);
 
 	protected static void draw(IGraphics g) throws IOException {
-		URL imageResource = SimpleExampleUtil.class.getResource("test.png");
-		Image image = new Image(imageResource);
+		g.drawProperties().setColor(RED);
+		g.fillProperties().setColor(YELLOW);
+
+		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
+		g.fill(rectangle);
+		g.draw(rectangle.getOutline());
+
+		g.pushState();
 
 		PolyBezier cubicInterpolation = PolyBezier.interpolateCubic(new Point(
 				50, 50), new Point(200, 100), new Point(150, 200), new Point(
 				50, 300), new Point(150, 350), new Point(150, 200), new Point(
 				200, 75), new Point(300, 100), new Point(150, 400));
 
-		g.drawProperties().setColor(RED);
-		g.fillProperties().setColor(YELLOW);
-
-		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
-
-		g.fill(rectangle);
-		g.draw(rectangle.getOutline());
-
-		g.pushState();
-
 		g.fillProperties().setColor(BLUE);
-
 		g.fill(cubicInterpolation.toPath());
 
-		g.popState();
-		g.pushState();
+		g.restoreState();
 
 		g.drawProperties().setColor(BLACK).setLineWidth(3);
-
 		g.draw(cubicInterpolation);
 
 		g.popState();
 
 		rectangle.shrink(150, 150);
-
 		g.fill(rectangle);
 		g.draw(rectangle.getOutline());
 
@@ -73,11 +67,9 @@ public class SimpleExampleUtil {
 				g.canvasProperties().getAffineTransform().translate(270, 50));
 
 		String text = "This is a first test example.";
-
 		g.write(text);
 
 		Dimension textDimension = g.fontUtils().getTextDimension(text);
-
 		g.draw(new Rectangle(0, 0, textDimension.width, textDimension.height)
 				.getOutline());
 
@@ -85,8 +77,17 @@ public class SimpleExampleUtil {
 
 		AffineTransform at = g.canvasProperties().getAffineTransform();
 		at.translate(50, 50).rotate(0.3);
-
 		g.canvasProperties().setAffineTransform(at);
+
+		Image image;
+		try {
+			image = new Image(new File(SimpleExampleUtil.class.getResource(
+					IMAGE_FILE).toURI()));
+		} catch (URISyntaxException e) {
+			System.out.println("Cannot load image file '" + IMAGE_FILE + "':");
+			e.printStackTrace();
+			return;
+		}
 
 		g.blit(image);
 
