@@ -35,12 +35,11 @@ public class AWTFillProperties extends AbstractFillProperties {
 	 * The {@link Color fill color} associated with this
 	 * {@link AbstractFillProperties}.
 	 */
-	protected Color fillColor;
+	private Color fillColor;
 
 	/**
-	 * Creates a new {@link AWTFillProperties} with the
-	 * {@link AbstractFillProperties#fillColor} set to the default color
-	 * specified by the {@link IFillProperties} interface.
+	 * Creates a new {@link AWTFillProperties} with the {@link #fillColor} set
+	 * to the default color specified by the {@link IFillProperties} interface.
 	 */
 	public AWTFillProperties() {
 		fillColor = new Color();

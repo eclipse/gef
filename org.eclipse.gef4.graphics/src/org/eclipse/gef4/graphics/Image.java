@@ -13,9 +13,10 @@
 package org.eclipse.gef4.graphics;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -40,8 +41,7 @@ public class Image {
 	public static final int NUM_CHANNELS = 4;
 
 	/**
-	 * Stores the image data. TODO: Delegate {@link Image}'s methods to this
-	 * {@link BufferedImage}.
+	 * Stores the image data.
 	 */
 	private BufferedImage bufferedImage = null;
 
@@ -58,17 +58,15 @@ public class Image {
 	}
 
 	/**
-	 * Constructs a new {@link Image} from the given image file {@link URL}.
+	 * Reads image data from the given {@link File} and constructs a new
+	 * {@link Image} object representing that data.
 	 * 
 	 * @param imageFile
-	 *            a {@link URL} locating the image file to load
+	 *            the {@link File} from which to read the image data
 	 * @throws IOException
-	 *             in case no {@link Image} can be constructed from the given
-	 *             {@link URL}
 	 */
-	public Image(URL imageFile) throws IOException {
-		BufferedImage tmp = ImageIO.read(imageFile);
-		setTo(tmp);
+	public Image(File imageFile) throws IOException {
+		this(ImageIO.read(imageFile));
 	}
 
 	/**
@@ -138,12 +136,107 @@ public class Image {
 	}
 
 	/**
+	 * <p>
+	 * Returns a histogram of the alpha-channel values used in this
+	 * {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The histogram is represented by an <code>int</code>-array with
+	 * <code>256</code> elements. The number of elements equals the number of
+	 * possible alpha-channel values. At every index, the number of pixels with
+	 * an alpha-channel value equal to that index is stored in the array.
+	 * </p>
+	 * 
+	 * @return a histogram of the alpha-channel values used in this
+	 *         {@link Image}
+	 */
+	public int[] getAlphaHistogram() {
+		int[] hist = new int[256];
+
+		for (int i = 0; i < hist.length; i++) {
+			hist[i] = 0;
+		}
+
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				hist[Color.getPixelAlpha(getPixel(x, y))]++;
+			}
+		}
+
+		return hist;
+	}
+
+	/**
+	 * <p>
+	 * Returns a histogram of the blue-channel values used in this {@link Image}
+	 * .
+	 * </p>
+	 * 
+	 * <p>
+	 * The histogram is represented by an <code>int</code>-array with
+	 * <code>256</code> elements. The number of elements equals the number of
+	 * possible blue-channel values. At every index, the number of pixels with a
+	 * blue-channel value equal to that index is stored in the array.
+	 * </p>
+	 * 
+	 * @return a histogram of the blue-channel values used in this {@link Image}
+	 */
+	public int[] getBlueHistogram() {
+		int[] hist = new int[256];
+
+		for (int i = 0; i < hist.length; i++) {
+			hist[i] = 0;
+		}
+
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				hist[Color.getPixelBlue(getPixel(x, y))]++;
+			}
+		}
+
+		return hist;
+	}
+
+	/**
 	 * Returns a copy of <code>this</code> {@link Image}.
 	 * 
 	 * @return a copy of <code>this</code> {@link Image}
 	 */
 	public Image getCopy() {
 		return new Image(this.bufferedImage);
+	}
+
+	/**
+	 * <p>
+	 * Returns a histogram of the green-channel values used in this
+	 * {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The histogram is represented by an <code>int</code>-array with
+	 * <code>256</code> elements. The number of elements equals the number of
+	 * possible green-channel values. At every index, the number of pixels with
+	 * a green-channel value equal to that index is stored in the array.
+	 * </p>
+	 * 
+	 * @return a histogram of the green-channel values used in this
+	 *         {@link Image}
+	 */
+	public int[] getGreenHistogram() {
+		int[] hist = new int[256];
+
+		for (int i = 0; i < hist.length; i++) {
+			hist[i] = 0;
+		}
+
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				hist[Color.getPixelGreen(getPixel(x, y))]++;
+			}
+		}
+
+		return hist;
 	}
 
 	/**
@@ -155,6 +248,38 @@ public class Image {
 	 */
 	public int getHeight() {
 		return bufferedImage.getHeight();
+	}
+
+	/**
+	 * <p>
+	 * Returns a histogram of the pixel-intensity values used in this
+	 * {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The histogram is represented by an <code>int</code>-array with
+	 * <code>256</code> elements. The number of elements equals the number of
+	 * possible pixel-intensity values. At every index, the number of pixels
+	 * with an intensity value equal to that index is stored in the array.
+	 * </p>
+	 * 
+	 * @return a histogram of the pixel-intensity values used in this
+	 *         {@link Image}
+	 */
+	public int[] getIntensityHistogram() {
+		int[] hist = new int[256];
+
+		for (int i = 0; i < hist.length; i++) {
+			hist[i] = 0;
+		}
+
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				hist[Color.computePixelIntensity(getPixel(x, y))]++;
+			}
+		}
+
+		return hist;
 	}
 
 	/**
@@ -179,6 +304,67 @@ public class Image {
 	}
 
 	/**
+	 * <p>
+	 * Returns a histogram of the red-channel values used in this {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The histogram is represented by an <code>int</code>-array with
+	 * <code>256</code> elements. The number of elements equals the number of
+	 * possible red-channel values. At every index, the number of pixels with a
+	 * red-channel value equal to that index is stored in the array.
+	 * </p>
+	 * 
+	 * @return a histogram of the red-channel values used in this {@link Image}
+	 */
+	public int[] getRedHistogram() {
+		int[] hist = new int[256];
+
+		for (int i = 0; i < hist.length; i++) {
+			hist[i] = 0;
+		}
+
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
+				hist[Color.getPixelRed(getPixel(x, y))]++;
+			}
+		}
+
+		return hist;
+	}
+
+	public Image getScaled(double scaleFactor) {
+		int newWidth = (int) (getWidth() * scaleFactor);
+		int newHeight = (int) (getHeight() * scaleFactor);
+
+		BufferedImage scaled = new BufferedImage(newWidth, newHeight,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = scaled.createGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g2d.drawImage(bufferedImage(), 0, 0, newWidth, newHeight, null);
+		g2d.dispose();
+
+		// TODO: Implement the possibility to construct an Image from a
+		// BufferedImage, without copying the image data
+
+		return new Image(scaled);
+	}
+
+	public Image getSubImage(int x, int y, int width, int height) {
+		return new Image(bufferedImage.getSubimage(x, y, width, height));
+	}
+
+	public Image getThumbnail(int maxWidth, int maxHeight) {
+		int width = getWidth(), height = getHeight();
+		int deltaWidth = width - maxWidth;
+		int deltaHeight = height - maxHeight;
+		double scale = deltaWidth > deltaHeight ? (0.5 + maxWidth) / width
+				: (0.5 + maxHeight) / height;
+		return getScaled(scale);
+	}
+
+	/**
 	 * Returns the width of <code>this</code> {@link Image}.
 	 * 
 	 * TODO: add note: this is a delegation
@@ -187,6 +373,17 @@ public class Image {
 	 */
 	public int getWidth() {
 		return bufferedImage.getWidth();
+	}
+
+	/**
+	 * Writes the image data into the passed-in {@link File}.
+	 * 
+	 * @param file
+	 *            the {@link File} to write this {@link Image} into
+	 * @throws IOException
+	 */
+	public void save(File file) throws IOException {
+		ImageIO.write(bufferedImage, "png", file);
 	}
 
 	/**
@@ -218,7 +415,7 @@ public class Image {
 	 * @param replacement
 	 *            the new {@link BufferedImage} to manage
 	 */
-	protected void setTo(BufferedImage replacement) {
+	public void setTo(BufferedImage replacement) {
 		bufferedImage = new BufferedImage(replacement.getWidth(),
 				replacement.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = bufferedImage.createGraphics();

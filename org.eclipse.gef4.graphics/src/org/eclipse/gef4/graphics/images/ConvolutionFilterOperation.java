@@ -14,6 +14,8 @@ package org.eclipse.gef4.graphics.images;
 
 import java.util.Arrays;
 
+import org.eclipse.gef4.graphics.Color;
+
 /**
  * A ConvolutionFilterOperation computes...
  * 
@@ -22,7 +24,7 @@ import java.util.Arrays;
  */
 public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterOperation {
 
-	protected final double[] kernel;
+	private final double[] kernel;
 
 	public ConvolutionFilterOperation(final int dimension, final EdgeMode edgeMode,
 			final double... kernel) {
@@ -43,20 +45,21 @@ public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterO
 
 	@Override
 	public int processNeighborhood(int[] neighborhoodPixels) {
-		double alpha = ImageUtils
-				.getAlpha(neighborhoodPixels[neighborhoodPixels.length / 2]);
+		double alpha = Color
+				.getPixelAlpha(neighborhoodPixels[neighborhoodPixels.length / 2]);
 		double red = 0, green = 0, blue = 0;
 
 		for (int i = 0; i < kernel.length; i++) {
-			int[] neighborhoodPixel = ImageUtils.getARGB(neighborhoodPixels[i]);
+			int[] neighborhoodPixel = Color.getPixelARGB(neighborhoodPixels[i]);
 			red += kernel[i] * neighborhoodPixel[1];
 			green += kernel[i] * neighborhoodPixel[2];
 			blue += kernel[i] * neighborhoodPixel[3];
 		}
 
-		return ImageUtils.getPixel(ImageUtils.getClamped((int) alpha),
-				ImageUtils.getClamped((int) red), ImageUtils.getClamped((int) green),
-				ImageUtils.getClamped((int) blue));
+		return Color.getPixel(Color.getChannelClamped((int) alpha),
+				Color.getChannelClamped((int) red),
+				Color.getChannelClamped((int) green),
+				Color.getChannelClamped((int) blue));
 	}
 
 }

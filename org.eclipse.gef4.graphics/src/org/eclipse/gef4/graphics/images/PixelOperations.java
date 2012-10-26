@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.images;
 
+import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Image;
 
 /**
@@ -56,10 +57,11 @@ public class PixelOperations {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int pixel, int x, int y, Image input) {
-				int[] argb = ImageUtils.getARGB(pixel);
+				int[] argb = Color.getPixelARGB(pixel);
 				int intensity = (int) (sr * argb[1] + sg * argb[2] + sb
 						* argb[3]);
-				return ImageUtils.getPixel(argb[0], intensity, intensity, intensity);
+				return Color.getPixel(argb[0], intensity, intensity,
+						intensity);
 			}
 		};
 	}
@@ -85,12 +87,12 @@ public class PixelOperations {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int pixel, int x, int y, Image input) {
-				int[] argb = ImageUtils.getARGB(pixel);
-				int intensity = ImageUtils.computeIntensity(argb);
+				int[] argb = Color.getPixelARGB(pixel);
+				int intensity = Color.computePixelIntensity(argb);
 				if (intensity >= intensityThreshold) {
-					return ImageUtils.getPixel(argb[0], 0xff, 0xff, 0xff);
+					return Color.getPixel(argb[0], 0xff, 0xff, 0xff);
 				} else {
-					return ImageUtils.getPixel(argb[0], 0, 0, 0);
+					return Color.getPixel(argb[0], 0, 0, 0);
 				}
 			}
 		};

@@ -40,7 +40,8 @@ import org.eclipse.gef4.graphics.Image;
  * </p>
  * 
  * <p>
- * TODO
+ * In addition, you can display {@link Image}s or write text on the screen using
+ * these two methods:
  * <ul>
  * <li><code>{@link #blit(Image)}</code></li>
  * <li><code>{@link #write(String)}</code></li>

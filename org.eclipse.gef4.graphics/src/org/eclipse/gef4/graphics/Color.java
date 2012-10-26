@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
-import org.eclipse.gef4.geometry.euclidean.Angle;
 
 /**
  * TODO
@@ -21,111 +20,6 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * 
  */
 public class Color {
-
-	/**
-	 * TODO: implement IHSV and delete the interface!
-	 * 
-	 * An {@link IHSV} provides hue, saturation, and value component information
-	 * for an {@link Color}. Furthermore, the modification of these values is
-	 * facilitated. For example, you can easily brighten an {@link IHSV} by
-	 * increasing its value.
-	 */
-	public interface IHSV {
-		/**
-		 * Decreases the saturation of this {@link IHSV}. The scale <i>p</i> is
-		 * in the range <code>[0;1]</code> and defines the percentage of change.
-		 * 
-		 * @param p
-		 *            the percentage of change (in range <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV decreaseSaturation(double p);
-
-		/**
-		 * Decreases the value of this {@link IHSV}. The scale <i>p</i> is in
-		 * the range <code>[0;1]</code> and defines the percentage of change.
-		 * 
-		 * @param p
-		 *            the percentage of change (in range <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV decreaseValue(double p);
-
-		/**
-		 * Returns the hue of this {@link IHSV}.
-		 * 
-		 * @return the hue of this {@link IHSV}
-		 */
-		Angle getHue();
-
-		/**
-		 * Returns the saturation of this {@link IHSV} in the range
-		 * <code>[0;1]</code>.
-		 * 
-		 * @return the saturation of this {@link IHSV} (in range
-		 *         <code>[0;1]</code>)
-		 */
-		double getSaturation();
-
-		/**
-		 * Returns the value of this {@link IHSV} in the range
-		 * <code>[0;1]</code>.
-		 * 
-		 * @return the value of this {@link IHSV} (in range <code>[0;1]</code>)
-		 */
-		double getValue();
-
-		/**
-		 * Increases the saturation of this {@link IHSV}. The scale <i>p</i> is
-		 * in the range <code>[0;1]</code> and defines the percentage of change.
-		 * 
-		 * @param p
-		 *            the percentage of change (in range <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV increaseSaturation(double p);
-
-		/**
-		 * Increases the value of this {@link IHSV}. The scale <i>p</i> is in
-		 * the range <code>[0;1]</code> and defines the percentage of change.
-		 * 
-		 * @param p
-		 *            the percentage of change (in range <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV increaseValue(double p);
-
-		/**
-		 * Sets the hue of this {@link IHSV} to the specified {@link Angle}.
-		 * 
-		 * @param hue
-		 *            the new hue {@link Angle} of this {@link IHSV}
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV setHue(Angle hue);
-
-		/**
-		 * Sets the saturation of this {@link IHSV} to the specified value in
-		 * the range <code>[0;1]</code>.
-		 * 
-		 * @param saturation
-		 *            the new saturation of this {@link IHSV} (in range
-		 *            <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV setSaturation(double saturation);
-
-		/**
-		 * Sets the value of this {@link IHSV} to the specified value in the
-		 * range <code>[0;1]</code>.
-		 * 
-		 * @param value
-		 *            the new value of this {@link IHSV} (in range
-		 *            <code>[0;1]</code>)
-		 * @return <code>this</code> for convenience
-		 */
-		IHSV setValue(double value);
-	}
 
 	/**
 	 * The <i>alpha</i> value used in the {@link #Color() default constructor}.
@@ -148,27 +42,189 @@ public class Color {
 	public static final int DEFAULT_RED = 0;
 
 	/**
+	 * <p>
+	 * Returns the intensity value of the given ARGB pixel value.
+	 * </p>
+	 * 
+	 * <p>
+	 * Note that the alpha value does not influence the computation.
+	 * </p>
+	 * 
+	 * @param pixel
+	 *            the ARGB pixel value for which to compute the intensity
+	 * @return the intensity value of the given ARGB pixel value
+	 */
+	public static int computePixelIntensity(int pixel) {
+		return computePixelIntensity(getPixelARGB(pixel));
+	}
+
+	/**
+	 * <p>
+	 * Returns the intensity value for the given alpha, red, green, and blue
+	 * channel values.
+	 * </p>
+	 * 
+	 * <p>
+	 * Note that the alpha value does not influence the computation.
+	 * </p>
+	 * 
+	 * @param argb
+	 *            the alpha, red, green, and blue channel values of the pixel
+	 *            for which to compute the intensity
+	 * @return the intensity value for the given alpha, red, green, and blue
+	 *         channel values
+	 */
+	public static int computePixelIntensity(int[] argb) {
+		return computePixelIntensity(argb, 0.3333, 0.3334, 0.3333);
+	}
+
+	/**
+	 * <p>
+	 * Returns the intensity value for the given alpha, red, green, and blue
+	 * channel values. The individual channels are weighted according to the
+	 * specified scale factors.
+	 * </p>
+	 * 
+	 * <p>
+	 * Note that the alpha value does not influence the computation.
+	 * </p>
+	 * 
+	 * <p>
+	 * Note that the sum of the provided weights controls the maximum possible
+	 * intensity value. If the sum equals 1, then the maximum possible intensity
+	 * value is 255. Greater weights increase the maximum possible intensity
+	 * value.
+	 * </p>
+	 * 
+	 * @param argb
+	 *            the alpha, red, green, and blue channel values of the pixel
+	 *            for which to compute the intensity
+	 * @param sr
+	 *            the scale factor for the red channel
+	 * @param sg
+	 *            the scale factor for the green channel
+	 * @param sb
+	 *            the scale factor for the blue channel
+	 * @return the intensity value for the given alpha, red, green, and blue
+	 *         channel values
+	 */
+	public static int computePixelIntensity(int[] argb, double sr, double sg,
+			double sb) {
+		return (int) (sr * argb[1] + sg * argb[2] + sb * argb[3]);
+	}
+
+	/**
+	 * Clamps the given color/alpha channel value to the range
+	 * <code>[0;255]</code>. If the given value is smaller then the lower limit
+	 * of the range, the lower limit is returned. If the given value is greater
+	 * then the upper limit of the range, the upper limit is returned.
+	 * Otherwise, the given value is returned.
+	 * 
+	 * @param channel
+	 *            the color/alpha channel value to clamp
+	 * @return the given value, clamped to the range <code>[0;255]</code>
+	 */
+	public static int getChannelClamped(int channel) {
+		return Math.min(255, Math.max(0, channel));
+	}
+
+	/**
+	 * Merges the given individual alpha, red, green, and blue component values
+	 * into an ARGB pixel value.
+	 * 
+	 * @param argb
+	 *            array of <code>int</code> containing the individual alpha,
+	 *            red, green, and blue components in the range
+	 *            <code>[0;255]</code>
+	 * @return an ARGB pixel value representing the given component values
+	 */
+	public static int getPixel(int... argb) {
+		return (argb[0] & 0xff) << 24 | (argb[1] & 0xff) << 16
+				| (argb[2] & 0xff) << 8 | argb[3] & 0xff;
+	}
+
+	/**
+	 * Returns the alpha channel value of the given ARGB pixel value.
+	 * 
+	 * @param pixel
+	 *            the ARGB pixel value from which to extract the alpha channel
+	 * @return the alpha channel value of the given ARGB pixel value
+	 */
+	public static int getPixelAlpha(int pixel) {
+		return (pixel & 0xff000000) >>> 24;
+	}
+
+	/**
+	 * Splits an ARGB pixel value into its 4 components.
+	 * 
+	 * @param pixel
+	 * @return array of <code>int</code> containing the individual alpha, red,
+	 *         green, and blue components of the given ARGB pixel value in the
+	 *         range <code>[0;255]</code>
+	 */
+	public static int[] getPixelARGB(int pixel) {
+		int a = getPixelAlpha(pixel);
+		int r = getPixelRed(pixel);
+		int g = getPixelGreen(pixel);
+		int b = getPixelBlue(pixel);
+		return new int[] { a, r, g, b };
+	}
+
+	/**
+	 * Returns the blue channel value of the given ARGB pixel value.
+	 * 
+	 * @param pixel
+	 *            the ARGB pixel value from which to extract the blue channel
+	 * @return the blue channel value of the given ARGB pixel value
+	 */
+	public static int getPixelBlue(int pixel) {
+		return pixel & 0xff;
+	}
+
+	/**
+	 * Returns the green channel value of the given ARGB pixel value.
+	 * 
+	 * @param pixel
+	 *            the ARGB pixel value from which to extract the green channel
+	 * @return the green channel value of the given ARGB pixel value
+	 */
+	public static int getPixelGreen(int pixel) {
+		return (pixel & 0xff00) >>> 8;
+	}
+
+	/**
+	 * Returns the red channel value of the given ARGB pixel value.
+	 * 
+	 * @param pixel
+	 *            the ARGB pixel value from which to extract the red channel
+	 * @return the red channel value of the given ARGB pixel value
+	 */
+	public static int getPixelRed(int pixel) {
+		return (pixel & 0xff0000) >>> 16;
+	}
+
+	/**
 	 * The red component of this {@link Color} in the range <code>[0;255]</code>
 	 * .
 	 */
-	protected int r;
+	private int r;
 
 	/**
 	 * The green component of this {@link Color} in the range
 	 * <code>[0;255]</code>.
 	 */
-	protected int g;
+	private int g;
 
 	/**
 	 * The blue component of this {@link Color} in the range
 	 * <code>[0;255]</code>.
 	 */
-	protected int b;
+	private int b;
 
 	/**
 	 * The alpha value associated with this {@link Color}.
 	 */
-	protected int a;
+	private int a;
 
 	/**
 	 * Constructs a new {@link Color} object representing a fully opaque black,
@@ -182,8 +238,22 @@ public class Color {
 	}
 
 	/**
-	 * Creates a new {@link Color} from the given values.
+	 * Constructs a new {@link Color} object representing a fully opaque color
+	 * with the specified red, green, and blue components.
 	 * 
+	 * @param red
+	 *            the {@link #r red} component of this {@link Color}
+	 * @param green
+	 *            the {@link #g green} component of this {@link Color}
+	 * @param blue
+	 *            the {@link #b blue} component of this {@link Color}
+	 */
+	public Color(int red, int green, int blue) {
+		this(red, green, blue, DEFAULT_ALPHA);
+	}
+
+	/**
+	 * Creates a new {@link Color} from the given values.
 	 * @param red
 	 *            the {@link #r red} component of this {@link Color}
 	 * @param green
@@ -253,18 +323,6 @@ public class Color {
 	}
 
 	/**
-	 * Returns an {@link IHSV} color space representation of this {@link Color}
-	 * 's {@link #r red}, {@link #g green}, and {@link #b blue} values.
-	 * 
-	 * @return an {@link IHSV} color space representation of this {@link Color}
-	 *         's {@link #r red}, {@link #g green}, and {@link #b blue} values
-	 */
-	public IHSV getHSV() {
-		throw new UnsupportedOperationException(
-				"This operation is not yet implemented.");
-	}
-
-	/**
 	 * Returns the red component of this {@link Color} in the range
 	 * <code>[0;255]</code>.
 	 * 
@@ -278,7 +336,7 @@ public class Color {
 	@Override
 	public int hashCode() {
 		return (r << 24) + (g << 16) + (b << 8) + a;
-	}
+	};
 
 	/**
 	 * Sets the alpha component of this {@link Color} to the specified value in
@@ -339,18 +397,6 @@ public class Color {
 	}
 
 	/**
-	 * Sets the red, green, and blue components of this {@link Color} according
-	 * to the passed-in {@link IHSV} color representation.
-	 * 
-	 * @param hsv
-	 * @return <code>this</code> for convenience
-	 */
-	public Color setHSV(IHSV hsv) {
-		throw new UnsupportedOperationException(
-				"This operation is not yet implemented.");
-	}
-
-	/**
 	 * Sets the red component of this {@link Color} to the specified value in
 	 * range <code>[0;255]</code>.
 	 * 
@@ -388,6 +434,6 @@ public class Color {
 	public String toString() {
 		return "Color(r = " + r + ", g = " + g + ", b = " + b + ", a = " + a
 				+ ")";
-	};
+	}
 
 }
