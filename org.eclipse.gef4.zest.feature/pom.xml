@@ -4,12 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>org.eclipse.gef4.zest</artifactId>
-		<groupId>org.eclipse</groupId>
+		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<groupId>org.eclipse.gef4</groupId>
 		<version>0.1.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.gef4.zest.parent</relativePath>
+		<relativePath>../org.eclipse.gef4.releng</relativePath>
 	</parent>
-	<groupId>org.eclipse</groupId>
+	<groupId>org.eclipse.gef4</groupId>
 	<artifactId>org.eclipse.gef4.zest.sdk</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>

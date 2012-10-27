@@ -103,7 +103,20 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-		</plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>plugin-source</id>
+            <goals>
+              <goal>plugin-source</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
 	</build>
 	<profiles>
 		<profile>
@@ -127,6 +140,9 @@
 									<classifier>JUNO_4_2</classifier>
 								</artifact>
 							</target>
+              <dependency-resolution>
+                <optionalDependencies>ignore</optionalDependencies>
+              </dependency-resolution>
 							<environments>
 								<environment>
 									<os>linux</os>
@@ -177,6 +193,9 @@
 									<classifier>JUNO_3_8</classifier>
 								</artifact>
 							</target>
+              <dependency-resolution>
+                <optionalDependencies>ignore</optionalDependencies>
+              </dependency-resolution>
 							<environments>
 								<environment>
 									<os>linux</os>
@@ -227,6 +246,9 @@
 									<classifier>INDIGO_3_7_1</classifier>
 								</artifact>
 							</target>
+              <dependency-resolution>
+                <optionalDependencies>ignore</optionalDependencies>
+              </dependency-resolution>
 							<environments>
 								<environment>
 									<os>linux</os>
@@ -266,6 +288,13 @@
 			<id>maven.eclipse.org</id>
 			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
 		</pluginRepository>
+    <pluginRepository>
+      <id>fornax-snapshots</id>
+      <url>http://www.fornax-platform.org/archiva/repository/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
 	</pluginRepositories>
 
 	<modules>
