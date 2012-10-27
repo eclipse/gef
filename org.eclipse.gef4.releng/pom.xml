@@ -306,7 +306,6 @@
 		<module>../org.eclipse.gef4.zest.dot.ui</module>
 		<module>../org.eclipse.gef4.zest.feature</module>
 		<module>../org.eclipse.gef4.zest.source-feature</module>
-		<module>../org.eclipse.gef4.zest.repository</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
 	</modules>
 

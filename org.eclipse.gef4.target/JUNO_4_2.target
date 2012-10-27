@@ -7,5 +7,13 @@
 <unit id="org.eclipse.sdk.ide" version="4.2.0.I20120608-1400"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.2"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.3.1.v201208210947"/>
+<repository location="http://download.eclipse.org/releases/juno"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.draw2d.sdk.feature.group" version="3.8.1.201208200205"/>
+<repository location="http://download.eclipse.org/tools/gef/updates/releases"/>
+</location>
 </locations>
 </target>
