@@ -72,9 +72,20 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 
 			private int color = DEFAULT_COLOR;
 
+			/**
+			 * Constructs a new {@link ConstantPixel} {@link EdgeMode} with the
+			 * constant pixel color set to the {@link #DEFAULT_COLOR}.
+			 */
 			public ConstantPixel() {
 			}
 
+			/**
+			 * Constructs a new {@link ConstantPixel} {@link EdgeMode} with the
+			 * constant pixel color set to the passed-in ARGB pixel value.
+			 * 
+			 * @param pixel
+			 *            the ARGB pixel value used as the constant pixel color
+			 */
 			public ConstantPixel(int pixel) {
 				color = pixel;
 			}
@@ -133,9 +144,23 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 
 			private int color = DEFAULT_COLOR;
 
+			/**
+			 * Constructs a new {@link ConstantPixelNeighbors} {@link EdgeMode}
+			 * with the constant pixel neighbor color set to the
+			 * {@link #DEFAULT_COLOR}.
+			 */
 			public ConstantPixelNeighbors() {
 			}
 
+			/**
+			 * Constructs a new {@link ConstantPixelNeighbors} {@link EdgeMode}
+			 * with the constant pixel neighbor color set to the passed-in ARGB
+			 * pixel value.
+			 * 
+			 * @param pixel
+			 *            the ARGB pixel value used as the constant pixel
+			 *            neighbor color
+			 */
 			public ConstantPixelNeighbors(int pixel) {
 				color = pixel;
 			}
@@ -148,12 +173,17 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 				int over = op.getDimension() / 2;
 				int i = 0;
 				for (int xx = x - over; xx <= x + over; xx++) {
-					boolean xIsOutside = xx < 0 || xx >= w;
-					for (int yy = y - over; yy <= y + over; yy++) {
-						if (xIsOutside || yy < 0 || yy >= h) {
+					if (xx < 0 || xx >= w) {
+						for (int yy = y - over; yy <= y + over; yy++) {
 							neighbors[i++] = color;
-						} else {
-							neighbors[i++] = src.getRGB(xx, yy);
+						}
+					} else {
+						for (int yy = y - over; yy <= y + over; yy++) {
+							if (yy < 0 || yy >= h) {
+								neighbors[i++] = color;
+							} else {
+								neighbors[i++] = src.getRGB(xx, yy);
+							}
 						}
 					}
 				}
@@ -242,9 +272,63 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 			}
 		}
 
+		/**
+		 * <p>
+		 * This method is called for every "edge" pixel of an {@link Image}. It
+		 * fills the passed-in <i>neighbors</i> array with appropriate ARGB
+		 * pixel values.
+		 * </p>
+		 * 
+		 * <p>
+		 * The <i>neighbors</i> array is a one-dimensional <code>int</code>
+		 * array that is used to store the pixel neighborhood at a specific
+		 * position, so that further methods can base their calculations on that
+		 * neighborhood.
+		 * </p>
+		 * 
+		 * <p>
+		 * Example implementation for non-"edge" pixels:
+		 * {@link AbstractPixelNeighborhoodFilterOperation#fillNeighbors(BufferedImage, int, int)
+		 * fillNeighbors}.
+		 * </p>
+		 * 
+		 * <p>
+		 * Example implemenation for {@link ConstantPixelNeighbors}:
+		 * {@link ConstantPixelNeighbors#fillNeighbors(AbstractPixelNeighborhoodFilterOperation, BufferedImage, int, int, int[])
+		 * fillNeighbors}.
+		 * </p>
+		 * 
+		 * @param op
+		 *            the applied
+		 *            {@link AbstractPixelNeighborhoodFilterOperation}
+		 * @param src
+		 *            the processed {@link BufferedImage} (TODO: Make this a
+		 *            GEF4 {@link Image}.)
+		 * @param x
+		 *            the x-coordinate of the processed pixel
+		 * @param y
+		 *            the y-coordinate of the processed pixel
+		 * @param neighbors
+		 *            the <code>int</code> array used to store the pixel
+		 *            neighborhood at a the currently processed position
+		 */
 		public abstract void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
 				BufferedImage src, int x, int y, int[] neighbors);
 
+		/**
+		 * Returns the new ARGB pixel value for the passed-in
+		 * {@link AbstractPixelNeighborhoodFilterOperation} and the passed-in
+		 * <i>neighbors</i> array.
+		 * 
+		 * @param op
+		 *            the currently applied
+		 *            {@link AbstractPixelNeighborhoodFilterOperation}
+		 * @param neighbors
+		 *            the neighborhood pixel values for which the new ARGB pixel
+		 *            value is to be calculated
+		 * @return the new ARGB pixel value for the passed-in <i>neighbors</i>
+		 *         array
+		 */
 		public abstract int processNeighborhodd(AbstractPixelNeighborhoodFilterOperation op,
 				int[] neighbors);
 
@@ -297,6 +381,27 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		return new Image(res);
 	}
 
+	/**
+	 * <p>
+	 * This method is called for every non-"edge" pixel of the processed
+	 * {@link Image}. It fills the passed-in <i>neighbors</i> array with
+	 * appropriate ARGB pixel values.
+	 * </p>
+	 * 
+	 * <p>
+	 * The <i>neighbors</i> array is a one-dimensional <code>int</code> array
+	 * that is used to store the pixel neighborhood at a specific position, so
+	 * that further methods can base their calculations on that neighborhood.
+	 * </p>
+	 * 
+	 * @param src
+	 *            the processed {@link BufferedImage} (TODO: Make this a GEF4
+	 *            {@link Image}.)
+	 * @param x
+	 *            the x-coordinate of the processed pixel
+	 * @param y
+	 *            the y-coordinate of the processed pixel
+	 */
 	protected void fillNeighbors(BufferedImage src, int x, int y) {
 		int over = dimension / 2;
 		int i = 0;
@@ -359,10 +464,23 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		}
 	}
 
+	/**
+	 * Returns the dimension of the neighborhood matrix. The neighborhood matrix
+	 * has a size of <code>dimension * dimension</code>. You can access a
+	 * specific position in the neighborhood as follows:
+	 * <code>neighbors[y * dimension + x]</code>
+	 * 
+	 * @return the dimension of the neighborhood matrix
+	 */
 	public int getDimension() {
 		return dimension;
 	}
 
+	/**
+	 * Returns a copy of the neighborhood matrix.
+	 * 
+	 * @return a copy of the neighborhood matrix
+	 */
 	public int[] getNeighbors() {
 		return Arrays.copyOf(neighbors, neighbors.length);
 	}

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.images;
 
+import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Image;
 
 /**
@@ -24,147 +25,214 @@ import org.eclipse.gef4.graphics.Image;
 public class ArithmeticOperations {
 
 	/**
-	 * Creates an {@link IImageOperation} that computes the absolute difference
-	 * of the given {@link Image} and the applied one, for each color channel.
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * absolute difference of the given {@link Image} and the applied one, for
+	 * each color channel.
 	 * 
 	 * @param other
-	 * @return an {@link IImageOperation} that computes the absolute difference
-	 *         of the given {@link Image} and the applied one
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         absolute difference of the given {@link Image} and the applied
+	 *         one
 	 */
-	public static AbstractChannelFilterOperation getAbsDifferenceOperation(
+	public static AbstractColorChannelFilterOperation getAbsDifferenceOperation(
 			final Image other) {
-		return new AbstractChannelFilterOperation() {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : Math.abs(v - ImageUtils.getARGB(other.getPixel(x, y))[i]);
+				return Math
+						.abs(v - Color.getPixelARGB(other.getPixel(x, y))[i]);
 			}
 		};
 	}
 
 	/**
-	 * Creates an {@link IImageOperation} that computes the absolute difference
-	 * of the given constant pixel value and the applied {@link Image}.
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the
+	 * absolute difference of the given constant pixel value and the applied
+	 * {@link Image}.
 	 * 
 	 * @param pixelOther
-	 * @return an {@link IImageOperation} that computes the absolute difference
-	 *         of the given constant pixel value and the applied {@link Image}
+	 * @return an {@link AbstractChannelFilterOperation} that computes the
+	 *         absolute difference of the given constant pixel value and the
+	 *         applied {@link Image}
 	 */
 	public static AbstractChannelFilterOperation getAbsDifferenceOperation(
 			final int pixelOther) {
-		final int[] argbOther = ImageUtils.getARGB(pixelOther);
+		final int[] argbOther = Color.getPixelARGB(pixelOther);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : Math.abs(v - argbOther[i]);
+				return Math.abs(v - argbOther[i]);
 			}
 		};
 	}
 
 	/**
-	 * Creates an {@link IImageOperation} that computes the sum of the given
-	 * {@link Image} and the applied one, for each color channel.
-	 * 
-	 * @param addend
-	 * @return an {@link IImageOperation} that computes the sum of the given
-	 *         {@link Image} and the applied one
-	 */
-	public static AbstractChannelFilterOperation getAddOperation(
-			final Image addend) {
-		return new AbstractChannelFilterOperation() {
-			@Override
-			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : v + ImageUtils.getARGB(addend.getPixel(x, y))[i];
-			}
-		};
-	}
-
-	/**
-	 * Creates an {@link IImageOperation} that computes the sum of the given
-	 * constant pixel value and the applied {@link Image}, for each color
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * sum of the given {@link Image} and the applied one, for each color
 	 * channel.
 	 * 
+	 * @param addend
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         sum of the given {@link Image} and the applied one
+	 */
+	public static AbstractColorChannelFilterOperation getAddOperation(
+			final Image addend) {
+		return new AbstractColorChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v + Color.getPixelARGB(addend.getPixel(x, y))[i];
+			}
+		};
+	}
+
+	/**
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the sum
+	 * of the given constant pixel value and the applied {@link Image}.
+	 * 
 	 * @param pixelOffset
-	 * @return an {@link IImageOperation} that computes the absolute difference
+	 * @return an {@link AbstractChannelFilterOperation} that computes the sum
 	 *         of the given constant pixel value and the applied {@link Image}
 	 */
 	public static AbstractChannelFilterOperation getAddOperation(
 			final int pixelOffset) {
-		final int[] argbOffset = ImageUtils.getARGB(pixelOffset);
+		final int[] argbOffset = Color.getPixelARGB(pixelOffset);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : v + argbOffset[i];
+				return v + argbOffset[i];
 			}
 		};
 	}
 
 	/**
-	 * Creates an {@link IImageOperation} that computes the logical-and of the
-	 * given {@link Image} and the applied one.
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * logical-AND of the given {@link Image} and the applied one, for each
+	 * color channel.
 	 * 
 	 * @param other
-	 * @return an {@link IImageOperation} that computes the logical-and of the
-	 *         given {@link Image} and the applied one
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         logical-AND of the given {@link Image} and the applied one
 	 */
-	public static AbstractPixelFilterOperation getAndOperation(final Image other) {
-		return new AbstractPixelFilterOperation() {
+	public static AbstractColorChannelFilterOperation getAndOperation(
+			final Image other) {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb & other.getPixel(x, y);
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v & Color.getPixelARGB(other.getPixel(x, y))[i];
 			}
 		};
 	}
 
 	/**
-	 * Creates an {@link IImageOperation} that computes the logical-and of the
-	 * given constant pixel value and the applied {@link Image}.
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the
+	 * logical-AND of the given constant pixel value and the applied
+	 * {@link Image}.
 	 * 
 	 * @param pixelOther
-	 * @return an {@link IImageOperation} that computes the logical-and of the
-	 *         given constant pixel value and the applied {@link Image}
+	 * @return an {@link AbstractChannelFilterOperation} that computes the
+	 *         logical-AND of the given constant pixel value and the applied
+	 *         {@link Image}
 	 */
-	public static AbstractPixelFilterOperation getAndOperation(
+	public static AbstractChannelFilterOperation getAndOperation(
 			final int pixelOther) {
-		return new AbstractPixelFilterOperation() {
+		final int[] constant = Color.getPixelARGB(pixelOther);
+		return new AbstractChannelFilterOperation() {
 			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb & pixelOther;
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v & constant[i];
 			}
 		};
 	}
 
-	public static AbstractChannelFilterOperation getBlendOperation(
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * merge of the given {@link Image} and the applied {@link Image}, for each
+	 * color channel.
+	 * 
+	 * @param xr
+	 *            [0;1] red balance factor
+	 * @param xg
+	 *            [0;1] green balance factor
+	 * @param xb
+	 *            [0;1] blue balance factor
+	 * @param other
+	 *            the {@link Image} to merge with the applied {@link Image}
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         merge of the given {@link Image} and the applied {@link Image}
+	 */
+	public static AbstractColorChannelFilterOperation getBlendOperation(
 			final double xr,
 			final double xg, final double xb, final Image other) {
-		final double[] xs = new double[] { xr, xg, xb };
-		return new AbstractChannelFilterOperation() {
+		final double[] xs = new double[] { 0, xr, xg, xb };
+		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : (int) (xs[i] * v + (1 - xs[i])
-						* ImageUtils.getARGB(other.getPixel(x, y))[i]);
+				return (int) (xs[i] * v + (1 - xs[i])
+						* Color.getPixelARGB(other.getPixel(x, y))[i]);
 			}
 		};
 	}
 
-	public static AbstractChannelFilterOperation getDivideOperation(
+	/**
+	 * <p>
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * quotient of the applied {@link Image} and the passed-in <i>divisor</i>
+	 * {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The quotient of two {@link Image}s can be used to detect changes, similar
+	 * to {@link #getAbsDifferenceOperation(Image) subtraction}. Unfortunately,
+	 * only integer color channels are implemented, so that a division result
+	 * below <code>1</code> is rounded down to <code>0</code>. To visualize such
+	 * changes, it is necessary to scale the pixel-quotient appropriately. A
+	 * good first try might be a factor of <code>128</code>.
+	 * </p>
+	 * 
+	 * @param divisor
+	 *            the {@link Image} which contains the divisor pixels
+	 * @param scaleFactor
+	 *            the quotient of two pixels is multiplied by this value
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         quotient of the applied {@link Image} and the passed-in
+	 *         <i>divisor</i> {@link Image}
+	 */
+	public static AbstractColorChannelFilterOperation getDivideOperation(
 			final Image divisor,
 			final double scaleFactor) {
-		return new AbstractChannelFilterOperation() {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : (int) (scaleFactor * v / ImageUtils
-						.getARGB(divisor.getPixel(x, y))[i]);
+				int v2 = Color.getPixelARGB(divisor.getPixel(x, y))[i];
+				return (int) (scaleFactor * v / (v2 == 0 ? 1 : v2));
 			}
 		};
 	}
 
-	public static AbstractPixelFilterOperation getInvertOperation() {
+	/**
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the
+	 * photographic negative of the applied {@link Image}.
+	 * 
+	 * @return an {@link AbstractChannelFilterOperation} that computes the
+	 *         photographic negative of the applied {@link Image}
+	 */
+	public static AbstractChannelFilterOperation getInvertOperation() {
 		return getXorOperation(0xffffff);
 	}
 
-	public static AbstractChannelFilterOperation getMultiplyOperation(
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} which multiplies
+	 * the applied {@link Image} with the passed-in constant factor <i>f</i>,
+	 * for each color channel.
+	 * 
+	 * @param f
+	 *            the applied {@link Image} is multiplied by this factor
+	 * @return an {@link AbstractChannelFilterOperation} which multiplies the
+	 *         applied {@link Image} with the passed-in constant factor <i>f</i>
+	 */
+	public static AbstractColorChannelFilterOperation getMultiplyOperation(
 			final double f) {
-		return new AbstractChannelFilterOperation() {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
 				return (int) (f * v);
@@ -172,6 +240,21 @@ public class ArithmeticOperations {
 		};
 	}
 
+	/**
+	 * Creates an {@link AbstractChannelFilterOperation} which multiplies the
+	 * applied {@link Image} channel-wise with the given factors.
+	 * 
+	 * @param fa
+	 *            the factor for the alpha channel
+	 * @param fr
+	 *            the factor for the red channel
+	 * @param fg
+	 *            the factor for the green channel
+	 * @param fb
+	 *            the factor for the blue channel
+	 * @return an {@link AbstractChannelFilterOperation} which multiplies the
+	 *         applied {@link Image} channel-wise with the given factors
+	 */
 	public static AbstractChannelFilterOperation getMultiplyOperation(
 			final double fa,
 			final double fr, final double fg, final double fb) {
@@ -184,81 +267,181 @@ public class ArithmeticOperations {
 		};
 	}
 
-	public static AbstractChannelFilterOperation getOrOperation(
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * logical-OR of the given {@link Image} and the applied one.
+	 * 
+	 * @param other
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         logical-OR of the given {@link Image} and the applied one
+	 */
+	public static AbstractColorChannelFilterOperation getOrOperation(
 			final Image other) {
+		return new AbstractColorChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v | Color.getPixelARGB(input.getPixel(x, y))[i];
+			}
+		};
+	}
+
+	/**
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the
+	 * logical-OR of the given constant pixel value and the applied
+	 * {@link Image}.
+	 * 
+	 * @param pixel
+	 *            the constant pixel value to OR with the applied {@link Image}
+	 * @return an {@link AbstractChannelFilterOperation} that computes the
+	 *         logical-OR of the given constant pixel value and the applied
+	 *         {@link Image}
+	 */
+	public static AbstractChannelFilterOperation getOrOperation(final int pixel) {
+		final int[] constant = Color.getPixelARGB(pixel);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : v | ImageUtils.getARGB(other.getPixel(x, y))[i];
+				return v | constant[i];
 			}
 		};
 	}
 
-	public static AbstractPixelFilterOperation getOrOperation(
-			final int argbOther) {
-		return new AbstractPixelFilterOperation() {
-			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb | argbOther;
-			}
-		};
-	}
-
-	public static AbstractPixelFilterOperation getShiftLeftOperation(final int n) {
-		return new AbstractPixelFilterOperation() {
-			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb << n;
-			}
-		};
-	}
-
-	public static AbstractPixelFilterOperation getShiftRightOperation(
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} that shifts the
+	 * bits representing the RGB color values channel-wise to the left by the
+	 * given number of digits.
+	 * 
+	 * @param n
+	 *            the number of digits to shift by
+	 * @return an {@link AbstractColorChannelFilterOperation} that shifts the
+	 *         bits representing the RGB color values to the left
+	 */
+	public static AbstractColorChannelFilterOperation getShiftLeftOperation(
 			final int n) {
-		return new AbstractPixelFilterOperation() {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb >>> n;
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v << n;
 			}
 		};
 	}
 
-	public static AbstractChannelFilterOperation getSubtractOperation(
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} that shifts the
+	 * bits representing the RGB color values channel-wise to the right by the
+	 * given number of digits.
+	 * 
+	 * @param n
+	 *            the number of digits to shift by
+	 * @return an {@link AbstractColorChannelFilterOperation} that shifts the
+	 *         bits representing the RGB color values to the right
+	 */
+	public static AbstractColorChannelFilterOperation getShiftRightOperation(
+			final int n) {
+		return new AbstractColorChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v >>> n;
+			}
+		};
+	}
+
+	/**
+	 * <p>
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * difference of the applied {@link Image} and the passed-in <i>other</i>
+	 * {@link Image}.
+	 * </p>
+	 * 
+	 * <p>
+	 * Contrary to the {@link #getAbsDifferenceOperation(Image)} method, the
+	 * results of the subtraction are not taken absolute, i.e. negative results
+	 * are raised to <code>0</code>.
+	 * </p>
+	 * 
+	 * @param other
+	 *            the {@link Image} to subtract from the applied {@link Image}
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         difference of the applied {@link Image} and the passed-in
+	 *         <i>other</i> {@link Image}
+	 */
+	public static AbstractColorChannelFilterOperation getSubtractOperation(
 			final Image other) {
-		return new AbstractChannelFilterOperation() {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : v - ImageUtils.getARGB(other.getPixel(x, y))[i];
+				return v - Color.getPixelARGB(other.getPixel(x, y))[i];
 			}
 		};
 	}
 
+	/**
+	 * <p>
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * difference of the applied {@link Image} and the passed-in constant pixel
+	 * value.
+	 * </p>
+	 * 
+	 * <p>
+	 * Contrary to the {@link #getAbsDifferenceOperation(int)} method, the
+	 * results of the subtraction are not taken absolute, i.e. negative results
+	 * are raised to <code>0</code>.
+	 * </p>
+	 * 
+	 * @param pixel
+	 *            the constant pixel value to subtract from the applied
+	 *            {@link Image}
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         difference of the applied {@link Image} and the passed-in
+	 *         constant pixel value
+	 */
 	public static AbstractChannelFilterOperation getSubtractOperation(
-			final int pixelOther) {
-		final int[] argbOther = ImageUtils.getARGB(pixelOther);
+			final int pixel) {
+		final int[] constant = Color.getPixelARGB(pixel);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return i == 0 ? v : v - argbOther[i];
+				return v - constant[i];
 			}
 		};
 	}
 
-	public static AbstractPixelFilterOperation getXorOperation(final Image other) {
-		return new AbstractPixelFilterOperation() {
+	/**
+	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
+	 * logical-XOR of the given {@link Image} and the applied one.
+	 * 
+	 * @param other
+	 *            the {@link Image} to XOR with the applied {@link Image}
+	 * @return an {@link AbstractColorChannelFilterOperation} that computes the
+	 *         logical-XOR of the given {@link Image} and the applied one
+	 */
+	public static AbstractColorChannelFilterOperation getXorOperation(
+			final Image other) {
+		return new AbstractColorChannelFilterOperation() {
 			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb ^ other.getPixel(x, y);
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v ^ Color.getPixelARGB(other.getPixel(x, y))[i];
 			}
 		};
 	}
 
-	public static AbstractPixelFilterOperation getXorOperation(
-			final int argbOther) {
-		return new AbstractPixelFilterOperation() {
+	/**
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the
+	 * logical-XOR of the given constant pixel value and the applied
+	 * {@link Image}.
+	 * 
+	 * @param pixel
+	 *            the constant pixel value to XOR with the applied {@link Image}
+	 * @return an {@link AbstractChannelFilterOperation} that computes the
+	 *         logical-XOR of the given constant pixel value and the applied
+	 *         {@link Image}
+	 */
+	public static AbstractChannelFilterOperation getXorOperation(final int pixel) {
+		final int[] constant = Color.getPixelARGB(pixel);
+		return new AbstractChannelFilterOperation() {
 			@Override
-			protected int processPixel(int argb, int x, int y, Image input) {
-				return argb ^ argbOther;
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return v ^ constant[i];
 			}
 		};
 	}

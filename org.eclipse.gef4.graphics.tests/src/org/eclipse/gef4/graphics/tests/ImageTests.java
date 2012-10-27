@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 import org.eclipse.gef4.graphics.Image;
 import org.junit.Test;
@@ -34,13 +33,13 @@ public class ImageTests {
 		assertEquals(640, img.bufferedImage().getWidth());
 		assertEquals(480, img.bufferedImage().getHeight());
 
-		// Image transforms to ARGB color space
+		// Image transforms to ARGB color space (hence, 4 channels)
 		assertEquals(4, img.bufferedImage().getRaster().getNumBands());
 
 		boolean thrown = false;
 		try {
-			new Image((URL) null);
-		} catch (Exception x) {
+			new Image((BufferedImage) null);
+		} catch (NullPointerException x) {
 			thrown = true;
 		}
 

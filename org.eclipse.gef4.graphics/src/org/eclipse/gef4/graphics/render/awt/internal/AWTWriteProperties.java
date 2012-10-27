@@ -48,6 +48,16 @@ public class AWTWriteProperties extends AbstractWriteProperties {
 	 */
 	protected Font font;
 
+	/**
+	 * <p>
+	 * Constructs a new {@link AWTWriteProperties} with default background and
+	 * foreground color, and default font.
+	 * </p>
+	 * 
+	 * <p>
+	 * The default values for the
+	 * </p>
+	 */
 	public AWTWriteProperties() {
 		backgroundColor = new Color(
 				IWriteProperties.DEFAULT_BACKGROUND_COLOR_R,

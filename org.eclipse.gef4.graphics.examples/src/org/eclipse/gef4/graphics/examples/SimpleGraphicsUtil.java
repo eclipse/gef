@@ -26,11 +26,11 @@ public class SimpleGraphicsUtil {
 		final Ellipse ellipse = new Ellipse(50, 50, 350, 200);
 		final Rectangle rectangle = new Rectangle(100, 160, 125, 220);
 		final Polygon triangle = new Polygon(260, 170, 190, 300, 330, 300);
-		final Color red = new Color(255, 0, 0, 255);
-		final Color darkRed = new Color(128, 0, 0, 255);
-		final Color blue = new Color(0, 0, 255, 255);
-		final Color green = new Color(0, 255, 0, 255);
-		final Color darkGreen = new Color(0, 128, 0, 255);
+		final Color red = new Color(255, 0, 0);
+		final Color darkRed = new Color(128, 0, 0);
+		final Color blue = new Color(0, 0, 255);
+		final Color green = new Color(0, 255, 0);
+		final Color darkGreen = new Color(0, 128, 0);
 
 		g.pushState();
 
