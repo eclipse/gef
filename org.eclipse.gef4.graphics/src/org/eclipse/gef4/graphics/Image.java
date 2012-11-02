@@ -15,14 +15,12 @@ package org.eclipse.gef4.graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import org.eclipse.gef4.graphics.images.IImageOperation;
+import org.eclipse.gef4.graphics.render.IBlitProperties.InterpolationHint;
+import org.eclipse.gef4.graphics.render.IGraphics;
 
-// TODO: delegate methods to BufferedImage
+// TODO: Provide more methods that are available on a BufferedImage.
 
 /**
  * An {@link Image} stores color and alpha data for a rectangular pixel raster.
@@ -40,6 +38,15 @@ public class Image {
 	 */
 	public static final int NUM_CHANNELS = 4;
 
+	private static BufferedImage getCopy(BufferedImage bufferedImage) {
+		BufferedImage copy = new BufferedImage(bufferedImage.getWidth(),
+				bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+		g2d.drawImage(bufferedImage, null, 0, 0);
+		g2d.dispose();
+		return copy;
+	}
+
 	/**
 	 * Stores the image data.
 	 */
@@ -54,19 +61,7 @@ public class Image {
 	 * @param bufferedImage
 	 */
 	public Image(BufferedImage bufferedImage) {
-		setTo(bufferedImage);
-	}
-
-	/**
-	 * Reads image data from the given {@link File} and constructs a new
-	 * {@link Image} object representing that data.
-	 * 
-	 * @param imageFile
-	 *            the {@link File} from which to read the image data
-	 * @throws IOException
-	 */
-	public Image(File imageFile) throws IOException {
-		this(ImageIO.read(imageFile));
+		this.bufferedImage = getCopy(bufferedImage);
 	}
 
 	/**
@@ -94,20 +89,6 @@ public class Image {
 	 */
 	public Image apply(IImageOperation op) {
 		return op.apply(this);
-	}
-
-	/**
-	 * Returns the {@link BufferedImage} that is used to store the image data of
-	 * <code>this</code> {@link Image}.
-	 * 
-	 * TODO: add note: method name convention: start without 'get', so the
-	 * _real_ object is returned, and not just a copy of it.
-	 * 
-	 * @return the {@link BufferedImage} that is used to store the image data of
-	 *         <code>this</code> {@link Image}
-	 */
-	public BufferedImage bufferedImage() {
-		return bufferedImage;
 	}
 
 	@Override
@@ -242,8 +223,6 @@ public class Image {
 	/**
 	 * Returns the height of <code>this</code> {@link Image}.
 	 * 
-	 * TODO: add note: this is a delegation
-	 * 
 	 * @return the height of <code>this</code> {@link Image}
 	 */
 	public int getHeight() {
@@ -333,57 +312,103 @@ public class Image {
 		return hist;
 	}
 
+	/**
+	 * <p>
+	 * Returns a scaled version of this {@link Image}. The dimensions of the
+	 * resulting {@link Image} are computed by multiplying this {@link Image}'s
+	 * dimensions with the given <i>scaleFactor</i>.
+	 * </p>
+	 * 
+	 * <p>
+	 * The interpolation is done exactly as with drawing an {@link Image}
+	 * transformed with an {@link IGraphics} using the
+	 * {@link InterpolationHint#QUALITY QUALITY} {@link InterpolationHint}.
+	 * </p>
+	 * 
+	 * @param scaleFactor
+	 * @return a scaled version of this {@link Image}
+	 */
 	public Image getScaled(double scaleFactor) {
 		int newWidth = (int) (getWidth() * scaleFactor);
 		int newHeight = (int) (getHeight() * scaleFactor);
+		return getScaledTo(newWidth, newHeight);
+	}
 
-		BufferedImage scaled = new BufferedImage(newWidth, newHeight,
+	/**
+	 * Returns a version of this {@link Image} that is scaled to the passed-in
+	 * <i>width</i> and <i>height</i>.
+	 * 
+	 * @param width
+	 *            the width to scale to
+	 * @param height
+	 *            the height to scale to
+	 * @return a scaled version of this {@link Image}
+	 */
+	public Image getScaledTo(int width, int height) {
+		BufferedImage scaled = new BufferedImage(width, height,
 				BufferedImage.TYPE_INT_ARGB);
+
 		Graphics2D g2d = scaled.createGraphics();
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		g2d.drawImage(bufferedImage(), 0, 0, newWidth, newHeight, null);
+		g2d.drawImage(bufferedImage, 0, 0, width, height, null);
 		g2d.dispose();
 
 		// TODO: Implement the possibility to construct an Image from a
 		// BufferedImage, without copying the image data
 
+		// TODO: Integrate the IGraphics / Remove duplicate code.
+
 		return new Image(scaled);
 	}
 
+	/**
+	 * Cuts out a portion of this {@link Image} starting at the given <i>x</i>
+	 * and <i>y</i> coordinates and extending by the given <i>width</i> and
+	 * <i>height</i>.
+	 * 
+	 * @param x
+	 *            starting x coordinate for the sub-{@link Image} to cut out
+	 * @param y
+	 *            starting y coordinate for the sub-{@link Image} to cut out
+	 * @param width
+	 *            width of the sub-{@link Image}
+	 * @param height
+	 *            height of the sub-{@link Image}
+	 * @return a sub-{@link Image} of this {@link Image}
+	 */
 	public Image getSubImage(int x, int y, int width, int height) {
 		return new Image(bufferedImage.getSubimage(x, y, width, height));
 	}
 
+	/**
+	 * <p>
+	 * Creates a thumbnail {@link Image} from this {@link Image}. The dimensions
+	 * of the thumbnail are gueranteed to not exceed the passed-in maximum
+	 * <i>width</i> and <i>height</i>.
+	 * </p>
+	 * 
+	 * @param maxWidth
+	 *            maximum width of the thumbnail
+	 * @param maxHeight
+	 *            maximum height of the thumbnail
+	 * @return a thumbnail of this {@link Image}
+	 */
 	public Image getThumbnail(int maxWidth, int maxHeight) {
 		int width = getWidth(), height = getHeight();
-		int deltaWidth = width - maxWidth;
-		int deltaHeight = height - maxHeight;
-		double scale = deltaWidth > deltaHeight ? (0.5 + maxWidth) / width
-				: (0.5 + maxHeight) / height;
+		double wScale = ((double) maxWidth) / width;
+		double hScale = ((double) maxHeight) / height;
+		double scale = wScale < hScale ? wScale : hScale;
 		return getScaled(scale);
 	}
 
 	/**
 	 * Returns the width of <code>this</code> {@link Image}.
 	 * 
-	 * TODO: add note: this is a delegation
-	 * 
 	 * @return the width of <code>this</code> {@link Image}
 	 */
 	public int getWidth() {
 		return bufferedImage.getWidth();
-	}
-
-	/**
-	 * Writes the image data into the passed-in {@link File}.
-	 * 
-	 * @param file
-	 *            the {@link File} to write this {@link Image} into
-	 * @throws IOException
-	 */
-	public void save(File file) throws IOException {
-		ImageIO.write(bufferedImage, "png", file);
 	}
 
 	/**
@@ -408,20 +433,18 @@ public class Image {
 		bufferedImage.setRGB(x, y, argb);
 	}
 
-	/**
-	 * Replaces the {@link BufferedImage} that is managed by <code>this</code>
-	 * {@link Image} with the given <i>replacement</i>.
-	 * 
-	 * @param replacement
-	 *            the new {@link BufferedImage} to manage
-	 */
-	public void setTo(BufferedImage replacement) {
-		bufferedImage = new BufferedImage(replacement.getWidth(),
-				replacement.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = bufferedImage.createGraphics();
-		g2d.drawImage(replacement, null, 0, 0);
-		g2d.dispose();
-	}
+	// /**
+	// * Returns the {@link BufferedImage} that is used to store the image data
+	// of
+	// * <code>this</code> {@link Image}.
+	// *
+	// * @return the {@link BufferedImage} that is used to store the image data
+	// of
+	// * <code>this</code> {@link Image}
+	// */
+	// public BufferedImage toBufferedImage() {
+	// return getCopy(bufferedImage);
+	// }
 
 	@Override
 	public String toString() {

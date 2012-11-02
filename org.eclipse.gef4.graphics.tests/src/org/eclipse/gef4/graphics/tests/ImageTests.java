@@ -30,11 +30,8 @@ public class ImageTests {
 		Image img = new Image(new BufferedImage(640, 480,
 				BufferedImage.TYPE_3BYTE_BGR));
 
-		assertEquals(640, img.bufferedImage().getWidth());
-		assertEquals(480, img.bufferedImage().getHeight());
-
-		// Image transforms to ARGB color space (hence, 4 channels)
-		assertEquals(4, img.bufferedImage().getRaster().getNumBands());
+		assertEquals(640, img.getWidth());
+		assertEquals(480, img.getHeight());
 
 		boolean thrown = false;
 		try {

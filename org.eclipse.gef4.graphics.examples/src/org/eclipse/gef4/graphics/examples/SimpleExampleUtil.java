@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+
+import javax.imageio.ImageIO;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -81,11 +81,11 @@ public class SimpleExampleUtil {
 
 		Image image;
 		try {
-			image = new Image(new File(SimpleExampleUtil.class.getResource(
-					IMAGE_FILE).toURI()));
-		} catch (URISyntaxException e) {
+			image = new Image(ImageIO.read(SimpleExampleUtil.class
+					.getResource(IMAGE_FILE)));
+		} catch (IOException x) {
 			System.out.println("Cannot load image file '" + IMAGE_FILE + "':");
-			e.printStackTrace();
+			x.printStackTrace();
 			return;
 		}
 

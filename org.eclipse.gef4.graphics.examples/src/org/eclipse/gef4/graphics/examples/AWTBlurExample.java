@@ -15,11 +15,11 @@ package org.eclipse.gef4.graphics.examples;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -68,7 +68,7 @@ class AWTBlurExamplePanel extends JPanel {
 	private void initResources(URL resource) throws IOException,
 			URISyntaxException {
 		if (img == null) {
-			img = new Image(new File(resource.toURI()));
+			img = new Image(ImageIO.read(resource));
 		}
 
 		if (imgNoOp == null) {

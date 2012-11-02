@@ -92,7 +92,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 
 			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
-					BufferedImage src, int x, int y, int[] neighbors) {
+					Image src,
+					int x, int y, int[] neighbors) {
 				// we do not need to inspect the neighbors
 			}
 
@@ -167,7 +168,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 
 			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
-					BufferedImage src, int x, int y, int[] neighbors) {
+					Image src,
+					int x, int y, int[] neighbors) {
 				int w = src.getWidth();
 				int h = src.getHeight();
 				int over = op.getDimension() / 2;
@@ -182,7 +184,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 							if (yy < 0 || yy >= h) {
 								neighbors[i++] = color;
 							} else {
-								neighbors[i++] = src.getRGB(xx, yy);
+								neighbors[i++] = src.getPixel(xx, yy);
 							}
 						}
 					}
@@ -230,8 +232,9 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		public static class NoOperation extends EdgeMode {
 			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
-					BufferedImage src, int x, int y, int[] neighbors) {
-				neighbors[0] = src.getRGB(x, y);
+					Image src,
+					int x, int y, int[] neighbors) {
+				neighbors[0] = src.getPixel(x, y);
 			}
 
 			@Override
@@ -252,7 +255,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		public static class Overlap extends EdgeMode {
 			@Override
 			public void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
-					BufferedImage src, int x, int y, int[] neighbors) {
+					Image src,
+					int x, int y, int[] neighbors) {
 				int w = src.getWidth();
 				int h = src.getHeight();
 				int over = op.getDimension() / 2;
@@ -261,7 +265,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 					int x2 = xx < 0 ? w + xx : xx >= w ? xx - w : xx;
 					for (int yy = y - over; yy <= y + over; yy++) {
 						int y2 = yy < 0 ? h + yy : yy >= h ? yy - h : yy;
-						neighbors[i++] = src.getRGB(x2, y2);
+						neighbors[i++] = src.getPixel(x2, y2);
 					}
 				}
 			}
@@ -288,20 +292,20 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		 * 
 		 * <p>
 		 * Example implementation for non-"edge" pixels:
-		 * {@link AbstractPixelNeighborhoodFilterOperation#fillNeighbors(BufferedImage, int, int)
+		 * {@link AbstractPixelNeighborhoodFilterOperation#fillNeighbors(Image, int, int)
 		 * fillNeighbors}.
 		 * </p>
 		 * 
 		 * <p>
 		 * Example implemenation for {@link ConstantPixelNeighbors}:
-		 * {@link ConstantPixelNeighbors#fillNeighbors(AbstractPixelNeighborhoodFilterOperation, BufferedImage, int, int, int[])
+		 * {@link ConstantPixelNeighbors#fillNeighbors(AbstractPixelNeighborhoodFilterOperation, Image, int, int, int[])
 		 * fillNeighbors}.
 		 * </p>
 		 * 
 		 * @param op
 		 *            the applied
 		 *            {@link AbstractPixelNeighborhoodFilterOperation}
-		 * @param src
+		 * @param image
 		 *            the processed {@link BufferedImage} (TODO: Make this a
 		 *            GEF4 {@link Image}.)
 		 * @param x
@@ -313,7 +317,8 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 		 *            neighborhood at a the currently processed position
 		 */
 		public abstract void fillNeighbors(AbstractPixelNeighborhoodFilterOperation op,
-				BufferedImage src, int x, int y, int[] neighbors);
+				Image image,
+				int x, int y, int[] neighbors);
 
 		/**
 		 * Returns the new ARGB pixel value for the passed-in
@@ -371,14 +376,10 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 	}
 
 	public Image apply(final Image image) {
-		BufferedImage src = image.bufferedImage();
-		BufferedImage res = new BufferedImage(src.getWidth(), src.getHeight(),
-				BufferedImage.TYPE_INT_ARGB);
-
-		filterMiddle(src, res);
-		filterEdges(src, res);
-
-		return new Image(res);
+		Image res = image.getCopy();
+		filterMiddle(image, res);
+		filterEdges(image, res);
+		return res;
 	}
 
 	/**
@@ -394,7 +395,7 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 	 * that further methods can base their calculations on that neighborhood.
 	 * </p>
 	 * 
-	 * @param src
+	 * @param image
 	 *            the processed {@link BufferedImage} (TODO: Make this a GEF4
 	 *            {@link Image}.)
 	 * @param x
@@ -402,64 +403,68 @@ public abstract class AbstractPixelNeighborhoodFilterOperation implements IImage
 	 * @param y
 	 *            the y-coordinate of the processed pixel
 	 */
-	protected void fillNeighbors(BufferedImage src, int x, int y) {
+	protected void fillNeighbors(Image image, int x, int y) {
 		int over = dimension / 2;
 		int i = 0;
 		for (int xx = x - over; xx <= x + over; xx++) {
 			for (int yy = y - over; yy <= y + over; yy++) {
-				neighbors[i++] = src.getRGB(xx, yy);
+				neighbors[i++] = image.getPixel(xx, yy);
 			}
 		}
 	}
 
-	private void filterEdges(BufferedImage src, BufferedImage dst) {
-		int width = src.getWidth();
-		int height = src.getHeight();
+	private void filterEdges(Image image, Image res) {
+		int width = image.getWidth();
+		int height = image.getHeight();
 
 		int edgeWidth = dimension / 2;
 
 		// filter top
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < edgeWidth; y++) {
-				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
+				edgeMode.fillNeighbors(this, image, x, y, neighbors);
+				res.setPixel(x, y,
+						edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
 		// filter bottom
 		for (int x = 0; x < width; x++) {
 			for (int y = height - edgeWidth; y < height; y++) {
-				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
+				edgeMode.fillNeighbors(this, image, x, y, neighbors);
+				res.setPixel(x, y,
+						edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
 		// filter left
 		for (int x = 0; x < edgeWidth; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
-				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
+				edgeMode.fillNeighbors(this, image, x, y, neighbors);
+				res.setPixel(x, y,
+						edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 
 		// filter right
 		for (int x = width - edgeWidth; x < width; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
-				edgeMode.fillNeighbors(this, src, x, y, neighbors);
-				dst.setRGB(x, y, edgeMode.processNeighborhodd(this, neighbors));
+				edgeMode.fillNeighbors(this, image, x, y, neighbors);
+				res.setPixel(x, y,
+						edgeMode.processNeighborhodd(this, neighbors));
 			}
 		}
 	}
 
-	private void filterMiddle(BufferedImage src, BufferedImage dst) {
-		int width = src.getWidth();
-		int height = src.getHeight();
+	private void filterMiddle(Image image, Image res) {
+		int width = image.getWidth();
+		int height = image.getHeight();
 		int edgeWidth = dimension / 2;
 
 		for (int x = edgeWidth; x < width - edgeWidth; x++) {
 			for (int y = edgeWidth; y < height - edgeWidth; y++) {
-				fillNeighbors(src, x, y);
-				dst.setRGB(x, y, processNeighborhood(neighbors));
+				fillNeighbors(image, x, y);
+				res.setPixel(x, y, processNeighborhood(neighbors));
 			}
 		}
 	}

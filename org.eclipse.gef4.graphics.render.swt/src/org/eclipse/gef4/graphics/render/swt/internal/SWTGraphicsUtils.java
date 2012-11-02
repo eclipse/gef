@@ -12,15 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.render.swt.internal;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Font;
 import org.eclipse.gef4.graphics.Image;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 class SWTGraphicsUtils {
@@ -36,41 +34,19 @@ class SWTGraphicsUtils {
 		return new org.eclipse.swt.graphics.Font(Display.getCurrent(),
 				font.getFamily(), (int) font.getSize(), swtStyle);
 	}
-
-	static org.eclipse.swt.graphics.Image createSWTImage(Image img) {
-		BufferedImage bufImg = img.bufferedImage();
-		int width = bufImg.getWidth();
-		int height = bufImg.getHeight();
-		int depth = 24;
-		ImageData swtdat = new ImageData(width, height,
-				depth, new PaletteData(
-						0xFF0000, 0xFF00, 0xFF));
-		if (swtdat.alphaData == null) {
-			swtdat.alphaData = new byte[width * height];
-		}
-
-		Raster raster = bufImg.getData();
-		int numBands = raster.getNumBands();
-		int scanLineWidth = width * numBands;
-		int[] awtdat = raster.getPixels(0, 0, width, height, new int[height
-		                                                             * scanLineWidth]);
-
-		for (int y = 0; y < height; y++) {
-			int swtdatOffset = y * swtdat.bytesPerLine;
-			int awtdatOffset = y * scanLineWidth;
-			for (int x = 0; x < width; x++) {
-				int swtdatIdx = swtdatOffset + x * 3;
-				int awtdatIdx = awtdatOffset + x * numBands;
-				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx];
-				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx + 1];
-				swtdat.data[swtdatIdx++] = (byte) awtdat[awtdatIdx + 2];
-				if (numBands == 4) {
-					swtdat.alphaData[y * width + x] = (byte) awtdat[awtdatIdx + 3];
-				}
+	
+	static org.eclipse.swt.graphics.Image createSWTImage(Image image) {
+		PaletteData paletteData = new PaletteData(0xff0000, 0xff00, 0xff);
+		ImageData imageData = new ImageData(image.getWidth(), image.getHeight(), 32, paletteData);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				int[] argb = Color.getPixelARGB(image.getPixel(x, y));
+				imageData.setPixel(x, y, paletteData.getPixel(new RGB(argb[1], argb[2], argb[3])));
+				imageData.setAlpha(x, y, argb[0]);
 			}
 		}
-
-		return new org.eclipse.swt.graphics.Image(Display.getCurrent(), swtdat);
+		
+		return new org.eclipse.swt.graphics.Image(Display.getCurrent(), imageData);
 	}
 
 	static void dispose(org.eclipse.swt.graphics.Resource res) {
