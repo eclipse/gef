@@ -393,6 +393,15 @@ public class EllipseTests {
 	}
 
 	@Test
+	public void test_getShrinked() {
+		Ellipse e = new Ellipse(0, 0, 100, 100);
+		assertEquals(new Ellipse(50, 0, 50, 100), e.getShrinked(50, 0, 0, 0));
+		assertEquals(new Ellipse(0, 50, 100, 50), e.getShrinked(0, 50, 0, 0));
+		assertEquals(new Ellipse(0, 0, 50, 100), e.getShrinked(0, 0, 50, 0));
+		assertEquals(new Ellipse(0, 0, 100, 50), e.getShrinked(0, 0, 0, 50));
+	}
+
+	@Test
 	public void test_intersects_Line() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);

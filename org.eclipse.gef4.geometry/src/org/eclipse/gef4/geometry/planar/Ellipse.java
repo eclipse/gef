@@ -253,35 +253,24 @@ public class Ellipse extends
 					&& PrecisionUtils.smallerEqual(x1, a)) { // -a <= x1 <= a
 				// inside the ellipse
 
-				// x is known (x = x1), so we do only need to calculate y
+				// x is known (x = x1), so we do only need to calculate y.
+				// y = +- sqrt(rad), follows from the equations above.
 				double rad = bSq * (1 - x1 * x1 / aSq);
-
-				// y = +- sqrt(rad), follows from the equations above
 				double y = rad < 0 ? 0 : Math.sqrt(rad);
 
-				if (isInBetween(y, y1, y2)) {
-					intersections.add(new Point(x1, y));
-				} else if (isInBetween(-y, y1, y2)) {
-					intersections.add(new Point(x1, -y));
-				}
+				if (y == 0) {
+					if (isInBetween(0, y1, y2)) {
+						intersections.add(new Point(x1, 0));
+					}
+				} else {
 
-				// if (PrecisionUtils.greaterEqual(y1, y)) {
-				// if (PrecisionUtils.smallerEqual(y2, y)) {
-				// intersections.add(new Point(x1, y));
-				// }
-				// if (!PrecisionUtils.equal(y, 0)
-				// && PrecisionUtils.smallerEqual(y2, -y)) {
-				// intersections.add(new Point(x1, -y));
-				// }
-				// } else if (PrecisionUtils.smallerEqual(y1, -y)) {
-				// if (PrecisionUtils.greaterEqual(y2, -y)) {
-				// intersections.add(new Point(x1, -y));
-				// }
-				// if (!PrecisionUtils.equal(y, 0)
-				// && PrecisionUtils.greaterEqual(y2, y)) {
-				// intersections.add(new Point(x1, y));
-				// }
-				// }
+					if (isInBetween(y, y1, y2)) {
+						intersections.add(new Point(x1, y));
+					}
+					if (isInBetween(-y, y1, y2)) {
+						intersections.add(new Point(x1, -y));
+					}
+				}
 			}
 		} else {
 			// calculating the line function's slope and y-offset:
