@@ -378,6 +378,21 @@ public class EllipseTests {
 	}
 
 	@Test
+	public void test_getIntersections_Line_failing() {
+		Ellipse e = new Ellipse(0.0, 0.0, 100.0, 100.0);
+		Point p1 = new Point(25.0, 25.0);
+		Point p2 = new Point(25.0, -93.0);
+
+		assertTrue(e.contains(p1));
+		assertFalse(e.contains(p2));
+
+		Line l = new Line(p1, p2);
+		Point[] intersections = e.getIntersections(l);
+
+		assertEquals(1, intersections.length);
+	}
+
+	@Test
 	public void test_intersects_Line() {
 		Rectangle r = new Rectangle(34.3435, 56.458945, 123.3098, 146.578);
 		Ellipse e = new Ellipse(r);

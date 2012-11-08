@@ -252,26 +252,36 @@ public class Ellipse extends
 			if (PrecisionUtils.smallerEqual(-a, x1)
 					&& PrecisionUtils.smallerEqual(x1, a)) { // -a <= x1 <= a
 				// inside the ellipse
+
+				// x is known (x = x1), so we do only need to calculate y
 				double rad = bSq * (1 - x1 * x1 / aSq);
+
+				// y = +- sqrt(rad), follows from the equations above
 				double y = rad < 0 ? 0 : Math.sqrt(rad);
 
-				if (PrecisionUtils.greaterEqual(y1, y)) {
-					if (PrecisionUtils.smallerEqual(y2, y)) {
-						intersections.add(new Point(x1, y));
-					}
-					if (!PrecisionUtils.equal(y, 0)
-							&& PrecisionUtils.smallerEqual(y2, -y)) {
-						intersections.add(new Point(x1, -y));
-					}
-				} else if (PrecisionUtils.smallerEqual(y1, -y)) {
-					if (PrecisionUtils.greaterEqual(y2, -y)) {
-						intersections.add(new Point(x1, -y));
-					}
-					if (!PrecisionUtils.equal(y, 0)
-							&& PrecisionUtils.greaterEqual(y2, y)) {
-						intersections.add(new Point(x1, y));
-					}
+				if (isInBetween(y, y1, y2)) {
+					intersections.add(new Point(x1, y));
+				} else if (isInBetween(-y, y1, y2)) {
+					intersections.add(new Point(x1, -y));
 				}
+
+				// if (PrecisionUtils.greaterEqual(y1, y)) {
+				// if (PrecisionUtils.smallerEqual(y2, y)) {
+				// intersections.add(new Point(x1, y));
+				// }
+				// if (!PrecisionUtils.equal(y, 0)
+				// && PrecisionUtils.smallerEqual(y2, -y)) {
+				// intersections.add(new Point(x1, -y));
+				// }
+				// } else if (PrecisionUtils.smallerEqual(y1, -y)) {
+				// if (PrecisionUtils.greaterEqual(y2, -y)) {
+				// intersections.add(new Point(x1, -y));
+				// }
+				// if (!PrecisionUtils.equal(y, 0)
+				// && PrecisionUtils.greaterEqual(y2, y)) {
+				// intersections.add(new Point(x1, y));
+				// }
+				// }
 			}
 		} else {
 			// calculating the line function's slope and y-offset:
@@ -378,6 +388,17 @@ public class Ellipse extends
 	public IGeometry getTransformed(AffineTransform t) {
 		// choose a path implementation
 		return toPath().getTransformed(t);
+	}
+
+	private boolean isInBetween(double a, double lower, double upper) {
+		if (upper < lower) {
+			double tmp = upper;
+			upper = lower;
+			lower = tmp;
+		}
+
+		return PrecisionUtils.greaterEqual(a, lower)
+				&& PrecisionUtils.smallerEqual(a, upper);
 	}
 
 	/**
