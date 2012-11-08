@@ -528,7 +528,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * @return <code>this</code> for convenience
 	 */
 	@SuppressWarnings("unchecked")
-	public T shrink(double top, double left, double bottom, double right) {
+	public T shrink(double left, double top, double right, double bottom) {
 		x += left;
 		y += top;
 		width -= (left + right);
