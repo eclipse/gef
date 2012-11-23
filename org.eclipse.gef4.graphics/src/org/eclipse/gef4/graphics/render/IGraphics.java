@@ -17,6 +17,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Image;
 
 /**
@@ -138,6 +139,15 @@ public interface IGraphics {
 	 *            the {@link Path} to draw
 	 */
 	void draw(Path path);
+
+	/**
+	 * Draws the given {@link Point} on this {@link IGraphics} using the
+	 * associated {@link ICanvasProperties} and {@link IDrawProperties}.
+	 * 
+	 * @param point
+	 *            the {@link Point} to draw
+	 */
+	void draw(Point point);
 
 	/**
 	 * Returns the current states {@link IDrawProperties}.

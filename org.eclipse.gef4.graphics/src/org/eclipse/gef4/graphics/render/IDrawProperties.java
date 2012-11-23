@@ -13,9 +13,8 @@
 package org.eclipse.gef4.graphics.render;
 
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Color;
-
-
 
 /**
  * <p>
@@ -175,6 +174,8 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 */
 	void applyOn(IGraphics g, Path p);
 
+	void applyOn(IGraphics g, Point point);
+
 	/**
 	 * Returns the {@link Color draw color} associated with this
 	 * {@link IDrawProperties}.
@@ -183,6 +184,7 @@ public interface IDrawProperties extends IGraphicsProperties {
 	 */
 	Color getColor();
 
+	@Override
 	IDrawProperties getCopy();
 
 	/**

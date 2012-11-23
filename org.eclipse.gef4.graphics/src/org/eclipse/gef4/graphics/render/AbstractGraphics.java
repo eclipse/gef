@@ -18,6 +18,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Image;
 
 /**
@@ -113,19 +114,23 @@ public abstract class AbstractGraphics implements IGraphics {
 		state.writeProperties.activate();
 	}
 
+	@Override
 	public void blit(Image image) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().blitProperties.applyOn(this, image);
 	}
 
+	@Override
 	public IBlitProperties blitProperties() {
 		return currentState().blitProperties;
 	}
 
+	@Override
 	public ICanvasProperties canvasProperties() {
 		return currentState().canvasProperties;
 	}
 
+	@Override
 	public void cleanUp() {
 		// clear states stack
 		while (states.size() > 1) {
@@ -163,32 +168,45 @@ public abstract class AbstractGraphics implements IGraphics {
 		s.writeProperties.deactivate();
 	}
 
+	@Override
 	public void draw(ICurve curve) {
 		draw(curve.toPath());
 	}
 
+	@Override
 	public void draw(Path path) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().drawProperties.applyOn(this, path);
 	}
 
+	@Override
+	public void draw(Point point) {
+		currentState().canvasProperties.applyOn(this);
+		currentState().drawProperties.applyOn(this, point);
+	}
+
+	@Override
 	public IDrawProperties drawProperties() {
 		return currentState().drawProperties;
 	}
 
+	@Override
 	public void fill(IMultiShape multiShape) {
 		fill(multiShape.toPath());
 	}
 
+	@Override
 	public void fill(IShape shape) {
 		fill(shape.toPath());
 	}
 
+	@Override
 	public void fill(Path path) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().fillProperties.applyOn(this, path);
 	}
 
+	@Override
 	public IFillProperties fillProperties() {
 		return currentState().fillProperties;
 	}
@@ -202,10 +220,10 @@ public abstract class AbstractGraphics implements IGraphics {
 		state.writeProperties.init(this);
 	}
 
+	@Override
 	public void popState() {
 		if (states.size() == 1) {
-			throw new IllegalStateException(
-					"You have to push a State first.");
+			throw new IllegalStateException("You have to push a State first.");
 		}
 		cleanUpProperties();
 		deactivateProperties(currentState());
@@ -240,6 +258,7 @@ public abstract class AbstractGraphics implements IGraphics {
 		initProperties();
 	}
 
+	@Override
 	public void pushState() {
 		if (states.isEmpty()) {
 			throw new IllegalStateException(
@@ -251,16 +270,19 @@ public abstract class AbstractGraphics implements IGraphics {
 		initProperties();
 	}
 
+	@Override
 	public void restoreState() {
 		popState();
 		pushState();
 	}
 
+	@Override
 	public void write(String text) {
 		currentState().canvasProperties.applyOn(this);
 		currentState().writeProperties.applyOn(this, text);
 	}
 
+	@Override
 	public IWriteProperties writeProperties() {
 		return currentState().writeProperties;
 	}

@@ -51,6 +51,7 @@ public class AWTGraphics extends AbstractGraphics {
 		pushInitialState(cp, dp, fp, bp, wp);
 	}
 
+	@Override
 	public IFontUtils fontUtils() {
 		return new AWTFontUtils(this);
 	}

@@ -18,6 +18,7 @@ import java.awt.RenderingHints;
 
 import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.render.AbstractDrawProperties;
 import org.eclipse.gef4.graphics.render.IDrawProperties;
@@ -39,34 +40,31 @@ public class AWTDrawProperties extends AbstractDrawProperties {
 	protected Color drawColor;
 
 	/**
-	 * Creates a new {@link AWTDrawProperties} with the {@link #drawColor} set to
-	 * the default color specified by the {@link IDrawProperties} interface.
+	 * Creates a new {@link AWTDrawProperties} with the {@link #drawColor} set
+	 * to the default color specified by the {@link IDrawProperties} interface.
 	 */
 	public AWTDrawProperties() {
 		drawColor = new Color();
 	}
 
+	@Override
 	public void applyOn(IGraphics graphics, Path path) {
-		Graphics2D g = ((AWTGraphics) graphics).getGraphics2D();
-
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON
-						: RenderingHints.VALUE_ANTIALIAS_OFF);
-
-		java.awt.Color awtColor = AWTGraphicsUtils.toAWTColor(drawColor);
-		g.setColor(awtColor);
-
-		g.setStroke(getAWTStroke());
-
-		g.draw(Geometry2AWT.toAWTPath(path));
+		prepare(graphics).draw(Geometry2AWT.toAWTPath(path));
 	}
 
+	@Override
+	public void applyOn(IGraphics graphics, Point point) {
+		int x = (int) point.x;
+		int y = (int) point.y;
+		prepare(graphics).fillRect(x, y, 1, 1);
+	}
+
+	@Override
 	public void cleanUp(IGraphics g) {
-		// TODO Auto-generated method stub
-
+		// set stroke etc.
 	}
 
-	private BasicStroke getAWTStroke() {
+	private BasicStroke createAWTStroke() {
 		float[] dashes = null;
 		if (dashArray != null) {
 			dashes = new float[dashArray.length];
@@ -79,16 +77,18 @@ public class AWTDrawProperties extends AbstractDrawProperties {
 				lineCap == LineCap.FLAT ? BasicStroke.CAP_BUTT
 						: lineCap == LineCap.ROUND ? BasicStroke.CAP_ROUND
 								: BasicStroke.CAP_SQUARE,
-								lineJoin == LineJoin.BEVEL ? BasicStroke.JOIN_BEVEL
-										: lineJoin == LineJoin.MITER ? BasicStroke.JOIN_MITER
-												: BasicStroke.JOIN_ROUND, (float) miterLimit,
-												dashes, (float) dashBegin);
+				lineJoin == LineJoin.BEVEL ? BasicStroke.JOIN_BEVEL
+						: lineJoin == LineJoin.MITER ? BasicStroke.JOIN_MITER
+								: BasicStroke.JOIN_ROUND, (float) miterLimit,
+				dashes, (float) dashBegin);
 	}
 
+	@Override
 	public Color getColor() {
 		return drawColor.getCopy();
 	}
 
+	@Override
 	public AWTDrawProperties getCopy() {
 		AWTDrawProperties copy = new AWTDrawProperties();
 		copy.antialiasing = antialiasing;
@@ -102,11 +102,30 @@ public class AWTDrawProperties extends AbstractDrawProperties {
 		return copy;
 	}
 
+	@Override
 	public void init(IGraphics g) {
-		// TODO Auto-generated method stub
-
+		// TODO: read stroke etc.
 	}
 
+	/**
+	 * @param graphics
+	 */
+	private Graphics2D prepare(IGraphics graphics) {
+		Graphics2D g = ((AWTGraphics) graphics).getGraphics2D();
+
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				antialiasing ? RenderingHints.VALUE_ANTIALIAS_ON
+						: RenderingHints.VALUE_ANTIALIAS_OFF);
+
+		java.awt.Color awtColor = AWTGraphicsUtils.toAWTColor(drawColor);
+		g.setColor(awtColor);
+
+		g.setStroke(createAWTStroke());
+
+		return g;
+	}
+
+	@Override
 	public IDrawProperties setColor(Color drawColor) {
 		this.drawColor.setTo(drawColor);
 		return this;

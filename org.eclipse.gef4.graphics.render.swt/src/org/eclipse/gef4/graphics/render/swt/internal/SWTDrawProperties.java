@@ -14,6 +14,7 @@ package org.eclipse.gef4.graphics.render.swt.internal;
 
 import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
 import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.render.AbstractDrawProperties;
 import org.eclipse.gef4.graphics.render.IGraphics;
@@ -44,21 +45,20 @@ public class SWTDrawProperties extends AbstractDrawProperties {
 		drawColorProperty.set(new Color());
 	}
 
+	@Override
 	public void applyOn(IGraphics g, Path path) {
-		GC gc = ((SWTGraphics) g).getGC();
-
-		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
-		gc.setAlpha(drawColorProperty.data.getAlpha());
-		gc.setLineAttributes(getSWTLineAttributes());
-
-		drawColorProperty.apply(gc);
-
 		org.eclipse.swt.graphics.Path swtPath = new org.eclipse.swt.graphics.Path(
 				Display.getCurrent(), Geometry2SWT.toSWTPathData(path));
-		gc.drawPath(swtPath);
+		prepare(g).drawPath(swtPath);
 		swtPath.dispose();
 	}
 
+	@Override
+	public void applyOn(IGraphics g, Point point) {
+		prepare(g).drawPoint((int) point.x, (int) point.y);
+	}
+
+	@Override
 	public void cleanUp(IGraphics g) {
 		GC gc = ((SWTGraphics) g).getGC();
 		gc.setAlpha(initialAlpha);
@@ -66,10 +66,12 @@ public class SWTDrawProperties extends AbstractDrawProperties {
 		drawColorProperty.clean();
 	}
 
+	@Override
 	public Color getColor() {
 		return drawColorProperty.data.getCopy();
 	}
 
+	@Override
 	public SWTDrawProperties getCopy() {
 		SWTDrawProperties copy = new SWTDrawProperties();
 		copy.setAntialiasing(antialiasing);
@@ -94,13 +96,13 @@ public class SWTDrawProperties extends AbstractDrawProperties {
 				lineCap == LineCap.FLAT ? SWT.CAP_FLAT
 						: lineCap == LineCap.ROUND ? SWT.CAP_ROUND
 								: SWT.CAP_SQUARE,
-								lineJoin == LineJoin.BEVEL ? SWT.JOIN_BEVEL
-										: lineJoin == LineJoin.ROUND ? SWT.JOIN_ROUND
-												: SWT.JOIN_MITER, SWT.LINE_CUSTOM, dashes,
-												(float) dashBegin,
-												(float) miterLimit);
+				lineJoin == LineJoin.BEVEL ? SWT.JOIN_BEVEL
+						: lineJoin == LineJoin.ROUND ? SWT.JOIN_ROUND
+								: SWT.JOIN_MITER, SWT.LINE_CUSTOM, dashes,
+				(float) dashBegin, (float) miterLimit);
 	}
 
+	@Override
 	public void init(IGraphics g) {
 		// abstract factory contract
 		GC gc = ((SWTGraphics) g).getGC();
@@ -110,6 +112,22 @@ public class SWTDrawProperties extends AbstractDrawProperties {
 		initialAlpha = gc.getAlpha();
 	}
 
+	/**
+	 * @param g
+	 * @return
+	 */
+	private GC prepare(IGraphics g) {
+		GC gc = ((SWTGraphics) g).getGC();
+
+		gc.setAntialias(antialiasing ? SWT.ON : SWT.OFF);
+		gc.setAlpha(drawColorProperty.data.getAlpha());
+		gc.setLineAttributes(getSWTLineAttributes());
+
+		drawColorProperty.apply(gc);
+		return gc;
+	}
+
+	@Override
 	public SWTDrawProperties setColor(Color drawColor) {
 		drawColorProperty.set(drawColor);
 		return this;
