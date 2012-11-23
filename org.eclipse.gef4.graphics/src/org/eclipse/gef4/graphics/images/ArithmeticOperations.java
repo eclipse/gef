@@ -145,6 +145,37 @@ public class ArithmeticOperations {
 	}
 
 	/**
+	 * Creates an {@link AbstractChannelFilterOperation} that computes the merge
+	 * of the given {@link Image} and the applied {@link Image}, for each
+	 * channel.
+	 * 
+	 * @param xr
+	 *            [0;1] red balance factor
+	 * @param xg
+	 *            [0;1] green balance factor
+	 * @param xb
+	 *            [0;1] blue balance factor
+	 * @param xa
+	 *            [0;1] alpha balance factor
+	 * @param other
+	 *            the {@link Image} to merge with the applied {@link Image}
+	 * @return an {@link AbstractChannelFilterOperation} that computes the merge
+	 *         of the given {@link Image} and the applied {@link Image}
+	 */
+	public static AbstractColorChannelFilterOperation getBlendOperation(
+			final double xr,
+			final double xg, final double xb, final double xa, final Image other) {
+		final double[] xs = new double[] { xa, xr, xg, xb };
+		return new AbstractColorChannelFilterOperation() {
+			@Override
+			protected int processChannel(int v, int x, int y, int i, Image input) {
+				return (int) (xs[i] * v + (1 - xs[i])
+						* Color.getPixelARGB(other.getPixel(x, y))[i]);
+			}
+		};
+	}
+
+	/**
 	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
 	 * merge of the given {@link Image} and the applied {@link Image}, for each
 	 * color channel.
