@@ -15,6 +15,16 @@ package org.eclipse.gef4.graphics.images;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Image;
 
+/**
+ * The AbstractColorChannelFilterOperation can be used exactly like an
+ * {@link AbstractChannelFilterOperation}. The only difference between the two
+ * is, that an AbstractColorChannelFilterOperation will not call the
+ * {@link AbstractChannelFilterOperation#processChannel(int, int, int, int, Image)}
+ * method for the alpha channel, so that you do not need to check for that.
+ * 
+ * @author mwienand
+ * 
+ */
 abstract public class AbstractColorChannelFilterOperation extends
 AbstractChannelFilterOperation {
 

@@ -18,6 +18,21 @@ import java.util.List;
 
 import org.eclipse.gef4.graphics.Image;
 
+/**
+ * A CompositeChannelFilterOperation combines a set of
+ * {@link AbstractChannelFilterOperation}s to apply them at once to an
+ * {@link Image}. The combination of multiple
+ * {@link AbstractChannelFilterOperation}s does not only ease the appliance by
+ * grouping the operations, it does also increase the execution speed for the
+ * grouped operations. In fact, if when {@link IImageOperation#apply(Image)
+ * applying} the operations sequentially, the {@link Image}'s pixels have to be
+ * iterated for each of the operations. But if they are
+ * {@link IImageOperation#apply(Image) applied} as a group, the {@link Image}'s
+ * pixels do only have to be iterated once.
+ * 
+ * @author mwienand
+ * 
+ */
 public class CompositeChannelFilterOperation extends
 AbstractChannelFilterOperation {
 

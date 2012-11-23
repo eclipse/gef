@@ -16,12 +16,6 @@ import java.util.Arrays;
 
 import org.eclipse.gef4.graphics.Color;
 
-/**
- * A ConvolutionFilterOperation computes...
- * 
- * @author mwienand
- * 
- */
 public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterOperation {
 
 	private final double[] kernel;
