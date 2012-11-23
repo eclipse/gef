@@ -19,13 +19,13 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class SWTGraphicsExample implements PaintListener {
+public class SimpleGraphicsSWT implements PaintListener {
 
 	public static void main(String[] args) {
-		new SWTGraphicsExample("GEF4 Graphics - SWT");
+		new SimpleGraphicsSWT("GEF4 Graphics - SWT");
 	}
 
-	public SWTGraphicsExample(String title) {
+	public SimpleGraphicsSWT(String title) {
 		Display display = new Display();
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);

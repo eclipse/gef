@@ -55,7 +55,6 @@ public class SimpleExampleSWT implements PaintListener {
 		try {
 			SimpleExampleUtil.draw(g);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

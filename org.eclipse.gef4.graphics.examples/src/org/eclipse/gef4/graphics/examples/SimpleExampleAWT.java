@@ -63,7 +63,6 @@ class SimpleExampleAWTPanel extends JPanel {
 		try {
 			SimpleExampleUtil.draw(g);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

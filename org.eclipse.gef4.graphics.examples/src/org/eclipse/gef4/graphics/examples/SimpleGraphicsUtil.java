@@ -18,6 +18,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
 import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
+import org.eclipse.gef4.graphics.render.ColorFill;
 import org.eclipse.gef4.graphics.render.IGraphics;
 
 public class SimpleGraphicsUtil {
@@ -38,7 +39,7 @@ public class SimpleGraphicsUtil {
 		g.fillProperties().setAntialiasing(true);
 		g.pushState();
 
-		g.fillProperties().setColor(red);
+		g.fillProperties().setMode(new ColorFill(red));
 		g.drawProperties().setDashArray(25, 10).setColor(darkRed);
 		g.fill(ellipse);
 		g.draw(ellipse.getOutline());
@@ -46,7 +47,7 @@ public class SimpleGraphicsUtil {
 		g.popState();
 		g.pushState();
 
-		g.fillProperties().setColor(blue);
+		g.fillProperties().setMode(new ColorFill(blue));
 		g.drawProperties().setLineJoin(LineJoin.ROUND)
 				.setLineCap(LineCap.ROUND);
 		g.fill(rectangle);
@@ -54,7 +55,7 @@ public class SimpleGraphicsUtil {
 
 		g.popState();
 
-		g.fillProperties().setColor(green);
+		g.fillProperties().setMode(new ColorFill(green));
 		g.drawProperties().setColor(darkGreen).setLineJoin(LineJoin.MITER);
 		g.fill(triangle);
 		g.draw(triangle.getOutline());

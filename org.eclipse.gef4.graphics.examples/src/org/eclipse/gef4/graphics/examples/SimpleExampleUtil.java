@@ -23,6 +23,7 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Image;
+import org.eclipse.gef4.graphics.render.ColorFill;
 import org.eclipse.gef4.graphics.render.IGraphics;
 
 public class SimpleExampleUtil {
@@ -34,7 +35,7 @@ public class SimpleExampleUtil {
 
 	protected static void draw(IGraphics g) throws IOException {
 		g.drawProperties().setColor(RED);
-		g.fillProperties().setColor(YELLOW);
+		g.fillProperties().setMode(new ColorFill(YELLOW));
 
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
 		g.fill(rectangle);
@@ -47,7 +48,8 @@ public class SimpleExampleUtil {
 				50, 300), new Point(150, 350), new Point(150, 200), new Point(
 				200, 75), new Point(300, 100), new Point(150, 400));
 
-		g.fillProperties().setColor(BLUE);
+		g.fillProperties().setMode(new ColorFill(BLUE));
+		// ((ColorFill) g.fillProperties().getMode()).setColor(BLUE);
 		g.fill(cubicInterpolation.toPath());
 
 		g.restoreState();

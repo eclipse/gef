@@ -16,6 +16,7 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.Color;
+import org.eclipse.gef4.graphics.render.ColorFill;
 import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
 import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
 import org.eclipse.gef4.graphics.render.IGraphics;
@@ -26,13 +27,13 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Example001 implements PaintListener {
+public class Ex001SimpleGraphics implements PaintListener {
 
 	public static void main(String[] args) {
-		new Example001("Simple Graphics");
+		new Ex001SimpleGraphics("Simple Graphics");
 	}
 
-	public Example001(String title) {
+	public Ex001SimpleGraphics(String title) {
 		Display display = new Display();
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
@@ -41,7 +42,7 @@ public class Example001 implements PaintListener {
 		shell.open();
 
 		shell.addPaintListener(this);
-		shell.redraw(); // triggers a PaintEvent platform independently
+		shell.redraw(); // platform independently triggers a PaintEvent
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -70,7 +71,7 @@ public class Example001 implements PaintListener {
 
 		g.pushState(); // saves the current set of properties on the stack
 
-		g.fillProperties().setColor(new Color(255, 0, 0));
+		g.fillProperties().setMode(new ColorFill(new Color(255, 0, 0)));
 		g.drawProperties().setDashArray(25, 10).setColor(new Color(128, 0, 0));
 
 		g.fill(ellipse);
@@ -78,7 +79,7 @@ public class Example001 implements PaintListener {
 
 		g.restoreState(); // restores the previously saved properties
 
-		g.fillProperties().setColor(new Color(0, 0, 255));
+		g.fillProperties().setMode(new ColorFill(new Color(0, 0, 255)));
 		g.drawProperties().setLineJoin(LineJoin.ROUND)
 				.setLineCap(LineCap.ROUND);
 
@@ -88,7 +89,7 @@ public class Example001 implements PaintListener {
 		g.popState(); // removes the previously saved properties from the stack
 						// and enables the prior set of properties
 
-		g.fillProperties().setColor(new Color(0, 255, 0));
+		g.fillProperties().setMode(new ColorFill(new Color(0, 255, 0)));
 		g.drawProperties().setColor(new Color(0, 128, 0))
 				.setLineJoin(LineJoin.MITER);
 

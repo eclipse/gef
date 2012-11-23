@@ -102,10 +102,8 @@ class AWTBlurExamplePanel extends JPanel {
 		try {
 			renderScene(g, this.getClass().getResource("test.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
