@@ -15,6 +15,7 @@ import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.internal.ZestRootLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -118,6 +119,20 @@ public class GraphTests extends TestCase {
 		shell.dispose();
 		assertTrue("The graph's nodes should be disposed", n.isDisposed());
 		assertTrue("The graph's edges should be disposed", c.isDisposed());
+
+	}
+
+	/**
+	 * Check that Graphs with Zest styles can be created and the styles are set
+	 * (e.g. ZestStyles.ANIMATION_DISABLED, see https://bugs.eclipse.org/238529)
+	 */
+	public void testZestGraphStyles() {
+		int style = ZestStyles.ANIMATION_DISABLED;
+		Graph g = new Graph(shell, style);
+		assertTrue("Passed style should be set", (g.getStyle() & style) == 0);
+		style = ZestStyles.GESTURES_DISABLED;
+		g = new Graph(shell, style);
+		assertTrue("Passed style should be set", (g.getStyle() & style) == 0);
 
 	}
 

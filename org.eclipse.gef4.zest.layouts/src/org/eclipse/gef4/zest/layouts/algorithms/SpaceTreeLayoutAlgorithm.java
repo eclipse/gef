@@ -121,7 +121,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 							.size()));
 
 				if (treeObserver != null)
-					refreshLayout(true);
+					refreshLayout(animate);
 			}
 		}
 
@@ -921,12 +921,12 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					.getTreeNode(node);
 			if (expanded) {
 				maximizeExpansion(spaceTreeNode);
-				refreshLayout(true);
+				refreshLayout(animate);
 			} else if (spaceTreeNode.expanded) {
 				spaceTreeNode.expanded = false;
 				((SpaceTreeLayer) spaceTreeLayers.get(spaceTreeNode.depth + 1))
 						.removeNodes(spaceTreeNode.children);
-				refreshLayout(true);
+				refreshLayout(animate);
 			}
 		}
 
@@ -1146,6 +1146,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	 */
 	private SpaceTreeNode protectedNode = null;
 
+	private boolean animate = true;
+
 	/**
 	 * Constructs an instance of <code>SpaceTreeLayoutAlgorithm</code> that
 	 * places the root of a tree at the top of the graph.
@@ -1161,9 +1163,13 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	 *            direction of the tree, sould be one of the following:
 	 *            {@link #TOP_DOWN}, {@link #BOTTOM_UP}, {@link #LEFT_RIGHT},
 	 *            {@link #RIGHT_LEFT}.
+	 * @param animate
+	 *            if true, implicit animations are enabled (e.g. on layout
+	 *            changes)
 	 */
-	public SpaceTreeLayoutAlgorithm(int direction) {
+	public SpaceTreeLayoutAlgorithm(int direction, boolean animate) {
 		setDirection(direction);
+		this.animate = animate;
 	}
 
 	/**
@@ -1267,9 +1273,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			return;
 		SpaceTreeNode superRoot = (SpaceTreeNode) treeObserver.getSuperRoot();
 		if (animation && superRoot.flushCollapseChanges())
-			context.flushChanges(true);
+			context.flushChanges(animation);
 		if (superRoot.flushLocationChanges(0) && animation)
-			context.flushChanges(true);
+			context.flushChanges(animation);
 		superRoot.flushExpansionChanges();
 		superRoot.flushLocationChanges(0);
 		context.flushChanges(animation);

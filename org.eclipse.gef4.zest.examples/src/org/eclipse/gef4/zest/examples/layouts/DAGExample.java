@@ -47,7 +47,7 @@ public class DAGExample {
 
 		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
-		g.setExpandCollapseManager(new DAGExpandCollapseManager());
+		g.setExpandCollapseManager(new DAGExpandCollapseManager(true));
 
 		GraphNode root = new GraphNode(g, SWT.NONE, "Root");
 		GraphNode a = new GraphNode(g, SWT.NONE, "A");

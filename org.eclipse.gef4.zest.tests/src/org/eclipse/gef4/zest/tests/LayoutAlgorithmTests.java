@@ -72,7 +72,7 @@ public class LayoutAlgorithmTests extends TestCase {
 	public void testCustomLayoutSubgraphItemAccess() {
 		Graph graph = new Graph(new Shell(), SWT.NONE);
 		graph.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
-		graph.setExpandCollapseManager(new DAGExpandCollapseManager());
+		graph.setExpandCollapseManager(new DAGExpandCollapseManager(true));
 		GraphNode n1 = new GraphNode(graph, SWT.NONE);
 		GraphNode n2 = new GraphNode(graph, SWT.NONE);
 		GraphNode n3 = new GraphNode(graph, SWT.NONE);
@@ -103,7 +103,7 @@ public class LayoutAlgorithmTests extends TestCase {
 	public void testCustomLayoutSubgraphFilteredAccess() {
 		Graph graph = new Graph(new Shell(), SWT.NONE);
 		graph.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
-		graph.setExpandCollapseManager(new DAGExpandCollapseManager());
+		graph.setExpandCollapseManager(new DAGExpandCollapseManager(true));
 		GraphNode n1 = new GraphNode(graph, SWT.NONE);
 		GraphNode n2 = new GraphNode(graph, SWT.NONE, "filter");
 		GraphNode n3 = new GraphNode(graph, SWT.NONE);

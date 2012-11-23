@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class GraphContainer extends GraphNode implements IContainer {
 
-	static class ExpandGraphLabel extends Figure implements ActionListener {
+	class ExpandGraphLabel extends Figure implements ActionListener {
 
 		private boolean isExpanded;
 		private Expander expander = new Expander();
@@ -116,9 +116,9 @@ public class GraphContainer extends GraphNode implements IContainer {
 		 */
 		public void actionPerformed(ActionEvent event) {
 			if (isExpanded) {
-				container.close(true);
+				container.close(getGraph().animate);
 			} else {
-				container.open(true);
+				container.open(getGraph().animate);
 			}
 		}
 
@@ -683,10 +683,14 @@ public class GraphContainer extends GraphNode implements IContainer {
 		if (layoutAlgorithm == null) {
 			setLayoutAlgorithm(new TreeLayoutAlgorithm(), false);
 		}
-		Animation.markBegin();
+		if (getGraph().animate) {
+			Animation.markBegin();
+		}
 		layoutAlgorithm.applyLayout(true);
 		layoutContext.flushChanges(false);
-		Animation.run(ANIMATION_TIME);
+		if (getGraph().animate) {
+			Animation.run(ANIMATION_TIME);
+		}
 		getFigure().getUpdateManager().performUpdate();
 	}
 

@@ -68,6 +68,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @see ZestStyles#LAYOUT_SPRING
 	 * @see ZestStyles#NO_OVERLAPPING_NODES
 	 * @see ZestStyles#NODES_HIGHLIGHT_ADJACENT
+	 * @see ZestStyles#GESTURES_DISABLED
+	 * @see ZestStyles#ANIMATION_DISABLED
 	 * @see SWT#V_SCROLL
 	 * @see SWT#H_SCROLL
 	 */

@@ -9,6 +9,7 @@ import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -35,14 +36,15 @@ public class TreeLayoutExample {
 		shell.setLayout(gridLayout);
 		shell.setSize(600, 500);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final Graph g = new Graph(shell, ZestStyles.ANIMATION_DISABLED);
 		final TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
 		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
-		g.setExpandCollapseManager(new DAGExpandCollapseManager());
 
+		g.setExpandCollapseManager(new DAGExpandCollapseManager(false));
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 10, 10));
 		g.setSize(500, 500);
+		g.applyLayout();
 
 		GraphNode root = new GraphNode(g, SWT.NONE, "Root");
 

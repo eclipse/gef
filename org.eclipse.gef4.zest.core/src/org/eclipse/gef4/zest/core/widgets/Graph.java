@@ -111,6 +111,7 @@ public class Graph extends FigureCanvas implements IContainer {
 
 	private ConnectionRouter defaultConnectionRouter;
 	private ZoomManager zoomManager = null;
+	boolean animate = true;
 
 	/**
 	 * Constructor for a Graph. This widget represents the root of the graph,
@@ -118,9 +119,11 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * 
 	 * @param parent
 	 * @param style
+	 * @see ZestStyles#GESTURES_DISABLED
+	 * @see ZestStyles#ANIMATION_DISABLED
 	 */
 	public Graph(Composite parent, int style) {
-		super(parent, style | SWT.DOUBLE_BUFFERED);
+		super(parent, (style | SWT.DOUBLE_BUFFERED) & ~ZestStyles.GRAPH_STYLES);
 		this.style = style;
 		this.setBackground(ColorConstants.white);
 
@@ -208,6 +211,7 @@ public class Graph extends FigureCanvas implements IContainer {
 			this.addGestureListener(new ZoomGestureListener());
 			this.addGestureListener(new RotateGestureListener());
 		}
+		animate = (style & (ZestStyles.ANIMATION_DISABLED)) == 0;
 		this.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				release();
@@ -431,11 +435,15 @@ public class Graph extends FigureCanvas implements IContainer {
 				Display.getDefault().asyncExec(
 						scheduledLayoutRunnable = new Runnable() {
 							public void run() {
-								Animation.markBegin();
+								if (animate) {
+									Animation.markBegin();
+								}
 								getLayoutContext().applyLayout(
 										scheduledLayoutClean);
 								layoutContext.flushChanges(false);
-								Animation.run(ANIMATION_TIME);
+								if (animate) {
+									Animation.run(ANIMATION_TIME);
+								}
 								getLightweightSystem().getUpdateManager()
 										.performUpdate();
 								synchronized (Graph.this) {
@@ -734,14 +742,14 @@ public class Graph extends FigureCanvas implements IContainer {
 					return;
 				}
 				if (fisheyedItem != null) {
-					((GraphNode) fisheyedItem).fishEye(false, true);
+					((GraphNode) fisheyedItem).fishEye(false, animate);
 					fisheyedItem = null;
 				}
 				if (itemUnderMouse != null
 						&& itemUnderMouse.getItemType() == GraphItem.NODE) {
 					fisheyedItem = itemUnderMouse;
 					IFigure fisheyedFigure = ((GraphNode) itemUnderMouse)
-							.fishEye(true, true);
+							.fishEye(true, animate);
 					if (fisheyedFigure == null) {
 						// If there is no fisheye figure (this means that the
 						// node does not support a fish eye)
@@ -751,7 +759,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				}
 			} else {
 				if (fisheyedItem != null) {
-					((GraphNode) fisheyedItem).fishEye(false, true);
+					((GraphNode) fisheyedItem).fishEye(false, animate);
 					fisheyedItem = null;
 				}
 			}
@@ -1341,4 +1349,5 @@ public class Graph extends FigureCanvas implements IContainer {
 		}
 		return zoomManager;
 	}
+
 }

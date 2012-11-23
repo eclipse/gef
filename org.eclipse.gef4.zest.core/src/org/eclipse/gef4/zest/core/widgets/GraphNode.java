@@ -580,7 +580,7 @@ public class GraphNode extends GraphItem {
 
 			// Add the fisheye
 			this.getGraphModel().fishEye(nodeFigure, fishEyeFigure, rectangle,
-					true);
+					animate);
 			if (fishEyeFigure != null) {
 				isFisheyeEnabled = true;
 			}

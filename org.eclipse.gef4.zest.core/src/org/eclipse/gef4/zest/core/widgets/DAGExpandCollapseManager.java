@@ -58,6 +58,17 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private boolean cleanLayoutScheduled = false;
 
+	private boolean animate = true;
+
+	/**
+	 * @param animate
+	 *            if true, implicit animations are enabled (e.g. on layout
+	 *            changes)
+	 */
+	public DAGExpandCollapseManager(boolean animate) {
+		this.animate = animate;
+	}
+
 	public void initExpansion(final LayoutContext context2) {
 		if (!(context2 instanceof InternalLayoutContext)) {
 			throw new RuntimeException(
@@ -283,7 +294,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 		(context).applyLayout(cleanLayoutScheduled);
 		cleanLayoutScheduled = false;
-		context.flushChanges(true);
+		context.flushChanges(animate);
 	}
 
 	private boolean isExpanded(NodeLayout node) {
