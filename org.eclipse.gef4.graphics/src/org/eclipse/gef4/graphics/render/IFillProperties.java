@@ -13,16 +13,27 @@
 package org.eclipse.gef4.graphics.render;
 
 import org.eclipse.gef4.geometry.planar.Path;
-import org.eclipse.gef4.graphics.Color;
 
 /**
- * An {@link IFillProperties} manages the {@link IGraphics} properties used when
- * displaying a geometric object using one of the
+ * <p>
+ * An {@link IFillProperties} manages the properties used when displaying a
+ * geometric object using one of the
  * {@link IGraphics#fill(org.eclipse.gef4.geometry.planar.IMultiShape)
  * fill(IMultiShape)},
  * {@link IGraphics#fill(org.eclipse.gef4.geometry.planar.IShape) fill(IShape)},
  * or {@link IGraphics#fill(org.eclipse.gef4.geometry.planar.Path) fill(Path)}
  * methods.
+ * </p>
+ * 
+ * <p>
+ * The modifiable properties are:
+ * <ul>
+ * <li>the anti-aliasing setting ({@link #isAntialiasing()},
+ * {@link #setAntialiasing(boolean)})</li>
+ * <li>the {@link IFillMode} in use ({@link #getMode()},
+ * {@link #setMode(IFillMode)})</li>
+ * </ul>
+ * </p>
  * 
  * @author mwienand
  * 
@@ -33,6 +44,8 @@ public interface IFillProperties extends IGraphicsProperties {
 	 * Anti-aliasing is enabled per default.
 	 */
 	static final boolean DEFAULT_ANTIALIASING = true;
+
+	static final ColorFill DEFAULT_MODE = new ColorFill();
 
 	/**
 	 * Applies the {@link IFillProperties} stored in this object to the
@@ -47,23 +60,28 @@ public interface IFillProperties extends IGraphicsProperties {
 	 */
 	void applyOn(IGraphics g, Path p);
 
-	/**
-	 * Returns the {@link Color fill color} associated with this
-	 * {@link IFillProperties}.
-	 * 
-	 * @return the current {@link Color fill color}
-	 */
-	Color getColor();
+	// /**
+	// * Returns the {@link Color fill color} associated with this
+	// * {@link IFillProperties}.
+	// *
+	// * @return the current {@link Color fill color}
+	// */
+	// Color getColor();
 
 	IFillProperties getCopy();
 
+	// GradientFill getGradient();
+	//
+	// Image getImage();
+	//
+	// FillMode getMode();
+
 	/**
-	 * Returns the {@link Image} associated with this {@link IFillProperties}.
-	 * This {@link Image} is used when filling a geometry object using the...
+	 * Returns a copy of the currently in-use {@link IFillMode}.
 	 * 
-	 * @return the {@link Image} associated with this {@link IFillProperties}
+	 * @return a copy of the currently in-use {@link IFillMode}
 	 */
-	// Image getTexture();
+	IFillMode getMode();
 
 	/**
 	 * Returns <code>true</code> if anti-aliasing is enabled. Otherwise,
@@ -86,15 +104,27 @@ public interface IFillProperties extends IGraphicsProperties {
 	IFillProperties setAntialiasing(boolean antialiasing);
 
 	/**
-	 * Sets the {@link Color fill color} associated with this
-	 * {@link IFillProperties} to the given value.
+	 * Sets the {@link IFillMode} to use for filling geometry objects.
 	 * 
-	 * @param fillColor
-	 *            the new {@link Color fill color}
+	 * @param mode
 	 * @return <code>this</code> for convenience
 	 */
-	IFillProperties setColor(Color fillColor);
+	IFillProperties setMode(IFillMode mode);
 
-	// IFillProperties setTexture(Image texture);
+	// /**
+	// * Sets the {@link Color fill color} associated with this
+	// * {@link IFillProperties} to the given value.
+	// *
+	// * @param fillColor
+	// * the new {@link Color fill color}
+	// * @return <code>this</code> for convenience
+	// */
+	// IFillProperties setColor(Color fillColor);
+	//
+	// IFillProperties setGradient(GradientFill gradient);
+	//
+	// IFillProperties setImage(Image image);
+	//
+	// IFillProperties setMode(FillMode mode);
 
 }

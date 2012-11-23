@@ -36,6 +36,7 @@ public class AWTCanvasProperties extends AbstractCanvasProperties {
 	public AWTCanvasProperties() {
 	}
 
+	@Override
 	public void applyOn(IGraphics graphics) {
 		Graphics2D g = ((AWTGraphics) graphics).getGraphics2D();
 
@@ -46,11 +47,12 @@ public class AWTCanvasProperties extends AbstractCanvasProperties {
 				.getMatrix()));
 	}
 
+	@Override
 	public void cleanUp(IGraphics g) {
-		// TODO Auto-generated method stub
-
+		// reset clip and transform
 	}
 
+	@Override
 	public AWTCanvasProperties getCopy() {
 		AWTCanvasProperties copy = new AWTCanvasProperties();
 		copy.affineTransform = getAffineTransform();
@@ -58,9 +60,9 @@ public class AWTCanvasProperties extends AbstractCanvasProperties {
 		return copy;
 	}
 
+	@Override
 	public void init(IGraphics g) {
-		// TODO Auto-generated method stub
-
+		// read clip and transform
 	}
 
 }
