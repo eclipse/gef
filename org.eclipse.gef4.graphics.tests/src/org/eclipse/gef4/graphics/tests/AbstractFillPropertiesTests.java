@@ -15,7 +15,6 @@ package org.eclipse.gef4.graphics.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.render.IFillProperties;
 import org.eclipse.gef4.graphics.render.IGraphics;
 import org.junit.Test;
@@ -23,18 +22,18 @@ import org.junit.Test;
 public abstract class AbstractFillPropertiesTests extends
 		AbstractGraphicsPropertiesTests<IFillProperties> {
 
-	@Test
-	public void getColor() {
-		assertEquals(properties.getColor(), propertiesCopy.getColor());
-		assertFalse(properties.getColor() == propertiesCopy.getColor());
-		properties.setColor(new Color(0, 0, 0, 0));
-		propertiesCopy.setColor(new Color(1, 1, 1, 1));
-		assertFalse(properties.getColor().equals(propertiesCopy.getColor()));
-		properties.setColor(new Color(0, 1, 0, 1));
-		assertFalse(properties.getColor().equals(propertiesCopy.getColor()));
-		properties.setColor(new Color(1, 1, 1, 1));
-		assertEquals(properties.getColor(), propertiesCopy.getColor());
-	}
+	// @Test
+	// public void getColor() {
+	// assertEquals(properties.getColor(), propertiesCopy.getColor());
+	// assertFalse(properties.getColor() == propertiesCopy.getColor());
+	// properties.setColor(new Color(0, 0, 0, 0));
+	// propertiesCopy.setColor(new Color(1, 1, 1, 1));
+	// assertFalse(properties.getColor().equals(propertiesCopy.getColor()));
+	// properties.setColor(new Color(0, 1, 0, 1));
+	// assertFalse(properties.getColor().equals(propertiesCopy.getColor()));
+	// properties.setColor(new Color(1, 1, 1, 1));
+	// assertEquals(properties.getColor(), propertiesCopy.getColor());
+	// }
 
 	@Override
 	public IFillProperties getProperties(IGraphics g) {

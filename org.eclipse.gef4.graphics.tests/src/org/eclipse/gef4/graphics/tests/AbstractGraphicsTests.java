@@ -19,9 +19,9 @@ import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.render.IGraphics;
 import org.eclipse.gef4.graphics.render.IBlitProperties.InterpolationHint;
 import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
+import org.eclipse.gef4.graphics.render.IGraphics;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,27 +125,27 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		assertEquals(lc0, lc1);
 	}
 
-	@Test
-	public void state_fillProperties() {
-		Color c0 = graphics.fillProperties().setColor(new Color(0, 0, 0, 0))
-				.getColor();
-
-		graphics.pushState();
-
-		Color c1 = graphics.fillProperties().getColor();
-		assertEquals(c0, c1);
-		assertNotSame(c0, c1);
-
-		graphics.fillProperties().setColor(new Color(1, 1, 1, 1));
-		c1 = graphics.fillProperties().getColor();
-		assertFalse(c0.equals(c1));
-
-		graphics.popState();
-
-		c1 = graphics.fillProperties().getColor();
-		assertEquals(c0, c1);
-		assertNotSame(c0, c1);
-	}
+	// @Test
+	// public void state_fillProperties() {
+	// Color c0 = graphics.fillProperties().setColor(new Color(0, 0, 0, 0))
+	// .getColor();
+	//
+	// graphics.pushState();
+	//
+	// Color c1 = graphics.fillProperties().getColor();
+	// assertEquals(c0, c1);
+	// assertNotSame(c0, c1);
+	//
+	// graphics.fillProperties().setColor(new Color(1, 1, 1, 1));
+	// c1 = graphics.fillProperties().getColor();
+	// assertFalse(c0.equals(c1));
+	//
+	// graphics.popState();
+	//
+	// c1 = graphics.fillProperties().getColor();
+	// assertEquals(c0, c1);
+	// assertNotSame(c0, c1);
+	// }
 
 	@Test
 	public void state_writeProperties() {
