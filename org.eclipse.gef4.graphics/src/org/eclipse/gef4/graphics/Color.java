@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
-
 /**
  * TODO
  * 
@@ -237,6 +236,11 @@ public class Color {
 		this(DEFAULT_RED, DEFAULT_GREEN, DEFAULT_BLUE, DEFAULT_ALPHA);
 	}
 
+	public Color(int pixel) {
+		this(getPixelRed(pixel), getPixelGreen(pixel), getPixelBlue(pixel),
+				getPixelAlpha(pixel));
+	}
+
 	/**
 	 * Constructs a new {@link Color} object representing a fully opaque color
 	 * with the specified red, green, and blue components.
@@ -254,6 +258,7 @@ public class Color {
 
 	/**
 	 * Creates a new {@link Color} from the given values.
+	 * 
 	 * @param red
 	 *            the {@link #r red} component of this {@link Color}
 	 * @param green
@@ -289,6 +294,63 @@ public class Color {
 	 */
 	public int getAlpha() {
 		return a;
+	}
+
+	/**
+	 * Blends this {@link Color} and the passed-in {@link Color} with a blending
+	 * ratio of <code>0.5</code>.
+	 * 
+	 * @param other
+	 *            the {@link Color} to blend with this {@link Color}
+	 * @return the {@link Color} resulting from blending this {@link Color} and
+	 *         the passed-in {@link Color}
+	 */
+	public Color getBlended(Color other) {
+		return getBlended(other, 0.5, 0.5, 0.5, 0.5);
+	}
+
+	/**
+	 * Blends this {@link Color} and the passed-in {@link Color} with the
+	 * specified blending ratio. A blending ratio of <code>1</code> will fully
+	 * retain the original channel value. A blending ratio of <code>0</code>
+	 * will fully discard the original channel value.
+	 * 
+	 * @param other
+	 *            the {@link Color} to blend with this {@link Color}
+	 * @param x
+	 *            the blending ratio
+	 * @return the {@link Color} resulting from blending this {@link Color} and
+	 *         the passed-in {@link Color}
+	 */
+	public Color getBlended(Color other, double x) {
+		return getBlended(other, x, x, x, x);
+	}
+
+	/**
+	 * Blends this {@link Color} and the passed-in {@link Color} with the
+	 * specified blending ratios. A blending ratio of <code>1</code> will fully
+	 * retain the original channel value. A blending ratio of <code>0</code>
+	 * will fully discard the original channel value.
+	 * 
+	 * @param other
+	 *            the {@link Color} to blend with this {@link Color}
+	 * @param xRed
+	 *            the red-channel's blending ratio
+	 * @param xGreen
+	 *            the green-channel's blending ratio
+	 * @param xBlue
+	 *            the blue-channel's blending ratio
+	 * @param xAlpha
+	 *            the alpha-channel's blending ratio
+	 * @return the {@link Color} resulting from blending this {@link Color} and
+	 *         the passed-in {@link Color}
+	 */
+	public Color getBlended(Color other, double xRed, double xGreen,
+			double xBlue, double xAlpha) {
+		return new Color((int) (getRed() * xRed + (1 - xRed) * other.getRed()),
+				(int) (getGreen() * xGreen + (1 - xGreen) * other.getGreen()),
+				(int) (getBlue() * xBlue + (1 - xBlue) * other.getBlue()),
+				(int) (getAlpha() * xAlpha + (1 - xAlpha) * other.getAlpha()));
 	}
 
 	/**
@@ -336,7 +398,7 @@ public class Color {
 	@Override
 	public int hashCode() {
 		return (r << 24) + (g << 16) + (b << 8) + a;
-	};
+	}
 
 	/**
 	 * Sets the alpha component of this {@link Color} to the specified value in
@@ -352,7 +414,7 @@ public class Color {
 		if (alpha < 0 || alpha > 255) {
 			throw new IllegalArgumentException(
 					"The given alpha component (alpha = " + alpha
-					+ ") is not in the range [0;255]!");
+							+ ") is not in the range [0;255]!");
 		}
 		a = alpha;
 		return this;
@@ -371,7 +433,7 @@ public class Color {
 		if (blue < 0 || blue > 255) {
 			throw new IllegalArgumentException(
 					"The given alpha component (alpha = " + blue
-					+ ") is not in the range [0;255]!");
+							+ ") is not in the range [0;255]!");
 		}
 		b = blue;
 		return this;
@@ -390,7 +452,7 @@ public class Color {
 		if (green < 0 || green > 255) {
 			throw new IllegalArgumentException(
 					"The given alpha component (alpha = " + green
-					+ ") is not in the range [0;255]!");
+							+ ") is not in the range [0;255]!");
 		}
 		g = green;
 		return this;
@@ -409,7 +471,7 @@ public class Color {
 		if (red < 0 || red > 255) {
 			throw new IllegalArgumentException(
 					"The given alpha component (alpha = " + red
-					+ ") is not in the range [0;255]!");
+							+ ") is not in the range [0;255]!");
 		}
 		r = red;
 		return this;
