@@ -41,7 +41,7 @@ public class Image {
 	private static BufferedImage getCopy(BufferedImage bufferedImage) {
 		BufferedImage copy = new BufferedImage(bufferedImage.getWidth(),
 				bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = bufferedImage.createGraphics();
+		Graphics2D g2d = copy.createGraphics();
 		g2d.drawImage(bufferedImage, null, 0, 0);
 		g2d.dispose();
 		return copy;
@@ -52,9 +52,6 @@ public class Image {
 	 */
 	private BufferedImage bufferedImage = null;
 
-	// TODO: add default constructor. (What should its semantics be?)
-	// TODO: add (width, height, ?background-color?) constructor.
-
 	/**
 	 * Constructs a new {@link Image} from the given {@link BufferedImage}.
 	 * 
@@ -63,6 +60,9 @@ public class Image {
 	public Image(BufferedImage bufferedImage) {
 		this.bufferedImage = getCopy(bufferedImage);
 	}
+
+	// TODO: add default constructor. (What should its semantics be?)
+	// TODO: add (width, height, ?background-color?) constructor.
 
 	/**
 	 * <p>
@@ -431,6 +431,10 @@ public class Image {
 					+ ") out of image bounds (0-" + getHeight() + ").");
 		}
 		bufferedImage.setRGB(x, y, argb);
+	}
+
+	public BufferedImage toBufferedImage() {
+		return bufferedImage;
 	}
 
 	// /**
