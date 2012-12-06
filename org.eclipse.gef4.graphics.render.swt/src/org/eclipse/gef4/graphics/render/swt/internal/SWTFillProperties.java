@@ -17,6 +17,8 @@ import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.render.AbstractFillProperties;
 import org.eclipse.gef4.graphics.render.ColorFill;
+import org.eclipse.gef4.graphics.render.GradientFill;
+import org.eclipse.gef4.graphics.render.GradientFill.GradientStop;
 import org.eclipse.gef4.graphics.render.IFillMode;
 import org.eclipse.gef4.graphics.render.IFillProperties;
 import org.eclipse.gef4.graphics.render.IGraphics;
@@ -68,75 +70,35 @@ public class SWTFillProperties extends AbstractFillProperties {
 
 			gc.setBackgroundPattern(oldPattern);
 			imagePattern.dispose();
-		}
-		// else if (fillMode instanceof GradientFill.Linear) {
-		// GradientFill.Linear m = (GradientFill.Linear) fillMode;
-		//
-		// GradientStop[] stops = m.getStops();
-		// if (stops.length < 2) {
-		// throw new IllegalStateException(
-		// "A GradientFill requires at least 2 specified GradientStops.");
-		// }
-		//
-		// // back-up GC's settings
-		// Pattern oldPattern = gc.getBackgroundPattern();
-		// Region oldClip = new Region();
-		// gc.getClipping(oldClip);
-		//
-		// PathData swtPathData = Geometry2SWT.toSWTPathData(path);
-		// org.eclipse.swt.graphics.Path swtPath = new
-		// org.eclipse.swt.graphics.Path(
-		// gc.getDevice(), swtPathData);
-		//
-		// Rectangle bounds = path.getBounds();
-		//
-		// Point start = m.getStart();
-		// Point end = m.getEnd();
-		// Vector direction = new Vector(start, end);
-		// Vector normal = direction.getRotatedCCW(Angle.fromDeg(90));
-		//
-		// for (int i = 0; i < stops.length - 1; i++) {
-		// GradientStop s0 = stops[i];
-		// GradientStop s1 = stops[i + 1];
-		//
-		// Color c0 = s0.getColor();
-		// Color c1 = s1.getColor();
-		//
-		// Point offset = start.getTranslated(direction.getMultiplied(
-		// s0.getPercentualDistance()).toPoint());
-		// Point stop = start.getTranslated(direction.getMultiplied(
-		// s1.getPercentualDistance()).toPoint());
-		//
-		// Straight cutLine = new Straight(new Vector(offset), normal);
-		// // TODO: find first two points of intersection
-		//
-		// cutLine = new Straight(new Vector(stop), normal);
-		// // TODO: find next two points of intersection
-		//
-		// // TODO: construct clipping polygon from the points of
-		// // intersection
-		//
-		// // TODO: intersect user's clipping region with the clipping
-		// // polygon
-		//
-		// Pattern gradientPattern = new Pattern(gc.getDevice(),
-		// (float) offset.x, (float) offset.y, (float) stop.x,
-		// (float) stop.y, SWTGraphicsUtils.createSWTColor(c0),
-		// c0.getAlpha(), SWTGraphicsUtils.createSWTColor(c1),
-		// c1.getAlpha());
-		//
-		// // TODO: fill with gradientPattern
-		// }
-		//
-		// // TODO: work out how to handle CycleMode
-		//
-		// // clean up
-		// gc.setBackgroundPattern(oldPattern);
-		// gc.setClipping(oldClip);
-		// oldClip.dispose();
-		// swtPath.dispose();
-		// }
-		else {
+		} else if (fillMode instanceof GradientFill.Linear) {
+			GradientFill.Linear m = (GradientFill.Linear) fillMode;
+			GradientStop[] stops = normalize(m.getStops());
+
+			if (stops.length == 2) {
+				org.eclipse.swt.graphics.Color swtColorFrom = SWTGraphicsUtils
+						.createSWTColor(stops[0].getColor());
+				org.eclipse.swt.graphics.Color swtColorTo = SWTGraphicsUtils
+						.createSWTColor(stops[1].getColor());
+
+				Pattern gradientPattern = new Pattern(gc.getDevice(),
+						(float) m.getStart().x, (float) m.getStart().y,
+						(float) m.getEnd().x, (float) m.getEnd().y,
+						swtColorFrom, stops[0].getColor().getAlpha(),
+						swtColorTo, stops[1].getColor().getAlpha());
+
+				Pattern oldPattern = gc.getBackgroundPattern();
+				gc.setBackgroundPattern(gradientPattern);
+
+				fillPath(path, gc);
+
+				// clean up
+				gc.setBackgroundPattern(oldPattern);
+				swtColorFrom.dispose();
+				swtColorTo.dispose();
+			} else {
+				super.generalFill(g, path);
+			}
+		} else {
 			super.generalFill(g, path);
 		}
 	}
@@ -168,4 +130,25 @@ public class SWTFillProperties extends AbstractFillProperties {
 	public void init(IGraphics g) {
 	}
 
+	private GradientStop[] normalize(GradientStop[] stops) {
+		boolean addFrom = stops[0].getPercentualDistance() > 0;
+		boolean addTo = stops[stops.length - 1].getPercentualDistance() < 1;
+
+		GradientStop[] normalizedStops = new GradientStop[stops.length
+				+ (addFrom ? 1 : 0) + (addTo ? 1 : 0)];
+
+		if (addFrom) {
+			normalizedStops[0] = new GradientStop(0, stops[0].getColor());
+		}
+
+		System.arraycopy(stops, 0, normalizedStops, addFrom ? 1 : 0,
+				stops.length);
+
+		if (addTo) {
+			normalizedStops[normalizedStops.length - 1] = new GradientStop(1,
+					stops[stops.length - 1].getColor());
+		}
+
+		return normalizedStops;
+	}
 }
