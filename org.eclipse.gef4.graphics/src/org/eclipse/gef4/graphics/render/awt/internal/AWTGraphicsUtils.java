@@ -62,6 +62,4 @@ class AWTGraphicsUtils {
 		return res;
 	}
 
-
-
 }

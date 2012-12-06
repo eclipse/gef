@@ -433,9 +433,9 @@ public class Image {
 		bufferedImage.setRGB(x, y, argb);
 	}
 
-	public BufferedImage toBufferedImage() {
-		return bufferedImage;
-	}
+	// public BufferedImage toBufferedImage() {
+	// return bufferedImage;
+	// }
 
 	// /**
 	// * Returns the {@link BufferedImage} that is used to store the image data

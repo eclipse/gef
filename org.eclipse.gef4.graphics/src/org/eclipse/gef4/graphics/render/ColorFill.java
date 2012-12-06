@@ -3,6 +3,17 @@ package org.eclipse.gef4.graphics.render;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Color;
 
+/**
+ * When a ColorFill {@link IFillMode} implementation is applied, the
+ * {@link IGraphics#fill(org.eclipse.gef4.geometry.planar.Path)
+ * IGraphics#fill()} methods will fill the given objects with a single
+ * {@link Color}.
+ * 
+ * @see GradientFill
+ * @see ImageFill
+ * @author mwienand
+ * 
+ */
 public class ColorFill implements IFillMode {
 
 	private Color color = null;
@@ -25,10 +36,12 @@ public class ColorFill implements IFillMode {
 		return color.getCopy();
 	}
 
+	@Override
 	public Color getColorAt(Point p) {
 		return color.getCopy();
 	}
 
+	@Override
 	public IFillMode getCopy() {
 		return new ColorFill(color);
 	}

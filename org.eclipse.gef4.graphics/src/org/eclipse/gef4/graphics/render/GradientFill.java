@@ -244,6 +244,15 @@ public abstract class GradientFill<T extends GradientFill<?>> implements
 
 	}
 
+	/**
+	 * A Radial {@link GradientFill} is defined by an {@link Ellipse} and a
+	 * focus {@link Point}. A set of
+	 * {@link org.eclipse.gef4.graphics.render.GradientFill.GradientStop
+	 * GradientStop}s determine the {@link Color} at any given {@link Point}.
+	 * The focus {@link Point} specifies the origin of a radial gradient
+	 * (percentual distance = 0). The perimeter of the {@link Ellipse} specifies
+	 * the border of a radial gradient (percentual distance = 1).
+	 */
 	public static class Radial extends GradientFill<Radial> {
 
 		private Ellipse boundary;

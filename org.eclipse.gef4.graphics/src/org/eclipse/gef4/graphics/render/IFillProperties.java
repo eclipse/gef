@@ -45,6 +45,9 @@ public interface IFillProperties extends IGraphicsProperties {
 	 */
 	static final boolean DEFAULT_ANTIALIASING = true;
 
+	/**
+	 * The default {@link IFillMode} is a {@link ColorFill}.
+	 */
 	static final ColorFill DEFAULT_MODE = new ColorFill();
 
 	/**
@@ -68,6 +71,7 @@ public interface IFillProperties extends IGraphicsProperties {
 	// */
 	// Color getColor();
 
+	@Override
 	IFillProperties getCopy();
 
 	// GradientFill getGradient();

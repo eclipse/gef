@@ -13,7 +13,18 @@
 package org.eclipse.gef4.graphics;
 
 /**
- * TODO
+ * <p>
+ * The Color class represents a color in RGBA color space. Therefore, a Color
+ * object manages four channel values for the Red, Green, Blue, and Alpha
+ * channels. The Red, Green, and Blue channels contain the color information.
+ * The Alpha channel additionally contains transparency information.
+ * </p>
+ * 
+ * <p>
+ * The channel values are limited to the range <code>[0;255]</code>. An
+ * arbitrary integer value can be {@link #getChannelClamped(int) clamped} in
+ * order to fit that range.
+ * </p>
  * 
  * @author mwienand
  * 
@@ -236,6 +247,12 @@ public class Color {
 		this(DEFAULT_RED, DEFAULT_GREEN, DEFAULT_BLUE, DEFAULT_ALPHA);
 	}
 
+	/**
+	 * Constructs a new {@link Color} object from the given <i>pixel</i> value
+	 * which is expected to be in ARGB format, 8 bits per channel.
+	 * 
+	 * @param pixel
+	 */
 	public Color(int pixel) {
 		this(getPixelRed(pixel), getPixelGreen(pixel), getPixelBlue(pixel),
 				getPixelAlpha(pixel));
