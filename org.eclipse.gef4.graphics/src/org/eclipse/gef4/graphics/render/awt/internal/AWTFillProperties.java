@@ -21,13 +21,15 @@ import java.awt.Paint;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.image.BufferedImage;
 
 import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.graphics.Color;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graphics.Image;
 import org.eclipse.gef4.graphics.render.AbstractFillProperties;
 import org.eclipse.gef4.graphics.render.ColorFill;
 import org.eclipse.gef4.graphics.render.GradientFill;
@@ -48,11 +50,10 @@ import org.eclipse.gef4.graphics.render.awt.AWTGraphics;
 public class AWTFillProperties extends AbstractFillProperties {
 
 	/**
-	 * Creates a new {@link AWTFillProperties} with the {@link #fillColor} set
-	 * to the default color specified by the {@link IFillProperties} interface.
+	 * Creates a new {@link AWTFillProperties} with the {@link IFillMode} set to
+	 * {@link IFillProperties#DEFAULT_MODE}.
 	 */
 	public AWTFillProperties() {
-		new Color();
 	}
 
 	@Override
@@ -159,9 +160,20 @@ public class AWTFillProperties extends AbstractFillProperties {
 	private void fill(Path path, Graphics2D g, ImageFill m) {
 		// We do not use TexturePaint but clip appropriately instead, because a
 		// TexturePaint is not recommended for large images.
+
+		Image img = m.image();
+		BufferedImage awtImage = AWTGraphicsUtils.toAWTImage(img);
+		Rectangle pathBounds = path.getBounds();
+
 		Shape oldClip = g.getClip();
 		g.clip(Geometry2AWT.toAWTPath(path));
-		g.drawImage(AWTGraphicsUtils.toAWTImage(m.image()), null, 0, 0);
+
+		for (int x = 0; x < pathBounds.getWidth(); x += img.getWidth()) {
+			for (int y = 0; y < pathBounds.getHeight(); y += img.getHeight()) {
+				g.drawImage(awtImage, null, x, y);
+			}
+		}
+
 		g.setClip(oldClip);
 	}
 
@@ -182,7 +194,7 @@ public class AWTFillProperties extends AbstractFillProperties {
 	 * @param m
 	 * @return
 	 */
-	private CycleMethod getAWTCycleMode(GradientFill m) {
+	private CycleMethod getAWTCycleMode(GradientFill<?> m) {
 		CycleMode cycleMode = m.getCycleMode();
 		CycleMethod cycleModeAWT;
 		if (cycleMode == CycleMode.NO_CYCLE) {

@@ -40,8 +40,9 @@ class FillModesUtil {
 		Image image = null;
 		try {
 			image = new Image(ImageIO.read(FillModesAWT.class
-					.getResource(IMAGE_FILE))).apply(ArithmeticOperations
-					.getInvertOperation());
+					.getResource(IMAGE_FILE))).apply(
+					ArithmeticOperations.getInvertOperation()).getSubImage(0,
+					0, 50, 50);
 		} catch (IOException x) {
 			x.printStackTrace();
 		}

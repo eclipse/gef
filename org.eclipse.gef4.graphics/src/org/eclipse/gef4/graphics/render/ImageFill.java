@@ -4,20 +4,23 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graphics.Color;
 import org.eclipse.gef4.graphics.Image;
 
+/**
+ * An ImageFill is a specific {@link IFillMode} implementation used to fill an
+ * area with image data.
+ * 
+ * @author mwienand
+ * 
+ */
 public class ImageFill implements IFillMode {
+
+	private static int circularIndex(int index, int size) {
+		return index - ((int) Math.floor(((double) index) / size)) * size;
+	}
 
 	private Image image;
 
-	// private int offsetX;
-	// private int offsetY;
-
 	public ImageFill(Image image) {
 		setImage(image);
-	}
-
-	@Override
-	protected ImageFill clone() throws CloneNotSupportedException {
-		return getCopy();
 	}
 
 	// @Override
@@ -35,8 +38,15 @@ public class ImageFill implements IFillMode {
 	// }
 
 	@Override
+	protected ImageFill clone() throws CloneNotSupportedException {
+		return getCopy();
+	}
+
+	@Override
 	public Color getColorAt(Point p) {
-		return new Color(image.getPixel((int) p.x, (int) p.y));
+		int x = circularIndex((int) p.x, image.getWidth());
+		int y = circularIndex((int) p.y, image.getHeight());
+		return new Color(image.getPixel(x, y));
 	}
 
 	@Override
