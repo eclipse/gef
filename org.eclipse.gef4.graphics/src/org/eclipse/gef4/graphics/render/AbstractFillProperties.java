@@ -15,6 +15,7 @@ package org.eclipse.gef4.graphics.render;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.graphics.Color;
 
 /**
  * The AbstractFillProperties class partially implements the
@@ -34,6 +35,24 @@ public abstract class AbstractFillProperties extends AbstractGraphicsProperties
 
 	private IFillMode mode = IFillProperties.DEFAULT_MODE;
 
+	/**
+	 * <p>
+	 * Implements a generic filling algorithm for an arbitrary {@link IFillMode}
+	 * . Uses the {@link IGraphics#draw(Point)} method to paint every interior
+	 * {@link Point} of the given {@link Path} with the {@link Color} returned
+	 * by the {@link IFillMode#getColorAt(Point)} method.
+	 * </p>
+	 * 
+	 * <p>
+	 * TODO: Optimize the generic fill algorithm by splitting the path into
+	 * rectangular pieces for which we do not have to check if their pixels
+	 * belong to the Path. Maybe we can reduce the number of color switches as
+	 * well, but that has to be benchmarked first.
+	 * </p>
+	 * 
+	 * @param graphics
+	 * @param path
+	 */
 	public void generalFill(IGraphics graphics, Path path) {
 		Rectangle bounds = path.getBounds();
 		Point p = bounds.getLocation();
@@ -58,8 +77,7 @@ public abstract class AbstractFillProperties extends AbstractGraphicsProperties
 
 	@Override
 	public IFillMode getMode() {
-		// TODO: return a copy here
-		return mode;
+		return mode.getCopy();
 	}
 
 	@Override
