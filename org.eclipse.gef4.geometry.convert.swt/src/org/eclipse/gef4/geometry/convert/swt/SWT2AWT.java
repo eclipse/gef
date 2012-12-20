@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 itemis AG and others.
+ * Copyright (c) 2011, 2012 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - remove AffineTransform from resulting PathIterator
  *     
  *******************************************************************************/
 package org.eclipse.gef4.geometry.convert.swt;
@@ -87,7 +88,7 @@ public class SWT2AWT {
 				break;
 			}
 		}
-		return path.getPathIterator(new java.awt.geom.AffineTransform());
+		return path.getPathIterator(null);
 	}
 
 	private SWT2AWT() {

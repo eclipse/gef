@@ -9,4 +9,4 @@ Export-Package: org.eclipse.gef4.geometry.convert.awt,
  org.eclipse.gef4.geometry.euclidean,
  org.eclipse.gef4.geometry.planar,
  org.eclipse.gef4.geometry.projective,
- org.eclipse.gef4.geometry.utils;x-friends:="org.eclipse.gef4.geometry.tests,org.eclipse.gef4.geometry.convert.swt"
+ org.eclipse.gef4.geometry.utils;x-friends:="org.eclipse.gef4.geometry.tests,org.eclipse.gef4.geometry.convert.swt,org.eclipse.gef4.geometry.convert.swt.tests"

@@ -13,8 +13,14 @@
 package org.eclipse.gef4.geometry.convert.swt.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.PathIterator;
+
+import org.eclipse.gef4.geometry.convert.swt.AWT2SWT;
 import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
+import org.eclipse.gef4.geometry.convert.swt.SWT2AWT;
 import org.eclipse.gef4.geometry.convert.swt.SWT2Geometry;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
@@ -22,9 +28,58 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.PathData;
 import org.junit.Test;
 
 public class SWTConversionTests {
+
+	@Test
+	public void test_AWT_Path() {
+		PathIterator pathIteratorBefore = new java.awt.geom.Path2D.Double(
+				new java.awt.geom.RoundRectangle2D.Double(0, 0, 100, 80, 10, 10))
+				.getPathIterator(null);
+
+		PathData swtPathData = AWT2SWT.toSWTPathData(pathIteratorBefore);
+		int windingRuleSWT = pathIteratorBefore.getWindingRule() == java.awt.geom.Path2D.WIND_EVEN_ODD ? SWT.FILL_EVEN_ODD
+				: SWT.FILL_WINDING;
+
+		PathIterator pathIteratorAfter = SWT2AWT.toAWTPathIterator(swtPathData,
+				windingRuleSWT);
+
+		while (!pathIteratorBefore.isDone()) {
+			assertFalse(pathIteratorAfter.isDone());
+
+			float[] coordsBefore = new float[6];
+			float[] coordsAfter = new float[6];
+			int typeBefore = pathIteratorBefore.currentSegment(coordsBefore);
+			int typeAfter = pathIteratorAfter.currentSegment(coordsAfter);
+			assertEquals(typeBefore, typeAfter);
+
+			int numCoords = 0;
+			switch (typeBefore) {
+			case java.awt.geom.PathIterator.SEG_MOVETO:
+			case java.awt.geom.PathIterator.SEG_LINETO:
+				numCoords = 2;
+				break;
+			case java.awt.geom.PathIterator.SEG_QUADTO:
+				numCoords = 4;
+				break;
+			case java.awt.geom.PathIterator.SEG_CUBICTO:
+				numCoords = 6;
+				break;
+			}
+
+			for (int i = 0; i < numCoords; i++) {
+				assertTrue(PrecisionUtils
+						.equal(coordsBefore[i], coordsAfter[i]));
+			}
+
+			pathIteratorBefore.next();
+			pathIteratorAfter.next();
+		}
+	}
 
 	@Test
 	public void test_LineConversion() {
