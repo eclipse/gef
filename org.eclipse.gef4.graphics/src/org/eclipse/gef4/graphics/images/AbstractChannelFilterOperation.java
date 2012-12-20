@@ -27,7 +27,7 @@ import org.eclipse.gef4.graphics.Image;
  * 
  */
 public abstract class AbstractChannelFilterOperation extends
-AbstractPixelFilterOperation {
+		AbstractPixelFilterOperation {
 
 	/**
 	 * Returns the new value of the channel at index <i>i</i>. This method is
@@ -51,17 +51,18 @@ AbstractPixelFilterOperation {
 	 *            the processed {@link Image}
 	 * @return the new value of the channel at index <i>i</i>
 	 */
-	protected abstract int processChannel(int v, int x, int y, int i, Image input);
+	protected abstract int processChannel(int v, int x, int y, int i,
+			Image input);
 
 	@Override
-	protected int processPixel(int argb, int x, int y, Image input) {
-		int[] argbIn = Color.getPixelARGB(argb);
-		int[] argbOut = new int[4];
+	protected int processPixel(int pixel, int x, int y, Image input) {
+		int[] rgbaIn = Color.getPixelRGBA(pixel);
+		int[] rgbaOut = new int[4];
 		for (int i = 0; i < Image.NUM_CHANNELS; i++) {
-			argbOut[i] = Color.getChannelClamped(processChannel(argbIn[i], x,
+			rgbaOut[i] = Color.getChannelClamped(processChannel(rgbaIn[i], x,
 					y, i, input));
 		}
-		return Color.getPixel(argbOut);
+		return Color.getPixel(rgbaOut);
 	}
 
 }

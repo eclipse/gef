@@ -34,19 +34,22 @@ class SWTGraphicsUtils {
 		return new org.eclipse.swt.graphics.Font(Display.getCurrent(),
 				font.getFamily(), (int) font.getSize(), swtStyle);
 	}
-	
+
 	static org.eclipse.swt.graphics.Image createSWTImage(Image image) {
 		PaletteData paletteData = new PaletteData(0xff0000, 0xff00, 0xff);
-		ImageData imageData = new ImageData(image.getWidth(), image.getHeight(), 32, paletteData);
+		ImageData imageData = new ImageData(image.getWidth(),
+				image.getHeight(), 32, paletteData);
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
-				int[] argb = Color.getPixelARGB(image.getPixel(x, y));
-				imageData.setPixel(x, y, paletteData.getPixel(new RGB(argb[1], argb[2], argb[3])));
-				imageData.setAlpha(x, y, argb[0]);
+				int[] rgba = Color.getPixelRGBA(image.getPixel(x, y));
+				imageData.setPixel(x, y, paletteData.getPixel(new RGB(rgba[0],
+						rgba[1], rgba[2])));
+				imageData.setAlpha(x, y, rgba[3]);
 			}
 		}
-		
-		return new org.eclipse.swt.graphics.Image(Display.getCurrent(), imageData);
+
+		return new org.eclipse.swt.graphics.Image(Display.getCurrent(),
+				imageData);
 	}
 
 	static void dispose(org.eclipse.swt.graphics.Resource res) {

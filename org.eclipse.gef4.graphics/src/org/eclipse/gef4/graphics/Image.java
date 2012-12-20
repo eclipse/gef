@@ -20,8 +20,6 @@ import org.eclipse.gef4.graphics.images.IImageOperation;
 import org.eclipse.gef4.graphics.render.IBlitProperties.InterpolationHint;
 import org.eclipse.gef4.graphics.render.IGraphics;
 
-// TODO: Provide more methods that are available on a BufferedImage.
-
 /**
  * An {@link Image} stores color and alpha data for a rectangular pixel raster.
  * 
@@ -52,6 +50,10 @@ public class Image {
 	 */
 	private BufferedImage bufferedImage = null;
 
+	public Image() {
+		this(0, 0, new Color());
+	}
+
 	/**
 	 * Constructs a new {@link Image} from the given {@link BufferedImage}.
 	 * 
@@ -61,8 +63,21 @@ public class Image {
 		this.bufferedImage = getCopy(bufferedImage);
 	}
 
-	// TODO: add default constructor. (What should its semantics be?)
-	// TODO: add (width, height, ?background-color?) constructor.
+	public Image(int w, int h) {
+		this(w, h, new Color());
+	}
+
+	public Image(int w, int h, Color bg) {
+		this(w, h, Color.getPixel(bg.getRGBA()));
+	}
+
+	public Image(int w, int h, int bgPixel) {
+		bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = bufferedImage.createGraphics();
+		g.setColor(new java.awt.Color(bgPixel));
+		g.fillRect(0, 0, w, h);
+		g.dispose();
+	}
 
 	/**
 	 * <p>
@@ -97,12 +112,14 @@ public class Image {
 			if (obj == this) {
 				return true;
 			}
-
 			Image o = (Image) obj;
+
+			// check width and height first, because it is faster
 			if (getWidth() != o.getWidth() || getHeight() != o.getHeight()) {
 				return false;
 			}
 
+			// check every single pixel...
 			for (int x = 0; x < getWidth(); x++) {
 				for (int y = 0; y < getHeight(); y++) {
 					if (getPixel(x, y) != o.getPixel(x, y)) {
@@ -354,11 +371,6 @@ public class Image {
 		g2d.drawImage(bufferedImage, 0, 0, width, height, null);
 		g2d.dispose();
 
-		// TODO: Implement the possibility to construct an Image from a
-		// BufferedImage, without copying the image data
-
-		// TODO: Integrate the IGraphics / Remove duplicate code.
-
 		return new Image(scaled);
 	}
 
@@ -432,23 +444,6 @@ public class Image {
 		}
 		bufferedImage.setRGB(x, y, argb);
 	}
-
-	// public BufferedImage toBufferedImage() {
-	// return bufferedImage;
-	// }
-
-	// /**
-	// * Returns the {@link BufferedImage} that is used to store the image data
-	// of
-	// * <code>this</code> {@link Image}.
-	// *
-	// * @return the {@link BufferedImage} that is used to store the image data
-	// of
-	// * <code>this</code> {@link Image}
-	// */
-	// public BufferedImage toBufferedImage() {
-	// return getCopy(bufferedImage);
-	// }
 
 	@Override
 	public String toString() {

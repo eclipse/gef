@@ -40,7 +40,7 @@ public class ArithmeticOperations {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
 				return Math
-						.abs(v - Color.getPixelARGB(other.getPixel(x, y))[i]);
+						.abs(v - Color.getPixelRGBA(other.getPixel(x, y))[i]);
 			}
 		};
 	}
@@ -57,7 +57,7 @@ public class ArithmeticOperations {
 	 */
 	public static AbstractChannelFilterOperation getAbsDifferenceOperation(
 			final int pixelOther) {
-		final int[] argbOther = Color.getPixelARGB(pixelOther);
+		final int[] argbOther = Color.getPixelRGBA(pixelOther);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -80,7 +80,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return v + Color.getPixelARGB(addend.getPixel(x, y))[i];
+				return v + Color.getPixelRGBA(addend.getPixel(x, y))[i];
 			}
 		};
 	}
@@ -95,7 +95,7 @@ public class ArithmeticOperations {
 	 */
 	public static AbstractChannelFilterOperation getAddOperation(
 			final int pixelOffset) {
-		final int[] argbOffset = Color.getPixelARGB(pixelOffset);
+		final int[] argbOffset = Color.getPixelRGBA(pixelOffset);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -118,7 +118,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return v & Color.getPixelARGB(other.getPixel(x, y))[i];
+				return v & Color.getPixelRGBA(other.getPixel(x, y))[i];
 			}
 		};
 	}
@@ -135,7 +135,7 @@ public class ArithmeticOperations {
 	 */
 	public static AbstractChannelFilterOperation getAndOperation(
 			final int pixelOther) {
-		final int[] constant = Color.getPixelARGB(pixelOther);
+		final int[] constant = Color.getPixelRGBA(pixelOther);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -170,7 +170,7 @@ public class ArithmeticOperations {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
 				return (int) (xs[i] * v + (1 - xs[i])
-						* Color.getPixelARGB(other.getPixel(x, y))[i]);
+						* Color.getPixelRGBA(other.getPixel(x, y))[i]);
 			}
 		};
 	}
@@ -199,7 +199,7 @@ public class ArithmeticOperations {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
 				return (int) (xs[i] * v + (1 - xs[i])
-						* Color.getPixelARGB(other.getPixel(x, y))[i]);
+						* Color.getPixelRGBA(other.getPixel(x, y))[i]);
 			}
 		};
 	}
@@ -234,7 +234,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				int v2 = Color.getPixelARGB(divisor.getPixel(x, y))[i];
+				int v2 = Color.getPixelRGBA(divisor.getPixel(x, y))[i];
 				return (int) (scaleFactor * v / (v2 == 0 ? 1 : v2));
 			}
 		};
@@ -311,7 +311,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return v | Color.getPixelARGB(input.getPixel(x, y))[i];
+				return v | Color.getPixelRGBA(input.getPixel(x, y))[i];
 			}
 		};
 	}
@@ -328,7 +328,7 @@ public class ArithmeticOperations {
 	 *         {@link Image}
 	 */
 	public static AbstractChannelFilterOperation getOrOperation(final int pixel) {
-		final int[] constant = Color.getPixelARGB(pixel);
+		final int[] constant = Color.getPixelRGBA(pixel);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -401,7 +401,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return v - Color.getPixelARGB(other.getPixel(x, y))[i];
+				return v - Color.getPixelRGBA(other.getPixel(x, y))[i];
 			}
 		};
 	}
@@ -428,7 +428,7 @@ public class ArithmeticOperations {
 	 */
 	public static AbstractChannelFilterOperation getSubtractOperation(
 			final int pixel) {
-		final int[] constant = Color.getPixelARGB(pixel);
+		final int[] constant = Color.getPixelRGBA(pixel);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
@@ -451,7 +451,7 @@ public class ArithmeticOperations {
 		return new AbstractColorChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
-				return v ^ Color.getPixelARGB(other.getPixel(x, y))[i];
+				return v ^ Color.getPixelRGBA(other.getPixel(x, y))[i];
 			}
 		};
 	}
@@ -468,7 +468,7 @@ public class ArithmeticOperations {
 	 *         {@link Image}
 	 */
 	public static AbstractChannelFilterOperation getXorOperation(final int pixel) {
-		final int[] constant = Color.getPixelARGB(pixel);
+		final int[] constant = Color.getPixelRGBA(pixel);
 		return new AbstractChannelFilterOperation() {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {

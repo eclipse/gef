@@ -16,18 +16,23 @@ import java.util.Arrays;
 
 import org.eclipse.gef4.graphics.Color;
 
-public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterOperation {
+public class ConvolutionFilterOperation extends
+		AbstractPixelNeighborhoodFilterOperation {
 
 	private final double[] kernel;
 
-	public ConvolutionFilterOperation(final int dimension, final EdgeMode edgeMode,
-			final double... kernel) {
+	public ConvolutionFilterOperation(final int dimension,
+			final EdgeMode edgeMode, final double... kernel) {
 		super(dimension, edgeMode);
 
 		int size = dimension * dimension;
 		if (kernel.length != size) {
 			throw new IllegalArgumentException(
-					"The kernel dimension does not match the actual kernel size. Given dimension = " + dimension + "x" + dimension + ", kerne = "
+					"The kernel dimension does not match the actual kernel size. Given dimension = "
+							+ dimension
+							+ "x"
+							+ dimension
+							+ ", kerne = "
 							+ Arrays.toString(kernel) + ".");
 		}
 		this.kernel = Arrays.copyOf(kernel, size);
@@ -44,16 +49,16 @@ public class ConvolutionFilterOperation extends AbstractPixelNeighborhoodFilterO
 		double red = 0, green = 0, blue = 0;
 
 		for (int i = 0; i < kernel.length; i++) {
-			int[] neighborhoodPixel = Color.getPixelARGB(neighborhoodPixels[i]);
-			red += kernel[i] * neighborhoodPixel[1];
-			green += kernel[i] * neighborhoodPixel[2];
-			blue += kernel[i] * neighborhoodPixel[3];
+			int[] neighborhoodPixel = Color.getPixelRGBA(neighborhoodPixels[i]);
+			red += kernel[i] * neighborhoodPixel[0];
+			green += kernel[i] * neighborhoodPixel[1];
+			blue += kernel[i] * neighborhoodPixel[2];
 		}
 
-		return Color.getPixel(Color.getChannelClamped((int) alpha),
-				Color.getChannelClamped((int) red),
+		return Color.getPixel(Color.getChannelClamped((int) red),
 				Color.getChannelClamped((int) green),
-				Color.getChannelClamped((int) blue));
+				Color.getChannelClamped((int) blue),
+				Color.getChannelClamped((int) alpha));
 	}
 
 }

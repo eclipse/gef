@@ -137,20 +137,19 @@ public class FilterOperations {
 				int[] blue = new int[neighbors.length];
 
 				for (int i = 0; i < neighbors.length; i++) {
-					int[] argb = Color.getPixelARGB(neighbors[i]);
-					red[i] = argb[1];
-					green[i] = argb[2];
-					blue[i] = argb[3];
+					int[] rgba = Color.getPixelRGBA(neighbors[i]);
+					red[i] = rgba[0];
+					green[i] = rgba[1];
+					blue[i] = rgba[2];
 				}
 
 				Arrays.sort(red);
 				Arrays.sort(green);
 				Arrays.sort(blue);
 
-				return Color
-						.getPixel(alpha, red[neighbors.length / 2],
-								green[neighbors.length / 2],
-								blue[neighbors.length / 2]);
+				return Color.getPixel(red[neighbors.length / 2],
+						green[neighbors.length / 2],
+						blue[neighbors.length / 2], alpha);
 			}
 		};
 	}

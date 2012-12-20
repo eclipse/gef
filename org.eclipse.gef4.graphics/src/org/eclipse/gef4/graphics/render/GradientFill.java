@@ -258,10 +258,25 @@ public abstract class GradientFill<T extends GradientFill<?>> implements
 		private Ellipse boundary;
 		private Point focus;
 
+		/**
+		 * Constructs a new {@link GradientFill.Radial} with its boundary set to
+		 * the passed-in {@link Ellipse}. The {@link Ellipse#getCenter() center}
+		 * {@link Point} of the {@link Ellipse} is used as the focal
+		 * {@link Point}.
+		 * 
+		 * @param boundary
+		 */
 		public Radial(Ellipse boundary) {
 			this(boundary, boundary.getCenter());
 		}
 
+		/**
+		 * Constructs a new {@link GradientFill.Radial} from the passed-in
+		 * values.
+		 * 
+		 * @param boundary
+		 * @param focus
+		 */
 		public Radial(Ellipse boundary, Point focus) {
 			super();
 
@@ -309,12 +324,12 @@ public abstract class GradientFill<T extends GradientFill<?>> implements
 						.getIntersections(positiveFocusLine);
 
 				if (intersections.length != 1) {
-					// TODO: Add a note to the exception's message encouraging
-					// users to submit a bug ticket.
 					throw new IllegalStateException(
 							"There may always be an intersection. (Ellipse = "
-									+ boundary + ", Line = "
-									+ positiveFocusLine);
+									+ boundary
+									+ ", Line = "
+									+ positiveFocusLine
+									+ ".) This is a bug. It would be awsome if you create a ticket at bugs.eclipse.org containing this error message.");
 				}
 
 				double ds = new Vector(focus, intersections[0]).getLength();
@@ -398,15 +413,6 @@ public abstract class GradientFill<T extends GradientFill<?>> implements
 	}
 
 	abstract public double computePercentualDistance(Point p);
-
-	// public T addStop(GradientStop gradientStop) {
-	// if (gradientStop.percentualDistance > 1) {
-	// throw new IllegalArgumentException(
-	// "The percentual distance from a gradient's start may not exceed 1.");
-	// }
-	// stops.add(gradientStop.getCopy());
-	// return (T) this;
-	// }
 
 	@Override
 	public Color getColorAt(Point p) {

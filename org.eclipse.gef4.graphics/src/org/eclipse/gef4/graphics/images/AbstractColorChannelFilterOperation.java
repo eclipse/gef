@@ -26,18 +26,18 @@ import org.eclipse.gef4.graphics.Image;
  * 
  */
 abstract public class AbstractColorChannelFilterOperation extends
-AbstractChannelFilterOperation {
+		AbstractChannelFilterOperation {
 
 	@Override
-	protected int processPixel(int argb, int x, int y, Image input) {
-		int[] argbIn = Color.getPixelARGB(argb);
-		int[] argbOut = new int[4];
-		argbOut[0] = argbIn[0]; // can't touch this
-		for (int i = 1; i < Image.NUM_CHANNELS; i++) {
-			argbOut[i] = Color.getChannelClamped(processChannel(argbIn[i], x,
+	protected int processPixel(int pixel, int x, int y, Image input) {
+		int[] rgbaIn = Color.getPixelRGBA(pixel);
+		int[] rgbaOut = new int[4];
+		rgbaOut[3] = rgbaIn[3]; // can't touch this
+		for (int i = 0; i < 3; i++) {
+			rgbaOut[i] = Color.getChannelClamped(processChannel(rgbaIn[i], x,
 					y, i, input));
 		}
-		return Color.getPixel(argbOut);
+		return Color.getPixel(rgbaOut);
 	}
 
 }

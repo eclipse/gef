@@ -57,11 +57,9 @@ public class PixelOperations {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int pixel, int x, int y, Image input) {
-				int[] argb = Color.getPixelARGB(pixel);
-				int intensity = (int) (sr * argb[1] + sg * argb[2] + sb
-						* argb[3]);
-				return Color.getPixel(argb[0], intensity, intensity,
-						intensity);
+				int[] rgba = Color.getPixelRGBA(pixel);
+				int intensity = Color.computePixelIntensity(rgba, sr, sg, sb);
+				return Color.getPixel(intensity, intensity, intensity, rgba[3]);
 			}
 		};
 	}
@@ -87,12 +85,12 @@ public class PixelOperations {
 		return new AbstractPixelFilterOperation() {
 			@Override
 			protected int processPixel(int pixel, int x, int y, Image input) {
-				int[] argb = Color.getPixelARGB(pixel);
-				int intensity = Color.computePixelIntensity(argb);
+				int[] rgba = Color.getPixelRGBA(pixel);
+				int intensity = Color.computePixelIntensity(rgba);
 				if (intensity >= intensityThreshold) {
-					return Color.getPixel(argb[0], 0xff, 0xff, 0xff);
+					return Color.getPixel(0xff, 0xff, 0xff, rgba[3]);
 				} else {
-					return Color.getPixel(argb[0], 0, 0, 0);
+					return Color.getPixel(0, 0, 0, rgba[3]);
 				}
 			}
 		};

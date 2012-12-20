@@ -65,7 +65,7 @@ public class Color {
 	 * @return the intensity value of the given ARGB pixel value
 	 */
 	public static int computePixelIntensity(int pixel) {
-		return computePixelIntensity(getPixelARGB(pixel));
+		return computePixelIntensity(getPixelRGBA(pixel));
 	}
 
 	/**
@@ -78,19 +78,19 @@ public class Color {
 	 * Note that the alpha value does not influence the computation.
 	 * </p>
 	 * 
-	 * @param argb
+	 * @param rgba
 	 *            the alpha, red, green, and blue channel values of the pixel
 	 *            for which to compute the intensity
 	 * @return the intensity value for the given alpha, red, green, and blue
 	 *         channel values
 	 */
-	public static int computePixelIntensity(int[] argb) {
-		return computePixelIntensity(argb, 0.3333, 0.3334, 0.3333);
+	public static int computePixelIntensity(int[] rgba) {
+		return computePixelIntensity(rgba, 0.3333, 0.3334, 0.3333);
 	}
 
 	/**
 	 * <p>
-	 * Returns the intensity value for the given alpha, red, green, and blue
+	 * Returns the intensity value for the given red, green, blue, and alpha
 	 * channel values. The individual channels are weighted according to the
 	 * specified scale factors.
 	 * </p>
@@ -106,8 +106,8 @@ public class Color {
 	 * value.
 	 * </p>
 	 * 
-	 * @param argb
-	 *            the alpha, red, green, and blue channel values of the pixel
+	 * @param rgba
+	 *            the red, green, blue, and alpha channel values of the pixel
 	 *            for which to compute the intensity
 	 * @param sr
 	 *            the scale factor for the red channel
@@ -118,9 +118,9 @@ public class Color {
 	 * @return the intensity value for the given alpha, red, green, and blue
 	 *         channel values
 	 */
-	public static int computePixelIntensity(int[] argb, double sr, double sg,
+	public static int computePixelIntensity(int[] rgba, double sr, double sg,
 			double sb) {
-		return (int) (sr * argb[1] + sg * argb[2] + sb * argb[3]);
+		return (int) (sr * rgba[0] + sg * rgba[1] + sb * rgba[2]);
 	}
 
 	/**
@@ -139,18 +139,18 @@ public class Color {
 	}
 
 	/**
-	 * Merges the given individual alpha, red, green, and blue component values
+	 * Merges the given individual red, green, blue, and alpha component values
 	 * into an ARGB pixel value.
 	 * 
-	 * @param argb
-	 *            array of <code>int</code> containing the individual alpha,
-	 *            red, green, and blue components in the range
+	 * @param rgba
+	 *            array of <code>int</code> containing the individual red,
+	 *            green, blue, and alpha components in the range
 	 *            <code>[0;255]</code>
 	 * @return an ARGB pixel value representing the given component values
 	 */
-	public static int getPixel(int... argb) {
-		return (argb[0] & 0xff) << 24 | (argb[1] & 0xff) << 16
-				| (argb[2] & 0xff) << 8 | argb[3] & 0xff;
+	public static int getPixel(int... rgba) {
+		return (rgba[3] & 0xff) << 24 | (rgba[0] & 0xff) << 16
+				| (rgba[1] & 0xff) << 8 | rgba[2] & 0xff;
 	}
 
 	/**
@@ -162,22 +162,6 @@ public class Color {
 	 */
 	public static int getPixelAlpha(int pixel) {
 		return (pixel & 0xff000000) >>> 24;
-	}
-
-	/**
-	 * Splits an ARGB pixel value into its 4 components.
-	 * 
-	 * @param pixel
-	 * @return array of <code>int</code> containing the individual alpha, red,
-	 *         green, and blue components of the given ARGB pixel value in the
-	 *         range <code>[0;255]</code>
-	 */
-	public static int[] getPixelARGB(int pixel) {
-		int a = getPixelAlpha(pixel);
-		int r = getPixelRed(pixel);
-		int g = getPixelGreen(pixel);
-		int b = getPixelBlue(pixel);
-		return new int[] { a, r, g, b };
 	}
 
 	/**
@@ -211,6 +195,19 @@ public class Color {
 	 */
 	public static int getPixelRed(int pixel) {
 		return (pixel & 0xff0000) >>> 16;
+	}
+
+	/**
+	 * Splits an ARGB pixel value into its 4 components.
+	 * 
+	 * @param pixel
+	 * @return array of <code>int</code> containing the individual alpha, red,
+	 *         green, and blue components of the given ARGB pixel value in the
+	 *         range <code>[0;255]</code>
+	 */
+	public static int[] getPixelRGBA(int pixel) {
+		return new int[] { getPixelRed(pixel), getPixelGreen(pixel),
+				getPixelBlue(pixel), getPixelAlpha(pixel) };
 	}
 
 	/**
@@ -410,6 +407,18 @@ public class Color {
 	 */
 	public int getRed() {
 		return r;
+	}
+
+	/**
+	 * Returns an <code>int</code> array containing the individual red, green,
+	 * blue, and alpha channel values which constitute this {@link Color}.
+	 * 
+	 * @return an <code>int</code> array containing the individual red, green,
+	 *         blue, and alpha channel values which constitute this
+	 *         {@link Color}
+	 */
+	public int[] getRGBA() {
+		return new int[] { getRed(), getGreen(), getBlue(), getAlpha() };
 	}
 
 	@Override
