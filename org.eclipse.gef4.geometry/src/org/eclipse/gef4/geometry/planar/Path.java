@@ -44,7 +44,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * @see #QUAD_TO
 	 * @see #CUBIC_TO
 	 */
-	public class Segment {
+	public static class Segment {
 
 		/**
 		 * A {@link #MOVE_TO} {@link Segment} represents a change of position
@@ -357,6 +357,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		return this;
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		return Geometry2AWT.toAWTPath(this)
 				.contains(Geometry2AWT.toAWTPoint(p));
@@ -417,11 +418,13 @@ public class Path extends AbstractGeometry implements IGeometry {
 		return false;
 	}
 
+	@Override
 	public Rectangle getBounds() {
 		return AWT2Geometry.toRectangle(Geometry2AWT.toAWTPath(this)
 				.getBounds2D());
 	}
 
+	@Override
 	public Path getCopy() {
 		return new Path(getWindingRule(), getSegments());
 	}
@@ -537,6 +540,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		return getCopy();
 	}

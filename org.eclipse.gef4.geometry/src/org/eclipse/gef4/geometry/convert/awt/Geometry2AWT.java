@@ -197,7 +197,7 @@ public class Geometry2AWT {
 	 *         y, width, height, arcWidth, and arcHeight values of the passed in
 	 *         {@link RoundedRectangle}
 	 */
-	public static RoundRectangle2D toAWTRoundRectangle(RoundedRectangle r) {
+	public static RoundRectangle2D.Double toAWTRoundRectangle(RoundedRectangle r) {
 		return new RoundRectangle2D.Double(r.getX(), r.getY(), r.getWidth(),
 				r.getHeight(), r.getArcWidth(), r.getArcHeight());
 	}

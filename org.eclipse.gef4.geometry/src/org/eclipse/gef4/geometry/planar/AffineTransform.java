@@ -195,9 +195,11 @@ public class AffineTransform {
 	}
 
 	/**
-	 * Returns the transformation matrix of this {@link AffineTransform}.
+	 * Returns the 6 specifiable elements of the transformation matrix of this
+	 * {@link AffineTransform}.
 	 * 
-	 * @return the transformation matrix of this {@link AffineTransform}
+	 * @return the 6 specifiable elements of the transformation matrix of this
+	 *         {@link AffineTransform}
 	 */
 	public double[] getMatrix() {
 		double[] flatmatrix = new double[6];
