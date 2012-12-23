@@ -123,17 +123,25 @@ public class GraphTests extends TestCase {
 	}
 
 	/**
-	 * Check that Graphs with Zest styles can be created and the styles are set
-	 * (e.g. ZestStyles.ANIMATION_DISABLED, see https://bugs.eclipse.org/238529)
+	 * Check that Graphs with Zest styles can be created and the styles are set.
 	 */
 	public void testZestGraphStyles() {
-		int style = ZestStyles.ANIMATION_DISABLED;
+		int style = ZestStyles.GESTURES_DISABLED;
 		Graph g = new Graph(shell, style);
 		assertTrue("Passed style should be set", (g.getStyle() & style) == 0);
-		style = ZestStyles.GESTURES_DISABLED;
-		g = new Graph(shell, style);
-		assertTrue("Passed style should be set", (g.getStyle() & style) == 0);
 
+	}
+
+	/**
+	 * Check that graph animation is disabled by default and can be enabled
+	 * later (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=238529).
+	 */
+	public void testZestGraphAnimationEnabled() {
+		Graph g = new Graph(shell, ZestStyles.NONE);
+		assertFalse("Graph should have animation disabled by default",
+				g.isAnimationEnabled());
+		g.setAnimationEnabled(true);
+		assertTrue("Graph animation can be enabled", g.isAnimationEnabled());
 	}
 
 }

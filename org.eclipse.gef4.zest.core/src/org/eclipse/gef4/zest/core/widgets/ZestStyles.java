@@ -88,16 +88,12 @@ public final class ZestStyles {
 	 * Disallows the default multitouch gestures
 	 */
 	public static final int GESTURES_DISABLED = 1 << 6;
-	/**
-	 * Disables implicit animations (e.g. when layouting graphs).
-	 */
-	public static final int ANIMATION_DISABLED = 1 << 7;
 
 	/**
 	 * Zest-specific graph styles to be passed to Graph and GraphViewer
 	 * constructors, but not to be passed up the Graph widget hierarchy.
 	 */
-	static final int GRAPH_STYLES = GESTURES_DISABLED | ANIMATION_DISABLED;
+	static final int GRAPH_STYLES = GESTURES_DISABLED; // bitwise-or others
 
 	/**
 	 * Bitwise ANDs the styleToCheck integer with the given style.

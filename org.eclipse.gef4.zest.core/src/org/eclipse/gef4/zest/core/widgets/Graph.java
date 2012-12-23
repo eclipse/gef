@@ -111,7 +111,7 @@ public class Graph extends FigureCanvas implements IContainer {
 
 	private ConnectionRouter defaultConnectionRouter;
 	private ZoomManager zoomManager = null;
-	boolean animate = true;
+	boolean animate = false;
 
 	/**
 	 * Constructor for a Graph. This widget represents the root of the graph,
@@ -211,7 +211,6 @@ public class Graph extends FigureCanvas implements IContainer {
 			this.addGestureListener(new ZoomGestureListener());
 			this.addGestureListener(new RotateGestureListener());
 		}
-		animate = (style & (ZestStyles.ANIMATION_DISABLED)) == 0;
 		this.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				release();
@@ -1348,6 +1347,22 @@ public class Graph extends FigureCanvas implements IContainer {
 			zoomManager = new ZoomManager(getRootLayer(), getViewport());
 		}
 		return zoomManager;
+	}
+
+	/**
+	 * @return Returns true if animation is enabled for this graph.
+	 */
+	public boolean isAnimationEnabled() {
+		return animate;
+	}
+
+	/**
+	 * @param animate
+	 *            Pass true to enable animation for this graph.
+	 */
+	public void setAnimationEnabled(boolean animate) {
+		this.animate = animate;
+
 	}
 
 }

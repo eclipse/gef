@@ -36,7 +36,7 @@ public class TreeLayoutExample {
 		shell.setLayout(gridLayout);
 		shell.setSize(600, 500);
 
-		final Graph g = new Graph(shell, ZestStyles.ANIMATION_DISABLED);
+		final Graph g = new Graph(shell, ZestStyles.NONE);
 		final TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
 		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
@@ -115,6 +115,15 @@ public class TreeLayoutExample {
 			}
 		});
 
+		final Button animateButton = new Button(shell, SWT.CHECK);
+		animateButton.setText("Animate");
+		animateButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				g.setAnimationEnabled(animateButton.getSelection());
+			}
+		});
+
+		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {
 			while (!d.readAndDispatch()) {

@@ -24,7 +24,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -120,7 +119,7 @@ public class ExpandGraphLabel extends Figure implements ActionListener {
 	public ExpandGraphLabel(GraphContainer container, String text, Image image,
 			boolean cacheLabel) {
 		int graphStyle = container.getGraph().getStyle();
-		this.animate = (graphStyle & ZestStyles.ANIMATION_DISABLED) == 0;
+		this.animate = container.getGraph().isAnimationEnabled();
 		this.label = new Label(text) {
 
 			/*

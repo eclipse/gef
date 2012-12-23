@@ -113,8 +113,8 @@ public class GraphJFaceSnippet1 {
 			}
 
 		});
-		viewer = new GraphViewer(shell, ZestStyles.ANIMATION_DISABLED);
-
+		viewer = new GraphViewer(shell, ZestStyles.NONE);
+		viewer.getGraphControl().setAnimationEnabled(true);
 		viewer.setContentProvider(new MyContentProvider());
 		viewer.setLabelProvider(new MyLabelProvider());
 		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
