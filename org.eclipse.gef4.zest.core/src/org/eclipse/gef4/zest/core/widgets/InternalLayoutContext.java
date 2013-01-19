@@ -43,8 +43,8 @@ class InternalLayoutContext implements LayoutContext {
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
 	private final HashSet subgraphs = new HashSet();
 	private boolean eventsOn = true;
-	private boolean backgorundLayoutEnabled = true;
-	private boolean externalLayoutInvocation = false;
+	private boolean backgorundLayoutEnabled = false;
+	private boolean externalLayoutInvocation = true;
 
 	/**
 	 * @param graph

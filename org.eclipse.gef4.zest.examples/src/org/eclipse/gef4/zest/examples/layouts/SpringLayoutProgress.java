@@ -194,7 +194,7 @@ public class SpringLayoutProgress {
 				return false;
 			}
 		});
-
+		g.setDynamicLayout(true);
 		g.setLayoutAlgorithm(springLayoutAlgorithm, false);
 		// springLayoutAlgorithm.setIterations(1000);
 		// springLayoutAlgorithm.fitWithinBounds = true;

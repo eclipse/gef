@@ -134,9 +134,10 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	}
 
 	protected void inputChanged(Object input, Object oldInput) {
+		boolean dynamicLayoutEnabled = graph.isDynamicLayoutEnabled();
 		graph.setDynamicLayout(false);
 		super.inputChanged(input, oldInput);
-		graph.setDynamicLayout(true);
+		graph.setDynamicLayout(dynamicLayoutEnabled);
 		graph.applyLayout();
 	}
 
@@ -299,9 +300,6 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * NOTE: If a layout algorithm is set in the receiver, layout is performed
-	 * after the refresh.
 	 */
 	public void refresh(Object element) {
 		boolean dynamicLayoutEnabled = graph.isDynamicLayoutEnabled();
@@ -312,9 +310,6 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * NOTE: If a layout algorithm is set in the receiver, layout is performed
-	 * after the refresh.
 	 */
 	public void refresh(Object element, boolean updateLabels) {
 		boolean dynamicLayoutEnabled = graph.isDynamicLayoutEnabled();
@@ -325,9 +320,6 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * NOTE: If a layout algorithm is set in the receiver, layout is performed
-	 * after the update.
 	 */
 	public void update(Object element, String[] properties) {
 		boolean dynamicLayoutEnabled = graph.isDynamicLayoutEnabled();
@@ -338,9 +330,6 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * NOTE: If a layout algorithm is set in the receiver, layout is performed
-	 * after the update.
 	 */
 	public void update(Object[] elements, String[] properties) {
 		boolean dynamicLayoutEnabled = graph.isDynamicLayoutEnabled();

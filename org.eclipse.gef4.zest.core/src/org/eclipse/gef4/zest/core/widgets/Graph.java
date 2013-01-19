@@ -530,6 +530,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	public void setExpandCollapseManager(
 			ExpandCollapseManager expandCollapseManager) {
 		getLayoutContext().setExpandCollapseManager(expandCollapseManager);
+		setDynamicLayout(true);
 	}
 
 	/**

@@ -21,6 +21,7 @@ import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -153,6 +154,27 @@ public class GraphViewerTests extends TestCase {
 	 */
 	public void testViewerFilterWithGraphContentProvider() {
 		testViewerFilter(new SampleGraphContentProvider());
+	}
+
+	/**
+	 * Assert that dynamic layout is disabled by default and that it stays
+	 * disabled after changing input, refreshing, or updating the viewer (see
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=390172)
+	 */
+	public void testViewerRefreshDoesNotApplyLayout() {
+		viewer.setLayoutAlgorithm(new SpringLayoutAlgorithm());
+		viewer.setContentProvider(new SampleGraphContentProvider());
+		assertFalse("Dynamic layout should be disabled by default", viewer
+				.getGraphControl().isDynamicLayoutEnabled());
+		viewer.setInput(new Object());
+		assertFalse("Dynamic layout should be disabled after setting input",
+				viewer.getGraphControl().isDynamicLayoutEnabled());
+		viewer.refresh(new Object());
+		assertFalse("Dynamic layout should be disabled after refresh", viewer
+				.getGraphControl().isDynamicLayoutEnabled());
+		viewer.update(new Object(), new String[] {});
+		assertFalse("Dynamic layout should be disabled after update", viewer
+				.getGraphControl().isDynamicLayoutEnabled());
 	}
 
 	public void testViewerFilter(IContentProvider contentProvider) {
