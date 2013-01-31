@@ -7,6 +7,7 @@ Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Export-Package: org.eclipse.gef4.graphics,
- org.eclipse.gef4.graphics.images,
- org.eclipse.gef4.graphics.render,
- org.eclipse.gef4.graphics.render.awt
+ org.eclipse.gef4.graphics.color,
+ org.eclipse.gef4.graphics.image,
+ org.eclipse.gef4.graphics.font,
+ org.eclipse.gef4.graphics.awt
