@@ -74,6 +74,7 @@ public class Ellipse extends
 	/**
 	 * @see IShape#contains(IGeometry)
 	 */
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
@@ -94,6 +95,7 @@ public class Ellipse extends
 	/**
 	 * @see IGeometry#contains(Point)
 	 */
+	@Override
 	public boolean contains(Point p) {
 		/*
 		 * point has to fulfill (x/a)^2 + (y/b)^2 <= 1, where a = width/2 and b
@@ -173,6 +175,7 @@ public class Ellipse extends
 	 * @return A copy of this {@link Ellipse}, having the same x, y, width, and
 	 *         height values
 	 */
+	@Override
 	public Ellipse getCopy() {
 		return new Ellipse(x, y, width, height);
 	}
@@ -323,17 +326,28 @@ public class Ellipse extends
 		return intersections.toArray(new Point[] {});
 	}
 
+	@Override
 	public ICurve getOutline() {
 		return ShapeUtils.getOutline(this);
 	}
 
 	/**
-	 * Calculates the border segments of this {@link Ellipse}. The
-	 * border-segments are approximated by {@link CubicCurve}s. These curves are
-	 * generated as in the {@link Ellipse#toPath()} method.
+	 * Calculates the outline segments of this {@link Ellipse}. The outline
+	 * segments are approximated by {@link CubicCurve}s. The outline segments
+	 * are returned in the following order:
+	 * <ol>
+	 * <li>from <code>0deg</code> to <code>90deg</code> (quadrant I)</li>
+	 * <li>from <code>90deg</code> to <code>180deg</code> (quadrant II)</li>
+	 * <li>from <code>180deg</code> to <code>270deg</code> (quadrant III)</li>
+	 * <li>from <code>270deg</code> to <code>360deg</code> (quadrant IV)</li>
+	 * </ol>
+	 * An {@link Angle} of <code>0deg</code> is oriented to the right.
+	 * Increasing an {@link Angle} rotates counter-clockwise (CCW).
 	 * 
-	 * @return border-segments
+	 * @return an array of {@link CubicCurve}s representing the outline of this
+	 *         {@link Ellipse}
 	 */
+	@Override
 	public CubicCurve[] getOutlineSegments() {
 		return new CubicCurve[] {
 				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
@@ -346,26 +360,32 @@ public class Ellipse extends
 						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {
 		return new PolyBezier(getOutlineSegments()).rotateCCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, Point center) {
 		return new PolyBezier(getOutlineSegments()).rotateCCW(angle, center);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle) {
 		return new PolyBezier(getOutlineSegments()).rotateCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(getOutlineSegments()).rotateCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, Point center) {
 		return new PolyBezier(getOutlineSegments()).rotateCW(angle, center);
 	}
@@ -391,22 +411,15 @@ public class Ellipse extends
 	}
 
 	/**
-	 * Returns a path representation of this {@link Ellipse}, which is an
-	 * approximation of the four segments by means of cubic Bezier curves.
+	 * Returns a {@link Path} representation of this {@link Ellipse}, which is
+	 * an approximation of the four {@link #getOutlineSegments() outline
+	 * segments} by means of {@link CubicCurve}s.
 	 * 
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
-		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
-		// on the approximation used here
-		return CurveUtils.toPath(ShapeUtils.computeEllipticalArcApproximation(
-				x, y, width, height, Angle.fromDeg(0), Angle.fromDeg(90)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(90), Angle.fromDeg(180)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(180), Angle.fromDeg(270)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(270), Angle.fromDeg(360)));
+		return CurveUtils.toPath(getOutlineSegments());
 	}
 
 	@Override
