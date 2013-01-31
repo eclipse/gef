@@ -1,79 +1,14 @@
 <class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.IGraphics" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/IGraphics.java" binary="false">    
+  <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.IGraphics" 
+    project="org.eclipse.gef4.graphics" file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/IGraphics.java" 
+    binary="false">    
     <position height="-1" width="-1" x="416" y="181"/>    
     <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
   </interface>  
-  <interface id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.IFillProperties" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/IFillProperties.java" binary="false">    
-    <position height="-1" width="-1" x="118" y="436"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="false" private="false"/>    
-    </display>  
-  </interface>  
-  <interface id="3" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.IBlitProperties" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/IBlitProperties.java" binary="false">    
-    <position height="-1" width="-1" x="733" y="181"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="false" private="false"/>    
-    </display>  
-  </interface>  
-  <interface id="4" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.IWriteProperties" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/IWriteProperties.java" binary="false">    
-    <position height="-1" width="-1" x="733" y="355"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="false" private="false"/>    
-    </display>  
-  </interface>  
-  <interface id="5" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.IDrawProperties" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/IDrawProperties.java" binary="false">    
-    <position height="-1" width="-1" x="118" y="179"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="false" private="false"/>    
-    </display>  
-  </interface>  
-  <interface id="6" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.render.ICanvasProperties" 
-    project="org.eclipse.gef4.graphics" 
-    file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/render/ICanvasProperties.java" binary="false">    
-    <position height="-1" width="-1" x="417" y="479"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="false" protected="false" private="false"/>    
-    </display>  
-  </interface>  
-  <dependency id="7">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="3"/>  
-  </dependency>  
-  <dependency id="8">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="4"/>  
-  </dependency>  
-  <dependency id="9">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="5"/>  
-  </dependency>  
-  <dependency id="10">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="11">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
   <classifier-display autosize="true" package="true" initial-value="true" signature="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false"/>    
     <operations public="false" package="false" protected="false" private="false"/>  
