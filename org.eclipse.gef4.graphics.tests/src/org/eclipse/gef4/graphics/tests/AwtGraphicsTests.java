@@ -8,17 +8,28 @@
  * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ * 
  *******************************************************************************/
 package org.eclipse.gef4.graphics.tests;
 
-import org.eclipse.gef4.graphics.render.IGraphics;
+import static org.junit.Assert.assertEquals;
 
-public class AWTBlitPropertiesTests extends AbstractBlitPropertiesTests {
+import java.awt.image.BufferedImage;
+
+import org.eclipse.gef4.graphics.awt.AwtGraphics;
+import org.junit.Test;
+
+public class AwtGraphicsTests extends AbstractGraphicsTests<AwtGraphics> {
 
 	@Override
-	public IGraphics createGraphics() {
-		return AWTUtils.createGraphics();
+	public AwtGraphics createGraphics() {
+		return new AwtGraphics(new BufferedImage(640, 480,
+				java.awt.image.BufferedImage.TYPE_INT_ARGB).createGraphics());
+	}
+
+	@Test
+	public void test_toString() {
+		assertEquals("IGraphics()", graphics.toString());
 	}
 
 }

@@ -17,8 +17,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ org.eclipse.gef4.graphics.tests.AllAWTTests.class,
-		ColorTests.class, ImageTests.class, FontTests.class })
+@SuiteClasses({ org.eclipse.gef4.graphics.tests.AllAwtTests.class,
+		ColorTests.class, ImageTests.class, FontTests.class, PatternTests.class })
 public class AllTests {
 
 }

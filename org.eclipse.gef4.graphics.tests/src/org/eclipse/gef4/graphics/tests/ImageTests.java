@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2012, 2013 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,47 +13,54 @@
 package org.eclipse.gef4.graphics.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.image.BufferedImage;
-
-import org.eclipse.gef4.graphics.Image;
+import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.image.Image;
 import org.junit.Test;
 
 public class ImageTests {
 
-	// TODO: Test with actual images!
-	// -> implement gradients -> synthesize test images
+	private static final int W = 640;
+	private static final int H = 480;
+	private static final int BG = new Color(255, 0, 0, 255).toPixelARGB();
 
 	@Test
 	public void test_constructor() {
-		Image img = new Image(new BufferedImage(640, 480,
-				BufferedImage.TYPE_3BYTE_BGR));
+		Image img = new Image(W, H);
 
-		assertEquals(640, img.getWidth());
-		assertEquals(480, img.getHeight());
+		assertEquals(W, img.getWidth());
+		assertEquals(H, img.getHeight());
 
-		boolean thrown = false;
-		try {
-			new Image((BufferedImage) null);
-		} catch (NullPointerException x) {
-			thrown = true;
+		img = new Image(W, H, BG);
+		assertEquals(W, img.getWidth());
+		assertEquals(H, img.getHeight());
+
+		for (int x = 0; x < img.getWidth(); x += 10) {
+			for (int y = 0; y < img.getHeight(); y += 10) {
+				assertEquals(BG, img.getPixel(x, y));
+			}
 		}
-
-		assertTrue(thrown);
 	}
 
 	@Test
 	public void test_getCopy() {
-		// TODO
+		Image image = new Image(W, H, BG);
+		Image copy = image.getCopy();
+		assertNotNull(copy);
+		assertNotSame(image, copy);
+		assertEquals(image, copy);
 	}
 
 	@Test
 	public void test_toString() {
-		// TODO: write a better toString() method.
-		Image img = new Image(new BufferedImage(640, 480,
-				BufferedImage.TYPE_3BYTE_BGR));
-		assertTrue(img.toString().contains("Image(bufferedImage = "));
+		Image img = new Image(W, H, BG);
+		assertTrue(img.toString()
+				.contains(
+						"Image(width = " + W + ", height = " + H
+								+ ", bufferedImage = "));
 	}
 
 }

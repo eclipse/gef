@@ -17,7 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.gef4.graphics.Font;
+import org.eclipse.gef4.graphics.font.Font;
 import org.junit.Test;
 
 public class FontTests {

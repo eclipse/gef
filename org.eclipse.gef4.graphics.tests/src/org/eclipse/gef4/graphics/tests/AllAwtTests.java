@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.tests;
 
-import org.eclipse.gef4.graphics.render.IGraphics;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-public class AWTWritePropertiesTests extends AbstractWritePropertiesTests {
-
-	@Override
-	public IGraphics createGraphics() {
-		return AWTUtils.createGraphics();
-	}
+@RunWith(Suite.class)
+@SuiteClasses({ AwtGraphicsTests.class })
+public class AllAwtTests {
 
 }
