@@ -495,6 +495,9 @@ public class AffineTransform {
 		return this;
 	}
 
+	// TODO: Add the possibility to pass Angle objects instead of simple double
+	// values.
+
 	/**
 	 * Adds a rotation around a {@link Point} to the transformation matrix of
 	 * this {@link AffineTransform}. The given coordinates specify a

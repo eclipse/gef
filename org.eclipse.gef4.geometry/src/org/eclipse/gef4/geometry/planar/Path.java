@@ -444,7 +444,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	@Override
-	public IGeometry getTransformed(AffineTransform t) {
+	public Path getTransformed(AffineTransform t) {
 		return AWT2Geometry.toPath(new Path2D.Double(Geometry2AWT
 				.toAWTPath(this), Geometry2AWT.toAWTAffineTransform(t)));
 	}
