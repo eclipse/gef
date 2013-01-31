@@ -15,7 +15,6 @@ package org.eclipse.gef4.graphics.examples;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.IOException;
 
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -23,7 +22,7 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.awt.AwtGraphics;
 
-public class SimpleExampleAWT extends JApplet {
+public class SimpleGraphicsAwt extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -31,7 +30,7 @@ public class SimpleExampleAWT extends JApplet {
 		JFrame frame = new JFrame();
 		frame.setTitle("First test example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JApplet applet = new SimpleExampleAWT();
+		JApplet applet = new SimpleGraphicsAwt();
 		applet.init();
 		frame.getContentPane().add(applet);
 		frame.pack();
@@ -40,16 +39,16 @@ public class SimpleExampleAWT extends JApplet {
 
 	@Override
 	public void init() {
-		JPanel panel = new SimpleExampleAWTPanel();
+		JPanel panel = new SimpleGraphicsAwtPanel();
 		getContentPane().add(panel);
 	}
 }
 
-class SimpleExampleAWTPanel extends JPanel {
+class SimpleGraphicsAwtPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public SimpleExampleAWTPanel() {
+	public SimpleGraphicsAwtPanel() {
 		setPreferredSize(new Dimension(640, 480));
 	}
 
@@ -59,12 +58,7 @@ class SimpleExampleAWTPanel extends JPanel {
 
 		Graphics2D g2d = (Graphics2D) graphics;
 		AwtGraphics g = new AwtGraphics(g2d);
-
-		try {
-			SimpleExampleUtil.draw(g);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		SimpleGraphicsUtil.renderScene(g);
 	}
 
 }

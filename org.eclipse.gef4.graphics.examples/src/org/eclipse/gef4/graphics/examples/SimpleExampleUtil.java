@@ -16,15 +16,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.render.ColorFill;
-import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.image.Image;
 
 public class SimpleExampleUtil {
 
@@ -34,67 +33,48 @@ public class SimpleExampleUtil {
 			BLACK = new Color(0, 0, 0);
 
 	protected static void draw(IGraphics g) throws IOException {
-		g.drawProperties().setColor(RED);
-		g.fillProperties().setMode(new ColorFill(YELLOW));
-
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
-		g.fill(rectangle);
-		g.draw(rectangle.getOutline());
 
-		g.pushState();
+		g.setDraw(RED).setFill(YELLOW).pushState();
+
+		g.fill(rectangle).draw(rectangle.getOutline());
 
 		PolyBezier cubicInterpolation = PolyBezier.interpolateCubic(new Point(
 				50, 50), new Point(200, 100), new Point(150, 200), new Point(
 				50, 300), new Point(150, 350), new Point(150, 200), new Point(
 				200, 75), new Point(300, 100), new Point(150, 400));
 
-		g.fillProperties().setMode(new ColorFill(BLUE));
-		// ((ColorFill) g.fillProperties().getMode()).setColor(BLUE);
-		g.fill(cubicInterpolation.toPath());
-
-		g.restoreState();
-
-		g.drawProperties().setColor(BLACK).setLineWidth(3);
-		g.draw(cubicInterpolation);
+		g.setFill(BLUE).setDraw(BLACK).setLineWidth(3);
+		g.fill(cubicInterpolation.toPath()).draw(cubicInterpolation);
 
 		g.popState();
 
 		rectangle.shrink(150, 150);
-		g.fill(rectangle);
-		g.draw(rectangle.getOutline());
-
-		g.pushState();
-
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(270, 50));
+		g.fill(rectangle).draw(rectangle.getOutline());
 
 		String text = "This is a first test example.";
+		Dimension textDimension = g.getTextDimension(text);
+
+		g.translate(270, 50);
 		g.write(text);
+		g.draw(new Rectangle(new Point(), textDimension).getOutline());
 
-		Dimension textDimension = g.fontUtils().getTextDimension(text);
-		g.draw(new Rectangle(0, 0, textDimension.width, textDimension.height)
-				.getOutline());
+		g.translate(50, 50).rotate(Angle.fromDeg(20));
+		g.blit(loadImage());
+	}
 
-		g.pushState();
-
-		AffineTransform at = g.canvasProperties().getAffineTransform();
-		at.translate(50, 50).rotate(0.3);
-		g.canvasProperties().setAffineTransform(at);
-
-		Image image;
+	/**
+	 * @return
+	 */
+	private static Image loadImage() {
+		Image image = null;
 		try {
 			image = new Image(ImageIO.read(SimpleExampleUtil.class
 					.getResource(IMAGE_FILE)));
 		} catch (IOException x) {
 			System.out.println("Cannot load image file '" + IMAGE_FILE + "':");
 			x.printStackTrace();
-			return;
 		}
-
-		g.blit(image);
-
-		g.popState();
-		g.popState();
+		return image;
 	}
-
 }

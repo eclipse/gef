@@ -15,11 +15,10 @@ package org.eclipse.gef4.graphics.examples;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
-import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
-import org.eclipse.gef4.graphics.render.ColorFill;
-import org.eclipse.gef4.graphics.render.IGraphics;
+import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.LineCap;
+import org.eclipse.gef4.graphics.LineJoin;
+import org.eclipse.gef4.graphics.color.Color;
 
 public class SimpleGraphicsUtil {
 
@@ -33,32 +32,21 @@ public class SimpleGraphicsUtil {
 		final Color green = new Color(0, 255, 0);
 		final Color darkGreen = new Color(0, 128, 0);
 
+		g.setLineWidth(4);
 		g.pushState();
 
-		g.drawProperties().setLineWidth(4).setAntialiasing(true);
-		g.fillProperties().setAntialiasing(true);
-		g.pushState();
+		g.setFill(red).setDraw(darkRed).setDashArray(25, 10);
+		g.fill(ellipse).draw(ellipse.getOutline());
 
-		g.fillProperties().setMode(new ColorFill(red));
-		g.drawProperties().setDashArray(25, 10).setColor(darkRed);
-		g.fill(ellipse);
-		g.draw(ellipse.getOutline());
+		g.restoreState();
 
-		g.popState();
-		g.pushState();
-
-		g.fillProperties().setMode(new ColorFill(blue));
-		g.drawProperties().setLineJoin(LineJoin.ROUND)
-				.setLineCap(LineCap.ROUND);
-		g.fill(rectangle);
-		g.draw(rectangle.getOutline());
+		g.setFill(blue).setLineJoin(LineJoin.ROUND).setLineCap(LineCap.ROUND);
+		g.fill(rectangle).draw(rectangle.getOutline());
 
 		g.popState();
 
-		g.fillProperties().setMode(new ColorFill(green));
-		g.drawProperties().setColor(darkGreen).setLineJoin(LineJoin.MITER);
-		g.fill(triangle);
-		g.draw(triangle.getOutline());
+		g.setFill(green).setDraw(darkGreen).setLineJoin(LineJoin.MITER);
+		g.fill(triangle).draw(triangle.getOutline());
 	}
 
 }

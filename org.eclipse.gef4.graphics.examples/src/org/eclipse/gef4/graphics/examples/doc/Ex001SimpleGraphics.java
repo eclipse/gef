@@ -15,12 +15,11 @@ package org.eclipse.gef4.graphics.examples.doc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.render.ColorFill;
-import org.eclipse.gef4.graphics.render.IDrawProperties.LineCap;
-import org.eclipse.gef4.graphics.render.IDrawProperties.LineJoin;
-import org.eclipse.gef4.graphics.render.IGraphics;
-import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
+import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.LineCap;
+import org.eclipse.gef4.graphics.LineJoin;
+import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.swt.SwtGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -52,7 +51,7 @@ public class Ex001SimpleGraphics implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		SWTGraphics g = new SWTGraphics(e.gc);
+		SwtGraphics g = new SwtGraphics(e.gc);
 		renderScene(g);
 		g.cleanUp();
 	}
@@ -66,35 +65,20 @@ public class Ex001SimpleGraphics implements PaintListener {
 		final Rectangle rectangle = new Rectangle(100, 160, 125, 220);
 		final Polygon triangle = new Polygon(260, 170, 190, 300, 330, 300);
 
-		g.drawProperties().setLineWidth(4).setAntialiasing(true);
-		g.fillProperties().setAntialiasing(true);
+		g.setFill(new Color(255, 0, 0)).setDraw(new Color(128, 0, 0))
+				.setDashArray(25, 10);
 
-		g.pushState(); // saves the current set of properties on the stack
+		g.fill(ellipse).draw(ellipse.getOutline());
 
-		g.fillProperties().setMode(new ColorFill(new Color(255, 0, 0)));
-		g.drawProperties().setDashArray(25, 10).setColor(new Color(128, 0, 0));
-
-		g.fill(ellipse);
-		g.draw(ellipse.getOutline());
-
-		g.restoreState(); // restores the previously saved properties
-
-		g.fillProperties().setMode(new ColorFill(new Color(0, 0, 255)));
-		g.drawProperties().setLineJoin(LineJoin.ROUND)
+		g.setFill(new Color(0, 0, 255)).setLineJoin(LineJoin.ROUND)
 				.setLineCap(LineCap.ROUND);
 
-		g.fill(rectangle);
-		g.draw(rectangle.getOutline());
+		g.fill(rectangle).draw(rectangle.getOutline());
 
-		g.popState(); // removes the previously saved properties from the stack
-						// and enables the prior set of properties
-
-		g.fillProperties().setMode(new ColorFill(new Color(0, 255, 0)));
-		g.drawProperties().setColor(new Color(0, 128, 0))
+		g.setFill(new Color(0, 255, 0)).setDraw(new Color(0, 128, 0))
 				.setLineJoin(LineJoin.MITER);
 
-		g.fill(triangle);
-		g.draw(triangle.getOutline());
+		g.fill(triangle).draw(triangle.getOutline());
 	}
 
 }

@@ -14,7 +14,7 @@ package org.eclipse.gef4.graphics.examples;
 
 import java.io.IOException;
 
-import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
+import org.eclipse.gef4.graphics.swt.SwtGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -28,7 +28,7 @@ public class SimpleExampleSWT implements PaintListener {
 	}
 
 	Shell shell;
-	SWTGraphics g;
+	SwtGraphics g;
 
 	public SimpleExampleSWT(String title) {
 		Display display = new Display();
@@ -51,7 +51,7 @@ public class SimpleExampleSWT implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		g = new SWTGraphics(e.gc);
+		g = new SwtGraphics(e.gc);
 		try {
 			SimpleExampleUtil.draw(g);
 		} catch (IOException e1) {

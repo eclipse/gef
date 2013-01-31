@@ -7,22 +7,26 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class FillModesSWT implements PaintListener {
+public class XorModeSwt implements PaintListener {
 
 	public static void main(String[] args) {
-		new FillModesSWT(FillModesUtil.TITLE);
+		new XorModeSwt("GEF4 Graphics Xor-Mode (SWT)");
 	}
 
-	public FillModesSWT(String title) {
+	private final XorModeUtil XOR_MODE_UTIL = new XorModeUtil();
+	private Shell shell;
+
+	private SwtGraphics g;
+
+	public XorModeSwt(String title) {
 		Display display = new Display();
 
-		final Shell shell = new Shell(display, SWT.SHELL_TRIM
-				| SWT.DOUBLE_BUFFERED);
+		shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
 		shell.setText(title);
-		shell.setBounds(0, 0, FillModesUtil.WIDTH, FillModesUtil.HEIGHT);
+		shell.pack();
 		shell.open();
+		shell.setBounds(0, 0, 640, 480);
 		shell.addPaintListener(this);
-		shell.redraw(); // platform independently triggers a PaintEvent
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -32,8 +36,8 @@ public class FillModesSWT implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		SwtGraphics g = new SwtGraphics(e.gc);
-		FillModesUtil.renderScene(g);
+		g = new SwtGraphics(e.gc);
+		XOR_MODE_UTIL.renderScene(g);
 		g.cleanUp();
 	}
 

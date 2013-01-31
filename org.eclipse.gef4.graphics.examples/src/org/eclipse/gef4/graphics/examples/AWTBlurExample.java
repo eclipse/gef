@@ -24,11 +24,11 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.images.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
-import org.eclipse.gef4.graphics.images.FilterOperations;
-import org.eclipse.gef4.graphics.render.IGraphics;
-import org.eclipse.gef4.graphics.render.awt.AWTGraphics;
+import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.awt.AwtGraphics;
+import org.eclipse.gef4.graphics.image.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
+import org.eclipse.gef4.graphics.image.FilterOperations;
+import org.eclipse.gef4.graphics.image.Image;
 
 public class AWTBlurExample extends JApplet {
 
@@ -54,6 +54,8 @@ public class AWTBlurExample extends JApplet {
 
 class AWTBlurExamplePanel extends JPanel {
 
+	private static final int PIXEL_RED = 0xffff0000;
+	private static final int STANDARD_DEVIATION = 4;
 	private static final long serialVersionUID = 1L;
 	private Image img;
 	private Image imgNoOp;
@@ -72,23 +74,25 @@ class AWTBlurExamplePanel extends JPanel {
 		}
 
 		if (imgNoOp == null) {
-			imgNoOp = FilterOperations.getGaussianBlur(2.25,
+			imgNoOp = FilterOperations.getGaussianBlur(STANDARD_DEVIATION,
 					new EdgeMode.NoOperation()).apply(img);
 		}
 
 		if (imgConstPixel == null) {
-			imgConstPixel = FilterOperations.getGaussianBlur(2.25,
-					new EdgeMode.ConstantPixel(0x00000000)).apply(img);
+			imgConstPixel = FilterOperations.getGaussianBlur(
+					STANDARD_DEVIATION, new EdgeMode.ConstantPixel(PIXEL_RED))
+					.apply(img);
 		}
 
 		if (imgOverlap == null) {
-			imgOverlap = FilterOperations.getGaussianBlur(2.25,
+			imgOverlap = FilterOperations.getGaussianBlur(STANDARD_DEVIATION,
 					new EdgeMode.Overlap()).apply(img);
 		}
 
 		if (imgConstNeighbors == null) {
-			imgConstNeighbors = FilterOperations.getGaussianBlur(2.25,
-					new EdgeMode.ConstantPixelNeighbors(0xffffffff)).apply(img);
+			imgConstNeighbors = FilterOperations.getGaussianBlur(
+					STANDARD_DEVIATION,
+					new EdgeMode.ConstantPixelNeighbors(PIXEL_RED)).apply(img);
 		}
 	}
 
@@ -97,7 +101,7 @@ class AWTBlurExamplePanel extends JPanel {
 		super.paintComponents(graphics);
 
 		Graphics2D g2d = (Graphics2D) graphics;
-		AWTGraphics g = new AWTGraphics(g2d);
+		AwtGraphics g = new AwtGraphics(g2d);
 
 		try {
 			renderScene(g, this.getClass().getResource("test.png"));
@@ -111,42 +115,14 @@ class AWTBlurExamplePanel extends JPanel {
 	private void renderScene(IGraphics g, URL resource) throws IOException,
 			URISyntaxException {
 		initResources(resource);
-
 		g.pushState();
-
-		g.blit(img);
-
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform()
-						.translate(0, img.getHeight()));
-
-		g.blit(imgNoOp);
-
+		g.blit(img).translate(0, img.getHeight()).blit(imgNoOp);
+		g.restoreState();
+		g.translate(img.getWidth(), 0).blit(imgConstPixel);
+		g.pushState();
+		g.translate(0, img.getHeight()).blit(imgConstNeighbors);
 		g.popState();
-		g.pushState();
-
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform()
-						.translate(img.getWidth(), 0));
-
-		g.blit(imgConstPixel);
-
-		g.pushState();
-
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform()
-						.translate(0, img.getHeight()));
-
-		g.blit(imgConstNeighbors);
-
-		g.popState();
-
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform()
-						.translate(img.getWidth(), 0));
-
-		g.blit(imgOverlap);
-
+		g.translate(img.getWidth(), 0).blit(imgOverlap);
 		g.popState();
 	}
 }

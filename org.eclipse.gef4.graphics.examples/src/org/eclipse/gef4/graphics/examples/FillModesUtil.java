@@ -7,13 +7,12 @@ import javax.imageio.ImageIO;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graphics.Color;
-import org.eclipse.gef4.graphics.Image;
-import org.eclipse.gef4.graphics.images.ArithmeticOperations;
-import org.eclipse.gef4.graphics.render.ColorFill;
-import org.eclipse.gef4.graphics.render.GradientFill;
-import org.eclipse.gef4.graphics.render.IGraphics;
-import org.eclipse.gef4.graphics.render.ImageFill;
+import org.eclipse.gef4.graphics.Gradient;
+import org.eclipse.gef4.graphics.IGraphics;
+import org.eclipse.gef4.graphics.Pattern.Mode;
+import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.image.ArithmeticOperations;
+import org.eclipse.gef4.graphics.image.Image;
 
 class FillModesUtil {
 
@@ -52,60 +51,59 @@ class FillModesUtil {
 	public static void renderScene(IGraphics g) {
 		long time = System.currentTimeMillis();
 
+		// g.setFill(loadImage());
+		// g.fill(new Rectangle(0, 0, 100, 100));
+		// g.fill(new Rectangle(100, 100, 100, 100));
+
 		Rectangle rectangle = new Rectangle(0, 0, 100, 100);
 		Ellipse circle = new Ellipse(rectangle);
 
 		// ColorFill
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(50, 50));
-
-		g.fillProperties().setMode(new ColorFill(MAGENTA));
+		g.translate(50, 50);
+		// g.setFill(new Color());
+		// g.fill(rectangle);
+		g.setXorMode(true);
+		g.setFill(MAGENTA);
 		g.fill(rectangle);
+		g.setXorMode(false);
 
-		// GradientFill.Linear 1
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(0, 150));
-
-		GradientFill.Linear linearGradient = new GradientFill.Linear(new Point(
-				0, 0), new Point(100, 0)).addStop(0, RED).addStop(0.5, GREEN)
+		// Gradient.Linear 1
+		Gradient.Linear linearGradient = new Gradient.Linear(new Point(0, 0),
+				new Point(100, 0)).addStop(0, RED).addStop(0.5, GREEN)
 				.addStop(1, BLUE);
 
-		g.fillProperties().setMode(linearGradient);
+		g.translate(0, 150);
+		g.setFillPatternMode(Mode.GRADIENT).setFillPatternGradient(
+				linearGradient);
 		g.fill(rectangle);
 
-		// GradientFill.Linear 2
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(150, -150));
-
-		linearGradient = new GradientFill.Linear(new Point(0, 0), new Point(
-				100, 100)).addStop(0, LIGHT_GREY).addStop(0.5, GREY)
+		// Gradient.Linear 2
+		linearGradient = new Gradient.Linear(new Point(0, 0), new Point(100,
+				100)).addStop(0, LIGHT_GREY).addStop(0.5, GREY)
 				.addStop(1, LIGHT_GREY);
 
-		g.fillProperties().setMode(linearGradient);
+		g.translate(150, -150);
+		g.setFillPatternGradient(linearGradient);
 		g.fill(rectangle);
 
-		// GradientFill.Radial
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(0, 150));
+		// Gradient.Radial
+		Gradient.Radial radialGradient = new Gradient.Radial(circle, new Point(
+				25, 25)).addStop(0, BLUE).addStop(1, DARK_BLUE);
 
-		GradientFill.Radial radialGradient = new GradientFill.Radial(circle,
-				new Point(25, 25)).addStop(0, BLUE).addStop(1, DARK_BLUE);
-
-		g.fillProperties().setMode(radialGradient);
+		g.translate(0, 150);
+		g.setFillPatternGradient(radialGradient);
 		g.fill(circle);
 
 		// highlights
-		radialGradient = new GradientFill.Radial(circle, new Point(25, 25))
+		radialGradient = new Gradient.Radial(circle, new Point(25, 25))
 				.addStop(0, WHITE_A192).addStop(0.5, WHITE_A0);
 
-		g.fillProperties().setMode(radialGradient);
+		g.setFillPatternGradient(radialGradient);
 		g.fill(circle);
 
 		// ImageFill
-		g.canvasProperties().setAffineTransform(
-				g.canvasProperties().getAffineTransform().translate(150, -150));
-
-		g.fillProperties().setMode(new ImageFill(loadImage()));
+		g.translate(150, -150);
+		g.setFillPatternMode(Mode.IMAGE).setFillPatternImage(loadImage());
 		g.fill(circle);
 
 		// show render time

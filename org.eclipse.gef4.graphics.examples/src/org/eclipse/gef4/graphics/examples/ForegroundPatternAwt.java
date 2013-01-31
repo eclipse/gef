@@ -10,15 +10,15 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.awt.AwtGraphics;
 
-public class FillModesAWT extends JApplet {
+public class ForegroundPatternAwt extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setTitle(FillModesUtil.TITLE);
+		frame.setTitle("GEF4 Graphics Foreground Pattern");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JApplet applet = new FillModesAWT();
+		JApplet applet = new ForegroundPatternAwt();
 		applet.init();
 		frame.getContentPane().add(applet);
 		frame.pack();
@@ -27,19 +27,19 @@ public class FillModesAWT extends JApplet {
 
 	@Override
 	public void init() {
-		JPanel panel = new FillModesAWTPanel();
+		JPanel panel = new ForegroundPatternAwtPanel();
 		getContentPane().add(panel);
 	}
-
 }
 
-class FillModesAWTPanel extends JPanel {
+class ForegroundPatternAwtPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public FillModesAWTPanel() {
-		setPreferredSize(new Dimension(FillModesUtil.WIDTH,
-				FillModesUtil.HEIGHT));
+	private final ForegroundPatternUtil FOREGROUND_PATTERN_UTIL = new ForegroundPatternUtil();
+
+	public ForegroundPatternAwtPanel() {
+		setPreferredSize(new Dimension(640, 480));
 	}
 
 	@Override
@@ -48,8 +48,8 @@ class FillModesAWTPanel extends JPanel {
 
 		Graphics2D g2d = (Graphics2D) graphics;
 		AwtGraphics g = new AwtGraphics(g2d);
-
-		FillModesUtil.renderScene(g);
+		FOREGROUND_PATTERN_UTIL.renderScene(g);
+		g.cleanUp();
 	}
 
 }

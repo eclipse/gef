@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
+import org.eclipse.gef4.graphics.swt.SwtGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -21,7 +21,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.printing.PrintDialog;
-import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
@@ -60,15 +59,15 @@ public class SWTPrinterExample implements PaintListener {
 				printDialog.setText("Print");
 				PrinterData printerData = printDialog.open();
 				if (!(printerData == null)) {
-					Printer p = new Printer(printerData);
-					p.startJob("PrintJob");
-					p.startPage();
-					SWTGraphics g = new SWTGraphics(p);
-					SimpleGraphicsUtil.renderScene(g);
-					p.endPage();
-					g.cleanUp();
-					p.endJob();
-					p.dispose();
+					// Printer p = new Printer(printerData);
+					// p.startJob("PrintJob");
+					// p.startPage();
+					// SwtGraphics g = new SwtGraphics(p);
+					// SimpleGraphicsUtil.renderScene(g);
+					// p.endPage();
+					// g.cleanUp();
+					// p.endJob();
+					// p.dispose();
 				}
 			}
 		});
@@ -85,7 +84,7 @@ public class SWTPrinterExample implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		SWTGraphics g = new SWTGraphics(e.gc);
+		SwtGraphics g = new SwtGraphics(e.gc);
 		SimpleGraphicsUtil.renderScene(g);
 		g.cleanUp();
 	}

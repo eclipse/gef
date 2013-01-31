@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
-import org.eclipse.gef4.graphics.render.swt.SWTGraphics;
+import org.eclipse.gef4.graphics.swt.SwtGraphics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -44,7 +44,7 @@ public class SimpleGraphicsSWT implements PaintListener {
 	}
 
 	public void paintControl(PaintEvent e) {
-		SWTGraphics g = new SWTGraphics(e.gc);
+		SwtGraphics g = new SwtGraphics(e.gc);
 		SimpleGraphicsUtil.renderScene(g);
 		g.cleanUp();
 	}
