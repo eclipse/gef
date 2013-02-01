@@ -10,7 +10,9 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.graphics.image;
+package org.eclipse.gef4.graphics.image.operations;
+
+import org.eclipse.gef4.graphics.image.Image;
 
 
 /**

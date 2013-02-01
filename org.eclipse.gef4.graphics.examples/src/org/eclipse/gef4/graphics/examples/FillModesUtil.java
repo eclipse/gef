@@ -11,8 +11,8 @@ import org.eclipse.gef4.graphics.Gradient;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.Pattern.Mode;
 import org.eclipse.gef4.graphics.color.Color;
-import org.eclipse.gef4.graphics.image.ArithmeticOperations;
 import org.eclipse.gef4.graphics.image.Image;
+import org.eclipse.gef4.graphics.image.operations.ImageOperations;
 
 class FillModesUtil {
 
@@ -40,8 +40,8 @@ class FillModesUtil {
 		try {
 			image = new Image(ImageIO.read(FillModesAWT.class
 					.getResource(IMAGE_FILE))).apply(
-					ArithmeticOperations.getInvertOperation()).getSubImage(0,
-					0, 50, 50);
+					ImageOperations.getInvertOperation()).getSubImage(0, 0, 50,
+					50);
 		} catch (IOException x) {
 			x.printStackTrace();
 		}

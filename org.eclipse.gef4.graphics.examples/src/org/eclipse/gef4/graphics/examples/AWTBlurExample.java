@@ -26,9 +26,9 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.awt.AwtGraphics;
-import org.eclipse.gef4.graphics.image.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
-import org.eclipse.gef4.graphics.image.FilterOperations;
 import org.eclipse.gef4.graphics.image.Image;
+import org.eclipse.gef4.graphics.image.operations.ImageOperations;
+import org.eclipse.gef4.graphics.image.operations.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
 
 public class AWTBlurExample extends JApplet {
 
@@ -74,23 +74,22 @@ class AWTBlurExamplePanel extends JPanel {
 		}
 
 		if (imgNoOp == null) {
-			imgNoOp = FilterOperations.getGaussianBlur(STANDARD_DEVIATION,
+			imgNoOp = ImageOperations.getGaussianBlur(STANDARD_DEVIATION,
 					new EdgeMode.NoOperation()).apply(img);
 		}
 
 		if (imgConstPixel == null) {
-			imgConstPixel = FilterOperations.getGaussianBlur(
-					STANDARD_DEVIATION, new EdgeMode.ConstantPixel(PIXEL_RED))
-					.apply(img);
+			imgConstPixel = ImageOperations.getGaussianBlur(STANDARD_DEVIATION,
+					new EdgeMode.ConstantPixel(PIXEL_RED)).apply(img);
 		}
 
 		if (imgOverlap == null) {
-			imgOverlap = FilterOperations.getGaussianBlur(STANDARD_DEVIATION,
+			imgOverlap = ImageOperations.getGaussianBlur(STANDARD_DEVIATION,
 					new EdgeMode.Overlap()).apply(img);
 		}
 
 		if (imgConstNeighbors == null) {
-			imgConstNeighbors = FilterOperations.getGaussianBlur(
+			imgConstNeighbors = ImageOperations.getGaussianBlur(
 					STANDARD_DEVIATION,
 					new EdgeMode.ConstantPixelNeighbors(PIXEL_RED)).apply(img);
 		}
@@ -116,13 +115,13 @@ class AWTBlurExamplePanel extends JPanel {
 			URISyntaxException {
 		initResources(resource);
 		g.pushState();
-		g.blit(img).translate(0, img.getHeight()).blit(imgNoOp);
+		g.paint(img).translate(0, img.getHeight()).paint(imgNoOp);
 		g.restoreState();
-		g.translate(img.getWidth(), 0).blit(imgConstPixel);
+		g.translate(img.getWidth(), 0).paint(imgConstPixel);
 		g.pushState();
-		g.translate(0, img.getHeight()).blit(imgConstNeighbors);
+		g.translate(0, img.getHeight()).paint(imgConstNeighbors);
 		g.popState();
-		g.translate(img.getWidth(), 0).blit(imgOverlap);
+		g.translate(img.getWidth(), 0).paint(imgOverlap);
 		g.popState();
 	}
 }

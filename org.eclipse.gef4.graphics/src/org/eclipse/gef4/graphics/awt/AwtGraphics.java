@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.awt;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.CompositeContext;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -19,6 +22,9 @@ import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 import org.eclipse.gef4.geometry.convert.awt.Geometry2AWT;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -48,6 +54,58 @@ import org.eclipse.gef4.graphics.image.Image;
  */
 public class AwtGraphics extends AbstractGraphics {
 
+	// TODO: XorMode is failing badly when xor'd things are out of the viewport.
+
+	private static class XorComposite implements Composite {
+
+		public static XorComposite INSTANCE = new XorComposite();
+
+		private XorContext context = new XorContext();
+
+		@Override
+		public CompositeContext createContext(ColorModel srcColorModel,
+				ColorModel dstColorModel, RenderingHints hints) {
+			return context;
+		}
+
+	}
+
+	private static class XorContext implements CompositeContext {
+
+		/*
+		 * TODO: check if this works "everywhere"
+		 */
+
+		public XorContext() {
+		}
+
+		@Override
+		public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
+			// TODO: Find out which minimum/maximum values we really have.
+			int w = Math.min(src.getWidth(), dstIn.getWidth());
+			int h = Math.min(src.getHeight(), dstIn.getHeight());
+
+			int[] srcArgb = new int[4];
+			int[] dstArgb = new int[4];
+
+			for (int x = 0; x < w; x++) {
+				for (int y = 0; y < h; y++) {
+					src.getPixel(x, y, srcArgb);
+					dstIn.getPixel(x, y, dstArgb);
+					for (int i = 0; i < 3; i++) {
+						dstArgb[i] ^= srcArgb[i];
+					}
+					dstOut.setPixel(x, y, dstArgb);
+				}
+			}
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+	}
+
 	private Graphics2D g;
 
 	/**
@@ -57,13 +115,6 @@ public class AwtGraphics extends AbstractGraphics {
 	 */
 	public AwtGraphics(Graphics2D g2d) {
 		g = (Graphics2D) g2d.create();
-	}
-
-	@Override
-	public AwtGraphics blit(Image image) {
-		validateBlit();
-		g.drawImage(AwtGraphicsUtils.toAwtImage(image), 0, 0, null);
-		return this;
 	}
 
 	@Override
@@ -186,6 +237,13 @@ public class AwtGraphics extends AbstractGraphics {
 	}
 
 	@Override
+	public AwtGraphics paint(Image image) {
+		validateBlit();
+		g.drawImage(AwtGraphicsUtils.toAwtImage(image), 0, 0, null);
+		return this;
+	}
+
+	@Override
 	public IGraphics setXorMode(boolean xor) {
 		getCurrentState().setXorMode(xor);
 		return this;
@@ -236,14 +294,15 @@ public class AwtGraphics extends AbstractGraphics {
 					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		}
 
-		// if (getCurrentState().isXorMode()) {
-		// g.setXORMode(AwtGraphicsUtils.toAwtColor(new Color(0, 0, 255)));
-		// g.setComposite(AlphaComposite.Xor);
-		// g.setComposite(XorComposite.INSTANCE);
-		// } else {
-		// g.setPaintMode();
-		// g.setComposite(AlphaComposite.SrcOver);
-		// }
+		if (getCurrentState().isXorMode()) {
+			// g.setXORMode(AwtGraphicsUtils.toAwtColor(new Color(0, 0, 255)));
+			// g.setComposite(AlphaComposite.Xor);
+			// TODO: disable anti-aliasing as a workaround
+			g.setComposite(XorComposite.INSTANCE);
+		} else {
+			// g.setPaintMode();
+			g.setComposite(AlphaComposite.SrcOver);
+		}
 	}
 
 	private void validatePattern(Pattern p) {
@@ -278,13 +337,12 @@ public class AwtGraphics extends AbstractGraphics {
 				.getFontByReference());
 		scale(fontScale, fontScale);
 
+		// TODO: Use LineMetrics.
 		FontMetrics fontMetrics = g.getFontMetrics();
 		int ascent = fontMetrics.getMaxAscent();
 		translate(0, ascent);
 
 		validateWrite();
-
-		System.out.println(g.getFontRenderContext().getTransform());
 
 		g.drawString(text, 0, 0);
 

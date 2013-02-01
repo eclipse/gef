@@ -20,6 +20,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.InterpolationHint;
 import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.image.operations.IImageOperation;
 
 /**
  * An {@link Image} stores color and alpha data for a rectangular pixel raster.

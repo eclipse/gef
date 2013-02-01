@@ -492,42 +492,12 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
-	public IGraphics clip(IMultiShape toClip) {
-		if (toClip == null) {
-			throw new IllegalArgumentException(
-					"The given IMultiShape may not be null.");
-		}
-		return clip(toClip.toPath());
-	}
-
-	@Override
-	public IGraphics clip(IShape toClip) {
-		if (toClip == null) {
-			throw new IllegalArgumentException(
-					"The given IShape may not be null.");
-		}
-		return clip(toClip.toPath());
-	}
-
-	@Override
-	public IGraphics clip(Path toClip) {
-		if (toClip == null) {
-			throw new IllegalArgumentException(
-					"The given Path may not be null.");
-		}
-		Path clip = getCurrentState().getClippingAreaByReference();
-		getCurrentState().setClippingAreaByReference(
-				clip == null ? toClip : Path.intersect(clip, toClip));
-		return this;
-	}
-
-	@Override
 	public AffineTransform getAffineTransform() {
 		return getCurrentState().getAffineTransformByReference().getCopy();
 	}
 
 	@Override
-	public Path getClippingArea() {
+	public Path getClip() {
 		Path clip = getCurrentState().getClippingAreaByReference();
 		return clip == null ? null : clip.getCopy();
 	}
@@ -678,6 +648,36 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
+	public IGraphics intersectClip(IMultiShape toClip) {
+		if (toClip == null) {
+			throw new IllegalArgumentException(
+					"The given IMultiShape may not be null.");
+		}
+		return intersectClip(toClip.toPath());
+	}
+
+	@Override
+	public IGraphics intersectClip(IShape toIntersect) {
+		if (toIntersect == null) {
+			throw new IllegalArgumentException(
+					"The given IShape may not be null.");
+		}
+		return intersectClip(toIntersect.toPath());
+	}
+
+	@Override
+	public IGraphics intersectClip(Path toIntersect) {
+		if (toIntersect == null) {
+			throw new IllegalArgumentException(
+					"The given Path may not be null.");
+		}
+		Path clip = getCurrentState().getClippingAreaByReference();
+		getCurrentState().setClippingAreaByReference(
+				clip == null ? toIntersect : Path.intersect(clip, toIntersect));
+		return this;
+	}
+
+	@Override
 	public boolean isAntiAliasing() {
 		return getCurrentState().isAntiAliasing();
 	}
@@ -748,17 +748,20 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
-	public IGraphics setClippingArea(Path clippingArea) {
+	public IGraphics setClip(Path clip) {
 		getCurrentState().setClippingAreaByReference(
-				clippingArea == null ? null : clippingArea.getCopy());
+				clip == null ? null : clip.getCopy());
 		return this;
 	}
 
 	@Override
 	public IGraphics setDashArray(double... dashArray) {
+		if (dashArray == null) {
+			throw new IllegalArgumentException(
+					"The given dash array may not be null.");
+		}
 		getCurrentState().setDashArrayByReference(
-				dashArray == null ? new double[] {} : Arrays.copyOf(dashArray,
-						dashArray.length));
+				Arrays.copyOf(dashArray, dashArray.length));
 		return this;
 	}
 
@@ -1110,25 +1113,25 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
-	public IGraphics unclip(IMultiShape toShow) {
+	public IGraphics unionClip(IMultiShape toShow) {
 		if (toShow == null) {
 			throw new IllegalArgumentException(
 					"The given IMultiShape may not be null.");
 		}
-		return unclip(toShow.toPath());
+		return unionClip(toShow.toPath());
 	}
 
 	@Override
-	public IGraphics unclip(IShape toShow) {
+	public IGraphics unionClip(IShape toShow) {
 		if (toShow == null) {
 			throw new IllegalArgumentException(
 					"The given IShape may not be null.");
 		}
-		return unclip(toShow.toPath());
+		return unionClip(toShow.toPath());
 	}
 
 	@Override
-	public IGraphics unclip(Path toShow) {
+	public IGraphics unionClip(Path toShow) {
 		if (toShow == null) {
 			throw new IllegalArgumentException(
 					"The given Path may not be null.");

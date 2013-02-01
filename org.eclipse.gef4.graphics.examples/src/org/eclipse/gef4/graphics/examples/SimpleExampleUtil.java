@@ -60,7 +60,7 @@ public class SimpleExampleUtil {
 		g.draw(new Rectangle(new Point(), textDimension).getOutline());
 
 		g.translate(50, 50).rotate(Angle.fromDeg(20));
-		g.blit(loadImage());
+		g.paint(loadImage());
 	}
 
 	/**

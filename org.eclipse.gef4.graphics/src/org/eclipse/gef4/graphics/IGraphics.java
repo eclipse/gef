@@ -51,7 +51,7 @@ import org.eclipse.gef4.graphics.image.Image;
  * In addition, you can display {@link Image}s or write text on the screen using
  * these two methods:
  * <ul>
- * <li><code>{@link #blit(Image)}</code></li>
+ * <li><code>{@link #paint(Image)}</code></li>
  * <li><code>{@link #write(String)}</code></li>
  * </ul>
  * </p>
@@ -77,8 +77,8 @@ import org.eclipse.gef4.graphics.image.Image;
  * <li>{@link #setAffineTransform(AffineTransform)},
  * {@link #translate(double, double)}, {@link #scale(double, double)},
  * {@link #rotate(Angle)}, {@link #shear(double, double)}</li>
- * <li>{@link #setClippingArea(Path)}, {@link #clip(Path)},
- * {@link #unclip(Path)}</li>
+ * <li>{@link #setClip(Path)}, {@link #intersectClip(Path)},
+ * {@link #unionClip(Path)}</li>
  * <li>{@link #setAntiAliasing(boolean)}</li>
  * </ul>
  * </li>
@@ -220,57 +220,10 @@ public interface IGraphics {
 	static final boolean DEFAULT_XOR_MODE = false;
 
 	/**
-	 * Draws the given {@link Image}.
-	 * 
-	 * @param image
-	 *            the {@link Image} to draw
-	 * @return <code>this</code> for convenience
-	 * 
-	 * @see #setInterpolationHint(InterpolationHint)
-	 */
-	IGraphics blit(Image image);
-
-	/**
 	 * Resets the underlying drawing toolkit and disposes all system resources
 	 * allocated by this {@link IGraphics}.
 	 */
 	void cleanUp();
-
-	/**
-	 * Intersects the given {@link Path} with the clipping area.
-	 * 
-	 * @param toClip
-	 * @return <code>this</code> for convenience
-	 * 
-	 * @see #clip(Path)
-	 * @see #clip(IShape)
-	 * @see #setClippingArea(Path)
-	 */
-	IGraphics clip(IMultiShape toClip);
-
-	/**
-	 * Intersects the given {@link Path} with the clipping area.
-	 * 
-	 * @param toClip
-	 * @return <code>this</code> for convenience
-	 * 
-	 * @see #clip(Path)
-	 * @see #clip(IMultiShape)
-	 * @see #setClippingArea(Path)
-	 */
-	IGraphics clip(IShape toClip);
-
-	/**
-	 * Intersects the given {@link Path} with the clipping area.
-	 * 
-	 * @param toClip
-	 * @return <code>this</code> for convenience
-	 * 
-	 * @see #clip(IMultiShape)
-	 * @see #clip(IShape)
-	 * @see #setClippingArea(Path)
-	 */
-	IGraphics clip(Path toClip);
 
 	/**
 	 * Creates a new {@link IImageGraphics} for the same drawing toolkit that is
@@ -281,31 +234,6 @@ public interface IGraphics {
 	 * @return a new {@link IImageGraphics} to draw into the given {@link Image}
 	 */
 	IImageGraphics createImageGraphics(Image image);
-
-	// /**
-	// * Creates a new {@link PrintConfiguration} that contains page bounds
-	// inside
-	// * of the specified <i>bounds</i> by considering page size and printer
-	// * resolution. If the <i>multiPage</i> parameter is set to
-	// <code>true</code>
-	// * then the given <i>bounds</i> is divided into page sized sub-bounds.
-	// * Otherwise, the {@link PrintConfiguration} will contain a single page
-	// with
-	// * the given <i>bounds</i>, so that the rendering is scaled down later.
-	// *
-	// * TODO: Move this method to a utility class. (PrintUtils)
-	// *
-	// * @param bounds
-	// * a {@link Rectangle} bounding the area that you want to print
-	// * @param multiPage
-	// * a boolean indicating whether to split the area to print into
-	// * multiple pages
-	// * @return a {@link PrintConfiguration} that can be used to print the
-	// given
-	// * <i>bounds</i> on a single or on multiple pages (<i>multiPage</i>)
-	// */
-	// PrintConfiguration createPrintConfiguration(Rectangle bounds,
-	// boolean multiPage);
 
 	/**
 	 * Draws the given {@link ICurve}.
@@ -371,6 +299,31 @@ public interface IGraphics {
 	 */
 	IGraphics fill(IMultiShape multiShape);
 
+	// /**
+	// * Creates a new {@link PrintConfiguration} that contains page bounds
+	// inside
+	// * of the specified <i>bounds</i> by considering page size and printer
+	// * resolution. If the <i>multiPage</i> parameter is set to
+	// <code>true</code>
+	// * then the given <i>bounds</i> is divided into page sized sub-bounds.
+	// * Otherwise, the {@link PrintConfiguration} will contain a single page
+	// with
+	// * the given <i>bounds</i>, so that the rendering is scaled down later.
+	// *
+	// * TODO: Move this method to a utility class. (PrintUtils)
+	// *
+	// * @param bounds
+	// * a {@link Rectangle} bounding the area that you want to print
+	// * @param multiPage
+	// * a boolean indicating whether to split the area to print into
+	// * multiple pages
+	// * @return a {@link PrintConfiguration} that can be used to print the
+	// given
+	// * <i>bounds</i> on a single or on multiple pages (<i>multiPage</i>)
+	// */
+	// PrintConfiguration createPrintConfiguration(Rectangle bounds,
+	// boolean multiPage);
+
 	/**
 	 * Fills the interior of the given {@link IShape}.
 	 * 
@@ -414,9 +367,9 @@ public interface IGraphics {
 	 * 
 	 * @return a {@link Path} representing the current clipping area
 	 * 
-	 * @see #setClippingArea(Path)
+	 * @see #setClip(Path)
 	 */
-	Path getClippingArea();
+	Path getClip();
 
 	/**
 	 * Returns a <code>double[]</code> representing the current dash array.
@@ -710,6 +663,42 @@ public interface IGraphics {
 	Pattern.Mode getWritePatternMode();
 
 	/**
+	 * Intersects the given {@link Path} with the clipping area.
+	 * 
+	 * @param toClip
+	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #intersectClip(Path)
+	 * @see #intersectClip(IShape)
+	 * @see #setClip(Path)
+	 */
+	IGraphics intersectClip(IMultiShape toClip);
+
+	/**
+	 * Intersects the given {@link Path} with the clipping area.
+	 * 
+	 * @param toClip
+	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #intersectClip(Path)
+	 * @see #intersectClip(IMultiShape)
+	 * @see #setClip(Path)
+	 */
+	IGraphics intersectClip(IShape toClip);
+
+	/**
+	 * Intersects the given {@link Path} with the clipping area.
+	 * 
+	 * @param toClip
+	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #intersectClip(IMultiShape)
+	 * @see #intersectClip(IShape)
+	 * @see #setClip(Path)
+	 */
+	IGraphics intersectClip(Path toClip);
+
+	/**
 	 * Returns <code>true</code> if anti-aliasing is active, otherwise
 	 * <code>false</code>.
 	 * 
@@ -729,6 +718,17 @@ public interface IGraphics {
 	 * @see #setXorMode(boolean)
 	 */
 	boolean isXorMode();
+
+	/**
+	 * Paints the given {@link Image}.
+	 * 
+	 * @param image
+	 *            the {@link Image} to paint
+	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setInterpolationHint(InterpolationHint)
+	 */
+	IGraphics paint(Image image);
 
 	/**
 	 * Restores the set of properties that was pushed last.
@@ -827,16 +827,23 @@ public interface IGraphics {
 	IGraphics setAntiAliasing(boolean aa);
 
 	/**
-	 * Sets the clipping area to the passed-in value.
+	 * <p>
+	 * Sets the clip to the passed-in value.
+	 * </p>
+	 * <p>
+	 * If the passed-in <i>clip</i> is <code>null</code> clipping is disabled.
+	 * </p>
 	 * 
-	 * @param clippingArea
+	 * @param clip
+	 *            {@link Path} to use as clip, <code>null</code> to disable
+	 *            clipping
 	 * @return <code>this</code> for convenience
 	 * 
-	 * @see #getClippingArea()
-	 * @see #clip(Path)
-	 * @see #unclip(Path)
+	 * @see #getClip()
+	 * @see #intersectClip(Path)
+	 * @see #unionClip(Path)
 	 */
-	IGraphics setClippingArea(Path clippingArea);
+	IGraphics setClip(Path clip);
 
 	/**
 	 * Sets the current dash array to the given value(s).
@@ -1366,11 +1373,11 @@ public interface IGraphics {
 	 * @param toShow
 	 * @return <code>this</code> for convenience
 	 * 
-	 * @see #setClippingArea(Path)
-	 * @see #unclip(IShape)
-	 * @see #unclip(Path)
+	 * @see #setClip(Path)
+	 * @see #unionClip(IShape)
+	 * @see #unionClip(Path)
 	 */
-	IGraphics unclip(IMultiShape toShow);
+	IGraphics unionClip(IMultiShape toShow);
 
 	/**
 	 * Adds the given {@link IShape} to the current clipping area, i.e. marks
@@ -1379,11 +1386,11 @@ public interface IGraphics {
 	 * @param toShow
 	 * @return <code>this</code> for convenience
 	 * 
-	 * @see #setClippingArea(Path)
-	 * @see #unclip(IMultiShape)
-	 * @see #unclip(Path)
+	 * @see #setClip(Path)
+	 * @see #unionClip(IMultiShape)
+	 * @see #unionClip(Path)
 	 */
-	IGraphics unclip(IShape toShow);
+	IGraphics unionClip(IShape toShow);
 
 	/**
 	 * Adds the given {@link Path} to the current clipping area, i.e. marks the
@@ -1392,11 +1399,11 @@ public interface IGraphics {
 	 * @param toShow
 	 * @return <code>this</code> for convenience
 	 * 
-	 * @see #setClippingArea(Path)
-	 * @see #unclip(IShape)
-	 * @see #unclip(IMultiShape)
+	 * @see #setClip(Path)
+	 * @see #unionClip(IShape)
+	 * @see #unionClip(IMultiShape)
 	 */
-	IGraphics unclip(Path toShow);
+	IGraphics unionClip(Path toShow);
 
 	/**
 	 * Draws the given <i>text</i> on this {@link IGraphics}.

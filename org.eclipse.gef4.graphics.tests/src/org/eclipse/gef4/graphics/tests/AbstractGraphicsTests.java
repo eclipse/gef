@@ -77,9 +77,9 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 
 		IImageGraphics ig = graphics.createImageGraphics(image);
 
-		ig.clip(new Rectangle(100, 100, 200, 100));
-		ig.clip(new Rectangle(150, 50, 100, 200));
-		Path clip = ig.getClippingArea();
+		ig.intersectClip(new Rectangle(100, 100, 200, 100));
+		ig.intersectClip(new Rectangle(150, 50, 100, 200));
+		Path clip = ig.getClip();
 
 		ig.setFill(fgColor);
 		ig.fill(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
@@ -108,7 +108,7 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 				graphics.getAffineTransform());
 		assertEquals(IGraphics.DEFAULT_ANTI_ALIASING, graphics.isAntiAliasing());
 
-		Path clip = graphics.getClippingArea();
+		Path clip = graphics.getClip();
 		if (clip == null) {
 			assertNull(IGraphics.DEFAULT_CLIPPING_AREA);
 		} else {
@@ -376,11 +376,11 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 	@Test
 	public void test_setClippingArea() {
 		Path clip = new Polygon(50, 100, 100, 50, 150, 100, 100, 150).toPath();
-		graphics.setClippingArea(clip);
-		assertEquals(clip, graphics.getClippingArea());
+		graphics.setClip(clip);
+		assertEquals(clip, graphics.getClip());
 
-		graphics.setClippingArea(null);
-		assertEquals(null, graphics.getClippingArea());
+		graphics.setClip(null);
+		assertEquals(null, graphics.getClip());
 	}
 
 	@Test
@@ -479,9 +479,9 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		Image image = new Image(400, 300, bgColor);
 		IImageGraphics ig = graphics.createImageGraphics(image);
 
-		ig.clip(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
-		ig.unclip(new Rectangle(100, 100, 50, 50));
-		Path clip = ig.getClippingArea();
+		ig.intersectClip(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
+		ig.unionClip(new Rectangle(100, 100, 50, 50));
+		Path clip = ig.getClip();
 
 		ig.setFill(fgColor);
 		ig.fill(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
@@ -578,8 +578,8 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		Image image = new Image(400, 300, bgColor);
 		IImageGraphics ig = graphics.createImageGraphics(image);
 		assertSame(image, ig.getImage());
-		ig.setClippingArea(new Rectangle(100, 100, 50, 50).toPath());
-		Path clip = ig.getClippingArea();
+		ig.setClip(new Rectangle(100, 100, 50, 50).toPath());
+		Path clip = ig.getClip();
 		ig.setXorMode(true);
 		assertTrue(ig.isXorMode());
 		ig.setFill(fgColor);

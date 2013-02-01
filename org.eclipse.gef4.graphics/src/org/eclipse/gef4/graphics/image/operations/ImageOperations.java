@@ -1,28 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
- * 
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
- *******************************************************************************/
-package org.eclipse.gef4.graphics.image;
+package org.eclipse.gef4.graphics.image.operations;
+
+import java.util.Arrays;
 
 import org.eclipse.gef4.graphics.color.Color;
+import org.eclipse.gef4.graphics.image.Image;
+import org.eclipse.gef4.graphics.image.operations.AbstractPixelNeighborhoodFilterOperation.EdgeMode;
 
-/**
- * The ArithmeticOperations class contains methods to create arithmetic and
- * logical pixel filters.
- * 
- * @author mwienand
- * 
- */
-public class ArithmeticOperations {
-
+public class ImageOperations {
 	/**
 	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
 	 * absolute difference of the given {@link Image} and the applied one, for
@@ -195,6 +179,61 @@ public class ArithmeticOperations {
 		return getBlendOperation(xr, xg, xb, 0, other);
 	}
 
+	public static IImageOperation getBoxBlur() {
+		return getBoxBlur(3);
+	}
+
+	public static IImageOperation getBoxBlur(int dimension) {
+		return getBoxBlur(dimension, new EdgeMode.NoOperation());
+	}
+
+	public static IImageOperation getBoxBlur(int dimension, EdgeMode edgeMode) {
+		// TODO: Optimize box blurring by applying two one-dimensional blurs
+		// sequentially, instead of one two-dimensional blur
+
+		int size = dimension * dimension;
+		double fraction = 1d / size;
+		double[] kernel = new double[size];
+		for (int i = 0; i < size; i++) {
+			kernel[i] = fraction;
+		}
+		return new ConvolutionFilterOperation(dimension, edgeMode, kernel);
+	}
+
+	public static IImageOperation getConservativeBlur(final int dimension,
+			final EdgeMode edgeMode) {
+		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
+			@Override
+			public int processNeighborhood(int[] neighbors) {
+				int midIdx = neighbors.length / 2, midValue = Color
+						.computePixelIntensity(neighbors[midIdx]), minIdx = 0, minValue = Color
+						.computePixelIntensity(neighbors[minIdx]), maxIdx = 0, maxValue = Color
+						.computePixelIntensity(neighbors[maxIdx]);
+
+				for (int i = 1; i < neighbors.length; i++) {
+					if (i == midIdx) {
+						continue;
+					}
+
+					int currentValue = Color
+							.computePixelIntensity(neighbors[i]);
+
+					if (currentValue > maxValue) {
+						maxValue = currentValue;
+						maxIdx = i;
+					} else if (currentValue < minValue) {
+						minValue = currentValue;
+						minIdx = i;
+					}
+				}
+
+				return midValue < minValue ? neighbors[minIdx]
+						: midValue > maxValue ? neighbors[maxIdx]
+								: neighbors[midIdx];
+			}
+		};
+	}
+
 	/**
 	 * <p>
 	 * Creates an {@link AbstractColorChannelFilterOperation} that computes the
@@ -230,6 +269,93 @@ public class ArithmeticOperations {
 		};
 	}
 
+	public static IImageOperation getGaussianBlur() {
+		return getGaussianBlur(1d);
+	}
+
+	public static IImageOperation getGaussianBlur(double standardDeviation) {
+		return getGaussianBlur(standardDeviation, new EdgeMode.NoOperation());
+	}
+
+	public static IImageOperation getGaussianBlur(double standardDeviation,
+			EdgeMode edgeMode) {
+		// TODO: do not accept a standard deviation greater than X (X may be
+		// 2.125 or something...) so that we do not run into floating point
+		// difficulties.
+
+		// TODO: Optimize Gaussian blur by applying two one-dimensional blurs
+		// sequentially, instead of one two-dimensional blur
+
+		// TODO: explain why we do dimension = 6*s
+		int dimension = (int) Math.ceil(6d * standardDeviation);
+
+		// ensure dimension is odd so that we have a middle
+		if (dimension % 2 == 0) {
+			dimension++;
+		}
+
+		// compute kernel values from the two dimensional Gaussian function
+		double s2 = standardDeviation * standardDeviation;
+		double gaussianCoefficient = 1d / (2d * Math.PI * s2);
+		double exponentDenominator = 2d * s2;
+
+		double sum = 0d;
+		double kernel[] = new double[dimension * dimension];
+		for (int i = 0, y = -dimension / 2; y <= dimension / 2; y++) {
+			for (int x = -dimension / 2; x <= dimension / 2; x++, i++) {
+				kernel[i] = gaussianCoefficient
+						* Math.pow(Math.E, (-x * x - y * y)
+								/ exponentDenominator);
+				sum += kernel[i];
+			}
+		}
+		for (int i = 0; i < kernel.length; i++) {
+			kernel[i] /= sum;
+		}
+
+		return new ConvolutionFilterOperation(dimension, edgeMode, kernel);
+	}
+
+	/**
+	 * Creates a new grayscale {@link IImageOperation}. A grayscale computes an
+	 * intensity value for every pixel of an {@link Image}. The red, green, and
+	 * blue channel values of one pixel are replaced by the pixels intensity
+	 * value.
+	 * 
+	 * @return a new grayscale {@link IImageOperation}
+	 */
+	public static AbstractPixelFilterOperation getGreyScaleOperation() {
+		return getGreyScaleOperation(0.3333, 0.3334, 0.3333);
+	}
+
+	/**
+	 * Creates a new grayscale {@link IImageOperation} with the provided scale
+	 * factors for the red, green, and blue channels. A grayscale
+	 * {@link IImageOperation} computes an intensity value for every pixel of an
+	 * {@link Image}. The red, green, and blue channel values of one pixel are
+	 * replaced by the pixels intensity value.
+	 * 
+	 * @param sr
+	 *            the red channel scale factor
+	 * @param sg
+	 *            the green channel scale factor
+	 * @param sb
+	 *            the blue channel scale factor
+	 * @return a new grayscale {@link IImageOperation} with the provided scale
+	 *         factors
+	 */
+	public static AbstractPixelFilterOperation getGreyScaleOperation(
+			final double sr, final double sg, final double sb) {
+		return new AbstractPixelFilterOperation() {
+			@Override
+			protected int processPixel(int pixel, int x, int y, Image input) {
+				int[] rgba = Color.getPixelRGBA(pixel);
+				int intensity = Color.computePixelIntensity(rgba, sr, sg, sb);
+				return Color.getPixel(intensity, intensity, intensity, rgba[3]);
+			}
+		};
+	}
+
 	/**
 	 * Creates an {@link AbstractChannelFilterOperation} that computes the
 	 * photographic negative of the applied {@link Image}.
@@ -239,6 +365,39 @@ public class ArithmeticOperations {
 	 */
 	public static AbstractChannelFilterOperation getInvertOperation() {
 		return getXorOperation(0xffffff);
+	}
+
+	public static IImageOperation getLaplacian() {
+		return new ConvolutionFilterOperation(3, new EdgeMode.NoOperation(),
+				new double[] { -1, -1, -1, -1, 8, -1, -1, -1, -1 });
+	}
+
+	public static IImageOperation getMedianBlur(int dimension, EdgeMode edgeMode) {
+		return new AbstractPixelNeighborhoodFilterOperation(dimension, edgeMode) {
+			@Override
+			public int processNeighborhood(int[] neighbors) {
+				int alpha = Color
+						.getPixelAlpha(neighbors[neighbors.length / 2]);
+				int[] red = new int[neighbors.length];
+				int[] green = new int[neighbors.length];
+				int[] blue = new int[neighbors.length];
+
+				for (int i = 0; i < neighbors.length; i++) {
+					int[] rgba = Color.getPixelRGBA(neighbors[i]);
+					red[i] = rgba[0];
+					green[i] = rgba[1];
+					blue[i] = rgba[2];
+				}
+
+				Arrays.sort(red);
+				Arrays.sort(green);
+				Arrays.sort(blue);
+
+				return Color.getPixel(red[neighbors.length / 2],
+						green[neighbors.length / 2],
+						blue[neighbors.length / 2], alpha);
+			}
+		};
 	}
 
 	/**
@@ -422,6 +581,38 @@ public class ArithmeticOperations {
 			@Override
 			protected int processChannel(int v, int x, int y, int i, Image input) {
 				return v - constant[i];
+			}
+		};
+	}
+
+	/**
+	 * <p>
+	 * Creates a new threshold {@link IImageOperation}.
+	 * </p>
+	 * 
+	 * <p>
+	 * A threshold {@link IImageOperation} classifies each pixel of an
+	 * {@link Image} into either being a foreground, or a background pixel
+	 * depending on the pixel's intensity value. If the intensity of a pixel is
+	 * greater than or equal to the passed-in intensity threshold, the pixel is
+	 * set to white. Otherwise, the pixel is set to black.
+	 * </p>
+	 * 
+	 * @param intensityThreshold
+	 * @return a new threshold {@link IImageOperation}
+	 */
+	public static AbstractPixelFilterOperation getThresholdOperation(
+			final int intensityThreshold) {
+		return new AbstractPixelFilterOperation() {
+			@Override
+			protected int processPixel(int pixel, int x, int y, Image input) {
+				int[] rgba = Color.getPixelRGBA(pixel);
+				int intensity = Color.computePixelIntensity(rgba);
+				if (intensity >= intensityThreshold) {
+					return Color.getPixel(0xff, 0xff, 0xff, rgba[3]);
+				} else {
+					return Color.getPixel(0, 0, 0, rgba[3]);
+				}
 			}
 		};
 	}

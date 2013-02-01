@@ -13,6 +13,7 @@
 package org.eclipse.gef4.graphics.swt;
 
 import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -37,8 +38,11 @@ import org.eclipse.gef4.graphics.Pattern;
 import org.eclipse.gef4.graphics.color.Color;
 import org.eclipse.gef4.graphics.font.Font;
 import org.eclipse.gef4.graphics.image.Image;
+import org.eclipse.gef4.graphics.image.operations.ImageOperations;
+import org.eclipse.gef4.graphics.swt.image.SwtImageAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.graphics.Transform;
@@ -120,11 +124,22 @@ public class SwtGraphics extends AbstractGraphics {
 		gc.setAdvanced(true);
 	}
 
-	@Override
-	public IGraphics blit(org.eclipse.gef4.graphics.image.Image image) {
-		validateBlit();
-		gc.drawImage(SwtGraphicsUtils.createSwtImage(image), 0, 0);
-		return this;
+	private void assimilate(IImageGraphics ig) {
+		// TODO: Do not copy twice, use the State object.
+		ig.setAffineTransform(getAffineTransform());
+		ig.setAntiAliasing(isAntiAliasing());
+		ig.setDashArray(getDashArray());
+		ig.setDashBegin(getDashBegin());
+		ig.setDrawPattern(getDrawPattern());
+		ig.setFillPattern(getFillPattern());
+		ig.setFont(getFont());
+		ig.setInterpolationHint(getInterpolationHint());
+		ig.setLineCap(getLineCap());
+		ig.setLineJoin(getLineJoin());
+		ig.setLineWidth(getLineWidth());
+		ig.setMiterLimit(getMiterLimit());
+		ig.setWriteBackground(getWriteBackground());
+		ig.setWritePattern(getWritePattern());
 	}
 
 	@Override
@@ -187,6 +202,48 @@ public class SwtGraphics extends AbstractGraphics {
 		validateDraw(new Rectangle(x, y, 1, 1));
 		gc.drawLine(x, y, x, y);
 		return this;
+	}
+
+	private void drawXor(Path path) {
+		AffineTransform at = getCurrentState().getAffineTransformByReference();
+		Rectangle bounds = path.getTransformed(at).getBounds();
+		path = path.getTransformed(new AffineTransform().translate(
+				-bounds.getX(), -bounds.getY()));
+
+		org.eclipse.swt.graphics.Image dst = new org.eclipse.swt.graphics.Image(
+				gc.getDevice(), (int) bounds.getWidth(),
+				(int) bounds.getHeight());
+
+		gc.copyArea(dst, (int) bounds.getX(), (int) bounds.getY());
+
+		ImageData dstImageData = dst.getImageData();
+
+		SwtImageAdapter srcImage = new SwtImageAdapter(new ImageData(
+				dstImageData.width, dstImageData.height, dstImageData.depth,
+				dstImageData.palette));
+
+		// TODO: Make it possible to directly draw into a native image.
+		IImageGraphics ig = createImageGraphics(srcImage);
+
+		// fill with black, because 0 ^ x = x
+		ig.setFill(new Color(0, 0, 0, 255)).fill(
+				new Rectangle(0, 0, bounds.getWidth(), bounds.getHeight()));
+
+		// apply graphics attributes
+		assimilate(ig);
+
+		// draw the path
+		ig.draw(path);
+		ig.cleanUp();
+
+		SwtImageAdapter dstIn = new SwtImageAdapter(dstImageData);
+		SwtImageAdapter dstOut = (SwtImageAdapter) dstIn.apply(ImageOperations
+				.getXorOperation(srcImage));
+
+		gc.setTransform(null);
+		gc.drawImage(
+				new org.eclipse.swt.graphics.Image(gc.getDevice(), dstOut
+						.getImageData()), 0, 0);
 	}
 
 	@Override
@@ -261,6 +318,13 @@ public class SwtGraphics extends AbstractGraphics {
 		validateFont();
 		org.eclipse.swt.graphics.Point textExtent = gc.stringExtent(text);
 		return new Dimension(textExtent.x, textExtent.y);
+	}
+
+	@Override
+	public IGraphics paint(org.eclipse.gef4.graphics.image.Image image) {
+		validateBlit();
+		gc.drawImage(SwtGraphicsUtils.createSwtImage(image), 0, 0);
+		return this;
 	}
 
 	private void setImagePattern(boolean background, Image image) {
@@ -340,11 +404,7 @@ public class SwtGraphics extends AbstractGraphics {
 		gc.setAntialias(antialias);
 		gc.setTextAntialias(antialias);
 
-		/*
-		 * gc.setXORMode(boolean); may not be used because it is a) deprecated
-		 * and b) not working on linux gtk (advanced/cairo).
-		 */
-		// gc.setXORMode(isXorMode());
+		// gc.setXORMode(isXorMode()); // does not work
 	}
 
 	private void validateInterpolationHint() {

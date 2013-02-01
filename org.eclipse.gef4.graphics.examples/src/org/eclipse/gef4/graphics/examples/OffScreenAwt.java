@@ -15,7 +15,7 @@ public class OffScreenAwt extends JApplet {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setTitle("First test example");
+		frame.setTitle("Off-Screen Example");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JApplet applet = new OffScreenAwt();
 		applet.init();
@@ -37,16 +37,14 @@ class OffScreenAwtPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public OffScreenAwtPanel() {
-		setPreferredSize(new Dimension(640, 480));
+		setPreferredSize(new Dimension(500, 400));
 	}
 
 	@Override
 	public void paintComponent(Graphics graphics) {
 		super.paintComponents(graphics);
-
 		Graphics2D g2d = (Graphics2D) graphics;
 		AwtGraphics g = new AwtGraphics(g2d);
-
 		OFF_SCREEN_UTIL.renderScene(g);
 		g.cleanUp();
 	}

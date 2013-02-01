@@ -37,7 +37,7 @@ class XorModeAwtPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public XorModeAwtPanel() {
-		setPreferredSize(new Dimension(640, 480));
+		setPreferredSize(new Dimension(420, 280));
 	}
 
 	@Override
