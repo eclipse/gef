@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.gef4.graphics.render.swt.tests"
+      id="org.eclipse.gef4.graphics.swt.tests"
       label="GEF4 Graphics SWT Rendering Tests"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
-      plugin="org.eclipse.gef4.graphics.render.swt.tests">
+      plugin="org.eclipse.gef4.graphics.swt.tests">
 
    <description>
       %description
@@ -19,7 +19,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.gef4.graphics.render.swt.tests"
+         id="org.eclipse.gef4.graphics.swt.tests"
          download-size="0"
          install-size="0"
          version="0.0.0"

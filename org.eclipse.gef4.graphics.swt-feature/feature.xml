@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.gef4.graphics.render.swt"
+      id="org.eclipse.gef4.graphics.swt"
       label="GEF4 Graphics SWT Rendering"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
-      plugin="org.eclipse.gef4.graphics.render.swt">
+      plugin="org.eclipse.gef4.graphics.swt">
 
    <description>
       %description
@@ -19,7 +19,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.gef4.graphics.render.swt"
+         id="org.eclipse.gef4.graphics.swt"
          download-size="0"
          install-size="0"
          version="0.0.0"

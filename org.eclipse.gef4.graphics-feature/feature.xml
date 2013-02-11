@@ -19,7 +19,7 @@
    </license>
 
    <includes
-         id="org.eclipse.gef4.graphics.render.swt"
+         id="org.eclipse.gef4.graphics.swt"
          version="0.0.0"
          optional="true"/>
 
