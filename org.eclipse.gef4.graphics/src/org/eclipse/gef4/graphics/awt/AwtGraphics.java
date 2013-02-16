@@ -44,6 +44,7 @@ import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.IImageGraphics;
 import org.eclipse.gef4.graphics.InterpolationHint;
 import org.eclipse.gef4.graphics.Pattern;
+import org.eclipse.gef4.graphics.GraphicsState;
 import org.eclipse.gef4.graphics.image.Image;
 
 /**
@@ -263,7 +264,7 @@ public class AwtGraphics extends AbstractGraphics {
 		validateGlobals();
 		validatePattern(getCurrentState().getDrawPatternByReference());
 
-		State s = getCurrentState();
+		GraphicsState s = getCurrentState();
 		g.setStroke(AwtGraphicsUtils.toAwtBasicStroke(
 				s.getDashArrayByReference(), s.getDashBegin(), s.getLineCap(),
 				s.getLineJoin(), s.getLineWidth(), s.getMiterLimit()));
