@@ -26,13 +26,13 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Ex001SimpleGraphics implements PaintListener {
+public class Example001 implements PaintListener {
 
 	public static void main(String[] args) {
-		new Ex001SimpleGraphics("Simple Graphics");
+		new Example001("Simple Graphics");
 	}
 
-	public Ex001SimpleGraphics(String title) {
+	public Example001(String title) {
 		Display display = new Display();
 
 		Shell shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
