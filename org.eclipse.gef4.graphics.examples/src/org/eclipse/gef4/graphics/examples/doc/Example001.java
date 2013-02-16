@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2012, 2013 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -50,6 +50,7 @@ public class Example001 implements PaintListener {
 		}
 	}
 
+	@Override
 	public void paintControl(PaintEvent e) {
 		SwtGraphics g = new SwtGraphics(e.gc);
 		renderScene(g);

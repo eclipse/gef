@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics;
 
 import java.util.Arrays;
@@ -8,8 +20,8 @@ import org.eclipse.gef4.graphics.color.Color;
 import org.eclipse.gef4.graphics.font.Font;
 
 /**
- * A GraphicsState object maintains one set of "lightweight" objects that constitute
- * a state of an {@link IGraphics}.
+ * A GraphicsState object maintains one set of "lightweight" objects that
+ * constitute a state of an {@link IGraphics}.
  * 
  * @author mwienand
  * 
@@ -54,12 +66,12 @@ public class GraphicsState {
 	 * @param interpolation
 	 * @param xorMode
 	 */
-	public GraphicsState(AffineTransform transform, boolean antiAlias, Path clip,
-			double[] dashes, double dashBegin, double lineWidth,
+	public GraphicsState(AffineTransform transform, boolean antiAlias,
+			Path clip, double[] dashes, double dashBegin, double lineWidth,
 			double miterLimit, LineCap lineCap, LineJoin lineJoin,
 			Pattern drawPattern, Pattern fillPattern, Pattern textPattern,
-			Color textBackground, Font font,
-			InterpolationHint interpolation, boolean xorMode) {
+			Color textBackground, Font font, InterpolationHint interpolation,
+			boolean xorMode) {
 		this.transform = transform;
 		this.antiAlias = antiAlias;
 		this.clip = clip;
@@ -89,10 +101,11 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Returns the exact (i.e. the same reference) clipping area (
-	 * {@link Path}) currently maintained by this {@link GraphicsState}.
+	 * Returns the exact (i.e. the same reference) clipping area ( {@link Path})
+	 * currently maintained by this {@link GraphicsState}.
 	 * 
-	 * @return the exact clipping area ({@link Path}) of this {@link GraphicsState}
+	 * @return the exact clipping area ({@link Path}) of this
+	 *         {@link GraphicsState}
 	 */
 	public Path getClippingAreaByReference() {
 		return clip;
@@ -125,7 +138,8 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Returns the dash-begin currently maintained by this {@link GraphicsState}.
+	 * Returns the dash-begin currently maintained by this {@link GraphicsState}
+	 * .
 	 * 
 	 * @return the dash-begin maintained by this {@link GraphicsState}
 	 */
@@ -197,7 +211,8 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Returns the line width currently maintained by this {@link GraphicsState}.
+	 * Returns the line width currently maintained by this {@link GraphicsState}
+	 * .
 	 * 
 	 * @return the line width maintained by this {@link GraphicsState}
 	 */
@@ -206,7 +221,8 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Returns the miter limit currently maintained by this {@link GraphicsState}.
+	 * Returns the miter limit currently maintained by this
+	 * {@link GraphicsState}.
 	 * 
 	 * @return the miter limit maintained by this {@link GraphicsState}
 	 */
@@ -263,8 +279,8 @@ public class GraphicsState {
 	 * {@link GraphicsState} to exactly the given value, i.e. "by reference".
 	 * 
 	 * @param at
-	 *            the {@link AffineTransform} that is to be maintained by
-	 *            this {@link GraphicsState}
+	 *            the {@link AffineTransform} that is to be maintained by this
+	 *            {@link GraphicsState}
 	 */
 	public void setAffineTransformByReference(AffineTransform at) {
 		this.transform = at;
@@ -272,8 +288,8 @@ public class GraphicsState {
 
 	/**
 	 * Enables or disables anti-aliasing in this {@link GraphicsState}.
-	 * Anti-aliasing is enabled if <code>true</code> is passed-in,
-	 * otherwise, anti-aliasing is disabled.
+	 * Anti-aliasing is enabled if <code>true</code> is passed-in, otherwise,
+	 * anti-aliasing is disabled.
 	 * 
 	 * @param antiAliasing
 	 *            if <code>true</code> enables anti-aliasing in this
@@ -285,8 +301,8 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Sets the clipping area that is maintained by this {@link GraphicsState} to
-	 * exactly the given value, i.e. "by reference".
+	 * Sets the clipping area that is maintained by this {@link GraphicsState}
+	 * to exactly the given value, i.e. "by reference".
 	 * 
 	 * @param clip
 	 *            a {@link Path} that is to be maintained by this
@@ -301,8 +317,8 @@ public class GraphicsState {
 	 * exactly the given value, i.e. "by reference".
 	 * 
 	 * @param dashes
-	 *            a <code>double</code>-array that is to be maintained by
-	 *            this {@link GraphicsState} as its dash-array
+	 *            a <code>double</code>-array that is to be maintained by this
+	 *            {@link GraphicsState} as its dash-array
 	 */
 	public void setDashArrayByReference(double[] dashes) {
 		this.dashes = dashes;
@@ -355,18 +371,20 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Sets the {@link InterpolationHint} of this {@link GraphicsState} to the given
-	 * value.
+	 * Sets the {@link InterpolationHint} of this {@link GraphicsState} to the
+	 * given value.
 	 * 
 	 * @param interp
-	 *            the new {@link InterpolationHint} of this {@link GraphicsState}
+	 *            the new {@link InterpolationHint} of this
+	 *            {@link GraphicsState}
 	 */
 	public void setInterpolationHint(InterpolationHint interp) {
 		this.interpolation = interp;
 	}
 
 	/**
-	 * Sets the {@link LineCap} of this {@link GraphicsState} to the given value.
+	 * Sets the {@link LineCap} of this {@link GraphicsState} to the given
+	 * value.
 	 * 
 	 * @param lineCap
 	 *            the new {@link LineCap} of this {@link GraphicsState}
@@ -376,7 +394,8 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Sets the {@link LineJoin} of this {@link GraphicsState} to the given value.
+	 * Sets the {@link LineJoin} of this {@link GraphicsState} to the given
+	 * value.
 	 * 
 	 * @param lineJoin
 	 *            the new {@link LineJoin} of this {@link GraphicsState}
@@ -410,8 +429,8 @@ public class GraphicsState {
 	 * {@link GraphicsState} to exactly the given value, i.e. "by reference".
 	 * 
 	 * @param writeBg
-	 *            the write background {@link Color} that is to be
-	 *            maintained by this {@link GraphicsState}
+	 *            the write background {@link Color} that is to be maintained by
+	 *            this {@link GraphicsState}
 	 */
 	public void setWriteBackgroundByReference(Color writeBg) {
 		this.textBackground = writeBg;
@@ -430,12 +449,12 @@ public class GraphicsState {
 	}
 
 	/**
-	 * Enables or disabled xor mode. If the given value is <code>true</code>
-	 * xor mode is enabled, otherwise xor mode is disabled.
+	 * Enables or disabled xor mode. If the given value is <code>true</code> xor
+	 * mode is enabled, otherwise xor mode is disabled.
 	 * 
 	 * @param xor
-	 *            <code>true</code> to enable xor mode, <code>false</code>
-	 *            to disable it
+	 *            <code>true</code> to enable xor mode, <code>false</code> to
+	 *            disable it
 	 */
 	public void setXorMode(boolean xor) {
 		xorMode = xor;
