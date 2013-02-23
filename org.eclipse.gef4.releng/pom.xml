@@ -10,7 +10,7 @@
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
-		<tycho-version>0.14.0</tycho-version>
+		<tycho-version>0.16.0</tycho-version>
 		<antrun-version>1.6</antrun-version>
 	</properties>
 
@@ -288,13 +288,10 @@
 			<id>maven.eclipse.org</id>
 			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
 		</pluginRepository>
-    <pluginRepository>
-      <id>fornax-snapshots</id>
-      <url>http://www.fornax-platform.org/archiva/repository/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
+		<pluginRepository>
+			<id>fornax</id>
+			<url>http://fornax-platform.org/nexus/content/groups/public/</url>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<modules>

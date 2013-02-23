@@ -22,7 +22,7 @@
 			<plugin>
 				<groupId>org.fornax.toolsupport</groupId>
 				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>3.3.1-SNAPSHOT</version>
+				<version>3.4.0</version>
 				<configuration>
 					<workflowEngine>mwe2</workflowEngine>
 					<workflowDescriptor>src/org/eclipse/gef4/zest/internal/dot/parser/GenerateDot.mwe2</workflowDescriptor>
