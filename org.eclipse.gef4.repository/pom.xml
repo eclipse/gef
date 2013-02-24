@@ -16,6 +16,7 @@
 	<properties>
 		<signer-version>1.0.5</signer-version>
 		<signer-input-directory>/home/data/httpd/download-staging.priv/tools/gef/gef4</signer-input-directory>
+		<signer-input-file>${project.build.directory}/org.eclipse.gef4.repository-${project.version}.zip</signer-input-file>
 	</properties>
 
 	<profiles>
@@ -31,7 +32,7 @@
 							<execution>
 								<id>pack</id>
 								<configuration>
-									<inputFile>${project.build.directory}/org.eclipse.gef4.repository.zip</inputFile>
+									<inputFile>${signer-input-file}</inputFile>
 								</configuration>
 								<phase>package</phase>
 								<goals>
@@ -41,7 +42,7 @@
 							<execution>
 								<id>sign</id>
 								<configuration>
-									<inputFile>${project.build.directory}/org.eclipse.gef4.repository.zip</inputFile>
+									<inputFile>${signer-input-file}</inputFile>
 									<signerInputDirectory>${signer-input-directory}</signerInputDirectory>
 								</configuration>
 								<phase>package</phase>
