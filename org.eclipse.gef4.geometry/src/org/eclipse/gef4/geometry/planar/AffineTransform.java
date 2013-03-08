@@ -278,19 +278,10 @@ public class AffineTransform {
 	public Point[] getTransformed(Point[] points) {
 		Point[] result = new Point[points.length];
 
-		System.out.println("Points before transformation:");
-		for (int i = 0; i < points.length; i++) {
-			System.out.println("... " + points[i]);
-		}
-
 		for (int i = 0; i < points.length; i++) {
 			result[i] = getTransformed(points[i]);
 		}
 
-		System.out.println("Points after transformation:");
-		for (int i = 0; i < result.length; i++) {
-			System.out.println("... " + result[i]);
-		}
 		return result;
 	}
 
