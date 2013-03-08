@@ -93,6 +93,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 		}
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		for (IShape s : getShapes()) {
 			if (s.contains(p)) {
@@ -239,6 +240,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 */
 	abstract protected Line[] getAllEdges();
 
+	@Override
 	public Polyline[] getOutlines() {
 		List<Polyline> outlines = new ArrayList<Polyline>();
 		Map<Point, List<Line>> segmentsByEndPoints = new HashMap<Point, List<Line>>();
@@ -265,6 +267,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 			segmentsByEndPoints.get(seg.getP2()).add(seg);
 		}
 
+		// TODO
 		for (List<Line> segments : segmentsByEndPoints.values()) {
 			if (segments.size() < 2) {
 				throw new IllegalStateException("error");
@@ -304,6 +307,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 * 
 	 * @return the outline segments of this {@link AbstractMultiShape}
 	 */
+	@Override
 	public Line[] getOutlineSegments() {
 		HashMap<Line, Integer> seen = new HashMap<Line, Integer>();
 		Stack<Line> elementsToAdd = new Stack<Line>();
@@ -345,6 +349,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 		final Point[] p = new Point[] { seg.getP1(), seg.getP2(),
 				toAdd.getP1(), toAdd.getP2() };
 		Arrays.sort(p, new Comparator<Point>() {
+			@Override
 			public int compare(Point p1, Point p2) {
 				if (PrecisionUtils.equal(p1.x, p2.x)) {
 					return p1.y < p2.y ? 1 : -1;
@@ -373,6 +378,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 		}
 	}
 
+	@Override
 	public Path toPath() {
 		Polyline[] outlines = getOutlines();
 		if (outlines == null || outlines.length < 1) {
