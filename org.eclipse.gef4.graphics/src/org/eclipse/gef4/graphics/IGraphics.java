@@ -220,6 +220,11 @@ public interface IGraphics {
 	static final boolean DEFAULT_XOR_MODE = false;
 
 	/**
+	 * The default logical DPI is set to 72 per default.
+	 */
+	static final int DEFAULT_LOGICAL_DPI = 72;
+
+	/**
 	 * Resets the underlying drawing toolkit and disposes all system resources
 	 * allocated by this {@link IGraphics}.
 	 */
@@ -310,8 +315,6 @@ public interface IGraphics {
 	// with
 	// * the given <i>bounds</i>, so that the rendering is scaled down later.
 	// *
-	// * TODO: Move this method to a utility class. (PrintUtils)
-	// *
 	// * @param bounds
 	// * a {@link Rectangle} bounding the area that you want to print
 	// * @param multiPage
@@ -390,6 +393,24 @@ public interface IGraphics {
 	 * @see #getDashArray()
 	 */
 	double getDashBegin();
+
+	/**
+	 * Returns the default device DPI, i.e. the value returned by the used
+	 * native. Note that this value is not guaranteed to be correct.
+	 * 
+	 * @return the default device DPI
+	 */
+	int getDefaultDeviceDpi();
+
+	/**
+	 * Returns the dots per inch (DPI) of the current display device. Note that
+	 * this value is not guaranteed to be correct. Therefore, it is possible to
+	 * set the DPI for the current display device and users should be able to do
+	 * this from an application menu.
+	 * 
+	 * @return the DPI of the current display device
+	 */
+	int getDeviceDpi();
 
 	/**
 	 * Returns the current draw {@link Pattern}.
@@ -571,6 +592,13 @@ public interface IGraphics {
 	double getLineWidth();
 
 	/**
+	 * Returns the dots per inch (DPI) that equal one unit of length.
+	 * 
+	 * @return the DPI that equal one unit of length
+	 */
+	int getLogicalDpi();
+
+	/**
 	 * Returns the current miter limit.
 	 * 
 	 * @return the current miter limit
@@ -579,6 +607,15 @@ public interface IGraphics {
 	 * @see #getLineJoin()
 	 */
 	double getMiterLimit();
+
+	/**
+	 * Returns a {@link GraphicsState} representing the state of this
+	 * {@link IGraphics}.
+	 * 
+	 * @return a {@link GraphicsState} representing the state of this
+	 *         {@link IGraphics}
+	 */
+	GraphicsState getState();
 
 	/**
 	 * Returns a {@link Dimension} representing the width and height of a
@@ -866,6 +903,18 @@ public interface IGraphics {
 	 * @see #setDashArray(double...)
 	 */
 	IGraphics setDashBegin(double dashBegin);
+
+	/**
+	 * Sets the dots per inch (DPI) to assume for the current display device. A
+	 * default device DPI is offered by the {@link IGraphics}. But the default
+	 * is not guaranteed to be correct. That's why you have the possibility to
+	 * set the device DPI.
+	 * 
+	 * @param dpi
+	 *            the DPI to assume for the current display device
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setDeviceDpi(int dpi);
 
 	/**
 	 * Sets the draw {@link Pattern}'s {@link Color} to the passed-in value.
@@ -1180,6 +1229,16 @@ public interface IGraphics {
 	IGraphics setLineWidth(double lineWidth);
 
 	/**
+	 * Sets the logical dots per inch (DPI), i.e. the DPI that equals one unit
+	 * of length.
+	 * 
+	 * @param dpi
+	 *            the new logical DPI
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setLogicalDpi(int dpi);
+
+	/**
 	 * Sets the current miter limit to the given value.
 	 * 
 	 * @param miterLimit
@@ -1189,6 +1248,70 @@ public interface IGraphics {
 	 * @see #setLineJoin(LineJoin)
 	 */
 	IGraphics setMiterLimit(double miterLimit);
+
+	/**
+	 * Applies the given {@link GraphicsState} to this {@link IGraphics}.
+	 * 
+	 * @param state
+	 *            the {@link GraphicsState} to apply to this {@link IGraphics}
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setState(GraphicsState state);
+
+	/**
+	 * Sets the current stroke to the passed-in values.
+	 * 
+	 * @param width
+	 *            the new line width
+	 * @param cap
+	 *            the new {@link LineCap}
+	 * @param join
+	 *            the new {@link LineJoin}
+	 * @param miterLimit
+	 *            the new limit for {@link LineJoin#MITER}
+	 * @param dashBegin
+	 *            the dash offset length
+	 * @param dashes
+	 *            the alternating opaque and transparent dash lengths
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setStroke(double dashBegin, double... dashes);
+
+	/**
+	 * Sets the current stroke to the passed-in values.
+	 * 
+	 * @param width
+	 *            the new line width
+	 * @param cap
+	 *            the new {@link LineCap}
+	 * @param join
+	 *            the new {@link LineJoin}
+	 * @param miterLimit
+	 *            the new limit for {@link LineJoin#MITER}
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setStroke(double width, LineCap cap, LineJoin join,
+			double miterLimit);
+
+	/**
+	 * Sets the current stroke to the passed-in values.
+	 * 
+	 * @param width
+	 *            the new line width
+	 * @param cap
+	 *            the new {@link LineCap}
+	 * @param join
+	 *            the new {@link LineJoin}
+	 * @param miterLimit
+	 *            the new limit for {@link LineJoin#MITER}
+	 * @param dashBegin
+	 *            the dash offset length
+	 * @param dashes
+	 *            the alternating opaque and transparent dash lengths
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setStroke(double width, LineCap cap, LineJoin join,
+			double miterLimit, double dashBegin, double... dashes);
 
 	/**
 	 * Sets the write {@link Pattern}'s {@link Color} to the passed-in value.
@@ -1351,6 +1474,23 @@ public interface IGraphics {
 
 	/**
 	 * Multiplies the current transformation matrix ({@link AffineTransform}) by
+	 * the passed-in transformation matrix.
+	 * 
+	 * @param transformations
+	 *            the transformation matrix ({@link AffineTransform}) by which
+	 *            the current transformation matrix is multiplied
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics transform(AffineTransform transformations);
+
+	/*
+	 * TODO: In which direction shall we multiply transformation matrices? Right
+	 * to left might be the better default, because transformations are applied
+	 * in order then.
+	 */
+
+	/**
+	 * Multiplies the current transformation matrix ({@link AffineTransform}) by
 	 * a translation matrix for the given offsets.
 	 * 
 	 * @param x
@@ -1405,11 +1545,13 @@ public interface IGraphics {
 	 */
 	IGraphics unionClip(Path toShow);
 
+	/*
+	 * TODO: write(): Where does text rendering start? Is the current position
+	 * at the baseline? Or at the ascent? Or at the maximum ascent?
+	 */
+
 	/**
 	 * Draws the given <i>text</i> on this {@link IGraphics}.
-	 * 
-	 * TODO: Where does text rendering start? Is the current position at the
-	 * baseline? Or at the ascent? Or at the maximum ascent?
 	 * 
 	 * @param text
 	 *            the text to draw
@@ -1418,12 +1560,5 @@ public interface IGraphics {
 	 * @see #setFont(Font)
 	 */
 	IGraphics write(String text);
-
-	// TODO: Refer to LineJoin, miter limit, LineCap, line width, and dash as
-	// Stroke?
-	// Stroke getStroke();
-	// IGraphics setStroke(Stroke stroke);
-	// IGraphics setStroke(double lineWidth, double miterLimit, double
-	// dashBegin, double[] dashArray, LineJoin lineJoin, LineCap lineCap)
 
 }

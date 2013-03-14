@@ -13,9 +13,11 @@
 package org.eclipse.gef4.graphics.swt;
 
 import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IMultiShape;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -38,8 +40,11 @@ import org.eclipse.gef4.graphics.color.Color;
 import org.eclipse.gef4.graphics.font.Font;
 import org.eclipse.gef4.graphics.image.Image;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.graphics.Transform;
 
@@ -114,6 +119,14 @@ public class SwtGraphics extends AbstractGraphics {
 	private GC gc;
 	private GcState gcState;
 
+	private AffineTransform xmT;
+	private org.eclipse.swt.graphics.Image xmDstImg;
+	private org.eclipse.swt.graphics.Image xmSrcImg;
+	private GC xmGc;
+	private Rectangle xmBounds;
+	private Path xmClip;
+	private ImageData xmSrc;
+
 	public SwtGraphics(GC gc) {
 		this.gc = gc;
 		gcState = new GcState(gc);
@@ -151,35 +164,35 @@ public class SwtGraphics extends AbstractGraphics {
 	@Override
 	public IGraphics draw(ICurve curve) {
 		if (curve instanceof Line) {
+			prepareXorMode(curve);
 			validateDraw(curve.getBounds());
 			Line line = (Line) curve;
 			gc.drawLine((int) line.getX1(), (int) line.getY1(),
 					(int) line.getX2(), (int) line.getY2());
 		} else if (curve instanceof Polyline) {
+			prepareXorMode(curve);
 			validateDraw(curve.getBounds());
 			gc.drawPolyline(Geometry2SWT.toSWTPointArray((Polyline) curve));
 		} else {
 			return draw(curve.toPath());
 		}
+		finishXorMode();
 		return this;
 	}
 
 	@Override
 	public IGraphics draw(Path path) {
+		prepareXorMode(path);
 		validateDraw(path.getBounds());
 		validateWindingRule(path);
 		gc.drawPath(SwtGraphicsUtils.createSwtPath(path, gc.getDevice()));
+		finishXorMode();
 		return this;
 	}
 
 	@Override
-	public IGraphics draw(Point point) {
-		int x = (int) point.x;
-		int y = (int) point.y;
-		// TODO: xor and stroke
-		validateDraw(new Rectangle(x, y, 1, 1));
-		gc.drawLine(x, y, x, y);
-		return this;
+	public IGraphics draw(Point p) {
+		return draw(new Line(p, p));
 	}
 
 	@Override
@@ -190,16 +203,19 @@ public class SwtGraphics extends AbstractGraphics {
 	@Override
 	public IGraphics fill(IShape shape) {
 		if (shape instanceof Rectangle) {
+			prepareXorMode(shape);
 			Rectangle r = (Rectangle) shape;
 			validateFill(r);
-			gc.fillRectangle((int) (r.getX() + 0.5), (int) (r.getY() + 0.5),
-					(int) (r.getWidth() + 1), (int) (r.getHeight() + 1));
+			gc.fillRectangle((int) r.getX(), (int) r.getY(),
+					(int) r.getWidth(), (int) r.getHeight());
 		} else if (shape instanceof Ellipse) {
+			prepareXorMode(shape);
 			Ellipse e = (Ellipse) shape;
 			validateFill(e.getBounds());
-			gc.fillOval((int) (e.getX() + 0.5), (int) (e.getY() + 0.5),
-					(int) (e.getWidth() + 1), (int) (e.getHeight() + 1));
+			gc.fillOval((int) e.getX(), (int) e.getY(), (int) e.getWidth(),
+					(int) e.getHeight());
 		} else if (shape instanceof Pie) {
+			prepareXorMode(shape);
 			Pie p = (Pie) shape;
 			validateFill(p.getBounds());
 			gc.fillArc((int) (p.getX() + 0.5), (int) (p.getY() + 0.5), (int) (p
@@ -207,6 +223,7 @@ public class SwtGraphics extends AbstractGraphics {
 					.getStartAngle().deg() + 0.5), (int) (p.getAngularExtent()
 					.deg() + 0.5));
 		} else if (shape instanceof RoundedRectangle) {
+			prepareXorMode(shape);
 			RoundedRectangle r = (RoundedRectangle) shape;
 			validateFill(r.getBounds());
 			gc.fillRoundRectangle((int) (r.getX() + 0.5),
@@ -214,6 +231,7 @@ public class SwtGraphics extends AbstractGraphics {
 					(int) (r.getHeight() + 1), (int) r.getArcWidth(),
 					(int) r.getArcHeight());
 		} else if (shape instanceof Polygon) {
+			prepareXorMode(shape);
 			Polygon p = (Polygon) shape;
 			validateFill(p.getBounds());
 			Point[] points = p.getPoints();
@@ -226,18 +244,85 @@ public class SwtGraphics extends AbstractGraphics {
 		} else {
 			return fill(shape.toPath());
 		}
+		finishXorMode();
 		return this;
 	}
 
 	@Override
 	public IGraphics fill(Path path) {
+		prepareXorMode(path);
 		validateFill(path.getBounds());
 		validateWindingRule(path);
 		org.eclipse.swt.graphics.Path swtPath = SwtGraphicsUtils.createSwtPath(
 				path, gc.getDevice());
 		gc.fillPath(swtPath);
 		swtPath.dispose();
+		finishXorMode();
 		return this;
+	}
+
+	private void finishXorMode() {
+		if (!isXorMode()) {
+			return;
+		}
+
+		gc.dispose();
+		gc = xmGc;
+
+		ImageData dst = xmDstImg.getImageData();
+		ImageData src = xmSrcImg.getImageData();
+		assert dst.width == src.width;
+		assert dst.height == src.height;
+
+		int w = (int) xmBounds.getWidth();
+		int h = (int) xmBounds.getHeight();
+		int x0 = (int) xmBounds.getX();
+		int y0 = (int) xmBounds.getY();
+
+		ImageData res = new ImageData(w, h, dst.depth, dst.palette);
+
+		int[] srcPixels = new int[w];
+		int[] dstPixels = new int[w];
+
+		for (int y = 0; y < h; y++) {
+			dst.getPixels(x0, y0 + y, w, dstPixels, 0);
+			src.getPixels(x0, y0 + y, w, srcPixels, 0);
+
+			for (int x = 0; x < w; x++) {
+				dstPixels[x] ^= srcPixels[x];
+			}
+
+			res.setPixels(0, y, w, dstPixels, 0);
+		}
+
+		// paint result at tight bounds
+		Transform t = new Transform(gc.getDevice(), 1, 0, 0, 1, x0, y0);
+		gc.setTransform(t);
+		org.eclipse.swt.graphics.Image resImg = new org.eclipse.swt.graphics.Image(
+				gc.getDevice(), res);
+		gc.drawImage(resImg, 0, 0);
+		t.dispose();
+
+		// dispose off images, maybe: re-use them as layers (multi buffers)
+		xmDstImg.dispose();
+		xmSrcImg.dispose();
+		resImg.dispose();
+
+		// recover transformations
+		validateGlobals();
+	}
+
+	@Override
+	public int getDefaultDeviceDpi() {
+		Device device = gc.getDevice();
+		if (device == null) {
+			throw new IllegalStateException("Device not set.");
+		}
+		org.eclipse.swt.graphics.Point dpi = device.getDPI();
+		if (dpi == null) {
+			throw new IllegalStateException("DPI not set.");
+		}
+		return dpi.x;
 	}
 
 	/**
@@ -258,9 +343,54 @@ public class SwtGraphics extends AbstractGraphics {
 
 	@Override
 	public IGraphics paint(org.eclipse.gef4.graphics.image.Image image) {
+		prepareXorMode(image.getBounds());
 		validateBlit();
 		gc.drawImage(SwtGraphicsUtils.createSwtImage(image), 0, 0);
+		finishXorMode();
 		return this;
+	}
+
+	private void prepareXorMode(IGeometry g) {
+		if (!isXorMode()) {
+			return;
+		}
+
+		// copy current transformations
+		AffineTransform at = getCurrentState().getAffineTransformByReference();
+
+		// compute correct bounds
+		g = g.getTransformed(at);
+		xmBounds = g.getBounds();
+		xmBounds.expand(getCurrentState().getLineWidth(), getCurrentState()
+				.getLineWidth());
+
+		// min 1x1
+		if (xmBounds.getWidth() < 1) {
+			xmBounds.setWidth(1);
+		}
+		if (xmBounds.getHeight() < 1) {
+			xmBounds.setHeight(1);
+		}
+
+		Rectangle bigBounds = xmBounds.getUnioned(new Point());
+		org.eclipse.swt.graphics.Rectangle swtBigBounds = Geometry2SWT
+				.toSWTRectangle(bigBounds);
+
+		// copy destination image
+		xmDstImg = new org.eclipse.swt.graphics.Image(gc.getDevice(),
+				swtBigBounds);
+		gc.copyArea(xmDstImg, 0, 0);
+
+		// create transparent source image
+		ImageData src = new ImageData(swtBigBounds.width, swtBigBounds.height,
+				gc.getDevice().getDepth(), new PaletteData(0xff, 0xff00,
+						0xff0000));
+
+		xmSrcImg = new org.eclipse.swt.graphics.Image(gc.getDevice(), src);
+
+		// swap GC with image-GC
+		xmGc = gc;
+		gc = new GC(xmSrcImg);
 	}
 
 	private void setImagePattern(boolean background, Image image) {
@@ -339,8 +469,6 @@ public class SwtGraphics extends AbstractGraphics {
 		int antialias = getCurrentState().isAntiAliasing() ? SWT.ON : SWT.OFF;
 		gc.setAntialias(antialias);
 		gc.setTextAntialias(antialias);
-
-		// gc.setXORMode(isXorMode()); // does not work
 	}
 
 	private void validateInterpolationHint() {
@@ -466,10 +594,13 @@ public class SwtGraphics extends AbstractGraphics {
 		double fontScale = font.getSize() / (int) font.getSize();
 		scale(fontScale, fontScale);
 
-		validateWrite(new Rectangle(new Point(), getTextDimension(text)));
-
+		Dimension size = getTextDimension(text);
+		Rectangle bounds = new Rectangle(new Point(), size);
+		prepareXorMode(bounds);
+		validateWrite(bounds);
 		gc.drawString(text, 0, 0, getCurrentState()
 				.getWriteBackgroundByReference().getAlpha() == 0);
+		finishXorMode();
 
 		// undo scaling
 		scale(1d / fontScale, 1d / fontScale);

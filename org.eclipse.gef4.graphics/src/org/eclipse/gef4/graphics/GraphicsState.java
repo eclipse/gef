@@ -44,6 +44,8 @@ public class GraphicsState {
 	private Font font;
 	private InterpolationHint interpolation;
 	private boolean xorMode;
+	private int deviceDpi;
+	private int logicalDpi;
 
 	/**
 	 * Creates a new GraphicsState object from the given set of "lightweight"
@@ -65,13 +67,15 @@ public class GraphicsState {
 	 * @param font
 	 * @param interpolation
 	 * @param xorMode
+	 * @param deviceDpi
+	 * @param logicalDpi
 	 */
 	public GraphicsState(AffineTransform transform, boolean antiAlias,
 			Path clip, double[] dashes, double dashBegin, double lineWidth,
 			double miterLimit, LineCap lineCap, LineJoin lineJoin,
 			Pattern drawPattern, Pattern fillPattern, Pattern textPattern,
 			Color textBackground, Font font, InterpolationHint interpolation,
-			boolean xorMode) {
+			boolean xorMode, int deviceDpi, int logicalDpi) {
 		this.transform = transform;
 		this.antiAlias = antiAlias;
 		this.clip = clip;
@@ -88,6 +92,8 @@ public class GraphicsState {
 		this.font = font;
 		this.interpolation = interpolation;
 		this.xorMode = xorMode;
+		this.deviceDpi = deviceDpi;
+		this.logicalDpi = logicalDpi;
 	}
 
 	/**
@@ -124,7 +130,7 @@ public class GraphicsState {
 				lineCap, lineJoin, drawPattern.getCopy(),
 				fillPattern.getCopy(), textPattern.getCopy(),
 				textBackground.getCopy(), font.getCopy(), interpolation,
-				xorMode);
+				xorMode, deviceDpi, logicalDpi);
 	}
 
 	/**
@@ -145,6 +151,10 @@ public class GraphicsState {
 	 */
 	public double getDashBegin() {
 		return dashBegin;
+	}
+
+	public int getDeviceDpi() {
+		return deviceDpi;
 	}
 
 	/**
@@ -218,6 +228,10 @@ public class GraphicsState {
 	 */
 	public double getLineWidth() {
 		return lineWidth;
+	}
+
+	public int getLogicalDpi() {
+		return logicalDpi;
 	}
 
 	/**
@@ -334,6 +348,10 @@ public class GraphicsState {
 		this.dashBegin = dashBegin;
 	}
 
+	public void setDeviceDpi(int dpi) {
+		deviceDpi = dpi;
+	}
+
 	/**
 	 * Sets the draw {@link Pattern} that is maintained by this
 	 * {@link GraphicsState} to exactly the given value, i.e. "by reference".
@@ -412,6 +430,10 @@ public class GraphicsState {
 	 */
 	public void setLineWidth(double lineWidth) {
 		this.lineWidth = lineWidth;
+	}
+
+	public void setLogicalDpi(int dpi) {
+		logicalDpi = dpi;
 	}
 
 	/**

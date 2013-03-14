@@ -40,11 +40,11 @@ import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.graphics.AbstractGraphics;
+import org.eclipse.gef4.graphics.GraphicsState;
 import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.IImageGraphics;
 import org.eclipse.gef4.graphics.InterpolationHint;
 import org.eclipse.gef4.graphics.Pattern;
-import org.eclipse.gef4.graphics.GraphicsState;
 import org.eclipse.gef4.graphics.image.Image;
 
 /**
@@ -206,6 +206,11 @@ public class AwtGraphics extends AbstractGraphics {
 		validateFill();
 		g.fill(Geometry2AWT.toAWTPath(path));
 		return this;
+	}
+
+	@Override
+	public int getDefaultDeviceDpi() {
+		return java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
 	}
 
 	/**

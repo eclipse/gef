@@ -52,8 +52,21 @@ public abstract class AbstractGraphics implements IGraphics {
 				IGraphics.DEFAULT_WRITE_PATTERN,
 				IGraphics.DEFAULT_WRITE_BACKGROUND, IGraphics.DEFAULT_FONT,
 				IGraphics.DEFAULT_INTERPOLATION_HINT,
-				IGraphics.DEFAULT_XOR_MODE).getCopy());
+				IGraphics.DEFAULT_XOR_MODE, 72, IGraphics.DEFAULT_LOGICAL_DPI)
+				.getCopy());
+		// double resScale = computeResolutionScale();
+		// scale(resScale, resScale);
 	}
+
+	// TODO: Resolution scaling.
+	// TODO: Zooming.
+
+	// /**
+	// * Computes the scale factor which scales the graphics
+	// *
+	// * @return
+	// */
+	// protected abstract double computeResolutionScale();
 
 	@Override
 	public AffineTransform getAffineTransform() {
@@ -84,6 +97,11 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public double getDashBegin() {
 		return getCurrentState().getDashBegin();
+	}
+
+	@Override
+	public int getDeviceDpi() {
+		return getCurrentState().getDeviceDpi();
 	}
 
 	@Override
@@ -177,8 +195,18 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
+	public int getLogicalDpi() {
+		return getCurrentState().getLogicalDpi();
+	}
+
+	@Override
 	public double getMiterLimit() {
 		return getCurrentState().getMiterLimit();
+	}
+
+	@Override
+	public GraphicsState getState() {
+		return getCurrentState().getCopy();
 	}
 
 	@Override
@@ -254,7 +282,8 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public IGraphics popState() {
 		if (states.size() == 1) {
-			throw new IllegalStateException("You have to push a GraphicsState first.");
+			throw new IllegalStateException(
+					"You have to push a GraphicsState first.");
 		}
 		states.pop();
 		return this;
@@ -332,6 +361,12 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public IGraphics setDashBegin(double dashBegin) {
 		getCurrentState().setDashBegin(dashBegin);
+		return this;
+	}
+
+	@Override
+	public IGraphics setDeviceDpi(int dpi) {
+		getCurrentState().setDeviceDpi(dpi);
 		return this;
 	}
 
@@ -560,9 +595,60 @@ public abstract class AbstractGraphics implements IGraphics {
 	}
 
 	@Override
+	public IGraphics setLogicalDpi(int dpi) {
+		getCurrentState().setLogicalDpi(dpi);
+		return this;
+	}
+
+	@Override
 	public IGraphics setMiterLimit(double miterLimit) {
 		getCurrentState().setMiterLimit(miterLimit);
 		return this;
+	}
+
+	@Override
+	public IGraphics setState(GraphicsState state) {
+		setAffineTransform(state.getAffineTransformByReference());
+		setAntiAliasing(state.isAntiAliasing());
+		setClip(state.getClippingAreaByReference());
+		setXorMode(state.isXorMode());
+		setInterpolationHint(state.getInterpolationHint());
+		setFillPattern(state.getFillPatternByReference());
+		setDrawPattern(state.getDrawPatternByReference());
+		setStroke(state.getLineWidth(), state.getLineCap(),
+				state.getLineJoin(), state.getMiterLimit(),
+				state.getDashBegin(), state.getDashArrayByReference());
+		setWritePattern(state.getWritePatternByReference());
+		setWriteBackground(state.getWriteBackgroundByReference());
+		setFont(state.getFontByReference());
+
+		return this;
+	}
+
+	@Override
+	public IGraphics setStroke(double width, double... dashes) {
+		setLineWidth(width);
+		return setDashArray(dashes);
+	}
+
+	@Override
+	public IGraphics setStroke(double width, LineCap cap, LineJoin join,
+			double miterLimit) {
+		setLineWidth(width);
+		setLineCap(cap);
+		setLineJoin(join);
+		return setMiterLimit(miterLimit);
+	}
+
+	@Override
+	public IGraphics setStroke(double width, LineCap cap, LineJoin join,
+			double miterLimit, double dashBegin, double... dashes) {
+		setLineWidth(width);
+		setLineCap(cap);
+		setLineJoin(join);
+		setMiterLimit(miterLimit);
+		setDashBegin(dashBegin);
+		return setDashArray(dashes);
 	}
 
 	@Override
@@ -668,6 +754,13 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public String toString() {
 		return "IGraphics()";
+	}
+
+	@Override
+	public IGraphics transform(AffineTransform transformations) {
+		getCurrentState().getAffineTransformByReference().concatenate(
+				transformations);
+		return this;
 	}
 
 	@Override

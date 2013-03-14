@@ -3,8 +3,8 @@
   <interface id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.IGraphics" 
     project="org.eclipse.gef4.graphics" file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/IGraphics.java" 
     binary="false">    
-    <position height="-1" width="-1" x="416" y="181"/>    
-    <display autosize="true" package="true" initial-value="true" signature="true" visibility="true">      
+    <position height="1567" width="254" x="13" y="-44"/>    
+    <display autosize="false" package="true" initial-value="true" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
