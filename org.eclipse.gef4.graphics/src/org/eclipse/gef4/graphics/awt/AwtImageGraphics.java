@@ -26,6 +26,7 @@ public class AwtImageGraphics extends AwtGraphics implements IImageGraphics {
 	public AwtImageGraphics(Image image) {
 		this(AwtGraphicsUtils.toAwtImage(image));
 		this.image = image;
+		initialize();
 	}
 
 	/**

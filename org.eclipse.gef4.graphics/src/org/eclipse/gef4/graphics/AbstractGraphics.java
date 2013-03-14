@@ -35,38 +35,14 @@ import org.eclipse.gef4.graphics.image.Image;
 public abstract class AbstractGraphics implements IGraphics {
 
 	private Stack<GraphicsState> states = new Stack<GraphicsState>();
+	private AffineTransform tempTx;
 
-	/**
-	 * Creates a new {@link AbstractGraphics} object and initializes the
-	 * {@link GraphicsState}s stack with a "default"-{@link GraphicsState}.
-	 */
 	public AbstractGraphics() {
-		// push initial (default) state
-		states.push(new GraphicsState(IGraphics.DEFAULT_AFFINE_TRANSFORM,
-				IGraphics.DEFAULT_ANTI_ALIASING,
-				IGraphics.DEFAULT_CLIPPING_AREA, IGraphics.DEFAULT_DASH_ARRAY,
-				IGraphics.DEFAULT_DASH_BEGIN, IGraphics.DEFAULT_LINE_WIDTH,
-				IGraphics.DEFAULT_MITER_LIMIT, IGraphics.DEFAULT_LINE_CAP,
-				IGraphics.DEFAULT_LINE_JOIN, IGraphics.DEFAULT_DRAW_PATTERN,
-				IGraphics.DEFAULT_FILL_PATTERN,
-				IGraphics.DEFAULT_WRITE_PATTERN,
-				IGraphics.DEFAULT_WRITE_BACKGROUND, IGraphics.DEFAULT_FONT,
-				IGraphics.DEFAULT_INTERPOLATION_HINT,
-				IGraphics.DEFAULT_XOR_MODE, 72, IGraphics.DEFAULT_LOGICAL_DPI)
-				.getCopy());
-		// double resScale = computeResolutionScale();
-		// scale(resScale, resScale);
 	}
 
-	// TODO: Resolution scaling.
-	// TODO: Zooming.
-
-	// /**
-	// * Computes the scale factor which scales the graphics
-	// *
-	// * @return
-	// */
-	// protected abstract double computeResolutionScale();
+	protected double computeResolutionScaleFactor() {
+		return (double) getDeviceDpi() / (double) getLogicalDpi();
+	}
 
 	@Override
 	public AffineTransform getAffineTransform() {
@@ -237,6 +213,28 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public Pattern.Mode getWritePatternMode() {
 		return getCurrentState().getWritePatternByReference().getMode();
+	}
+
+	/**
+	 * Initializes this {@link IGraphics} by pushing the initial
+	 * {@link GraphicsState} to the states stack. The initial state uses the
+	 * default values provided by the {@link IGraphics} interface for the
+	 * individual properties. The device DPI are set to the value returned by
+	 * {@link #getDefaultDeviceDpi()}. The default transformation matrix is
+	 */
+	protected void initialize() {
+		states.push(new GraphicsState(IGraphics.DEFAULT_AFFINE_TRANSFORM,
+				IGraphics.DEFAULT_ANTI_ALIASING,
+				IGraphics.DEFAULT_CLIPPING_AREA, IGraphics.DEFAULT_DASH_ARRAY,
+				IGraphics.DEFAULT_DASH_BEGIN, IGraphics.DEFAULT_LINE_WIDTH,
+				IGraphics.DEFAULT_MITER_LIMIT, IGraphics.DEFAULT_LINE_CAP,
+				IGraphics.DEFAULT_LINE_JOIN, IGraphics.DEFAULT_DRAW_PATTERN,
+				IGraphics.DEFAULT_FILL_PATTERN,
+				IGraphics.DEFAULT_WRITE_PATTERN,
+				IGraphics.DEFAULT_WRITE_BACKGROUND, IGraphics.DEFAULT_FONT,
+				IGraphics.DEFAULT_INTERPOLATION_HINT,
+				IGraphics.DEFAULT_XOR_MODE, getDefaultDeviceDpi(),
+				IGraphics.DEFAULT_LOGICAL_DPI).getCopy());
 	}
 
 	@Override
@@ -611,17 +609,18 @@ public abstract class AbstractGraphics implements IGraphics {
 		setAffineTransform(state.getAffineTransformByReference());
 		setAntiAliasing(state.isAntiAliasing());
 		setClip(state.getClippingAreaByReference());
-		setXorMode(state.isXorMode());
-		setInterpolationHint(state.getInterpolationHint());
-		setFillPattern(state.getFillPatternByReference());
+		setDeviceDpi(state.getDeviceDpi());
 		setDrawPattern(state.getDrawPatternByReference());
+		setFillPattern(state.getFillPatternByReference());
+		setFont(state.getFontByReference());
+		setInterpolationHint(state.getInterpolationHint());
+		setLogicalDpi(state.getLogicalDpi());
 		setStroke(state.getLineWidth(), state.getLineCap(),
 				state.getLineJoin(), state.getMiterLimit(),
 				state.getDashBegin(), state.getDashArrayByReference());
 		setWritePattern(state.getWritePatternByReference());
 		setWriteBackground(state.getWriteBackgroundByReference());
-		setFont(state.getFontByReference());
-
+		setXorMode(state.isXorMode());
 		return this;
 	}
 

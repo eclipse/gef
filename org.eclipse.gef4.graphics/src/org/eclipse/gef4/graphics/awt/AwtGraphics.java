@@ -116,6 +116,7 @@ public class AwtGraphics extends AbstractGraphics {
 	 */
 	public AwtGraphics(Graphics2D g2d) {
 		g = (Graphics2D) g2d.create();
+		initialize();
 	}
 
 	@Override
@@ -281,8 +282,11 @@ public class AwtGraphics extends AbstractGraphics {
 	}
 
 	private void validateGlobals() {
-		g.setTransform(new AffineTransform(getCurrentState()
-				.getAffineTransformByReference().getMatrix()));
+		AffineTransform tx = new AffineTransform(getCurrentState()
+				.getAffineTransformByReference().getMatrix());
+		double scale = computeResolutionScaleFactor();
+		tx.scale(scale, scale);
+		g.setTransform(tx);
 
 		Path clip = getCurrentState().getClippingAreaByReference();
 		g.setClip(clip == null ? null : Geometry2AWT.toAWTPath(clip));
@@ -362,4 +366,5 @@ public class AwtGraphics extends AbstractGraphics {
 
 		return this;
 	}
+
 }

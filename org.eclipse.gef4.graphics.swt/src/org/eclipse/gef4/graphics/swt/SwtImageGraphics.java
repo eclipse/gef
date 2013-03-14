@@ -28,6 +28,7 @@ public class SwtImageGraphics extends SwtGraphics implements IImageGraphics {
 	public SwtImageGraphics(Image image) {
 		this(SwtGraphicsUtils.createSwtImage(image));
 		this.image = image;
+		initialize();
 	}
 
 	private SwtImageGraphics(org.eclipse.swt.graphics.Image swtImage) {

@@ -77,6 +77,9 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 
 		IImageGraphics ig = graphics.createImageGraphics(image);
 
+		// assure that no transformations are performed
+		ig.setDeviceDpi(ig.getLogicalDpi());
+
 		ig.intersectClip(new Rectangle(100, 100, 200, 100));
 		ig.intersectClip(new Rectangle(150, 50, 100, 200));
 		Path clip = ig.getClip();
@@ -479,7 +482,8 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		Image image = new Image(400, 300, bgColor);
 		IImageGraphics ig = graphics.createImageGraphics(image);
 
-		ig.intersectClip(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
+		ig.intersectClip(new Rectangle(0, 0, image.getWidth(), image
+				.getHeight()));
 		ig.unionClip(new Rectangle(100, 100, 50, 50));
 		Path clip = ig.getClip();
 

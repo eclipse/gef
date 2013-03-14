@@ -119,18 +119,16 @@ public class SwtGraphics extends AbstractGraphics {
 	private GC gc;
 	private GcState gcState;
 
-	private AffineTransform xmT;
 	private org.eclipse.swt.graphics.Image xmDstImg;
 	private org.eclipse.swt.graphics.Image xmSrcImg;
 	private GC xmGc;
 	private Rectangle xmBounds;
-	private Path xmClip;
-	private ImageData xmSrc;
 
 	public SwtGraphics(GC gc) {
 		this.gc = gc;
-		gcState = new GcState(gc);
-		gc.setAdvanced(true);
+		gcState = new GcState(this.gc);
+		this.gc.setAdvanced(true);
+		initialize();
 	}
 
 	@Override
@@ -411,8 +409,10 @@ public class SwtGraphics extends AbstractGraphics {
 	}
 
 	private void validateAffineTransform() {
-		double[] matrix = getCurrentState().getAffineTransformByReference()
-				.getMatrix();
+		AffineTransform tx = getAffineTransform();
+		double scale = computeResolutionScaleFactor();
+		tx.scale(scale, scale);
+		double[] matrix = tx.getMatrix();
 		float[] matrixSwt = new float[6];
 		for (int i = 0; i < 6; i++) {
 			matrixSwt[i] = (float) matrix[i];

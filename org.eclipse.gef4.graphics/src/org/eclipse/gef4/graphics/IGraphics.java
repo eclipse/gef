@@ -200,6 +200,11 @@ public interface IGraphics {
 	static final double DEFAULT_LINE_WIDTH = 1;
 
 	/**
+	 * The default logical DPI is set to 72 per default.
+	 */
+	static final int DEFAULT_LOGICAL_DPI = 96;
+
+	/**
 	 * The default miter limit is 11.
 	 */
 	static final double DEFAULT_MITER_LIMIT = 11;
@@ -218,11 +223,6 @@ public interface IGraphics {
 	 * The <code>xor</code>-mode is disabled per default.
 	 */
 	static final boolean DEFAULT_XOR_MODE = false;
-
-	/**
-	 * The default logical DPI is set to 72 per default.
-	 */
-	static final int DEFAULT_LOGICAL_DPI = 72;
 
 	/**
 	 * Resets the underlying drawing toolkit and disposes all system resources
