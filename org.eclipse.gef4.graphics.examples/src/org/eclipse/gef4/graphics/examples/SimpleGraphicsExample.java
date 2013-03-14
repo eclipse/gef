@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2012, 2013 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,9 +20,25 @@ import org.eclipse.gef4.graphics.LineCap;
 import org.eclipse.gef4.graphics.LineJoin;
 import org.eclipse.gef4.graphics.color.Color;
 
-public class SimpleGraphicsUtil {
+public class SimpleGraphicsExample implements IExample {
 
-	public static void renderScene(IGraphics g) {
+	@Override
+	public int getHeight() {
+		return 480;
+	}
+
+	@Override
+	public String getTitle() {
+		return "GEF4 Graphics - Simple Graphics Example";
+	}
+
+	@Override
+	public int getWidth() {
+		return 640;
+	}
+
+	@Override
+	public void renderScene(IGraphics g) {
 		final Ellipse ellipse = new Ellipse(50, 50, 350, 200);
 		final Rectangle rectangle = new Rectangle(100, 160, 125, 220);
 		final Polygon triangle = new Polygon(260, 170, 190, 300, 330, 300);

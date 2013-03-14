@@ -10,11 +10,24 @@ import org.eclipse.gef4.graphics.LineCap;
 import org.eclipse.gef4.graphics.LineJoin;
 import org.eclipse.gef4.graphics.color.Color;
 
-public class ForegroundPatternUtil {
+public class ForegroundPatternExample implements IExample {
 
-	public ForegroundPatternUtil() {
+	@Override
+	public int getHeight() {
+		return 480;
 	}
 
+	@Override
+	public String getTitle() {
+		return "GEF4 Graphics - Draw Pattern";
+	}
+
+	@Override
+	public int getWidth() {
+		return 640;
+	}
+
+	@Override
 	public void renderScene(IGraphics g) {
 		g.setDraw(new Gradient.Linear(new Point(), new Point(100, 100))
 				.addStop(0, new Color(64, 32, 228)).addStop(1,

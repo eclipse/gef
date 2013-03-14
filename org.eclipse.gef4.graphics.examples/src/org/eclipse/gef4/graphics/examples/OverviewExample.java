@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2012, 2013 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,7 +16,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
@@ -25,15 +24,49 @@ import org.eclipse.gef4.graphics.IGraphics;
 import org.eclipse.gef4.graphics.color.Color;
 import org.eclipse.gef4.graphics.image.Image;
 
-public class SimpleExampleUtil {
+public class OverviewExample implements IExample {
 
 	private static final String IMAGE_FILE = "test.png";
-	protected static final Color RED = new Color(255, 0, 0),
-			YELLOW = new Color(255, 255, 0, 128), BLUE = new Color(0, 0, 255),
-			BLACK = new Color(0, 0, 0);
+	private static final Color RED = new Color(255, 0, 0), YELLOW = new Color(
+			255, 255, 0, 128), BLUE = new Color(0, 0, 255), BLACK = new Color(
+			0, 0, 0);
 
-	protected static void draw(IGraphics g) throws IOException {
+	private Image image;
+
+	@Override
+	public int getHeight() {
+		return 480;
+	}
+
+	private Image getImage() {
+		if (image == null) {
+			try {
+				image = new Image(ImageIO.read(OverviewExample.class
+						.getResource(IMAGE_FILE)));
+			} catch (IOException x) {
+				System.out.println("Cannot load image file '" + IMAGE_FILE
+						+ "':");
+				x.printStackTrace();
+			}
+		}
+		return image;
+	}
+
+	@Override
+	public String getTitle() {
+		return "GEF4 Graphics - Simple Example";
+	}
+
+	@Override
+	public int getWidth() {
+		return 640;
+	}
+
+	@Override
+	public void renderScene(IGraphics g) {
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
+
+		g.setXorMode(true);
 
 		g.setDraw(RED).setFill(YELLOW).pushState();
 
@@ -59,22 +92,7 @@ public class SimpleExampleUtil {
 		g.write(text);
 		g.draw(new Rectangle(new Point(), textDimension).getOutline());
 
-		g.translate(50, 50).rotate(Angle.fromDeg(20));
-		g.paint(loadImage());
-	}
-
-	/**
-	 * @return
-	 */
-	private static Image loadImage() {
-		Image image = null;
-		try {
-			image = new Image(ImageIO.read(SimpleExampleUtil.class
-					.getResource(IMAGE_FILE)));
-		} catch (IOException x) {
-			System.out.println("Cannot load image file '" + IMAGE_FILE + "':");
-			x.printStackTrace();
-		}
-		return image;
+		g.translate(50, 50);// .rotate(Angle.fromDeg(20));
+		g.paint(getImage());
 	}
 }

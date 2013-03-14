@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
 import java.awt.Color;
@@ -22,7 +34,7 @@ public class AwtXorTest extends JApplet {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setTitle("Particle Example");
+		frame.setTitle("AWT XorMode Test");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JApplet applet = new AwtXorTest();
 		applet.init();
@@ -86,6 +98,8 @@ class AwtXorTestPanel extends JPanel {
 
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	public AwtXorTestPanel() {
 		setPreferredSize(new Dimension(640, 480));
 	}
@@ -93,9 +107,11 @@ class AwtXorTestPanel extends JPanel {
 	@Override
 	public void paint(Graphics graphics) {
 		Graphics2D g2d = (Graphics2D) graphics;
+
 		// comment out to see it working:
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+
 		g2d.setComposite(XorComposite.INSTANCE);
 		g2d.setColor(new Color(0, 255, 255)); // resulting color should be red
 		g2d.fill(new Rectangle(100, 100, 500, 500));

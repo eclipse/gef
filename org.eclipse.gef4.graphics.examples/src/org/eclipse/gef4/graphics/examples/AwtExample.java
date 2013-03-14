@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2013 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,43 +23,44 @@ import javax.swing.JPanel;
 
 import org.eclipse.gef4.graphics.awt.AwtGraphics;
 
-public class SimpleGraphicsAwt extends JApplet {
+public class AwtExample extends JApplet {
 
 	private static final long serialVersionUID = 1L;
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.setTitle("First test example");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JApplet applet = new SimpleGraphicsAwt();
-		applet.init();
-		frame.getContentPane().add(applet);
-		frame.pack();
-		frame.setVisible(true);
+	private final IExample example;
+
+	public AwtExample(IExample example) {
+		this.example = example;
+		init();
 	}
 
 	@Override
 	public void init() {
-		JPanel panel = new SimpleGraphicsAwtPanel();
+		JPanel panel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+
+			{
+				setBackground(new Color(255, 255, 255));
+				setPreferredSize(new Dimension(example.getWidth(),
+						example.getHeight()));
+			}
+
+			@Override
+			public void paint(Graphics g) {
+				super.paint(g);
+				Graphics2D g2d = (Graphics2D) g;
+				AwtGraphics graphics = new AwtGraphics(g2d);
+				example.renderScene(graphics);
+				graphics.cleanUp();
+			}
+		};
 		getContentPane().add(panel);
-	}
-}
-
-class SimpleGraphicsAwtPanel extends JPanel {
-
-	private static final long serialVersionUID = 1L;
-
-	public SimpleGraphicsAwtPanel() {
-		setPreferredSize(new Dimension(640, 480));
-	}
-
-	@Override
-	public void paintComponent(Graphics graphics) {
-		super.paintComponents(graphics);
-
-		Graphics2D g2d = (Graphics2D) graphics;
-		AwtGraphics g = new AwtGraphics(g2d);
-		SimpleGraphicsUtil.renderScene(g);
+		JFrame frame = new JFrame();
+		frame.setTitle(example.getTitle() + " (AWT)");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(this);
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 }

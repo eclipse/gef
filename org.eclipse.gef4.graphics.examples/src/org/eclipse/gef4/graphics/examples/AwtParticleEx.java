@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
 import java.awt.Dimension;
@@ -58,12 +70,7 @@ class AwtParticleExPanel extends JPanel implements MouseListener,
 		private long life, initLife;
 		private Point s;
 		private Vector v;
-		private long deltaT = 0;
 		private static final int RADIUS = 6;
-
-		public Particle(Point position, Vector velocity) {
-			this(position, velocity, 150, 2000);
-		}
 
 		public Particle(Point position, Vector velocity, double acceleration,
 				long life) {
@@ -75,13 +82,11 @@ class AwtParticleExPanel extends JPanel implements MouseListener,
 
 		public void draw(IGraphics g) {
 			g.setFillPatternColor(color);
-			Vector u = new Vector(1, 0);
 			g.fill(new Ellipse(s.x - RADIUS, s.y - RADIUS, 2 * RADIUS,
 					2 * RADIUS));
 		}
 
 		public boolean update(long deltaMillis) {
-			this.deltaT += deltaMillis;
 			life -= deltaMillis;
 			if (life < 0) {
 				return false;

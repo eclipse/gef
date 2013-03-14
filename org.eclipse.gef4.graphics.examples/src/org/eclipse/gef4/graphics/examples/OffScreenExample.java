@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.graphics.examples;
 
 import java.util.Random;
@@ -11,21 +23,34 @@ import org.eclipse.gef4.graphics.IImageGraphics;
 import org.eclipse.gef4.graphics.color.Color;
 import org.eclipse.gef4.graphics.image.Image;
 
-public class OffScreenUtil {
+public class OffScreenExample implements IExample {
 
+	private static final int PAD = 30;
 	private static final int IMG_HEIGHT = 300;
 	private static final int IMG_WIDTH = 400;
-	private IGraphics g;
-	private Image img;
 
-	public OffScreenUtil() {
+	private Image image;
+
+	@Override
+	public int getHeight() {
+		return IMG_HEIGHT + PAD + PAD;
 	}
 
-	private void initResource() {
-		if (img == null) {
-			img = new Image(IMG_WIDTH, IMG_HEIGHT, new Color(255, 255, 255));
+	@Override
+	public String getTitle() {
+		return "GEF4 Graphics - Off Screen Example";
+	}
 
-			IImageGraphics ig = g.createImageGraphics(img);
+	@Override
+	public int getWidth() {
+		return IMG_WIDTH + PAD + PAD;
+	}
+
+	private void initResource(IGraphics g) {
+		if (image == null) {
+			image = new Image(IMG_WIDTH, IMG_HEIGHT, new Color(255, 255, 255));
+
+			IImageGraphics ig = g.createImageGraphics(image);
 
 			ig.setFill(new Gradient.Linear(new Point(), new Point(400, 300))
 					.addStop(0, new Color(255, 255, 0))
@@ -56,11 +81,11 @@ public class OffScreenUtil {
 		}
 	}
 
-	public void renderScene(IGraphics graphics) {
-		g = graphics;
-		initResource();
-		g.translate(50, 50);
-		g.paint(img);
+	@Override
+	public void renderScene(IGraphics g) {
+		initResource(g);
+		g.translate(PAD, PAD);
+		g.paint(image);
 	}
 
 }
