@@ -261,7 +261,8 @@ public abstract class Gradient<T extends Gradient<?>> {
 
 		@Override
 		public Linear getCopy() {
-			return new Linear(start, end, getCycleMode()).setStops(getStops());
+			return new Linear(start, end, getCycleMode()).setStops(getStops())
+					.setGammaCorrection(getGammaCorrection());
 		}
 
 		public Point getEnd() {
@@ -393,8 +394,8 @@ public abstract class Gradient<T extends Gradient<?>> {
 
 		@Override
 		public Radial getCopy() {
-			return new Radial(boundary, focus, getCycleMode())
-					.setStops(getStops());
+			return new Radial(boundary, focus, getCycleMode()).setStops(
+					getStops()).setGammaCorrection(getGammaCorrection());
 		}
 
 		public Point getFocus() {
@@ -414,6 +415,8 @@ public abstract class Gradient<T extends Gradient<?>> {
 	private SortedSet<GradientStop> stops;
 
 	private CycleMode cycle;
+
+	private double gammaCorrection = 1d; // no correction
 
 	/**
 	 * Constructs a new {@link Gradient} with an empty set of
@@ -505,6 +508,10 @@ public abstract class Gradient<T extends Gradient<?>> {
 		return cycle;
 	}
 
+	public double getGammaCorrection() {
+		return gammaCorrection;
+	}
+
 	/**
 	 * @param normalizedDistance
 	 * @return
@@ -540,7 +547,8 @@ public abstract class Gradient<T extends Gradient<?>> {
 			}
 		}
 
-		return to.getColor().getBlended(from.getColor(), blendRatio);
+		return to.getColor().getBlended(from.getColor(), blendRatio,
+				gammaCorrection);
 	}
 
 	/**
@@ -592,6 +600,12 @@ public abstract class Gradient<T extends Gradient<?>> {
 	@SuppressWarnings("unchecked")
 	public T setCycleMode(CycleMode cycle) {
 		this.cycle = cycle;
+		return (T) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T setGammaCorrection(double gammaCorrection) {
+		this.gammaCorrection = gammaCorrection;
 		return (T) this;
 	}
 

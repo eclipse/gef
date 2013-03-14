@@ -342,7 +342,7 @@ public class Color {
 	 *         the passed-in {@link Color}
 	 */
 	public Color getBlended(Color other) {
-		return getBlended(other, 0.5, 0.5, 0.5, 0.5);
+		return getBlended(other, 0.5, 0.5, 0.5, 0.5, 1);
 	}
 
 	/**
@@ -359,7 +359,36 @@ public class Color {
 	 *         the passed-in {@link Color}
 	 */
 	public Color getBlended(Color other, double x) {
-		return getBlended(other, x, x, x, x);
+		return getBlended(other, x, x, x, x, 1);
+	}
+
+	/**
+	 * <p>
+	 * Blends this {@link Color} and the passed-in {@link Color} with the
+	 * specified blending ratio. A blending ratio of <code>1</code> will fully
+	 * retain the original channel value. A blending ratio of <code>0</code>
+	 * will fully discard the original channel value.
+	 * </p>
+	 * 
+	 * <p>
+	 * The <i>gammaCorrection</i> value can be used to transform from linear to
+	 * sRGB color space. The common gamma correction value for such a
+	 * transformation is <code>2.2</code>. The resulting {@link Color} is
+	 * exponentiated by the reciprocal of this value.
+	 * </p>
+	 * 
+	 * @param other
+	 *            the {@link Color} to blend with this {@link Color}
+	 * @param x
+	 *            the blending ratio
+	 * @param gammaCorrection
+	 *            the resulting {@link Color} is exponentiated by the reciprocal
+	 *            of this value
+	 * @return the {@link Color} resulting from blending this {@link Color} and
+	 *         the passed-in {@link Color}
+	 */
+	public Color getBlended(Color other, double x, double gammaCorrection) {
+		return getBlended(other, x, x, x, x, gammaCorrection);
 	}
 
 	/**
@@ -383,10 +412,53 @@ public class Color {
 	 */
 	public Color getBlended(Color other, double xRed, double xGreen,
 			double xBlue, double xAlpha) {
-		return new Color((int) (getRed() * xRed + (1 - xRed) * other.getRed()),
-				(int) (getGreen() * xGreen + (1 - xGreen) * other.getGreen()),
-				(int) (getBlue() * xBlue + (1 - xBlue) * other.getBlue()),
-				(int) (getAlpha() * xAlpha + (1 - xAlpha) * other.getAlpha()));
+		return getBlended(other, xRed, xGreen, xBlue, xAlpha, 1);
+	}
+
+	/**
+	 * <p>
+	 * Blends this {@link Color} and the passed-in {@link Color} with the
+	 * specified blending ratios. A blending ratio of <code>1</code> will fully
+	 * retain the original channel value. A blending ratio of <code>0</code>
+	 * will fully discard the original channel value.
+	 * </p>
+	 * 
+	 * <p>
+	 * The <i>gammaCorrection</i> value can be used to transform from linear to
+	 * sRGB color space. The common gamma correction value for such a
+	 * transformation is <code>2.2</code>. The resulting {@link Color} is
+	 * exponentiated by the reciprocal of this value.
+	 * </p>
+	 * 
+	 * @param other
+	 *            the {@link Color} to blend with this {@link Color}
+	 * @param xRed
+	 *            the red-channel's blending ratio
+	 * @param xGreen
+	 *            the green-channel's blending ratio
+	 * @param xBlue
+	 *            the blue-channel's blending ratio
+	 * @param xAlpha
+	 *            the alpha-channel's blending ratio
+	 * @param gammaCorrection
+	 *            the resulting color is exponentiated by the reciprocal of this
+	 *            value
+	 * @return the {@link Color} resulting from blending this {@link Color} and
+	 *         the passed-in {@link Color}
+	 */
+	public Color getBlended(Color other, double xRed, double xGreen,
+			double xBlue, double xAlpha, double gammaCorrection) {
+		double r = getRed() * xRed + (1 - xRed) * other.getRed();
+		double g = getGreen() * xGreen + (1 - xGreen) * other.getGreen();
+		double b = getBlue() * xBlue + (1 - xBlue) * other.getBlue();
+		double a = getAlpha() * xAlpha + (1 - xAlpha) * other.getAlpha();
+
+		r = Math.pow(r / 255d, 1d / gammaCorrection) * 255d;
+		g = Math.pow(g / 255d, 1d / gammaCorrection) * 255d;
+		b = Math.pow(b / 255d, 1d / gammaCorrection) * 255d;
+		a = Math.pow(a / 255d, 1d / gammaCorrection) * 255d;
+
+		return new Color((int) r, (int) g, (int) b, (int) a);
 	}
 
 	/**
