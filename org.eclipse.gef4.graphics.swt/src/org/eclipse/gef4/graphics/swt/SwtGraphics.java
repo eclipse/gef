@@ -431,7 +431,7 @@ public class SwtGraphics extends AbstractGraphics {
 	private void validateClippingArea() {
 		Path clip = getCurrentState().getClippingAreaByReference();
 		if (clip == null) {
-			gc.setClipping((org.eclipse.swt.graphics.Path) null);
+			gc.setClipping((org.eclipse.swt.graphics.Rectangle) null);
 		} else {
 			org.eclipse.swt.graphics.Path clipSwt = SwtGraphicsUtils
 					.createSwtPath(clip, gc.getDevice());
