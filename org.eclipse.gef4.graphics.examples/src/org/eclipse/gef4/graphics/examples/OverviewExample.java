@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
@@ -66,8 +67,6 @@ public class OverviewExample implements IExample {
 	public void renderScene(IGraphics g) {
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
 
-		g.setXorMode(true);
-
 		g.setDraw(RED).setFill(YELLOW).pushState();
 
 		g.fill(rectangle).draw(rectangle.getOutline());
@@ -92,7 +91,7 @@ public class OverviewExample implements IExample {
 		g.write(text);
 		g.draw(new Rectangle(new Point(), textDimension).getOutline());
 
-		g.translate(50, 50);// .rotate(Angle.fromDeg(20));
+		g.translate(50, 50).rotate(Angle.fromDeg(20));
 		g.paint(getImage());
 	}
 }

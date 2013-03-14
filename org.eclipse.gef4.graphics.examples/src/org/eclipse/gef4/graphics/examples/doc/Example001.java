@@ -67,12 +67,12 @@ public class Example001 implements PaintListener {
 		final Polygon triangle = new Polygon(260, 170, 190, 300, 330, 300);
 
 		g.setFill(new Color(255, 0, 0)).setDraw(new Color(128, 0, 0))
-				.setDashArray(25, 10);
+				.setDashArray(25, 10).setLineWidth(3);
 
 		g.fill(ellipse).draw(ellipse.getOutline());
 
-		g.setFill(new Color(0, 0, 255)).setLineJoin(LineJoin.ROUND)
-				.setLineCap(LineCap.ROUND);
+		g.setFill(new Color(0, 0, 255)).setDraw(new Color())
+				.setLineJoin(LineJoin.ROUND).setLineCap(LineCap.ROUND);
 
 		g.fill(rectangle).draw(rectangle.getOutline());
 
