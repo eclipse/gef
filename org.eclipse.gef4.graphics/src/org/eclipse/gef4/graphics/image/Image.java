@@ -354,6 +354,21 @@ public class Image {
 	}
 
 	/**
+	 * Returns the pixel values of the specified row as an <code>int</code>
+	 * array.
+	 * 
+	 * @param y
+	 *            the row to extract (starting at <code>0</code>)
+	 * @return an <code>int</code> array containing the pixel values of the
+	 *         specified row
+	 */
+	public int[] getPixelRow(int y) {
+		// TODO: check if this is correct
+		return bufferedImage.getRGB(0, y, getWidth(), 1, new int[getWidth()],
+				0, getWidth());
+	}
+
+	/**
 	 * Returns an <code>int</code> array containing all pixels of this
 	 * {@link Image}. You can access a particular pixel at position (x,y) as
 	 * follows:
@@ -373,7 +388,91 @@ public class Image {
 	public int[] getPixels() {
 		int w = getWidth();
 		int h = getHeight();
-		return bufferedImage.getRGB(0, 0, w, h, new int[w * h], 0, getWidth());
+		return getPixels(0, 0, w, h, new int[w * h], 0, w);
+	}
+
+	/**
+	 * Returns an <code>int</code> array containing the pixels of this
+	 * {@link Image} that are inside of the specified rectangular area. You can
+	 * access a particular pixel at position (x,y) as follows:
+	 * 
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * int[] pixels = image.getPixels(x0, y0, w, h);
+	 * int at_x_y = pixels[(y - y0) * w + x - x0];
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * 
+	 * @param x0
+	 *            the x coordinate of the top left corner of the rectangular
+	 *            area to extract
+	 * @param y0
+	 *            the y coordinate of the top left corner of the rectangular
+	 *            area to extract
+	 * @param w
+	 *            the width of the rectangular area to extract
+	 * @param h
+	 *            the height of the rectangular area to extract
+	 * @param pixels
+	 *            an <code>int</code> array where the pixel values are stored
+	 * @param offset
+	 *            the offset for indexing the <i>pixels</i> array
+	 * @param pitch
+	 *            the number of <code>int</code> values in one row of the
+	 *            <i>pixels</i> array
+	 * @return an <code>int</code> array containing the pixels of this
+	 *         {@link Image} that are inside of the specified rectangular area
+	 * @throws IllegalArgumentException
+	 *             unless <code>0 <= <i>x0</i> < getWidth()</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code>0 <= <i>w</i> < getWidth()</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code>0 <= <i>y0</i> < getHeight()</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code>0 <= <i>h</i> < getHeight()</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code><i>offset</i> > 0</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code><i>pitch</i> > 0</code>
+	 * @throws IllegalArgumentException
+	 *             unless <code><i>pixels</i> != null</code>
+	 * @throws IllegalArgumentException
+	 *             unless
+	 *             <code><i>pixels</i>.length >= <i>offset</i> + <i>h</i> * <i>pitch</i></code>
+	 */
+	public int[] getPixels(int x0, int y0, int w, int h, int[] pixels,
+			int offset, int pitch) {
+		if (x0 < 0) {
+			throw new IllegalArgumentException("x0 (" + x0 + ") < 0");
+		}
+		if (y0 < 0) {
+			throw new IllegalArgumentException("y0 (" + y0 + ") < 0");
+		}
+		if (x0 + w > getWidth()) {
+			throw new IllegalArgumentException("x0 + w (" + (x0 + w)
+					+ ") > width (" + getWidth() + ")");
+		}
+		if (y0 + h > getHeight()) {
+			throw new IllegalArgumentException("y0 + h (" + (y0 + h)
+					+ ") > height (" + getHeight() + ")");
+		}
+		if (offset < 0) {
+			throw new IllegalArgumentException("offset (" + offset + ") < 0");
+		}
+		if (pitch < 0) {
+			throw new IllegalArgumentException("pitch (" + pitch + ") < 0");
+		}
+		if (pixels == null) {
+			throw new IllegalArgumentException("pixels == null");
+		}
+		if (pixels.length < offset + h * pitch) {
+			throw new IllegalArgumentException("pixels.length ("
+					+ pixels.length + ") < offset + h * pitch ("
+					+ (offset + h * pitch) + ")");
+		}
+		return bufferedImage.getRGB(x0, y0, w, h, pixels, offset, pitch);
 	}
 
 	/**
@@ -535,6 +634,40 @@ public class Image {
 					+ ") out of image bounds (0-" + getHeight() + ").");
 		}
 		bufferedImage.setRGB(x, y, argb);
+	}
+
+	/**
+	 * Sets the pixels of the specified rectangular area of this {@link Image}
+	 * to the specified values. The index of a pixel at position (x, y) is
+	 * computed using the following formula: <blockquote>
+	 * 
+	 * <pre>
+	 * int index = offset + (y - y0) * pitch + x - x0
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * 
+	 * @param x0
+	 *            the x coordinate of the top left corner of the rectangular
+	 *            area
+	 * @param y0
+	 *            the y coordinate of the top left corner of the rectangular
+	 *            area
+	 * @param w
+	 *            the width of the rectangular area
+	 * @param h
+	 *            the height of the rectangular area
+	 * @param pixels
+	 *            an <code>in</code> array containing the pixel values
+	 * @param offset
+	 *            the offset for indexing the <i>pixels</i> array
+	 * @param pitch
+	 *            the number of <code>int</code> values in one row of the
+	 *            <i>pixels</i> array
+	 */
+	public void setPixels(int x0, int y0, int w, int h, int[] pixels,
+			int offset, int pitch) {
+		bufferedImage.setRGB(x0, y0, w, h, pixels, offset, pitch);
 	}
 
 	@Override
