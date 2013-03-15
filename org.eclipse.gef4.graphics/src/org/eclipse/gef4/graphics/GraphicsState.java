@@ -46,6 +46,7 @@ public class GraphicsState {
 	private boolean xorMode;
 	private int deviceDpi;
 	private int logicalDpi;
+	private boolean emuXorMode;
 
 	/**
 	 * Creates a new GraphicsState object from the given set of "lightweight"
@@ -75,7 +76,7 @@ public class GraphicsState {
 			double miterLimit, LineCap lineCap, LineJoin lineJoin,
 			Pattern drawPattern, Pattern fillPattern, Pattern textPattern,
 			Color textBackground, Font font, InterpolationHint interpolation,
-			boolean xorMode, int deviceDpi, int logicalDpi) {
+			boolean xorMode, int deviceDpi, int logicalDpi, boolean emuXorMode) {
 		this.transform = transform;
 		this.antiAlias = antiAlias;
 		this.clip = clip;
@@ -94,6 +95,7 @@ public class GraphicsState {
 		this.xorMode = xorMode;
 		this.deviceDpi = deviceDpi;
 		this.logicalDpi = logicalDpi;
+		this.emuXorMode = emuXorMode;
 	}
 
 	/**
@@ -130,7 +132,7 @@ public class GraphicsState {
 				lineCap, lineJoin, drawPattern.getCopy(),
 				fillPattern.getCopy(), textPattern.getCopy(),
 				textBackground.getCopy(), font.getCopy(), interpolation,
-				xorMode, deviceDpi, logicalDpi);
+				xorMode, deviceDpi, logicalDpi, emuXorMode);
 	}
 
 	/**
@@ -277,6 +279,10 @@ public class GraphicsState {
 		return antiAlias;
 	}
 
+	public boolean isEmulateXorMode() {
+		return emuXorMode;
+	}
+
 	/**
 	 * Returns <code>true</code> if xor mode is enabled. Otherwise,
 	 * <code>false</code> is returned.
@@ -362,6 +368,10 @@ public class GraphicsState {
 	 */
 	public void setDrawPatternByReference(Pattern drawPattern) {
 		this.drawPattern = drawPattern;
+	}
+
+	public void setEmulateXorMode(boolean emuXorMode) {
+		this.emuXorMode = emuXorMode;
 	}
 
 	/**

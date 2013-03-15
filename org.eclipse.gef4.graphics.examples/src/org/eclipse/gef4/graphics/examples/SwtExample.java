@@ -30,7 +30,8 @@ public class SwtExample implements PaintListener {
 
 		Display display = new Display();
 
-		Shell shell = new Shell(display, SWT.SHELL_TRIM | SWT.DOUBLE_BUFFERED);
+		final Shell shell = new Shell(display, SWT.SHELL_TRIM
+				| SWT.DOUBLE_BUFFERED);
 		shell.setText(example.getTitle() + " (SWT)");
 		shell.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 		shell.pack();
@@ -41,6 +42,9 @@ public class SwtExample implements PaintListener {
 		Rectangle clientArea = shell.getClientArea();
 		shell.setBounds(0, 0, 2 * w - clientArea.width, 2 * h
 				- clientArea.height);
+
+		// example.init(shell);
+
 		shell.addPaintListener(this);
 		shell.redraw();
 

@@ -38,7 +38,6 @@ import org.eclipse.gef4.graphics.font.Font;
 import org.eclipse.gef4.graphics.image.Image;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractGraphicsTests<T extends IGraphics> {
@@ -68,17 +67,10 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 	@Test
 	public void test_clip() {
 		Color fgColor = new Color(255, 0, 0, 255);
-		int fgPixel = fgColor.toPixelARGB();
-
 		Color bgColor = new Color(255, 255, 255, 255);
-		int bgPixel = bgColor.toPixelARGB();
 
 		Image image = new Image(400, 300, bgColor);
-
 		IImageGraphics ig = graphics.createImageGraphics(image);
-
-		// assure that no transformations are performed
-		ig.setDeviceDpi(ig.getLogicalDpi());
 
 		ig.intersectClip(new Rectangle(100, 100, 200, 100));
 		ig.intersectClip(new Rectangle(150, 50, 100, 200));
@@ -88,6 +80,9 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		ig.fill(new Rectangle(0, 0, image.getWidth(), image.getHeight()));
 
 		ig.cleanUp();
+
+		int fgPixel = fgColor.toPixelARGB();
+		int bgPixel = bgColor.toPixelARGB();
 
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -565,7 +560,6 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 		assertEquals(mode, writePattern.getMode());
 	}
 
-	@Ignore("Not yet implemented.")
 	@Test
 	public void test_xorMode() {
 		Color fgColor = new Color(255, 0, 0, 255); // red
@@ -581,6 +575,7 @@ public abstract class AbstractGraphicsTests<T extends IGraphics> {
 
 		Image image = new Image(400, 300, bgColor);
 		IImageGraphics ig = graphics.createImageGraphics(image);
+
 		assertSame(image, ig.getImage());
 		ig.setClip(new Rectangle(100, 100, 50, 50).toPath());
 		Path clip = ig.getClip();

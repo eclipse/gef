@@ -27,6 +27,7 @@ public class AwtImageGraphics extends AwtGraphics implements IImageGraphics {
 		this(AwtGraphicsUtils.toAwtImage(image));
 		this.image = image;
 		initialize();
+		setDeviceDpi(getLogicalDpi());
 	}
 
 	/**

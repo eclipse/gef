@@ -29,6 +29,7 @@ public class SwtImageGraphics extends SwtGraphics implements IImageGraphics {
 		this(SwtGraphicsUtils.createSwtImage(image));
 		this.image = image;
 		initialize();
+		setDeviceDpi(getLogicalDpi());
 	}
 
 	private SwtImageGraphics(org.eclipse.swt.graphics.Image swtImage) {

@@ -267,7 +267,7 @@ public class SwtGraphics extends AbstractGraphics {
 
 		// in case no emulation is used, we have to leave the GC in a clean
 		// state
-		if (!SWT.getPlatform().equals("gtk")) {
+		if (!isEmulateXorMode() && !SWT.getPlatform().equals("gtk")) {
 			gc.setXORMode(false);
 			return;
 		}
@@ -284,6 +284,10 @@ public class SwtGraphics extends AbstractGraphics {
 		int h = (int) xmBounds.getHeight();
 		int x0 = (int) xmBounds.getX();
 		int y0 = (int) xmBounds.getY();
+		assert w <= dst.width;
+		assert h <= dst.height;
+		assert x0 >= 0;
+		assert y0 >= 0;
 
 		ImageData res = new ImageData(w, h, dst.depth, dst.palette);
 
@@ -364,12 +368,12 @@ public class SwtGraphics extends AbstractGraphics {
 
 		// in case the underlying ws supports xor mode, we do not have to
 		// emulate
-		if (!SWT.getPlatform().equals("gtk")) {
+		if (!isEmulateXorMode() && !SWT.getPlatform().equals("gtk")) {
 			gc.setXORMode(true);
 			return;
 		}
 
-		// copy current transformations
+		// get current transformations
 		double scaleFactor = computeResolutionScaleFactor();
 		AffineTransform at = getAffineTransform().scale(scaleFactor,
 				scaleFactor);
@@ -380,7 +384,17 @@ public class SwtGraphics extends AbstractGraphics {
 		xmBounds.expand(getCurrentState().getLineWidth(), getCurrentState()
 				.getLineWidth());
 
-		// min 1x1
+		// Ensure bounds' location is >= (0, 0) because we cannot draw outside
+		// the canvas.
+		if (xmBounds.getX() < 0) {
+			xmBounds.setX(0);
+		}
+		if (xmBounds.getY() < 0) {
+			xmBounds.setY(0);
+		}
+
+		// Ensure bounds' dimension is >= (1, 1) because we cannot create an
+		// Image otherwise.
 		if (xmBounds.getWidth() < 1) {
 			xmBounds.setWidth(1);
 		}
