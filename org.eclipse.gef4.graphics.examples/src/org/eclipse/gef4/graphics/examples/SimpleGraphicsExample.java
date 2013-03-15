@@ -39,9 +39,12 @@ public class SimpleGraphicsExample implements IExample {
 
 	@Override
 	public void renderScene(IGraphics g) {
+		// prepare geometries
 		final Ellipse ellipse = new Ellipse(50, 50, 350, 200);
 		final Rectangle rectangle = new Rectangle(100, 160, 125, 220);
 		final Polygon triangle = new Polygon(260, 170, 190, 300, 330, 300);
+
+		// prepare colors
 		final Color red = new Color(255, 0, 0);
 		final Color darkRed = new Color(128, 0, 0);
 		final Color blue = new Color(0, 0, 255);
@@ -49,17 +52,18 @@ public class SimpleGraphicsExample implements IExample {
 		final Color darkGreen = new Color(0, 128, 0);
 
 		g.setLineWidth(4);
-		g.pushState();
+		g.pushState(); // save the current set of properties on the stack
 
 		g.setFill(red).setDraw(darkRed).setDashArray(25, 10);
 		g.fill(ellipse).draw(ellipse.getOutline());
 
-		g.restoreState();
+		g.restoreState(); // restore the previously saved properties
 
 		g.setFill(blue).setLineJoin(LineJoin.ROUND).setLineCap(LineCap.ROUND);
 		g.fill(rectangle).draw(rectangle.getOutline());
 
-		g.popState();
+		g.popState(); // removes the previously saved properties from the stack
+						// and enables the properties that were set in advance
 
 		g.setFill(green).setDraw(darkGreen).setLineJoin(LineJoin.MITER);
 		g.fill(triangle).draw(triangle.getOutline());
