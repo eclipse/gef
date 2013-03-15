@@ -354,9 +354,9 @@ public class SwtGraphics extends AbstractGraphics {
 		}
 
 		// copy current transformations
-		AffineTransform at = getAffineTransform();
-		double s = computeResolutionScaleFactor();
-		at.scale(s, s);
+		double scaleFactor = computeResolutionScaleFactor();
+		AffineTransform at = getAffineTransform().scale(scaleFactor,
+				scaleFactor);
 
 		// compute correct bounds
 		g = g.getTransformed(at);
