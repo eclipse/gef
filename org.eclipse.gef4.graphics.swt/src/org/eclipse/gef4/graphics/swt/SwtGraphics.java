@@ -259,8 +259,16 @@ public class SwtGraphics extends AbstractGraphics {
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void finishXorMode() {
 		if (!isXorMode()) {
+			return;
+		}
+
+		// in case no emulation is used, we have to leave the GC in a clean
+		// state
+		if (!SWT.getPlatform().equals("gtk")) {
+			gc.setXORMode(false);
 			return;
 		}
 
@@ -352,8 +360,16 @@ public class SwtGraphics extends AbstractGraphics {
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void prepareXorMode(IGeometry g) {
 		if (!isXorMode()) {
+			return;
+		}
+
+		// in case the underlying ws supports xor mode, we do not have to
+		// emulate
+		if (!isEmulateXorMode() && !SWT.getPlatform().equals("gtk")) {
+			gc.setXORMode(true);
 			return;
 		}
 
