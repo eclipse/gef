@@ -169,6 +169,11 @@ public interface IGraphics {
 	static final Pattern DEFAULT_DRAW_PATTERN = new Pattern(new Color());
 
 	/**
+	 * Xor-mode rendering is only emulated when necessary per default.
+	 */
+	static final boolean DEFAULT_EMULATE_XOR_MODE = false;
+
+	/**
 	 * The default fill {@link Pattern} used the default {@link Color}.
 	 */
 	static final Pattern DEFAULT_FILL_PATTERN = new Pattern(new Color());
@@ -747,6 +752,15 @@ public interface IGraphics {
 	boolean isAntiAliasing();
 
 	/**
+	 * Returns <code>true</code> if xor-mode rendering is always emulated by
+	 * this {@link IGraphics}, otherwise <code>false</code>.
+	 * 
+	 * @return <code>true</code> if xor-mode rendering is always emulated by
+	 *         this {@link IGraphics}, otherwise <code>false</code>
+	 */
+	boolean isEmulateXorMode();
+
+	/**
 	 * Returns <code>true</code> if <code>xor</code> mode is enabled. Otherwise,
 	 * <code>false</code> is returned.
 	 * 
@@ -1033,6 +1047,19 @@ public interface IGraphics {
 	 * @see #setDrawPattern(Pattern)
 	 */
 	IGraphics setDrawPatternMode(Pattern.Mode drawMode);
+
+	/**
+	 * Specifies whether this {@link IGraphics} is allowed not to emulate
+	 * xor-mode rendering. When set to <code>true</code>, xor-mode rendering is
+	 * always emulated by this {@link IGraphics}. When set to <code>false</code>
+	 * , xor-mode rendering is only emulated on some platforms (gtk).
+	 * 
+	 * @param emulateXorMode
+	 *            <code>true</code> to always emulate xor-mode rendering,
+	 *            otherwise <code>false</code>
+	 * @return <code>this</code> for convenience
+	 */
+	IGraphics setEmulateXorMode(boolean emulateXorMode);
 
 	/**
 	 * Sets the fill {@link Pattern}'s {@link Color} to the passed-in value.

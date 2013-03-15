@@ -267,7 +267,7 @@ public class SwtGraphics extends AbstractGraphics {
 
 		// in case no emulation is used, we have to leave the GC in a clean
 		// state
-		if (!SWT.getPlatform().equals("gtk")) {
+		if (!isEmulateXorMode() && !SWT.getPlatform().equals("gtk")) {
 			gc.setXORMode(false);
 			return;
 		}

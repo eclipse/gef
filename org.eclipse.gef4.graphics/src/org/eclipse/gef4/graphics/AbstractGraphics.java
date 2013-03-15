@@ -234,7 +234,8 @@ public abstract class AbstractGraphics implements IGraphics {
 				IGraphics.DEFAULT_WRITE_BACKGROUND, IGraphics.DEFAULT_FONT,
 				IGraphics.DEFAULT_INTERPOLATION_HINT,
 				IGraphics.DEFAULT_XOR_MODE, getDefaultDeviceDpi(),
-				IGraphics.DEFAULT_LOGICAL_DPI).getCopy());
+				IGraphics.DEFAULT_LOGICAL_DPI,
+				IGraphics.DEFAULT_EMULATE_XOR_MODE).getCopy());
 	}
 
 	@Override
@@ -270,6 +271,11 @@ public abstract class AbstractGraphics implements IGraphics {
 	@Override
 	public boolean isAntiAliasing() {
 		return getCurrentState().isAntiAliasing();
+	}
+
+	@Override
+	public boolean isEmulateXorMode() {
+		return getCurrentState().isEmulateXorMode();
 	}
 
 	@Override
@@ -443,6 +449,12 @@ public abstract class AbstractGraphics implements IGraphics {
 					"The given Pattern.Mode may not be null.");
 		}
 		getCurrentState().getDrawPatternByReference().setMode(drawMode);
+		return this;
+	}
+
+	@Override
+	public IGraphics setEmulateXorMode(boolean emulateXorMode) {
+		getCurrentState().setEmulateXorMode(emulateXorMode);
 		return this;
 	}
 
