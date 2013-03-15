@@ -52,7 +52,7 @@ public class SwtXorTest implements PaintListener {
 		e.gc.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
 		e.gc.fillRectangle(20, 20, 100, 100);
 		e.gc.setXORMode(true);
-		e.gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
+		e.gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		e.gc.fillRectangle(20, 20, 100, 100);
 	}
 

@@ -293,16 +293,19 @@ public class SwtGraphics extends AbstractGraphics {
 
 		int[] srcPixels = new int[w];
 		int[] dstPixels = new int[w];
+		byte[] dstAlphas = new byte[w];
 
 		for (int y = 0; y < h; y++) {
 			dst.getPixels(x0, y0 + y, w, dstPixels, 0);
 			src.getPixels(x0, y0 + y, w, srcPixels, 0);
+			dst.getAlphas(x0, y0 + y, w, dstAlphas, 0);
 
 			for (int x = 0; x < w; x++) {
 				dstPixels[x] ^= srcPixels[x];
 			}
 
 			res.setPixels(0, y, w, dstPixels, 0);
+			res.setAlphas(0, y, w, dstAlphas, 0);
 		}
 
 		// paint result at tight bounds
@@ -492,6 +495,7 @@ public class SwtGraphics extends AbstractGraphics {
 		org.eclipse.swt.graphics.Font swtFont = SwtGraphicsUtils
 				.createSwtFont(font);
 		gc.setFont(swtFont);
+		// TODO: dispose the swtFont
 	}
 
 	private void validateGlobals() {
@@ -514,7 +518,11 @@ public class SwtGraphics extends AbstractGraphics {
 		switch (p.getMode()) {
 		case COLOR:
 			Color color = p.getColor();
-			gc.setAlpha(color.getAlpha());
+
+			// no alpha in xor-mode rendering
+			if (!isXorMode()) {
+				gc.setAlpha(color.getAlpha());
+			}
 
 			org.eclipse.swt.graphics.Color colorSwt = SwtGraphicsUtils
 					.createSwtColor(color);

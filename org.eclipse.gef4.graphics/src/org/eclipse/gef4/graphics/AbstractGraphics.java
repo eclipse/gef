@@ -40,6 +40,13 @@ public abstract class AbstractGraphics implements IGraphics {
 	public AbstractGraphics() {
 	}
 
+	/**
+	 * Computes the resolution scale factor used to ensure resolution
+	 * independence. The scale factor is the quotient of physical and logical
+	 * DPI.
+	 * 
+	 * @return the resolution scale factor
+	 */
 	protected double computeResolutionScaleFactor() {
 		return (double) getDeviceDpi() / (double) getLogicalDpi();
 	}

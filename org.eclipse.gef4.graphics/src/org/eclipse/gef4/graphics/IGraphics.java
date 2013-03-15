@@ -309,6 +309,19 @@ public interface IGraphics {
 	 */
 	IGraphics fill(IMultiShape multiShape);
 
+	/**
+	 * Fills the interior of the given {@link IShape}.
+	 * 
+	 * @param shape
+	 *            the {@link IShape} to fill
+	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #fill(Path)
+	 * @see #fill(IMultiShape)
+	 * @see #setFillPattern(Pattern)
+	 */
+	IGraphics fill(IShape shape);
+
 	// /**
 	// * Creates a new {@link PrintConfiguration} that contains page bounds
 	// inside
@@ -331,19 +344,6 @@ public interface IGraphics {
 	// */
 	// PrintConfiguration createPrintConfiguration(Rectangle bounds,
 	// boolean multiPage);
-
-	/**
-	 * Fills the interior of the given {@link IShape}.
-	 * 
-	 * @param shape
-	 *            the {@link IShape} to fill
-	 * @return <code>this</code> for convenience
-	 * 
-	 * @see #fill(Path)
-	 * @see #fill(IMultiShape)
-	 * @see #setFillPattern(Pattern)
-	 */
-	IGraphics fill(IShape shape);
 
 	/**
 	 * Fills the interior of the given {@link Path} (closing it first, if
