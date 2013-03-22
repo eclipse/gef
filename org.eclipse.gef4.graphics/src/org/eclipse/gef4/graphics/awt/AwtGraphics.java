@@ -184,8 +184,8 @@ public class AwtGraphics extends AbstractGraphics {
 		} else if (shape instanceof RoundedRectangle) {
 			RoundedRectangle r = (RoundedRectangle) shape;
 			g.fillRoundRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(),
-					(int) r.getHeight(), (int) r.getArcWidth(),
-					(int) r.getArcHeight());
+					(int) r.getHeight(), 2 * (int) r.getArcWidth(),
+					2 * (int) r.getArcHeight());
 		} else if (shape instanceof Polygon) {
 			Polygon p = (Polygon) shape;
 			Point[] points = p.getPoints();

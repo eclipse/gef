@@ -227,8 +227,8 @@ public class SwtGraphics extends AbstractGraphics {
 			validateFill(r.getBounds());
 			gc.fillRoundRectangle((int) (r.getX() + 0.5),
 					(int) (r.getY() + 0.5), (int) (r.getWidth() + 1),
-					(int) (r.getHeight() + 1), (int) r.getArcWidth(),
-					(int) r.getArcHeight());
+					(int) (r.getHeight() + 1), 2 * (int) r.getArcWidth(),
+					2 * (int) r.getArcHeight());
 		} else if (shape instanceof Polygon) {
 			prepareXorMode(shape);
 			Polygon p = (Polygon) shape;
