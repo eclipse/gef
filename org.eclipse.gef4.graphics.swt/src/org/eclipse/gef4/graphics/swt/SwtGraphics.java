@@ -41,6 +41,7 @@ import org.eclipse.gef4.graphics.font.Font;
 import org.eclipse.gef4.graphics.image.Image;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
@@ -636,10 +637,19 @@ public class SwtGraphics extends AbstractGraphics {
 
 		Dimension size = getTextDimension(text);
 		Rectangle bounds = new Rectangle(new Point(), size);
+
 		prepareXorMode(bounds);
 		validateWrite(bounds);
+
 		gc.drawString(text, 0, 0, getCurrentState()
 				.getWriteBackgroundByReference().getAlpha() == 0);
+
+		if (font.isUnderlined()) {
+			FontMetrics fontMetrics = gc.getFontMetrics();
+			gc.drawLine(0, fontMetrics.getAscent(), (int) bounds.getWidth(),
+					fontMetrics.getAscent());
+		}
+
 		finishXorMode();
 
 		// undo scaling
