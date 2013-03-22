@@ -63,7 +63,7 @@ import org.eclipse.gef4.graphics.image.Image;
  * <blockquote>
  * 
  * <pre>
- * graphics.setAntiAliasing(true).setLineWidth(10).draw(line);
+ * graphics.setAntiAliasing(false).setLineWidth(10).draw(line);
  * </pre>
  * 
  * </blockquote>
@@ -76,59 +76,54 @@ import org.eclipse.gef4.graphics.image.Image;
  * <ul>
  * <li>{@link #setAffineTransform(AffineTransform)},
  * {@link #translate(double, double)}, {@link #scale(double, double)},
- * {@link #rotate(Angle)}, {@link #shear(double, double)}</li>
+ * {@link #rotate(Angle)}, {@link #shear(double, double)},
+ * {@link #transform(AffineTransform)}</li>
+ * <li>{@link #setAntiAliasing(boolean)}</li>
  * <li>{@link #setClip(Path)}, {@link #intersectClip(Path)},
  * {@link #unionClip(Path)}</li>
- * <li>{@link #setAntiAliasing(boolean)}</li>
+ * <li>{@link #setDeviceDpi(int)}, {@link #setLogicalDpi(int)}</li>
+ * <li>{@link #setInterpolationHint(InterpolationHint)}</li>
+ * <li>{@link #setXorMode(boolean)}, {@link #setEmulateXorMode(boolean)}</li>
  * </ul>
  * </li>
- * <li>draw() properties:
+ * <li>draw(...) specific properties:
  * <ul>
  * <li>{@link #setDashArray(double...)}, {@link #setDashBegin(double)}</li>
  * <li>{@link #setLineCap(LineCap)}, {@link #setLineJoin(LineJoin)},
  * {@link #setLineWidth(double)}, {@link #setMiterLimit(double)}</li>
- * <li>{@link #setDrawPattern(Pattern)},
- * {@link #setDrawPatternMode(Pattern.Mode)},
- * {@link #setDrawPatternColor(Color)},
- * {@link #setDrawPatternGradient(Gradient)},
- * {@link #setDrawPatternImage(Image)}</li>
+ * <li>{@link #setDrawPattern(Pattern)}</li>
  * </ul>
  * </li>
- * <li>fill() properties:
+ * <li>fill(...) specific properties:
  * <ul>
- * <li>{@link #setFillPattern(Pattern)},
- * {@link #setFillPatternMode(Pattern.Mode)},
- * {@link #setFillPatternColor(Color)},
- * {@link #setFillPatternGradient(Gradient)},
- * {@link #setFillPatternImage(Image)}</li>
+ * <li>{@link #setFillPattern(Pattern)}</li>
  * </ul>
  * </li>
- * <li>write() properties:
+ * <li>write(...) specific properties:
  * <ul>
  * <li>{@link #setFont(Font)}</li>
- * <li>{@link #setWritePattern(Pattern)},
- * {@link #setWritePatternMode(Pattern.Mode)},
- * {@link #setWritePatternColor(Color)},
- * {@link #setWritePatternGradient(Gradient)},
- * {@link #setWritePatternImage(Image)}</li>
- * </ul>
- * </li>
- * <li>blit() properties:
- * <ul>
- * <li>{@link #setInterpolationHint(InterpolationHint)}</li>
+ * <li>{@link #setWriteBackground(Color)}</li>
+ * <li>{@link #setWritePattern(Pattern)}</li>
  * </ul>
  * </li>
  * </ul>
  * </p>
  * 
  * <p>
- * One set of properties is referred to as a state of an IGraphics. An IGraphics
- * uses a stack to store multiple states. If you modify a property, then you are
- * modifying the current state of the IGraphics. The {@link #pushState()} method
- * saves the current state to the stack and the {@link #popState()} method
- * removes and applies the state on top of the stack. Additionally, you can use
- * the {@link #restoreState()} method to restore the previously pushed state
- * without removing it from the stack.
+ * One set of properties is referred to as a {@link GraphicsState}. An IGraphics
+ * uses a stack to store multiple {@link GraphicsState}s. If you modify a
+ * property, then you are modifying the current {@link GraphicsState} used by
+ * the IGraphics. The {@link #pushState()} method saves the current
+ * {@link GraphicsState} to the stack and the {@link #popState()} method removes
+ * and applies the {@link GraphicsState} on top of the stack. Additionally, you
+ * can use the {@link #restoreState()} method to restore the previously pushed
+ * state without removing it from the stack.
+ * </p>
+ * 
+ * <p>
+ * Additionally, you can retrieve the current {@link GraphicsState} using
+ * {@link #getState()} and you can set the current {@link GraphicsState} using
+ * {@link #setState(GraphicsState)}.
  * </p>
  * 
  * @author mwienand
@@ -232,12 +227,31 @@ public interface IGraphics {
 	/**
 	 * Resets the underlying drawing toolkit and disposes all system resources
 	 * allocated by this {@link IGraphics}.
+	 * 
+	 * <blockquote>
+	 * 
+	 * <pre>
+	 * graphics.setFontStyle(Font.STYLE_BOLD | Font.STYLE_ITALIC);
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 */
 	void cleanUp();
 
 	/**
 	 * Creates a new {@link IImageGraphics} for the same drawing toolkit that is
 	 * used by this {@link IGraphics} to draw into the given {@link Image}.
+	 * 
+	 * For example:<blockquote>
+	 * 
+	 * <pre>
+	 * Image image = new Image(400, 300);
+	 * IImageGraphics ig = graphics.createImageGraphics(image);
+	 * ig.draw(new Ellipse(30, 30, 300, 200));
+	 * ig.cleanUp();
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param image
 	 *            the {@link Image} to draw into
@@ -414,6 +428,9 @@ public interface IGraphics {
 	 * this from an application menu.
 	 * 
 	 * @return the DPI of the current display device
+	 * 
+	 * @see #setDeviceDpi(int)
+	 * @see #getLogicalDpi()
 	 */
 	int getDeviceDpi();
 
@@ -535,6 +552,10 @@ public interface IGraphics {
 	 * @return the current {@link Font}
 	 * 
 	 * @see #setFont(Font)
+	 * @see #getFontFamily()
+	 * @see #getFontSize()
+	 * @see #getFontStyle()
+	 * @see #getTextDimension(String)
 	 */
 	Font getFont();
 
@@ -542,6 +563,9 @@ public interface IGraphics {
 	 * Returns the family of the current {@link Font}.
 	 * 
 	 * @return the family of the current {@link Font}
+	 * 
+	 * @see #getFont()
+	 * @see #setFontFamily(String)
 	 */
 	String getFontFamily();
 
@@ -549,6 +573,9 @@ public interface IGraphics {
 	 * Returns the size of the current {@link Font}.
 	 * 
 	 * @return the size of the current {@link Font}
+	 * 
+	 * @see #getFont()
+	 * @see #setFontSize(double)
 	 */
 	double getFontSize();
 
@@ -556,6 +583,9 @@ public interface IGraphics {
 	 * Returns the style of the current {@link Font}.
 	 * 
 	 * @return the style of the current {@link Font}
+	 * 
+	 * @see #getFont()
+	 * @see #setFontStyle(int)
 	 */
 	int getFontStyle();
 
@@ -600,6 +630,9 @@ public interface IGraphics {
 	 * Returns the dots per inch (DPI) that equal one unit of length.
 	 * 
 	 * @return the DPI that equal one unit of length
+	 * 
+	 * @see #setLogicalDpi(int)
+	 * @see #getDeviceDpi()
 	 */
 	int getLogicalDpi();
 
@@ -619,22 +652,40 @@ public interface IGraphics {
 	 * 
 	 * @return a {@link GraphicsState} representing the state of this
 	 *         {@link IGraphics}
+	 * 
+	 * @see #setState(GraphicsState)
+	 * @see #pushState()
+	 * @see #popState()
+	 * @see #restoreState()
 	 */
 	GraphicsState getState();
 
 	/**
+	 * <p>
 	 * Returns a {@link Dimension} representing the width and height of a
 	 * rectangle which encloses the given {@link String} when it is drawn via
 	 * {@link #write(String)} using this {@link IGraphics}. The
 	 * {@link Dimension} is not guaranteed to store the minimum width and height
 	 * needed to display the given {@link String}. But it is guaranteed to be at
 	 * least as big as that.
+	 * </p>
+	 * 
+	 * Example:<blockquote>
+	 * 
+	 * <pre>
+	 * Dimension size = graphics.getTextDimension(string);
+	 * graphics.draw(new Rectangle(new Point(), size));
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param text
 	 *            the {@link String} for which the {@link Dimension} is computed
 	 * @return a {@link Dimension} representing the width and height of a
 	 *         rectangle which encloses the given {@link String} when drawn by
 	 *         this {@link IGraphics}
+	 * 
+	 * @see #getFont()
 	 */
 	Dimension getTextDimension(String text);
 
@@ -812,8 +863,8 @@ public interface IGraphics {
 	 * <blockquote>
 	 * 
 	 * <pre>
-	 * popState();
-	 * pushState();
+	 * graphics.popState();
+	 * graphics.pushState();
 	 * </pre>
 	 * 
 	 * </blockquote>
@@ -834,6 +885,10 @@ public interface IGraphics {
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #setAffineTransform(AffineTransform)
+	 * @see #translate(double, double)
+	 * @see #shear(double, double)
+	 * @see #scale(double, double)
+	 * @see #transform(AffineTransform)
 	 */
 	IGraphics rotate(Angle theta);
 
@@ -848,6 +903,10 @@ public interface IGraphics {
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #setAffineTransform(AffineTransform)
+	 * @see #transform(AffineTransform)
+	 * @see #translate(double, double)
+	 * @see #shear(double, double)
+	 * @see #rotate(Angle)
 	 */
 	IGraphics scale(double sx, double sy);
 
@@ -900,10 +959,12 @@ public interface IGraphics {
 	 * Sets the current dash array to the given value(s).
 	 * 
 	 * @param dashArray
+	 *            alternating opaque/transparent segment lengths
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #getDashArray()
 	 * @see #setDashBegin(double)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setDashArray(double... dashArray);
 
@@ -911,10 +972,12 @@ public interface IGraphics {
 	 * Sets the dash begin to the given value.
 	 * 
 	 * @param dashBegin
+	 *            the dash array offset length
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #getDashBegin()
 	 * @see #setDashArray(double...)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setDashBegin(double dashBegin);
 
@@ -927,6 +990,9 @@ public interface IGraphics {
 	 * @param dpi
 	 *            the DPI to assume for the current display device
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getDeviceDpi()
+	 * @see #setLogicalDpi(int)
 	 */
 	IGraphics setDeviceDpi(int dpi);
 
@@ -937,7 +1003,7 @@ public interface IGraphics {
 	 * <blockquote>
 	 * 
 	 * <pre>
-	 * igraphics.setDrawPatternMode(Mode.COLOR).setDrawPatternColor(color);
+	 * graphics.setDrawPatternMode(Mode.COLOR).setDrawPatternColor(color);
 	 * </pre>
 	 * 
 	 * </blockquote>
@@ -945,6 +1011,10 @@ public interface IGraphics {
 	 * @param color
 	 *            the new drawing {@link Color}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setDrawPattern(Pattern)
+	 * @see #setDrawPatternColor(Color)
+	 * @see #setDrawPatternMode(Mode)
 	 */
 	IGraphics setDraw(Color color);
 
@@ -955,7 +1025,7 @@ public interface IGraphics {
 	 * <blockquote>
 	 * 
 	 * <pre>
-	 * igraphics.setDrawPatternMode(Mode.GRADIENT).setDrawPatternGradient(gradient);
+	 * graphics.setDrawPatternMode(Mode.GRADIENT).setDrawPatternGradient(gradient);
 	 * </pre>
 	 * 
 	 * </blockquote>
@@ -963,6 +1033,10 @@ public interface IGraphics {
 	 * @param gradient
 	 *            the new drawing {@link Gradient}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setDrawPattern(Pattern)
+	 * @see #setDrawPatternGradient(Gradient)
+	 * @see #setDrawPatternMode(Mode)
 	 */
 	IGraphics setDraw(Gradient<?> gradient);
 
@@ -981,6 +1055,10 @@ public interface IGraphics {
 	 * @param image
 	 *            the new drawing {@link Image}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setDrawPattern(Pattern)
+	 * @see #setDrawPatternImage(Image)
+	 * @see #setDrawPatternMode(Mode)
 	 */
 	IGraphics setDraw(Image image);
 
@@ -1008,6 +1086,7 @@ public interface IGraphics {
 	 * @see #getDrawPatternColor()
 	 * @see #setDrawPattern(Pattern)
 	 * @see #setDrawPatternMode(Pattern.Mode)
+	 * @see #setDraw(Color)
 	 */
 	IGraphics setDrawPatternColor(Color color);
 
@@ -1021,6 +1100,7 @@ public interface IGraphics {
 	 * @see #getDrawPatternGradient()
 	 * @see #setDrawPattern(Pattern)
 	 * @see #setDrawPatternMode(Pattern.Mode)
+	 * @see #setDraw(Gradient)
 	 */
 	IGraphics setDrawPatternGradient(Gradient<?> gradient);
 
@@ -1034,6 +1114,7 @@ public interface IGraphics {
 	 * @see #getDrawPatternImage()
 	 * @see #setDrawPattern(Pattern)
 	 * @see #setDrawPatternMode(Pattern.Mode)
+	 * @see #setDraw(Image)
 	 */
 	IGraphics setDrawPatternImage(Image image);
 
@@ -1058,6 +1139,9 @@ public interface IGraphics {
 	 *            <code>true</code> to always emulate xor-mode rendering,
 	 *            otherwise <code>false</code>
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #isEmulateXorMode()
+	 * @see #isXorMode()
 	 */
 	IGraphics setEmulateXorMode(boolean emulateXorMode);
 
@@ -1076,6 +1160,10 @@ public interface IGraphics {
 	 * @param color
 	 *            the new fill {@link Color}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setFillPattern(Pattern)
+	 * @see #setFillPatternColor(Color)
+	 * @see #setFillPatternMode(Mode)
 	 */
 	IGraphics setFill(Color color);
 
@@ -1094,6 +1182,10 @@ public interface IGraphics {
 	 * @param gradient
 	 *            the new fill {@link Gradient}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setFillPattern(Pattern)
+	 * @see #setFillPatternGradient(Gradient)
+	 * @see #setFillPatternMode(Mode)
 	 */
 	IGraphics setFill(Gradient<?> gradient);
 
@@ -1112,6 +1204,10 @@ public interface IGraphics {
 	 * @param image
 	 *            the new fill {@link Image}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setFillPattern(Pattern)
+	 * @see #setFillPatternImage(Image)
+	 * @see #setFillPatternMode(Mode)
 	 */
 	IGraphics setFill(Image image);
 
@@ -1139,6 +1235,7 @@ public interface IGraphics {
 	 * @see #getFillPatternColor()
 	 * @see #setFillPattern(Pattern)
 	 * @see #setFillPatternMode(Pattern.Mode)
+	 * @see #setFill(Color)
 	 */
 	IGraphics setFillPatternColor(Color color);
 
@@ -1152,6 +1249,7 @@ public interface IGraphics {
 	 * @see #getFillPatternGradient()
 	 * @see #setFillPattern(Pattern)
 	 * @see #setFillPatternMode(Pattern.Mode)
+	 * @see #setFill(Gradient)
 	 */
 	IGraphics setFillPatternGradient(Gradient<?> gradient);
 
@@ -1165,6 +1263,7 @@ public interface IGraphics {
 	 * @see #getFillPatternImage()
 	 * @see #setFillPattern(Pattern)
 	 * @see #setFillPatternMode(Pattern.Mode)
+	 * @see #setFill(Image)
 	 */
 	IGraphics setFillPatternImage(Image image);
 
@@ -1180,37 +1279,84 @@ public interface IGraphics {
 	IGraphics setFillPatternMode(Pattern.Mode fillMode);
 
 	/**
+	 * <p>
 	 * Sets the current {@link Font} to the given value.
+	 * </p>
+	 * 
+	 * Example:<blockquote>
+	 * 
+	 * <pre>
+	 * Font font = new Font(&quot;Courier New&quot;, 11.5, Font.STYLE_NORMAL);
+	 * graphics.setFont(font);
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param font
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getFont()
+	 * @see #setFontFamily(String)
+	 * @see #setFontSize(double)
+	 * @see #setFontStyle(int)
 	 */
 	IGraphics setFont(Font font);
 
 	/**
-	 * Sets the family of the current {@link Font} to the passed-in value.
+	 * Sets the family of the current {@link Font} to the passed-in value, for
+	 * example:<blockquote>
+	 * 
+	 * <pre>
+	 * graphics.setFontFamily(&quot;Courier New&quot;);
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param family
 	 *            the new family of the current {@link Font}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getFontFamily()
+	 * @see #setFont(Font)
 	 */
 	IGraphics setFontFamily(String family);
 
 	/**
-	 * Sets the size of the current {@link Font} to the passed-in value.
+	 * Sets the size of the current {@link Font} to the passed-in value (in
+	 * points), for example: <blockquote>
+	 * 
+	 * <pre>
+	 * graphics.setFontSize(11.5); // 11.5pt
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param size
 	 *            the new size of the current {@link Font}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getFontSize()
+	 * @see #setFont(Font)
 	 */
 	IGraphics setFontSize(double size);
 
 	/**
-	 * Sets the style of the current {@link Font} to the passed-in value.
+	 * Sets the style of the current {@link Font} to the passed-in value which
+	 * is composed by the STYLE_ constants defined in {@link Font} using
+	 * bitwise-or, for example: <blockquote>
+	 * 
+	 * <pre>
+	 * graphics.setFontStyle(Font.STYLE_BOLD | Font.STYLE_ITALIC);
+	 * </pre>
+	 * 
+	 * </blockquote>
 	 * 
 	 * @param style
 	 *            the new style of the current {@link Font}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getFontStyle()
+	 * @see #setFont(Font)
 	 */
 	IGraphics setFontStyle(int style);
 
@@ -1231,6 +1377,7 @@ public interface IGraphics {
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #getLineCap()
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setLineCap(LineCap lineCap);
 
@@ -1242,6 +1389,7 @@ public interface IGraphics {
 	 * 
 	 * @see #getLineJoin()
 	 * @see #setMiterLimit(double)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setLineJoin(LineJoin lineJoin);
 
@@ -1252,6 +1400,7 @@ public interface IGraphics {
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #getLineWidth()
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setLineWidth(double lineWidth);
 
@@ -1262,17 +1411,22 @@ public interface IGraphics {
 	 * @param dpi
 	 *            the new logical DPI
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getLogicalDpi()
+	 * @see #setDeviceDpi(int)
 	 */
 	IGraphics setLogicalDpi(int dpi);
 
 	/**
-	 * Sets the current miter limit to the given value.
+	 * Sets the current miter limit to the given value. The miter-limit
+	 * specifies the maximum length of a {@link LineJoin#MITER}.
 	 * 
 	 * @param miterLimit
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #getMiterLimit()
 	 * @see #setLineJoin(LineJoin)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
 	 */
 	IGraphics setMiterLimit(double miterLimit);
 
@@ -1282,25 +1436,27 @@ public interface IGraphics {
 	 * @param state
 	 *            the {@link GraphicsState} to apply to this {@link IGraphics}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getState()
+	 * @see #pushState()
+	 * @see #popState()
+	 * @see #restoreState()
 	 */
 	IGraphics setState(GraphicsState state);
 
 	/**
-	 * Sets the current stroke to the passed-in values.
+	 * Sets dash-array and dash-begin to the given values.
 	 * 
-	 * @param width
-	 *            the new line width
-	 * @param cap
-	 *            the new {@link LineCap}
-	 * @param join
-	 *            the new {@link LineJoin}
-	 * @param miterLimit
-	 *            the new limit for {@link LineJoin#MITER}
 	 * @param dashBegin
 	 *            the dash offset length
 	 * @param dashes
-	 *            the alternating opaque and transparent dash lengths
+	 *            alternating opaque and transparent dash lengths
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setStroke(double, LineCap, LineJoin, double)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
+	 * @see #setDashBegin(double)
+	 * @see #setDashArray(double...)
 	 */
 	IGraphics setStroke(double dashBegin, double... dashes);
 
@@ -1316,6 +1472,13 @@ public interface IGraphics {
 	 * @param miterLimit
 	 *            the new limit for {@link LineJoin#MITER}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setStroke(double, double...)
+	 * @see #setStroke(double, LineCap, LineJoin, double, double, double...)
+	 * @see #setLineWidth(double)
+	 * @see #setLineCap(LineCap)
+	 * @see #setLineJoin(LineJoin)
+	 * @see #setMiterLimit(double)
 	 */
 	IGraphics setStroke(double width, LineCap cap, LineJoin join,
 			double miterLimit);
@@ -1336,6 +1499,15 @@ public interface IGraphics {
 	 * @param dashes
 	 *            the alternating opaque and transparent dash lengths
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setStroke(double, double...)
+	 * @see #setStroke(double, LineCap, LineJoin, double)
+	 * @see #setLineWidth(double)
+	 * @see #setLineCap(LineCap)
+	 * @see #setLineJoin(LineJoin)
+	 * @see #setMiterLimit(double)
+	 * @see #setDashBegin(double)
+	 * @see #setDashArray(double...)
 	 */
 	IGraphics setStroke(double width, LineCap cap, LineJoin join,
 			double miterLimit, double dashBegin, double... dashes);
@@ -1355,6 +1527,11 @@ public interface IGraphics {
 	 * @param color
 	 *            the new write {@link Pattern}'s {@link Color}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getWritePattern()
+	 * @see #setWritePattern(Pattern)
+	 * @see #setWritePatternColor(Color)
+	 * @see #setWritePatternMode(Mode)
 	 */
 	IGraphics setWrite(Color color);
 
@@ -1373,6 +1550,11 @@ public interface IGraphics {
 	 * @param gradient
 	 *            the new write {@link Pattern}'s {@link Gradient}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getWritePattern()
+	 * @see #setWritePattern(Pattern)
+	 * @see #setWritePatternGradient(Gradient)
+	 * @see #setWritePatternMode(Mode)
 	 */
 	IGraphics setWrite(Gradient<?> gradient);
 
@@ -1391,6 +1573,11 @@ public interface IGraphics {
 	 * @param image
 	 *            the new write {@link Pattern}'s {@link Image}
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #getWritePattern()
+	 * @see #setWritePattern(Pattern)
+	 * @see #setWritePatternImage(Image)
+	 * @see #setWritePatternMode(Mode)
 	 */
 	IGraphics setWrite(Image image);
 
@@ -1470,15 +1657,25 @@ public interface IGraphics {
 	IGraphics setWritePatternMode(Pattern.Mode textPatternMode);
 
 	/**
+	 * <p>
 	 * Enables or disables <code>xor</code> mode. If the given value is
 	 * <code>true</code> <code>xor</code> mode is enabled. Otherwise it is
 	 * disabled.
+	 * </p>
+	 * 
+	 * <p>
+	 * When xor-mode-rendering is enabled, source color values are composed with
+	 * destination color values using bitwise xor. For example, drawing blue
+	 * (001) over red (100) results in magenta (101).
+	 * </p>
 	 * 
 	 * @param xor
 	 *            <code>true</code> to enable <code>xor</code> mode,
 	 *            <code>false</code> to disable it
 	 * @return <code>this</code> for convenience
+	 * 
 	 * @see #isXorMode()
+	 * @see #setEmulateXorMode(boolean)
 	 */
 	IGraphics setXorMode(boolean xor);
 
@@ -1496,6 +1693,7 @@ public interface IGraphics {
 	 * @see #translate(double, double)
 	 * @see #rotate(Angle)
 	 * @see #scale(double, double)
+	 * @see #transform(AffineTransform)
 	 */
 	IGraphics shear(double shx, double shy);
 
@@ -1507,6 +1705,12 @@ public interface IGraphics {
 	 *            the transformation matrix ({@link AffineTransform}) by which
 	 *            the current transformation matrix is multiplied
 	 * @return <code>this</code> for convenience
+	 * 
+	 * @see #setAffineTransform(AffineTransform)
+	 * @see #rotate(Angle)
+	 * @see #translate(double, double)
+	 * @see #scale(double, double)
+	 * @see #shear(double, double)
 	 */
 	IGraphics transform(AffineTransform transformations);
 
@@ -1530,6 +1734,7 @@ public interface IGraphics {
 	 * @see #rotate(Angle)
 	 * @see #scale(double, double)
 	 * @see #shear(double, double)
+	 * @see #transform(AffineTransform)
 	 */
 	IGraphics translate(double x, double y);
 
@@ -1572,11 +1777,6 @@ public interface IGraphics {
 	 */
 	IGraphics unionClip(Path toShow);
 
-	/*
-	 * TODO: write(): Where does text rendering start? Is the current position
-	 * at the baseline? Or at the ascent? Or at the maximum ascent?
-	 */
-
 	/**
 	 * Draws the given <i>text</i> on this {@link IGraphics}.
 	 * 
@@ -1585,6 +1785,8 @@ public interface IGraphics {
 	 * @return <code>this</code> for convenience
 	 * 
 	 * @see #setFont(Font)
+	 * @see #setWriteBackground(Color)
+	 * @see #setWritePattern(Pattern)
 	 */
 	IGraphics write(String text);
 
