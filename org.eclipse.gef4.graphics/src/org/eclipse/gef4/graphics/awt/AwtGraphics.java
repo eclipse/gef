@@ -168,12 +168,12 @@ public class AwtGraphics extends AbstractGraphics {
 		validateFill();
 		if (shape instanceof Rectangle) {
 			Rectangle r = (Rectangle) shape;
-			g.fillRect((int) r.getX(), (int) r.getY(), (int) r.getWidth() + 1,
-					(int) r.getHeight() + 1);
+			g.fillRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(),
+					(int) r.getHeight());
 		} else if (shape instanceof Ellipse) {
 			Ellipse e = (Ellipse) shape;
-			g.fillOval((int) e.getX(), (int) e.getY(), (int) e.getWidth() + 1,
-					(int) e.getHeight() + 1);
+			g.fillOval((int) e.getX(), (int) e.getY(), (int) e.getWidth(),
+					(int) e.getHeight());
 		} else if (shape instanceof Pie) {
 			Pie p = (Pie) shape;
 			g.fillArc((int) (p.getX() + 0.5), (int) (p.getY() + 0.5), (int) (p
@@ -183,9 +183,9 @@ public class AwtGraphics extends AbstractGraphics {
 
 		} else if (shape instanceof RoundedRectangle) {
 			RoundedRectangle r = (RoundedRectangle) shape;
-			g.fillRoundRect((int) r.getX(), (int) r.getY(),
-					(int) r.getWidth() + 1, (int) r.getHeight() + 1,
-					(int) r.getArcWidth(), (int) r.getArcHeight());
+			g.fillRoundRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(),
+					(int) r.getHeight(), (int) r.getArcWidth(),
+					(int) r.getArcHeight());
 		} else if (shape instanceof Polygon) {
 			Polygon p = (Polygon) shape;
 			Point[] points = p.getPoints();
