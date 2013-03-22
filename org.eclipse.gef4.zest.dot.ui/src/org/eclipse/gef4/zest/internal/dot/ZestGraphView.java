@@ -198,7 +198,7 @@ public final class ZestGraphView extends ViewPart {
 				if (graph != null) {
 					graph.dispose();
 				}
-				if (composite != null) {
+				if (!dot.trim().isEmpty() && composite != null) {
 					DotImport dotImport = new DotImport(dotString);
 					if (dotImport.getErrors().size() > 0) {
 						String message = String.format(
@@ -215,9 +215,9 @@ public final class ZestGraphView extends ViewPart {
 					setupLayout();
 					composite.layout();
 					graph.applyLayout();
+					handleWikiText(currentDot);
+					linkCorrespondingImage();
 				}
-				handleWikiText(currentDot);
-				linkCorrespondingImage();
 			}
 		};
 		Display display = getViewSite().getShell().getDisplay();
