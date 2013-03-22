@@ -14,17 +14,16 @@ package org.eclipse.gef4.graphics.image.operations;
 
 import org.eclipse.gef4.graphics.image.Image;
 
-
 /**
  * An IImageOperation can be {@link #apply(Image) applied} to a an {@link Image}
  * and results in another {@link Image}. Therefore, you can easily chain
- * IImageOperations as follows:
+ * IImageOperations as follows: <blockquote>
  * 
  * <pre>
- * <blockquote> Image result = inputImage.apply(imageOp0)
- *                          .apply(imageOp1)
- *                          .apply(imageOp2);</blockquote>
+ * Image result = source.apply(op0).apply(op1).apply(op2);
  * </pre>
+ * 
+ * </blockquote>
  * 
  * @author mwienand
  * 

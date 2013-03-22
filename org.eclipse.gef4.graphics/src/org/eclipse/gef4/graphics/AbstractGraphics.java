@@ -35,7 +35,6 @@ import org.eclipse.gef4.graphics.image.Image;
 public abstract class AbstractGraphics implements IGraphics {
 
 	private Stack<GraphicsState> states = new Stack<GraphicsState>();
-	private AffineTransform tempTx;
 
 	public AbstractGraphics() {
 	}

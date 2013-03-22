@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Example001 implements PaintListener {
 
 	public static void main(String[] args) {
-		new Example001("Simple Graphics");
+		new Example001("Example 001 - Simple Graphics (SWT)");
 	}
 
 	public Example001(String title) {

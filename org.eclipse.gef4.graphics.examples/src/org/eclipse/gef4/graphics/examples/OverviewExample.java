@@ -67,18 +67,17 @@ public class OverviewExample implements IExample {
 	public void renderScene(IGraphics g) {
 		Rectangle rectangle = new Rectangle(20, 20, 400, 400);
 
-		g.setDraw(RED).setFill(YELLOW).pushState();
-
-		g.fill(rectangle).draw(rectangle.getOutline());
-
 		PolyBezier cubicInterpolation = PolyBezier.interpolateCubic(new Point(
 				50, 50), new Point(200, 100), new Point(150, 200), new Point(
 				50, 300), new Point(150, 350), new Point(150, 200), new Point(
 				200, 75), new Point(300, 100), new Point(150, 400));
 
+		g.setDraw(RED).setFill(YELLOW);
+		g.fill(rectangle).draw(rectangle.getOutline());
+
+		g.pushState();
 		g.setFill(BLUE).setDraw(BLACK).setLineWidth(3);
 		g.fill(cubicInterpolation.toPath()).draw(cubicInterpolation);
-
 		g.popState();
 
 		rectangle.shrink(150, 150);
@@ -94,4 +93,5 @@ public class OverviewExample implements IExample {
 		g.translate(50, 50).rotate(Angle.fromDeg(20));
 		g.paint(getImage());
 	}
+
 }

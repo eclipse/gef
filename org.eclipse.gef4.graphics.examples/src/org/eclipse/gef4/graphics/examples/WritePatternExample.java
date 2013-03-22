@@ -45,8 +45,8 @@ public class WritePatternExample implements IExample {
 		gradient.addStop(0, new Color(255, 0, 0));
 		gradient.addStop(1, new Color(255, 255, 0));
 		g.setWrite(gradient);
-		g.setFontSize(32);
-		g.setFontStyle(Font.STYLE_BOLD | Font.STYLE_UNDERLINED);
+		g.setFont(new Font("Courier New", 32, Font.STYLE_BOLD
+				| Font.STYLE_UNDERLINED));
 
 		g.setDraw(new Color(0, 0, 255));
 		g.draw(new Rectangle(0, 0, 100, 100).getOutline());
