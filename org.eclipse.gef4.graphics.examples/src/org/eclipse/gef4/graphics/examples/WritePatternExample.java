@@ -25,7 +25,7 @@ public class WritePatternExample implements IExample {
 
 	@Override
 	public int getHeight() {
-		return 480;
+		return 150;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class WritePatternExample implements IExample {
 
 	@Override
 	public int getWidth() {
-		return 640;
+		return 600;
 	}
 
 	@Override

@@ -72,7 +72,8 @@ public class Example001 implements PaintListener {
 		g.fill(ellipse).draw(ellipse.getOutline());
 
 		g.setFill(new Color(0, 0, 255)).setDraw(new Color())
-				.setLineJoin(LineJoin.ROUND).setLineCap(LineCap.ROUND);
+				.setLineJoin(LineJoin.ROUND).setLineCap(LineCap.ROUND)
+				.setDashArray(new double[] {}); // no dashes
 
 		g.fill(rectangle).draw(rectangle.getOutline());
 

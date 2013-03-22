@@ -34,16 +34,25 @@ public class XorModeExample implements IExample {
 		return 640;
 	}
 
-	@Override
-	public void renderScene(IGraphics g) {
-		g.scale(3, 3);
+	/**
+	 * @param g
+	 */
+	private void render(IGraphics g, boolean xor) {
 		g.setFill(new Color(0, 0, 255));
 		g.fill(new Rectangle(5, 5, 90, 45));
-		g.setXorMode(true);
+		g.setXorMode(xor);
 		g.setFill(new Color(255, 255, 255));
 		g.fill(new Rectangle(20, 20, 50, 50));
 		g.setFill(new Color(255, 0, 0));
 		g.fill(new Ellipse(80, 20, 50, 50));
+	}
+
+	@Override
+	public void renderScene(IGraphics g) {
+		g.scale(3, 3);
+		render(g, false);
+		g.translate(0, 80);
+		render(g, true);
 	}
 
 }
