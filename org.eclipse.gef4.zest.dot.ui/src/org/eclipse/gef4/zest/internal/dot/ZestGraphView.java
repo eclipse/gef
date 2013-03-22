@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.zest.DotUiMessages;
 import org.eclipse.gef4.zest.core.widgets.Graph;
-import org.eclipse.gef4.zest.internal.dot.DotImport;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -42,7 +41,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -70,8 +68,10 @@ public final class ZestGraphView extends ViewPart {
 
 	public static final String ID = "org.eclipse.gef4.zest.dot.ZestView"; //$NON-NLS-1$
 
-	private static final RGB BACKGROUND = JFaceResources.getColorRegistry()
-			.getRGB("org.eclipse.jdt.ui.JavadocView.backgroundColor"); //$NON-NLS-1$
+	private static final Color BACKGROUND = JFaceResources.getResources()
+			.createColor(
+					JFaceResources.getColorRegistry().getRGB(
+							"org.eclipse.jdt.ui.JavadocView.backgroundColor")); //$NON-NLS-1$
 
 	private static final String ADD_EXPORT_QUESTION = DotUiMessages.ZestGraphView_0;
 	private static final String ADD_EXPORT_MESSAGE = DotUiMessages.ZestGraphView_1
@@ -166,7 +166,7 @@ public final class ZestGraphView extends ViewPart {
 		composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
-		composite.setBackground(new Color(composite.getDisplay(), BACKGROUND));
+		composite.setBackground(BACKGROUND);
 		if (file != null) {
 			try {
 				updateGraph();
@@ -493,9 +493,7 @@ public final class ZestGraphView extends ViewPart {
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			graph.setLayout(new GridLayout());
 			graph.setLayoutData(gd);
-			Color color = new Color(graph.getDisplay(), BACKGROUND);
-			graph.setBackground(color);
-			graph.getParent().setBackground(color);
+			graph.setBackground(BACKGROUND);
 		}
 	}
 
@@ -545,6 +543,7 @@ public final class ZestGraphView extends ViewPart {
 		if (composite != null) {
 			composite.dispose();
 		}
+		JFaceResources.getResources().destroyColor(BACKGROUND.getRGB());
 	}
 
 	/**
