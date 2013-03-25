@@ -81,10 +81,10 @@ public class GraphItemStyler {
 			}
 			if (labelProvider instanceof ILabelProvider) {
 				String text = ((ILabelProvider) labelProvider).getText(conn
-						.getExternalConnection());
+						.getData());
 				conn.setText((text != null) ? text : "");
 				conn.setImage(((ILabelProvider) labelProvider).getImage(conn
-						.getExternalConnection()));
+						.getData()));
 			}
 			if (labelProvider instanceof IEntityConnectionStyleProvider) {
 				styleEntityConnection(conn,
@@ -107,7 +107,7 @@ public class GraphItemStyler {
 	 */
 	private static void styleConnection(GraphConnection conn,
 			IConnectionStyleProvider provider) {
-		Object rel = conn.getExternalConnection();
+		Object rel = conn.getData();
 		Color c;
 		int style = provider.getConnectionStyle(rel);
 		if (!ZestStyles.validateConnectionStyle(style)) {

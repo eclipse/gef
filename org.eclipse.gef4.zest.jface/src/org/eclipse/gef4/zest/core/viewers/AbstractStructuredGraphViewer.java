@@ -62,21 +62,21 @@ public abstract class AbstractStructuredGraphViewer extends
 	 */
 	private int connectionStyle;
 
-	private HashMap nodesMap = new HashMap();
-	private HashMap connectionsMap = new HashMap();
+	private HashMap<Object, GraphItem> nodesMap = new HashMap<Object, GraphItem>();
+	private HashMap<Object, GraphItem> connectionsMap = new HashMap<Object, GraphItem>();
 
 	/**
-	 * A simple graph comparator that orders graph elements based on thier type
+	 * A simple graph comparator that orders graph elements based on their type
 	 * (connection or node), and their unique object identification.
 	 */
-	private class SimpleGraphComparator implements Comparator {
-		TreeSet storedStrings;
+	private class SimpleGraphComparator implements Comparator<GraphItem> {
+		TreeSet<String> storedStrings;
 
 		/**
 		 * 
 		 */
 		public SimpleGraphComparator() {
-			this.storedStrings = new TreeSet();
+			this.storedStrings = new TreeSet<String>();
 		}
 
 		/*
@@ -84,7 +84,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		public int compare(Object arg0, Object arg1) {
+		public int compare(GraphItem arg0, GraphItem arg1) {
 			if (arg0 instanceof GraphNode && arg1 instanceof GraphConnection) {
 				return 1;
 			} else if (arg0 instanceof GraphConnection
@@ -217,7 +217,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @return
 	 */
-	public HashMap getNodesMap() {
+	public HashMap<Object, GraphItem> getNodesMap() {
 		return this.nodesMap;
 	}
 
@@ -399,8 +399,8 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		Widget node = (Widget) nodesMap.get(element);
-		Widget connection = (Widget) connectionsMap.get(element);
+		Widget node = nodesMap.get(element);
+		Widget connection = connectionsMap.get(element);
 		return (node != null) ? node : connection;
 	}
 
@@ -409,9 +409,9 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
-	protected List getSelectionFromWidget() {
+	protected List<Object> getSelectionFromWidget() {
 		List internalSelection = getWidgetSelection();
-		LinkedList externalSelection = new LinkedList();
+		LinkedList<Object> externalSelection = new LinkedList<Object>();
 		for (Iterator i = internalSelection.iterator(); i.hasNext();) {
 			Object data = ((GraphItem) i.next()).getData();
 			if (data != null) {
@@ -426,14 +426,14 @@ public abstract class AbstractStructuredGraphViewer extends
 			return new GraphItem[0];
 		}
 
-		ArrayList list = new ArrayList();
+		ArrayList<GraphItem> list = new ArrayList<GraphItem>();
 		Iterator iterator = l.iterator();
 
 		while (iterator.hasNext()) {
 			GraphItem w = (GraphItem) findItem(iterator.next());
 			list.add(w);
 		}
-		return (GraphItem[]) list.toArray(new GraphItem[list.size()]);
+		return list.toArray(new GraphItem[list.size()]);
 	}
 
 	/*
@@ -445,7 +445,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 */
 	protected void setSelectionToWidget(List l, boolean reveal) {
 		Graph control = (Graph) getControl();
-		List selection = new LinkedList();
+		List<GraphItem> selection = new LinkedList<GraphItem>();
 		for (Iterator i = l.iterator(); i.hasNext();) {
 			Object obj = i.next();
 			GraphNode node = (GraphNode) nodesMap.get(obj);
@@ -457,8 +457,7 @@ public abstract class AbstractStructuredGraphViewer extends
 				selection.add(conn);
 			}
 		}
-		control.setSelection((GraphNode[]) selection
-				.toArray(new GraphNode[selection.size()]));
+		control.setSelection(selection.toArray(new GraphNode[selection.size()]));
 	}
 
 	/**
@@ -484,11 +483,11 @@ public abstract class AbstractStructuredGraphViewer extends
 
 		// Save the old map so we can set the size and position of any nodes
 		// that are the same
-		Map oldNodesMap = nodesMap;
+		Map<Object, GraphItem> oldNodesMap = nodesMap;
 		Graph graph = (Graph) getControl();
 		graph.setSelection(new GraphNode[0]);
 
-		Iterator iterator = nodesMap.values().iterator();
+		Iterator<GraphItem> iterator = nodesMap.values().iterator();
 		while (iterator.hasNext()) {
 			GraphNode node = (GraphNode) iterator.next();
 			if (!node.isDisposed()) {
@@ -504,8 +503,8 @@ public abstract class AbstractStructuredGraphViewer extends
 			}
 		}
 
-		nodesMap = new HashMap();
-		connectionsMap = new HashMap();
+		nodesMap = new HashMap<Object, GraphItem>();
+		connectionsMap = new HashMap<Object, GraphItem>();
 
 		graph = factory.createGraphModel(graph);
 
@@ -514,7 +513,8 @@ public abstract class AbstractStructuredGraphViewer extends
 
 		// check if any of the pre-existing nodes are still present
 		// in this case we want them to keep the same location & size
-		for (Iterator iter = oldNodesMap.keySet().iterator(); iter.hasNext();) {
+		for (Iterator<Object> iter = oldNodesMap.keySet().iterator(); iter
+				.hasNext();) {
 			Object data = iter.next();
 			GraphNode newNode = (GraphNode) nodesMap.get(data);
 			if (newNode != null) {
@@ -546,8 +546,9 @@ public abstract class AbstractStructuredGraphViewer extends
 		}
 		Object[] filtered = getFilteredChildren(getInput());
 		SimpleGraphComparator comparator = new SimpleGraphComparator();
-		TreeSet filteredElements = new TreeSet(comparator);
-		TreeSet unfilteredElements = new TreeSet(comparator);
+		TreeSet<GraphItem> filteredElements = new TreeSet<GraphItem>(comparator);
+		TreeSet<GraphItem> unfilteredElements = new TreeSet<GraphItem>(
+				comparator);
 		List connections = getGraphControl().getConnections();
 		List nodes = getGraphControl().getNodes();
 		if (filtered.length == 0) {
@@ -566,7 +567,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		}
 		for (Iterator i = connections.iterator(); i.hasNext();) {
 			GraphConnection c = (GraphConnection) i.next();
-			if (c.getExternalConnection() != null) {
+			if (c.getData() != null) {
 				unfilteredElements.add(c);
 			}
 		}
@@ -577,7 +578,7 @@ public abstract class AbstractStructuredGraphViewer extends
 			}
 		}
 		for (int i = 0; i < filtered.length; i++) {
-			Object modelElement = connectionsMap.get(filtered[i]);
+			GraphItem modelElement = connectionsMap.get(filtered[i]);
 			if (modelElement == null) {
 				modelElement = nodesMap.get(filtered[i]);
 			}
@@ -589,7 +590,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		// set all the elements that did not pass the filters to invisible, and
 		// all the elements that passed to visible.
 		while (unfilteredElements.size() > 0) {
-			GraphItem i = (GraphItem) unfilteredElements.first();
+			GraphItem i = unfilteredElements.first();
 			i.setVisible(false);
 			unfilteredElements.remove(i);
 		}
@@ -610,14 +611,14 @@ public abstract class AbstractStructuredGraphViewer extends
 	protected Object[] getRawChildren(Object parent) {
 		if (parent == getInput()) {
 			// get the children from the model.
-			LinkedList children = new LinkedList();
+			LinkedList<Object> children = new LinkedList<Object>();
 			if (getGraphControl() != null) {
 				List connections = getGraphControl().getConnections();
 				List nodes = getGraphControl().getNodes();
 				for (Iterator i = connections.iterator(); i.hasNext();) {
 					GraphConnection c = (GraphConnection) i.next();
-					if (c.getExternalConnection() != null) {
-						children.add(c.getExternalConnection());
+					if (c.getData() != null) {
+						children.add(c.getData());
 					}
 				}
 				for (Iterator i = nodes.iterator(); i.hasNext();) {

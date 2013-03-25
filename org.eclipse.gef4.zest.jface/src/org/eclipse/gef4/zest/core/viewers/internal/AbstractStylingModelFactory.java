@@ -62,9 +62,9 @@ public abstract class AbstractStylingModelFactory implements
 		// go ahead and try it.
 		GraphNode source = conn.getSource();
 		GraphNode dest = conn.getDestination();
-		LinkedList rightList = getConnectionList(source, dest);
+		LinkedList<GraphConnection> rightList = getConnectionList(source, dest);
 
-		LinkedList leftList = null;
+		LinkedList<GraphConnection> leftList = null;
 
 		if (dest != source) {
 			leftList = getConnectionList(dest, source);
@@ -87,9 +87,9 @@ public abstract class AbstractStylingModelFactory implements
 	 * @param size
 	 *            total number of arcs - may be bigger then connections.size
 	 */
-	protected void adjustCurves(List connections, int size) {
+	protected void adjustCurves(List<GraphConnection> connections, int size) {
 		for (int i = 0; i < connections.size(); i++) {
-			GraphConnection conn = (GraphConnection) connections.get(i);
+			GraphConnection conn = connections.get(i);
 			int radius = 20;
 			if (conn.getSource() == conn.getDestination()) {
 				radius = 40;
@@ -105,8 +105,9 @@ public abstract class AbstractStylingModelFactory implements
 	 * @param dest
 	 * @return
 	 */
-	private LinkedList getConnectionList(GraphNode source, GraphNode dest) {
-		LinkedList list = new LinkedList();
+	private LinkedList<GraphConnection> getConnectionList(GraphNode source,
+			GraphNode dest) {
+		LinkedList<GraphConnection> list = new LinkedList<GraphConnection>();
 		Iterator i = source.getSourceConnections().iterator();
 		while (i.hasNext()) {
 			GraphConnection c = (GraphConnection) i.next();
@@ -131,7 +132,8 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * getLabelProvider()
 	 */
 	public IBaseLabelProvider getLabelProvider() {
@@ -141,7 +143,8 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * getContentProvider()
 	 */
 	public IStructuredContentProvider getContentProvider() {
@@ -151,8 +154,10 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
-	 * createConnection(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * createConnection
+	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
 	 * java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	public GraphConnection createConnection(Graph graph, Object element,
@@ -186,7 +191,8 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * createNode(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
 	 * java.lang.Object)
 	 */
@@ -270,20 +276,18 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * refreshGraph(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel)
 	 */
 	public void refreshGraph(Graph graph) {
 		// with this kind of graph, it is just as easy and cost-effective to
 		// rebuild the whole thing.
 
-		Map oldMap = viewer.getNodesMap();
-		HashMap nodesMap = new HashMap();
-		// have to copy the Map data accross so that it doesn't get overwritten
-		for (Iterator keys = oldMap.keySet().iterator(); keys.hasNext();) {
-			Object key = keys.next();
-			nodesMap.put(key, oldMap.get(key));
-		}
+		Map<Object, GraphItem> oldMap = viewer.getNodesMap();
+		// have to copy the Map data across so that it doesn't get overwritten
+		HashMap<Object, GraphItem> nodesMap = new HashMap<Object, GraphItem>(
+				oldMap);
 		clearGraph(graph);
 		doBuildGraph(graph);
 		// update the positions on the new nodes to match the old ones.
@@ -303,7 +307,7 @@ public abstract class AbstractStylingModelFactory implements
 				}
 			}
 		} else {
-			for (Iterator i = nodesMap.keySet().iterator(); i.hasNext();) {
+			for (Iterator<Object> i = nodesMap.keySet().iterator(); i.hasNext();) {
 				Object key = i.next();
 				GraphNode node = viewer.getGraphModelNode(key);
 				if (node != null) {
@@ -369,7 +373,8 @@ public abstract class AbstractStylingModelFactory implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
+	 * @see
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * isFiltered(java.lang.Object)
 	 */
 	protected Object[] filter(Object parent, Object[] elements) {
@@ -385,8 +390,9 @@ public abstract class AbstractStylingModelFactory implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#refresh
-	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object)
+	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory
+	 * #refresh (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
+	 * java.lang.Object)
 	 */
 	public void refresh(Graph graph, Object element) {
 		refresh(graph, element, false);
