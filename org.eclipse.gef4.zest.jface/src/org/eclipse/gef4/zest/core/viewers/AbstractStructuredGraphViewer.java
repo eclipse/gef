@@ -305,7 +305,10 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphConnection getGraphModelConnection(Object obj) {
-		return (GraphConnection) this.connectionsMap.get(obj);
+		GraphConnection connection = (GraphConnection) this.connectionsMap
+				.get(obj);
+		return (connection != null && !connection.isDisposed()) ? connection
+				: null;
 	}
 
 	/**
@@ -315,7 +318,8 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public GraphNode getGraphModelNode(Object obj) {
-		return (GraphNode) this.nodesMap.get(obj);
+		GraphNode node = (GraphNode) this.nodesMap.get(obj);
+		return (node != null && !node.isDisposed()) ? node : null;
 	}
 
 	/**
