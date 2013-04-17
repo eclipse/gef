@@ -16,10 +16,13 @@ import junit.framework.TestCase;
 
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
@@ -151,6 +154,22 @@ public class GraphSelectionTests extends TestCase {
 		setUp();
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getConnections().size());
+	}
+
+	/** https://bugs.eclipse.org/bugs/show_bug.cgi?id=405871 */
+	public void testVisualNodeSelection() {
+		Shell shell = graph.getShell();
+		shell.setLayout(new FillLayout());
+		shell.open();
+		Display display = shell.getDisplay();
+		while (!shell.isDisposed()) {
+			GraphItem node = (GraphItem) graph.getNodes().get(0);
+			graph.setSelection(new GraphItem[] { node });
+			if (display.readAndDispatch()) {
+				shell.close();
+			}
+		}
+		display.dispose();
 	}
 
 	private SelectionListener setupListener(final List events) {

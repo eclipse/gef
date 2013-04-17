@@ -422,8 +422,6 @@ public class Graph extends FigureCanvas implements IContainer {
 		GREY_BLUE.dispose();
 		DARK_BLUE.dispose();
 		LIGHT_YELLOW.dispose();
-		HIGHLIGHT_COLOR.dispose();
-		HIGHLIGHT_ADJACENT_COLOR.dispose();
 	}
 
 	private void applyLayoutInternal(boolean clean) {
