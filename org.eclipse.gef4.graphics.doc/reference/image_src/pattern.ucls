@@ -1,17 +1,17 @@
 <class-diagram version="1.0.7" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <enumeration id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.Pattern.Mode" 
-    project="org.eclipse.gef4.graphics" file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/Pattern.java" 
-    binary="false">    
+  <enumeration id="1" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.fxgraphics.swt.Pattern.Mode" 
+    project="org.eclipse.gef4.swt.canvas" 
+    file="/org.eclipse.gef4.swt.canvas/src/org/eclipse/gef4/fxgraphics/swt/Pattern.java" binary="false">    
     <position height="-1" width="-1" x="78" y="380"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="false" protected="false" private="false"/>    
     </display>  
   </enumeration>  
-  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.graphics.Pattern" 
-    project="org.eclipse.gef4.graphics" file="/org.eclipse.gef4.graphics/src/org/eclipse/gef4/graphics/Pattern.java" 
-    binary="false">    
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.eclipse.gef4.fxgraphics.swt.Pattern" 
+    project="org.eclipse.gef4.swt.canvas" 
+    file="/org.eclipse.gef4.swt.canvas/src/org/eclipse/gef4/fxgraphics/swt/Pattern.java" binary="false">    
     <position height="-1" width="-1" x="128" y="160"/>    
     <display autosize="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="false" protected="false" private="false"/>      
