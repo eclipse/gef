@@ -369,6 +369,24 @@ public class Image {
 	}
 
 	/**
+	 * Stores the pixel values of the specified row in the passed-in
+	 * <code>int</code> array.
+	 * 
+	 * @param y
+	 *            the row to extract (starting at <code>0</code>)
+	 * @param pixelRow
+	 *            the array to store the pixel values
+	 */
+	public void getPixelRow(int y, int[] pixelRow) {
+		if (pixelRow.length != getWidth()) {
+			throw new IllegalArgumentException(
+					"The passed-in pixelRow array is not of correct length: pixelRow.length = "
+							+ pixelRow.length + ", image width = " + getWidth());
+		}
+		bufferedImage.getRGB(0, y, getWidth(), 1, pixelRow, 0, getWidth());
+	}
+
+	/**
 	 * Returns an <code>int</code> array containing all pixels of this
 	 * {@link Image}. You can access a particular pixel at position (x,y) as
 	 * follows:
@@ -464,6 +482,7 @@ public class Image {
 		if (pitch < 0) {
 			throw new IllegalArgumentException("pitch (" + pitch + ") < 0");
 		}
+		// TODO: Allow pixels == null? Create it then.
 		if (pixels == null) {
 			throw new IllegalArgumentException("pixels == null");
 		}
@@ -634,6 +653,10 @@ public class Image {
 					+ ") out of image bounds (0-" + getHeight() + ").");
 		}
 		bufferedImage.setRGB(x, y, argb);
+	}
+
+	public void setPixelRow(int y, int[] pixels) {
+		bufferedImage.setRGB(0, y, getWidth(), 1, pixels, 0, getWidth());
 	}
 
 	/**
