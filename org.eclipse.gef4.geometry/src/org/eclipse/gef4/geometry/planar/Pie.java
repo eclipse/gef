@@ -76,10 +76,12 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 	 * TODO: Add additional methods to rotate a Pie so that it remains a Pie.
 	 */
 
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		// check if the point is in the arc's angle
 		Angle pAngle = new Vector(1, 0).getAngleCCW(new Vector(getCenter(), p));
@@ -95,44 +97,61 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
+	@Override
 	public Pie getCopy() {
 		return new Pie(x, y, width, height, startAngle, angularExtent);
 	}
 
+	@Override
 	public PolyBezier getOutline() {
 		return new PolyBezier(computeBezierApproximation());
 	}
 
+	@Override
 	public CubicCurve[] getOutlineSegments() {
 		return computeBezierApproximation();
 	}
 
+	@Override
 	public Path getRotatedCCW(Angle angle) {
 		return getRotatedCCW(angle, getCenter());
 	}
 
+	@Override
 	public Path getRotatedCCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
 				cx, cy).toPath();
 	}
 
+	@Override
 	public Path getRotatedCCW(Angle angle, Point center) {
 		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
 				center).toPath();
 	}
 
+	@Override
 	public Path getRotatedCW(Angle angle) {
 		return getRotatedCW(angle, getCenter());
 	}
 
+	@Override
 	public Path getRotatedCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
 				cy).toPath();
 	}
 
+	@Override
 	public Path getRotatedCW(Angle angle, Point center) {
 		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
 				center).toPath();
+	}
+
+	/**
+	 * @see IGeometry#getTransformed(AffineTransform)
+	 */
+	@Override
+	public CurvedPolygon getTransformed(AffineTransform t) {
+		return new CurvedPolygon(getOutlineSegments()).getTransformed(t);
 	}
 
 	@Override

@@ -157,6 +157,7 @@ public final class Rectangle extends
 						.greaterEqual(this.y + this.height, y + height);
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		if (g instanceof Rectangle) {
 			return contains((Rectangle) g);
@@ -174,6 +175,7 @@ public final class Rectangle extends
 	 * @return true if the Point is within this Rectangle
 	 * 
 	 */
+	@Override
 	public boolean contains(Point p) {
 		return contains(p.x(), p.y());
 	}
@@ -283,6 +285,7 @@ public final class Rectangle extends
 	 * 
 	 * @return Copy of this Rectangle
 	 */
+	@Override
 	public Rectangle getCopy() {
 		return new Rectangle(x, y, width, height);
 	}
@@ -310,6 +313,7 @@ public final class Rectangle extends
 		return new Point(x, y + height / 2);
 	}
 
+	@Override
 	public Polyline getOutline() {
 		return new Polyline(x, y, x + width, y, x + width, y + height, x, y
 				+ height, x, y);
@@ -322,6 +326,7 @@ public final class Rectangle extends
 	 * @return An array containing {@link Line} representations of this
 	 *         {@link Rectangle}'s borders.
 	 */
+	@Override
 	public Line[] getOutlineSegments() {
 		Line[] segments = new Line[4];
 		segments[0] = new Line(x, y, x + width, y);
@@ -361,6 +366,7 @@ public final class Rectangle extends
 	 * @return the resulting {@link Polygon}
 	 * @see IRotatable#getRotatedCCW(Angle, Point)
 	 */
+	@Override
 	public Polygon getRotatedCCW(Angle alpha) {
 		Point centroid = getCenter();
 		return toPolygon().rotateCCW(alpha, centroid.x, centroid.y);
@@ -382,6 +388,7 @@ public final class Rectangle extends
 	 *            y-component of the center point for the rotation
 	 * @return the resulting {@link Polygon}
 	 */
+	@Override
 	public Polygon getRotatedCCW(Angle alpha, double cx, double cy) {
 		return toPolygon().rotateCCW(alpha, cx, cy);
 	}
@@ -400,6 +407,7 @@ public final class Rectangle extends
 	 *            the center point for the rotation
 	 * @return the resulting {@link Polygon}
 	 */
+	@Override
 	public Polygon getRotatedCCW(Angle alpha, Point center) {
 		return toPolygon().rotateCCW(alpha, center.x, center.y);
 	}
@@ -414,6 +422,7 @@ public final class Rectangle extends
 	 * @return the resulting {@link Polygon}
 	 * @see IRotatable#getRotatedCW(Angle, Point)
 	 */
+	@Override
 	public Polygon getRotatedCW(Angle alpha) {
 		Point centroid = getCenter();
 		return toPolygon().rotateCW(alpha, centroid.x, centroid.y);
@@ -435,6 +444,7 @@ public final class Rectangle extends
 	 *            y-component of the center point for the rotation
 	 * @return the resulting {@link Polygon}
 	 */
+	@Override
 	public Polygon getRotatedCW(Angle alpha, double cx, double cy) {
 		return toPolygon().rotateCW(alpha, cx, cy);
 	}
@@ -453,6 +463,7 @@ public final class Rectangle extends
 	 *            the center point for the rotation
 	 * @return the resulting {@link Polygon}
 	 */
+	@Override
 	public Polygon getRotatedCW(Angle alpha, Point center) {
 		return toPolygon().rotateCW(alpha, center.x, center.y);
 	}
@@ -494,9 +505,7 @@ public final class Rectangle extends
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
-	public IGeometry getTransformed(AffineTransform t) {
-		// may not be type-intrinsically transformed, so use a polygon
-		// representation
+	public Polygon getTransformed(AffineTransform t) {
 		return new Polygon(t.getTransformed(getPoints()));
 	}
 
@@ -575,6 +584,7 @@ public final class Rectangle extends
 	/**
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		Path path = new Path();
 		path.moveTo(x, y);

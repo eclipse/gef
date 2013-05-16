@@ -254,6 +254,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		return contains(new Point(x, y));
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		if (g instanceof Line) {
 			return contains((Line) g);
@@ -298,6 +299,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 		Double[] poiParams = intersectionParams.toArray(new Double[] {});
 		Arrays.sort(poiParams, new Comparator<Double>() {
+			@Override
 			public int compare(Double t, Double u) {
 				double d = t - u;
 				return d < 0 ? -1 : d > 0 ? 1 : 0;
@@ -319,6 +321,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * @see IGeometry#contains(Point)
 	 */
+	@Override
 	public boolean contains(Point p) {
 		if (points.length == 0) {
 			return false;
@@ -539,10 +542,12 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * 
 	 * @return a new {@link Polygon} with an identical set of points.
 	 */
+	@Override
 	public Polygon getCopy() {
 		return new Polygon(getPoints());
 	}
 
+	@Override
 	public Polyline getOutline() {
 		return new Polyline(PointListUtils.toSegmentsArray(points, true));
 	}
@@ -555,6 +560,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * @return an array of {@link Line}s, representing the segments that make up
 	 *         this {@link Polygon}
 	 */
+	@Override
 	public Line[] getOutlineSegments() {
 		return PointListUtils.toSegmentsArray(points, true);
 	}
@@ -588,7 +594,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
-	public IGeometry getTransformed(AffineTransform t) {
+	public Polygon getTransformed(AffineTransform t) {
 		// shape type should remain polygon (not path)
 		return new Polygon(t.getTransformed(points));
 	}
@@ -611,6 +617,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		Path path = new Path();
 		if (points.length > 0) {

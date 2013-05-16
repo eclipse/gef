@@ -87,6 +87,7 @@ public final class RoundedRectangle extends
 				arcHeight);
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
@@ -94,6 +95,7 @@ public final class RoundedRectangle extends
 	/**
 	 * @see IGeometry#contains(Point)
 	 */
+	@Override
 	public boolean contains(final Point p) {
 		// quick rejection via bounds
 		final Rectangle testRect = getBounds();
@@ -199,6 +201,7 @@ public final class RoundedRectangle extends
 	/**
 	 * @see IGeometry#getCopy()
 	 */
+	@Override
 	public RoundedRectangle getCopy() {
 		return new RoundedRectangle(x, y, width, height, arcWidth, arcHeight);
 	}
@@ -212,6 +215,7 @@ public final class RoundedRectangle extends
 		return new Line(x, y + arcHeight, x, y + height - arcHeight);
 	}
 
+	@Override
 	public PolyBezier getOutline() {
 		return ShapeUtils.getOutline(this);
 	}
@@ -219,10 +223,9 @@ public final class RoundedRectangle extends
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IShape#getOutlineSegments()
 	 */
-	public ICurve[] getOutlineSegments() {
-		// see http://whizkidtech.redprince.net/bezier/circle/kappa/ for details
-		// on the approximation used here
-		return new ICurve[] {
+	@Override
+	public BezierCurve[] getOutlineSegments() {
+		return new BezierCurve[] {
 				ShapeUtils.computeEllipticalArcApproximation(x + width - 2
 						* arcWidth, y, 2 * arcWidth, 2 * arcHeight,
 						Angle.fromDeg(0), Angle.fromDeg(90)),
@@ -253,26 +256,32 @@ public final class RoundedRectangle extends
 				- arcHeight);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {
 		return getOutline().rotateCCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
 		return getOutline().rotateCCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, Point center) {
 		return getOutline().rotateCCW(angle, center);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle) {
 		return getOutline().rotateCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
 		return getOutline().rotateCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, Point center) {
 		return getOutline().rotateCW(angle, center);
 	}
@@ -307,6 +316,14 @@ public final class RoundedRectangle extends
 	}
 
 	/**
+	 * @see IGeometry#getTransformed(AffineTransform)
+	 */
+	@Override
+	public CurvedPolygon getTransformed(AffineTransform t) {
+		return new CurvedPolygon(getOutlineSegments()).getTransformed(t);
+	}
+
+	/**
 	 * Sets the arc height of this {@link RoundedRectangle}, which is the height
 	 * of the arc used to define its rounded corners.
 	 * 
@@ -332,6 +349,7 @@ public final class RoundedRectangle extends
 		return this;
 	}
 
+	@Override
 	public Path toPath() {
 		// return CurveUtils.toPath(getOutlineSegments());
 		// TODO: use cubic curves instead of quadratic curves here!

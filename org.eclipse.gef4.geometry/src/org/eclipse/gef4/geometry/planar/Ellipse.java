@@ -394,9 +394,8 @@ public class Ellipse extends
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
-	public IGeometry getTransformed(AffineTransform t) {
-		// choose a path implementation
-		return toPath().getTransformed(t);
+	public CurvedPolygon getTransformed(AffineTransform t) {
+		return new CurvedPolygon(getOutlineSegments()).getTransformed(t);
 	}
 
 	private boolean isInBetween(double a, double lower, double upper) {

@@ -59,4 +59,7 @@ public interface IShape extends IGeometry {
 	 */
 	public ICurve[] getOutlineSegments();
 
+	@Override
+	public IShape getTransformed(AffineTransform t);
+
 }

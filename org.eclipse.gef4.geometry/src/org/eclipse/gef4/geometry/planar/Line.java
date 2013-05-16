@@ -287,7 +287,7 @@ public class Line extends BezierCurve {
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
-	public IGeometry getTransformed(AffineTransform localTransform) {
+	public Line getTransformed(AffineTransform localTransform) {
 		Point[] transformed = localTransform.getTransformed(getPoints());
 		return new Line(transformed[0], transformed[1]);
 	}

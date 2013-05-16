@@ -475,11 +475,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	private static final long serialVersionUID = 1L;
 
+	private static final int CHUNK_SHIFT = -3;
+
 	// TODO: use constants that limit the number of iterations for the
 	// different iterative/recursive algorithms:
 	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
-
-	private static final int CHUNK_SHIFT = -3;
 
 	private static final boolean ORTHOGONAL = true;
 
@@ -487,6 +487,50 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
 			.calculateFraction(0) / 10;
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xmaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp yminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.y, q.y);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp ymaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.y, q.y);
+		}
+	};
 
 	/**
 	 * <p>
@@ -512,6 +556,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		ips.addAll(Arrays.asList(intervalPairs));
 
 		Collections.sort(ips, new Comparator<IntervalPair>() {
+			@Override
 			public int compare(IntervalPair i, IntervalPair j) {
 				return i.pi.a <= j.pi.a ? -1 : 1;
 			}
@@ -548,6 +593,64 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	}
 
 	/**
+	 * Searches the parameter value of the given {@link Point} on the given
+	 * {@link BezierCurve} using de Casteljau subdivision. The resulting
+	 * parameter range for the {@link Point} is recorded in the given
+	 * {@link Interval}. If the {@link Point} could be found on the
+	 * {@link BezierCurve} within the given parameter {@link Interval}. The
+	 * {@link Interval} is set to a convergin (see {@link Interval#converges()})
+	 * parameter range that contains the {@link Point} on the
+	 * {@link BezierCurve}.
+	 * 
+	 * @param c
+	 *            The {@link BezierCurve} on which the {@link Point} is searched
+	 *            for.
+	 * @param interval
+	 *            The parameter {@link Interval} on the given
+	 *            {@link BezierCurve} which is searched for the {@link Point}.
+	 *            The resulting parameter range is recorded in this
+	 *            {@link Interval}.
+	 * @param p
+	 *            the {@link Point} to find
+	 * @return <code>true</code> if the a converging parameter {@link Interval}
+	 *         that contains the {@link Point} can be identified, otherwise
+	 *         <code>false</code>
+	 */
+	private static boolean containmentParameter(BezierCurve c,
+			double[] interval, Point p) {
+		Stack<Interval> parts = new Stack<Interval>();
+		parts.push(new Interval(interval));
+		while (!parts.empty()) {
+			Interval i = parts.pop();
+
+			if (i.converges(1)) {
+				interval[0] = i.a;
+				interval[1] = i.b;
+				break;
+			}
+
+			double iMid = i.getMid();
+			Interval left = new Interval(i.a, iMid);
+			Interval right = new Interval(iMid, i.b);
+
+			BezierCurve clipped = c.getClipped(left.a, left.b);
+			Rectangle bounds = clipped.getControlBounds();
+
+			if (bounds.contains(p)) {
+				parts.push(left);
+			}
+
+			clipped = c.getClipped(right.a, right.b);
+			bounds = clipped.getControlBounds();
+
+			if (bounds.contains(p)) {
+				parts.push(right);
+			}
+		}
+		return PrecisionUtils.equal(interval[0], interval[1], 1);
+	}
+
+	/**
 	 * Overwrites the attribute values of {@link IntervalPair} <i>dst</i> with
 	 * the respective attribute values of {@link IntervalPair} <i>src</i>.
 	 * 
@@ -561,6 +664,40 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		dst.q = src.q;
 		dst.pi = src.pi;
 		dst.qi = src.qi;
+	}
+
+	/**
+	 * <p>
+	 * Returns the similarity of the given {@link BezierCurve} to a {@link Line}
+	 * , which is defined as the absolute distance of its control {@link Point}s
+	 * to the base {@link Line} connecting its end {@link Point}s.
+	 * </p>
+	 * <p>
+	 * A similarity of <code>0</code> means that the given {@link BezierCurve}'s
+	 * control {@link Point}s are on a straight {@link Line}.
+	 * </p>
+	 * 
+	 * @param c
+	 *            the {@link BezierCurve} of which the distance to its base
+	 *            {@link Line} is computed
+	 * @return the distance of the given {@link BezierCurve} to its base
+	 *         {@link Line}
+	 */
+	private static double distanceToBaseLine(BezierCurve c) {
+		Straight3D baseLine = Straight3D.through(c.points[0],
+				c.points[c.points.length - 1]);
+
+		if (baseLine == null) {
+			return 0d;
+		}
+
+		double maxDistance = 0d;
+		for (int i = 1; i < c.points.length - 1; i++) {
+			maxDistance = Math.max(maxDistance,
+					Math.abs(baseLine.getSignedDistanceCW(c.points[i])));
+		}
+
+		return maxDistance;
 	}
 
 	/**
@@ -848,138 +985,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	private final Vector3D[] points;
 
 	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xminCmp = new IPointCmp() {
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xmaxCmp = new IPointCmp() {
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp yminCmp = new IPointCmp() {
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.y, q.y);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp ymaxCmp = new IPointCmp() {
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.y, q.y);
-		}
-	};
-
-	/**
-	 * Searches the parameter value of the given {@link Point} on the given
-	 * {@link BezierCurve} using de Casteljau subdivision. The resulting
-	 * parameter range for the {@link Point} is recorded in the given
-	 * {@link Interval}. If the {@link Point} could be found on the
-	 * {@link BezierCurve} within the given parameter {@link Interval}. The
-	 * {@link Interval} is set to a convergin (see {@link Interval#converges()})
-	 * parameter range that contains the {@link Point} on the
-	 * {@link BezierCurve}.
-	 * 
-	 * @param c
-	 *            The {@link BezierCurve} on which the {@link Point} is searched
-	 *            for.
-	 * @param interval
-	 *            The parameter {@link Interval} on the given
-	 *            {@link BezierCurve} which is searched for the {@link Point}.
-	 *            The resulting parameter range is recorded in this
-	 *            {@link Interval}.
-	 * @param p
-	 *            the {@link Point} to find
-	 * @return <code>true</code> if the a converging parameter {@link Interval}
-	 *         that contains the {@link Point} can be identified, otherwise
-	 *         <code>false</code>
-	 */
-	private static boolean containmentParameter(BezierCurve c,
-			double[] interval, Point p) {
-		Stack<Interval> parts = new Stack<Interval>();
-		parts.push(new Interval(interval));
-		while (!parts.empty()) {
-			Interval i = parts.pop();
-
-			if (i.converges(1)) {
-				interval[0] = i.a;
-				interval[1] = i.b;
-				break;
-			}
-
-			double iMid = i.getMid();
-			Interval left = new Interval(i.a, iMid);
-			Interval right = new Interval(iMid, i.b);
-
-			BezierCurve clipped = c.getClipped(left.a, left.b);
-			Rectangle bounds = clipped.getControlBounds();
-
-			if (bounds.contains(p)) {
-				parts.push(left);
-			}
-
-			clipped = c.getClipped(right.a, right.b);
-			bounds = clipped.getControlBounds();
-
-			if (bounds.contains(p)) {
-				parts.push(right);
-			}
-		}
-		return PrecisionUtils.equal(interval[0], interval[1], 1);
-	}
-
-	/**
-	 * <p>
-	 * Returns the similarity of the given {@link BezierCurve} to a {@link Line}
-	 * , which is defined as the absolute distance of its control {@link Point}s
-	 * to the base {@link Line} connecting its end {@link Point}s.
-	 * </p>
-	 * <p>
-	 * A similarity of <code>0</code> means that the given {@link BezierCurve}'s
-	 * control {@link Point}s are on a straight {@link Line}.
-	 * </p>
-	 * 
-	 * @param c
-	 *            the {@link BezierCurve} of which the distance to its base
-	 *            {@link Line} is computed
-	 * @return the distance of the given {@link BezierCurve} to its base
-	 *         {@link Line}
-	 */
-	private static double distanceToBaseLine(BezierCurve c) {
-		Straight3D baseLine = Straight3D.through(c.points[0],
-				c.points[c.points.length - 1]);
-
-		if (baseLine == null) {
-			return 0d;
-		}
-
-		double maxDistance = 0d;
-		for (int i = 1; i < c.points.length - 1; i++) {
-			maxDistance = Math.max(maxDistance,
-					Math.abs(baseLine.getSignedDistanceCW(c.points[i])));
-		}
-
-		return maxDistance;
-	}
-
-	/**
 	 * Constructs a new {@link BezierCurve} from the given {@link CubicCurve}.
 	 * 
 	 * @param c
@@ -1160,6 +1165,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 				&& getOverlap(o) != null;
 	}
 
+	@Override
 	public boolean contains(final Point p) {
 		if (p == null) {
 			return false;
@@ -1520,6 +1526,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return getHC(t).toPoint();
 	}
 
+	@Override
 	public Rectangle getBounds() {
 		double xmin = findExtreme(xminCmp).x;
 		double xmax = findExtreme(xmaxCmp).x;
@@ -1579,6 +1586,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return new Rectangle(xmin, ymin, xmax - xmin, ymax - ymin);
 	}
 
+	@Override
 	public BezierCurve getCopy() {
 		return new BezierCurve(points);
 	}
@@ -1760,6 +1768,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return intersections.toArray(new Point[] {});
 	}
 
+	@Override
 	public final Point[] getIntersections(ICurve curve) {
 		Set<Point> intersections = new HashSet<Point>();
 
@@ -1803,10 +1812,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return overlap == null ? null : overlap.getPClipped();
 	}
 
+	@Override
 	public Point getP1() {
 		return points[0].toPoint();
 	}
 
+	@Override
 	public Point getP2() {
 		return points[points.length - 1].toPoint();
 	}
@@ -1887,78 +1898,105 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return copy;
 	}
 
+	@Override
 	public BezierCurve getRotatedCCW(Angle angle) {
 		return getCopy().rotateCCW(angle);
 	}
 
+	@Override
 	public BezierCurve getRotatedCCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCCW(angle, cx, cy);
 	}
 
+	@Override
 	public BezierCurve getRotatedCCW(Angle angle, Point center) {
 		return getCopy().rotateCCW(angle, center);
 	}
 
+	@Override
 	public BezierCurve getRotatedCW(Angle angle) {
 		return getCopy().rotateCW(angle);
 	}
 
+	@Override
 	public BezierCurve getRotatedCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCW(angle, cx, cy);
 	}
 
+	@Override
 	public BezierCurve getRotatedCW(Angle angle, Point center) {
 		return getCopy().rotateCW(angle, center);
 	}
 
+	@Override
 	public BezierCurve getScaled(double factor) {
 		return getCopy().getScaled(factor);
 	}
 
+	@Override
 	public BezierCurve getScaled(double fx, double fy) {
 		return getCopy().getScaled(fx, fy);
 	}
 
+	@Override
 	public BezierCurve getScaled(double factor, double cx, double cy) {
 		return getCopy().getScaled(factor, cx, cy);
 	}
 
+	@Override
 	public BezierCurve getScaled(double fx, double fy, double cx, double cy) {
 		return getCopy().getScaled(fx, fy, cx, cy);
 	}
 
+	@Override
 	public BezierCurve getScaled(double fx, double fy, Point center) {
 		return getCopy().getScaled(fx, fy, center);
 	}
 
+	@Override
 	public BezierCurve getScaled(double factor, Point center) {
 		return getCopy().getScaled(factor, center);
 	}
 
+	/**
+	 * @see IGeometry#getTransformed(AffineTransform)
+	 */
+	@Override
+	public BezierCurve getTransformed(AffineTransform t) {
+		return new BezierCurve(t.getTransformed(getPoints()));
+	}
+
+	@Override
 	public BezierCurve getTranslated(double dx, double dy) {
 		return getCopy().translate(dx, dy);
 	}
 
+	@Override
 	public BezierCurve getTranslated(Point d) {
 		return getCopy().translate(d.x, d.y);
 	}
 
+	@Override
 	public double getX1() {
 		return getP1().x;
 	}
 
+	@Override
 	public double getX2() {
 		return getP2().x;
 	}
 
+	@Override
 	public double getY1() {
 		return getP1().y;
 	}
 
+	@Override
 	public double getY2() {
 		return getP2().y;
 	}
 
+	@Override
 	public boolean intersects(ICurve c) {
 		return getIntersections(c).length > 0;
 	}
@@ -2004,6 +2042,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return getOverlap(other) != null;
 	}
 
+	@Override
 	public final boolean overlaps(ICurve c) {
 		for (BezierCurve seg : c.toBezier()) {
 			if (overlaps(seg)) {
@@ -2122,19 +2161,23 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return rotateCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public BezierCurve scale(double factor) {
 		return scale(factor, factor);
 	}
 
+	@Override
 	public BezierCurve scale(double fx, double fy) {
 		Point centroid = Point.getCentroid(getPoints());
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 
+	@Override
 	public BezierCurve scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	public BezierCurve scale(double fx, double fy, double cx, double cy) {
 		Point[] realPoints = getPoints();
 		Point.scale(realPoints, fx, fy, cx, cy);
@@ -2144,10 +2187,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
+	@Override
 	public BezierCurve scale(double fx, double fy, Point center) {
 		return scale(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public BezierCurve scale(double factor, Point center) {
 		return scale(factor, factor, center.x, center.y);
 	}
@@ -2237,6 +2282,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 				new BezierCurve(rightPoints) };
 	}
 
+	@Override
 	public BezierCurve[] toBezier() {
 		return new BezierCurve[] { this };
 	}
@@ -2353,6 +2399,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * @return a {@link Path} approximating this {@link BezierCurve} using
 	 *         {@link Line} segments
 	 */
+	@Override
 	public Path toPath() {
 		Path path = new Path();
 
@@ -2447,6 +2494,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return str + ")";
 	}
 
+	@Override
 	public BezierCurve translate(double dx, double dy) {
 		Point[] realPoints = getPoints();
 		Point.translate(realPoints, dx, dy);
@@ -2456,6 +2504,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
+	@Override
 	public BezierCurve translate(Point d) {
 		return translate(d.x, d.y);
 	}

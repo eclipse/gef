@@ -475,7 +475,8 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
-	 * Changes the current position without adding a new segment.
+	 * Changes the current position. A new {@link Segment} of type
+	 * {@link Segment#MOVE_TO} is added to this Path.
 	 * 
 	 * @param x
 	 *            The x-coordinate of the desired target point

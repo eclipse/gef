@@ -148,10 +148,12 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 				+ computeWindingNumber(split[1], p);
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		if (edges.length == 0) {
 			return false;
@@ -172,6 +174,7 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return w != 0;
 	}
 
+	@Override
 	public Rectangle getBounds() {
 		Rectangle bounds = new Rectangle();
 		for (BezierCurve c : edges) {
@@ -195,74 +198,103 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return Point.getCentroid(edgeCenters);
 	}
 
+	@Override
 	public CurvedPolygon getCopy() {
 		return new CurvedPolygon(edges);
 	}
 
+	@Override
 	public PolyBezier getOutline() {
 		return new PolyBezier(edges);
 	}
 
+	@Override
 	public BezierCurve[] getOutlineSegments() {
 		return CurveUtils.getCopy(edges);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCCW(Angle angle) {
 		Point c = getCenter();
 		return getRotatedCCW(angle, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCCW(angle, cx, cy);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCCW(Angle angle, Point center) {
 		return getRotatedCCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCW(Angle angle) {
 		Point c = getCenter();
 		return getRotatedCW(angle, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCW(angle, cx, cy);
 	}
 
+	@Override
 	public CurvedPolygon getRotatedCW(Angle angle, Point center) {
 		return getRotatedCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double factor) {
 		Point c = getCenter();
 		return getScaled(factor, factor, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double fx, double fy) {
 		Point c = getCenter();
 		return getScaled(fx, fy, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double factor, double cx, double cy) {
 		return getScaled(factor, factor, cx, cy);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double fx, double fy, double cx, double cy) {
 		return getCopy().scale(fx, fy, cx, cy);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double fx, double fy, Point center) {
 		return getScaled(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public CurvedPolygon getScaled(double factor, Point center) {
 		return getScaled(factor, factor, center.x, center.y);
 	}
 
+	/**
+	 * @see IGeometry#getTransformed(AffineTransform)
+	 */
+	@Override
+	public CurvedPolygon getTransformed(AffineTransform t) {
+		BezierCurve[] transformed = new BezierCurve[edges.length];
+		for (int i = 0; i < edges.length; i++) {
+			transformed[i] = edges[i].getTransformed(t);
+		}
+		return new CurvedPolygon(transformed);
+	}
+
+	@Override
 	public CurvedPolygon getTranslated(double dx, double dy) {
 		return getCopy().translate(dx, dy);
 	}
 
+	@Override
 	public CurvedPolygon getTranslated(Point d) {
 		return getTranslated(d.x, d.y);
 	}
@@ -409,20 +441,24 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return rotateCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public CurvedPolygon scale(double factor) {
 		Point c = getCenter();
 		return scale(factor, factor, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon scale(double fx, double fy) {
 		Point c = getCenter();
 		return scale(fx, fx, c.x, c.y);
 	}
 
+	@Override
 	public CurvedPolygon scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	public CurvedPolygon scale(double fx, double fy, double cx, double cy) {
 		for (BezierCurve c : edges) {
 			c.scale(fx, fy, cx, cy);
@@ -430,14 +466,17 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return this;
 	}
 
+	@Override
 	public CurvedPolygon scale(double fx, double fy, Point center) {
 		return scale(fx, fx, center.x, center.y);
 	}
 
+	@Override
 	public CurvedPolygon scale(double factor, Point center) {
 		return scale(factor, factor, center.x, center.y);
 	}
 
+	@Override
 	public Path toPath() {
 		return CurveUtils.toPath(edges);
 	}
@@ -455,6 +494,7 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return s + ")";
 	}
 
+	@Override
 	public CurvedPolygon translate(double dx, double dy) {
 		for (BezierCurve c : edges) {
 			c.translate(dx, dy);
@@ -462,6 +502,7 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 		return this;
 	}
 
+	@Override
 	public CurvedPolygon translate(Point d) {
 		return translate(d.x, d.y);
 	}
