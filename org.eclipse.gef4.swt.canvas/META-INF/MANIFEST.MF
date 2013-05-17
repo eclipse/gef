@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 SWT Canvas
+Bundle-SymbolicName: org.eclipse.gef4.swt.canvas
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry.convert.swt;bundle-version="0.1.0",
+ org.eclipse.gef4.graphics;bundle-version="0.1.0"
+Export-Package: org.eclipse.gef4.swt.canvas,
+ org.eclipse.gef4.swt.canvas.gc
