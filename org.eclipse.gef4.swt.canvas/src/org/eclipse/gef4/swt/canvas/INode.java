@@ -10,16 +10,12 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas.todo;
+package org.eclipse.gef4.swt.canvas;
 
-import java.util.List;
+public interface INode {
 
-import org.eclipse.gef4.swt.canvas.IBounds;
+	boolean addEventListener(IEventListener eventListener);
 
-public interface ILayoutable {
-
-	IBounds getBounds();
-
-	List<ILayoutConstraint> getLayoutConstraintList();
+	boolean removeEventListener(IEventListener eventListener);
 
 }

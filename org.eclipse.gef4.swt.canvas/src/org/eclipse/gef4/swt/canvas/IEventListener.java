@@ -10,8 +10,12 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas.todo;
+package org.eclipse.gef4.swt.canvas;
 
-public interface IUpdateManager {
+public interface IEventListener {
+
+	void handleEvent(Object event);
+
+	boolean handlesEvent(Object event);
 
 }

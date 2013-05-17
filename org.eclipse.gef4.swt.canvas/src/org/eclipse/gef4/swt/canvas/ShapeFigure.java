@@ -28,4 +28,14 @@ public class ShapeFigure extends AbstractFigure {
 		g.fillPath(shape.toPath());
 	}
 
+	@Override
+	public IBounds getBounds() {
+		return new GeneralBounds(shape, getPaintStateByReference()
+				.getTransformByReference());
+	}
+
+	public IShape getShape() {
+		return shape;
+	}
+
 }

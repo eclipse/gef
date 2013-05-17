@@ -48,14 +48,11 @@ public class TestFigures {
 		root.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		ShapeFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
-		colorize(rect,
-				new RgbaColor(display.getSystemColor(SWT.COLOR_DARK_CYAN), 128));
+		colorize(rect, new RgbaColor(0, 128, 128, 128));
 		trafo(rect).translate(50, 50);
 
 		ShapeFigure ellipse = new ShapeFigure(new Ellipse(0, 0, 100, 100));
-		colorize(ellipse,
-				new RgbaColor(display.getSystemColor(SWT.COLOR_DARK_MAGENTA),
-						128));
+		colorize(ellipse, new RgbaColor(128, 0, 128, 128));
 		trafo(ellipse).translate(100, 100);
 
 		CanvasFigure canvas = new CanvasFigure(100, 100);

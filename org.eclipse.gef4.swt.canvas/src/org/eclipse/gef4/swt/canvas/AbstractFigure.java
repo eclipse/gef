@@ -12,19 +12,29 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContextState;
 
 public abstract class AbstractFigure implements IFigure {
 
 	private GraphicsContextState paintState = new GraphicsContextState();
+	private List<IEventListener> eventListeners = new LinkedList<IEventListener>();
+	private Group container;
 
-	protected void cleanUpPaint(GraphicsContext g) {
-		g.takeDownGuard();
-		g.restore();
+	@Override
+	public boolean addEventListener(IEventListener eventListener) {
+		return eventListeners.add(eventListener);
 	}
 
 	protected abstract void doPaint(GraphicsContext g);
+
+	@Override
+	public Group getContainer() {
+		return container;
+	}
 
 	@Override
 	public GraphicsContextState getPaintStateByReference() {
@@ -32,15 +42,42 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	final public void paint(GraphicsContext g) {
-		validatePaint(g);
-		doPaint(g);
-		cleanUpPaint(g);
+	public void handleEvent(Object event) {
+		/*
+		 * TODO: Move this handleEvent method to some utility class. (It is used
+		 * in the Gruop, too.)
+		 */
+		for (IEventListener listener : eventListeners) {
+			if (listener.handlesEvent(event)) {
+				listener.handleEvent(event);
+			}
+		}
 	}
 
-	public void validatePaint(GraphicsContext g) {
+	@Override
+	final public void paint(GraphicsContext g) {
 		g.pushState(paintState);
 		g.setUpGuard();
+		doPaint(g);
+		g.takeDownGuard();
+		g.restore();
+	}
+
+	@Override
+	public boolean removeEventListener(IEventListener eventListener) {
+		return eventListeners.remove(eventListener);
+	}
+
+	@Override
+	public void setContainer(Group group) {
+		container = group;
+	}
+
+	@Override
+	public void update() {
+		if (container != null) {
+			container.redraw();
+		}
 	}
 
 }

@@ -15,10 +15,25 @@ package org.eclipse.gef4.swt.canvas;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContextState;
 
-public interface IFigure {
+public interface IFigure extends INode {
+
+	IBounds getBounds();
+
+	Group getContainer();
 
 	GraphicsContextState getPaintStateByReference();
 
+	void handleEvent(Object event);
+
 	void paint(GraphicsContext g);
+
+	/**
+	 * change container (do not call)
+	 * 
+	 * @param group
+	 */
+	void setContainer(Group group);
+
+	void update();
 
 }

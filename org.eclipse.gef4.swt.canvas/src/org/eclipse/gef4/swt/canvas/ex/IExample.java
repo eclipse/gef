@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.ex;
 
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
-import org.eclipse.swt.widgets.Canvas;
 
 public interface IExample {
 
@@ -22,7 +22,7 @@ public interface IExample {
 	 * 
 	 * @param c
 	 */
-	void addUi(Canvas c);
+	void addUi(Group group);
 
 	/**
 	 * Called once during GUI initialization.

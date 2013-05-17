@@ -10,37 +10,39 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas.todo;
+package org.eclipse.gef4.swt.canvas;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 
-public class AxisAlignedBounds extends
-		AbstractBounds<AxisAlignedBounds, Rectangle, Rectangle> {
+public class GeneralBounds extends
+		AbstractBounds<GeneralBounds, IShape, IShape> {
 
-	private AxisAlignedBounds() {
+	private GeneralBounds() {
 	}
 
-	public AxisAlignedBounds(Rectangle bounds) {
+	public GeneralBounds(IShape bounds) {
 		setShape(bounds);
 	}
 
+	public GeneralBounds(IShape bounds, AffineTransform trafo) {
+		setShape(bounds);
+		setTransform(trafo);
+	}
+
 	@Override
-	protected AxisAlignedBounds copy() {
-		return new AxisAlignedBounds();
+	protected GeneralBounds copy() {
+		return new GeneralBounds();
 	}
 
 	@Override
 	protected boolean isShapeOk(IShape shape) {
-		return shape instanceof Rectangle;
+		return shape != null;
 	}
 
 	@Override
-	protected Rectangle transform(Rectangle box) {
-		AffineTransform at = getTransformByReference();
-		return new Rectangle(at.getTransformed(box.getTopLeft()),
-				at.getTransformed(box.getBottomRight()));
+	protected IShape transform(IShape shape) {
+		return shape.getTransformed(getTransformByReference());
 	}
 
 }

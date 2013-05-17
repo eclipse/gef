@@ -14,6 +14,7 @@ package org.eclipse.gef4.swt.canvas;
 
 import java.util.Arrays;
 
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
@@ -125,6 +126,12 @@ public class CanvasFigure extends AbstractFigure {
 	// gc = new GC(image);
 	// g = new GraphicsContext(gc);
 	// }
+
+	@Override
+	public IBounds getBounds() {
+		return new GeneralBounds(new Rectangle(0, 0, width, height),
+				getPaintStateByReference().getTransformByReference());
+	}
 
 	public GraphicsContext getGraphicsContext() {
 		return g;

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.ex;
 
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
@@ -28,7 +29,7 @@ public class ShowTextExample implements IExample {
 	private Canvas c;
 
 	@Override
-	public void addUi(Canvas c) {
+	public void addUi(Group c) {
 		this.c = c;
 	}
 

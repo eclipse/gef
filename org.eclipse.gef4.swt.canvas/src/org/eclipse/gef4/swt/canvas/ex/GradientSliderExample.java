@@ -14,6 +14,7 @@ package org.eclipse.gef4.swt.canvas.ex;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.CycleMethod;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.LinearGradient;
@@ -84,7 +85,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 	}
 
 	@Override
-	public void addUi(Canvas c) {
+	public void addUi(Group c) {
 		this.canvas = c;
 		slider = new Slider(c, SWT.NONE);
 		slider.setMinimum(0);

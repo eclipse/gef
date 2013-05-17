@@ -15,6 +15,7 @@ package org.eclipse.gef4.swt.canvas.ex;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.CycleMethod;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.LinearGradient;
@@ -36,7 +37,7 @@ public class GradientCacheExample implements IExample {
 	private LinearGradient gradient;
 
 	@Override
-	public void addUi(Canvas c) {
+	public void addUi(Group c) {
 		this.c = c;
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		final Button button = new Button(c, SWT.TOGGLE);

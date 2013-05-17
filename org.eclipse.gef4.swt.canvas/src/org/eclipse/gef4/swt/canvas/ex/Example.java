@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.ex;
 
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -29,7 +29,7 @@ public class Example implements PaintListener {
 	private IExample ex;
 	private Display display;
 	private Shell shell;
-	private Canvas canvas;
+	private Group group;
 
 	public Example(IExample ex) {
 		this.ex = ex;
@@ -41,12 +41,12 @@ public class Example implements PaintListener {
 		shell.setText("org.eclipse.gef4.swt.canvas - " + ex.getTitle());
 		shell.setLayout(new GridLayout());
 
-		canvas = new Canvas(shell, SWT.NONE);
-		canvas.addPaintListener(this);
-		canvas.setSize(w, h);
-		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group = new Group(shell);
+		group.addBackgroundPaintListener(this);
+		group.setSize(w, h);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ex.addUi(canvas);
+		ex.addUi(group);
 
 		shell.pack();
 		shell.open();
@@ -64,7 +64,7 @@ public class Example implements PaintListener {
 	}
 
 	public Canvas getCanvas() {
-		return canvas;
+		return group;
 	}
 
 	@Override

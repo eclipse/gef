@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.ex;
 
+import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.gc.ArcType;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
@@ -30,7 +31,7 @@ public class PrimitivesExample implements IExample {
 	}
 
 	@Override
-	public void addUi(Canvas c) {
+	public void addUi(Group c) {
 		this.c = c;
 	}
 
