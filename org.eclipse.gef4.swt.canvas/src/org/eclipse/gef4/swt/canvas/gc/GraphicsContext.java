@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.gef4.geometry.convert.swt.Geometry2SWT;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
@@ -77,8 +76,8 @@ import org.eclipse.swt.graphics.Transform;
  */
 public class GraphicsContext {
 
-	// TODO: remove PatternType
-	private static enum PatternType {
+	// TODO: remove PaintType
+	private static enum PaintType {
 		FILL, STROKE,
 	}
 
@@ -102,12 +101,12 @@ public class GraphicsContext {
 	 */
 	private Stack<GraphicsContextState> states = new Stack<GraphicsContextState>();
 
-	// /**
-	// * The {@link #safeguardLevel} is the state-stack size that is guarded
-	// * against {@link #restore()}. A negative value indicates that no guard is
-	// * set up.
-	// */
-	// private int safeguardLevel = -1;
+	private org.eclipse.swt.graphics.Path swtPathClip;
+	private org.eclipse.swt.graphics.Path swtPathFill;
+	private org.eclipse.swt.graphics.Color swtColorPaint;
+	private org.eclipse.swt.graphics.Pattern swtPatternPaint;
+	private Image swtImageGradient;
+	private Transform swtTransform;
 
 	/**
 	 * Constructs a new {@link GraphicsContext} associated with the given
@@ -174,8 +173,12 @@ public class GraphicsContext {
 		if (clip == null) {
 			gc.setClipping((org.eclipse.swt.graphics.Rectangle) null);
 		} else {
-			// TODO: dispose of Path
-			gc.setClipping(SwtUtils.createSwtPath(clip, gc.getDevice()));
+			if (swtPathClip != null && !swtPathClip.isDisposed()) {
+				swtPathClip.dispose();
+				swtPathClip = null;
+			}
+			swtPathClip = SwtUtils.createSwtPath(clip, gc.getDevice());
+			gc.setClipping(swtPathClip);
 		}
 	}
 
@@ -262,77 +265,79 @@ public class GraphicsContext {
 		gc.setLineAttributes(lineAttrs);
 	}
 
-	private void applyPattern(Paint pattern, PatternType type) {
-		// TODO: do not use 100x100 as default bounds
-		applyPattern(pattern, type, new Rectangle(0, 0, 100, 100));
-	}
-
 	// TODO: split into applyFill(...) and applyStroke(...)
-	private void applyPattern(Paint pattern, PatternType type,
-			Rectangle drawingBounds) {
+	private void applyPaint(Paint paint, PaintType type, Rectangle drawingBounds) {
 		boolean isColor = false;
-		org.eclipse.swt.graphics.Color colorSwt = null;
-		org.eclipse.swt.graphics.Pattern patternSwt = null;
 
-		switch (pattern.getMode()) {
+		switch (paint.getMode()) {
 		case COLOR:
 			isColor = true;
-			colorSwt = SwtUtils.createSwtColor(gc.getDevice(),
-					pattern.getRgbaColor());
-			// TODO: dispose of the SWT Color
-			// TODO: what about color opacity? multiply global alpha?
+			RgbaColor c = paint.getRgbaColorByReference();
+			disposeSwtColorPaint();
+			swtColorPaint = SwtUtils.createSwtColor(gc.getDevice(), c);
+			// FIXME: opacity is ignored
 			break;
 		case GRADIENT:
-			Gradient<?> gradient = pattern.getGradient();
+			Gradient<?> gradient = paint.getGradient();
 			// TODO: where do i get the bounds from?
 			ImageData gradientImageData = SwtUtils.createGradientImageData(
 					gc.getDevice(), drawingBounds, gradient);
-			patternSwt = new org.eclipse.swt.graphics.Pattern(gc.getDevice(),
-					new Image(gc.getDevice(), gradientImageData));
+
+			disposeSwtImageGradient();
+			swtImageGradient = new Image(gc.getDevice(), gradientImageData);
+
+			disposeSwtPatternPaint();
+			swtPatternPaint = new org.eclipse.swt.graphics.Pattern(
+					gc.getDevice(), swtImageGradient);
 			break;
 		case IMAGE:
-			patternSwt = new org.eclipse.swt.graphics.Pattern(gc.getDevice(),
-					pattern.getImage());
+			disposeSwtPatternPaint();
+			swtPatternPaint = new org.eclipse.swt.graphics.Pattern(
+					gc.getDevice(), paint.getImage());
 			break;
 		default:
 			throw new IllegalStateException("Unknown Paint.Mode: "
-					+ pattern.getMode());
+					+ paint.getMode());
 		}
 
 		switch (type) {
 		case FILL:
 			if (isColor) {
-				gc.setBackground(colorSwt);
+				gc.setBackground(swtColorPaint);
 			} else {
 				// workaround for bug #399109
 				gc.setBackgroundPattern(null);
-				gc.setBackgroundPattern(patternSwt);
+				gc.setBackgroundPattern(swtPatternPaint);
 			}
 			break;
 		case STROKE:
 			if (isColor) {
-				gc.setForeground(colorSwt);
+				gc.setForeground(swtColorPaint);
 			} else {
 				gc.setForegroundPattern(null);
-				gc.setForegroundPattern(patternSwt);
+				gc.setForegroundPattern(swtPatternPaint);
 			}
 			break;
 		default:
-			throw new IllegalStateException("Unknown PatternType: " + type);
+			throw new IllegalStateException("Unknown PaintType: " + type);
 		}
+	}
+
+	private void applyPattern(Paint pattern, PaintType type) {
+		applyPaint(pattern, type, new Rectangle(0, 0, 100, 100));
 	}
 
 	private void applyStateToGc(GraphicsContextState state) {
 		applyGlobalAlpha(state.getGlobalAlpha());
 		applyClip(state.getClipPathByReference());
-		applyPattern(state.getFillByReference(), PatternType.FILL);
+		applyPattern(state.getFillByReference(), PaintType.FILL);
 		applyFillRule(state.getFillRule());
 		applyFont(new Font(gc.getDevice(), state.getFontDataByReference()));
 		applyLineCap(state.getLineCap());
 		applyLineJoin(state.getLineJoin());
 		applyLineWidth(state.getLineWidth());
 		applyMiterLimit(state.getMiterLimit());
-		applyPattern(state.getStrokeByReference(), PatternType.STROKE);
+		applyPattern(state.getStrokeByReference(), PaintType.STROKE);
 		applyTransform(state.getTransformByReference());
 
 		// TODO: What about these?
@@ -345,7 +350,9 @@ public class GraphicsContext {
 	 * @param at
 	 */
 	private void applyTransform(AffineTransform at) {
-		gc.setTransform(SwtUtils.createSwtTransform(at, gc.getDevice()));
+		disposeSwtTransform();
+		swtTransform = SwtUtils.createSwtTransform(at, gc.getDevice());
+		gc.setTransform(swtTransform);
 	}
 
 	/**
@@ -441,6 +448,12 @@ public class GraphicsContext {
 
 	public void cleanUp() {
 		initialGcState.apply(gc);
+		disposeSwtColorPaint();
+		disposeSwtImageGradient();
+		disposeSwtPathClip();
+		disposeSwtPathFill();
+		disposeSwtPatternPaint();
+		disposeSwtTransform();
 	}
 
 	/**
@@ -467,8 +480,9 @@ public class GraphicsContext {
 	 * Uses the current {@link Path} to clip subsequent drawings.
 	 */
 	public void clip() {
-		// TODO: dispose of SWT Path
-		gc.setClipping(SwtUtils.createSwtPath(path, gc.getDevice()));
+		disposeSwtPathClip();
+		swtPathClip = SwtUtils.createSwtPath(path, gc.getDevice());
+		gc.setClipping(swtPathClip);
 	}
 
 	/**
@@ -479,10 +493,55 @@ public class GraphicsContext {
 		path.close();
 	}
 
+	private void disposeSwtColorPaint() {
+		if (swtColorPaint != null && !swtColorPaint.isDisposed()) {
+			swtColorPaint.dispose();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void disposeSwtImageGradient() {
+		if (swtImageGradient != null && !swtImageGradient.isDisposed()) {
+			swtImageGradient.dispose();
+		}
+	}
+
+	private void disposeSwtPathClip() {
+		if (swtPathClip != null && !swtPathClip.isDisposed()) {
+			swtPathClip.dispose();
+		}
+	}
+
+	private void disposeSwtPathFill() {
+		if (swtPathFill != null && !swtPathFill.isDisposed()) {
+			swtPathFill.dispose();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void disposeSwtPatternPaint() {
+		if (swtPatternPaint != null && !swtPatternPaint.isDisposed()) {
+			swtPatternPaint.dispose();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void disposeSwtTransform() {
+		if (swtTransform != null && !swtTransform.isDisposed()) {
+			swtTransform.dispose();
+		}
+	}
+
 	/**
 	 * Draws the given {@link Image} at the specified location.
 	 * 
-	 * @param image
+	 * @param swtImageGradient
 	 * @param x
 	 *            destination x coordinate
 	 * @param y
@@ -495,7 +554,7 @@ public class GraphicsContext {
 	/**
 	 * Draws the given {@link Image} at the specified location.
 	 * 
-	 * @param image
+	 * @param swtImageGradient
 	 * @param x
 	 *            destination x coordinate
 	 * @param y
@@ -516,7 +575,7 @@ public class GraphicsContext {
 	 * Draws the specified portion of the given {@link Image} at the specified
 	 * location.
 	 * 
-	 * @param image
+	 * @param swtImageGradient
 	 */
 	public void drawImage(Image image, double srcX, double srcY,
 			double srcWidth, double srcHeight, double x, double y, double w,
@@ -533,10 +592,9 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		// TODO: which fill rule? even-odd or winding number?
-		// TODO: dispose of SWT Path
-		gc.fillPath(new org.eclipse.swt.graphics.Path(gc.getDevice(),
-				Geometry2SWT.toSWTPathData(path)));
+		disposeSwtPathFill();
+		swtPathFill = SwtUtils.createSwtPath(path, gc.getDevice());
+		gc.fillPath(swtPathFill);
 
 		if (a != 255) {
 			gc.setAlpha((int) getGlobalAlpha());
@@ -600,8 +658,11 @@ public class GraphicsContext {
 
 		setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD
 				: FillRule.WIND_NON_ZERO);
-		applyPattern(getFillPattern(), PatternType.FILL, path.getBounds());
-		gc.fillPath(SwtUtils.createSwtPath(path, gc.getDevice()));
+		applyPaint(getFillPattern(), PaintType.FILL, path.getBounds());
+		org.eclipse.swt.graphics.Path swtPathFill = SwtUtils.createSwtPath(
+				path, gc.getDevice());
+		gc.fillPath(swtPathFill);
+		swtPathFill.dispose();
 
 		if (a != 255) {
 			gc.setAlpha((int) getGlobalAlpha());
@@ -825,21 +886,21 @@ public class GraphicsContext {
 		Paint fillPattern = states.peek().getFillByReference();
 		fillPattern.setColor(SwtUtils.createRgbaColor(fillColor, 255));
 		fillPattern.setMode(PaintMode.COLOR);
-		applyPattern(fillPattern, PatternType.FILL);
+		applyPattern(fillPattern, PaintType.FILL);
 	}
 
 	public void setFill(Gradient<?> fillGradient) {
 		Paint fillPattern = states.peek().getFillByReference();
 		fillPattern.setGradient(fillGradient);
 		fillPattern.setMode(PaintMode.GRADIENT);
-		applyPattern(fillPattern, PatternType.FILL);
+		applyPattern(fillPattern, PaintType.FILL);
 	}
 
 	public void setFill(Image fillImage) {
 		Paint fillPattern = states.peek().getFillByReference();
 		fillPattern.setImage(fillImage);
 		fillPattern.setMode(PaintMode.IMAGE);
-		applyPattern(fillPattern, PatternType.FILL);
+		applyPattern(fillPattern, PaintType.FILL);
 	}
 
 	public void setFill(Object fill) {
@@ -861,7 +922,7 @@ public class GraphicsContext {
 		Paint fillPattern = states.peek().getFillByReference();
 		fillPattern.setColor(fillColor);
 		fillPattern.setMode(PaintMode.COLOR);
-		applyPattern(fillPattern, PatternType.FILL);
+		applyPattern(fillPattern, PaintType.FILL);
 	}
 
 	public void setFillRule(FillRule rule) {
@@ -909,21 +970,21 @@ public class GraphicsContext {
 		Paint strokePattern = states.peek().getStrokeByReference();
 		strokePattern.setColor(SwtUtils.createRgbaColor(strokeColor, 255));
 		strokePattern.setMode(PaintMode.COLOR);
-		applyPattern(strokePattern, PatternType.STROKE);
+		applyPattern(strokePattern, PaintType.STROKE);
 	}
 
 	public void setStroke(Gradient<?> strokeGradient) {
 		Paint strokePattern = states.peek().getStrokeByReference();
 		strokePattern.setGradient(strokeGradient);
 		strokePattern.setMode(PaintMode.GRADIENT);
-		applyPattern(strokePattern, PatternType.STROKE);
+		applyPattern(strokePattern, PaintType.STROKE);
 	}
 
 	public void setStroke(Image strokeImage) {
 		Paint strokePattern = states.peek().getStrokeByReference();
 		strokePattern.setImage(strokeImage);
 		strokePattern.setMode(PaintMode.IMAGE);
-		applyPattern(strokePattern, PatternType.STROKE);
+		applyPattern(strokePattern, PaintType.STROKE);
 	}
 
 	public void setStroke(Object stroke) {
@@ -943,7 +1004,7 @@ public class GraphicsContext {
 		Paint strokePattern = states.peek().getStrokeByReference();
 		strokePattern.setColor(strokeColor);
 		strokePattern.setMode(PaintMode.COLOR);
-		applyPattern(strokePattern, PatternType.STROKE);
+		applyPattern(strokePattern, PaintType.STROKE);
 	}
 
 	public void setTextAlign(TextAlignment textAlign) {
@@ -988,9 +1049,10 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		// TODO: dispose of the SWT Path
-		gc.drawPath(new org.eclipse.swt.graphics.Path(gc.getDevice(),
-				Geometry2SWT.toSWTPathData(path)));
+		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
+				path, gc.getDevice());
+		gc.drawPath(swtPathStroke);
+		swtPathStroke.dispose();
 
 		if (a != 255) {
 			gc.setAlpha((int) getGlobalAlpha());
@@ -1081,7 +1143,10 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		gc.drawPath(SwtUtils.createSwtPath(path, gc.getDevice()));
+		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
+				path, gc.getDevice());
+		gc.drawPath(swtPathStroke);
+		swtPathStroke.dispose();
 
 		if (a != 255) {
 			gc.setAlpha((int) getGlobalAlpha());

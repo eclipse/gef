@@ -24,7 +24,7 @@ public class GcState {
 	private int antialias;
 	private org.eclipse.swt.graphics.Color background;
 	private org.eclipse.swt.graphics.Pattern backgroundPattern;
-	private Region region; // TODO: dispose later
+	private Region region;
 	private boolean isDisposed;
 	private int fillRule;
 	private org.eclipse.swt.graphics.Font font;
@@ -33,7 +33,7 @@ public class GcState {
 	private int interpolation;
 	private LineAttributes lineAttributes;
 	private int textAntialias;
-	private Transform transform; // TODO: dispose later
+	private Transform transform;
 	private boolean xorMode;
 
 	public GcState(GC gc) {
@@ -59,17 +59,17 @@ public class GcState {
 	@SuppressWarnings("deprecation")
 	public void apply(GC gc) {
 		if (isDisposed) {
-			return;
+			throw new IllegalStateException("Cannot apply GcState twice!");
 		}
+		isDisposed = true;
+
 		gc.setAdvanced(advanced);
 		gc.setAlpha(alpha);
 		gc.setAntialias(antialias);
 		gc.setBackground(background);
 		gc.setBackgroundPattern(backgroundPattern);
 		gc.setClipping(region);
-		// TODO: How to dispose the Region? region.dispose(); is not allowed
-		// while the Region is set in the GC.
-		isDisposed = true;
+		region.dispose();
 		gc.setFillRule(fillRule);
 		gc.setFont(font);
 		gc.setForeground(foreground);
@@ -78,8 +78,7 @@ public class GcState {
 		gc.setLineAttributes(lineAttributes);
 		gc.setTextAntialias(textAntialias);
 		gc.setTransform(transform);
-		// TODO: How to dispose the Transform? transform.dispose(); is not
-		// allowed while the Transform is set in the GC.
+		transform.dispose();
 		gc.setXORMode(xorMode);
 	}
 

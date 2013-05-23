@@ -116,7 +116,6 @@ public class SwtUtils {
 	}
 
 	public static Transform createSwtTransform(AffineTransform at, Device dev) {
-		// TODO: dispose of the Transform
 		Transform t = new Transform(dev);
 		double[] m = at.getMatrix();
 		t.setElements((float) m[0], (float) m[1], (float) m[2], (float) m[3],
