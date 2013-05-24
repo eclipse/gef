@@ -96,7 +96,7 @@ public class PointTests {
 	}
 
 	@Test
-	public void test_getConvexHull() {
+	public void test_getConvexHull1() {
 		// test case from
 		// http://stackoverflow.com/questions/482278/test-case-data-for-convex-hull
 
@@ -137,8 +137,12 @@ public class PointTests {
 				0.4754929463150845, 0.4932166845474547, 0.4928094162538735,
 				0.4916198379282093, -0.345391701297268, 0.4823896228171788,
 				-0.4776170002088109 })).equals(new Polygon(convexHull)));
+	}
 
-		convexHull = Point.getConvexHull(new Point[] { new Point(0.0, 75.0),
+	@Test
+	public void test_getConvexHull2() {
+		Point[] convexHull = Point.getConvexHull(new Point[] {
+				new Point(0.0, 75.0),
 				new Point(0.3333333333333333, 0.9411910020934172),
 				new Point(0.6666666666666666, -60.0), new Point(1.0, -60.0) });
 		assertEquals(
@@ -146,36 +150,51 @@ public class PointTests {
 						0.3333333333333333, 0.9411910020934172,
 						0.6666666666666666, -60, 1, -60 })), new Polygon(
 						convexHull));
+	}
 
-		convexHull = Point.getConvexHull(new Point[] {
+	@Test
+	public void test_getConvexHull3() {
+		Point[] convexHull = Point.getConvexHull(new Point[] {
 				new Point(0.0, -1.8277675577160887E-4),
 				new Point(0.3333333333333333, -1.1294769632887472E-4),
 				new Point(0.6666666666666666, -4.311817922240293E-5),
 				new Point(1.0, 2.671179560675793E-5) });
-		assertTrue(convexHull.length == 3);
+		assertEquals(3, convexHull.length);
+	}
 
-		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+	@Test
+	public void test_getConvexHull4() {
+		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
 				new Point(0, 0), new Point(10, 0), new Point(10, 10),
 				new Point(0, 10) });
 		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
 				convexHull));
+	}
 
-		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+	@Test
+	public void test_getConvexHull5() {
+		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
 				new Point(10, 0), new Point(10, 10), new Point(0, 0),
 				new Point(0, 10) });
 		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
 				convexHull));
+	}
 
-		convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
+	@Test
+	public void test_getConvexHull6() {
+		Point[] convexHull = Point.getConvexHull(new Point[] { new Point(0, 0),
 				new Point(10, 0), new Point(), new Point(10, 10), new Point(),
 				new Point(0, 10), new Point(), new Point(10, 10) });
 		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
 				convexHull));
+	}
 
-		convexHull = Point.getConvexHull(new Point[] { new Point(10, 10),
-				new Point(5, 5), new Point(0, 0), new Point(10, 10),
-				new Point(5, 5), new Point(10, 0), new Point(10, 10),
-				new Point(0, 10), new Point(10, 10) });
+	@Test
+	public void test_getConvexHull7() {
+		Point[] convexHull = Point.getConvexHull(new Point[] {
+				new Point(10, 10), new Point(5, 5), new Point(0, 0),
+				new Point(10, 10), new Point(5, 5), new Point(10, 0),
+				new Point(10, 10), new Point(0, 10), new Point(10, 10) });
 		assertEquals(new Rectangle(0, 0, 10, 10).toPolygon(), new Polygon(
 				convexHull));
 	}
