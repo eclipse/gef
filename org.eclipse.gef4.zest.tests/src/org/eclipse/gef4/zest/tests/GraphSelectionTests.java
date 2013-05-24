@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
@@ -161,15 +160,13 @@ public class GraphSelectionTests extends TestCase {
 		Shell shell = graph.getShell();
 		shell.setLayout(new FillLayout());
 		shell.open();
-		Display display = shell.getDisplay();
 		while (!shell.isDisposed()) {
 			GraphItem node = (GraphItem) graph.getNodes().get(0);
 			graph.setSelection(new GraphItem[] { node });
-			if (display.readAndDispatch()) {
+			if (shell.getDisplay().readAndDispatch()) {
 				shell.close();
 			}
 		}
-		display.dispose();
 	}
 
 	private SelectionListener setupListener(final List events) {
