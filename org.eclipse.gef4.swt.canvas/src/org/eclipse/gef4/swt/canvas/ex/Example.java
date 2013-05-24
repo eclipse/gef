@@ -13,6 +13,7 @@
 package org.eclipse.gef4.swt.canvas.ex;
 
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.RootGroup;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -41,7 +42,7 @@ public class Example implements PaintListener {
 		shell.setText("org.eclipse.gef4.swt.canvas - " + ex.getTitle());
 		shell.setLayout(new GridLayout());
 
-		group = new Group(shell);
+		group = new RootGroup(shell);
 		group.addBackgroundPaintListener(this);
 		group.setSize(w, h);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));

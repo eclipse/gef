@@ -28,9 +28,13 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		PaintListener, INode, DisposeListener {
 
 	private List<IFigure> figures = new LinkedList<IFigure>();
+
 	private EventDispatcher eventDispatcher;
+
 	private List<IEventListener> eventListeners = new LinkedList<IEventListener>();
 	private PaintListener backgroundPaintListener;
+
+	// private FocusTraverseManager focusTraverseManager;
 
 	public Group(Composite parent) {
 		super(parent, SWT.NONE);

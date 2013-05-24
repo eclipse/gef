@@ -42,6 +42,7 @@ public class MouseExample implements IExample {
 		protected void onMouseDown(Event e) {
 			dragging = true;
 			start = new Point(e.x, e.y);
+			// figure.captureMouse(e);
 			super.onMouseDown(e);
 		}
 
@@ -59,6 +60,7 @@ public class MouseExample implements IExample {
 
 		@Override
 		protected void onMouseUp(Event e) {
+			// figure.releaseMouse(e);
 			dragging = false;
 			super.onMouseUp(e);
 		}
