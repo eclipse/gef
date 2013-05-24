@@ -28,20 +28,35 @@ public class EventDispatcher implements Listener {
 	 * listeners for the current event type only.
 	 */
 
-	// FIXME: do not listen to SWT.DragDetect because we want to get notified on
-	// MouseDown events immediately
-	final private static int[] EVENT_TYPES = new int[] { SWT.None, SWT.KeyDown,
-			SWT.KeyUp, SWT.MouseUp, SWT.MouseDown, SWT.MouseMove,
-			SWT.MouseEnter, SWT.MouseExit, SWT.MouseDoubleClick, SWT.Paint,
-			SWT.Move, SWT.Resize, SWT.Dispose, SWT.Selection,
-			SWT.DefaultSelection, SWT.FocusIn, SWT.FocusOut, SWT.Expand,
-			SWT.Collapse, SWT.Iconify, SWT.Deiconify, SWT.Close, SWT.Show,
-			SWT.Hide, SWT.Modify, SWT.Verify, SWT.Activate, SWT.Deactivate,
-			SWT.Help, SWT.Arm, SWT.Traverse, SWT.MouseHover, SWT.HardKeyDown,
-			SWT.HardKeyUp, SWT.MenuDetect, SWT.SetData, SWT.MouseVerticalWheel,
-			SWT.MouseHorizontalWheel, SWT.Settings, SWT.EraseItem,
-			SWT.MeasureItem, SWT.PaintItem, SWT.ImeComposition,
-			SWT.OrientationChange, SWT.Skin, SWT.OpenDocument };
+	/*
+	 * NOTE: The SWT constants for the event types are sorted by their name in
+	 * the EVENT_TYPES array.
+	 * 
+	 * NOTE: SWT.MouseHover is issued after the tooltip delay.
+	 * 
+	 * FIXME: do not listen to SWT.DragDetect because we want to get notified on
+	 * MouseDown events immediately
+	 */
+	final public static int[] EVENT_TYPES = new int[] { SWT.Activate, SWT.Arm,
+			SWT.Close, SWT.Collapse, SWT.Deactivate, SWT.DefaultSelection,
+			SWT.Deiconify, SWT.Dispose, SWT.EraseItem, SWT.Expand, SWT.FocusIn,
+			SWT.FocusOut, SWT.HardKeyDown, SWT.HardKeyUp, SWT.Help, SWT.Hide,
+			SWT.Iconify, SWT.ImeComposition, SWT.KeyDown, SWT.KeyUp,
+			SWT.MeasureItem, SWT.MenuDetect, SWT.Modify, SWT.MouseDoubleClick,
+			SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
+			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
+			SWT.MouseUp, SWT.MouseVerticalWheel, SWT.Move, SWT.None,
+			SWT.OpenDocument, SWT.OrientationChange, SWT.Paint, SWT.PaintItem,
+			SWT.Resize, SWT.Selection, SWT.SetData, SWT.Settings, SWT.Show,
+			SWT.Skin, SWT.Traverse, SWT.Verify };
+
+	final public static int[] MOUSE_EVENT_TYPES = new int[] {
+			SWT.MouseDoubleClick, SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
+			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
+			SWT.MouseUp, SWT.MouseVerticalWheel };
+
+	final public static int[] KEYBOARD_EVENT_TYPES = new int[] { SWT.KeyDown,
+			SWT.KeyUp };
 
 	private Group group;
 
@@ -67,9 +82,6 @@ public class EventDispatcher implements Listener {
 		while (i.hasPrevious()) {
 			IFigure f = i.previous();
 			if (f.getBounds().getTransformedShape().contains(mouseLocation)) {
-				// System.out.println("event " + event.type
-				// + " consumed by figure "
-				// + f.getBounds().getTransformedShape());
 				f.handleEvent(event);
 				return;
 			}
