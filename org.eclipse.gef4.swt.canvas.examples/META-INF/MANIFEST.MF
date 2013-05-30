@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 SWT Canvas Examples
+Bundle-SymbolicName: org.eclipse.gef4.swt.canvas.examples
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.swt.canvas;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

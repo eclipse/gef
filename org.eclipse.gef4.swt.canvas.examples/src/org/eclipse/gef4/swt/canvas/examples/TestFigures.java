@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas.ex;
+package org.eclipse.gef4.swt.canvas.examples;
 
 import java.util.Arrays;
 
