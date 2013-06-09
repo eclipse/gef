@@ -20,21 +20,43 @@
 				<artifactId>tycho-source-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.fornax.toolsupport</groupId>
-				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>3.4.0</version>
-				<configuration>
-					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>src/org/eclipse/gef4/zest/internal/dot/parser/GenerateDot.mwe2</workflowDescriptor>
-				</configuration>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<property name="compile.classpath" refid="maven.compile.classpath" />
+								<property name="runtime.classpath" refid="maven.runtime.classpath" />
+								<java classpath="${compile.classpath}:${runtime.classpath}:src"
+									classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher"
+									fork="true" failonerror="true">
+									<arg
+										value="src/org/eclipse/gef4/zest/internal/dot/parser/GenerateDot.mwe2" />
+									<sysproperty key="file.encoding" value="UTF-8" />
+								</java>
+							</tasks>
+						</configuration>
 						<goals>
-							<goal>run-workflow</goal>
+							<goal>run</goal>
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>src-gen</directory>
+							<includes>
+								<include>**</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
 			</plugin>
 		</plugins>
 		<resources>
