@@ -13,23 +13,25 @@
 package org.eclipse.gef4.swt.canvas.examples;
 
 import org.eclipse.gef4.geometry.planar.Ellipse;
+import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.IFigure;
 import org.eclipse.gef4.swt.canvas.ShapeFigure;
-import org.eclipse.gef4.swt.canvas.ev.MouseAdapter;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Event;
 
 public class MouseExample implements IExample {
 
-	static class FigureDragger extends MouseAdapter {
+	static class FigureDragger implements MouseListener, MouseMoveListener {
 		private IFigure figure;
 		private boolean dragging;
 		private Point start;
@@ -39,15 +41,17 @@ public class MouseExample implements IExample {
 		}
 
 		@Override
-		protected void onMouseDown(Event e) {
-			dragging = true;
-			start = new Point(e.x, e.y);
-			// figure.captureMouse(e);
-			super.onMouseDown(e);
+		public void mouseDoubleClick(MouseEvent e) {
 		}
 
 		@Override
-		protected void onMouseMove(Event e) {
+		public void mouseDown(MouseEvent e) {
+			dragging = true;
+			start = new Point(e.x, e.y);
+		}
+
+		@Override
+		public void mouseMove(MouseEvent e) {
 			if (dragging) {
 				figure.getPaintStateByReference().getTransformByReference()
 						.translate(e.x - start.x, e.y - start.y);
@@ -55,14 +59,11 @@ public class MouseExample implements IExample {
 				start.y = e.y;
 				figure.update();
 			}
-			super.onMouseMove(e);
 		}
 
 		@Override
-		protected void onMouseUp(Event e) {
-			// figure.releaseMouse(e);
+		public void mouseUp(MouseEvent e) {
 			dragging = false;
-			super.onMouseUp(e);
 		}
 	}
 
@@ -70,28 +71,43 @@ public class MouseExample implements IExample {
 		new Example(new MouseExample());
 	}
 
-	private ShapeFigure rectFigure = new ShapeFigure(new Rectangle(0, 0, 200,
-			100));
-	private ShapeFigure ovalFigure = new ShapeFigure(
-			new Ellipse(0, 0, 100, 200));
+	private static ShapeFigure shape(IShape shape, RgbaColor color) {
+		ShapeFigure figure = new ShapeFigure(shape);
+		figure.getPaintStateByReference().getFillByReference().setColor(color);
+		return figure;
+	}
+
+	private ShapeFigure rectFigure = shape(new Rectangle(0, 0, 200, 100),
+			new RgbaColor(0, 64, 255, 255));
+	private ShapeFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
+			new RgbaColor(255, 64, 0, 255));
 	private Group root;
 
 	@Override
 	public void addUi(Group root) {
-		rectFigure.getPaintStateByReference().getFillByReference()
-				.setColor(new RgbaColor(0, 64, 255, 255));
-		ovalFigure.getPaintStateByReference().getFillByReference()
-				.setColor(new RgbaColor(255, 64, 0, 255));
+		{
+			FigureDragger rectFigureDragger = new FigureDragger(rectFigure);
+			rectFigure.addMouseListener(rectFigureDragger);
+			rectFigure.addMouseMoveListener(rectFigureDragger);
+		}
 
-		rectFigure.addEventListener(new FigureDragger(rectFigure));
-		ovalFigure.addEventListener(new FigureDragger(ovalFigure));
+		{
+			FigureDragger ovalFigureDragger = new FigureDragger(ovalFigure);
+			ovalFigure.addMouseListener(ovalFigureDragger);
+			ovalFigure.addMouseMoveListener(ovalFigureDragger);
+		}
 
 		this.root = root;
+
+		// TODO: provide root.add(IFigure... figures);
 		root.getFigures().add(rectFigure);
 		root.getFigures().add(ovalFigure);
-		rectFigure.setContainer(root);
-		ovalFigure.setContainer(root);
 
+		// TODO: remove this boilerplate
+		rectFigure.setContainer(root); // boilerplate
+		ovalFigure.setContainer(root); // boilerplate
+
+		// create SWT control
 		Button resetButton = new Button(root, SWT.PUSH);
 		resetButton.setText("Reset");
 		org.eclipse.swt.graphics.Point size = resetButton.computeSize(
@@ -104,6 +120,7 @@ public class MouseExample implements IExample {
 				resetFigures();
 			}
 		});
+
 		resetFigures();
 	}
 
@@ -128,6 +145,10 @@ public class MouseExample implements IExample {
 	}
 
 	private void resetFigures() {
+		// for (IPaintState ps : rectFigure.getPaintStateByReference()) {
+		// ps.transform.setToIdentity();
+		// }
+
 		rectFigure.getPaintStateByReference().getTransformByReference()
 				.setToIdentity();
 		ovalFigure.getPaintStateByReference().getTransformByReference()

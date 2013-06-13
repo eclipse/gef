@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
+import org.eclipse.swt.widgets.Event;
+
 public interface IEventListener {
 
-	void handleEvent(Object event);
+	void handleEvent(Event event);
 
-	boolean handlesEvent(Object event);
+	boolean handlesEvent(Event event);
 
 }

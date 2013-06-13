@@ -47,13 +47,6 @@ import org.eclipse.swt.graphics.Transform;
  * </p>
  * 
  * <p>
- * The various apply*() methods are used to modify the underlying {@link GC}.
- * When the user changes an attribute, this change is passed along to the
- * current {@link GraphicsContextState} and the appropriate apply*() method is
- * called to update the {@link GC}.
- * </p>
- * 
- * <p>
  * Note, that not all of the JavaFx GraphicsContext2D functionality is provided
  * by this {@link GraphicsContext}. This is the list of missing features:
  * <ul>
@@ -75,6 +68,13 @@ import org.eclipse.swt.graphics.Transform;
  * 
  */
 public class GraphicsContext {
+
+	/*
+	 * The various apply*() methods are used to modify the underlying {@link
+	 * GC}. When the user changes an attribute, this change is passed along to
+	 * the current {@link GraphicsContextState} and the appropriate apply*()
+	 * method is called to update the {@link GC}.
+	 */
 
 	// TODO: remove PaintType
 	private static enum PaintType {

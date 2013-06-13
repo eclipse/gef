@@ -19,6 +19,7 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.CanvasFigure;
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.RootGroup;
 import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
@@ -44,7 +45,7 @@ public class TestFigures {
 		shell.setText("org.eclipse.gef4.swt.canvas");
 		shell.setLayout(new GridLayout());
 
-		Group root = new Group(shell);
+		Group root = new RootGroup(shell);
 		root.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		ShapeFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
@@ -61,6 +62,9 @@ public class TestFigures {
 		g.strokeText("canvas output", 0, 0);
 
 		root.getFigures().addAll(Arrays.asList(rect, ellipse, canvas));
+		rect.setContainer(root);
+		ellipse.setContainer(root);
+		canvas.setContainer(root);
 
 		Button button = new Button(root, SWT.PUSH);
 		button.setText("push me");

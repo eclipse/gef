@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -28,9 +31,7 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		PaintListener, INode, DisposeListener {
 
 	private List<IFigure> figures = new LinkedList<IFigure>();
-
 	private EventDispatcher eventDispatcher;
-
 	private List<IEventListener> eventListeners = new LinkedList<IEventListener>();
 	private PaintListener backgroundPaintListener;
 
@@ -41,6 +42,10 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		addPaintListener(this);
 		setEventDispatcher(new EventDispatcher());
 		addDisposeListener(this);
+
+		// focus
+		// setEnabled(true);
+		// setVisible(true);
 	}
 
 	public void addBackgroundPaintListener(PaintListener l) {
@@ -52,8 +57,38 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return eventListeners.add(eventListener);
 	}
 
+	public void addFigures(IFigure... figures) {
+		this.figures.addAll(Arrays.asList(figures));
+		for (IFigure f : figures) {
+			f.setContainer(this);
+		}
+	}
+
+	public boolean forceFocusFigure(IFigure focusFigure) {
+		if (!(focusFigure.getContainer() == this)) {
+			throw new IllegalArgumentException(
+					"The given IFigure is no child of this Group!");
+		}
+		if (forceFocus()) {
+			eventDispatcher.setFocusTarget(focusFigure);
+			return true;
+		}
+		return false;
+	}
+
 	public EventDispatcher getEventDispatcher() {
 		return eventDispatcher;
+	}
+
+	public IFigure getFigureAt(Point position) {
+		ListIterator<IFigure> it = figures.listIterator(figures.size());
+		while (it.hasPrevious()) {
+			IFigure f = it.previous();
+			if (f.getBounds().getTransformedShape().contains(position)) {
+				return f;
+			}
+		}
+		return null;
 	}
 
 	public List<IFigure> getFigures() {
@@ -102,6 +137,18 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		this.eventDispatcher = eventDispatcher;
 		eventDispatcher.setGroup(this);
 		eventDispatcher.addListeners();
+	}
+
+	public boolean setFocusFigure(IFigure focusFigure) {
+		if (!(focusFigure.getContainer() == this)) {
+			throw new IllegalArgumentException(
+					"The given IFigure is no child of this Group!");
+		}
+		if (setFocus()) {
+			eventDispatcher.setFocusTarget(focusFigure);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

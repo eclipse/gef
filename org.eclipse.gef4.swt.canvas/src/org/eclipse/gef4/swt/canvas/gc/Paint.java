@@ -26,6 +26,11 @@ import org.eclipse.swt.graphics.Image;
  */
 public class Paint {
 
+	/*
+	 * TODO: Convert Paint to Interface, implement ColorPaint, GradientPaint,
+	 * and ImagePaint.
+	 */
+
 	/**
 	 * @param p0
 	 * @param p1

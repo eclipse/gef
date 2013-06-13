@@ -17,6 +17,11 @@ import java.util.List;
 
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContextState;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.widgets.Event;
 
 public abstract class AbstractFigure implements IFigure {
 
@@ -29,7 +34,32 @@ public abstract class AbstractFigure implements IFigure {
 		return eventListeners.add(eventListener);
 	}
 
+	@Override
+	public void addKeyListener(KeyListener listener) {
+		addEventListener(new WrappedEventListener(listener));
+	}
+
+	@Override
+	public void addMouseListener(MouseListener listener) {
+		addEventListener(new WrappedEventListener(listener));
+	}
+
+	@Override
+	public void addMouseMoveListener(MouseMoveListener listener) {
+		addEventListener(new WrappedEventListener(listener));
+	}
+
+	@Override
+	public void addMouseWheelListener(MouseWheelListener listener) {
+		addEventListener(new WrappedEventListener(listener));
+	}
+
 	protected abstract void doPaint(GraphicsContext g);
+
+	@Override
+	public boolean forceRequestFocus() {
+		return container.forceFocusFigure(this);
+	}
 
 	@Override
 	public Group getContainer() {
@@ -42,13 +72,12 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public void handleEvent(Object event) {
-		/*
-		 * TODO: Move this handleEvent method to some utility class. (It is used
-		 * in the Gruop, too.)
-		 */
+	public void handleEvent(Event event) {
+		// System.out.println(this + " checks event listeners...");
 		for (IEventListener listener : eventListeners) {
+			// System.out.println("...listener: " + listener);
 			if (listener.handlesEvent(event)) {
+				// System.out.println("......handles the event!");
 				listener.handleEvent(event);
 			}
 		}
@@ -66,6 +95,42 @@ public abstract class AbstractFigure implements IFigure {
 	@Override
 	public boolean removeEventListener(IEventListener eventListener) {
 		return eventListeners.remove(eventListener);
+	}
+
+	@Override
+	public void removeKeyListener(KeyListener listener) {
+		removeWrappedListener(listener);
+	}
+
+	@Override
+	public void removeMouseListener(MouseListener listener) {
+		removeWrappedListener(listener);
+	}
+
+	@Override
+	public void removeMouseMoveListener(MouseMoveListener listener) {
+		removeWrappedListener(listener);
+	}
+
+	@Override
+	public void removeMouseWheelListener(MouseWheelListener listener) {
+		removeWrappedListener(listener);
+	}
+
+	private void removeWrappedListener(Object listener) {
+		for (IEventListener l : eventListeners) {
+			if (l instanceof WrappedEventListener) {
+				if (((WrappedEventListener) l).getListenerReference() == listener) {
+					removeEventListener(l);
+					return;
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean requestFocus() {
+		return container.setFocusFigure(this);
 	}
 
 	@Override

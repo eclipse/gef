@@ -31,36 +31,36 @@ public enum TextVPos {
 	/**
 	 * Y = 0 is at the ascent line of the text.
 	 * 
-	 * @see BOTTOM
-	 * @see CENTER
-	 * @see BASELINE
+	 * @see #BOTTOM
+	 * @see #CENTER
+	 * @see #BASELINE
 	 */
 	TOP,
 
 	/**
 	 * Y = 0 is at the center line of the text.
 	 * 
-	 * @see TOP
-	 * @see BOTTOM
-	 * @see BASELINE
+	 * @see #TOP
+	 * @see #BOTTOM
+	 * @see #BASELINE
 	 */
 	CENTER,
 
 	/**
 	 * Y = 0 is at the descent line of the text.
 	 * 
-	 * @see TOP
-	 * @see CENTER
-	 * @see BASELINE
+	 * @see #TOP
+	 * @see #CENTER
+	 * @see #BASELINE
 	 */
 	BOTTOM,
 
 	/**
 	 * Y = 0 is at the baseline of the text.
 	 * 
-	 * @see TOP
-	 * @see BOTTOM
-	 * @see CENTER
+	 * @see #TOP
+	 * @see #BOTTOM
+	 * @see #CENTER
 	 */
 	BASELINE;
 

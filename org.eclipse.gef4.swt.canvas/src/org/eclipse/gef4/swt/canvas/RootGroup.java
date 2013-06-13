@@ -1,10 +1,13 @@
 package org.eclipse.gef4.swt.canvas;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -26,6 +29,7 @@ public class RootGroup extends Group {
 	private static IFigure getFigureAt(Group group, Point cursor) {
 		List<IFigure> figures = group.getFigures();
 		for (IFigure f : figures) {
+			// System.out.println("...testing " + f);
 			if (f.getBounds().getTransformedShape().contains(cursor)) {
 				return f;
 			}
@@ -56,6 +60,7 @@ public class RootGroup extends Group {
 					if (event.widget instanceof Control) {
 						for (Control c = (Control) event.widget; c != null; c = c
 								.getParent()) {
+							// System.out.println("...widget " + c);
 							if (me == c) {
 								me.processEvent(event);
 								break;
@@ -67,15 +72,73 @@ public class RootGroup extends Group {
 		}
 	}
 
+	private void EventCapturing(Event event, Object eventTarget,
+			List<Object> route) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @param group
+	 * @param cursor
+	 */
+	private Object getGroupTarget(Group group, Point cursor) {
+		IFigure f = getFigureAt(group, cursor);
+		if (f != null) {
+			return f;
+		}
+		return group;
+	}
+
 	public void processEvent(Event event) {
 		assert event.widget instanceof Control;
 		Control swtTarget = (Control) event.widget;
 
+		// System.out.println("SWT Control (" + swtTarget + ")");
+		// System.out.println("Event (" + event + ")");
+
 		Object eventTarget = TargetSelection(event, swtTarget);
 
-		System.out.println("SWT Control ("
-				+ swtTarget.getClass().getCanonicalName() + ") issued Event ("
-				+ event.type + ") -> target (" + eventTarget + ")");
+		// System.out.println("EventTarget (" + eventTarget + ")");
+
+		List<Object> route = RouteConstruction(eventTarget);
+
+		EventCapturing(event, eventTarget, route);
+
+		// System.out.println("Route:");
+		// for (Object node : route) {
+		// System.out.println("  " + node);
+		// }
+	}
+
+	private void RouteConstruction(List<Object> route, Object eventTarget) {
+		if (eventTarget instanceof IFigure) {
+			IFigure f = (IFigure) eventTarget;
+			RouteConstruction(route, f.getContainer());
+		} else if (eventTarget instanceof Control) {
+			Control c = (Control) eventTarget;
+			Composite parent = c.getParent();
+			if (parent != null) {
+				RouteConstruction(route, parent);
+			}
+		} else {
+			throw new IllegalStateException(
+					"Given eventTarget is neither (GEF4) IFigure nor (SWT) Control!");
+		}
+		route.add(eventTarget);
+	}
+
+	/**
+	 * Constructs the route which the event travels along, i.e. returns all
+	 * widgets/figures in the hierarchy from this RootGroup to the eventTarget.
+	 * 
+	 * @param eventTarget
+	 * @return
+	 */
+	private List<Object> RouteConstruction(Object eventTarget) {
+		List<Object> route = new LinkedList<Object>();
+		RouteConstruction(route, eventTarget);
+		return route;
 	}
 
 	/**
@@ -108,56 +171,47 @@ public class RootGroup extends Group {
 	 * @param swtTarget
 	 */
 	private Object TargetSelection(Event event, Control swtTarget) {
-		/*
-		 * TODO: special mouse events
-		 * 
-		 * 1. If we have no mouseTarget yet and this is a MouseDown event, set
-		 * the mouseTarget.
-		 * 
-		 * 2. If we have a mouseTarget and this is a MouseUp event, unset the
-		 * mouseTarget.
-		 */
-
-		// 1.
+		// the focusTarget receives all keyboard events
 		if (isKeyboardEvent(event) && focusTarget != null) {
 			return focusTarget;
 		}
 
-		// 2.
 		if (isMouseEvent(event)) {
+			Object target = swtTarget;
+
+			// the mouse target receives all mouse events
 			if (mouseTarget != null) {
-				return mouseTarget;
+				target = mouseTarget;
+				// unset the mouseTarget on a MouseUp event
+				if (event.type == SWT.MouseUp) {
+					mouseTarget = null;
+				}
+				return target;
 			}
 
-			// 3.
 			if (swtTarget instanceof Group) {
-				// find figure under cursor
 				Point cursor = new Point(event.x, event.y);
-				IFigure f = getFigureAt((Group) swtTarget, cursor);
-				if (f != null) {
-					return f;
-				}
+				// System.out.println("..search figure at " + cursor);
+				target = getGroupTarget((Group) swtTarget, cursor);
 			}
-			// no figure under cursor => widget under cursor
-			return swtTarget;
+
+			// set the mouseTarget on a MouseDown event
+			if (mouseTarget == null && event.type == SWT.MouseDown) {
+				mouseTarget = target;
+			}
+
+			return target;
 		}
 
 		if (swtTarget instanceof Group) {
-			/*
-			 * A Group issued the event. Therefore, we know that either one of
-			 * our figures will be the event target or the Group itself.
-			 */
-			Group group = (Group) swtTarget;
-			// FIXME: wrong cursor for events that use .x and .y specially.
-			Point cursor = new Point(event.x, event.y);
-			IFigure f = getFigureAt(group, cursor);
-			if (f != null) {
-				return f;
-			}
-			// no figure under cursor => widget under cursor
-			return swtTarget;
+			org.eclipse.swt.graphics.Point cursorLocation = Display
+					.getCurrent().getCursorLocation();
+			Point cursor = new Point(cursorLocation.x, cursorLocation.y);
+			return getGroupTarget((Group) swtTarget, cursor);
 		}
 
+		// in any other case, return the swt control that emitted the event
 		return swtTarget;
 	}
+
 }

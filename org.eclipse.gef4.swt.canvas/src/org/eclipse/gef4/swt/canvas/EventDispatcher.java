@@ -13,10 +13,10 @@
 package org.eclipse.gef4.swt.canvas;
 
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -34,8 +34,8 @@ public class EventDispatcher implements Listener {
 	 * 
 	 * NOTE: SWT.MouseHover is issued after the tooltip delay.
 	 * 
-	 * FIXME: do not listen to SWT.DragDetect because we want to get notified on
-	 * MouseDown events immediately
+	 * FIXME: we do not listen to SWT.DragDetect (because we want to get
+	 * notified on MouseDown events immediately)
 	 */
 	final public static int[] EVENT_TYPES = new int[] { SWT.Activate, SWT.Arm,
 			SWT.Close, SWT.Collapse, SWT.Deactivate, SWT.DefaultSelection,
@@ -58,7 +58,18 @@ public class EventDispatcher implements Listener {
 	final public static int[] KEYBOARD_EVENT_TYPES = new int[] { SWT.KeyDown,
 			SWT.KeyUp };
 
+	private static boolean anyOf(int element, int[] set) {
+		for (int e : set) {
+			if (element == e) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private Group group;
+	private IFigure mouseTarget;
+	private IFigure focusTarget;
 
 	public EventDispatcher() {
 	}
@@ -69,6 +80,14 @@ public class EventDispatcher implements Listener {
 		}
 	}
 
+	private IFigure getFigureUnderCursor() {
+		org.eclipse.swt.graphics.Point cursorLocation = Display.getCurrent()
+				.getCursorLocation();
+		cursorLocation = group.toControl(cursorLocation);
+		Point cursor = new Point(cursorLocation.x, cursorLocation.y);
+		return group.getFigureAt(cursor);
+	}
+
 	@Override
 	public void handleEvent(Event event) {
 		List<IFigure> figures = group.getFigures();
@@ -76,25 +95,70 @@ public class EventDispatcher implements Listener {
 			return;
 		}
 
-		Point mouseLocation = new Point(event.x, event.y);
+		if (isKeyboardEvent(event)) {
+			// SWT would not send us the event if we are not supposed to handle
+			// it (no other control is focused)
+			if (focusTarget != null) {
+				// a figure is focus target
+				focusTarget.handleEvent(event);
+				return;
+			}
 
-		ListIterator<IFigure> i = figures.listIterator(figures.size());
-		while (i.hasPrevious()) {
-			IFigure f = i.previous();
-			if (f.getBounds().getTransformedShape().contains(mouseLocation)) {
-				f.handleEvent(event);
+			// cursor figure is the target
+			IFigure cursorFigure = getFigureUnderCursor();
+			if (cursorFigure != null) {
+				cursorFigure.handleEvent(event);
+				return;
+			}
+		} else if (isMouseEvent(event)) {
+			// SWT would not send us the event, if we were not to handle it (no
+			// control grabbed the mouse)
+			if (mouseTarget != null) {
+				mouseTarget.handleEvent(event);
+				if (event.type == SWT.MouseUp) {
+					mouseTarget = null;
+				}
+				return;
+			} else {
+				IFigure cursorTarget = getFigureUnderCursor();
+				if (cursorTarget != null) {
+					if (event.type == SWT.MouseDown) {
+						mouseTarget = cursorTarget;
+						mouseTarget.handleEvent(event);
+						return;
+					}
+					cursorTarget.handleEvent(event);
+				}
+			}
+		} else {
+			// System.out.println("fallback: getFigureUnderCursor()");
+			IFigure cursorTarget = getFigureUnderCursor();
+			if (cursorTarget != null) {
+				cursorTarget.handleEvent(event);
 				return;
 			}
 		}
 
-		// no one contains the event, so the group can handle it:
+		// no one else handles the event, so the group can handle it:
 		group.handleEvent(event);
+	}
+
+	private boolean isKeyboardEvent(Event event) {
+		return anyOf(event.type, KEYBOARD_EVENT_TYPES);
+	}
+
+	private boolean isMouseEvent(Event event) {
+		return anyOf(event.type, MOUSE_EVENT_TYPES);
 	}
 
 	public void removeListeners() {
 		for (int type : EVENT_TYPES) {
 			group.removeListener(type, this);
 		}
+	}
+
+	void setFocusTarget(IFigure focusTarget) {
+		this.focusTarget = focusTarget;
 	}
 
 	public void setGroup(Object group) {

@@ -24,6 +24,12 @@ package org.eclipse.gef4.swt.canvas.gc;
  * 
  */
 public enum PaintMode {
+
+	/*
+	 * TODO: Remove PaintMode. Substitute the functionality by providing
+	 * specialized Paint classes: ColorPaint, GradientPaint, and ImagePaint.
+	 */
+
 	/**
 	 * The COLOR {@link PaintMode} specifies that rendering operations use the
 	 * {@link Paint}'s {@link Color} as the drawing {@link Color} for any

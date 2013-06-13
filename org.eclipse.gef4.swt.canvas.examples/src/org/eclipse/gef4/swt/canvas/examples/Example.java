@@ -42,7 +42,7 @@ public class Example implements PaintListener {
 		shell.setText("org.eclipse.gef4.swt.canvas - " + ex.getTitle());
 		shell.setLayout(new GridLayout());
 
-		group = new RootGroup(shell);
+		group = new Group(shell);
 		group.addBackgroundPaintListener(this);
 		group.setSize(w, h);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
