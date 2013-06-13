@@ -38,9 +38,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -67,11 +65,6 @@ import org.eclipse.ui.part.ViewPart;
 public final class ZestGraphView extends ViewPart {
 
 	public static final String ID = "org.eclipse.gef4.zest.dot.ZestView"; //$NON-NLS-1$
-
-	private static final Color BACKGROUND = JFaceResources.getResources()
-			.createColor(
-					JFaceResources.getColorRegistry().getRGB(
-							"org.eclipse.jdt.ui.JavadocView.backgroundColor")); //$NON-NLS-1$
 
 	private static final String ADD_EXPORT_QUESTION = DotUiMessages.ZestGraphView_0;
 	private static final String ADD_EXPORT_MESSAGE = DotUiMessages.ZestGraphView_1
@@ -166,7 +159,6 @@ public final class ZestGraphView extends ViewPart {
 		composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
-		composite.setBackground(BACKGROUND);
 		if (file != null) {
 			try {
 				updateGraph();
@@ -493,7 +485,6 @@ public final class ZestGraphView extends ViewPart {
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			graph.setLayout(new GridLayout());
 			graph.setLayoutData(gd);
-			graph.setBackground(BACKGROUND);
 		}
 	}
 
@@ -543,7 +534,6 @@ public final class ZestGraphView extends ViewPart {
 		if (composite != null) {
 			composite.dispose();
 		}
-		JFaceResources.getResources().destroyColor(BACKGROUND.getRGB());
 	}
 
 	/**
