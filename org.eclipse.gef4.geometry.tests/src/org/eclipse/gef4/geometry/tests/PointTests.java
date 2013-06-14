@@ -159,7 +159,7 @@ public class PointTests {
 				new Point(0.3333333333333333, -1.1294769632887472E-4),
 				new Point(0.6666666666666666, -4.311817922240293E-5),
 				new Point(1.0, 2.671179560675793E-5) });
-		assertEquals(3, convexHull.length);
+		assertEquals(4, convexHull.length);
 	}
 
 	@Test

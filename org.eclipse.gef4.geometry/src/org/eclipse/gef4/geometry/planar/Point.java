@@ -45,6 +45,7 @@ public class Point implements Cloneable, Serializable {
 	private static Point[] eliminateDuplicates(Point... points) {
 		// sort points by x and y
 		Arrays.sort(points, 0, points.length, new Comparator<Point>() {
+			@Override
 			public int compare(Point p1, Point p2) {
 				if (p1.x < p2.x) {
 					return -1;
@@ -169,11 +170,10 @@ public class Point implements Cloneable, Serializable {
 		// first position
 		final Point p0 = points[0];
 		Arrays.sort(points, 1, points.length, new Comparator<Point>() {
+			@Override
 			public int compare(Point p1, Point p2) {
-				Vector v1 = new Vector(p0, p1);
-				Vector v2 = new Vector(p0, p2);
-				double angleInDeg = v1.getAngleCCW(v2).deg();
-				return angleInDeg > 180 ? -1 : 1;
+				double d = Straight.getSignedDistanceCCW(p0, p1, p2);
+				return d == 0 ? 0 : d < 0 ? -1 : 1;
 			}
 		});
 
