@@ -13,6 +13,7 @@
 package org.eclipse.gef4.swt.canvas.test;
 
 import org.eclipse.gef4.swt.canvas.ev.AbstractEventDispatcher;
+import org.eclipse.gef4.swt.canvas.ev.BasicEventDispatchChain;
 import org.eclipse.gef4.swt.canvas.ev.Event;
 import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;

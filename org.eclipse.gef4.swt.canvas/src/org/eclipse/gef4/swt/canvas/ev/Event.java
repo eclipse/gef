@@ -16,12 +16,22 @@ import java.util.EventObject;
 
 public class Event extends EventObject {
 
+	private static final long serialVersionUID = 1L;
+
+	public static void fireEvent(IEventTarget target, Event event) {
+		IEventDispatchChain chain = target
+				.buildEventDispatchChain(new BasicEventDispatchChain());
+		chain.dispatchEvent(event);
+	}
+
 	private EventType<? extends Event> type;
 	private IEventTarget target;
 	private boolean consumed;
 
+	private static Object NULL_SOURCE = "";
+
 	public Event(EventType<? extends Event> type) {
-		this(null, null, type);
+		this(NULL_SOURCE, null, type);
 	}
 
 	public Event(Object source, IEventTarget target,

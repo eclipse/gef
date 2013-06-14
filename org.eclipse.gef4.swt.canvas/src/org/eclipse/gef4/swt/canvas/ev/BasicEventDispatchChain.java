@@ -10,15 +10,12 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas.test;
+package org.eclipse.gef4.swt.canvas.ev;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.gef4.swt.canvas.ev.Event;
-import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
-import org.eclipse.gef4.swt.canvas.ev.IEventDispatcher;
 
 public class BasicEventDispatchChain implements IEventDispatchChain {
 

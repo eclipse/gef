@@ -64,6 +64,13 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		}
 	}
 
+	// @Override
+	// public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain
+	// edc) {
+	// edc.prepend(eventDispatcher);
+	// return edc;
+	// }
+
 	public boolean forceFocusFigure(IFigure focusFigure) {
 		if (!(focusFigure.getContainer() == this)) {
 			throw new IllegalArgumentException(
