@@ -28,14 +28,14 @@ public class CompositeEventHandler<T extends Event> {
 		handlers.add(handler);
 	}
 
-	public void dispatchBubblingEvent(Event event) {
-		for (IEventHandler handler : handlers) {
+	public void dispatchBubblingEvent(T event) {
+		for (IEventHandler<T> handler : handlers) {
 			handler.handle(event);
 		}
 	}
 
-	public void dispatchCapturingEvent(Event event) {
-		for (IEventHandler filter : filters) {
+	public void dispatchCapturingEvent(T event) {
+		for (IEventHandler<T> filter : filters) {
 			filter.handle(event);
 		}
 	}

@@ -17,11 +17,16 @@ import java.util.Map;
 
 public class EventHandlerManager extends AbstractEventDispatcher {
 
-	private Map<EventType<? extends Event>, CompositeEventHandler<? extends Event>> handlers = new HashMap<EventType<? extends Event>, CompositeEventHandler<? extends Event>>();
+	private Map<EventType<?>, CompositeEventHandler<?>> handlers = new HashMap<EventType<?>, CompositeEventHandler<?>>();
 
 	public <T extends Event> void addEventFilter(EventType<T> type,
 			IEventHandler<T> filter) {
 		handlers(type).addEventFilter(filter);
+	}
+
+	public <T extends Event> void addEventHandler(EventType<T> type,
+			IEventHandler<T> handler) {
+		handlers(type).addEventHandler(handler);
 	}
 
 	@Override
@@ -44,11 +49,22 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 		return event;
 	}
 
-	private CompositeEventHandler<? extends Event> handlers(EventType type) {
+	private <T extends Event> CompositeEventHandler<T> handlers(
+			EventType<T> type) {
 		if (!handlers.containsKey(type)) {
-			handlers.put(type, new CompositeEventHandler<Event>());
+			handlers.put(type, new CompositeEventHandler<T>());
 		}
-		return handlers.get(type);
+		return (CompositeEventHandler<T>) handlers.get(type);
+	}
+
+	public <T extends Event> void removeEventFilter(EventType<T> type,
+			IEventHandler<T> filter) {
+		handlers(type).removeEventFilter(filter);
+	}
+
+	public <T extends Event> void removeEventHandler(EventType<T> type,
+			IEventHandler<T> handler) {
+		handlers(type).removeEventHandler(handler);
 	}
 
 }
