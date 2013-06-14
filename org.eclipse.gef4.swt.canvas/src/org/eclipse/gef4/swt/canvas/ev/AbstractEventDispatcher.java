@@ -1,9 +1,9 @@
 package org.eclipse.gef4.swt.canvas.ev;
 
-public abstract class BasicEventDispatcher implements IEventDispatcher {
+public abstract class AbstractEventDispatcher implements IEventDispatcher {
 
-	// private BasicEventDispatcher nextDispatcher;
-	// private BasicEventDispatcher prevDispatcher;
+	// private AbstractEventDispatcher nextDispatcher;
+	// private AbstractEventDispatcher prevDispatcher;
 
 	// public Event dispatchBubblingEvent(Event event) {
 	// return event;
@@ -36,15 +36,16 @@ public abstract class BasicEventDispatcher implements IEventDispatcher {
 		return event == null || event.isConsumed() ? null : event;
 	}
 
-	// public BasicEventDispatcher getNextDispatcher() {
+	// public AbstractEventDispatcher getNextDispatcher() {
 	// return nextDispatcher;
 	// }
 	//
-	// public BasicEventDispatcher getPreviousDispatcher() {
+	// public AbstractEventDispatcher getPreviousDispatcher() {
 	// return prevDispatcher;
 	// }
 	//
-	// public void insertNextDispatcher(BasicEventDispatcher nextDispatcher) {
+	// public void insertNextDispatcher(AbstractEventDispatcher nextDispatcher)
+	// {
 	// if (this.nextDispatcher != null) {
 	// this.nextDispatcher.prevDispatcher = nextDispatcher;
 	// }

@@ -3,7 +3,7 @@ package org.eclipse.gef4.swt.canvas.ev;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventHandlerManager extends BasicEventDispatcher {
+public class EventHandlerManager extends AbstractEventDispatcher {
 
 	private Map<EventType<? extends Event>, CompositeEventHandler<? extends Event>> handlers = new HashMap<EventType<? extends Event>, CompositeEventHandler<? extends Event>>();
 
