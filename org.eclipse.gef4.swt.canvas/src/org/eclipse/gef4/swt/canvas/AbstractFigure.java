@@ -12,58 +12,40 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
+import org.eclipse.gef4.swt.canvas.ev.Event;
+import org.eclipse.gef4.swt.canvas.ev.EventHandlerManager;
+import org.eclipse.gef4.swt.canvas.ev.EventType;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatcher;
+import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContextState;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseWheelListener;
-import org.eclipse.swt.widgets.Event;
 
 public abstract class AbstractFigure implements IFigure {
 
 	private GraphicsContextState paintState = new GraphicsContextState();
-	private List<IEventListener> eventListeners = new LinkedList<IEventListener>();
+	private EventHandlerManager dispatcher = new EventHandlerManager();
 	private Group container;
 
 	@Override
-	public boolean addEventListener(IEventListener eventListener) {
-		return eventListeners.add(eventListener);
+	public <T extends Event> void addEventFilter(EventType<T> type,
+			IEventHandler<T> filter) {
+		dispatcher.addEventFilter(type, filter);
 	}
 
 	@Override
-	public void addKeyListener(KeyListener listener) {
-		addEventListener(new WrappedEventListener(listener));
+	public <T extends Event> void addEventHandler(EventType<T> type,
+			IEventHandler<T> handler) {
+		dispatcher.addEventHandler(type, handler);
 	}
 
 	@Override
-	public void addMouseListener(MouseListener listener) {
-		addEventListener(new WrappedEventListener(listener));
+	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
+		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this);
 	}
 
 	@Override
-	public void addMouseMoveListener(MouseMoveListener listener) {
-		addEventListener(new WrappedEventListener(listener));
-	}
-
-	@Override
-	public void addMouseWheelListener(MouseWheelListener listener) {
-		addEventListener(new WrappedEventListener(listener));
-	}
-
-	protected abstract void doPaint(GraphicsContext g);
-
-	@Override
-	public boolean forceRequestFocus() {
-		return container.forceFocusFigure(this);
-	}
-
-	@Override
-	public Group getContainer() {
-		return container;
+	public IEventDispatcher getEventDispatcher() {
+		return dispatcher;
 	}
 
 	@Override
@@ -72,60 +54,20 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public void handleEvent(Event event) {
-		// System.out.println(this + " checks event listeners...");
-		for (IEventListener listener : eventListeners) {
-			// System.out.println("...listener: " + listener);
-			if (listener.handlesEvent(event)) {
-				// System.out.println("......handles the event!");
-				listener.handleEvent(event);
-			}
-		}
+	public INode getParentNode() {
+		return container;
 	}
 
 	@Override
-	final public void paint(GraphicsContext g) {
-		g.pushState(paintState);
-		g.setUpGuard();
-		doPaint(g);
-		g.takeDownGuard();
-		g.restore();
+	public <T extends Event> void removeEventFilter(EventType<T> type,
+			IEventHandler<T> filter) {
+		dispatcher.removeEventFilter(type, filter);
 	}
 
 	@Override
-	public boolean removeEventListener(IEventListener eventListener) {
-		return eventListeners.remove(eventListener);
-	}
-
-	@Override
-	public void removeKeyListener(KeyListener listener) {
-		removeWrappedListener(listener);
-	}
-
-	@Override
-	public void removeMouseListener(MouseListener listener) {
-		removeWrappedListener(listener);
-	}
-
-	@Override
-	public void removeMouseMoveListener(MouseMoveListener listener) {
-		removeWrappedListener(listener);
-	}
-
-	@Override
-	public void removeMouseWheelListener(MouseWheelListener listener) {
-		removeWrappedListener(listener);
-	}
-
-	private void removeWrappedListener(Object listener) {
-		for (IEventListener l : eventListeners) {
-			if (l instanceof WrappedEventListener) {
-				if (((WrappedEventListener) l).getListenerReference() == listener) {
-					removeEventListener(l);
-					return;
-				}
-			}
-		}
+	public <T extends Event> void removeEventHandler(EventType<T> type,
+			IEventHandler<T> handler) {
+		dispatcher.removeEventHandler(type, handler);
 	}
 
 	@Override

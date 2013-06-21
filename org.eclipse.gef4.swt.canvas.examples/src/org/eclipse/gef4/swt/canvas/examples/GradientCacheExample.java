@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.examples;
 
-import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.gc.CycleMethod;
-import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.LinearGradient;
+import org.eclipse.gef4.swt.canvas.gc.PaintMode;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -40,6 +40,12 @@ public class GradientCacheExample implements IExample {
 	public void addUi(Group c) {
 		this.c = c;
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		resetGradient();
+		// gradient.computeAuxVars();
+		c.addFigures(createGradientRect(30, 30), createGradientRect(30, 250),
+				createGradientRect(360, 130));
+
 		final Button button = new Button(c, SWT.TOGGLE);
 		button.setText("Cache Gradient");
 		button.setBounds(480, 400, 125, 25);
@@ -53,7 +59,18 @@ public class GradientCacheExample implements IExample {
 				}
 			}
 		});
-		resetGradient();
+	}
+
+	private ShapeFigure createGradientRect(int tx, int ty) {
+		ShapeFigure fig = new ShapeFigure(new RoundedRectangle(0, 0, 300, 200,
+				20, 20));
+		fig.getPaintStateByReference().getFillByReference()
+				.setGradientByReference(gradient);
+		fig.getPaintStateByReference().getFillByReference()
+				.setMode(PaintMode.GRADIENT);
+		fig.getPaintStateByReference().getTransformByReference()
+				.translate(tx, ty);
+		return fig;
 	}
 
 	@Override
@@ -69,26 +86,6 @@ public class GradientCacheExample implements IExample {
 	@Override
 	public int getWidth() {
 		return 640;
-	}
-
-	@Override
-	public void render(GraphicsContext g) {
-		long time = System.currentTimeMillis();
-
-		g.clearRect(0, 0, c.getSize().x, c.getSize().y);
-
-		g.setFill(gradient);
-
-		Path rr = new RoundedRectangle(0, 0, 300, 200, 20, 20).toPath();
-		g.translate(30, 30);
-		g.fillPath(rr);
-		g.translate(0, 220);
-		g.fillPath(rr);
-		g.translate(330, -120);
-		g.fillPath(rr);
-
-		System.out.println("render time = "
-				+ (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private void resetGradient() {

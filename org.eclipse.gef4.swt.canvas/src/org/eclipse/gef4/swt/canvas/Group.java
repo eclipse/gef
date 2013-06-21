@@ -18,6 +18,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.swt.canvas.ev.EventHandlerManager;
+import org.eclipse.gef4.swt.canvas.ev.EventType;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatcher;
+import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
+import org.eclipse.gef4.swt.canvas.ev.SwtEventTargetSelector;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -25,36 +31,39 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 
 public class Group extends org.eclipse.swt.widgets.Canvas implements
 		PaintListener, INode, DisposeListener {
 
 	private List<IFigure> figures = new LinkedList<IFigure>();
-	private EventDispatcher eventDispatcher;
-	private List<IEventListener> eventListeners = new LinkedList<IEventListener>();
-	private PaintListener backgroundPaintListener;
+	private EventHandlerManager dispatcher = new EventHandlerManager();
+	private SwtEventTargetSelector swtEventDispatcher;
+
+	// private PaintListener backgroundPaintListener;
 
 	// private FocusTraverseManager focusTraverseManager;
 
 	public Group(Composite parent) {
 		super(parent, SWT.NONE);
 		addPaintListener(this);
-		setEventDispatcher(new EventDispatcher());
 		addDisposeListener(this);
-
-		// focus
-		// setEnabled(true);
-		// setVisible(true);
-	}
-
-	public void addBackgroundPaintListener(PaintListener l) {
-		backgroundPaintListener = l;
+		swtEventDispatcher = new SwtEventTargetSelector(this);
 	}
 
 	@Override
-	public boolean addEventListener(IEventListener eventListener) {
-		return eventListeners.add(eventListener);
+	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void addEventFilter(
+			EventType<T> type, IEventHandler<T> filter) {
+		dispatcher.addEventFilter(type, filter);
+	}
+
+	// public void addBackgroundPaintListener(PaintListener l) {
+	// backgroundPaintListener = l;
+	// }
+
+	@Override
+	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void addEventHandler(
+			EventType<T> type, IEventHandler<T> handler) {
+		dispatcher.addEventHandler(type, handler);
 	}
 
 	public void addFigures(IFigure... figures) {
@@ -64,27 +73,15 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		}
 	}
 
-	// @Override
-	// public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain
-	// edc) {
-	// edc.prepend(eventDispatcher);
-	// return edc;
-	// }
-
-	public boolean forceFocusFigure(IFigure focusFigure) {
-		if (!(focusFigure.getContainer() == this)) {
-			throw new IllegalArgumentException(
-					"The given IFigure is no child of this Group!");
-		}
-		if (forceFocus()) {
-			eventDispatcher.setFocusTarget(focusFigure);
-			return true;
-		}
-		return false;
+	@Override
+	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
+		// TODO: Prepend EDC to passed-in tail.
+		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this);
 	}
 
-	public EventDispatcher getEventDispatcher() {
-		return eventDispatcher;
+	@Override
+	public IEventDispatcher getEventDispatcher() {
+		return dispatcher;
 	}
 
 	public IFigure getFigureAt(Point position) {
@@ -102,19 +99,20 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return figures;
 	}
 
-	public void handleEvent(Event event) {
-		for (IEventListener listener : eventListeners) {
-			if (listener.handlesEvent(event)) {
-				listener.handleEvent(event);
-			}
+	@Override
+	public Group getParentNode() {
+		Composite parent = getParent();
+		if (parent instanceof Group) {
+			return (Group) parent;
 		}
+		return null;
 	}
 
 	@Override
 	public void paintControl(PaintEvent e) {
-		if (backgroundPaintListener != null) {
-			backgroundPaintListener.paintControl(e);
-		}
+		// if (backgroundPaintListener != null) {
+		// backgroundPaintListener.paintControl(e);
+		// }
 
 		GraphicsContext g = new GraphicsContext(e.gc);
 
@@ -127,32 +125,36 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			g.save();
 			g.setUpGuard();
 			figure.paint(g);
-			g.takeDownGuard();
+			try {
+				g.takeDownGuard();
+			} catch (IllegalStateException x) {
+				throw new IllegalStateException(
+						"Did you forget to call restore() in your drawing code?",
+						x);
+			}
 			g.restore();
 		}
 	}
 
 	@Override
-	public boolean removeEventListener(IEventListener eventListener) {
-		return eventListeners.remove(eventListener);
+	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void removeEventFilter(
+			EventType<T> type, IEventHandler<T> filter) {
+		dispatcher.removeEventFilter(type, filter);
 	}
 
-	public void setEventDispatcher(EventDispatcher eventDispatcher) {
-		if (this.eventDispatcher != null) {
-			this.eventDispatcher.removeListeners();
-		}
-		this.eventDispatcher = eventDispatcher;
-		eventDispatcher.setGroup(this);
-		eventDispatcher.addListeners();
+	@Override
+	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void removeEventHandler(
+			EventType<T> type, IEventHandler<T> handler) {
+		dispatcher.removeEventHandler(type, handler);
 	}
 
 	public boolean setFocusFigure(IFigure focusFigure) {
-		if (!(focusFigure.getContainer() == this)) {
+		if (focusFigure.getParentNode() != this) {
 			throw new IllegalArgumentException(
 					"The given IFigure is no child of this Group!");
 		}
-		if (setFocus()) {
-			eventDispatcher.setFocusTarget(focusFigure);
+		if (forceFocus()) {
+			swtEventDispatcher.setFocusTarget(focusFigure);
 			return true;
 		}
 		return false;
@@ -160,8 +162,8 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 
 	@Override
 	public void widgetDisposed(DisposeEvent e) {
-		if (eventDispatcher != null) {
-			eventDispatcher.removeListeners();
+		if (swtEventDispatcher != null) {
+			swtEventDispatcher.removeListeners();
 		}
 	}
 

@@ -10,30 +10,31 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas;
+package org.eclipse.gef4.swt.canvas.ev.types;
 
 import org.eclipse.gef4.swt.canvas.ev.Event;
 import org.eclipse.gef4.swt.canvas.ev.EventType;
-import org.eclipse.gef4.swt.canvas.ev.IEventDispatcher;
-import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
 import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 
-public interface INode extends IEventTarget {
+/**
+ * The ActionEvent class is the base class of all events emitted by the
+ * application and not by an input device.
+ * 
+ * TODO: List uses of ActionEvents. (transition events, user events)
+ * 
+ * @author mwienand
+ * 
+ */
+public class ActionEvent extends Event {
 
-	public <T extends Event> void addEventFilter(EventType<T> type,
-			IEventHandler<T> filter);
+	public static final EventType<ActionEvent> ANY = new EventType<ActionEvent>(
+			EventType.ROOT, "ActionEvent");
 
-	public <T extends Event> void addEventHandler(EventType<T> type,
-			IEventHandler<T> handler);
+	private static final long serialVersionUID = 1L;
 
-	IEventDispatcher getEventDispatcher();
-
-	INode getParentNode();
-
-	public <T extends Event> void removeEventFilter(EventType<T> type,
-			IEventHandler<T> filter);
-
-	public <T extends Event> void removeEventHandler(EventType<T> type,
-			IEventHandler<T> handler);
+	public ActionEvent(Object source, IEventTarget target,
+			EventType<? extends ActionEvent> type) {
+		super(source, target, type);
+	}
 
 }

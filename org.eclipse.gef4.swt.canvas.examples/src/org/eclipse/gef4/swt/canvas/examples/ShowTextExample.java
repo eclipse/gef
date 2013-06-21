@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.examples;
 
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Canvas;
 
 public class ShowTextExample implements IExample {
 
@@ -26,11 +27,35 @@ public class ShowTextExample implements IExample {
 		new Example(new ShowTextExample());
 	}
 
-	private Canvas c;
-
 	@Override
 	public void addUi(Group c) {
-		this.c = c;
+		c.addFigures(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+			@Override
+			public void paint(GraphicsContext g) {
+				g.clearRect(0, 0, getWidth(), getHeight());
+
+				g.setFont(new FontData("Times", 12, SWT.NORMAL));
+				g.setFill(new Color(g.getGcByReference().getDevice(), 200, 0, 0));
+				g.setStroke(new RgbaColor(20, 40, 250));
+
+				g.fillText(
+						"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
+						20, 20);
+				g.strokeText(
+						"incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
+						20, 40);
+				g.fillText(
+						"exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure",
+						20, 60);
+				g.strokeText(
+						"dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+						20, 80);
+				g.fillText(
+						"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt",
+						20, 100);
+				g.strokeText("mollit anim id est laborum.", 20, 120);
+			}
+		});
 	}
 
 	@Override
@@ -46,32 +71,6 @@ public class ShowTextExample implements IExample {
 	@Override
 	public int getWidth() {
 		return 640;
-	}
-
-	@Override
-	public void render(GraphicsContext g) {
-		g.clearRect(0, 0, c.getSize().x, c.getSize().y);
-		g.setFont(new FontData("Times", 12, SWT.NORMAL));
-
-		g.setFill(new Color(g.getGcByReference().getDevice(), 200, 0, 0));
-		g.setStroke(new RgbaColor(20, 40, 250));
-
-		g.fillText(
-				"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
-				20, 20);
-		g.strokeText(
-				"incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud",
-				20, 40);
-		g.fillText(
-				"exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure",
-				20, 60);
-		g.strokeText(
-				"dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-				20, 80);
-		g.fillText(
-				"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt",
-				20, 100);
-		g.strokeText("mollit anim id est laborum.", 20, 120);
 	}
 
 }

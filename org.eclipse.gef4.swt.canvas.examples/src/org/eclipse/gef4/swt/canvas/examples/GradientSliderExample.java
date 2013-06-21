@@ -15,9 +15,10 @@ package org.eclipse.gef4.swt.canvas.examples;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.gc.CycleMethod;
-import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.LinearGradient;
+import org.eclipse.gef4.swt.canvas.gc.PaintMode;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -92,6 +93,20 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		slider.setMaximum(100);
 		slider.setBounds(20, 20, 200, 20);
 		slider.addSelectionListener(this);
+
+		ShapeFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
+		fig.getPaintStateByReference().getTransformByReference()
+				.translate(20, 60);
+		fig.getPaintStateByReference().getFillByReference()
+				.setGradientByReference(gradient);
+		fig.getPaintStateByReference().getFillByReference()
+				.setMode(PaintMode.GRADIENT);
+
+		c.addFigures(fig);
+
+		// ShapeFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
+		// fig.translate(20, 60);
+		// fig.fill(gradient);
 	}
 
 	@Override
@@ -107,14 +122,6 @@ public class GradientSliderExample implements IExample, SelectionListener {
 	@Override
 	public int getWidth() {
 		return 300;
-	}
-
-	@Override
-	public void render(GraphicsContext g) {
-		g.clearRect(0, 0, getWidth(), getHeight());
-		g.setFill(gradient);
-		g.translate(20, 60);
-		g.fillPath(new Rectangle(0, 0, 200, 400).toPath());
 	}
 
 	@Override

@@ -12,12 +12,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.gef4.swt.canvas.ev.BasicEventDispatchChain;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
 
-public interface IEventListener {
+public class DefaultEventDispatchChainBuilder {
 
-	void handleEvent(Event event);
-
-	boolean handlesEvent(Event event);
+	public static IEventDispatchChain buildEventDispatchChain(INode target) {
+		BasicEventDispatchChain chain = new BasicEventDispatchChain();
+		chain.append(target.getEventDispatcher());
+		INode next = target.getParentNode();
+		while (next != null) {
+			chain.prepend(next.getEventDispatcher());
+			next = next.getParentNode();
+		}
+		return chain;
+	}
 
 }

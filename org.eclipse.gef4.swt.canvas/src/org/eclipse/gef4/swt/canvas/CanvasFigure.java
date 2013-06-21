@@ -96,38 +96,6 @@ public class CanvasFigure extends AbstractFigure {
 	}
 
 	@Override
-	public void doPaint(GraphicsContext g) {
-		g.drawImage(image, 0, 0);
-	}
-
-	// public void fixTransparency() {
-	// ImageData data = image.getImageData();
-	//
-	// int alphaMask = 0xffffffff;
-	// alphaMask &= ~data.palette.redMask;
-	// alphaMask &= ~data.palette.greenMask;
-	// alphaMask &= ~data.palette.blueMask;
-	//
-	// System.out.println("alpha mask = " + alphaMask);
-	// System.out.printf("alpha mask = %X\n", alphaMask);
-	//
-	// for (int y = 0; y < imgHeight; y++) {
-	// for (int x = 0; x < imgWidth; x++) {
-	// int alpha = data.getPixel(x, y) & alphaMask;
-	// data.setAlpha(x, y, alpha);
-	// }
-	// }
-	//
-	// g.cleanUp();
-	// gc.dispose();
-	// image.dispose();
-	//
-	// image = new Image(dev, data);
-	// gc = new GC(image);
-	// g = new GraphicsContext(gc);
-	// }
-
-	@Override
 	public IBounds getBounds() {
 		return new GeneralBounds(new Rectangle(0, 0, width, height),
 				getPaintStateByReference().getTransformByReference());
@@ -147,6 +115,11 @@ public class CanvasFigure extends AbstractFigure {
 
 	public double getWidth() {
 		return width;
+	}
+
+	@Override
+	public void paint(GraphicsContext g) {
+		g.drawImage(image, 0, 0);
 	}
 
 }

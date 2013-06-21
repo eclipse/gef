@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.examples;
 
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.gc.ArcType;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
+import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Canvas;
 
 public class ArcTypesExample implements IExample {
 
@@ -25,11 +27,38 @@ public class ArcTypesExample implements IExample {
 		new Example(new ArcTypesExample());
 	}
 
-	private Canvas c;
-
 	@Override
 	public void addUi(Group c) {
-		this.c = c;
+		ShapeFigure f = new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+			{
+				getPaintStateByReference().getFillByReference().setColor(
+						new RgbaColor(0xffffffff));
+				getPaintStateByReference().setFontDataByReference(
+						new FontData("Times", 12, SWT.BOLD));
+			}
+
+			@Override
+			public void paint(GraphicsContext g) {
+				super.paint(g); // background
+
+				g.fillText("stroke", 40, 0);
+				g.fillText("fill", 160, 0);
+
+				g.translate(0, 20);
+				g.fillText("ArcType.OPEN", 260, 40);
+				g.fillText("ArcType.CHORD", 260, 160);
+				g.fillText("ArcType.ROUND", 260, 280);
+
+				g.strokeArc(20, 20, 100, 100, 0, 270, ArcType.OPEN);
+				g.strokeArc(20, 140, 100, 100, 0, 270, ArcType.CHORD);
+				g.strokeArc(20, 260, 100, 100, 0, 270, ArcType.ROUND);
+
+				g.fillArc(140, 20, 100, 100, 0, 270, ArcType.OPEN);
+				g.fillArc(140, 140, 100, 100, 0, 270, ArcType.CHORD);
+				g.fillArc(140, 260, 100, 100, 0, 270, ArcType.ROUND);
+			}
+		};
+		c.addFigures(f);
 	}
 
 	@Override
@@ -45,33 +74,6 @@ public class ArcTypesExample implements IExample {
 	@Override
 	public int getWidth() {
 		return 640;
-	}
-
-	@Override
-	public void render(GraphicsContext g) {
-		long time = System.currentTimeMillis();
-
-		g.clearRect(0, 0, c.getSize().x, c.getSize().y);
-		g.setFont(new FontData("Times", 12, SWT.BOLD));
-
-		g.fillText("stroke", 40, 0);
-		g.fillText("fill", 160, 0);
-
-		g.translate(0, 20);
-		g.fillText("ArcType.OPEN", 260, 40);
-		g.fillText("ArcType.CHORD", 260, 160);
-		g.fillText("ArcType.ROUND", 260, 280);
-
-		g.strokeArc(20, 20, 100, 100, 0, 270, ArcType.OPEN);
-		g.strokeArc(20, 140, 100, 100, 0, 270, ArcType.CHORD);
-		g.strokeArc(20, 260, 100, 100, 0, 270, ArcType.ROUND);
-
-		g.fillArc(140, 20, 100, 100, 0, 270, ArcType.OPEN);
-		g.fillArc(140, 140, 100, 100, 0, 270, ArcType.CHORD);
-		g.fillArc(140, 260, 100, 100, 0, 270, ArcType.ROUND);
-
-		System.out.println("render time = "
-				+ (System.currentTimeMillis() - time) + "ms");
 	}
 
 }

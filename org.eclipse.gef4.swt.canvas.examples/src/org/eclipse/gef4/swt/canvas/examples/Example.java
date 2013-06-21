@@ -13,11 +13,6 @@
 package org.eclipse.gef4.swt.canvas.examples;
 
 import org.eclipse.gef4.swt.canvas.Group;
-import org.eclipse.gef4.swt.canvas.RootGroup;
-import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -25,7 +20,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Example implements PaintListener {
+public class Example {
 
 	private IExample ex;
 	private Display display;
@@ -43,7 +38,7 @@ public class Example implements PaintListener {
 		shell.setLayout(new GridLayout());
 
 		group = new Group(shell);
-		group.addBackgroundPaintListener(this);
+		// group.addBackgroundPaintListener(this);
 		group.setSize(w, h);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -68,12 +63,12 @@ public class Example implements PaintListener {
 		return group;
 	}
 
-	@Override
-	public void paintControl(PaintEvent e) {
-		GC gc = e.gc;
-		GraphicsContext gefGc = new GraphicsContext(gc);
-		ex.render(gefGc);
-		gefGc.cleanUp();
-	}
+	// @Override
+	// public void paintControl(PaintEvent e) {
+	// GC gc = e.gc;
+	// GraphicsContext gefGc = new GraphicsContext(gc);
+	// ex.render(gefGc);
+	// gefGc.cleanUp();
+	// }
 
 }

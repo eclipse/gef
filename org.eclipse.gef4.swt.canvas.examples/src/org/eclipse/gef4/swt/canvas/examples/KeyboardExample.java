@@ -15,11 +15,15 @@ package org.eclipse.gef4.swt.canvas.examples;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.ShapeFigure;
+import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
+import org.eclipse.gef4.swt.canvas.ev.types.KeyEvent;
 import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 
 public class KeyboardExample implements IExample {
 
@@ -39,19 +43,20 @@ public class KeyboardExample implements IExample {
 						new RgbaColor(128, 128, 255, 128));
 				getPaintStateByReference().getFontDataByReference().setHeight(
 						32);
-				addKeyListener(new KeyAdapter() {
-					@Override
-					public void keyPressed(KeyEvent e) {
-						text = Character.toString((char) e.keyCode);
-						update();
-					}
-				});
+				addEventHandler(KeyEvent.KEY_PRESSED,
+						new IEventHandler<KeyEvent>() {
+							@Override
+							public void handle(KeyEvent event) {
+								text = Character.toString(event.getChar());
+								update();
+							}
+						});
 			}
 
 			@Override
-			public void doPaint(GraphicsContext g) {
+			public void paint(GraphicsContext g) {
 				// paint background
-				super.doPaint(g);
+				super.paint(g);
 
 				// place text in middle
 				Point extent = g.getGcByReference().textExtent(text);
@@ -67,8 +72,22 @@ public class KeyboardExample implements IExample {
 				g.strokeText(text, x, y, maxWidth);
 			}
 		};
-
 		rootGroup.addFigures(keyboardRect);
+
+		Button btnFocus = new Button(rootGroup, SWT.PUSH);
+		btnFocus.setText("requestFocus");
+		btnFocus.setBounds(20, 200, 150, 50);
+		btnFocus.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println(keyboardRect.requestFocus());
+			}
+		});
 	}
 
 	@Override
@@ -84,12 +103,6 @@ public class KeyboardExample implements IExample {
 	@Override
 	public int getWidth() {
 		return 640;
-	}
-
-	@Override
-	public void render(GraphicsContext g) {
-		// everything is set up! (shell is visible now)
-		keyboardRect.requestFocus();
 	}
 
 }

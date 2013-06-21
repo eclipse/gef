@@ -24,11 +24,6 @@ public class ShapeFigure extends AbstractFigure {
 	}
 
 	@Override
-	public void doPaint(GraphicsContext g) {
-		g.fillPath(shape.toPath());
-	}
-
-	@Override
 	public IBounds getBounds() {
 		return new GeneralBounds(shape, getPaintStateByReference()
 				.getTransformByReference());
@@ -36,6 +31,13 @@ public class ShapeFigure extends AbstractFigure {
 
 	public IShape getShape() {
 		return shape;
+	}
+
+	@Override
+	public void paint(GraphicsContext g) {
+		g.pushState(getPaintStateByReference());
+		g.fillPath(shape.toPath());
+		g.restore();
 	}
 
 }

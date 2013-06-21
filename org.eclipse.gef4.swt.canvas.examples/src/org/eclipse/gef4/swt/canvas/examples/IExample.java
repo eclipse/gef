@@ -13,7 +13,6 @@
 package org.eclipse.gef4.swt.canvas.examples;
 
 import org.eclipse.gef4.swt.canvas.Group;
-import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 
 public interface IExample {
 
@@ -44,13 +43,5 @@ public interface IExample {
 	 * @return
 	 */
 	int getWidth();
-
-	/**
-	 * Called once per paint request. Will not be called before GUI
-	 * initialization is finished.
-	 * 
-	 * @param g
-	 */
-	void render(GraphicsContext g);
 
 }

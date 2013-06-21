@@ -10,23 +10,20 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.canvas;
+package org.eclipse.gef4.swt.canvas.ev;
 
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.swt.canvas.Group;
+import org.eclipse.gef4.swt.canvas.IFigure;
+import org.eclipse.gef4.swt.canvas.ev.types.KeyEvent;
+import org.eclipse.gef4.swt.canvas.ev.types.MouseEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public class EventDispatcher implements Listener {
-
-	/*
-	 * TODO: use an event table based on the event type so that we do not walk
-	 * over all the listeners for all the events but rather walk over the
-	 * listeners for the current event type only.
-	 */
+public class SwtEventTargetSelector implements Listener {
 
 	/*
 	 * NOTE: The SWT constants for the event types are sorted by their name in
@@ -71,7 +68,9 @@ public class EventDispatcher implements Listener {
 	private IFigure mouseTarget;
 	private IFigure focusTarget;
 
-	public EventDispatcher() {
+	public SwtEventTargetSelector(Group group) {
+		this.group = group;
+		addListeners();
 	}
 
 	public void addListeners() {
@@ -89,7 +88,9 @@ public class EventDispatcher implements Listener {
 	}
 
 	@Override
-	public void handleEvent(Event event) {
+	public void handleEvent(org.eclipse.swt.widgets.Event event) {
+		// System.out.println("swt event " + event);
+
 		List<IFigure> figures = group.getFigures();
 		if (figures.size() < 1) {
 			return;
@@ -100,21 +101,21 @@ public class EventDispatcher implements Listener {
 			// it (no other control is focused)
 			if (focusTarget != null) {
 				// a figure is focus target
-				focusTarget.handleEvent(event);
+				Event.fireEvent(focusTarget, wrap(event, focusTarget));
 				return;
 			}
 
 			// cursor figure is the target
 			IFigure cursorFigure = getFigureUnderCursor();
 			if (cursorFigure != null) {
-				cursorFigure.handleEvent(event);
+				Event.fireEvent(cursorFigure, wrap(event, cursorFigure));
 				return;
 			}
 		} else if (isMouseEvent(event)) {
 			// SWT would not send us the event, if we were not to handle it (no
 			// control grabbed the mouse)
 			if (mouseTarget != null) {
-				mouseTarget.handleEvent(event);
+				Event.fireEvent(mouseTarget, wrap(event, mouseTarget));
 				if (event.type == SWT.MouseUp) {
 					mouseTarget = null;
 				}
@@ -124,30 +125,30 @@ public class EventDispatcher implements Listener {
 				if (cursorTarget != null) {
 					if (event.type == SWT.MouseDown) {
 						mouseTarget = cursorTarget;
-						mouseTarget.handleEvent(event);
+						Event.fireEvent(mouseTarget, wrap(event, mouseTarget));
 						return;
 					}
-					cursorTarget.handleEvent(event);
+					Event.fireEvent(cursorTarget, wrap(event, cursorTarget));
 				}
 			}
 		} else {
 			// System.out.println("fallback: getFigureUnderCursor()");
 			IFigure cursorTarget = getFigureUnderCursor();
 			if (cursorTarget != null) {
-				cursorTarget.handleEvent(event);
+				Event.fireEvent(cursorTarget, wrap(event, cursorTarget));
 				return;
 			}
 		}
 
-		// no one else handles the event, so the group can handle it:
-		group.handleEvent(event);
+		// our group is the target
+		Event.fireEvent(group, wrap(event, group));
 	}
 
-	private boolean isKeyboardEvent(Event event) {
+	private boolean isKeyboardEvent(org.eclipse.swt.widgets.Event event) {
 		return anyOf(event.type, KEYBOARD_EVENT_TYPES);
 	}
 
-	private boolean isMouseEvent(Event event) {
+	private boolean isMouseEvent(org.eclipse.swt.widgets.Event event) {
 		return anyOf(event.type, MOUSE_EVENT_TYPES);
 	}
 
@@ -157,7 +158,7 @@ public class EventDispatcher implements Listener {
 		}
 	}
 
-	void setFocusTarget(IFigure focusTarget) {
+	public void setFocusTarget(IFigure focusTarget) {
 		this.focusTarget = focusTarget;
 	}
 
@@ -167,6 +168,68 @@ public class EventDispatcher implements Listener {
 		} else {
 			throw new IllegalArgumentException(
 					"We need a defined gef4.swt.canvas.Group here!");
+		}
+	}
+
+	private Event wrap(org.eclipse.swt.widgets.Event e, IEventTarget target) {
+		switch (e.type) {
+		case SWT.Activate:
+		case SWT.Arm:
+		case SWT.Close:
+		case SWT.Collapse:
+		case SWT.Deactivate:
+		case SWT.Deiconify:
+		case SWT.DefaultSelection:
+		case SWT.Dispose:
+		case SWT.DragDetect:
+		case SWT.Expand:
+		case SWT.FocusIn:
+		case SWT.FocusOut:
+		case SWT.Gesture:
+		case SWT.Help:
+		case SWT.Hide:
+		case SWT.Iconify:
+		case SWT.Modify:
+		case SWT.MenuDetect:
+		case SWT.MouseDoubleClick:
+		case SWT.MouseHover:
+		case SWT.Move:
+		case SWT.Paint:
+		case SWT.Resize:
+		case SWT.Selection:
+		case SWT.Show:
+		case SWT.Touch:
+		case SWT.Traverse:
+		case SWT.Verify:
+			// TODO: Those are all ignored, implement'em!
+			return new Event("", target, EventType.ROOT); // XXX
+		case SWT.KeyDown:
+			return new KeyEvent(e.widget, target, KeyEvent.KEY_PRESSED,
+					e.keyCode, e.character);
+		case SWT.KeyUp:
+			return new KeyEvent(e.widget, target, KeyEvent.KEY_RELEASED,
+					e.keyCode, e.character);
+		case SWT.MouseDown:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_PRESSED,
+					e.button, e.count, e.x, e.y);
+		case SWT.MouseEnter:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_ENTERED,
+					e.button, e.count, e.x, e.y);
+		case SWT.MouseExit:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_EXITED,
+					e.button, e.count, e.x, e.y);
+		case SWT.MouseMove:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_MOVED,
+					e.button, e.count, e.x, e.y);
+		case SWT.MouseWheel:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_SCROLLED,
+					e.button, e.count, e.x, e.y);
+		case SWT.MouseUp:
+			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
+					e.button, e.count, e.x, e.y);
+		default:
+			throw new IllegalArgumentException(
+					"This SWT event type is not supported: " + e);
 		}
 	}
 

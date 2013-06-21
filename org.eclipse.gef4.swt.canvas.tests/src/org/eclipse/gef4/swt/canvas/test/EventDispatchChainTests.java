@@ -38,7 +38,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e == null;
 	}
 
@@ -57,7 +57,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -101,7 +101,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -145,7 +145,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -189,7 +189,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e == null;
 	}
 
@@ -232,7 +232,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ANY));
+		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
 		assert e == null;
 	}
 

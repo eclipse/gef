@@ -875,6 +875,11 @@ public class GraphicsContext {
 
 	public void save() {
 		states.push(states.peek().getCopy());
+
+		// take down guard on copy
+		if (states.peek().isGuarded()) {
+			states.peek().setGuarded(false);
+		}
 	}
 
 	public void scale(double sx, double sy) {

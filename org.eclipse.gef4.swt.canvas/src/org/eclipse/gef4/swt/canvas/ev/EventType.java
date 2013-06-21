@@ -14,7 +14,7 @@ package org.eclipse.gef4.swt.canvas.ev;
 
 public class EventType<T extends Event> {
 
-	public static final EventType<Event> ANY = new EventType<Event>("ANY");
+	public static final EventType<Event> ROOT = new EventType<Event>("ROOT");
 
 	private EventType<? super T> superType;
 	private String name;
