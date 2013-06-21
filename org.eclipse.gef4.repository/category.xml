@@ -12,18 +12,6 @@
    <feature url="features/org.eclipse.gef4.geometry.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.tests" version="0.1.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.graphics_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics" version="0.1.0.qualifier">
-      <category name="GEF4 Graphics"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.graphics.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.doc" version="0.1.0.qualifier">
-      <category name="GEF4 Graphics"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.graphics.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.sdk" version="0.1.0.qualifier">
-      <category name="GEF4 Graphics"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.graphics.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.graphics.tests" version="0.1.0.qualifier">
-      <category name="GEF4 Graphics"/>
-   </feature>
    <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
