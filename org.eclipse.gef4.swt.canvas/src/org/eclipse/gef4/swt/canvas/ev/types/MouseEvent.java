@@ -12,10 +12,39 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas.ev.types;
 
+import org.eclipse.gef4.swt.canvas.INode;
 import org.eclipse.gef4.swt.canvas.ev.Event;
 import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 
+/**
+ * Represents a mouse event. There are several different mouse event types:
+ * 
+ * <ul>
+ * <li>MOUSE_PRESSED: fired when a mouse button is pressed.</li>
+ * <li>MOUSE_RELEASED: fired when a mouse button is released.</li>
+ * <li>MOUSE_SCROLLED: fired when the mouse wheel is scrolled.</li>
+ * <li>MOUSE_MOVED: fired when the mouse is moved.</li>
+ * <li>MOUSE_ENTERED_TARGET: fired when the mouse enters an {@link INode}</li>
+ * <li>MOUSE_EXITED_TARGET: fired when the mouse exits an {@link INode}</li>
+ * <li>MOUSE_ENTERED: only send to the entered {@link INode}</li>
+ * <li>MOUSE_EXITED: only send to the exited {@link INode}</li>
+ * </ul>
+ * 
+ * Every mouse event is associated with the following attributes:
+ * 
+ * <ul>
+ * <li>{@link #getButton()}: the id of the pressed/released button<br />
+ * You can use the SWT#BUTTONx constants to check which one.</li>
+ * <li>{@link #getClickCount()}: the scroll direction/speed if button = 0<br />
+ * Normally, a scroll event will set this field to -3 or 3.</li>
+ * <li>{@link #getX()}: the x coordinate of the mouse cursor</li>
+ * <li>{@link #getY()}: the y coordinate of the mouse cursor</li>
+ * </ul>
+ * 
+ * @author mwienand
+ * 
+ */
 public class MouseEvent extends Event {
 
 	public static final EventType<MouseEvent> ANY = new EventType<MouseEvent>(
@@ -77,6 +106,12 @@ public class MouseEvent extends Event {
 
 	public double getY() {
 		return y;
+	}
+
+	@Override
+	public String toString() {
+		return getEventType().getName() + "(button=" + button + ", count="
+				+ count + ", x=" + x + ", y=" + y + ")";
 	}
 
 }

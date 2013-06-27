@@ -20,6 +20,7 @@ import org.eclipse.gef4.swt.canvas.IFigure;
 import org.eclipse.gef4.swt.canvas.ev.types.KeyEvent;
 import org.eclipse.gef4.swt.canvas.ev.types.MouseEvent;
 import org.eclipse.gef4.swt.canvas.ev.types.SwtEvent;
+import org.eclipse.gef4.swt.canvas.ev.types.TraverseEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
@@ -87,6 +88,14 @@ public class SwtEventTargetSelector implements Listener {
 		cursorLocation = group.toControl(cursorLocation);
 		Point cursor = new Point(cursorLocation.x, cursorLocation.y);
 		return group.getFigureAt(cursor);
+	}
+
+	public IFigure getFocusTarget() {
+		return focusTarget;
+	}
+
+	public IFigure getMouseTarget() {
+		return mouseTarget;
 	}
 
 	@Override
@@ -224,7 +233,6 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Deiconify:
 		case SWT.DefaultSelection:
 		case SWT.Dispose:
-
 		case SWT.DragDetect:
 		case SWT.Expand:
 		case SWT.FocusIn:
@@ -243,7 +251,6 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Selection:
 		case SWT.Show:
 		case SWT.Touch:
-		case SWT.Traverse:
 		case SWT.Verify:
 			// TODO: Those are all ignored, implement'em!
 			return new SwtEvent(e, target, SwtEvent.ANY);
@@ -272,6 +279,9 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.MouseUp:
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
 					e.button, e.count, e.x, e.y);
+		case SWT.Traverse:
+			return new TraverseEvent(group, target, TraverseEvent.ANY,
+					e.keyCode, e.stateMask);
 		default:
 			throw new IllegalArgumentException(
 					"This SWT event type is not supported: " + e);

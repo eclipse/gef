@@ -36,4 +36,9 @@ public class SwtEvent extends Event {
 		super(swtEvent, target, type);
 	}
 
+	@Override
+	public String toString() {
+		return "SwtEvent(" + getSource() + ")";
+	}
+
 }

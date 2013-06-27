@@ -19,11 +19,11 @@ public interface IFigure extends INode {
 
 	IBounds getBounds();
 
+	Group getContainer();
+
 	GraphicsContextState getPaintStateByReference();
 
 	void paint(GraphicsContext g);
-
-	boolean requestFocus();
 
 	/**
 	 * change container (do not call)

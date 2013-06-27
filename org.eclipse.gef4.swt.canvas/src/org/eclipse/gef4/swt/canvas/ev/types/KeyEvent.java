@@ -46,4 +46,9 @@ public class KeyEvent extends InputEvent {
 		return code;
 	}
 
+	@Override
+	public String toString() {
+		return getEventType().getName() + "(code=" + code + ")";
+	}
+
 }

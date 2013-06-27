@@ -63,7 +63,7 @@ public interface INode extends IEventTarget {
 	 * @return the {@link IEventDispatcher} used to dispatch events for this
 	 *         {@link INode}
 	 */
-	IEventDispatcher getEventDispatcher();
+	public IEventDispatcher getEventDispatcher();
 
 	/**
 	 * Returns the parent {@link INode} or <code>null</code> if this is the root
@@ -72,7 +72,9 @@ public interface INode extends IEventTarget {
 	 * @return the parent {@link INode} or <code>null</code> if this is the root
 	 *         of the hierarchy
 	 */
-	INode getParentNode();
+	public INode getParentNode();
+
+	public boolean hasFocus();
 
 	/**
 	 * Removes the given {@link IEventHandler event filter} from the list of
@@ -95,5 +97,7 @@ public interface INode extends IEventTarget {
 	 */
 	public <T extends Event> void removeEventHandler(EventType<T> type,
 			IEventHandler<T> handler);
+
+	public boolean requestFocus();
 
 }

@@ -45,6 +45,11 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
+	public Group getContainer() {
+		return container;
+	}
+
+	@Override
 	public IEventDispatcher getEventDispatcher() {
 		return dispatcher;
 	}
@@ -55,8 +60,13 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public INode getParentNode() {
+	public Group getParentNode() {
 		return container;
+	}
+
+	@Override
+	public boolean hasFocus() {
+		return getContainer().getFocusFigure() == this;
 	}
 
 	@Override

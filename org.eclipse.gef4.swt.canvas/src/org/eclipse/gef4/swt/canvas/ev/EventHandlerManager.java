@@ -35,7 +35,10 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 	}
 
 	private Event dispatchBubblingEvent(EventType type, Event event) {
-		handlers(type).dispatchBubblingEvent(event);
+		while (type != null) {
+			handlers(type).dispatchBubblingEvent(event);
+			type = type.getSuperType();
+		}
 		return event;
 	}
 
@@ -45,7 +48,10 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 	}
 
 	private Event dispatchCapturingEvent(EventType type, Event event) {
-		handlers(type).dispatchCapturingEvent(event);
+		while (type != null) {
+			handlers(type).dispatchCapturingEvent(event);
+			type = type.getSuperType();
+		}
 		return event;
 	}
 

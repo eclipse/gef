@@ -56,10 +56,6 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		dispatcher.addEventFilter(type, filter);
 	}
 
-	// public void addBackgroundPaintListener(PaintListener l) {
-	// backgroundPaintListener = l;
-	// }
-
 	@Override
 	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void addEventHandler(
 			EventType<T> type, IEventHandler<T> handler) {
@@ -73,9 +69,14 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		}
 	}
 
+	// public void addBackgroundPaintListener(PaintListener l) {
+	// backgroundPaintListener = l;
+	// }
+
 	@Override
 	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
-		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this, tail);
+		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this,
+				tail);
 	}
 
 	@Override
@@ -98,6 +99,30 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return figures;
 	}
 
+	public IFigure getFocusFigure() {
+		return swtEventDispatcher.getFocusTarget();
+	}
+
+	public IFigure getNextFocusFigure() {
+		IFigure focus = swtEventDispatcher.getFocusTarget();
+		if (focus == null) {
+			return null;
+		}
+
+		boolean thisIsIt = false;
+		for (IFigure f : figures) {
+			if (thisIsIt) {
+				return f;
+			}
+			if (f == focus) {
+				thisIsIt = true;
+			}
+		}
+
+		// TODO: assert thisIsIt;
+		return thisIsIt ? figures.get(0) : null;
+	}
+
 	@Override
 	public Group getParentNode() {
 		Composite parent = getParent();
@@ -105,6 +130,27 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			return (Group) parent;
 		}
 		return null;
+	}
+
+	// public IFigure getMouseFigure() {
+	// return swtEventDispatcher.getMouseTarget();
+	// }
+
+	public IFigure getPreviousFocusFigure() {
+		IFigure focus = swtEventDispatcher.getFocusTarget();
+		IFigure last = figures.get(figures.size() - 1);
+		for (IFigure f : figures) {
+			if (f == focus) {
+				return last;
+			}
+			last = f;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean hasFocus() {
+		return isFocusControl() && swtEventDispatcher.getFocusTarget() == null;
 	}
 
 	@Override
@@ -145,6 +191,11 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 	public <T extends org.eclipse.gef4.swt.canvas.ev.Event> void removeEventHandler(
 			EventType<T> type, IEventHandler<T> handler) {
 		dispatcher.removeEventHandler(type, handler);
+	}
+
+	@Override
+	public boolean requestFocus() {
+		return forceFocus();
 	}
 
 	public boolean setFocusFigure(IFigure focusFigure) {

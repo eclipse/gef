@@ -19,8 +19,12 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.IFigure;
 import org.eclipse.gef4.swt.canvas.ShapeFigure;
+import org.eclipse.gef4.swt.canvas.ev.Event;
+import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
 import org.eclipse.gef4.swt.canvas.ev.types.MouseEvent;
+import org.eclipse.gef4.swt.canvas.ev.types.TraverseEvent;
+import org.eclipse.gef4.swt.canvas.gc.GraphicsContext;
 import org.eclipse.gef4.swt.canvas.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +40,19 @@ public class MouseExample implements IExample {
 
 		public FigureDragger(final IFigure f) {
 			figure = f;
+			f.addEventFilter(EventType.ROOT, new IEventHandler<Event>() {
+				@Override
+				public void handle(Event event) {
+					System.out.println(event);
+				}
+			});
+			f.addEventFilter(TraverseEvent.ANY,
+					new IEventHandler<TraverseEvent>() {
+						@Override
+						public void handle(TraverseEvent event) {
+							f.update();
+						}
+					});
 			f.addEventHandler(MouseEvent.MOUSE_ENTERED,
 					new IEventHandler<MouseEvent>() {
 						@Override
@@ -51,7 +68,14 @@ public class MouseExample implements IExample {
 						}
 					});
 			f.addEventHandler(MouseEvent.MOUSE_PRESSED,
-					createMousePressedHandler());
+					new IEventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent e) {
+							f.requestFocus();
+							dragging = true;
+							start = new Point(e.getX(), e.getY());
+						}
+					});
 			f.addEventHandler(MouseEvent.MOUSE_RELEASED,
 					new IEventHandler<MouseEvent>() {
 						@Override
@@ -76,9 +100,6 @@ public class MouseExample implements IExample {
 					});
 		}
 
-		/**
-		 * @return
-		 */
 		private IEventHandler<MouseEvent> createMousePressedHandler() {
 			return new IEventHandler<MouseEvent>() {
 				@Override
@@ -95,7 +116,21 @@ public class MouseExample implements IExample {
 	}
 
 	private static ShapeFigure shape(IShape shape, RgbaColor color) {
-		ShapeFigure figure = new ShapeFigure(shape);
+		ShapeFigure figure = new ShapeFigure(shape) {
+			@Override
+			public void paint(GraphicsContext g) {
+				g.pushState(getPaintStateByReference());
+				IShape shape = getBounds().getShape();
+				g.fillPath(shape.toPath());
+				if (hasFocus()) {
+					g.getGcByReference().setLineDash(new int[] { 20, 20 });
+					g.setLineWidth(5);
+					g.setStroke(new RgbaColor());
+					g.strokePath(getShape().toPath());
+				}
+				g.restore();
+			}
+		};
 		figure.getPaintStateByReference().getFillByReference().setColor(color);
 		return figure;
 	}
@@ -134,6 +169,11 @@ public class MouseExample implements IExample {
 				resetFigures();
 			}
 		});
+
+		Button snd = new Button(root, SWT.PUSH);
+		snd.setText("snd");
+		snd.setBounds(40 + size.x, root.getSize().y - size.y - 20, size.x,
+				size.y);
 
 		resetFigures();
 	}

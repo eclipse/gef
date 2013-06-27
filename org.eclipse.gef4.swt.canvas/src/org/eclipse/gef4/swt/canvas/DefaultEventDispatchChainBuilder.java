@@ -45,6 +45,7 @@ public class DefaultEventDispatchChainBuilder {
 			final INode target, final IEventDispatchChain tail) {
 		tail.prepend(target.getEventDispatcher());
 		tail.prepend(new MouseTrackDispatcher(target));
+		tail.prepend(new FocusTraversalDispatcher(target));
 		INode next = target.getParentNode();
 		if (next != null) {
 			return next.buildEventDispatchChain(tail);
