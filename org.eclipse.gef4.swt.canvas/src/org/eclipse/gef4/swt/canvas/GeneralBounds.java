@@ -15,6 +15,12 @@ package org.eclipse.gef4.swt.canvas;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 
+/**
+ * The GeneralBounds is the default {@link IBounds} implementation.
+ * 
+ * @author mwienand
+ * 
+ */
 public class GeneralBounds extends
 		AbstractBounds<GeneralBounds, IShape, IShape> {
 

@@ -19,6 +19,7 @@ import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.IFigure;
 import org.eclipse.gef4.swt.canvas.ev.types.KeyEvent;
 import org.eclipse.gef4.swt.canvas.ev.types.MouseEvent;
+import org.eclipse.gef4.swt.canvas.ev.types.SwtEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
@@ -67,6 +68,7 @@ public class SwtEventTargetSelector implements Listener {
 	private Group group;
 	private IFigure mouseTarget;
 	private IFigure focusTarget;
+	private IFigure mouseEnteredFigure;
 
 	public SwtEventTargetSelector(Group group) {
 		this.group = group;
@@ -89,10 +91,10 @@ public class SwtEventTargetSelector implements Listener {
 
 	@Override
 	public void handleEvent(org.eclipse.swt.widgets.Event event) {
-		// System.out.println("swt event " + event);
-
 		List<IFigure> figures = group.getFigures();
 		if (figures.size() < 1) {
+			// no figures => group is the target
+			Event.fireEvent(group, wrap(event, group));
 			return;
 		}
 
@@ -122,6 +124,48 @@ public class SwtEventTargetSelector implements Listener {
 				return;
 			} else {
 				IFigure cursorTarget = getFigureUnderCursor();
+
+				// insert mouse entered/exited events
+				if (event.type == SWT.MouseMove || event.type == SWT.MouseEnter
+						|| event.type == SWT.MouseExit) {
+
+					// special case SWT MouseExit
+					if (mouseEnteredFigure != null
+							&& event.type == SWT.MouseExit) {
+						Event.fireEvent(mouseEnteredFigure, new MouseEvent(
+								event.widget, mouseEnteredFigure,
+								MouseEvent.MOUSE_EXITED_TARGET, event.button,
+								event.count, event.x, event.y));
+						mouseEnteredFigure = null;
+						return;
+					}
+
+					// fire mouse exit
+					if (mouseEnteredFigure != null
+							&& mouseEnteredFigure != cursorTarget) {
+						Event.fireEvent(mouseEnteredFigure, new MouseEvent(
+								event.widget, mouseEnteredFigure,
+								MouseEvent.MOUSE_EXITED_TARGET, event.button,
+								event.count, event.x, event.y));
+						mouseEnteredFigure = null;
+					}
+
+					// fire mouse enter
+					if (mouseEnteredFigure == null && cursorTarget != null) {
+						Event.fireEvent(cursorTarget, new MouseEvent(
+								event.widget, cursorTarget,
+								MouseEvent.MOUSE_ENTERED_TARGET, event.button,
+								event.count, event.x, event.y));
+						mouseEnteredFigure = cursorTarget;
+					}
+
+					// SWT MouseEnter/MouseExit need no further processing
+					if (event.type == SWT.MouseEnter
+							|| event.type == SWT.MouseExit) {
+						return;
+					}
+				}
+
 				if (cursorTarget != null) {
 					if (event.type == SWT.MouseDown) {
 						mouseTarget = cursorTarget;
@@ -132,7 +176,6 @@ public class SwtEventTargetSelector implements Listener {
 				}
 			}
 		} else {
-			// System.out.println("fallback: getFigureUnderCursor()");
 			IFigure cursorTarget = getFigureUnderCursor();
 			if (cursorTarget != null) {
 				Event.fireEvent(cursorTarget, wrap(event, cursorTarget));
@@ -181,6 +224,7 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Deiconify:
 		case SWT.DefaultSelection:
 		case SWT.Dispose:
+
 		case SWT.DragDetect:
 		case SWT.Expand:
 		case SWT.FocusIn:
@@ -202,7 +246,7 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Traverse:
 		case SWT.Verify:
 			// TODO: Those are all ignored, implement'em!
-			return new Event("", target, EventType.ROOT); // XXX
+			return new SwtEvent(e, target, SwtEvent.ANY);
 		case SWT.KeyDown:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_PRESSED,
 					e.keyCode, e.character);
@@ -213,11 +257,12 @@ public class SwtEventTargetSelector implements Listener {
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_PRESSED,
 					e.button, e.count, e.x, e.y);
 		case SWT.MouseEnter:
-			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_ENTERED,
-					e.button, e.count, e.x, e.y);
+			return new MouseEvent(e.widget, target,
+					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, e.x,
+					e.y);
 		case SWT.MouseExit:
-			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_EXITED,
-					e.button, e.count, e.x, e.y);
+			return new MouseEvent(e.widget, target,
+					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, e.x, e.y);
 		case SWT.MouseMove:
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_MOVED,
 					e.button, e.count, e.x, e.y);

@@ -28,12 +28,27 @@ public class EventType<T extends Event> {
 		this.name = name;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return obj == this;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public EventType<? super T> getSuperType() {
 		return superType;
+	}
+
+	public boolean isDescendantOf(EventType<?> type) {
+		while (type != null) {
+			if (type.getName().equals(getName())) {
+				return true;
+			}
+			type = type.getSuperType();
+		}
+		return false;
 	}
 
 	@Override

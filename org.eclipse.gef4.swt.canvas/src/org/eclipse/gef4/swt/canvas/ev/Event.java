@@ -14,6 +14,15 @@ package org.eclipse.gef4.swt.canvas.ev;
 
 import java.util.EventObject;
 
+/**
+ * This is the base class of the event hierarchy. An {@link Event} object
+ * consists of an event source, the {@link IEventTarget event target}, and its
+ * {@link EventType event type}. An Event can be consumed to stop further
+ * processing of it.
+ * 
+ * @author mwienand
+ * 
+ */
 public class Event extends EventObject {
 
 	private static final long serialVersionUID = 1L;
@@ -65,6 +74,10 @@ public class Event extends EventObject {
 
 	public boolean isConsumed() {
 		return consumed;
+	}
+
+	public void setEventType(EventType<? extends Event> newType) {
+		type = newType;
 	}
 
 }

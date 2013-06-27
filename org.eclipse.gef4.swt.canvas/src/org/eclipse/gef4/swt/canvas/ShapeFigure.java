@@ -40,4 +40,9 @@ public class ShapeFigure extends AbstractFigure {
 		g.restore();
 	}
 
+	@Override
+	public String toString() {
+		return "ShapeFigure(" + shape + ")";
+	}
+
 }

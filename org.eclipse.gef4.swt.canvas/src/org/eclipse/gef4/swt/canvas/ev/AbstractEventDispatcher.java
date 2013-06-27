@@ -25,8 +25,26 @@ public abstract class AbstractEventDispatcher implements IEventDispatcher {
 	// return event;
 	// }
 
+	/**
+	 * This method is called during the "Bubbling" phase of event processing.
+	 * Normally, all registered event handlers are called during this phase. You
+	 * can call <code>event.consume()</code> on the passed-in {@link Event} or
+	 * return <code>null</code> to stop further event processing.
+	 * 
+	 * @param event
+	 * @return the passed-in {@link Event} or <code>null</code>.
+	 */
 	public abstract Event dispatchBubblingEvent(Event event);
 
+	/**
+	 * This method is called during the "Capturing" phase of event processing.
+	 * Normally, all registered event filters are called during this phase. You
+	 * can call <code>event.consume()<code> on the passed-in {@link Event} or
+	 * return <code>null</code> to stop further event processing.
+	 * 
+	 * @param event
+	 * @return the passed-in {@link Event} or <code>null</code>
+	 */
 	public abstract Event dispatchCapturingEvent(Event event);
 
 	@Override

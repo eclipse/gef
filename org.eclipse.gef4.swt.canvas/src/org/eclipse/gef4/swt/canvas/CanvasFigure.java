@@ -122,4 +122,9 @@ public class CanvasFigure extends AbstractFigure {
 		g.drawImage(image, 0, 0);
 	}
 
+	@Override
+	public String toString() {
+		return "CanvasFigure(" + width + "x" + height + ")";
+	}
+
 }

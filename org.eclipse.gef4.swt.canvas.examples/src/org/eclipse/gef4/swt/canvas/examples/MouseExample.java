@@ -34,8 +34,22 @@ public class MouseExample implements IExample {
 		private boolean dragging;
 		private Point start;
 
-		public FigureDragger(IFigure f) {
+		public FigureDragger(final IFigure f) {
 			figure = f;
+			f.addEventHandler(MouseEvent.MOUSE_ENTERED,
+					new IEventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							System.out.println("entered " + f);
+						}
+					});
+			f.addEventHandler(MouseEvent.MOUSE_EXITED,
+					new IEventHandler<MouseEvent>() {
+						@Override
+						public void handle(MouseEvent event) {
+							System.out.println("exited " + f);
+						}
+					});
 			f.addEventHandler(MouseEvent.MOUSE_PRESSED,
 					createMousePressedHandler());
 			f.addEventHandler(MouseEvent.MOUSE_RELEASED,

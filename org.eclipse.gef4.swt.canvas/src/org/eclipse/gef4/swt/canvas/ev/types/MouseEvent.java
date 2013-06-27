@@ -27,24 +27,25 @@ public class MouseEvent extends Event {
 	public static final EventType<MouseEvent> MOUSE_RELEASED = new EventType<MouseEvent>(
 			ANY, "MouseReleaseEvent");
 
-	public static final EventType<MouseEvent> MOUSE_MOVED = new EventType<MouseEvent>(
-			ANY, "MouseMoveEvent");
-
-	public static final EventType<MouseEvent> MOUSE_ENTERED = new EventType<MouseEvent>(
-			ANY, "MouseEnterEvent");
-
-	public static final EventType<MouseEvent> MOUSE_EXITED = new EventType<MouseEvent>(
-			ANY, "MouseExitEvent");
-
 	public static final EventType<MouseEvent> MOUSE_SCROLLED = new EventType<MouseEvent>(
 			ANY, "MouseScrollEvent");
 
-	private static final long serialVersionUID = 1L;
+	public static final EventType<MouseEvent> MOUSE_MOVED = new EventType<MouseEvent>(
+			ANY, "MouseMoveEvent");
 
-	/*
-	 * TODO: Evaluate if x and y should be integer or floating point numbers.
-	 * SWT works with integer coordinates.
-	 */
+	public static final EventType<MouseEvent> MOUSE_ENTERED_TARGET = new EventType<MouseEvent>(
+			ANY, "MouseEnterTargetEvent");
+
+	public static final EventType<MouseEvent> MOUSE_EXITED_TARGET = new EventType<MouseEvent>(
+			ANY, "MouseExitTargetEvent");
+
+	public static final EventType<MouseEvent> MOUSE_ENTERED = new EventType<MouseEvent>(
+			MOUSE_ENTERED_TARGET, "MouseEnterEvent");
+
+	public static final EventType<MouseEvent> MOUSE_EXITED = new EventType<MouseEvent>(
+			MOUSE_EXITED_TARGET, "MouseExitEvent");
+
+	private static final long serialVersionUID = 1L;
 
 	private int button;
 	private int count;

@@ -12,13 +12,39 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.canvas;
 
-import org.eclipse.gef4.swt.canvas.ev.BasicEventDispatchChain;
 import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
+import org.eclipse.gef4.swt.canvas.ev.IEventDispatcher;
+import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 
+/**
+ * Provides the {@link #buildEventDispatchChain(INode, IEventDispatchChain)
+ * default implementation} of the
+ * {@link IEventTarget#buildEventDispatchChain(IEventDispatchChain)} method used
+ * in the {@link Group} and {@link AbstractFigure} classes.
+ * 
+ * @author mwienand
+ * 
+ */
 public class DefaultEventDispatchChainBuilder {
 
-	public static IEventDispatchChain buildEventDispatchChain(INode target, IEventDispatchChain tail) {
+	/**
+	 * Recursively builds an {@link IEventDispatchChain} for the given
+	 * {@link INode target}. The target's {@link IEventDispatcher} is prepended
+	 * to the current {@link IEventDispatchChain chain} together with a
+	 * {@link MouseTrackDispatcher} for the target.
+	 * 
+	 * @param target
+	 *            the event target
+	 * @param tail
+	 *            the current {@link IEventDispatchChain}
+	 * @return an {@link IEventDispatchChain} for the given target
+	 * 
+	 * @see IEventTarget#buildEventDispatchChain(IEventDispatchChain)
+	 */
+	public static IEventDispatchChain buildEventDispatchChain(
+			final INode target, final IEventDispatchChain tail) {
 		tail.prepend(target.getEventDispatcher());
+		tail.prepend(new MouseTrackDispatcher(target));
 		INode next = target.getParentNode();
 		if (next != null) {
 			return next.buildEventDispatchChain(tail);
