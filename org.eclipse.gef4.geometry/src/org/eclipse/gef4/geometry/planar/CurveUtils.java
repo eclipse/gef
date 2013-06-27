@@ -226,6 +226,22 @@ class CurveUtils {
 						((CubicCurve) c).getCtrlX2(),
 						((CubicCurve) c).getCtrlY2(), ((CubicCurve) c).getX2(),
 						((CubicCurve) c).getY2());
+			} else if (c instanceof BezierCurve) {
+				Point[] points = ((BezierCurve) c).getPoints();
+				int length = points.length;
+				if (length == 1) {
+					p.moveTo(c.getX1(), c.getY1());
+				} else if (length == 2) {
+					p.lineTo(c.getX2(), c.getY2());
+				} else if (length == 3) {
+					p.quadTo(points[1].x, points[1].y, points[2].x, points[2].y);
+				} else if (length == 4) {
+					p.cubicTo(points[1].x, points[1].y, points[2].x,
+							points[2].y, points[3].x, points[3].y);
+				} else {
+					throw new UnsupportedOperationException(
+							"A BezierCurve with more than 4 control points cannot be integrated in a Path. Only singular, linear, quadratic, or cubic BezierCurves can be integrated in a Path.");
+				}
 			} else {
 				throw new UnsupportedOperationException(
 						"This type of ICurve is not yet implemented: toPath("
