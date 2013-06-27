@@ -15,6 +15,7 @@ package org.eclipse.gef4.swt.canvas;
 import org.eclipse.gef4.swt.canvas.ev.AbstractEventDispatcher;
 import org.eclipse.gef4.swt.canvas.ev.Event;
 import org.eclipse.gef4.swt.canvas.ev.types.TraverseEvent;
+import org.eclipse.swt.SWT;
 
 public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 
@@ -32,21 +33,37 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 	@Override
 	public Event dispatchCapturingEvent(Event event) {
 		if (event.getEventType() == TraverseEvent.ANY) {
+			TraverseEvent traverseEvent = (TraverseEvent) event;
 			if (target instanceof IFigure) {
 				IFigure f = (IFigure) target;
 				Group container = f.getContainer();
-				IFigure nextFocusFigure = container.getNextFocusFigure();
+				IFigure nextFocusFigure = trav(traverseEvent, container);
 				if (nextFocusFigure != null) {
 					container.setFocusFigure(nextFocusFigure);
-				} else {
-					System.out.println("What to do now?!");
 				}
-			} else {
-				Group g = (Group) target;
-				System.out.println("What to do now?!");
 			}
 		}
 		return event;
+	}
+
+	/**
+	 * @param container
+	 * @return
+	 */
+	private IFigure trav(TraverseEvent e, Group container) {
+		int detail = e.getDetail();
+		if (detail == SWT.TRAVERSE_ARROW_NEXT
+				|| detail == SWT.TRAVERSE_PAGE_NEXT
+				|| detail == SWT.TRAVERSE_TAB_NEXT) {
+			return container.getNextFocusFigure();
+		} else if (detail == SWT.TRAVERSE_ARROW_PREVIOUS
+				|| detail == SWT.TRAVERSE_PAGE_PREVIOUS
+				|| detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			return container.getPreviousFocusFigure();
+		} else {
+			// TODO: What to do here?
+			return null;
+		}
 	}
 
 }

@@ -31,15 +31,29 @@ public class TraverseEvent extends InputEvent {
 	// EventType<TraverseEvent>(
 	// ANY, "TraversePreviousEvent");
 
+	private int detail;
+
 	private int code;
 
 	private int modMask;
 
 	public TraverseEvent(Object source, IEventTarget target,
-			EventType<? extends InputEvent> type, int keyCode, int modifierMask) {
+			EventType<? extends InputEvent> type, int detail, int keyCode,
+			int modifierMask) {
 		super(source, target, type);
+		this.detail = detail;
 		code = keyCode;
 		modMask = modifierMask;
+	}
+
+	/**
+	 * Returns the event's detail field. You can compare the value to the
+	 * SWT.TRAVERSE_x constants.
+	 * 
+	 * @return the event's detail field
+	 */
+	public int getDetail() {
+		return detail;
 	}
 
 	public int getKeyCode() {
@@ -52,8 +66,9 @@ public class TraverseEvent extends InputEvent {
 
 	@Override
 	public String toString() {
-		return getEventType().getName() + "(keyCode=" + getKeyCode()
-				+ ", modifierMask=" + modMask + ")";
+		return getEventType().getName() + "(detail=" + getDetail()
+				+ ", keyCode=" + getKeyCode() + ", modifierMask="
+				+ getModifierMask() + ")";
 	}
 
 }

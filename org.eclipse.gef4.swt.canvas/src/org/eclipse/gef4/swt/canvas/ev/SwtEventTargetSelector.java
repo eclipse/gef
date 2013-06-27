@@ -264,10 +264,12 @@ public class SwtEventTargetSelector implements Listener {
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_PRESSED,
 					e.button, e.count, e.x, e.y);
 		case SWT.MouseEnter:
+			// TODO: re-think this one
 			return new MouseEvent(e.widget, target,
 					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, e.x,
 					e.y);
 		case SWT.MouseExit:
+			// TODO: re-think this one
 			return new MouseEvent(e.widget, target,
 					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, e.x, e.y);
 		case SWT.MouseMove:
@@ -280,8 +282,9 @@ public class SwtEventTargetSelector implements Listener {
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
 					e.button, e.count, e.x, e.y);
 		case SWT.Traverse:
+			// TODO: re-think this one
 			return new TraverseEvent(group, target, TraverseEvent.ANY,
-					e.keyCode, e.stateMask);
+					e.detail, e.keyCode, e.stateMask);
 		default:
 			throw new IllegalArgumentException(
 					"This SWT event type is not supported: " + e);
