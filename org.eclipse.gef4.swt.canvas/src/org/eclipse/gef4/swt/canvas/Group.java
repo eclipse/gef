@@ -75,8 +75,7 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 
 	@Override
 	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
-		// TODO: Prepend EDC to passed-in tail.
-		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this);
+		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this, tail);
 	}
 
 	@Override

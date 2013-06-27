@@ -40,7 +40,7 @@ public abstract class AbstractFigure implements IFigure {
 
 	@Override
 	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
-		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this);
+		return DefaultEventDispatchChainBuilder.buildEventDispatchChain(this, tail);
 	}
 
 	@Override

@@ -17,15 +17,13 @@ import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
 
 public class DefaultEventDispatchChainBuilder {
 
-	public static IEventDispatchChain buildEventDispatchChain(INode target) {
-		BasicEventDispatchChain chain = new BasicEventDispatchChain();
-		chain.append(target.getEventDispatcher());
+	public static IEventDispatchChain buildEventDispatchChain(INode target, IEventDispatchChain tail) {
+		tail.prepend(target.getEventDispatcher());
 		INode next = target.getParentNode();
-		while (next != null) {
-			chain.prepend(next.getEventDispatcher());
-			next = next.getParentNode();
+		if (next != null) {
+			return next.buildEventDispatchChain(tail);
 		}
-		return chain;
+		return tail;
 	}
 
 }
