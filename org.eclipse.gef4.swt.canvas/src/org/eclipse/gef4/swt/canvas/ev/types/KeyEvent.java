@@ -18,7 +18,7 @@ import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 public class KeyEvent extends InputEvent {
 
 	public static final EventType<KeyEvent> ANY = new EventType<KeyEvent>(
-			EventType.ROOT, "KeyEvent");
+			InputEvent.ANY, "KeyEvent");
 
 	public static final EventType<KeyEvent> KEY_PRESSED = new EventType<KeyEvent>(
 			ANY, "KeyPressedEvent");

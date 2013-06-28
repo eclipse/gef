@@ -148,6 +148,7 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return null;
 	}
 
+	@SuppressWarnings("all")
 	@Override
 	public boolean hasFocus() {
 		return isFocusControl() && swtEventDispatcher.getFocusTarget() == null;
@@ -155,10 +156,6 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 
 	@Override
 	public void paintControl(PaintEvent e) {
-		// if (backgroundPaintListener != null) {
-		// backgroundPaintListener.paintControl(e);
-		// }
-
 		GraphicsContext g = new GraphicsContext(e.gc);
 
 		// our rendering order is the reverse of SWT's

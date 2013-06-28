@@ -42,7 +42,7 @@ public class EventHandlerManagerTests {
 	}
 
 	public static EventType<InputEvent> INPUT = new EventType<InputEvent>(
-			EventType.ROOT, "InputEvent");
+			Event.ANY, "InputEvent");
 
 	public static EventType<MouseEvent> MOUSE = new EventType<MouseEvent>(
 			INPUT, "MouseEvent");
@@ -95,29 +95,29 @@ public class EventHandlerManagerTests {
 		int[] counter = new int[1];
 		counter[0] = 0;
 
-		root.dispatcher.addEventFilter(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 1, false));
-		plane[2].dispatcher.addEventFilter(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 2, false));
-		plane2[2].dispatcher.addEventFilter(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 3, false));
-		plane22[0].dispatcher.addEventFilter(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 4, false));
+		root.dispatcher.addEventFilter(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 1, false));
+		plane[2].dispatcher.addEventFilter(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 2, false));
+		plane2[2].dispatcher.addEventFilter(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 3, false));
+		plane22[0].dispatcher.addEventFilter(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 4, false));
 
-		plane22[0].dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 5, false));
-		plane2[2].dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 6, false));
-		plane[2].dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 7, false));
-		root.dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 8, false));
+		plane22[0].dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 5, false));
+		plane2[2].dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 6, false));
+		plane[2].dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 7, false));
+		root.dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 8, false));
 
-		Event.fireEvent(plane22[0], new Event("", plane22[0], EventType.ROOT));
+		Event.fireEvent(plane22[0], new Event("", plane22[0], Event.ANY));
 
 		// do it twice, just to make sure
 		counter[0] = 0;
-		Event.fireEvent(plane22[0], new Event("", plane22[0], EventType.ROOT));
+		Event.fireEvent(plane22[0], new Event("", plane22[0], Event.ANY));
 
 		root.dispatcher.addEventFilter(INPUT,
 				createCounterHandler(INPUT, counter, 9, false));
@@ -138,23 +138,21 @@ public class EventHandlerManagerTests {
 	@Test
 	public void test_root_filter() {
 		SimpleTarget root = new SimpleTarget(null);
-		root.dispatcher.addEventFilter(EventType.ROOT,
-				new IEventHandler<Event>() {
-					@Override
-					public void handle(Event event) {
-						event.consume();
-					}
-				});
-		root.dispatcher.addEventHandler(EventType.ROOT,
-				createFailHandler(EventType.ROOT));
+		root.dispatcher.addEventFilter(Event.ANY, new IEventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				event.consume();
+			}
+		});
+		root.dispatcher
+				.addEventHandler(Event.ANY, createFailHandler(Event.ANY));
 
 		SimpleTarget next = new SimpleTarget(root);
-		next.dispatcher.addEventFilter(EventType.ROOT,
-				createFailHandler(EventType.ROOT));
-		next.dispatcher.addEventHandler(EventType.ROOT,
-				createFailHandler(EventType.ROOT));
+		next.dispatcher.addEventFilter(Event.ANY, createFailHandler(Event.ANY));
+		next.dispatcher
+				.addEventHandler(Event.ANY, createFailHandler(Event.ANY));
 
-		Event.fireEvent(next, new Event(EventType.ROOT));
+		Event.fireEvent(next, new Event(Event.ANY));
 	}
 
 	@Test
@@ -164,8 +162,8 @@ public class EventHandlerManagerTests {
 		final int[] counter = new int[1];
 		counter[0] = 0;
 
-		root.dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 3, false));
+		root.dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 3, false));
 		root.dispatcher.addEventHandler(INPUT,
 				createCounterHandler(INPUT, counter, 2, false));
 		root.dispatcher.addEventHandler(MOUSE,
@@ -186,8 +184,8 @@ public class EventHandlerManagerTests {
 
 		root.dispatcher.addEventHandler(KEYB,
 				createCounterHandler(KEYB, counter, 4, true));
-		root.dispatcher.addEventHandler(EventType.ROOT,
-				createCounterHandler(EventType.ROOT, counter, 3, false));
+		root.dispatcher.addEventHandler(Event.ANY,
+				createCounterHandler(Event.ANY, counter, 3, false));
 		root.dispatcher.addEventHandler(MOUSE,
 				createCounterHandler(MOUSE, counter, 1, false));
 		root.dispatcher.addEventHandler(INPUT,

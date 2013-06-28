@@ -27,6 +27,8 @@ public class Event extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final EventType<Event> ANY = EventType.ROOT;
+
 	public static void fireEvent(IEventTarget target, Event event) {
 		IEventDispatchChain chain = target
 				.buildEventDispatchChain(new BasicEventDispatchChain());

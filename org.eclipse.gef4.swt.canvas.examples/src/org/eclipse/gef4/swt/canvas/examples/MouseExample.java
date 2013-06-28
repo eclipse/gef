@@ -20,7 +20,6 @@ import org.eclipse.gef4.swt.canvas.Group;
 import org.eclipse.gef4.swt.canvas.IFigure;
 import org.eclipse.gef4.swt.canvas.ShapeFigure;
 import org.eclipse.gef4.swt.canvas.ev.Event;
-import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventHandler;
 import org.eclipse.gef4.swt.canvas.ev.types.MouseEvent;
 import org.eclipse.gef4.swt.canvas.ev.types.TraverseEvent;
@@ -40,7 +39,7 @@ public class MouseExample implements IExample {
 
 		public FigureDragger(final IFigure f) {
 			figure = f;
-			f.addEventFilter(EventType.ROOT, new IEventHandler<Event>() {
+			f.addEventFilter(Event.ANY, new IEventHandler<Event>() {
 				@Override
 				public void handle(Event event) {
 					System.out.println(event);
@@ -139,7 +138,7 @@ public class MouseExample implements IExample {
 		this.root = root;
 		root.addFigures(rectFigure, ovalFigure);
 
-		root.addEventFilter(EventType.ROOT, new IEventHandler<Event>() {
+		root.addEventFilter(Event.ANY, new IEventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
 				System.out.println("root: " + event);

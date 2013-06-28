@@ -28,7 +28,7 @@ import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 public class ActionEvent extends Event {
 
 	public static final EventType<ActionEvent> ANY = new EventType<ActionEvent>(
-			EventType.ROOT, "ActionEvent");
+			Event.ANY, "ActionEvent");
 
 	private static final long serialVersionUID = 1L;
 

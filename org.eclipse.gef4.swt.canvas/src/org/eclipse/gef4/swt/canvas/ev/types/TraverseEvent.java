@@ -17,6 +17,8 @@ import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 
 public class TraverseEvent extends InputEvent {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final EventType<TraverseEvent> ANY = new EventType<TraverseEvent>(
 			InputEvent.ANY, "TraverseEvent");
 

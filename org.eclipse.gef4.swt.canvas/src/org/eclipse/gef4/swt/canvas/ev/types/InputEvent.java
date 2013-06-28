@@ -26,7 +26,7 @@ import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 public class InputEvent extends Event {
 
 	public static final EventType<InputEvent> ANY = new EventType<InputEvent>(
-			EventType.ROOT, "InputEvent");
+			Event.ANY, "InputEvent");
 
 	private static final long serialVersionUID = 1L;
 

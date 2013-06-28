@@ -29,7 +29,7 @@ public class SwtEvent extends Event {
 	private static final long serialVersionUID = 1L;
 
 	public static final EventType<SwtEvent> ANY = new EventType<SwtEvent>(
-			EventType.ROOT, "SwtEvent");
+			Event.ANY, "SwtEvent");
 
 	public SwtEvent(Object swtEvent, IEventTarget target,
 			EventType<? extends Event> type) {

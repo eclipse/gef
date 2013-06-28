@@ -15,7 +15,6 @@ package org.eclipse.gef4.swt.canvas.test;
 import org.eclipse.gef4.swt.canvas.ev.AbstractEventDispatcher;
 import org.eclipse.gef4.swt.canvas.ev.BasicEventDispatchChain;
 import org.eclipse.gef4.swt.canvas.ev.Event;
-import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventDispatchChain;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e == null;
 	}
 
@@ -57,7 +56,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -101,7 +100,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -145,7 +144,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e != null;
 		assert !e.isConsumed();
 	}
@@ -189,7 +188,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e == null;
 	}
 
@@ -232,7 +231,7 @@ public class EventDispatchChainTests {
 			}
 		});
 
-		Event e = chain.dispatchEvent(new Event(this, null, EventType.ROOT));
+		Event e = chain.dispatchEvent(new Event(this, null, Event.ANY));
 		assert e == null;
 	}
 

@@ -13,7 +13,6 @@
 package org.eclipse.gef4.swt.canvas.ev.types;
 
 import org.eclipse.gef4.swt.canvas.INode;
-import org.eclipse.gef4.swt.canvas.ev.Event;
 import org.eclipse.gef4.swt.canvas.ev.EventType;
 import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
 
@@ -45,10 +44,10 @@ import org.eclipse.gef4.swt.canvas.ev.IEventTarget;
  * @author mwienand
  * 
  */
-public class MouseEvent extends Event {
+public class MouseEvent extends InputEvent {
 
 	public static final EventType<MouseEvent> ANY = new EventType<MouseEvent>(
-			EventType.ROOT, "MouseEvent");
+			InputEvent.ANY, "MouseEvent");
 
 	public static final EventType<MouseEvent> MOUSE_PRESSED = new EventType<MouseEvent>(
 			ANY, "MousePressEvent");
