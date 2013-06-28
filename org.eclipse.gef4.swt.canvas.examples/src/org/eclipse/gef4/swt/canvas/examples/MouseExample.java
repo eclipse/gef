@@ -99,16 +99,6 @@ public class MouseExample implements IExample {
 						}
 					});
 		}
-
-		private IEventHandler<MouseEvent> createMousePressedHandler() {
-			return new IEventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent e) {
-					dragging = true;
-					start = new Point(e.getX(), e.getY());
-				}
-			};
-		}
 	}
 
 	public static void main(String[] args) {
@@ -143,18 +133,18 @@ public class MouseExample implements IExample {
 
 	@Override
 	public void addUi(Group root) {
-		FigureDragger rectFigureDragger = new FigureDragger(rectFigure);
-		FigureDragger ovalFigureDragger = new FigureDragger(ovalFigure);
+		new FigureDragger(rectFigure);
+		new FigureDragger(ovalFigure);
 
 		this.root = root;
+		root.addFigures(rectFigure, ovalFigure);
 
-		// TODO: provide root.add(IFigure... figures);
-		root.getFigures().add(rectFigure);
-		root.getFigures().add(ovalFigure);
-
-		// TODO: remove this boilerplate
-		rectFigure.setContainer(root); // boilerplate
-		ovalFigure.setContainer(root); // boilerplate
+		root.addEventFilter(EventType.ROOT, new IEventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				System.out.println("root: " + event);
+			}
+		});
 
 		// create SWT control
 		Button resetButton = new Button(root, SWT.PUSH);
