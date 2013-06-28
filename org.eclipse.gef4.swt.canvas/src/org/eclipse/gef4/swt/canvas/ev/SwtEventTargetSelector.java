@@ -134,10 +134,13 @@ public class SwtEventTargetSelector implements Listener {
 			} else {
 				IFigure cursorTarget = getFigureUnderCursor();
 
+				if (event.type == SWT.MouseEnter || event.type == SWT.MouseExit) {
+					Event.fireEvent(group, wrap(event, group));
+				}
+
 				// insert mouse entered/exited events
 				if (event.type == SWT.MouseMove || event.type == SWT.MouseEnter
 						|| event.type == SWT.MouseExit) {
-
 					// special case SWT MouseExit
 					if (mouseEnteredFigure != null
 							&& event.type == SWT.MouseExit) {
