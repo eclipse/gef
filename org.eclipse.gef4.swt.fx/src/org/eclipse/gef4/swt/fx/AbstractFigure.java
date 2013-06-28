@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx;
 
+import org.eclipse.gef4.swt.fx.event.DefaultEventDispatchChainBuilder;
 import org.eclipse.gef4.swt.fx.event.Event;
 import org.eclipse.gef4.swt.fx.event.EventHandlerManager;
 import org.eclipse.gef4.swt.fx.event.EventType;

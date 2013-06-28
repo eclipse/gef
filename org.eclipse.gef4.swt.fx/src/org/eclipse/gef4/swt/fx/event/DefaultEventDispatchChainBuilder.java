@@ -10,11 +10,11 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx;
+package org.eclipse.gef4.swt.fx.event;
 
-import org.eclipse.gef4.swt.fx.event.IEventDispatchChain;
-import org.eclipse.gef4.swt.fx.event.IEventDispatcher;
-import org.eclipse.gef4.swt.fx.event.IEventTarget;
+import org.eclipse.gef4.swt.fx.AbstractFigure;
+import org.eclipse.gef4.swt.fx.Group;
+import org.eclipse.gef4.swt.fx.INode;
 
 /**
  * Provides the {@link #buildEventDispatchChain(INode, IEventDispatchChain)

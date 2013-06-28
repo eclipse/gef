@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.event;
 
-import org.eclipse.gef4.swt.fx.DefaultEventDispatchChainBuilder;
 import org.eclipse.gef4.swt.fx.INode;
 import org.w3c.dom.events.EventTarget;
 

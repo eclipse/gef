@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.swt.fx.event.DefaultEventDispatchChainBuilder;
 import org.eclipse.gef4.swt.fx.event.EventHandlerManager;
 import org.eclipse.gef4.swt.fx.event.EventType;
 import org.eclipse.gef4.swt.fx.event.IEventDispatchChain;

@@ -10,13 +10,9 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx;
+package org.eclipse.gef4.swt.fx.event;
 
-import org.eclipse.gef4.swt.fx.event.AbstractEventDispatcher;
-import org.eclipse.gef4.swt.fx.event.Event;
-import org.eclipse.gef4.swt.fx.event.IEventDispatchChain;
-import org.eclipse.gef4.swt.fx.event.IEventDispatcher;
-import org.eclipse.gef4.swt.fx.event.MouseEvent;
+import org.eclipse.gef4.swt.fx.INode;
 
 /**
  * <p>

@@ -10,11 +10,11 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx;
+package org.eclipse.gef4.swt.fx.event;
 
-import org.eclipse.gef4.swt.fx.event.AbstractEventDispatcher;
-import org.eclipse.gef4.swt.fx.event.Event;
-import org.eclipse.gef4.swt.fx.event.TraverseEvent;
+import org.eclipse.gef4.swt.fx.Group;
+import org.eclipse.gef4.swt.fx.IFigure;
+import org.eclipse.gef4.swt.fx.INode;
 import org.eclipse.swt.SWT;
 
 public class FocusTraversalDispatcher extends AbstractEventDispatcher {
