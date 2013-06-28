@@ -5,4 +5,6 @@ Bundle-SymbolicName: org.eclipse.gef4.swt.canvas.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.gef4.swt.canvas.ev
-Require-Bundle: org.junit
+Require-Bundle: org.junit,
+ org.eclipse.gef4.swt.canvas;bundle-version="0.1.0",
+ org.eclipse.swt;bundle-version="3.7.1"
