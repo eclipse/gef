@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SWT-FX Tests
+Bundle-SymbolicName: org.eclipse.gef4.swt.fx.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.gef4.swt.fx.event
+Require-Bundle: org.junit,
+ org.eclipse.gef4.swt.fx;bundle-version="0.1.0",
+ org.eclipse.swt;bundle-version="3.7.1"
