@@ -25,7 +25,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 
 public class GradientCacheExample implements IExample {
 
@@ -33,12 +32,10 @@ public class GradientCacheExample implements IExample {
 		new Example(new GradientCacheExample());
 	}
 
-	private Canvas c;
 	private LinearGradient gradient;
 
 	@Override
 	public void addUi(Group c) {
-		this.c = c;
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		resetGradient();

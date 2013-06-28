@@ -16,6 +16,7 @@ import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.gef4.swt.fx.IFigure;
 import org.eclipse.gef4.swt.fx.INode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 
 public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 
@@ -34,36 +35,49 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 	public Event dispatchCapturingEvent(Event event) {
 		if (event.getEventType() == TraverseEvent.ANY) {
 			TraverseEvent traverseEvent = (TraverseEvent) event;
+
+			IEventTarget target = traverseEvent.getTarget();
+
 			if (target instanceof IFigure) {
-				IFigure f = (IFigure) target;
-				Group container = f.getContainer();
-				IFigure nextFocusFigure = trav(traverseEvent, container);
-				if (nextFocusFigure != null) {
-					container.setFocusFigure(nextFocusFigure);
+				target = ((IFigure) target).getContainer();
+			}
+
+			if (target instanceof Group) {
+				Group g = (Group) target;
+				if (g.isFocusTraversable()) {
+					boolean directionNext = traverseEvent.getDetail() == SWT.TRAVERSE_ARROW_NEXT
+							|| traverseEvent.getDetail() == SWT.TRAVERSE_PAGE_NEXT
+							|| traverseEvent.getDetail() == SWT.TRAVERSE_TAB_NEXT
+							|| traverseEvent.getDetail() == SWT.TRAVERSE_RETURN;
+
+					IFigure nextFocusFigure = trav(directionNext, g);
+					g.setFocusFigure(nextFocusFigure);
+
+					if (nextFocusFigure == null) {
+						if (directionNext) {
+							Control[] children = g.getChildren();
+							if (children.length > 0) {
+								children[0].forceFocus();
+							}
+						} else {
+							g.getParent().forceFocus();
+						}
+					}
+
+					g.redraw();
+					traverseEvent.consume();
 				}
+			} else {
+				return event;
 			}
 		}
+
 		return event;
 	}
 
-	/**
-	 * @param container
-	 * @return
-	 */
-	private IFigure trav(TraverseEvent e, Group container) {
-		int detail = e.getDetail();
-		if (detail == SWT.TRAVERSE_ARROW_NEXT
-				|| detail == SWT.TRAVERSE_PAGE_NEXT
-				|| detail == SWT.TRAVERSE_TAB_NEXT) {
-			return container.getNextFocusFigure();
-		} else if (detail == SWT.TRAVERSE_ARROW_PREVIOUS
-				|| detail == SWT.TRAVERSE_PAGE_PREVIOUS
-				|| detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-			return container.getPreviousFocusFigure();
-		} else {
-			// TODO: What to do here?
-			return null;
-		}
+	private IFigure trav(boolean directionNext, Group container) {
+		return directionNext ? container.getNextFocusFigure() : container
+				.getPreviousFocusFigure();
 	}
 
 }

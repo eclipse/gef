@@ -22,13 +22,11 @@ import org.eclipse.swt.widgets.Shell;
 
 public class Example {
 
-	private IExample ex;
 	private Display display;
 	private Shell shell;
 	private Group group;
 
 	public Example(IExample ex) {
-		this.ex = ex;
 		int w = ex.getWidth();
 		int h = ex.getHeight();
 

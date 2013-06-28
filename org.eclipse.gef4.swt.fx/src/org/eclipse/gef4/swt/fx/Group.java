@@ -39,10 +39,7 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 	private List<IFigure> figures = new LinkedList<IFigure>();
 	private EventHandlerManager dispatcher = new EventHandlerManager();
 	private SwtEventTargetSelector swtEventDispatcher;
-
-	// private PaintListener backgroundPaintListener;
-
-	// private FocusTraverseManager focusTraverseManager;
+	private boolean focusTraversable = true;
 
 	public Group(Composite parent) {
 		super(parent, SWT.NONE);
@@ -69,10 +66,6 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			f.setContainer(this);
 		}
 	}
-
-	// public void addBackgroundPaintListener(PaintListener l) {
-	// backgroundPaintListener = l;
-	// }
 
 	@Override
 	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
@@ -107,7 +100,8 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 	public IFigure getNextFocusFigure() {
 		IFigure focus = swtEventDispatcher.getFocusTarget();
 		if (focus == null) {
-			return null;
+			// first figure
+			return figures.get(0);
 		}
 
 		boolean thisIsIt = false;
@@ -120,8 +114,8 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			}
 		}
 
-		// TODO: assert thisIsIt;
-		return thisIsIt ? figures.get(0) : null;
+		// no next figure available
+		return null;
 	}
 
 	@Override
@@ -133,19 +127,17 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return null;
 	}
 
-	// public IFigure getMouseFigure() {
-	// return swtEventDispatcher.getMouseTarget();
-	// }
-
 	public IFigure getPreviousFocusFigure() {
 		IFigure focus = swtEventDispatcher.getFocusTarget();
-		IFigure last = figures.get(figures.size() - 1);
+		IFigure last = null;
 		for (IFigure f : figures) {
 			if (f == focus) {
 				return last;
 			}
 			last = f;
 		}
+
+		// no previous figure available
 		return null;
 	}
 
@@ -153,6 +145,11 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 	@Override
 	public boolean hasFocus() {
 		return isFocusControl() && swtEventDispatcher.getFocusTarget() == null;
+	}
+
+	@Override
+	public boolean isFocusTraversable() {
+		return focusTraversable;
 	}
 
 	@Override
@@ -197,6 +194,11 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 	}
 
 	public boolean setFocusFigure(IFigure focusFigure) {
+		if (focusFigure == null) {
+			swtEventDispatcher.setFocusTarget(null);
+			return true;
+		}
+
 		if (focusFigure.getParentNode() != this) {
 			throw new IllegalArgumentException(
 					"The given IFigure is no child of this Group!");
@@ -206,6 +208,11 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void setFocusTraversable(boolean focusTraversable) {
+		this.focusTraversable = focusTraversable;
 	}
 
 	@Override

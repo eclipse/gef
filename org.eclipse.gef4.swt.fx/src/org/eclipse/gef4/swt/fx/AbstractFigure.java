@@ -26,6 +26,7 @@ public abstract class AbstractFigure implements IFigure {
 	private GraphicsContextState paintState = new GraphicsContextState();
 	private EventHandlerManager dispatcher = new EventHandlerManager();
 	private Group container;
+	private boolean focusTraversable = true;
 
 	@Override
 	public <T extends Event> void addEventFilter(EventType<T> type,
@@ -71,6 +72,11 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
+	public boolean isFocusTraversable() {
+		return focusTraversable;
+	}
+
+	@Override
 	public <T extends Event> void removeEventFilter(EventType<T> type,
 			IEventHandler<T> filter) {
 		dispatcher.removeEventFilter(type, filter);
@@ -90,6 +96,11 @@ public abstract class AbstractFigure implements IFigure {
 	@Override
 	public void setContainer(Group group) {
 		container = group;
+	}
+
+	@Override
+	public void setFocusTraversable(boolean focusTraversable) {
+		this.focusTraversable = focusTraversable;
 	}
 
 	@Override

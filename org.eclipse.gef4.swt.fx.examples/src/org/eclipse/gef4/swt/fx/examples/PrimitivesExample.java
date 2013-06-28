@@ -19,7 +19,6 @@ import org.eclipse.gef4.swt.fx.gc.ArcType;
 import org.eclipse.gef4.swt.fx.gc.GraphicsContext;
 import org.eclipse.gef4.swt.fx.gc.RgbaColor;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Canvas;
 
 public class PrimitivesExample implements IExample {
 
@@ -27,14 +26,11 @@ public class PrimitivesExample implements IExample {
 		new Example(new PrimitivesExample());
 	}
 
-	private Canvas c;
-
 	public PrimitivesExample() {
 	}
 
 	@Override
 	public void addUi(Group c) {
-		this.c = c;
 		c.addFigures(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
 			public void paint(GraphicsContext g) {

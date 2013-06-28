@@ -17,6 +17,7 @@ import org.eclipse.gef4.swt.fx.event.EventType;
 import org.eclipse.gef4.swt.fx.event.IEventDispatcher;
 import org.eclipse.gef4.swt.fx.event.IEventHandler;
 import org.eclipse.gef4.swt.fx.event.IEventTarget;
+import org.eclipse.gef4.swt.fx.event.TraverseEvent;
 
 /**
  * The {@link INode} interface is a key abstraction of the SWT FX component.
@@ -74,7 +75,20 @@ public interface INode extends IEventTarget {
 	 */
 	public INode getParentNode();
 
+	/**
+	 * @return <code>true</code> if this {@link INode} currently has keyboard
+	 *         focus, otherwise <code>false</code>
+	 */
 	public boolean hasFocus();
+
+	/**
+	 * Determines if the focus of this {@link INode} is traversable, i.e. it
+	 * reacts to {@link TraverseEvent}s.
+	 * 
+	 * @return <code>true</code> if the focus of this {@link INode} is
+	 *         traversable, otherwise <code>false</code>
+	 */
+	public boolean isFocusTraversable();
 
 	/**
 	 * Removes the given {@link IEventHandler event filter} from the list of
@@ -98,6 +112,21 @@ public interface INode extends IEventTarget {
 	public <T extends Event> void removeEventHandler(EventType<T> type,
 			IEventHandler<T> handler);
 
+	/**
+	 * Tries to bind keyboard events to this {@link INode}. Uses the SWT
+	 * forceFocus() method.
+	 * 
+	 * @return <code>true</code> on success, otherwise <code>false</code>
+	 */
 	public boolean requestFocus();
+
+	/**
+	 * Sets the focusTraversable property of this {@link INode}. If the focus of
+	 * an {@link INode} is traversable, it will react to {@link TraverseEvent}s
+	 * by switching through the hierarchy.
+	 * 
+	 * @param focusTraversable
+	 */
+	public void setFocusTraversable(boolean focusTraversable);
 
 }

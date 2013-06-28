@@ -34,6 +34,7 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 		return dispatchBubblingEvent(event.getEventType(), event);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Event dispatchBubblingEvent(EventType type, Event event) {
 		while (type != null) {
 			handlers(type).dispatchBubblingEvent(event);
@@ -47,6 +48,7 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 		return dispatchCapturingEvent(event.getEventType(), event);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Event dispatchCapturingEvent(EventType type, Event event) {
 		while (type != null) {
 			handlers(type).dispatchCapturingEvent(event);
@@ -55,6 +57,7 @@ public class EventHandlerManager extends AbstractEventDispatcher {
 		return event;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends Event> CompositeEventHandler<T> handlers(
 			EventType<T> type) {
 		if (!handlers.containsKey(type)) {

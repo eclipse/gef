@@ -42,7 +42,9 @@ public class MouseExample implements IExample {
 			f.addEventFilter(Event.ANY, new IEventHandler<Event>() {
 				@Override
 				public void handle(Event event) {
-					System.out.println(event);
+					if (event.getEventType().getName().equals("TraverseEvent")) {
+						System.out.println("fig: " + event);
+					}
 				}
 			});
 			f.addEventFilter(TraverseEvent.ANY,
@@ -141,7 +143,9 @@ public class MouseExample implements IExample {
 		root.addEventFilter(Event.ANY, new IEventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
-				System.out.println("root: " + event);
+				if (event.getEventType().getName().equals("TraverseEvent")) {
+					System.out.println("root: " + event);
+				}
 			}
 		});
 
