@@ -164,7 +164,9 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 			 */
 			g.save();
 			g.setUpGuard();
+			g.pushState(figure.getPaintStateByReference());
 			figure.paint(g);
+			g.restore();
 			try {
 				g.takeDownGuard();
 			} catch (IllegalStateException x) {

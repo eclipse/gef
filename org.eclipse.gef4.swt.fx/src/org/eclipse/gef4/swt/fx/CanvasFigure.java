@@ -43,6 +43,8 @@ public class CanvasFigure extends AbstractFigure {
 	private int imgWidth;
 	private int imgHeight;
 
+	// TODO: private BlendOperation blender;
+
 	public CanvasFigure(Device dev, double width, double height,
 			RGB transparentPixel) {
 		if (width < 0) {
