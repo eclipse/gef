@@ -93,15 +93,22 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 		return figures;
 	}
 
+	public IFigure getFirstFigure() {
+		return figures.size() > 0 ? figures.get(0) : null;
+	}
+
 	public IFigure getFocusFigure() {
 		return swtEventDispatcher.getFocusTarget();
+	}
+
+	public IFigure getLastFigure() {
+		return figures.size() > 0 ? figures.get(figures.size() - 1) : null;
 	}
 
 	public IFigure getNextFocusFigure() {
 		IFigure focus = swtEventDispatcher.getFocusTarget();
 		if (focus == null) {
-			// first figure
-			return figures.get(0);
+			return getFirstFigure();
 		}
 
 		boolean thisIsIt = false;
@@ -129,6 +136,11 @@ public class Group extends org.eclipse.swt.widgets.Canvas implements
 
 	public IFigure getPreviousFocusFigure() {
 		IFigure focus = swtEventDispatcher.getFocusTarget();
+
+		if (focus == null) {
+			return getLastFigure();
+		}
+
 		IFigure last = null;
 		for (IFigure f : figures) {
 			if (f == focus) {

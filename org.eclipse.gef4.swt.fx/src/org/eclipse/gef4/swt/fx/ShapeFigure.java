@@ -61,6 +61,7 @@ public class ShapeFigure extends AbstractFigure {
 	@Override
 	public void paint(GraphicsContext g) {
 		g.fillPath(shape.toPath());
+		g.strokePath(shape.toPath());
 	}
 
 	public void setLineCap(LineCap cap) {

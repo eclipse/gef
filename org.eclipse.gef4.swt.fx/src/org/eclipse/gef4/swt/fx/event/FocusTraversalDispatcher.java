@@ -20,10 +20,8 @@ import org.eclipse.swt.widgets.Control;
 
 public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 
-	private INode target;
-
 	public FocusTraversalDispatcher(INode target) {
-		this.target = target;
+		// TODO: Do we need to know the "target"?
 	}
 
 	@Override
@@ -34,11 +32,20 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 	@Override
 	public Event dispatchCapturingEvent(Event event) {
 		if (event.getEventType() == TraverseEvent.ANY) {
+			// event.consume();
+			// if (true) {
+			// return event;
+			// }
+
 			TraverseEvent traverseEvent = (TraverseEvent) event;
 
 			IEventTarget target = traverseEvent.getTarget();
 
 			if (target instanceof IFigure) {
+				if (!((IFigure) target).isFocusTraversable()) {
+					traverseEvent.consume();
+					return traverseEvent;
+				}
 				target = ((IFigure) target).getContainer();
 			}
 
@@ -54,20 +61,39 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 					g.setFocusFigure(nextFocusFigure);
 
 					if (nextFocusFigure == null) {
-						if (directionNext) {
-							Control[] children = g.getChildren();
-							if (children.length > 0) {
+						Control[] children = g.getChildren();
+						if (children.length > 0) {
+							if (directionNext) {
 								children[0].forceFocus();
+							} else {
+								children[children.length - 1].forceFocus();
 							}
 						} else {
 							g.getParent().forceFocus();
+							// if (directionNext) {
+							// g.setFocusFigure(g.getFirstFigure());
+							// } else {
+							// g.setFocusFigure(g.getLastFigure());
+							// }
 						}
 					}
+
+					// if (nextFocusFigure == null) {
+					// Control[] children = g.getChildren();
+					// if (directionNext) {
+					// if (children.length > 0) {
+					// children[0].forceFocus();
+					// }
+					// } else {
+					// g.getParent().forceFocus();
+					// }
+					// }
 
 					g.redraw();
 					traverseEvent.consume();
 				}
 			} else {
+				// event.consume();
 				return event;
 			}
 		}
