@@ -672,7 +672,7 @@ public class GraphicsContext {
 	}
 
 	public void fillPath(Path path) {
-		fillPath(path, path.getBounds());
+		fillPath(path, path.getBounds().getUnioned(new Point()));
 	}
 
 	public void fillPath(Path path, Rectangle bounds) {
