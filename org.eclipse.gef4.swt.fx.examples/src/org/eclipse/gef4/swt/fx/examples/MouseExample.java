@@ -110,16 +110,13 @@ public class MouseExample implements IExample {
 		ShapeFigure figure = new ShapeFigure(shape) {
 			@Override
 			public void paint(GraphicsContext g) {
-				g.pushState(getPaintStateByReference());
-				IShape shape = getBounds().getShape();
-				g.fillPath(shape.toPath());
 				if (hasFocus()) {
 					g.getGcByReference().setLineDash(new int[] { 20, 20 });
 					g.setLineWidth(5);
 					g.setStroke(new RgbaColor());
 					g.strokePath(getShape().toPath());
 				}
-				g.restore();
+				super.paint(g);
 			}
 		};
 		figure.getPaintStateByReference().getFillByReference().setColor(color);

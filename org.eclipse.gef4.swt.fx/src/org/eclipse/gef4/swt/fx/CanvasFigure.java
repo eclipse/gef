@@ -92,6 +92,9 @@ public class CanvasFigure extends AbstractFigure {
 			gc.dispose();
 			image.dispose();
 		}
+
+		// FIXME: use a resource pool to get rid of the Image, the GC, and the
+		// resources of the GraphicsContext
 		image = new Image(dev, id);
 		gc = new GC(image);
 		g = new GraphicsContext(gc);
