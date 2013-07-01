@@ -96,6 +96,13 @@ public class SwtEventTargetSelector implements Listener {
 
 	@Override
 	public void handleEvent(org.eclipse.swt.widgets.Event event) {
+		// ignore Traverse events (per Group FocusManger/FocusDispatcher will
+		// handle key presses appropriately)
+		if (event.type == SWT.Traverse) {
+			event.doit = false;
+			return;
+		}
+
 		List<IFigure> figures = group.getFigures();
 		if (figures.size() < 1) {
 			// no figures => group is the target
@@ -281,6 +288,8 @@ public class SwtEventTargetSelector implements Listener {
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
 					e.button, e.count, e.x, e.y);
 		case SWT.Traverse:
+			// XXX: This is unreachable code, because handleEvent() ignores
+			// Traverse events, completely.
 			// TODO: re-think this one
 			return new TraverseEvent(group, target, TraverseEvent.ANY,
 					e.detail, e.keyCode, e.stateMask);
