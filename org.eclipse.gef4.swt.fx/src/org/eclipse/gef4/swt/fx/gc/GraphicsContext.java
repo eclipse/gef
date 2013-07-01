@@ -18,17 +18,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.gef4.geometry.convert.swt.SWT2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -279,7 +282,6 @@ public class GraphicsContext {
 			break;
 		case GRADIENT:
 			Gradient<?> gradient = paint.getGradient();
-			// TODO: where do i get the bounds from?
 			ImageData gradientImageData = SwtUtils.createGradientImageData(
 					gc.getDevice(), drawingBounds, gradient);
 
@@ -339,11 +341,6 @@ public class GraphicsContext {
 		applyMiterLimit(state.getMiterLimit());
 		applyPattern(state.getStrokeByReference(), PaintType.STROKE);
 		applyTransform(state.getTransformByReference());
-
-		// TODO: What about these?
-		// org.eclipse.gef4.swt.fx.gc.TextAlignment textAlign = state
-		// .getTextAlign();
-		// TextVPos textBaseline = state.getTextBaseline();
 	}
 
 	/**
@@ -603,20 +600,38 @@ public class GraphicsContext {
 
 	public void fillArc(double x, double y, double w, double h,
 			double startAngleDeg, double angularExtentDeg, ArcType arcType) {
+		Rectangle bounds = new Rectangle(x, y, w, h);
+
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
 		switch (arcType) {
-		case ROUND:
-			gc.fillArc((int) Math.round(x), (int) Math.round(y),
-					(int) Math.round(w), (int) Math.round(h),
-					(int) Math.round(startAngleDeg),
-					(int) Math.round(angularExtentDeg));
+		case ROUND: {
+			Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+					Angle.fromDeg(angularExtentDeg));
+			List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
+			CubicCurve[] beziers = arc.toBezier();
+			arcSegs.addAll(Arrays.asList(beziers));
+			arcSegs.add(new Line(beziers[beziers.length - 1].getP2(), arc
+					.getCenter()));
+			arcSegs.add(new Line(arc.getCenter(), beziers[0].getP1()));
+			fillPath(
+					new PolyBezier(arcSegs.toArray(new BezierCurve[] {}))
+							.toPath(),
+					bounds);
+
+			// fillPath(new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+			// Angle.fromDeg(angularExtentDeg)).toPath());
+			// gc.fillArc((int) Math.round(x), (int) Math.round(y),
+			// (int) Math.round(w), (int) Math.round(h),
+			// (int) Math.round(startAngleDeg),
+			// (int) Math.round(angularExtentDeg));
 			break;
+		}
 		case CHORD:
-		case OPEN:
+		case OPEN: {
 			Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
 					Angle.fromDeg(angularExtentDeg));
 			List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
@@ -627,6 +642,7 @@ public class GraphicsContext {
 			fillPath(new PolyBezier(arcSegs.toArray(new BezierCurve[] {}))
 					.toPath());
 			break;
+		}
 		default:
 			throw new IllegalStateException("Unknown ArcType: " + arcType);
 		}
@@ -637,6 +653,11 @@ public class GraphicsContext {
 	}
 
 	public void fillOval(double x, double y, double w, double h) {
+		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
+			fillPath(new Ellipse(x, y, w, h).toPath());
+			return;
+		}
+
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
@@ -651,6 +672,10 @@ public class GraphicsContext {
 	}
 
 	public void fillPath(Path path) {
+		fillPath(path, path.getBounds());
+	}
+
+	public void fillPath(Path path, Rectangle bounds) {
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
@@ -658,7 +683,7 @@ public class GraphicsContext {
 
 		setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD
 				: FillRule.WIND_NON_ZERO);
-		applyPaint(getFillPattern(), PaintType.FILL, path.getBounds());
+		applyPaint(getFillPattern(), PaintType.FILL, bounds);
 		org.eclipse.swt.graphics.Path swtPathFill = SwtUtils.createSwtPath(
 				path, gc.getDevice());
 		gc.fillPath(swtPathFill);
@@ -670,12 +695,19 @@ public class GraphicsContext {
 	}
 
 	public void fillPolygon(double[] xs, double[] ys, int n) {
+		int[] swtPointsArray = SwtUtils.createSwtPointsArray(xs, ys, n);
+
+		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
+			fillPath(SWT2Geometry.toPolygon(swtPointsArray).toPath());
+			return;
+		}
+
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		gc.fillPolygon(SwtUtils.createSwtPointsArray(xs, ys, n));
+		gc.fillPolygon(swtPointsArray);
 
 		if (a != 255) {
 			gc.setAlpha((int) getGlobalAlpha());
@@ -683,6 +715,11 @@ public class GraphicsContext {
 	}
 
 	public void fillRect(double x, double y, double w, double h) {
+		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
+			fillPath(new Rectangle(x, y, w, h).toPath());
+			return;
+		}
+
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
@@ -698,6 +735,14 @@ public class GraphicsContext {
 
 	public void fillRoundRect(double x, double y, double w, double h,
 			double arcWidth, double arcHeight) {
+		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
+			fillPath(
+					new RoundedRectangle(x, y, w, h, arcWidth, arcHeight)
+							.toPath(),
+					new Rectangle(x, y, w, h));
+			return;
+		}
+
 		int a = getBackgroundAlpha();
 		if (a != 255) {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
@@ -776,6 +821,15 @@ public class GraphicsContext {
 		return 255;
 	}
 
+	/**
+	 * Returns the SWT {@link GC} which is used to perform drawing operations.
+	 * Modifications of the state of the returned GC will affect every
+	 * {@link GraphicsContext} which uses that GC. Moreover, such modifications
+	 * are <b>not</b> propagated to the current {@link GraphicsContextState}.
+	 * Therefore, directly using the GC is not recommended.
+	 * 
+	 * @return the SWT {@link GC} used to perform drawing operations
+	 */
 	public GC getGcByReference() {
 		return gc;
 	}
@@ -936,7 +990,7 @@ public class GraphicsContext {
 	}
 
 	public void setFont(Font font) {
-		// TODO: What about multiple FontData objects?
+		// TODO: We do not care about multiple FontData objects?
 		states.peek().setFontDataByReference(font.getFontData()[0]);
 		applyFont(font);
 	}
