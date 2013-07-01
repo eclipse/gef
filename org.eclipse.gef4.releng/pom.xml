@@ -318,6 +318,8 @@
 		<module>../org.eclipse.gef4.graphics.tests-feature</module>
 		<module>../org.eclipse.gef4.graphics.doc-feature</module>
 		<module>../org.eclipse.gef4.graphics.sdk-feature</module>
+		<module>../org.eclipse.gef4.swt.fx</module>
+		<module>../org.eclipse.gef4.swt.fx.tests</module>
 		<module>../org.eclipse.gef4.repository</module>
 		<module>../org.eclipse.gef4.zest.cloudio</module>
 		<module>../org.eclipse.gef4.zest.core</module>
