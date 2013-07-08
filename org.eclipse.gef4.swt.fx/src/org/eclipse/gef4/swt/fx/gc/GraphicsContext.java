@@ -185,6 +185,23 @@ public class GraphicsContext {
 		}
 	}
 
+	private void applyDashes(double[] dashesByReference) {
+		float[] dashes = new float[dashesByReference.length];
+		for (int i = 0; i < dashes.length; i++) {
+			dashes[i] = (float) dashesByReference[i];
+		}
+		LineAttributes lineAttrs = gc.getLineAttributes();
+		lineAttrs.dash = dashes;
+		lineAttrs.style = SWT.LINE_CUSTOM;
+		gc.setLineAttributes(lineAttrs);
+	}
+
+	private void applyDashOffset(double dashOffset) {
+		LineAttributes lineAttrs = gc.getLineAttributes();
+		lineAttrs.dashOffset = (float) dashOffset;
+		gc.setLineAttributes(lineAttrs);
+	}
+
 	/**
 	 * @param fillRule
 	 */
@@ -341,6 +358,8 @@ public class GraphicsContext {
 		applyMiterLimit(state.getMiterLimit());
 		applyPattern(state.getStrokeByReference(), PaintType.STROKE);
 		applyTransform(state.getTransformByReference());
+		applyDashes(state.getDashesByReference());
+		applyDashOffset(state.getDashOffset());
 	}
 
 	/**
@@ -797,6 +816,15 @@ public class GraphicsContext {
 		return 255;
 	}
 
+	public double[] getDashes() {
+		double[] dashes = states.peek().getDashesByReference();
+		return Arrays.copyOf(dashes, dashes.length);
+	}
+
+	public double getDashOffset() {
+		return states.peek().getDashOffset();
+	}
+
 	public Object getFill() {
 		return states.peek().getFillByReference().getActive();
 	}
@@ -939,6 +967,17 @@ public class GraphicsContext {
 	public void scale(double sx, double sy) {
 		states.peek().getTransformByReference().scale(sx, sy);
 		applyTransform(states.peek().getTransformByReference());
+	}
+
+	public void setDashes(double... dashes) {
+		double[] dashesCopy = Arrays.copyOf(dashes, dashes.length);
+		states.peek().setDashesByReference(dashesCopy);
+		applyDashes(dashesCopy);
+	}
+
+	public void setDashOffset(double dashOffset) {
+		states.peek().setDashOffset(dashOffset);
+		applyDashOffset(dashOffset);
 	}
 
 	public void setFill(Color fillColor) {

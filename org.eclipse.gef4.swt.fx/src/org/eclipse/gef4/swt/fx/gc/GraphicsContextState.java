@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.gc;
 
+import java.util.Arrays;
+
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.swt.SWT;
@@ -47,18 +49,24 @@ public class GraphicsContextState {
 
 	private boolean guarded;
 
+	private double[] dashes;
+
+	private double dashOffset;
+
 	public GraphicsContextState() {
 		this(1.0, new AffineTransform(), null, new Paint(new RgbaColor()),
 				new Paint(new RgbaColor()), 1.0, LineCap.FLAT, LineJoin.BEVEL,
 				10.0, new FontData("Times", 16, SWT.NORMAL),
-				TextAlignment.LEFT, TextVPos.TOP, FillRule.EVEN_ODD, false);
+				TextAlignment.LEFT, TextVPos.TOP, FillRule.EVEN_ODD, false,
+				new double[] {}, 0);
 	}
 
 	public GraphicsContextState(double globalAlpha, AffineTransform transform,
 			Path clipPath, Paint fill, Paint stroke, double lineWidth,
 			LineCap lineCap, LineJoin lineJoin, double miterLimit,
 			FontData fontData, TextAlignment textAlign, TextVPos textBaseline,
-			FillRule fillRule, boolean guarded) {
+			FillRule fillRule, boolean guarded, double[] dashes,
+			double dashOffset) {
 		this.globalAlpha = globalAlpha;
 		this.transform = transform;
 		this.clipPath = clipPath;
@@ -73,6 +81,8 @@ public class GraphicsContextState {
 		this.textBaseline = textBaseline;
 		this.fillRule = fillRule;
 		this.guarded = guarded;
+		this.dashes = dashes;
+		this.dashOffset = dashOffset;
 	}
 
 	public Path getClipPathByReference() {
@@ -83,7 +93,16 @@ public class GraphicsContextState {
 		return new GraphicsContextState(globalAlpha, transform.getCopy(),
 				clipPath, fill.getCopy(), stroke.getCopy(), lineWidth, lineCap,
 				lineJoin, miterLimit, fontData, textAlign, textBaseline,
-				fillRule, guarded);
+				fillRule, guarded, Arrays.copyOf(dashes, dashes.length),
+				dashOffset);
+	}
+
+	public double[] getDashesByReference() {
+		return dashes;
+	}
+
+	public double getDashOffset() {
+		return dashOffset;
 	}
 
 	public Paint getFillByReference() {
@@ -140,6 +159,14 @@ public class GraphicsContextState {
 
 	public void setClipPathByReference(Path clipPath) {
 		this.clipPath = clipPath;
+	}
+
+	public void setDashesByReference(double[] dashes) {
+		this.dashes = dashes;
+	}
+
+	public void setDashOffset(double dashOffset) {
+		this.dashOffset = dashOffset;
 	}
 
 	public void setFillByReference(Paint fill) {

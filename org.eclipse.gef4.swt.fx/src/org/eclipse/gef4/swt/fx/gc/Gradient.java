@@ -133,7 +133,7 @@ public abstract class Gradient<T extends Gradient<?>> {
 	 * 
 	 * @return the currently active {@link CycleMethod}
 	 */
-	public CycleMethod getCycleMode() {
+	public CycleMethod getCycleMethod() {
 		return cycle;
 	}
 
@@ -205,11 +205,11 @@ public abstract class Gradient<T extends Gradient<?>> {
 	 * @return
 	 */
 	private double normalizePercentualDistance(double d) {
-		if (getCycleMode() == CycleMethod.NO_CYCLE && d > 1) {
+		if (getCycleMethod() == CycleMethod.NO_CYCLE && d > 1) {
 			d = 1;
-		} else if (getCycleMode() == CycleMethod.REPEAT && d > 1) {
+		} else if (getCycleMethod() == CycleMethod.REPEAT && d > 1) {
 			d = d - (int) d;
-		} else if (getCycleMode() == CycleMethod.REFLECT && d > 1) {
+		} else if (getCycleMethod() == CycleMethod.REFLECT && d > 1) {
 			d -= 2 * (int) (d / 2);
 			if (d > 1) {
 				d = 2 - d;
@@ -227,7 +227,7 @@ public abstract class Gradient<T extends Gradient<?>> {
 	 * @return <code>this</code> for convenience
 	 */
 	@SuppressWarnings("unchecked")
-	public T setCycleMode(CycleMethod cycle) {
+	public T setCycleMethod(CycleMethod cycle) {
 		this.cycle = cycle;
 		return (T) this;
 	}

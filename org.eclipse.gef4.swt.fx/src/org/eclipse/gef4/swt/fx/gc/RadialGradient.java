@@ -75,7 +75,7 @@ public class RadialGradient extends Gradient<RadialGradient> {
 
 	public RadialGradient(Ellipse boundary, Point focus, CycleMethod cycleMode) {
 		this(boundary, focus);
-		setCycleMode(cycleMode);
+		setCycleMethod(cycleMode);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class RadialGradient extends Gradient<RadialGradient> {
 	@Override
 	public RadialGradient getCopy() {
 		RadialGradient copy = new RadialGradient(boundary, focus,
-				getCycleMode()).setStops(getStops()).setGammaCorrection(
+				getCycleMethod()).setStops(getStops()).setGammaCorrection(
 				getGammaCorrection());
 		copy.auxColors = auxColors == null ? null : Arrays.copyOf(auxColors,
 				auxColors.length);
@@ -189,7 +189,7 @@ public class RadialGradient extends Gradient<RadialGradient> {
 				auxColors.length);
 		other.boundary = boundary.getCopy();
 		other.focus = focus.getCopy();
-		other.setCycleMode(getCycleMode());
+		other.setCycleMethod(getCycleMethod());
 		other.setStops(getStops());
 	}
 

@@ -78,7 +78,7 @@ public class LinearGradient extends Gradient<LinearGradient> {
 		super();
 		start = new Point(from);
 		end = new Point(to);
-		setCycleMode(cycleMode);
+		setCycleMethod(cycleMode);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class LinearGradient extends Gradient<LinearGradient> {
 
 	@Override
 	public LinearGradient getCopy() {
-		LinearGradient copy = new LinearGradient(start, end, getCycleMode());
+		LinearGradient copy = new LinearGradient(start, end, getCycleMethod());
 		copyInto(copy);
 		return copy;
 	}
