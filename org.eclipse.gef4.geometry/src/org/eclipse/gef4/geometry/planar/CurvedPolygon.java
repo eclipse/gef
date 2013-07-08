@@ -176,10 +176,15 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 
 	@Override
 	public Rectangle getBounds() {
-		Rectangle bounds = new Rectangle();
-		for (BezierCurve c : edges) {
-			bounds.union(c.getBounds());
+		if (edges == null || edges.length == 0) {
+			return new Rectangle();
 		}
+
+		Rectangle bounds = edges[0].getBounds();
+		for (int i = 1; i < edges.length; i++) {
+			bounds.union(edges[i].getBounds());
+		}
+
 		return bounds;
 	}
 

@@ -124,6 +124,7 @@ public class AffineTransform {
 	 */
 	public java.awt.geom.AffineTransform createInverse()
 			throws NoninvertibleTransformException {
+		// TODO: return our AffineTransform, not the AWT thing
 		return delegate.createInverse();
 	}
 

@@ -108,8 +108,17 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 	}
 
 	@Override
-	public CubicCurve[] getOutlineSegments() {
-		return computeBezierApproximation();
+	public BezierCurve[] getOutlineSegments() {
+		CubicCurve[] arcSegs = computeBezierApproximation();
+		BezierCurve[] outlineSegs = new BezierCurve[arcSegs.length + 2];
+		for (int i = 0; i < arcSegs.length; i++) {
+			outlineSegs[i] = arcSegs[i];
+		}
+		outlineSegs[outlineSegs.length - 2] = new Line(
+				outlineSegs[outlineSegs.length - 3].getP2(), getCenter());
+		outlineSegs[outlineSegs.length - 1] = new Line(getCenter(),
+				outlineSegs[0].getP1());
+		return outlineSegs;
 	}
 
 	@Override

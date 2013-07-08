@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.junit.Test;
 
 public class CurvedPolygonTests {
@@ -38,4 +41,17 @@ public class CurvedPolygonTests {
 		assertTrue(curvedPolygon.contains(new Point(150, 200)));
 		assertTrue(curvedPolygon.contains(new Point(100, 100)));
 	}
+
+	@Test
+	public void test_getBounds() {
+		// TODO: store points in variables
+		CurvedPolygon curvedPolygon = new CurvedPolygon(new Line(100, 100, 200,
+				100), new Line(200, 100, 200, 200),
+				new Line(200, 200, 100, 200), new Line(100, 200, 100, 100));
+		Rectangle expectation = new Rectangle(new Point(100, 100), new Point(
+				200, 200));
+		Rectangle reality = curvedPolygon.getBounds();
+		assertEquals(expectation, reality);
+	}
+
 }
