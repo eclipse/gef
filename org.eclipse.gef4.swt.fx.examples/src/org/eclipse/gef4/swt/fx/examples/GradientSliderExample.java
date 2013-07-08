@@ -14,6 +14,7 @@ package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.swt.fx.AbstractFigure;
 import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.gef4.swt.fx.ShapeFigure;
 import org.eclipse.gef4.swt.fx.gc.CycleMethod;
@@ -51,7 +52,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		@Override
 		public SlidableLinearGradient getCopy() {
 			SlidableLinearGradient copy = new SlidableLinearGradient(
-					getStart(), getEnd(), getCycleMode());
+					getStart(), getEnd(), getCycleMethod());
 			this.copyInto(copy);
 			copy.setDistanceOffset(getDistanceOffset());
 			return copy;
@@ -94,19 +95,14 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		slider.setBounds(20, 20, 200, 20);
 		slider.addSelectionListener(this);
 
-		ShapeFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
-		fig.getPaintStateByReference().getTransformByReference()
-				.translate(20, 60);
+		AbstractFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
+		fig.relocate(20, 60);
 		fig.getPaintStateByReference().getFillByReference()
 				.setGradientByReference(gradient);
 		fig.getPaintStateByReference().getFillByReference()
 				.setMode(PaintMode.GRADIENT);
 
 		c.addFigures(fig);
-
-		// ShapeFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
-		// fig.translate(20, 60);
-		// fig.fill(gradient);
 	}
 
 	@Override

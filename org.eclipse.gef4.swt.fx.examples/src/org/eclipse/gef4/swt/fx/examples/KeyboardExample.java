@@ -13,6 +13,7 @@
 package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.swt.fx.AbstractFigure;
 import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.gef4.swt.fx.ShapeFigure;
 import org.eclipse.gef4.swt.fx.event.IEventHandler;
@@ -31,7 +32,7 @@ public class KeyboardExample implements IExample {
 		new Example(new KeyboardExample());
 	}
 
-	private ShapeFigure keyboardRect;
+	private AbstractFigure keyboardRect;
 
 	@Override
 	public void addUi(Group rootGroup) {

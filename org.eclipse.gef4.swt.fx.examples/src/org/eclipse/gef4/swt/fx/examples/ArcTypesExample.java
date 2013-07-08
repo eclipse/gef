@@ -13,6 +13,7 @@
 package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.swt.fx.AbstractFigure;
 import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.gef4.swt.fx.ShapeFigure;
 import org.eclipse.gef4.swt.fx.gc.ArcType;
@@ -29,7 +30,7 @@ public class ArcTypesExample implements IExample {
 
 	@Override
 	public void addUi(Group c) {
-		ShapeFigure f = new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+		AbstractFigure f = new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			{
 				getPaintStateByReference().getFillByReference().setColor(
 						new RgbaColor(0xffffffff));
@@ -41,18 +42,19 @@ public class ArcTypesExample implements IExample {
 			public void paint(GraphicsContext g) {
 				super.paint(g); // background
 
-				g.fillText("stroke", 40, 0);
-				g.fillText("fill", 160, 0);
+				g.strokeText("stroke", 40, 0);
+				g.strokeText("fill", 160, 0);
 
 				g.translate(0, 20);
-				g.fillText("ArcType.OPEN", 260, 40);
-				g.fillText("ArcType.CHORD", 260, 160);
-				g.fillText("ArcType.ROUND", 260, 280);
+				g.strokeText("ArcType.OPEN", 260, 40);
+				g.strokeText("ArcType.CHORD", 260, 160);
+				g.strokeText("ArcType.ROUND", 260, 280);
 
 				g.strokeArc(20, 20, 100, 100, 0, 270, ArcType.OPEN);
 				g.strokeArc(20, 140, 100, 100, 0, 270, ArcType.CHORD);
 				g.strokeArc(20, 260, 100, 100, 0, 270, ArcType.ROUND);
 
+				g.setFill(new RgbaColor());
 				g.fillArc(140, 20, 100, 100, 0, 270, ArcType.OPEN);
 				g.fillArc(140, 140, 100, 100, 0, 270, ArcType.CHORD);
 				g.fillArc(140, 260, 100, 100, 0, 270, ArcType.ROUND);

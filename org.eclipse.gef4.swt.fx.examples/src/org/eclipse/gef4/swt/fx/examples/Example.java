@@ -14,8 +14,6 @@ package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -33,12 +31,12 @@ public class Example {
 		display = new Display();
 		shell = new Shell(display);
 		shell.setText("org.eclipse.gef4.swt.fx - " + ex.getTitle());
-		shell.setLayout(new GridLayout());
+		// shell.setLayout(new GridLayout());
 
 		group = new Group(shell);
 		// group.addBackgroundPaintListener(this);
 		group.setSize(w, h);
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		ex.addUi(group);
 

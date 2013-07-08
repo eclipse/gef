@@ -34,8 +34,7 @@ public class PrimitivesExample implements IExample {
 		c.addFigures(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
 			public void paint(GraphicsContext g) {
-				Rectangle bounds = this.getBounds().getTransformedShape()
-						.getBounds();
+				Rectangle bounds = this.getLayoutBounds();
 				g.clearRect(0, 0, bounds.getWidth(), bounds.getHeight());
 
 				g.setFill(new RgbaColor(255, 0, 0));
