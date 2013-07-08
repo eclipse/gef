@@ -59,6 +59,10 @@ public class Event extends EventObject {
 		return copy;
 	}
 
+	/**
+	 * Marks this {@link Event} as consumed, i.e. already processed. Consumed
+	 * events are not further dispatched.
+	 */
 	public void consume() {
 		if (consumed) {
 			throw new IllegalStateException("This Event is already consumed.");
@@ -66,18 +70,46 @@ public class Event extends EventObject {
 		consumed = true;
 	}
 
+	/**
+	 * Returns the {@link EventType} associated with this Event.
+	 * 
+	 * @return the {@link EventType} associated with this Event
+	 */
 	public EventType<? extends Event> getEventType() {
 		return type;
 	}
 
+	/**
+	 * Returns the {@link IEventTarget} for which this Event was generated.
+	 * 
+	 * @return the {@link IEventTarget} for which this Event was generated
+	 */
 	public IEventTarget getTarget() {
 		return target;
 	}
 
+	/**
+	 * Checks if this Event is already consumed, i.e. {@link #consume()} has
+	 * been called on this Event. Returns <code>true</code> if so, otherwise
+	 * <code>false</code>.
+	 * 
+	 * @return <code>true</code> if {@link #consume()} has been called on this
+	 *         Event, otherwise <code>false</code>
+	 */
 	public boolean isConsumed() {
 		return consumed;
 	}
 
+	/**
+	 * Sets the {@link EventType} of this Event to the passed-in EventType. This
+	 * is used internally to transform events of one type to another.
+	 * Specifically, the {@link MouseTrackDispatcher} makes use of this method
+	 * to transform MOUSE_ENTERED_TARGET and MOUSE_EXITED_TARGET events to
+	 * MOUSE_ENTERED and MOUSE_EXITED events.
+	 * 
+	 * @param newType
+	 *            the new {@link EventType} for this Event
+	 */
 	public void setEventType(EventType<? extends Event> newType) {
 		type = newType;
 	}

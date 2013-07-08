@@ -46,7 +46,7 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 					traverseEvent.consume();
 					return traverseEvent;
 				}
-				target = ((IFigure) target).getContainer();
+				target = ((IFigure) target).getParentNode();
 			}
 
 			if (target instanceof Group) {
@@ -89,7 +89,7 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 					// }
 					// }
 
-					g.redraw();
+					g.requestRedraw();
 					traverseEvent.consume();
 				}
 			} else {

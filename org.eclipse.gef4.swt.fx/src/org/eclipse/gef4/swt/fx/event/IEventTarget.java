@@ -40,10 +40,10 @@ public interface IEventTarget {
 	 * {@link DefaultEventDispatchChainBuilder}.
 	 * </p>
 	 * 
-	 * @param chain
+	 * @param tail
 	 *            current {@link IEventDispatchChain}
 	 * @return modified {@link IEventDispatchChain}
 	 */
-	IEventDispatchChain buildEventDispatchChain(IEventDispatchChain chain);
+	IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail);
 
 }

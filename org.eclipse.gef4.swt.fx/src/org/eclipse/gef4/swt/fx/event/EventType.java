@@ -12,6 +12,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.event;
 
+/**
+ * <p>
+ * Every {@link Event} is associated with an EventType. An EventType is
+ * parameterized with the corresponding Event class. Therefore, EventTypes are
+ * hierarchically organized just as Event classes.
+ * </p>
+ * 
+ * <p>
+ * The root of the EventType hierarchy is defined as {@link #ROOT}. It does not
+ * have a super type. Event#ANY is defined to be exactly the same object.
+ * </p>
+ * 
+ * @author mwienand
+ * 
+ */
 public class EventType<T extends Event> {
 
 	public static final EventType<Event> ROOT = new EventType<Event>("ROOT");
@@ -28,11 +43,6 @@ public class EventType<T extends Event> {
 		this.name = name;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return obj == this;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -41,9 +51,15 @@ public class EventType<T extends Event> {
 		return superType;
 	}
 
-	public boolean isDescendantOf(EventType<?> type) {
+	public boolean isa(EventType<?> base) {
+		if (base == null) {
+			// TODO: think about it: true or false? or exception?
+			return false;
+		}
+
+		EventType<?> type = this;
 		while (type != null) {
-			if (type.getName().equals(getName())) {
+			if (type == base) {
 				return true;
 			}
 			type = type.getSuperType();

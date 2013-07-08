@@ -15,8 +15,10 @@ package org.eclipse.gef4.swt.fx.event;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.swt.fx.AbstractParent;
 import org.eclipse.gef4.swt.fx.Group;
 import org.eclipse.gef4.swt.fx.IFigure;
+import org.eclipse.gef4.swt.fx.INode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
@@ -62,28 +64,32 @@ public class SwtEventTargetSelector implements Listener {
 		return false;
 	}
 
-	private Group group;
+	private AbstractParent region;
 	private IFigure mouseTarget;
 	private IFigure focusTarget;
 	private IFigure mouseEnteredFigure;
 
-	public SwtEventTargetSelector(Group group) {
-		this.group = group;
+	public SwtEventTargetSelector(AbstractParent region) {
+		this.region = region;
 		addListeners();
 	}
 
 	public void addListeners() {
 		for (int type : EVENT_TYPES) {
-			group.addListener(type, this);
+			region.addListener(type, this);
 		}
 	}
 
 	private IFigure getFigureUnderCursor() {
 		org.eclipse.swt.graphics.Point cursorLocation = Display.getCurrent()
 				.getCursorLocation();
-		cursorLocation = group.toControl(cursorLocation);
+		cursorLocation = region.toControl(cursorLocation);
 		Point cursor = new Point(cursorLocation.x, cursorLocation.y);
-		return group.getFigureAt(cursor);
+		double[] xy = new double[2];
+		transformToTarget(region, cursorLocation.x, cursorLocation.y, xy);
+		cursor.x = xy[0];
+		cursor.y = xy[1];
+		return region.getFigureAt(cursor);
 	}
 
 	public IFigure getFocusTarget() {
@@ -103,10 +109,10 @@ public class SwtEventTargetSelector implements Listener {
 			return;
 		}
 
-		List<IFigure> figures = group.getFigures();
+		List<IFigure> figures = region.getFigures();
 		if (figures.size() < 1) {
 			// no figures => group is the target
-			Event.fireEvent(group, wrap(event, group));
+			Event.fireEvent(region, wrap(event, region));
 			return;
 		}
 
@@ -138,7 +144,7 @@ public class SwtEventTargetSelector implements Listener {
 				IFigure cursorTarget = getFigureUnderCursor();
 
 				if (event.type == SWT.MouseEnter || event.type == SWT.MouseExit) {
-					Event.fireEvent(group, wrap(event, group));
+					Event.fireEvent(region, wrap(event, region));
 				}
 
 				// insert mouse entered/exited events
@@ -199,7 +205,7 @@ public class SwtEventTargetSelector implements Listener {
 		}
 
 		// our group is the target
-		Event.fireEvent(group, wrap(event, group));
+		Event.fireEvent(region, wrap(event, region));
 	}
 
 	private boolean isKeyboardEvent(org.eclipse.swt.widgets.Event event) {
@@ -212,7 +218,7 @@ public class SwtEventTargetSelector implements Listener {
 
 	public void removeListeners() {
 		for (int type : EVENT_TYPES) {
-			group.removeListener(type, this);
+			region.removeListener(type, this);
 		}
 	}
 
@@ -222,14 +228,23 @@ public class SwtEventTargetSelector implements Listener {
 
 	public void setGroup(Object group) {
 		if (group instanceof Group) {
-			this.group = (Group) group;
+			this.region = (Group) group;
 		} else {
 			throw new IllegalArgumentException(
 					"We need a defined gef4.swt.canvas.Group here!");
 		}
 	}
 
-	private Event wrap(org.eclipse.swt.widgets.Event e, IEventTarget target) {
+	private void transformToTarget(INode target, double x, double y,
+			double[] xyOut) {
+		Point control = new Point(x, y);
+		Point local = new Point();
+		region.controlToLocal(control, local);
+		xyOut[0] = local.x;
+		xyOut[1] = local.y;
+	}
+
+	private Event wrap(org.eclipse.swt.widgets.Event e, INode target) {
 		switch (e.type) {
 		case SWT.Activate:
 		case SWT.Arm:
@@ -250,6 +265,11 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Modify:
 		case SWT.MenuDetect:
 		case SWT.MouseDoubleClick:
+		case SWT.MouseHorizontalWheel:
+			// TODO
+			// return new MouseEvent(e.widget, target,
+			// MouseEvent.MOUSE_SCROLLED,
+			// e.button, e.count, e.x, e.y);
 		case SWT.MouseHover:
 		case SWT.Move:
 		case SWT.Paint:
@@ -266,32 +286,51 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.KeyUp:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_RELEASED,
 					e.keyCode, e.character);
-		case SWT.MouseDown:
+		case SWT.MouseDown: {
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_PRESSED,
-					e.button, e.count, e.x, e.y);
-		case SWT.MouseEnter:
+					e.button, e.count, xy[0], xy[1]);
+		}
+		case SWT.MouseEnter: {
 			// TODO: re-think this one
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target,
-					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, e.x,
-					e.y);
-		case SWT.MouseExit:
+					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, xy[0],
+					xy[1]);
+		}
+		case SWT.MouseExit: {
 			// TODO: re-think this one
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target,
-					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, e.x, e.y);
-		case SWT.MouseMove:
+					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, xy[0],
+					xy[1]);
+		}
+		case SWT.MouseMove: {
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_MOVED,
-					e.button, e.count, e.x, e.y);
-		case SWT.MouseWheel:
+					e.button, e.count, xy[0], xy[1]);
+		}
+		case SWT.MouseWheel: {
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_SCROLLED,
-					e.button, e.count, e.x, e.y);
-		case SWT.MouseUp:
+					e.button, e.count, xy[0], xy[1]);
+		}
+		case SWT.MouseUp: {
+			double[] xy = new double[2];
+			transformToTarget(target, e.x, e.y, xy);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
-					e.button, e.count, e.x, e.y);
+					e.button, e.count, xy[0], xy[1]);
+		}
 		case SWT.Traverse:
 			// XXX: This is unreachable code, because handleEvent() ignores
 			// Traverse events, completely.
 			// TODO: re-think this one
-			return new TraverseEvent(group, target, TraverseEvent.ANY,
+			return new TraverseEvent(region, target, TraverseEvent.ANY,
 					e.detail, e.keyCode, e.stateMask);
 		default:
 			throw new IllegalArgumentException(

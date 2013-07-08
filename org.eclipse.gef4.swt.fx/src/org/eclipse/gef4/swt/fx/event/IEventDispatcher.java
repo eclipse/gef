@@ -20,11 +20,11 @@ package org.eclipse.gef4.swt.fx.event;
  * </p>
  * 
  * <p>
+ * An IEventDispatcher is capable of processing an {@link Event} during both
+ * phases of event processing, bubbling and capturing. This is done using a
+ * recursive mechanism:
  * 
- * </p>
- * 
- * <p>
- * Sample implementation ({@link AbstractEventDispatcher}): <blockquote>
+ * <blockquote>
  * 
  * <pre>
  * &#064;Override
@@ -47,6 +47,12 @@ package org.eclipse.gef4.swt.fx.event;
  * </blockquote>
  * </p>
  * 
+ * <p>
+ * An abstract implementation of this interface is provided by the
+ * {@link AbstractEventDispatcher}. If you want to create your own
+ * IEventDispatcher it is best to subclass that one.
+ * </p>
+ * 
  * @see {@link EventHandlerManager} <br />
  *      Every INode uses an EventHandlerManager to register and dispatch event
  *      filters and event handlers specified by the user.
@@ -65,6 +71,25 @@ package org.eclipse.gef4.swt.fx.event;
  */
 public interface IEventDispatcher {
 
+	/**
+	 * <p>
+	 * Dispatches the passed-in {@link Event} and eventually passes it along to
+	 * the passed-in {@link IEventDispatchChain}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The method returns the passed-in {@link Event} object or
+	 * <code>null</code> to cancel further event processing. Event processing is
+	 * also stopped, when the event is {@link Event#consume() consumed}.
+	 * </p>
+	 * 
+	 * @param event
+	 *            the {@link Event} to dispatch
+	 * @param tail
+	 *            the {@link IEventDispatchChain} to further dispatch the event
+	 * @return the passed-in event, or <code>null</code> to cancel event
+	 *         processing
+	 */
 	Event dispatchEvent(Event event, IEventDispatchChain tail);
 
 }
