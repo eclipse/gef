@@ -22,7 +22,6 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.fx.CanvasFigure;
 import org.eclipse.gef4.swt.fx.gc.ArcType;
 import org.eclipse.gef4.swt.fx.gc.GraphicsContext;
@@ -163,8 +162,7 @@ public class GraphicsContextTests {
 
 	@Test
 	public void test_fillPath_with_RadialGradient() {
-		Ellipse boundary = new Ellipse((Rectangle) canvas.getBounds()
-				.getShape());
+		Ellipse boundary = new Ellipse(canvas.getLayoutBounds());
 		gc.setFill(new RadialGradient(boundary).addStop(0,
 				new RgbaColor(255, 0, 0)).addStop(1, new RgbaColor(0, 255, 0)));
 		gc.fillPath(SHAPE.toPath());

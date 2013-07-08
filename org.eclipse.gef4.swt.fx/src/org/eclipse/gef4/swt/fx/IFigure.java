@@ -12,26 +12,57 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx;
 
+import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.swt.fx.gc.GraphicsContext;
 import org.eclipse.gef4.swt.fx.gc.GraphicsContextState;
 
 public interface IFigure extends INode {
 
-	IBounds getBounds();
+	/**
+	 * Returns the clipping {@link Path} associated with this {@link INode}.
+	 * 
+	 * @return the clipping {@link Path} associated with this {@link INode}
+	 */
+	public Path getClipPath();
 
-	Group getContainer();
-
+	/**
+	 * Returns the {@link GraphicsContextState} associated with this IFigure.
+	 * 
+	 * @deprecated The paint state will not be part of the public API.
+	 * @return the {@link GraphicsContextState} associated with this IFigure
+	 */
+	@Deprecated
 	GraphicsContextState getPaintStateByReference();
 
+	/**
+	 * Draws this {@link IFigure} using the passed-in {@link GraphicsContext}.
+	 * 
+	 * @param g
+	 */
 	void paint(GraphicsContext g);
 
 	/**
-	 * change container (do not call)
+	 * Sets the clipping {@link Path} of this {@link IFigure} to the given
+	 * {@link Path}.
 	 * 
-	 * @param group
+	 * @param clipPath
 	 */
-	void setContainer(Group group);
+	public void setClipPath(Path clipPath);
 
+	/**
+	 * Changes the parent of this IFigure. This method is automatically called
+	 * when you add an IFigure
+	 * 
+	 * @deprecated The container is assigned automatically.
+	 * @param group
+	 *            new container
+	 */
+	@Deprecated
+	void setParentNode(IParent parent);
+
+	/**
+	 * Requests the container to redraw.
+	 */
 	void update();
 
 }

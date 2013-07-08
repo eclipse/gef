@@ -14,6 +14,8 @@ package org.eclipse.gef4.swt.fx;
 
 import java.util.Arrays;
 
+import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swt.fx.gc.GraphicsContext;
 import org.eclipse.swt.graphics.Device;
@@ -43,7 +45,21 @@ public class CanvasFigure extends AbstractFigure {
 	private int imgWidth;
 	private int imgHeight;
 
-	// TODO: private BlendOperation blender;
+	/*
+	 * TODO: private IBlendOperation blender;
+	 * 
+	 * Create an interface IBlendOperation which provides a single method
+	 * blend(Image source, Image destination) : Image. The blender is used to
+	 * merge source and destination images, i.e. the CanvasFigure's image and
+	 * the underlying drawings.
+	 * 
+	 * MAYBE: private Effect effect;
+	 * 
+	 * The specified Effect can be used to blend the CanvasFigure's image with
+	 * the underlying drawings. A CompositeEffect can be used to allow combined
+	 * Effects on a CanvasFigure. Effects should only be allowed if available on
+	 * any IFigure, at least, or ideally on any INode.
+	 */
 
 	public CanvasFigure(Device dev, double width, double height,
 			RGB transparentPixel) {
@@ -65,6 +81,10 @@ public class CanvasFigure extends AbstractFigure {
 
 	public CanvasFigure(double width, double height) {
 		this(Display.getCurrent(), width, height, new RGB(255, 255, 255));
+	}
+
+	@Override
+	public void absoluteToLocal(Point absoluteIn, Point localOut) {
 	}
 
 	public void clear() {
@@ -101,12 +121,40 @@ public class CanvasFigure extends AbstractFigure {
 	}
 
 	@Override
-	public IBounds getBounds() {
-		return new GeneralBounds(new Rectangle(0, 0, width, height),
-				getPaintStateByReference().getTransformByReference());
+	public boolean contains(double localX, double localY) {
+		return getLayoutBounds().contains(localX, localY);
+	}
+
+	private void forceImageUpdate() {
+		// FIXME: ~5-10 millis (way too much!)
+		ImageData imageData = image.getImageData();
+		g.cleanUp();
+		gc.dispose();
+		image.dispose();
+		image = new Image(dev, imageData);
+		gc = new GC(image);
+		g = new GraphicsContext(gc);
+	}
+
+	@Override
+	public Rectangle getBoundsInLocal() {
+		return getLayoutBounds();
+	}
+
+	@Override
+	public Path getClipPath() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public GraphicsContext getGraphicsContext() {
+		/*
+		 * XXX: The underlying Image is sometimes not updated when the user
+		 * draws into it using the returned GraphicsContext. The call to
+		 * forceImageUpdate() fixes this strange behavior, but we should find
+		 * out in detail what is going wrong.
+		 */
+		forceImageUpdate();
 		return g;
 	}
 
@@ -118,6 +166,11 @@ public class CanvasFigure extends AbstractFigure {
 		return image;
 	}
 
+	@Override
+	public Rectangle getLayoutBounds() {
+		return new Rectangle(0, 0, width, height);
+	}
+
 	public double getWidth() {
 		return width;
 	}
@@ -125,6 +178,10 @@ public class CanvasFigure extends AbstractFigure {
 	@Override
 	public void paint(GraphicsContext g) {
 		g.drawImage(image, 0, 0);
+	}
+
+	@Override
+	public void setClipPath(Path clipPath) {
 	}
 
 	@Override
