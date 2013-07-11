@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.event;
 
-import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.INode;
+import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
 
 public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 
@@ -32,11 +31,6 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 	@Override
 	public Event dispatchCapturingEvent(Event event) {
 		if (event.getEventType() == TraverseEvent.ANY) {
-			// event.consume();
-			// if (true) {
-			// return event;
-			// }
-
 			TraverseEvent traverseEvent = (TraverseEvent) event;
 
 			IEventTarget target = traverseEvent.getTarget();
@@ -49,8 +43,8 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 				target = ((IFigure) target).getParentNode();
 			}
 
-			if (target instanceof Group) {
-				Group g = (Group) target;
+			if (target instanceof IParent) {
+				IParent g = (IParent) target;
 				if (g.isFocusTraversable()) {
 					boolean directionNext = traverseEvent.getDetail() == SWT.TRAVERSE_ARROW_NEXT
 							|| traverseEvent.getDetail() == SWT.TRAVERSE_PAGE_NEXT
@@ -58,36 +52,7 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 							|| traverseEvent.getDetail() == SWT.TRAVERSE_RETURN;
 
 					IFigure nextFocusFigure = trav(directionNext, g);
-					g.setFocusFigure(nextFocusFigure);
-
-					if (nextFocusFigure == null) {
-						Control[] children = g.getChildren();
-						if (children.length > 0) {
-							if (directionNext) {
-								children[0].forceFocus();
-							} else {
-								children[children.length - 1].forceFocus();
-							}
-						} else {
-							g.getParent().forceFocus();
-							// if (directionNext) {
-							// g.setFocusFigure(g.getFirstFigure());
-							// } else {
-							// g.setFocusFigure(g.getLastFigure());
-							// }
-						}
-					}
-
-					// if (nextFocusFigure == null) {
-					// Control[] children = g.getChildren();
-					// if (directionNext) {
-					// if (children.length > 0) {
-					// children[0].forceFocus();
-					// }
-					// } else {
-					// g.getParent().forceFocus();
-					// }
-					// }
+					g.setFocusNode(nextFocusFigure);
 
 					g.requestRedraw();
 					traverseEvent.consume();
@@ -101,9 +66,8 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 		return event;
 	}
 
-	private IFigure trav(boolean directionNext, Group container) {
-		return directionNext ? container.getNextFocusFigure() : container
-				.getPreviousFocusFigure();
+	private IFigure trav(boolean directionNext, IParent container) {
+		return null;
 	}
 
 }

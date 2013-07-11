@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.examples;
 
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -22,7 +22,7 @@ public class Example {
 
 	private Display display;
 	private Shell shell;
-	private Group group;
+	private Pane pane;
 
 	public Example(IExample ex) {
 		int w = ex.getWidth();
@@ -33,12 +33,12 @@ public class Example {
 		shell.setText("org.eclipse.gef4.swtfx - " + ex.getTitle());
 		// shell.setLayout(new GridLayout());
 
-		group = new Group(shell);
+		pane = new Pane(shell);
 		// group.addBackgroundPaintListener(this);
-		group.setSize(w, h);
+		pane.resize(w, h);
 		// group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ex.addUi(group);
+		ex.addUi(pane);
 
 		shell.pack();
 		shell.open();
@@ -56,7 +56,7 @@ public class Example {
 	}
 
 	public Canvas getCanvas() {
-		return group;
+		return pane;
 	}
 
 	// @Override

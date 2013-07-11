@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.event;
 
-
 /**
  * The ActionEvent class is the base class of all events emitted by the
  * application and not by an input device.
@@ -26,6 +25,9 @@ public class ActionEvent extends Event {
 
 	public static final EventType<ActionEvent> ANY = new EventType<ActionEvent>(
 			Event.ANY, "ActionEvent");
+
+	public static final EventType<ActionEvent> SELECTION = new EventType<ActionEvent>(
+			ANY, "ActionSelectionEvent");
 
 	private static final long serialVersionUID = 1L;
 

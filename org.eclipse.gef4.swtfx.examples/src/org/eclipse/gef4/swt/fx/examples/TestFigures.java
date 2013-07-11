@@ -12,35 +12,23 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.examples;
 
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
 import org.eclipse.gef4.swtfx.CanvasFigure;
-import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class TestFigures {
-
-	// private static CurvedPolygon generateCurvedPolygon(Point... points) {
-	// Polygon polygon = new Polygon(points);
-	// Line[] lines = polygon.getOutlineSegments();
-	// BezierCurve[] curves = new BezierCurve[lines.length];
-	// for (int i = 0; i < lines.length; i++) {
-	// Line line = lines[i];
-	// curves[i] = new QuadraticCurve(line.getP1(), line.get(0.5)
-	// .translate(0, 50), line.getP2());
-	// }
-	// return new CurvedPolygon(curves);
-	// }
 
 	public static void main(String[] args) {
 		new TestFigures();
@@ -56,8 +44,7 @@ public class TestFigures {
 		shell.setText("org.eclipse.gef4.swtfx");
 		shell.setLayout(new GridLayout());
 
-		Group root = new Group(shell);
-		root.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final Pane root = new Pane(shell);
 
 		// ShapeFigure curved = new ShapeFigure(generateCurvedPolygon(new Point(
 		// 250, 50), new Point(450, 200), new Point(400, 450), new Point(
@@ -67,11 +54,11 @@ public class TestFigures {
 
 		AbstractFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
 		colorize(rect, new RgbaColor(0, 128, 128, 128));
-		trafo(rect).translate(50, 50);
+		rect.relocate(50, 50);
 
 		AbstractFigure ellipse = new ShapeFigure(new Ellipse(0, 0, 100, 100));
 		colorize(ellipse, new RgbaColor(128, 0, 128, 128));
-		trafo(ellipse).translate(100, 100);
+		ellipse.relocate(100, 100);
 
 		CanvasFigure canvas = new CanvasFigure(100, 100);
 		GraphicsContext g = canvas.getGraphicsContext();
@@ -79,12 +66,20 @@ public class TestFigures {
 		g.strokeText("canvas output", 0, 0);
 
 		// root.addFigures(curved, rect, ellipse, canvas);
-		root.addFigures(rect, ellipse, canvas);
+		root.addChildNodes(rect, ellipse, canvas);
 
 		Button button = new Button(root, SWT.PUSH);
 		button.setText("push me");
 		button.setLocation(300, 100);
 		button.setSize(100, 50);
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				root.doLayout();
+				root.updateSwtBounds();
+				root.requestRedraw();
+			}
+		});
 
 		shell.pack();
 		shell.open();
@@ -100,10 +95,6 @@ public class TestFigures {
 	private void colorize(AbstractFigure sf, RgbaColor color) {
 		sf.getPaintStateByReference().getFillByReference()
 				.setColorByReference(color);
-	}
-
-	private AffineTransform trafo(AbstractFigure sf) {
-		return sf.getPaintStateByReference().getTransformByReference();
 	}
 
 }

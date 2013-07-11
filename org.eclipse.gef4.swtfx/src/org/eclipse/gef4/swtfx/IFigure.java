@@ -50,17 +50,6 @@ public interface IFigure extends INode {
 	public void setClipPath(Path clipPath);
 
 	/**
-	 * Changes the parent of this IFigure. This method is automatically called
-	 * when you add an IFigure
-	 * 
-	 * @deprecated The container is assigned automatically.
-	 * @param group
-	 *            new container
-	 */
-	@Deprecated
-	void setParentNode(IParent parent);
-
-	/**
 	 * Requests the container to redraw.
 	 */
 	void update();

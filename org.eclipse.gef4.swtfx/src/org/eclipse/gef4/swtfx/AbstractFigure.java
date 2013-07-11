@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.event.Event;
@@ -64,6 +63,11 @@ public abstract class AbstractFigure implements IFigure {
 	public <T extends Event> void addEventHandler(EventType<T> type,
 			IEventHandler<T> handler) {
 		dispatcher.addEventHandler(type, handler);
+	}
+
+	@Override
+	public void autosize() {
+		NodeUtil.autosize(this);
 	}
 
 	@Override
@@ -183,11 +187,6 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public Dimension getPreferredSize() {
-		return getLayoutBounds().getSize();
-	}
-
-	@Override
 	public double getPrefHeight() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -231,12 +230,22 @@ public abstract class AbstractFigure implements IFigure {
 
 	@Override
 	public boolean isFocused() {
-		return getParentNode().getFocusFigure() == this;
+		return getParentNode().getFocusNode() == this;
 	}
 
 	@Override
 	public boolean isFocusTraversable() {
 		return focusTraversable;
+	}
+
+	@Override
+	public boolean isManaged() {
+		return true;
+	}
+
+	@Override
+	public boolean isResizable() {
+		return false;
 	}
 
 	@Override
@@ -284,7 +293,7 @@ public abstract class AbstractFigure implements IFigure {
 
 	@Override
 	public boolean requestFocus() {
-		return parent.setFocusFigure(this);
+		return parent.setFocusNode(this);
 	}
 
 	@Override

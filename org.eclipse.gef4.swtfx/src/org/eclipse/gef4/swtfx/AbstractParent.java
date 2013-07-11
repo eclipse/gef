@@ -35,7 +35,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * The AbstractParent is the provided abstract {@link IParent} implementation.
@@ -48,7 +47,8 @@ import org.eclipse.swt.widgets.Control;
 public abstract class AbstractParent extends Canvas implements IParent,
 		PaintListener, DisposeListener {
 
-	private List<IFigure> figures = new LinkedList<IFigure>();
+	// private List<IFigure> figures = new LinkedList<IFigure>();
+	private List<INode> children = new LinkedList<INode>();
 	private EventHandlerManager dispatcher = new EventHandlerManager();
 	private SwtEventTargetSelector swtEventDispatcher;
 	private boolean focusTraversable = true;
@@ -63,6 +63,15 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	private Angle angle = Angle.fromRad(0);
 	private List<AffineTransform> transforms = new LinkedList<AffineTransform>();
 	private ILayouter layouter;
+	private double maxHeight = INode.USE_COMPUTED_SIZE;
+	private double maxWidth = INode.USE_COMPUTED_SIZE;
+	private double minHeight = INode.USE_COMPUTED_SIZE;
+	private double minWidth = INode.USE_COMPUTED_SIZE;
+	private double prefHeight = INode.USE_COMPUTED_SIZE;
+	private double prefWidth = INode.USE_COMPUTED_SIZE;
+	private double width = 0;
+	private double height = 0;
+	private Orientation contentBias = Orientation.NONE;
 
 	public AbstractParent(Composite parent) {
 		super(parent, SWT.NONE);
@@ -85,6 +94,21 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
+	public void addChildNodes(INode... nodes) {
+		for (INode node : nodes) {
+			if (children.contains(node)) {
+				throw new IllegalStateException(
+						"The given INode ("
+								+ node
+								+ ") is already registered as a child of this IParent ("
+								+ this + ").");
+			}
+			children.add(node);
+			node.setParentNode(this);
+		}
+	}
+
+	@Override
 	public <T extends org.eclipse.gef4.swtfx.event.Event> void addEventFilter(
 			EventType<T> type, IEventHandler<T> filter) {
 		dispatcher.addEventFilter(type, filter);
@@ -97,11 +121,8 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
-	public void addFigures(IFigure... figures) {
-		for (IFigure f : figures) {
-			this.figures.add(f);
-			f.setParentNode(this);
-		}
+	public void autosize() {
+		NodeUtil.autosize(this);
 	}
 
 	@Override
@@ -111,38 +132,37 @@ public abstract class AbstractParent extends Canvas implements IParent,
 
 	@Override
 	public double computeMaxHeight(double width) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Double.MAX_VALUE;
 	}
 
 	@Override
 	public double computeMaxWidth(double height) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Double.MAX_VALUE;
 	}
 
 	@Override
 	public double computeMinHeight(double width) {
-		// TODO Auto-generated method stub
+		// sum of top and bottom padding
 		return 0;
 	}
 
 	@Override
 	public double computeMinWidth(double height) {
-		// TODO Auto-generated method stub
+		// sum of left and right padding
 		return 0;
 	}
 
 	@Override
 	public double computePrefHeight(double width) {
-		// TODO Auto-generated method stub
-		return 0;
+		// sum of top and bottom padding + children height
+		Rectangle bbox = getLayoutBounds();
+		return bbox.getHeight();
 	}
 
 	@Override
 	public double computePrefWidth(double height) {
-		// TODO Auto-generated method stub
-		return 0;
+		// sum of left and right padding + children width
+		return getLayoutBounds().getWidth();
 	}
 
 	@Override
@@ -153,6 +173,23 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	@Override
 	public void controlToLocal(Point controlIn, Point localOut) {
 		parentToLocal(controlIn, localOut);
+	}
+
+	public void doLayout() {
+		doLayoutChildren();
+		for (INode node : getChildNodes()) {
+			if (node instanceof AbstractParent) {
+				((AbstractParent) node).doLayout();
+			}
+		}
+	}
+
+	public void doLayoutChildren() {
+		for (INode node : getChildNodes()) {
+			if (node.isResizable() && node.isManaged()) {
+				node.autosize();
+			}
+		}
 	}
 
 	@Override
@@ -166,9 +203,13 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
+	public List<INode> getChildNodes() {
+		return children;
+	}
+
+	@Override
 	public Orientation getContentBias() {
-		// TODO Auto-generated method stub
-		return null;
+		return contentBias;
 	}
 
 	@Override
@@ -177,37 +218,33 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
-	public IFigure getFigureAt(Point localPosition) {
-		Point nodeLocal = localPosition; // just for the name
-		Point figureLocal = new Point(); // to store local positions
-
-		ListIterator<IFigure> it = figures.listIterator(figures.size());
-		while (it.hasPrevious()) {
-			IFigure figure = it.previous();
-			figure.parentToLocal(nodeLocal, figureLocal);
-			if (figure.contains(figureLocal.x, figureLocal.y)) {
-				return figure;
-			}
-		}
-
-		return null; // no figure at that position
-	}
-
-	@Override
-	public List<IFigure> getFigures() {
-		return figures;
-	}
-
-	@Override
-	public IFigure getFocusFigure() {
+	public INode getFocusNode() {
 		return swtEventDispatcher.getFocusTarget();
+	}
+
+	public double getHeight() {
+		return height;
 	}
 
 	@Override
 	public Rectangle getLayoutBounds() {
-		// TODO
-		org.eclipse.swt.graphics.Point size = getSize();
-		return new Rectangle(0, 0, size.x, size.y);
+		// union children's bounds
+		Rectangle unionedChildBounds = null;
+		for (INode child : getChildNodes()) {
+			Rectangle bounds = child.getBoundsInParent();
+			if (unionedChildBounds == null) {
+				unionedChildBounds = bounds;
+			} else {
+				unionedChildBounds.union(bounds);
+			}
+		}
+
+		if (unionedChildBounds == null) {
+			unionedChildBounds = new Rectangle();
+		}
+
+		// we do not apply our own transformations here
+		return unionedChildBounds;
 	}
 
 	@Override
@@ -217,14 +254,14 @@ public abstract class AbstractParent extends Canvas implements IParent,
 
 	@Override
 	public double getLayoutX() {
-		return getLocation().x;
-		// return layoutX;
+		// return getLocation().x;
+		return layoutX;
 	}
 
 	@Override
 	public double getLayoutY() {
-		return getLocation().y;
-		// return layoutY;
+		// return getLocation().y;
+		return layoutY;
 	}
 
 	@Override
@@ -239,26 +276,47 @@ public abstract class AbstractParent extends Canvas implements IParent,
 
 	@Override
 	public double getMaxHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return maxHeight;
+	}
+
+	public Dimension getMaxSize() {
+		return new Dimension(getMaxWidth(), getMaxHeight());
 	}
 
 	@Override
 	public double getMaxWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return maxWidth;
 	}
 
 	@Override
 	public double getMinHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return minHeight;
+	}
+
+	public Dimension getMinSize() {
+		return new Dimension(getMinWidth(), getMinHeight());
 	}
 
 	@Override
 	public double getMinWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return minWidth;
+	}
+
+	@Override
+	public INode getNodeAt(Point localPosition) {
+		Point parentLocal = localPosition; // just for the name
+		Point childLocal = new Point(); // to store local positions
+
+		ListIterator<INode> it = children.listIterator(children.size());
+		while (it.hasPrevious()) {
+			INode node = it.previous();
+			node.parentToLocal(parentLocal, childLocal);
+			if (node.contains(childLocal.x, childLocal.y)) {
+				return node;
+			}
+		}
+
+		return null; // no figure at that position
 	}
 
 	@Override
@@ -276,20 +334,13 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
-	public Dimension getPreferredSize() {
-		return getLayoutBounds().getSize();
-	}
-
-	@Override
 	public double getPrefHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return prefHeight;
 	}
 
 	@Override
 	public double getPrefWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return prefWidth;
 	}
 
 	@Override
@@ -327,6 +378,10 @@ public abstract class AbstractParent extends Canvas implements IParent,
 		return translateY;
 	}
 
+	public double getWidth() {
+		return width;
+	}
+
 	@Override
 	public boolean isFocused() {
 		return isFocusControl() && swtEventDispatcher.getFocusTarget() == null;
@@ -338,39 +393,18 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
+	public boolean isManaged() {
+		return true;
+	}
+
+	@Override
+	public boolean isResizable() {
+		return true;
+	}
+
+	@Override
 	public boolean isVisible() {
 		return visible;
-	}
-
-	@Override
-	public void layout() {
-		System.out.println("layout()");
-		super.layout();
-	}
-
-	@Override
-	public void layout(boolean changed) {
-		System.out.println("layout(" + changed + ")");
-		super.layout(changed);
-	}
-
-	@Override
-	public void layout(boolean changed, boolean all) {
-		System.out.println("layout(" + changed + ", " + all + ")");
-		super.layout(changed, all);
-	}
-
-	@Override
-	public void layout(Control[] changed) {
-		System.out.println("layout(" + changed.length + " controls)");
-		super.layout(changed);
-	}
-
-	@Override
-	public void layout(Control[] changed, int flags) {
-		System.out.println("layout(" + changed.length + " controls, " + flags
-				+ ")");
-		super.layout(changed, flags);
 	}
 
 	@Override
@@ -388,40 +422,53 @@ public abstract class AbstractParent extends Canvas implements IParent,
 		GraphicsContext g = new GraphicsContext(e.gc);
 
 		// our rendering order is the reverse of SWT's
-		for (IFigure figure : getFigures()) {
-			// save & guard the gc
-			g.save();
-			g.setUpGuard(); // TODO: evaluate if we need this, really
+		for (INode node : getChildNodes()) {
+			if (node instanceof IFigure) {
+				IFigure figure = (IFigure) node;
 
-			// apply figures paint state
-			// XXX: we should not be accessing the paint state, but rather do
-			// the appliance in the figure's paint method, which should be final
-			// and hookable via doPaint
-			g.pushState(figure.getPaintStateByReference().getCopy());
+				// save & guard the gc
+				g.save();
+				g.setUpGuard(); // TODO: evaluate if we need this, really
 
-			// apply correct transformations (TODO: review)
-			if (getParentNode() == null) {
-				// root takes into account its own transformations, too
-				g.setTransform(figure.getLocalToParentTransform()
-						.preConcatenate(getLocalToParentTransform()));
-			} else {
-				// transform to here
-				g.setTransform(figure.getLocalToParentTransform());
+				// apply figures paint state
+				// XXX: we should not be accessing the paint state, but rather
+				// do
+				// the appliance in the figure's paint method, which should be
+				// final
+				// and hookable via doPaint
+				g.pushState(figure.getPaintStateByReference().getCopy());
+
+				g.setTransform(figure.getLocalToAbsoluteTransform());
+				org.eclipse.swt.graphics.Point location = getLocation();
+				g.translate(-location.x, -location.y);
+
+				// org.eclipse.swt.graphics.Point location = getLocation();
+				// g.translate(-location.x, -location.y);
+
+				// // apply correct transformations (TODO: review)
+				// if (getParentNode() == null) {
+				// // root takes into account its own transformations, too
+				// g.setTransform(figure.getLocalToParentTransform()
+				// .preConcatenate(getLocalToParentTransform()));
+				// } else {
+				// // transform to here
+				// g.setTransform(figure.getLocalToParentTransform());
+				// }
+
+				// actually paint it
+				figure.paint(g);
+
+				// restore the gc & take down guard
+				g.restore();
+				try {
+					g.takeDownGuard();
+				} catch (IllegalStateException x) {
+					throw new IllegalStateException(
+							"Did you forget to call restore() in your drawing code?",
+							x);
+				}
+				g.restore();
 			}
-
-			// actually paint it
-			figure.paint(g);
-
-			// restore the gc & take down guard
-			g.restore();
-			try {
-				g.takeDownGuard();
-			} catch (IllegalStateException x) {
-				throw new IllegalStateException(
-						"Did you forget to call restore() in your drawing code?",
-						x);
-			}
-			g.restore();
 		}
 
 		g.cleanUp();
@@ -435,6 +482,7 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	@Override
 	public void relocate(double x, double y) {
 		NodeUtil.relocate(this, x, y);
+		updateSwtBounds();
 	}
 
 	@Override
@@ -455,62 +503,15 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
-	public void requestLayout() {
-		/*
-		 * TODO: Figure out which coordinates to use here. I think the local
-		 * coordinate system of this IParent might work best. To be able to do
-		 * that, we need to transform SWT control coordinates to local
-		 * coordinates and transform IFigure coordinates to the parent
-		 * coordinate system. (I think.)
-		 */
-
-		// collect SWT children (controls)
-		LinkedList<Control> layoutableControls = new LinkedList<Control>();
-		for (Control c : getChildren()) {
-			if (c instanceof IParent) {
-				System.err
-						.println("error: requestLayout() not implemented for nested IParents");
-				/*
-				 * TODO: We need to compute the layout through the full
-				 * hierarchy, so come up with a fancy recursive solution!
-				 */
-			}
-			layoutableControls.add(c);
-			org.eclipse.swt.graphics.Point prefSize = c.computeSize(
-					SWT.DEFAULT, SWT.DEFAULT, true);
-			layouter.setPreferredLayoutBounds(c, new Rectangle(0, 0,
-					prefSize.x, prefSize.y));
-		}
-
-		// collect GEF4 children (figures)
-		LinkedList<IFigure> layoutableFigures = new LinkedList<IFigure>();
-		for (IFigure f : figures) {
-			layoutableFigures.add(f);
-			Dimension prefSize = f.getPreferredSize();
-			layouter.setPreferredLayoutBounds(f, new Rectangle(new Point(),
-					prefSize));
-		}
-
-		// do the layouting
-		layouter.layout();
-
-		for (Control c : layoutableControls) {
-			Rectangle bounds = layouter.getComputedLayoutBounds(c);
-			c.setLocation((int) bounds.getX(), (int) bounds.getY());
-			c.setSize((int) bounds.getWidth(), (int) bounds.getHeight());
-		}
-
-		layouter.reset();
-	}
-
-	@Override
 	public void requestRedraw() {
 		super.redraw();
 	}
 
 	@Override
 	public void resize(double width, double height) {
-		setSize((int) width, (int) height);
+		setWidth(width);
+		setHeight(height);
+		updateSwtBounds();
 	}
 
 	@Override
@@ -519,18 +520,18 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	}
 
 	@Override
-	public boolean setFocusFigure(IFigure focusFigure) {
-		if (focusFigure == null) {
+	public boolean setFocusNode(INode focusNode) {
+		if (focusNode == null) {
 			swtEventDispatcher.setFocusTarget(null);
 			return true;
 		}
 
-		if (focusFigure.getParentNode() != this) {
+		if (focusNode.getParentNode() != this) {
 			throw new IllegalArgumentException(
 					"The given IFigure is no child of this Group!");
 		}
 		if (forceFocus()) {
-			swtEventDispatcher.setFocusTarget(focusFigure);
+			swtEventDispatcher.setFocusTarget(focusNode);
 			return true;
 		}
 		return false;
@@ -541,6 +542,10 @@ public abstract class AbstractParent extends Canvas implements IParent,
 		this.focusTraversable = focusTraversable;
 	}
 
+	public void setHeight(double height) {
+		this.height = height;
+	}
+
 	@Override
 	public void setLayouter(ILayouter layouter) {
 		this.layouter = layouter;
@@ -548,38 +553,34 @@ public abstract class AbstractParent extends Canvas implements IParent,
 
 	@Override
 	public void setLayoutX(double layoutX) {
-		setLocation((int) layoutX, (int) getLayoutY());
-		// this.layoutX = layoutX;
+		// setLocation((int) layoutX, (int) getLayoutY());
+		this.layoutX = layoutX;
 	}
 
 	@Override
 	public void setLayoutY(double layoutY) {
-		setLocation((int) getLayoutX(), (int) layoutY);
-		// this.layoutY = layoutY;
+		// setLocation((int) getLayoutX(), (int) layoutY);
+		this.layoutY = layoutY;
 	}
 
 	@Override
 	public void setMaxHeight(double height) {
-		// TODO Auto-generated method stub
-
+		maxHeight = height;
 	}
 
 	@Override
 	public void setMaxWidth(double width) {
-		// TODO Auto-generated method stub
-
+		maxWidth = width;
 	}
 
 	@Override
 	public void setMinHeight(double height) {
-		// TODO Auto-generated method stub
-
+		minHeight = height;
 	}
 
 	@Override
 	public void setMinWidth(double width) {
-		// TODO Auto-generated method stub
-
+		minWidth = width;
 	}
 
 	@Override
@@ -589,14 +590,12 @@ public abstract class AbstractParent extends Canvas implements IParent,
 
 	@Override
 	public void setPrefHeight(double height) {
-		// TODO Auto-generated method stub
-
+		prefHeight = height;
 	}
 
 	@Override
 	public void setPrefWidth(double width) {
-		// TODO Auto-generated method stub
-
+		prefWidth = width;
 	}
 
 	@Override
@@ -622,6 +621,56 @@ public abstract class AbstractParent extends Canvas implements IParent,
 	@Override
 	public void setTranslateY(double translateY) {
 		this.translateY = translateY;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	@Override
+	public String toString() {
+		return "Pane";
+	}
+
+	@Override
+	public void updateSwtBounds() {
+		// System.out.println("updateSwtBounds(" + this + "@"
+		// + System.identityHashCode(this) + ", lxy = " + getLayoutX()
+		// + ", " + getLayoutY() + "; lwh = " + getWidth() + " x "
+		// + getHeight() + " :: lb = " + getLayoutBounds());
+
+		// Point location = new Point();
+		// Composite parent = getParent();
+		// if (parent != null) {
+		// org.eclipse.swt.graphics.Point pt = parent.getLocation();
+		// location.setLocation(-pt.x, -pt.y);
+		// }
+
+		// AffineTransform tx = getLocalToAbsoluteTransform();
+		// Rectangle untransformedBounds = new Rectangle(location.x, location.y,
+		// getWidth(), getHeight());
+		// Rectangle txBounds =
+		// untransformedBounds.getTransformed(tx).getBounds();
+
+		// System.out.println("this (" + System.identityHashCode(this)
+		// + ") SWT bounds = " + txBounds);
+
+		// setBounds((int) txBounds.getX(), (int) txBounds.getY(),
+		// (int) txBounds.getWidth(), (int) txBounds.getHeight());
+
+		/*
+		 * 1. getWidth() and getHeight() deliver our width and height.
+		 * 
+		 * 2. Translate and scale these according to translation and scale
+		 * properties.
+		 * 
+		 * Now the unclear part:
+		 * 
+		 * 3. Take into account the translation and scaling of all parents?
+		 * 
+		 * Do we have to take into account their transformations here? Or do we
+		 * have to use a separate layout structure?
+		 */
 	}
 
 	@Override

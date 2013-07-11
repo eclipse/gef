@@ -13,7 +13,7 @@
 package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
@@ -28,8 +28,8 @@ public class ShowTextExample implements IExample {
 	}
 
 	@Override
-	public void addUi(Group c) {
-		c.addFigures(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+	public void addUi(IParent c) {
+		c.addChildNodes(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
 			public void paint(GraphicsContext g) {
 				g.clearRect(0, 0, getWidth(), getHeight());

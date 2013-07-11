@@ -67,11 +67,12 @@ public class SwtEventForwarder implements Listener {
 		case SWT.Move:
 		case SWT.Paint:
 		case SWT.Resize:
-		case SWT.Selection:
 		case SWT.Show:
 		case SWT.Touch:
 		case SWT.Verify:
 			return new SwtEvent(e, target, SwtEvent.ANY);
+		case SWT.Selection:
+			return new ActionEvent(e.widget, target, ActionEvent.SELECTION);
 		case SWT.KeyDown:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_PRESSED,
 					e.keyCode, e.character);

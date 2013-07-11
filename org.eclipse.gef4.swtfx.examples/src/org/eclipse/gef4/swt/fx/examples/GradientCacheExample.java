@@ -15,7 +15,7 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.CycleMethod;
 import org.eclipse.gef4.swtfx.gc.LinearGradient;
@@ -24,7 +24,6 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 
 public class GradientCacheExample implements IExample {
@@ -36,15 +35,13 @@ public class GradientCacheExample implements IExample {
 	private LinearGradient gradient;
 
 	@Override
-	public void addUi(Group c) {
-		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-
+	public void addUi(IParent c) {
 		resetGradient();
 		// gradient.computeAuxVars();
-		c.addFigures(createGradientRect(30, 30), createGradientRect(30, 250),
-				createGradientRect(360, 130));
+		c.addChildNodes(createGradientRect(30, 30),
+				createGradientRect(30, 250), createGradientRect(360, 130));
 
-		final Button button = new Button(c, SWT.TOGGLE);
+		final Button button = new Button(c.getSwtComposite(), SWT.TOGGLE);
 		button.setText("Cache Gradient");
 		button.setBounds(480, 400, 125, 25);
 		button.setSelection(false);
@@ -60,8 +57,8 @@ public class GradientCacheExample implements IExample {
 	}
 
 	private AbstractFigure createGradientRect(int tx, int ty) {
-		AbstractFigure fig = new ShapeFigure(new RoundedRectangle(0, 0, 300, 200,
-				20, 20));
+		AbstractFigure fig = new ShapeFigure(new RoundedRectangle(0, 0, 300,
+				200, 20, 20));
 		fig.getPaintStateByReference().getFillByReference()
 				.setGradientByReference(gradient);
 		fig.getPaintStateByReference().getFillByReference()

@@ -44,6 +44,44 @@ public class NodeUtil {
 		}
 	}
 
+	public static void autosize(INode node) {
+		if (node.isResizable()) {
+			double width, height;
+
+			Orientation orientation = node.getContentBias();
+			switch (orientation) {
+			case NONE:
+				// no dependence
+				width = clamp(node.computePrefWidth(-1),
+						node.computeMinWidth(-1), node.computeMaxWidth(-1));
+				height = clamp(node.computePrefHeight(-1),
+						node.computeMinHeight(-1), node.computeMaxHeight(-1));
+				break;
+			case HORIZONTAL:
+				// height depends on width
+				width = clamp(node.computePrefWidth(-1),
+						node.computeMinWidth(-1), node.computeMaxWidth(-1));
+				height = clamp(node.computePrefHeight(width),
+						node.computeMinHeight(width),
+						node.computeMaxHeight(width));
+				break;
+			case VERTICAL:
+				// width depends on height
+				height = clamp(node.computePrefHeight(-1),
+						node.computeMinHeight(-1), node.computeMaxHeight(-1));
+				width = clamp(node.computePrefWidth(height),
+						node.computeMinWidth(height),
+						node.computeMaxWidth(height));
+				break;
+			default:
+				throw new IllegalStateException("Unknown Orientation: "
+						+ orientation);
+			}
+
+			node.resize(width, height);
+		}
+	}
+
 	/**
 	 * Recursively builds an {@link IEventDispatchChain} for the given
 	 * {@link INode target}. The target's {@link IEventDispatcher} is prepended
@@ -68,6 +106,16 @@ public class NodeUtil {
 			return next.buildEventDispatchChain(tail);
 		}
 		return tail;
+	}
+
+	private static double clamp(double value, double min, double max) {
+		if (value < min) {
+			return min;
+		} else if (value > max) {
+			return max;
+		} else {
+			return value;
+		}
 	}
 
 	/**
@@ -100,7 +148,7 @@ public class NodeUtil {
 		AffineTransform tx = node.getLocalToParentTransform();
 		IParent parent = node.getParentNode();
 		if (parent != null) {
-			tx.concatenate(parent.getLocalToAbsoluteTransform());
+			tx.preConcatenate(parent.getLocalToAbsoluteTransform());
 		}
 		return tx;
 	}
@@ -144,6 +192,19 @@ public class NodeUtil {
 		AffineTransform localToParentTx = new AffineTransform();
 
 		Point pivot = node.getPivot();
+
+		if (node.getParentNode() == null) {
+			// we are root
+			if (node instanceof IParent) {
+				org.eclipse.swt.graphics.Point location = ((IParent) node)
+						.getSwtComposite().getLocation();
+				pivot = pivot.getTranslated(location.x, location.y);
+			} else {
+				throw new IllegalStateException(
+						"no parent, but not a parent itself?!");
+			}
+		}
+
 		localToParentTx.translate(node.getTranslateX() + node.getLayoutX()
 				+ pivot.x, node.getTranslateY() + node.getLayoutY() + pivot.y);
 		localToParentTx.rotate(node.getRotationAngle().rad());
@@ -240,6 +301,8 @@ public class NodeUtil {
 
 	public static void resizeRelocate(INode node, double x, double y,
 			double width, double height) {
+		// System.out.println("resizeRelocate(" + node + ", " + x + ", " + y
+		// + ", " + width + ", " + height);
 		node.relocate(x, y);
 		node.resize(width, height);
 	}

@@ -20,7 +20,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.CanvasFigure;
 import org.eclipse.gef4.swtfx.ControlNode;
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.IFigure;
+import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
@@ -30,6 +31,7 @@ import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LinearGradient;
 import org.eclipse.gef4.swtfx.gc.RadialGradient;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -37,12 +39,34 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public class NestedControls implements IExample {
 
 	public static void main(String[] args) {
 		new Example(new NestedControls());
+	}
+
+	public static void showAbsoluteBounds(INode node) {
+		System.out.println("node: " + node);
+		System.out.println("----------------------------------------");
+		Rectangle absBounds = node.getBoundsInLocal()
+				.getTransformed(node.getLocalToAbsoluteTransform()).getBounds();
+		System.out.println(absBounds);
+		System.out.println();
+
+		if (node instanceof Control) {
+			((Control) node).setBounds((int) absBounds.getX(),
+					(int) absBounds.getY(), (int) absBounds.getWidth(),
+					(int) absBounds.getHeight());
+		}
+
+		if (node instanceof IParent) {
+			for (INode child : ((IParent) node).getChildNodes()) {
+				showAbsoluteBounds(child);
+			}
+		}
 	}
 
 	private boolean gammaCorrection = false;
@@ -60,12 +84,12 @@ public class NestedControls implements IExample {
 	}
 
 	@Override
-	public void addUi(final Group root) {
+	public void addUi(final IParent root) {
 		{
-			Group naviGroup = new Group(root);
+			Pane naviGroup = new Pane(root.getSwtComposite());
 			naviGroup.resize(100, 300);
-			naviGroup
-					.setBackground(new Color(root.getDisplay(), 255, 128, 128));
+			naviGroup.setBackground(new Color(root.getSwtComposite()
+					.getDisplay(), 255, 128, 128));
 
 			button(naviGroup, "New", onClick("onNew"), 5, 5, 90);
 			button(naviGroup, "Open", onClick("onOpen"), 5, 40, 90);
@@ -73,20 +97,21 @@ public class NestedControls implements IExample {
 			button(naviGroup, "Quit", onClick("onQuit"), 5, 300 - 35, 90);
 		}
 
-		Group contentGroup = new Group(root);
+		Pane contentGroup = new Pane(root.getSwtComposite());
 		contentGroup.resizeRelocate(100, 0, 300, 300);
-		contentGroup.setBackground(new Color(root.getDisplay(), 128, 255, 128));
+		contentGroup.setBackground(new Color(root.getSwtComposite()
+				.getDisplay(), 128, 255, 128));
 
 		final CanvasFigure canvas = new CanvasFigure(300, 200);
-		contentGroup.addFigures(canvas);
+		contentGroup.addChildNodes(canvas);
 		canvas.relocate(0, 100); // leave space for some options
 		drawGradients(canvas);
 
 		{
-			Group optionsGroup = new Group(contentGroup);
+			Pane optionsGroup = new Pane(contentGroup);
 			optionsGroup.resize(300, 100);
-			optionsGroup.setBackground(new Color(root.getDisplay(), 128, 128,
-					255));
+			optionsGroup.setBackground(new Color(root.getSwtComposite()
+					.getDisplay(), 128, 128, 255));
 
 			int h = checkbox(optionsGroup, 5, 5, 290,
 					"Gamma correction (x^1/2.2)",
@@ -135,6 +160,12 @@ public class NestedControls implements IExample {
 						}
 					});
 		}
+
+		((Pane) root).doLayout();
+
+		showAbsoluteBounds(root);
+
+		// showLayoutInfo(root, 0);
 	}
 
 	public int button(IParent container, String text,
@@ -142,6 +173,7 @@ public class NestedControls implements IExample {
 		Button button = new Button(container.getSwtComposite(), SWT.PUSH);
 		button.setText(text);
 		ControlNode<Button> node = new ControlNode<Button>(button);
+		container.addChildNodes(node);
 		int height = (int) node.getLayoutBounds().getHeight();
 		node.resizeRelocate(x, y, width, height);
 		node.addEventHandler(MouseEvent.MOUSE_RELEASED, clickedHandler);
@@ -156,6 +188,7 @@ public class NestedControls implements IExample {
 		control.setBackground(compo.getBackground());
 
 		ControlNode<Button> checkbox = new ControlNode<Button>(control);
+		container.addChildNodes(checkbox);
 		Rectangle bb = checkbox.getLayoutBounds();
 		int height = (int) bb.getHeight();
 		control.setBounds(x, y, width, height);
@@ -255,6 +288,44 @@ public class NestedControls implements IExample {
 
 	public void onSave() {
 		System.out.println("save");
+	}
+
+	private void showLayoutInfo(INode node, int depth) {
+		String indent = "";
+		for (int i = 0; i < depth; i++) {
+			indent = indent.concat("  ");
+		}
+
+		if (node instanceof IParent) {
+			IParent parent = (IParent) node;
+
+			if (node instanceof Pane) {
+				Pane pane = (Pane) node;
+				System.out.println(indent + "Pane("
+						+ System.identityHashCode(node) + ")");
+
+				Rectangle layoutBounds = pane.getLayoutBounds();
+				double layoutX = pane.getLayoutX();
+				double layoutY = pane.getLayoutY();
+				System.out.println(indent + "lb: " + layoutBounds + "; x/y: "
+						+ layoutX + ", " + layoutY + "; w/h: "
+						+ pane.getWidth() + " x " + pane.getHeight());
+			}
+
+			for (INode child : parent.getChildNodes()) {
+				showLayoutInfo(child, depth + 1);
+			}
+		} else if (node instanceof IFigure) {
+			IFigure figure = (IFigure) node;
+
+			System.out.println(indent + "IFigure("
+					+ System.identityHashCode(node) + ")");
+			System.out.println(indent + "lb: " + figure.getLayoutBounds());
+		} else {
+			System.out.println(indent + "INode("
+					+ System.identityHashCode(node) + ")");
+			System.out.println(indent + "lb: " + node.getLayoutBounds());
+		}
 	}
 
 }

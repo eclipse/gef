@@ -15,7 +15,7 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.CycleMethod;
 import org.eclipse.gef4.swtfx.gc.LinearGradient;
@@ -24,7 +24,6 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Slider;
 
 public class GradientSliderExample implements IExample, SelectionListener {
@@ -71,7 +70,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		new Example(new GradientSliderExample());
 	}
 
-	private Canvas canvas;
+	private IParent root;
 	private Slider slider;
 	private SlidableLinearGradient gradient = new SlidableLinearGradient(
 			new Point(0, 0), new Point(200, 100), CycleMethod.REFLECT)
@@ -87,9 +86,9 @@ public class GradientSliderExample implements IExample, SelectionListener {
 	}
 
 	@Override
-	public void addUi(Group c) {
-		this.canvas = c;
-		slider = new Slider(c, SWT.NONE);
+	public void addUi(IParent c) {
+		this.root = c;
+		slider = new Slider(c.getSwtComposite(), SWT.NONE);
 		slider.setMinimum(0);
 		slider.setMaximum(100);
 		slider.setBounds(20, 20, 200, 20);
@@ -102,7 +101,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		fig.getPaintStateByReference().getFillByReference()
 				.setMode(PaintMode.GRADIENT);
 
-		c.addFigures(fig);
+		c.addChildNodes(fig);
 	}
 
 	@Override
@@ -136,6 +135,6 @@ public class GradientSliderExample implements IExample, SelectionListener {
 
 		double distOffset = selection / 90d; // TODO: Why not /100d but /90d?
 		gradient.setDistanceOffset(distOffset);
-		canvas.redraw();
+		root.requestRedraw();
 	}
 }

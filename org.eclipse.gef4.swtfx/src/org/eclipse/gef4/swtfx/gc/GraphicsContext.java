@@ -369,6 +369,7 @@ public class GraphicsContext {
 		disposeSwtTransform();
 		swtTransform = SwtUtils.createSwtTransform(at, gc.getDevice());
 		gc.setTransform(swtTransform);
+		gc.getGCData().state |= 1 << 9;
 	}
 
 	/**

@@ -19,9 +19,9 @@ import java.awt.AWTException;
 import java.awt.Robot;
 
 import org.eclipse.gef4.swtfx.CanvasFigure;
-import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -39,15 +39,15 @@ public class MouseEventTests {
 		final Shell shell = new Shell(display);
 		shell.setLayout(new GridLayout());
 
-		Group group = new Group(shell);
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Pane pane = new Pane(shell);
+		pane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		CanvasFigure canvas = new CanvasFigure(640, 480);
-		group.addFigures(canvas);
+		pane.addChildNodes(canvas);
 
 		final int[] state = new int[] { 0 };
 
-		group.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET,
+		pane.addEventHandler(MouseEvent.MOUSE_ENTERED_TARGET,
 				new IEventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent event) {

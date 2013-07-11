@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.examples;
 
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.IParent;
 
 public interface IExample {
 
@@ -21,7 +21,7 @@ public interface IExample {
 	 * 
 	 * @param c
 	 */
-	void addUi(Group group);
+	void addUi(IParent root);
 
 	/**
 	 * Called once during GUI initialization.

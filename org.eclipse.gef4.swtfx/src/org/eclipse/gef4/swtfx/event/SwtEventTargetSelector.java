@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.swtfx.AbstractParent;
-import org.eclipse.gef4.swtfx.Group;
-import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -64,39 +62,40 @@ public class SwtEventTargetSelector implements Listener {
 		return false;
 	}
 
-	private AbstractParent region;
-	private IFigure mouseTarget;
-	private IFigure focusTarget;
-	private IFigure mouseEnteredFigure;
+	private AbstractParent parent;
+	private INode mouseTarget;
+	private INode focusTarget;
+	private INode mouseEnteredFigure;
 
 	public SwtEventTargetSelector(AbstractParent region) {
-		this.region = region;
+		this.parent = region;
 		addListeners();
 	}
 
 	public void addListeners() {
 		for (int type : EVENT_TYPES) {
-			region.addListener(type, this);
+			parent.addListener(type, this);
 		}
 	}
 
-	private IFigure getFigureUnderCursor() {
+	private INode getFigureUnderCursor() {
 		org.eclipse.swt.graphics.Point cursorLocation = Display.getCurrent()
 				.getCursorLocation();
-		cursorLocation = region.toControl(cursorLocation);
+		cursorLocation = parent.toControl(cursorLocation);
 		Point cursor = new Point(cursorLocation.x, cursorLocation.y);
 		double[] xy = new double[2];
-		transformToTarget(region, cursorLocation.x, cursorLocation.y, xy);
-		cursor.x = xy[0];
-		cursor.y = xy[1];
-		return region.getFigureAt(cursor);
+		parent.controlToLocal(cursor, cursor);
+		// transformToTarget(parent, cursorLocation.x, cursorLocation.y, xy);
+		// cursor.x = xy[0];
+		// cursor.y = xy[1];
+		return parent.getNodeAt(cursor);
 	}
 
-	public IFigure getFocusTarget() {
+	public INode getFocusTarget() {
 		return focusTarget;
 	}
 
-	public IFigure getMouseTarget() {
+	public INode getMouseTarget() {
 		return mouseTarget;
 	}
 
@@ -109,10 +108,10 @@ public class SwtEventTargetSelector implements Listener {
 			return;
 		}
 
-		List<IFigure> figures = region.getFigures();
-		if (figures.size() < 1) {
+		List<INode> children = parent.getChildNodes();
+		if (children.size() < 1) {
 			// no figures => group is the target
-			Event.fireEvent(region, wrap(event, region));
+			Event.fireEvent(parent, wrap(event, parent));
 			return;
 		}
 
@@ -126,7 +125,7 @@ public class SwtEventTargetSelector implements Listener {
 			}
 
 			// cursor figure is the target
-			IFigure cursorFigure = getFigureUnderCursor();
+			INode cursorFigure = getFigureUnderCursor();
 			if (cursorFigure != null) {
 				Event.fireEvent(cursorFigure, wrap(event, cursorFigure));
 				return;
@@ -141,10 +140,10 @@ public class SwtEventTargetSelector implements Listener {
 				}
 				return;
 			} else {
-				IFigure cursorTarget = getFigureUnderCursor();
+				INode cursorTarget = getFigureUnderCursor();
 
 				if (event.type == SWT.MouseEnter || event.type == SWT.MouseExit) {
-					Event.fireEvent(region, wrap(event, region));
+					Event.fireEvent(parent, wrap(event, parent));
 				}
 
 				// insert mouse entered/exited events
@@ -197,7 +196,7 @@ public class SwtEventTargetSelector implements Listener {
 				}
 			}
 		} else {
-			IFigure cursorTarget = getFigureUnderCursor();
+			INode cursorTarget = getFigureUnderCursor();
 			if (cursorTarget != null) {
 				Event.fireEvent(cursorTarget, wrap(event, cursorTarget));
 				return;
@@ -205,7 +204,7 @@ public class SwtEventTargetSelector implements Listener {
 		}
 
 		// our group is the target
-		Event.fireEvent(region, wrap(event, region));
+		Event.fireEvent(parent, wrap(event, parent));
 	}
 
 	private boolean isKeyboardEvent(org.eclipse.swt.widgets.Event event) {
@@ -218,28 +217,24 @@ public class SwtEventTargetSelector implements Listener {
 
 	public void removeListeners() {
 		for (int type : EVENT_TYPES) {
-			region.removeListener(type, this);
+			parent.removeListener(type, this);
 		}
 	}
 
-	public void setFocusTarget(IFigure focusTarget) {
+	public void setFocusTarget(INode focusTarget) {
 		this.focusTarget = focusTarget;
-	}
-
-	public void setGroup(Object group) {
-		if (group instanceof Group) {
-			this.region = (Group) group;
-		} else {
-			throw new IllegalArgumentException(
-					"We need a defined gef4.swt.canvas.Group here!");
-		}
 	}
 
 	private void transformToTarget(INode target, double x, double y,
 			double[] xyOut) {
 		Point control = new Point(x, y);
 		Point local = new Point();
-		region.controlToLocal(control, local);
+		parent.controlToLocal(control, local);
+		if (target != parent) {
+			target.parentToLocal(local, local);
+			// System.out.println("(" + x + "," + y + ") :: (" + local.x + ","
+			// + local.y + ")");
+		}
 		xyOut[0] = local.x;
 		xyOut[1] = local.y;
 	}
@@ -274,12 +269,13 @@ public class SwtEventTargetSelector implements Listener {
 		case SWT.Move:
 		case SWT.Paint:
 		case SWT.Resize:
-		case SWT.Selection:
 		case SWT.Show:
 		case SWT.Touch:
 		case SWT.Verify:
 			// TODO: Those are all ignored, implement'em!
 			return new SwtEvent(e, target, SwtEvent.ANY);
+		case SWT.Selection:
+			return new ActionEvent(e.widget, target, ActionEvent.SELECTION);
 		case SWT.KeyDown:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_PRESSED,
 					e.keyCode, e.character);
@@ -330,7 +326,7 @@ public class SwtEventTargetSelector implements Listener {
 			// XXX: This is unreachable code, because handleEvent() ignores
 			// Traverse events, completely.
 			// TODO: re-think this one
-			return new TraverseEvent(region, target, TraverseEvent.ANY,
+			return new TraverseEvent(parent, target, TraverseEvent.ANY,
 					e.detail, e.keyCode, e.stateMask);
 		default:
 			throw new IllegalArgumentException(

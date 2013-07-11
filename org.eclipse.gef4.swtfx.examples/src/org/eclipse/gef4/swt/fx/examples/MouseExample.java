@@ -19,28 +19,28 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.Group;
+import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.IFigure;
+import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
+import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LineCap;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 public class MouseExample implements IExample {
 
 	static class FigureDragger {
-		private IFigure figure;
 		private boolean dragging;
 		private Point offset;
 
 		public FigureDragger(final IFigure f) {
-			figure = f;
 			f.addEventHandler(MouseEvent.MOUSE_PRESSED,
 					new IEventHandler<MouseEvent>() {
 						@Override
@@ -48,9 +48,6 @@ public class MouseExample implements IExample {
 							f.requestFocus();
 							dragging = true;
 							offset = new Point(e.getX(), e.getY());
-
-							// TODO: parentToLocal in SwtEventTargetSelector
-							f.parentToLocal(offset, offset);
 						}
 					});
 			f.addEventHandler(MouseEvent.MOUSE_RELEASED,
@@ -65,14 +62,15 @@ public class MouseExample implements IExample {
 						@Override
 						public void handle(MouseEvent e) {
 							if (dragging) {
-								figure.relocate(e.getX() - offset.x, e.getY()
+								Point cursor = new Point(e.getX(), e.getY());
+								f.localToParent(cursor, cursor);
+								f.relocate(cursor.x - offset.x, cursor.y
 										- offset.y);
 							}
 						}
 					});
 
-			// XXX: update on any mouse event, this will be done automatically
-			// in the future
+			// FIXME: The update will we done automatically in the future.
 			f.addEventHandler(MouseEvent.ANY, new IEventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
@@ -84,55 +82,40 @@ public class MouseExample implements IExample {
 
 	public class GroupTransformer {
 		private boolean dragging = false;
-		private Point start = new Point();
+		private Point start;
 		private AffineTransform startTx;
 
-		public GroupTransformer(final Group group) {
+		public GroupTransformer(final IParent parent) {
 			final AffineTransform tx = new AffineTransform();
-			group.getTransforms().add(tx);
+			parent.getTransforms().add(tx);
 
-			group.addEventHandler(MouseEvent.MOUSE_PRESSED,
+			parent.addEventHandler(MouseEvent.MOUSE_PRESSED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
 							if (event.getButton() == 3) {
 								dragging = true;
-								start.x = event.getX();
-								start.y = event.getY();
-
-								// group.localToParent(start, start);
-
-								// Point transformed = startTx
-								// .inverseTransform(new Point(x, y));
-								Point transformed = tx
-										.getTransformed(new Point(start.x,
-												start.y));
-								start.x = transformed.x;
-								start.y = transformed.y;
-
+								start = tx.getTransformed(new Point(event
+										.getX(), event.getY()));
 								startTx = tx.getCopy();
 							}
 						}
 					});
-			group.addEventHandler(MouseEvent.MOUSE_RELEASED,
+			parent.addEventHandler(MouseEvent.MOUSE_RELEASED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
 							dragging = false;
 						}
 					});
-			group.addEventHandler(MouseEvent.MOUSE_MOVED,
+			parent.addEventHandler(MouseEvent.MOUSE_MOVED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
-							// System.out.println("group mouse position = "
-							// + event.getX() + ", " + event.getY());
 							if (dragging) {
-								double y = event.getY();
 								double x = event.getX();
+								double y = event.getY();
 
-								// Point transformed = startTx
-								// .inverseTransform(new Point(x, y));
 								Point transformed = tx
 										.getTransformed(new Point(x, y));
 								x = transformed.x;
@@ -143,15 +126,17 @@ public class MouseExample implements IExample {
 								if (x < start.x) {
 									zoom = 1 / zoom;
 								}
+
 								AffineTransform newTx = new AffineTransform()
-										.rotate(Angle.fromDeg(angleDeg).rad(),
-												start.x, start.y)
 										.translate(start.x, start.y)
+										.rotate(Angle.fromDeg(angleDeg).rad())
 										.scale(zoom, zoom)
 										.translate(-start.x, -start.y)
 										.concatenate(startTx);
+
 								tx.setTransform(newTx);
-								group.requestRedraw();
+
+								parent.requestRedraw();
 							}
 						}
 					});
@@ -183,44 +168,50 @@ public class MouseExample implements IExample {
 			new RgbaColor(0, 64, 255, 255));
 	private AbstractFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
 			new RgbaColor(255, 64, 0, 255));
-	private Group root;
+	private IParent root;
 
 	@Override
-	public void addUi(Group root) {
+	public void addUi(final IParent root) {
+		this.root = root;
+		root.addChildNodes(rectFigure, ovalFigure);
 		new FigureDragger(rectFigure);
 		new FigureDragger(ovalFigure);
-
-		this.root = root;
-		root.addFigures(rectFigure, ovalFigure);
 		new GroupTransformer(root);
 
-		// create SWT control
-		Button resetButton = new Button(root, SWT.PUSH);
-		resetButton.setText("Reset");
-		org.eclipse.swt.graphics.Point size = resetButton.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT);
-		resetButton.setBounds(20, root.getSize().y - size.y - 20, size.x,
-				size.y);
-		resetButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				resetFigures();
-			}
-		});
+		ControlNode<Button> resetButton = new ControlNode<Button>(new Button(
+				root.getSwtComposite(), SWT.PUSH));
+		resetButton.getControl().setText("Reset");
+		resetButton.relocate(20, 300);
+		resetButton.addEventHandler(ActionEvent.SELECTION,
+				new IEventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						resetFigures();
+					}
+				});
 
-		Button quitButton = new Button(root, SWT.PUSH);
-		quitButton.setText("quit");
-		size = quitButton.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		quitButton.setBounds(root.getSize().x - 20 - size.x, root.getSize().y
-				- size.y - 20, size.x, size.y);
-		quitButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.exit(0);
-			}
-		});
+		ControlNode<Button> quitButton = new ControlNode<Button>(new Button(
+				root.getSwtComposite(), SWT.PUSH));
+		quitButton.getControl().setText("Quit");
+		quitButton.relocate(300, 300);
+		quitButton.addEventHandler(ActionEvent.SELECTION,
+				new IEventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						Composite compo = root.getSwtComposite();
+						while (compo != null && !(compo instanceof Shell)) {
+							compo = compo.getParent();
+						}
+						if (compo instanceof Shell) {
+							((Shell) compo).close();
+						}
+					}
+				});
+
+		root.addChildNodes(resetButton, quitButton);
 
 		resetFigures();
+		NestedControls.showAbsoluteBounds(root);
 	}
 
 	@Override

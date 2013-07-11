@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.event.Event;
@@ -94,6 +93,19 @@ public interface INode extends IEventTarget {
 			IEventHandler<T> handler);
 
 	/**
+	 * <p>
+	 * If this {@link INode} {@link #isResizable()}, will set its layout bounds
+	 * to its current preferred width and height. If this INode is not
+	 * resizable, this method is a no-op.
+	 * </p>
+	 * <p>
+	 * This method queries the node's content-bias and compute the preferred
+	 * width and height appropriately.
+	 * </p>
+	 */
+	public void autosize();
+
+	/**
 	 * Computes the node's maximum height in dependence of the given width.
 	 * 
 	 * @param width
@@ -133,14 +145,6 @@ public interface INode extends IEventTarget {
 	 */
 	public double computePrefHeight(double width);
 
-	/**
-	 * Computes the node's preferred width in dependence of the given height.
-	 * 
-	 * @param width
-	 * @return the node's preferred width in dependence of the given height
-	 */
-	public double computePrefWidth(double height);
-
 	// TODO: comment-in
 	// /**
 	// * Checks if the given {@link Point} is contained by this {@link INode}.
@@ -155,6 +159,14 @@ public interface INode extends IEventTarget {
 	// boolean contains(Point local);
 
 	/**
+	 * Computes the node's preferred width in dependence of the given height.
+	 * 
+	 * @param width
+	 * @return the node's preferred width in dependence of the given height
+	 */
+	public double computePrefWidth(double height);
+
+	/**
 	 * Checks if the given location is contained by this {@link INode}. The
 	 * location is interpreted in the local coordinate system of the node.
 	 * 
@@ -165,7 +177,7 @@ public interface INode extends IEventTarget {
 	 * @return <code>true</code> if the given location is contained by this
 	 *         {@link INode}, otherwise <code>false</code>
 	 */
-	boolean contains(double localX, double localY);
+	public boolean contains(double localX, double localY);
 
 	/**
 	 * Returns the physical bounds of this {@link INode} in its local coordinate
@@ -173,7 +185,7 @@ public interface INode extends IEventTarget {
 	 * 
 	 * @return the physcial bounds of this node in its local coordinate system
 	 */
-	Rectangle getBoundsInLocal();
+	public Rectangle getBoundsInLocal();
 
 	/**
 	 * Returns the physical bounds of this {@link INode} in the coordinate
@@ -183,7 +195,7 @@ public interface INode extends IEventTarget {
 	 * @return the physical bounds of this node in the coordinate system of its
 	 *         parent
 	 */
-	Rectangle getBoundsInParent();
+	public Rectangle getBoundsInParent();
 
 	/**
 	 * Returns the content-bias of this {@link INode}.
@@ -209,7 +221,7 @@ public interface INode extends IEventTarget {
 	 * 
 	 * @return the logical bounds of this IFigure
 	 */
-	Rectangle getLayoutBounds();
+	public Rectangle getLayoutBounds();
 
 	/**
 	 * Returns the layout-x coordinate associated with this {@link INode}. The
@@ -238,7 +250,7 @@ public interface INode extends IEventTarget {
 	 *         the local coordinate system of this {@link INode} to the
 	 *         coordinate system of the screen.
 	 */
-	AffineTransform getLocalToAbsoluteTransform();
+	public AffineTransform getLocalToAbsoluteTransform();
 
 	/**
 	 * Returns an {@link AffineTransform} which will transform coordinates from
@@ -249,7 +261,7 @@ public interface INode extends IEventTarget {
 	 *         the local coordinate system of this {@link INode} to the
 	 *         coordinate system of its parent
 	 */
-	AffineTransform getLocalToParentTransform();
+	public AffineTransform getLocalToParentTransform();
 
 	public double getMaxHeight();
 
@@ -276,14 +288,6 @@ public interface INode extends IEventTarget {
 	 * @return
 	 */
 	public Point getPivot();
-
-	/**
-	 * Returns the preferred size of this {@link INode}, i.e. the size at which
-	 * the {@link INode} is displayed best.
-	 * 
-	 * @return the preferred size of this {@link INode}
-	 */
-	public Dimension getPreferredSize();
 
 	public double getPrefHeight();
 
@@ -352,6 +356,25 @@ public interface INode extends IEventTarget {
 	public boolean isFocusTraversable();
 
 	/**
+	 * Returns <code>true</code> if this {@link INode} is managed, i.e. its
+	 * location and size can be regulated by its parent.
+	 * 
+	 * @return <code>true</code> if this {@link INode} is managed, otherwise
+	 *         <code>false</code>
+	 */
+	public boolean isManaged();
+
+	/**
+	 * Returns <code>true</code> if this {@link INode} is resizable, i.e. its
+	 * contents can be displayed at varying sizes. Otherwise, returns
+	 * <code>false</code>.
+	 * 
+	 * @return <code>true</code> if this {@link INode} is resizable, otherwise
+	 *         <code>false</code>
+	 */
+	public boolean isResizable();
+
+	/**
 	 * @return <code>true</code> if this {@link INode} is visible, otherwise
 	 *         <code>false</code>
 	 */
@@ -409,14 +432,6 @@ public interface INode extends IEventTarget {
 	 */
 	void parentToLocal(Point parentIn, Point localOut);
 
-	/**
-	 * Relocates this {@link INode} to the specified coordinates.
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void relocate(double x, double y);
-
 	// TODO: comment-in
 	// /**
 	// * Transforms the given x and y coordinates, interpreted as local to this
@@ -463,6 +478,14 @@ public interface INode extends IEventTarget {
 	// public Point localToAbsolute(Point local);
 
 	/**
+	 * Relocates this {@link INode} to the specified coordinates.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void relocate(double x, double y);
+
+	/**
 	 * Removes the given {@link IEventHandler event filter} from the list of
 	 * listeners managed by this {@link INode} for the specified
 	 * {@link EventType}.
@@ -472,6 +495,10 @@ public interface INode extends IEventTarget {
 	 */
 	public <T extends Event> void removeEventFilter(EventType<T> type,
 			IEventHandler<T> filter);
+
+	// TODO
+	// public void relocateResize(double x, double y, double width, double
+	// height);
 
 	/**
 	 * Removes the given {@link IEventHandler event handler} from the list of
@@ -484,10 +511,6 @@ public interface INode extends IEventTarget {
 	public <T extends Event> void removeEventHandler(EventType<T> type,
 			IEventHandler<T> handler);
 
-	// TODO
-	// public void relocateResize(double x, double y, double width, double
-	// height);
-
 	/**
 	 * Tries to bind keyboard events to this {@link INode}. Uses the SWT
 	 * forceFocus() method.
@@ -495,14 +518,6 @@ public interface INode extends IEventTarget {
 	 * @return <code>true</code> on success, otherwise <code>false</code>
 	 */
 	public boolean requestFocus();
-
-	/**
-	 * Resizes this {@link INode} to the specified width and height.
-	 * 
-	 * @param width
-	 * @param height
-	 */
-	public void resize(double width, double height);
 
 	// TODO: comment-in
 	// /**
@@ -547,6 +562,14 @@ public interface INode extends IEventTarget {
 	// Point parentToLocal(Point parent);
 
 	/**
+	 * Resizes this {@link INode} to the specified width and height.
+	 * 
+	 * @param width
+	 * @param height
+	 */
+	public void resize(double width, double height);
+
+	/**
 	 * Assigns the node a new location and size.
 	 * 
 	 * @param x
@@ -586,6 +609,15 @@ public interface INode extends IEventTarget {
 	public void setMinHeight(double height);
 
 	public void setMinWidth(double width);
+
+	/**
+	 * Changes the parent of this INode. This method is automatically called
+	 * when you add a node to the children list of a parent.
+	 * 
+	 * @param parent
+	 *            new container
+	 */
+	public void setParentNode(IParent parent);
 
 	/**
 	 * Sets the pivot {@link Point} to the passed-in {@link Point}.
