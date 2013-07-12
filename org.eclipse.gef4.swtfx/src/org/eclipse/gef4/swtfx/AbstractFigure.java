@@ -77,38 +77,32 @@ public abstract class AbstractFigure implements IFigure {
 
 	@Override
 	public double computeMaxHeight(double width) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getHeight();
 	}
 
 	@Override
 	public double computeMaxWidth(double height) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getWidth();
 	}
 
 	@Override
 	public double computeMinHeight(double width) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getHeight();
 	}
 
 	@Override
 	public double computeMinWidth(double height) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getWidth();
 	}
 
 	@Override
 	public double computePrefHeight(double width) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getHeight();
 	}
 
 	@Override
 	public double computePrefWidth(double height) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getLayoutBounds().getWidth();
 	}
 
 	@Override

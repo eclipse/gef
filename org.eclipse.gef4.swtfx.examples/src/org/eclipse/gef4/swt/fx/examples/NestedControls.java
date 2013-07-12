@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.swtfx.AbstractParent;
 import org.eclipse.gef4.swtfx.CanvasFigure;
 import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.IFigure;
@@ -48,18 +49,30 @@ public class NestedControls implements IExample {
 		new Example(new NestedControls());
 	}
 
+	/**
+	 * Computes, sets, and prints the absolute bounds of all thingies.
+	 * 
+	 * @param node
+	 */
 	public static void showAbsoluteBounds(INode node) {
-		System.out.println("node: " + node);
-		System.out.println("----------------------------------------");
+		// System.out.println("node: " + node);
+		// System.out.println("----------------------------------------");
 		Rectangle absBounds = node.getBoundsInLocal()
 				.getTransformed(node.getLocalToAbsoluteTransform()).getBounds();
-		System.out.println(absBounds);
-		System.out.println();
+		// System.out.println(absBounds);
+		// System.out.println();
 
 		if (node instanceof Control) {
-			((Control) node).setBounds((int) absBounds.getX(),
-					(int) absBounds.getY(), (int) absBounds.getWidth(),
-					(int) absBounds.getHeight());
+			if (node instanceof AbstractParent) {
+				((AbstractParent) node).updateSwtBounds();
+			} else if (node instanceof ControlNode) {
+				((ControlNode) node).updateSwtBounds();
+			} else {
+				System.out.println("Don't know how to setBounds of " + node);
+				// ((Control) node).setBounds((int) absBounds.getX(),
+				// (int) absBounds.getY(), (int) absBounds.getWidth(),
+				// (int) absBounds.getHeight());
+			}
 		}
 
 		if (node instanceof IParent) {
@@ -162,10 +175,8 @@ public class NestedControls implements IExample {
 		}
 
 		((Pane) root).doLayout();
-
 		showAbsoluteBounds(root);
-
-		// showLayoutInfo(root, 0);
+		showLayoutInfo(root, 0);
 	}
 
 	public int button(IParent container, String text,
@@ -191,7 +202,7 @@ public class NestedControls implements IExample {
 		container.addChildNodes(checkbox);
 		Rectangle bb = checkbox.getLayoutBounds();
 		int height = (int) bb.getHeight();
-		control.setBounds(x, y, width, height);
+		checkbox.resizeRelocate(x, y, width, height);
 
 		checkbox.addEventHandler(MouseEvent.MOUSE_RELEASED, clickHandler);
 

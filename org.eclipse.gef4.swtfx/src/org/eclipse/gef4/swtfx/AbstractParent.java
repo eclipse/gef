@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class AbstractParent extends Canvas implements IParent,
 		PaintListener, DisposeListener {
 
-	// private List<IFigure> figures = new LinkedList<IFigure>();
 	private List<INode> children = new LinkedList<INode>();
 	private EventHandlerManager dispatcher = new EventHandlerManager();
 	private SwtEventTargetSelector swtEventDispatcher;
@@ -638,6 +637,21 @@ public abstract class AbstractParent extends Canvas implements IParent,
 		// + System.identityHashCode(this) + ", lxy = " + getLayoutX()
 		// + ", " + getLayoutY() + "; lwh = " + getWidth() + " x "
 		// + getHeight() + " :: lb = " + getLayoutBounds());
+
+		Rectangle bounds = getBoundsInLocal().getTransformed(
+				getLocalToAbsoluteTransform()).getBounds();
+
+		IParent parentNode = getParentNode();
+		if (parentNode instanceof AbstractParent) {
+			org.eclipse.swt.graphics.Point location = ((AbstractParent) parentNode)
+					.getLocation();
+			bounds.translate(-location.x, -location.y);
+		}
+
+		setBounds((int) Math.ceil(bounds.getX()),
+				(int) Math.ceil(bounds.getY()),
+				(int) Math.ceil(bounds.getWidth()),
+				(int) Math.ceil(bounds.getHeight()));
 
 		// Point location = new Point();
 		// Composite parent = getParent();

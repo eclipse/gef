@@ -540,11 +540,24 @@ public class ControlNode<T extends Control> implements INode {
 						NodeUtil.getLocalToParentTransform(this)
 								.getTransformed(bounds.getTopLeft()));
 
+		IParent parentNode = getParentNode();
+		if (parentNode instanceof AbstractParent) {
+			org.eclipse.swt.graphics.Point location = ((AbstractParent) parentNode)
+					.getLocation();
+			offset.translate(-location.x, -location.y);
+		}
+
+		// System.out.println("update control bounds: " + offset + ", "
+		// + bounds.getSize());
+
 		// TODO: compute real width and height dependent on translation and
 		// scaling
 
-		control.setBounds((int) offset.x, (int) offset.y,
-				(int) bounds.getWidth(), (int) bounds.getHeight());
+		// ceil because we rather like to have a very small gap between
+		// controls, then not being able to fully see'em
+		control.setBounds((int) Math.ceil(offset.x), (int) Math.ceil(offset.y),
+				(int) Math.ceil(bounds.getWidth()),
+				(int) Math.ceil(bounds.getHeight()));
 	}
 
 }
