@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MouseEventTests {
@@ -33,6 +34,7 @@ public class MouseEventTests {
 	private static final int HEIGHT = 300;
 	private static final int WIDTH = 400;
 
+	@Ignore("UI harness dependencies missing.")
 	@Test
 	public void test_mouse_enters_window() {
 		final Display display = new Display();
