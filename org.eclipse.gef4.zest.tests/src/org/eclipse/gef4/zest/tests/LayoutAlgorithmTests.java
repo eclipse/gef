@@ -19,7 +19,9 @@ import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.LayoutFilter;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver;
 import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
+import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
@@ -141,5 +143,32 @@ public class LayoutAlgorithmTests extends TestCase {
 		graph.setLayoutAlgorithm(new GridLayoutAlgorithm(), true);
 		Assert.assertEquals(GridLayoutAlgorithm.class, graph
 				.getLayoutAlgorithm().getClass());
+	}
+
+	/**
+	 * Test issues with TreeLayoutObserver.TreeNode#isAncestorOf for tree nodes
+	 * that are their own descendants (see http://bugs.eclipse.org/412446)
+	 */
+	public void testTreeLayoutObserverTreeNodeIsAncestorOf() {
+		TestNode node1 = new TestNode(null, null);
+		Assert.assertTrue(node1.isAncestorOf(node1));
+		node1.addDescendant(node1);
+		Assert.assertTrue(node1.isAncestorOf(node1));
+		TestNode node2 = new TestNode(null, null);
+		node1.addDescendant(node2);
+		Assert.assertTrue(node1.isAncestorOf(node2));
+		Assert.assertFalse(node2.isAncestorOf(node1));
+	}
+
+	/* Use a private subclass to access protected members: */
+	private static class TestNode extends TreeLayoutObserver.TreeNode {
+		protected TestNode(NodeLayout node, TreeLayoutObserver owner) {
+			super(node, owner);
+		}
+
+		void addDescendant(TestNode descendant) {
+			addChild(descendant);
+			precomputeTree();
+		}
 	}
 }

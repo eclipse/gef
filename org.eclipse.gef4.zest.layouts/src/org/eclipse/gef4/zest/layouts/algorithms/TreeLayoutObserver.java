@@ -185,6 +185,8 @@ public class TreeLayoutObserver {
 		 *            node to add
 		 */
 		protected void addChild(TreeNode child) {
+			if (child == this)
+				return;
 			children.add(child);
 			child.parent = this;
 		}
