@@ -10,7 +10,7 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import java.io.File;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Util class for different tests.

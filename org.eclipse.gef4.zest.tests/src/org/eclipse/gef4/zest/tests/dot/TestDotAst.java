@@ -10,10 +10,9 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
 import org.eclipse.gef4.zest.internal.dot.DotAst;
 import org.eclipse.gef4.zest.internal.dot.DotFileUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

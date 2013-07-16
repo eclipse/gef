@@ -8,10 +8,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests.cloudio;
 
+import static org.eclipse.gef4.zest.tests.cloudio.TagCloudTests.DELTA;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.eclipse.gef4.zest.cloudio.TagCloud;
 import org.eclipse.gef4.zest.cloudio.TagCloudViewer;
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -169,8 +170,8 @@ public class TagCloudViewerTests {
 				Assert.assertEquals(TestLabelProvider.FONT_DATA[i],
 						word.getFontData()[i]);
 			}
-			Assert.assertEquals(TestLabelProvider.ANGLE, word.angle);
-			Assert.assertEquals(TestLabelProvider.WEIGHT, word.weight);
+			Assert.assertEquals(TestLabelProvider.ANGLE, word.angle, DELTA);
+			Assert.assertEquals(TestLabelProvider.WEIGHT, word.weight, DELTA);
 			Assert.assertTrue(word.x != 0);
 			Assert.assertTrue(word.y != 0);
 			Assert.assertTrue(word.width != 0);

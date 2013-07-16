@@ -11,7 +11,6 @@ package org.eclipse.gef4.zest.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
@@ -36,6 +35,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Assert;
 
 /**
  * Tests for the {@link GraphViewer} class.

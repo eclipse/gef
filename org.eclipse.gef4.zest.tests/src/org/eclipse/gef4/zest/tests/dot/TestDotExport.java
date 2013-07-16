@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import junit.framework.Assert;
-
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -27,6 +25,7 @@ import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

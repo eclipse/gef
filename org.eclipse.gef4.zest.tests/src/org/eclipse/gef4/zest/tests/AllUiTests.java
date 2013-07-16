@@ -8,12 +8,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.zest.tests.dot.TestDotDirStore;
 import org.eclipse.gef4.zest.tests.dot.TestDotExtractor;
 import org.eclipse.gef4.zest.tests.dot.TestZestGraphView;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

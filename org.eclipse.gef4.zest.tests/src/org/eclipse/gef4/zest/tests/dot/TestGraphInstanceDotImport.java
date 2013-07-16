@@ -9,7 +9,6 @@
 package org.eclipse.gef4.zest.tests.dot;
 
 import static org.junit.Assert.assertEquals;
-import junit.framework.Assert;
 
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
@@ -28,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

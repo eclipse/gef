@@ -14,8 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.eclipse.gef4.zest.cloudio.TagCloud;
 import org.eclipse.gef4.zest.cloudio.Word;
 import org.eclipse.swt.SWT;
@@ -34,11 +32,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TagCloudTests {
 
+	static final double DELTA = 1e-9;
 	private Display display;
 	private boolean createdDisplay = false;
 	private Composite composite;
@@ -308,7 +308,7 @@ public class TagCloudTests {
 		double zoom = cloud.getZoom();
 		cloud.zoomReset();
 		Assert.assertTrue(cloud.getZoom() > zoom);
-		Assert.assertEquals(cloud.getZoom(), 1.0);
+		Assert.assertEquals(cloud.getZoom(), 1.0, DELTA);
 	}
 
 	@Test
@@ -417,9 +417,9 @@ public class TagCloudTests {
 	public void testSetValidBoostFactor() {
 		TagCloud cloud = new TagCloud(composite, SWT.NONE);
 		cloud.setBoostFactor(3.3F);
-		Assert.assertEquals(3.3F, cloud.getBoostFactor());
+		Assert.assertEquals(3.3F, cloud.getBoostFactor(), DELTA);
 		cloud.setBoostFactor(-2.2F);
-		Assert.assertEquals(-2.2F, cloud.getBoostFactor());
+		Assert.assertEquals(-2.2F, cloud.getBoostFactor(), DELTA);
 	}
 
 	@Test

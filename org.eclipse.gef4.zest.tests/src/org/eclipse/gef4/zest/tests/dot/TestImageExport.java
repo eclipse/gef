@@ -12,10 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import junit.framework.Assert;
-
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.internal.dot.DotExport;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 
 /**

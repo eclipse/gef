@@ -10,11 +10,10 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import java.io.File;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.zest.internal.dot.DotDirStore;
 import org.eclipse.gef4.zest.internal.dot.DotUiActivator;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

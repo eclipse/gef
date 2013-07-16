@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.gef4.zest.core.widgets.DAGExpandCollapseManager;
@@ -24,6 +23,7 @@ import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Assert;
 
 /**
  * Tests involving the {@link LayoutAlgorithm} interface.

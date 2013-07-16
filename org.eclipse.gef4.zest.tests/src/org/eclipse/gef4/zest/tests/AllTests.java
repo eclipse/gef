@@ -8,9 +8,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.Platform;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

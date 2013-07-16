@@ -11,8 +11,6 @@ package org.eclipse.gef4.zest.tests.dot;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.internal.dot.DotExport;
@@ -20,6 +18,7 @@ import org.eclipse.gef4.zest.internal.dot.ZestGraphView;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
