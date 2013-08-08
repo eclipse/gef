@@ -33,10 +33,12 @@ public class PrimitivesExample implements IExample {
 	public void addUi(IParent c) {
 		c.addChildNodes(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
-			public void paint(GraphicsContext g) {
+			public void doPaint(GraphicsContext g) {
+				// clear
 				Rectangle bounds = this.getLayoutBounds();
 				g.clearRect(0, 0, bounds.getWidth(), bounds.getHeight());
 
+				// show some geometric shapes
 				g.setFill(new RgbaColor(255, 0, 0));
 				g.fillArc(20, 20, 100, 100, 30, 130, ArcType.ROUND);
 
@@ -53,13 +55,18 @@ public class PrimitivesExample implements IExample {
 				g.setFill(new RgbaColor(255, 0, 255));
 				g.fillRoundRect(260, 20, 100, 100, 20, 20);
 
+				// text output
+				String text = "Too long for 100px?";
 				g.setFill(new RgbaColor(0, 255, 255));
+				g.setStroke(new RgbaColor());
 
 				for (int size = 16, y = 140; size > 6; size -= 2, y += 20) {
 					FontData fontData = g.getFont().getFontData()[0];
 					fontData.setHeight(size);
 					g.setFont(fontData);
-					g.fillText("Too long for 100px?", 260, y, 100);
+
+					g.strokeText(text, 260, y, 100);
+					g.fillText(text, 260, y, 100);
 				}
 			}
 		});

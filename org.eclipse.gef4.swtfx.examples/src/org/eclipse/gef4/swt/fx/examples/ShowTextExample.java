@@ -31,7 +31,7 @@ public class ShowTextExample implements IExample {
 	public void addUi(IParent c) {
 		c.addChildNodes(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
-			public void paint(GraphicsContext g) {
+			public void doPaint(GraphicsContext g) {
 				g.clearRect(0, 0, getWidth(), getHeight());
 
 				g.setFont(new FontData("Times", 12, SWT.NORMAL));
@@ -54,6 +54,7 @@ public class ShowTextExample implements IExample {
 						"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt",
 						20, 100);
 				g.strokeText("mollit anim id est laborum.", 20, 120);
+				g.fillText("mollit anim id est laborum.", 20, 120);
 			}
 		});
 	}

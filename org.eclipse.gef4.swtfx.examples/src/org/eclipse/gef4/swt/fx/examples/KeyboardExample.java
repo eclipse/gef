@@ -23,6 +23,8 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 
@@ -40,10 +42,14 @@ public class KeyboardExample implements IExample {
 			private String text = " ";
 
 			{
-				getPaintStateByReference().getFillByReference().setColor(
-						new RgbaColor(128, 128, 255, 128));
-				getPaintStateByReference().getFontDataByReference().setHeight(
-						32);
+				setFill(new RgbaColor(128, 128, 255, 128));
+
+				// TODO: changing fonts (their sizes etc.) should be easier
+				Font font = getFont();
+				FontData fontData = font.getFontData()[0];
+				fontData.setHeight(32);
+				setFont(new Font(font.getDevice(), fontData));
+
 				addEventHandler(KeyEvent.KEY_PRESSED,
 						new IEventHandler<KeyEvent>() {
 							@Override
@@ -55,9 +61,9 @@ public class KeyboardExample implements IExample {
 			}
 
 			@Override
-			public void paint(GraphicsContext g) {
+			public void doPaint(GraphicsContext g) {
 				// paint background
-				super.paint(g);
+				super.doPaint(g);
 
 				// place text in middle
 				Point extent = g.getGcByReference().textExtent(text);
@@ -70,12 +76,13 @@ public class KeyboardExample implements IExample {
 					y = (100 - extent.y) / 2;
 				}
 
-				g.strokeText(text, x, y, maxWidth);
+				g.setFill(new RgbaColor());
+				g.fillText(text, x, y, maxWidth);
 			}
 		};
 		root.addChildNodes(keyboardRect);
 
-		Button btnFocus = new Button(root.getSwtComposite(), SWT.PUSH);
+		Button btnFocus = new Button(root.getScene(), SWT.PUSH);
 		btnFocus.setText("requestFocus");
 		btnFocus.setBounds(20, 200, 150, 50);
 		btnFocus.addSelectionListener(new SelectionListener() {
@@ -86,7 +93,7 @@ public class KeyboardExample implements IExample {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println(keyboardRect.requestFocus());
+				keyboardRect.requestFocus();
 			}
 		});
 	}

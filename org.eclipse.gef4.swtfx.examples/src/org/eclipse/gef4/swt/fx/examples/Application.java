@@ -13,44 +13,36 @@
 package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.swtfx.Scene;
-import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Example {
+public abstract class Application {
 
 	private Display display;
 	private Shell shell;
-	private Pane pane;
 
-	public Example(IExample ex) {
-		int w = ex.getWidth();
-		int h = ex.getHeight();
-
+	public Application() {
 		display = new Display();
 		shell = new Shell(display);
-		shell.setText("org.eclipse.gef4.swtfx - " + ex.getTitle());
+		shell.setText("org.eclipse.gef4.swtfx");
 		shell.setLayout(new GridLayout());
 
-		pane = new Pane();
-		Scene scene = new Scene(shell, pane);
+		Scene scene = start(shell);
 		scene.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		// group.addBackgroundPaintListener(this);
-		pane.resize(w, h);
-		// group.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		ex.addUi(pane);
 
 		shell.pack();
 		shell.open();
-		shell.setBounds(0, 0, w, h);
+
+		double prefWidth = scene.getRoot().getPrefWidth();
+		double prefHeight = scene.getRoot().getPrefHeight();
+		shell.setSize((int) prefWidth, (int) prefHeight);
 		Rectangle clientArea = shell.getClientArea();
-		shell.setBounds(0, 0, 2 * w - clientArea.width, 2 * h
-				- clientArea.height);
+		shell.setSize((int) prefWidth * 2 - clientArea.width, (int) prefHeight
+				* 2 - clientArea.height);
+
 		shell.redraw();
 
 		while (!shell.isDisposed()) {
@@ -60,12 +52,6 @@ public class Example {
 		}
 	}
 
-	// @Override
-	// public void paintControl(PaintEvent e) {
-	// GC gc = e.gc;
-	// GraphicsContext gefGc = new GraphicsContext(gc);
-	// ex.render(gefGc);
-	// gefGc.cleanUp();
-	// }
+	public abstract Scene start(Shell shell);
 
 }

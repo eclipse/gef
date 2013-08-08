@@ -20,61 +20,30 @@ import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Polygon;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
-import org.eclipse.gef4.swtfx.AbstractParent;
 import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.IParent;
+import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
-import org.eclipse.gef4.swtfx.gc.GraphicsContextState;
-import org.eclipse.gef4.swtfx.gc.Paint;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.HBox;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.gef4.swtfx.layout.VBox;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
-public class TryOutPane implements IExample {
+public class TryOutPane {
 
-	public static void main(String[] args) {
-		new Example(new TryOutPane());
-	}
-
-	@Override
-	public void addUi(IParent root) {
-		VBox vbox = new VBox(root.getSwtComposite());
-
-		HBox hbox = new HBox(vbox);
-		hbox.addChildNodes(
-				shape(new Rectangle(0, 0, 100, 100), 1, 0, 0),
-				shape(new Ellipse(0, 0, 100, 100), 0, 1, 0),
-				shape(new Pie(0, 0, 100, 100, Angle.fromDeg(15), Angle
-						.fromDeg(215)), 0, 0, 1));
-
-		HBox hbox2 = new HBox(vbox);
-		hbox2.addChildNodes(
-				shape(new Polygon(30, 0, 60, 60, 0, 60), 0.2, 0.7, 0.3),
-				shape(new RoundedRectangle(0, 0, 280, 160, 15, 15), 0.3, 1, 0.7),
-				shape(new CurvedPolygon(PolyBezier.interpolateCubic(
-						new Point(10, 10), new Point(100, 50),
-						new Point(30, 70), new Point(10, 10)).toBezier()), 1,
-						0, 1));
-
-		HBox hbox3 = new HBox(vbox);
-		hbox3.addChildNodes(button(hbox3, "You"), button(hbox3, "can"),
-				button(hbox3, "use"), button(hbox3, "SWT"),
-				button(hbox3, "controls"));
-
-		((AbstractParent) root).doLayout();
-		NestedControls.showAbsoluteBounds(root);
-	}
-
-	private ControlNode<Button> button(Pane pane, final String label) {
-		Button button = new Button(pane, SWT.PUSH);
+	private static ControlNode<Button> button(Pane pane, final String label) {
+		Button button = new Button(pane.getScene(), SWT.PUSH);
 		button.setText(label);
 		ControlNode<Button> controlNode = new ControlNode<Button>(button);
 		controlNode.addEventHandler(ActionEvent.SELECTION,
@@ -87,30 +56,100 @@ public class TryOutPane implements IExample {
 		return controlNode;
 	}
 
-	@Override
-	public int getHeight() {
-		return 480;
+	public static void main(String[] args) {
+		new TryOutPane();
 	}
 
-	@Override
-	public String getTitle() {
-		return "HBox & VBox";
-	}
-
-	@Override
-	public int getWidth() {
-		return 640;
-	}
-
-	private IFigure shape(final IShape shape, final double red,
+	private static IFigure shape(final IShape shape, final double red,
 			final double green, final double blue) {
 		return new ShapeFigure(shape) {
 			{
-				GraphicsContextState gcs = getPaintStateByReference();
-				Paint fill = gcs.getFillByReference();
-				fill.setColor(new RgbaColor((int) (red * 255),
-						(int) (green * 255), (int) (blue * 255)));
+				setFill(new RgbaColor((int) (red * 255), (int) (green * 255),
+						(int) (blue * 255)));
 			}
 		};
 	}
+
+	public Display display;
+	public Shell shell;
+	public Scene scene;
+
+	public TryOutPane() {
+		int w = 640;
+		int h = 480;
+
+		display = new Display();
+		shell = new Shell(display);
+		shell.setText("org.eclipse.gef4.swtfx - HBox & VBox");
+		shell.setLayout(new GridLayout());
+
+		Pane root = new Pane();
+		scene = new Scene(shell, root);
+		scene.setLayoutData(new GridData(GridData.FILL_BOTH));
+		addUi(root);
+
+		shell.pack();
+		// System.out.println("packed");
+		shell.open();
+		shell.setBounds(0, 0, w, h);
+		Rectangle clientArea = shell.getClientArea();
+		shell.setBounds(0, 0, 2 * w - clientArea.width, 2 * h
+				- clientArea.height);
+		shell.redraw();
+
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+	}
+
+	public void addUi(IParent root) {
+		VBox vbox = new VBox() {
+			/*
+			 * XXX: hack to let the VBox fill the entire available space of root
+			 */
+
+			@Override
+			public double computePrefHeight(double width) {
+				return getParentNode().getHeight();
+			}
+
+			@Override
+			public double computePrefWidth(double height) {
+				return getParentNode().getWidth();
+			}
+		};
+		root.addChildNodes(vbox);
+
+		HBox hbox = new HBox();
+		vbox.addChildNodes(hbox);
+		hbox.addChildNodes(
+				button(hbox, "You"),
+				shape(new Ellipse(0, 0, 100, 100), 0, 1, 0),
+				shape(new Pie(0, 0, 100, 100, Angle.fromDeg(15), Angle
+						.fromDeg(215)), 0, 0, 1));
+
+		HBox hbox2 = new HBox();
+		vbox.addChildNodes(hbox2);
+		hbox2.addChildNodes(
+				shape(new Polygon(30, 0, 60, 60, 0, 60), 0.2, 0.7, 0.3),
+				button(hbox2, "can"),
+				shape(new CurvedPolygon(PolyBezier.interpolateCubic(
+						new Point(10, 10), new Point(100, 50),
+						new Point(30, 70), new Point(10, 10)).toBezier()), 1,
+						0, 1), button(hbox2, "use"));
+
+		HBox hbox3 = new HBox();
+		vbox.addChildNodes(hbox3);
+		hbox3.addChildNodes(
+				shape(new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 100,
+						100), 1, 0, 0),
+				button(hbox3, "SWT"),
+				shape(new RoundedRectangle(0, 0, 280, 160, 15, 15), 0.3, 1, 0.7),
+				button(hbox3, "controls"));
+
+		root.getScene().refreshVisuals();
+	}
+
 }

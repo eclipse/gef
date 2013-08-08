@@ -15,14 +15,16 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.CanvasNode;
+import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
+import org.eclipse.gef4.swtfx.event.ActionEvent;
+import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
@@ -44,57 +46,52 @@ public class TestFigures {
 		shell.setText("org.eclipse.gef4.swtfx");
 		shell.setLayout(new GridLayout());
 
-		final Pane root = new Pane(shell);
-
-		// ShapeFigure curved = new ShapeFigure(generateCurvedPolygon(new Point(
-		// 250, 50), new Point(450, 200), new Point(400, 450), new Point(
-		// 250, 350), new Point(100, 450), new Point(50, 200)));
-		// colorize(curved, new RgbaColor(255, 255, 0));
-		// trafo(curved).translate(50, 200);
+		final Pane root = new Pane();
+		new Scene(shell, root);
 
 		AbstractFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
-		colorize(rect, new RgbaColor(0, 128, 128, 128));
+		rect.setFill(new RgbaColor(0, 128, 128));
 		rect.relocate(50, 50);
 
 		AbstractFigure ellipse = new ShapeFigure(new Ellipse(0, 0, 100, 100));
-		colorize(ellipse, new RgbaColor(128, 0, 128, 128));
+		ellipse.setFill(new RgbaColor(128, 0, 128));
 		ellipse.relocate(100, 100);
 
-		CanvasFigure canvas = new CanvasFigure(100, 100);
-		GraphicsContext g = canvas.getGraphicsContext();
-		g.setStroke(new RgbaColor(255, 0, 0, 255));
-		g.strokeText("canvas output", 0, 0);
+		CanvasNode canvas = new CanvasNode(100, 100);
+		{
+			GraphicsContext g = canvas.getGraphicsContext();
+			g.setFill(new RgbaColor(255, 0, 0));
+			g.fillText("canvas output", 0, 0);
+			g.cleanUp();
+		}
 
-		// root.addFigures(curved, rect, ellipse, canvas);
-		root.addChildNodes(rect, ellipse, canvas);
+		ControlNode<Button> button = new ControlNode<Button>(new Button(
+				root.getScene(), SWT.PUSH));
+		button.getControl().setText("push me");
+		button.relocate(300, 100);
+		button.setPrefWidth(100);
+		button.setPrefHeight(50);
+		button.addEventHandler(ActionEvent.SELECTION,
+				new IEventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						root.getScene().refreshVisuals();
+					}
+				});
 
-		Button button = new Button(root, SWT.PUSH);
-		button.setText("push me");
-		button.setLocation(300, 100);
-		button.setSize(100, 50);
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				root.doLayout();
-				root.updateSwtBounds();
-				root.requestRedraw();
-			}
-		});
+		root.addChildNodes(rect, ellipse, canvas, button);
 
 		shell.pack();
 		shell.open();
 		shell.redraw();
+
+		root.layout();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-	}
-
-	private void colorize(AbstractFigure sf, RgbaColor color) {
-		sf.getPaintStateByReference().getFillByReference()
-				.setColorByReference(color);
 	}
 
 }

@@ -80,14 +80,21 @@ class AwtXorTestPanel extends JPanel {
 			int[] srcRgba = new int[4];
 			int[] dstRgba = new int[4];
 
+			int srcMinX = src.getMinX();
+			int srcMinY = src.getMinY();
+			int dstInMinX = dstIn.getMinX();
+			int dstInMinY = dstIn.getMinY();
+			int dstOutMinX = dstOut.getMinX();
+			int dstOutMinY = dstOut.getMinY();
+
 			for (int x = 0; x < w; x++) {
 				for (int y = 0; y < h; y++) {
-					src.getPixel(x, y, srcRgba);
-					dstIn.getPixel(x, y, dstRgba);
+					src.getPixel(x + srcMinX, y + srcMinY, srcRgba);
+					dstIn.getPixel(x + dstInMinX, y + dstInMinY, dstRgba);
 					for (int i = 0; i < 3; i++) {
 						dstRgba[i] ^= srcRgba[i];
 					}
-					dstOut.setPixel(x, y, dstRgba);
+					dstOut.setPixel(x + dstOutMinX, y + dstOutMinY, dstRgba);
 				}
 			}
 		}

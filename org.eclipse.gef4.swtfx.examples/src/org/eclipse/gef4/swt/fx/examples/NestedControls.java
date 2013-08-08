@@ -19,7 +19,7 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractParent;
-import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.CanvasNode;
 import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.INode;
@@ -34,7 +34,6 @@ import org.eclipse.gef4.swtfx.gc.RadialGradient;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -49,22 +48,26 @@ public class NestedControls implements IExample {
 		new Example(new NestedControls());
 	}
 
+	/*
+	 * TODO: Remove debug routines.
+	 */
+
 	/**
 	 * Computes, sets, and prints the absolute bounds of all thingies.
 	 * 
 	 * @param node
 	 */
 	public static void showAbsoluteBounds(INode node) {
-		// System.out.println("node: " + node);
-		// System.out.println("----------------------------------------");
+		System.out.println("node: " + node);
+		System.out.println("----------------------------------------");
 		Rectangle absBounds = node.getBoundsInLocal()
 				.getTransformed(node.getLocalToAbsoluteTransform()).getBounds();
-		// System.out.println(absBounds);
-		// System.out.println();
+		System.out.println(absBounds);
+		System.out.println();
 
 		if (node instanceof Control) {
 			if (node instanceof AbstractParent) {
-				((AbstractParent) node).updateSwtBounds();
+				// ((AbstractParent) node).updateSwtBounds();
 			} else if (node instanceof ControlNode) {
 				((ControlNode) node).updateSwtBounds();
 			} else {
@@ -99,35 +102,31 @@ public class NestedControls implements IExample {
 	@Override
 	public void addUi(final IParent root) {
 		{
-			Pane naviGroup = new Pane(root.getSwtComposite());
+			Pane naviGroup = new Pane();
+			root.addChildNodes(naviGroup);
 			naviGroup.resize(100, 300);
-			naviGroup.setBackground(new Color(root.getSwtComposite()
-					.getDisplay(), 255, 128, 128));
 
 			button(naviGroup, "New", onClick("onNew"), 5, 5, 90);
 			button(naviGroup, "Open", onClick("onOpen"), 5, 40, 90);
 			button(naviGroup, "Save", onClick("onSave"), 5, 75, 90);
-			button(naviGroup, "Quit", onClick("onQuit"), 5, 300 - 35, 90);
+			button(naviGroup, "Quit", onClick("onQuit"), 5, 300 - 40, 90);
 		}
 
-		Pane contentGroup = new Pane(root.getSwtComposite());
+		Pane contentGroup = new Pane();
+		root.addChildNodes(contentGroup);
 		contentGroup.resizeRelocate(100, 0, 300, 300);
-		contentGroup.setBackground(new Color(root.getSwtComposite()
-				.getDisplay(), 128, 255, 128));
 
-		final CanvasFigure canvas = new CanvasFigure(300, 200);
+		final CanvasNode canvas = new CanvasNode(300, 200);
 		contentGroup.addChildNodes(canvas);
 		canvas.relocate(0, 100); // leave space for some options
 		drawGradients(canvas);
 
 		{
-			Pane optionsGroup = new Pane(contentGroup);
+			Pane optionsGroup = new Pane();
+			contentGroup.addChildNodes(optionsGroup);
 			optionsGroup.resize(300, 100);
-			optionsGroup.setBackground(new Color(root.getSwtComposite()
-					.getDisplay(), 128, 128, 255));
 
-			int h = checkbox(optionsGroup, 5, 5, 290,
-					"Gamma correction (x^1/2.2)",
+			checkbox(optionsGroup, 5, 5, 290, "Gamma correction (x^1/2.2)",
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
@@ -137,7 +136,7 @@ public class NestedControls implements IExample {
 						}
 					});
 
-			checkbox(optionsGroup, 5, 10 + h, 290, "Invert colors",
+			checkbox(optionsGroup, 5, 50, 290, "Invert colors",
 					new IEventHandler<MouseEvent>() {
 						boolean checked = false;
 
@@ -173,27 +172,28 @@ public class NestedControls implements IExample {
 						}
 					});
 		}
-
-		((Pane) root).doLayout();
-		showAbsoluteBounds(root);
-		showLayoutInfo(root, 0);
 	}
 
 	public int button(IParent container, String text,
 			IEventHandler<MouseEvent> clickedHandler, int x, int y, int width) {
-		Button button = new Button(container.getSwtComposite(), SWT.PUSH);
+		Button button = new Button(container.getScene(), SWT.PUSH);
 		button.setText(text);
+
 		ControlNode<Button> node = new ControlNode<Button>(button);
 		container.addChildNodes(node);
+
 		int height = (int) node.getLayoutBounds().getHeight();
-		node.resizeRelocate(x, y, width, height);
+
+		node.setPrefWidth(width);
+		node.relocate(x, y);
 		node.addEventHandler(MouseEvent.MOUSE_RELEASED, clickedHandler);
+
 		return height;
 	}
 
 	private int checkbox(IParent container, int x, int y, int width,
 			String label, IEventHandler<MouseEvent> clickHandler) {
-		Composite compo = container.getSwtComposite();
+		Composite compo = container.getScene();
 		Button control = new Button(compo, SWT.CHECK);
 		control.setText(label);
 		control.setBackground(compo.getBackground());
@@ -212,7 +212,7 @@ public class NestedControls implements IExample {
 	/**
 	 * @param canvas
 	 */
-	private void drawGradients(final CanvasFigure canvas) {
+	private void drawGradients(final CanvasNode canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext();
 		gc.setFill(new RgbaColor(255, 255, 255));
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());

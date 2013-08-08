@@ -15,11 +15,11 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
+import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.CycleMethod;
 import org.eclipse.gef4.swtfx.gc.LinearGradient;
-import org.eclipse.gef4.swtfx.gc.PaintMode;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -80,6 +80,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 			.addStop(0.6, new RgbaColor(0, 0, 255))
 			.addStop(0.8, new RgbaColor(0, 0, 0))
 			.addStop(1, new RgbaColor(255, 255, 0));
+	private AbstractFigure fig;
 
 	public GradientSliderExample() {
 		gradient.computeAuxVars();
@@ -88,20 +89,20 @@ public class GradientSliderExample implements IExample, SelectionListener {
 	@Override
 	public void addUi(IParent c) {
 		this.root = c;
-		slider = new Slider(c.getSwtComposite(), SWT.NONE);
+
+		slider = new Slider(c.getScene(), SWT.NONE);
 		slider.setMinimum(0);
 		slider.setMaximum(100);
-		slider.setBounds(20, 20, 200, 20);
 		slider.addSelectionListener(this);
+		ControlNode<Slider> sliderNode = new ControlNode<Slider>(slider);
 
-		AbstractFigure fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
+		fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
+		fig.setFill(gradient);
+
+		c.addChildNodes(sliderNode, fig);
+
+		sliderNode.resizeRelocate(20, 20, 200, 20);
 		fig.relocate(20, 60);
-		fig.getPaintStateByReference().getFillByReference()
-				.setGradientByReference(gradient);
-		fig.getPaintStateByReference().getFillByReference()
-				.setMode(PaintMode.GRADIENT);
-
-		c.addChildNodes(fig);
 	}
 
 	@Override
@@ -135,6 +136,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 
 		double distOffset = selection / 90d; // TODO: Why not /100d but /90d?
 		gradient.setDistanceOffset(distOffset);
-		root.requestRedraw();
+		fig.setFill(gradient);
+		root.getScene().refreshVisuals();
 	}
 }

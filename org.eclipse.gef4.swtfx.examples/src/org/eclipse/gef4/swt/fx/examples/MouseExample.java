@@ -16,19 +16,24 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.AbstractFigure;
 import org.eclipse.gef4.swtfx.ControlNode;
-import org.eclipse.gef4.swtfx.IFigure;
+import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
+import org.eclipse.gef4.swtfx.animation.IInterpolator;
+import org.eclipse.gef4.swtfx.animation.ParallelTransition;
+import org.eclipse.gef4.swtfx.animation.PathTransition;
+import org.eclipse.gef4.swtfx.animation.RotateTransition;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LineCap;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -36,56 +41,51 @@ import org.eclipse.swt.widgets.Shell;
 
 public class MouseExample implements IExample {
 
-	static class FigureDragger {
+	static class NodeDragger {
 		private boolean dragging;
 		private Point offset;
 
-		public FigureDragger(final IFigure f) {
-			f.addEventHandler(MouseEvent.MOUSE_PRESSED,
+		public NodeDragger(final INode node) {
+			node.addEventHandler(MouseEvent.MOUSE_PRESSED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent e) {
-							f.requestFocus();
+							// System.out.println("drag start");
+							node.requestFocus();
 							dragging = true;
 							offset = new Point(e.getX(), e.getY());
 						}
 					});
-			f.addEventHandler(MouseEvent.MOUSE_RELEASED,
+			node.addEventHandler(MouseEvent.MOUSE_RELEASED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent e) {
+							// System.out.println("drag end");
 							dragging = false;
 						}
 					});
-			f.addEventHandler(MouseEvent.MOUSE_MOVED,
+			node.addEventHandler(MouseEvent.MOUSE_MOVED,
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent e) {
 							if (dragging) {
 								Point cursor = new Point(e.getX(), e.getY());
-								f.localToParent(cursor, cursor);
-								f.relocate(cursor.x - offset.x, cursor.y
+								node.localToParent(cursor, cursor);
+								node.relocate(cursor.x - offset.x, cursor.y
 										- offset.y);
+								node.getScene().refreshVisuals();
 							}
 						}
 					});
-
-			// FIXME: The update will we done automatically in the future.
-			f.addEventHandler(MouseEvent.ANY, new IEventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					f.update();
-				}
-			});
 		}
 	}
 
-	public class GroupTransformer {
+	public class ParentTransformer {
 		private boolean dragging = false;
 		private Point start;
 		private AffineTransform startTx;
 
-		public GroupTransformer(final IParent parent) {
+		public ParentTransformer(final IParent parent) {
 			final AffineTransform tx = new AffineTransform();
 			parent.getTransforms().add(tx);
 
@@ -136,7 +136,7 @@ public class MouseExample implements IExample {
 
 								tx.setTransform(newTx);
 
-								parent.requestRedraw();
+								parent.getScene().refreshVisuals();
 							}
 						}
 					});
@@ -147,39 +147,47 @@ public class MouseExample implements IExample {
 		new Example(new MouseExample());
 	}
 
-	private static AbstractFigure shape(IShape shape, RgbaColor color) {
-		AbstractFigure figure = new ShapeFigure(shape) {
+	private static ShapeFigure shape(IShape shape, RgbaColor color) {
+		ShapeFigure figure = new ShapeFigure(shape) {
+			{
+				// TODO: implement StrokeType dependent drawing
+				// setStrokeType(StrokeType.INSIDE);
+			}
+
 			@Override
-			public void paint(GraphicsContext g) {
+			public void doPaint(GraphicsContext g) {
 				if (isFocused()) {
 					g.setDashes(20, 20);
 					g.setLineWidth(5);
 					g.setLineCap(LineCap.ROUND);
 					g.setStroke(new RgbaColor());
 				}
-				super.paint(g);
+				super.doPaint(g);
 			}
 		};
 		figure.getPaintStateByReference().getFillByReference().setColor(color);
 		return figure;
 	}
 
-	private AbstractFigure rectFigure = shape(new Rectangle(0, 0, 200, 100),
+	private ShapeFigure rectFigure = shape(new Rectangle(0, 0, 200, 100),
 			new RgbaColor(0, 64, 255, 255));
-	private AbstractFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
+	private ShapeFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
 			new RgbaColor(255, 64, 0, 255));
 	private IParent root;
 
 	@Override
-	public void addUi(final IParent root) {
+	public void addUi(final IParent realRoot) {
+		final Pane root = new Pane();
+		realRoot.addChildNodes(root);
+
 		this.root = root;
 		root.addChildNodes(rectFigure, ovalFigure);
-		new FigureDragger(rectFigure);
-		new FigureDragger(ovalFigure);
-		new GroupTransformer(root);
+		new NodeDragger(rectFigure);
+		new NodeDragger(ovalFigure);
+		new ParentTransformer(root);
 
 		ControlNode<Button> resetButton = new ControlNode<Button>(new Button(
-				root.getSwtComposite(), SWT.PUSH));
+				root.getScene(), SWT.PUSH));
 		resetButton.getControl().setText("Reset");
 		resetButton.relocate(20, 300);
 		resetButton.addEventHandler(ActionEvent.SELECTION,
@@ -191,14 +199,14 @@ public class MouseExample implements IExample {
 				});
 
 		ControlNode<Button> quitButton = new ControlNode<Button>(new Button(
-				root.getSwtComposite(), SWT.PUSH));
+				root.getScene(), SWT.PUSH));
 		quitButton.getControl().setText("Quit");
 		quitButton.relocate(300, 300);
 		quitButton.addEventHandler(ActionEvent.SELECTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						Composite compo = root.getSwtComposite();
+						Composite compo = root.getScene();
 						while (compo != null && !(compo instanceof Shell)) {
 							compo = compo.getParent();
 						}
@@ -208,10 +216,23 @@ public class MouseExample implements IExample {
 					}
 				});
 
-		root.addChildNodes(resetButton, quitButton);
+		new NodeDragger(resetButton);
+		new NodeDragger(quitButton);
 
+		root.addChildNodes(resetButton, quitButton);
 		resetFigures();
-		NestedControls.showAbsoluteBounds(root);
+
+		rectFigure.setPivot(rectFigure.getShape().getBounds().getCenter());
+
+		PathTransition pathTransition = new PathTransition(2000, new Line(50,
+				50, 400, 400).toPath(), rectFigure);
+		pathTransition.setInterpolator(IInterpolator.SMOOTH_STEP);
+
+		RotateTransition rotateTransition = new RotateTransition(2000,
+				rectFigure, Angle.fromDeg(0), Angle.fromDeg(180));
+		rotateTransition.setInterpolator(IInterpolator.SMOOTH_STEP);
+
+		new ParallelTransition(pathTransition, rotateTransition).play();
 	}
 
 	@Override
@@ -235,7 +256,7 @@ public class MouseExample implements IExample {
 		if (root.getTransforms().size() > 0) {
 			root.getTransforms().get(0).setToIdentity();
 		}
-		root.requestRedraw();
+		root.getScene().refreshVisuals();
 	}
 
 }
