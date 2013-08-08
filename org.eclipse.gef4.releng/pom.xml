@@ -305,19 +305,6 @@
 		<module>../org.eclipse.gef4.geometry.tests-feature</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
-		<module>../org.eclipse.gef4.graphics</module>
-		<module>../org.eclipse.gef4.graphics.swt</module>
-		<module>../org.eclipse.gef4.graphics.tests</module>
-		<module>../org.eclipse.gef4.graphics.swt.tests</module>
-		<module>../org.eclipse.gef4.graphics.doc</module>
-		<module>../org.eclipse.gef4.graphics.swt-feature</module>
-		<module>../org.eclipse.gef4.graphics-feature</module>
-		<module>../org.eclipse.gef4.graphics.swt.source-feature</module>
-		<module>../org.eclipse.gef4.graphics.source-feature</module>
-		<module>../org.eclipse.gef4.graphics.swt.tests-feature</module>
-		<module>../org.eclipse.gef4.graphics.tests-feature</module>
-		<module>../org.eclipse.gef4.graphics.doc-feature</module>
-		<module>../org.eclipse.gef4.graphics.sdk-feature</module>
 		<module>../org.eclipse.gef4.swtfx</module>
 		<module>../org.eclipse.gef4.swtfx.tests</module>
 		<module>../org.eclipse.gef4.repository</module>
