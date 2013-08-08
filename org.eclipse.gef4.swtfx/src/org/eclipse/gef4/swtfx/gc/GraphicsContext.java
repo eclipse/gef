@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * <p>
@@ -227,6 +228,14 @@ public class GraphicsContext {
 
 	private void applyGlobalAlpha(double globalAlpha) {
 		gc.setAlpha((int) (255 * globalAlpha));
+
+		/*
+		 * FIXME: move anti-aliasing to GraphicsContextState
+		 * 
+		 * You should be able to enable/disable anti-aliasing on the
+		 * GraphicsContextState.
+		 */
+		gc.setAntialias(SWT.ON);
 	}
 
 	private void applyLineCap(LineCap lineCap) {
@@ -614,7 +623,7 @@ public class GraphicsContext {
 		gc.fillPath(swtPathFill);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -668,7 +677,7 @@ public class GraphicsContext {
 		}
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -687,7 +696,7 @@ public class GraphicsContext {
 				(int) Math.round(w), (int) Math.round(h));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -710,7 +719,7 @@ public class GraphicsContext {
 		swtPathFill.dispose();
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -730,7 +739,7 @@ public class GraphicsContext {
 		gc.fillPolygon(swtPointsArray);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -749,7 +758,7 @@ public class GraphicsContext {
 				(int) Math.round(w), (int) Math.round(h));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -773,7 +782,7 @@ public class GraphicsContext {
 				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -785,11 +794,11 @@ public class GraphicsContext {
 
 		Object stroke = getStroke();
 		setStroke(getFill());
-		showText(text, x, y);
+		showText(text, x, y, true);
 		setStroke(stroke);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -801,11 +810,11 @@ public class GraphicsContext {
 
 		Object stroke = getStroke();
 		setStroke(getFill());
-		showText(trim(text, maxWidth), x, y);
+		showText(trim(text, maxWidth), x, y, true);
 		setStroke(stroke);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -863,7 +872,7 @@ public class GraphicsContext {
 		return gc;
 	}
 
-	public double getGlobalAlpha() {
+	public int getGlobalAlpha() {
 		return gc.getAlpha();
 	}
 
@@ -1136,9 +1145,24 @@ public class GraphicsContext {
 		states.peek().setGuarded(true);
 	}
 
-	private void showText(String text, double x, double y) {
+	private void showText(String text, double x, double y, boolean isFill) {
 		beforeShowText();
-		gc.drawText(text, (int) Math.round(x), (int) Math.round(y), true);
+
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+
+		org.eclipse.swt.graphics.Path path = new org.eclipse.swt.graphics.Path(
+				display);
+		path.addString(text, (float) x, (float) y, getFont());
+
+		if (isFill) {
+			gc.fillPath(path);
+		} else {
+			gc.drawPath(path);
+		}
+
 		afterShowText();
 	}
 
@@ -1154,7 +1178,7 @@ public class GraphicsContext {
 		swtPathStroke.dispose();
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1204,7 +1228,7 @@ public class GraphicsContext {
 		}
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1218,7 +1242,7 @@ public class GraphicsContext {
 				(int) Math.round(x1), (int) Math.round(y1));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1232,7 +1256,7 @@ public class GraphicsContext {
 				(int) Math.round(w), (int) Math.round(h));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1248,7 +1272,7 @@ public class GraphicsContext {
 		swtPathStroke.dispose();
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1261,7 +1285,7 @@ public class GraphicsContext {
 		gc.drawPolygon(SwtUtils.createSwtPointsArray(xs, ys, n));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1274,7 +1298,7 @@ public class GraphicsContext {
 		gc.drawPolyline(SwtUtils.createSwtPointsArray(xs, ys, n));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1288,7 +1312,7 @@ public class GraphicsContext {
 				(int) Math.round(w), (int) Math.round(h));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1304,7 +1328,7 @@ public class GraphicsContext {
 				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1314,10 +1338,10 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		showText(text, x, y);
+		showText(text, x, y, false);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 
@@ -1327,10 +1351,10 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
-		showText(trim(text, maxWidth), x, y);
+		showText(trim(text, maxWidth), x, y, false);
 
 		if (a != 255) {
-			gc.setAlpha((int) getGlobalAlpha());
+			gc.setAlpha(getGlobalAlpha());
 		}
 	}
 

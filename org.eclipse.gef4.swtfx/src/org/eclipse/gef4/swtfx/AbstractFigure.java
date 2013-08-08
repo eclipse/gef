@@ -12,68 +12,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.event.Event;
-import org.eclipse.gef4.swtfx.event.EventHandlerManager;
-import org.eclipse.gef4.swtfx.event.EventType;
-import org.eclipse.gef4.swtfx.event.IEventDispatchChain;
-import org.eclipse.gef4.swtfx.event.IEventDispatcher;
-import org.eclipse.gef4.swtfx.event.IEventHandler;
+import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.swtfx.gc.Gradient;
+import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.GraphicsContextState;
+import org.eclipse.gef4.swtfx.gc.LineCap;
+import org.eclipse.gef4.swtfx.gc.LineJoin;
+import org.eclipse.gef4.swtfx.gc.PaintMode;
+import org.eclipse.gef4.swtfx.gc.RgbaColor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
-public abstract class AbstractFigure implements IFigure {
+public abstract class AbstractFigure extends AbstractNode implements IFigure {
 
 	// TODO: delegate to GraphicsContextState, do not allow direct access
 	private GraphicsContextState paintState = new GraphicsContextState();
-
-	private EventHandlerManager dispatcher = new EventHandlerManager();
-	private IParent parent;
-	private boolean focusTraversable = true;
-	private double layoutX = 0;
-	private double layoutY = 0;
-	private Point pivot = new Point();
-	private double scaleX = 1;
-	private double scaleY = 1;
-	private double translateX = 0;
-	private double translateY = 0;
-	private boolean visible = true;
-	private Angle angle = Angle.fromRad(0);
-	private List<AffineTransform> transforms = new LinkedList<AffineTransform>();
-
-	@Override
-	public void absoluteToLocal(Point absoluteIn, Point localOut) {
-		parent.absoluteToControl(absoluteIn, localOut);
-		parent.controlToLocal(localOut, localOut);
-		parentToLocal(localOut, localOut);
-	}
-
-	@Override
-	public <T extends Event> void addEventFilter(EventType<T> type,
-			IEventHandler<T> filter) {
-		dispatcher.addEventFilter(type, filter);
-	}
-
-	@Override
-	public <T extends Event> void addEventHandler(EventType<T> type,
-			IEventHandler<T> handler) {
-		dispatcher.addEventHandler(type, handler);
-	}
-
-	@Override
-	public void autosize() {
-		NodeUtil.autosize(this);
-	}
-
-	@Override
-	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
-		return NodeUtil.buildEventDispatchChain(this, tail);
-	}
 
 	@Override
 	public double computeMaxHeight(double width) {
@@ -105,64 +59,58 @@ public abstract class AbstractFigure implements IFigure {
 		return getLayoutBounds().getWidth();
 	}
 
+	abstract protected void doPaint(GraphicsContext g);
+
 	@Override
-	public Rectangle getBoundsInParent() {
-		return NodeUtil.getBoundsInParent(this);
+	public Path getClipPath() {
+		return paintState.getClipPathByReference();
 	}
 
 	@Override
-	public Orientation getContentBias() {
-		// TODO Auto-generated method stub
-		return null;
+	public double[] getDashes() {
+		return paintState.getDashesByReference();
 	}
 
 	@Override
-	public IEventDispatcher getEventDispatcher() {
-		return dispatcher;
+	public double getDashOffset() {
+		return paintState.getDashOffset();
 	}
 
 	@Override
-	public double getLayoutX() {
-		return layoutX;
+	public Object getFill() {
+		return paintState.getFillByReference().getActive();
 	}
 
 	@Override
-	public double getLayoutY() {
-		return layoutY;
+	public Font getFont() {
+		// FIXME: return FontData or Font?
+		return new Font(Display.getCurrent(),
+				paintState.getFontDataByReference());
 	}
 
 	@Override
-	public AffineTransform getLocalToAbsoluteTransform() {
-		return NodeUtil.getLocalToAbsoluteTransform(this);
+	public int getGlobalAlpha() {
+		return (int) paintState.getGlobalAlpha();
 	}
 
 	@Override
-	public AffineTransform getLocalToParentTransform() {
-		return NodeUtil.getLocalToParentTransform(this);
+	public LineCap getLineCap() {
+		return paintState.getLineCap();
 	}
 
 	@Override
-	public double getMaxHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+	public LineJoin getLineJoin() {
+		return paintState.getLineJoin();
 	}
 
 	@Override
-	public double getMaxWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getLineWidth() {
+		return paintState.getLineWidth();
 	}
 
 	@Override
-	public double getMinHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getMinWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getMiterLimit() {
+		return paintState.getMiterLimit();
 	}
 
 	@Override
@@ -171,70 +119,8 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public IParent getParentNode() {
-		return parent;
-	}
-
-	@Override
-	public Point getPivot() {
-		return pivot;
-	}
-
-	@Override
-	public double getPrefHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getPrefWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Angle getRotationAngle() {
-		return angle;
-	}
-
-	@Override
-	public double getScaleX() {
-		return scaleX;
-	}
-
-	@Override
-	public double getScaleY() {
-		return scaleY;
-	}
-
-	@Override
-	public List<AffineTransform> getTransforms() {
-		return transforms;
-	}
-
-	@Override
-	public double getTranslateX() {
-		return translateX;
-	}
-
-	@Override
-	public double getTranslateY() {
-		return translateY;
-	}
-
-	@Override
-	public boolean isFocused() {
-		return getParentNode().getFocusNode() == this;
-	}
-
-	@Override
-	public boolean isFocusTraversable() {
-		return focusTraversable;
-	}
-
-	@Override
-	public boolean isManaged() {
-		return true;
+	public Object getStroke() {
+		return paintState.getStrokeByReference().getActive();
 	}
 
 	@Override
@@ -243,51 +129,12 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public boolean isVisible() {
-		return visible;
-	}
-
-	@Override
-	public void localToAbsolute(Point localIn, Point absoluteOut) {
-		NodeUtil.localToAbsolute(this, localIn, absoluteOut);
-	}
-
-	@Override
-	public void localToParent(Point localIn, Point parentOut) {
-		NodeUtil.localToParent(this, localIn, parentOut);
-	}
-
-	public Point parentToLocal(double parentX, double parentY) {
-		Point local = new Point();
-		parentToLocal(new Point(parentX, parentY), local);
-		return local;
-	}
-
-	@Override
-	public void parentToLocal(Point parentIn, Point localOut) {
-		NodeUtil.parentToLocal(this, parentIn, localOut);
-	}
-
-	@Override
-	public void relocate(double x, double y) {
-		NodeUtil.relocate(this, x, y);
-	}
-
-	@Override
-	public <T extends Event> void removeEventFilter(EventType<T> type,
-			IEventHandler<T> filter) {
-		dispatcher.removeEventFilter(type, filter);
-	}
-
-	@Override
-	public <T extends Event> void removeEventHandler(EventType<T> type,
-			IEventHandler<T> handler) {
-		dispatcher.removeEventHandler(type, handler);
-	}
-
-	@Override
-	public boolean requestFocus() {
-		return parent.setFocusNode(this);
+	final public void paint(GraphicsContext g) {
+		g.pushState(paintState);
+		g.save();
+		doPaint(g);
+		g.restore();
+		g.restore();
 	}
 
 	@Override
@@ -298,101 +145,89 @@ public abstract class AbstractFigure implements IFigure {
 	}
 
 	@Override
-	public void resizeRelocate(double x, double y, double width, double height) {
-		NodeUtil.resizeRelocate(this, x, y, width, height);
+	public void setClipPath(Path clipPath) {
+		paintState.setClipPathByReference(clipPath);
 	}
 
 	@Override
-	public void setFocusTraversable(boolean focusTraversable) {
-		this.focusTraversable = focusTraversable;
+	public void setDashes(double... dashes) {
+		paintState.setDashesByReference(dashes);
 	}
 
 	@Override
-	public void setLayoutX(double layoutX) {
-		this.layoutX = layoutX;
+	public void setDashOffset(double dashOffset) {
+		paintState.setDashOffset(dashOffset);
 	}
 
 	@Override
-	public void setLayoutY(double layoutY) {
-		this.layoutY = layoutY;
+	public void setFill(Gradient<?> gradient) {
+		paintState.getFillByReference().setGradient(gradient);
+		paintState.getFillByReference().setMode(PaintMode.GRADIENT);
 	}
 
 	@Override
-	public void setMaxHeight(double height) {
-		// TODO Auto-generated method stub
-
+	public void setFill(Image image) {
+		paintState.getFillByReference().setImage(image);
+		paintState.getFillByReference().setMode(PaintMode.IMAGE);
 	}
 
 	@Override
-	public void setMaxWidth(double width) {
-		// TODO Auto-generated method stub
-
+	public void setFill(RgbaColor color) {
+		paintState.getFillByReference().setColor(color);
+		paintState.getFillByReference().setMode(PaintMode.COLOR);
 	}
 
 	@Override
-	public void setMinHeight(double height) {
-		// TODO Auto-generated method stub
-
+	public void setFont(Font font) {
+		paintState.setFontDataByReference(font.getFontData()[0]);
 	}
 
 	@Override
-	public void setMinWidth(double width) {
-		// TODO Auto-generated method stub
-
+	public void setGlobalAlpha(int alpha) {
+		paintState.setGlobalAlpha(alpha);
 	}
 
 	@Override
-	public void setParentNode(IParent parent) {
-		this.parent = parent;
+	public void setLineCap(LineCap cap) {
+		paintState.setLineCap(cap);
 	}
 
 	@Override
-	public void setPivot(Point p) {
-		pivot.setLocation(p);
+	public void setLineJoin(LineJoin join) {
+		paintState.setLineJoin(join);
 	}
 
 	@Override
-	public void setPrefHeight(double height) {
-		// TODO Auto-generated method stub
-
+	public void setLineWidth(double width) {
+		paintState.setLineWidth(width);
 	}
 
 	@Override
-	public void setPrefWidth(double width) {
-		// TODO Auto-generated method stub
-
+	public void setMiterLimit(double miterLimit) {
+		paintState.setMiterLimit(miterLimit);
 	}
 
 	@Override
-	public void setRotationAngle(Angle angle) {
-		this.angle.setRad(angle.rad());
+	public void setStroke(Gradient<?> gradient) {
+		paintState.getStrokeByReference().setGradient(gradient);
+		paintState.getStrokeByReference().setMode(PaintMode.GRADIENT);
 	}
 
 	@Override
-	public void setScaleX(double scaleX) {
-		this.scaleX = scaleX;
+	public void setStroke(Image image) {
+		paintState.getStrokeByReference().setImage(image);
+		paintState.getStrokeByReference().setMode(PaintMode.IMAGE);
 	}
 
 	@Override
-	public void setScaleY(double scaleY) {
-		this.scaleY = scaleY;
-	}
-
-	@Override
-	public void setTranslateX(double translateX) {
-		this.translateX = translateX;
-	}
-
-	@Override
-	public void setTranslateY(double translateY) {
-		this.translateY = translateY;
+	public void setStroke(RgbaColor color) {
+		paintState.getStrokeByReference().setColor(color);
+		paintState.getStrokeByReference().setMode(PaintMode.COLOR);
 	}
 
 	@Override
 	public void update() {
-		if (parent != null) {
-			parent.requestRedraw();
-		}
+		getScene().redraw();
 	}
 
 }

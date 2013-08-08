@@ -69,7 +69,7 @@ public class EventType<T extends Event> {
 
 	@Override
 	public String toString() {
-		return "EventType (" + name + " extends " + getSuperType() + ")";
+		return "EventType(" + name + ")";
 	}
 
 }

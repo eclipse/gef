@@ -52,9 +52,9 @@ public class FocusTraversalDispatcher extends AbstractEventDispatcher {
 							|| traverseEvent.getDetail() == SWT.TRAVERSE_RETURN;
 
 					IFigure nextFocusFigure = trav(directionNext, g);
-					g.setFocusNode(nextFocusFigure);
+					g.getScene().setFocusTarget(nextFocusFigure);
 
-					g.requestRedraw();
+					// TODO g.requestRedraw();
 					traverseEvent.consume();
 				}
 			} else {

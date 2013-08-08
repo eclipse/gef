@@ -46,6 +46,25 @@ public class ShapeFigure extends AbstractFigure {
 	}
 
 	@Override
+	public void doPaint(GraphicsContext g) {
+		g.fillPath(shape.toPath());
+		switch (getStrokeType()) {
+		case CENTER:
+			g.strokePath(shape.toPath());
+			break;
+		case OUTSIDE:
+			throw new IllegalStateException(
+					"The StrokeType.OUTSIDE is not yet implemented.");
+		case INSIDE:
+			throw new IllegalStateException(
+					"The StrokeType.INSIDE is not yet implemented.");
+		default:
+			throw new IllegalStateException("Unknown StrokeType: "
+					+ getStrokeType());
+		}
+	}
+
+	@Override
 	public Rectangle getBoundsInLocal() {
 		Rectangle boundsInLocal = getLayoutBounds();
 
@@ -59,12 +78,6 @@ public class ShapeFigure extends AbstractFigure {
 		}
 
 		return boundsInLocal;
-	}
-
-	@Override
-	public Path getClipPath() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -84,10 +97,12 @@ public class ShapeFigure extends AbstractFigure {
 		return layoutBounds;
 	}
 
+	@Override
 	public LineCap getLineCap() {
 		return getPaintStateByReference().getLineCap();
 	}
 
+	@Override
 	public LineJoin getLineJoin() {
 		return getPaintStateByReference().getLineJoin();
 	}
@@ -101,21 +116,11 @@ public class ShapeFigure extends AbstractFigure {
 	}
 
 	@Override
-	public void paint(GraphicsContext g) {
-		g.fillPath(shape.toPath());
-		g.strokePath(shape.toPath());
-	}
-
-	@Override
-	public void setClipPath(Path clipPath) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void setLineCap(LineCap cap) {
 		getPaintStateByReference().setLineCap(cap);
 	}
 
+	@Override
 	public void setLineJoin(LineJoin join) {
 		getPaintStateByReference().setLineJoin(join);
 	}

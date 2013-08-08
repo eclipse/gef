@@ -35,6 +35,18 @@ import org.eclipse.gef4.swtfx.event.TraverseEvent;
  */
 public interface INode extends IEventTarget {
 
+	/*
+	 * TODO: Provide convenience methods to define event handlers:
+	 * 
+	 * public void onMousePress(IEventHandler<MouseEvent> handler);
+	 * 
+	 * public void onKeyPress(IEventHandler<KeyEvent> handler);
+	 * 
+	 * public void onAction(IEventHandler<ActionEvent> handler);
+	 * 
+	 * ... (and many more)
+	 */
+
 	/**
 	 * You can set the minimum, maximum, or preferred size of this {@link INode}
 	 * (via {@link #setMinHeight(double)}, {@link #setMinWidth(double)}, ...).
@@ -51,7 +63,19 @@ public interface INode extends IEventTarget {
 	 * equals the preferred size, you can set the respective value to
 	 * USE_PREF_SIZE.
 	 */
-	public static final double USE_PREF_SIZE = -1D / 0D;
+	public static final double USE_PREF_SIZE = Double.NEGATIVE_INFINITY;
+
+	/**
+	 * Transforms the passed-in absolute {@link Point} to the local coordinate
+	 * system of this {@link INode}.
+	 * 
+	 * @param absolute
+	 * @return new {@link Point} holding respective local coordinates
+	 * 
+	 * @see #absoluteToLocal(Point, Point)
+	 * @see #localToAbsolute(Point)
+	 */
+	public Point absoluteToLocal(Point absolute);
 
 	/**
 	 * Transforms the first passed-in absolute {@link Point} to the local
@@ -106,7 +130,13 @@ public interface INode extends IEventTarget {
 	public void autosize();
 
 	/**
+	 * <p>
 	 * Computes the node's maximum height in dependence of the given width.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the width in order to get the maximum
+	 * height independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's maximum height in dependence of the given width
@@ -114,7 +144,13 @@ public interface INode extends IEventTarget {
 	public double computeMaxHeight(double width);
 
 	/**
+	 * <p>
 	 * Computes the node's maximum width in dependence of the given height.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the height in order to get the
+	 * maximum width independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's maximum width in dependence of the given height
@@ -122,7 +158,13 @@ public interface INode extends IEventTarget {
 	public double computeMaxWidth(double height);
 
 	/**
+	 * <p>
 	 * Computes the node's minimum height in dependence of the given width.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the width in order to get the minimum
+	 * height independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's minimum height in dependence of the given width
@@ -130,7 +172,13 @@ public interface INode extends IEventTarget {
 	public double computeMinHeight(double width);
 
 	/**
+	 * <p>
 	 * Computes the node's minimum width in dependence of the given height.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the height in order to get the
+	 * minimum width independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's minimum width in dependence of the given height
@@ -138,28 +186,27 @@ public interface INode extends IEventTarget {
 	public double computeMinWidth(double height);
 
 	/**
+	 * <p>
 	 * Computes the node's preferred height in dependence of the given width.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the width in order to get the
+	 * preferred height independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's preferred height in dependence of the given width
 	 */
 	public double computePrefHeight(double width);
 
-	// TODO: comment-in
-	// /**
-	// * Checks if the given {@link Point} is contained by this {@link INode}.
-	// The
-	// * point is interpreted as local to the coordinate system of this node.
-	// *
-	// * @param local
-	// * @return <code>true</code> if the given {@link Point} is contained by
-	// this
-	// * {@link INode}, otherwise <code>false</code>
-	// */
-	// boolean contains(Point local);
-
 	/**
+	 * <p>
 	 * Computes the node's preferred width in dependence of the given height.
+	 * </p>
+	 * <p>
+	 * You can pass-in <code>-1</code> for the height in order to get the
+	 * preferred width independently.
+	 * </p>
 	 * 
 	 * @param width
 	 * @return the node's preferred width in dependence of the given height
@@ -178,6 +225,16 @@ public interface INode extends IEventTarget {
 	 *         {@link INode}, otherwise <code>false</code>
 	 */
 	public boolean contains(double localX, double localY);
+
+	/**
+	 * Checks if the given {@link Point} is contained by this {@link INode}. The
+	 * point is interpreted as local to the coordinate system of this node.
+	 * 
+	 * @param local
+	 * @return <code>true</code> if the given {@link Point} is contained by this
+	 *         {@link INode}, otherwise <code>false</code>
+	 */
+	public boolean contains(Point local);
 
 	/**
 	 * Returns the physical bounds of this {@link INode} in its local coordinate
@@ -263,12 +320,24 @@ public interface INode extends IEventTarget {
 	 */
 	public AffineTransform getLocalToParentTransform();
 
+	/**
+	 * @return the value of the maximum-height attribute of this {@link INode}
+	 */
 	public double getMaxHeight();
 
+	/**
+	 * @return the value of the maximum-width attribute of this {@link INode}
+	 */
 	public double getMaxWidth();
 
+	/**
+	 * @return the value of the minimum-height attribute of this {@link INode}
+	 */
 	public double getMinHeight();
 
+	/**
+	 * @return the value of the minimum-width attribute of this {@link INode}
+	 */
 	public double getMinWidth();
 
 	/**
@@ -289,8 +358,16 @@ public interface INode extends IEventTarget {
 	 */
 	public Point getPivot();
 
+	/**
+	 * @return the value of the preferred-height attribute of this {@link INode}
+	 */
 	public double getPrefHeight();
 
+	/**
+	 * Returns the value of the preferred-width attribute of this {@link INode}.
+	 * 
+	 * @return the value of the preferred-width attribute of this {@link INode}
+	 */
 	public double getPrefWidth();
 
 	/**
@@ -313,6 +390,13 @@ public interface INode extends IEventTarget {
 	 * @return the scale-y factor associated with this {@link INode}
 	 */
 	public double getScaleY();
+
+	/**
+	 * Returns the {@link Scene} which this {@link INode} belongs to.
+	 * 
+	 * @return the {@link Scene} which this {@link INode} belongs to
+	 */
+	public Scene getScene();
 
 	/**
 	 * Returns a {@link List} of {@link AffineTransform}s which you can modify
@@ -355,6 +439,15 @@ public interface INode extends IEventTarget {
 	 */
 	public boolean isFocusTraversable();
 
+	// /**
+	// * Returns <code>true</code> if the mouse pointer currently is above this
+	// * {@link INode}. Otherwise, <code>false</code> is returned.
+	// *
+	// * @return <code>true</code> if the mouse pointer currently is above this
+	// * {@link INode}, otherwise <code>false</code>
+	// */
+	// public boolean isHovered();
+
 	/**
 	 * Returns <code>true</code> if this {@link INode} is managed, i.e. its
 	 * location and size can be regulated by its parent.
@@ -365,9 +458,28 @@ public interface INode extends IEventTarget {
 	public boolean isManaged();
 
 	/**
+	 * <p>
+	 * Returns <code>true</code> if this {@link INode} currently has mouse focus
+	 * due to a mouse button press on this {@link INode}. Otherwise,
+	 * <code>false</code> is returned.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if this {@link INode} currently has mouse
+	 *         focus, otherwise <code>false</code>
+	 */
+	public boolean isPressed();
+
+	/**
+	 * <p>
 	 * Returns <code>true</code> if this {@link INode} is resizable, i.e. its
 	 * contents can be displayed at varying sizes. Otherwise, returns
 	 * <code>false</code>.
+	 * </p>
+	 * <p>
+	 * A resizable node can resize itself to its preferred size using
+	 * {@link #autosize()}. Resizable and {@link #isManaged() managed} nodes are
+	 * "autosized" automatically during layout.
+	 * </p>
 	 * 
 	 * @return <code>true</code> if this {@link INode} is resizable, otherwise
 	 *         <code>false</code>
@@ -379,6 +491,50 @@ public interface INode extends IEventTarget {
 	 *         <code>false</code>
 	 */
 	public boolean isVisible();
+
+	/**
+	 * Transforms the given x and y coordinates, interpreted as local to this
+	 * {@link INode}'s coordinate system, to the coordinate system of the
+	 * screen. Returns a new {@link Point} holding the transformed absolute
+	 * coordinates.
+	 * 
+	 * @param localX
+	 *            local x coordinate
+	 * @param localY
+	 *            local y coordinate
+	 * @return a new {@link Point} holding the transformed absolute coordinates
+	 */
+	public Point localToAbsolute(double localX, double localY);
+
+	/**
+	 * Transforms the given x and y coordinates, interpreted as local to this
+	 * {@link INode}'s coordinate system, to the coordinate system of the
+	 * screen. The given {@link Point} is set to the transformed absolute
+	 * coordinates and therefore may not be <code>null</code>.
+	 * 
+	 * @param localX
+	 *            local x coordinate
+	 * @param localY
+	 *            local y coordinate
+	 * @param absoluteOut
+	 *            is set to the transformed absolute coordinates
+	 */
+	public void localToAbsolute(double localX, double localY, Point absoluteOut);
+
+	/**
+	 * Transforms the given {@link Point}, interpreted as local to this
+	 * {@link INode}'s coordinate system, to the coordinate system of the
+	 * screen. Returns a new {@link Point} holding the transformed absolute
+	 * coordinates.
+	 * 
+	 * @param local
+	 *            local {@link Point}
+	 * @return a new {@link Point} holding the transformed absolute coordinates
+	 * 
+	 * @see #localToAbsolute(Point, Point)
+	 * @see #absoluteToLocal(Point)
+	 */
+	public Point localToAbsolute(Point local);
 
 	/**
 	 * Transforms the given {@link Point}, interpreted as local to this
@@ -393,15 +549,6 @@ public interface INode extends IEventTarget {
 	 */
 	public void localToAbsolute(Point localIn, Point absoluteOut);
 
-	// TODO: we dont need isHovered(), do we?
-	// public boolean isHovered();
-
-	// TODO: we dont need isPressed(), do we?
-	// public boolean isPressed();
-
-	// TODO: we dont need isResizable(), do we?
-	// public boolean isResizable();
-
 	/**
 	 * Transforms the first passed-in local {@link Point} to the coordinate
 	 * system of this {@link INode}'s parent. The second passed-in {@link Point}
@@ -412,6 +559,45 @@ public interface INode extends IEventTarget {
 	 * @param parentOut
 	 */
 	public void localToParent(Point localIn, Point parentOut);
+
+	/**
+	 * Transforms the given coordinates, interpreted as local to the coordinate
+	 * system of this {@link INode}'s parent, into the local coordinate system
+	 * of this {@link INode}.
+	 * 
+	 * @param parentX
+	 *            parent x coordinate
+	 * @param parentY
+	 *            parent y coordinate
+	 * @return a new {@link Point} holding the transformed local coordinates
+	 */
+	public Point parentToLocal(double parentX, double parentY);
+
+	/**
+	 * Transforms the given coordinates, interpreted as local to the coordinate
+	 * system of this {@link INode}'s parent, into the local coordinate system
+	 * of this {@link INode}. The passed-in {@link Point} is set to the
+	 * transformed absolute coordinates, and therefore may not be
+	 * <code>null</code>.
+	 * 
+	 * @param parentX
+	 *            parent x coordinate
+	 * @param parentY
+	 *            parent y coordinate
+	 * @param localOut
+	 *            is set to the transformed local coordinates
+	 */
+	public void parentToLocal(double parentX, double parentY, Point localOut);
+
+	/**
+	 * Transforms the given {@link Point}, interpreted as local to the
+	 * coordinate system of this {@link INode}'s parent, into the local
+	 * coordinate system of this {@link INode}.
+	 * 
+	 * @param parent
+	 * @return a new {@link Point} holding the transformed local coordinates
+	 */
+	public Point parentToLocal(Point parent);
 
 	/**
 	 * <p>
@@ -430,52 +616,7 @@ public interface INode extends IEventTarget {
 	 * @param localOut
 	 *            is set to the transformed local coordinates
 	 */
-	void parentToLocal(Point parentIn, Point localOut);
-
-	// TODO: comment-in
-	// /**
-	// * Transforms the given x and y coordinates, interpreted as local to this
-	// * {@link INode}'s coordinate system, to the coordinate system of the
-	// * screen. Returns a new {@link Point} holding the transformed absolute
-	// * coordinates.
-	// *
-	// * @param localX
-	// * local x coordinate
-	// * @param localY
-	// * local y coordinate
-	// * @return a new {@link Point} holding the transformed absolute
-	// coordinates
-	// */
-	// public Point localToAbsolute(double localX, double localY);
-	//
-	// /**
-	// * Transforms the given x and y coordinates, interpreted as local to this
-	// * {@link INode}'s coordinate system, to the coordinate system of the
-	// * screen. The given {@link Point} is set to the transformed absolute
-	// * coordinates and therefore may not be <code>null</code>.
-	// *
-	// * @param localX
-	// * local x coordinate
-	// * @param localY
-	// * local y coordinate
-	// * @param absoluteOut
-	// * is set to the transformed absolute coordinates
-	// */
-	// public void localToAbsolute(double localX, double localY, Point
-	// absoluteOut);
-	//
-	// /**
-	// * Transforms the given {@link Point}, interpreted as local to this
-	// * {@link INode}'s coordinate system, to the coordinate system of the
-	// * screen. Returns a new {@link Point} holding the transformed absolute
-	// * coordinates.
-	// *
-	// * @param local
-	// * local {@link Point}
-	// * @return a new {@link Point} holding the transformed absolute
-	// coordinates
-	// */
-	// public Point localToAbsolute(Point local);
+	public void parentToLocal(Point parentIn, Point localOut);
 
 	/**
 	 * Relocates this {@link INode} to the specified coordinates.
@@ -496,10 +637,6 @@ public interface INode extends IEventTarget {
 	public <T extends Event> void removeEventFilter(EventType<T> type,
 			IEventHandler<T> filter);
 
-	// TODO
-	// public void relocateResize(double x, double y, double width, double
-	// height);
-
 	/**
 	 * Removes the given {@link IEventHandler event handler} from the list of
 	 * listeners managed by this {@link INode} for the specified
@@ -512,54 +649,9 @@ public interface INode extends IEventTarget {
 			IEventHandler<T> handler);
 
 	/**
-	 * Tries to bind keyboard events to this {@link INode}. Uses the SWT
-	 * forceFocus() method.
-	 * 
-	 * @return <code>true</code> on success, otherwise <code>false</code>
+	 * Selects this {@link INode} as the focus-target.
 	 */
-	public boolean requestFocus();
-
-	// TODO: comment-in
-	// /**
-	// * Transforms the given coordinates, interpreted as local to the
-	// coordinate
-	// * system of this {@link INode}'s parent, into the local coordinate system
-	// * of this {@link INode}.
-	// *
-	// * @param parentX
-	// * parent x coordinate
-	// * @param parentY
-	// * parent y coordinate
-	// * @return a new {@link Point} holding the transformed local coordinates
-	// */
-	// Point parentToLocal(double parentX, double parentY);
-	//
-	// /**
-	// * Transforms the given coordinates, interpreted as local to the
-	// coordinate
-	// * system of this {@link INode}'s parent, into the local coordinate system
-	// * of this {@link INode}. The passed-in {@link Point} is set to the
-	// * transformed absolute coordinates, and therefore may not be
-	// * <code>null</code>.
-	// *
-	// * @param parentX
-	// * parent x coordinate
-	// * @param parentY
-	// * parent y coordinate
-	// * @param localOut
-	// * is set to the transformed local coordinates
-	// */
-	// void parentToLocal(double parentX, double parentY, Point localOut);
-	//
-	// /**
-	// * Transforms the given {@link Point}, interpreted as local to the
-	// * coordinate system of this {@link INode}'s parent, into the local
-	// * coordinate system of this {@link INode}.
-	// *
-	// * @param parent
-	// * @return a new {@link Point} holding the transformed local coordinates
-	// */
-	// Point parentToLocal(Point parent);
+	public void requestFocus();
 
 	/**
 	 * Resizes this {@link INode} to the specified width and height.
@@ -578,6 +670,8 @@ public interface INode extends IEventTarget {
 	 * @param height
 	 */
 	public void resizeRelocate(double x, double y, double width, double height);
+
+	// public void resetTrafoAttribs();
 
 	/**
 	 * Sets the focusTraversable property of this {@link INode}. If the focus of
@@ -602,12 +696,44 @@ public interface INode extends IEventTarget {
 	 */
 	public void setLayoutY(double layoutY);
 
+	/**
+	 * Sets the maximum height of this {@link INode} to the given value. A value
+	 * of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computeMaxHeight(double)} method is to be queried for the maximum
+	 * height.
+	 * 
+	 * @param height
+	 */
 	public void setMaxHeight(double height);
 
+	/**
+	 * Sets the maximum width of this {@link INode} to the given value. A value
+	 * of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computeMaxWidth(double)} method is to be queried for the maximum
+	 * width.
+	 * 
+	 * @param width
+	 */
 	public void setMaxWidth(double width);
 
+	/**
+	 * Sets the minimum height of this {@link INode} to the given value. A value
+	 * of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computeMinHeight(double)} method is to be queried for the minimum
+	 * height.
+	 * 
+	 * @param height
+	 */
 	public void setMinHeight(double height);
 
+	/**
+	 * Sets the minimum width of this {@link INode} to the given value. A value
+	 * of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computeMinWidth(double)} method is to be queried for the minimum
+	 * width.
+	 * 
+	 * @param width
+	 */
 	public void setMinWidth(double width);
 
 	/**
@@ -620,14 +746,31 @@ public interface INode extends IEventTarget {
 	public void setParentNode(IParent parent);
 
 	/**
-	 * Sets the pivot {@link Point} to the passed-in {@link Point}.
+	 * Sets the pivot {@link Point} to the passed-in {@link Point}. The pivot
+	 * point is the anchor point for local rotation and scaling.
 	 * 
 	 * @param p
 	 */
 	public void setPivot(Point p);
 
+	/**
+	 * Sets the preferred height of this {@link INode} to the given value. A
+	 * value of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computePrefHeight(double)} method is to be queried for the
+	 * preferred height.
+	 * 
+	 * @param height
+	 */
 	public void setPrefHeight(double height);
 
+	/**
+	 * Sets the preferred width of this {@link INode} to the given value. A
+	 * value of {@link #USE_COMPUTED_SIZE} indicates that the corresponding
+	 * {@link #computePrefWidth(double)} method is to be queried for the
+	 * preferred width.
+	 * 
+	 * @param width
+	 */
 	public void setPrefWidth(double width);
 
 	/**

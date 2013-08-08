@@ -21,12 +21,11 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * A RadialGradient {@link Gradient} is defined by an {@link Ellipse} and a
- * focus {@link Point}. A set of
- * {@link org.eclipse.gef4.swtfx.gc.GradientStop GradientStop}s determine
- * the {@link RgbaColor} at any given {@link Point}. The focus {@link Point}
- * specifies the origin of a radial gradient (percentual distance = 0). The
- * perimeter of the {@link Ellipse} specifies the border of a radial gradient
- * (percentual distance = 1).
+ * focus {@link Point}. A set of {@link org.eclipse.gef4.swtfx.gc.GradientStop
+ * GradientStop}s determine the {@link RgbaColor} at any given {@link Point}.
+ * The focus {@link Point} specifies the origin of a radial gradient (percentual
+ * distance = 0). The perimeter of the {@link Ellipse} specifies the border of a
+ * radial gradient (percentual distance = 1).
  */
 public class RadialGradient extends Gradient<RadialGradient> {
 

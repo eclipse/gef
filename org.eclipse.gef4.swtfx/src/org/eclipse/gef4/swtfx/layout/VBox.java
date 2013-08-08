@@ -13,34 +13,43 @@
 package org.eclipse.gef4.swtfx.layout;
 
 import org.eclipse.gef4.swtfx.INode;
-import org.eclipse.swt.widgets.Composite;
 
 public class VBox extends Pane {
 
-	public VBox(Composite parent) {
-		super(parent);
-	}
-
 	@Override
-	public void doLayoutChildren() {
+	public void layoutChildren() {
+		double width = getWidth();
+		// double height = getHeight();
+
 		// resize-relocate all managed children
 		double y = 0;
 		for (INode child : getChildNodes()) {
 			if (child.isManaged()) {
-				double h = child.computePrefHeight(getWidth());
-				double w = child.computePrefWidth(h);
+				double h = child.computePrefHeight(width);
+				// double w = child.computePrefWidth(h);
 				child.relocate(0, y);
 				if (child.isResizable()) {
-					child.resize(w, h);
+					// TODO: change width to local w when constraints work
+					child.resize(width, h);
 				}
 				y += h;
-				y++; // XXX: double/int problem => some pixel errors
 				/*
 				 * TODO: Respect baseline-offset setting, allow padding/spacing
 				 * constraints, allow grow-priority constraint.
 				 */
 			}
 		}
-		setHeight(y);
+
+		// double restHeight = height - y;
+		//
+		// for (INode child : getChildNodes()) {
+		// if (child.isManaged() && child.isResizable()) {
+		// double h = child.getLayoutBounds().getHeight() + restHeight;
+		// double w = child.computePrefWidth(h);
+		// child.resize(w, h);
+		// setHeight(height);
+		// break;
+		// }
+		// }
 	}
 }

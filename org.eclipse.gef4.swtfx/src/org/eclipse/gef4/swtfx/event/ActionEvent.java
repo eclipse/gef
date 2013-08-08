@@ -27,7 +27,10 @@ public class ActionEvent extends Event {
 			Event.ANY, "ActionEvent");
 
 	public static final EventType<ActionEvent> SELECTION = new EventType<ActionEvent>(
-			ANY, "ActionSelectionEvent");
+			ANY, "SelectionEvent");
+
+	public static final EventType<ActionEvent> RESIZE = new EventType<ActionEvent>(
+			ANY, "ResizeEvent");
 
 	private static final long serialVersionUID = 1L;
 

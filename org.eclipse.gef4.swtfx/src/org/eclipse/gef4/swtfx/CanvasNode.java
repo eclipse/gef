@@ -14,8 +14,6 @@ package org.eclipse.gef4.swtfx;
 
 import java.util.Arrays;
 
-import org.eclipse.gef4.geometry.planar.Path;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.swt.graphics.Device;
@@ -27,14 +25,14 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * This {@link CanvasFigure} is counter-part of the JavaFx Canvas. Therefore it
+ * This {@link CanvasNode} is counter-part of the JavaFx Canvas. Therefore it
  * provides a {@link GraphicsContext} which can be used to perform drawing
  * operations on it.
  * 
  * @author mwienand
  * 
  */
-public class CanvasFigure extends AbstractFigure {
+public class CanvasNode extends AbstractFigure {
 
 	private Device dev;
 	private Image image;
@@ -50,18 +48,18 @@ public class CanvasFigure extends AbstractFigure {
 	 * 
 	 * Create an interface IBlendOperation which provides a single method
 	 * blend(Image source, Image destination) : Image. The blender is used to
-	 * merge source and destination images, i.e. the CanvasFigure's image and
-	 * the underlying drawings.
+	 * merge source and destination images, i.e. the CanvasNode's image and the
+	 * underlying drawings.
 	 * 
 	 * MAYBE: private Effect effect;
 	 * 
-	 * The specified Effect can be used to blend the CanvasFigure's image with
-	 * the underlying drawings. A CompositeEffect can be used to allow combined
-	 * Effects on a CanvasFigure. Effects should only be allowed if available on
+	 * The specified Effect can be used to blend the CanvasNode's image with the
+	 * underlying drawings. A CompositeEffect can be used to allow combined
+	 * Effects on a CanvasNode. Effects should only be allowed if available on
 	 * any IFigure, at least, or ideally on any INode.
 	 */
 
-	public CanvasFigure(Device dev, double width, double height,
+	public CanvasNode(Device dev, double width, double height,
 			RGB transparentPixel) {
 		if (width < 0) {
 			throw new IllegalArgumentException("width < 0");
@@ -79,12 +77,8 @@ public class CanvasFigure extends AbstractFigure {
 		clear(id);
 	}
 
-	public CanvasFigure(double width, double height) {
+	public CanvasNode(double width, double height) {
 		this(Display.getCurrent(), width, height, new RGB(255, 255, 255));
-	}
-
-	@Override
-	public void absoluteToLocal(Point absoluteIn, Point localOut) {
 	}
 
 	public void clear() {
@@ -125,6 +119,11 @@ public class CanvasFigure extends AbstractFigure {
 		return getLayoutBounds().contains(localX, localY);
 	}
 
+	@Override
+	public void doPaint(GraphicsContext g) {
+		g.drawImage(image, 0, 0);
+	}
+
 	private void forceImageUpdate() {
 		// FIXME: ~5-10 millis (way too much!)
 		ImageData imageData = image.getImageData();
@@ -139,12 +138,6 @@ public class CanvasFigure extends AbstractFigure {
 	@Override
 	public Rectangle getBoundsInLocal() {
 		return getLayoutBounds();
-	}
-
-	@Override
-	public Path getClipPath() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public GraphicsContext getGraphicsContext() {
@@ -176,17 +169,14 @@ public class CanvasFigure extends AbstractFigure {
 	}
 
 	@Override
-	public void paint(GraphicsContext g) {
-		g.drawImage(image, 0, 0);
-	}
-
-	@Override
-	public void setClipPath(Path clipPath) {
+	public void resize(double width, double height) {
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
 	public String toString() {
-		return "CanvasFigure(" + width + "x" + height + ")";
+		return "CanvasNode(" + width + "x" + height + ")";
 	}
 
 }

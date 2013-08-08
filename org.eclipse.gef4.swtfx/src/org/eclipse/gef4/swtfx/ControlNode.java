@@ -12,39 +12,26 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.event.Event;
-import org.eclipse.gef4.swtfx.event.EventHandlerManager;
-import org.eclipse.gef4.swtfx.event.EventType;
-import org.eclipse.gef4.swtfx.event.IEventDispatchChain;
-import org.eclipse.gef4.swtfx.event.IEventDispatcher;
-import org.eclipse.gef4.swtfx.event.IEventHandler;
-import org.eclipse.gef4.swtfx.event.SwtEventForwarder;
+import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * The ControlFigure class wraps the {@link INode} interface around arbitrary
- * SWT {@link Control}s.
+ * The ControlNode class wraps the {@link INode} interface around arbitrary SWT
+ * {@link Control}s in order to be able to intermix GEF4 figures and SWT
+ * controls. The ControlNode is not considered a ControlFigure, because an
+ * {@link IFigure} has the responsibility to paint itself using the
+ * {@link GraphicsContext} API, where as a ControlNode cannot paint itself, but
+ * rather is painted by SWT.
  * 
  * @author mwienand
  * 
  */
-public class ControlNode<T extends Control> implements INode {
-
-	/**
-	 * Registers SWT event listeners and wraps the SWT events in GEF4 event
-	 * objects.
-	 */
-	private SwtEventForwarder swtEventDispatcher;
+public class ControlNode<T extends Control> extends AbstractNode {
 
 	/**
 	 * The wrapped {@link Control}.
@@ -52,74 +39,19 @@ public class ControlNode<T extends Control> implements INode {
 	private T control;
 
 	/**
-	 * The {@link EventHandlerManager} manages the registering of event handlers
-	 * and event filters. What's more, it dispatches incoming events to the
-	 * registered handlers and filters.
+	 * Used to dispatch events to the {@link Scene}.
 	 */
-	private EventHandlerManager dispatcher = new EventHandlerManager();
+	private SwtEventForwarder swtEventForwarder;
 
 	/**
-	 * Focus-traversable property.
+	 * Width assigned during layout.
 	 */
-	private boolean focusTraversable = true;
+	private double width;
 
 	/**
-	 * Horizontal translation used for layouting the node.
+	 * Height assigned during layout.
 	 */
-	private double layoutX = 0;
-
-	/**
-	 * Vertical translation used for layouting the node.
-	 */
-	private double layoutY = 0;
-
-	/**
-	 * Pivot point for all local transformations (layout-x/y, translate-x/y,
-	 * scale-x/y, rotation-angle). Before those transformations are applied, a
-	 * translation by the pivot point is executed first. And after those
-	 * transformations are applied, the translation by the pivot point is
-	 * inverted.
-	 */
-	private Point pivot = new Point();
-
-	/**
-	 * Horizontal scale factor.
-	 */
-	private double scaleX = 1;
-
-	/**
-	 * Vertical scale factor.
-	 */
-	private double scaleY = 1;
-
-	/**
-	 * Horizontal translation.
-	 */
-	private double translateX = 0;
-
-	/**
-	 * Vertical translation.
-	 */
-	private double translateY = 0;
-
-	/**
-	 * Visibility property.
-	 */
-	private boolean visible = true;
-
-	/**
-	 * Rotation angle.
-	 */
-	private Angle angle = Angle.fromRad(0);
-
-	/**
-	 * List of additional transformations.
-	 */
-	private List<AffineTransform> transforms = new LinkedList<AffineTransform>();
-
-	private double prefWidth = INode.USE_COMPUTED_SIZE;
-
-	private double prefHeight = INode.USE_COMPUTED_SIZE;
+	private double height;
 
 	/**
 	 * Constructs a new {@link ControlNode} for the passed-in {@link Control}.
@@ -131,34 +63,6 @@ public class ControlNode<T extends Control> implements INode {
 	 */
 	public ControlNode(T control) {
 		this.control = control;
-		swtEventDispatcher = new SwtEventForwarder(this);
-	}
-
-	@Override
-	public void absoluteToLocal(Point absoluteIn, Point localOut) {
-		NodeUtil.absoluteToLocal(this, absoluteIn, localOut);
-	}
-
-	@Override
-	public <E extends Event> void addEventFilter(EventType<E> type,
-			IEventHandler<E> filter) {
-		dispatcher.addEventFilter(type, filter);
-	}
-
-	@Override
-	public <E extends Event> void addEventHandler(EventType<E> type,
-			IEventHandler<E> handler) {
-		dispatcher.addEventHandler(type, handler);
-	}
-
-	@Override
-	public void autosize() {
-		NodeUtil.autosize(this);
-	}
-
-	@Override
-	public IEventDispatchChain buildEventDispatchChain(IEventDispatchChain tail) {
-		return NodeUtil.buildEventDispatchChain(this, tail);
 	}
 
 	@Override
@@ -183,33 +87,59 @@ public class ControlNode<T extends Control> implements INode {
 
 	@Override
 	public double computePrefHeight(double width) {
-		return getLayoutBounds().getHeight();
+		double ph = getPrefHeight();
+		if (ph != INode.USE_COMPUTED_SIZE) {
+			return ph;
+		}
+
+		org.eclipse.swt.graphics.Point size = control.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, true);
+		return size.y;
 	}
 
 	@Override
 	public double computePrefWidth(double height) {
-		return getLayoutBounds().getWidth();
+		double pw = getPrefWidth();
+		if (pw != INode.USE_COMPUTED_SIZE) {
+			return pw;
+		}
+
+		org.eclipse.swt.graphics.Point size = control.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, true);
+		return size.x;
 	}
 
 	@Override
 	public boolean contains(double localX, double localY) {
-		return getLayoutBounds().contains(localX, localY);
+		if (control.isDisposed()) {
+			return false;
+		}
+
+		Point abs = localToAbsolute(localX, localY);
+
+		org.eclipse.swt.graphics.Point controlLocation = control.toControl(
+				(int) abs.x, (int) abs.y);
+
+		return controlLocation.x >= 0
+				&& controlLocation.x <= control.getBounds().width
+				&& controlLocation.y >= 0
+				&& controlLocation.y <= control.getBounds().height;
+	}
+
+	/**
+	 * @return the absolute bounds with
+	 *         <code>location = layout-bounds.transformToAbsolute.location</code>
+	 *         , and <code>size = layout-bounds.size</code>
+	 */
+	private Rectangle getAbsoluteBounds() {
+		Rectangle layoutBounds = getLayoutBounds();
+		return layoutBounds.getTransformed(getLocalToAbsoluteTransform())
+				.getBounds();
 	}
 
 	@Override
 	public Rectangle getBoundsInLocal() {
-		Rectangle layoutBounds = getLayoutBounds();
-		return layoutBounds;
-	}
-
-	@Override
-	public Rectangle getBoundsInParent() {
-		return NodeUtil.getBoundsInParent(this);
-	}
-
-	@Override
-	public Orientation getContentBias() {
-		return Orientation.NONE;
+		return getLayoutBounds();
 	}
 
 	/**
@@ -222,160 +152,24 @@ public class ControlNode<T extends Control> implements INode {
 	}
 
 	@Override
-	public IEventDispatcher getEventDispatcher() {
-		return dispatcher;
-	}
-
-	@Override
 	public Rectangle getLayoutBounds() {
-		double w, h;
-		org.eclipse.swt.graphics.Point size = control.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT, true);
-
-		// check preferred width
-		if (prefWidth != INode.USE_COMPUTED_SIZE) {
-			w = prefWidth;
-		} else {
-			w = size.x;
-		}
-
-		// check preferred height
-		if (prefHeight != INode.USE_COMPUTED_SIZE) {
-			h = prefHeight;
-		} else {
-			h = size.y;
-		}
-
-		// System.out.println("### " + size + " ### " + prefWidth + " x "
-		// + prefHeight + " ### " + w + " x " + h);
-
-		return new Rectangle(0, 0, w, h);
-	}
-
-	@Override
-	public double getLayoutX() {
-		return layoutX;
-	}
-
-	@Override
-	public double getLayoutY() {
-		return layoutY;
-	}
-
-	@Override
-	public AffineTransform getLocalToAbsoluteTransform() {
-		return NodeUtil.getLocalToAbsoluteTransform(this);
+		return new Rectangle(0, 0, width, height);
 	}
 
 	@Override
 	public AffineTransform getLocalToParentTransform() {
-		if (true) {
-			return NodeUtil.getLocalToParentTransform(this);
-		}
-
-		AffineTransform localToAbsoluteTransform = getParentNode()
+		AffineTransform parentToAbsoluteTransform = getParentNode()
 				.getLocalToAbsoluteTransform();
-		try {
-			return localToAbsoluteTransform.invert();
-		} catch (NoninvertibleTransformException e) {
-			// FIXME
-			throw new IllegalStateException(
-					"TODO: Assure that all transformations are invertable.");
-		}
-	}
 
-	@Override
-	public double getMaxHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		// extract parent-to-absolute rotation angle
+		double[] m = parentToAbsoluteTransform.getMatrix();
+		double rotRad = Math.atan2(m[1], m[0]);
 
-	@Override
-	public double getMaxWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getMinHeight() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getMinWidth() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public IParent getParentNode() {
-		Composite parent = control.getParent();
-		if (parent instanceof IParent) {
-			return (IParent) parent;
-		}
-		return null;
-	}
-
-	@Override
-	public Point getPivot() {
-		return pivot;
-	}
-
-	@Override
-	public double getPrefHeight() {
-		return prefHeight;
-	}
-
-	@Override
-	public double getPrefWidth() {
-		return prefWidth;
-	}
-
-	@Override
-	public Angle getRotationAngle() {
-		return angle;
-	}
-
-	@Override
-	public double getScaleX() {
-		return scaleX;
-	}
-
-	@Override
-	public double getScaleY() {
-		return scaleY;
-	}
-
-	@Override
-	public List<AffineTransform> getTransforms() {
-		return transforms;
-	}
-
-	@Override
-	public double getTranslateX() {
-		return translateX;
-	}
-
-	@Override
-	public double getTranslateY() {
-		return translateY;
-	}
-
-	@Override
-	public boolean isFocused() {
-		// TODO
-		return false;
-	}
-
-	@Override
-	public boolean isFocusTraversable() {
-		return focusTraversable;
-	}
-
-	@Override
-	public boolean isManaged() {
-		return true;
+		// count back that rotation and combine it with the other local
+		// transformations
+		setPivot(getLayoutBounds().getCenter());
+		setRotationAngle(Angle.fromRad(-rotRad));
+		return super.getLocalToParentTransform();
 	}
 
 	@Override
@@ -384,180 +178,31 @@ public class ControlNode<T extends Control> implements INode {
 	}
 
 	@Override
-	public boolean isVisible() {
-		return visible;
-	}
-
-	@Override
-	public void localToAbsolute(Point localIn, Point absoluteOut) {
-		NodeUtil.localToAbsolute(this, localIn, absoluteOut);
-	}
-
-	@Override
-	public void localToParent(Point localIn, Point parentOut) {
-		NodeUtil.localToParent(this, localIn, parentOut);
-	}
-
-	@Override
-	public void parentToLocal(Point parentIn, Point localOut) {
-		NodeUtil.parentToLocal(this, parentIn, localOut);
-	}
-
-	@Override
-	public void relocate(double x, double y) {
-		NodeUtil.relocate(this, x, y);
-		updateSwtBounds();
-	}
-
-	@Override
-	public <E extends Event> void removeEventFilter(EventType<E> type,
-			IEventHandler<E> filter) {
-		dispatcher.removeEventFilter(type, filter);
-	}
-
-	@Override
-	public <E extends Event> void removeEventHandler(EventType<E> type,
-			IEventHandler<E> handler) {
-		dispatcher.removeEventHandler(type, handler);
-	}
-
-	@Override
-	public boolean requestFocus() {
-		return control.forceFocus();
-	}
-
-	@Override
 	public void resize(double width, double height) {
-		// FIXME: use separate width and height for the layout
-		setPrefWidth(width);
-		setPrefHeight(height);
+		this.width = width;
+		this.height = height;
 		updateSwtBounds();
-	}
-
-	@Override
-	public void resizeRelocate(double x, double y, double width, double height) {
-		NodeUtil.resizeRelocate(this, x, y, width, height);
-		updateSwtBounds();
-	}
-
-	@Override
-	public void setFocusTraversable(boolean focusTraversable) {
-		this.focusTraversable = focusTraversable;
-	}
-
-	@Override
-	public void setLayoutX(double layoutX) {
-		this.layoutX = layoutX;
-	}
-
-	@Override
-	public void setLayoutY(double layoutY) {
-		this.layoutY = layoutY;
-	}
-
-	@Override
-	public void setMaxHeight(double height) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setMaxWidth(double width) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setMinHeight(double height) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setMinWidth(double width) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setParentNode(IParent parent) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setPivot(Point pivot) {
-		this.pivot = pivot;
-	}
-
-	@Override
-	public void setPrefHeight(double height) {
-		prefHeight = height;
-	}
-
-	@Override
-	public void setPrefWidth(double width) {
-		prefWidth = width;
-	}
-
-	@Override
-	public void setRotationAngle(Angle angle) {
-		this.angle = angle;
-	}
-
-	@Override
-	public void setScaleX(double scaleX) {
-		this.scaleX = scaleX;
-	}
-
-	@Override
-	public void setScaleY(double scaleY) {
-		this.scaleY = scaleY;
-	}
-
-	@Override
-	public void setTranslateX(double translateX) {
-		this.translateX = translateX;
-	}
-
-	@Override
-	public void setTranslateY(double translateY) {
-		this.translateY = translateY;
-	}
-
-	public void setVisible(boolean visible) {
-		this.visible = visible;
+		super.setParentNode(parent);
+		if (swtEventForwarder != null) {
+			swtEventForwarder.unregisterListeners();
+		}
+		swtEventForwarder = new SwtEventForwarder(control, parent.getScene());
 	}
 
 	public void updateSwtBounds() {
-		Rectangle bounds = getLayoutBounds();
-		/*
-		 * Most probably, the bounds are located at 0, 0. But we use the top
-		 * left corner so that the user can subclass ControlNode.
-		 */
-		Point offset = getParentNode().getLocalToAbsoluteTransform()
-				.getTransformed(
-						NodeUtil.getLocalToParentTransform(this)
-								.getTransformed(bounds.getTopLeft()));
+		Rectangle txBounds = getAbsoluteBounds();
 
-		IParent parentNode = getParentNode();
-		if (parentNode instanceof AbstractParent) {
-			org.eclipse.swt.graphics.Point location = ((AbstractParent) parentNode)
-					.getLocation();
-			offset.translate(-location.x, -location.y);
-		}
+		org.eclipse.swt.graphics.Point location = getScene().getLocation();
+		location = getScene().toDisplay(location);
+		txBounds.translate(-location.x, -location.y);
 
-		// System.out.println("update control bounds: " + offset + ", "
-		// + bounds.getSize());
-
-		// TODO: compute real width and height dependent on translation and
-		// scaling
-
-		// ceil because we rather like to have a very small gap between
-		// controls, then not being able to fully see'em
-		control.setBounds((int) Math.ceil(offset.x), (int) Math.ceil(offset.y),
-				(int) Math.ceil(bounds.getWidth()),
-				(int) Math.ceil(bounds.getHeight()));
+		control.setBounds((int) Math.ceil(txBounds.getX()),
+				(int) Math.ceil(txBounds.getY()),
+				(int) Math.ceil(txBounds.getWidth()),
+				(int) Math.ceil(txBounds.getHeight()));
 	}
-
 }
