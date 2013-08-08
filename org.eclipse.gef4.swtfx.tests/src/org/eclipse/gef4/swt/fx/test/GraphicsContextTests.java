@@ -22,7 +22,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
-import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.CanvasNode;
 import org.eclipse.gef4.swtfx.gc.ArcType;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LinearGradient;
@@ -48,7 +48,7 @@ public class GraphicsContextTests {
 			new Point(250, 350), new Point(100, 450), new Point(50, 200))
 			.getScaled(0.2, new Point());
 	private static Display display;
-	private static CanvasFigure canvas;
+	private static CanvasNode canvas;
 
 	@AfterClass
 	public static void class_clean() {
@@ -62,7 +62,7 @@ public class GraphicsContextTests {
 	@BeforeClass
 	public static void class_init() {
 		display = new Display();
-		canvas = new CanvasFigure(display, WIDTH, HEIGHT, BACKGROUND_COLOR);
+		canvas = new CanvasNode(display, WIDTH, HEIGHT, BACKGROUND_COLOR);
 	}
 
 	private static CurvedPolygon generateCurvedPolygon(Point... points) {

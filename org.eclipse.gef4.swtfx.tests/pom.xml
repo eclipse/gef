@@ -48,8 +48,9 @@
 					<includes>
 						<include>**/AllTests.class</include>
 					</includes>
+					<testFailureIgnore>true</testFailureIgnore>
 					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
+					<useUIThread>true</useUIThread>
 					<argLine>${test.vmargs}</argLine>
 				</configuration>
 			</plugin>
