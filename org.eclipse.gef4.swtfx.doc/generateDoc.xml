@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GEF4 SwtFX Documentation Build" default="all" basedir=".">
+
+	<!-- path to wikitext standalone package -->
+	<path id="wikitext.classpath">
+		<fileset dir="libs">
+			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+		</fileset>
+	</path>
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties" />
+
+	<target name="all">
+		<antcall target="generate.api" />
+		<antcall target="generate.wiki" />
+	</target>
+
+	<target name="generate.api">
+		<echo message="Cleaning reference/api..." />
+		<delete dir="reference/api" />
+		<mkdir dir="reference/api" />
+		<echo message="Done." />
+
+		<echo message="Determining path to javadoc executable, using home dir ${java.home}..." />
+		<available file="${java.home}/../bin/javadoc.exe" property="javadoc" value="${java.home}/../bin/javadoc.exe" />
+		<available file="${java.home}/../bin/javadoc" property="javadoc" value="${java.home}/../bin/javadoc" />
+		<available file="${java.home}/bin/javadoc" property="javadoc" value="${java.home}/bin/javadoc" />
+		<echo message="Done: ${javadoc}" />
+
+		<echo message="Determining args list delimiter..." />
+		<condition property="args.list.delimiter" value=":">
+			<or>
+				<os family="unix" />
+				<os family="mac" />
+			</or>
+		</condition>
+		<condition property="args.list.delimiter" value=";">
+			<os family="windows" />
+		</condition>
+		<echo message="Done: ${args.list.delimiter}" />
+
+		<echo message="Determining context libs for javadoc generation ..." />
+		<path id="api.context.libs">
+			<fileset dir="api-context-libs">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<pathconvert property="api.context.libs.classpath" pathsep=":">
+			<path refid="api.context.libs" />
+		</pathconvert>
+		<echo message="Done: ${api.context.libs.classpath}" />
+
+		<echo message="Preparing offline link target" />
+		<property name="linkoffline-target" value="linkoffline-target" />
+		<unzip src="${linkoffline-target}/org.eclipse.platform.doc.isv.jar" dest="${linkoffline-target}/org.eclipse.platform.doc.isv/" />
+		<echo message="Done: ${linkoffline-target} contains unzipped offline link target." />
+
+		<property name="tmp.options.file" value="javadocOptions.tmp.txt" />
+		<echo message="Preparing temporary options file ${tmp.options.file}" />
+		<copy file="javadocOptions.txt" tofile="${tmp.options.file}" overwrite="true" />
+		<replaceregexp file="${basedir}/${tmp.options.file}" flags="g" match="(\r\n?|\n);" replace="${args.list.delimiter}" />
+		<replace file="${basedir}/${tmp.options.file}" token="@context@" value="${api.context.libs.classpath}" />
+		<replace file="${basedir}/${tmp.options.file}" token="@rt@" value="${bootclasspath}" />
+		<replace file="${basedir}/${tmp.options.file}" token="@linkoffline-target@" value="${linkoffline-target}" />
+		<echo message="Done." />
+
+		<echo message="Generating javadoc..." />
+		<exec dir="." executable="${javadoc}" output="doc.bin.log" failonerror="true">
+			<arg line="@${basedir}/${tmp.options.file} -J-Xmx1000M" />
+		</exec>
+		<echo message="Done." />
+	</target>
+
+	<target name="generate.wiki">
+		<!-- Set up the base wiki location to pull content from: -->
+		<mediawiki-to-eclipse-help markuplanguage="MediaWiki" wikiBaseUrl="http://wiki.eclipse.org" navigationImages="true" validate="true" failonvalidationerror="true" prependImagePrefix="images" formatoutput="true" defaultAbsoluteLinkTarget="doc_external" dest="${basedir}/reference/wiki" helpPrefix="reference/wiki" title="GEF4 SwtFX" generateUnifiedToc="false">
+			<!-- Set up which wiki pages to pull from: -->
+			<path name="GEF/GEF4/SwtFX" title="GEF4 SwtFX Documentation" generateToc="true" />
+		</mediawiki-to-eclipse-help>
+	</target>
+</project>
+
