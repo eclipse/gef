@@ -21,7 +21,6 @@ import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver;
 import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
@@ -147,28 +146,60 @@ public class LayoutAlgorithmTests extends TestCase {
 
 	/**
 	 * Test issues with TreeLayoutObserver.TreeNode#isAncestorOf for tree nodes
-	 * that are their own descendants (see http://bugs.eclipse.org/412446)
+	 * that are their own descendants, using the protected addChild() method
+	 * (see http://bugs.eclipse.org/412446)
 	 */
-	public void testTreeLayoutObserverTreeNodeIsAncestorOf() {
-		TestNode node1 = new TestNode(null, null);
+	public void testTreeLayoutObserverTreeNodeIsAncestorOfAdded() {
+		TestNode node1 = new TestNode();
 		Assert.assertTrue(node1.isAncestorOf(node1));
 		node1.addDescendant(node1);
 		Assert.assertTrue(node1.isAncestorOf(node1));
-		TestNode node2 = new TestNode(null, null);
+		TestNode node2 = new TestNode();
 		node1.addDescendant(node2);
 		Assert.assertTrue(node1.isAncestorOf(node2));
 		Assert.assertFalse(node2.isAncestorOf(node1));
+		TestNode node3 = new TestNode();
+		TestNode node4 = new TestNode();
+		node4.addDescendant(node4);
+		Assert.assertFalse(node3.isAncestorOf(node4));
+		Assert.assertFalse(node4.isAncestorOf(node3));
+	}
+
+	/**
+	 * Test issues with TreeLayoutObserver.TreeNode#isAncestorOf for tree nodes
+	 * that are their own descendants, linking protected members directly (see
+	 * http://bugs.eclipse.org/412446)
+	 */
+	public void testTreeLayoutObserverTreeNodeIsAncestorOfLinked() {
+		TestNode node1 = new TestNode();
+		Assert.assertTrue(node1.isAncestorOf(node1));
+		node1.linkDescendant(node1);
+		Assert.assertTrue(node1.isAncestorOf(node1));
+		TestNode node2 = new TestNode();
+		node1.linkDescendant(node2);
+		Assert.assertTrue(node1.isAncestorOf(node2));
+		Assert.assertFalse(node2.isAncestorOf(node1));
+		TestNode node3 = new TestNode();
+		TestNode node4 = new TestNode();
+		node4.linkDescendant(node4);
+		Assert.assertFalse(node3.isAncestorOf(node4));
+		Assert.assertFalse(node4.isAncestorOf(node3));
 	}
 
 	/* Use a private subclass to access protected members: */
 	private static class TestNode extends TreeLayoutObserver.TreeNode {
-		protected TestNode(NodeLayout node, TreeLayoutObserver owner) {
-			super(node, owner);
+		protected TestNode() {
+			super(null, null);
 		}
 
 		void addDescendant(TestNode descendant) {
 			addChild(descendant);
 			precomputeTree();
+		}
+
+		public void linkDescendant(TestNode descendant) {
+			descendant.parent = this;
+			descendant.depth = this.depth + 1;
 		}
 	}
 }

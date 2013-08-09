@@ -276,8 +276,10 @@ public class TreeLayoutObserver {
 		 * @return true if this node is an ancestor if given descendant node
 		 */
 		public boolean isAncestorOf(TreeNode descendant) {
-			while (descendant.depth > this.depth)
+			while (descendant.depth > this.depth
+					&& descendant != descendant.parent) {
 				descendant = descendant.parent;
+			}
 			return descendant == this;
 		}
 	}
