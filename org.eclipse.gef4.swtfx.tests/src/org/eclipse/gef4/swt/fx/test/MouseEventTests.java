@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.Test;
 
+/*
+ * TODO: Replace AWT robot with SWT bot to generate events or send events directly
+ */
 public class MouseEventTests {
 
 	public static interface IRobotTest {
@@ -68,7 +71,6 @@ public class MouseEventTests {
 				display.sleep();
 			}
 		}
-		display.dispose();
 	}
 
 	/**
