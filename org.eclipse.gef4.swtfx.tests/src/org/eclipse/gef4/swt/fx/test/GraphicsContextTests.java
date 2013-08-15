@@ -56,12 +56,11 @@ public class GraphicsContextTests {
 		graphicsContext.cleanUp();
 		graphicsContext.getGcByReference().dispose();
 		canvas.getImage().dispose();
-		display.dispose();
 	}
 
 	@BeforeClass
 	public static void class_init() {
-		display = Display.getCurrent();
+		display = Display.getDefault();
 		canvas = new CanvasNode(display, WIDTH, HEIGHT, BACKGROUND_COLOR);
 	}
 
