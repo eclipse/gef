@@ -121,7 +121,7 @@ public class MouseEventTests {
 
 	@Test
 	public void test_attributes() {
-		final Display display = new Display();
+		final Display display = Display.getDefault();
 		final Shell shell = new Shell(display);
 
 		Scene scene = createScene(shell);
@@ -158,7 +158,7 @@ public class MouseEventTests {
 
 	@Test
 	public void test_enter_exit() {
-		final Display display = new Display();
+		final Display display = Display.getDefault();
 		final Shell shell = new Shell(display);
 
 		Scene scene = createScene(shell);

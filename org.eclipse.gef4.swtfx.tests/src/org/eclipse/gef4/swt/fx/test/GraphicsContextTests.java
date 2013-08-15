@@ -61,7 +61,7 @@ public class GraphicsContextTests {
 
 	@BeforeClass
 	public static void class_init() {
-		display = new Display();
+		display = Display.getCurrent();
 		canvas = new CanvasNode(display, WIDTH, HEIGHT, BACKGROUND_COLOR);
 	}
 
