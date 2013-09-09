@@ -18,6 +18,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ EventDispatchChainTests.class, EventHandlerManagerTests.class,
-		GraphicsContextTests.class, MouseEventTests.class, NodeTests.class })
+		GraphicsContextTests.class, NodeTests.class })
 public class AllTests {
 }

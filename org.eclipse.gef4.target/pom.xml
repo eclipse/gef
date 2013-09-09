@@ -18,10 +18,42 @@
 
 	<profiles>
 		<profile>
-			<id>JUNO_4_2.target</id>
+			<id>KEPLER_4_3.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-version}</version>
+						<executions>
+							<!-- make target file available for incremental builds -->
+							<execution>
+								<id>attach-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<!-- note: the file name must be ${classifier}.target -->
+											<file>KEPLER_4_3.target</file>
+											<type>target</type>
+											<classifier>KEPLER_4_3</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>JUNO_4_2.target</id>
 			<build>
 				<plugins>
 					<plugin>
