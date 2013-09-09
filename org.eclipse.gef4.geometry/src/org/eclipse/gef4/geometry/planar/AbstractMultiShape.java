@@ -267,10 +267,24 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 			segmentsByEndPoints.get(seg.getP2()).add(seg);
 		}
 
-		// TODO
-		for (List<Line> segments : segmentsByEndPoints.values()) {
+		// search for broken end points
+		// List<Point> unconnectedEndPoints = new ArrayList<Point>();
+		for (Point p : segmentsByEndPoints.keySet()) {
+			List<Line> segments = segmentsByEndPoints.get(p);
 			if (segments.size() < 2) {
-				throw new IllegalStateException("error");
+				throw new IllegalStateException("There is an end point (" + p
+						+ ") which is not connected to two segments!");
+				// // unconnectedEndPoints.add(p);
+				// if (segments.size() == 0) {
+				// System.out.println("error: unconnected end point " + p);
+				// } else {
+				// assert segments.size() == 1;
+				// System.out.println("error: loose end point " + p
+				// + ", segment = " + segments.get(0));
+				// // unconnectedEndPoints.add(segments.get(0).getP1());
+				// // unconnectedEndPoints.add(segments.get(0).getP2());
+				// }
+				// System.out.println("     | remove point/segment from tree");
 			}
 		}
 

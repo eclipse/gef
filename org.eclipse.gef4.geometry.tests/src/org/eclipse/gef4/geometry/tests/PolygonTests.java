@@ -25,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
 /**
@@ -386,6 +387,17 @@ public class PolygonTests {
 				new Point(1, 0), new Point(), new Point(2, 0))
 				.equals(new Polygon(new Point(), new Point(1, 0), new Point(),
 						new Point(2, 0), new Point(), new Point(2, 0))));
+	}
+
+	@Test
+	public void test_getArea() {
+		// test area of 1x1 square
+		Polygon quad = new Polygon(0, 0, 0, 1, 1, 1, 1, 0);
+		assertTrue("" + quad.getArea(), PrecisionUtils.equal(1, quad.getArea()));
+
+		// test area of 10,5 triangle
+		Polygon tri = new Polygon(0, 0, 5, 5, 10, 0);
+		assertTrue("" + tri.getArea(), PrecisionUtils.equal(25, tri.getArea()));
 	}
 
 	@Test

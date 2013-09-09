@@ -264,7 +264,10 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	public Ring add(Polygon p) {
 		Stack<Polygon> toAdd = new Stack<Polygon>();
 		for (Polygon triangleToAdd : p.getTriangulation()) {
-			toAdd.push(triangleToAdd);
+			// do not add "empty" triangles
+			if (triangleToAdd.getArea() != 0) {
+				toAdd.push(triangleToAdd);
+			}
 		}
 
 		while (!toAdd.empty()) {
@@ -298,6 +301,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return this;
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
@@ -362,6 +366,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return edges.toArray(new Line[] {});
 	}
 
+	@Override
 	public Rectangle getBounds() {
 		if (triangles.size() == 0) {
 			return null;
@@ -375,66 +380,82 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return bounds;
 	}
 
+	@Override
 	public Ring getCopy() {
 		return new Ring(this);
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle) {
 		return getCopy().rotateCCW(angle);
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCCW(angle, cx, cy);
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle, Point center) {
 		return getCopy().rotateCCW(angle, center);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle) {
 		return getCopy().rotateCW(angle);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle, double cx, double cy) {
 		return getCopy().rotateCW(angle, cx, cy);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle, Point center) {
 		return getCopy().rotateCW(angle, center);
 	}
 
+	@Override
 	public Ring getScaled(double factor) {
 		return getCopy().scale(factor);
 	}
 
+	@Override
 	public Ring getScaled(double fx, double fy) {
 		return getCopy().scale(fx, fy);
 	}
 
+	@Override
 	public Ring getScaled(double factor, double cx, double cy) {
 		return getCopy().scale(factor, cx, cy);
 	}
 
+	@Override
 	public Ring getScaled(double fx, double fy, double cx, double cy) {
 		return getCopy().scale(fx, fy, cx, cy);
 	}
 
+	@Override
 	public Ring getScaled(double fx, double fy, Point center) {
 		return getCopy().scale(fx, fy, center);
 	}
 
+	@Override
 	public Ring getScaled(double factor, Point center) {
 		return getCopy().scale(factor, center);
 	}
 
+	@Override
 	public Polygon[] getShapes() {
 		return triangles.toArray(new Polygon[] {});
 	}
 
+	@Override
 	public Ring getTranslated(double dx, double dy) {
 		return getCopy().translate(dx, dy);
 	}
 
+	@Override
 	public Ring getTranslated(Point d) {
 		return getCopy().translate(d.x, d.y);
 	}
@@ -569,19 +590,23 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return rotateCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public Ring scale(double factor) {
 		return scale(factor, factor);
 	}
 
+	@Override
 	public Ring scale(double fx, double fy) {
 		Point center = getBounds().getCenter();
 		return scale(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public Ring scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	public Ring scale(double fx, double fy, double cx, double cy) {
 		for (Polygon p : triangles) {
 			p.scale(fx, fy, cx, cy);
@@ -589,14 +614,17 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return this;
 	}
 
+	@Override
 	public Ring scale(double fx, double fy, Point center) {
 		return scale(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public Ring scale(double factor, Point center) {
 		return scale(factor, factor, center.x, center.y);
 	}
 
+	@Override
 	public Ring translate(double dx, double dy) {
 		for (Polygon p : triangles) {
 			p.translate(dx, dy);
@@ -604,6 +632,7 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 		return this;
 	}
 
+	@Override
 	public Ring translate(Point d) {
 		return translate(d.x, d.y);
 	}

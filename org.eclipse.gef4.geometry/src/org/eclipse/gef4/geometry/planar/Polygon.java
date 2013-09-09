@@ -584,8 +584,8 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		}
 
 		// closing segment
-		area += points[points.length - 2].x * points[points.length - 1].y
-				- points[points.length - 2].y * points[points.length - 1].x;
+		area += points[points.length - 1].x * points[0].y
+				- points[points.length - 1].y * points[0].x;
 
 		return area * 0.5;
 	}

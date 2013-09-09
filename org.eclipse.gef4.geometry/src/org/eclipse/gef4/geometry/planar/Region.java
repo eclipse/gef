@@ -174,15 +174,16 @@ public class Region extends AbstractMultiShape implements
 		return this;
 	}
 
+	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO: Invent a better algorithm.
 		if (obj instanceof Region) {
 			Region o = (Region) obj;
+			// TODO: Invent a better algorithm.
 			return contains(o) && o.contains(this);
 		}
 		return false;
@@ -205,6 +206,7 @@ public class Region extends AbstractMultiShape implements
 		return edges.toArray(new Line[] {});
 	}
 
+	@Override
 	public Rectangle getBounds() {
 		if (rects.size() == 0) {
 			return null;
@@ -218,6 +220,7 @@ public class Region extends AbstractMultiShape implements
 		return bounds;
 	}
 
+	@Override
 	public Region getCopy() {
 		return new Region(this);
 	}
@@ -239,11 +242,13 @@ public class Region extends AbstractMultiShape implements
 		return intersections.toArray(new Point[] {});
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle) {
 		Point centroid = getBounds().getCenter();
 		return getRotatedCCW(angle, centroid.x, centroid.y);
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle, double cx, double cy) {
 		Polygon[] polys = new Polygon[rects.size()];
 		for (int i = 0; i < polys.length; i++) {
@@ -252,15 +257,18 @@ public class Region extends AbstractMultiShape implements
 		return new Ring(polys);
 	}
 
+	@Override
 	public Ring getRotatedCCW(Angle angle, Point center) {
 		return getRotatedCCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle) {
 		Point centroid = getBounds().getCenter();
 		return getRotatedCW(angle, centroid.x, centroid.y);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle, double cx, double cy) {
 		Polygon[] polys = new Polygon[rects.size()];
 		for (int i = 0; i < polys.length; i++) {
@@ -269,59 +277,73 @@ public class Region extends AbstractMultiShape implements
 		return new Ring(polys);
 	}
 
+	@Override
 	public Ring getRotatedCW(Angle angle, Point center) {
 		return getRotatedCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public Region getScaled(double factor) {
 		return getCopy().scale(factor);
 	}
 
+	@Override
 	public Region getScaled(double fx, double fy) {
 		return getCopy().scale(fx, fy);
 	}
 
+	@Override
 	public Region getScaled(double factor, double cx, double cy) {
 		return getCopy().scale(factor, cx, cy);
 	}
 
+	@Override
 	public Region getScaled(double fx, double fy, double cx, double cy) {
 		return getCopy().scale(fx, fy, cx, cy);
 	}
 
+	@Override
 	public Region getScaled(double fx, double fy, Point center) {
 		return getCopy().scale(fx, fy, center);
 	}
 
+	@Override
 	public Region getScaled(double factor, Point center) {
 		return getCopy().scale(factor, center);
 	}
 
+	@Override
 	public Rectangle[] getShapes() {
 		return rects.toArray(new Rectangle[] {});
 	}
 
+	@Override
 	public Region getTranslated(double dx, double dy) {
 		return getCopy().translate(dx, dy);
 	}
 
+	@Override
 	public Region getTranslated(Point d) {
 		return getCopy().translate(d.x, d.y);
 	}
 
+	@Override
 	public Region scale(double factor) {
 		return scale(factor, factor);
 	}
 
+	@Override
 	public Region scale(double fx, double fy) {
 		Point centroid = getBounds().getCenter();
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 
+	@Override
 	public Region scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	public Region scale(double fx, double fy, double cx, double cy) {
 		for (Rectangle r : rects) {
 			r.scale(fx, fy, cx, cy);
@@ -329,10 +351,12 @@ public class Region extends AbstractMultiShape implements
 		return this;
 	}
 
+	@Override
 	public Region scale(double fx, double fy, Point center) {
 		return scale(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public Region scale(double factor, Point center) {
 		return scale(factor, factor, center.x, center.y);
 	}
@@ -353,6 +377,7 @@ public class Region extends AbstractMultiShape implements
 		return new Ring(polys);
 	}
 
+	@Override
 	public Region translate(double dx, double dy) {
 		for (Rectangle r : rects) {
 			r.translate(dx, dy);
@@ -360,6 +385,7 @@ public class Region extends AbstractMultiShape implements
 		return this;
 	}
 
+	@Override
 	public Region translate(Point d) {
 		return translate(d.x, d.y);
 	}
