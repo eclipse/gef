@@ -108,17 +108,6 @@ public class MouseEventTests {
 		}.start();
 	}
 
-	private static void update(final Display display) {
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				while (display.readAndDispatch()) {
-					;
-				}
-			}
-		});
-	}
-
 	@Test
 	public void test_attributes() {
 		final Display display = new Display();
