@@ -15,7 +15,9 @@ package org.eclipse.gef4.geometry.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.junit.Test;
 
 public class AffineTransformTests {
@@ -32,6 +34,14 @@ public class AffineTransformTests {
 		assertFalse(t0.equals(t1));
 		t1.setToTranslation(5, 5);
 		assertEquals(t0, t1);
+	}
+
+	@Test
+	public void test_rotate90() {
+		AffineTransform tx = new AffineTransform();
+		// rotation looks clockwise because the Y axis is upside down
+		tx.rotate(Angle.fromDeg(90).rad());
+		assertEquals(new Point(0, 1), tx.getTransformed(new Point(1, 0)));
 	}
 
 }
