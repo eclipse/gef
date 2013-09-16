@@ -717,6 +717,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		if (relationship != null) {
 			// remove the relationship from the model
 			relationship.dispose();
+			connectionsMap.remove(connection);
 		}
 	}
 
@@ -746,6 +747,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		if (node != null) {
 			// remove the node and it's connections from the model
 			node.dispose();
+			nodesMap.remove(element);
 		}
 	}
 
