@@ -45,7 +45,7 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-		<pathconvert property="api.context.libs.classpath" pathsep=":">
+		<pathconvert property="api.context.libs.classpath" pathsep="${args.list.delimiter}">
 			<path refid="api.context.libs" />
 		</pathconvert>
 		<echo message="Done: ${api.context.libs.classpath}" />
@@ -58,9 +58,9 @@
 		<property name="tmp.options.file" value="javadocOptions.tmp.txt" />
 		<echo message="Preparing temporary options file ${tmp.options.file}" />
 		<copy file="javadocOptions.txt" tofile="${tmp.options.file}" overwrite="true" />
-		<replaceregexp file="${basedir}/${tmp.options.file}" flags="g" match="(\r\n?|\n);" replace="${args.list.delimiter}" />
 		<replace file="${basedir}/${tmp.options.file}" token="@context@" value="${api.context.libs.classpath}" />
 		<replace file="${basedir}/${tmp.options.file}" token="@rt@" value="${bootclasspath}" />
+		<replace file="${basedir}/${tmp.options.file}" token="@args.list.delimiter@" value="${args.list.delimiter}" />
 		<replace file="${basedir}/${tmp.options.file}" token="@linkoffline-target@" value="${linkoffline-target}" />
 		<echo message="Done." />
 
