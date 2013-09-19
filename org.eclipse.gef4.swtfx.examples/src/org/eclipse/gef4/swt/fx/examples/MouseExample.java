@@ -16,17 +16,12 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.ControlNode;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
-import org.eclipse.gef4.swtfx.animation.IInterpolator;
-import org.eclipse.gef4.swtfx.animation.ParallelTransition;
-import org.eclipse.gef4.swtfx.animation.PathTransition;
-import org.eclipse.gef4.swtfx.animation.RotateTransition;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
@@ -54,6 +49,17 @@ public class MouseExample implements IExample {
 							node.requestFocus();
 							dragging = true;
 							offset = new Point(e.getX(), e.getY());
+							if (node instanceof ShapeFigure) {
+								Point parentOut = new Point();
+								node.localToParent(offset, parentOut);
+
+								// System.out.println("trafo correct? "
+								// + offset.equals(node
+								// .parentToLocal(parentOut)));
+
+								// System.out.println(((ShapeFigure) node)
+								// .getShape() + " picked at " + parentOut);
+							}
 						}
 					});
 			node.addEventHandler(MouseEvent.MOUSE_RELEASED,
@@ -93,6 +99,10 @@ public class MouseExample implements IExample {
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
+							// if (event.getButton() == 1) {
+							// System.out.println("mouse pointer at "
+							// + event.getX() + ", " + event.getY());
+							// }
 							if (event.getButton() == 3) {
 								dragging = true;
 								start = tx.getTransformed(new Point(event
@@ -112,6 +122,7 @@ public class MouseExample implements IExample {
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
+							// TODO: simplify transformation calculation
 							if (dragging) {
 								double x = event.getX();
 								double y = event.getY();
@@ -135,6 +146,8 @@ public class MouseExample implements IExample {
 										.concatenate(startTx);
 
 								tx.setTransform(newTx);
+
+								// System.out.println("new transform: " + tx);
 
 								parent.getScene().refreshVisuals();
 							}
@@ -174,6 +187,8 @@ public class MouseExample implements IExample {
 	private ShapeFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
 			new RgbaColor(255, 64, 0, 255));
 	private IParent root;
+	private ControlNode<Button> resetButton;
+	private ControlNode<Button> quitButton;
 
 	@Override
 	public void addUi(final IParent realRoot) {
@@ -186,10 +201,9 @@ public class MouseExample implements IExample {
 		new NodeDragger(ovalFigure);
 		new ParentTransformer(root);
 
-		ControlNode<Button> resetButton = new ControlNode<Button>(new Button(
-				root.getScene(), SWT.PUSH));
+		resetButton = new ControlNode<Button>(new Button(root.getScene(),
+				SWT.PUSH));
 		resetButton.getControl().setText("Reset");
-		resetButton.relocate(20, 300);
 		resetButton.addEventHandler(ActionEvent.SELECTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
@@ -198,10 +212,9 @@ public class MouseExample implements IExample {
 					}
 				});
 
-		ControlNode<Button> quitButton = new ControlNode<Button>(new Button(
-				root.getScene(), SWT.PUSH));
+		quitButton = new ControlNode<Button>(new Button(root.getScene(),
+				SWT.PUSH));
 		quitButton.getControl().setText("Quit");
-		quitButton.relocate(300, 300);
 		quitButton.addEventHandler(ActionEvent.SELECTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
@@ -221,18 +234,6 @@ public class MouseExample implements IExample {
 
 		root.addChildNodes(resetButton, quitButton);
 		resetFigures();
-
-		rectFigure.setPivot(rectFigure.getShape().getBounds().getCenter());
-
-		PathTransition pathTransition = new PathTransition(2000, new Line(50,
-				50, 400, 400).toPath(), rectFigure);
-		pathTransition.setInterpolator(IInterpolator.SMOOTH_STEP);
-
-		RotateTransition rotateTransition = new RotateTransition(2000,
-				rectFigure, Angle.fromDeg(0), Angle.fromDeg(180));
-		rotateTransition.setInterpolator(IInterpolator.SMOOTH_STEP);
-
-		new ParallelTransition(pathTransition, rotateTransition).play();
 	}
 
 	@Override
@@ -253,6 +254,8 @@ public class MouseExample implements IExample {
 	private void resetFigures() {
 		rectFigure.relocate(0, 0);
 		ovalFigure.relocate(0, 0);
+		resetButton.relocate(20, 300);
+		quitButton.relocate(300, 300);
 		if (root.getTransforms().size() > 0) {
 			root.getTransforms().get(0).setToIdentity();
 		}

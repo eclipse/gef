@@ -57,15 +57,12 @@ public class PrimitivesExample implements IExample {
 
 				// text output
 				String text = "Too long for 100px?";
-				g.setFill(new RgbaColor(0, 255, 255));
-				g.setStroke(new RgbaColor());
+				g.setFill(new RgbaColor(0, 0, 0));
 
 				for (int size = 16, y = 140; size > 6; size -= 2, y += 20) {
 					FontData fontData = g.getFont().getFontData()[0];
 					fontData.setHeight(size);
 					g.setFont(fontData);
-
-					g.strokeText(text, 260, y, 100);
 					g.fillText(text, 260, y, 100);
 				}
 			}

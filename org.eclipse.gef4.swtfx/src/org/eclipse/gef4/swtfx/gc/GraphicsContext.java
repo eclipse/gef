@@ -832,10 +832,10 @@ public class GraphicsContext {
 	 * #253670/#335769.
 	 * <p>
 	 * It is not ensured, that this fix works on all platforms. Moreover, it is
-	 * not clear which GC drawing operations really need this fix. For the
-	 * various {@link GraphicsContext#fix253670()} calls, separate those that
-	 * are really needed from those that are superfluous. At the moment, every
-	 * GC drawing operation is prefixed by one call.
+	 * not clear which GC drawing operations really need this fix. Both points
+	 * For the various {@link GraphicsContext#fix253670()} calls, separate those
+	 * that are really needed from those that are superfluous. At the moment,
+	 * every GC drawing operation is prefixed by one call.
 	 */
 	private void fix253670() {
 		applyLineWidth(getLineWidth());

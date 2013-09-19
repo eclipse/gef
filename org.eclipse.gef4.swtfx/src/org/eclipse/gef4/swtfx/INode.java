@@ -271,10 +271,16 @@ public interface INode extends IEventTarget {
 	public IEventDispatcher getEventDispatcher();
 
 	/**
+	 * <p>
 	 * Returns the logical bounds of this {@link INode}. The logical bounds are
 	 * local to the coordinate system of this node. In most cases, they reflect
 	 * the bounds of the geometric shape of the node. They do not take into
 	 * account any transformations or clipping, but usually contain the stroke.
+	 * </p>
+	 * <p>
+	 * The layout-bounds can be empty. This is signified by zero width and
+	 * height.
+	 * </p>
 	 * 
 	 * @return the logical bounds of this IFigure
 	 */

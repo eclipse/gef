@@ -47,6 +47,8 @@ public class ShapeFigure extends AbstractFigure {
 
 	@Override
 	public void doPaint(GraphicsContext g) {
+		// System.out.println("#paint(" + this + ")");
+
 		g.fillPath(shape.toPath());
 		switch (getStrokeType()) {
 		case CENTER:

@@ -60,8 +60,8 @@ public class HBox extends Pane {
 		double availableWidth = getWidth();
 		double availableHeight = getHeight();
 
-		System.out.println("available space: " + availableWidth + " x "
-				+ availableHeight);
+		// System.out.println("available space: " + availableWidth + " x "
+		// + availableHeight);
 
 		INode[] managed = getManagedChildren();
 		double[] prefWidths = collectPrefWidths(managed);
@@ -69,7 +69,7 @@ public class HBox extends Pane {
 
 		double d = availableWidth - prefWidth;
 		if (d > 0) {
-			System.out.println("excess width = " + d);
+			// System.out.println("excess width = " + d);
 
 			int[][] groups = sortByPrio(managed, true);
 			for (int i = 0; i < groups.length; i++) {
@@ -88,22 +88,31 @@ public class HBox extends Pane {
 				}
 			}
 		} else if (d < 0) {
-			System.out.println("  insufficient width = " + d);
+			// System.out.println("  insufficient width = " + d);
 
 			int[][] groups = sortByPrio(managed, false);
 			for (int i = 0; i < groups.length; i++) {
+				// d is negative => socalPart is positive
 				double socialPart = -d / groups[i].length;
 
 				for (int j = 0; j < groups[i].length; j++) {
 					int index = groups[i][j];
 					INode n = managed[index];
 
+					// System.out.println("    pref-width(" + n + ") = "
+					// + prefWidths[index]);
+
 					double minWidth = minWidth(n);
 					if (minWidth <= prefWidths[index] - socialPart) {
 						prefWidths[index] -= socialPart;
 					} else {
+						// double rest = minWidth - prefWidths[index] +
+						// socialPart;
+						// socialPart += rest / groups[i].length;
 						prefWidths[index] = minWidth;
 					}
+
+					// System.out.println("    -> " + prefWidths[index]);
 				}
 			}
 		}

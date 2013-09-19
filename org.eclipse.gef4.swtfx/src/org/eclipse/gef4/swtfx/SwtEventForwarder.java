@@ -184,9 +184,18 @@ class SwtEventForwarder implements Listener {
 
 			// check for enter/exit
 			INode oldPointerTarget = receiver.getMousePointerTarget();
+
+			// System.out.println("event mouse pos = " + event.x + ", " +
+			// event.y);
 			Point mousePosition = getAbsMousePos(event);
+			// System.out.println("abs mouse pos = " + mousePosition);
+
 			Point rootLocalMousePosition = receiver.getRoot().absoluteToLocal(
 					mousePosition);
+
+			// System.out.println("root local mouse pos = "
+			// + rootLocalMousePosition);
+
 			INode newPointerTarget = receiver.getRoot().getNodeAt(
 					rootLocalMousePosition);
 
