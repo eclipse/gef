@@ -87,6 +87,7 @@ public class ControlNode<T extends Control> extends AbstractNode {
 
 	@Override
 	public double computePrefHeight(double width) {
+		// TODO: evaluate if we need to check for USE_COMPUTED_SIZE here
 		double ph = getPrefHeight();
 		if (ph != INode.USE_COMPUTED_SIZE) {
 			return ph;
@@ -99,6 +100,7 @@ public class ControlNode<T extends Control> extends AbstractNode {
 
 	@Override
 	public double computePrefWidth(double height) {
+		// TODO: evaluate if we need to check for USE_COMPUTED_SIZE here
 		double pw = getPrefWidth();
 		if (pw != INode.USE_COMPUTED_SIZE) {
 			return pw;
@@ -196,8 +198,7 @@ public class ControlNode<T extends Control> extends AbstractNode {
 	public void updateSwtBounds() {
 		Rectangle txBounds = getAbsoluteBounds();
 
-		org.eclipse.swt.graphics.Point location = getScene().getLocation();
-		location = getScene().toDisplay(location);
+		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
 		txBounds.translate(-location.x, -location.y);
 
 		control.setBounds((int) Math.ceil(txBounds.getX()),

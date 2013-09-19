@@ -126,14 +126,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public boolean contains(double localX, double localY) {
-		Point local = new Point(localX, localY);
-		Point abs = localToAbsolute(local);
-		return getAbsoluteBounds().contains(abs);
-	}
-
-	private Rectangle getAbsoluteBounds() {
-		return getLayoutBounds().getTransformed(getLocalToAbsoluteTransform())
-				.getBounds();
+		return getBoundsInLocal().contains(localX, localY);
 	}
 
 	@Override
@@ -153,7 +146,21 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public Rectangle getLayoutBounds() {
-		return new Rectangle(0, 0, getWidth(), getHeight());
+		// union children's bounds
+		double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+		boolean hasVisibleChildren = false;
+		for (INode n : getChildNodes()) {
+			if (n.isVisible()) {
+				hasVisibleChildren = true;
+				Rectangle bbox = n.getBoundsInParent();
+				minX = Math.min(minX, bbox.getX());
+				minY = Math.min(minY, bbox.getY());
+				maxX = Math.max(maxX, bbox.getX() + bbox.getWidth());
+				maxY = Math.max(maxY, bbox.getY() + bbox.getHeight());
+			}
+		}
+		return hasVisibleChildren ? new Rectangle(minX, minY, maxX - minX, maxY
+				- minY) : new Rectangle();
 	}
 
 	@Override
@@ -163,6 +170,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		// System.out.println("area: " + getWidth() + " x " + getHeight());
 
 		if (!contains(localPosition)) {
+			// System.out.println(localPosition + " not contained by " + this);
 			return null;
 		}
 
@@ -226,7 +234,13 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		}
 	}
 
-	private void paintMyFigures(GraphicsContext g) {
+	/**
+	 * Paints all child figures of this parent node.
+	 * 
+	 * @param g
+	 *            {@link GraphicsContext} which is passed along to the figures
+	 */
+	protected void paintMyFigures(GraphicsContext g) {
 		// our rendering order is the reverse of SWT's
 		for (INode node : getChildNodes()) {
 			if (node instanceof IFigure) {
@@ -242,9 +256,8 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 				 * location from it (translation).
 				 */
 				AffineTransform tx = figure.getLocalToAbsoluteTransform();
-				org.eclipse.swt.graphics.Point location = getScene()
-						.getLocation();
-				location = getScene().toDisplay(location);
+				org.eclipse.swt.graphics.Point location = getScene().toDisplay(
+						0, 0);
 				tx.preConcatenate(new AffineTransform().translate(-location.x,
 						-location.y));
 				figure.getPaintStateByReference().setTransformByReference(tx);
@@ -266,7 +279,15 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		}
 	}
 
-	private void paintOtherFigures(GraphicsContext g) {
+	/**
+	 * Calls {@link IParent#renderFigures(GraphicsContext)} on all children
+	 * which are parent nodes.
+	 * 
+	 * @param g
+	 *            {@link GraphicsContext} which is passed along to the parent
+	 *            nodes
+	 */
+	protected void paintOtherFigures(GraphicsContext g) {
 		for (INode node : getChildNodes()) {
 			if (node instanceof IParent) {
 				((IParent) node).renderFigures(g);

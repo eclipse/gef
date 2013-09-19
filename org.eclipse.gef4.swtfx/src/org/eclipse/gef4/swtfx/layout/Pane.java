@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractParent;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
@@ -24,7 +25,12 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 
 public class Pane extends AbstractParent {
 
-	private boolean debugging = false;
+	private boolean debugging = true;
+
+	@Override
+	public Rectangle getLayoutBounds() {
+		return new Rectangle(0, 0, getWidth(), getHeight());
+	}
 
 	public INode[] getManagedChildren() {
 		List<INode> managed = new ArrayList<INode>();
@@ -48,8 +54,7 @@ public class Pane extends AbstractParent {
 		g.save();
 
 		AffineTransform tx = getLocalToAbsoluteTransform();
-		org.eclipse.swt.graphics.Point location = getScene().getLocation();
-		location = getScene().toDisplay(location);
+		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
 		tx.preConcatenate(new AffineTransform().translate(-location.x,
 				-location.y));
 		g.setTransform(tx);
@@ -67,7 +72,8 @@ public class Pane extends AbstractParent {
 		}
 
 		g.setStroke(new RgbaColor(0, 0, 255));
-		g.strokePath(getLayoutBounds().toPath());
+		g.strokePath(getLayoutBounds()
+				.getTranslated(getLayoutX(), getLayoutY()).toPath());
 
 		g.restore();
 	}

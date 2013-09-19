@@ -19,6 +19,38 @@ import org.eclipse.gef4.swtfx.event.MouseTrackDispatcher;
 
 abstract public class AbstractNode implements INode {
 
+	/*
+	 * TODO: Enable the option to compute the pivot point of a node by the node
+	 * itself. Per default, the center point of the node's layout-bounds shall
+	 * be used as the pivot point for transformations. This default shall be
+	 * easily modifiable by the user. I think the sanest solution would be to
+	 * use a pivot-point-hint. If the hint is set to compute-pivot-point, then
+	 * the methods computePivotX() and computePivotY() shall be used to retrieve
+	 * the pivot point. Otherwise, the user supplied point shall be used.
+	 * 
+	 * Maybe it would be nice to overload the setPivot() method: The
+	 * setPivot(Point) method clears the hint, so that the user supplied point
+	 * is used. The setPivot(Hint) method activates pivot point computation.
+	 * 
+	 * schematically:
+	 * 
+	 * public static enum ComputePivotHint { COMPUTE_PIVOT; PROVIDE_PIVOT; }
+	 * 
+	 * private ComputePivotHint pivotHint = COMPUTE_PIVOT;
+	 * 
+	 * private Point providedPivot = new Point();
+	 * 
+	 * public void setPivot(Point p) { providedPivot = p; pivotHint =
+	 * PROVIDE_PIVOT; }
+	 * 
+	 * public void setComputePivot() { pivotHint = COMPUTE_PIVOT; }
+	 * 
+	 * public Point getPivot() { if (pivotHint == COMPUTE_PIVOT) return
+	 * computePivot(); else return providedPivot; }
+	 * 
+	 * public Point computePivot() { return getLayoutBounds().getCenter(); }
+	 */
+
 	private static double clamp(double value, double min, double max) {
 		if (value < min) {
 			return min;
@@ -274,8 +306,8 @@ abstract public class AbstractNode implements INode {
 		if (parent != null) {
 			tx.preConcatenate(parent.getLocalToAbsoluteTransform());
 		} else {
-			org.eclipse.swt.graphics.Point location = getScene().getLocation();
-			location = getScene().toDisplay(location);
+			org.eclipse.swt.graphics.Point location = getScene().toDisplay(
+					new org.eclipse.swt.graphics.Point(0, 0));
 			tx.translate(location.x, location.y);
 		}
 		return tx;
@@ -286,19 +318,6 @@ abstract public class AbstractNode implements INode {
 		AffineTransform localToParentTx = new AffineTransform();
 
 		Point pivot = getPivot();
-
-		if (getParentNode() == null) {
-			// we are root
-			if (this instanceof IParent) {
-				org.eclipse.swt.graphics.Point location = getScene()
-						.getLocation();
-				pivot = pivot.getTranslated(location.x, location.y);
-			} else {
-				// we have no parent, and we are no parent?
-				throw new IllegalStateException(
-						"This node is not part of the scene graph.");
-			}
-		}
 
 		localToParentTx.translate(getTranslateX() + getLayoutX() + pivot.x,
 				getTranslateY() + getLayoutY() + pivot.y);
