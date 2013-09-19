@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.event.Event;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 
@@ -34,27 +33,6 @@ public class Group extends AbstractParent {
 	public Group(INode... children) {
 		this();
 		addChildNodes(children);
-	}
-
-	@Override
-	public Rectangle getLayoutBounds() {
-		// no children
-		int numChildren = getChildNodes().size();
-		if (numChildren < 1) {
-			return new Rectangle();
-		}
-
-		// one child
-		Rectangle bounds = getChildNodes().get(0).getBoundsInParent();
-		if (numChildren == 1) {
-			return bounds;
-		}
-
-		// multiple children
-		for (INode child : getChildNodes().subList(1, numChildren)) {
-			bounds.getUnioned(child.getBoundsInParent());
-		}
-		return bounds;
 	}
 
 	public boolean isAutoSizeChildren() {
