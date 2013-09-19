@@ -66,34 +66,36 @@ public class PathEvaluator {
 	private static Line[] toLineStrip(Path path, double maxDistance) {
 		List<Line> lines = new ArrayList<Line>();
 
-		Point[] p = null;
 		Point last = null;
 		Point start = null;
 
 		for (Segment seg : path.getSegments()) {
+			Point[] p = seg.getPoints();
 			switch (seg.getType()) {
 			case Path.Segment.MOVE_TO:
-				last = seg.getPoints()[0];
+				last = p[p.length - 1];
 				if (start == null) {
 					start = last;
 				}
 				break;
 			case Path.Segment.LINE_TO:
-				lines.add(new Line(last, seg.getPoints()[0]));
+				lines.add(new Line(last, p[0]));
 				break;
 			case Path.Segment.QUAD_TO:
-				p = seg.getPoints();
 				toLineStrip(new BezierCurve(last, p[0], p[1]), maxDistance,
 						lines);
 				break;
 			case Path.Segment.CUBIC_TO:
-				p = seg.getPoints();
 				toLineStrip(new BezierCurve(last, p[0], p[1], p[2]),
 						maxDistance, lines);
 				break;
 			case Path.Segment.CLOSE:
 				lines.add(new Line(last, start));
 				break;
+			}
+
+			if (p.length > 0) {
+				last = p[p.length - 1];
 			}
 		}
 
