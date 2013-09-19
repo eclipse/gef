@@ -17,7 +17,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.euclidean.Angle.AngleUnit;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 import org.junit.Test;
@@ -32,8 +31,8 @@ public class AngleTests {
 
 	@Test
 	public void test_constructors() {
-		Angle alpha = new Angle(180, AngleUnit.DEG);
-		assertTrue(alpha.equals(new Angle(Math.PI, AngleUnit.RAD)));
+		Angle alpha = Angle.fromDeg(180);
+		assertTrue(alpha.equals(new Angle(Math.PI)));
 		assertTrue(alpha.equals(Angle.fromDeg(180)));
 		assertTrue(alpha.equals(Angle.fromRad(Math.PI)));
 		assertTrue(new Angle().equals(Angle.fromRad(0)));
@@ -49,8 +48,8 @@ public class AngleTests {
 
 	@Test
 	public void test_deg() {
-		Angle alpha = new Angle(180, AngleUnit.DEG);
-		Angle beta = new Angle(Math.PI, AngleUnit.RAD);
+		Angle alpha = Angle.fromDeg(180);
+		Angle beta = new Angle(Math.PI);
 
 		assertTrue(PrecisionUtils.equal(180, alpha.deg()));
 		assertTrue(PrecisionUtils.equal(180, beta.deg()));
@@ -63,10 +62,10 @@ public class AngleTests {
 
 	@Test
 	public void test_equals() {
-		Angle alpha = new Angle(Math.PI, AngleUnit.RAD);
-		Angle beta = new Angle(Math.PI, AngleUnit.RAD);
-		Angle gamma = new Angle(0, AngleUnit.RAD);
-		Angle delta = new Angle(2 * Math.PI, AngleUnit.RAD);
+		Angle alpha = new Angle(Math.PI);
+		Angle beta = new Angle(Math.PI);
+		Angle gamma = new Angle(0);
+		Angle delta = new Angle(2 * Math.PI);
 
 		assertTrue(alpha.equals(alpha));
 		assertTrue(alpha.equals(beta));
@@ -77,9 +76,8 @@ public class AngleTests {
 		assertFalse(alpha.equals(null));
 		assertFalse(alpha.equals(new Point()));
 
-		alpha = new Angle(UNRECOGNIZABLE_FRACTION / 2, AngleUnit.RAD);
-		beta = new Angle(2 * Math.PI - UNRECOGNIZABLE_FRACTION / 2,
-				AngleUnit.RAD);
+		alpha = new Angle(UNRECOGNIZABLE_FRACTION / 2);
+		beta = new Angle(2 * Math.PI - UNRECOGNIZABLE_FRACTION / 2);
 		assertTrue(alpha.equals(beta));
 		assertTrue(beta.equals(alpha));
 
@@ -87,8 +85,8 @@ public class AngleTests {
 
 	@Test
 	public void test_getAdded() {
-		Angle alpha = new Angle(180, AngleUnit.DEG);
-		Angle beta = new Angle(Math.PI, AngleUnit.RAD);
+		Angle alpha = Angle.fromDeg(180);
+		Angle beta = new Angle(Math.PI);
 
 		assertTrue(alpha.getAdded(beta).equals(beta.getAdded(alpha)));
 	}
@@ -136,13 +134,6 @@ public class AngleTests {
 	public void test_toString() {
 		Angle alpha = Angle.fromDeg(0);
 		assertEquals("Angle(0.0rad (0.0deg))", alpha.toString());
-	}
-
-	@Test
-	public void test_unit() {
-		// to keep the coverage up
-		assertEquals(AngleUnit.DEG, AngleUnit.valueOf("DEG"));
-		assertEquals(AngleUnit.RAD, AngleUnit.valueOf("RAD"));
 	}
 
 }
