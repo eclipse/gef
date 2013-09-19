@@ -54,6 +54,23 @@ public class HBoxConstraints {
 	}
 
 	/**
+	 * Constructs a new {@link HBoxConstraints} initializing it with the
+	 * passed-in values.
+	 * 
+	 * @param growPriority
+	 * @param shrinkPriority
+	 * @param vFill
+	 * @param margin
+	 */
+	public HBoxConstraints(double growPriority, double shrinkPriority,
+			boolean vFill, Insets margin) {
+		setGrowPriority(growPriority);
+		setShrinkPriority(shrinkPriority);
+		setVFill(vFill);
+		setMargin(margin);
+	}
+
+	/**
 	 * Returns the {@link #growPriority} associated with this HBoxConstraints.
 	 * 
 	 * @return the {@link #growPriority}
@@ -113,6 +130,10 @@ public class HBoxConstraints {
 	 */
 	public void setShrinkPriority(double shrinkPriority) {
 		this.shrinkPriority = shrinkPriority;
+	}
+
+	public void setVFill(boolean vFill) {
+		this.vfill = vFill;
 	}
 
 }
