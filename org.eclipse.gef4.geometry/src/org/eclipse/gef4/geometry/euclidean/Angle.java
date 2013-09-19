@@ -17,42 +17,22 @@ import java.io.Serializable;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
+ * <p>
  * An {@link Angle} object abstracts the angle's unit. It provides a simple
  * interface to construct it from degrees or radians. Additionally, some useful
  * calculations are implemented. But for sine/cosine/tangent calculations you
  * may use the Math package.
- * 
- * The {@link AngleUnit} enumeration is used to differentiate between degrees
- * and radians. For the sake of simplicity, the methods that need to
- * differentiate between the angle's unit are available twice. Expecting degrees
- * or radians.
- * 
+ * </p>
+ * <p>
  * Every {@link Angle} object is normalized. That means, you will never
  * encounter an {@link Angle} object beyond 360/2pi or below 0/0
  * (degrees/radians).
+ * </p>
  * 
  * @author mwienand
  * 
  */
 public class Angle implements Cloneable, Serializable {
-
-	/**
-	 * The {@link Angle#Angle(double, AngleUnit)} constructor uses this
-	 * enumeration to differentiate the unit of its first argument.
-	 */
-	public enum AngleUnit {
-		/**
-		 * Specifies that the angle is given in degrees. The range of an angle
-		 * in degrees is from 0deg to 360deg.
-		 */
-		DEG,
-
-		/**
-		 * Specifies that the angle is given in radians. The range of an angle
-		 * in radians is from 0 to 2pi.
-		 */
-		RAD,
-	}
 
 	private static final long serialVersionUID = 1L;
 	private static final double DEG_TO_RAD = Math.PI / 180d;
@@ -70,7 +50,7 @@ public class Angle implements Cloneable, Serializable {
 	 *         degrees
 	 */
 	public static Angle fromDeg(double degrees) {
-		return new Angle(degrees, AngleUnit.DEG);
+		return new Angle(degrees * DEG_TO_RAD);
 	}
 
 	/**
@@ -83,7 +63,7 @@ public class Angle implements Cloneable, Serializable {
 	 *         radians
 	 */
 	public static Angle fromRad(double radians) {
-		return new Angle(radians, AngleUnit.RAD);
+		return new Angle(radians);
 	}
 
 	private double rad = 0d;
@@ -95,19 +75,13 @@ public class Angle implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Constructs a new {@link Angle} object with the given value. The
-	 * {@link AngleUnit} u is used to differentiate the value's unit.
+	 * Constructs a new {@link Angle} object with the given value in radians.
 	 * 
-	 * @param v
+	 * @param rad
 	 *            the angle's value
-	 * @param u
-	 *            the angle's unit ({@link AngleUnit})
 	 */
-	public Angle(double v, AngleUnit u) {
-		if (u == AngleUnit.DEG) {
-			v *= DEG_TO_RAD;
-		}
-		setRad(v);
+	public Angle(double rad) {
+		setRad(rad);
 	}
 
 	/**
