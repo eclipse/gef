@@ -6,21 +6,21 @@ import org.eclipse.gef4.swtfx.INode;
 public class RotateTransition extends AbstractTransition {
 
 	private INode node;
-	private Angle start;
-	private Angle end;
+	private double startDeg;
+	private double endDeg;
 
-	public RotateTransition(long durationMillis, INode node, Angle start,
-			Angle end) {
+	public RotateTransition(long durationMillis, INode node, double startDeg,
+			double endDeg) {
 		super(durationMillis);
 		this.node = node;
-		this.start = start;
-		this.end = end;
+		this.startDeg = startDeg;
+		this.endDeg = endDeg;
 	}
 
 	@Override
 	public void doStep(double t) {
-		double rad = start.rad() * (1 - t) + end.rad() * t;
-		node.setRotationAngle(Angle.fromRad(rad));
+		double deg = startDeg * (1 - t) + endDeg * t;
+		node.setRotationAngle(Angle.fromDeg(deg));
 	}
 
 	@Override
