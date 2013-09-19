@@ -574,6 +574,7 @@ public class GraphicsContext {
 	 *            destination y coordinate
 	 */
 	public void drawImage(Image image, double x, double y) {
+		fix253670();
 		gc.drawImage(image, (int) Math.round(x), (int) Math.round(y));
 	}
 
@@ -592,6 +593,7 @@ public class GraphicsContext {
 	 */
 	public void drawImage(Image image, double x, double y, double w, double h) {
 		org.eclipse.swt.graphics.Rectangle bounds = image.getBounds();
+		fix253670();
 		gc.drawImage(image, 0, 0, bounds.width, bounds.height,
 				(int) Math.round(x), (int) Math.round(y), (int) Math.round(w),
 				(int) Math.round(h));
@@ -606,6 +608,7 @@ public class GraphicsContext {
 	public void drawImage(Image image, double srcX, double srcY,
 			double srcWidth, double srcHeight, double x, double y, double w,
 			double h) {
+		fix253670();
 		gc.drawImage(image, (int) Math.round(srcX), (int) Math.round(srcY),
 				(int) Math.round(srcWidth), (int) Math.round(srcHeight),
 				(int) Math.round(x), (int) Math.round(y), (int) Math.round(w),
@@ -620,6 +623,7 @@ public class GraphicsContext {
 
 		disposeSwtPathFill();
 		swtPathFill = SwtUtils.createSwtPath(path, gc.getDevice());
+		fix253670();
 		gc.fillPath(swtPathFill);
 
 		if (a != 255) {
@@ -692,6 +696,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.fillOval((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h));
 
@@ -715,6 +720,7 @@ public class GraphicsContext {
 		applyPaint(getFillPattern(), PaintType.FILL, bounds);
 		org.eclipse.swt.graphics.Path swtPathFill = SwtUtils.createSwtPath(
 				path, gc.getDevice());
+		fix253670();
 		gc.fillPath(swtPathFill);
 		swtPathFill.dispose();
 
@@ -736,6 +742,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.fillPolygon(swtPointsArray);
 
 		if (a != 255) {
@@ -754,6 +761,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.fillRectangle((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h));
 
@@ -777,6 +785,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.fillRoundRectangle((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h),
 				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
@@ -816,6 +825,20 @@ public class GraphicsContext {
 		if (a != 255) {
 			gc.setAlpha(getGlobalAlpha());
 		}
+	}
+
+	/**
+	 * Prefix GC drawing operation by a call to this method to fix SWT Bugs
+	 * #253670/#335769.
+	 * <p>
+	 * It is not ensured, that this fix works on all platforms. Moreover, it is
+	 * not clear which GC drawing operations really need this fix. For the
+	 * various {@link GraphicsContext#fix253670()} calls, separate those that
+	 * are really needed from those that are superfluous. At the moment, every
+	 * GC drawing operation is prefixed by one call.
+	 */
+	private void fix253670() {
+		applyLineWidth(getLineWidth());
 	}
 
 	private int getBackgroundAlpha() {
@@ -1157,6 +1180,7 @@ public class GraphicsContext {
 				display);
 		path.addString(text, (float) x, (float) y, getFont());
 
+		fix253670();
 		if (isFill) {
 			gc.fillPath(path);
 		} else {
@@ -1174,6 +1198,7 @@ public class GraphicsContext {
 
 		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
 				path, gc.getDevice());
+		fix253670();
 		gc.drawPath(swtPathStroke);
 		swtPathStroke.dispose();
 
@@ -1189,6 +1214,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		switch (arcType) {
 		case OPEN:
 			gc.drawArc((int) Math.round(x), (int) Math.round(y),
@@ -1205,6 +1231,7 @@ public class GraphicsContext {
 					(int) Math.round(angularExtentDeg));
 			Point start = arc.getP1();
 			Point end = arc.getP2();
+			fix253670();
 			gc.drawLine((int) Math.round(end.x), (int) Math.round(end.y),
 					(int) Math.round(start.x), (int) Math.round(start.y));
 			break;
@@ -1218,8 +1245,10 @@ public class GraphicsContext {
 			start = arc.getP1();
 			end = arc.getP2();
 			Point center = arc.getCenter();
+			fix253670();
 			gc.drawLine((int) Math.round(end.x), (int) Math.round(end.y),
 					(int) Math.round(center.x), (int) Math.round(center.y));
+			fix253670();
 			gc.drawLine((int) Math.round(center.x), (int) Math.round(center.y),
 					(int) Math.round(start.x), (int) Math.round(start.y));
 			break;
@@ -1238,6 +1267,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawLine((int) Math.round(x0), (int) Math.round(y0),
 				(int) Math.round(x1), (int) Math.round(y1));
 
@@ -1252,6 +1282,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawOval((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h));
 
@@ -1268,7 +1299,10 @@ public class GraphicsContext {
 
 		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
 				path, gc.getDevice());
+
+		fix253670();
 		gc.drawPath(swtPathStroke);
+
 		swtPathStroke.dispose();
 
 		if (a != 255) {
@@ -1282,6 +1316,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawPolygon(SwtUtils.createSwtPointsArray(xs, ys, n));
 
 		if (a != 255) {
@@ -1295,6 +1330,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawPolyline(SwtUtils.createSwtPointsArray(xs, ys, n));
 
 		if (a != 255) {
@@ -1308,6 +1344,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawRectangle((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h));
 
@@ -1323,6 +1360,7 @@ public class GraphicsContext {
 			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
 		}
 
+		fix253670();
 		gc.drawRoundRectangle((int) Math.round(x), (int) Math.round(y),
 				(int) Math.round(w), (int) Math.round(h),
 				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
