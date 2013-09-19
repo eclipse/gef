@@ -93,7 +93,8 @@ public class CoordinateTrafoTests {
 		s.setPivot(new Point(50, 50));
 		s.setScaleX(2);
 		s.setScaleY(2);
-		assertEquals(new Rectangle(-50, -50, 200, 200), s.getLayoutBounds());
+		// bounds contains stroke (line width = 1 => 0.5 stroke on all sides)
+		assertEquals(new Rectangle(-51, -51, 202, 202), s.getBoundsInParent());
 	}
 
 	@Test
