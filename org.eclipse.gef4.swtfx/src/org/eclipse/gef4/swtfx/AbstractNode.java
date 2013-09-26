@@ -165,14 +165,14 @@ abstract public class AbstractNode implements INode {
 	private boolean visible = true;
 
 	@Override
-	public Point absoluteToLocal(Point absolute) {
+	public Point displayToLocal(Point absolute) {
 		Point local = new Point();
-		absoluteToLocal(absolute, local);
+		displayToLocal(absolute, local);
 		return local;
 	}
 
 	@Override
-	public void absoluteToLocal(Point absoluteIn, Point localOut) {
+	public void displayToLocal(Point absoluteIn, Point localOut) {
 		AffineTransform tx = getLocalToAbsoluteTransform();
 
 		// FIXME: Local coordinates are not exactly correct: when the mouse is
@@ -433,24 +433,24 @@ abstract public class AbstractNode implements INode {
 	}
 
 	@Override
-	public Point localToAbsolute(double localX, double localY) {
+	public Point localToDisplay(double localX, double localY) {
 		Point p = new Point(localX, localY);
-		localToAbsolute(p, p);
+		localToDisplay(p, p);
 		return p;
 	}
 
 	@Override
-	public void localToAbsolute(double localX, double localY, Point absoluteOut) {
-		absoluteOut.setLocation(localToAbsolute(localX, localY));
+	public void localToDisplay(double localX, double localY, Point absoluteOut) {
+		absoluteOut.setLocation(localToDisplay(localX, localY));
 	}
 
 	@Override
-	public Point localToAbsolute(Point local) {
-		return localToAbsolute(local.x, local.y);
+	public Point localToDisplay(Point local) {
+		return localToDisplay(local.x, local.y);
 	}
 
 	@Override
-	public void localToAbsolute(Point localIn, Point absoluteOut) {
+	public void localToDisplay(Point localIn, Point absoluteOut) {
 		AffineTransform tx = getLocalToAbsoluteTransform();
 		absoluteOut.setLocation(tx.getTransformed(localIn));
 	}

@@ -117,7 +117,7 @@ public class ControlNode<T extends Control> extends AbstractNode {
 			return false;
 		}
 
-		Point abs = localToAbsolute(localX, localY);
+		Point abs = localToDisplay(localX, localY);
 
 		org.eclipse.swt.graphics.Point controlLocation = control.toControl(
 				(int) abs.x, (int) abs.y);

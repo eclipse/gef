@@ -92,7 +92,7 @@ class SwtEventForwarder implements Listener {
 		org.eclipse.swt.graphics.Point scene = receiver.toControl(
 				(int) absPos.x, (int) absPos.y);
 
-		Point localPos = entered.absoluteToLocal(absPos);
+		Point localPos = entered.displayToLocal(absPos);
 		Event.fireEvent(entered, new MouseEvent(e.widget, entered,
 				MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, localPos.x,
 				localPos.y, scene.x, scene.y, absPos.x, absPos.y));
@@ -114,7 +114,7 @@ class SwtEventForwarder implements Listener {
 		org.eclipse.swt.graphics.Point scene = receiver.toControl(
 				(int) absPos.x, (int) absPos.y);
 
-		Point localPos = exited.absoluteToLocal(absPos);
+		Point localPos = exited.displayToLocal(absPos);
 		Event.fireEvent(exited, new MouseEvent(e.widget, exited,
 				MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, localPos.x,
 				localPos.y, scene.x, scene.y, absPos.x, absPos.y));
@@ -196,7 +196,7 @@ class SwtEventForwarder implements Listener {
 			Point mousePosition = getAbsMousePos(event);
 			// System.out.println("abs mouse pos = " + mousePosition);
 
-			Point rootLocalMousePosition = receiver.getRoot().absoluteToLocal(
+			Point rootLocalMousePosition = receiver.getRoot().displayToLocal(
 					mousePosition);
 
 			// System.out.println("root local mouse pos = "
@@ -247,7 +247,7 @@ class SwtEventForwarder implements Listener {
 			// System.out.println("  determining target...");
 
 			Point mousePosition = getAbsMousePos(event);
-			receiver.getRoot().absoluteToLocal(mousePosition, mousePosition);
+			receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
 			// System.out.println("    root local mouse position ("
 			// + mousePosition.x + ", " + mousePosition.y + ")");
@@ -286,7 +286,7 @@ class SwtEventForwarder implements Listener {
 
 	private void handleOtherEvent(org.eclipse.swt.widgets.Event event,
 			Point mousePosition) {
-		receiver.getRoot().absoluteToLocal(mousePosition, mousePosition);
+		receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
 		// System.out.println("    root local mouse position (" +
 		// mousePosition.x
@@ -334,7 +334,7 @@ class SwtEventForwarder implements Listener {
 		sceneOut[1] = scene.y;
 
 		Point p = new Point(display.x, display.y);
-		target.absoluteToLocal(p, p);
+		target.displayToLocal(p, p);
 		targetOut[0] = p.x;
 		targetOut[1] = p.y;
 	}

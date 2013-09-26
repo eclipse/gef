@@ -74,10 +74,10 @@ public interface INode extends IEventTarget {
 	 * @param absolute
 	 * @return new {@link Point} holding respective local coordinates
 	 * 
-	 * @see #absoluteToLocal(Point, Point)
-	 * @see #localToAbsolute(Point)
+	 * @see #displayToLocal(Point, Point)
+	 * @see #localToDisplay(Point)
 	 */
-	public Point absoluteToLocal(Point absolute);
+	public Point displayToLocal(Point absolute);
 
 	/**
 	 * Transforms the first passed-in absolute {@link Point} to the local
@@ -89,7 +89,7 @@ public interface INode extends IEventTarget {
 	 * @param absoluteIn
 	 * @param localOut
 	 */
-	public void absoluteToLocal(Point absoluteIn, Point localOut);
+	public void displayToLocal(Point absoluteIn, Point localOut);
 
 	/**
 	 * Adds an event filter for the specified {@link EventType} to the list of
@@ -513,7 +513,7 @@ public interface INode extends IEventTarget {
 	 *            local y coordinate
 	 * @return a new {@link Point} holding the transformed absolute coordinates
 	 */
-	public Point localToAbsolute(double localX, double localY);
+	public Point localToDisplay(double localX, double localY);
 
 	/**
 	 * Transforms the given x and y coordinates, interpreted as local to this
@@ -528,7 +528,7 @@ public interface INode extends IEventTarget {
 	 * @param absoluteOut
 	 *            is set to the transformed absolute coordinates
 	 */
-	public void localToAbsolute(double localX, double localY, Point absoluteOut);
+	public void localToDisplay(double localX, double localY, Point absoluteOut);
 
 	/**
 	 * Transforms the given {@link Point}, interpreted as local to this
@@ -540,10 +540,10 @@ public interface INode extends IEventTarget {
 	 *            local {@link Point}
 	 * @return a new {@link Point} holding the transformed absolute coordinates
 	 * 
-	 * @see #localToAbsolute(Point, Point)
-	 * @see #absoluteToLocal(Point)
+	 * @see #localToDisplay(Point, Point)
+	 * @see #displayToLocal(Point)
 	 */
-	public Point localToAbsolute(Point local);
+	public Point localToDisplay(Point local);
 
 	/**
 	 * Transforms the given {@link Point}, interpreted as local to this
@@ -557,7 +557,7 @@ public interface INode extends IEventTarget {
 	 * @param absoluteOut
 	 *            is set to the transformed absolute coordinates
 	 */
-	public void localToAbsolute(Point localIn, Point absoluteOut);
+	public void localToDisplay(Point localIn, Point absoluteOut);
 
 	/**
 	 * Transforms the first passed-in local {@link Point} to the coordinate
