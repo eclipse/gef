@@ -85,6 +85,20 @@ public class GraphicsContext {
 		FILL, STROKE,
 	}
 
+	/*
+	 * TODO: evaluate if WITH_ALPHA() is a good idea
+	 */
+	private static void WITH_ALPHA(GraphicsContext g, int alpha, Runnable code) {
+		int globalAlpha = g.getGlobalAlpha();
+		if (alpha != 255) {
+			g.gc.setAlpha((int) (alpha * globalAlpha / 255d));
+		}
+		code.run();
+		if (alpha != 255) {
+			g.gc.setAlpha(globalAlpha);
+		}
+	}
+
 	/**
 	 * The current {@link Path} of this {@link GraphicsContext}.
 	 */
@@ -227,15 +241,7 @@ public class GraphicsContext {
 	}
 
 	private void applyGlobalAlpha(double globalAlpha) {
-		gc.setAlpha((int) (255 * globalAlpha));
-
-		/*
-		 * FIXME: move anti-aliasing to GraphicsContextState
-		 * 
-		 * You should be able to enable/disable anti-aliasing on the
-		 * GraphicsContextState.
-		 */
-		gc.setAntialias(SWT.ON);
+		gc.setAlpha((int) globalAlpha);
 	}
 
 	private void applyLineCap(LineCap lineCap) {
@@ -616,162 +622,136 @@ public class GraphicsContext {
 	}
 
 	public void fill() {
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		disposeSwtPathFill();
-		swtPathFill = SwtUtils.createSwtPath(path, gc.getDevice());
-		fix253670();
-		gc.fillPath(swtPathFill);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				disposeSwtPathFill();
+				swtPathFill = SwtUtils.createSwtPath(path, gc.getDevice());
+				fix253670();
+				gc.fillPath(swtPathFill);
+			}
+		});
 	}
 
-	public void fillArc(double x, double y, double w, double h,
-			double startAngleDeg, double angularExtentDeg, ArcType arcType) {
-		Rectangle bounds = new Rectangle(x, y, w, h);
+	public void fillArc(final double x, final double y, final double w,
+			final double h, final double startAngleDeg,
+			final double angularExtentDeg, final ArcType arcType) {
+		final Rectangle bounds = new Rectangle(x, y, w, h);
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				switch (arcType) {
+				case ROUND: {
+					Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+							Angle.fromDeg(angularExtentDeg));
+					List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
+					CubicCurve[] beziers = arc.toBezier();
+					arcSegs.addAll(Arrays.asList(beziers));
+					arcSegs.add(new Line(beziers[beziers.length - 1].getP2(),
+							arc.getCenter()));
+					arcSegs.add(new Line(arc.getCenter(), beziers[0].getP1()));
+					fillPath(
+							new PolyBezier(arcSegs
+									.toArray(new BezierCurve[] {})).toPath(),
+							bounds);
+					break;
+				}
+				case CHORD:
+				case OPEN: {
+					Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+							Angle.fromDeg(angularExtentDeg));
+					List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
+					CubicCurve[] beziers = arc.toBezier();
+					arcSegs.addAll(Arrays.asList(beziers));
+					arcSegs.add(new Line(beziers[beziers.length - 1].getP2(),
+							beziers[0].getP1()));
+					fillPath(new PolyBezier(arcSegs
+							.toArray(new BezierCurve[] {})).toPath());
+					break;
+				}
+				default:
+					throw new IllegalStateException("Unknown ArcType: "
+							+ arcType);
+				}
 
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		switch (arcType) {
-		case ROUND: {
-			Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
-					Angle.fromDeg(angularExtentDeg));
-			List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
-			CubicCurve[] beziers = arc.toBezier();
-			arcSegs.addAll(Arrays.asList(beziers));
-			arcSegs.add(new Line(beziers[beziers.length - 1].getP2(), arc
-					.getCenter()));
-			arcSegs.add(new Line(arc.getCenter(), beziers[0].getP1()));
-			fillPath(
-					new PolyBezier(arcSegs.toArray(new BezierCurve[] {}))
-							.toPath(),
-					bounds);
-
-			// fillPath(new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
-			// Angle.fromDeg(angularExtentDeg)).toPath());
-			// gc.fillArc((int) Math.round(x), (int) Math.round(y),
-			// (int) Math.round(w), (int) Math.round(h),
-			// (int) Math.round(startAngleDeg),
-			// (int) Math.round(angularExtentDeg));
-			break;
-		}
-		case CHORD:
-		case OPEN: {
-			Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
-					Angle.fromDeg(angularExtentDeg));
-			List<BezierCurve> arcSegs = new ArrayList<BezierCurve>();
-			CubicCurve[] beziers = arc.toBezier();
-			arcSegs.addAll(Arrays.asList(beziers));
-			arcSegs.add(new Line(beziers[beziers.length - 1].getP2(),
-					beziers[0].getP1()));
-			fillPath(new PolyBezier(arcSegs.toArray(new BezierCurve[] {}))
-					.toPath());
-			break;
-		}
-		default:
-			throw new IllegalStateException("Unknown ArcType: " + arcType);
-		}
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+			}
+		});
 	}
 
-	public void fillOval(double x, double y, double w, double h) {
+	public void fillOval(final double x, final double y, final double w,
+			final double h) {
 		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
 			fillPath(new Ellipse(x, y, w, h).toPath());
 			return;
 		}
 
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.fillOval((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.fillOval((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h));
+			}
+		});
 	}
 
 	public void fillPath(Path path) {
 		fillPath(path, path.getBounds().getUnioned(new Point()));
 	}
 
-	public void fillPath(Path path, Rectangle bounds) {
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
+	public void fillPath(final Path path, final Rectangle bounds) {
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD
+						: FillRule.WIND_NON_ZERO);
+				applyPaint(getFillPattern(), PaintType.FILL, bounds);
 
-		setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD
-				: FillRule.WIND_NON_ZERO);
-		applyPaint(getFillPattern(), PaintType.FILL, bounds);
-		org.eclipse.swt.graphics.Path swtPathFill = SwtUtils.createSwtPath(
-				path, gc.getDevice());
-		fix253670();
-		gc.fillPath(swtPathFill);
-		swtPathFill.dispose();
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+				org.eclipse.swt.graphics.Path swtPathFill = SwtUtils
+						.createSwtPath(path, gc.getDevice());
+				fix253670();
+				gc.fillPath(swtPathFill);
+				swtPathFill.dispose();
+			}
+		});
 	}
 
 	public void fillPolygon(double[] xs, double[] ys, int n) {
-		int[] swtPointsArray = SwtUtils.createSwtPointsArray(xs, ys, n);
+		final int[] swtPointsArray = SwtUtils.createSwtPointsArray(xs, ys, n);
 
 		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
 			fillPath(SWT2Geometry.toPolygon(swtPointsArray).toPath());
 			return;
 		}
 
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.fillPolygon(swtPointsArray);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.fillPolygon(swtPointsArray);
+			}
+		});
 	}
 
-	public void fillRect(double x, double y, double w, double h) {
+	public void fillRect(final double x, final double y, final double w,
+			final double h) {
 		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
 			fillPath(new Rectangle(x, y, w, h).toPath());
 			return;
 		}
 
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.fillRectangle((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.fillRectangle((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h));
+			}
+		});
 	}
 
-	public void fillRoundRect(double x, double y, double w, double h,
-			double arcWidth, double arcHeight) {
+	public void fillRoundRect(final double x, final double y, final double w,
+			final double h, final double arcWidth, final double arcHeight) {
 		if (states.peek().getFillByReference().getMode() != PaintMode.COLOR) {
 			fillPath(
 					new RoundedRectangle(x, y, w, h, arcWidth, arcHeight)
@@ -780,51 +760,40 @@ public class GraphicsContext {
 			return;
 		}
 
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.fillRoundRectangle((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h),
-				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.fillRoundRectangle((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h),
+						(int) Math.round(arcWidth), (int) Math.round(arcHeight));
+			}
+		});
 	}
 
-	public void fillText(String text, double x, double y) {
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		Object stroke = getStroke();
-		setStroke(getFill());
-		showText(text, x, y, true);
-		setStroke(stroke);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void fillText(final String text, final double x, final double y) {
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				Object stroke = getStroke();
+				setStroke(getFill());
+				showText(text, x, y, true);
+				setStroke(stroke);
+			}
+		});
 	}
 
-	public void fillText(String text, double x, double y, double maxWidth) {
-		int a = getBackgroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		Object stroke = getStroke();
-		setStroke(getFill());
-		showText(trim(text, maxWidth), x, y, true);
-		setStroke(stroke);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void fillText(final String text, final double x, final double y,
+			final double maxWidth) {
+		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				Object stroke = getStroke();
+				setStroke(getFill());
+				showText(trim(text, maxWidth), x, y, true);
+				setStroke(stroke);
+			}
+		});
 	}
 
 	/**
@@ -896,7 +865,16 @@ public class GraphicsContext {
 	}
 
 	public int getGlobalAlpha() {
-		return gc.getAlpha();
+		/*
+		 * TODO: decide if [0;255] or [0;1] is our channel range
+		 * 
+		 * [0;1] => double values => more precision, simple usage (1,0,0,1) ==
+		 * RED
+		 * 
+		 * [0;255] => integer values => less precision, superfluous digits
+		 * (255,0,0,255) == RED
+		 */
+		return (int) states.peek().getGlobalAlpha();
 	}
 
 	public LineCap getLineCap() {
@@ -1072,6 +1050,7 @@ public class GraphicsContext {
 		applyFont(new Font(gc.getDevice(), fontData));
 	}
 
+	// TODO: double vs. int
 	public void setGlobalAlpha(double alpha) {
 		states.peek().setGlobalAlpha(alpha);
 		applyGlobalAlpha(alpha);
@@ -1191,209 +1170,176 @@ public class GraphicsContext {
 	}
 
 	public void stroke() {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
-				path, gc.getDevice());
-		fix253670();
-		gc.drawPath(swtPathStroke);
-		swtPathStroke.dispose();
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils
+						.createSwtPath(path, gc.getDevice());
+				fix253670();
+				gc.drawPath(swtPathStroke);
+				swtPathStroke.dispose();
+			}
+		});
 	}
 
-	public void strokeArc(double x, double y, double w, double h,
-			double startAngleDeg, double angularExtentDeg, ArcType arcType) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		switch (arcType) {
-		case OPEN:
-			gc.drawArc((int) Math.round(x), (int) Math.round(y),
-					(int) Math.round(w), (int) Math.round(h),
-					(int) Math.round(startAngleDeg),
-					(int) Math.round(angularExtentDeg));
-			break;
-		case CHORD:
-			Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
-					Angle.fromDeg(angularExtentDeg));
-			gc.drawArc((int) Math.round(x), (int) Math.round(y),
-					(int) Math.round(w), (int) Math.round(h),
-					(int) Math.round(startAngleDeg),
-					(int) Math.round(angularExtentDeg));
-			Point start = arc.getP1();
-			Point end = arc.getP2();
-			fix253670();
-			gc.drawLine((int) Math.round(end.x), (int) Math.round(end.y),
-					(int) Math.round(start.x), (int) Math.round(start.y));
-			break;
-		case ROUND:
-			arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
-					Angle.fromDeg(angularExtentDeg));
-			gc.drawArc((int) Math.round(x), (int) Math.round(y),
-					(int) Math.round(w), (int) Math.round(h),
-					(int) Math.round(startAngleDeg),
-					(int) Math.round(angularExtentDeg));
-			start = arc.getP1();
-			end = arc.getP2();
-			Point center = arc.getCenter();
-			fix253670();
-			gc.drawLine((int) Math.round(end.x), (int) Math.round(end.y),
-					(int) Math.round(center.x), (int) Math.round(center.y));
-			fix253670();
-			gc.drawLine((int) Math.round(center.x), (int) Math.round(center.y),
-					(int) Math.round(start.x), (int) Math.round(start.y));
-			break;
-		default:
-			throw new IllegalStateException("Unknown ArcType: " + arcType);
-		}
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	// TODO: split strokeArc() into different methods (strokeOpenArc,
+	// strokeChordArc, strokeRoundArc)
+	public void strokeArc(final double x, final double y, final double w,
+			final double h, final double startAngleDeg,
+			final double angularExtentDeg, final ArcType arcType) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				switch (arcType) {
+				case OPEN:
+					gc.drawArc((int) Math.round(x), (int) Math.round(y),
+							(int) Math.round(w), (int) Math.round(h),
+							(int) Math.round(startAngleDeg),
+							(int) Math.round(angularExtentDeg));
+					break;
+				case CHORD:
+					Arc arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+							Angle.fromDeg(angularExtentDeg));
+					gc.drawArc((int) Math.round(x), (int) Math.round(y),
+							(int) Math.round(w), (int) Math.round(h),
+							(int) Math.round(startAngleDeg),
+							(int) Math.round(angularExtentDeg));
+					Point start = arc.getP1();
+					Point end = arc.getP2();
+					fix253670();
+					gc.drawLine((int) Math.round(end.x),
+							(int) Math.round(end.y), (int) Math.round(start.x),
+							(int) Math.round(start.y));
+					break;
+				case ROUND:
+					arc = new Arc(x, y, w, h, Angle.fromDeg(startAngleDeg),
+							Angle.fromDeg(angularExtentDeg));
+					gc.drawArc((int) Math.round(x), (int) Math.round(y),
+							(int) Math.round(w), (int) Math.round(h),
+							(int) Math.round(startAngleDeg),
+							(int) Math.round(angularExtentDeg));
+					start = arc.getP1();
+					end = arc.getP2();
+					Point center = arc.getCenter();
+					fix253670();
+					gc.drawLine((int) Math.round(end.x),
+							(int) Math.round(end.y),
+							(int) Math.round(center.x),
+							(int) Math.round(center.y));
+					fix253670();
+					gc.drawLine((int) Math.round(center.x),
+							(int) Math.round(center.y),
+							(int) Math.round(start.x),
+							(int) Math.round(start.y));
+					break;
+				default:
+					throw new IllegalStateException("Unknown ArcType: "
+							+ arcType);
+				}
+			}
+		});
 	}
 
-	public void strokeLine(double x0, double y0, double x1, double y1) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawLine((int) Math.round(x0), (int) Math.round(y0),
-				(int) Math.round(x1), (int) Math.round(y1));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeLine(final double x0, final double y0, final double x1,
+			final double y1) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawLine((int) Math.round(x0), (int) Math.round(y0),
+						(int) Math.round(x1), (int) Math.round(y1));
+			}
+		});
 	}
 
-	public void strokeOval(double x, double y, double w, double h) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawOval((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeOval(final double x, final double y, final double w,
+			final double h) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawOval((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h));
+			}
+		});
 	}
 
-	public void strokePath(Path path) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils.createSwtPath(
-				path, gc.getDevice());
-
-		fix253670();
-		gc.drawPath(swtPathStroke);
-
-		swtPathStroke.dispose();
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokePath(final Path path) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils
+						.createSwtPath(path, gc.getDevice());
+				fix253670();
+				gc.drawPath(swtPathStroke);
+				swtPathStroke.dispose();
+			}
+		});
 	}
 
-	public void strokePolygon(double[] xs, double[] ys, int n) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawPolygon(SwtUtils.createSwtPointsArray(xs, ys, n));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokePolygon(final double[] xs, final double[] ys, final int n) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawPolygon(SwtUtils.createSwtPointsArray(xs, ys, n));
+			}
+		});
 	}
 
-	public void strokePolyline(double[] xs, double[] ys, int n) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawPolyline(SwtUtils.createSwtPointsArray(xs, ys, n));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokePolyline(final double[] xs, final double[] ys, final int n) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawPolyline(SwtUtils.createSwtPointsArray(xs, ys, n));
+			}
+		});
 	}
 
-	public void strokeRect(double x, double y, double w, double h) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawRectangle((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeRect(final double x, final double y, final double w,
+			final double h) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawRectangle((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h));
+			}
+		});
 	}
 
-	public void strokeRoundRect(double x, double y, double w, double h,
-			double arcWidth, double arcHeight) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		fix253670();
-		gc.drawRoundRectangle((int) Math.round(x), (int) Math.round(y),
-				(int) Math.round(w), (int) Math.round(h),
-				(int) Math.round(arcWidth), (int) Math.round(arcHeight));
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeRoundRect(final double x, final double y, final double w,
+			final double h, final double arcWidth, final double arcHeight) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				fix253670();
+				gc.drawRoundRectangle((int) Math.round(x), (int) Math.round(y),
+						(int) Math.round(w), (int) Math.round(h),
+						(int) Math.round(arcWidth), (int) Math.round(arcHeight));
+			}
+		});
 	}
 
-	public void strokeText(String text, double x, double y) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		showText(text, x, y, false);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeText(final String text, final double x, final double y) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				showText(text, x, y, false);
+			}
+		});
 	}
 
-	public void strokeText(String text, double x, double y, double maxWidth) {
-		int a = getForegroundAlpha();
-		if (a != 255) {
-			gc.setAlpha((int) (255d * (a / 255d) * getGlobalAlpha()));
-		}
-
-		showText(trim(text, maxWidth), x, y, false);
-
-		if (a != 255) {
-			gc.setAlpha(getGlobalAlpha());
-		}
+	public void strokeText(final String text, final double x, final double y,
+			final double maxWidth) {
+		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
+			@Override
+			public void run() {
+				showText(trim(text, maxWidth), x, y, false);
+			}
+		});
 	}
 
 	/**

@@ -54,7 +54,7 @@ public class GraphicsContextState {
 	private double dashOffset;
 
 	public GraphicsContextState() {
-		this(1.0, new AffineTransform(), null, new Paint(new RgbaColor()),
+		this(255, new AffineTransform(), null, new Paint(new RgbaColor()),
 				new Paint(new RgbaColor()), 1.0, LineCap.FLAT, LineJoin.BEVEL,
 				10.0, new FontData("Times", 16, SWT.NORMAL),
 				TextAlignment.LEFT, TextVPos.TOP, FillRule.EVEN_ODD, false,
