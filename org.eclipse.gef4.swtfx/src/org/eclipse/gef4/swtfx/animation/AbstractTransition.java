@@ -5,17 +5,48 @@ import java.util.TimerTask;
 
 public abstract class AbstractTransition {
 
-	public static final int PERIOD = 30;
+	private static final int PERIOD = 30;
 	public static final double INDEFINITE = -1;
 
 	private IInterpolator interpolator = IInterpolator.LINEAR;
 
-	private long durationMillis;
+	/**
+	 * Stores the duration of one animation cycle (in millis), i.e. the time it
+	 * takes for the interpolator to switch from 0 to 1 or vice versa.
+	 */
+	private long cycleDurationMillis;
+
+	// /**
+	// * The number of cycles to execute, i.e. how often the interpolator should
+	// * switch between 0 and 1.
+	// */
+	// private double cycleCount;
+	//
+	// /**
+	// * Specifies if alternating cycles reverse the animation's direction. For
+	// * example, if you have a PathTransition with autoReverse set to
+	// * <code>true</code>, then the object will move back and forth on the
+	// path.
+	// */
+	// private boolean autoReverse;
+	//
+	// /**
+	// * Stores the delay (in millis) for the start of the transition.
+	// */
+	// private long delayMillis;
+	//
+	// /**
+	// * Stores an {@link IEventHandler} that is executed when the animation
+	// * finishes. An animation finishes after
+	// * <code>cycleCount * cycleDuration</code> (millis).
+	// */
+	// private IEventHandler<ActionEvent> onFinished;
+
 	private long startMillis;
 	private boolean running;
 
 	public AbstractTransition(long durationMillis) {
-		this.durationMillis = durationMillis;
+		this.cycleDurationMillis = durationMillis;
 	}
 
 	public abstract void doStep(double t);
@@ -23,7 +54,7 @@ public abstract class AbstractTransition {
 	public abstract void doUpdate();
 
 	public long getDuration() {
-		return durationMillis;
+		return cycleDurationMillis;
 	}
 
 	public IInterpolator getInterpolator() {
@@ -49,7 +80,7 @@ public abstract class AbstractTransition {
 				}
 
 				long deltaMillis = millis - startMillis;
-				double t = deltaMillis / (double) durationMillis;
+				double t = deltaMillis / (double) cycleDurationMillis;
 
 				if (t > 1) {
 					cancel();

@@ -89,7 +89,11 @@ public class CoordinateTrafoTests {
 
 	@Test
 	public void test_pivot_scale() {
+		Pane root = new Pane();
 		ShapeFigure s = new ShapeFigure(new Rectangle(0, 0, 100, 100));
+		new Scene(new Shell(), root);
+		root.addChildNodes(s);
+
 		s.setPivot(new Point(50, 50));
 		s.setScaleX(2);
 		s.setScaleY(2);
