@@ -24,6 +24,7 @@ import org.eclipse.gef4.swtfx.event.IEventDispatcher;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.IEventTarget;
 import org.eclipse.gef4.swtfx.event.TraverseEvent;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The {@link INode} interface is a key abstraction of the SWT FX component.
@@ -42,7 +43,7 @@ public interface INode extends IEventTarget {
 	 * 
 	 * public void onKeyPress(IEventHandler<KeyEvent> handler);
 	 * 
-	 * public void onAction(IEventHandler<ActionEvent> handler);
+	 * public void onSelection(IEventHandler<ActionEvent> handler);
 	 * 
 	 * ... (and many more)
 	 */
@@ -67,7 +68,8 @@ public interface INode extends IEventTarget {
 
 	/**
 	 * Transforms the passed-in absolute {@link Point} to the local coordinate
-	 * system of this {@link INode}.
+	 * system of this {@link INode}. Absolute coordinates are interpreted to be
+	 * relative to the coordinate system of the {@link Display}.
 	 * 
 	 * @param absolute
 	 * @return new {@link Point} holding respective local coordinates
@@ -81,7 +83,8 @@ public interface INode extends IEventTarget {
 	 * Transforms the first passed-in absolute {@link Point} to the local
 	 * coordinate system of this {@link INode}. The second passed-in
 	 * {@link Point} is set to the transformed local coordinates, and therefore
-	 * may not be <code>null</code>.
+	 * may not be <code>null</code>. Absolute coordinates are interpreted to be
+	 * relative to the coordinate system of the {@link Display}.
 	 * 
 	 * @param absoluteIn
 	 * @param localOut
@@ -307,7 +310,7 @@ public interface INode extends IEventTarget {
 	/**
 	 * Returns an {@link AffineTransform} which will transform coordinates from
 	 * the local coordinate system of this {@link INode} to the coordinate
-	 * system of the screen.
+	 * system of the {@link Display}.
 	 * 
 	 * @return an {@link AffineTransform} which will transform coordinates from
 	 *         the local coordinate system of this {@link INode} to the
@@ -501,8 +504,8 @@ public interface INode extends IEventTarget {
 	/**
 	 * Transforms the given x and y coordinates, interpreted as local to this
 	 * {@link INode}'s coordinate system, to the coordinate system of the
-	 * screen. Returns a new {@link Point} holding the transformed absolute
-	 * coordinates.
+	 * {@link Display}. Returns a new {@link Point} holding the transformed
+	 * absolute coordinates.
 	 * 
 	 * @param localX
 	 *            local x coordinate
@@ -515,8 +518,8 @@ public interface INode extends IEventTarget {
 	/**
 	 * Transforms the given x and y coordinates, interpreted as local to this
 	 * {@link INode}'s coordinate system, to the coordinate system of the
-	 * screen. The given {@link Point} is set to the transformed absolute
-	 * coordinates and therefore may not be <code>null</code>.
+	 * {@link Display}. The given {@link Point} is set to the transformed
+	 * absolute coordinates and therefore may not be <code>null</code>.
 	 * 
 	 * @param localX
 	 *            local x coordinate
@@ -530,8 +533,8 @@ public interface INode extends IEventTarget {
 	/**
 	 * Transforms the given {@link Point}, interpreted as local to this
 	 * {@link INode}'s coordinate system, to the coordinate system of the
-	 * screen. Returns a new {@link Point} holding the transformed absolute
-	 * coordinates.
+	 * {@link Display}. Returns a new {@link Point} holding the transformed
+	 * absolute coordinates.
 	 * 
 	 * @param local
 	 *            local {@link Point}
@@ -545,8 +548,9 @@ public interface INode extends IEventTarget {
 	/**
 	 * Transforms the given {@link Point}, interpreted as local to this
 	 * {@link INode}'s coordinate system, to the coordinate system of the
-	 * screen. The secondly given {@link Point} is set to the transformed
-	 * absolute coordinates, and therefore may not be <code>null</code>.
+	 * {@link Display}. The secondly given {@link Point} is set to the
+	 * transformed absolute coordinates, and therefore may not be
+	 * <code>null</code>.
 	 * 
 	 * @param localIn
 	 *            local {@link Point}
@@ -625,7 +629,10 @@ public interface INode extends IEventTarget {
 	public void parentToLocal(Point parentIn, Point localOut);
 
 	/**
-	 * Relocates this {@link INode} to the specified coordinates.
+	 * Relocates this {@link INode} to the specified coordinates within the
+	 * coordinate system of its parent.
+	 * 
+	 * TODO: example: relocate to click location
 	 * 
 	 * @param x
 	 * @param y
