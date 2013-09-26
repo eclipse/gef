@@ -89,10 +89,13 @@ class SwtEventForwarder implements Listener {
 			fireEntered(e, parent, absPos);
 		}
 
+		org.eclipse.swt.graphics.Point scene = receiver.toControl(
+				(int) absPos.x, (int) absPos.y);
+
 		Point localPos = entered.absoluteToLocal(absPos);
 		Event.fireEvent(entered, new MouseEvent(e.widget, entered,
 				MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, localPos.x,
-				localPos.y));
+				localPos.y, scene.x, scene.y, absPos.x, absPos.y));
 	}
 
 	/**
@@ -108,10 +111,13 @@ class SwtEventForwarder implements Listener {
 			fireExited(e, parent, absPos);
 		}
 
+		org.eclipse.swt.graphics.Point scene = receiver.toControl(
+				(int) absPos.x, (int) absPos.y);
+
 		Point localPos = exited.absoluteToLocal(absPos);
 		Event.fireEvent(exited, new MouseEvent(e.widget, exited,
 				MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, localPos.x,
-				localPos.y));
+				localPos.y, scene.x, scene.y, absPos.x, absPos.y));
 	}
 
 	/**
@@ -315,14 +321,22 @@ class SwtEventForwarder implements Listener {
 		}
 	}
 
-	public void transformToTarget(INode target, double x, double y,
-			double[] xyOut) {
+	public void transformMouseCoords(INode target, double x, double y,
+			double[] displayOut, double[] sceneOut, double[] targetOut) {
 		org.eclipse.swt.graphics.Point display = sender.toDisplay((int) x,
 				(int) y);
+		displayOut[0] = display.x;
+		displayOut[1] = display.y;
+
+		org.eclipse.swt.graphics.Point scene = receiver.toControl(display.x,
+				display.y);
+		sceneOut[0] = scene.x;
+		sceneOut[1] = scene.y;
+
 		Point p = new Point(display.x, display.y);
 		target.absoluteToLocal(p, p);
-		xyOut[0] = p.x;
-		xyOut[1] = p.y;
+		targetOut[0] = p.x;
+		targetOut[1] = p.y;
 	}
 
 	protected void unregisterListeners() {
@@ -376,44 +390,60 @@ class SwtEventForwarder implements Listener {
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_RELEASED,
 					e.keyCode, e.character);
 		case SWT.MouseDown: {
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_PRESSED,
-					e.button, e.count, xy[0], xy[1]);
+					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
+					sceneXY[1], displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseEnter: {
-			// TODO: re-think this one
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target,
-					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count, xy[0],
-					xy[1]);
+					MouseEvent.MOUSE_ENTERED_TARGET, e.button, e.count,
+					targetXY[0], targetXY[1], sceneXY[0], sceneXY[1],
+					displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseExit: {
-			// TODO: re-think this one
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target,
-					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count, xy[0],
-					xy[1]);
+					MouseEvent.MOUSE_EXITED_TARGET, e.button, e.count,
+					targetXY[0], targetXY[1], sceneXY[0], sceneXY[1],
+					displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseMove: {
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_MOVED,
-					e.button, e.count, xy[0], xy[1]);
+					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
+					sceneXY[1], displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseWheel: {
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_SCROLLED,
-					e.button, e.count, xy[0], xy[1]);
+					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
+					sceneXY[1], displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseUp: {
-			double[] xy = new double[2];
-			transformToTarget(target, e.x, e.y, xy);
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
 			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_RELEASED,
-					e.button, e.count, xy[0], xy[1]);
+					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
+					sceneXY[1], displayXY[0], displayXY[1]);
 		}
 		case SWT.Traverse:
 			// TODO: re-think this one
