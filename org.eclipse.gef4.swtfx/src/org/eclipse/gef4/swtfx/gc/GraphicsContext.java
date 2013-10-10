@@ -627,15 +627,7 @@ public class GraphicsContext {
 	}
 
 	public void fill() {
-		WITH_ALPHA(this, getBackgroundAlpha(), new Runnable() {
-			@Override
-			public void run() {
-				disposeSwtPathFill();
-				swtPathFill = SwtUtils.createSwtPath(path, gc.getDevice());
-				fix253670();
-				gc.fillPath(swtPathFill);
-			}
-		});
+		fillPath(path);
 	}
 
 	public void fillArc(final double x, final double y, final double w,
