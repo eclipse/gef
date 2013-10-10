@@ -302,6 +302,11 @@ public class GraphicsContext {
 
 	// TODO: split into applyFill(...) and applyStroke(...)
 	private void applyPaint(Paint paint, PaintType type, Rectangle drawingBounds) {
+		// no need to apply anything when nothing is to be drawn
+		if (drawingBounds.getWidth() <= 0 || drawingBounds.getHeight() <= 0) {
+			return;
+		}
+
 		boolean isColor = false;
 
 		switch (paint.getMode()) {
