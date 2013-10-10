@@ -24,6 +24,7 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Path;
@@ -1353,6 +1354,11 @@ public class GraphicsContext {
 		states.peek().setGuarded(false);
 	}
 
+	public Dimension textExtent(String text) {
+		org.eclipse.swt.graphics.Point textExtent = gc.textExtent(text);
+		return new Dimension(textExtent.x, textExtent.y);
+	}
+
 	public void transform(AffineTransform transform) {
 		states.peek().getTransformByReference().concatenate(transform);
 		applyTransform(states.peek().getTransformByReference());
@@ -1374,6 +1380,7 @@ public class GraphicsContext {
 	 * @return
 	 */
 	private String trim(String text, double maxWidth) {
+		// TODO: check if GC.textExtent() works correctly.
 		// TODO: find a better way to determine the visible text
 		// 1) clip to a rect with corresponding width
 		// 2) binary search text length
