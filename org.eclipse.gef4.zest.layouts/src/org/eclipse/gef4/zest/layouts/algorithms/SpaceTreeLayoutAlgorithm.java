@@ -1128,6 +1128,42 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	private double branchGap = leafGap + 5;
 	private double layerGap = 20;
 
+	/**
+	 * Sets the distance between leaf nodes. Default value is 15.
+	 * 
+	 */
+	public void setLeafGap(double value) {
+		this.leafGap = value;
+	}
+
+	/**
+	 * Sets the distance between branches. Default value is 20.
+	 * 
+	 */
+	public void setBranchGap(double value) {
+		this.branchGap = value;
+	}
+
+	/**
+	 * Sets the distance between layers. Default value is 20.
+	 * 
+	 */
+	public void setLayerGap(double value) {
+		this.layerGap = value;
+	}
+
+	public double getLeafGap() {
+		return this.leafGap;
+	}
+
+	public double getBranchGap() {
+		return this.branchGap;
+	}
+
+	public double getLayerGap() {
+		return this.layerGap;
+	}
+
 	private boolean directionChanged = false;
 
 	private LayoutContext context;
