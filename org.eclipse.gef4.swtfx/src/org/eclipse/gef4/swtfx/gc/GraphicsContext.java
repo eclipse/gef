@@ -1168,16 +1168,7 @@ public class GraphicsContext {
 	}
 
 	public void stroke() {
-		WITH_ALPHA(this, getForegroundAlpha(), new Runnable() {
-			@Override
-			public void run() {
-				org.eclipse.swt.graphics.Path swtPathStroke = SwtUtils
-						.createSwtPath(path, gc.getDevice());
-				fix253670();
-				gc.drawPath(swtPathStroke);
-				swtPathStroke.dispose();
-			}
-		});
+		strokePath(path);
 	}
 
 	// TODO: split strokeArc() into different methods (strokeOpenArc,
