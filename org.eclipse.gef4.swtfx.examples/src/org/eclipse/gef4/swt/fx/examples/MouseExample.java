@@ -19,6 +19,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
@@ -28,7 +29,6 @@ import org.eclipse.gef4.swtfx.event.MouseEvent;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LineCap;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
-import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -48,7 +48,7 @@ public class MouseExample implements IExample {
 							// System.out.println("drag start");
 							node.requestFocus();
 							dragging = true;
-							offset = new Point(e.getX(), e.getY());
+							offset = new Point(e.getTargetX(), e.getTargetY());
 							if (node instanceof ShapeFigure) {
 								Point parentOut = new Point();
 								node.localToParent(offset, parentOut);
@@ -75,11 +75,21 @@ public class MouseExample implements IExample {
 						@Override
 						public void handle(MouseEvent e) {
 							if (dragging) {
-								Point cursor = new Point(e.getX(), e.getY());
+								Point cursor = new Point(e.getTargetX(), e
+										.getTargetY());
 								node.localToParent(cursor, cursor);
 								node.relocate(cursor.x - offset.x, cursor.y
 										- offset.y);
 								node.getScene().refreshVisuals();
+
+								System.out.println(node.getParentNode()
+										.getLayoutBounds());
+								System.out.println("  "
+										+ node.getParentNode()
+												.getBoundsInLocal());
+								System.out.println("    "
+										+ node.getParentNode()
+												.getBoundsInParent());
 							}
 						}
 					});
@@ -88,7 +98,7 @@ public class MouseExample implements IExample {
 
 	public class ParentTransformer {
 		private boolean dragging = false;
-		private Point start;
+		private Point start = new Point();
 		private AffineTransform startTx;
 
 		public ParentTransformer(final IParent parent) {
@@ -99,14 +109,10 @@ public class MouseExample implements IExample {
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
-							// if (event.getButton() == 1) {
-							// System.out.println("mouse pointer at "
-							// + event.getX() + ", " + event.getY());
-							// }
 							if (event.getButton() == 3) {
 								dragging = true;
-								start = tx.getTransformed(new Point(event
-										.getX(), event.getY()));
+								start.x = event.getSceneX();
+								start.y = event.getSceneY();
 								startTx = tx.getCopy();
 							}
 						}
@@ -122,15 +128,9 @@ public class MouseExample implements IExample {
 					new IEventHandler<MouseEvent>() {
 						@Override
 						public void handle(MouseEvent event) {
-							// TODO: simplify transformation calculation
 							if (dragging) {
-								double x = event.getX();
-								double y = event.getY();
-
-								Point transformed = tx
-										.getTransformed(new Point(x, y));
-								x = transformed.x;
-								y = transformed.y;
+								double x = event.getSceneX();
+								double y = event.getSceneY();
 
 								double angleDeg = y - start.y;
 								double zoom = 1 + Math.abs(x - start.x) / 100;
@@ -147,8 +147,7 @@ public class MouseExample implements IExample {
 
 								tx.setTransform(newTx);
 
-								// System.out.println("new transform: " + tx);
-
+								// TODO: make this call unnecessary
 								parent.getScene().refreshVisuals();
 							}
 						}
@@ -192,11 +191,31 @@ public class MouseExample implements IExample {
 
 	@Override
 	public void addUi(final IParent realRoot) {
-		final Pane root = new Pane();
+		final Group root = new Group();
+		this.root = root;
+
+		realRoot.addChildNodes(new ShapeFigure(new Rectangle()) {
+			{
+				setFill(new RgbaColor(0, 0, 0, 0));
+				setStroke(new RgbaColor(0, 255, 0, 255));
+			}
+
+			@Override
+			public void doPaint(GraphicsContext g) {
+				// TODO: make ShapeFigure generic: ShapeFigure<T extends IShape>
+				// => T getShape();
+				for (Rectangle r : new Rectangle[] { root.getLayoutBounds(),
+						rectFigure.getBoundsInParent(),
+						ovalFigure.getBoundsInParent() }) {
+					((Rectangle) getShape()).setBounds(r);
+					super.doPaint(g);
+				}
+			}
+		});
+
+		root.addChildNodes(rectFigure, ovalFigure);
 		realRoot.addChildNodes(root);
 
-		this.root = root;
-		root.addChildNodes(rectFigure, ovalFigure);
 		new NodeDragger(rectFigure);
 		new NodeDragger(ovalFigure);
 		new ParentTransformer(root);
@@ -204,7 +223,7 @@ public class MouseExample implements IExample {
 		resetButton = new ControlNode<Button>(new Button(root.getScene(),
 				SWT.PUSH));
 		resetButton.getControl().setText("Reset");
-		resetButton.addEventHandler(ActionEvent.SELECTION,
+		resetButton.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -215,7 +234,7 @@ public class MouseExample implements IExample {
 		quitButton = new ControlNode<Button>(new Button(root.getScene(),
 				SWT.PUSH));
 		quitButton.getControl().setText("Quit");
-		quitButton.addEventHandler(ActionEvent.SELECTION,
+		quitButton.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {

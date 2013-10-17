@@ -25,6 +25,7 @@ import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
@@ -47,7 +48,8 @@ public class TestFigures {
 		shell.setLayout(new GridLayout());
 
 		final Pane root = new Pane();
-		new Scene(shell, root);
+		Scene scene = new Scene(shell, root);
+		scene.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		AbstractFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
 		rect.setFill(new RgbaColor(0, 128, 128));
@@ -71,7 +73,7 @@ public class TestFigures {
 		button.relocate(300, 100);
 		button.setPrefWidth(100);
 		button.setPrefHeight(50);
-		button.addEventHandler(ActionEvent.SELECTION,
+		button.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -84,8 +86,6 @@ public class TestFigures {
 		shell.pack();
 		shell.open();
 		shell.redraw();
-
-		root.layout();
 
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

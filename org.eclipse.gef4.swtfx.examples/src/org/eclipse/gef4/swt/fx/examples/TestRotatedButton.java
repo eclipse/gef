@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Button;
 
 public class TestRotatedButton implements IExample {
 
+	// TODO: DOES NOT WORK CURRENTLY! FIX IT!
+
 	private static final int ROTATION_ANGLE_DEG = 15;
 
 	public static void main(String[] args) {
@@ -51,7 +53,7 @@ public class TestRotatedButton implements IExample {
 
 		root.addChildNodes(pushCw, pushCcw, rect);
 
-		pushCw.addEventHandler(ActionEvent.SELECTION,
+		pushCw.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {

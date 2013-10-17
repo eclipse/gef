@@ -84,7 +84,7 @@ public class SceneExample {
 		ControlNode<Button> controlNode = new ControlNode<Button>(new Button(
 				scene, SWT.TOGGLE));
 		controlNode.getControl().setText("blank");
-		controlNode.addEventHandler(ActionEvent.SELECTION,
+		controlNode.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {

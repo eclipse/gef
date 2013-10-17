@@ -46,7 +46,7 @@ public class TryOutPane {
 		Button button = new Button(pane.getScene(), SWT.PUSH);
 		button.setText(label);
 		ControlNode<Button> controlNode = new ControlNode<Button>(button);
-		controlNode.addEventHandler(ActionEvent.SELECTION,
+		controlNode.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
