@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.swt;bundle-version="3.7.0",
 Eclipse-LazyStart: false
 Export-Package: org.eclipse.gef4.zest.core.widgets,
  org.eclipse.gef4.zest.core.widgets.custom,
+ org.eclipse.gef4.zest.core.widgets.decoration,
  org.eclipse.gef4.zest.core.widgets.gestures,
  org.eclipse.gef4.zest.core.widgets.internal;x-internal:=true,
  org.eclipse.gef4.zest.core.widgets.zooming

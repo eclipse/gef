@@ -7,6 +7,7 @@
  * 
  * Contributors: The Chisel Group, University of Victoria 
  *               Mateusz Matela
+ *               Zoltan Ujhelyi
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
@@ -36,6 +37,9 @@ import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.zest.core.widgets.decoration.DefaultConnectionDecorator;
+import org.eclipse.gef4.zest.core.widgets.decoration.DirectedConnectionDecorator;
+import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.gestures.RotateGestureListener;
 import org.eclipse.gef4.zest.core.widgets.gestures.ZoomGestureListener;
 import org.eclipse.gef4.zest.core.widgets.internal.ContainerFigure;
@@ -110,6 +114,8 @@ public class Graph extends FigureCanvas implements IContainer {
 	private ZestRootLayer zestRootLayer;
 
 	private ConnectionRouter defaultConnectionRouter;
+	private IConnectionDecorator defaultConnectionDecorator = new DefaultConnectionDecorator();
+	private IConnectionDecorator defaultDirectedConnectionDecorator = new DirectedConnectionDecorator();
 	private ZoomManager zoomManager = null;
 	boolean animate = false;
 
@@ -1304,6 +1310,52 @@ public class Graph extends FigureCanvas implements IContainer {
 	 */
 	ConnectionRouter getDefaultConnectionRouter() {
 		return defaultConnectionRouter;
+	}
+
+	/**
+	 * @return The default connection decorator for undirected connections;
+	 *         never null
+	 */
+	public IConnectionDecorator getDefaultConnectionDecorator() {
+		return defaultConnectionDecorator;
+	}
+
+	/**
+	 * Sets the connection decorator used for adding source and target
+	 * decorations. Only called for undirected edges.
+	 * 
+	 * @param connectionDecorator
+	 *            the defaultConnectionDecorator to set; or null to reset to
+	 *            default
+	 */
+	public void setDefaultConnectionDecorator(
+			IConnectionDecorator connectionDecorator) {
+		if (connectionDecorator == null) {
+			this.defaultConnectionDecorator = new DefaultConnectionDecorator();
+		} else {
+			this.defaultConnectionDecorator = connectionDecorator;
+		}
+	}
+
+	/**
+	 * @return The default connection decorator for directed connections; never
+	 *         null
+	 */
+	public IConnectionDecorator getDefaultDirectedConnectionDecorator() {
+		return defaultDirectedConnectionDecorator;
+	}
+
+	/**
+	 * Sets the connection decorator used for adding source and target
+	 * decorations. Only called for directed edges.
+	 * 
+	 * @param connectionDecorator
+	 *            the defaultConnectionDecorator to set; or null to reset to
+	 *            default
+	 */
+	public void setDefaultDirectedConnectionDecorator(
+			IConnectionDecorator connectionDecorator) {
+		this.defaultDirectedConnectionDecorator = connectionDecorator;
 	}
 
 	/**

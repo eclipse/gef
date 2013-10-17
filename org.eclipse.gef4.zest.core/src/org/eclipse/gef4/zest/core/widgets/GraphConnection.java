@@ -7,6 +7,7 @@
  * 
  * Contributors: The Chisel Group, University of Victoria 
  *               Mateusz Matela
+ *               Zoltan Ujhelyi
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
@@ -19,10 +20,10 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Locator;
 import org.eclipse.draw2d.MidpointLocator;
-import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.internal.LoopAnchor;
 import org.eclipse.gef4.zest.core.widgets.internal.PolylineArcConnection;
 import org.eclipse.gef4.zest.core.widgets.internal.RoundedChopboxAnchor;
@@ -76,6 +77,8 @@ public class GraphConnection extends GraphItem {
 	private boolean hasCustomTooltip;
 
 	private ConnectionRouter router = null;
+
+	private IConnectionDecorator connectionDecorator = null;
 
 	public GraphConnection(Graph graphModel, int style, GraphNode source,
 			GraphNode destination) {
@@ -622,19 +625,6 @@ public class GraphConnection extends GraphItem {
 		if (connectionFigure != null) {
 			applyConnectionRouter(connectionFigure);
 		}
-		if ((connectionStyle & ZestStyles.CONNECTIONS_DIRECTED) > 0) {
-			PolygonDecoration decoration = new PolygonDecoration();
-			if (getLineWidth() < 3) {
-				decoration.setScale(9, 3);
-			} else {
-				double logLineWith = getLineWidth() / 2.0;
-				decoration.setScale(7 * logLineWith, 3 * logLineWith);
-			}
-			if (connection instanceof PolylineConnection) {
-				((PolylineArcConnection) connection)
-						.setTargetDecoration(decoration);
-			}
-		}
 
 		IFigure toolTip;
 		if (this.getTooltip() == null && getText() != null
@@ -684,6 +674,8 @@ public class GraphConnection extends GraphItem {
 		connectionFigure.setSourceAnchor(sourceAnchor);
 		connectionFigure.setTargetAnchor(targetAnchor);
 		connectionFigure.add(this.connectionLabel, labelLocator);
+
+		applyDecoration(connectionFigure);
 
 		doUpdateFigure(connectionFigure);
 		return connectionFigure;
@@ -764,6 +756,16 @@ public class GraphConnection extends GraphItem {
 		}
 	}
 
+	void applyDecoration(PolylineArcConnection conn) {
+		IConnectionDecorator decorator = connectionDecorator;
+		if (decorator == null) {
+			decorator = ((connectionStyle & ZestStyles.CONNECTIONS_DIRECTED) > 0) ? getGraphModel()
+					.getDefaultDirectedConnectionDecorator() : getGraphModel()
+					.getDefaultConnectionDecorator();
+		}
+		decorator.decorateConnection(this, conn);
+	}
+
 	/**
 	 * Sets the connection router of the connection
 	 * 
@@ -774,4 +776,10 @@ public class GraphConnection extends GraphItem {
 		this.router = router;
 	}
 
+	public void setConnectionDecoration(IConnectionDecorator connectionDecorator) {
+		this.connectionDecorator = connectionDecorator;
+		if (connectionFigure != null) {
+			updateFigure(connectionFigure);
+		}
+	}
 }
