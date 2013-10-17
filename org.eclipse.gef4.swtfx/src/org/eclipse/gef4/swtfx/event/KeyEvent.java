@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.event;
 
-
 public class KeyEvent extends InputEvent {
 
 	public static final EventType<KeyEvent> ANY = new EventType<KeyEvent>(
@@ -28,12 +27,15 @@ public class KeyEvent extends InputEvent {
 
 	private int code;
 	private char sym;
+	private int stateMask;
 
 	public KeyEvent(Object source, IEventTarget target,
-			EventType<? extends KeyEvent> type, int code, char sym) {
+			EventType<? extends KeyEvent> type, int code, char sym,
+			int stateMask) {
 		super(source, target, type);
 		this.code = code;
 		this.sym = sym;
+		this.stateMask = stateMask;
 	}
 
 	public char getChar() {
@@ -42,6 +44,10 @@ public class KeyEvent extends InputEvent {
 
 	public int getCode() {
 		return code;
+	}
+
+	public int getStateMask() {
+		return stateMask;
 	}
 
 	@Override
