@@ -26,7 +26,7 @@ public class ActionEvent extends Event {
 	public static final EventType<ActionEvent> ANY = new EventType<ActionEvent>(
 			Event.ANY, "ActionEvent");
 
-	public static final EventType<ActionEvent> SELECTION = new EventType<ActionEvent>(
+	public static final EventType<ActionEvent> ACTION = new EventType<ActionEvent>(
 			ANY, "SelectionEvent");
 
 	public static final EventType<ActionEvent> RESIZE = new EventType<ActionEvent>(

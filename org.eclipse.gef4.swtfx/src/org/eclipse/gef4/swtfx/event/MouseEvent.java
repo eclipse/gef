@@ -22,6 +22,7 @@ import org.eclipse.gef4.swtfx.INode;
  * <li>MOUSE_RELEASED: fired when a mouse button is released.</li>
  * <li>MOUSE_SCROLLED: fired when the mouse wheel is scrolled.</li>
  * <li>MOUSE_MOVED: fired when the mouse is moved.</li>
+ * <li>TODO: MOUSE_DRAGGED: fired when the mouse is moved while being pressed.</li>
  * <li>MOUSE_ENTERED_TARGET: fired when the mouse enters an {@link INode}</li>
  * <li>MOUSE_EXITED_TARGET: fired when the mouse exits an {@link INode}</li>
  * <li>MOUSE_ENTERED: only send to the entered {@link INode}</li>
