@@ -27,8 +27,8 @@ import org.eclipse.gef4.swtfx.TextFigure;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.AnchorPane;
 import org.eclipse.gef4.swtfx.layout.AnchorPaneConstraints;
-import org.eclipse.gef4.swtfx.layout.HBoxSimple;
-import org.eclipse.gef4.swtfx.layout.VBoxSimple;
+import org.eclipse.gef4.swtfx.layout.HBox;
+import org.eclipse.gef4.swtfx.layout.VBox;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
@@ -63,9 +63,9 @@ public class LayoutSample extends Application {
 
 	@Override
 	public Scene start(Shell shell) {
-		VBoxSimple root = new VBoxSimple();
+		VBox root = new VBox();
 
-		HBoxSimple hbox = new HBoxSimple();
+		HBox hbox = new HBox();
 		AnchorPane anchorPane = new AnchorPane();
 
 		Scene scene = new Scene(shell, root);
@@ -74,9 +74,9 @@ public class LayoutSample extends Application {
 		root.setGrower(anchorPane);
 
 		// fill HBox
-		VBoxSimple col1 = new VBoxSimple();
-		VBoxSimple col2 = new VBoxSimple();
-		VBoxSimple col3 = new VBoxSimple();
+		VBox col1 = new VBox();
+		VBox col2 = new VBox();
+		VBox col3 = new VBox();
 		hbox.addChildNodes(col1, col2, col3);
 
 		col1.addChildNodes(

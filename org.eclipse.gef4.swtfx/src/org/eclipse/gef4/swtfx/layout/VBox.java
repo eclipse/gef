@@ -12,44 +12,100 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.layout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.gef4.swtfx.INode;
 
 public class VBox extends Pane {
 
+	private Map<INode, Boolean> fill = new HashMap<INode, Boolean>();
+	private INode grower = null;
+
+	public VBox() {
+	}
+
+	public void add(INode node, boolean fill) {
+		addChildNodes(node);
+		this.fill.put(node, fill);
+	}
+
+	private double getDeltaHeight(INode[] managed, double height) {
+		double totalHeight = 0;
+		for (INode n : managed) {
+			totalHeight += n.getLayoutBounds().getHeight();
+		}
+		return height - totalHeight;
+	}
+
+	public Boolean getFill(INode node) {
+		if (fill.containsKey(node)) {
+			return fill.get(node);
+		}
+		return false;
+	}
+
+	public INode getGrower() {
+		return grower;
+	}
+
 	@Override
 	public void layoutChildren() {
-		double width = getWidth();
-		// double height = getHeight();
-
-		// resize-relocate all managed children
-		double y = 0;
-		for (INode child : getChildNodes()) {
-			if (child.isManaged()) {
-				double h = child.computePrefHeight(width);
-				// double w = child.computePrefWidth(h);
-				child.relocate(0, y);
-				if (child.isResizable()) {
-					// TODO: change width to local w when constraints work
-					child.resize(width, h);
-				}
-				y += h;
-				/*
-				 * TODO: Respect baseline-offset setting, allow padding/spacing
-				 * constraints, allow grow-priority constraint.
-				 */
-			}
+		INode[] managed = getManagedChildren();
+		if (managed == null || managed.length == 0) {
+			return;
 		}
 
-		// double restHeight = height - y;
-		//
-		// for (INode child : getChildNodes()) {
-		// if (child.isManaged() && child.isResizable()) {
-		// double h = child.getLayoutBounds().getHeight() + restHeight;
-		// double w = child.computePrefWidth(h);
-		// child.resize(w, h);
-		// setHeight(height);
-		// break;
-		// }
-		// }
+		// auto-size to determine pref-bounds
+		super.layoutChildren();
+
+		// get available space
+		double width = getWidth();
+		double height = getHeight();
+
+		// compute delta space
+		double deltaHeight = getDeltaHeight(managed, height);
+
+		// compute delta space per child
+		double y = 0;
+		double perChild = deltaHeight / managed.length;
+
+		for (INode n : managed) {
+			double w = n.getLayoutBounds().getWidth();
+			double h = n.getLayoutBounds().getHeight();
+
+			n.relocate(0, y);
+
+			if (n.isResizable()) {
+				double newWidth = w > width ? width : w;
+				double newHeight = h + perChild;
+
+				if (grower != null) {
+					newHeight = h;
+					if (grower == n) {
+						newHeight += deltaHeight;
+					}
+				}
+
+				if (fill.containsKey(n)) {
+					if (fill.get(n)) {
+						newWidth = width;
+					}
+				}
+
+				n.resize(newWidth, newHeight);
+				y += newHeight;
+			} else {
+				y += h;
+			}
+		}
+	}
+
+	public void setFill(INode node, Boolean fill) {
+		this.fill.put(node, fill);
+	}
+
+	public void setGrower(INode node) {
+		grower = node;
 	}
 }

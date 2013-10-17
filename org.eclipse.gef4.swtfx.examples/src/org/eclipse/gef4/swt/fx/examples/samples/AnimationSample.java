@@ -22,9 +22,9 @@ import org.eclipse.gef4.swtfx.TextFigure;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
-import org.eclipse.gef4.swtfx.layout.HBoxSimple;
+import org.eclipse.gef4.swtfx.layout.HBox;
 import org.eclipse.gef4.swtfx.layout.Pane;
-import org.eclipse.gef4.swtfx.layout.VBoxSimple;
+import org.eclipse.gef4.swtfx.layout.VBox;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
@@ -45,10 +45,10 @@ public class AnimationSample extends Application {
 
 	@Override
 	public Scene start(Shell shell) {
-		HBoxSimple root = new HBoxSimple();
+		HBox root = new HBox();
 		Scene scene = new Scene(shell, root);
 
-		VBoxSimple vbox = new VBoxSimple();
+		VBox vbox = new VBox();
 		Pane pane = new Pane();
 		root.addChildNodes(vbox, pane);
 		root.setGrower(pane);

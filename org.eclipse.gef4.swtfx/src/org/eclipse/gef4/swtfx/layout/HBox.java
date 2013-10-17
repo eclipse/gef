@@ -12,248 +12,110 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.layout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.swtfx.INode;
 
 public class HBox extends Pane {
 
-	private Map<INode, HBoxConstraints> constraints = new HashMap<INode, HBoxConstraints>();
+	private Map<INode, Boolean> fill = new HashMap<INode, Boolean>();
+	private INode grower = null;
 
-	public void add(INode node, HBoxConstraints constraints) {
+	public HBox() {
+	}
+
+	// private double getDeltaHeight(INode[] managed, double height) {
+	// double totalHeight = 0;
+	// for (INode n : managed) {
+	// totalHeight += n.getLayoutBounds().getHeight();
+	// }
+	// return height - totalHeight;
+	// }
+
+	public void add(INode node, boolean fill) {
 		addChildNodes(node);
-		this.constraints.put(node, constraints);
+		this.fill.put(node, fill);
 	}
 
-	private double[] collectPrefWidths(INode[] managed) {
-		double[] prefWidths = new double[managed.length];
-		for (int i = 0; i < managed.length; i++) {
-			prefWidths[i] = managed[i].computePrefWidth(getHeight());
+	private double getDeltaWidth(INode[] managed, double width) {
+		double totalWidth = 0;
+		for (INode n : managed) {
+			totalWidth += n.getLayoutBounds().getWidth();
 		}
-		return prefWidths;
+		return width - totalWidth;
 	}
 
-	public HBoxConstraints getConstraints(INode node) {
-		if (node.getParentNode() != this) {
-			throw new IllegalArgumentException("The given node (" + node
-					+ ") is not a child of this HBox.");
+	public Boolean getFill(INode node) {
+		if (fill.containsKey(node)) {
+			return fill.get(node);
 		}
-		if (!constraints.containsKey(node)) {
-			constraints.put(node, new HBoxConstraints());
-		}
-		return constraints.get(node);
+		return false;
+	}
+
+	public INode getGrower() {
+		return grower;
 	}
 
 	@Override
 	public void layoutChildren() {
-		double availableWidth = getWidth();
-		double availableHeight = getHeight();
-
-		// System.out.println("available space: " + availableWidth + " x "
-		// + availableHeight);
-
 		INode[] managed = getManagedChildren();
-		double[] prefWidths = collectPrefWidths(managed);
-		double prefWidth = sum(prefWidths);
-
-		double d = availableWidth - prefWidth;
-		if (d > 0) {
-			// System.out.println("excess width = " + d);
-
-			int[][] groups = sortByPrio(managed, true);
-			for (int i = 0; i < groups.length; i++) {
-				double socialPart = d / groups[i].length;
-
-				for (int j = 0; j < groups[i].length; j++) {
-					int index = groups[i][j];
-					INode n = managed[index];
-
-					double maxWidth = maxWidth(n);
-					if (maxWidth >= prefWidths[index] + socialPart) {
-						prefWidths[index] += socialPart;
-					} else {
-						prefWidths[index] = maxWidth;
-					}
-				}
-			}
-		} else if (d < 0) {
-			// System.out.println("  insufficient width = " + d);
-
-			int[][] groups = sortByPrio(managed, false);
-			for (int i = 0; i < groups.length; i++) {
-				// d is negative => socalPart is positive
-				double socialPart = -d / groups[i].length;
-
-				for (int j = 0; j < groups[i].length; j++) {
-					int index = groups[i][j];
-					INode n = managed[index];
-
-					// System.out.println("    pref-width(" + n + ") = "
-					// + prefWidths[index]);
-
-					double minWidth = minWidth(n);
-					if (minWidth <= prefWidths[index] - socialPart) {
-						prefWidths[index] -= socialPart;
-					} else {
-						// double rest = minWidth - prefWidths[index] +
-						// socialPart;
-						// socialPart += rest / groups[i].length;
-						prefWidths[index] = minWidth;
-					}
-
-					// System.out.println("    -> " + prefWidths[index]);
-				}
-			}
+		if (managed == null || managed.length == 0) {
+			return;
 		}
 
+		// auto-size to determine pref-bounds
+		super.layoutChildren();
+
+		// get available space
+		double width = getWidth();
+		double height = getHeight();
+
+		// compute delta space
+		double deltaWidth = getDeltaWidth(managed, width);
+		// double deltaHeight = getDeltaHeight(managed, height);
+
+		// compute delta space per child
 		double x = 0;
+		double perChild = deltaWidth / managed.length;
 
-		for (int i = 0; i < managed.length; i++) {
-			INode child = managed[i];
-			double w = prefWidths[i];
-			double h = child.computePrefHeight(w);
+		for (INode n : managed) {
+			double w = n.getLayoutBounds().getWidth();
+			double h = n.getLayoutBounds().getHeight();
 
-			child.relocate(x, 0);
-			if (child.isResizable()) {
-				child.resize(w, h);
-			}
+			n.relocate(x, 0);
 
-			x += w;
+			if (n.isResizable()) {
+				double newWidth = w + perChild;
+				double newHeight = h > height ? height : h;
 
-			/*
-			 * TODO: Respect baseline-offset setting, allow padding/spacing
-			 * constraints, allow grow-priority constraint.
-			 */
-		}
-	}
+				if (grower != null) {
+					newWidth = w;
+					if (grower == n) {
+						newWidth += deltaWidth;
+					}
+				}
 
-	private double maxWidth(INode n) {
-		double mw = n.getMaxWidth();
-		if (mw == USE_COMPUTED_SIZE) {
-			return n.computeMaxWidth(getHeight());
-		}
-		return mw;
-	}
+				if (fill.containsKey(n)) {
+					if (fill.get(n)) {
+						newHeight = height;
+					}
+				}
 
-	private double minWidth(INode n) {
-		double minWidth = n.getMinWidth();
-		// System.out.println("minWidth(" + n + ") = " + minWidth);
-		if (minWidth == INode.USE_COMPUTED_SIZE) {
-			return n.computeMinWidth(getHeight());
-		}
-		return minWidth;
-	}
-
-	private int[][] sortByPrio(final INode[] managed, boolean growing) {
-		if (managed.length < 1) {
-			return new int[0][0];
-		}
-
-		// sort by grow priority
-		Integer[] indices = new Integer[managed.length];
-		int lenResizable = 0;
-		for (int i = 0; i < indices.length; i++) {
-			if (managed[i].isResizable()) {
-				indices[i] = i;
-				lenResizable++;
+				n.resize(newWidth, newHeight);
+				x += newWidth;
 			} else {
-				indices[i] = -1;
+				x += w;
 			}
 		}
-
-		if (lenResizable == 0) {
-			return new int[0][0];
-		}
-
-		Integer[] sorted = new Integer[lenResizable];
-		for (int i = 0, j = 0; i < indices.length; i++) {
-			if (indices[i] >= 0) {
-				sorted[j] = indices[i];
-				j++;
-			}
-		}
-
-		// sort by (grow|shrink) priority
-		if (growing) {
-			Arrays.sort(sorted, new Comparator<Integer>() {
-				@Override
-				public int compare(Integer a, Integer b) {
-					double ca = getConstraints(managed[a]).getGrowPriority();
-					double cb = getConstraints(managed[b]).getGrowPriority();
-					return ca < cb ? -1 : ca > cb ? 1 : 0;
-				}
-			});
-		} else {
-			Arrays.sort(sorted, new Comparator<Integer>() {
-				@Override
-				public int compare(Integer a, Integer b) {
-					double ca = getConstraints(managed[a]).getShrinkPriority();
-					double cb = getConstraints(managed[b]).getShrinkPriority();
-					return ca < cb ? -1 : ca > cb ? 1 : 0;
-				}
-			});
-		}
-
-		// get indices groups
-		List<int[]> groups = new ArrayList<int[]>();
-
-		// assign the first child to a group
-		HBoxConstraints first = getConstraints(managed[sorted[0]]);
-		double p = growing ? first.getGrowPriority() : first
-				.getShrinkPriority();
-		List<Integer> group = new ArrayList<Integer>();
-		group.add(sorted[0]);
-
-		// assign all children to their groups
-		for (int i = 1; i < sorted.length; i++) {
-			Integer managedIndex = sorted[i];
-			HBoxConstraints c = getConstraints(managed[managedIndex]);
-			double gp = growing ? c.getGrowPriority() : c.getShrinkPriority();
-			if (gp == p) {
-				group.add(managedIndex);
-			} else {
-				// store group
-				int[] g = new int[group.size()];
-				for (int j = 0; j < g.length; j++) {
-					g[j] = group.get(j);
-				}
-				groups.add(g);
-
-				// start new group
-				group.clear();
-				group.add(managedIndex);
-				p = gp;
-			}
-		}
-
-		// store last group
-		if (group.size() > 0) {
-			int[] g = new int[group.size()];
-			for (int j = 0; j < g.length; j++) {
-				g[j] = group.get(j);
-			}
-			groups.add(g);
-		}
-
-		// map indices to managed (the array indices)
-		int[][] prioGroups = new int[groups.size()][];
-		for (int i = 0; i < groups.size(); i++) {
-			prioGroups[i] = groups.get(i);
-		}
-		return prioGroups;
 	}
 
-	private double sum(double[] nums) {
-		double sum = 0;
-		for (double i : nums) {
-			sum += i;
-		}
-		return sum;
+	public void setFill(INode node, Boolean fill) {
+		this.fill.put(node, fill);
+	}
+
+	public void setGrower(INode node) {
+		grower = node;
 	}
 
 }
