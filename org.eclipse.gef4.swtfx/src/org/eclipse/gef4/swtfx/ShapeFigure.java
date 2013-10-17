@@ -20,12 +20,12 @@ import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.gef4.swtfx.gc.LineCap;
 import org.eclipse.gef4.swtfx.gc.LineJoin;
 
-public class ShapeFigure extends AbstractFigure {
+public class ShapeFigure<T extends IShape> extends AbstractFigure {
 
-	private IShape shape;
+	private T shape;
 	private StrokeType strokeType = StrokeType.CENTER;
 
-	public ShapeFigure(IShape shape) {
+	public ShapeFigure(T shape) {
 		this.shape = shape;
 	}
 
@@ -109,7 +109,7 @@ public class ShapeFigure extends AbstractFigure {
 		return getPaintStateByReference().getLineJoin();
 	}
 
-	public IShape getShape() {
+	public T getShape() {
 		return shape;
 	}
 
