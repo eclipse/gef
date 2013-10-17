@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
 import org.eclipse.gef4.geometry.planar.Point;
@@ -6,7 +18,6 @@ import org.eclipse.gef4.swtfx.event.Event;
 import org.eclipse.gef4.swtfx.event.KeyEvent;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
 import org.eclipse.gef4.swtfx.event.SwtEvent;
-import org.eclipse.gef4.swtfx.event.TraverseEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -28,13 +39,20 @@ class SwtEventForwarder implements Listener {
 			SWT.Resize, SWT.Selection, SWT.SetData, SWT.Settings, SWT.Show,
 			SWT.Skin, SWT.Traverse, SWT.Verify };
 
-	final public static int[] MOUSE_EVENT_TYPES = new int[] {
+	public static final int[] MOUSE_EVENT_TYPES = new int[] {
 			SWT.MouseDoubleClick, SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
 			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
 			SWT.MouseUp, SWT.MouseVerticalWheel };
 
-	final public static int[] KEYBOARD_EVENT_TYPES = new int[] { SWT.KeyDown,
+	public static final int[] KEYBOARD_EVENT_TYPES = new int[] { SWT.KeyDown,
 			SWT.KeyUp };
+
+	private static final int[] UNSUPPORTED_EVENT_TYPES = new int[] {
+			SWT.Activate, SWT.Arm, SWT.Close, SWT.Collapse, SWT.Deactivate,
+			SWT.Deiconify, SWT.DefaultSelection, SWT.Dispose, SWT.DragDetect,
+			SWT.Expand, SWT.FocusIn, SWT.FocusOut, SWT.Gesture, SWT.Help,
+			SWT.Hide, SWT.Iconify, SWT.Modify, SWT.MenuDetect, SWT.Move,
+			SWT.Paint, SWT.Show, SWT.Touch, SWT.Traverse, SWT.Verify };
 
 	private static boolean anyOf(int element, int[] set) {
 		for (int e : set) {
@@ -164,6 +182,9 @@ class SwtEventForwarder implements Listener {
 		} else if (anyOf(event.type, KEYBOARD_EVENT_TYPES)) {
 			// System.out.println("  is keyboard event");
 			handleKeyboardEvent(event);
+		} else if (anyOf(event.type, UNSUPPORTED_EVENT_TYPES)) {
+			// System.out.println("  is unsupported!");
+			return;
 		} else {
 			// System.out.println("  is other event");
 			handleOtherEvent(event);
@@ -347,48 +368,22 @@ class SwtEventForwarder implements Listener {
 
 	private Event wrap(org.eclipse.swt.widgets.Event e, INode target) {
 		switch (e.type) {
-		case SWT.Activate:
-		case SWT.Arm:
-		case SWT.Close:
-		case SWT.Collapse:
-		case SWT.Deactivate:
-		case SWT.Deiconify:
-		case SWT.DefaultSelection:
-		case SWT.Dispose:
-		case SWT.DragDetect:
-		case SWT.Expand:
-		case SWT.FocusIn:
-		case SWT.FocusOut:
-		case SWT.Gesture:
-		case SWT.Help:
-		case SWT.Hide:
-		case SWT.Iconify:
-		case SWT.Modify:
-		case SWT.MenuDetect:
 		case SWT.MouseDoubleClick:
-		case SWT.MouseHorizontalWheel:
-			// TODO
-			// return new MouseEvent(e.widget, target,
-			// MouseEvent.MOUSE_SCROLLED,
-			// e.button, e.count, e.x, e.y);
 		case SWT.MouseHover:
-		case SWT.Move:
-		case SWT.Paint:
-		case SWT.Show:
-		case SWT.Touch:
-		case SWT.Verify:
-			// TODO: Those are all ignored, implement'em!
-			return new SwtEvent(e, target, SwtEvent.ANY);
+		case SWT.MouseHorizontalWheel:
+			// TODO: the previous event types are ignored => we have to
+			// implement them
+			return new SwtEvent(e.widget, target, SwtEvent.ANY);
 		case SWT.Resize:
 			return new ActionEvent(e.widget, target, ActionEvent.RESIZE);
 		case SWT.Selection:
-			return new ActionEvent(e.widget, target, ActionEvent.SELECTION);
+			return new ActionEvent(e.widget, target, ActionEvent.ACTION);
 		case SWT.KeyDown:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_PRESSED,
-					e.keyCode, e.character);
+					e.keyCode, e.character, e.stateMask);
 		case SWT.KeyUp:
 			return new KeyEvent(e.widget, target, KeyEvent.KEY_RELEASED,
-					e.keyCode, e.character);
+					e.keyCode, e.character, e.stateMask);
 		case SWT.MouseDown: {
 			double[] displayXY = new double[2];
 			double[] sceneXY = new double[2];
@@ -445,10 +440,6 @@ class SwtEventForwarder implements Listener {
 					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
 					sceneXY[1], displayXY[0], displayXY[1]);
 		}
-		case SWT.Traverse:
-			// TODO: re-think this one
-			return new TraverseEvent(e.widget, target, TraverseEvent.ANY,
-					e.detail, e.keyCode, e.stateMask);
 		default:
 			throw new IllegalArgumentException(
 					"This SWT event type is not supported: " + e);
