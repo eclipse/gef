@@ -7,10 +7,10 @@
  * Contributors: Zoltan Ujhelyi
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets.decoration;
+
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
-
 
 public abstract class AbstractConnectionDecorator implements
 		IConnectionDecorator {
@@ -41,13 +41,9 @@ public abstract class AbstractConnectionDecorator implements
 			PolylineConnection figure) {
 		if (figure instanceof PolylineConnection) {
 			RotatableDecoration sourceDecoration = createSourceDecoration(connection);
-			if (sourceDecoration != null) {
-				figure.setSourceDecoration(sourceDecoration);
-			}
+			figure.setSourceDecoration(sourceDecoration);
 			RotatableDecoration targetDecoration = createTargetDecoration(connection);
-			if (targetDecoration != null) {
-				figure.setTargetDecoration(targetDecoration);
-			}
+			figure.setTargetDecoration(targetDecoration);
 		}
 	}
 }

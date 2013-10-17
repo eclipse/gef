@@ -779,6 +779,7 @@ public class GraphConnection extends GraphItem {
 	public void setConnectionDecoration(IConnectionDecorator connectionDecorator) {
 		this.connectionDecorator = connectionDecorator;
 		if (connectionFigure != null) {
+			applyDecoration(connectionFigure);
 			updateFigure(connectionFigure);
 		}
 	}
