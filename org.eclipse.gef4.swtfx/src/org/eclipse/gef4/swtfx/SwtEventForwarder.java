@@ -196,8 +196,7 @@ class SwtEventForwarder implements Listener {
 		if (focusTarget != null) {
 			// System.out.println("  send to focus target (" + focusTarget +
 			// ")");
-			org.eclipse.gef4.swtfx.event.Event.fireEvent(focusTarget,
-					wrap(event, focusTarget));
+			Event.fireEvent(focusTarget, wrap(event, focusTarget));
 		} else {
 			// System.out.println("  determining target...");
 			handleOtherEvent(event);
@@ -262,8 +261,7 @@ class SwtEventForwarder implements Listener {
 				// System.out.println("    invalidate mouse target");
 				receiver.setMouseTarget(null);
 			}
-			org.eclipse.gef4.swtfx.event.Event.fireEvent(mouseTarget,
-					wrap(event, mouseTarget));
+			Event.fireEvent(mouseTarget, wrap(event, mouseTarget));
 		} else {
 			// System.out.println("  determining target...");
 
@@ -288,9 +286,8 @@ class SwtEventForwarder implements Listener {
 				if (receiver.getRoot().contains(mousePosition)) {
 					// System.out.println("    send to root parent ("
 					// + receiver.getRoot() + ")");
-					org.eclipse.gef4.swtfx.event.Event
-							.fireEvent(receiver.getRoot(),
-									wrap(event, receiver.getRoot()));
+					Event.fireEvent(receiver.getRoot(),
+							wrap(event, receiver.getRoot()));
 				} else {
 					// System.out.println("    discard event! (no target found)");
 				}
@@ -301,6 +298,13 @@ class SwtEventForwarder implements Listener {
 	private void handleOtherEvent(org.eclipse.swt.widgets.Event event) {
 		if (receiver.isDisposed()) {
 			return;
+		} else if (event.type == SWT.Selection) {
+			// send to focus target if possible
+			INode focusTarget = receiver.getFocusTarget();
+			if (focusTarget != null) {
+				Event.fireEvent(focusTarget, wrap(event, focusTarget));
+				return;
+			}
 		}
 		handleOtherEvent(event, getMousePosition());
 	}
@@ -321,8 +325,8 @@ class SwtEventForwarder implements Listener {
 			if (receiver.getRoot().contains(mousePosition)) {
 				// System.out.println("    send to root parent ("
 				// + receiver.getRoot() + ")");
-				org.eclipse.gef4.swtfx.event.Event.fireEvent(
-						receiver.getRoot(), wrap(event, receiver.getRoot()));
+				Event.fireEvent(receiver.getRoot(),
+						wrap(event, receiver.getRoot()));
 			} else {
 				// System.out.println("    discard event! (no target found)");
 				// no one can process the event
@@ -331,8 +335,7 @@ class SwtEventForwarder implements Listener {
 		} else {
 			// System.out.println("    send to node at mouse (" + nodeAtMouse
 			// + ")");
-			org.eclipse.gef4.swtfx.event.Event.fireEvent(nodeAtMouse,
-					wrap(event, nodeAtMouse));
+			Event.fireEvent(nodeAtMouse, wrap(event, nodeAtMouse));
 		}
 	}
 

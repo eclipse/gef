@@ -18,6 +18,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -63,6 +65,18 @@ public class ControlNode<T extends Control> extends AbstractNode {
 	 */
 	public ControlNode(T control) {
 		this.control = control;
+		control.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				Scene scene = getScene();
+				scene.setFocusTarget(ControlNode.this);
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO
+			}
+		});
 	}
 
 	@Override
