@@ -12,6 +12,7 @@ package org.eclipse.gef4.zest.core.viewers;
 
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.services.IDisposable;
 
@@ -28,8 +29,8 @@ import org.eclipse.ui.services.IDisposable;
 public interface IConnectionStyleProvider extends IDisposable {
 	/**
 	 * Returns the style flags for this connection. Valid flags are those that
-	 * begin with CONNECTION in @see org.eclipse.gef4.zest.core.ZestStyles. Check
-	 * ZestStyles for legal combinations.
+	 * begin with CONNECTION in @see org.eclipse.gef4.zest.core.ZestStyles.
+	 * Check ZestStyles for legal combinations.
 	 * 
 	 * @param rel
 	 *            the relationship represented by this connection.
@@ -86,4 +87,13 @@ public interface IConnectionStyleProvider extends IDisposable {
 	 * @return the connection router for rel. Null for default.
 	 */
 	public ConnectionRouter getRouter(Object rel);
+
+	/**
+	 * Returns the connection decoration for a single relation.
+	 * 
+	 * @param rel
+	 *            the relationship represented by this connection.
+	 * @return the connection router for rel. Null for default.
+	 */
+	public IConnectionDecorator getConnectionDecorator(Object rel);
 }

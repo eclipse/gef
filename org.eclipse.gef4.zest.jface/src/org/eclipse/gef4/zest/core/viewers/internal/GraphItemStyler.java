@@ -19,6 +19,7 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -154,6 +155,10 @@ public class GraphItemStyler {
 		ConnectionRouter cr;
 		if ((cr = provider.getRouter(rel)) != null) {
 			conn.setRouter(cr);
+		}
+		IConnectionDecorator decorator;
+		if ((decorator = provider.getConnectionDecorator(rel)) != null) {
+			conn.setConnectionDecoration(decorator);
 		}
 	}
 
