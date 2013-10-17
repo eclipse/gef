@@ -273,6 +273,14 @@ public class RgbaColor {
 		this(DEFAULT_RED, DEFAULT_GREEN, DEFAULT_BLUE, DEFAULT_ALPHA);
 	}
 
+	public RgbaColor(double r, double g, double b) {
+		this(r, g, b, 1);
+	}
+
+	public RgbaColor(double r, double g, double b, double a) {
+		this((int) (255 * r), (int) (255 * g), (int) (255 * b), (int) (255 * a));
+	}
+
 	/**
 	 * Constructs a new {@link RgbaColor} object from the given <i>pixel</i>
 	 * value which is expected to be in ARGB format, 8 bits per channel.
