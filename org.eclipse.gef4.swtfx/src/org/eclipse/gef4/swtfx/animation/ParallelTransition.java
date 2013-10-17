@@ -2,10 +2,13 @@ package org.eclipse.gef4.swtfx.animation;
 
 public class ParallelTransition extends AbstractTransition {
 
+	/**
+	 * Return longest duration of given transitions.
+	 */
 	private static long getTotalDuration(AbstractTransition[] transitions) {
 		long duration = 0;
 		for (AbstractTransition tr : transitions) {
-			duration += tr.getDuration();
+			duration = Math.max(duration, tr.getDuration());
 		}
 		return duration;
 	}
