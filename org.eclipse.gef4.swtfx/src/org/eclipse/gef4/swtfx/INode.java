@@ -43,9 +43,7 @@ public interface INode extends IEventTarget {
 	 * 
 	 * public void onKeyPress(IEventHandler<KeyEvent> handler);
 	 * 
-	 * public void onSelection(IEventHandler<ActionEvent> handler);
-	 * 
-	 * ... (and many more)
+	 * ...
 	 */
 
 	/**
@@ -65,31 +63,6 @@ public interface INode extends IEventTarget {
 	 * USE_PREF_SIZE.
 	 */
 	public static final double USE_PREF_SIZE = Double.NEGATIVE_INFINITY;
-
-	/**
-	 * Transforms the passed-in absolute {@link Point} to the local coordinate
-	 * system of this {@link INode}. Absolute coordinates are interpreted to be
-	 * relative to the coordinate system of the {@link Display}.
-	 * 
-	 * @param absolute
-	 * @return new {@link Point} holding respective local coordinates
-	 * 
-	 * @see #displayToLocal(Point, Point)
-	 * @see #localToDisplay(Point)
-	 */
-	public Point displayToLocal(Point absolute);
-
-	/**
-	 * Transforms the first passed-in absolute {@link Point} to the local
-	 * coordinate system of this {@link INode}. The second passed-in
-	 * {@link Point} is set to the transformed local coordinates, and therefore
-	 * may not be <code>null</code>. Absolute coordinates are interpreted to be
-	 * relative to the coordinate system of the {@link Display}.
-	 * 
-	 * @param absoluteIn
-	 * @param localOut
-	 */
-	public void displayToLocal(Point absoluteIn, Point localOut);
 
 	/**
 	 * Adds an event filter for the specified {@link EventType} to the list of
@@ -238,6 +211,31 @@ public interface INode extends IEventTarget {
 	 *         {@link INode}, otherwise <code>false</code>
 	 */
 	public boolean contains(Point local);
+
+	/**
+	 * Transforms the passed-in absolute {@link Point} to the local coordinate
+	 * system of this {@link INode}. Absolute coordinates are interpreted to be
+	 * relative to the coordinate system of the {@link Display}.
+	 * 
+	 * @param absolute
+	 * @return new {@link Point} holding respective local coordinates
+	 * 
+	 * @see #displayToLocal(Point, Point)
+	 * @see #localToDisplay(Point)
+	 */
+	public Point displayToLocal(Point absolute);
+
+	/**
+	 * Transforms the first passed-in absolute {@link Point} to the local
+	 * coordinate system of this {@link INode}. The second passed-in
+	 * {@link Point} is set to the transformed local coordinates, and therefore
+	 * may not be <code>null</code>. Absolute coordinates are interpreted to be
+	 * relative to the coordinate system of the {@link Display}.
+	 * 
+	 * @param absoluteIn
+	 * @param localOut
+	 */
+	public void displayToLocal(Point absoluteIn, Point localOut);
 
 	/**
 	 * Returns the physical bounds of this {@link INode} in its local coordinate
@@ -560,6 +558,27 @@ public interface INode extends IEventTarget {
 	public void localToDisplay(Point localIn, Point absoluteOut);
 
 	/**
+	 * Transforms the given x and y coordinates, interpreted as local to the
+	 * coordinate system of this {@link INode}, into the coordinate system of
+	 * this {@link INode}'s parent.
+	 * 
+	 * @param localX
+	 * @param localY
+	 * @return a new {@link Point} holding the transformed (parent) coordinates
+	 */
+	public Point localToParent(double localX, double localY);
+
+	/**
+	 * Transforms the given {@link Point}, interpreted as local to the
+	 * coordinate system of this {@link INode}, into the coordinate system of
+	 * this {@link INode}'s parent.
+	 * 
+	 * @param local
+	 * @return a new {@link Point} holding the transformed (parent) coordinates
+	 */
+	public Point localToParent(Point local);
+
+	/**
 	 * Transforms the first passed-in local {@link Point} to the coordinate
 	 * system of this {@link INode}'s parent. The second passed-in {@link Point}
 	 * is set to the transformed parent coordinates, and therefore may not be
@@ -820,5 +839,15 @@ public interface INode extends IEventTarget {
 	 * @param translateY
 	 */
 	public void setTranslateY(double translateY);
+
+	// /**
+	// * Request to give focus to the next node.
+	// */
+	// public void focusNext();
+	//
+	// /**
+	// * Request to give focus to the previous node.
+	// */
+	// public void focusPrev();
 
 }

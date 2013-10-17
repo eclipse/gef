@@ -61,6 +61,11 @@ abstract public class AbstractNode implements INode {
 		}
 	}
 
+	// /**
+	// * Signifies if this node or any of its children needs layout.
+	// */
+	// private boolean needsLayout = true;
+
 	/**
 	 * The local rotation angle.
 	 */
@@ -165,45 +170,6 @@ abstract public class AbstractNode implements INode {
 	private boolean visible = true;
 
 	@Override
-	public Point displayToLocal(Point absolute) {
-		Point local = new Point();
-		displayToLocal(absolute, local);
-		return local;
-	}
-
-	@Override
-	public void displayToLocal(Point absoluteIn, Point localOut) {
-		AffineTransform tx = getLocalToAbsoluteTransform();
-
-		// FIXME: Local coordinates are not exactly correct: when the mouse is
-		// at the top of the window the local y coordinate is wrong by -4
-		// pixels.
-
-		// TODO: According to the type of transformation matrix (pure
-		// translation? pure scaling? pure rotation?) we can transform the
-		// coordinates by hand. We have to evaluate if that is actually faster
-		// than computing the inverse matrix and multiplying it by the
-		// coordinate vector (benchmark!).
-
-		// if (tx.getScaleX() == 1 && tx.getScaleY() == 1 && tx.getShearX() == 0
-		// && tx.getShearY() == 0) {
-		// // just translation
-		// double translateX = tx.getTranslateX();
-		// double translateY = tx.getTranslateY();
-		// org.eclipse.swt.graphics.Point location = getScene().getLocation();
-		// location = getScene().toDisplay(location);
-		// localOut.translate(location.x - translateX, location.y - translateY);
-		// }
-
-		try {
-			localOut.setLocation(tx.inverseTransform(absoluteIn));
-		} catch (NoninvertibleTransformException e) {
-			e.printStackTrace();
-			// TODO: we have to assure that all transformations are invertible
-		}
-	}
-
-	@Override
 	public <T extends Event> void addEventFilter(EventType<T> type,
 			IEventHandler<T> filter) {
 		dispatcher.addEventFilter(type, filter);
@@ -268,6 +234,45 @@ abstract public class AbstractNode implements INode {
 	@Override
 	public boolean contains(Point local) {
 		return contains(local.x, local.y);
+	}
+
+	@Override
+	public Point displayToLocal(Point absolute) {
+		Point local = new Point();
+		displayToLocal(absolute, local);
+		return local;
+	}
+
+	@Override
+	public void displayToLocal(Point absoluteIn, Point localOut) {
+		AffineTransform tx = getLocalToAbsoluteTransform();
+
+		// FIXME: Local coordinates are not exactly correct: when the mouse is
+		// at the top of the window the local y coordinate is wrong by -4
+		// pixels.
+
+		// TODO: According to the type of transformation matrix (pure
+		// translation? pure scaling? pure rotation?) we can transform the
+		// coordinates by hand. We have to evaluate if that is actually faster
+		// than computing the inverse matrix and multiplying it by the
+		// coordinate vector (benchmark!).
+
+		// if (tx.getScaleX() == 1 && tx.getScaleY() == 1 && tx.getShearX() == 0
+		// && tx.getShearY() == 0) {
+		// // just translation
+		// double translateX = tx.getTranslateX();
+		// double translateY = tx.getTranslateY();
+		// org.eclipse.swt.graphics.Point location = getScene().getLocation();
+		// location = getScene().toDisplay(location);
+		// localOut.translate(location.x - translateX, location.y - translateY);
+		// }
+
+		try {
+			localOut.setLocation(tx.inverseTransform(absoluteIn));
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
+			// TODO: we have to assure that all transformations are invertible
+		}
 	}
 
 	@Override
@@ -389,6 +394,9 @@ abstract public class AbstractNode implements INode {
 
 	@Override
 	public Scene getScene() {
+		if (parent == null) {
+			return null;
+		}
 		return parent.getScene();
 	}
 
@@ -453,6 +461,22 @@ abstract public class AbstractNode implements INode {
 	public void localToDisplay(Point localIn, Point absoluteOut) {
 		AffineTransform tx = getLocalToAbsoluteTransform();
 		absoluteOut.setLocation(tx.getTransformed(localIn));
+	}
+
+	@Override
+	public Point localToParent(double localX, double localY) {
+		return localToParent(new Point(localX, localY));
+	}
+
+	public void localToParent(double localX, double localY, Point parentOut) {
+		localToParent(new Point(localX, localY), parentOut);
+	}
+
+	@Override
+	public Point localToParent(Point local) {
+		Point parent = new Point();
+		localToParent(local, parent);
+		return parent;
 	}
 
 	@Override
