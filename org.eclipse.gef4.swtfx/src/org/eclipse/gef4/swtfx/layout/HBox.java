@@ -24,8 +24,6 @@ import org.eclipse.gef4.swtfx.INode;
 public class HBox extends Pane {
 
 	private Map<INode, HBoxConstraints> constraints = new HashMap<INode, HBoxConstraints>();
-	private Insets margin;
-	private double spacing;
 
 	public void add(INode node, HBoxConstraints constraints) {
 		addChildNodes(node);
@@ -49,10 +47,6 @@ public class HBox extends Pane {
 			constraints.put(node, new HBoxConstraints());
 		}
 		return constraints.get(node);
-	}
-
-	public Insets getMargin() {
-		return margin;
 	}
 
 	@Override
@@ -123,9 +117,6 @@ public class HBox extends Pane {
 			INode child = managed[i];
 			double w = prefWidths[i];
 			double h = child.computePrefHeight(w);
-
-			// System.out.println("  layout " + child + " to " + x + ", 0"
-			// + " sized " + w + " x " + h);
 
 			child.relocate(x, 0);
 			if (child.isResizable()) {

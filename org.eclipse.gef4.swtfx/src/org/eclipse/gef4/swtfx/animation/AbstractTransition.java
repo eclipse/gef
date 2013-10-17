@@ -45,6 +45,15 @@ public abstract class AbstractTransition {
 	private long startMillis;
 	private boolean running;
 
+	/*
+	 * TODO: Pass in Scene. When starting the animation, register an
+	 * IPulseListener on that Scene. When pausing/stopping an animation,
+	 * unregister that listener. On each pulse, step(current time).
+	 * 
+	 * We do not want to manage threads here. Instead we register an
+	 * IPulseListener on the PulseThread of the given Scene.
+	 */
+
 	public AbstractTransition(long durationMillis) {
 		this.cycleDurationMillis = durationMillis;
 	}

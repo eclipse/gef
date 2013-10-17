@@ -50,7 +50,7 @@
 					</includes>
 					<testFailureIgnore>true</testFailureIgnore>
 					<useUIHarness>false</useUIHarness>
-					<useUIThread>true</useUIThread>
+					<useUIThread>false</useUIThread>
 					<argLine>${test.vmargs}</argLine>
 				</configuration>
 			</plugin>
