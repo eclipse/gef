@@ -16,10 +16,15 @@ import java.util.Iterator;
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.ManhattanConnectionRouter;
+import org.eclipse.draw2d.PolygonDecoration;
+import org.eclipse.draw2d.RotatableDecoration;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
+import org.eclipse.gef4.zest.core.widgets.GraphConnection;
+import org.eclipse.gef4.zest.core.widgets.decoration.AbstractConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -44,7 +49,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Ian Bull - original implementation
  * 
  */
-public class ManhattanLayoutJFaceSnippet {
+public class ConnectionDecorationJFaceSnippet {
 
 	static class MyContentProvider implements IGraphContentProvider {
 
@@ -107,10 +112,7 @@ public class ManhattanLayoutJFaceSnippet {
 		/* Relation-based customization: IConnectionStyleProvider */
 
 		public ConnectionRouter getRouter(Object rel) {
-			if (!rel.equals("Scissors2Rock"))
-				return new ManhattanConnectionRouter();
-			else
-				return null;
+			return null;
 		}
 
 		public int getConnectionStyle(Object rel) {
@@ -134,7 +136,25 @@ public class ManhattanLayoutJFaceSnippet {
 		}
 
 		public IConnectionDecorator getConnectionDecorator(Object rel) {
-			return null;
+			return new AbstractConnectionDecorator() {
+
+				public RotatableDecoration createTargetDecoration(
+						GraphConnection connection) {
+					return null;
+				}
+
+				public RotatableDecoration createSourceDecoration(
+						GraphConnection connection) {
+					PolygonDecoration decoration = new PolygonDecoration();
+					PointList decorationPointList = new PointList();
+					decorationPointList.addPoint(0, 0);
+					decorationPointList.addPoint(-2, 2);
+					decorationPointList.addPoint(-4, 0);
+					decorationPointList.addPoint(-2, -2);
+					decoration.setTemplate(decorationPointList);
+					return decoration;
+				}
+			};
 		}
 
 	}
