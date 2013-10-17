@@ -25,7 +25,25 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 
 public class Pane extends AbstractParent {
 
-	private boolean debugging = true;
+	private boolean debugging = false;
+
+	@Override
+	public double computePrefHeight(double width) {
+		double prefHeight = getPrefHeight();
+		if (prefHeight == INode.USE_COMPUTED_SIZE) {
+			return super.computePrefHeight(width);
+		}
+		return prefHeight;
+	}
+
+	@Override
+	public double computePrefWidth(double height) {
+		double prefWidth = getPrefWidth();
+		if (prefWidth == INode.USE_COMPUTED_SIZE) {
+			return super.computePrefWidth(height);
+		}
+		return prefWidth;
+	}
 
 	@Override
 	public Rectangle getLayoutBounds() {
@@ -72,8 +90,7 @@ public class Pane extends AbstractParent {
 		}
 
 		g.setStroke(new RgbaColor(0, 0, 255));
-		g.strokePath(getLayoutBounds()
-				.getTranslated(getLayoutX(), getLayoutY()).toPath());
+		g.strokePath(getLayoutBounds().toPath());
 
 		g.restore();
 	}
