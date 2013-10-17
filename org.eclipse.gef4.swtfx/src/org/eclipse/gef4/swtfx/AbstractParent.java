@@ -235,70 +235,49 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	}
 
 	/**
-	 * Paints all child figures of this parent node.
+	 * Paints the given child figure of this parent.
 	 * 
 	 * @param g
 	 *            {@link GraphicsContext} which is passed along to the figures
 	 */
-	protected void paintMyFigures(GraphicsContext g) {
-		// our rendering order is the reverse of SWT's
-		for (INode node : getChildNodes()) {
-			if (node instanceof IFigure) {
-				IFigure figure = (IFigure) node;
+	protected void paintFigure(IFigure figure, GraphicsContext g) {
+		// save & guard the gc
+		g.save();
+		g.setUpGuard(); // TODO: evaluate if we need this, really
 
-				// save & guard the gc
-				g.save();
-				g.setUpGuard(); // TODO: evaluate if we need this, really
+		/*
+		 * Compute transformation matrix: Take the local-to-absolute-transform
+		 * and subtract the absolute scene location from it (translation).
+		 */
+		AffineTransform tx = figure.getLocalToAbsoluteTransform();
+		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
+		tx.preConcatenate(new AffineTransform().translate(-location.x,
+				-location.y));
+		figure.getPaintStateByReference().setTransformByReference(tx);
+		// g.setTransform(tx);
 
-				/*
-				 * Compute transformation matrix: Take the
-				 * local-to-absolute-transform and subtract the absolute scene
-				 * location from it (translation).
-				 */
-				AffineTransform tx = figure.getLocalToAbsoluteTransform();
-				org.eclipse.swt.graphics.Point location = getScene().toDisplay(
-						0, 0);
-				tx.preConcatenate(new AffineTransform().translate(-location.x,
-						-location.y));
-				figure.getPaintStateByReference().setTransformByReference(tx);
-				// g.setTransform(tx);
+		// actually paint it
+		figure.paint(g);
 
-				// actually paint it
-				figure.paint(g);
-
-				// take down guard & restore gc
-				try {
-					g.takeDownGuard();
-				} catch (IllegalStateException x) {
-					throw new IllegalStateException(
-							"Did you forget to call restore() in your drawing code?",
-							x);
-				}
-				g.restore();
-			}
+		// take down guard & restore gc
+		try {
+			g.takeDownGuard();
+		} catch (IllegalStateException x) {
+			throw new IllegalStateException(
+					"Did you forget to call restore() in your drawing code?", x);
 		}
-	}
-
-	/**
-	 * Calls {@link IParent#renderFigures(GraphicsContext)} on all children
-	 * which are parent nodes.
-	 * 
-	 * @param g
-	 *            {@link GraphicsContext} which is passed along to the parent
-	 *            nodes
-	 */
-	protected void paintOtherFigures(GraphicsContext g) {
-		for (INode node : getChildNodes()) {
-			if (node instanceof IParent) {
-				((IParent) node).renderFigures(g);
-			}
-		}
+		g.restore();
 	}
 
 	@Override
 	public void renderFigures(GraphicsContext g) {
-		paintMyFigures(g);
-		paintOtherFigures(g);
+		for (INode node : getChildNodes()) {
+			if (node instanceof IFigure) {
+				paintFigure((IFigure) node, g);
+			} else if (node instanceof IParent) {
+				((IParent) node).renderFigures(g);
+			}
+		}
 	}
 
 	@Override
