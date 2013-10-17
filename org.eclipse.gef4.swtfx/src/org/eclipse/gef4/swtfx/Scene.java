@@ -24,6 +24,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * An instance of the Scene class is the entry point for scene graph related
@@ -34,6 +35,11 @@ import org.eclipse.swt.widgets.Composite;
  * 
  */
 public class Scene extends Canvas {
+
+	/**
+	 * Default FPS to use for the {@link PulseThread}.
+	 */
+	public static final int DEFAULT_FPS = 30;
 
 	/**
 	 * The root of the scene graph.
@@ -58,6 +64,35 @@ public class Scene extends Canvas {
 	private INode mousePointerTarget;
 
 	/*
+	 * TODO: pulse-updates
+	 * 
+	 * We need to create a pulse thread, i.e. a thread that will call pulse
+	 * listeners every X millis. JavaFX uses 60Hz frequency for pulses. I do not
+	 * think we need such a fine granularity (which is typical for games!). 30Hz
+	 * should be enough for SwtFX.
+	 * 
+	 * Although JavaFX uses the underlying toolkit to generate the pulse, I want
+	 * to create one pulse thread per Scene. In the real world, you will rarely
+	 * feel the need for more than a couple of Scenes in your application
+	 * (main-editor, outline-view).
+	 * 
+	 * The scene will then register itself as a pulse-listener on the newly
+	 * created pulse-thread. Inside that pulse-listener, a layout pass is
+	 * performed and SWT is asked to redraw the Scene. Rendering is fully
+	 * controlled by SWT, we just tell SWT when we need to redraw.
+	 * 
+	 * Animations could either register on the Scene or also on the pulse
+	 * thread.
+	 */
+
+	/**
+	 * Synchronizes layout and animation passes.
+	 */
+	private PulseThread pulseThread;
+
+	/*
+	 * TODO: layout-roots
+	 * 
 	 * The root IParent of the scene graph is coupled to the Scene's width and
 	 * height. When the Scene's width or height changes, that change is
 	 * propagated to the scene graph root and a layout pass is performed on the
@@ -78,12 +113,13 @@ public class Scene extends Canvas {
 	 * height changes. So that a layout pass is simply calling the layout()
 	 * method on all dirty-layout-roots.
 	 * 
-	 * Now comes the part I do not yet understand. JavaFX uses two
-	 * dirty-layout-roots lists, because they allow one layout-pass to mark
-	 * nodes as needing a re-layout. I cannot imagine a situation where one
-	 * layout pass is not enough. Maybe we have to run into bugs before
-	 * implementing it the same way.
+	 * JavaFX uses two dirty-layout-roots lists, because they allow one
+	 * layout-pass to mark nodes as needing a re-layout. I cannot imagine a
+	 * situation where one layout pass is not enough. Maybe we have to run into
+	 * bugs before implementing it the same way.
 	 */
+
+	// private List<IParent> layoutRoots;
 
 	/**
 	 * <p>
@@ -108,14 +144,26 @@ public class Scene extends Canvas {
 		super(swtComposite, SWT.NONE);
 		this.root = root;
 		root.setScene(this);
+		pulseThread = new PulseThread(this, DEFAULT_FPS);
+		pulseThread.getListeners().add(new IPulseListener() {
+			@Override
+			public void handlePulse(long elapsedMs) {
+				// TODO: oddity in PulseThread => check for elapsedMs == 0
+				if (elapsedMs == 0) {
+					return;
+				}
+				// System.out.println(pulseThread.getRealFps());
+				onPulse(elapsedMs);
+			}
+		});
 		addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
 				Rectangle clientArea = getClientArea();
 				root.resize(clientArea.width, clientArea.height);
+				// TODO: layout here?
 				root.layout();
 				redraw();
-				// update();
 			}
 		});
 		addPaintListener(new PaintListener() {
@@ -127,6 +175,7 @@ public class Scene extends Canvas {
 			}
 		});
 		new SwtEventForwarder(this, this);
+		pulseThread.start();
 	}
 
 	/**
@@ -147,6 +196,10 @@ public class Scene extends Canvas {
 		return mouseTarget;
 	}
 
+	public PulseThread getPulseThread() {
+		return pulseThread;
+	}
+
 	/**
 	 * @return the scene graph root {@link INode node}
 	 */
@@ -154,9 +207,33 @@ public class Scene extends Canvas {
 		return root;
 	}
 
+	protected void onPulse(long elapsedMs) {
+		// if (!dirtyLayoutRoots.isEmpty()) {
+		// root.layout();
+		// redraw();
+		// }
+		// System.out.println("FPS: " + pulseThread.getRealFps());
+
+		// guard against SWT disposal
+		Display display = getDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
+
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				double millis = System.currentTimeMillis();
+				root.layout();
+				redraw();
+			}
+		});
+	}
+
 	public void refreshVisuals() {
-		root.layout();
-		redraw();
+		// TODO: this should not be a noop!
+		// root.layout();
+		// redraw();
 	}
 
 	/**

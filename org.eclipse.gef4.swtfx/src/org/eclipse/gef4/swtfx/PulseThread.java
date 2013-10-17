@@ -29,6 +29,12 @@ import java.util.List;
  */
 public class PulseThread extends Thread {
 
+	/*
+	 * TODO: There is an oddity with this PulseThread: The onPulse() listener is
+	 * always called twice, once with 0 elapsed millis and once with the corrent
+	 * elapsed millis.
+	 */
+
 	public static final int DEFAULT_FPS = 30;
 
 	/**
@@ -136,6 +142,8 @@ public class PulseThread extends Thread {
 				counterMs = 1000;
 				frames = 0;
 			}
+
+			// System.out.println("sleep: " + sleepMs);
 
 			// take a (very short) break
 			if (elapsedMs < desiredElapsedMs) {
