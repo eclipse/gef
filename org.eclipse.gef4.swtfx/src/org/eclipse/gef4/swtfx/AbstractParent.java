@@ -32,6 +32,25 @@ import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	/**
+	 * {@link SwtControlAdapterNode}s have to be notified about {@link Scene}
+	 * changes in order to be able to (de-)register SWT listeners.
+	 * 
+	 * @param parent
+	 * @param oldScene
+	 * @param newScene
+	 */
+	private static void propagateSceneChanged(IParent parent, Scene oldScene,
+			Scene newScene) {
+		for (INode n : parent.getChildNodes()) {
+			if (n instanceof IParent) {
+				propagateSceneChanged((IParent) n, oldScene, newScene);
+			} else if (n instanceof SwtControlAdapterNode<?>) {
+				((SwtControlAdapterNode<?>) n).sceneChanged(oldScene, newScene);
+			}
+		}
+	}
+
+	/**
 	 * {@link List} of children.
 	 */
 	private List<INode> children = new LinkedList<INode>();
@@ -201,6 +220,9 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		if (scene != null) {
 			return scene;
 		} else {
+			if (getParentNode() == null) {
+				return null;
+			}
 			return getParentNode().getScene();
 		}
 	}
@@ -293,7 +315,10 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public void setScene(Scene scene) {
+		Scene oldScene = this.scene;
 		this.scene = scene;
+		Scene newScene = scene;
+		propagateSceneChanged(this, oldScene, newScene);
 	}
 
 	@Override
