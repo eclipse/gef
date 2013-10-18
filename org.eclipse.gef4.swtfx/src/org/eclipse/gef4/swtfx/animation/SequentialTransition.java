@@ -34,8 +34,18 @@ public class SequentialTransition extends AbstractTransition {
 
 	@Override
 	public void step(double t) {
+		long accumDuration = 0;
 		for (AbstractTransition trans : transitions) {
-			trans.step(t);
+			long durationEnd = accumDuration + trans.getDuration();
+			long currentDuration = (long) (t * getDuration());
+			if (accumDuration <= currentDuration
+					&& currentDuration < durationEnd) {
+				double stretched = (currentDuration - accumDuration)
+						/ (double) trans.getDuration();
+				trans.step(stretched);
+				break;
+			}
+			accumDuration = durationEnd;
 		}
 	}
 }
