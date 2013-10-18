@@ -18,9 +18,6 @@ import org.eclipse.gef4.swtfx.Scene;
 
 public abstract class AbstractTransition implements IPulseListener {
 
-	// private static final int PERIOD = 30;
-	// public static final double INDEFINITE = -1;
-
 	private IInterpolator interpolator = IInterpolator.LINEAR;
 
 	/**
@@ -55,7 +52,9 @@ public abstract class AbstractTransition implements IPulseListener {
 	// private IEventHandler<ActionEvent> onFinished;
 
 	private long startMillis = 0;
+	private long deltaMillis = 0;
 	private boolean running = false;
+	private boolean paused = false;
 
 	/**
 	 * Stores the scene, so that we can (de-)register ourself as an
@@ -81,14 +80,14 @@ public abstract class AbstractTransition implements IPulseListener {
 
 	@Override
 	public void handlePulse(long elapsedMs) {
-		if (running) {
+		if (running && !paused) {
 			long millis = System.currentTimeMillis();
 
 			if (startMillis == 0) {
 				startMillis = millis;
 			}
 
-			long deltaMillis = millis - startMillis;
+			deltaMillis = millis - startMillis;
 			double totalTime = deltaMillis / (double) cycleDurationMillis;
 			int fullCycles = (int) totalTime;
 			double t = totalTime - fullCycles;
@@ -104,28 +103,53 @@ public abstract class AbstractTransition implements IPulseListener {
 		}
 	}
 
+	/**
+	 * Pauses animation playback.
+	 */
+	public void pause() {
+		paused = true;
+	}
+
+	/**
+	 * Starts animation playback.
+	 */
 	public void play() {
 		if (running) {
 			stop();
 		}
-		running = true;
-
 		step(0);
 		scene.getPulseThread().getListeners().add(this);
+		running = true;
+	}
+
+	/**
+	 * Resumes animation playback if previously paused.
+	 */
+	public void resume() {
+		startMillis = System.currentTimeMillis() - deltaMillis;
+		paused = false;
 	}
 
 	public void setInterpolator(IInterpolator interpolator) {
 		this.interpolator = interpolator;
 	}
 
+	/**
+	 * Updates scene graph nodes according to the interpolated time <i>t</i> in
+	 * range <code>[0;1]</code>. The method is called on each pulse.
+	 * 
+	 * @param t
+	 */
 	abstract public void step(double t);
 
+	/**
+	 * Stops animation playback.
+	 */
 	public void stop() {
 		if (!running) {
 			return;
 		}
 		running = false;
-
 		scene.getPulseThread().getListeners().remove(this);
 		startMillis = 0;
 		step(1);
