@@ -25,14 +25,14 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * This {@link CanvasNode} is counter-part of the JavaFx Canvas. Therefore it
+ * This {@link CanvasFigure} is counter-part of the JavaFx Canvas. Therefore it
  * provides a {@link GraphicsContext} which can be used to perform drawing
  * operations on it.
  * 
  * @author mwienand
  * 
  */
-public class CanvasNode extends AbstractFigure {
+public class CanvasFigure extends AbstractFigure {
 
 	private Device dev;
 	private Image image;
@@ -48,18 +48,18 @@ public class CanvasNode extends AbstractFigure {
 	 * 
 	 * Create an interface IBlendOperation which provides a single method
 	 * blend(Image source, Image destination) : Image. The blender is used to
-	 * merge source and destination images, i.e. the CanvasNode's image and the
+	 * merge source and destination images, i.e. the CanvasFigure's image and the
 	 * underlying drawings.
 	 * 
 	 * MAYBE: private Effect effect;
 	 * 
-	 * The specified Effect can be used to blend the CanvasNode's image with the
+	 * The specified Effect can be used to blend the CanvasFigure's image with the
 	 * underlying drawings. A CompositeEffect can be used to allow combined
-	 * Effects on a CanvasNode. Effects should only be allowed if available on
+	 * Effects on a CanvasFigure. Effects should only be allowed if available on
 	 * any IFigure, at least, or ideally on any INode.
 	 */
 
-	public CanvasNode(Device dev, double width, double height,
+	public CanvasFigure(Device dev, double width, double height,
 			RGB transparentPixel) {
 		if (width < 0) {
 			throw new IllegalArgumentException("width < 0");
@@ -77,7 +77,7 @@ public class CanvasNode extends AbstractFigure {
 		clear(id);
 	}
 
-	public CanvasNode(double width, double height) {
+	public CanvasFigure(double width, double height) {
 		this(Display.getCurrent(), width, height, new RGB(255, 255, 255));
 	}
 
@@ -176,7 +176,7 @@ public class CanvasNode extends AbstractFigure {
 
 	@Override
 	public String toString() {
-		return "CanvasNode(" + width + "x" + height + ")";
+		return "CanvasFigure(" + width + "x" + height + ")";
 	}
 
 }

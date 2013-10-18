@@ -248,8 +248,8 @@ public class Scene extends Canvas {
 	 */
 	public void setFocusTarget(INode focusTarget) {
 		this.focusTarget = focusTarget;
-		if (focusTarget instanceof ControlNode) {
-			ControlNode<?> cn = (ControlNode<?>) focusTarget;
+		if (focusTarget instanceof SwtControlAdapterNode) {
+			SwtControlAdapterNode<?> cn = (SwtControlAdapterNode<?>) focusTarget;
 			cn.getControl().forceFocus();
 		} else {
 			forceFocus();

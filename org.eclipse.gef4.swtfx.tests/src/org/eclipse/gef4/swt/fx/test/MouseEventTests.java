@@ -19,7 +19,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 
-import org.eclipse.gef4.swtfx.CanvasNode;
+import org.eclipse.gef4.swtfx.CanvasFigure;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
@@ -155,7 +155,7 @@ public class MouseEventTests {
 		Scene scene = createScene(shell);
 		Pane root = (Pane) scene.getRoot();
 
-		CanvasNode canvas = new CanvasNode(640, 480);
+		CanvasFigure canvas = new CanvasFigure(640, 480);
 		root.addChildNodes(canvas);
 
 		final int[] state = new int[] { 0 };
