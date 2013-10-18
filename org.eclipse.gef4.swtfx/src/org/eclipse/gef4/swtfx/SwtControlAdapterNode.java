@@ -18,22 +18,24 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * The ControlNode class wraps the {@link INode} interface around arbitrary SWT
- * {@link Control}s in order to be able to intermix GEF4 figures and SWT
- * controls. The ControlNode is not considered a ControlFigure, because an
- * {@link IFigure} has the responsibility to paint itself using the
- * {@link GraphicsContext} API, where as a ControlNode cannot paint itself, but
- * rather is painted by SWT.
+ * The SwtControlAdapterNode class wraps the {@link INode} interface around
+ * arbitrary SWT {@link Control}s in order to be able to intermix GEF4 figures
+ * and SWT controls. The SwtControlAdapterNode is not considered a
+ * ControlFigure, because an {@link IFigure} has the responsibility to paint
+ * itself using the {@link GraphicsContext} API, where as a
+ * SwtControlAdapterNode cannot paint itself, but rather is painted by SWT.
  * 
  * @author mwienand
  * 
  */
-public class ControlNode<T extends Control> extends AbstractNode {
+public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 
 	/**
 	 * The wrapped {@link Control}.
@@ -44,6 +46,8 @@ public class ControlNode<T extends Control> extends AbstractNode {
 	 * Used to dispatch events to the {@link Scene}.
 	 */
 	private SwtEventForwarder swtEventForwarder;
+	private FocusListener focusListener;
+	private DisposeListener disposeListener;
 
 	/**
 	 * Width assigned during layout.
@@ -56,27 +60,16 @@ public class ControlNode<T extends Control> extends AbstractNode {
 	private double height;
 
 	/**
-	 * Constructs a new {@link ControlNode} for the passed-in {@link Control}.
-	 * An ControlFigure implements the {@link INode} interface for arbitrary SWT
-	 * controls. This wrapper is used, so that the {@link INode} interface can
-	 * be used as the central abstraction throughout the API.
+	 * Constructs a new {@link SwtControlAdapterNode} for the passed-in
+	 * {@link Control} . An ControlFigure implements the {@link INode} interface
+	 * for arbitrary SWT controls. This wrapper is used, so that the
+	 * {@link INode} interface can be used as the central abstraction throughout
+	 * the API.
 	 * 
 	 * @param control
 	 */
-	public ControlNode(T control) {
+	public SwtControlAdapterNode(T control) {
 		this.control = control;
-		control.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				Scene scene = getScene();
-				scene.setFocusTarget(ControlNode.this);
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				// TODO
-			}
-		});
 	}
 
 	@Override
@@ -107,9 +100,13 @@ public class ControlNode<T extends Control> extends AbstractNode {
 			return ph;
 		}
 
-		org.eclipse.swt.graphics.Point size = control.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT, true);
-		return size.y;
+		if (control != null) {
+			org.eclipse.swt.graphics.Point size = control.computeSize(
+					SWT.DEFAULT, SWT.DEFAULT, true);
+			return size.y;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -120,9 +117,13 @@ public class ControlNode<T extends Control> extends AbstractNode {
 			return pw;
 		}
 
-		org.eclipse.swt.graphics.Point size = control.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT, true);
-		return size.x;
+		if (control != null) {
+			org.eclipse.swt.graphics.Point size = control.computeSize(
+					SWT.DEFAULT, SWT.DEFAULT, true);
+			return size.x;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -188,6 +189,46 @@ public class ControlNode<T extends Control> extends AbstractNode {
 		return super.getLocalToParentTransform();
 	}
 
+	protected void hookControl() {
+		// maybe we got a new scene
+		if (swtEventForwarder == null) {
+			swtEventForwarder = new SwtEventForwarder(control, getScene());
+		} else {
+			swtEventForwarder.setReceiver(getScene());
+		}
+
+		// TODO: we may use the swt event forwarding for focus events as well
+		if (focusListener == null) {
+			focusListener = new FocusListener() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					Scene scene = getScene();
+					if (scene != null) {
+						scene.setFocusTarget(SwtControlAdapterNode.this);
+					}
+				}
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					// TODO
+				}
+			};
+		}
+		control.addFocusListener(focusListener);
+
+		if (disposeListener == null) {
+			disposeListener = new DisposeListener() {
+				@Override
+				public void widgetDisposed(DisposeEvent e) {
+					swtEventForwarder = null;
+					focusListener = null;
+					disposeListener = null;
+				}
+			};
+		}
+		control.addDisposeListener(disposeListener);
+	}
+
 	@Override
 	public boolean isResizable() {
 		return true;
@@ -200,16 +241,58 @@ public class ControlNode<T extends Control> extends AbstractNode {
 		updateSwtBounds();
 	}
 
+	protected void sceneChanged(Scene oldScene, Scene newScene) {
+		if (oldScene != null) {
+			if (oldScene != newScene) {
+				unhookControl();
+			}
+		}
+		if (newScene != null) {
+			if (oldScene != newScene) {
+				hookControl();
+			}
+		}
+
+		// if resize was called while we did not have a control, ensure it gets
+		// resized now
+		updateSwtBounds();
+	}
+
+	protected void setControl(T control) {
+		this.control = control;
+	}
+
 	@Override
 	public void setParentNode(IParent parent) {
+		Scene oldScene = getScene();
+
 		super.setParentNode(parent);
+
+		Scene newScene = getScene();
+
+		if (oldScene != newScene) {
+			sceneChanged(oldScene, newScene);
+		}
+	}
+
+	protected void unhookControl() {
+		// remove from hierarchy
 		if (swtEventForwarder != null) {
 			swtEventForwarder.unregisterListeners();
 		}
-		swtEventForwarder = new SwtEventForwarder(control, parent.getScene());
+		if (focusListener != null) {
+			control.removeFocusListener(focusListener);
+		}
+		if (disposeListener != null) {
+			control.removeDisposeListener(disposeListener);
+		}
 	}
 
 	public void updateSwtBounds() {
+		if (control == null) {
+			return;
+		}
+
 		Rectangle txBounds = getAbsoluteBounds();
 
 		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
@@ -220,4 +303,5 @@ public class ControlNode<T extends Control> extends AbstractNode {
 				(int) Math.ceil(txBounds.getWidth()),
 				(int) Math.ceil(txBounds.getHeight()));
 	}
+
 }

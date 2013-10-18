@@ -345,6 +345,10 @@ class SwtEventForwarder implements Listener {
 		}
 	}
 
+	public void setReceiver(Scene receiver) {
+		this.receiver = receiver;
+	}
+
 	public void transformMouseCoords(INode target, double x, double y,
 			double[] displayOut, double[] sceneOut, double[] targetOut) {
 		org.eclipse.swt.graphics.Point display = sender.toDisplay((int) x,
