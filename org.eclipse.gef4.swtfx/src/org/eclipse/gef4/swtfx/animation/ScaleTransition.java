@@ -42,4 +42,11 @@ public class ScaleTransition extends AbstractTransition {
 		node.setScaleY(sy);
 	}
 
+	@Override
+	public String toString() {
+		return "ScaleTransition(" + node + "; start-scale=" + startScaleX + ","
+				+ startScaleY + "; end-scale=" + endScaleX + "," + endScaleY
+				+ ")";
+	}
+
 }
