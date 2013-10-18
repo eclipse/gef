@@ -13,7 +13,7 @@
 package org.eclipse.gef4.swtfx.examples.nestedgraph;
 
 import org.eclipse.gef4.geometry.planar.Ellipse;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
@@ -48,7 +48,7 @@ public class BallsNode extends LabPane {
 	}
 
 	private void addOptions() {
-		ControlNode<Button> addBall = new ControlNode<Button>(new Button(
+		SwtControlAdapterNode<Button> addBall = new SwtControlAdapterNode<Button>(new Button(
 				getScene(), SWT.PUSH));
 		addBall.getControl().setText("add ball");
 		addBall.addEventHandler(ActionEvent.ACTION,

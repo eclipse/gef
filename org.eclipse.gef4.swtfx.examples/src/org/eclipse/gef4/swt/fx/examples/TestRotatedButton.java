@@ -14,7 +14,7 @@ package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
@@ -38,13 +38,13 @@ public class TestRotatedButton implements IExample {
 
 	@Override
 	public void addUi(final IParent root) {
-		final ControlNode<Button> pushCw = new ControlNode<Button>(new Button(
+		final SwtControlAdapterNode<Button> pushCw = new SwtControlAdapterNode<Button>(new Button(
 				root.getScene(), SWT.PUSH));
 		pushCw.getControl().setText("Push! (CW)");
 		pushCw.relocate(300, 300);
 
 		Button control = new Button(root.getScene(), SWT.PUSH);
-		final ControlNode<Button> pushCcw = new ControlNode<Button>(control);
+		final SwtControlAdapterNode<Button> pushCcw = new SwtControlAdapterNode<Button>(control);
 		pushCcw.getControl().setText("Push! (CCW)");
 		pushCcw.relocate(400, 200);
 
@@ -88,8 +88,8 @@ public class TestRotatedButton implements IExample {
 		return 640;
 	}
 
-	private void update(final IParent root, final ControlNode n1,
-			final ControlNode n2) {
+	private void update(final IParent root, final SwtControlAdapterNode n1,
+			final SwtControlAdapterNode n2) {
 		root.setRotationAngle(rotationAngle);
 		root.getScene().refreshVisuals();
 	}

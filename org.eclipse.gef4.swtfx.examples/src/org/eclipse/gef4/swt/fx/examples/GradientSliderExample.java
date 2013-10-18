@@ -15,7 +15,7 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.gc.CycleMethod;
@@ -94,7 +94,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		slider.setMinimum(0);
 		slider.setMaximum(100);
 		slider.addSelectionListener(this);
-		ControlNode<Slider> sliderNode = new ControlNode<Slider>(slider);
+		SwtControlAdapterNode<Slider> sliderNode = new SwtControlAdapterNode<Slider>(slider);
 
 		fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
 		fig.setFill(gradient);

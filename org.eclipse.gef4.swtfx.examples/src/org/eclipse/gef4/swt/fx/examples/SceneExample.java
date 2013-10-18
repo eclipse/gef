@@ -14,8 +14,8 @@ package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.Ellipse;
-import org.eclipse.gef4.swtfx.CanvasNode;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
@@ -54,7 +54,7 @@ public class SceneExample {
 		scene = new Scene(shell, root);
 		scene.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ControlNode<Button> control = new ControlNode<Button>(new Button(scene,
+		SwtControlAdapterNode<Button> control = new SwtControlAdapterNode<Button>(new Button(scene,
 				SWT.PUSH));
 		control.getControl().setText("btn");
 
@@ -64,7 +64,7 @@ public class SceneExample {
 
 		HBox hbox2 = new HBox();
 		ShapeFigure shapeFigure = new ShapeFigure(new Ellipse(0, 0, 50, 100));
-		hbox2.addChildNodes(new CanvasNode(200, 50), shapeFigure);
+		hbox2.addChildNodes(new CanvasFigure(200, 50), shapeFigure);
 		hbox2.setRotationAngle(Angle.fromDeg(30));
 
 		Group group = new Group();
@@ -81,7 +81,7 @@ public class SceneExample {
 
 		// root.addChildNodes(hbox2);
 
-		ControlNode<Button> controlNode = new ControlNode<Button>(new Button(
+		SwtControlAdapterNode<Button> controlNode = new SwtControlAdapterNode<Button>(new Button(
 				scene, SWT.TOGGLE));
 		controlNode.getControl().setText("blank");
 		controlNode.addEventHandler(ActionEvent.ACTION,

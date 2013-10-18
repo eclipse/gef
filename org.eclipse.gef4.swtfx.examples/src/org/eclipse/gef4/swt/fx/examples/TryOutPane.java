@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.IParent;
 import org.eclipse.gef4.swtfx.Scene;
@@ -42,10 +42,10 @@ import org.eclipse.swt.widgets.Shell;
 
 public class TryOutPane {
 
-	private static ControlNode<Button> button(Pane pane, final String label) {
+	private static SwtControlAdapterNode<Button> button(Pane pane, final String label) {
 		Button button = new Button(pane.getScene(), SWT.PUSH);
 		button.setText(label);
-		ControlNode<Button> controlNode = new ControlNode<Button>(button);
+		SwtControlAdapterNode<Button> controlNode = new SwtControlAdapterNode<Button>(button);
 		controlNode.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override

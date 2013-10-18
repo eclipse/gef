@@ -15,8 +15,8 @@ package org.eclipse.gef4.swt.fx.examples;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractFigure;
-import org.eclipse.gef4.swtfx.CanvasNode;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
@@ -59,7 +59,7 @@ public class TestFigures {
 		ellipse.setFill(new RgbaColor(128, 0, 128));
 		ellipse.relocate(100, 100);
 
-		CanvasNode canvas = new CanvasNode(100, 100);
+		CanvasFigure canvas = new CanvasFigure(100, 100);
 		{
 			GraphicsContext g = canvas.getGraphicsContext();
 			g.setFill(new RgbaColor(255, 0, 0));
@@ -67,7 +67,7 @@ public class TestFigures {
 			g.cleanUp();
 		}
 
-		ControlNode<Button> button = new ControlNode<Button>(new Button(
+		SwtControlAdapterNode<Button> button = new SwtControlAdapterNode<Button>(new Button(
 				root.getScene(), SWT.PUSH));
 		button.getControl().setText("push me");
 		button.relocate(300, 100);

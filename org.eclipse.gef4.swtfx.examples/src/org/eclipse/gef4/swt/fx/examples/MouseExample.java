@@ -18,7 +18,7 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
@@ -186,8 +186,8 @@ public class MouseExample implements IExample {
 	private ShapeFigure ovalFigure = shape(new Ellipse(0, 0, 100, 200),
 			new RgbaColor(255, 64, 0, 255));
 	private IParent root;
-	private ControlNode<Button> resetButton;
-	private ControlNode<Button> quitButton;
+	private SwtControlAdapterNode<Button> resetButton;
+	private SwtControlAdapterNode<Button> quitButton;
 
 	@Override
 	public void addUi(final IParent realRoot) {
@@ -220,7 +220,7 @@ public class MouseExample implements IExample {
 		new NodeDragger(ovalFigure);
 		new ParentTransformer(root);
 
-		resetButton = new ControlNode<Button>(new Button(root.getScene(),
+		resetButton = new SwtControlAdapterNode<Button>(new Button(root.getScene(),
 				SWT.PUSH));
 		resetButton.getControl().setText("Reset");
 		resetButton.addEventHandler(ActionEvent.ACTION,
@@ -231,7 +231,7 @@ public class MouseExample implements IExample {
 					}
 				});
 
-		quitButton = new ControlNode<Button>(new Button(root.getScene(),
+		quitButton = new SwtControlAdapterNode<Button>(new Button(root.getScene(),
 				SWT.PUSH));
 		quitButton.getControl().setText("Quit");
 		quitButton.addEventHandler(ActionEvent.ACTION,

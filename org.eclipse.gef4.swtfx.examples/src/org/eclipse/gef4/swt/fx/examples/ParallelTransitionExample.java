@@ -13,7 +13,7 @@
 package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
@@ -38,14 +38,14 @@ public class ParallelTransitionExample extends Application {
 	 * @return
 	 */
 	private ParallelTransition createTransition(ShapeFigure box) {
-		RotateTransition rotateTransition = new RotateTransition(2500, box, 0,
-				720);
+		RotateTransition rotateTransition = new RotateTransition(
+				box.getScene(), 2500, 1, false, box, 0, 720);
 
-		PathTransition pathTransition = new PathTransition(2500, new Rectangle(
-				0, 0, 300, 250).toPath(), box);
+		PathTransition pathTransition = new PathTransition(box.getScene(),
+				2500, 1, false, box, new Rectangle(0, 0, 300, 250).toPath());
 
 		ParallelTransition parallelTransition = new ParallelTransition(
-				pathTransition, rotateTransition);
+				box.getScene(), 1, false, pathTransition, rotateTransition);
 
 		parallelTransition.setInterpolator(IInterpolator.SMOOTH_STEP);
 		return parallelTransition;
@@ -57,7 +57,8 @@ public class ParallelTransitionExample extends Application {
 		root.setPrefWidth(400);
 		root.setPrefHeight(300);
 
-		ShapeFigure box = new ShapeFigure(new Rectangle(0, 0, 100, 50));
+		ShapeFigure<Rectangle> box = new ShapeFigure<Rectangle>(new Rectangle(
+				0, 0, 100, 50));
 		box.setPivot(box.getLayoutBounds().getCenter());
 		box.setFill(new RgbaColor(255, 0, 0));
 
@@ -66,7 +67,7 @@ public class ParallelTransitionExample extends Application {
 
 		final ParallelTransition parallelTransition = createTransition(box);
 
-		ControlNode<Button> button = new ControlNode<Button>(new Button(
+		SwtControlAdapterNode<Button> button = new SwtControlAdapterNode<Button>(new Button(
 				root.getScene(), SWT.PUSH));
 		button.getControl().setText("Play!");
 		button.addEventHandler(ActionEvent.ACTION,

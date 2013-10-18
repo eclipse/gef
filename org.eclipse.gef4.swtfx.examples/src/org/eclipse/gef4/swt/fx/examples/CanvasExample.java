@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swt.fx.examples;
 
-import org.eclipse.gef4.swtfx.CanvasNode;
+import org.eclipse.gef4.swtfx.CanvasFigure;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
@@ -27,7 +27,7 @@ public class CanvasExample extends Application {
 	@Override
 	public Scene start(Shell shell) {
 		Group root = new Group();
-		CanvasNode canvas = new CanvasNode(400, 300);
+		CanvasFigure canvas = new CanvasFigure(400, 300);
 		root.addChildNodes(canvas);
 
 		GraphicsContext gc = canvas.getGraphicsContext();

@@ -19,8 +19,8 @@ import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.AbstractParent;
-import org.eclipse.gef4.swtfx.CanvasNode;
-import org.eclipse.gef4.swtfx.ControlNode;
+import org.eclipse.gef4.swtfx.CanvasFigure;
+import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.IFigure;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
@@ -68,8 +68,8 @@ public class NestedControls implements IExample {
 		if (node instanceof Control) {
 			if (node instanceof AbstractParent) {
 				// ((AbstractParent) node).updateSwtBounds();
-			} else if (node instanceof ControlNode) {
-				((ControlNode) node).updateSwtBounds();
+			} else if (node instanceof SwtControlAdapterNode) {
+				((SwtControlAdapterNode) node).updateSwtBounds();
 			} else {
 				System.out.println("Don't know how to setBounds of " + node);
 				// ((Control) node).setBounds((int) absBounds.getX(),
@@ -116,7 +116,7 @@ public class NestedControls implements IExample {
 		root.addChildNodes(contentGroup);
 		contentGroup.resizeRelocate(100, 0, 300, 300);
 
-		final CanvasNode canvas = new CanvasNode(300, 200);
+		final CanvasFigure canvas = new CanvasFigure(300, 200);
 		contentGroup.addChildNodes(canvas);
 		canvas.relocate(0, 100); // leave space for some options
 		drawGradients(canvas);
@@ -179,7 +179,7 @@ public class NestedControls implements IExample {
 		Button button = new Button(container.getScene(), SWT.PUSH);
 		button.setText(text);
 
-		ControlNode<Button> node = new ControlNode<Button>(button);
+		SwtControlAdapterNode<Button> node = new SwtControlAdapterNode<Button>(button);
 		container.addChildNodes(node);
 
 		int height = (int) node.getLayoutBounds().getHeight();
@@ -198,7 +198,7 @@ public class NestedControls implements IExample {
 		control.setText(label);
 		control.setBackground(compo.getBackground());
 
-		ControlNode<Button> checkbox = new ControlNode<Button>(control);
+		SwtControlAdapterNode<Button> checkbox = new SwtControlAdapterNode<Button>(control);
 		container.addChildNodes(checkbox);
 		Rectangle bb = checkbox.getLayoutBounds();
 		int height = (int) bb.getHeight();
@@ -212,7 +212,7 @@ public class NestedControls implements IExample {
 	/**
 	 * @param canvas
 	 */
-	private void drawGradients(final CanvasNode canvas) {
+	private void drawGradients(final CanvasFigure canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext();
 		gc.setFill(new RgbaColor(255, 255, 255));
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
