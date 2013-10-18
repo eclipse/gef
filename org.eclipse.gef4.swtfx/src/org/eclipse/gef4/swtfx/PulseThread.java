@@ -31,7 +31,7 @@ public class PulseThread extends Thread {
 
 	/*
 	 * TODO: There is an oddity with this PulseThread: The onPulse() listener is
-	 * always called twice, once with 0 elapsed millis and once with the corrent
+	 * always called twice, once with 0 elapsed millis and once with the correct
 	 * elapsed millis.
 	 */
 
@@ -125,7 +125,7 @@ public class PulseThread extends Thread {
 		// stop pulse when scene is disposed
 		while (!scene.isDisposed()) {
 			// execute pulse
-			for (IPulseListener l : listeners) {
+			for (IPulseListener l : listeners.toArray(new IPulseListener[0])) {
 				l.handlePulse(elapsedMs);
 			}
 
