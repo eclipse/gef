@@ -121,22 +121,13 @@ public class AnchorPane extends Pane {
 		// double availableWidth = getWidth();
 		// double availableHeight = getHeight();
 
-		// TODO: logger
-		// System.out.println("area: " + availableWidth + " x " +
-		// availableHeight);
-
 		for (INode child : getManagedChildren()) {
 			Rectangle rect = getPrefRect(child);
-
-			// System.out.println("anchor " + child + " at " + x + ", " + y
-			// + " sized " + w + " x " + h);
 
 			child.relocate(rect.getX(), rect.getY());
 			if (child.isResizable()) {
 				child.resize(rect.getWidth(), rect.getHeight());
 			}
 		}
-
-		// TODO: minimum/maximum resizing
 	}
 }

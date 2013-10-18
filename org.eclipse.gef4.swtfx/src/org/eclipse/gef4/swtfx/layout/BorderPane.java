@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.INode;
 
 public class BorderPane extends Pane {
@@ -64,6 +65,9 @@ public class BorderPane extends Pane {
 
 	@Override
 	public void layoutChildren() {
+		// autosize children (TODO: really?)
+		super.layoutChildren();
+
 		double availableWidth = getWidth();
 		double availableHeight = getHeight();
 
@@ -86,41 +90,40 @@ public class BorderPane extends Pane {
 				.computePrefHeight(availableWidth);
 
 		double x = 0;
-		double h = 0;
+		double hMid = availableHeight - hBottom - y;
 
 		if (left != null) {
 			BorderPaneConstraints c = constraints.get(left);
 
 			left.relocate(0, y);
 
-			h = availableHeight - hBottom - y;
-			x = left.computePrefWidth(h);
+			x = left.computePrefWidth(hMid);
 			if (left.isResizable()) {
-				left.resize(x, h);
+				left.resize(x, hMid);
 			}
 		}
 
 		if (bottom != null) {
 			BorderPaneConstraints c = constraints.get(bottom);
 
-			bottom.relocate(0, y + h);
+			bottom.relocate(0, y + hMid);
 
 			if (bottom.isResizable()) {
 				bottom.resize(availableWidth, hBottom);
 			}
 		}
 
-		double w = 0;
+		double wRight = 0;
 
 		if (right != null) {
 			BorderPaneConstraints c = constraints.get(right);
 
-			w = right.computePrefWidth(h);
+			wRight = right.computePrefWidth(hMid);
 
-			right.relocate(availableWidth - w, y);
+			right.relocate(availableWidth - wRight, y);
 
 			if (right.isResizable()) {
-				right.resize(w, h);
+				right.resize(wRight, hMid);
 			}
 		}
 
@@ -130,7 +133,14 @@ public class BorderPane extends Pane {
 			center.relocate(x, y);
 
 			if (center.isResizable()) {
-				center.resize(availableWidth - x - w, h);
+				center.resize(availableWidth - x - wRight, hMid);
+			} else {
+				Rectangle bounds = center.getLayoutBounds();
+				double dx = availableWidth - x - wRight - bounds.getWidth();
+				double dy = hMid - bounds.getHeight();
+				x += dx / 2;
+				y += dy / 2;
+				center.relocate(x, y);
 			}
 		}
 	}
