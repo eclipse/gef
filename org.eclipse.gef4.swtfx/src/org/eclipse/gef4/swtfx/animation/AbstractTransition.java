@@ -1,12 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.swtfx.animation;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import org.eclipse.gef4.swtfx.IPulseListener;
+import org.eclipse.gef4.swtfx.PulseThread;
+import org.eclipse.gef4.swtfx.Scene;
 
-public abstract class AbstractTransition {
+public abstract class AbstractTransition implements IPulseListener {
 
-	private static final int PERIOD = 30;
-	public static final double INDEFINITE = -1;
+	// private static final int PERIOD = 30;
+	// public static final double INDEFINITE = -1;
 
 	private IInterpolator interpolator = IInterpolator.LINEAR;
 
@@ -16,20 +29,19 @@ public abstract class AbstractTransition {
 	 */
 	private long cycleDurationMillis;
 
-	// /**
-	// * The number of cycles to execute, i.e. how often the interpolator should
-	// * switch between 0 and 1.
-	// */
-	// private double cycleCount;
-	//
-	// /**
-	// * Specifies if alternating cycles reverse the animation's direction. For
-	// * example, if you have a PathTransition with autoReverse set to
-	// * <code>true</code>, then the object will move back and forth on the
-	// path.
-	// */
-	// private boolean autoReverse;
-	//
+	/**
+	 * The number of cycles to execute, i.e. how often the interpolator should
+	 * switch between 0 and 1. A negative value signifies indefinite cycles.
+	 */
+	private double cycleCount = 1;
+
+	/**
+	 * Specifies if alternating cycles reverse the animation's direction. For
+	 * example, if you have a PathTransition with autoReverse set to
+	 * <code>true</code>, then the object will move back and forth on the path.
+	 */
+	private boolean autoReverse = true;
+
 	// /**
 	// * Stores the delay (in millis) for the start of the transition.
 	// */
@@ -42,25 +54,22 @@ public abstract class AbstractTransition {
 	// */
 	// private IEventHandler<ActionEvent> onFinished;
 
-	private long startMillis;
-	private boolean running;
+	private long startMillis = 0;
+	private boolean running = false;
 
-	/*
-	 * TODO: Pass in Scene. When starting the animation, register an
-	 * IPulseListener on that Scene. When pausing/stopping an animation,
-	 * unregister that listener. On each pulse, step(current time).
-	 * 
-	 * We do not want to manage threads here. Instead we register an
-	 * IPulseListener on the PulseThread of the given Scene.
+	/**
+	 * Stores the scene, so that we can (de-)register ourself as an
+	 * {@link IPulseListener} on its {@link PulseThread}.
 	 */
+	private Scene scene;
 
-	public AbstractTransition(long durationMillis) {
+	public AbstractTransition(Scene scene, long durationMillis,
+			double cycleCount, boolean autoReverse) {
+		this.scene = scene;
 		this.cycleDurationMillis = durationMillis;
+		this.cycleCount = cycleCount;
+		this.autoReverse = autoReverse;
 	}
-
-	public abstract void doStep(double t);
-
-	public abstract void doUpdate();
 
 	public long getDuration() {
 		return cycleDurationMillis;
@@ -70,51 +79,54 @@ public abstract class AbstractTransition {
 		return interpolator;
 	}
 
+	@Override
+	public void handlePulse(long elapsedMs) {
+		if (running) {
+			long millis = System.currentTimeMillis();
+
+			if (startMillis == 0) {
+				startMillis = millis;
+			}
+
+			long deltaMillis = millis - startMillis;
+			double totalTime = deltaMillis / (double) cycleDurationMillis;
+			int fullCycles = (int) totalTime;
+			double t = totalTime - fullCycles;
+
+			if (totalTime > cycleCount && cycleCount > 0) {
+				stop();
+			} else {
+				if (autoReverse && fullCycles % 2 == 1) {
+					t = 1 - t;
+				}
+				step(getInterpolator().curve(t));
+			}
+		}
+	}
+
 	public void play() {
 		if (running) {
 			stop();
 		}
-
 		running = true;
+
 		step(0);
-
-		Timer timer = new Timer(true);
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				long millis = System.currentTimeMillis();
-
-				if (startMillis == 0) {
-					startMillis = millis;
-				}
-
-				long deltaMillis = millis - startMillis;
-				double t = deltaMillis / (double) cycleDurationMillis;
-
-				if (t > 1) {
-					cancel();
-					stop();
-				} else {
-					step(getInterpolator().curve(t));
-				}
-			}
-		}, 0, PERIOD);
+		scene.getPulseThread().getListeners().add(this);
 	}
 
 	public void setInterpolator(IInterpolator interpolator) {
 		this.interpolator = interpolator;
 	}
 
-	public void step(double t) {
-		doStep(t);
-		doUpdate();
-	}
+	abstract public void step(double t);
 
 	public void stop() {
 		if (!running) {
 			return;
 		}
 		running = false;
+
+		scene.getPulseThread().getListeners().remove(this);
 		startMillis = 0;
 		step(1);
 	}

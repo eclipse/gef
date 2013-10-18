@@ -1,4 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.swtfx.animation;
+
+import org.eclipse.gef4.swtfx.Scene;
 
 public class ParallelTransition extends AbstractTransition {
 
@@ -15,25 +29,17 @@ public class ParallelTransition extends AbstractTransition {
 
 	private AbstractTransition[] transitions;
 
-	public ParallelTransition(AbstractTransition... transitions) {
-		super(getTotalDuration(transitions));
+	public ParallelTransition(Scene scene, double cycleCount,
+			boolean autoReverse, AbstractTransition... transitions) {
+		super(scene, getTotalDuration(transitions), cycleCount, autoReverse);
 		this.transitions = transitions;
 	}
 
 	@Override
-	public void doStep(double t) {
+	public void step(double t) {
 		for (AbstractTransition tr : transitions) {
-			tr.doStep(tr.getInterpolator().curve(t));
+			tr.step(tr.getInterpolator().curve(t));
 		}
-	}
-
-	@Override
-	public void doUpdate() {
-		// XXX: scene.refreshVisuals is called by all of them
-		if (transitions.length < 1) {
-			return;
-		}
-		transitions[0].doUpdate();
 	}
 
 }
