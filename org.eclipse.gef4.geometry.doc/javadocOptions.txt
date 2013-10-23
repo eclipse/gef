@@ -14,7 +14,7 @@
 -link http://docs.oracle.com/javase/1.5.0/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
-org.eclipse.gef4.geometry.convert
+org.eclipse.gef4.geometry.convert.awt
 org.eclipse.gef4.geometry.euclidean
 org.eclipse.gef4.geometry.planar
 org.eclipse.gef4.geometry.projective
