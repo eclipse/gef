@@ -12,6 +12,18 @@
    <feature url="features/org.eclipse.gef4.geometry.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.tests" version="0.1.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.swtfx_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx" version="0.1.0.qualifier">
+      <category name="GEF4 SwtFX"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.swtfx.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.doc" version="0.1.0.qualifier">
+      <category name="GEF4 SwtFX"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.swtfx.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 SwtFX"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.swtfx.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.tests" version="0.1.0.qualifier">
+      <category name="GEF4 SwtFX"/>
+   </feature>
    <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
@@ -19,6 +31,6 @@
       <category name="GEF4 Zest"/>
    </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
-   <category-def name="GEF4 Graphics" label="GEF4 Graphics"/>
+   <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>
 </site>
