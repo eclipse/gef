@@ -16,6 +16,7 @@ import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.widgets.ScrollBar;
 
 public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 
@@ -103,6 +104,32 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 		return scrolled;
 	}
 
+	public int getIncrement() {
+		return getSwtBar().getIncrement();
+	}
+
+	public int getMaximum() {
+		return getSwtBar().getMaximum();
+	}
+
+	public int getMinimum() {
+		return getSwtBar().getMinimum();
+	}
+
+	public int getPageIncrement() {
+		return getSwtBar().getPageIncrement();
+	}
+
+	public int getSelection() {
+		return getSwtBar().getSelection();
+	}
+
+	public ScrollBar getSwtBar() {
+		ScrolledComposite c = getControl();
+		return orientation == Orientation.HORIZONTAL ? c.getHorizontalBar() : c
+				.getVerticalBar();
+	}
+
 	@Override
 	protected void hookControl() {
 		setControl(createScrolled(orientation));
@@ -123,6 +150,26 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 			setPrefHeight(height);
 			super.resize(computePrefWidth(height), height);
 		}
+	}
+
+	public void setIncrement(int inc) {
+		getSwtBar().setIncrement(inc);
+	}
+
+	public void setMaximum(int max) {
+		getSwtBar().setMaximum(max);
+	}
+
+	public void setMinimum(int min) {
+		getSwtBar().setMinimum(min);
+	}
+
+	public void setPageIncrement(int pageInc) {
+		getSwtBar().setPageIncrement(pageInc);
+	}
+
+	public void setSelection(int sel) {
+		getSwtBar().setSelection(sel);
 	}
 
 	@Override
