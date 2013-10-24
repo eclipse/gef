@@ -14,9 +14,11 @@ package org.eclipse.gef4.swt.fx.examples;
 
 import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.Scene;
+import org.eclipse.gef4.swtfx.TextFigure;
 import org.eclipse.gef4.swtfx.controls.SwtScrollBar;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.gef4.swtfx.layout.ScrollPane;
+import org.eclipse.gef4.swtfx.layout.VBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class ScrolledExample extends Application {
@@ -37,11 +39,19 @@ public class ScrolledExample extends Application {
 		ScrollPane scrollPane = new ScrollPane();
 
 		scrollPane.resizeRelocate(100, 100, 100, 100);
+		scrollPane.setPrefWidth(100);
+		scrollPane.setPrefHeight(100);
+
+		VBox vbox = new VBox();
+
+		for (int i = 0; i < 10; i++) {
+			vbox.addChildNodes(new TextFigure(
+					"alpha beta gamma delta epsilon lambda"));
+		}
+
+		scrollPane.setContent(vbox);
 
 		root.addChildNodes(hBar, vBar, scrollPane);
-
-		hBar.resize(200, 0);
-		vBar.resizeRelocate(50, 50, 0, 200);
 
 		return new Scene(shell, root);
 	}
