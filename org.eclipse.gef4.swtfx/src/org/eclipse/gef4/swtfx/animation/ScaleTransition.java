@@ -23,15 +23,20 @@ public class ScaleTransition extends AbstractTransition {
 	private double endScaleX;
 	private double endScaleY;
 
-	public ScaleTransition(Scene scene, long durationMillis, double cycleCount,
+	public ScaleTransition(long durationMillis, double cycleCount,
 			boolean autoReverse, INode node, double startScaleX,
 			double startScaleY, double endScaleX, double endScaleY) {
-		super(scene, durationMillis, cycleCount, autoReverse);
+		super(durationMillis, cycleCount, autoReverse);
 		this.startScaleX = startScaleX;
 		this.startScaleY = startScaleY;
 		this.endScaleX = endScaleX;
 		this.endScaleY = endScaleY;
 		this.node = node;
+	}
+
+	@Override
+	protected Scene getScene() {
+		return node.getScene();
 	}
 
 	@Override

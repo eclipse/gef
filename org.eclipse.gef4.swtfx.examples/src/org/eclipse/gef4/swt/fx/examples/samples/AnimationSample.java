@@ -89,32 +89,20 @@ public class AnimationSample extends Application {
 		borderPane
 				.setCenter(dragonGroup, new BorderPaneConstraints(Pos.CENTER));
 
-		// TODO: change transitions so that we do not need to create scene here
-		Scene scene = new Scene(shell, root);
-
 		// create spin transition
-		spinTransition = new RotateTransition(scene, 2000, -1, false,
-				dragonGroup, 0, 360);
-
-		// start listening for pulses, so that we can easily start/stop at the
-		// current state via pause() and resume()
-		spinTransition.pause();
-		spinTransition.play();
+		spinTransition = new RotateTransition(2000, -1, false, dragonGroup, 0,
+				360);
 
 		// create scale transition, it is a sequence of several scale
 		// transitions, so that we start out at a scale of 1, 1
-		ScaleTransition scaleUp1 = new ScaleTransition(scene, 500, 1, false,
+		ScaleTransition scaleUp1 = new ScaleTransition(500, 1, false,
 				dragonGroup, 1, 1, 2, 2);
-		ScaleTransition scaleDown = new ScaleTransition(scene, 1000, 1, false,
+		ScaleTransition scaleDown = new ScaleTransition(1000, 1, false,
 				dragonGroup, 2, 2, 0.2, 0.2);
-		ScaleTransition scaleUp2 = new ScaleTransition(scene, 500, 1, false,
+		ScaleTransition scaleUp2 = new ScaleTransition(500, 1, false,
 				dragonGroup, 0.2, 0.2, 1, 1);
-		scaleTransition = new SequentialTransition(scene, -1, false, scaleUp1,
+		scaleTransition = new SequentialTransition(-1, false, scaleUp1,
 				scaleDown, scaleUp2);
-
-		// start listening for pulses
-		scaleTransition.pause();
-		scaleTransition.play();
 
 		// add buttons
 		SwtButton spinButton = new SwtButton("Spin", Type.TOGGLE);
@@ -150,7 +138,13 @@ public class AnimationSample extends Application {
 		root.setPrefWidth(400);
 		root.setPrefHeight(300);
 
+		// start listening for pulses (but do not start the animation yet)
+		Scene scene = new Scene(shell, root);
+		spinTransition.play();
+		spinTransition.pause();
+		scaleTransition.play();
+		scaleTransition.pause();
+
 		return scene;
 	}
-
 }

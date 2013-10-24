@@ -26,10 +26,18 @@ public class SequentialTransition extends AbstractTransition {
 
 	private AbstractTransition[] transitions;
 
-	public SequentialTransition(Scene scene, double cycleCount,
-			boolean autoReverse, AbstractTransition... transitions) {
-		super(scene, getTotalDuration(transitions), cycleCount, autoReverse);
+	public SequentialTransition(double cycleCount, boolean autoReverse,
+			AbstractTransition... transitions) {
+		super(getTotalDuration(transitions), cycleCount, autoReverse);
 		this.transitions = transitions;
+	}
+
+	@Override
+	protected Scene getScene() {
+		if (transitions != null && transitions.length > 0) {
+			return transitions[0].getScene();
+		}
+		return null;
 	}
 
 	@Override

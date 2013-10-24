@@ -22,13 +22,17 @@ public class RotateTransition extends AbstractTransition {
 	private double startDeg;
 	private double endDeg;
 
-	public RotateTransition(Scene scene, long durationMillis,
-			double cycleCount, boolean autoReverse, INode node,
-			double startDeg, double endDeg) {
-		super(scene, durationMillis, cycleCount, autoReverse);
+	public RotateTransition(long durationMillis, double cycleCount,
+			boolean autoReverse, INode node, double startDeg, double endDeg) {
+		super(durationMillis, cycleCount, autoReverse);
 		this.node = node;
 		this.startDeg = startDeg;
 		this.endDeg = endDeg;
+	}
+
+	@Override
+	protected Scene getScene() {
+		return node.getScene();
 	}
 
 	@Override

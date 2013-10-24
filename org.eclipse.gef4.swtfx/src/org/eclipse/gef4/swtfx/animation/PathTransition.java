@@ -22,11 +22,16 @@ public class PathTransition extends AbstractTransition {
 	private PathEvaluator evaluator;
 	private INode node;
 
-	public PathTransition(Scene scene, long durationMillis, double cycleCount,
+	public PathTransition(long durationMillis, double cycleCount,
 			boolean autoReverse, INode node, Path path) {
-		super(scene, durationMillis, cycleCount, autoReverse);
+		super(durationMillis, cycleCount, autoReverse);
 		evaluator = new PathEvaluator(path);
 		this.node = node;
+	}
+
+	@Override
+	protected Scene getScene() {
+		return node.getScene();
 	}
 
 	@Override

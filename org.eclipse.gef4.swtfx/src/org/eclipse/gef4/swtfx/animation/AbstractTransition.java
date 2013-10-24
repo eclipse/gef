@@ -56,15 +56,8 @@ public abstract class AbstractTransition implements IPulseListener {
 	private boolean running = false;
 	private boolean paused = false;
 
-	/**
-	 * Stores the scene, so that we can (de-)register ourself as an
-	 * {@link IPulseListener} on its {@link PulseThread}.
-	 */
-	private Scene scene;
-
-	public AbstractTransition(Scene scene, long durationMillis,
-			double cycleCount, boolean autoReverse) {
-		this.scene = scene;
+	public AbstractTransition(long durationMillis, double cycleCount,
+			boolean autoReverse) {
 		this.cycleDurationMillis = durationMillis;
 		this.cycleCount = cycleCount;
 		this.autoReverse = autoReverse;
@@ -77,6 +70,17 @@ public abstract class AbstractTransition implements IPulseListener {
 	public IInterpolator getInterpolator() {
 		return interpolator;
 	}
+
+	/**
+	 * Returns the scene, so that we can (de-)register ourself as an
+	 * {@link IPulseListener} on its {@link PulseThread}. This method is allowed
+	 * to return <code>null</code> if the Scene is currently unknown.
+	 * 
+	 * If you try to start playing an animation which is not associated with a
+	 * {@link Scene} (i.e. this method returns <code>null</code>) an
+	 * {@link IllegalStateException} is thrown.
+	 */
+	protected abstract Scene getScene();
 
 	@Override
 	public void handlePulse(long elapsedMs) {
@@ -112,8 +116,16 @@ public abstract class AbstractTransition implements IPulseListener {
 
 	/**
 	 * Starts animation playback.
+	 * 
+	 * If no {@link Scene} can be associated with this animation, an
+	 * {@link IllegalStateException} is thrown.
 	 */
 	public void play() {
+		Scene scene = getScene();
+		if (scene == null) {
+			throw new IllegalStateException("Unknown Scene!");
+		}
+
 		if (running) {
 			stop();
 		}
@@ -150,7 +162,12 @@ public abstract class AbstractTransition implements IPulseListener {
 			return;
 		}
 		running = false;
-		scene.getPulseThread().getListeners().remove(this);
+		Scene scene = getScene();
+		if (scene != null) {
+			scene.getPulseThread().getListeners().remove(this);
+		} else {
+			throw new IllegalStateException("Unknown Scene!");
+		}
 		startMillis = 0;
 		step(1);
 	}
