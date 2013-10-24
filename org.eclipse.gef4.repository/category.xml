@@ -12,6 +12,12 @@
    <feature url="features/org.eclipse.gef4.geometry.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.tests" version="0.1.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 Zest"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.zest.source-feature_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.source-feature" version="0.1.0.qualifier">
+      <category name="GEF4 Zest"/>
+   </feature>
    <feature url="features/org.eclipse.gef4.swtfx_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx" version="0.1.0.qualifier">
       <category name="GEF4 SwtFX"/>
    </feature>
@@ -24,13 +30,20 @@
    <feature url="features/org.eclipse.gef4.swtfx.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.tests" version="0.1.0.qualifier">
       <category name="GEF4 SwtFX"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
-      <category name="GEF4 Zest"/>
+   <feature url="features/org.eclipse.gef4.cloudio_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio" version="0.1.0.qualifier">
+      <category name="GEF4 Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.source-feature_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.source-feature" version="0.1.0.qualifier">
-      <category name="GEF4 Zest"/>
+   <feature url="features/org.eclipse.gef4.cloudio.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.doc" version="0.1.0.qualifier">
+      <category name="GEF4 Cloudio"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.cloudio.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 Cloudio"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.cloudio.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.tests" version="0.1.0.qualifier">
+      <category name="GEF4 Cloudio"/>
    </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>
+   <category-def name="GEF4 Cloudio" label="GEF4 Cloudio"/>
 </site>

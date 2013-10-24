@@ -41,7 +41,8 @@
 										<echo
 											message="Replacing @build@ token within about.mappings with build id." />
 										<replace file="about.mappings">
-											<replacefilter token="@build@" value="${unqualifiedVersion}.${buildQualifier}" />
+											<replacefilter token="@build@"
+												value="${unqualifiedVersion}.${buildQualifier}" />
 										</replace>
 									</then>
 								</if>
@@ -51,7 +52,8 @@
 										<echo
 											message="Replacing @build@ token within javadocOptions.txt with build id." />
 										<replace file="javadocOptions.txt">
-											<replacefilter token="@build@" value="${unqualifiedVersion}.${buildQualifier}" />
+											<replacefilter token="@build@"
+												value="${unqualifiedVersion}.${buildQualifier}" />
 										</replace>
 									</then>
 								</if>
@@ -74,7 +76,8 @@
 										<echo
 											message="Replacing back build id within about.mappings with @build@ token." />
 										<replace file="about.mappings">
-											<replacefilter token="${unqualifiedVersion}.${buildQualifier}" value="@build@" />
+											<replacefilter token="${unqualifiedVersion}.${buildQualifier}"
+												value="@build@" />
 										</replace>
 									</then>
 								</if>
@@ -84,7 +87,8 @@
 										<echo
 											message="Replacing back build id within javadocOptions.txt with @build@ token." />
 										<replace file="javadocOptions.txt">
-											<replacefilter token="${unqualifiedVersion}.${buildQualifier}" value="@build@" />
+											<replacefilter token="${unqualifiedVersion}.${buildQualifier}"
+												value="@build@" />
 										</replace>
 									</then>
 								</if>
@@ -103,24 +107,24 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-source-plugin</artifactId>
-        <version>${tycho-version}</version>
-        <executions>
-          <execution>
-            <id>plugin-source</id>
-            <goals>
-              <goal>plugin-source</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>JUNO_4_2.target</id>
+			<id>KEPLER_4_2.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -137,118 +141,16 @@
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
 									<version>0.1.0-SNAPSHOT</version>
-									<classifier>JUNO_4_2</classifier>
+									<classifier>KEPLER_4_3</classifier>
 								</artifact>
 							</target>
-              <dependency-resolution>
-                <optionalDependencies>ignore</optionalDependencies>
-              </dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>JUNO_3_8.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho-version}</version>
-						<configuration>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef4</groupId>
-									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.1.0-SNAPSHOT</version>
-									<classifier>JUNO_3_8</classifier>
-								</artifact>
-							</target>
-              <dependency-resolution>
-                <optionalDependencies>ignore</optionalDependencies>
-              </dependency-resolution>
-							<environments>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>linux</os>
-									<ws>gtk</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86</arch>
-								</environment>
-								<environment>
-									<os>win32</os>
-									<ws>win32</ws>
-									<arch>x86_64</arch>
-								</environment>
-								<environment>
-									<os>macosx</os>
-									<ws>cocoa</ws>
-									<arch>x86_64</arch>
-								</environment>
-							</environments>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>INDIGO_3_7_1.target</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>target-platform-configuration</artifactId>
-						<version>${tycho-version}</version>
-						<configuration>
-							<!-- add target file content to target platform -->
-							<target>
-								<artifact>
-									<groupId>org.eclipse.gef4</groupId>
-									<artifactId>org.eclipse.gef4.target</artifactId>
-									<version>0.1.0-SNAPSHOT</version>
-									<classifier>INDIGO_3_7_1</classifier>
-								</artifact>
-							</target>
-              <dependency-resolution>
-                <optionalDependencies>ignore</optionalDependencies>
-              </dependency-resolution>
+							<dependency-resolution>
+								<!-- Bug #420224: This is currently required in order to satisfy 
+									dependencies of org.eclipse.gef4.zest.dot.ui; however, it prevents the other 
+									doc plugins form properly building their javadoc, as context libs are inferred 
+									from optionally required bundles -->
+								<optionalDependencies>ignore</optionalDependencies>
+							</dependency-resolution>
 							<environments>
 								<environment>
 									<os>linux</os>
@@ -283,38 +185,37 @@
 		</profile>
 	</profiles>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven.eclipse.org</id>
-			<url>http://maven.eclipse.org/nexus/content/groups/public/</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<modules>
 		<module>../org.eclipse.gef4.target</module>
 		<module>../org.eclipse.gef4.geometry</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt</module>
-		<module>../org.eclipse.gef4.geometry.tests</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt.tests</module>
-		<module>../org.eclipse.gef4.geometry.doc</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt-feature</module>
 		<module>../org.eclipse.gef4.geometry-feature</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.source-feature</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt.tests-feature</module>
+		<module>../org.eclipse.gef4.geometry.tests</module>
 		<module>../org.eclipse.gef4.geometry.tests-feature</module>
+		<module>../org.eclipse.gef4.geometry.convert.swt</module>
+		<module>../org.eclipse.gef4.geometry.convert.swt-feature</module>
+		<module>../org.eclipse.gef4.geometry.convert.swt.source-feature</module>
+		<module>../org.eclipse.gef4.geometry.convert.swt.tests</module>
+		<module>../org.eclipse.gef4.geometry.convert.swt.tests-feature</module>
+		<module>../org.eclipse.gef4.geometry.doc</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
 		<module>../org.eclipse.gef4.swtfx</module>
-		<module>../org.eclipse.gef4.swtfx.tests</module>
-		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx-feature</module>
 		<module>../org.eclipse.gef4.swtfx.source-feature</module>
+		<module>../org.eclipse.gef4.swtfx.tests</module>
 		<module>../org.eclipse.gef4.swtfx.tests-feature</module>
+		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
-		<module>../org.eclipse.gef4.repository</module>
-		<module>../org.eclipse.gef4.zest.cloudio</module>
+		<module>../org.eclipse.gef4.cloudio</module>
+		<module>../org.eclipse.gef4.cloudio-feature</module>
+		<module>../org.eclipse.gef4.cloudio.source-feature</module>
+		<module>../org.eclipse.gef4.cloudio.tests</module>
+		<module>../org.eclipse.gef4.cloudio.tests-feature</module>
+		<module>../org.eclipse.gef4.cloudio.doc</module>
+		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
+		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
 		<module>../org.eclipse.gef4.zest.layouts</module>
@@ -324,6 +225,7 @@
 		<module>../org.eclipse.gef4.zest.feature</module>
 		<module>../org.eclipse.gef4.zest.source-feature</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
+		<module>../org.eclipse.gef4.repository</module>
 	</modules>
 
 </project>

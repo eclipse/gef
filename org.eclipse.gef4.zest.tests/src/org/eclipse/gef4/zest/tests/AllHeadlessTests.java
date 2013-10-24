@@ -8,8 +8,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests;
 
-import org.eclipse.gef4.zest.tests.cloudio.TagCloudTests;
-import org.eclipse.gef4.zest.tests.cloudio.TagCloudViewerTests;
 import org.eclipse.gef4.zest.tests.dot.DotExportSuite;
 import org.eclipse.gef4.zest.tests.dot.DotImportSuite;
 import org.junit.runner.RunWith;
@@ -23,7 +21,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ GraphTests.class, GraphSelectionTests.class,
 		GraphViewerTests.class, IFigureProviderTests.class,
-		LayoutAlgorithmTests.class, DotExportSuite.class, DotImportSuite.class,
-		TagCloudTests.class, TagCloudViewerTests.class })
+		LayoutAlgorithmTests.class, DotExportSuite.class, DotImportSuite.class })
 public final class AllHeadlessTests {
 }

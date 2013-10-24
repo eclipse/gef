@@ -1,0 +1,19 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef4.cloudio/src"
+-d reference/api
+-classpath "@rt@@args.list.delimiter@@context@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF4 Cloudio API Reference"
+-doctitle "GEF4 Cloudio API Reference"
+-header "<b>GEF4 Cloudio</b><br>@build@"
+-bottom "Copyright (c) 2000, 2012 IBM Corporation, itemis AG, and others. All rights reserved."
+-link http://docs.oracle.com/javase/1.5.0/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+
+org.eclipse.gef4.cloudio
+org.eclipse.gef4.cloudio.layout
+org.eclipse.gef4.cloudio.util

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 Cloudio Examples
+Bundle-SymbolicName: org.eclipse.gef4.cloudio.examples
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.gef4.cloudio;bundle-version="0.1.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.jface;bundle-version="3.6.0"

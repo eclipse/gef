@@ -22,10 +22,6 @@
     <extension point="org.eclipse.help.toc">
         <toc file="Zest-DOT-toc.xml" primary="true"/>
         <toc file="Zest-toc.xml" primary="true"/>
-        <toc
-              file="Zest-Cloudio-toc.xml"
-              primary="true">
-        </toc>
     </extension>
     
     <!-- DOT editor -->
