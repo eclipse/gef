@@ -38,7 +38,7 @@ public abstract class Application {
 
 		double prefWidth = scene.getRoot().getPrefWidth();
 		double prefHeight = scene.getRoot().getPrefHeight();
-		shell.setSize((int) prefWidth, (int) prefHeight);
+		shell.setSize((int) Math.ceil(prefWidth), (int) Math.ceil(prefHeight));
 		Rectangle clientArea = shell.getClientArea();
 		shell.setSize((int) prefWidth * 2 - clientArea.width, (int) prefHeight
 				* 2 - clientArea.height);
