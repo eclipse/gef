@@ -21,7 +21,7 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
  * resizable, it keeps its preferred size constant, and it fills its interior
  * with the specified color.
  */
-public class ColoredPiece extends ShapeFigure {
+public class ColoredPiece extends ShapeFigure<Rectangle> {
 
 	public double sWidth;
 	public double sHeight;
@@ -54,7 +54,7 @@ public class ColoredPiece extends ShapeFigure {
 
 	@Override
 	public void resize(double width, double height) {
-		((Rectangle) getShape()).setSize(width, height);
+		getShape().setSize(width, height);
 	}
 
 }

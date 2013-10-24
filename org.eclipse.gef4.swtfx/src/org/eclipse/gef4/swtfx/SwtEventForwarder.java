@@ -174,19 +174,13 @@ class SwtEventForwarder implements Listener {
 	 */
 	@Override
 	public void handleEvent(org.eclipse.swt.widgets.Event event) {
-		// System.out.println("raised event " + event);
-
 		if (anyOf(event.type, MOUSE_EVENT_TYPES)) {
-			// System.out.println("  is mouse event");
 			handleMouseEvent(event);
 		} else if (anyOf(event.type, KEYBOARD_EVENT_TYPES)) {
-			// System.out.println("  is keyboard event");
 			handleKeyboardEvent(event);
 		} else if (anyOf(event.type, UNSUPPORTED_EVENT_TYPES)) {
-			// System.out.println("  is unsupported!");
 			return;
 		} else {
-			// System.out.println("  is other event");
 			handleOtherEvent(event);
 		}
 	}
@@ -194,11 +188,8 @@ class SwtEventForwarder implements Listener {
 	private void handleKeyboardEvent(org.eclipse.swt.widgets.Event event) {
 		INode focusTarget = receiver.getFocusTarget();
 		if (focusTarget != null) {
-			// System.out.println("  send to focus target (" + focusTarget +
-			// ")");
 			Event.fireEvent(focusTarget, wrap(event, focusTarget));
 		} else {
-			// System.out.println("  determining target...");
 			handleOtherEvent(event);
 		}
 	}
@@ -206,42 +197,25 @@ class SwtEventForwarder implements Listener {
 	private void handleMouseEvent(org.eclipse.swt.widgets.Event event) {
 		if (event.type == SWT.MouseMove || event.type == SWT.MouseEnter
 				|| event.type == SWT.MouseExit) {
-			// System.out.println("  enter/exit check");
-
 			// check for enter/exit
 			INode oldPointerTarget = receiver.getMousePointerTarget();
 
-			// System.out.println("event mouse pos = " + event.x + ", " +
-			// event.y);
 			Point mousePosition = getAbsMousePos(event);
-			// System.out.println("abs mouse pos = " + mousePosition);
-
 			Point rootLocalMousePosition = receiver.getRoot().displayToLocal(
 					mousePosition);
-
-			// System.out.println("root local mouse pos = "
-			// + rootLocalMousePosition);
 
 			INode newPointerTarget = receiver.getRoot().getNodeAt(
 					rootLocalMousePosition);
 
-			// System.out.println("    old-pointer-target = " +
-			// oldPointerTarget);
-			// System.out.println("    new-pointer-target = " +
-			// newPointerTarget);
-
 			if (oldPointerTarget != null) {
 				if (newPointerTarget != oldPointerTarget) {
-					// System.out.println("    exit old-pointer-target");
 					fireExited(event, oldPointerTarget, mousePosition);
 					if (newPointerTarget != null) {
-						// System.out.println("    enter new-pointer-target");
 						fireEntered(event, newPointerTarget, mousePosition);
 					}
 				}
 			} else {
 				if (newPointerTarget != null) {
-					// System.out.println("    enter new-pointer-target");
 					fireEntered(event, newPointerTarget, mousePosition);
 				}
 			}
@@ -255,41 +229,25 @@ class SwtEventForwarder implements Listener {
 
 		INode mouseTarget = receiver.getMouseTarget();
 		if (mouseTarget != null) {
-			// System.out.println("  send to mouse target (" + mouseTarget +
-			// ")");
 			if (event.type == SWT.MouseUp) {
-				// System.out.println("    invalidate mouse target");
 				receiver.setMouseTarget(null);
 			}
 			Event.fireEvent(mouseTarget, wrap(event, mouseTarget));
 		} else {
-			// System.out.println("  determining target...");
-
 			Point mousePosition = getAbsMousePos(event);
 			receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
-			// System.out.println("    root local mouse position ("
-			// + mousePosition.x + ", " + mousePosition.y + ")");
-
 			INode nodeAtMouse = receiver.getRoot().getNodeAt(mousePosition);
-
-			// System.out.println("    node at mouse (" + nodeAtMouse + ")");
 
 			if (nodeAtMouse != null) {
 				if (event.type == SWT.MouseDown) {
-					// System.out
-					// .println("      set mouse target to node at mouse");
 					receiver.setMouseTarget(nodeAtMouse);
 				}
 				Event.fireEvent(nodeAtMouse, wrap(event, nodeAtMouse));
 			} else {
 				if (receiver.getRoot().contains(mousePosition)) {
-					// System.out.println("    send to root parent ("
-					// + receiver.getRoot() + ")");
 					Event.fireEvent(receiver.getRoot(),
 							wrap(event, receiver.getRoot()));
-				} else {
-					// System.out.println("    discard event! (no target found)");
 				}
 			}
 		}
@@ -313,28 +271,14 @@ class SwtEventForwarder implements Listener {
 			Point mousePosition) {
 		receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
-		// System.out.println("    root local mouse position (" +
-		// mousePosition.x
-		// + ", " + mousePosition.y + ")");
-
 		INode nodeAtMouse = receiver.getRoot().getNodeAt(mousePosition);
 
 		if (nodeAtMouse == null) {
-			// System.out.println("    no node at mouse");
-			// check if root can see it
 			if (receiver.getRoot().contains(mousePosition)) {
-				// System.out.println("    send to root parent ("
-				// + receiver.getRoot() + ")");
 				Event.fireEvent(receiver.getRoot(),
 						wrap(event, receiver.getRoot()));
-			} else {
-				// System.out.println("    discard event! (no target found)");
-				// no one can process the event
-				return;
 			}
 		} else {
-			// System.out.println("    send to node at mouse (" + nodeAtMouse
-			// + ")");
 			Event.fireEvent(nodeAtMouse, wrap(event, nodeAtMouse));
 		}
 	}
