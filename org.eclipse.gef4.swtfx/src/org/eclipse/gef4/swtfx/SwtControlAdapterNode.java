@@ -148,7 +148,7 @@ public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 	 *         <code>location = layout-bounds.transformToAbsolute.location</code>
 	 *         , and <code>size = layout-bounds.size</code>
 	 */
-	private Rectangle getAbsoluteBounds() {
+	protected Rectangle getAbsoluteBounds() {
 		Rectangle layoutBounds = getLayoutBounds();
 		return layoutBounds.getTransformed(getLocalToAbsoluteTransform())
 				.getBounds();
@@ -297,6 +297,8 @@ public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 
 		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
 		txBounds.translate(-location.x, -location.y);
+
+		// System.out.println("tx-bounds: " + txBounds);
 
 		control.setBounds((int) Math.ceil(txBounds.getX()),
 				(int) Math.ceil(txBounds.getY()),

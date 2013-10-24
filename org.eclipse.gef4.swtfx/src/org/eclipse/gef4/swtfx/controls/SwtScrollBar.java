@@ -65,7 +65,7 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	public double computePrefHeight(double width) {
 		if (orientation == Orientation.HORIZONTAL) {
 			if (getControl() != null) {
-				return getControl().getHorizontalBar().getSize().x;
+				return getControl().computeTrim(0, 0, 0, 0).height;
 			}
 		}
 		return super.computePrefHeight(width);
@@ -75,7 +75,7 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	public double computePrefWidth(double height) {
 		if (orientation == Orientation.VERTICAL) {
 			if (getControl() != null) {
-				return getControl().getVerticalBar().getSize().y;
+				return getControl().computeTrim(0, 0, 0, 0).width;
 			}
 		}
 		return super.computePrefWidth(height);
@@ -95,13 +95,12 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 					+ orientation);
 		}
 
-		ScrolledComposite scrolledComposite = new ScrolledComposite(getScene(),
-				flags);
-		scrolledComposite.setBackground(getScene().getDisplay().getSystemColor(
-				SWT.COLOR_BLUE));
-		scrolledComposite.setAlwaysShowScrollBars(true);
+		ScrolledComposite scrolled = new ScrolledComposite(getScene(), flags);
+		scrolled.setContent(null);
+		scrolled.setMinSize(0, 0);
+		scrolled.setAlwaysShowScrollBars(true);
 
-		return scrolledComposite;
+		return scrolled;
 	}
 
 	@Override
@@ -112,9 +111,16 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 
 	@Override
 	public void resize(double width, double height) {
+		/*
+		 * Note: We are setting the pref-width or pref-height here so that
+		 * computePrefX() returns that size. This is not how it should work.
+		 */
+
 		if (orientation == Orientation.HORIZONTAL) {
+			setPrefWidth(width);
 			super.resize(width, computePrefHeight(width));
 		} else if (orientation == Orientation.VERTICAL) {
+			setPrefHeight(height);
 			super.resize(computePrefWidth(height), height);
 		}
 	}
@@ -123,13 +129,6 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	protected void unhookControl() {
 		super.unhookControl();
 		getControl().dispose();
-	}
-
-	@Override
-	public void updateSwtBounds() {
-		if (getControl() == null) {
-			return;
-		}
 	}
 
 }
