@@ -14,8 +14,12 @@ package org.eclipse.gef4.swtfx.controls;
 
 import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
+import org.eclipse.gef4.swtfx.event.ActionEvent;
+import org.eclipse.gef4.swtfx.event.Event;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
@@ -130,9 +134,25 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 				.getVerticalBar();
 	}
 
+	public int getThumb() {
+		return getSwtBar().getThumb();
+	}
+
 	@Override
 	protected void hookControl() {
 		setControl(createScrolled(orientation));
+		getSwtBar().addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Event.fireEvent(SwtScrollBar.this, new ActionEvent(e,
+						SwtScrollBar.this, ActionEvent.ACTION));
+			}
+		});
 		super.hookControl();
 	}
 
@@ -170,6 +190,23 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 
 	public void setSelection(int sel) {
 		getSwtBar().setSelection(sel);
+	}
+
+	public void setThumb(int thumb) {
+		getSwtBar().setThumb(thumb);
+	}
+
+	public void setValues(int sel, int min, int max, int thumb, int inc,
+			int pageInc) {
+		getSwtBar().setValues(sel, min, max, thumb, inc, pageInc);
+	}
+
+	@Override
+	public String toString() {
+		return "SwtScrollBar { range: " + "[" + getMinimum() + ";"
+				+ getMaximum() + "]" + ", sel: " + getSelection() + ", thumb: "
+				+ getThumb() + ", inc: " + getIncrement() + ";"
+				+ getPageIncrement() + " }";
 	}
 
 	@Override
