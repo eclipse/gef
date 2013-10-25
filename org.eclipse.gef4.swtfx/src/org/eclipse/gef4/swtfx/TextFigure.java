@@ -17,12 +17,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.gc.GraphicsContext;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
 
 public class TextFigure extends AbstractFigure {
 
 	private String text;
 	private Dimension textExtent = new Dimension();
+	private boolean textChanged = true;
 
 	public TextFigure(String text) {
 		setText(text);
@@ -44,7 +44,7 @@ public class TextFigure extends AbstractFigure {
 	protected void doPaint(GraphicsContext g) {
 		// TODO: remove textExtent calculation, this should happen during
 		// layout-pass
-		if (textExtent.isEmpty()) {
+		if (textChanged) {
 			// this is the correct way of computing
 			textExtent = g.textExtent(text);
 		}
@@ -62,17 +62,13 @@ public class TextFigure extends AbstractFigure {
 		return new Rectangle(new Point(), textExtent);
 	}
 
+	public String getText() {
+		return text;
+	}
+
 	public void setText(String text) {
 		this.text = text;
-
-		Scene scene = getScene();
-		if (scene != null) {
-			GC gc = new GC(scene);
-			// TODO: this is just a hack, use GraphicsContextState
-			org.eclipse.swt.graphics.Point extent = gc.textExtent(text);
-			textExtent = new Dimension(extent.x, extent.y);
-			gc.dispose();
-		}
+		textChanged = true;
 	}
 
 }

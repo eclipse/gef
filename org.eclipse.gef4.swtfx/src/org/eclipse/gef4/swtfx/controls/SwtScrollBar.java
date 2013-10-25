@@ -24,6 +24,11 @@ import org.eclipse.swt.widgets.ScrollBar;
 
 public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 
+	/*
+	 * TODO: Implement a ScrollBarModel so that we can apply scroll changes even
+	 * without having an actual SWT ScrollBar available.
+	 */
+
 	// private double size;
 
 	// TODO: this is the wrong Orientation, use enum { HORIZONTAL, VERTICAL }
@@ -109,33 +114,60 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	}
 
 	public int getIncrement() {
-		return getSwtBar().getIncrement();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getIncrement();
+		}
+		return 0;
 	}
 
 	public int getMaximum() {
-		return getSwtBar().getMaximum();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getMaximum();
+		}
+		return 0;
 	}
 
 	public int getMinimum() {
-		return getSwtBar().getMinimum();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getMinimum();
+		}
+		return 0;
 	}
 
 	public int getPageIncrement() {
-		return getSwtBar().getPageIncrement();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getPageIncrement();
+		}
+		return 0;
 	}
 
 	public int getSelection() {
-		return getSwtBar().getSelection();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getSelection();
+		}
+		return 0;
 	}
 
 	public ScrollBar getSwtBar() {
 		ScrolledComposite c = getControl();
-		return orientation == Orientation.HORIZONTAL ? c.getHorizontalBar() : c
-				.getVerticalBar();
+		if (c != null) {
+			return orientation == Orientation.HORIZONTAL ? c.getHorizontalBar()
+					: c.getVerticalBar();
+		}
+		return null;
 	}
 
 	public int getThumb() {
-		return getSwtBar().getThumb();
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			return swtBar.getThumb();
+		}
+		return 0;
 	}
 
 	@Override
@@ -173,32 +205,53 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	}
 
 	public void setIncrement(int inc) {
-		getSwtBar().setIncrement(inc);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setIncrement(inc);
+		}
 	}
 
 	public void setMaximum(int max) {
-		getSwtBar().setMaximum(max);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setMaximum(max);
+		}
 	}
 
 	public void setMinimum(int min) {
-		getSwtBar().setMinimum(min);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setMinimum(min);
+		}
 	}
 
 	public void setPageIncrement(int pageInc) {
-		getSwtBar().setPageIncrement(pageInc);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setPageIncrement(pageInc);
+		}
 	}
 
 	public void setSelection(int sel) {
-		getSwtBar().setSelection(sel);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setSelection(sel);
+		}
 	}
 
 	public void setThumb(int thumb) {
-		getSwtBar().setThumb(thumb);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setThumb(thumb);
+		}
 	}
 
 	public void setValues(int sel, int min, int max, int thumb, int inc,
 			int pageInc) {
-		getSwtBar().setValues(sel, min, max, thumb, inc, pageInc);
+		ScrollBar swtBar = getSwtBar();
+		if (swtBar != null) {
+			swtBar.setValues(sel, min, max, thumb, inc, pageInc);
+		}
 	}
 
 	@Override

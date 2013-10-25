@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 
 public class SwtLabel extends SwtControlAdapterNode<Label> {
+
 	private String text;
 
 	public SwtLabel(String text) {
@@ -30,10 +31,24 @@ public class SwtLabel extends SwtControlAdapterNode<Label> {
 		return label;
 	}
 
+	public String getText() {
+		if (getControl() != null) {
+			text = getControl().getText();
+		}
+		return text;
+	}
+
 	@Override
 	protected void hookControl() {
 		setControl(createLabel());
 		super.hookControl();
+	}
+
+	public void setText(String text) {
+		this.text = text;
+		if (getControl() != null) {
+			getControl().setText(text);
+		}
 	}
 
 	@Override
