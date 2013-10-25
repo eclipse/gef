@@ -130,4 +130,11 @@ public class AnchorPane extends Pane {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "AnchorPane " + System.identityHashCode(this)
+				+ " { children-count: " + getChildNodes().size() + " }";
+	}
+
 }

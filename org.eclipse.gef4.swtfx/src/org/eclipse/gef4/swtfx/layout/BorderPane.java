@@ -190,4 +190,10 @@ public class BorderPane extends Pane {
 		this.constraints.put(top, constraints);
 	}
 
+	@Override
+	public String toString() {
+		return "BorderPane " + System.identityHashCode(this)
+				+ " { children-count: " + getChildNodes().size() + " }";
+	}
+
 }

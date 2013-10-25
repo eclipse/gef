@@ -213,4 +213,10 @@ public class ScrollPane extends Pane {
 		this.vBarPolicy = vBarPolicy;
 	}
 
+	@Override
+	public String toString() {
+		return "ScrollPane " + System.identityHashCode(this)
+				+ " { children-count: " + getChildNodes().size() + " }";
+	}
+
 }

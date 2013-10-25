@@ -118,4 +118,10 @@ public class HBox extends Pane {
 		grower = node;
 	}
 
+	@Override
+	public String toString() {
+		return "HBox " + System.identityHashCode(this) + " { children-count: "
+				+ getChildNodes().size() + " }";
+	}
+
 }

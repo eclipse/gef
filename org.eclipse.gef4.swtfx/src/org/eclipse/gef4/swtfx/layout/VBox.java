@@ -108,4 +108,11 @@ public class VBox extends Pane {
 	public void setGrower(INode node) {
 		grower = node;
 	}
+
+	@Override
+	public String toString() {
+		return "VBox " + System.identityHashCode(this) + " { children-count: "
+				+ getChildNodes().size() + " }";
+	}
+
 }
