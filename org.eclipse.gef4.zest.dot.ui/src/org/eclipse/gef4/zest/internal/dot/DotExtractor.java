@@ -23,7 +23,7 @@ import org.eclipse.gef4.zest.DotUiMessages;
  */
 public final class DotExtractor {
 	/** The DOT graph returned if the input contains no DOT graph substring. */
-	public static final String NO_DOT = "graph{n1[label=\"" + DotUiMessages.DotExtractor_0 + "\"]}"; //$NON-NLS-1$//$NON-NLS-3$
+	public static final String NO_DOT = "graph{n1[label=\"" + DotUiMessages.DotExtractor_0 + "\"]}"; //$NON-NLS-1$ //$NON-NLS-2$
 	private String input = NO_DOT;
 
 	/**
