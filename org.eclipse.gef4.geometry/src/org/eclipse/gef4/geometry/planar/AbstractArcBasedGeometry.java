@@ -271,6 +271,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * @see IGeometry#toPath()
 	 */
+	@Override
 	public Path toPath() {
 		return CurveUtils.toPath(computeBezierApproximation());
 	}

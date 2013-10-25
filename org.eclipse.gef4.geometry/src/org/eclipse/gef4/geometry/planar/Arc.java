@@ -87,6 +87,7 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	 * returns PolyBezier objects if it is rotated.)
 	 */
 
+	@Override
 	public boolean contains(Point p) {
 		for (CubicCurve c : computeBezierApproximation()) {
 			if (c.contains(p)) {
@@ -109,46 +110,61 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 				&& startAngle.equals(o.startAngle);
 	}
 
+	@Override
+	public Rectangle getBounds() {
+		return new PolyBezier(toBezier()).getBounds();
+	}
+
+	@Override
 	public Arc getCopy() {
 		return new Arc(x, y, width, height, startAngle, angularExtent);
 	}
 
+	@Override
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(this, c);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {
 		return getRotatedCCW(angle, getCenter());
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
 				cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, Point center) {
 		return new PolyBezier(computeBezierApproximation()).rotateCCW(angle,
 				center);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle) {
 		return getRotatedCW(angle, getCenter());
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
 		return new PolyBezier(computeBezierApproximation()).rotateCW(angle, cx,
 				cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, Point center) {
 		return new PolyBezier(computeBezierApproximation()).rotateCW(angle,
 				center);
 	}
 
+	@Override
 	public boolean intersects(ICurve c) {
 		return CurveUtils.getIntersections(this, c).length > 0;
 	}
 
+	@Override
 	public boolean overlaps(ICurve c) {
 		for (BezierCurve seg1 : computeBezierApproximation()) {
 			if (seg1.overlaps(c)) {
@@ -158,6 +174,7 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 		return false;
 	}
 
+	@Override
 	public CubicCurve[] toBezier() {
 		return computeBezierApproximation();
 	}

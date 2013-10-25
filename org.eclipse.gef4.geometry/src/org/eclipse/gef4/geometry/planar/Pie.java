@@ -72,14 +72,14 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 		super(x, y, width, height, startAngle, angularExtent);
 	}
 
-	/*
-	 * TODO: Add additional methods to rotate a Pie so that it remains a Pie.
-	 */
-
 	@Override
 	public boolean contains(IGeometry g) {
 		return ShapeUtils.contains(this, g);
 	}
+
+	/*
+	 * TODO: Add additional methods to rotate a Pie so that it remains a Pie.
+	 */
 
 	@Override
 	public boolean contains(Point p) {
@@ -94,6 +94,11 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 		return new Ellipse(x, y, width, height).contains(p);
 	}
 
+	@Override
+	public Rectangle getBounds() {
+		return getOutline().getBounds();
+	}
+
 	/**
 	 * @see org.eclipse.gef4.geometry.planar.IGeometry#getCopy()
 	 */
@@ -104,7 +109,7 @@ public class Pie extends AbstractArcBasedGeometry<Pie, Path> implements IShape {
 
 	@Override
 	public PolyBezier getOutline() {
-		return new PolyBezier(computeBezierApproximation());
+		return new PolyBezier(getOutlineSegments());
 	}
 
 	@Override

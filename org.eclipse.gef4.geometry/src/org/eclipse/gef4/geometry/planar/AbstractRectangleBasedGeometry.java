@@ -98,7 +98,8 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
-	public final Rectangle getBounds() {
+	@Override
+	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
 	}
 
@@ -171,32 +172,38 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return new Point(x, y);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factor) {
 		return (T) ((T) getCopy()).scale(factor);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factorX, double factorY) {
 		return (T) ((T) getCopy()).scale(factorX, factorY);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factor, double centerX, double centerY) {
 		return (T) ((T) getCopy()).scale(factor, centerX, centerY);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factorX, double factorY, double centerX,
 			double centerY) {
 		return (T) ((T) getCopy()).scale(factorX, factorY, centerX, centerY);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factorX, double factorY, Point center) {
 		return (T) ((T) getCopy()).scale(factorX, factorY, center);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getScaled(double factor, Point center) {
 		return (T) ((T) getCopy()).scale(factor, center);
@@ -249,11 +256,13 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return new Dimension(width, height);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getTranslated(double dx, double dy) {
 		return (T) ((T) getCopy()).translate(dx, dy);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T getTranslated(Point pt) {
 		return (T) ((T) getCopy()).translate(pt);
@@ -286,18 +295,22 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return y;
 	}
 
+	@Override
 	public T scale(double factor) {
 		return scale(factor, factor);
 	}
 
+	@Override
 	public T scale(double fx, double fy) {
 		return scale(fx, fy, getCenter());
 	}
 
+	@Override
 	public T scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T scale(double fx, double fy, double cx, double cy) {
 		x = (x - cx) * fx + cx;
@@ -307,10 +320,12 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
+	@Override
 	public T scale(double fx, double fy, Point center) {
 		return scale(fx, fy, center.x, center.y);
 	}
 
+	@Override
 	public T scale(double factor, Point center) {
 		return scale(factor, center.x, center.y);
 	}
@@ -536,6 +551,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T translate(double dx, double dy) {
 		x += dx;
@@ -543,6 +559,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
+	@Override
 	public T translate(Point p) {
 		return translate(p.x, p.y);
 	}
