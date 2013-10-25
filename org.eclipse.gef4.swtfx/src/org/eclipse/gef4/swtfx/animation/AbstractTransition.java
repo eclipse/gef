@@ -107,6 +107,14 @@ public abstract class AbstractTransition implements IPulseListener {
 		}
 	}
 
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public boolean isPlaying() {
+		return running;
+	}
+
 	/**
 	 * Pauses animation playback.
 	 */
