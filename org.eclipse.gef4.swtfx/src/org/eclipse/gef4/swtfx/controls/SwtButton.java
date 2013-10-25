@@ -19,13 +19,18 @@ import org.eclipse.swt.widgets.Button;
 public class SwtButton extends SwtControlAdapterNode<Button> {
 
 	public static enum Type {
-		PUSH, TOGGLE;
+		PUSH, TOGGLE, RADIO, CHECK;
+
 		public int getSwtFlags() {
 			switch (this) {
 			case PUSH:
 				return SWT.PUSH;
 			case TOGGLE:
 				return SWT.TOGGLE;
+			case RADIO:
+				return SWT.RADIO;
+			case CHECK:
+				return SWT.CHECK;
 			default:
 				throw new IllegalStateException("Unsupported SwtButton.Type: "
 						+ this);
@@ -50,6 +55,13 @@ public class SwtButton extends SwtControlAdapterNode<Button> {
 		Button button = new Button(getScene(), type.getSwtFlags());
 		button.setText(text);
 		return button;
+	}
+
+	public boolean getSelection() {
+		if (getControl() != null) {
+			return getControl().getSelection();
+		}
+		return false;
 	}
 
 	@Override
