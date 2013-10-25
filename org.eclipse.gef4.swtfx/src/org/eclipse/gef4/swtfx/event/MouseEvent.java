@@ -22,11 +22,12 @@ import org.eclipse.gef4.swtfx.INode;
  * <li>MOUSE_RELEASED: fired when a mouse button is released.</li>
  * <li>MOUSE_SCROLLED: fired when the mouse wheel is scrolled.</li>
  * <li>MOUSE_MOVED: fired when the mouse is moved.</li>
- * <li>TODO: MOUSE_DRAGGED: fired when the mouse is moved while being pressed.</li>
- * <li>MOUSE_ENTERED_TARGET: fired when the mouse enters an {@link INode}</li>
- * <li>MOUSE_EXITED_TARGET: fired when the mouse exits an {@link INode}</li>
- * <li>MOUSE_ENTERED: only send to the entered {@link INode}</li>
- * <li>MOUSE_EXITED: only send to the exited {@link INode}</li>
+ * <li>MOUSE_DRAGGED: fired when the mouse is moved while being pressed.</li>
+ * <li>MOUSE_ENTERED_TARGET: fired when the mouse enters an {@link INode}.</li>
+ * <li>MOUSE_EXITED_TARGET: fired when the mouse exits an {@link INode}.</li>
+ * <li>MOUSE_ENTERED: only sent to the entered {@link INode}.</li>
+ * <li>MOUSE_EXITED: only sent to the exited {@link INode}.</li>
+ * <li>MOUSE_DOUBLE_CLICKED: fired when a mouse button is double clicked.</li>
  * </ul>
  * 
  * Every mouse event is associated with the following attributes:
@@ -34,10 +35,10 @@ import org.eclipse.gef4.swtfx.INode;
  * <ul>
  * <li>{@link #getButton()}: the id of the pressed/released button<br />
  * You can use the SWT#BUTTONx constants to check which one.</li>
- * <li>{@link #getClickCount()}: the scroll direction/speed if button = 0<br />
+ * <li>{@link #getClickCount()}: the scroll direction/speed if button = 0.<br />
  * Normally, a scroll event will set this field to -3 or 3.</li>
- * <li>{@link #getTargetX()}: the x coordinate of the mouse cursor</li>
- * <li>{@link #getTargetY()}: the y coordinate of the mouse cursor</li>
+ * <li>{@link #getDisplayX()}: the absolute x coordinate of the mouse cursor.</li>
+ * <li>{@link #getDisplayY()}: the absolute y coordinate of the mouse cursor.</li>
  * </ul>
  * 
  * @author mwienand
@@ -71,6 +72,12 @@ public class MouseEvent extends InputEvent {
 
 	public static final EventType<MouseEvent> MOUSE_EXITED = new EventType<MouseEvent>(
 			MOUSE_EXITED_TARGET, "MouseExitEvent");
+
+	public static final EventType<MouseEvent> MOUSE_DRAGGED = new EventType<MouseEvent>(
+			MOUSE_MOVED, "MouseDraggedEvent");
+
+	public static final EventType<MouseEvent> MOUSE_DOUBLE_CLICKED = new EventType<MouseEvent>(
+			ANY, "MouseDoubleClickEvent");
 
 	private static final long serialVersionUID = 1L;
 

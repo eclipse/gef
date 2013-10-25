@@ -15,6 +15,7 @@ package org.eclipse.gef4.swtfx;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.Event;
+import org.eclipse.gef4.swtfx.event.EventType;
 import org.eclipse.gef4.swtfx.event.KeyEvent;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
 import org.eclipse.gef4.swtfx.event.SwtEvent;
@@ -319,12 +320,21 @@ class SwtEventForwarder implements Listener {
 
 	private Event wrap(org.eclipse.swt.widgets.Event e, INode target) {
 		switch (e.type) {
-		case SWT.MouseDoubleClick:
 		case SWT.MouseHover:
 		case SWT.MouseHorizontalWheel:
 			// TODO: the previous event types are ignored => we have to
 			// implement them
 			return new SwtEvent(e.widget, target, SwtEvent.ANY);
+		case SWT.MouseDoubleClick: {
+			double[] displayXY = new double[2];
+			double[] sceneXY = new double[2];
+			double[] targetXY = new double[2];
+			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
+			return new MouseEvent(e.widget, target,
+					MouseEvent.MOUSE_DOUBLE_CLICKED, e.button, e.count,
+					targetXY[0], targetXY[1], sceneXY[0], sceneXY[1],
+					displayXY[0], displayXY[1]);
+		}
 		case SWT.Resize:
 			return new ActionEvent(e.widget, target, ActionEvent.RESIZE);
 		case SWT.Selection:
@@ -369,9 +379,17 @@ class SwtEventForwarder implements Listener {
 			double[] sceneXY = new double[2];
 			double[] targetXY = new double[2];
 			transformMouseCoords(target, e.x, e.y, displayXY, sceneXY, targetXY);
-			return new MouseEvent(e.widget, target, MouseEvent.MOUSE_MOVED,
-					e.button, e.count, targetXY[0], targetXY[1], sceneXY[0],
-					sceneXY[1], displayXY[0], displayXY[1]);
+			EventType<MouseEvent> type = MouseEvent.MOUSE_MOVED;
+			if (((e.stateMask & SWT.BUTTON1) != 0)
+					|| ((e.stateMask & SWT.BUTTON2) != 0)
+					|| ((e.stateMask & SWT.BUTTON3) != 0)
+					|| ((e.stateMask & SWT.BUTTON4) != 0)
+					|| ((e.stateMask & SWT.BUTTON5) != 0)) {
+				type = MouseEvent.MOUSE_DRAGGED;
+			}
+			return new MouseEvent(e.widget, target, type, e.button, e.count,
+					targetXY[0], targetXY[1], sceneXY[0], sceneXY[1],
+					displayXY[0], displayXY[1]);
 		}
 		case SWT.MouseWheel: {
 			double[] displayXY = new double[2];
@@ -396,5 +414,4 @@ class SwtEventForwarder implements Listener {
 					"This SWT event type is not supported: " + e);
 		}
 	}
-
 }
