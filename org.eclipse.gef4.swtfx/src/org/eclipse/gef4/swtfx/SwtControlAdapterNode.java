@@ -175,7 +175,13 @@ public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 
 	@Override
 	public AffineTransform getLocalToParentTransform() {
-		AffineTransform parentToAbsoluteTransform = getParentNode()
+		IParent parentNode = getParentNode();
+
+		if (parentNode == null) {
+			return super.getLocalToParentTransform();
+		}
+
+		AffineTransform parentToAbsoluteTransform = parentNode
 				.getLocalToAbsoluteTransform();
 
 		// extract parent-to-absolute rotation angle
@@ -289,13 +295,14 @@ public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 	}
 
 	public void updateSwtBounds() {
-		if (control == null) {
+		Scene scene = getScene();
+		if (control == null || scene == null) {
 			return;
 		}
 
 		Rectangle txBounds = getAbsoluteBounds();
 
-		org.eclipse.swt.graphics.Point location = getScene().toDisplay(0, 0);
+		org.eclipse.swt.graphics.Point location = scene.toDisplay(0, 0);
 		txBounds.translate(-location.x, -location.y);
 
 		// System.out.println("tx-bounds: " + txBounds);

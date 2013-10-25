@@ -311,9 +311,12 @@ abstract public class AbstractNode implements INode {
 		if (parent != null) {
 			tx.preConcatenate(parent.getLocalToAbsoluteTransform());
 		} else {
-			org.eclipse.swt.graphics.Point location = getScene().toDisplay(
-					new org.eclipse.swt.graphics.Point(0, 0));
-			tx.translate(location.x, location.y);
+			Scene scene = getScene();
+			if (scene != null) {
+				org.eclipse.swt.graphics.Point location = scene
+						.toDisplay(new org.eclipse.swt.graphics.Point(0, 0));
+				tx.translate(location.x, location.y);
+			}
 		}
 		return tx;
 	}
