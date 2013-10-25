@@ -85,6 +85,15 @@ public interface IParent extends INode {
 	public void renderFigures(GraphicsContext gc);
 
 	/**
+	 * Replaces the given {@link INode} in the children list of this
+	 * {@link IParent} with the given replacement.
+	 * 
+	 * @param child
+	 * @param replace
+	 */
+	public void replace(INode child, INode replace);
+
+	/**
 	 * Sets the height of this {@link IParent} to the specified value.
 	 * 
 	 * @param width
