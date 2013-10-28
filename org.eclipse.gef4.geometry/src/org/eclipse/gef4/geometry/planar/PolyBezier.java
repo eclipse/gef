@@ -137,6 +137,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		this.beziers = copy(beziers);
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		for (BezierCurve c : beziers) {
 			if (c.contains(p)) {
@@ -146,8 +147,13 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return false;
 	}
 
+	@Override
 	public Rectangle getBounds() {
-		Rectangle bounds = new Rectangle();
+		if (beziers == null || beziers.length == 0) {
+			return new Rectangle();
+		}
+
+		Rectangle bounds = beziers[0].getBounds();
 
 		for (BezierCurve c : beziers) {
 			bounds.union(c.getBounds());
@@ -156,98 +162,122 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return bounds;
 	}
 
+	@Override
 	public PolyBezier getCopy() {
 		return new PolyBezier(beziers);
 	}
 
+	@Override
 	public Point[] getIntersections(ICurve g) {
 		return CurveUtils.getIntersections(g, this);
 	}
 
+	@Override
 	public Point getP1() {
 		return beziers[0].getP1();
 	}
 
+	@Override
 	public Point getP2() {
 		return beziers[beziers.length - 1].getP2();
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle) {
 		return getCopy().rotateCCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, double cx, double cy) {
 		return getCopy().getRotatedCCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCCW(Angle angle, Point center) {
 		return getCopy().getRotatedCCW(angle, center);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle) {
 		return getCopy().getRotatedCW(angle);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, double cx, double cy) {
 		return getCopy().getRotatedCW(angle, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getRotatedCW(Angle angle, Point center) {
 		return getCopy().getRotatedCW(angle, center);
 	}
 
+	@Override
 	public PolyBezier getScaled(double factor) {
 		return getCopy().scale(factor);
 	}
 
+	@Override
 	public PolyBezier getScaled(double fx, double fy) {
 		return getCopy().scale(fx, fy);
 	}
 
+	@Override
 	public PolyBezier getScaled(double factor, double cx, double cy) {
 		return getCopy().scale(factor, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getScaled(double fx, double fy, double cx, double cy) {
 		return getCopy().scale(fx, fy, cx, cy);
 	}
 
+	@Override
 	public PolyBezier getScaled(double fx, double fy, Point center) {
 		return getCopy().scale(fx, fy, center);
 	}
 
+	@Override
 	public PolyBezier getScaled(double factor, Point center) {
 		return getCopy().scale(factor, center);
 	}
 
+	@Override
 	public PolyBezier getTranslated(double dx, double dy) {
 		return getCopy().translate(dx, dy);
 	}
 
+	@Override
 	public PolyBezier getTranslated(Point d) {
 		return getCopy().translate(d.x, d.y);
 	}
 
+	@Override
 	public double getX1() {
 		return getP1().x;
 	}
 
+	@Override
 	public double getX2() {
 		return getP2().x;
 	}
 
+	@Override
 	public double getY1() {
 		return getP1().y;
 	}
 
+	@Override
 	public double getY2() {
 		return getP2().y;
 	}
 
+	@Override
 	public boolean intersects(ICurve c) {
 		return CurveUtils.intersects(c, this);
 	}
 
+	@Override
 	public boolean overlaps(ICurve c) {
 		return CurveUtils.overlaps(c, this);
 	}
@@ -360,10 +390,12 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return rotateCW(angle, center.x, center.y);
 	}
 
+	@Override
 	public PolyBezier scale(double factor) {
 		return scale(factor, factor);
 	}
 
+	@Override
 	public PolyBezier scale(double fx, double fy) {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (BezierCurve c : beziers) {
@@ -373,10 +405,12 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return scale(fx, fy, centroid.x, centroid.y);
 	}
 
+	@Override
 	public PolyBezier scale(double factor, double cx, double cy) {
 		return scale(factor, factor, cx, cy);
 	}
 
+	@Override
 	public PolyBezier scale(double fx, double fy, double cx, double cy) {
 		for (BezierCurve c : beziers) {
 			c.scale(fx, fy, cx, cy);
@@ -384,22 +418,27 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
+	@Override
 	public PolyBezier scale(double fx, double fy, Point center) {
 		return scale(fx, fx, center.x, center.y);
 	}
 
+	@Override
 	public PolyBezier scale(double factor, Point center) {
 		return scale(factor, factor, center.x, center.y);
 	}
 
+	@Override
 	public BezierCurve[] toBezier() {
 		return copy(beziers);
 	}
 
+	@Override
 	public Path toPath() {
 		return CurveUtils.toPath(beziers);
 	}
 
+	@Override
 	public PolyBezier translate(double dx, double dy) {
 		for (BezierCurve c : beziers) {
 			c.translate(dx, dy);
@@ -407,6 +446,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return this;
 	}
 
+	@Override
 	public PolyBezier translate(Point d) {
 		return translate(d.x, d.y);
 	}
