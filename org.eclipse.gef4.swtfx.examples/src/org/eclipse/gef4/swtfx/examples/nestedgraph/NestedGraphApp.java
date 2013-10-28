@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.nestedgraph;
 
-import org.eclipse.gef4.swt.fx.examples.Application;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.Scene;
+import org.eclipse.gef4.swtfx.examples.Application;
 import org.eclipse.swt.widgets.Shell;
 
 public class NestedGraphApp extends Application {

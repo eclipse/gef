@@ -10,39 +10,47 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx.examples;
+package org.eclipse.gef4.swtfx.examples;
 
 import org.eclipse.gef4.swtfx.Scene;
+import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class Application {
+public class Example {
 
 	private Display display;
 	private Shell shell;
+	private Pane pane;
 
-	public Application() {
+	public Example(IExample ex) {
+		int w = ex.getWidth();
+		int h = ex.getHeight();
+
 		display = new Display();
 		shell = new Shell(display);
-		shell.setText("org.eclipse.gef4.swtfx");
+		shell.setText("org.eclipse.gef4.swtfx - " + ex.getTitle());
 		shell.setLayout(new GridLayout());
 
-		Scene scene = start(shell);
+		pane = new Pane();
+		Scene scene = new Scene(shell, pane);
 		scene.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		// group.addBackgroundPaintListener(this);
+		pane.resize(w, h);
+		// group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		ex.addUi(pane);
 
 		shell.pack();
 		shell.open();
-
-		double prefWidth = scene.getRoot().getPrefWidth();
-		double prefHeight = scene.getRoot().getPrefHeight();
-		shell.setSize((int) Math.ceil(prefWidth), (int) Math.ceil(prefHeight));
+		shell.setBounds(0, 0, w, h);
 		Rectangle clientArea = shell.getClientArea();
-		shell.setSize((int) prefWidth * 2 - clientArea.width, (int) prefHeight
-				* 2 - clientArea.height);
-
+		shell.setBounds(0, 0, 2 * w - clientArea.width, 2 * h
+				- clientArea.height);
 		shell.redraw();
 
 		while (!shell.isDisposed()) {
@@ -52,6 +60,12 @@ public abstract class Application {
 		}
 	}
 
-	public abstract Scene start(Shell shell);
+	// @Override
+	// public void paintControl(PaintEvent e) {
+	// GC gc = e.gc;
+	// GraphicsContext gefGc = new GraphicsContext(gc);
+	// ex.render(gefGc);
+	// gefGc.cleanUp();
+	// }
 
 }

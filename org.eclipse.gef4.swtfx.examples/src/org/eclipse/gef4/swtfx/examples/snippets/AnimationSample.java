@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
-import org.eclipse.gef4.swt.fx.examples.Application;
 import org.eclipse.gef4.swtfx.Group;
 import org.eclipse.gef4.swtfx.ImageFigure;
 import org.eclipse.gef4.swtfx.Scene;
@@ -24,6 +23,7 @@ import org.eclipse.gef4.swtfx.controls.SwtButton;
 import org.eclipse.gef4.swtfx.controls.SwtButton.Type;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
+import org.eclipse.gef4.swtfx.examples.Application;
 import org.eclipse.gef4.swtfx.layout.AnchorPane;
 import org.eclipse.gef4.swtfx.layout.AnchorPaneConstraints;
 import org.eclipse.gef4.swtfx.layout.BorderPane;

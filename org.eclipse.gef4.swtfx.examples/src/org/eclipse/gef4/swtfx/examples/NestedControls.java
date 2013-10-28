@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx.examples;
+package org.eclipse.gef4.swtfx.examples;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
