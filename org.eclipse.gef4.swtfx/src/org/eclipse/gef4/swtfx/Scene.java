@@ -39,7 +39,7 @@ public class Scene extends Canvas {
 	/**
 	 * Default FPS to use for the {@link PulseThread}.
 	 */
-	public static final int DEFAULT_FPS = 30;
+	public static final int DEFAULT_FPS = 24;
 
 	/**
 	 * The root of the scene graph.
@@ -141,7 +141,7 @@ public class Scene extends Canvas {
 	 * @param root
 	 */
 	public Scene(final Composite swtComposite, final IParent root) {
-		super(swtComposite, SWT.NONE);
+		super(swtComposite, SWT.NONE | SWT.NO_RADIO_GROUP);
 		this.root = root;
 		root.setScene(this);
 		pulseThread = new PulseThread(this, DEFAULT_FPS);
@@ -161,7 +161,6 @@ public class Scene extends Canvas {
 			public void controlResized(ControlEvent e) {
 				Rectangle clientArea = getClientArea();
 				root.resize(clientArea.width, clientArea.height);
-				// TODO: layout here?
 				root.layout();
 				redraw();
 			}
@@ -223,7 +222,6 @@ public class Scene extends Canvas {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				double millis = System.currentTimeMillis();
 				root.layout();
 				redraw();
 			}

@@ -35,7 +35,7 @@ public class PulseThread extends Thread {
 	 * elapsed millis.
 	 */
 
-	public static final int DEFAULT_FPS = 30;
+	public static final int DEFAULT_FPS = 24;
 
 	/**
 	 * Reference to the {@link Scene} which this PulseThread belongs to.

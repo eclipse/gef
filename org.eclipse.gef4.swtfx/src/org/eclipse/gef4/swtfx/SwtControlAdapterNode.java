@@ -128,7 +128,7 @@ public class SwtControlAdapterNode<T extends Control> extends AbstractNode {
 
 	@Override
 	public boolean contains(double localX, double localY) {
-		if (control.isDisposed()) {
+		if (control == null || control.isDisposed()) {
 			return false;
 		}
 

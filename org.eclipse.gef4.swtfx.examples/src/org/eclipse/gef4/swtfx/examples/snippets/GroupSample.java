@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swt.fx.examples.samples;
+package org.eclipse.gef4.swtfx.examples.snippets;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -48,10 +48,10 @@ public class GroupSample extends Application {
 					Point pos = n.localToParent(0, 0);
 					n.relocate((int) pos.x + (int) dx, (int) pos.y + (int) dy);
 
-					dragging[0] = event.getEventType().equals(
+					dragging[0] = event.getEventType().isa(
 							MouseEvent.MOUSE_MOVED);
 				} else {
-					dragging[0] = event.getEventType().equals(
+					dragging[0] = event.getEventType().isa(
 							MouseEvent.MOUSE_PRESSED);
 				}
 

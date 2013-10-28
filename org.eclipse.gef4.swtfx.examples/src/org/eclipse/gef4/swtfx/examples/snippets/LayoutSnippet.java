@@ -22,20 +22,16 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.swt.fx.examples.Application;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
-import org.eclipse.gef4.swtfx.TextFigure;
 import org.eclipse.gef4.swtfx.controls.SwtButton;
-import org.eclipse.gef4.swtfx.controls.SwtLabel;
 import org.eclipse.gef4.swtfx.gc.RgbaColor;
-import org.eclipse.gef4.swtfx.layout.AnchorPane;
-import org.eclipse.gef4.swtfx.layout.AnchorPaneConstraints;
 import org.eclipse.gef4.swtfx.layout.HBox;
 import org.eclipse.gef4.swtfx.layout.VBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class LayoutSample extends Application {
+public class LayoutSnippet extends Application {
 
 	public static void main(String[] args) {
-		new LayoutSample();
+		new LayoutSnippet();
 	}
 
 	private ShapeFigure<?> shape(IShape shape, double r, double g, double b) {
@@ -46,45 +42,26 @@ public class LayoutSample extends Application {
 
 	@Override
 	public Scene start(Shell shell) {
-		VBox root = new VBox();
-
 		HBox hbox = new HBox();
-		AnchorPane anchorPane = new AnchorPane();
-
-		root.add(hbox, true);
-		root.add(anchorPane, true);
-		root.setGrower(anchorPane);
-
-		// fill HBox
 		VBox col1 = new VBox();
 		VBox col2 = new VBox();
-		VBox col3 = new VBox();
-		hbox.addChildNodes(col1, col2, col3);
+		hbox.addChildNodes(col1, col2);
 
 		col1.addChildNodes(
 				new SwtButton("abc"),
 				shape(new Polygon(50, 0, 100, 100, 0, 100), 0, 1, 0),
 				shape(new Pie(0, 0, 100, 100, Angle.fromDeg(15), Angle
-						.fromDeg(120)), 0, 1, 1));
+						.fromDeg(120)), 0, 1, 1), new SwtButton("123"));
 
 		col2.addChildNodes(shape(new Ellipse(0, 0, 70, 80), 1, 0, 0),
 				shape(new Rectangle(0, 0, 100, 40), 0, 0, 1), new SwtButton(
-						"test"),
+						"foobar"),
 				shape(new RoundedRectangle(0, 0, 100, 100, 10, 10), 1, 0, 1));
 
-		col3.addChildNodes(shape(new Rectangle(0, 0, 100, 100), 1, 1, 0),
-				new SwtButton("foobar"), new SwtButton("gaga"));
-
-		// fill AnchorPane
-		anchorPane.add(new SwtLabel("SWT Label"), new AnchorPaneConstraints(
-				10d, 10d, null, null));
-		anchorPane.add(new TextFigure("TextFigure"), new AnchorPaneConstraints(
-				null, null, 10d, 10d));
-
-		// set root pref size
-		root.setPrefWidth(400);
-		root.setPrefHeight(400);
-
-		return new Scene(shell, root);
+		// set root size and create scene
+		hbox.setPrefWidth(400);
+		hbox.setPrefHeight(300);
+		return new Scene(shell, hbox);
 	}
+
 }

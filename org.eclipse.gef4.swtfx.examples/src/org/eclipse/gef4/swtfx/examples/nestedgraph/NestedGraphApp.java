@@ -29,18 +29,16 @@ public class NestedGraphApp extends Application {
 		root.setPrefWidth(800);
 		root.setPrefHeight(600);
 
-		Scene scene = new Scene(shell, root);
-
-		LabPane labPane = new LabPane("Progressbars");
+		EditLabPane labPane = new EditLabPane("Progress");
 		labPane.addContentNodes(new ProgressNode());
 		labPane.relocate(50, 50);
 
-		BallsNode ballsNode = new BallsNode(scene);
+		BallsNode ballsNode = new BallsNode();
 		ballsNode.relocate(250, 200);
 
 		root.addChildNodes(labPane, ballsNode);
 
-		return scene;
+		return new Scene(shell, root);
 	}
 
 }

@@ -175,6 +175,8 @@ public interface INode extends IEventTarget {
 	 */
 	public double computePrefHeight(double width);
 
+	// public void sceneChanged(Scene oldScene, Scene newScene);
+
 	/**
 	 * <p>
 	 * Computes the node's preferred width in dependence of the given height.

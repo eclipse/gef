@@ -13,6 +13,8 @@
 package org.eclipse.gef4.swtfx.controls;
 
 import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
+import org.eclipse.gef4.swtfx.event.ActionEvent;
+import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 
@@ -38,8 +40,33 @@ public class SwtButton extends SwtControlAdapterNode<Button> {
 		}
 	}
 
+	public static void groupRadios(final SwtButton... radios) {
+		// validate arguments
+		for (SwtButton btn : radios) {
+			if (btn.type != Type.RADIO) {
+				throw new IllegalArgumentException(
+						"You can only group RADIO buttons.");
+			}
+		}
+
+		// register event handlers
+		for (final SwtButton btn : radios) {
+			btn.addEventHandler(ActionEvent.ACTION,
+					new IEventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							for (SwtButton btn : radios) {
+								btn.setSelection(false);
+							}
+							btn.setSelection(true);
+						}
+					});
+		}
+	}
+
 	private String text;
 	private Type type;
+	private boolean sel;
 
 	public SwtButton(String text) {
 		this(text, Type.PUSH);
@@ -54,6 +81,7 @@ public class SwtButton extends SwtControlAdapterNode<Button> {
 	private Button createButton() {
 		Button button = new Button(getScene(), type.getSwtFlags());
 		button.setText(text);
+		button.setSelection(sel);
 		return button;
 	}
 
@@ -68,6 +96,13 @@ public class SwtButton extends SwtControlAdapterNode<Button> {
 	protected void hookControl() {
 		setControl(createButton());
 		super.hookControl();
+	}
+
+	public void setSelection(boolean sel) {
+		this.sel = sel;
+		if (getControl() != null) {
+			getControl().setSelection(sel);
+		}
 	}
 
 	@Override

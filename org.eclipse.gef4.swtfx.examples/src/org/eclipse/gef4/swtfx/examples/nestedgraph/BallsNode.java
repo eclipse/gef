@@ -13,9 +13,8 @@
 package org.eclipse.gef4.swtfx.examples.nestedgraph;
 
 import org.eclipse.gef4.geometry.planar.Ellipse;
-import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
-import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.ShapeFigure;
+import org.eclipse.gef4.swtfx.controls.SwtButton;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
 import org.eclipse.gef4.swtfx.event.MouseEvent;
@@ -23,18 +22,14 @@ import org.eclipse.gef4.swtfx.gc.RgbaColor;
 import org.eclipse.gef4.swtfx.layout.HBox;
 import org.eclipse.gef4.swtfx.layout.Pane;
 import org.eclipse.gef4.swtfx.layout.VBox;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 
-public class BallsNode extends LabPane {
+public class BallsNode extends EditLabPane {
 
 	private VBox options;
 	private Pane container;
 
-	// TODO: we need another way to get the scene
-	public BallsNode(Scene scene) {
+	public BallsNode() {
 		super("Balls");
-		setScene(scene);
 
 		container = new Pane();
 		options = new VBox();
@@ -48,10 +43,8 @@ public class BallsNode extends LabPane {
 	}
 
 	private void addOptions() {
-		SwtControlAdapterNode<Button> addBall = new SwtControlAdapterNode<Button>(new Button(
-				getScene(), SWT.PUSH));
-		addBall.getControl().setText("add ball");
-		addBall.addEventHandler(ActionEvent.ACTION,
+		SwtButton btnAddBall = new SwtButton("add ball");
+		btnAddBall.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -63,16 +56,15 @@ public class BallsNode extends LabPane {
 					}
 				});
 
-		options.addChildNodes(addBall);
+		options.addChildNodes(btnAddBall);
 	}
 
-	private ShapeFigure genBall(double x, double y, double w, double h) {
-		final ShapeFigure ball = new ShapeFigure(new Ellipse(x, y, w, h));
+	private ShapeFigure<Ellipse> genBall(double x, double y, double w, double h) {
+		final ShapeFigure<Ellipse> ball = new ShapeFigure<Ellipse>(new Ellipse(
+				x, y, w, h));
 
-		// ball.setFill(new RadialGradient(ellipse, ellipse.getCenter(),
-		// CycleMethod.NO_CYCLE).addStop(0, rndColor()).addStop(1,
-		// rndColor()));
-		ball.setFill(rndColor());
+		ball.setFill(new RgbaColor((int) (Math.random() * 255), (int) (Math
+				.random() * 255), (int) (Math.random() * 255)));
 
 		ball.addEventHandler(MouseEvent.MOUSE_PRESSED,
 				new IEventHandler<MouseEvent>() {
@@ -81,12 +73,8 @@ public class BallsNode extends LabPane {
 						container.getChildNodes().remove(ball);
 					}
 				});
-		return ball;
-	}
 
-	private RgbaColor rndColor() {
-		return new RgbaColor((int) (Math.random() * 255),
-				(int) (Math.random() * 255), (int) (Math.random() * 255));
+		return ball;
 	}
 
 }

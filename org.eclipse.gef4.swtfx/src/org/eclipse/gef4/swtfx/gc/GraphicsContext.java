@@ -816,6 +816,16 @@ public class GraphicsContext {
 		return 255;
 	}
 
+	public Path getClipping() {
+		if (swtPathClip == null) {
+			return null;
+		}
+
+		return SWT2Geometry.toPath(
+				getFillRule() == FillRule.EVEN_ODD ? Path.WIND_EVEN_ODD
+						: Path.WIND_NON_ZERO, swtPathClip.getPathData());
+	}
+
 	public double[] getDashes() {
 		double[] dashes = states.peek().getDashesByReference();
 		return Arrays.copyOf(dashes, dashes.length);
@@ -977,6 +987,17 @@ public class GraphicsContext {
 		states.peek().getTransformByReference().scale(sx, sy);
 		applyTransform(states.peek().getTransformByReference());
 	}
+
+	// public void setClipping(Path clippingPath) {
+	// if (clippingPath == null) {
+	// gc.setClipping((org.eclipse.swt.graphics.Rectangle) null);
+	// return;
+	// }
+	//
+	// disposeSwtPathClip();
+	// swtPathClip = SwtUtils.createSwtPath(clippingPath, gc.getDevice());
+	// gc.setClipping(swtPathClip);
+	// }
 
 	public void setDashes(double... dashes) {
 		double[] dashesCopy = Arrays.copyOf(dashes, dashes.length);

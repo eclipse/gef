@@ -48,6 +48,20 @@ public interface IInterpolator {
 		}
 	};
 
+	public static final IInterpolator EASE_IN = new IInterpolator() {
+		@Override
+		public double curve(double t) {
+			return t * t * t;
+		}
+	};
+
+	public static final IInterpolator EASE_OUT = new IInterpolator() {
+		@Override
+		public double curve(double t) {
+			return Math.cbrt(t);
+		}
+	};
+
 	/**
 	 * Returns a value in range <code>[0;1]</code> depending on the elapsed time
 	 * <i>t</i>. Attribute interpolation is computed based on the returned

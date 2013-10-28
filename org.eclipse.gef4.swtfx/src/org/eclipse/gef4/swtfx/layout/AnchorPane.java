@@ -93,8 +93,9 @@ public class AnchorPane extends Pane {
 		Double right = c.getRight();
 		Double top = c.getTop();
 
-		double w = child.computePrefWidth(-1);
-		double h = child.computePrefHeight(-1);
+		child.autosize();
+		double w = child.getLayoutBounds().getWidth();
+		double h = child.getLayoutBounds().getHeight();
 
 		double x = left == null ? right == null ? 0 : getWidth() - right - w
 				: left;
