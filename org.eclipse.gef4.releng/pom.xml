@@ -147,11 +147,7 @@
 								</artifact>
 							</target>
 							<dependency-resolution>
-								<!-- Bug #420224: This is currently required in order to satisfy 
-									dependencies of org.eclipse.gef4.zest.dot.ui; however, it prevents the other 
-									doc plugins form properly building their javadoc, as context libs are inferred 
-									from optionally required bundles -->
-								<optionalDependencies>ignore</optionalDependencies>
+								<optionalDependencies>require</optionalDependencies>
 							</dependency-resolution>
 							<environments>
 								<environment>
