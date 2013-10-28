@@ -42,12 +42,14 @@ public class ShapeFigure<T extends IShape> extends AbstractFigure {
 
 	@Override
 	public boolean contains(double localX, double localY) {
-		return shape.contains(new Point(localX, localY));
+		return geomContains(localX, localY);
 	}
 
 	@Override
 	public void doPaint(GraphicsContext g) {
-		// System.out.println("#paint(" + this + ")");
+		g.save();
+		Point loc = shape.getBounds().getLocation().getNegated();
+		g.translate(loc.x, loc.y);
 
 		g.fillPath(shape.toPath());
 		switch (getStrokeType()) {
@@ -64,6 +66,21 @@ public class ShapeFigure<T extends IShape> extends AbstractFigure {
 			throw new IllegalStateException("Unknown StrokeType: "
 					+ getStrokeType());
 		}
+
+		g.restore();
+	}
+
+	/**
+	 * Returns <code>true</code> if the given point is contained by the
+	 * underlying {@link IShape}.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private boolean geomContains(double x, double y) {
+		return shape.contains(shape.getBounds().getLocation().getNegated()
+				.getTranslated(x, y));
 	}
 
 	@Override
@@ -82,9 +99,21 @@ public class ShapeFigure<T extends IShape> extends AbstractFigure {
 		return boundsInLocal;
 	}
 
+	/**
+	 * Returns the geometric bounds of the underlying {@link IShape}. For some
+	 * shapes, the bounds have to be translated to the local coordinate system
+	 * of the {@link INode}.
+	 * 
+	 * @return
+	 */
+	private Rectangle getGeomBounds() {
+		Rectangle bounds = shape.getBounds();
+		return bounds.getTranslated(bounds.getLocation().getNegated());
+	}
+
 	@Override
 	public Rectangle getLayoutBounds() {
-		Rectangle layoutBounds = shape.getBounds();
+		Rectangle layoutBounds = getGeomBounds();
 
 		if (strokeType != StrokeType.INSIDE) {
 			// advance layoutBounds by strokeWidth
