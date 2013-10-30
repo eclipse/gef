@@ -52,11 +52,11 @@ public class BallsNode extends EditLabPane {
 						double y = Math.random() * container.getHeight();
 						double w = 25 + Math.random() * 100;
 						double h = 25 + Math.random() * 100;
-						container.addChildNodes(genBall(x, y, w, h));
+						container.addChildren(genBall(x, y, w, h));
 					}
 				});
 
-		options.addChildNodes(btnAddBall);
+		options.addChildren(btnAddBall);
 	}
 
 	private ShapeFigure<Ellipse> genBall(double x, double y, double w, double h) {
@@ -70,7 +70,7 @@ public class BallsNode extends EditLabPane {
 				new IEventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent event) {
-						container.getChildNodes().remove(ball);
+						container.getChildrenUnmodifiable().remove(ball);
 					}
 				});
 

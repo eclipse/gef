@@ -70,10 +70,10 @@ public class NodeTests {
 	public void test_relationship() {
 		IParent parent = new Pane();
 		IFigure child = new ShapeFigure(new Rectangle(0, 0, 100, 100));
-		parent.addChildNodes(child);
+		parent.addChildren(child);
 
 		assertEquals(parent, child.getParentNode());
-		assertEquals(child, parent.getChildNodes().get(0));
+		assertEquals(child, parent.getChildrenUnmodifiable().get(0));
 	}
 
 	@Test
@@ -84,38 +84,38 @@ public class NodeTests {
 		IParent left = new Pane();
 		IParent right = new Pane();
 		IFigure mid = new ShapeFigure(SHAPE);
-		root.addChildNodes(left, mid, right);
+		root.addChildren(left, mid, right);
 
 		assertEquals(root, left.getParentNode());
 		assertEquals(root, mid.getParentNode());
 		assertEquals(root, right.getParentNode());
 
-		assertEquals(left, root.getChildNodes().get(0));
-		assertEquals(mid, root.getChildNodes().get(1));
-		assertEquals(right, root.getChildNodes().get(2));
+		assertEquals(left, root.getChildrenUnmodifiable().get(0));
+		assertEquals(mid, root.getChildrenUnmodifiable().get(1));
+		assertEquals(right, root.getChildrenUnmodifiable().get(2));
 
 		IFigure leftLeft = new ShapeFigure(SHAPE);
 		IFigure leftMid = new ShapeFigure(SHAPE);
 		IFigure leftRight = new ShapeFigure(SHAPE);
-		left.addChildNodes(leftLeft, leftMid, leftRight);
+		left.addChildren(leftLeft, leftMid, leftRight);
 
 		assertEquals(left, leftLeft.getParentNode());
 		assertEquals(left, leftMid.getParentNode());
 		assertEquals(left, leftRight.getParentNode());
 
-		assertEquals(leftLeft, left.getChildNodes().get(0));
-		assertEquals(leftMid, left.getChildNodes().get(1));
-		assertEquals(leftRight, left.getChildNodes().get(2));
+		assertEquals(leftLeft, left.getChildrenUnmodifiable().get(0));
+		assertEquals(leftMid, left.getChildrenUnmodifiable().get(1));
+		assertEquals(leftRight, left.getChildrenUnmodifiable().get(2));
 
 		IFigure rightLeft = new ShapeFigure(SHAPE);
 		IFigure rightRight = new ShapeFigure(SHAPE);
-		right.addChildNodes(rightLeft, rightRight);
+		right.addChildren(rightLeft, rightRight);
 
 		assertEquals(right, rightLeft.getParentNode());
 		assertEquals(right, rightRight.getParentNode());
 
-		assertEquals(rightLeft, right.getChildNodes().get(0));
-		assertEquals(rightRight, right.getChildNodes().get(1));
+		assertEquals(rightLeft, right.getChildrenUnmodifiable().get(0));
+		assertEquals(rightRight, right.getChildrenUnmodifiable().get(1));
 	}
 
 	@Test
@@ -127,10 +127,10 @@ public class NodeTests {
 		// transformation calculations
 		IParent root = new Pane();
 		IParent parent = new Pane();
-		root.addChildNodes(parent);
+		root.addChildren(parent);
 
 		ShapeFigure child = new ShapeFigure(SHAPE);
-		parent.addChildNodes(child);
+		parent.addChildren(child);
 
 		// would die if parent did not have a parent
 		assertEquals(IDENTITY, parent.getLocalToParentTransform());

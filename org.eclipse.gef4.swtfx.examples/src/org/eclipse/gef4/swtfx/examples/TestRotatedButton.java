@@ -51,7 +51,7 @@ public class TestRotatedButton implements IExample {
 		ShapeFigure rect = new ShapeFigure(new Rectangle(0, 0, 100, 100));
 		rect.relocate(100, 100);
 
-		root.addChildNodes(pushCw, pushCcw, rect);
+		root.addChildren(pushCw, pushCcw, rect);
 
 		pushCw.addEventHandler(ActionEvent.ACTION,
 				new IEventHandler<ActionEvent>() {

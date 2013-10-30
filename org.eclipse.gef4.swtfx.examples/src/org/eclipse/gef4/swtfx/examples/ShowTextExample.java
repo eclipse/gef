@@ -29,7 +29,7 @@ public class ShowTextExample implements IExample {
 
 	@Override
 	public void addUi(IParent c) {
-		c.addChildNodes(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+		c.addChildren(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
 			public void doPaint(GraphicsContext g) {
 				g.clearRect(0, 0, getWidth(), getHeight());

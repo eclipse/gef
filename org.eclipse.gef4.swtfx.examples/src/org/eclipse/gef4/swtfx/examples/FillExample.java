@@ -25,7 +25,7 @@ public class FillExample implements IExample {
 
 	@Override
 	public void addUi(final IParent root) {
-		root.addChildNodes(new ShapeFigure(new Ellipse(0, 0, 100, 100)) {
+		root.addChildren(new ShapeFigure(new Ellipse(0, 0, 100, 100)) {
 			@Override
 			public Rectangle getLayoutBounds() {
 				// XXX: this is a hack, root should be an AnchorPane and we

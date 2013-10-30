@@ -120,19 +120,19 @@ public class TryOutPane {
 				return getParentNode().getWidth();
 			}
 		};
-		root.addChildNodes(vbox);
+		root.addChildren(vbox);
 
 		HBox hbox = new HBox();
-		vbox.addChildNodes(hbox);
-		hbox.addChildNodes(
+		vbox.addChildren(hbox);
+		hbox.addChildren(
 				button(hbox, "You"),
 				shape(new Ellipse(0, 0, 100, 100), 0, 1, 0),
 				shape(new Pie(0, 0, 100, 100, Angle.fromDeg(15), Angle
 						.fromDeg(215)), 0, 0, 1));
 
 		HBox hbox2 = new HBox();
-		vbox.addChildNodes(hbox2);
-		hbox2.addChildNodes(
+		vbox.addChildren(hbox2);
+		hbox2.addChildren(
 				shape(new Polygon(30, 0, 60, 60, 0, 60), 0.2, 0.7, 0.3),
 				button(hbox2, "can"),
 				shape(new CurvedPolygon(PolyBezier.interpolateCubic(
@@ -141,8 +141,8 @@ public class TryOutPane {
 						0, 1), button(hbox2, "use"));
 
 		HBox hbox3 = new HBox();
-		vbox.addChildNodes(hbox3);
-		hbox3.addChildNodes(
+		vbox.addChildren(hbox3);
+		hbox3.addChildren(
 				shape(new org.eclipse.gef4.geometry.planar.Rectangle(0, 0, 100,
 						100), 1, 0, 0),
 				button(hbox3, "SWT"),

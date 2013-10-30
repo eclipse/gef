@@ -194,7 +194,7 @@ public class MouseExample implements IExample {
 		final Group root = new Group();
 		this.root = root;
 
-		realRoot.addChildNodes(new ShapeFigure(new Rectangle()) {
+		realRoot.addChildren(new ShapeFigure(new Rectangle()) {
 			{
 				setFill(new RgbaColor(0, 0, 0, 0));
 				setStroke(new RgbaColor(0, 255, 0, 255));
@@ -213,8 +213,8 @@ public class MouseExample implements IExample {
 			}
 		});
 
-		root.addChildNodes(rectFigure, ovalFigure);
-		realRoot.addChildNodes(root);
+		root.addChildren(rectFigure, ovalFigure);
+		realRoot.addChildren(root);
 
 		new NodeDragger(rectFigure);
 		new NodeDragger(ovalFigure);
@@ -251,7 +251,7 @@ public class MouseExample implements IExample {
 		new NodeDragger(resetButton);
 		new NodeDragger(quitButton);
 
-		root.addChildNodes(resetButton, quitButton);
+		root.addChildren(resetButton, quitButton);
 		resetFigures();
 	}
 

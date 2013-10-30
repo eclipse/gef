@@ -33,7 +33,7 @@ public class BorderPane extends Pane {
 	}
 
 	@Override
-	public void addChildNodes(INode... nodes) {
+	public void addChildren(INode... nodes) {
 		throw new UnsupportedOperationException(
 				"You cannot add arbitrary children to a BorderPane.");
 	}
@@ -47,8 +47,8 @@ public class BorderPane extends Pane {
 	}
 
 	@Override
-	public List<INode> getChildNodes() {
-		return Collections.unmodifiableList(super.getChildNodes());
+	public List<INode> getChildrenUnmodifiable() {
+		return Collections.unmodifiableList(super.getChildrenUnmodifiable());
 	}
 
 	public INode getLeft() {
@@ -147,45 +147,45 @@ public class BorderPane extends Pane {
 
 	public void setBottom(INode bottomNode, BorderPaneConstraints constraints) {
 		if (bottom != null) {
-			super.getChildNodes().remove(bottom);
+			super.getChildrenUnmodifiable().remove(bottom);
 		}
-		super.addChildNodes(bottomNode);
+		super.addChildren(bottomNode);
 		bottom = bottomNode;
 		this.constraints.put(bottom, constraints);
 	}
 
 	public void setCenter(INode centerNode, BorderPaneConstraints constraints) {
 		if (center != null) {
-			super.getChildNodes().remove(center);
+			super.getChildrenUnmodifiable().remove(center);
 		}
-		super.addChildNodes(centerNode);
+		super.addChildren(centerNode);
 		center = centerNode;
 		this.constraints.put(center, constraints);
 	}
 
 	public void setLeft(INode leftNode, BorderPaneConstraints constraints) {
 		if (left != null) {
-			super.getChildNodes().remove(left);
+			super.getChildrenUnmodifiable().remove(left);
 		}
-		super.addChildNodes(leftNode);
+		super.addChildren(leftNode);
 		left = leftNode;
 		this.constraints.put(left, constraints);
 	}
 
 	public void setRight(INode rightNode, BorderPaneConstraints constraints) {
 		if (right != null) {
-			super.getChildNodes().remove(right);
+			super.getChildrenUnmodifiable().remove(right);
 		}
-		super.addChildNodes(rightNode);
+		super.addChildren(rightNode);
 		right = rightNode;
 		this.constraints.put(right, constraints);
 	}
 
 	public void setTop(INode topNode, BorderPaneConstraints constraints) {
 		if (top != null) {
-			super.getChildNodes().remove(top);
+			super.getChildrenUnmodifiable().remove(top);
 		}
-		super.addChildNodes(topNode);
+		super.addChildren(topNode);
 		top = topNode;
 		this.constraints.put(top, constraints);
 	}
@@ -193,7 +193,7 @@ public class BorderPane extends Pane {
 	@Override
 	public String toString() {
 		return "BorderPane " + System.identityHashCode(this)
-				+ " { children-count: " + getChildNodes().size() + " }";
+				+ " { children-count: " + getChildrenUnmodifiable().size() + " }";
 	}
 
 }

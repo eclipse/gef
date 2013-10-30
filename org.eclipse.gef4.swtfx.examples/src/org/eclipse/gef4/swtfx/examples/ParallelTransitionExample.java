@@ -62,7 +62,7 @@ public class ParallelTransitionExample extends Application {
 		box.setPivot(box.getLayoutBounds().getCenter());
 		box.setFill(new RgbaColor(255, 0, 0));
 
-		root.addChildNodes(box);
+		root.addChildren(box);
 		Scene scene = new Scene(shell, root);
 
 		final ParallelTransition parallelTransition = createTransition(box);
@@ -78,7 +78,7 @@ public class ParallelTransitionExample extends Application {
 					}
 				});
 
-		root.addChildNodes(button);
+		root.addChildren(button);
 		return scene;
 	}
 }

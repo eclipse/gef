@@ -81,7 +81,7 @@ public class TestFigures {
 					}
 				});
 
-		root.addChildNodes(rect, ellipse, canvas, button);
+		root.addChildren(rect, ellipse, canvas, button);
 
 		shell.pack();
 		shell.open();

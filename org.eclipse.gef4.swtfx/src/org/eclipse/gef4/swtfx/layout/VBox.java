@@ -26,7 +26,7 @@ public class VBox extends Pane {
 	}
 
 	public void add(INode node, boolean fill) {
-		addChildNodes(node);
+		addChildren(node);
 		this.fill.put(node, fill);
 	}
 
@@ -112,7 +112,7 @@ public class VBox extends Pane {
 	@Override
 	public String toString() {
 		return "VBox " + System.identityHashCode(this) + " { children-count: "
-				+ getChildNodes().size() + " }";
+				+ getChildrenUnmodifiable().size() + " }";
 	}
 
 }

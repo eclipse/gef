@@ -32,7 +32,7 @@ public class Group extends AbstractParent {
 
 	public Group(INode... children) {
 		this();
-		addChildNodes(children);
+		addChildren(children);
 	}
 
 	public boolean isAutoSizeChildren() {
@@ -62,7 +62,7 @@ public class Group extends AbstractParent {
 	@Override
 	public String toString() {
 		return "Group @ " + System.identityHashCode(this)
-				+ " (children-count => " + getChildNodes().size() + ")";
+				+ " (children-count => " + getChildrenUnmodifiable().size() + ")";
 	}
 
 }

@@ -34,7 +34,7 @@ public class HBox extends Pane {
 	// }
 
 	public void add(INode node, boolean fill) {
-		addChildNodes(node);
+		addChildren(node);
 		this.fill.put(node, fill);
 	}
 
@@ -121,7 +121,7 @@ public class HBox extends Pane {
 	@Override
 	public String toString() {
 		return "HBox " + System.identityHashCode(this) + " { children-count: "
-				+ getChildNodes().size() + " }";
+				+ getChildrenUnmodifiable().size() + " }";
 	}
 
 }

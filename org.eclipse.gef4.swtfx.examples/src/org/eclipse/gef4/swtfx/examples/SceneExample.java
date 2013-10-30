@@ -58,13 +58,13 @@ public class SceneExample {
 				SWT.PUSH));
 		control.getControl().setText("btn");
 
-		root.addChildNodes(
+		root.addChildren(
 				new ShapeFigure(new org.eclipse.gef4.geometry.planar.Rectangle(
 						0, 0, 100, 100)), control);
 
 		HBox hbox2 = new HBox();
 		ShapeFigure shapeFigure = new ShapeFigure(new Ellipse(0, 0, 50, 100));
-		hbox2.addChildNodes(new CanvasFigure(200, 50), shapeFigure);
+		hbox2.addChildren(new CanvasFigure(200, 50), shapeFigure);
 		hbox2.setRotationAngle(Angle.fromDeg(30));
 
 		Group group = new Group();
@@ -75,7 +75,7 @@ public class SceneExample {
 			}
 		});
 
-		root.addChildNodes(hbox2);
+		root.addChildren(hbox2);
 		// root.addChildNodes(group);
 		// group.addChildNodes(hbox2);
 
@@ -92,8 +92,8 @@ public class SceneExample {
 					}
 				});
 		Group group2 = new Group();
-		hbox2.addChildNodes(group2);
-		group2.addChildNodes(controlNode);
+		hbox2.addChildren(group2);
+		group2.addChildren(controlNode);
 
 		shell.pack();
 		shell.open();

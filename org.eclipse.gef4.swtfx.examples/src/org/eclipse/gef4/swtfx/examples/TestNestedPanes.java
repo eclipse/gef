@@ -38,10 +38,10 @@ public class TestNestedPanes implements IExample {
 			topRight.setFill(new RgbaColor(255, 0, 0));
 			IFigure bottomRight = new ShapeFigure(new Rectangle(95, 95, 10, 10));
 			bottomRight.setFill(new RgbaColor(0, 255, 0));
-			main.addChildNodes(origin, topRight, bottomRight);
+			main.addChildren(origin, topRight, bottomRight);
 		}
 
-		root.addChildNodes(main);
+		root.addChildren(main);
 
 		Pane inner = new Pane();
 		inner.relocate(50, 50);
@@ -54,10 +54,10 @@ public class TestNestedPanes implements IExample {
 			topRight.setFill(new RgbaColor(255, 0, 0));
 			IFigure bottomRight = new ShapeFigure(new Rectangle(95, 95, 10, 10));
 			bottomRight.setFill(new RgbaColor(0, 255, 0));
-			inner.addChildNodes(origin, topRight, bottomRight);
+			inner.addChildren(origin, topRight, bottomRight);
 		}
 
-		main.addChildNodes(inner);
+		main.addChildren(inner);
 	}
 
 	@Override

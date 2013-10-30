@@ -35,7 +35,7 @@ public interface IParent extends INode {
 	 * @param nodes
 	 *            The child nodes to add to this parent
 	 */
-	public void addChildNodes(INode... nodes);
+	public void addChildren(INode... nodes);
 
 	/**
 	 * Returns the {@link List} of {@link INode}s registered as children of this
@@ -44,7 +44,7 @@ public interface IParent extends INode {
 	 * @return the {@link List} of {@link INode}s registered as children of this
 	 *         {@link IParent}
 	 */
-	public List<INode> getChildNodes();
+	public List<INode> getChildrenUnmodifiable();
 
 	/**
 	 * Returns the height of this {@link IParent}.
@@ -88,7 +88,7 @@ public interface IParent extends INode {
 	 * @param nodes
 	 *            The child nodes to add to this parent
 	 */
-	public void removeChildNodes(INode... nodes);
+	public void removeChildren(INode... nodes);
 
 	/**
 	 * Redraw child figures using the passed-in {@link GraphicsContext}.

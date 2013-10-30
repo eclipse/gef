@@ -28,7 +28,7 @@ public class CanvasExample extends Application {
 	public Scene start(Shell shell) {
 		Group root = new Group();
 		CanvasFigure canvas = new CanvasFigure(400, 300);
-		root.addChildNodes(canvas);
+		root.addChildren(canvas);
 
 		GraphicsContext gc = canvas.getGraphicsContext();
 		gc.arc(100, 100, 40, 60, 10, 90);

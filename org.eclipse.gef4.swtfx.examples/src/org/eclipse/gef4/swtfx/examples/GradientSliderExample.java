@@ -99,7 +99,7 @@ public class GradientSliderExample implements IExample, SelectionListener {
 		fig = new ShapeFigure(new Rectangle(0, 0, 200, 400));
 		fig.setFill(gradient);
 
-		c.addChildNodes(sliderNode, fig);
+		c.addChildren(sliderNode, fig);
 
 		sliderNode.resizeRelocate(20, 20, 200, 20);
 		fig.relocate(20, 60);

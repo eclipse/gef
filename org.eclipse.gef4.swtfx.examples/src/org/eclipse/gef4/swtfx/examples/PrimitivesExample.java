@@ -31,7 +31,7 @@ public class PrimitivesExample implements IExample {
 
 	@Override
 	public void addUi(IParent c) {
-		c.addChildNodes(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
+		c.addChildren(new ShapeFigure(new Rectangle(0, 0, 640, 480)) {
 			@Override
 			public void doPaint(GraphicsContext g) {
 				// clear

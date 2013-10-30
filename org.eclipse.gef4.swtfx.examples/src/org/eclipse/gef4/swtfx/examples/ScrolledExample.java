@@ -45,13 +45,13 @@ public class ScrolledExample extends Application {
 		VBox vbox = new VBox();
 
 		for (int i = 0; i < 10; i++) {
-			vbox.addChildNodes(new TextFigure(
+			vbox.addChildren(new TextFigure(
 					"alpha beta gamma delta epsilon lambda"));
 		}
 
 		scrollPane.setContent(vbox);
 
-		root.addChildNodes(hBar, vBar, scrollPane);
+		root.addChildren(hBar, vBar, scrollPane);
 
 		return new Scene(shell, root);
 	}

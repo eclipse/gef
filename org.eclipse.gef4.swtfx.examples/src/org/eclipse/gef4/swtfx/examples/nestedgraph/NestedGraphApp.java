@@ -36,7 +36,7 @@ public class NestedGraphApp extends Application {
 		BallsNode ballsNode = new BallsNode();
 		ballsNode.relocate(250, 200);
 
-		root.addChildNodes(labPane, ballsNode);
+		root.addChildren(labPane, ballsNode);
 
 		return new Scene(shell, root);
 	}

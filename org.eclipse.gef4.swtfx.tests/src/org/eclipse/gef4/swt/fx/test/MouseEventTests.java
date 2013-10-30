@@ -156,7 +156,7 @@ public class MouseEventTests {
 		Pane root = (Pane) scene.getRoot();
 
 		CanvasFigure canvas = new CanvasFigure(640, 480);
-		root.addChildNodes(canvas);
+		root.addChildren(canvas);
 
 		final int[] state = new int[] { 0 };
 

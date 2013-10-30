@@ -59,20 +59,20 @@ public class LayoutSample extends Application {
 		VBox col1 = new VBox();
 		VBox col2 = new VBox();
 		VBox col3 = new VBox();
-		hbox.addChildNodes(col1, col2, col3);
+		hbox.addChildren(col1, col2, col3);
 
-		col1.addChildNodes(
+		col1.addChildren(
 				new SwtButton("abc"),
 				shape(new Polygon(50, 0, 100, 100, 0, 100), 0, 1, 0),
 				shape(new Pie(0, 0, 100, 100, Angle.fromDeg(15), Angle
 						.fromDeg(120)), 0, 1, 1));
 
-		col2.addChildNodes(shape(new Ellipse(0, 0, 70, 80), 1, 0, 0),
+		col2.addChildren(shape(new Ellipse(0, 0, 70, 80), 1, 0, 0),
 				shape(new Rectangle(0, 0, 100, 40), 0, 0, 1), new SwtButton(
 						"test"),
 				shape(new RoundedRectangle(0, 0, 100, 100, 10, 10), 1, 0, 1));
 
-		col3.addChildNodes(shape(new Rectangle(0, 0, 100, 100), 1, 1, 0),
+		col3.addChildren(shape(new Rectangle(0, 0, 100, 100), 1, 1, 0),
 				new SwtButton("foobar"), new SwtButton("gaga"));
 
 		// fill AnchorPane

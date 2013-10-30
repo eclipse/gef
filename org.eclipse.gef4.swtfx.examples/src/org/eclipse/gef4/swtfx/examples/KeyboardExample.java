@@ -80,7 +80,7 @@ public class KeyboardExample implements IExample {
 				g.fillText(text, x, y, maxWidth);
 			}
 		};
-		root.addChildNodes(keyboardRect);
+		root.addChildren(keyboardRect);
 
 		Button btnFocus = new Button(root.getScene(), SWT.PUSH);
 		btnFocus.setText("requestFocus");

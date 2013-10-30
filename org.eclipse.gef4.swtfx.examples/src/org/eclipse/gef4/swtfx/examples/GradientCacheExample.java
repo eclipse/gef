@@ -39,7 +39,7 @@ public class GradientCacheExample implements IExample {
 	public void addUi(final IParent c) {
 		resetGradient();
 		// gradient.computeAuxVars();
-		c.addChildNodes(createGradientRect(30, 30),
+		c.addChildren(createGradientRect(30, 30),
 				createGradientRect(30, 250), createGradientRect(360, 130));
 
 		final Button button = new Button(c.getScene(), SWT.TOGGLE);
@@ -52,7 +52,7 @@ public class GradientCacheExample implements IExample {
 				resetGradient();
 				if (button.getSelection()) {
 					gradient.computeAuxVars();
-					for (INode n : c.getChildNodes()) {
+					for (INode n : c.getChildrenUnmodifiable()) {
 						if (n instanceof IFigure) {
 							((IFigure) n).setFill(gradient);
 						}

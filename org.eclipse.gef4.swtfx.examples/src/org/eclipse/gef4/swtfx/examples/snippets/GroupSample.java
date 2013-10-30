@@ -68,7 +68,7 @@ public class GroupSample extends Application {
 	public Scene start(Shell shell) {
 		Pane root = new Pane();
 		Group parent = new Group();
-		root.addChildNodes(parent);
+		root.addChildren(parent);
 
 		root.setPrefWidth(640);
 		root.setPrefHeight(480);
@@ -78,7 +78,7 @@ public class GroupSample extends Application {
 		ShapeFigure<Ellipse> oval = new ShapeFigure<Ellipse>(new Ellipse(0, 0,
 				100, 200));
 
-		parent.addChildNodes(rect, oval);
+		parent.addChildren(rect, oval);
 
 		rect.setFill(new RgbaColor(0, 0, 255));
 		oval.setFill(new RgbaColor(255, 0, 0));

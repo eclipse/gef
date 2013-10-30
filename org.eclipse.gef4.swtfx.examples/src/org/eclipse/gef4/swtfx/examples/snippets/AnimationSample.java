@@ -113,7 +113,7 @@ public class AnimationSample extends Application {
 		VBox vbox = new VBox();
 		BorderPane borderPane = new BorderPane();
 
-		root.addChildNodes(vbox, borderPane);
+		root.addChildren(vbox, borderPane);
 		root.setGrower(borderPane);
 		root.setFill(borderPane, true);
 

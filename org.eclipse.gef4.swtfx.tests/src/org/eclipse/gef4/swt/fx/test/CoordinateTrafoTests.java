@@ -41,7 +41,7 @@ public class CoordinateTrafoTests {
 
 		// create node to test its behavior
 		ShapeFigure box = new ShapeFigure(new Rectangle(0, 0, 100, 50));
-		pane.addChildNodes(box);
+		pane.addChildren(box);
 
 		// set Pane width x height so that it does not reject our test calls
 		pane.setWidth(200);
@@ -92,7 +92,7 @@ public class CoordinateTrafoTests {
 		Pane root = new Pane();
 		ShapeFigure s = new ShapeFigure(new Rectangle(0, 0, 100, 100));
 		new Scene(new Shell(), root);
-		root.addChildNodes(s);
+		root.addChildren(s);
 
 		s.setPivot(new Point(50, 50));
 		s.setScaleX(2);
@@ -114,7 +114,7 @@ public class CoordinateTrafoTests {
 		box.setRotationAngle(Angle.fromDeg(45));
 		// the box is not at: (0, 50), (36, 15), (105, 85), (71, 120)
 		// (the values are not exact, but inner integer approximations)
-		pane.addChildNodes(box);
+		pane.addChildren(box);
 
 		// set Pane width x height so that it does not reject our test calls
 		pane.setWidth(200);
@@ -154,7 +154,7 @@ public class CoordinateTrafoTests {
 		box.setPivot(new Point(50, 50));
 		box.setRotationAngle(Angle.fromDeg(90));
 		// the box is now at (50,0) sized 50x100
-		pane.addChildNodes(box);
+		pane.addChildren(box);
 
 		// set Pane width x height so that it does not reject our test calls
 		pane.setWidth(200);
@@ -193,7 +193,7 @@ public class CoordinateTrafoTests {
 		ShapeFigure box = new ShapeFigure(new Rectangle(0, 0, 100, 50));
 		box.setScaleX(2);
 		box.setScaleY(0.5);
-		pane.addChildNodes(box);
+		pane.addChildren(box);
 
 		// set Pane width x height so that it does not reject our test calls
 		pane.setWidth(300);
@@ -229,7 +229,7 @@ public class CoordinateTrafoTests {
 		ShapeFigure box = new ShapeFigure(new Rectangle(0, 0, 100, 50));
 		box.setTranslateX(10);
 		box.setTranslateY(20);
-		pane.addChildNodes(box);
+		pane.addChildren(box);
 
 		// set Pane width x height so that it does not reject our test calls
 		pane.setWidth(200);

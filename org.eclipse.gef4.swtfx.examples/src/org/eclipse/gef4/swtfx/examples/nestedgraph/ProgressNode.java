@@ -63,7 +63,7 @@ public class ProgressNode extends AnchorPane {
 			this.lColor = left;
 			this.rColor = right;
 
-			addChildNodes(new ShapeFigure<Rectangle>(new Rectangle()) {
+			addChildren(new ShapeFigure<Rectangle>(new Rectangle()) {
 				@Override
 				public void doPaint(GraphicsContext g) {
 					display(g);
@@ -118,7 +118,7 @@ public class ProgressNode extends AnchorPane {
 		hBox.add(separator, false);
 		hBox.add(sliced, false);
 
-		addChildNodes(hBox);
+		addChildren(hBox);
 	}
 
 }

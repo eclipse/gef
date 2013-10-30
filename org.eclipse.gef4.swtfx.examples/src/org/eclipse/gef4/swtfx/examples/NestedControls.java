@@ -79,7 +79,7 @@ public class NestedControls implements IExample {
 		}
 
 		if (node instanceof IParent) {
-			for (INode child : ((IParent) node).getChildNodes()) {
+			for (INode child : ((IParent) node).getChildrenUnmodifiable()) {
 				showAbsoluteBounds(child);
 			}
 		}
@@ -103,7 +103,7 @@ public class NestedControls implements IExample {
 	public void addUi(final IParent root) {
 		{
 			Pane naviGroup = new Pane();
-			root.addChildNodes(naviGroup);
+			root.addChildren(naviGroup);
 			naviGroup.resize(100, 300);
 
 			button(naviGroup, "New", onClick("onNew"), 5, 5, 90);
@@ -113,17 +113,17 @@ public class NestedControls implements IExample {
 		}
 
 		Pane contentGroup = new Pane();
-		root.addChildNodes(contentGroup);
+		root.addChildren(contentGroup);
 		contentGroup.resizeRelocate(100, 0, 300, 300);
 
 		final CanvasFigure canvas = new CanvasFigure(300, 200);
-		contentGroup.addChildNodes(canvas);
+		contentGroup.addChildren(canvas);
 		canvas.relocate(0, 100); // leave space for some options
 		drawGradients(canvas);
 
 		{
 			Pane optionsGroup = new Pane();
-			contentGroup.addChildNodes(optionsGroup);
+			contentGroup.addChildren(optionsGroup);
 			optionsGroup.resize(300, 100);
 
 			checkbox(optionsGroup, 5, 5, 290, "Gamma correction (x^1/2.2)",
@@ -180,7 +180,7 @@ public class NestedControls implements IExample {
 		button.setText(text);
 
 		SwtControlAdapterNode<Button> node = new SwtControlAdapterNode<Button>(button);
-		container.addChildNodes(node);
+		container.addChildren(node);
 
 		int height = (int) node.getLayoutBounds().getHeight();
 
@@ -199,7 +199,7 @@ public class NestedControls implements IExample {
 		control.setBackground(compo.getBackground());
 
 		SwtControlAdapterNode<Button> checkbox = new SwtControlAdapterNode<Button>(control);
-		container.addChildNodes(checkbox);
+		container.addChildren(checkbox);
 		Rectangle bb = checkbox.getLayoutBounds();
 		int height = (int) bb.getHeight();
 		checkbox.resizeRelocate(x, y, width, height);
@@ -323,7 +323,7 @@ public class NestedControls implements IExample {
 						+ pane.getWidth() + " x " + pane.getHeight());
 			}
 
-			for (INode child : parent.getChildNodes()) {
+			for (INode child : parent.getChildrenUnmodifiable()) {
 				showLayoutInfo(child, depth + 1);
 			}
 		} else if (node instanceof IFigure) {

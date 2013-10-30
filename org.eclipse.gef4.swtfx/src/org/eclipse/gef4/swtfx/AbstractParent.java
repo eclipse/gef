@@ -42,7 +42,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	 */
 	private static void propagateSceneChanged(IParent parent, Scene oldScene,
 			Scene newScene) {
-		for (INode n : parent.getChildNodes()) {
+		for (INode n : parent.getChildrenUnmodifiable()) {
 			if (n instanceof IParent) {
 				propagateSceneChanged((IParent) n, oldScene, newScene);
 			} else if (n instanceof SwtControlAdapterNode<?>) {
@@ -78,7 +78,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	private Scene scene = null;
 
 	@Override
-	public void addChildNodes(INode... nodes) {
+	public void addChildren(INode... nodes) {
 		for (INode node : nodes) {
 			if (children.contains(node)) {
 				throw new IllegalStateException(
@@ -119,7 +119,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		// TODO: top and bottom padding
 		double yMin = 0;
 		double yMax = 0;
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node.isManaged()) {
 				double y = node.getLayoutBounds().getY() + node.getLayoutY();
 				yMin = Math.min(yMin, y);
@@ -134,7 +134,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		// TODO: left and right padding
 		double xMin = 0;
 		double xMax = 0;
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node.isManaged()) {
 				double x = node.getLayoutBounds().getX() + node.getLayoutX();
 				xMin = Math.min(xMin, x);
@@ -155,7 +155,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	}
 
 	@Override
-	public List<INode> getChildNodes() {
+	public List<INode> getChildrenUnmodifiable() {
 		return Collections.unmodifiableList(children);
 	}
 
@@ -169,7 +169,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 		// union children's bounds
 		double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
 		boolean hasVisibleChildren = false;
-		for (INode n : getChildNodes()) {
+		for (INode n : getChildrenUnmodifiable()) {
 			if (n.isVisible()) {
 				hasVisibleChildren = true;
 				Rectangle bbox = n.getBoundsInParent();
@@ -234,7 +234,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	@Override
 	public void layout() {
 		layoutChildren();
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node instanceof IParent) {
 				((IParent) node).layout();
 			}
@@ -243,7 +243,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public void layoutChildren() {
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node.isResizable() && node.isManaged()) {
 				node.autosize();
 			}
@@ -286,7 +286,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	}
 
 	@Override
-	public void removeChildNodes(INode... nodes) {
+	public void removeChildren(INode... nodes) {
 		for (INode node : nodes) {
 			if (!children.contains(node)) {
 				throw new IllegalStateException("The given INode (" + node
@@ -300,7 +300,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public void renderFigures(GraphicsContext g) {
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node instanceof IFigure) {
 				paintFigure((IFigure) node, g);
 			} else if (node instanceof IParent) {

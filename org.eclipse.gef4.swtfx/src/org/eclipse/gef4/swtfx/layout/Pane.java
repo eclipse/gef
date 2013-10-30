@@ -52,7 +52,7 @@ public class Pane extends AbstractParent {
 
 	public INode[] getManagedChildren() {
 		List<INode> managed = new ArrayList<INode>();
-		for (INode child : getChildNodes()) {
+		for (INode child : getChildrenUnmodifiable()) {
 			if (child.isManaged()) {
 				managed.add(child);
 			}
@@ -79,7 +79,7 @@ public class Pane extends AbstractParent {
 
 		g.setLineWidth(1);
 
-		for (INode node : getChildNodes()) {
+		for (INode node : getChildrenUnmodifiable()) {
 			if (node instanceof IParent) {
 				g.setStroke(new RgbaColor(255, 0, 0));
 				g.strokePath(node.getBoundsInParent().toPath());
@@ -98,6 +98,6 @@ public class Pane extends AbstractParent {
 	@Override
 	public String toString() {
 		return "Pane @ " + System.identityHashCode(this)
-				+ " (children-count => " + getChildNodes().size() + ")";
+				+ " (children-count => " + getChildrenUnmodifiable().size() + ")";
 	}
 }

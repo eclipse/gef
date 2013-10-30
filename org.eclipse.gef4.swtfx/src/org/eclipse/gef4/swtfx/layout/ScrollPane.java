@@ -109,19 +109,9 @@ public class ScrollPane extends Pane {
 	}
 
 	@Override
-	public void addChildNodes(INode... nodes) {
+	public void addChildren(INode... nodes) {
 		throw new UnsupportedOperationException(
-				"A ScrollPane does not work like this. You have to set its content attribute instead.");
-	}
-
-	/**
-	 * Adds the given {@link INode}s to the list of children of this
-	 * {@link ScrollPane}.
-	 * 
-	 * @param nodes
-	 */
-	protected void addChildren(INode... nodes) {
-		super.addChildNodes(nodes);
+				"A ScrollPane does not work like this. You have to unset its content attribute instead.");
 	}
 
 	public SwtScrollBar getHBar() {
@@ -185,6 +175,12 @@ public class ScrollPane extends Pane {
 	}
 
 	@Override
+	public void removeChildren(INode... nodes) {
+		throw new UnsupportedOperationException(
+				"A ScrollPane does not work like this. You have to set its content attribute instead.");
+	}
+
+	@Override
 	public void resize(double width, double height) {
 		super.resize(width, height);
 
@@ -199,7 +195,7 @@ public class ScrollPane extends Pane {
 
 	public void setContent(INode content) {
 		if (this.content != null) {
-			getChildNodes().remove(this.content);
+			getChildrenUnmodifiable().remove(this.content);
 		}
 		this.content = content;
 		addChildren(content);
@@ -216,7 +212,8 @@ public class ScrollPane extends Pane {
 	@Override
 	public String toString() {
 		return "ScrollPane " + System.identityHashCode(this)
-				+ " { children-count: " + getChildNodes().size() + " }";
+				+ " { children-count: " + getChildrenUnmodifiable().size()
+				+ " }";
 	}
 
 }

@@ -26,7 +26,7 @@ public class AnchorPane extends Pane {
 	}
 
 	public void add(INode node, AnchorPaneConstraints constraints) {
-		addChildNodes(node);
+		addChildren(node);
 		this.constraints.put(node, constraints);
 	}
 
@@ -135,7 +135,7 @@ public class AnchorPane extends Pane {
 	@Override
 	public String toString() {
 		return "AnchorPane " + System.identityHashCode(this)
-				+ " { children-count: " + getChildNodes().size() + " }";
+				+ " { children-count: " + getChildrenUnmodifiable().size() + " }";
 	}
 
 }

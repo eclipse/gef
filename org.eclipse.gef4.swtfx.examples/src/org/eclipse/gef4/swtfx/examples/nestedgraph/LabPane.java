@@ -42,7 +42,7 @@ public class LabPane extends VBox {
 		contentAnchor.add(contentPane, new AnchorPaneConstraints(10d, 10d, 10d,
 				10d));
 
-		addChildNodes(createBackground(), titleFigure, contentAnchor);
+		addChildren(createBackground(), titleFigure, contentAnchor);
 
 		dragging = false;
 		final double[] coords = new double[2];
@@ -71,7 +71,7 @@ public class LabPane extends VBox {
 	}
 
 	public void addContentNodes(INode... nodes) {
-		contentPane.addChildNodes(nodes);
+		contentPane.addChildren(nodes);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class LabPane extends VBox {
 				return false;
 			}
 		};
-		bgPane.addChildNodes(new ShapeFigure<Rectangle>(new Rectangle()) {
+		bgPane.addChildren(new ShapeFigure<Rectangle>(new Rectangle()) {
 			@Override
 			public void doPaint(GraphicsContext g) {
 				g.setFill(new RgbaColor(128, 128, 128, 128));

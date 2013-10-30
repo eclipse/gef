@@ -68,7 +68,7 @@ public class ArcTypesExample implements IExample {
 				g.fillArc(140, 260, 100, 100, 0, 270, ArcType.ROUND);
 			}
 		};
-		c.addChildNodes(f);
+		c.addChildren(f);
 	}
 
 	@Override
