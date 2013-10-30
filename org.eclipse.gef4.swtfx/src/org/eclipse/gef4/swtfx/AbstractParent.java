@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -155,7 +156,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 	@Override
 	public List<INode> getChildNodes() {
-		return children;
+		return Collections.unmodifiableList(children);
 	}
 
 	@Override
@@ -282,6 +283,19 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 					"Did you forget to call restore() in your drawing code?", x);
 		}
 		g.restore();
+	}
+
+	@Override
+	public void removeChildNodes(INode... nodes) {
+		for (INode node : nodes) {
+			if (!children.contains(node)) {
+				throw new IllegalStateException("The given INode (" + node
+						+ ") is not registered as a child of this IParent ("
+						+ this + ").");
+			}
+			node.setParentNode(null);
+			children.remove(node);
+		}
 	}
 
 	@Override

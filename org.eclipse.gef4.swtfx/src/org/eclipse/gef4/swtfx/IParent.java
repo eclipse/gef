@@ -33,6 +33,7 @@ public interface IParent extends INode {
 	 * nodes.
 	 * 
 	 * @param nodes
+	 *            The child nodes to add to this parent
 	 */
 	public void addChildNodes(INode... nodes);
 
@@ -78,6 +79,16 @@ public interface IParent extends INode {
 	 * Reposition and resize children of this IParent.
 	 */
 	public void layoutChildren();
+
+	/**
+	 * Removes the given {@link INode}s from this {@link IParent}'s children
+	 * list. Besides, this {@link IParent} is removed as the parent for all
+	 * passed-in nodes.
+	 * 
+	 * @param nodes
+	 *            The child nodes to add to this parent
+	 */
+	public void removeChildNodes(INode... nodes);
 
 	/**
 	 * Redraw child figures using the passed-in {@link GraphicsContext}.
