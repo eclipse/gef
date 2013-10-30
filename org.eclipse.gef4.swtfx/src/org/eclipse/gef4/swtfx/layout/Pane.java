@@ -61,8 +61,8 @@ public class Pane extends AbstractParent {
 	}
 
 	@Override
-	public void renderFigures(GraphicsContext g) {
-		super.renderFigures(g);
+	public void renderChildFigures(GraphicsContext g) {
+		super.renderChildFigures(g);
 		if (debugging) {
 			renderLayoutDebug(g);
 		}

@@ -184,7 +184,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	}
 
 	@Override
-	public INode getNodeAt(Point localPosition) {
+	public INode getChildAt(Point localPosition) {
 		if (!contains(localPosition)) {
 			return null;
 		}
@@ -199,7 +199,7 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 
 			if (node.contains(childLocal.x, childLocal.y)) {
 				if (node instanceof IParent) {
-					INode n = ((IParent) node).getNodeAt(childLocal);
+					INode n = ((IParent) node).getChildAt(childLocal);
 					return n == null ? node : n;
 				}
 				return node;
@@ -299,18 +299,18 @@ public abstract class AbstractParent extends AbstractNode implements IParent {
 	}
 
 	@Override
-	public void renderFigures(GraphicsContext g) {
+	public void renderChildFigures(GraphicsContext g) {
 		for (INode node : getChildrenUnmodifiable()) {
 			if (node instanceof IFigure) {
 				paintFigure((IFigure) node, g);
 			} else if (node instanceof IParent) {
-				((IParent) node).renderFigures(g);
+				((IParent) node).renderChildFigures(g);
 			}
 		}
 	}
 
 	@Override
-	public void replace(INode child, INode replace) {
+	public void replaceChild(INode child, INode replace) {
 		if (child == null) {
 			throw new IllegalArgumentException(
 					"The given child INode may not be null.");

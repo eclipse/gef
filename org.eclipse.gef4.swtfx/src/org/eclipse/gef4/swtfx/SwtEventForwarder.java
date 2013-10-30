@@ -205,7 +205,7 @@ class SwtEventForwarder implements Listener {
 			Point rootLocalMousePosition = receiver.getRoot().displayToLocal(
 					mousePosition);
 
-			INode newPointerTarget = receiver.getRoot().getNodeAt(
+			INode newPointerTarget = receiver.getRoot().getChildAt(
 					rootLocalMousePosition);
 
 			if (oldPointerTarget != null) {
@@ -238,7 +238,7 @@ class SwtEventForwarder implements Listener {
 			Point mousePosition = getAbsMousePos(event);
 			receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
-			INode nodeAtMouse = receiver.getRoot().getNodeAt(mousePosition);
+			INode nodeAtMouse = receiver.getRoot().getChildAt(mousePosition);
 
 			if (nodeAtMouse != null) {
 				if (event.type == SWT.MouseDown) {
@@ -272,7 +272,7 @@ class SwtEventForwarder implements Listener {
 			Point mousePosition) {
 		receiver.getRoot().displayToLocal(mousePosition, mousePosition);
 
-		INode nodeAtMouse = receiver.getRoot().getNodeAt(mousePosition);
+		INode nodeAtMouse = receiver.getRoot().getChildAt(mousePosition);
 
 		if (nodeAtMouse == null) {
 			if (receiver.getRoot().contains(mousePosition)) {

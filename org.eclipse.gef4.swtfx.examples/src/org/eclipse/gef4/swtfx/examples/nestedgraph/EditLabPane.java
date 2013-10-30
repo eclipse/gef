@@ -38,7 +38,7 @@ public class EditLabPane extends LabPane {
 						swtText.setText(text);
 
 						final IParent parent = titleFigure.getParentNode();
-						parent.replace(titleFigure, swtText);
+						parent.replaceChild(titleFigure, swtText);
 						swtText.requestFocus();
 						swtText.setSelection(0, text.length());
 
@@ -51,7 +51,7 @@ public class EditLabPane extends LabPane {
 											event.consume();
 											titleFigure.setText(" "
 													+ swtText.getText());
-											parent.replace(swtText, titleFigure);
+											parent.replaceChild(swtText, titleFigure);
 										}
 									}
 								});

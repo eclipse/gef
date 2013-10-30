@@ -56,13 +56,13 @@ public class CoordinateTrafoTests {
 		assertFalse(box.contains(0, 51));
 
 		// test pane coordinate system
-		assertSame(box, pane.getNodeAt(new Point(0, 0)));
-		assertSame(box, pane.getNodeAt(new Point(100, 50)));
-		assertSame(box, pane.getNodeAt(new Point(0, 50)));
-		assertSame(box, pane.getNodeAt(new Point(100, 0)));
-		assertSame(box, pane.getNodeAt(new Point(50, 25)));
-		assertNotSame(box, pane.getNodeAt(new Point(0, 51)));
-		assertNotSame(box, pane.getNodeAt(new Point(101, 0)));
+		assertSame(box, pane.getChildAt(new Point(0, 0)));
+		assertSame(box, pane.getChildAt(new Point(100, 50)));
+		assertSame(box, pane.getChildAt(new Point(0, 50)));
+		assertSame(box, pane.getChildAt(new Point(100, 0)));
+		assertSame(box, pane.getChildAt(new Point(50, 25)));
+		assertNotSame(box, pane.getChildAt(new Point(0, 51)));
+		assertNotSame(box, pane.getChildAt(new Point(101, 0)));
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class CoordinateTrafoTests {
 
 		ShapeFigure box = new ShapeFigure(rect);
 		pane.getTransforms().add(tx);
-		INode nodeAt = pane.getNodeAt(point);
+		INode nodeAt = pane.getChildAt(point);
 		assertNotSame(box, nodeAt);
 		assertNull(nodeAt);
 	}
@@ -131,15 +131,15 @@ public class CoordinateTrafoTests {
 		assertFalse(box.contains(101, 25));
 
 		// test pane coordinate system
-		assertSame(box, pane.getNodeAt(new Point(0, 50)));
-		assertSame(box, pane.getNodeAt(new Point(36, 16)));
-		assertSame(box, pane.getNodeAt(new Point(105, 85)));
-		assertSame(box, pane.getNodeAt(new Point(71, 120)));
-		assertSame(box, pane.getNodeAt(new Point(50, 50)));
+		assertSame(box, pane.getChildAt(new Point(0, 50)));
+		assertSame(box, pane.getChildAt(new Point(36, 16)));
+		assertSame(box, pane.getChildAt(new Point(105, 85)));
+		assertSame(box, pane.getChildAt(new Point(71, 120)));
+		assertSame(box, pane.getChildAt(new Point(50, 50)));
 
-		assertNotSame(box, pane.getNodeAt(new Point(10, 10)));
-		assertNotSame(box, pane.getNodeAt(new Point(100, 50)));
-		assertNotSame(box, pane.getNodeAt(new Point(25, 100)));
+		assertNotSame(box, pane.getChildAt(new Point(10, 10)));
+		assertNotSame(box, pane.getChildAt(new Point(100, 50)));
+		assertNotSame(box, pane.getChildAt(new Point(25, 100)));
 	}
 
 	@Test
@@ -171,15 +171,15 @@ public class CoordinateTrafoTests {
 		assertFalse(box.contains(101, 25));
 
 		// test pane coordinate system
-		assertSame(box, pane.getNodeAt(new Point(50, 0)));
-		assertSame(box, pane.getNodeAt(new Point(50, 100)));
-		assertSame(box, pane.getNodeAt(new Point(100, 100)));
-		assertSame(box, pane.getNodeAt(new Point(100, 0)));
-		assertSame(box, pane.getNodeAt(new Point(75, 50)));
+		assertSame(box, pane.getChildAt(new Point(50, 0)));
+		assertSame(box, pane.getChildAt(new Point(50, 100)));
+		assertSame(box, pane.getChildAt(new Point(100, 100)));
+		assertSame(box, pane.getChildAt(new Point(100, 0)));
+		assertSame(box, pane.getChildAt(new Point(75, 50)));
 
-		assertNotSame(box, pane.getNodeAt(new Point(49, 0)));
-		assertNotSame(box, pane.getNodeAt(new Point(101, 0)));
-		assertNotSame(box, pane.getNodeAt(new Point(75, 101)));
+		assertNotSame(box, pane.getChildAt(new Point(49, 0)));
+		assertNotSame(box, pane.getChildAt(new Point(101, 0)));
+		assertNotSame(box, pane.getChildAt(new Point(75, 101)));
 	}
 
 	@Test
@@ -208,14 +208,14 @@ public class CoordinateTrafoTests {
 		assertFalse(box.contains(0, 51));
 
 		// test pane coordinate system
-		assertSame(box, pane.getNodeAt(new Point(0, 0)));
-		assertSame(box, pane.getNodeAt(new Point(200, 0)));
-		assertSame(box, pane.getNodeAt(new Point(200, 25)));
-		assertSame(box, pane.getNodeAt(new Point(0, 25)));
-		assertSame(box, pane.getNodeAt(new Point(100, 15)));
+		assertSame(box, pane.getChildAt(new Point(0, 0)));
+		assertSame(box, pane.getChildAt(new Point(200, 0)));
+		assertSame(box, pane.getChildAt(new Point(200, 25)));
+		assertSame(box, pane.getChildAt(new Point(0, 25)));
+		assertSame(box, pane.getChildAt(new Point(100, 15)));
 
-		assertNotSame(box, pane.getNodeAt(new Point(201, 15)));
-		assertNotSame(box, pane.getNodeAt(new Point(100, 26)));
+		assertNotSame(box, pane.getChildAt(new Point(201, 15)));
+		assertNotSame(box, pane.getChildAt(new Point(100, 26)));
 	}
 
 	@Test
@@ -244,22 +244,22 @@ public class CoordinateTrafoTests {
 		assertFalse(box.contains(0, 51));
 
 		// test pane coordinate system
-		assertNotSame(box, pane.getNodeAt(new Point(0, 0)));
-		assertSame(box, pane.getNodeAt(new Point(100, 50)));
-		assertNotSame(box, pane.getNodeAt(new Point(0, 50)));
-		assertNotSame(box, pane.getNodeAt(new Point(100, 0)));
-		assertSame(box, pane.getNodeAt(new Point(50, 25)));
-		assertNotSame(box, pane.getNodeAt(new Point(0, 51)));
-		assertNotSame(box, pane.getNodeAt(new Point(101, 0)));
+		assertNotSame(box, pane.getChildAt(new Point(0, 0)));
+		assertSame(box, pane.getChildAt(new Point(100, 50)));
+		assertNotSame(box, pane.getChildAt(new Point(0, 50)));
+		assertNotSame(box, pane.getChildAt(new Point(100, 0)));
+		assertSame(box, pane.getChildAt(new Point(50, 25)));
+		assertNotSame(box, pane.getChildAt(new Point(0, 51)));
+		assertNotSame(box, pane.getChildAt(new Point(101, 0)));
 
-		assertSame(box, pane.getNodeAt(new Point(10, 20)));
-		assertSame(box, pane.getNodeAt(new Point(110, 70)));
-		assertSame(box, pane.getNodeAt(new Point(10, 70)));
-		assertSame(box, pane.getNodeAt(new Point(110, 20)));
-		assertSame(box, pane.getNodeAt(new Point(60, 45)));
+		assertSame(box, pane.getChildAt(new Point(10, 20)));
+		assertSame(box, pane.getChildAt(new Point(110, 70)));
+		assertSame(box, pane.getChildAt(new Point(10, 70)));
+		assertSame(box, pane.getChildAt(new Point(110, 20)));
+		assertSame(box, pane.getChildAt(new Point(60, 45)));
 
-		assertNotSame(box, pane.getNodeAt(new Point(111, 40)));
-		assertNotSame(box, pane.getNodeAt(new Point(60, 71)));
+		assertNotSame(box, pane.getChildAt(new Point(111, 40)));
+		assertNotSame(box, pane.getChildAt(new Point(60, 71)));
 	}
 
 }

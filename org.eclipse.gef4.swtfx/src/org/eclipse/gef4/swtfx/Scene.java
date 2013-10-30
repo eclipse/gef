@@ -169,7 +169,7 @@ public class Scene extends Canvas {
 			@Override
 			public void paintControl(PaintEvent e) {
 				GraphicsContext gc = new GraphicsContext(e.gc);
-				root.renderFigures(gc);
+				root.renderChildFigures(gc);
 				gc.cleanUp();
 			}
 		});

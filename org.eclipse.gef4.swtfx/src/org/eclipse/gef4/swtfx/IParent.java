@@ -61,7 +61,7 @@ public interface IParent extends INode {
 	 * @param localPosition
 	 * @return
 	 */
-	public INode getNodeAt(Point localPosition);
+	public INode getChildAt(Point localPosition);
 
 	/**
 	 * Returns the width of this {@link IParent}.
@@ -93,7 +93,7 @@ public interface IParent extends INode {
 	/**
 	 * Redraw child figures using the passed-in {@link GraphicsContext}.
 	 */
-	public void renderFigures(GraphicsContext gc);
+	public void renderChildFigures(GraphicsContext gc);
 
 	/**
 	 * Replaces the given {@link INode} in the children list of this
@@ -102,7 +102,7 @@ public interface IParent extends INode {
 	 * @param child
 	 * @param replace
 	 */
-	public void replace(INode child, INode replace);
+	public void replaceChild(INode child, INode replace);
 
 	/**
 	 * Sets the height of this {@link IParent} to the specified value.
