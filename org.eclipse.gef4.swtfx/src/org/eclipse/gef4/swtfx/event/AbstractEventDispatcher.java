@@ -14,17 +14,6 @@ package org.eclipse.gef4.swtfx.event;
 
 public abstract class AbstractEventDispatcher implements IEventDispatcher {
 
-	// private AbstractEventDispatcher nextDispatcher;
-	// private AbstractEventDispatcher prevDispatcher;
-
-	// public Event dispatchBubblingEvent(Event event) {
-	// return event;
-	// }
-	//
-	// public Event dispatchCapturingEvent(Event event) {
-	// return event;
-	// }
-
 	/**
 	 * This method is called during the "Bubbling" phase of event processing.
 	 * Normally, all registered event handlers are called during this phase. You
@@ -51,37 +40,16 @@ public abstract class AbstractEventDispatcher implements IEventDispatcher {
 	public Event dispatchEvent(Event event, IEventDispatchChain tail) {
 		event = dispatchCapturingEvent(event);
 
-		// TODO: is event == null even possible?
 		if (event != null && !event.isConsumed()) {
 			// forward the event to the rest of the chain
 			event = tail.dispatchEvent(event);
 
-			// TODO: is event == null even possible?
 			if (event != null && !event.isConsumed()) {
 				event = dispatchBubblingEvent(event);
 			}
 		}
 
-		// TODO: is event == null even possible?
 		return event == null || event.isConsumed() ? null : event;
 	}
-
-	// public AbstractEventDispatcher getNextDispatcher() {
-	// return nextDispatcher;
-	// }
-	//
-	// public AbstractEventDispatcher getPreviousDispatcher() {
-	// return prevDispatcher;
-	// }
-	//
-	// public void insertNextDispatcher(AbstractEventDispatcher nextDispatcher)
-	// {
-	// if (this.nextDispatcher != null) {
-	// this.nextDispatcher.prevDispatcher = nextDispatcher;
-	// }
-	// nextDispatcher.nextDispatcher = this.nextDispatcher;
-	// nextDispatcher.prevDispatcher = this;
-	// this.nextDispatcher = nextDispatcher;
-	// }
 
 }

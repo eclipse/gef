@@ -48,7 +48,9 @@ public class BallsNode extends EditLabPane {
 				new IEventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						double x = Math.random() * container.getWidth();
+						double x = Math.max(0, Math.min(Math.random()
+								* container.getWidth(),
+								container.getWidth() - 10));
 						double y = Math.random() * container.getHeight();
 						double w = 25 + Math.random() * 100;
 						double h = 25 + Math.random() * 100;
@@ -61,7 +63,10 @@ public class BallsNode extends EditLabPane {
 
 	private ShapeFigure<Ellipse> genBall(double x, double y, double w, double h) {
 		final ShapeFigure<Ellipse> ball = new ShapeFigure<Ellipse>(new Ellipse(
-				x, y, w, h));
+				0, 0, w, h));
+		ball.relocate(x, y);
+
+		// System.out.println(ball.getLayoutBounds());
 
 		ball.setFill(new RgbaColor((int) (Math.random() * 255), (int) (Math
 				.random() * 255), (int) (Math.random() * 255)));
@@ -70,7 +75,7 @@ public class BallsNode extends EditLabPane {
 				new IEventHandler<MouseEvent>() {
 					@Override
 					public void handle(MouseEvent event) {
-						container.getChildrenUnmodifiable().remove(ball);
+						container.removeChildren(ball);
 					}
 				});
 

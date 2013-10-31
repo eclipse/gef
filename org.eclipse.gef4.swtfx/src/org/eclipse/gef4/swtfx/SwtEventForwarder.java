@@ -386,6 +386,7 @@ class SwtEventForwarder implements Listener {
 					|| ((e.stateMask & SWT.BUTTON4) != 0)
 					|| ((e.stateMask & SWT.BUTTON5) != 0)) {
 				type = MouseEvent.MOUSE_DRAGGED;
+				// TODO: would be awesome to have the previous mouse position
 			}
 			return new MouseEvent(e.widget, target, type, e.button, e.count,
 					targetXY[0], targetXY[1], sceneXY[0], sceneXY[1],

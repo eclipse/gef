@@ -29,7 +29,6 @@ import org.eclipse.gef4.swtfx.layout.VBox;
 public class LabPane extends VBox {
 
 	private Pane contentPane;
-	private AnchorPaneConstraints contentConstraints;
 	private TextFigure titleFigure;
 	private boolean dragging;
 
@@ -51,7 +50,8 @@ public class LabPane extends VBox {
 			@Override
 			public void handle(MouseEvent event) {
 				if (dragging) {
-					dragging = event.getEventType().isa(MouseEvent.MOUSE_MOVED);
+					dragging = event.getEventType().isa(
+							MouseEvent.MOUSE_DRAGGED);
 					double dx = event.getDisplayX() - coords[0];
 					double dy = event.getDisplayY() - coords[1];
 					Point newPos = new Point();
@@ -66,7 +66,7 @@ public class LabPane extends VBox {
 			}
 		};
 		addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
-		addEventFilter(MouseEvent.MOUSE_MOVED, handler);
+		addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
 		addEventFilter(MouseEvent.MOUSE_RELEASED, handler);
 	}
 

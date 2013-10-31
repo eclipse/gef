@@ -181,6 +181,9 @@ public class Scene extends Canvas {
 	 * @return the {@link #focusTarget}
 	 */
 	public INode getFocusTarget() {
+		if (focusTarget != null && focusTarget.getScene() == null) {
+			focusTarget = null;
+		}
 		return focusTarget;
 	}
 
@@ -192,6 +195,9 @@ public class Scene extends Canvas {
 	 * @return the {@link #mouseTarget}
 	 */
 	public INode getMouseTarget() {
+		if (mouseTarget != null && mouseTarget.getScene() == null) {
+			mouseTarget = null;
+		}
 		return mouseTarget;
 	}
 
