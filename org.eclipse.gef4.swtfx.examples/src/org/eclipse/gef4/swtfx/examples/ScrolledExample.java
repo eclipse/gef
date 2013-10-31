@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples;
 
-import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.Scene;
 import org.eclipse.gef4.swtfx.TextFigure;
 import org.eclipse.gef4.swtfx.controls.SwtScrollBar;
@@ -33,8 +32,10 @@ public class ScrolledExample extends Application {
 		root.setPrefWidth(400);
 		root.setPrefHeight(300);
 
-		SwtScrollBar hBar = new SwtScrollBar(Orientation.HORIZONTAL);
-		SwtScrollBar vBar = new SwtScrollBar(Orientation.VERTICAL);
+		SwtScrollBar hBar = new SwtScrollBar(
+				org.eclipse.gef4.swtfx.controls.SwtScrollBar.Orientation.HORIZONTAL);
+		SwtScrollBar vBar = new SwtScrollBar(
+				org.eclipse.gef4.swtfx.controls.SwtScrollBar.Orientation.VERTICAL);
 
 		ScrollPane scrollPane = new ScrollPane();
 

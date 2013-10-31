@@ -16,7 +16,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.swtfx.INode;
 import org.eclipse.gef4.swtfx.IParent;
-import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.controls.SwtScrollBar;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.IEventHandler;
@@ -76,8 +75,10 @@ public class ScrollPane extends Pane {
 	private Point offset = new Point();
 
 	public ScrollPane() {
-		hBar = new SwtScrollBar(Orientation.HORIZONTAL);
-		vBar = new SwtScrollBar(Orientation.VERTICAL);
+		hBar = new SwtScrollBar(
+				org.eclipse.gef4.swtfx.controls.SwtScrollBar.Orientation.HORIZONTAL);
+		vBar = new SwtScrollBar(
+				org.eclipse.gef4.swtfx.controls.SwtScrollBar.Orientation.VERTICAL);
 		corner = new Pane();
 		addChildren(hBar, vBar, corner);
 

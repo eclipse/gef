@@ -258,13 +258,6 @@ public interface INode extends IEventTarget {
 	public Rectangle getBoundsInParent();
 
 	/**
-	 * Returns the content-bias of this {@link INode}.
-	 * 
-	 * @return the content-bias of this {@link INode}
-	 */
-	public Orientation getContentBias();
-
-	/**
 	 * Returns the {@link IEventDispatcher} used to dispatch events for this
 	 * {@link INode}.
 	 * 

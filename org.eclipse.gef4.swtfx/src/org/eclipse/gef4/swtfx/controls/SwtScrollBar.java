@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.controls;
 
-import org.eclipse.gef4.swtfx.Orientation;
 import org.eclipse.gef4.swtfx.SwtControlAdapterNode;
 import org.eclipse.gef4.swtfx.event.ActionEvent;
 import org.eclipse.gef4.swtfx.event.Event;
@@ -30,6 +29,24 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	 */
 
 	// private double size;
+
+	public static enum Orientation {
+		HORIZONTAL, VERTICAL;
+		public int getSwtFlags() {
+			int flags;
+			switch (this) {
+			case HORIZONTAL:
+				flags = SWT.H_SCROLL;
+				break;
+			case VERTICAL:
+				flags = SWT.V_SCROLL;
+				break;
+			default:
+				throw new IllegalStateException("Unknown Orientation: " + this);
+			}
+			return flags;
+		}
+	}
 
 	// TODO: this is the wrong Orientation, use enum { HORIZONTAL, VERTICAL }
 	private Orientation orientation;
@@ -92,24 +109,11 @@ public class SwtScrollBar extends SwtControlAdapterNode<ScrolledComposite> {
 	}
 
 	protected ScrolledComposite createScrolled(Orientation orientation) {
-		int flags;
-		switch (orientation) {
-		case HORIZONTAL:
-			flags = SWT.H_SCROLL;
-			break;
-		case VERTICAL:
-			flags = SWT.V_SCROLL;
-			break;
-		default:
-			throw new IllegalStateException("Unknown Orientation: "
-					+ orientation);
-		}
-
-		ScrolledComposite scrolled = new ScrolledComposite(getScene(), flags);
+		ScrolledComposite scrolled = new ScrolledComposite(getScene(),
+				orientation.getSwtFlags());
 		scrolled.setContent(null);
 		scrolled.setMinSize(0, 0);
 		scrolled.setAlwaysShowScrollBars(true);
-
 		return scrolled;
 	}
 

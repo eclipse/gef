@@ -72,12 +72,6 @@ abstract public class AbstractNode implements INode {
 	private Angle angle = Angle.fromRad(0);
 
 	/**
-	 * The content orientation, i.e. whether width depends on height or vice
-	 * versa.
-	 */
-	private Orientation contentBias = Orientation.NONE;
-
-	/**
 	 * The {@link EventHandlerManager} dispatches events along an
 	 * {@link IEventDispatchChain}.
 	 */
@@ -186,33 +180,11 @@ abstract public class AbstractNode implements INode {
 		if (isResizable()) {
 			double width, height;
 
-			Orientation orientation = getContentBias();
-			switch (orientation) {
-			case NONE:
-				// no dependence
-				width = clamp(computePrefWidth(-1), computeMinWidth(-1),
-						computeMaxWidth(-1));
-				height = clamp(computePrefHeight(-1), computeMinHeight(-1),
-						computeMaxHeight(-1));
-				break;
-			case HORIZONTAL:
-				// height depends on width
-				width = clamp(computePrefWidth(-1), computeMinWidth(-1),
-						computeMaxWidth(-1));
-				height = clamp(computePrefHeight(width),
-						computeMinHeight(width), computeMaxHeight(width));
-				break;
-			case VERTICAL:
-				// width depends on height
-				height = clamp(computePrefHeight(-1), computeMinHeight(-1),
-						computeMaxHeight(-1));
-				width = clamp(computePrefWidth(height),
-						computeMinWidth(height), computeMaxWidth(height));
-				break;
-			default:
-				throw new IllegalStateException("Unknown Orientation: "
-						+ orientation);
-			}
+			// we do not implement node-orientation currently
+			width = clamp(computePrefWidth(-1), computeMinWidth(-1),
+					computeMaxWidth(-1));
+			height = clamp(computePrefHeight(-1), computeMinHeight(-1),
+					computeMaxHeight(-1));
 
 			resize(width, height);
 		}
@@ -280,11 +252,6 @@ abstract public class AbstractNode implements INode {
 		Rectangle boundsInLocal = getBoundsInLocal();
 		return boundsInLocal.getTransformed(getLocalToParentTransform())
 				.getBounds();
-	}
-
-	@Override
-	public Orientation getContentBias() {
-		return contentBias;
 	}
 
 	@Override
