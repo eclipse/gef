@@ -1,4 +1,6 @@
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.aspects.selection;
+
+import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
 public interface ISelectionPolicy<V> extends IEditPolicy<V> {
 

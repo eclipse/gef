@@ -1,8 +1,8 @@
-package org.eclipse.gef4.mvc.tools;
+package org.eclipse.gef4.mvc.aspects.dragging;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IEditPart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 
 public abstract class AbstractDragTool<V> extends AbstractTool<V> {
 

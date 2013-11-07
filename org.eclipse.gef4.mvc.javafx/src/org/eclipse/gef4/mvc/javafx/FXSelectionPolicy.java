@@ -5,8 +5,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
+import org.eclipse.gef4.mvc.aspects.selection.ISelectionPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractEditPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXSelectionPolicy extends AbstractEditPolicy<Node> implements ISelectionPolicy<Node> {
 

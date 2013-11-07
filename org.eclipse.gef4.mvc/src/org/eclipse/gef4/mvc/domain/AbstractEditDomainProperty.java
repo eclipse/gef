@@ -1,8 +1,6 @@
-package org.eclipse.gef4.mvc.tools;
+package org.eclipse.gef4.mvc.domain;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
-
-public abstract class AbstractTool<V> implements ITool<V> {
+public abstract class AbstractEditDomainProperty<V> implements IEditDomainProperty<V> {
 
 	private IEditDomain<V> domain;
 
@@ -15,4 +13,5 @@ public abstract class AbstractTool<V> implements ITool<V> {
 	public IEditDomain<V> getDomain() {
 		return domain;
 	}
+
 }

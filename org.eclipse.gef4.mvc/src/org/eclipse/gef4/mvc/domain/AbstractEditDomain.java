@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.mvc.commands.CommandStack;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
@@ -27,8 +29,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 
 	private List<ITool<V>> activeTools;
 	private IEditPartViewer<V> viewer;
-
-	private SelectionAndFocusModel<V> selectionAndFocusModel = new SelectionAndFocusModel<V>();
+	private Map<Class<? extends Object>, Object> properties;
 
 	private CommandStack commandStack = new CommandStack();
 
@@ -55,7 +56,6 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 			if (activeTools != null) {
 				for (ITool<V> t : activeTools) {
 					t.deactivate();
-					t.setViewer(null);
 				}
 			}
 			this.viewer.setEditDomain(null);
@@ -65,7 +65,6 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 			this.viewer.setEditDomain(this);
 			if (activeTools != null) {
 				for (ITool<V> t : activeTools) {
-					t.setViewer(viewer);
 					t.activate();
 				}
 			}
@@ -87,10 +86,10 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * 
 	 * @see org.eclipse.gef.ui.parts.IEditDomain#getCommandStack()
 	 */
-	 @Override
-	 public CommandStack getCommandStack() {
-	 return commandStack;
-	 }
+	@Override
+	public CommandStack getCommandStack() {
+		return commandStack;
+	}
 
 	protected abstract List<ITool<V>> getDefaultTools();
 
@@ -125,13 +124,13 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 				if (viewer != null) {
 					t.deactivate();
 				}
-				t.setEditDomain(null);
+				t.setDomain(null);
 			}
 		}
 		activeTools = tools;
 		if (activeTools != null) {
 			for (ITool<V> t : activeTools) {
-				t.setEditDomain(this);
+				t.setDomain(this);
 				if (viewer != null) {
 					t.activate();
 				}
@@ -139,9 +138,38 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public SelectionAndFocusModel<V> getSelectionAndFocusModel() {
-		return selectionAndFocusModel;
+	public <P extends IEditDomainProperty<V>> void setProperty(Class<P> key,
+			P property) {
+		// unregister old property
+		if (properties != null && properties.get(key) != null) {
+			((IEditDomainProperty<V>) properties.remove(key)).setDomain(null);
+		}
+	
+		// register new property
+		if (property != null) {
+			// create map
+			if(properties == null) {
+				properties = new HashMap<Class<? extends Object>, Object>();
+			}
+			property.setDomain(this);
+			properties.put(key, property);
+		} else {
+			// dispose map
+			if (properties != null && properties.size() == 0) {
+				properties = null;
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <P extends IEditDomainProperty<V>> P getProperty(Class<P> key) {
+		if (properties == null) {
+			return null;
+		}
+		return (P) properties.get(key);
 	}
 
 }

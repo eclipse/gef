@@ -4,9 +4,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.aspects.dragging.IDragPolicy;
 import org.eclipse.gef4.mvc.parts.INodeEditPart;
 import org.eclipse.gef4.mvc.policies.AbstractEditPolicy;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXDragPolicy extends AbstractEditPolicy<Node> implements
 		IDragPolicy<Node> {

@@ -1,16 +1,18 @@
-package org.eclipse.gef4.mvc.domain;
+package org.eclipse.gef4.mvc.aspects.selection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.domain.AbstractEditDomainProperty;
+import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IEditPart;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
-public class SelectionAndFocusModel<V> {
-	
-	private IEditPart<V> focus;
+public class SelectionModel<V> extends AbstractEditDomainProperty<V> {
+
 	private List<IEditPart<V>> selection = new ArrayList<IEditPart<V>>();
+	private IEditDomain<V> domain;
 
 	/**
 	 * @see IEditPartViewer#appendSelection(IEditPart)
@@ -33,30 +35,15 @@ public class SelectionAndFocusModel<V> {
 		selection.clear();
 	}
 
-	
-	/**
-	 * @see IEditPartViewer#getFocusPart()
-	 */
-	public IEditPart<V> getFocusPart() {
-		return focus;
-	}
-	
 	public List<IEditPart<V>> getSelectedParts() {
 		return Collections.unmodifiableList(selection);
 	}
-	
-	/**
-	 * @see IEditPartViewer#setFocusPart(IEditPart)
-	 */
-	public void setFocusPart(IEditPart<V> part) {
-		focus = part;
-	}
-	
+
 	/**
 	 * @see IEditPartViewer#select(IEditPart)
 	 */
 	public void select(IEditPart<V> editpart) {
 		selection.remove(editpart);
-		selection.add(0,editpart);
+		selection.add(0, editpart);
 	}
 }

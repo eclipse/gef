@@ -87,7 +87,7 @@ public abstract class AbstractEditPartViewer<V> implements IEditPartViewer<V> {
 	}
 
 	/**
-	 * @see IEditPartViewer#setEditDomain(EditDomain)
+	 * @see IEditPartViewer#setDomain(EditDomain)
 	 */
 	public void setEditDomain(IEditDomain<V> editdomain) {
 		if (domain == editdomain)

@@ -8,6 +8,10 @@ import org.eclipse.gef4.mvc.tools.ITool;
 
 public interface IEditDomain<V> {
 
+	<P extends IEditDomainProperty<V>> void setProperty(Class<P> key, P property);
+	
+	<P extends IEditDomainProperty<V>> P getProperty(Class<P> key);
+	
 	/**
 	 * Adds an EditPartViewer into the EditDomain. A viewer is most likely
 	 * placed in a {@link org.eclipse.ui.IWorkbenchPart WorkbenchPart} of some
@@ -42,8 +46,6 @@ public interface IEditDomain<V> {
 	 *            the CommandStack
 	 */
 	public abstract void setCommandStack(CommandStack stack);
-	
-	SelectionAndFocusModel<V> getSelectionAndFocusModel();
 
 	/**
 	 * Sets the active Tool for this EditDomain. If a current Tool is active, it

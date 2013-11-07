@@ -80,21 +80,8 @@ public interface ITool<V> {
 	 * @param domain
 	 *            The EditDomain to which this Tool belongs
 	 */
-	void setEditDomain(IEditDomain<V> domain);
+	void setDomain(IEditDomain<V> domain);
 	
-	IEditDomain<V> getEditDomain();
-
-	/**
-	 * Called to set the current Viewer receiving events. This method is rarely
-	 * called, since the Viewer is always passed along with the events
-	 * themselves. This method really just applies to {@link IDragTracker
-	 * DragTrackers}.
-	 * 
-	 * @param viewer
-	 *            The current Viewer
-	 */
-	void setViewer(IEditPartViewer<V> viewer);
-
-	IEditPartViewer<V> getViewer();
+	IEditDomain<V> getDomain();
 	
 }

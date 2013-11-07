@@ -11,10 +11,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Export-Package: org.eclipse.gef4.mvc,
+ org.eclipse.gef4.mvc.aspects.dragging,
+ org.eclipse.gef4.mvc.aspects.selection,
  org.eclipse.gef4.mvc.commands,
+ org.eclipse.gef4.mvc.domain,
  org.eclipse.gef4.mvc.parts,
  org.eclipse.gef4.mvc.partviewer,
  org.eclipse.gef4.mvc.policies,
- org.eclipse.gef4.mvc.domain,
  org.eclipse.gef4.mvc.tools,
  org.eclipse.gef4.mvc.utils

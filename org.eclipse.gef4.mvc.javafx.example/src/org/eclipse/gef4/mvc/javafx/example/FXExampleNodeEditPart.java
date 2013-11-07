@@ -5,11 +5,11 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import org.eclipse.gef4.mvc.aspects.dragging.IDragPolicy;
+import org.eclipse.gef4.mvc.aspects.selection.ISelectionPolicy;
 import org.eclipse.gef4.mvc.javafx.AbstractFXNodeEditPart;
 import org.eclipse.gef4.mvc.javafx.FXDragPolicy;
 import org.eclipse.gef4.mvc.javafx.FXSelectionPolicy;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXExampleNodeEditPart extends AbstractFXNodeEditPart {
 
