@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 MVC
+Bundle-SymbolicName: org.eclipse.gef4.mvc
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: org.eclipse.gef4.mvc.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.gef4.geometry;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Export-Package: org.eclipse.gef4.mvc,
+ org.eclipse.gef4.mvc.commands,
+ org.eclipse.gef4.mvc.parts,
+ org.eclipse.gef4.mvc.partviewer,
+ org.eclipse.gef4.mvc.policies,
+ org.eclipse.gef4.mvc.domain,
+ org.eclipse.gef4.mvc.tools,
+ org.eclipse.gef4.mvc.utils
