@@ -12,7 +12,7 @@ public abstract class AbstractDragTool<V> extends AbstractTool<V> {
 	}
 	
 	public void initDrag(IEditPart<V> editPart, Point position){
-		getDragPolicy(editPart).initDrag(editPart, position);
+		getDragPolicy(editPart).initDrag(position);
 	}
 
 	public void commitDrag(IEditPart<V> editPart, Point position){
