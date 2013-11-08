@@ -2,24 +2,7 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
-public interface INodeEditPart<V> extends IEditPart<V> {
-	
-	/**
-	 * <img src="doc-files/dblack.gif"/>Sets the parent. This should only be
-	 * called by the parent EditPart.
-	 * 
-	 * @param parent
-	 *            the parent EditPart
-	 */
-	void setParent(IEditPart<V> parent);
-	
-	/**
-	 * Returns the parent <code>EditPart</code>. This method should only be
-	 * called internally or by helpers such as EditPolicies.
-	 * 
-	 * @return <code>null</code> or the parent {@link IEditPart}
-	 */
-	IEditPart<V> getParent();
+public interface INodeEditPart<V> extends IContentsEditPart<V> {
 	
 	/**
 	 * Adds a NodeListener to the EditPart. Duplicate calls result in duplicate

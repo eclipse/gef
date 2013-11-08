@@ -41,7 +41,7 @@ import org.eclipse.gef4.mvc.policies.IEditPolicy;
  * potentially be containers for other EditParts.
  */
 public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
-
+	
 	/**
 	 * This flag is set during {@link #activate()}, and reset on
 	 * {@link #deactivate()}
@@ -55,12 +55,10 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 */
 	protected static final int MAX_FLAG = FLAG_ACTIVE;
 
-	private Object model;
-
 	private int flags;
 
 	private Map<Class<? extends IEditPolicy<V>>, IEditPolicy<V>> editPolicies;
-	private List<INodeEditPart<V>> nodeChildren;
+	private List<IContentsEditPart<V>> children;
 
 	/**
 	 * call getEventListeners(Class) instead.
@@ -86,7 +84,7 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 			}
 		}
 
-		List<INodeEditPart<V>> c = getNodeChildren();
+		List<IContentsEditPart<V>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
 
@@ -95,12 +93,12 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 
 	/**
 	 * Adds a child <code>EditPart</code> to this EditPart. This method is
-	 * called from {@link #synchronizeNodeChildren()}. The following events
+	 * called from {@link #synchronizeChildren()}. The following events
 	 * occur in the order listed:
 	 * <OL>
-	 * <LI>The child is added to the {@link #nodeChildren} List, and its parent
+	 * <LI>The child is added to the {@link #children} List, and its parent
 	 * is set to <code>this</code>
-	 * <LI>{@link #addNodeChildVisual(IEditPart, int)} is called to add the
+	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the
 	 * child's visual
 	 * <LI>{@link IEditPart#addNotify()} is called on the child.
 	 * <LI><code>activate()</code> is called if this part is active
@@ -108,26 +106,28 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 * added.
 	 * </OL>
 	 * <P>
-	 * Subclasses should implement {@link #addNodeChildVisual(IEditPart, int)}.
+	 * Subclasses should implement {@link #addChildVisual(IEditPart, int)}.
 	 * 
 	 * @param child
 	 *            The <code>EditPart</code> to add
 	 * @param index
 	 *            The index
-	 * @see #addNodeChildVisual(IEditPart, int)
+	 * @see #addChildVisual(IEditPart, int)
 	 * @see #removeNodeChild(IEditPart)
-	 * @see #reorderNodeChild(IEditPart,int)
+	 * @see #reorderChild(IEditPart,int)
 	 */
-	protected void addNodeChild(INodeEditPart<V> child, int index) {
+	protected void addChild(IContentsEditPart<V> child, int index) {
 		Assert.isNotNull(child);
-		addNodeChildWithoutNotify(child, index);
+		addChildWithoutNotify(child, index);
+		
 		child.setParent(this);
 
-		addNodeChildVisual(child, index);
+		addChildVisual(child, index);
 
+		// TODO: activation/deactivation of child
 		if (isActive())
 			child.activate();
-		fireNodeChildAdded(child, index);
+		fireChildAdded(child, index);
 	}
 
 	/**
@@ -140,15 +140,15 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 *            The EditPart being added
 	 * @param index
 	 *            The child's position
-	 * @see #addNodeChild(EditPart, int)
-	 * @see AbstractGraphicalEditPart#removeNodeChildVisual(EditPart)
+	 * @see #addChild(EditPart, int)
+	 * @see AbstractGraphicalEditPart#removeChildVisual(EditPart)
 	 */
-	protected abstract void addNodeChildVisual(INodeEditPart<V> child, int index);
+	protected abstract void addChildVisual(IContentsEditPart<V> child, int index);
 
-	private void addNodeChildWithoutNotify(INodeEditPart<V> child, int index) {
-		if (nodeChildren == null)
-			nodeChildren = new ArrayList<INodeEditPart<V>>(2);
-		nodeChildren.add(index, child);
+	private void addChildWithoutNotify(IContentsEditPart<V> child, int index) {
+		if (children == null)
+			children = new ArrayList<IContentsEditPart<V>>(2);
+		children.add(index, child);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 
 	/**
 	 * Create the child <code>EditPart</code> for the given model object. This
-	 * method is called from {@link #synchronizeNodeChildren()}.
+	 * method is called from {@link #synchronizeChildren()}.
 	 * <P>
 	 * By default, the implementation will delegate to the
 	 * <code>EditPartViewer</code>'s {@link IEditPartFactory}. Subclasses may
@@ -173,9 +173,16 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 *            the Child model object
 	 * @return The child EditPart
 	 */
-	protected INodeEditPart<V> createChild(Object model) {
+	protected INodeEditPart<V> createNodeChild(Object model) {
 		INodeEditPart<V> child = getViewer().getEditPartFactory()
 				.createNodeEditPart(this, model);
+		child.setModel(model);
+		return child;
+	}
+	
+	protected IConnectionEditPart<V> createConnectionChild(Object model) {
+		IConnectionEditPart<V> child = getViewer().getEditPartFactory()
+				.createConnectionEditPart(this, model);
 		child.setModel(model);
 		return child;
 	}
@@ -189,7 +196,7 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 * @see #activate()
 	 */
 	public void deactivate() {
-		List<INodeEditPart<V>> c = getNodeChildren();
+		List<IContentsEditPart<V>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
@@ -221,7 +228,7 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 * @param index
 	 *            Position child is being added into.
 	 */
-	protected void fireNodeChildAdded(INodeEditPart<V> child, int index) {
+	protected void fireChildAdded(IEditPart<V> child, int index) {
 		Iterator listeners = getEventListeners(IEditPartListener.class);
 		while (listeners.hasNext())
 			((IEditPartListener) listeners.next()).childAdded(child, index);
@@ -245,7 +252,7 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 * @param index
 	 *            Position of the child in children list.
 	 */
-	protected void fireRemovingNodeChild(INodeEditPart<V> child, int index) {
+	protected void fireRemovingChild(IEditPart<V> child, int index) {
 		Iterator listeners = getEventListeners(IEditPartListener.class);
 		while (listeners.hasNext())
 			((IEditPartListener) listeners.next()).removingChild(child, index);
@@ -264,13 +271,10 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 		return Platform.getAdapterManager().getAdapter(this, key);
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getNodeChildren()
-	 */
-	public List<INodeEditPart<V>> getNodeChildren() {
-		if (nodeChildren == null)
+	public List<IContentsEditPart<V>> getChildren(){
+		if (children == null)
 			return Collections.emptyList();
-		return nodeChildren;
+		return children;
 	}
 
 	/**
@@ -298,12 +302,6 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 		return (flags & flag) != 0;
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getModel()
-	 */
-	public Object getModel() {
-		return model;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -313,21 +311,9 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 		}
 		return (P) editPolicies.get(key);
 	}
-
-	/**
-	 * Returns a <code>List</code> containing the children model objects. If
-	 * this EditPart's model is a container, this method should be overridden to
-	 * returns its children. This is what causes children EditParts to be
-	 * created.
-	 * <P>
-	 * Callers must not modify the returned List. Must not return
-	 * <code>null</code>.
-	 * 
-	 * @return the List of children
-	 */
-	protected List<Object> getModelNodeChildren() {
-		return Collections.emptyList();
-	}
+	
+	protected abstract boolean isNodeModel(Object model);
+	protected abstract boolean isConnectionModel(Object model);	
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getViewer()
@@ -361,77 +347,6 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	}
 
 	/**
-	 * Updates the set of children EditParts so that it is in sync with the
-	 * model children. This method is called from {@link #refresh()}, and may
-	 * also be called in response to notification from the model. This method
-	 * requires linear time to complete. Clients should call this method as few
-	 * times as possible. Consider also calling
-	 * {@link #removeNodeChild(IEditPart)} and
-	 * {@link #addNodeChild(IEditPart, int)} which run in constant time.
-	 * <P>
-	 * The update is performed by comparing the existing EditParts with the set
-	 * of model children returned from {@link #getModelNodeChildren()}.
-	 * EditParts whose models no longer exist are
-	 * {@link #removeNodeChild(IEditPart) removed}. New models have their
-	 * EditParts {@link #createChild(Object) created}.
-	 * <P>
-	 * This method should <em>not</em> be overridden.
-	 * 
-	 * @see #getModelNodeChildren()
-	 */
-	public void synchronizeNodeChildren() {
-		int i;
-		INodeEditPart<V> editPart;
-		Object model;
-
-		List<INodeEditPart<V>> children = getNodeChildren();
-		int size = children.size();
-		Map<Object, IEditPart<V>> modelToEditPart = Collections.emptyMap();
-		if (size > 0) {
-			modelToEditPart = new HashMap<Object, IEditPart<V>>(size);
-			for (i = 0; i < size; i++) {
-				editPart = (INodeEditPart<V>) children.get(i);
-				modelToEditPart.put(editPart.getModel(), editPart);
-			}
-		}
-
-		List<Object> modelObjects = getModelNodeChildren();
-		for (i = 0; i < modelObjects.size(); i++) {
-			model = modelObjects.get(i);
-
-			// Do a quick check to see if editPart[i] == model[i]
-			if (i < children.size() && children.get(i).getModel() == model)
-				continue;
-
-			// Look to see if the EditPart is already around but in the
-			// wrong location
-			editPart = (INodeEditPart<V>) modelToEditPart.get(model);
-
-			if (editPart != null)
-				reorderNodeChild(editPart, i);
-			else {
-				// An EditPart for this model doesn't exist yet. Create and
-				// insert one.
-				editPart = createChild(model);
-				addNodeChild(editPart, i);
-			}
-		}
-
-		// remove the remaining EditParts
-		size = children.size();
-		if (i < size) {
-			List<INodeEditPart<V>> trash = new ArrayList<INodeEditPart<V>>(size
-					- i);
-			for (; i < size; i++)
-				trash.add(children.get(i));
-			for (i = 0; i < trash.size(); i++) {
-				INodeEditPart<V> ep = trash.get(i);
-				removeNodeChild(ep);
-			}
-		}
-	}
-
-	/**
 	 * Refreshes this EditPart's <i>visuals</i>. This method is called by
 	 * {@link #refresh()}, and may also be called in response to notifications
 	 * from the model. This method does nothing by default. Subclasses may
@@ -440,47 +355,38 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	public abstract void refreshVisual();
 
 	/**
-	 * Registers the <i>model</i> in the
-	 * {@link IEditPartViewer#getEditPartRegistry()}. Subclasses should only
-	 * extend this method if they need to register this EditPart in additional
-	 * ways.
-	 */
-	protected void registerModel() {
-		getViewer().getEditPartRegistry().put(getModel(), this);
-	}
-
-	/**
 	 * Removes a child <code>EditPart</code>. This method is called from
-	 * {@link #synchronizeNodeChildren()}. The following events occur in the
+	 * {@link #synchronizeChildren()}. The following events occur in the
 	 * order listed:
 	 * <OL>
 	 * <LI><code>EditPartListeners</code> are notified that the child is being
 	 * removed
 	 * <LI><code>deactivate()</code> is called if the child is active
 	 * <LI>{@link IEditPart#removeNotify()} is called on the child.
-	 * <LI>{@link #removeNodeChildVisual(IEditPart)} is called to remove the
+	 * <LI>{@link #removeChildVisual(IEditPart)} is called to remove the
 	 * child's visual object.
 	 * <LI>The child's parent is set to <code>null</code>
 	 * </OL>
 	 * <P>
-	 * Subclasses should implement {@link #removeNodeChildVisual(IEditPart)}.
+	 * Subclasses should implement {@link #removeChildVisual(IEditPart)}.
 	 * 
 	 * @param child
 	 *            EditPart being removed
-	 * @see #addNodeChild(IEditPart,int)
+	 * @see #addChild(IEditPart,int)
 	 */
-	protected void removeNodeChild(INodeEditPart<V> child) {
+	protected void removeChild(IContentsEditPart<V> child) {
 		Assert.isNotNull(child);
-		int index = getNodeChildren().indexOf(child);
+		int index = getChildren().indexOf(child);
 		if (index < 0)
 			return;
-		fireRemovingNodeChild(child, index);
+		fireRemovingChild(child, index);
+		// TODO: activation/deactivation of connections?
 		if (isActive())
 			child.deactivate();
-		removeNodeChildVisual(child);
+		removeChildVisual(child);
 
 		child.setParent(null);
-		removeNodeChildWithoutNotify(child);
+		removeChildWithoutNotify(child);
 	}
 
 	/**
@@ -491,12 +397,12 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 	 * @param child
 	 *            the child EditPart
 	 */
-	protected abstract void removeNodeChildVisual(INodeEditPart<V> child);
+	protected abstract void removeChildVisual(IContentsEditPart<V> child);
 
-	private void removeNodeChildWithoutNotify(INodeEditPart<V> child) {
-		getNodeChildren().remove(child);
-		if (nodeChildren.size() == 0) {
-			nodeChildren = null;
+	private void removeChildWithoutNotify(IContentsEditPart<V> child) {
+		getChildren().remove(child);
+		if (children.size() == 0) {
+			children = null;
 		}
 	}
 
@@ -525,18 +431,18 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 
 	/**
 	 * Moves a child <code>EditPart</code> into a lower index than it currently
-	 * occupies. This method is called from {@link #synchronizeNodeChildren()}.
+	 * occupies. This method is called from {@link #synchronizeChildren()}.
 	 * 
 	 * @param editpart
 	 *            the child being reordered
 	 * @param index
 	 *            new index for the child
 	 */
-	protected void reorderNodeChild(INodeEditPart<V> child, int index) {
-		removeNodeChildVisual(child);
-		removeNodeChildWithoutNotify(child);
-		addNodeChildWithoutNotify(child, index);
-		addNodeChildVisual(child, index);
+	protected void reorderChild(IContentsEditPart<V> child, int index) {
+		removeChildVisual(child);
+		removeChildWithoutNotify(child);
+		addChildWithoutNotify(child, index);
+		addChildVisual(child, index);
 	}
 
 	/**
@@ -557,44 +463,6 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 			flags &= ~flag;
 	}
 
-	/**
-	 * Set the primary model object that this EditPart represents. This method
-	 * is used by an <code>EditPartFactory</code> when creating an EditPart.
-	 * 
-	 * @see IEditPart#setModel(Object)
-	 */
-	public void setModel(Object model) {
-		// TODO: optimize if attached model is passed in again
-		this.model = model;
-	}
-
-	protected void synchronize() {
-		synchronizeNodeChildren();
-	}
-
-	/**
-	 * Describes this EditPart for developmental debugging purposes.
-	 * 
-	 * @return a description
-	 */
-	public String toString() {
-		String c = getClass().getName();
-		c = c.substring(c.lastIndexOf('.') + 1);
-		return c + "( " + getModel() + " )";//$NON-NLS-2$//$NON-NLS-1$
-	}
-
-	/**
-	 * Unregisters the <i>model</i> in the
-	 * {@link IEditPartViewer#getEditPartRegistry()}. Subclasses should only
-	 * extend this method if they need to unregister this EditPart in additional
-	 * ways.
-	 */
-	protected void unregisterModel() {
-		Map<Object, IEditPart<V>> registry = getViewer().getEditPartRegistry();
-		if (registry.get(getModel()) == this)
-			registry.remove(getModel());
-	}
-
 	protected void registerVisual() {
 		getViewer().getVisualPartMap().put(getVisual(), this);
 	}
@@ -603,4 +471,88 @@ public abstract class AbstractEditPart<V> implements IEditPart<V>, IAdaptable {
 		getViewer().getVisualPartMap().remove(getVisual());
 	}
 
+	/**
+	 * Updates the set of children EditParts so that it is in sync with the
+	 * model children. This method is called from {@link #refresh()}, and may
+	 * also be called in response to notification from the model. This method
+	 * requires linear time to complete. Clients should call this method as few
+	 * times as possible. Consider also calling
+	 * {@link #removeNodeChild(IEditPart)} and
+	 * {@link #addChild(IEditPart, int)} which run in constant time.
+	 * <P>
+	 * The update is performed by comparing the existing EditParts with the set
+	 * of model children returned from {@link #getModelNodeChildren()}.
+	 * EditParts whose models no longer exist are
+	 * {@link #removeNodeChild(IEditPart) removed}. New models have their
+	 * EditParts {@link #createNodeChild(Object) created}.
+	 * <P>
+	 * This method should <em>not</em> be overridden.
+	 * 
+	 * @see #getModelChildren()
+	 */
+	public void synchronizeChildren() {
+		int i;
+		IContentsEditPart<V> editPart;
+		Object model;
+
+		List<IContentsEditPart<V>> children = getChildren();
+		int size = children.size();
+		Map<Object, IContentsEditPart<V>> modelToEditPart = Collections.emptyMap();
+		if (size > 0) {
+			modelToEditPart = new HashMap<Object, IContentsEditPart<V>>(size);
+			for (i = 0; i < size; i++) {
+				editPart = (IContentsEditPart<V>) children.get(i);
+				modelToEditPart.put(editPart.getModel(), editPart);
+			}
+		}
+
+		List<Object> modelObjects = getModelChildren();
+		for (i = 0; i < modelObjects.size(); i++) {
+			model = modelObjects.get(i);
+
+			// Do a quick check to see if editPart[i] == model[i]
+			if (i < children.size() && children.get(i).getModel() == model)
+				continue;
+
+			// Look to see if the EditPart is already around but in the
+			// wrong location
+			editPart = (IContentsEditPart<V>) modelToEditPart.get(model);
+
+			if (editPart != null)
+				reorderChild(editPart, i);
+			else {
+				// An EditPart for this model doesn't exist yet. Create and
+				// insert one.
+				if(isNodeModel(model)){
+					editPart = createNodeChild(model);
+				}
+				else {
+					editPart = createConnectionChild(model);
+				}
+				addChild(editPart, i);
+			}
+		}
+
+		// remove the remaining EditParts
+		size = children.size();
+		if (i < size) {
+			List<IContentsEditPart<V>> trash = new ArrayList<IContentsEditPart<V>>(size
+					- i);
+			for (; i < size; i++)
+				trash.add(children.get(i));
+			for (i = 0; i < trash.size(); i++) {
+				IContentsEditPart<V> ep = trash.get(i);
+				removeChild(ep);
+			}
+		}
+	}
+	
+	protected void synchronize() {
+		synchronizeChildren();
+	}
+	
+	protected List<Object> getModelChildren() {
+		return Collections.emptyList();
+	}
+	
 }

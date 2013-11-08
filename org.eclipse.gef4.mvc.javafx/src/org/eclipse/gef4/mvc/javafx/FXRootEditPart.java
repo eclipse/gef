@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.gef4.mvc.parts.AbstractRootEditPart;
+import org.eclipse.gef4.mvc.parts.IContentsEditPart;
 import org.eclipse.gef4.mvc.parts.INodeEditPart;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
@@ -64,13 +65,23 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 	}
 
 	@Override
-	protected void addNodeChildVisual(INodeEditPart<Node> child, int index) {
+	protected void addChildVisual(IContentsEditPart<Node> child, int index) {
 		primaryLayer.getChildren().add(index, child.getVisual());
 	}
 
 	@Override
-	protected void removeNodeChildVisual(INodeEditPart<Node> child) {
+	protected void removeChildVisual(IContentsEditPart<Node> child) {
 		primaryLayer.getChildren().remove(child);
+	}
+
+	@Override
+	protected boolean isNodeModel(Object model) {
+		return true;
+	}
+
+	@Override
+	protected boolean isConnectionModel(Object model) {
+		return false;
 	}
 
 }

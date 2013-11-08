@@ -7,13 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.partviewer.IEditPartFactory;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
-public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implements
-		INodeEditPart<V> {
+public abstract class AbstractNodeEditPart<V> extends
+		AbstractContentsEditPart<V> implements INodeEditPart<V> {
 
-	private IEditPart<V> parent;
 	/**
 	 * List of <i>source</i> ConnectionEditParts
 	 */
@@ -23,62 +21,21 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * List of <i>source</i> ConnectionEditParts
 	 */
 	protected List<IConnectionEditPart<V>> targetConnections;
-	
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getRoot()
-	 */
-	public IRootEditPart<V> getRoot() {
-		if (getParent() == null) {
-			return null;
-		}
-		return getParent().getRoot();
-	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getParent()
-	 */
-	public IEditPart<V> getParent() {
-		return parent;
-	}
-
-	/**
-	 * Sets the parent EditPart. There is no reason to override this method.
-	 * 
-	 * @see IEditPart#setParent(IEditPart)
-	 */
-	public void setParent(IEditPart<V> editPart) {
-		if(parent == editPart)
-			return;
-		
-		if(parent != null){
-			unregisterVisual();
-			unregisterModel();
-		}
-		parent = editPart;
-		if(parent != null){
-			registerModel();
-			registerVisual();
-			refreshVisual();
-			synchronize();
-		}
-	}
-	
 	/**
 	 * @see org.eclipse.gef.editparts.IGraphicalEditPart#addNodeListener(org.eclipse.gef4.mvc.parts.INodeEditPartListener)
 	 */
 	public void addNodeListener(INodeEditPartListener listener) {
 		eventListeners.addListener(INodeEditPartListener.class, listener);
 	}
-	
+
 	/**
 	 * @see org.eclipse.gef.editparts.IGraphicalEditPart#removeNodeListener(org.eclipse.gef4.mvc.parts.INodeEditPartListener)
 	 */
 	public void removeNodeListener(INodeEditPartListener listener) {
 		eventListeners.removeListener(INodeEditPartListener.class, listener);
 	}
-	
 
-	
 	/**
 	 * Notifies listeners that a target connection has been removed. Called from
 	 * {@link #removeTargetConnection(IConnectionEditPart)}. There is no reason
@@ -89,18 +46,19 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param index
 	 *            Position child is being added into.
 	 */
-	private void fireRemovingTargetConnection(IConnectionEditPart<V> connection,
-			int index) {
+	private void fireRemovingTargetConnection(
+			IConnectionEditPart<V> connection, int index) {
 		if (eventListeners == null)
 			return;
-		Iterator listeners = eventListeners.getListeners(INodeEditPartListener.class);
+		Iterator listeners = eventListeners
+				.getListeners(INodeEditPartListener.class);
 		INodeEditPartListener listener = null;
 		while (listeners.hasNext()) {
 			listener = (INodeEditPartListener) listeners.next();
 			listener.removingTargetConnection(connection, index);
 		}
 	}
-	
+
 	/**
 	 * Notifies listeners that a source connection has been removed. Called from
 	 * {@link #removeSourceConnection(IConnectionEditPart)}. There is no reason
@@ -111,22 +69,23 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param index
 	 *            Position child is being added into.
 	 */
-	private void fireRemovingSourceConnection(IConnectionEditPart<V> connection,
-			int index) {
+	private void fireRemovingSourceConnection(
+			IConnectionEditPart<V> connection, int index) {
 		if (eventListeners == null)
 			return;
-		Iterator listeners = eventListeners.getListeners(INodeEditPartListener.class);
+		Iterator listeners = eventListeners
+				.getListeners(INodeEditPartListener.class);
 		INodeEditPartListener listener = null;
 		while (listeners.hasNext()) {
 			listener = (INodeEditPartListener) listeners.next();
 			listener.removingSourceConnection(connection, index);
 		}
 	}
-	
+
 	/**
 	 * Notifies listeners that a source connection has been added. Called from
-	 * {@link #addSourceConnection(IConnectionEditPart, int)}. There is no reason
-	 * for subclasses to call or override this method.
+	 * {@link #addSourceConnection(IConnectionEditPart, int)}. There is no
+	 * reason for subclasses to call or override this method.
 	 * 
 	 * @param connection
 	 *            <code>ConnectionEditPart</code> being added as child.
@@ -137,7 +96,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 			int index) {
 		if (eventListeners == null)
 			return;
-		Iterator listeners = eventListeners.getListeners(INodeEditPartListener.class);
+		Iterator listeners = eventListeners
+				.getListeners(INodeEditPartListener.class);
 		INodeEditPartListener listener = null;
 		while (listeners.hasNext()) {
 			listener = (INodeEditPartListener) listeners.next();
@@ -147,8 +107,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 
 	/**
 	 * Notifies listeners that a target connection has been added. Called from
-	 * {@link #addTargetConnection(IConnectionEditPart, int)}. There is no reason
-	 * for subclasses to call or override this method.
+	 * {@link #addTargetConnection(IConnectionEditPart, int)}. There is no
+	 * reason for subclasses to call or override this method.
 	 * 
 	 * @param connection
 	 *            <code>ConnectionEditPart</code> being added as child.
@@ -159,35 +119,39 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 			int index) {
 		if (eventListeners == null)
 			return;
-		Iterator listeners = eventListeners.getListeners(INodeEditPartListener.class);
+		Iterator listeners = eventListeners
+				.getListeners(INodeEditPartListener.class);
 		INodeEditPartListener listener = null;
 		while (listeners.hasNext()) {
 			listener = (INodeEditPartListener) listeners.next();
 			listener.targetConnectionAdded(connection, index);
 		}
 	}
-	
+
 	/**
 	 * Adds a <i>source</i> ConnectionEditPart at the specified index. This
-	 * method is called from {@link #synchronizeSourceConnections()}. There should
-	 * be no reason to call or override this method. Source connection are
-	 * created as a result of overriding {@link #getModelSourceConnections()}.
+	 * method is called from {@link #synchronizeSourceConnections()}. There
+	 * should be no reason to call or override this method. Source connection
+	 * are created as a result of overriding
+	 * {@link #getModelSourceConnections()}.
 	 * <P>
-	 * {@link #addSourceConnectionWithoutNotify(IConnectionEditPart, int)} is called to
-	 * perform the actual update of the {@link #sourceConnections}
+	 * {@link #addSourceConnectionWithoutNotify(IConnectionEditPart, int)} is
+	 * called to perform the actual update of the {@link #sourceConnections}
 	 * <code>List</code>. The connection will have its source set to
 	 * <code>this</code>.
 	 * <P>
 	 * If active, this EditPart will activate the ConnectionEditPart.
 	 * <P>
-	 * Finally, all {@link INodeEditPartListener}s are notified of the new connection.
+	 * Finally, all {@link INodeEditPartListener}s are notified of the new
+	 * connection.
 	 * 
 	 * @param connection
 	 *            Connection being added
 	 * @param index
 	 *            Index where it is being added
 	 */
-	protected void addSourceConnection(IConnectionEditPart<V> connection, int index) {
+	protected void addSourceConnection(IConnectionEditPart<V> connection,
+			int index) {
 		addSourceConnectionWithoutNotify(connection, index);
 
 		INodeEditPart<V> source = connection.getSource();
@@ -195,49 +159,54 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 			source.getSourceConnections().remove(connection);
 
 		connection.setSource(this);
-		
+
 		if (isActive())
 			connection.activate();
 		fireSourceConnectionAdded(connection, index);
 	}
-	
+
 	@Override
 	public void activate() {
 		super.activate();
-		
+
+		// TODO: check how we should enable/disable connections properly
 		List<IConnectionEditPart<V>> l = getSourceConnections();
 		for (int i = 0; i < l.size(); i++)
 			l.get(i).activate();
 	}
-	
+
 	@Override
 	public void deactivate() {
+		// TODO: check how we should enable/disable connections properly
 		List<IConnectionEditPart<V>> l = getSourceConnections();
 		for (int i = 0; i < l.size(); i++)
 			l.get(i).deactivate();
-		
+
 		super.deactivate();
 	}
 
 	/**
 	 * Adds a <i>target</i> ConnectionEditPart at the specified index. This
-	 * method is called from {@link #synchronizeTargetConnections()}. There should
-	 * be no reason to call or override this method. Target connection are
-	 * created as a result of overriding {@link #getModelTargetConnections()}.
+	 * method is called from {@link #synchronizeTargetConnections()}. There
+	 * should be no reason to call or override this method. Target connection
+	 * are created as a result of overriding
+	 * {@link #getModelTargetConnections()}.
 	 * <P>
-	 * {@link #addTargetConnectionWithoutNotify(IConnectionEditPart, int)} is called to
-	 * perform the actual update of the {@link #targetConnections}
+	 * {@link #addTargetConnectionWithoutNotify(IConnectionEditPart, int)} is
+	 * called to perform the actual update of the {@link #targetConnections}
 	 * <code>List</code>. The connection will have its target set to
 	 * <code>this</code>.
 	 * <P>
-	 * Finally, all {@link INodeEditPartListener}s are notified of the new connection.
+	 * Finally, all {@link INodeEditPartListener}s are notified of the new
+	 * connection.
 	 * 
 	 * @param connection
 	 *            Connection being added
 	 * @param index
 	 *            Index where it is being added
 	 */
-	protected void addTargetConnection(IConnectionEditPart<V> connection, int index) {
+	protected void addTargetConnection(IConnectionEditPart<V> connection,
+			int index) {
 		addTargetConnectionWithoutNotify(connection, index);
 
 		INodeEditPart<V> target = connection.getTarget();
@@ -249,47 +218,20 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	}
 
 	/**
-	 * Creates a {@link IConnectionEditPart} for the given model. Similar to
-	 * {@link AbstractEditPart#createChild(Object)}. This method is called
-	 * indirectly during {@link #synchronizeSourceConnections()}, and
-	 * {@link #synchronizeTargetConnections()}.
-	 * <P>
-	 * The default implementation goes to the EditPartViewer's
-	 * {@link IEditPartFactory} to create the connection. This method should not
-	 * be overridden unless factories are not being used.
-	 * 
-	 * @param model
-	 *            the connection model object
-	 * @return the new ConnectionEditPart
-	 */
-	protected IConnectionEditPart<V> createConnection(Object model) {
-		IConnectionEditPart<V> sourceConnection = getViewer().getEditPartFactory()
-				.createConnectionEditPart(this, model);
-		sourceConnection.setModel(model);
-		return sourceConnection;
-	}
-
-	
-	/**
 	 * Searches for an existing <code>ConnectionEditPart</code> in the Viewer's
 	 * {@link IEditPartViewer#getEditPartRegistry() EditPart registry} and
-	 * returns it if one is found. Otherwise, {@link #createConnection(Object)}
-	 * is called to create a new ConnectionEditPart. Override this method only
-	 * if you need to find an existing connection some other way.
+	 * returns it if one is found.
 	 * 
 	 * @param model
 	 *            the Connection's model
 	 * @return the ConnectionEditPart
 	 */
-	protected IConnectionEditPart<V> createOrFindConnection(Object model) {
-		IConnectionEditPart<V> conx = (IConnectionEditPart<V>) getViewer()
+	protected IConnectionEditPart<V> findConnection(Object model) {
+		IConnectionEditPart<V> connection = (IConnectionEditPart<V>) getViewer()
 				.getEditPartRegistry().get(model);
-		if (conx != null)
-			return conx;
-		return createConnection(model);
+		return connection;
 	}
 
-	
 	/**
 	 * Returns the <code>List</code> of the connection model objects for which
 	 * this EditPart's model is the <b>source</b>.
@@ -405,7 +347,7 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 		removeTargetConnectionWithoutNotify(connection);
 		addTargetConnectionWithoutNotify(connection, index);
 	}
-	
+
 	/**
 	 * Adds the specified source <code>ConnectionEditPart</code> at an index.
 	 * This method is used to update the {@link #sourceConnections} List. This
@@ -418,8 +360,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param index
 	 *            the index of the add
 	 */
-	private void addSourceConnectionWithoutNotify(IConnectionEditPart<V> connection,
-			int index) {
+	private void addSourceConnectionWithoutNotify(
+			IConnectionEditPart<V> connection, int index) {
 		if (sourceConnections == null)
 			sourceConnections = new ArrayList<IConnectionEditPart<V>>(2);
 		sourceConnections.add(index, connection);
@@ -437,8 +379,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param index
 	 *            the index of the add
 	 */
-	private void addTargetConnectionWithoutNotify(IConnectionEditPart<V> connection,
-			int index) {
+	private void addTargetConnectionWithoutNotify(
+			IConnectionEditPart<V> connection, int index) {
 		if (targetConnections == null)
 			targetConnections = new ArrayList<IConnectionEditPart<V>>(2);
 		targetConnections.add(index, connection);
@@ -453,9 +395,10 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param connection
 	 *            Connection to remove.
 	 */
-	private void removeSourceConnectionWithoutNotify(IConnectionEditPart<V> connection) {
+	private void removeSourceConnectionWithoutNotify(
+			IConnectionEditPart<V> connection) {
 		sourceConnections.remove(connection);
-		if(sourceConnections.size() == 0){
+		if (sourceConnections.size() == 0) {
 			sourceConnections = null;
 		}
 	}
@@ -469,20 +412,21 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 	 * @param connection
 	 *            Connection to remove.
 	 */
-	private void removeTargetConnectionWithoutNotify(IConnectionEditPart<V> connection) {
+	private void removeTargetConnectionWithoutNotify(
+			IConnectionEditPart<V> connection) {
 		targetConnections.remove(connection);
-		if(targetConnections.size() == 0){
+		if (targetConnections.size() == 0) {
 			targetConnections = null;
 		}
 	}
-	
+
 	@Override
 	protected void synchronize() {
 		super.synchronize();
 		synchronizeSourceConnections();
 		synchronizeTargetConnections();
 	}
-	
+
 	/**
 	 * Updates the set of <i>source</i> ConnectionEditParts so that it is in
 	 * sync with the model source connections. This method is called from
@@ -507,7 +451,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 
 		List<IConnectionEditPart<V>> sourceConnections = getSourceConnections();
 		int size = sourceConnections.size();
-		Map<Object, IConnectionEditPart<V>> modelToEditPart = Collections.emptyMap();
+		Map<Object, IConnectionEditPart<V>> modelToEditPart = Collections
+				.emptyMap();
 		if (size > 0) {
 			modelToEditPart = new HashMap<Object, IConnectionEditPart<V>>(size);
 			for (i = 0; i < size; i++) {
@@ -531,7 +476,7 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 			if (editPart != null)
 				reorderSourceConnection(editPart, i);
 			else {
-				editPart = createOrFindConnection(model);
+				editPart = findConnection(model);
 				addSourceConnection(editPart, i);
 			}
 		}
@@ -539,14 +484,15 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 		// Remove the remaining EditParts
 		size = sourceConnections.size();
 		if (i < size) {
-			List<IConnectionEditPart<V>> trash = new ArrayList<IConnectionEditPart<V>>(size - i);
+			List<IConnectionEditPart<V>> trash = new ArrayList<IConnectionEditPart<V>>(
+					size - i);
 			for (; i < size; i++)
 				trash.add(sourceConnections.get(i));
 			for (i = 0; i < trash.size(); i++)
 				removeSourceConnection(trash.get(i));
 		}
 	}
-	
+
 	/**
 	 * Updates the set of <i>target</i> ConnectionEditParts so that it is in
 	 * sync with the model target connections. This method is called from
@@ -571,7 +517,8 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 
 		List<IConnectionEditPart<V>> targetConnections = getTargetConnections();
 		int size = targetConnections.size();
-		Map<Object, IConnectionEditPart<V>> modelToEditPart = Collections.emptyMap();
+		Map<Object, IConnectionEditPart<V>> modelToEditPart = Collections
+				.emptyMap();
 		if (size > 0) {
 			modelToEditPart = new HashMap<Object, IConnectionEditPart<V>>(size);
 			for (i = 0; i < size; i++) {
@@ -595,7 +542,7 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 			if (editPart != null)
 				reorderTargetConnection(editPart, i);
 			else {
-				editPart = createOrFindConnection(model);
+				editPart = findConnection(model);
 				addTargetConnection(editPart, i);
 			}
 		}
@@ -603,11 +550,26 @@ public abstract class AbstractNodeEditPart<V> extends AbstractEditPart<V> implem
 		// Remove the remaining EditParts
 		size = targetConnections.size();
 		if (i < size) {
-			List<IConnectionEditPart<V>> trash = new ArrayList<IConnectionEditPart<V>>(size - i);
+			List<IConnectionEditPart<V>> trash = new ArrayList<IConnectionEditPart<V>>(
+					size - i);
 			for (; i < size; i++)
 				trash.add(targetConnections.get(i));
 			for (i = 0; i < trash.size(); i++)
 				removeTargetConnection(trash.get(i));
+		}
+	}
+
+	/**
+	 * Sets the parent EditPart. There is no reason to override this method.
+	 * 
+	 * @see IEditPart#setParent(IEditPart)
+	 */
+	@Override
+	public void setParent(IEditPart<V> parent) {
+		super.setParent(parent);
+		if (parent != null) {
+			refreshVisual();
+			synchronize();
 		}
 	}
 }

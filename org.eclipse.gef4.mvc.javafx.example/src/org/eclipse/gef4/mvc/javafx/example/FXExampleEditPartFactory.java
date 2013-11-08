@@ -28,7 +28,7 @@ public class FXExampleEditPartFactory implements IEditPartFactory<Node> {
 
 	@Override
 	public IConnectionEditPart<Node> createConnectionEditPart(
-			INodeEditPart<Node> sourceOrTarget, Object model) {
+			IEditPart<Node> sourceOrTarget, Object model) {
 		return null;
 	}
 

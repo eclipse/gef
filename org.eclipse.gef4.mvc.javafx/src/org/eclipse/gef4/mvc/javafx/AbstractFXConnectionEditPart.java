@@ -4,12 +4,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
-import org.eclipse.gef4.mvc.parts.AbstractNodeEditPart;
+import org.eclipse.gef4.mvc.parts.AbstractConnectionEditPart;
 import org.eclipse.gef4.mvc.parts.IContentsEditPart;
 
-public abstract class AbstractFXNodeEditPart extends AbstractNodeEditPart<Node> {
+public abstract class AbstractFXConnectionEditPart extends AbstractConnectionEditPart<Node> {
 
-	
 	@Override
 	protected void addChildVisual(IContentsEditPart<Node> child, int index) {
 		if(getVisual() instanceof Parent){

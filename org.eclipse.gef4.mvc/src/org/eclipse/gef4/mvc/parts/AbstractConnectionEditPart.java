@@ -10,48 +10,55 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-
 /**
- * The base implementation for {@link org.eclipse.gef4.mvc.parts.IConnectionEditPart}.
+ * The base implementation for
+ * {@link org.eclipse.gef4.mvc.parts.IConnectionEditPart}.
  */
 public abstract class AbstractConnectionEditPart<V> extends
-		AbstractEditPart<V> implements IConnectionEditPart<V> {
+		AbstractContentsEditPart<V> implements IConnectionEditPart<V> {
 
-	private INodeEditPart<V> sourceEditPart, targetEditPart;
+	private INodeEditPart<V> source, target;
+
+	/**
+	 * Sets the parent EditPart. There is no reason to override this method.
+	 * 
+	 * @see IEditPart#setParent(IEditPart)
+	 */
+	@Override
+	public void setParent(IEditPart<V> parent) {
+		super.setParent(parent);
+		if (parent != null && source != null && target != null) {
+			refreshVisual();
+			synchronize();
+		}
+	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IConnectionEditPart#getSource()
 	 */
 	public INodeEditPart<V> getSource() {
-		return sourceEditPart;
+		return source;
 	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IConnectionEditPart#getTarget()
 	 */
 	public INodeEditPart<V> getTarget() {
-		return targetEditPart;
+		return target;
 	}
-	
 
 	/**
 	 * Sets the source EditPart of this connection.
 	 * 
-	 * @param editPart
+	 * @param source
 	 *            EditPart which is the source.
 	 */
-	public void setSource(INodeEditPart<V> editPart) {
-		if (sourceEditPart == editPart)
+	public void setSource(INodeEditPart<V> source) {
+		if (this.source == source)
 			return;
-		
-		if(this.sourceEditPart != null){
-			unregisterVisual();
-			unregisterModel();
-		}
-		sourceEditPart = editPart;
-		if (sourceEditPart != null && targetEditPart != null){
-			registerModel();
-			registerVisual();
+
+		this.source = source;
+		if (this.source != null && target != null && getParent() != null) {
 			refreshVisual();
 			synchronize();
 		}
@@ -60,20 +67,14 @@ public abstract class AbstractConnectionEditPart<V> extends
 	/**
 	 * Sets the target EditPart of this connection.
 	 * 
-	 * @param editPart
+	 * @param target
 	 *            EditPart which is the target.
 	 */
-	public void setTarget(INodeEditPart<V> editPart) {
-		if (targetEditPart == editPart)
+	public void setTarget(INodeEditPart<V> target) {
+		if (this.target == target)
 			return;
-		if(targetEditPart != null){
-			unregisterVisual();
-			unregisterModel();
-		}
-		targetEditPart = editPart;
-		if (sourceEditPart != null && targetEditPart != null){
-			registerModel();
-			registerVisual();
+		this.target = target;
+		if (source != null && this.target != null && getParent() != null) {
 			refreshVisual();
 			synchronize();
 		}

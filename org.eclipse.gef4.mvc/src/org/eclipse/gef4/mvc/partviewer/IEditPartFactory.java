@@ -30,14 +30,15 @@ public interface IEditPartFactory<V> {
 	 * <i>model</i>.
 	 * 
 	 * @param parent
-	 *            The parent in which the {@link INodeEditPart} is being created.
+	 *            The parent in which the {@link INodeEditPart} is being
+	 *            created.
 	 * @param model
 	 *            the model of the {@link INodeEditPart} being created
 	 * @return the new {@link INodeEditPart}
 	 */
 	INodeEditPart<V> createNodeEditPart(IEditPart<V> parent, Object model);
-	
-	
-	IConnectionEditPart<V> createConnectionEditPart(INodeEditPart<V> sourceOrTarget, Object model);
+
+	IConnectionEditPart<V> createConnectionEditPart(IEditPart<V> parent,
+			Object model);
 
 }

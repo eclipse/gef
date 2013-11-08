@@ -5,14 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.domain.AbstractEditDomainProperty;
-import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IEditPart;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
 public class SelectionModel<V> extends AbstractEditDomainProperty<V> {
 
 	private List<IEditPart<V>> selection = new ArrayList<IEditPart<V>>();
-	private IEditDomain<V> domain;
 
 	/**
 	 * @see IEditPartViewer#appendSelection(IEditPart)

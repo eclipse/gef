@@ -40,4 +40,14 @@ public class FXExampleNodeEditPart extends AbstractFXNodeEditPart {
 		visual.setHeight(getModel().getHeight());
 	}
 
+	@Override
+	protected boolean isNodeModel(Object model) {
+		return true;
+	}
+
+	@Override
+	protected boolean isConnectionModel(Object model) {
+		return false;
+	}
+
 }

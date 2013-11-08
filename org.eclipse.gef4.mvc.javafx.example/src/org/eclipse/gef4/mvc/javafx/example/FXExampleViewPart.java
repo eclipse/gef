@@ -1,6 +1,8 @@
 package org.eclipse.gef4.mvc.javafx.example;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
 import javafx.geometry.Rectangle2D;
@@ -27,7 +29,9 @@ public class FXExampleViewPart extends ViewPart {
 
 		FXViewer viewer = new FXViewer(canvas);
 		viewer.setEditPartFactory(new FXExampleEditPartFactory());
-		viewer.setContents(Arrays.asList(new Rectangle2D[]{new Rectangle2D(50, 50,  50, 50), new Rectangle2D(150, 50, 50, 50)}));
+		List<Object> contents = new ArrayList<Object>();
+		contents.add(Arrays.asList(new Rectangle2D[]{new Rectangle2D(50, 50,  50, 50), new Rectangle2D(150, 50, 50, 50)}));
+		viewer.setContents(contents);
 		viewer.setEditDomain(domain);
 	}
 

@@ -11,6 +11,7 @@
 
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,17 +23,20 @@ import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
  * @author Pratik Shah
  * @since 3.2
  */
-public abstract class AbstractRootEditPart<V>
-		extends AbstractEditPart<V> implements IRootEditPart<V> {
+public abstract class AbstractRootEditPart<V> extends AbstractEditPart<V>
+		implements IRootEditPart<V> {
 
-	private Object contents;
+	private List<Object> contents;
 	private IEditPartViewer<V> viewer;
 
 	/**
 	 * @see IRootEditPart#getContents()
 	 */
-	public Object getContents() {
-		return contents;
+	public List<Object> getContents() {
+		if (contents == null) {
+			return Collections.unmodifiableList(Collections.emptyList());
+		}
+		return Collections.unmodifiableList(contents);
 	}
 
 	/**
@@ -52,14 +56,19 @@ public abstract class AbstractRootEditPart<V>
 	/**
 	 * @see IRootEditPart#setContents(EditPart)
 	 */
-	public void setContents(Object contents) {
-		this.contents = contents;
-		synchronize(); // could also call setModel(null);
+	public void setContents(List<Object> contents) {
+		if (contents != null) {
+			this.contents = new ArrayList<Object>(contents);
+		}
+		else {
+			this.contents = null;
+		}
+		synchronize();
 	}
 
 	@Override
-	protected List<Object> getModelNodeChildren() {
-		return Collections.singletonList(contents);
+	protected List<Object> getModelChildren() {
+		return getContents();
 	}
 
 	/**

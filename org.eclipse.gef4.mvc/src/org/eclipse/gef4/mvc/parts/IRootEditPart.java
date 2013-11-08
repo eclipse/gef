@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.List;
+
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
 /**
@@ -27,7 +29,7 @@ public interface IRootEditPart<V> extends IEditPart<V> {
 	 * 
 	 * @return the contents.
 	 */
-	Object getContents();
+	List<Object> getContents();
 
 	/**
 	 * Returns the root's EditPartViewer.
@@ -43,7 +45,7 @@ public interface IRootEditPart<V> extends IEditPart<V> {
 	 * @param editpart
 	 *            the contents
 	 */
-	void setContents(Object contents);
+	void setContents(List<Object> contents);
 
 	/**
 	 * Sets the root's EditPartViewer.

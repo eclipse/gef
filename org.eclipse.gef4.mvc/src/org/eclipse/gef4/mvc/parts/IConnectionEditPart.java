@@ -56,7 +56,7 @@ package org.eclipse.gef4.mvc.parts;
  * create things in any order.
  * </UL>
  */
-public interface IConnectionEditPart<V> extends IEditPart<V> {
+public interface IConnectionEditPart<V> extends IContentsEditPart<V> {
 
 	/**
 	 * @return the EditPart at the <i>source</i> end of this connection.

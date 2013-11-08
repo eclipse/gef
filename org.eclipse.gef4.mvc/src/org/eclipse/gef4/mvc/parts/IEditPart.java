@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.commands.Command;
-import org.eclipse.gef4.mvc.partviewer.IEditPartFactory;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
 /**
@@ -96,16 +95,10 @@ public interface IEditPart<V> extends IAdaptable {
 	 * </UL>
 	 */
 	void deactivate();
-
-	/**
-	 * Returns the List of children <code>EditParts</code>. This method should
-	 * rarely be called, and is only made public so that helper objects of this
-	 * EditPart, such as EditPolicies, can obtain the children. The returned
-	 * List may be by reference, and should never be modified.
-	 * 
-	 * @return a <code>List</code> of children
-	 */
-	List<INodeEditPart<V>> getNodeChildren();
+	
+	List<IContentsEditPart<V>> getChildren();
+	
+	void synchronizeChildren();
 
 	/**
 	 * @param key
@@ -113,17 +106,6 @@ public interface IEditPart<V> extends IAdaptable {
 	 * @return <code>null</code> or the EditPolicy installed with the given key
 	 */
 	<P extends IEditPolicy<V>> P getEditPolicy(Class<P> key);
-
-	/**
-	 * Returns the primary model object that this EditPart represents. EditParts
-	 * may correspond to more than one model object, or even no model object. In
-	 * practice, the Object returned is used by other EditParts to identify this
-	 * EditPart. In addition, EditPolicies probably rely on this method to build
-	 * Commands that operate on the model.
-	 * 
-	 * @return <code>null</code> or the primary model object
-	 */
-	Object getModel();
 
 	/**
 	 * Returns the {@link IRootEditPart}. This method should only be called
@@ -134,8 +116,6 @@ public interface IEditPart<V> extends IAdaptable {
 	 */
 	IRootEditPart<V> getRoot();
 	
-//	V getContentPane(INodeEditPart<V> child);
-
 	/**
 	 * Installs an EditPolicy for a specified <i>role</i>. A <i>role</i> is is
 	 * simply an Object used to identify the EditPolicy. An example of a role is
@@ -154,10 +134,8 @@ public interface IEditPart<V> extends IAdaptable {
 	
 	void refreshVisual();
 
-	void synchronizeNodeChildren();
-
 	/**
-	 * Removes the first occurance of the specified listener from the list of
+	 * Removes the first occurrence of the specified listener from the list of
 	 * listeners. Does nothing if the listener was not present.
 	 * 
 	 * @param listener
@@ -175,18 +153,5 @@ public interface IEditPart<V> extends IAdaptable {
 	 * @see #installEditPolicy(Object, IEditPolicy)
 	 */
 	<P extends IEditPolicy<V>> void uninstallEditPolicy(Class<P> key);
-
-	/**
-	 * <img src="doc-files/dblack.gif"/>Sets the model. This method is made
-	 * public to facilitate the use of {@link IEditPartFactory
-	 * EditPartFactories} .
-	 * 
-	 * <P>
-	 * IMPORTANT: This method should only be called once.
-	 * 
-	 * @param model
-	 *            the Model
-	 */
-	void setModel(Object model);
 
 }

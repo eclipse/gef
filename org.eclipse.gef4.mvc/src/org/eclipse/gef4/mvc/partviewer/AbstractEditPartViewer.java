@@ -11,6 +11,7 @@
 package org.eclipse.gef4.mvc.partviewer;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
@@ -40,7 +41,7 @@ public abstract class AbstractEditPartViewer<V> implements IEditPartViewer<V> {
 	/**
 	 * @see IEditPartViewer#getContents()
 	 */
-	public Object getContents() {
+	public List<Object> getContents() {
 		return getRootEditPart().getContents();
 	}
 
@@ -82,7 +83,7 @@ public abstract class AbstractEditPartViewer<V> implements IEditPartViewer<V> {
 	/**
 	 * @see IEditPartViewer#setContents(Object)
 	 */
-	public void setContents(Object contents) {
+	public void setContents(List<Object> contents) {
 		getRootEditPart().setContents(contents);
 	}
 
