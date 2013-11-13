@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension point="org.eclipse.core.runtime.adapters">
+		<factory
+				class="org.eclipse.gef4.mvc.properties.PropertySourceAdapterFactory"
+				adaptableType="org.eclipse.gef4.mvc.IContentsEditPart">
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+		</factory>
+	</extension>
+</plugin>

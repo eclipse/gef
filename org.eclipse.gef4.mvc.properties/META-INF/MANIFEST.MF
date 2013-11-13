@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC Properties
-Bundle-SymbolicName: org.eclipse.gef4.mvc.properties
+Bundle-SymbolicName: org.eclipse.gef4.mvc.properties;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
