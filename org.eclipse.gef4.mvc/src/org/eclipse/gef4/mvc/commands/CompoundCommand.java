@@ -26,7 +26,7 @@ import java.util.List;
  * simplest equivalent form of the CompoundCommand. So, if a CompoundCommand
  * contains just one Command, that Command is returned.
  */
-public class CompoundCommand extends Command {
+public class CompoundCommand extends AbstractCommand {
 
 	private List commandList = new ArrayList();
 
@@ -60,7 +60,7 @@ public class CompoundCommand extends Command {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#canExecute()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#canExecute()
 	 */
 	public boolean canExecute() {
 		if (commandList.size() == 0)
@@ -76,7 +76,7 @@ public class CompoundCommand extends Command {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#canUndo()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#canUndo()
 	 */
 	public boolean canUndo() {
 		if (commandList.size() == 0)
@@ -94,11 +94,11 @@ public class CompoundCommand extends Command {
 	/**
 	 * Disposes all contained Commands.
 	 * 
-	 * @see org.eclipse.gef4.mvc.commands.Command#dispose()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#dispose()
 	 */
 	public void dispose() {
 		for (int i = 0; i < commandList.size(); i++)
-			((Command) getCommands().get(i)).dispose();
+			((AbstractCommand) getCommands().get(i)).dispose();
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class CompoundCommand extends Command {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#getLabel()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#getLabel()
 	 */
 	public String getLabel() {
 		String label = super.getLabel();
@@ -140,7 +140,7 @@ public class CompoundCommand extends Command {
 				return null;
 		if (label != null)
 			return label;
-		return ((Command) commandList.get(0)).getLabel();
+		return ((AbstractCommand) commandList.get(0)).getLabel();
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class CompoundCommand extends Command {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#redo()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#redo()
 	 */
 	public void redo() {
 		for (int i = 0; i < commandList.size(); i++)
@@ -166,7 +166,7 @@ public class CompoundCommand extends Command {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#undo()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#undo()
 	 */
 	public void undo() {
 		for (int i = commandList.size() - 1; i >= 0; i--)

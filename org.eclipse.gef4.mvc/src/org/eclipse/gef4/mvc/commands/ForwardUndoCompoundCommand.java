@@ -35,7 +35,7 @@ public class ForwardUndoCompoundCommand extends CompoundCommand {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.Command#getDebugLabel()
+	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#getDebugLabel()
 	 */
 	public String getDebugLabel() {
 		return "ForwardUndoCommand: " + super.getDebugLabel();//$NON-NLS-1$

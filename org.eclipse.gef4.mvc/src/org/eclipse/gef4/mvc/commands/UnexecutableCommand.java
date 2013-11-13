@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.commands;
 /**
  * A Command which can never be executed
  */
-public final class UnexecutableCommand extends Command {
+public final class UnexecutableCommand extends AbstractCommand {
 
 	/**
 	 * The singleton instance

@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
  * The Requests are then used to communicate with EditParts in the Viewer to
  * perform the User's operation. Using Requests, Tools will:
  * <UL>
- * <LI>Ask EditParts for {@link org.eclipse.gef4.mvc.commands.Command Commands} to
+ * <LI>Ask EditParts for {@link org.eclipse.gef4.mvc.commands.AbstractCommand Commands} to
  * perform changes on the model.
  * <LI>Ask EditParts to show and erase feedback during an operation.
  * <LI>Ask EditParts to perform a generic function, using

@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef4.mvc.commands.Command;
+import org.eclipse.gef4.mvc.commands.AbstractCommand;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
 /**
@@ -35,7 +35,7 @@ import org.eclipse.gef4.mvc.policies.IEditPolicy;
  * {@link #getTargetEditPart(IRequest) targeting}, filtering the selection
  * (using {@link #understandsRequest(IRequest)}), graphical
  * {@link #showSourceFeedback(IRequest)} feedback, and most importantly,
- * {@link #getCommand(IRequest) obtaining} commands. Only {@link Command
+ * {@link #getCommand(IRequest) obtaining} commands. Only {@link AbstractCommand
  * Commands} should change the model.
  * <p>
  * IMPORTANT: This interface is <EM>not</EM> intended to be implemented by

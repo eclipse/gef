@@ -17,7 +17,7 @@ import java.util.Stack;
 
 /**
  * An implementation of a command stack. A stack manages the executing, undoing,
- * and redoing of {@link Command Commands}. Executed commands are pushed onto a
+ * and redoing of {@link AbstractCommand Commands}. Executed commands are pushed onto a
  * a stack for undoing later. Commands which are undone are pushed onto a redo
  * stack. Whenever a new command is executed, the Redo stack is flushed.
  * <P>
@@ -199,7 +199,7 @@ public class CommandStack {
 			command.execute();
 			if (getUndoLimit() > 0) {
 				while (undoable.size() >= getUndoLimit()) {
-					((Command) undoable.remove(0)).dispose();
+					((AbstractCommand) undoable.remove(0)).dispose();
 					if (saveLocation > -1)
 						saveLocation--;
 				}
@@ -227,12 +227,12 @@ public class CommandStack {
 
 	private void flushRedo() {
 		while (!redoable.isEmpty())
-			((Command) redoable.pop()).dispose();
+			((AbstractCommand) redoable.pop()).dispose();
 	}
 
 	private void flushUndo() {
 		while (!undoable.isEmpty())
-			((Command) undoable.pop()).dispose();
+			((AbstractCommand) undoable.pop()).dispose();
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class CommandStack {
 	 * @return the top of the <i>redo</i> stack, which may be <code>null</code>
 	 */
 	public ICommand getRedoCommand() {
-		return redoable.isEmpty() ? null : (Command) redoable.peek();
+		return redoable.isEmpty() ? null : (AbstractCommand) redoable.peek();
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class CommandStack {
 	 * @return the top of the <i>undo</i> stack, which may be <code>null</code>
 	 */
 	public ICommand getUndoCommand() {
-		return undoable.isEmpty() ? null : (Command) undoable.peek();
+		return undoable.isEmpty() ? null : (AbstractCommand) undoable.peek();
 	}
 
 	/**

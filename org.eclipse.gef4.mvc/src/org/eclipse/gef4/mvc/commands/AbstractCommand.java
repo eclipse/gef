@@ -11,12 +11,12 @@
 package org.eclipse.gef4.mvc.commands;
 
 /**
- * An Abstract implementation of {@link Command}.
+ * An Abstract implementation of {@link AbstractCommand}.
  * 
  * @author hudsonr
  * @since 2.0
  */
-public abstract class Command implements ICommand {
+public abstract class AbstractCommand implements ICommand {
 
 	private String label;
 
@@ -25,7 +25,7 @@ public abstract class Command implements ICommand {
 	/**
 	 * Constructs a Command with no label.
 	 */
-	public Command() {
+	public AbstractCommand() {
 	}
 
 	/**
@@ -34,7 +34,7 @@ public abstract class Command implements ICommand {
 	 * @param label
 	 *            the Command's label
 	 */
-	public Command(String label) {
+	public AbstractCommand(String label) {
 		setLabel(label);
 	}
 
@@ -62,7 +62,7 @@ public abstract class Command implements ICommand {
 		if (command == null)
 			return this;
 		class ChainedCompoundCommand extends CompoundCommand {
-			public Command chain(Command c) {
+			public AbstractCommand chain(AbstractCommand c) {
 				add(c);
 				return this;
 			}
