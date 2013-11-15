@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="24">
+<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="26">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.sdk.ide" version="4.3.0.I20130605-2000"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.3"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.0.v201308291703"/>
-<repository location="http://download.itemis.de/updates/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.draw2d.sdk.feature.group" version="3.9.0.201305060205"/>
-<repository location="http://download.eclipse.org/tools/gef/updates/releases"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.4.2.v201306120542"/>
-<repository location="http://download.eclipse.org/releases/kepler"/>
+<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.9.0.201311150807"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swt.tools" version="3.101.0.201302211459"/>
 <repository location="http://www.eclipse.org/swt/updates/4.3"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.9.0.201311150807"/>
-<repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
+<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.0.v201308291703"/>
+<repository location="http://download.itemis.de/updates/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.4.2.v201306120542"/>
+<unit id="org.eclipse.gef.sdk.feature.group" version="3.9.1.201308190730"/>
+<repository location="http://download.eclipse.org/releases/kepler"/>
 </location>
 </locations>
 </target>
