@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="22">
+<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="24">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.sdk.ide" version="4.3.0.I20130605-2000"/>
@@ -20,6 +20,10 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swt.tools" version="3.101.0.201302211459"/>
 <repository location="http://www.eclipse.org/swt/updates/4.3"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.9.0.201311150807"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
 </location>
 </locations>
 </target>
