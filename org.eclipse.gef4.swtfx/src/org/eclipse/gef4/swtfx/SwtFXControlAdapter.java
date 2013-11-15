@@ -54,6 +54,20 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 						getSwtFXCanvas(newValue));
 			}
 		});
+		// focusedProperty().addListener(new ChangeListener<Boolean>() {
+		// @Override
+		// public void changed(ObservableValue<? extends Boolean> observable,
+		// Boolean hadFocus, Boolean hasFocus) {
+		// if (!hadFocus && hasFocus) {
+		// // focus gained
+		// if (getControl() != null) {
+		// getControl().forceFocus();
+		// }
+		// } else if (hadFocus && !hasFocus) {
+		// // focus lost
+		// }
+		// }
+		// });
 	}
 
 	protected void canvasChanged(SwtFXCanvas oldCanvas, SwtFXCanvas newCanvas) {
