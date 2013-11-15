@@ -1,5 +1,6 @@
 package org.eclipse.gef4.mvc.aspects.selection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
@@ -21,23 +22,69 @@ public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 		return editPart.getEditPolicy(ISelectionPolicy.class);
 	}
 
-	public void select(IEditPart<V> editPart, boolean append) {
-		if (append) {
-			// append to selection
-			List<IEditPart<V>> oldSelection = getSelectionModel()
-					.getSelectedParts();
-			if (!oldSelection.isEmpty()) {
-				getSelectionPolicy(oldSelection.get(0)).becomeSecondary();
-				// viewer selection remains unaffected
-			}
+	/**
+	 * 
+	 * @param targetEditPart
+	 * @param append
+	 * @return <code>true</code> on selection change, otherwise <code>false</code>
+	 */
+	public boolean select(IEditPart<V> targetEditPart, boolean append) {
+		boolean changed = true;
+		
+		SelectionModel<V> selectionModel = getSelectionModel();
+		// retrieve old selection
+		List<IEditPart<V>> oldSelection = new ArrayList<IEditPart<V>>(
+				selectionModel.getSelectedParts());
+		// determine new selection
+		if (targetEditPart == null) {
+			// remove all selected
+			selectionModel.deselectAll();
 		} else {
-			// clear selection
-			deselectAll();
+			if (oldSelection.contains(targetEditPart)) {
+				if (append) {
+					// deselect the target edit part (ensure we get a new
+					// primary selection)
+					selectionModel.deselect(targetEditPart);
+				} else {
+					// target should become the new primary selection
+//					selectionModel.select(targetEditPart);
+					changed = false;
+				}
+			} else {
+				if (append) {
+					// append to current selection (as new primary)
+					selectionModel.select(targetEditPart);
+				} else {
+					// clear old selection, target should become the only
+					// selected
+					selectionModel.deselectAll();
+					selectionModel.select(targetEditPart);
+				}				
+			}
 		}
-		ISelectionPolicy<V> selectionPolicy = getSelectionPolicy(editPart);
-		if (selectionPolicy != null) {
-			selectionPolicy.selectPrimary();
-			getSelectionModel().select(editPart);
+		// handle adjustment of selection feedback (via edit policy)
+		List<IEditPart<V>> newSelection = selectionModel.getSelectedParts();
+		oldSelection.removeAll(newSelection);
+		adjustFeedback(oldSelection, newSelection);
+		
+		return changed;
+	}
+
+	protected void adjustFeedback(List<IEditPart<V>> deselected,
+			List<IEditPart<V>> selected) {
+		// deselect unselected
+		for (IEditPart<V> e : deselected) {
+			getSelectionPolicy(e).deselect();
+		}
+		// select newly selected
+		for (int i = 0; i < selected.size(); i++) {
+			ISelectionPolicy<V> selectionPolicy = getSelectionPolicy(selected
+					.get(i));
+			if (i == 0) {
+				selectionPolicy.selectPrimary();
+			} else {
+				selectionPolicy.selectSecondary();
+			}
 		}
 	}
 
@@ -46,15 +93,4 @@ public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 		return getDomain().getProperty(SelectionModel.class);
 	}
 
-	public void deselectAll() {
-		List<IEditPart<V>> oldSelection = getSelectionModel()
-				.getSelectedParts();
-		if (!oldSelection.isEmpty()) {
-			for (IEditPart<V> e : oldSelection) {
-				getSelectionPolicy(e).deselect();
-			}
-			getSelectionModel().deselectAll();
-		}
-
-	}
 }

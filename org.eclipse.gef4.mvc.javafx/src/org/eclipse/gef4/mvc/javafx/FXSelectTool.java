@@ -12,16 +12,10 @@ public class FXSelectTool extends AbstractSelectTool<Node> {
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			// compute new selection target
-			IEditPart<Node> targetPart = getTargetPart(event);
-			// perform selection
-			if (targetPart != null) {
-				select(targetPart, event.isControlDown());
-			} else {
-				deselectAll();
+			if (select(getTargetPart(event), event.isControlDown())) {
+				event.consume();
 			}
 		}
-
 	};
 
 	private IEditPart<Node> getTargetPart(MouseEvent event) {

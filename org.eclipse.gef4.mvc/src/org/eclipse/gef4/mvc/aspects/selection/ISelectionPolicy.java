@@ -6,7 +6,7 @@ public interface ISelectionPolicy<V> extends IEditPolicy<V> {
 
 	public void selectPrimary();
 	
-	public void becomeSecondary();
+	public void selectSecondary();
 	
 	public void deselect();
 	

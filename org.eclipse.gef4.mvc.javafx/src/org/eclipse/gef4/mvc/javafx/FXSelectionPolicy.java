@@ -38,7 +38,7 @@ public class FXSelectionPolicy extends AbstractEditPolicy<Node> implements ISele
 	}
 
 	@Override
-	public void becomeSecondary() {
+	public void selectSecondary() {
 		getHost().getVisual().setEffect(secondarySelectionEffect);	
 	}
 
