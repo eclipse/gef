@@ -11,7 +11,9 @@ public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 	@Override
 	public void setDomain(IEditDomain<V> domain) {
 		super.setDomain(domain);
-		domain.setProperty(SelectionModel.class, new SelectionModel<V>());
+		if (domain != null) {
+			domain.setProperty(SelectionModel.class, new SelectionModel<V>());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
