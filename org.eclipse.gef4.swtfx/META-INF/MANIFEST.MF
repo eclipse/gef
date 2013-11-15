@@ -9,11 +9,7 @@ Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
  org.eclipse.gef4.geometry.convert.swt;bundle-version="0.1.0"
 Export-Package: org.eclipse.gef4.swtfx,
- org.eclipse.gef4.swtfx.animation,
- org.eclipse.gef4.swtfx.controls,
- org.eclipse.gef4.swtfx.event,
- org.eclipse.gef4.swtfx.gc,
- org.eclipse.gef4.swtfx.layout
+ org.eclipse.gef4.swtfx.controls
 Import-Package: javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",
  javafx.beans;version="2.2.0",
