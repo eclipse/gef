@@ -8,8 +8,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.jface;
 
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;

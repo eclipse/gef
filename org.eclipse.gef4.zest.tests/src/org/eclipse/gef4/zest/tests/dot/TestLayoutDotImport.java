@@ -13,11 +13,11 @@ import static org.eclipse.gef4.zest.tests.dot.DotImportTestUtils.importFrom;
 
 import java.io.File;
 
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.internal.dot.DotImport;
-import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.junit.Test;
 
 /**

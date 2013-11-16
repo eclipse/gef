@@ -3,13 +3,13 @@ package org.eclipse.gef4.zest.examples.layouts;
 import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph.TriangleSubgraphFactory;
-import org.eclipse.gef4.zest.layouts.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;

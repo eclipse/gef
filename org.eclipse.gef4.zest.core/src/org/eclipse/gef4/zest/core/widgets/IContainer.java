@@ -13,8 +13,8 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentRectangle;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.swt.widgets.Widget;
 
 /**

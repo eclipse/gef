@@ -9,11 +9,11 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.examples.jface;
 
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.EntityConnectionData;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.gef4.zest.core.viewers.INestedContentProvider;
-import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;

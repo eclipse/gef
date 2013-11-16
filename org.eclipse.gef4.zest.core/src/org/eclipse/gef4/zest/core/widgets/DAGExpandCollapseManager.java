@@ -12,12 +12,12 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.ContextListener;
-import org.eclipse.gef4.zest.layouts.interfaces.ExpandCollapseManager;
-import org.eclipse.gef4.zest.layouts.interfaces.GraphStructureListener;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
+import org.eclipse.gef4.layout.interfaces.ContextListener;
+import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
+import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 /**
  * <p>

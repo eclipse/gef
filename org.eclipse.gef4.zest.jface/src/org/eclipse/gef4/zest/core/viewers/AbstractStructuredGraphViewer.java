@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
@@ -30,7 +31,6 @@ import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.custom.CGraphNode;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Widget;

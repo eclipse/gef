@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
-import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;

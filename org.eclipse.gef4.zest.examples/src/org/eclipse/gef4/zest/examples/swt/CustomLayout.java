@@ -1,11 +1,11 @@
 package org.eclipse.gef4.zest.examples.swt;
 
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;

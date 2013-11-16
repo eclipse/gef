@@ -11,9 +11,9 @@ package org.eclipse.gef4.zest.examples.jface;
 
 import java.util.Iterator;
 
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
-import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;

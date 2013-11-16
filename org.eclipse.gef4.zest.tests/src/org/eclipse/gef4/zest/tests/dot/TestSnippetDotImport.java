@@ -8,13 +8,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.tests.dot;
 
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.internal.dot.DotImport;
 import org.eclipse.gef4.zest.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;

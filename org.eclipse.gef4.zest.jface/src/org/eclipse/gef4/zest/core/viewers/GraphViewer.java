@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityRelationshipFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelFactory;
@@ -22,7 +23,6 @@ import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.zooming.ZoomManager;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -176,7 +176,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * (non-Javadoc)
 	 * 
 	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#
-	 * setLayoutAlgorithm(org.eclipse.gef4.zest.layouts.LayoutAlgorithm)
+	 * setLayoutAlgorithm(org.eclipse.gef4.layout.LayoutAlgorithm)
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		super.setLayoutAlgorithm(algorithm);

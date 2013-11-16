@@ -6,7 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.ui;bundle-version="3.7.0",
  org.eclipse.gef4.zest.core;bundle-version="0.1.0",
- org.eclipse.gef4.zest.layouts;bundle-version="0.1.0",
+ org.eclipse.gef4.layout;bundle-version="0.1.0",
  org.eclipse.draw2d;bundle-version="3.7.0"
 Export-Package: org.eclipse.gef4.zest.core.viewers,
  org.eclipse.gef4.zest.core.viewers.internal;x-internal:=true

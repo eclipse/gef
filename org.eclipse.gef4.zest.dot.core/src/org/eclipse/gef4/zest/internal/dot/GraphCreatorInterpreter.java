@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
@@ -39,7 +40,6 @@ import org.eclipse.gef4.zest.internal.dot.parser.dot.NodeStmt;
 import org.eclipse.gef4.zest.internal.dot.parser.dot.Stmt;
 import org.eclipse.gef4.zest.internal.dot.parser.dot.Subgraph;
 import org.eclipse.gef4.zest.internal.dot.parser.dot.util.DotSwitch;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 

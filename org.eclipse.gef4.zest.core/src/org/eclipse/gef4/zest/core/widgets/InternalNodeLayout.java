@@ -18,12 +18,12 @@ import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 class InternalNodeLayout implements NodeLayout {
 
