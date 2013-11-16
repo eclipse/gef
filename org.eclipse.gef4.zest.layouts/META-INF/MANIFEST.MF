@@ -9,8 +9,5 @@ Export-Package: org.eclipse.gef4.zest.layouts,
  org.eclipse.gef4.zest.layouts.algorithms,
  org.eclipse.gef4.zest.layouts.dataStructures,
  org.eclipse.gef4.zest.layouts.interfaces
-Require-Bundle: org.eclipse.swt;visibility:=reexport,
- org.eclipse.core.runtime,
- org.eclipse.jface,
- org.eclipse.draw2d
+Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

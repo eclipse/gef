@@ -11,7 +11,6 @@ package org.eclipse.gef4.zest.layouts.interfaces;
 
 import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentDimension;
 import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentPoint;
-import org.eclipse.swt.widgets.Item;
 
 /**
  * A common interface for entities that are displayed on a graph, that is
@@ -112,5 +111,5 @@ public interface EntityLayout {
 	 * 
 	 * @return an array of graph items
 	 */
-	public Item[] getItems();
+	public Object[] getItems();
 }

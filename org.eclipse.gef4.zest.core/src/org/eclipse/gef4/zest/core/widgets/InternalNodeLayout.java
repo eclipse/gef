@@ -24,7 +24,6 @@ import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
 import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
 import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
-import org.eclipse.swt.widgets.Item;
 
 class InternalNodeLayout implements NodeLayout {
 
@@ -274,7 +273,7 @@ class InternalNodeLayout implements NodeLayout {
 		return node;
 	}
 
-	public Item[] getItems() {
+	public Object[] getItems() {
 		return new GraphNode[] { node };
 	}
 

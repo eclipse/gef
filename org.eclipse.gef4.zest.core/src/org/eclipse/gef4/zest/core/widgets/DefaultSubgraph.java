@@ -27,7 +27,6 @@ import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Item;
 
 /**
  * Default implementation of {@link SubgraphLayout}. Every subgraph added to
@@ -328,7 +327,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return result2;
 	}
 
-	public Item[] getItems() {
+	public Object[] getItems() {
 		GraphNode[] result = new GraphNode[nodes.size()];
 		int i = 0;
 		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {

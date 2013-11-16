@@ -2,7 +2,7 @@ package org.eclipse.gef4.zest.examples.layouts;
 
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.zest.core.widgets.DAGExpandCollapseManager;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
 import org.eclipse.gef4.zest.core.widgets.Graph;

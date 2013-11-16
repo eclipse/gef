@@ -13,7 +13,7 @@ package org.eclipse.gef4.zest.layouts.algorithms;
 
 import java.util.Iterator;
 
-import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentRectangle;
@@ -198,11 +198,11 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 	private void updateLeafAndLayerSizes() {
 		if (nodeSpace != null) {
 			if (getDirection() == TOP_DOWN || getDirection() == BOTTOM_UP) {
-				leafSize = nodeSpace.preciseWidth();
-				layerSize = nodeSpace.preciseHeight();
+				leafSize = nodeSpace.getWidth();
+				layerSize = nodeSpace.getHeight();
 			} else {
-				leafSize = nodeSpace.preciseHeight();
-				layerSize = nodeSpace.preciseWidth();
+				leafSize = nodeSpace.getHeight();
+				layerSize = nodeSpace.getWidth();
 			}
 		} else {
 			TreeNode superRoot = treeObserver.getSuperRoot();

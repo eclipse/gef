@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
 import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
@@ -389,7 +389,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		DisplayIndependentRectangle boundary = context.getBounds();
 		if (dimension != null)
 			boundary = new DisplayIndependentRectangle(0, 0,
-					dimension.preciseWidth(), dimension.preciseHeight());
+					dimension.getWidth(), dimension.getHeight());
 		double dx = boundary.width / layers.size();
 		double dy = boundary.height / (last + 1);
 		if (direction == HORIZONTAL)
