@@ -7,9 +7,19 @@ import org.eclipse.swt.custom.StyledText;
 
 public class SwtFXStyledText extends AbstractSwtFXControl<StyledText> {
 
+	private int swtStyleFlags;
+
+	public SwtFXStyledText() {
+		this(SWT.BORDER);
+	}
+
+	public SwtFXStyledText(int swtStyleFlags) {
+		this.swtStyleFlags = swtStyleFlags;
+	}
+
 	@Override
 	protected StyledText createControl(SwtFXCanvas fxCanvas) {
-		return new StyledText(fxCanvas, SWT.BORDER);
+		return new StyledText(fxCanvas, swtStyleFlags);
 	}
 
 	@Override
