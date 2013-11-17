@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot.test_data;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
@@ -21,18 +21,19 @@ public class SimpleGraph extends Graph {
 	 */
 	public SimpleGraph() {
 		/* Set a layout algorithm: */
-		setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		withAttribute(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Set the nodes: */
-		GraphNode n1 = new GraphNode(this, "1"); //$NON-NLS-1$
-		GraphNode n2 = new GraphNode(this, "2"); //$NON-NLS-1$
-		GraphNode n3 = new GraphNode(this, "3"); //$NON-NLS-1$
+		Node n1 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "1"); //$NON-NLS-1$
+		Node n2 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "2"); //$NON-NLS-1$
+		Node n3 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "3"); //$NON-NLS-1$ 
 
 		/* Connection from n1 to n2: */
-		new GraphConnection(this, n1, n2);
+		Edge e1 = new Edge(n1, n2);
 
 		/* Connection from n1 to n3: */
-		new GraphConnection(this, n1, n3);
+		Edge e2 = new Edge(n1, n3);
 
+		withNodes(n1, n2, n3).withEdges(e1, e2);
 	}
 }

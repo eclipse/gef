@@ -11,7 +11,7 @@ package org.eclipse.gef4.graph.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
@@ -31,31 +31,31 @@ public class LayoutAlgorithmTests extends TestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=337144)
 	 */
 	public void testCustomLayoutSimpleItemAccess() {
-		Graph graph = new Graph();
-		new GraphNode(graph);
-		graph.setLayoutAlgorithm(new LayoutAlgorithm() {
-			public void setLayoutContext(LayoutContext context) {
-				Object[] all = context.getEntities()[0].getItems();
-				Object[] nodes = context.getNodes()[0].getItems();
-				Assert.assertEquals(1, all.length);
-				Assert.assertEquals(1, nodes.length);
-				Assert.assertTrue(
-						"All entity items should be wrapped in a GraphNode[]",
-						all instanceof GraphNode[]);
-				Assert.assertTrue(
-						"Node entity items should be wrapped in a GraphNode[]",
-						nodes instanceof GraphNode[]);
-				Assert.assertTrue(
-						"All entity items should be GraphNode instances",
-						all[0] instanceof GraphNode);
-				Assert.assertTrue(
-						"Node entity items should be GraphNode instances",
-						nodes[0] instanceof GraphNode);
-			}
+		Graph graph = new Graph().withNodes(new Node());
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new LayoutAlgorithm() {
+					public void setLayoutContext(LayoutContext context) {
+						Object[] all = context.getEntities()[0].getItems();
+						Object[] nodes = context.getNodes()[0].getItems();
+						Assert.assertEquals(1, all.length);
+						Assert.assertEquals(1, nodes.length);
+						Assert.assertTrue(
+								"All entity items should be wrapped in a Node[]",
+								all instanceof Node[]);
+						Assert.assertTrue(
+								"Node entity items should be wrapped in a Node[]",
+								nodes instanceof Node[]);
+						Assert.assertTrue(
+								"All entity items should be Node instances",
+								all[0] instanceof Node);
+						Assert.assertTrue(
+								"Node entity items should be Node instances",
+								nodes[0] instanceof Node);
+					}
 
-			public void applyLayout(boolean clean) {
-			}
-		}, true);
+					public void applyLayout(boolean clean) {
+					}
+				});
 	}
 
 	/**
@@ -64,9 +64,10 @@ public class LayoutAlgorithmTests extends TestCase {
 	 */
 	public void testGridLayoutAlgorithmEmptyGraph() {
 		Graph graph = new Graph();
-		graph.setLayoutAlgorithm(new GridLayoutAlgorithm(), true);
-		Assert.assertEquals(GridLayoutAlgorithm.class, graph
-				.getLayoutAlgorithm().getClass());
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new GridLayoutAlgorithm());
+		Assert.assertEquals(GridLayoutAlgorithm.class,
+				graph.getAttribute(Graph.Attr.LAYOUT.toString()).getClass());
 	}
 
 	/**

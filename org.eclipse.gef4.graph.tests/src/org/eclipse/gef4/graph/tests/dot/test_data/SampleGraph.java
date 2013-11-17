@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot.test_data;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
@@ -24,28 +24,33 @@ public class SampleGraph extends Graph {
 	 */
 	public SampleGraph() {
 		/* Global settings: */
-		setConnectionStyle(ZestStyle.CONNECTIONS_DIRECTED);
-		setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.CONNECTIONS_DIRECTED).withAttribute(
+				Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
-		GraphNode n1 = new GraphNode(this, "Node"); //$NON-NLS-1$
-		GraphNode n2 = new GraphNode(this, "Node"); //$NON-NLS-1$
-		GraphNode n3 = new GraphNode(this, "Leaf1"); //$NON-NLS-1$
-		GraphNode n4 = new GraphNode(this, "Leaf2"); //$NON-NLS-1$
+		Node n1 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "Node"); //$NON-NLS-1$
+		Node n2 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "Node"); //$NON-NLS-1$
+		Node n3 = new Node()
+				.withAttribute(Graph.Attr.LABEL.toString(), "Leaf1"); //$NON-NLS-1$
+		Node n4 = new Node()
+				.withAttribute(Graph.Attr.LABEL.toString(), "Leaf2"); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
-		GraphConnection n1n2 = new GraphConnection(this, n1, n2);
-		n1n2.setText("Edge"); //$NON-NLS-1$
-		n1n2.setLineStyle(ZestStyle.LINE_DASH);
+		new Edge(n1, n2).withAttribute(Graph.Attr.LABEL.toString(), "Edge")
+				.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+						ZestStyle.LINE_DASH);
 
 		/* Connection from n2 to n3: */
-		GraphConnection n2n3 = new GraphConnection(this, n2, n3);
-		n2n3.setText("Edge"); //$NON-NLS-1$
-		n2n3.setLineStyle(ZestStyle.LINE_DASH);
+		Edge e1 = new Edge(n2, n3).withAttribute(Graph.Attr.LABEL.toString(),
+				"Edge").withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.LINE_DASH);
 
 		/* Connection from n2 to n4: */
-		GraphConnection n2n4 = new GraphConnection(this, n2, n4);
-		n2n4.setText("Dotted"); //$NON-NLS-1$
-		n2n4.setLineStyle(ZestStyle.LINE_DOT);
+		Edge e2 = new Edge(n2, n4).withAttribute(Graph.Attr.LABEL.toString(),
+				"Dotted").withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.LINE_DOT);
+
+		withNodes(n1, n2, n3, n4).withEdges(e1, e2);
 	}
 }

@@ -10,9 +10,9 @@ package org.eclipse.gef4.graph.tests.dot;
 
 import java.io.File;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.internal.dot.export.DotExport;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
@@ -31,18 +31,21 @@ public final class DotExportSample {
 	public static void main(final String[] args) {
 		/* Set up a directed Zest graph with a single connection: */
 		Graph graph = new Graph();
-		graph.setConnectionStyle(ZestStyle.CONNECTIONS_DIRECTED);
-		GraphConnection edge = new GraphConnection(graph, new GraphNode(graph,
-				"Node 1"), new GraphNode(graph, //$NON-NLS-1$
-				"Node 2")); //$NON-NLS-1$
-		edge.setText("A dotted edge"); //$NON-NLS-1$
-		edge.setLineStyle(ZestStyle.LINE_DOT);
+		graph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.CONNECTIONS_DIRECTED).withEdges(
+				new Edge(new Node().withAttribute(Graph.Attr.LABEL.toString(),
+						"Node 1"), new Node().withAttribute(
+						Graph.Attr.LABEL.toString(), "Node 2")).withAttribute(
+						Graph.Attr.LABEL.toString(), "A dotted edge")
+						.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+								ZestStyle.LINE_DOT));
 		/* Export the Zest graph to a DOT string or a DOT file: */
 		DotExport dotExport = new DotExport(graph);
 		System.out.println(dotExport.toDotString());
 		dotExport.toDotFile(new File("src-gen/DirectSample.dot")); //$NON-NLS-1$
 		/* Show the Zest graph: */
-		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm());
 	}
 
 	private DotExportSample() { /* enforce non-instantiability */

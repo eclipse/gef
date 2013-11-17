@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot.test_data;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
@@ -23,25 +23,28 @@ public class LabeledGraph extends Graph {
 	 */
 	public LabeledGraph() {
 		/* Global settings: */
-		setConnectionStyle(ZestStyle.CONNECTIONS_DIRECTED);
-		setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.CONNECTIONS_DIRECTED).withAttribute(
+				Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
 
 		/* Nodes: */
-		GraphNode n1 = new GraphNode(this, "One"); //$NON-NLS-1$
-		GraphNode n2 = new GraphNode(this, "Two"); //$NON-NLS-1$
-		GraphNode n3 = new GraphNode(this, "3"); //$NON-NLS-1$
-		GraphNode n4 = new GraphNode(this, "4"); //$NON-NLS-1$
+		Node n1 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "One"); //$NON-NLS-1$
+		Node n2 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "Two"); //$NON-NLS-1$
+		Node n3 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "3"); //$NON-NLS-1$
+		Node n4 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "4"); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
-		GraphConnection n1n2 = new GraphConnection(this, n1, n2);
-		n1n2.setText("+1"); //$NON-NLS-1$
+		Edge e1 = new Edge(n1, n2).withAttribute(Graph.Attr.LABEL.toString(),
+				"+1"); //$NON-NLS-1$
 
 		/* Connection from n1 to n3: */
-		GraphConnection n1n3 = new GraphConnection(this, n1, n3);
-		n1n3.setText("+2"); //$NON-NLS-1$
+		Edge e2 = new Edge(n1, n3).withAttribute(Graph.Attr.LABEL.toString(),
+				"+2"); //$NON-NLS-1$
 
 		/* Connection from n3 to n4: */
-		new GraphConnection(this, n3, n4);
+		Edge e3 = new Edge(n3, n4);
+
+		withNodes(n1, n2, n3, n4).withEdges(e1, e2, e3);
 
 	}
 }

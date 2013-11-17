@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot;
 
-import org.eclipse.gef4.graph.DotGraph;
+import org.eclipse.gef4.graph.Graph;
 import org.junit.Test;
 
 /**
@@ -20,15 +20,13 @@ public class SampleUsage {
 	@Test
 	public void sampleUsage() {
 		/*
-		 * A Dot graph is a Zest graph that can be created from DOT. <br/>
-		 * 
-		 * The DOT input can be given as a String, File or IFile:
+		 * A graph can be created from DOT, given as a String:
 		 */
-		DotGraph graph = new DotGraph("digraph{1->2}");
+		Graph graph = new Graph("digraph{1->2}");
 		/* The Dot graph can be modified using DOT snippets: */
-		graph.add("2->3").add("2->4");
+		graph.withDot("2->3").withDot("2->4");
 		/* The snippets can contain DOT node and edge attributes: */
-		graph.add("node[label=zested]; edge[style=dashed]; 3->5; 4->6");
+		graph.withDot("node[label=zested]; edge[style=dashed]; 3->5; 4->6");
 		/* Export to a DOT string: */
 		String dot = graph.toDot();
 		/* See some of the results: */

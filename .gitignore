@@ -12,3 +12,4 @@ org.eclipse.gef4.zest.dot.ui/*-toc.xml
 src-gen
 *.orig
 org.eclipse.gef4.graph.ui
+org.eclipse.gef4.graph.tests/resources/output/*.dot

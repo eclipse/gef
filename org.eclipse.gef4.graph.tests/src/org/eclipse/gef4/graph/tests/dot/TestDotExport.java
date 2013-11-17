@@ -14,9 +14,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.eclipse.gef4.graph.DotGraph;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.export.DotExport;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
@@ -60,21 +59,25 @@ public class TestDotExport extends TestDotTemplate {
 	/** Test mapping of Zest layouts to Graphviz layouts. */
 	@Test
 	public void zestToGraphvizLayoutMapping() {
-		DotGraph graph = new DotGraph();
-		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(), false);
+		Graph graph = new Graph();
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm());
 		assertTrue("TreeLayout -> 'dot'",
 				graph.toDot().contains("graph[layout=dot]"));
-		graph.setLayoutAlgorithm(new RadialLayoutAlgorithm(), false);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new RadialLayoutAlgorithm());
 		assertTrue("RadialLayout -> 'twopi'",
 				graph.toDot().contains("graph[layout=twopi]"));
-		graph.setLayoutAlgorithm(new GridLayoutAlgorithm(), false);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new GridLayoutAlgorithm());
 		assertTrue("GridLayout -> 'osage'",
 				graph.toDot().contains("graph[layout=osage]"));
-		graph.setLayoutAlgorithm(new SpringLayoutAlgorithm(), false);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new SpringLayoutAlgorithm());
 		assertTrue("SpringLayout, small -> 'fdp'",
 				graph.toDot().contains("graph[layout=fdp]"));
 		for (int i = 0; i < 100; i++) {
-			new GraphNode(graph);
+			graph.withNodes(new Node());
 		}
 		assertTrue("SpringLayout, large -> 'sfdp'",
 				graph.toDot().contains("graph[layout=sfdp]"));

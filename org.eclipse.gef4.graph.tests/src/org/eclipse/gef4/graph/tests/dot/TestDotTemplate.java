@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.internal.dot.export.DotTemplate;
 import org.eclipse.gef4.graph.tests.dot.test_data.LabeledGraph;
@@ -33,14 +33,16 @@ public class TestDotTemplate {
 	@Test
 	public void zestGraph() {
 		Graph graph = new Graph();
-		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(
-				TreeLayoutAlgorithm.LEFT_RIGHT), true);
-		graph.setConnectionStyle(ZestStyle.CONNECTIONS_DIRECTED);
-		GraphConnection edge = new GraphConnection(graph, new GraphNode(graph,
-				"Node 1"), new GraphNode(graph, //$NON-NLS-1$
-				"Node 2")); //$NON-NLS-1$
-		edge.setText("A dotted edge"); //$NON-NLS-1$
-		edge.setLineStyle(ZestStyle.LINE_DOT);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm(TreeLayoutAlgorithm.LEFT_RIGHT));
+		graph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				ZestStyle.CONNECTIONS_DIRECTED).withEdges(
+				new Edge(new Node().withAttribute(Graph.Attr.LABEL.toString(),
+						"Node 1"), new Node().withAttribute(
+						Graph.Attr.LABEL.toString(), "Node 2")).withAttribute(
+						Graph.Attr.LABEL.toString(), "A dotted edge")
+						.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+								ZestStyle.LINE_DOT));
 		String dot = new DotTemplate().generate(graph);
 		Assert.assertTrue(
 				"Graph with horizontal tree layout should contain rankdir=LR",
@@ -92,7 +94,7 @@ public class TestDotTemplate {
 		Assert.assertTrue(
 				"DOT representation must contain simple class name of Zest input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
-		Assert.assertTrue(graph.getConnectionStyle() == ZestStyle.CONNECTIONS_DIRECTED ? dot
+		Assert.assertTrue(graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.CONNECTIONS_DIRECTED ? dot
 				.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(dot);
 	}

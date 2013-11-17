@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.internal.dot;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 
 /**
  * Imports the content of a Zest graph generated from DOT into an existing Zest
@@ -37,45 +37,61 @@ final class ZestGraphImport {
 	 */
 	void into(Graph targetGraph) {
 		Graph sourceGraph = graphFromDot;
-		targetGraph.setNodeStyle(sourceGraph.getNodeStyle());
-		targetGraph.setConnectionStyle(sourceGraph.getConnectionStyle());
-		targetGraph.setLayoutAlgorithm(sourceGraph.getLayoutAlgorithm(), true);
-		for (Object edge : sourceGraph.getConnections()) {
-			copy((GraphConnection) edge, targetGraph);
+		targetGraph.withAttribute(Graph.Attr.NODE_STYLE.toString(),
+				sourceGraph.getAttribute(Graph.Attr.NODE_STYLE.toString()));
+		targetGraph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				sourceGraph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		targetGraph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				sourceGraph.getAttribute(Graph.Attr.LAYOUT.toString()));
+		for (Object edge : sourceGraph.getEdges()) {
+			copy((Edge) edge, targetGraph);
 		}
 		for (Object node : sourceGraph.getNodes()) {
-			copy((GraphNode) node, targetGraph);
+			copy((Node) node, targetGraph);
 		}
-		targetGraph.update();
 	}
 
-	private GraphConnection copy(GraphConnection edge, Graph targetGraph) {
-		GraphNode source = copy(edge.getSource(), targetGraph);
-		GraphNode target = copy(edge.getDestination(), targetGraph);
-		GraphConnection copy = new GraphConnection(targetGraph, source, target);
-		copy.setStyle(edge.getStyle());
-		copy.setText(edge.getText());
-		copy.setData(edge.getData());
-		copy.setLineStyle(edge.getLineStyle());
+	private Edge copy(Edge edge, Graph targetGraph) {
+		Node source = copy(edge.getSource(), targetGraph);
+		Node target = copy(edge.getTarget(), targetGraph);
+		Edge copy = new Edge(source, target)
+				.withAttribute(Graph.Attr.STYLE.toString(),
+						edge.getAttribute(Graph.Attr.STYLE.toString()))
+				.withAttribute(Graph.Attr.LABEL.toString(),
+						edge.getAttribute(Graph.Attr.LABEL.toString()))
+				.withAttribute(Graph.Attr.DATA.toString(),
+						edge.getAttribute(Graph.Attr.DATA.toString()))
+				.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+						edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		targetGraph.withEdges(copy);
 		return copy;
 	}
 
-	private GraphNode copy(GraphNode node, Graph targetGraph) {
-		GraphNode find = find(node, targetGraph);
+	private Node copy(Node node, Graph targetGraph) {
+		Node find = find(node, targetGraph);
 		if (find == null) {
-			GraphNode copy = new GraphNode(targetGraph, node.getText());
-			copy.setStyle(node.getStyle());
-			copy.setImage(node.getImage());
-			copy.setData(node.getData());
+			Node copy = new Node()
+					.withAttribute(Graph.Attr.LABEL.toString(),
+							node.getAttribute(Graph.Attr.LABEL.toString()))
+					.withAttribute(Graph.Attr.STYLE.toString(),
+							node.getAttribute(Graph.Attr.STYLE.toString()))
+					.withAttribute(Graph.Attr.IMAGE.toString(),
+							node.getAttribute(Graph.Attr.IMAGE.toString()))
+					.withAttribute(Graph.Attr.DATA.toString(),
+							node.getAttribute(Graph.Attr.DATA.toString()));
+			targetGraph.withNodes(copy);
 			return copy;
 		}
 		return find; // target already contains the node to copy over
 	}
 
-	private GraphNode find(GraphNode node, Graph graph) {
+	private Node find(Node node, Graph graph) {
 		for (Object o : graph.getNodes()) {
-			GraphNode n = (GraphNode) o;
-			if (node.getData() != null && node.getData().equals(n.getData())) {
+			Node n = (Node) o;
+			Object nodeData = node.getAttribute(Graph.Attr.DATA.toString());
+			if (nodeData != null
+					&& nodeData.equals(n.getAttribute(Graph.Attr.DATA
+							.toString()))) {
 				return n;
 			}
 		}

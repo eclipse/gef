@@ -8,9 +8,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph.tests.dot;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.DotImport;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
@@ -36,9 +39,10 @@ public final class TestSnippetDotImport {
 	@Test
 	public void addToEmptyGraph() {
 		Graph graph = new Graph();
-		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm());
 		Assert.assertEquals(0, graph.getNodes().size());
-		Assert.assertEquals(0, graph.getConnections().size());
+		Assert.assertEquals(0, graph.getEdges().size());
 		/* The DOT input, can be given as a String, File or IFile: */
 		new DotImport("1->2").into(graph); //$NON-NLS-1$
 		assertNodesEdgesCount(2, 1, graph);
@@ -47,7 +51,7 @@ public final class TestSnippetDotImport {
 		new DotImport("5->6").into(graph); //$NON-NLS-1$
 		assertNodesEdgesCount(6, 2, graph);
 		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getConnectionStyle());
+				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 	}
 
 	@Test
@@ -70,7 +74,7 @@ public final class TestSnippetDotImport {
 		new DotImport("1->3").into(graph); // reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
 		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getConnectionStyle());
+				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 	}
 
 	@Test
@@ -81,63 +85,73 @@ public final class TestSnippetDotImport {
 		new DotImport("1--3").into(graph); // reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
 		Assert.assertEquals(ZestStyle.CONNECTIONS_SOLID,
-				graph.getConnectionStyle());
+				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 	}
 
 	@Test
 	public void addLayoutAlgorithm() {
 		Graph graph = new Graph();
-		Assert.assertEquals(null, graph.getLayoutAlgorithm());
+		Assert.assertEquals(null,
+				graph.getAttribute(Graph.Attr.LAYOUT.toString()));
 		new DotImport("rankdir=LR").into(graph);
-		Assert.assertEquals(TreeLayoutAlgorithm.class, graph
-				.getLayoutAlgorithm().getClass());
+		Assert.assertEquals(TreeLayoutAlgorithm.class,
+				graph.getAttribute(Graph.Attr.LAYOUT.toString()).getClass());
 		Assert.assertEquals(TreeLayoutAlgorithm.LEFT_RIGHT,
-				((TreeLayoutAlgorithm) (graph.getLayoutAlgorithm()))
-						.getDirection());
+				((TreeLayoutAlgorithm) (graph.getAttribute(Graph.Attr.LAYOUT
+						.toString()))).getDirection());
 		new DotImport("rankdir=TD").into(graph);
-		Assert.assertEquals(TreeLayoutAlgorithm.class, graph
-				.getLayoutAlgorithm().getClass());
+		Assert.assertEquals(TreeLayoutAlgorithm.class,
+				graph.getAttribute(Graph.Attr.LAYOUT.toString()).getClass());
 		Assert.assertEquals(TreeLayoutAlgorithm.TOP_DOWN,
-				((TreeLayoutAlgorithm) (graph.getLayoutAlgorithm()))
-						.getDirection());
+				((TreeLayoutAlgorithm) (graph.getAttribute(Graph.Attr.LAYOUT
+						.toString()))).getDirection());
 	}
 
 	@Test
 	public void addStyledEdge() {
 		Graph graph = new Graph();
-		Assert.assertEquals(ZestStyle.NONE, graph.getConnectionStyle());
+		Assert.assertNull(graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 		assertNodesEdgesCount(0, 0, graph);
 		new DotImport("1->2[style=dashed label=dashed]").into(graph);
 		assertNodesEdgesCount(2, 1, graph);
-		GraphConnection edge = (GraphConnection) graph.getConnections().get(0);
-		Assert.assertEquals(ZestStyle.LINE_DASH, edge.getLineStyle());
-		Assert.assertEquals("dashed", edge.getText());
+		Iterator<Edge> iterator = graph.getEdges().iterator();
+		Edge edge = iterator.next();
+		Assert.assertEquals(ZestStyle.LINE_DASH,
+				edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals("dashed",
+				edge.getAttribute(Graph.Attr.LABEL.toString()));
 		new DotImport("2->3[style=dotted label=dotted]").into(graph);
 		assertNodesEdgesCount(3, 2, graph);
-		edge = (GraphConnection) graph.getConnections().get(1);
-		Assert.assertEquals(ZestStyle.LINE_DOT, edge.getLineStyle());
-		Assert.assertEquals("dotted", edge.getText());
+		iterator = graph.getEdges().iterator();
+		iterator.next();
+		edge = iterator.next();
+		Assert.assertEquals(ZestStyle.LINE_DOT,
+				edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals("dotted",
+				edge.getAttribute(Graph.Attr.LABEL.toString()));
 	}
 
 	@Test
 	public void addStyledNode() {
 		Graph graph = new Graph();
-		Assert.assertEquals(ZestStyle.NONE, graph.getConnectionStyle());
+		Assert.assertNull(graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 		assertNodesEdgesCount(0, 0, graph);
 		new DotImport("1[label=one]").into(graph);
 		assertNodesEdgesCount(1, 0, graph);
-		GraphNode node = (GraphNode) graph.getNodes().get(0);
-		Assert.assertEquals("one", node.getText());
+		List<Node> list = graph.getNodes();
+		Assert.assertEquals("one",
+				list.get(0).getAttribute(Graph.Attr.LABEL.toString()));
 		new DotImport("2[label=two]; 3[label=three]").into(graph);
 		assertNodesEdgesCount(3, 0, graph);
+		list = graph.getNodes();
 		Assert.assertEquals("two",
-				((GraphNode) graph.getNodes().get(1)).getText());
+				list.get(1).getAttribute(Graph.Attr.LABEL.toString()));
 		Assert.assertEquals("three",
-				((GraphNode) graph.getNodes().get(2)).getText());
+				list.get(2).getAttribute(Graph.Attr.LABEL.toString()));
 	}
 
 	private void assertNodesEdgesCount(int n, int e, Graph graph) {
 		Assert.assertEquals(n, graph.getNodes().size());
-		Assert.assertEquals(e, graph.getConnections().size());
+		Assert.assertEquals(e, graph.getEdges().size());
 	}
 }

@@ -1,78 +1,74 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Fabian Steeg. All rights reserved. This program and
+ * the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
+ *******************************************************************************/
 package org.eclipse.gef4.graph;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.graph.internal.dot.DotImport;
+import org.eclipse.gef4.graph.internal.dot.GraphCreatorInterpreter;
+import org.eclipse.gef4.graph.internal.dot.export.DotExport;
 
 public class Graph {
 
+	private List<Node> nodes = new ArrayList<Node>();
+	private List<Edge> edges = new ArrayList<Edge>();
+	private Map<String, Object> attr = new HashMap<String, Object>();
+
+	public static enum Attr {
+		NODE_STYLE, EDGE_STYLE, LABEL, STYLE, DATA, IMAGE, LAYOUT
+	}
+
 	public Graph() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public Object getNodeStyle() {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph(String dot) {
+		new GraphCreatorInterpreter().create(new DotImport(dot).getDotAst(),
+				this);
 	}
 
-	public void setNodeStyle(Object nodeStyle) {
-		// TODO Auto-generated method stub
-
+	public List<Edge> getEdges() {
+		return edges;
 	}
 
-	public Object getConnectionStyle() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Node> getNodes() {
+		return nodes;
 	}
 
-	public void setConnectionStyle(Object connectionStyle) {
-		// TODO Auto-generated method stub
-
+	public Graph withNodes(Node... nodes) {
+		this.nodes.addAll(Arrays.asList(nodes));
+		return this;
 	}
 
-	public LayoutAlgorithm getLayoutAlgorithm() {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph withEdges(Edge... edges) {
+		this.edges.addAll(Arrays.asList(edges));
+		return this;
 	}
 
-	public void setLayoutAlgorithm(Object layoutAlgorithm, boolean b) {
-		// TODO Auto-generated method stub
-
+	public Object getAttribute(String key) {
+		return attr.get(key);
 	}
 
-	public List<Object> getConnections() {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph withAttribute(String key, Object value) {
+		attr.put(key, value);
+		return this;
 	}
 
-	public List<Object> getNodes() {
-		// TODO Auto-generated method stub
-		return null;
+	public Graph withDot(String dot) {
+		new DotImport(dot).into(this);
+		return this;
 	}
 
-	public void update() {
-		// TODO Auto-generated method stub
-
+	public String toDot() {
+		return new DotExport(this).toDotString();
 	}
-
-	public void setText(String value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setData(String name, String value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Object getStyle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object getData(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

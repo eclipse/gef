@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Scanner;
 
-import org.eclipse.core.runtime.FileLocator;
-
 /**
  * Static helper methods for working with files.
  * 
@@ -45,11 +43,8 @@ public final class DotFileUtils {
 		 * NullPointerException if the URL is a normal file URL.
 		 */
 		if (!url.getProtocol().equals("file")) { //$NON-NLS-1$
-			try {
-				resolved = FileLocator.resolve(resolved);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			throw new IllegalArgumentException("Unsupported protocol: " //$NON-NLS-1$
+					+ url.getProtocol());
 		}
 		try {
 			resultFile = new File(resolved.toURI());
@@ -147,8 +142,7 @@ public final class DotFileUtils {
 				File destinationFolder = new File(destinationRootFolder,
 						source.getName());
 				if (!destinationFolder.mkdirs() && !destinationFolder.exists()) {
-					throw new IllegalStateException(DotMessages.DotFileUtils_0
-							+ ": " //$NON-NLS-1$
+					throw new IllegalStateException("Could not create" + ": " //$NON-NLS-1$ //$NON-NLS-2$
 							+ destinationFolder);
 				}
 				copyAllFiles(source, destinationFolder);

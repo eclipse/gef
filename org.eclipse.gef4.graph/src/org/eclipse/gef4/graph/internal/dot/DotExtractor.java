@@ -9,11 +9,9 @@
 package org.eclipse.gef4.graph.internal.dot;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
 
 /**
@@ -32,17 +30,6 @@ public final class DotExtractor {
 	 */
 	public DotExtractor(final String input) {
 		this.input = input;
-	}
-
-	/**
-	 * @param file
-	 *            The file to extract a DOT substring from
-	 * @throws MalformedURLException
-	 *             If the file cannot be resolved
-	 */
-	public DotExtractor(final IFile file) throws MalformedURLException {
-		this(DotFileUtils.read(DotFileUtils.resolve(file.getLocationURI()
-				.toURL())));
 	}
 
 	/**

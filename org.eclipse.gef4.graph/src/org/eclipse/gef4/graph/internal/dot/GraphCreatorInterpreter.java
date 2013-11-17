@@ -16,9 +16,9 @@ import java.util.Map;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.GraphConnection;
-import org.eclipse.gef4.graph.GraphNode;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.DotAst.Layout;
 import org.eclipse.gef4.graph.internal.dot.DotAst.Style;
 import org.eclipse.gef4.graph.internal.dot.parser.dot.AList;
@@ -45,7 +45,7 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
  */
 public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
-	private Map<String, GraphNode> nodes;
+	private Map<String, Node> nodes;
 	private Graph graph;
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
@@ -66,7 +66,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 							.errors().toString()));
 		}
 		this.graph = graph;
-		nodes = new HashMap<String, GraphNode>();
+		nodes = new HashMap<String, Node>();
 		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(
 				dotAst.resource(), false);
 		while (contents.hasNext()) {
@@ -91,9 +91,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 				&& object.getValue().equals("LR")) { //$NON-NLS-1$
 			TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm(
 					TreeLayoutAlgorithm.LEFT_RIGHT);
-			graph.setLayoutAlgorithm(algorithm, true);
+			graph.withAttribute(Graph.Attr.LAYOUT.toString(), algorithm);
 		} else if (graph != null && object.getName().equals("label")) { //$NON-NLS-1$
-			graph.setText(object.getValue());
+			graph.withAttribute(Graph.Attr.LABEL.toString(), object.getValue());
 		}
 		return super.caseAttribute(object);
 	}
@@ -134,23 +134,28 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	}
 
 	private void addConnectionTo(String targetNodeId) {
-		GraphConnection graphConnection = new GraphConnection(graph,
-				node(currentEdgeSourceNodeId), node(targetNodeId));
+		Edge graphConnection = new Edge(node(currentEdgeSourceNodeId),
+				node(targetNodeId));
 		/* Set the optional label, if set in the DOT input: */
 		if (currentEdgeLabelValue != null) {
-			graphConnection.setText(currentEdgeLabelValue);
+			graphConnection.withAttribute(Graph.Attr.LABEL.toString(),
+					currentEdgeLabelValue);
 		} else if (globalEdgeLabel != null) {
-			graphConnection.setText(globalEdgeLabel);
+			graphConnection.withAttribute(Graph.Attr.LABEL.toString(),
+					globalEdgeLabel);
 		}
 		/* Set the optional style, if set in the DOT input: */
 		if (currentEdgeStyleValue != null) {
 			Style v = Enum.valueOf(Style.class,
 					currentEdgeStyleValue.toUpperCase());
-			graphConnection.setLineStyle(v.style);
+			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+					v.style);
 		} else if (globalEdgeStyle != null) {
 			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
-			graphConnection.setLineStyle(v.style);
+			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+					v.style);
 		}
+		graph.withEdges(graphConnection);
 	}
 
 	@Override
@@ -168,10 +173,12 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	// private implementation of the cases above
 
 	private void createGraph(MainGraph object) {
-		graph.setLayoutAlgorithm(new TreeLayoutAlgorithm(), true);
+		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm());
 		GraphType graphType = object.getType();
-		graph.setConnectionStyle(graphType == GraphType.DIGRAPH ? ZestStyle.CONNECTIONS_DIRECTED
-				: ZestStyle.CONNECTIONS_SOLID);
+		graph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
+				graphType == GraphType.DIGRAPH ? ZestStyle.CONNECTIONS_DIRECTED
+						: ZestStyle.CONNECTIONS_SOLID);
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {
@@ -188,13 +195,14 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		}
 		case GRAPH: {
 			for (AList a : attrStmt.getAttributes().get(0).getA_list()) {
-				graph.setData(a.getName(), a.getValue());
+				graph.withAttribute(a.getName(), a.getValue());
 			}
 			String graphLayout = getAttributeValue(attrStmt, "layout"); //$NON-NLS-1$
 			if (graphLayout != null) {
 				Layout layout = Enum.valueOf(Layout.class,
 						graphLayout.toUpperCase());
-				graph.setLayoutAlgorithm(layout.algorithm, true);
+				graph.withAttribute(Graph.Attr.LAYOUT.toString(),
+						layout.algorithm);
 			}
 			break;
 		}
@@ -203,25 +211,32 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		String nodeId = escaped(nodeStatement.getName());
-		GraphNode node = nodes.containsKey(nodeId) ? nodes.get(nodeId)
-				: new GraphNode(graph);
-		node.setText(nodeId);
-		node.setData(nodeId);
+		Node node = null;
+		if (nodes.containsKey(nodeId)) {
+			node = nodes.get(nodeId);
+		} else {
+			node = new Node()
+					.withAttribute(Graph.Attr.LABEL.toString(), nodeId)
+					.withAttribute(Graph.Attr.DATA.toString(), nodeId);
+			graph = graph.withNodes(node);
+		}
 		String value = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
 		if (value != null) {
-			node.setText(value);
+			node = node.withAttribute(Graph.Attr.LABEL.toString(), value);
 		} else if (globalNodeLabel != null) {
-			node.setText(globalNodeLabel);
+			node = node.withAttribute(Graph.Attr.LABEL.toString(),
+					globalNodeLabel);
 		}
 		nodes.put(nodeId, node);
 	}
 
-	private GraphNode node(String id) {
+	private Node node(String id) {
 		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
-			GraphNode node = new GraphNode(graph,
-					globalNodeLabel != null ? globalNodeLabel : id);
-			node.setData(id);
+			Node node = new Node().withAttribute(Graph.Attr.LABEL.toString(),
+					globalNodeLabel != null ? globalNodeLabel : id)
+					.withAttribute(Graph.Attr.DATA.toString(), id);
 			nodes.put(id, node);
+			graph = graph.withNodes(node);
 		}
 		return nodes.get(id);
 	}

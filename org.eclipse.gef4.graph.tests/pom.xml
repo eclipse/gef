@@ -49,27 +49,18 @@
 	</profiles>
 	<build>
 		<plugins>
-			<!-- plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<useUIHarness>true</useUIHarness>
-					<useUIThread>true</useUIThread>
+					<useUIHarness>false</useUIHarness>
+					<useUIThread>false</useUIThread>
 					<argLine>${vmargs}</argLine>
 					<testSuite>org.eclipse.gef4.graph.tests</testSuite>
-					<testClass>org.eclipse.gef4.graph.tests.AllTests</testClass>
-					<product>org.eclipse.platform.ide</product>
-					<application>org.eclipse.ui.ide.workbench</application>
-					<dependencies>
-						<dependency>
-							<type>p2-installable-unit</type>
-							<artifactId>org.eclipse.platform.ide</artifactId>
-							<version>0.0.0</version>
-						</dependency>
-					</dependencies>
+					<testClass>org.eclipse.gef4.graph.tests.AllHeadlessTests</testClass>
 				</configuration>
-			</plugin -->
+			</plugin>
 		</plugins>
 	</build>
 </project>

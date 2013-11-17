@@ -10,11 +10,10 @@
 package org.eclipse.gef4.graph.internal.dot;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
 
 /**
  * Transformation of DOT files or strings to Zest Graph instances.
@@ -30,22 +29,8 @@ public final class DotImport {
 	 *            The DOT file to import
 	 */
 	public DotImport(final File dotFile) {
-		this.dotString = DotCoreFileUtils.read(dotFile);
+		this.dotString = DotFileUtils.read(dotFile);
 		load();
-	}
-
-	/**
-	 * @param dotFile
-	 *            The DOT file to import
-	 */
-	public DotImport(final IFile dotFile) {
-		try {
-			this.dotString = DotCoreFileUtils.read(DotCoreFileUtils
-					.resolve(dotFile.getLocationURI().toURL()));
-			load();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
