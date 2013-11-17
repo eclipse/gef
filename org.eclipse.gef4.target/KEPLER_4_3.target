@@ -6,7 +6,7 @@
 <repository location="http://download.eclipse.org/eclipse/updates/4.3"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.9.0.201311150807"/>
+<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
