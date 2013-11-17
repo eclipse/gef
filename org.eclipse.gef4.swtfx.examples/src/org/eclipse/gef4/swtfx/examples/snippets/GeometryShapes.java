@@ -1,6 +1,5 @@
 package org.eclipse.gef4.swtfx.examples.snippets;
 
-import javafx.embed.swt.FXCanvas;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,17 +13,26 @@ import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
+import org.eclipse.gef4.swtfx.GeomShape;
 import org.eclipse.gef4.swtfx.SwtFXScene;
-import org.eclipse.gef4.swtfx.SwtFXShape;
 import org.eclipse.gef4.swtfx.controls.SwtFXButton;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
 
-public class ShapeTest {
-	private static SwtFXScene createScene() {
+public class GeometryShapes extends SwtFXApplication {
+	public static void main(String[] args) {
+		new GeometryShapes();
+	}
+
+	private static <T extends IShape> GeomShape<T> shape(T shape,
+			double r, double g, double b) {
+		GeomShape<T> fxShape = new GeomShape<T>(shape);
+		fxShape.setFill(new Color(r, g, b, 1));
+		fxShape.setStroke(new Color(0, 0, 0, 1));
+		return fxShape;
+	}
+
+	@Override
+	public SwtFXScene createScene() {
 		HBox hbox = new HBox();
 		VBox col1 = new VBox();
 		VBox col2 = new VBox();
@@ -43,34 +51,7 @@ public class ShapeTest {
 				new SwtFXButton("foobar"),
 				shape(new RoundedRectangle(0, 0, 100, 100, 10, 10), 1, 0, 1));
 
-		// create scene (and set scene size)
 		return new SwtFXScene(hbox, 400, 300);
-	}
-
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
-		FXCanvas canvas = new SwtFXCanvas(shell, SWT.NONE);
-
-		SwtFXScene scene = createScene();
-		canvas.setScene(scene);
-
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
-	}
-
-	private static <T extends IShape> SwtFXShape<T> shape(T shape, double r,
-			double g, double b) {
-		SwtFXShape<T> fxShape = new SwtFXShape<T>(shape);
-		fxShape.setFill(new Color(r, g, b, 1));
-		fxShape.setStroke(new Color(0, 0, 0, 1));
-		return fxShape;
 	}
 
 }

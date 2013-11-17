@@ -59,8 +59,8 @@ public class SwtFXScene extends javafx.scene.Scene {
 
 		while (!nodes.isEmpty()) {
 			Node node = nodes.remove(0);
-			if (node instanceof SwtFXControlAdapter) {
-				((SwtFXControlAdapter<?>) node).canvasChanged(old, canvas);
+			if (node instanceof AbstractSwtFXControl) {
+				((AbstractSwtFXControl<?>) node).canvasChanged(old, canvas);
 			}
 			if (node instanceof Parent) {
 				nodes.addAll(((Parent) node).getChildrenUnmodifiable());

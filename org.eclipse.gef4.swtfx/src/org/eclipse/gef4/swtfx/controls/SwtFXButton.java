@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 
+import org.eclipse.gef4.swtfx.AbstractSwtFXControl;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;

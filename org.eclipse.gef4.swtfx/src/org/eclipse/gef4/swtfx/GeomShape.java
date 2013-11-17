@@ -12,7 +12,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class SwtFXShape<T extends IShape> extends Path {
+public class GeomShape<T extends IShape> extends Path {
 
 	private static PathElement[] toPathElements(IShape shape) {
 		Segment[] segments = shape.toPath().getSegments();
@@ -47,7 +47,7 @@ public class SwtFXShape<T extends IShape> extends Path {
 
 	private T shape;
 
-	public SwtFXShape(T shape) {
+	public GeomShape(T shape) {
 		super(toPathElements(shape));
 		this.shape = shape;
 	}
