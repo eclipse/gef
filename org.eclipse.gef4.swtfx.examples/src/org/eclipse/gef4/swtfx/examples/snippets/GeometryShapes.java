@@ -13,7 +13,7 @@ import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
-import org.eclipse.gef4.swtfx.GeomShape;
+import org.eclipse.gef4.swtfx.GeometryNode;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXButton;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
@@ -23,9 +23,9 @@ public class GeometryShapes extends SwtFXApplication {
 		new GeometryShapes();
 	}
 
-	private static <T extends IShape> GeomShape<T> shape(T shape,
-			double r, double g, double b) {
-		GeomShape<T> fxShape = new GeomShape<T>(shape);
+	private static <T extends IShape> GeometryNode<T> shape(T shape, double r,
+			double g, double b) {
+		GeometryNode<T> fxShape = new GeometryNode<T>(shape);
 		fxShape.setFill(new Color(r, g, b, 1));
 		fxShape.setStroke(new Color(0, 0, 0, 1));
 		return fxShape;

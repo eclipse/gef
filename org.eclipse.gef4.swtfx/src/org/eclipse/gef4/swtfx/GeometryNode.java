@@ -8,14 +8,14 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
-import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class GeomShape<T extends IShape> extends Path {
+public class GeometryNode<T extends IGeometry> extends Path {
 
-	private static PathElement[] toPathElements(IShape shape) {
-		Segment[] segments = shape.toPath().getSegments();
+	private static PathElement[] toPathElements(IGeometry geom) {
+		Segment[] segments = geom.toPath().getSegments();
 		PathElement[] elements = new PathElement[segments.length];
 		for (int i = 0; i < segments.length; i++) {
 			Point[] points = segments[i].getPoints();
@@ -45,15 +45,15 @@ public class GeomShape<T extends IShape> extends Path {
 		return elements;
 	}
 
-	private T shape;
+	private T geom;
 
-	public GeomShape(T shape) {
-		super(toPathElements(shape));
-		this.shape = shape;
+	public GeometryNode(T geom) {
+		super(toPathElements(geom));
+		this.geom = geom;
 	}
 
-	public T getShape() {
-		return shape;
+	public T getGeometry() {
+		return geom;
 	}
 
 }

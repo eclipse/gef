@@ -14,7 +14,7 @@ import javafx.scene.shape.Shape;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Polygon;
-import org.eclipse.gef4.swtfx.GeomShape;
+import org.eclipse.gef4.swtfx.GeometryNode;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXButton;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
@@ -23,7 +23,7 @@ public class SwtFXLayoutSnippet extends SwtFXApplication {
 
 	private static <T extends IShape> Node gef4shape(T shape, double r,
 			double g, double b) {
-		GeomShape<T> node = new GeomShape<T>(shape);
+		GeometryNode<T> node = new GeometryNode<T>(shape);
 		node.setFill(new Color(r, g, b, 1));
 		node.setStroke(new Color(0, 0, 0, 1));
 		return node;
