@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<groupId>org.eclipse.gef4</groupId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.gef4.releng</relativePath>
+	</parent>
+	<groupId>org.eclipse.gef4</groupId>
+	<artifactId>org.eclipse.gef4.graph.tests</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>eclipse-test-plugin</packaging>
+	<properties>
+		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
+	</properties>
+	<repositories>
+		<repository>
+			<id>juno</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/juno/</url>
+		</repository>
+	</repositories>
+	<profiles>
+		<profile>
+			<id>skip-tests</id>
+			<activation>
+				<property>
+					<name>skip-tests</name>
+				</property>
+			</activation>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>mac-customization</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<vmargs>-Xmx1024m -XX:MaxPermSize=512m -XstartOnFirstThread</vmargs>
+			</properties>
+		</profile>
+	</profiles>
+	<build>
+		<plugins>
+			<!-- plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
+					<argLine>${vmargs}</argLine>
+					<testSuite>org.eclipse.gef4.graph.tests</testSuite>
+					<testClass>org.eclipse.gef4.graph.tests.AllTests</testClass>
+					<product>org.eclipse.platform.ide</product>
+					<application>org.eclipse.ui.ide.workbench</application>
+					<dependencies>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.eclipse.platform.ide</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+					</dependencies>
+				</configuration>
+			</plugin -->
+		</plugins>
+	</build>
+</project>

@@ -10,3 +10,5 @@ org.eclipse.gef4.zest.dot.ui/Graphviz_DOT_as_a_DSL_for_Zest
 org.eclipse.gef4.zest.dot.ui/Zest
 org.eclipse.gef4.zest.dot.ui/*-toc.xml
 src-gen
+*.orig
+org.eclipse.gef4.graph.ui
