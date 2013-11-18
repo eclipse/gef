@@ -248,8 +248,8 @@
 		<module>../org.eclipse.gef4.swtfx</module>
 		<module>../org.eclipse.gef4.swtfx-feature</module>
 		<module>../org.eclipse.gef4.swtfx.source-feature</module>
-		<module>../org.eclipse.gef4.swtfx.tests</module>
-		<module>../org.eclipse.gef4.swtfx.tests-feature</module>
+		<!-- <module>../org.eclipse.gef4.swtfx.tests</module>
+		<module>../org.eclipse.gef4.swtfx.tests-feature</module> -->
 		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
