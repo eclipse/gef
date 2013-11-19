@@ -27,9 +27,6 @@
    <feature url="features/org.eclipse.gef4.swtfx.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.sdk" version="0.1.0.qualifier">
       <category name="GEF4 SwtFX"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.swtfx.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.swtfx.tests" version="0.1.0.qualifier">
-      <category name="GEF4 SwtFX"/>
-   </feature>
    <feature url="features/org.eclipse.gef4.cloudio_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio" version="0.1.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
