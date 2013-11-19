@@ -16,7 +16,7 @@ public class FXDragTool extends AbstractDragTool<Node> {
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			for(IEditPart<Node> selected : (List<IEditPart<Node>>)getDomain().getProperty(SelectionModel.class).getSelectedParts()){
+			for(IEditPart<Node> selected : (List<IEditPart<Node>>)getDomain().getProperty(SelectionModel.class).getSelection()){
 				initDrag(selected, new Point(event.getScreenX(),
 						event.getScreenY()));
 			}
@@ -28,7 +28,7 @@ public class FXDragTool extends AbstractDragTool<Node> {
 
 		@Override
 		public void handle(MouseEvent event) {
-			for(IEditPart<Node> selected : (List<IEditPart<Node>>)getDomain().getProperty(SelectionModel.class).getSelectedParts()){
+			for(IEditPart<Node> selected : (List<IEditPart<Node>>)getDomain().getProperty(SelectionModel.class).getSelection()){
 				commitDrag(selected,
 						new Point(event.getScreenX(), event.getScreenY()));
 			}

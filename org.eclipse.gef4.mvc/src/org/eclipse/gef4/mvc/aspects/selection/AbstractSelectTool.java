@@ -9,6 +9,7 @@ import org.eclipse.gef4.mvc.tools.AbstractTool;
 
 public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setDomain(IEditDomain<V> domain) {
 		super.setDomain(domain);
@@ -34,7 +35,7 @@ public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 		SelectionModel<V> selectionModel = getSelectionModel();
 		// retrieve old selection
 		List<IEditPart<V>> oldSelection = new ArrayList<IEditPart<V>>(
-				selectionModel.getSelectedParts());
+				selectionModel.getSelection());
 		// determine new selection
 		if (targetEditPart == null) {
 			// remove all selected
@@ -63,7 +64,7 @@ public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
 			}
 		}
 		// handle adjustment of selection feedback (via edit policy)
-		List<IEditPart<V>> newSelection = selectionModel.getSelectedParts();
+		List<IEditPart<V>> newSelection = selectionModel.getSelection();
 		oldSelection.removeAll(newSelection);
 		adjustFeedback(oldSelection, newSelection);
 		
