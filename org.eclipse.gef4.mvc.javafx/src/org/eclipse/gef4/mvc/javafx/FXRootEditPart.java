@@ -30,7 +30,7 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 		if (getViewer() != null) {
 			unregisterVisual();
 		}
-		if (!(newViewer instanceof FXViewer)) {
+		if (newViewer != null && !(newViewer instanceof FXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setViewer(newViewer);
