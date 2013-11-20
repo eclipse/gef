@@ -29,7 +29,7 @@ public class FXViewer extends AbstractEditPartViewer<Node> {
 		}
 	}
 
-	protected FXCanvas getCanvas() {
+	public FXCanvas getCanvas() {
 		return canvas;
 	}
 	
