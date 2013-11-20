@@ -477,7 +477,9 @@ public abstract class AbstractNodeEditPart<V> extends
 				reorderSourceConnection(editPart, i);
 			else {
 				editPart = findConnection(model);
-				addSourceConnection(editPart, i);
+				if (editPart != null) {
+					addSourceConnection(editPart, i);
+				}
 			}
 		}
 
@@ -543,7 +545,9 @@ public abstract class AbstractNodeEditPart<V> extends
 				reorderTargetConnection(editPart, i);
 			else {
 				editPart = findConnection(model);
-				addTargetConnection(editPart, i);
+				if (editPart != null) {
+					addTargetConnection(editPart, i);
+				}
 			}
 		}
 

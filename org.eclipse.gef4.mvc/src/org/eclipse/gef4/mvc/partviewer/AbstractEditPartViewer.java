@@ -112,14 +112,16 @@ public abstract class AbstractEditPartViewer<V> implements IEditPartViewer<V> {
 	/**
 	 * @see IEditPartViewer#setRootEditPart(IRootEditPart)
 	 */
-	public void setRootEditPart(IRootEditPart<V> editpart) {
-		if (rootEditPart != null) {
-			rootEditPart.deactivate();
-			rootEditPart.setViewer(null);
+	public void setRootEditPart(IRootEditPart<V> rootEditPart) {
+		if (this.rootEditPart != null) {
+			this.rootEditPart.deactivate();
+			this.rootEditPart.setViewer(null);
 		}
-		rootEditPart = editpart;
-		rootEditPart.setViewer(this);
-		rootEditPart.activate();
+		this.rootEditPart = rootEditPart;
+		if(this.rootEditPart != null) {
+			this.rootEditPart.setViewer(this);
+			this.rootEditPart.activate();
+		}
 	}
 
 }
