@@ -4,8 +4,8 @@ Bundle-Name: GEF4 MVC
 Bundle-SymbolicName: org.eclipse.gef4.mvc
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.mvc.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.commands;bundle-version="3.6.100",
  org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
