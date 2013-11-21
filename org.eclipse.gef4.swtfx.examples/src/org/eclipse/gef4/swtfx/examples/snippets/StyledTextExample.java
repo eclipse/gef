@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
 import javafx.event.ActionEvent;
@@ -66,7 +78,7 @@ public class StyledTextExample extends SwtFXApplication {
 
 		// create toolbar
 		Button whiteBlackButton = new Button("white/black");
-		Button yellowGrayButton = new Button("orange/gray");
+		Button yellowGrayButton = new Button("yellow/gray");
 		Button boldButton = new Button("Bold");
 		Button italicButton = new Button("Italic");
 		Button underlineButton = new Button("Underline");
