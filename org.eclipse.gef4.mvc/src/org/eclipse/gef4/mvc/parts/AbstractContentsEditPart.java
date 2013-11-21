@@ -61,13 +61,14 @@ public abstract class AbstractContentsEditPart<V> extends AbstractEditPart<V>
 		if (this.parent == parent)
 			return;
 
+		if(this.parent != null){
+			unregisterVisual();
+			unregisterModel();
+		}
 		this.parent = parent;
 		if (this.parent != null) {
 			registerModel();
 			registerVisual();
-		} else {
-			unregisterVisual();
-			unregisterModel();
 		}
 	}
 
