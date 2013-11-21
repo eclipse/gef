@@ -13,7 +13,6 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef4.mvc.commands.AbstractCommand;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
 /**

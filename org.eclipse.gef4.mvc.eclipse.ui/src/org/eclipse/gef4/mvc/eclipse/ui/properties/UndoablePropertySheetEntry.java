@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
-import java.util.EventObject;
-
-import org.eclipse.gef4.mvc.commands.CommandStack;
-import org.eclipse.gef4.mvc.commands.ICommandStackListener;
-import org.eclipse.gef4.mvc.commands.CompoundCommand;
-import org.eclipse.gef4.mvc.commands.ForwardUndoCompoundCommand;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.gef4.mvc.commands.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.commands.ReverseUndoCompositeOperation;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 
@@ -34,9 +36,8 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
  */
 public class UndoablePropertySheetEntry extends PropertySheetEntry {
 
-	private ICommandStackListener commandStackListener;
-
-	private CommandStack commandStack;
+	private IOperationHistory operationHistory;
+	private IOperationHistoryListener operationHistoryListener;
 
 	/**
 	 * Constructs a non-root, i.e. child entry, which may obtain the command
@@ -50,18 +51,20 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	/**
 	 * Constructs the root entry using the given command stack.
 	 * 
-	 * @param commandStack
+	 * @param operationHistory
 	 *            the command stack to use
 	 * @since 3.1
 	 */
-	public UndoablePropertySheetEntry(CommandStack commandStack) {
-		this.commandStack = commandStack;
-		this.commandStackListener = new ICommandStackListener() {
-			public void commandStackChanged(EventObject e) {
+	public UndoablePropertySheetEntry(IOperationHistory operationHistory) {
+		this.operationHistory = operationHistory;
+		this.operationHistoryListener = new IOperationHistoryListener() {
+
+			@Override
+			public void historyNotification(OperationHistoryEvent event) {
 				refreshFromRoot();
 			}
 		};
-		this.commandStack.addCommandStackListener(commandStackListener);
+		this.operationHistory.addOperationHistoryListener(operationHistoryListener);
 	}
 
 	/**
@@ -75,8 +78,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
 	 */
 	public void dispose() {
-		if (commandStack != null)
-			commandStack.removeCommandStackListener(commandStackListener);
+		if (operationHistory != null)
+			operationHistory.removeOperationHistoryListener(operationHistoryListener);
 		super.dispose();
 	}
 
@@ -87,18 +90,18 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @return the {@link CommandStack} to be used.
 	 * @since 3.7
 	 */
-	protected CommandStack getCommandStack() {
+	protected IOperationHistory getOperationHistory() {
 		// only the root has, and is listening too, the command stack
 		if (getParent() != null)
-			return ((UndoablePropertySheetEntry) getParent()).getCommandStack();
-		return commandStack;
+			return ((UndoablePropertySheetEntry) getParent()).getOperationHistory();
+		return operationHistory;
 	}
 
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
 	 */
 	public void resetPropertyValue() {
-		CompoundCommand cc = new CompoundCommand();
+		ICompositeOperation cc = new ReverseUndoCompositeOperation("");
 		if (getParent() == null)
 			// root does not have a default value
 			return;
@@ -109,16 +112,20 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 		for (int i = 0; i < objects.length; i++) {
 			IPropertySource source = getPropertySource(objects[i]);
 			if (source.isPropertySet(getDescriptor().getId())) {
-				SetPropertyValueCommand restoreCmd = new SetPropertyValueCommand(
+				SetPropertyValueOperation restoreCmd = new SetPropertyValueOperation(
 						getDescriptor().getDisplayName(), source,
 						getDescriptor().getId(),
-						SetPropertyValueCommand.DEFAULT_VALUE);
+						SetPropertyValueOperation.DEFAULT_VALUE);
 				cc.add(restoreCmd);
 				change = true;
 			}
 		}
 		if (change) {
-			getCommandStack().execute(cc);
+			try {
+				getOperationHistory().execute(cc, new NullProgressMonitor(), null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 			refreshFromRoot();
 		}
 	}
@@ -128,17 +135,17 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 */
 	protected void valueChanged(PropertySheetEntry child) {
 		valueChanged((UndoablePropertySheetEntry) child,
-				new ForwardUndoCompoundCommand());
+				new ForwardUndoCompositeOperation(""));
 	}
 
 	private void valueChanged(UndoablePropertySheetEntry child,
-			CompoundCommand command) {
-		CompoundCommand cc = new CompoundCommand();
+			ICompositeOperation command) {
+		ICompositeOperation cc = new ReverseUndoCompositeOperation("");
 		command.add(cc);
 
-		SetPropertyValueCommand setCommand;
+		SetPropertyValueOperation setCommand;
 		for (int i = 0; i < getValues().length; i++) {
-			setCommand = new SetPropertyValueCommand(child.getDisplayName(),
+			setCommand = new SetPropertyValueOperation(child.getDisplayName(),
 					getPropertySource(getValues()[i]), child.getDescriptor()
 							.getId(), child.getValues()[i]);
 			cc.add(setCommand);
@@ -150,7 +157,11 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 					command);
 		else {
 			// I am the root entry
-			commandStack.execute(command);
+			try {
+				operationHistory.execute(command, new NullProgressMonitor(), null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

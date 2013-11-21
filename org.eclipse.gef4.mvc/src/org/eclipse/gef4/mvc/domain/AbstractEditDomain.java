@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.commands.CommandStack;
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 import org.eclipse.gef4.mvc.tools.ITool;
 
@@ -31,7 +32,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	private IEditPartViewer<V> viewer;
 	private Map<Class<? extends Object>, Object> properties;
 
-	private CommandStack commandStack = new CommandStack();
+	private IOperationHistory operationHistory = new DefaultOperationHistory();
 
 	/**
 	 * Constructs an EditDomain and loads the default tool.
@@ -87,8 +88,8 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * @see org.eclipse.gef.ui.parts.IEditDomain#getCommandStack()
 	 */
 	@Override
-	public CommandStack getCommandStack() {
-		return commandStack;
+	public IOperationHistory getOperationHistory() {
+		return operationHistory;
 	}
 
 	protected abstract List<ITool<V>> getDefaultTools();
@@ -106,8 +107,8 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * commands.CommandStack)
 	 */
 	@Override
-	public void setCommandStack(CommandStack stack) {
-		commandStack = stack;
+	public void setOperationHistory(IOperationHistory stack) {
+		operationHistory = stack;
 	}
 
 	/*

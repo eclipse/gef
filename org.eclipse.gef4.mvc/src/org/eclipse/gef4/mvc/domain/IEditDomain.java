@@ -2,7 +2,7 @@ package org.eclipse.gef4.mvc.domain;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.commands.CommandStack;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 import org.eclipse.gef4.mvc.tools.ITool;
 
@@ -35,7 +35,7 @@ public interface IEditDomain<V> {
 	 * 
 	 * @return The command stack
 	 */
-	public abstract CommandStack getCommandStack();
+	public abstract IOperationHistory getOperationHistory();
 
 	public IEditPartViewer<V> getViewer();
 
@@ -45,7 +45,7 @@ public interface IEditDomain<V> {
 	 * @param stack
 	 *            the CommandStack
 	 */
-	public abstract void setCommandStack(CommandStack stack);
+	public abstract void setOperationHistory(IOperationHistory stack);
 
 	/**
 	 * Sets the active Tool for this EditDomain. If a current Tool is active, it

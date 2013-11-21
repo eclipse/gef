@@ -11,9 +11,9 @@
 
 package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
-import org.eclipse.gef4.mvc.commands.CommandStack;
-import org.eclipse.gef4.mvc.commands.CommandStackEvent;
-import org.eclipse.gef4.mvc.commands.ICommandStackEventListener;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -25,14 +25,14 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class UndoablePropertySheetPage extends PropertySheetPage {
 
-	private final CommandStack commandStack;
-	private final ICommandStackEventListener commandStackEventListener;
+	private final IOperationHistory operationHistory;
+	private final IOperationHistoryListener operationHistoryListener;
 
 	/**
 	 * Constructs a new {@link UndoablePropertySheetPage}.
 	 * 
-	 * @param commandStack
-	 *            The {@link CommandStack} shared with the editor.
+	 * @param operationHistory
+	 *            The {@link IOperationHistory} shared with the editor.
 	 * @param undoAction
 	 *            The global action handler to be registered for undo
 	 *            operations.
@@ -40,22 +40,21 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 *            The global action handler to be registered for redo
 	 *            operations.
 	 */
-	public UndoablePropertySheetPage(final CommandStack commandStack) {
-		this.commandStack = commandStack;
-		this.commandStackEventListener = new ICommandStackEventListener() {
+	public UndoablePropertySheetPage(IOperationHistory operationHistory) {
+		this.operationHistory = operationHistory;
+		this.operationHistoryListener = new IOperationHistoryListener() {
 
-			public void stackChanged(CommandStackEvent event) {
-				if (event.getDetail() == CommandStack.PRE_UNDO
-						|| event.getDetail() == CommandStack.PRE_REDO) {
-					// ensure the property sheet entry looses its current edit
-					// state, otherwise it may revert the undo/redo operation
-					// within valueChanged when the editor is activated again.
+			@Override
+			public void historyNotification(OperationHistoryEvent event) {
+				if (event.getEventType() == OperationHistoryEvent.ABOUT_TO_REDO
+						|| event.getEventType() == OperationHistoryEvent.ABOUT_TO_UNDO) {
 					refresh();
 				}
+
 			}
 		};
-		commandStack.addCommandStackEventListener(commandStackEventListener);
-		setRootEntry(new UndoablePropertySheetEntry(commandStack));
+		operationHistory.addOperationHistoryListener(operationHistoryListener);
+		setRootEntry(new UndoablePropertySheetEntry(operationHistory));
 	}
 
 	/**
@@ -64,9 +63,9 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 * @see org.eclipse.ui.views.properties.PropertySheetPage#dispose()
 	 */
 	public void dispose() {
-		if (commandStack != null)
-			commandStack
-					.removeCommandStackEventListener(commandStackEventListener);
+		if (operationHistory != null)
+			operationHistory
+					.removeOperationHistoryListener(operationHistoryListener);
 		super.dispose();
 	}
 }

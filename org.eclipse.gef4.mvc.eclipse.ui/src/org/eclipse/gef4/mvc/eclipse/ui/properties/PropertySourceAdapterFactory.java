@@ -22,6 +22,14 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		IContentsEditPart part = (IContentsEditPart) adaptableObject;
+		if(adapterType.isInstance(part)){
+			return part;
+		}
+		Object adapter = part.getAdapter(adapterType);
+		if(adapter != null){
+			return adapter;
+		}
+		
 		Object model = part.getModel();
 		// check if model is already of the desired adapter type
 		if (adapterType.isInstance(model)) {
@@ -30,7 +38,7 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 		// check if model is adaptable and does provide an adapter of the
 		// desired type
 		if (model instanceof IAdaptable) {
-			Object adapter = ((IAdaptable) model).getAdapter(adapterType);
+			adapter = ((IAdaptable) model).getAdapter(adapterType);
 			if (adapter != null) {
 				return adapter;
 			}

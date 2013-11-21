@@ -12,13 +12,19 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
 import java.text.MessageFormat;
 
-import org.eclipse.gef4.mvc.commands.AbstractCommand;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.eclipse.ui.Messages;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 
 /**
- * A command used to set or reset the value of a property.
+ * An {@link IUndoableOperation} used to set or reset the value of a property.
  * 
  * @author pshah
  * @author anyssen
@@ -26,7 +32,7 @@ import org.eclipse.ui.views.properties.IPropertySource2;
  * @since 3.7
  * 
  */
-public class SetPropertyValueCommand extends AbstractCommand {
+public class SetPropertyValueOperation extends AbstractOperation {
 
 	/**
 	 * Value constant to indicate that the property is to be reset to its
@@ -44,7 +50,7 @@ public class SetPropertyValueCommand extends AbstractCommand {
 	private IPropertySource propertySource;
 
 	/**
-	 * Constructs a new {@link SetPropertyValueCommand}.
+	 * Constructs a new {@link SetPropertyValueOperation}.
 	 * 
 	 * @param propertyLabel
 	 *            A label to identify the property whose value is set by this
@@ -60,7 +66,7 @@ public class SetPropertyValueCommand extends AbstractCommand {
 	 *            reset.
 	 * @since 3.7
 	 */
-	public SetPropertyValueCommand(String propertyLabel,
+	public SetPropertyValueOperation(String propertyLabel,
 			IPropertySource propertySource, Object propertyId, Object newValue) {
 		super(MessageFormat.format(Messages.SetPropertyValueCommand_Label,
 				new Object[] { propertyLabel }).trim());
@@ -88,47 +94,6 @@ public class SetPropertyValueCommand extends AbstractCommand {
 			return canExecute;
 		}
 		return true;
-	}
-
-	/**
-	 * @see org.eclipse.gef.commands.Command#execute()
-	 */
-	public void execute() {
-		/*
-		 * Fix for bug #54250 IPropertySource.isPropertySet(String) returns
-		 * false both when there is no default value, and when there is a
-		 * default value and the property is set to that value. To correctly
-		 * determine if a reset should be done during undo, we compare the
-		 * return value of isPropertySet(String) before and after
-		 * setPropertyValue(...) is invoked. If they are different (it must have
-		 * been false before and true after -- it cannot be the other way
-		 * around), then that means we need to reset.
-		 */
-		boolean wasPropertySet = propertySource.isPropertySet(propertyId);
-		oldValue = unwrapValue(propertySource.getPropertyValue(propertyId));
-
-		// set value of property to new value or reset the value, if specified
-		if (newValue == DEFAULT_VALUE) {
-			propertySource.resetPropertyValue(propertyId);
-		} else {
-			propertySource.setPropertyValue(propertyId, unwrapValue(newValue));
-		}
-
-		// check if property was set to its default value before (so it will
-		// have to be resetted during undo); note that if the new value is
-		// DEFAULT_VALUE the old value may not have been the default value as
-		// well, as the command would not be executable in this case.
-		if (propertySource instanceof IPropertySource2) {
-			if (!wasPropertySet
-					&& ((IPropertySource2) propertySource)
-							.isPropertyResettable(propertyId)) {
-				oldValue = DEFAULT_VALUE;
-			}
-		} else {
-			if (!wasPropertySet && propertySource.isPropertySet(propertyId)) {
-				oldValue = DEFAULT_VALUE;
-			}
-		}
 	}
 
 	/**
@@ -177,28 +142,70 @@ public class SetPropertyValueCommand extends AbstractCommand {
 		return propertySource;
 	}
 
-	/**
-	 * @see org.eclipse.gef.commands.Command#redo()
-	 */
-	public void redo() {
-		execute();
+	
+	private Object unwrapValue(Object value) {
+		if (value instanceof IPropertySource)
+			return ((IPropertySource) value).getEditableValue();
+		return value;
 	}
 
-	/**
-	 * @see org.eclipse.gef.commands.Command#undo()
-	 */
-	public void undo() {
+	@Override
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		/*
+		 * Fix for bug #54250 IPropertySource.isPropertySet(String) returns
+		 * false both when there is no default value, and when there is a
+		 * default value and the property is set to that value. To correctly
+		 * determine if a reset should be done during undo, we compare the
+		 * return value of isPropertySet(String) before and after
+		 * setPropertyValue(...) is invoked. If they are different (it must have
+		 * been false before and true after -- it cannot be the other way
+		 * around), then that means we need to reset.
+		 */
+		boolean wasPropertySet = propertySource.isPropertySet(propertyId);
+		oldValue = unwrapValue(propertySource.getPropertyValue(propertyId));
+
+		// set value of property to new value or reset the value, if specified
+		if (newValue == DEFAULT_VALUE) {
+			propertySource.resetPropertyValue(propertyId);
+		} else {
+			propertySource.setPropertyValue(propertyId, unwrapValue(newValue));
+		}
+
+		// check if property was set to its default value before (so it will
+		// have to be resetted during undo); note that if the new value is
+		// DEFAULT_VALUE the old value may not have been the default value as
+		// well, as the command would not be executable in this case.
+		if (propertySource instanceof IPropertySource2) {
+			if (!wasPropertySet
+					&& ((IPropertySource2) propertySource)
+							.isPropertyResettable(propertyId)) {
+				oldValue = DEFAULT_VALUE;
+			}
+		} else {
+			if (!wasPropertySet && propertySource.isPropertySet(propertyId)) {
+				oldValue = DEFAULT_VALUE;
+			}
+		}
+		// TODO: infer a proper status
+		return Status.OK_STATUS;
+	}
+
+	@Override
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		return execute(monitor, info);
+	}
+
+	@Override
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
 		if (oldValue == DEFAULT_VALUE) {
 			propertySource.resetPropertyValue(propertyId);
 		} else {
 			propertySource.setPropertyValue(propertyId, oldValue);
 		}
-	}
-
-	private Object unwrapValue(Object value) {
-		if (value instanceof IPropertySource)
-			return ((IPropertySource) value).getEditableValue();
-		return value;
+		return Status.OK_STATUS;
 	}
 
 }
