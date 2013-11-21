@@ -1,23 +1,46 @@
 package org.eclipse.gef4.mvc.javafx;
 
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.gef4.mvc.parts.AbstractRootEditPart;
 import org.eclipse.gef4.mvc.parts.IContentsEditPart;
-import org.eclipse.gef4.mvc.parts.INodeEditPart;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
 public class FXRootEditPart extends AbstractRootEditPart<Node> {
 
+	private AnchorPane rootAnchorPane;
+	private ScrollPane scrollPane;
 	private Group layers;
 	private Pane primaryLayer;
 
 	public FXRootEditPart() {
+		rootAnchorPane = new AnchorPane();
+		scrollPane = new ScrollPane();
+		
+		// fix 
+		scrollPane.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				scrollPane.requestFocus();
+			}
+		});
+		
+		// anchor constraints for the ScrollPane
+		rootAnchorPane.getChildren().add(scrollPane);
+		AnchorPane.setBottomAnchor(scrollPane, 0d);
+		AnchorPane.setTopAnchor(scrollPane, 0d);
+		AnchorPane.setLeftAnchor(scrollPane, 0d);
+		AnchorPane.setRightAnchor(scrollPane, 0d);
+		
 		layers = new Group();
+		scrollPane.setContent(layers);
 		primaryLayer = new Pane();
-		primaryLayer.setPrefSize(1024, 768);
 		layers.getChildren().add(primaryLayer);
 	}
 
@@ -61,7 +84,7 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 
 	@Override
 	public Node getVisual() {
-		return layers;
+		return rootAnchorPane;
 	}
 
 	@Override
