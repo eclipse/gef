@@ -6,6 +6,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionTool;
 import org.eclipse.gef4.mvc.parts.IEditPart;
+import org.eclipse.gef4.mvc.parts.IRootEditPart;
 
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
@@ -18,7 +19,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		}
 	};
 
-	private IEditPart<Node> getTargetPart(MouseEvent event) {
+	protected IEditPart<Node> getTargetPart(MouseEvent event) {
 		IEditPart<Node> newSelection = getDomain().getViewer().getVisualPartMap().get(
 				((Node) event.getTarget()));
 		return newSelection;
