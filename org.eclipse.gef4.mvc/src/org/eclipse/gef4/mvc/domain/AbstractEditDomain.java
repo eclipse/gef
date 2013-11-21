@@ -139,13 +139,12 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IEditDomainProperty<V>> void setProperty(Class<P> key,
+	public <P extends Object> void setProperty(Class<P> key,
 			P property) {
 		// unregister old property
 		if (properties != null && properties.get(key) != null) {
-			((IEditDomainProperty<V>) properties.remove(key)).setDomain(null);
+			properties.remove(key);
 		}
 	
 		// register new property
@@ -154,7 +153,6 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 			if(properties == null) {
 				properties = new HashMap<Class<? extends Object>, Object>();
 			}
-			property.setDomain(this);
 			properties.put(key, property);
 		} else {
 			// dispose map
@@ -166,7 +164,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IEditDomainProperty<V>> P getProperty(Class<P> key) {
+	public <P extends Object> P getProperty(Class<P> key) {
 		if (properties == null) {
 			return null;
 		}

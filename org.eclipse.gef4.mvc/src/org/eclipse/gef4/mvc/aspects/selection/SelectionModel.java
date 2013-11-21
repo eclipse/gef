@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.domain.AbstractEditDomainProperty;
 import org.eclipse.gef4.mvc.parts.IEditPart;
 import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
-public class SelectionModel<V> extends AbstractEditDomainProperty<V> {
+public class SelectionModel<V> {
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);

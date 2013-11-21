@@ -8,10 +8,10 @@ import org.eclipse.gef4.mvc.tools.ITool;
 
 public interface IEditDomain<V> {
 
-	<P extends IEditDomainProperty<V>> void setProperty(Class<P> key, P property);
-	
-	<P extends IEditDomainProperty<V>> P getProperty(Class<P> key);
-	
+	<P extends Object> void setProperty(Class<P> key, P property);
+
+	<P extends Object> P getProperty(Class<P> key);
+
 	/**
 	 * Adds an EditPartViewer into the EditDomain. A viewer is most likely
 	 * placed in a {@link org.eclipse.ui.IWorkbenchPart WorkbenchPart} of some
@@ -30,22 +30,21 @@ public interface IEditDomain<V> {
 	public abstract List<ITool<V>> getActiveTools();
 
 	/**
-	 * Returns the CommandStack. Command stacks could potentially be shared
-	 * across domains depending on the application.
+	 * Returns the {@link IOperationHistory} that is used by this domain.
 	 * 
-	 * @return The command stack
+	 * @return The {@link IOperationHistory}.
 	 */
 	public abstract IOperationHistory getOperationHistory();
 
 	public IEditPartViewer<V> getViewer();
 
 	/**
-	 * Sets the <code>CommandStack</code>.
+	 * Sets the {@link IOperationHistory}, which can later be requested via {@link #getOperationHistory()}.
 	 * 
-	 * @param stack
-	 *            the CommandStack
+	 * @param operationHistory
+	 *            The new {@link IOperationHistory} to be used.
 	 */
-	public abstract void setOperationHistory(IOperationHistory stack);
+	public abstract void setOperationHistory(IOperationHistory operationHistory);
 
 	/**
 	 * Sets the active Tool for this EditDomain. If a current Tool is active, it
