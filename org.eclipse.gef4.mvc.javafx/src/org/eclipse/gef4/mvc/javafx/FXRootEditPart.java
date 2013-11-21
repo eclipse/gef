@@ -14,30 +14,13 @@ import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
 
 public class FXRootEditPart extends AbstractRootEditPart<Node> {
 
-	private AnchorPane rootAnchorPane;
 	private ScrollPane scrollPane;
 	private Group layers;
 	private Pane primaryLayer;
 
 	public FXRootEditPart() {
-		rootAnchorPane = new AnchorPane();
 		scrollPane = new ScrollPane();
-		
-		// fix 
-		scrollPane.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				scrollPane.requestFocus();
-			}
-		});
-		
-		// anchor constraints for the ScrollPane
-		rootAnchorPane.getChildren().add(scrollPane);
-		AnchorPane.setBottomAnchor(scrollPane, 0d);
-		AnchorPane.setTopAnchor(scrollPane, 0d);
-		AnchorPane.setLeftAnchor(scrollPane, 0d);
-		AnchorPane.setRightAnchor(scrollPane, 0d);
-		
+		scrollPane.setPannable(true);
 		layers = new Group();
 		scrollPane.setContent(layers);
 		primaryLayer = new Pane();
@@ -84,7 +67,7 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 
 	@Override
 	public Node getVisual() {
-		return rootAnchorPane;
+		return scrollPane;
 	}
 
 	@Override
