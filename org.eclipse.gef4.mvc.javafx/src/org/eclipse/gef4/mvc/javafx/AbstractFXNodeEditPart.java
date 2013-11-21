@@ -8,12 +8,11 @@ import org.eclipse.gef4.mvc.parts.AbstractNodeEditPart;
 import org.eclipse.gef4.mvc.parts.IContentsEditPart;
 
 public abstract class AbstractFXNodeEditPart extends AbstractNodeEditPart<Node> {
-
 	
 	@Override
 	protected void addChildVisual(IContentsEditPart<Node> child, int index) {
-		if(getVisual() instanceof Parent){
-			((Group)getVisual()).getChildren().add(index, child.getVisual());
+		if (getVisual() instanceof Group) {
+			((Group) getVisual()).getChildren().add(index, child.getVisual());
 		}
 		else {
 			throw new UnsupportedOperationException();
@@ -22,8 +21,8 @@ public abstract class AbstractFXNodeEditPart extends AbstractNodeEditPart<Node> 
 
 	@Override
 	protected void removeChildVisual(IContentsEditPart<Node> child) {
-		if(getVisual() instanceof Parent){
-			((Group)getVisual()).getChildren().remove(child.getVisual());
+		if (getVisual() instanceof Group) {
+			((Group) getVisual()).getChildren().remove(child.getVisual());
 		}
 		else {
 			throw new UnsupportedOperationException();
