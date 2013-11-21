@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class CompoundCommand extends AbstractCommand {
 
-	private List commandList = new ArrayList();
+	private List<ICommand> commands = new ArrayList<ICommand>();
 
 	/**
 	 * Constructs an empty CompoundCommand
@@ -56,17 +56,17 @@ public class CompoundCommand extends AbstractCommand {
 	 */
 	public void add(ICommand command) {
 		if (command != null)
-			commandList.add(command);
+			commands.add(command);
 	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#canExecute()
 	 */
 	public boolean canExecute() {
-		if (commandList.size() == 0)
+		if (commands.size() == 0)
 			return false;
-		for (int i = 0; i < commandList.size(); i++) {
-			ICommand cmd = (ICommand) commandList.get(i);
+		for (int i = 0; i < commands.size(); i++) {
+			ICommand cmd = (ICommand) commands.get(i);
 			if (cmd == null)
 				return false;
 			if (!cmd.canExecute())
@@ -79,10 +79,10 @@ public class CompoundCommand extends AbstractCommand {
 	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#canUndo()
 	 */
 	public boolean canUndo() {
-		if (commandList.size() == 0)
+		if (commands.size() == 0)
 			return false;
-		for (int i = 0; i < commandList.size(); i++) {
-			ICommand cmd = (ICommand) commandList.get(i);
+		for (int i = 0; i < commands.size(); i++) {
+			ICommand cmd = (ICommand) commands.get(i);
 			if (cmd == null)
 				return false;
 			if (!cmd.canUndo())
@@ -97,7 +97,7 @@ public class CompoundCommand extends AbstractCommand {
 	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#dispose()
 	 */
 	public void dispose() {
-		for (int i = 0; i < commandList.size(); i++)
+		for (int i = 0; i < commands.size(); i++)
 			((AbstractCommand) getCommands().get(i)).dispose();
 	}
 
@@ -106,8 +106,8 @@ public class CompoundCommand extends AbstractCommand {
 	 * the commands that it contains.
 	 */
 	public void execute() {
-		for (int i = 0; i < commandList.size(); i++) {
-			ICommand cmd = (ICommand) commandList.get(i);
+		for (int i = 0; i < commands.size(); i++) {
+			ICommand cmd = (ICommand) commands.get(i);
 			cmd.execute();
 		}
 	}
@@ -120,14 +120,14 @@ public class CompoundCommand extends AbstractCommand {
 	 * @return returns the Commands as an array of Objects.
 	 */
 	public Object[] getChildren() {
-		return commandList.toArray();
+		return commands.toArray();
 	}
 
 	/**
 	 * @return the List of contained Commands
 	 */
-	public List getCommands() {
-		return commandList;
+	public List<ICommand> getCommands() {
+		return commands;
 	}
 
 	/**
@@ -136,41 +136,41 @@ public class CompoundCommand extends AbstractCommand {
 	public String getLabel() {
 		String label = super.getLabel();
 		if (label == null)
-			if (commandList.isEmpty())
+			if (commands.isEmpty())
 				return null;
 		if (label != null)
 			return label;
-		return ((AbstractCommand) commandList.get(0)).getLabel();
+		return ((AbstractCommand) commands.get(0)).getLabel();
 	}
 
 	/**
 	 * @return <code>true</code> if the CompoundCommand is empty
 	 */
 	public boolean isEmpty() {
-		return commandList.isEmpty();
+		return commands.isEmpty();
 	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#redo()
 	 */
 	public void redo() {
-		for (int i = 0; i < commandList.size(); i++)
-			((ICommand) commandList.get(i)).redo();
+		for (int i = 0; i < commands.size(); i++)
+			((ICommand) commands.get(i)).redo();
 	}
 
 	/**
 	 * @return the number of contained Commands
 	 */
 	public int size() {
-		return commandList.size();
+		return commands.size();
 	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#undo()
 	 */
 	public void undo() {
-		for (int i = commandList.size() - 1; i >= 0; i--)
-			((ICommand) commandList.get(i)).undo();
+		for (int i = commands.size() - 1; i >= 0; i--)
+			((ICommand) commands.get(i)).undo();
 	}
 
 	/**
@@ -180,11 +180,11 @@ public class CompoundCommand extends AbstractCommand {
 	 * @return the simplest form of this Command that is equivalent
 	 */
 	public ICommand unwrap() {
-		switch (commandList.size()) {
+		switch (commands.size()) {
 		case 0:
 			return UnexecutableCommand.INSTANCE;
 		case 1:
-			return (ICommand) commandList.get(0);
+			return (ICommand) commands.get(0);
 		default:
 			return this;
 		}
