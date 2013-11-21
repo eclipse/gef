@@ -14,9 +14,6 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 import org.eclipse.gef4.mvc.commands.CommandStack;
 import org.eclipse.gef4.mvc.commands.CommandStackEvent;
 import org.eclipse.gef4.mvc.commands.ICommandStackEventListener;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -28,8 +25,6 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  */
 public class UndoablePropertySheetPage extends PropertySheetPage {
 
-	private final IAction undoHandler;
-	private final IAction redoHandler;
 	private final CommandStack commandStack;
 	private final ICommandStackEventListener commandStackEventListener;
 
@@ -45,10 +40,7 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 *            The global action handler to be registered for redo
 	 *            operations.
 	 */
-	public UndoablePropertySheetPage(final CommandStack commandStack,
-			IAction undoAction, IAction redoAction) {
-		this.undoHandler = undoAction;
-		this.redoHandler = redoAction;
+	public UndoablePropertySheetPage(final CommandStack commandStack) {
 		this.commandStack = commandStack;
 		this.commandStackEventListener = new ICommandStackEventListener() {
 
@@ -76,20 +68,5 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 			commandStack
 					.removeCommandStackEventListener(commandStackEventListener);
 		super.dispose();
-	}
-
-	/**
-	 * Overwritten to register global action handlers for undo and redo.
-	 * 
-	 * @see org.eclipse.ui.views.properties.PropertySheetPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void setActionBars(IActionBars actionBars) {
-		super.setActionBars(actionBars);
-		// register global action handlers for undo and redo
-		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-				undoHandler);
-		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
-				redoHandler);
-
 	}
 }
