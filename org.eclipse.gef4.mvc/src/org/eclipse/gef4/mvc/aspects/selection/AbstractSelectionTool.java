@@ -7,7 +7,7 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IEditPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-public abstract class AbstractSelectTool<V> extends AbstractTool<V> {
+public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("unchecked")
 	@Override

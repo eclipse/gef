@@ -4,10 +4,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectTool;
+import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionTool;
 import org.eclipse.gef4.mvc.parts.IEditPart;
 
-public class FXSelectTool extends AbstractSelectTool<Node> {
+public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override

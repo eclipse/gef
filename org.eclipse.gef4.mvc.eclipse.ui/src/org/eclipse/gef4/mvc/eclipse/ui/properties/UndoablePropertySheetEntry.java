@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.mvc.properties;
+package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
 import java.util.EventObject;
 

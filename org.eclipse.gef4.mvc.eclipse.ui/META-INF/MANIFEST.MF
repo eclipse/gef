@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 MVC Properties
-Bundle-SymbolicName: org.eclipse.gef4.mvc.properties;singleton:=true
+Bundle-Name: GEF4 MVC Eclipse UI
+Bundle-SymbolicName: org.eclipse.gef4.mvc.eclipse.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
  org.eclipse.ui.views
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.properties
+Export-Package: org.eclipse.gef4.mvc.eclipse.ui.properties

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.gef4.mvc.properties;
+package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
 import org.eclipse.gef4.mvc.commands.CommandStack;
 import org.eclipse.gef4.mvc.commands.CommandStackEvent;

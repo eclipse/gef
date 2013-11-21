@@ -13,7 +13,7 @@ public class FXEditDomain extends AbstractEditDomain<Node> {
 	@Override
 	protected List<ITool<Node>> getDefaultTools() {
 		List<ITool<Node>> tools = new ArrayList<ITool<Node>>();
-		tools.add(new FXSelectTool());
+		tools.add(new FXSelectionTool());
 		tools.add(new FXDragTool());
 		return tools;
 	}
