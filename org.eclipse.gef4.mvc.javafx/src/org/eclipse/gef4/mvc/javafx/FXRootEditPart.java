@@ -71,7 +71,7 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 
 	@Override
 	protected void removeChildVisual(IContentsEditPart<Node> child) {
-		primaryLayer.getChildren().remove(child);
+		primaryLayer.getChildren().remove(child.getVisual());
 	}
 
 	@Override
