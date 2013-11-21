@@ -1,6 +1,8 @@
 package org.eclipse.gef4.mvc.commands;
 
 public interface ICommand {
+	
+	public abstract String getLabel();
 
 	/**
 	 * @return <code>true</code> if the command can be executed

@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 import java.text.MessageFormat;
 
 import org.eclipse.gef4.mvc.commands.AbstractCommand;
+import org.eclipse.gef4.mvc.eclipse.ui.Messages;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 
@@ -61,8 +62,7 @@ public class SetPropertyValueCommand extends AbstractCommand {
 	 */
 	public SetPropertyValueCommand(String propertyLabel,
 			IPropertySource propertySource, Object propertyId, Object newValue) {
-		// TODO: externalize message
-		super(MessageFormat.format("Set {0} Property",
+		super(MessageFormat.format(Messages.SetPropertyValueCommand_Label,
 				new Object[] { propertyLabel }).trim());
 		this.propertySource = propertySource;
 		this.propertyId = propertyId;

@@ -17,7 +17,7 @@ package org.eclipse.gef4.mvc.commands;
  * 
  * @since 3.1
  */
-public interface CommandStackEventListener {
+public interface ICommandStackEventListener {
 
 	/**
 	 * Sent when an event occurs on the command stack.

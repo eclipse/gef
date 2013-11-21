@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 
 import org.eclipse.gef4.mvc.commands.CommandStack;
 import org.eclipse.gef4.mvc.commands.CommandStackEvent;
-import org.eclipse.gef4.mvc.commands.CommandStackEventListener;
+import org.eclipse.gef4.mvc.commands.ICommandStackEventListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
@@ -31,7 +31,7 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	private final IAction undoHandler;
 	private final IAction redoHandler;
 	private final CommandStack commandStack;
-	private final CommandStackEventListener commandStackEventListener;
+	private final ICommandStackEventListener commandStackEventListener;
 
 	/**
 	 * Constructs a new {@link UndoablePropertySheetPage}.
@@ -50,7 +50,7 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 		this.undoHandler = undoAction;
 		this.redoHandler = redoAction;
 		this.commandStack = commandStack;
-		this.commandStackEventListener = new CommandStackEventListener() {
+		this.commandStackEventListener = new ICommandStackEventListener() {
 
 			public void stackChanged(CommandStackEvent event) {
 				if (event.getDetail() == CommandStack.PRE_UNDO

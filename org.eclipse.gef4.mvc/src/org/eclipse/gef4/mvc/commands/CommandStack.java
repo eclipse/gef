@@ -103,13 +103,7 @@ public class CommandStack {
 
 	private List eventListeners = new ArrayList();
 
-	/**
-	 * The list of {@link CommandStackListener}s.
-	 * 
-	 * @deprecated This field should not be referenced, use
-	 *             {@link #notifyListeners()}
-	 */
-	protected List listeners = new ArrayList();
+	private List listeners = new ArrayList();
 
 	private Stack redoable = new Stack();
 
@@ -134,7 +128,7 @@ public class CommandStack {
 	 * @param listener
 	 *            the event listener
 	 */
-	public void addCommandStackEventListener(CommandStackEventListener listener) {
+	public void addCommandStackEventListener(ICommandStackEventListener listener) {
 		eventListeners.add(listener);
 	}
 
@@ -145,7 +139,7 @@ public class CommandStack {
 	 * @param listener
 	 *            the listener
 	 */
-	public void addCommandStackListener(CommandStackListener listener) {
+	public void addCommandStackListener(ICommandStackListener listener) {
 		listeners.add(listener);
 	}
 
@@ -180,7 +174,7 @@ public class CommandStack {
 	 * event listeners. Similarly, after attempting to execute the command, an
 	 * event for {@link #POST_EXECUTE} will be fired. If the execution of the
 	 * command completely normally, stack listeners will receive
-	 * {@link CommandStackListener#commandStackChanged(EventObject)
+	 * {@link ICommandStackListener#commandStackChanged(EventObject)
 	 * stackChanged} notification.
 	 * <P>
 	 * If the command is <code>null</code> or cannot be executed, nothing
@@ -188,7 +182,7 @@ public class CommandStack {
 	 * 
 	 * @param command
 	 *            the Command to execute
-	 * @see CommandStackEventListener
+	 * @see ICommandStackEventListener
 	 */
 	public void execute(ICommand command) {
 		if (command == null || !command.canExecute())
@@ -301,14 +295,14 @@ public class CommandStack {
 	}
 
 	/**
-	 * Sends notification to all {@link CommandStackListener}s.
+	 * Sends notification to all {@link ICommandStackListener}s.
 	 * 
 	 * @deprecated
 	 */
 	protected void notifyListeners() {
 		EventObject event = new EventObject(this);
 		for (int i = 0; i < listeners.size(); i++)
-			((CommandStackListener) listeners.get(i))
+			((ICommandStackListener) listeners.get(i))
 					.commandStackChanged(event);
 	}
 
@@ -325,7 +319,7 @@ public class CommandStack {
 	protected void notifyListeners(ICommand command, int state) {
 		CommandStackEvent event = new CommandStackEvent(this, command, state);
 		for (int i = 0; i < eventListeners.size(); i++)
-			((CommandStackEventListener) eventListeners.get(i))
+			((ICommandStackEventListener) eventListeners.get(i))
 					.stackChanged(event);
 	}
 
@@ -356,7 +350,7 @@ public class CommandStack {
 	 *            the listener
 	 */
 	public void removeCommandStackEventListener(
-			CommandStackEventListener listener) {
+			ICommandStackEventListener listener) {
 		eventListeners.remove(listener);
 	}
 
@@ -366,7 +360,7 @@ public class CommandStack {
 	 * @param listener
 	 *            the listener
 	 */
-	public void removeCommandStackListener(CommandStackListener listener) {
+	public void removeCommandStackListener(ICommandStackListener listener) {
 		listeners.remove(listener);
 	}
 

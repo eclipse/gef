@@ -35,13 +35,6 @@ public class ForwardUndoCompoundCommand extends CompoundCommand {
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.commands.AbstractCommand#getDebugLabel()
-	 */
-	public String getDebugLabel() {
-		return "ForwardUndoCommand: " + super.getDebugLabel();//$NON-NLS-1$
-	}
-
-	/**
 	 * Undo the command. For a Preorder compound command this means undoing all
 	 * of the commands that it contains. Do it in the same order as applied.
 	 */

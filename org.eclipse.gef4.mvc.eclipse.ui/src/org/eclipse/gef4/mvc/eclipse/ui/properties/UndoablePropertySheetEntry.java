@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 import java.util.EventObject;
 
 import org.eclipse.gef4.mvc.commands.CommandStack;
-import org.eclipse.gef4.mvc.commands.CommandStackListener;
+import org.eclipse.gef4.mvc.commands.ICommandStackListener;
 import org.eclipse.gef4.mvc.commands.CompoundCommand;
 import org.eclipse.gef4.mvc.commands.ForwardUndoCompoundCommand;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -34,7 +34,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
  */
 public class UndoablePropertySheetEntry extends PropertySheetEntry {
 
-	private CommandStackListener commandStackListener;
+	private ICommandStackListener commandStackListener;
 
 	private CommandStack commandStack;
 
@@ -56,7 +56,7 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 */
 	public UndoablePropertySheetEntry(CommandStack commandStack) {
 		this.commandStack = commandStack;
-		this.commandStackListener = new CommandStackListener() {
+		this.commandStackListener = new ICommandStackListener() {
 			public void commandStackChanged(EventObject e) {
 				refreshFromRoot();
 			}

@@ -12,11 +12,12 @@ package org.eclipse.gef4.mvc.commands;
 
 import java.util.EventObject;
 
+
 /**
  * A CommandStackListener is notified whenever the {@link CommandStack}'s state
  * has changed.
  */
-public interface CommandStackListener {
+public interface ICommandStackListener {
 
 	/**
 	 * Called when the {@link CommandStack}'s state has changed.

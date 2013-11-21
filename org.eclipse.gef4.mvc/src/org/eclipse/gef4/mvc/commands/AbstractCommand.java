@@ -91,13 +91,6 @@ public abstract class AbstractCommand implements ICommand {
 	}
 
 	/**
-	 * @return an untranslated String used for debug purposes only
-	 */
-	public String getDebugLabel() {
-		return debugLabel + ' ' + getLabel();
-	}
-
-	/**
 	 * @return a String used to describe this command to the User
 	 */
 	public String getLabel() {
