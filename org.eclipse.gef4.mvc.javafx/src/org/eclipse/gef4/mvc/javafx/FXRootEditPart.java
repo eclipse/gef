@@ -17,6 +17,7 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 	private ScrollPane scrollPane;
 	private Group layers;
 	private Pane primaryLayer;
+	private Pane handleLayer;
 
 	public FXRootEditPart() {
 		scrollPane = new ScrollPane();
@@ -25,6 +26,12 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 		scrollPane.setContent(layers);
 		primaryLayer = new Pane();
 		layers.getChildren().add(primaryLayer);
+		handleLayer = new Pane();
+		layers.getChildren().add(handleLayer);
+	}
+	
+	public Pane getHandleLayer() {
+		return handleLayer;
 	}
 
 	public Pane getPrimaryLayer() {
@@ -58,11 +65,19 @@ public class FXRootEditPart extends AbstractRootEditPart<Node> {
 	@Override
 	protected void registerVisual() {
 		getViewer().getVisualPartMap().put(layers, this);
+		for(Node child : layers.getChildren()){
+			// register root edit part also for the layers
+			getViewer().getVisualPartMap().put(child, this);
+		}
 	}
 
 	@Override
 	protected void unregisterVisual() {
 		getViewer().getVisualPartMap().remove(layers);
+		for(Node child : layers.getChildren()){
+			// register root edit part also for the layers
+			getViewer().getVisualPartMap().remove(child);
+		}
 	}
 
 	@Override
