@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.parts.IEditPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The default implementation of {@link IEditPolicy}.
@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.parts.IEditPart;
  */
 public abstract class AbstractEditPolicy<V> implements IEditPolicy<V> {
 
-	private IEditPart<V> host;
+	private IVisualPart<V> host;
 
 	/**
 	 * Does nothing by default.
@@ -43,14 +43,14 @@ public abstract class AbstractEditPolicy<V> implements IEditPolicy<V> {
 	/**
 	 * @see org.eclipse.gef4.mvc.policies.IEditPolicy#getHost()
 	 */
-	public IEditPart<V> getHost() {
+	public IVisualPart<V> getHost() {
 		return host;
 	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.policies.IEditPolicy#setHost(IEditPart)
 	 */
-	public void setHost(IEditPart<V> host) {
+	public void setHost(IVisualPart<V> host) {
 		this.host = host;
 	}
 

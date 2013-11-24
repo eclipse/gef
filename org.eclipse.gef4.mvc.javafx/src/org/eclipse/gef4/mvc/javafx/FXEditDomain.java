@@ -1,21 +1,21 @@
 package org.eclipse.gef4.mvc.javafx;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.aspects.handles.HandleTool;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
+import org.eclipse.gef4.mvc.tools.CompositeTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXEditDomain extends AbstractEditDomain<Node> {
 
 	@Override
-	protected List<ITool<Node>> getDefaultTools() {
-		List<ITool<Node>> tools = new ArrayList<ITool<Node>>();
-		tools.add(new FXSelectionTool());
-		tools.add(new FXDragTool());
-		return tools;
+	protected ITool<Node> getDefaultTool() {
+		CompositeTool<Node> defaultTool = new CompositeTool<>();
+		defaultTool.add(new FXSelectionTool());
+		defaultTool.add(new FXRelocateTool());
+		defaultTool.add(new HandleTool<Node>());
+		return defaultTool;
 	}
 
 }

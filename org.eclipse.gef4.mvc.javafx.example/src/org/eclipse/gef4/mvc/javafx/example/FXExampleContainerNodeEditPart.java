@@ -6,10 +6,9 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.javafx.AbstractFXNodeEditPart;
-import org.eclipse.gef4.mvc.parts.IEditPart;
+import org.eclipse.gef4.mvc.javafx.AbstractFXNodeContentPart;
 
-public class FXExampleContainerNodeEditPart extends AbstractFXNodeEditPart {
+public class FXExampleContainerNodeEditPart extends AbstractFXNodeContentPart {
 
 	private Group g;
 
@@ -34,15 +33,13 @@ public class FXExampleContainerNodeEditPart extends AbstractFXNodeEditPart {
 	}
 
 	@Override
-	protected boolean isNodeModel(Object model) {
+	protected boolean isModelObject(Object model) {
 		return true;
 	}
 
 	@Override
-	protected boolean isConnectionModel(Object model) {
+	protected boolean isModelLink(Object model) {
 		return false;
 	}
-	
-	
 
 }

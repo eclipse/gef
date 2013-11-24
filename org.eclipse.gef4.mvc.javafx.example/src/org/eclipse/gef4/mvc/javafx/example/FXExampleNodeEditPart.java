@@ -5,21 +5,24 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.mvc.aspects.dragging.IDragPolicy;
-import org.eclipse.gef4.mvc.aspects.selection.ISelectionPolicy;
-import org.eclipse.gef4.mvc.javafx.AbstractFXNodeEditPart;
-import org.eclipse.gef4.mvc.javafx.FXDragPolicy;
+import org.eclipse.gef4.mvc.aspects.relocate.AbstractRelocatePolicy;
+import org.eclipse.gef4.mvc.aspects.resize.AbstractResizePolicy;
+import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
+import org.eclipse.gef4.mvc.javafx.AbstractFXNodeContentPart;
+import org.eclipse.gef4.mvc.javafx.FXRelocatePolicy;
+import org.eclipse.gef4.mvc.javafx.FXResizePolicy;
 import org.eclipse.gef4.mvc.javafx.FXSelectionPolicy;
 
-public class FXExampleNodeEditPart extends AbstractFXNodeEditPart {
+public class FXExampleNodeEditPart extends AbstractFXNodeContentPart {
 
 	private Rectangle visual;
 
 	public FXExampleNodeEditPart() {
 		visual =  new Rectangle();
 		visual.setFill(Color.RED);
-		installEditPolicy(ISelectionPolicy.class, new FXSelectionPolicy());
-		installEditPolicy(IDragPolicy.class, new FXDragPolicy());
+		installEditPolicy(AbstractSelectionPolicy.class, new FXSelectionPolicy());
+		installEditPolicy(AbstractRelocatePolicy.class, new FXRelocatePolicy());
+		installEditPolicy(AbstractResizePolicy.class, new FXResizePolicy());
 	}
 	
 	@Override
@@ -41,12 +44,12 @@ public class FXExampleNodeEditPart extends AbstractFXNodeEditPart {
 	}
 
 	@Override
-	protected boolean isNodeModel(Object model) {
+	protected boolean isModelObject(Object model) {
 		return true;
 	}
 
 	@Override
-	protected boolean isConnectionModel(Object model) {
+	protected boolean isModelLink(Object model) {
 		return false;
 	}
 

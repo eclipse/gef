@@ -5,22 +5,22 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-import org.eclipse.gef4.mvc.parts.IEditPart;
-import org.eclipse.gef4.mvc.parts.IRootEditPart;
-import org.eclipse.gef4.mvc.partviewer.AbstractEditPartViewer;
+import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.partviewer.AbstractVisualPartViewer;
 
-public class FXViewer extends AbstractEditPartViewer<Node> {
+public class FXViewer extends AbstractVisualPartViewer<Node> {
 
 	private FXCanvas canvas;
 
 	public FXViewer(FXCanvas canvas) {
 		this.canvas = canvas;
-		setRootEditPart(new FXRootEditPart());
+		setRootPart(new FXRootVisualPart());
 	}
 	
 	@Override
-	public void setRootEditPart(IRootEditPart<Node> editpart) {
-		super.setRootEditPart(editpart);
+	public void setRootPart(IRootVisualPart<Node> editpart) {
+		super.setRootPart(editpart);
 		if(editpart != null){
 			canvas.setScene(new Scene((Parent) editpart.getVisual()));
 		}
@@ -34,7 +34,7 @@ public class FXViewer extends AbstractEditPartViewer<Node> {
 	}
 	
 	@Override
-	public void reveal(IEditPart<Node> editpart) {
+	public void reveal(IVisualPart<Node> editpart) {
 		// TODO Auto-generated method stub
 		
 	}

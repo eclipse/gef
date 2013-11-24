@@ -14,14 +14,14 @@ package org.eclipse.gef4.mvc.eclipse.ui.properties;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gef4.mvc.parts.IContentsEditPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PropertySourceAdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		IContentsEditPart part = (IContentsEditPart) adaptableObject;
+		IContentPart part = (IContentPart) adaptableObject;
 		if(adapterType.isInstance(part)){
 			return part;
 		}

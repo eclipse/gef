@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.parts.IEditPart;
+import org.eclipse.gef4.mvc.IActivateable;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * A pluggable contribution implementing a portion of an EditPart's behavior.
@@ -43,40 +44,12 @@ import org.eclipse.gef4.mvc.parts.IEditPart;
  * added in the future.
  */
 
-public interface IEditPolicy<V> {
-
-	/**
-	 * Activates this EditPolicy. The EditPolicy might need to hook listeners.
-	 * These listeners should be unhooked in <code>deactivate()</code>. The
-	 * EditPolicy might also contribute feedback/visuals immediately, such as
-	 * <i>selection handles</i> if the EditPart was selected at the time of
-	 * activation.
-	 * <P>
-	 * Activate is called after the <i>host</i> has been set, and that host has
-	 * been activated.
-	 * 
-	 * @see IEditPart#activate()
-	 * @see #deactivate()
-	 * @see IEditPart#installEditPolicy(Object, EditPolicy)
-	 */
-	void activate();
-
-	/**
-	 * Deactivates the EditPolicy, the inverse of {@link #activate()}.
-	 * Deactivate is called when the <i>host</i> is deactivated, or when the
-	 * EditPolicy is uninstalled from an active host. Deactivate unhooks any
-	 * listeners, and removes all feedback.
-	 * 
-	 * @see IEditPart#deactivate()
-	 * @see #activate()
-	 * @see IEditPart#removeEditPolicy(Object)
-	 */
-	void deactivate();
+public interface IEditPolicy<V> extends IActivateable{
 
 	/**
 	 * @return the <i>host</i> EditPart on which this policy is installed.
 	 */
-	IEditPart<V> getHost();
+	IVisualPart<V> getHost();
 
 	/**
 	 * Sets the host in which this EditPolicy is installed.
@@ -84,6 +57,6 @@ public interface IEditPolicy<V> {
 	 * @param editpart
 	 *            the host EditPart
 	 */
-	void setHost(IEditPart<V> editpart);
+	void setHost(IVisualPart<V> editpart);
 
 }

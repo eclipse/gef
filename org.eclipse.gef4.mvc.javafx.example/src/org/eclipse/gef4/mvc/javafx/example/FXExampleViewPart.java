@@ -1,8 +1,6 @@
 package org.eclipse.gef4.mvc.javafx.example;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
 import javafx.geometry.Rectangle2D;
@@ -18,21 +16,19 @@ public class FXExampleViewPart extends ViewPart {
 	private FXCanvas canvas;
 
 	public FXExampleViewPart() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
-		canvas = new FXCanvas(parent,  SWT.NONE);
-		
+		canvas = new FXCanvas(parent, SWT.NONE);
 		FXEditDomain domain = new FXEditDomain();
-
 		FXViewer viewer = new FXViewer(canvas);
-		viewer.setEditPartFactory(new FXExampleEditPartFactory());
-		List<Object> contents = new ArrayList<Object>();
-		contents.add(Arrays.asList(new Rectangle2D[]{new Rectangle2D(50, 50,  50, 50), new Rectangle2D(150, 50, 50, 50)}));
-		viewer.setContents(contents);
+		viewer.setContentPartFactory(new FXExampleNodePartFactory());
+		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());
 		viewer.setEditDomain(domain);
+		viewer.setContents(Arrays.asList(new Rectangle2D[] {
+				new Rectangle2D(50, 50, 50, 50),
+				new Rectangle2D(150, 50, 50, 50) }));
 	}
 
 	@Override

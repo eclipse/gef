@@ -13,10 +13,11 @@ package org.eclipse.gef4.mvc.domain;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
+import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.ITool;
 
 /**
@@ -28,8 +29,8 @@ import org.eclipse.gef4.mvc.tools.ITool;
  */
 public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 
-	private List<ITool<V>> activeTools;
-	private IEditPartViewer<V> viewer;
+	private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
+	private IVisualPartViewer<V> viewer;
 	private Map<Class<? extends Object>, Object> properties;
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
@@ -38,7 +39,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * Constructs an EditDomain and loads the default tool.
 	 */
 	public AbstractEditDomain() {
-		setActiveTools(getDefaultTools());
+		pushTool(getDefaultTool());
 	}
 
 	/*
@@ -49,25 +50,21 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * .IEditPartViewer)
 	 */
 	@Override
-	public void setViewer(IEditPartViewer<V> viewer) {
+	public void setViewer(IVisualPartViewer<V> viewer) {
 		if (this.viewer == viewer) {
 			return;
 		}
 		if (this.viewer != null) {
-			if (activeTools != null) {
-				for (ITool<V> t : activeTools) {
-					t.deactivate();
-				}
+			if (peekTool() != null) {
+				peekTool().deactivate();
 			}
 			this.viewer.setEditDomain(null);
 		}
 		this.viewer = viewer;
-		if (this.viewer != null) {
-			this.viewer.setEditDomain(this);
-			if (activeTools != null) {
-				for (ITool<V> t : activeTools) {
-					t.activate();
-				}
+		if (viewer != null) {
+			viewer.setEditDomain(this);
+			if (peekTool() != null) {
+				peekTool().activate();
 			}
 		}
 	}
@@ -78,8 +75,11 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * @see org.eclipse.gef.ui.parts.IEditDomain#getActiveTool()
 	 */
 	@Override
-	public List<ITool<V>> getActiveTools() {
-		return activeTools;
+	public ITool<V> peekTool() {
+		if (toolsStack.isEmpty()) {
+			return null;
+		}
+		return toolsStack.peek();
 	}
 
 	/*
@@ -92,10 +92,10 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		return operationHistory;
 	}
 
-	protected abstract List<ITool<V>> getDefaultTools();
+	protected abstract ITool<V> getDefaultTool();
 
 	@Override
-	public IEditPartViewer<V> getViewer() {
+	public IVisualPartViewer<V> getViewer() {
 		return viewer;
 	}
 
@@ -119,38 +119,50 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	 * .ITool)
 	 */
 	@Override
-	public void setActiveTools(List<ITool<V>> tools) {
-		if (activeTools != null) {
-			for (ITool<V> t : activeTools) {
-				if (viewer != null) {
-					t.deactivate();
+	public void pushTool(ITool<V> tool) {
+		if (tool != null) {
+			ITool<V> currentTool = peekTool();
+			toolsStack.push(tool);
+			tool.setDomain(this);
+			if (viewer != null) {
+				if (currentTool != null) {
+					currentTool.deactivate();
 				}
-				t.setDomain(null);
-			}
-		}
-		activeTools = tools;
-		if (activeTools != null) {
-			for (ITool<V> t : activeTools) {
-				t.setDomain(this);
-				if (viewer != null) {
-					t.activate();
-				}
+				tool.activate();
 			}
 		}
 	}
 
 	@Override
-	public <P extends Object> void setProperty(Class<P> key,
-			P property) {
+	public ITool<V> popTool() {
+		if (!toolsStack.isEmpty()) {
+			ITool<V> currentTool = toolsStack.pop();
+			currentTool.setDomain(null);
+			if (viewer != null) {
+				if (currentTool != null) {
+					currentTool.deactivate();
+				}
+				// activate former tool, in case we are attached to a viewer
+				if (peekTool() != null) {
+					peekTool().activate();
+				}
+			}
+			return currentTool;
+		}
+		return null;
+	}
+
+	@Override
+	public <P extends Object> void setProperty(Class<P> key, P property) {
 		// unregister old property
 		if (properties != null && properties.get(key) != null) {
 			properties.remove(key);
 		}
-	
+
 		// register new property
 		if (property != null) {
 			// create map
-			if(properties == null) {
+			if (properties == null) {
 				properties = new HashMap<Class<? extends Object>, Object>();
 			}
 			properties.put(key, property);

@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
+import java.util.List;
+
+import org.eclipse.gef4.mvc.IActivateable;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
-import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 
 /**
  * A <code>Tool</code> interprets Mouse and Keyboard input from an
- * {@link AbstractEditDomain} and its {@link IEditPartViewer EditPartViewers}. The active
+ * {@link AbstractEditDomain} and its {@link IVisualPartViewer EditPartViewers}. The active
  * Tool and its state determines how the EditDomain will interpret input. Input
  * flows from a Viewer, to the EditDomain, to the EditDomain's active Tool.
  * <P>
@@ -56,22 +60,7 @@ import org.eclipse.gef4.mvc.partviewer.IEditPartViewer;
  * {@link org.eclipse.gef4.mvc.tools.AbstractTool}. New methods may be added in the
  * future.
  */
-public interface ITool<V> {
-
-	/**
-	 * Called when this tool becomes the active tool for the EditDomain.
-	 * implementors can perform any necessary initialization here.
-	 * 
-	 * @see #deactivate()
-	 */
-	void activate();
-
-	/**
-	 * Called when another Tool becomes the active tool for the EditDomain.
-	 * implementors can perform state clean-up or to free resources.
-	 */
-	void deactivate();
-
+public interface ITool<V> extends IActivateable{
 
 	/**
 	 * Called to set the EditDomain for this Tool. This is called right before
@@ -83,5 +72,9 @@ public interface ITool<V> {
 	void setDomain(IEditDomain<V> domain);
 	
 	IEditDomain<V> getDomain();
+	
+//	List<IContentPart<V>> getTargetContentParts();
+	
+	//TODO: tools/handles should change the cursor
 	
 }
