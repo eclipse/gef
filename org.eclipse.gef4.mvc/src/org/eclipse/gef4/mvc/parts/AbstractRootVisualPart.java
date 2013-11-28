@@ -60,7 +60,7 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 		}
 		if (this.rootContentPart != null) {
 			// unregister
-			removeChild(rootContentPart);
+			removeChild(this.rootContentPart);
 		}
 		this.rootContentPart = rootContentPart;
 		if (rootContentPart != null) {
