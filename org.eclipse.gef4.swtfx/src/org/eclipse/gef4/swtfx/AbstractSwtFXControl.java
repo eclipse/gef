@@ -31,7 +31,7 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 
 	private static final int[] FORWARD_EVENT_TYPES = new int[] {
 			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp,
-			SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
+			SWT.Gesture, SWT.MouseDown, SWT.MouseEnter, SWT.MouseExit,
 			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
 			SWT.MouseUp, SWT.MouseVerticalWheel, SWT.Move, SWT.Traverse,
 			SWT.Verify };
