@@ -5,12 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.mvc.aspects.relocate.AbstractRelocatePolicy;
-import org.eclipse.gef4.mvc.aspects.resize.AbstractResizePolicy;
+import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
 import org.eclipse.gef4.mvc.javafx.AbstractFXNodeContentPart;
-import org.eclipse.gef4.mvc.javafx.FXRelocatePolicy;
-import org.eclipse.gef4.mvc.javafx.FXResizePolicy;
+import org.eclipse.gef4.mvc.javafx.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.javafx.FXSelectionPolicy;
 
 public class FXExampleNodeEditPart extends AbstractFXNodeContentPart {
@@ -21,8 +19,7 @@ public class FXExampleNodeEditPart extends AbstractFXNodeContentPart {
 		visual =  new Rectangle();
 		visual.setFill(Color.RED);
 		installEditPolicy(AbstractSelectionPolicy.class, new FXSelectionPolicy());
-		installEditPolicy(AbstractRelocatePolicy.class, new FXRelocatePolicy());
-		installEditPolicy(AbstractResizePolicy.class, new FXResizePolicy());
+		installEditPolicy(AbstractResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
 	}
 	
 	@Override

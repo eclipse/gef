@@ -5,10 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.aspects.relocate.AbstractRelocateTool;
+import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractRelocateTool;
 
 public class FXRelocateTool extends AbstractRelocateTool<Node> {
-
+	
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
