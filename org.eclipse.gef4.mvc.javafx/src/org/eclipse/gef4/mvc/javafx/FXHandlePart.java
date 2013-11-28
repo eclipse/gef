@@ -95,16 +95,16 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 				unionedBoundsInScene);
 		double xInset = visual.getWidth() / 2.0;
 		double yInset = visual.getWidth() / 2.0;
-		if (Pos.TOP_LEFT == pos) {
+		if (Pos.TOP_LEFT == getPos()) {
 			visual.setLayoutX(layoutBounds.getMinX() - xInset);
 			visual.setLayoutY(layoutBounds.getMinY() - yInset);
-		} else if (Pos.TOP_RIGHT == pos) {
+		} else if (Pos.TOP_RIGHT == getPos()) {
 			visual.setLayoutX(layoutBounds.getMaxX() - xInset);
 			visual.setLayoutY(layoutBounds.getMinY() - yInset);
-		} else if (Pos.BOTTOM_RIGHT == pos) {
+		} else if (Pos.BOTTOM_RIGHT == getPos()) {
 			visual.setLayoutX(layoutBounds.getMaxX() - xInset);
 			visual.setLayoutY(layoutBounds.getMaxY() - yInset);
-		} else if (Pos.BOTTOM_LEFT == pos) {
+		} else if (Pos.BOTTOM_LEFT == getPos()) {
 			visual.setLayoutX(layoutBounds.getMinX() - xInset);
 			visual.setLayoutY(layoutBounds.getMaxY() - yInset);
 		} else {
@@ -115,9 +115,10 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 	private Bounds getUnionedBoundsInScene(List<IContentPart<Node>> selection) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
 		for (IContentPart<Node> cp : selection) {
-			Bounds boundsInParent = cp.getVisual().getBoundsInParent();
-			Bounds boundsInScene = cp.getVisual().getParent()
-					.localToScene(boundsInParent);
+//			Bounds boundsInParent = cp.getVisual().getBoundsInParent();
+//			Bounds boundsInScene = cp.getVisual().getParent()
+//					.localToScene(boundsInParent);
+			Bounds boundsInScene = cp.getVisual().localToScene(cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {
 				unionedBoundsInScene = boundsToRectangle(boundsInScene);
 			} else {
@@ -147,4 +148,9 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 		}
 		return fxResizeTool;
 	}
+
+	public Pos getPos() {
+		return pos;
+	}
+
 }
