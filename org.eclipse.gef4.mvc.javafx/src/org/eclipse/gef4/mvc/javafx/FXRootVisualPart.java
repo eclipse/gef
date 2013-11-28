@@ -34,7 +34,7 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 		return handleLayer;
 	}
 
-	public Pane getPrimaryLayer() {
+	public Pane getContentLayer() {
 		return contentLayer;
 	}
 
