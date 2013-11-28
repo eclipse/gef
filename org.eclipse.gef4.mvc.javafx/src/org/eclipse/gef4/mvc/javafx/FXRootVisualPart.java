@@ -20,15 +20,16 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 	
 	public FXRootVisualPart() {
 		scrollPane = new ScrollPane();
-		
 		// panning is done via a PanningTool
 		scrollPane.setPannable(false);
 		
 		layers = new StackPane();
 		scrollPane.setContent(new Group(layers));
+		
 		contentLayer = new Pane();
 		contentLayer.setPickOnBounds(false);
 		layers.getChildren().add(contentLayer);
+		
 		handleLayer = new Pane();
 		handleLayer.setPickOnBounds(false);
 		layers.getChildren().add(handleLayer);

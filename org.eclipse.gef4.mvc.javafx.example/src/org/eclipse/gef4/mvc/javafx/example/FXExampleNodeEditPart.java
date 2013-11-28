@@ -16,7 +16,13 @@ public class FXExampleNodeEditPart extends AbstractFXNodeContentPart {
 	private Rectangle visual;
 
 	public FXExampleNodeEditPart() {
-		visual =  new Rectangle();
+		visual =  new Rectangle() {
+			@Override
+			public void resize(double w, double h) {
+				setWidth(w);
+				setHeight(h);
+			}
+		};
 		visual.setFill(Color.RED);
 		installEditPolicy(AbstractSelectionPolicy.class, new FXSelectionPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class, new FXResizeRelocatePolicy());

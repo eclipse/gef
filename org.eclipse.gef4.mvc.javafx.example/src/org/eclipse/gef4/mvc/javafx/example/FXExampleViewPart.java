@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 public class FXExampleViewPart extends ViewPart {
-
+	
 	private FXCanvas canvas;
 
 	public FXExampleViewPart() {
@@ -28,7 +28,9 @@ public class FXExampleViewPart extends ViewPart {
 		viewer.setEditDomain(domain);
 		viewer.setContents(Arrays.asList(new Rectangle2D[] {
 				new Rectangle2D(50, 50, 50, 50),
-				new Rectangle2D(150, 50, 50, 50) }));
+				new Rectangle2D(150, 50, 50, 50),
+				new Rectangle2D(400, 400, 50, 50),
+				new Rectangle2D(-5, -5, 10, 10) }));
 	}
 
 	@Override
