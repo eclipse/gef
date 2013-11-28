@@ -1,5 +1,6 @@
 package org.eclipse.gef4.mvc.javafx;
 
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
@@ -19,9 +20,12 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 	
 	public FXRootVisualPart() {
 		scrollPane = new ScrollPane();
-		scrollPane.setPannable(true);
+		
+		// panning is done via a PanningTool
+		scrollPane.setPannable(false);
+		
 		layers = new StackPane();
-		scrollPane.setContent(layers);
+		scrollPane.setContent(new Group(layers));
 		contentLayer = new Pane();
 		contentLayer.setPickOnBounds(false);
 		layers.getChildren().add(contentLayer);
