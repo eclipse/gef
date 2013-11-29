@@ -17,6 +17,7 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 	private StackPane layers;
 	private Pane contentLayer;
 	private Pane handleLayer;
+	private Pane feedbackLayer;
 	
 	public FXRootVisualPart() {
 		scrollPane = new ScrollPane();
@@ -26,13 +27,17 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 		layers = new StackPane();
 		scrollPane.setContent(new Group(layers));
 		
-		contentLayer = new Pane();
-		contentLayer.setPickOnBounds(false);
-		layers.getChildren().add(contentLayer);
-		
-		handleLayer = new Pane();
-		handleLayer.setPickOnBounds(false);
-		layers.getChildren().add(handleLayer);
+		contentLayer = createLayer(false);
+		handleLayer = createLayer(false);
+		feedbackLayer = createLayer(true);
+	}
+	
+	public Pane createLayer(boolean mouseTransparent) {
+		Pane layer = new Pane();
+		layer.setPickOnBounds(false);
+		layer.setMouseTransparent(mouseTransparent);
+		layers.getChildren().add(layer);
+		return layer;
 	}
 
 	public Pane getHandleLayer() {
@@ -41,6 +46,10 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 
 	public Pane getContentLayer() {
 		return contentLayer;
+	}
+	
+	public Pane getFeedbackLayer() {
+		return feedbackLayer;
 	}
 
 	@Override
