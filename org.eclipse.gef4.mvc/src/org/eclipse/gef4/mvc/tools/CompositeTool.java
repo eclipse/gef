@@ -11,18 +11,18 @@ public class CompositeTool<V> extends AbstractTool<V> implements ICompositeTool<
 	
 	@Override
 	public void activate() {
+		super.activate();
 		for(ITool<V> tool : tools){
 			tool.activate();
 		}
-		super.activate();
 	}
 
 	@Override
 	public void deactivate() {
-		super.deactivate();
 		for(ITool<V> tool : tools){
 			tool.deactivate();
 		}
+		super.deactivate();
 	}
 
 	@Override

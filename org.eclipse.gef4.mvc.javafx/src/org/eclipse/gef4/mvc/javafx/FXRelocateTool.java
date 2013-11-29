@@ -32,6 +32,7 @@ public class FXRelocateTool extends AbstractRelocateTool<Node> {
 
 	@Override
 	public void activate() {
+		super.activate();
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
@@ -48,6 +49,7 @@ public class FXRelocateTool extends AbstractRelocateTool<Node> {
 				.removeEventFilter(MouseEvent.MOUSE_DRAGGED, draggedFilter);
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		super.deactivate();
 	}
 
 }

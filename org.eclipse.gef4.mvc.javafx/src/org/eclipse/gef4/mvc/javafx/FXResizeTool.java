@@ -16,7 +16,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 
 	private Pos pos;
-	private IEditDomain<Node> domain = null;
 
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -49,9 +48,9 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 			// appropriate location probably)
 			// the handle tool should in this case also push the handle tool to
 			// the stack
-			domain = getDomain(); // we need this to properly unregister
+			 // we need this to properly unregister
 			commitResize(new Point(event.getSceneX(), event.getSceneY()));
-			domain.popTool(); // remove ourselves from the tool stack
+			getDomain().popTool(); // remove ourselves from the tool stack
 			pos = null;
 		}
 
@@ -59,6 +58,7 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 
 	@Override
 	public void activate() {
+		super.activate();
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
@@ -70,13 +70,13 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 	@Override
 	public void deactivate() {
 		// TODO: proper handling of domain registration
-		((FXViewer) domain.getViewer()).getCanvas().getScene()
+		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-		((FXViewer) domain.getViewer()).getCanvas().getScene()
+		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventFilter(MouseEvent.MOUSE_DRAGGED, draggedFilter);
-		((FXViewer) domain.getViewer()).getCanvas().getScene()
+		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
-		domain = null;
+		super.deactivate();
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = getTargetPart(event);
-			if(targetPart == null || targetPart instanceof IRootVisualPart){
+			if(targetPart == null || targetPart instanceof IRootVisualPart) {
 				select(null, false);
 			}
 			else if (targetPart instanceof IContentPart) {
@@ -47,6 +47,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
 	@Override
 	public void activate() {
+		super.activate();
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
 	}
@@ -55,6 +56,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 	public void deactivate() {
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
+		super.deactivate();
 	}
 
 }
