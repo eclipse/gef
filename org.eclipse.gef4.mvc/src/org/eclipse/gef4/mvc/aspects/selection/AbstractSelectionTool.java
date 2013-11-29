@@ -74,16 +74,19 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 			List<IContentPart<V>> selected) {
 		// deselect unselected
 		for (IVisualPart<V> e : deselected) {
-			getSelectionPolicy(e).deselect();
+			AbstractSelectionPolicy<V> policy = getSelectionPolicy(e);
+			if (policy != null) policy.deselect();
 		}
 		// select newly selected
 		for (int i = 0; i < selected.size(); i++) {
-			AbstractSelectionPolicy<V> selectionPolicy = getSelectionPolicy(selected
+			AbstractSelectionPolicy<V> policy = getSelectionPolicy(selected
 					.get(i));
-			if (i == 0) {
-				selectionPolicy.selectPrimary();
-			} else {
-				selectionPolicy.selectSecondary();
+			if (policy != null) {
+				if (i == 0) {
+					policy.selectPrimary();
+				} else {
+					policy.selectSecondary();
+				}
 			}
 		}
 	}
