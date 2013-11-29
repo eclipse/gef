@@ -12,6 +12,7 @@ package org.eclipse.gef4.mvc.partviewer;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractVisualPartViewer<V> implements
 		IVisualPartViewer<V> {
 
+	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
+			this);
+	
 	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
 
@@ -114,10 +118,12 @@ public abstract class AbstractVisualPartViewer<V> implements
 	public void setContents(Object contents) {
 		// TODO: make this null-safe and ensure it gets set when root is set
 		// afterwards
+		Object oldContents = getContents();
 		IContentPart<V> rootContentPart = getContentPartFactory()
 				.createRootContentPart(getRootPart(), contents);
 		rootContentPart.setModel(contents);
 		getRootPart().setRootContentPart(rootContentPart);
+		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY, oldContents, contents);
 	}
 
 	/**
@@ -163,6 +169,16 @@ public abstract class AbstractVisualPartViewer<V> implements
 			this.rootPart.setViewer(this);
 			this.rootPart.activate();
 		}
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
 	@Override

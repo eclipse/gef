@@ -12,6 +12,7 @@ package org.eclipse.gef4.mvc.partviewer;
 
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -67,8 +68,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * WARNING: This interface is not intended to be implemented. Clients should
  * extend {@link org.eclipse.gef4.mvc.partviewer.AbstractVisualPartViewer}.
  */
-public interface IVisualPartViewer<V> {
+public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 
+	public static final String CONTENTS_PROPERTY = "contents";
+	
 	// /**
 	// * Returns <code>null</code> or the <code>EditPart</code> associated with
 	// * the specified location. The location is relative to the client area of
