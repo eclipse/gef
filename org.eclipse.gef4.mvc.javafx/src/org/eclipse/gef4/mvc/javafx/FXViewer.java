@@ -15,16 +15,25 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 
 	public FXViewer(FXCanvas canvas) {
 		this.canvas = canvas;
-		setRootPart(new FXRootVisualPart());
+		setRootPart(createRootVisualPart());
 	}
-	
+
+	/**
+	 * Creates the {@link FXRootVisualPart} which provides the root element for
+	 * the JavaFX {@link Scene}.
+	 * 
+	 * @return an {@link FXRootVisualPart}
+	 */
+	protected FXRootVisualPart createRootVisualPart() {
+		return new FXRootVisualPart();
+	}
+
 	@Override
 	public void setRootPart(IRootVisualPart<Node> editpart) {
 		super.setRootPart(editpart);
-		if(editpart != null){
+		if (editpart != null) {
 			canvas.setScene(new Scene((Parent) editpart.getVisual()));
-		}
-		else {
+		} else {
 			canvas.setScene(null);
 		}
 	}
@@ -32,10 +41,9 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 	public FXCanvas getCanvas() {
 		return canvas;
 	}
-	
+
 	@Override
 	public void reveal(IVisualPart<Node> editpart) {
-		// TODO Auto-generated method stub
-		
 	}
+
 }
