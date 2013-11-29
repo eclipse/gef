@@ -1,5 +1,7 @@
 package org.eclipse.gef4.mvc.aspects.selection;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,9 +9,10 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
+public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implements PropertyChangeListener {
 
 	@Override
 	public void setDomain(IEditDomain<V> domain) {
@@ -17,7 +20,8 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AbstractSelectionPolicy<V> getSelectionPolicy(IVisualPart<V> editPart) {
+	protected AbstractSelectionPolicy<V> getSelectionPolicy(
+			IVisualPart<V> editPart) {
 		return editPart.getEditPolicy(AbstractSelectionPolicy.class);
 	}
 
@@ -25,12 +29,13 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 	 * 
 	 * @param targetEditPart
 	 * @param append
-	 * @return <code>true</code> on selection change, otherwise <code>false</code>
+	 * @return <code>true</code> on selection change, otherwise
+	 *         <code>false</code>
 	 */
 	public boolean select(IContentPart<V> targetPart, boolean append) {
 		// TODO: extract into tool policy
 		boolean changed = true;
-		
+
 		IContentPartSelectionModel<V> selectionModel = getSelectionModel();
 		// retrieve old selection
 		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(
@@ -47,7 +52,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 					selectionModel.deselect(targetPart);
 				} else {
 					// target should become the new primary selection
-//					selectionModel.select(targetEditPart);
+					// selectionModel.select(targetEditPart);
 					changed = false;
 				}
 			} else {
@@ -59,14 +64,14 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 					// selected
 					selectionModel.deselectAll();
 					selectionModel.select(targetPart);
-				}				
+				}
 			}
 		}
 		// handle adjustment of selection feedback (via edit policy)
 		List<IContentPart<V>> newSelection = selectionModel.getSelected();
 		oldSelection.removeAll(newSelection);
 		adjustFeedback(oldSelection, newSelection);
-		
+
 		return changed;
 	}
 
@@ -75,7 +80,8 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 		// deselect unselected
 		for (IVisualPart<V> e : deselected) {
 			AbstractSelectionPolicy<V> policy = getSelectionPolicy(e);
-			if (policy != null) policy.deselect();
+			if (policy != null)
+				policy.deselect();
 		}
 		// select newly selected
 		for (int i = 0; i < selected.size(); i++) {
@@ -93,6 +99,25 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> {
 
 	protected IContentPartSelectionModel<V> getSelectionModel() {
 		return getDomain().getViewer().getContentPartSelection();
+	}
+	
+	@Override
+	public void activate() {
+		super.activate();
+		getDomain().getViewer().addPropertyChangeListener(this);
+	}
+	
+	@Override
+	public void deactivate() {
+		getDomain().getViewer().removePropertyChangeListener(this);
+		super.deactivate();
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
+			select(null, false);
+		}
 	}
 
 }
