@@ -21,23 +21,25 @@ public abstract class AbstractRelocateTool<V> extends AbstractTool<V> {
 	}
 
 	public void initRelocate(Point mouseLocation) {
+		initialMouseLocation = mouseLocation.getCopy();
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			getResizeRelocatePolicy(targetPart).initResizeRelocate();
 		}
 	}
 
 	public void performRelocate(Point mouseLocation) {
-		Point delta = initialMouseLocation.getTranslated(mouseLocation.getNegated());
+		Point delta = mouseLocation.getTranslated(initialMouseLocation.getNegated());
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			getResizeRelocatePolicy(targetPart).performResizeRelocate(delta.x, delta.y, 0, 0);
 		}
 	}
 
 	public void commitRelocate(Point mouseLocation) {
-		Point delta = initialMouseLocation.getTranslated(mouseLocation.getNegated());
+		Point delta = mouseLocation.getTranslated(initialMouseLocation.getNegated());
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			getResizeRelocatePolicy(targetPart).commitResizeRelocate(delta.x, delta.y, 0, 0);
 		}
+		initialMouseLocation = null;
 	}
 
 }

@@ -9,24 +9,32 @@ import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractRelocateTool;
 
 public class FXRelocateTool extends AbstractRelocateTool<Node> {
 	
+	private boolean performing = false;
+	
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			initRelocate(new Point(event.getSceneX(), event.getSceneY()));
+			performing = true;
 		}
 	};
 
 	private EventHandler<MouseEvent> draggedFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			performRelocate(new Point(event.getSceneX(), event.getSceneY()));
+			if (performing) {
+				performRelocate(new Point(event.getSceneX(), event.getSceneY()));
+			}
 		}
 	};
 
 	private EventHandler<MouseEvent> releasedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			commitRelocate(new Point(event.getSceneX(), event.getSceneY()));
+			if (performing) {
+				performing = false;
+				commitRelocate(new Point(event.getSceneX(), event.getSceneY()));
+			}
 		}
 	};
 

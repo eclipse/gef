@@ -12,14 +12,12 @@ public class FXResizeRelocatePolicy extends AbstractResizeRelocatePolicy<Node> {
 	@Override
 	public void initResizeRelocate() {
 		Node visual = getHost().getVisual();
-		Bounds bounds = visual.localToScene(visual.getBoundsInLocal());
-
-		initialLayoutX = visual.getLayoutX() - bounds.getMinX();
-		initialLayoutY = visual.getLayoutY() - bounds.getMinY();
+		initialLayoutX = visual.getLayoutX();
+		initialLayoutY = visual.getLayoutY();
 		
 		Bounds lb = visual.getLayoutBounds();
-		initialWidth = lb.getWidth() - bounds.getWidth();
-		initialHeight = lb.getHeight() - bounds.getHeight();
+		initialWidth = lb.getWidth();
+		initialHeight = lb.getHeight();
 	}
 	
 	@Override

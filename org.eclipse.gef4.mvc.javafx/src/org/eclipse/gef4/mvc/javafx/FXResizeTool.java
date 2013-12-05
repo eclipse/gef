@@ -16,6 +16,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 
 	private Pos pos;
+	
+	private boolean performing = false;
 
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -29,13 +31,16 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 			}
 			initResize(new Point(event.getSceneX(),
 					event.getSceneY()));
+			performing = true;
 		}
 	};
 
 	private EventHandler<MouseEvent> draggedFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			performResize(new Point(event.getSceneX(), event.getSceneY()));
+			if (performing) {
+				performResize(new Point(event.getSceneX(), event.getSceneY()));
+			}
 		}
 	};
 
@@ -49,9 +54,12 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 			// the handle tool should in this case also push the handle tool to
 			// the stack
 			 // we need this to properly unregister
-			commitResize(new Point(event.getSceneX(), event.getSceneY()));
-			getDomain().popTool(); // remove ourselves from the tool stack
-			pos = null;
+			if (performing) {
+				performing = false;
+				commitResize(new Point(event.getSceneX(), event.getSceneY()));
+				getDomain().popTool(); // remove ourselves from the tool stack
+				pos = null;
+			}
 		}
 
 	};
