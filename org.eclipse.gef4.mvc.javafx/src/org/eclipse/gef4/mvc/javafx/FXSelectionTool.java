@@ -74,13 +74,13 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 	public void activate() {
 		super.activate();
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedFilter);
+				.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
 	}
 
 	@Override
 	public void deactivate() {
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedFilter);
+				.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
 		super.deactivate();
 	}
 
