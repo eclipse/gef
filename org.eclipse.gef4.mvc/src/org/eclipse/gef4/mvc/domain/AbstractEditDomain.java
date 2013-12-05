@@ -137,10 +137,10 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	public ITool<V> popTool() {
 		if (!toolsStack.isEmpty()) {
 			ITool<V> currentTool = toolsStack.pop();
-			currentTool.setDomain(null);
 			if (viewer != null) {
 				if (currentTool != null) {
 					currentTool.deactivate();
+					currentTool.setDomain(null);
 				}
 				// activate former tool, in case we are attached to a viewer
 				if (peekTool() != null) {
