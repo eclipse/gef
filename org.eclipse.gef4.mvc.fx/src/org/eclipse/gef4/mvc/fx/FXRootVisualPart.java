@@ -3,6 +3,7 @@ package org.eclipse.gef4.mvc.fx;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -13,31 +14,41 @@ import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 
 public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 
+	/**
+	 * Per default, a ScrollPane draws a border and background color. We do not
+	 * want either.
+	 */
+	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
+
 	private ScrollPane scrollPane;
 	private StackPane layers;
 	private Pane contentLayer;
 	private Pane handleLayer;
 	private Pane feedbackLayer;
-	
+
 	public FXRootVisualPart() {
 		scrollPane = new ScrollPane();
-		// panning is done via a PanningTool
 		scrollPane.setPannable(false);
-		
+		scrollPane.setStyle(SCROLL_PANE_STYLE);
+
 		layers = new StackPane();
 		scrollPane.setContent(new Group(layers));
-		
+
 		contentLayer = createLayer(false);
 		handleLayer = createLayer(false);
 		feedbackLayer = createLayer(true);
 	}
-	
-	public Pane createLayer(boolean mouseTransparent) {
+
+	private Pane createLayer(boolean mouseTransparent) {
 		Pane layer = new Pane();
 		layer.setPickOnBounds(false);
 		layer.setMouseTransparent(mouseTransparent);
 		layers.getChildren().add(layer);
 		return layer;
+	}
+
+	public ScrollPane getScrollPane() {
+		return scrollPane;
 	}
 
 	public Pane getHandleLayer() {
@@ -47,7 +58,7 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 	public Pane getContentLayer() {
 		return contentLayer;
 	}
-	
+
 	public Pane getFeedbackLayer() {
 		return feedbackLayer;
 	}
