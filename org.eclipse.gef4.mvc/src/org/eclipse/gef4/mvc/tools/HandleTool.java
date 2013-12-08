@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.aspects.handles;
+package org.eclipse.gef4.mvc.tools;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -9,7 +9,6 @@ import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
 
 public class HandleTool<V> extends AbstractTool<V> implements
 		PropertyChangeListener {
