@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.partviewer;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
@@ -22,7 +20,6 @@ import org.eclipse.gef4.mvc.parts.ContentPartMultiSelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
