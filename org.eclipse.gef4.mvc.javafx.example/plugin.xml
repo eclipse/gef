@@ -2,13 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="FXView"
-         name="FXView"
          point="org.eclipse.ui.views">
       <view
             class="org.eclipse.gef4.mvc.javafx.example.FXExampleViewPart"
-            id="org.eclipse.gef4.mvc.javafx.example.view1"
-            name="name"
+            id="org.eclipse.gef4.mvc.javafx.example.FXExampleView"
+            name="GEF4 MVC FX Example View"
             restorable="true">
       </view>
    </extension>
