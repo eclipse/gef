@@ -2,22 +2,22 @@ package org.eclipse.gef4.mvc.javafx.example;
 
 import java.util.List;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IEdgeContentPart;
 import org.eclipse.gef4.mvc.parts.INodeContentPart;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
-public class FXExampleNodePartFactory implements IContentPartFactory<Node> {
+public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
 	@Override
 	public INodeContentPart<Node> createNodeContentPart(IContentPart<Node> parent,
 			Object model) {
-		if (model instanceof Rectangle2D) {
-			return new FXExampleNodeEditPart();
+		if (model instanceof IShape) {
+			return new FXExampleShapeEditPart();
 		} else {
 			throw new IllegalArgumentException();
 		}

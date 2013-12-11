@@ -3,8 +3,9 @@ package org.eclipse.gef4.mvc.javafx.example;
 import java.util.Arrays;
 
 import javafx.embed.swt.FXCanvas;
-import javafx.geometry.Rectangle2D;
 
+import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.javafx.FXEditDomain;
 import org.eclipse.gef4.mvc.javafx.FXViewer;
 import org.eclipse.swt.SWT;
@@ -23,14 +24,14 @@ public class FXExampleViewPart extends ViewPart {
 		canvas = new FXCanvas(parent, SWT.NONE);
 		FXEditDomain domain = new FXEditDomain();
 		FXViewer viewer = new FXViewer(canvas);
-		viewer.setContentPartFactory(new FXExampleNodePartFactory());
+		viewer.setContentPartFactory(new FXExampleContentPartFactory());
 		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());
 		viewer.setEditDomain(domain);
-		viewer.setContents(Arrays.asList(new Rectangle2D[] {
-				new Rectangle2D(50, 50, 50, 50),
-				new Rectangle2D(150, 50, 50, 50),
-				new Rectangle2D(400, 400, 50, 50),
-				new Rectangle2D(-5, -5, 10, 10) }));
+		viewer.setContents(Arrays.asList(new IGeometry[] {
+				new Rectangle(50, 50, 50, 50),
+				new Rectangle(150, 50, 50, 50),
+				new Rectangle(400, 400, 50, 50),
+				new Rectangle(-5, -5, 10, 10) }));
 	}
 
 	@Override

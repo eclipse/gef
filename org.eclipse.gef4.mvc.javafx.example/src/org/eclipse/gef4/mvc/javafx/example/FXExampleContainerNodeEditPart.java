@@ -14,6 +14,7 @@ public class FXExampleContainerNodeEditPart extends AbstractFXNodeContentPart {
 
 	public FXExampleContainerNodeEditPart() {
 		g = new Group();
+		g.setAutoSizeChildren(false);
 	}
 
 	@Override
