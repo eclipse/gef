@@ -20,9 +20,14 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
+import org.eclipse.gef4.geometry.planar.Arc;
+import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
+import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 public class GeometryNode<T extends IGeometry> extends Path {
 
@@ -57,15 +62,59 @@ public class GeometryNode<T extends IGeometry> extends Path {
 		return elements;
 	}
 
-	private T geom;
+	private T geometry;
+
+	public GeometryNode() {
+		super();
+	}
 
 	public GeometryNode(T geom) {
-		super(toPathElements(geom));
-		this.geom = geom;
+		setGeometry(geom);
 	}
 
 	public T getGeometry() {
-		return geom;
+		return geometry;
+	}
+
+	@Override
+	public boolean isResizable() {
+		// up to now, support resize for all AbstractRectangleBasedGeometries
+		// TODO: we could enable this in general in case we know how to resize
+		// other geometries
+		return geometry instanceof Rectangle
+				|| geometry instanceof RoundedRectangle
+				|| geometry instanceof Ellipse || geometry instanceof Arc
+				|| geometry instanceof Pie;
+	}
+
+	@Override
+	public void resize(double width, double height) {
+		if (geometry instanceof Rectangle) {
+			((Rectangle) geometry).setSize(width, height);
+		} else if (geometry instanceof RoundedRectangle) {
+			((RoundedRectangle) geometry).setSize(width, height);
+		} else if (geometry instanceof Ellipse) {
+			((Ellipse) geometry).setSize(width, height);
+		} else if (geometry instanceof Arc) {
+			((Arc) geometry).setSize(width, height);
+		} else if (geometry instanceof Pie) {
+			((Pie) geometry).setSize(width, height);
+		} else {
+			super.resize(width, height);
+			// TODO: we could resize by scaling the shape according to its
+			// bounds
+		}
+		updatePathElements();
+	}
+
+	public void setGeometry(T geometry) {
+		this.geometry = geometry;
+		updatePathElements();
+	}
+
+	private void updatePathElements() {
+		getElements().clear();
+		getElements().addAll(toPathElements(geometry));
 	}
 
 }
