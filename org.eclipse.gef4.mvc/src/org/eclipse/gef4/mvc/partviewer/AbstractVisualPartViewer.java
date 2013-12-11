@@ -116,13 +116,16 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 * @see IVisualPartViewer#setContents(Object)
 	 */
 	public void setContents(Object contents) {
-		// TODO: make this null-safe and ensure it gets set when root is set
-		// afterwards
 		Object oldContents = getContents();
-		IContentPart<V> rootContentPart = getContentPartFactory()
-				.createRootContentPart(getRootPart(), contents);
+		if(contentPartFactory == null){
+			throw new IllegalStateException("ContentPartFactory has to be set before passing contents in.");
+		}
+		if(rootPart == null){
+			throw new IllegalStateException("Root part has to be set before passing contents in.");
+		}
+		IContentPart<V> rootContentPart = contentPartFactory.createRootContentPart(rootPart, contents);
 		rootContentPart.setModel(contents);
-		getRootPart().setRootContentPart(rootContentPart);
+		rootPart.setRootContentPart(rootContentPart);
 		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY, oldContents, contents);
 	}
 
