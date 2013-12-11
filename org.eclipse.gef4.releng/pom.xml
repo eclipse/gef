@@ -253,6 +253,18 @@
 		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
+		<module>../org.eclipse.gef4.mvc</module>
+		<module>../org.eclipse.gef4.mvc-feature</module>
+		<module>../org.eclipse.gef4.mvc.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
+		<module>../org.eclipse.gef4.mvc.ui</module>
+		<module>../org.eclipse.gef4.mvc.ui-feature</module>
+		<module>../org.eclipse.gef4.mvc.ui.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.ui.sdk-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx</module>
+		<module>../org.eclipse.gef4.mvc.fx-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>
 		<module>../org.eclipse.gef4.cloudio.source-feature</module>

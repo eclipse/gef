@@ -39,8 +39,27 @@
    <feature url="features/org.eclipse.gef4.cloudio.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.tests" version="0.1.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.mvc_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.fx_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.ui_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.fx.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.fx.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.ui.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>
    <category-def name="GEF4 Cloudio" label="GEF4 Cloudio"/>
+   <category-def name="GEF4 MVC" label="GEF4 MVC"/>
 </site>
