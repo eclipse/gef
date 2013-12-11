@@ -9,7 +9,6 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocateTool;
-import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -96,6 +95,7 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 				contentPart.getVisual().getBoundsInLocal()));
 	}
 
+	// TODO: move to GEF4 Geometry Convert JavaFX
 	private Rectangle toRectangle(Bounds bounds) {
 		return new Rectangle(bounds.getMinX(), bounds.getMinY(),
 				bounds.getWidth(), bounds.getHeight());

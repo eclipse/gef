@@ -3,10 +3,7 @@ package org.eclipse.gef4.mvc.javafx;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 
 import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionTool;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -43,30 +40,30 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
 	protected IVisualPart<Node> getTargetPart(MouseEvent event) {
 		EventTarget target = event.getTarget();
-		
+
 		if (target instanceof Node) {
 			Node targetNode = (Node) target;
-			
+
 			// look for the Node in the visual-part-map
 			IVisualPart<Node> newSelection = getDomain().getViewer()
-				.getVisualPartMap().get(targetNode);
+					.getVisualPartMap().get(targetNode);
 			if (newSelection instanceof IVisualPart) {
 				return (IVisualPart<Node>) newSelection;
 			}
-		
+
 			// try to find the root visual in the target node's parent hierarchy
-			FXRootVisualPart rootPart = (FXRootVisualPart) getDomain().getViewer()
-				.getRootPart();
+			FXRootVisualPart rootPart = (FXRootVisualPart) getDomain()
+					.getViewer().getRootPart();
 			Node rootVisual = rootPart.getVisual();
 			while (targetNode != null && targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 			}
-			
+
 			if (targetNode == rootVisual) {
 				return rootPart;
 			}
 		}
-		
+
 		return null;
 	}
 
