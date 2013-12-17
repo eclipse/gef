@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.gef4.mvc.anchors.IAnchor;
+
 /**
  * The base implementation for
  * {@link org.eclipse.gef4.mvc.parts.IEdgeContentPart}.
@@ -17,67 +23,61 @@ package org.eclipse.gef4.mvc.parts;
 public abstract class AbstractEdgeContentPart<V> extends
 		AbstractContentEditPart<V> implements IEdgeContentPart<V> {
 
-	private INodeContentPart<V> source, target;
-	
-	/**
-	 * Sets the parent EditPart. There is no reason to override this method.
-	 * 
-	 * @see IEditPart#setParent(IEditPart)
-	 */
+	private List<IAnchor<V>> sourceAnchors;
+	private List<IAnchor<V>> targetAnchors;
+
 	@Override
-	public void setParent(IVisualPart<V> parent) {
-		super.setParent(parent);
-		if (parent != null && source != null && target != null) {
-			refreshVisual();
-			synchronize();
+	public List<IAnchor<V>> getSourceAnchors() {
+		if (sourceAnchors == null) {
+			return Collections.emptyList();
 		}
+		return Collections.unmodifiableList(sourceAnchors);
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEdgeContentPart#getSource()
-	 */
-	public INodeContentPart<V> getSource() {
-		return source;
-	}
-
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEdgeContentPart#getTarget()
-	 */
-	public INodeContentPart<V> getTarget() {
-		return target;
-	}
-
-	/**
-	 * Sets the source EditPart of this connection.
-	 * 
-	 * @param source
-	 *            EditPart which is the source.
-	 */
-	public void setSource(INodeContentPart<V> source) {
-		if (this.source == source)
-			return;
-
-		this.source = source;
-		if (this.source != null && target != null && getParent() != null) {
-			refreshVisual();
-			synchronize();
+	@Override
+	public void addSourceAnchor(IAnchor<V> sourceAnchor) {
+		if (sourceAnchors == null) {
+			sourceAnchors = new ArrayList<IAnchor<V>>();
 		}
+		sourceAnchors.add(sourceAnchor);
+		refreshVisual();
+
 	}
 
-	/**
-	 * Sets the target EditPart of this connection.
-	 * 
-	 * @param target
-	 *            EditPart which is the target.
-	 */
-	public void setTarget(INodeContentPart<V> target) {
-		if (this.target == target)
-			return;
-		this.target = target;
-		if (source != null && this.target != null && getParent() != null) {
-			refreshVisual();
-			synchronize();
+	@Override
+	public void removeSourceAnchor(IAnchor<V> sourceAnchor) {
+		sourceAnchors.remove(sourceAnchor);
+		if (sourceAnchors.size() == 0) {
+			sourceAnchors = null;
 		}
+		refreshVisual();
+	}
+
+	@Override
+	public List<IAnchor<V>> getTargetAnchors() {
+		if (targetAnchors == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(targetAnchors);
+	}
+
+	@Override
+	public void addTargetAnchor(IAnchor<V> targetAnchor) {
+		if (targetAnchors == null) {
+			targetAnchors = new ArrayList<IAnchor<V>>();
+		}
+		targetAnchors.add(targetAnchor);
+		refreshVisual();
+
+	}
+
+	@Override
+	public void removeTargetAnchor(IAnchor<V> targetAnchor) {
+		targetAnchors.remove(targetAnchor);
+		if (targetAnchors.size() == 0) {
+			targetAnchors = null;
+		}
+		refreshVisual();
 	}
 
 }

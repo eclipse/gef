@@ -6,13 +6,15 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.AbstractFXNodeContentPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXExampleContainerNodeEditPart extends AbstractFXNodeContentPart {
+public class FXExampleContainerPart extends AbstractFXNodeContentPart {
 
 	private Group g;
 
-	public FXExampleContainerNodeEditPart() {
+	public FXExampleContainerPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
 	}
@@ -34,13 +36,9 @@ public class FXExampleContainerNodeEditPart extends AbstractFXNodeContentPart {
 	}
 
 	@Override
-	protected boolean isModelObject(Object model) {
-		return true;
-	}
-
-	@Override
-	protected boolean isModelLink(Object model) {
-		return false;
+	public IAnchor<Node> getAnchor(IContentPart<Node> fixedPart) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,11 +1,13 @@
 package org.eclipse.gef4.mvc.parts;
 
+import org.eclipse.gef4.mvc.anchors.IAnchor;
+
 /**
  * An {@link IEditPart} that visualizes an underlying content model element.
  * 
  * @author nyssen
  */
-// TODO: parameterize
+// TODO: parameterize with model; rename model operations -> content
 public interface IContentPart<V> extends IVisualPart<V> {
 
 	/**
@@ -33,5 +35,8 @@ public interface IContentPart<V> extends IVisualPart<V> {
 	Object getModel();
 
 	void synchronizeContentChildren();
+	
+	// returns an anchor (linked to this part as anchorage), which is used to fix the given part
+	IAnchor<V> getAnchor(IContentPart<V> fixedPart);
 
 }

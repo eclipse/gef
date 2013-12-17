@@ -67,16 +67,9 @@ public abstract class AbstractContentEditPart<V> extends AbstractVisualPart<V>
 	 *            the Child model object
 	 * @return The child EditPart
 	 */
-	protected INodeContentPart<V> createNodeChild(Object model) {
-		INodeContentPart<V> child = getViewer().getContentPartFactory()
-				.createNodeContentPart(this, model);
-		child.setModel(model);
-		return child;
-	}
-	
-	protected IEdgeContentPart<V> createEdgeChild(Object model) {
-		IEdgeContentPart<V> child = getViewer().getContentPartFactory()
-				.createEdgeContentPart(this, model);
+	protected IContentPart<V> createChild(Object model) {
+		IContentPart<V> child = getViewer().getContentPartFactory()
+				.createChildContentPart(this, model);
 		child.setModel(model);
 		return child;
 	}
@@ -89,10 +82,7 @@ public abstract class AbstractContentEditPart<V> extends AbstractVisualPart<V>
 	protected void unregister() {
 		super.unregister();
 		unregisterModel();
-	}
-	
-	protected abstract boolean isModelObject(Object model);
-	protected abstract boolean isModelLink(Object model);	
+	}	
 	
 	/**
 	 * Updates the set of children EditParts so that it is in sync with the
@@ -150,12 +140,7 @@ public abstract class AbstractContentEditPart<V> extends AbstractVisualPart<V>
 			else {
 				// An EditPart for this model doesn't exist yet. Create and
 				// insert one.
-				if(isModelObject(model)){
-					editPart = createNodeChild(model);
-				}
-				else {
-					editPart = createEdgeChild(model);
-				}
+				editPart = createChild(model);
 				addChild(editPart, i);
 			}
 		}
@@ -191,6 +176,15 @@ public abstract class AbstractContentEditPart<V> extends AbstractVisualPart<V>
 	
 	protected List<Object> getModelChildren() {
 		return Collections.emptyList();
+	}
+	
+	@Override
+	public void setParent(IVisualPart<V> parent) {
+		super.setParent(parent);
+		if (parent != null) {
+			refreshVisual();
+			synchronize();
+		}
 	}
 
 }

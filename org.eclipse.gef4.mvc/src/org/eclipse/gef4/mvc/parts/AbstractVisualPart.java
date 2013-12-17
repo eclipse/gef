@@ -185,6 +185,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	 * 
 	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		return Platform.getAdapterManager().getAdapter(this, key);
 	}
@@ -192,7 +193,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	public List<IVisualPart<V>> getChildren(){
 		if (children == null)
 			return Collections.emptyList();
-		return children;
+		return Collections.unmodifiableList(children);
 	}
 
 	/**
@@ -302,7 +303,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	protected abstract void removeChildVisual(IVisualPart<V> child);
 
 	private void removeChildWithoutNotify(IVisualPart<V> child) {
-		getChildren().remove(child);
+		children.remove(child);
 		if (children.size() == 0) {
 			children = null;
 		}
