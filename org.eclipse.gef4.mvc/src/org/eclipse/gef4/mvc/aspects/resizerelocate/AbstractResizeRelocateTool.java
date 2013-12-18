@@ -127,7 +127,9 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			computeRelatives(targetPart);
-			getResizeRelocatePolicy(targetPart).initResizeRelocate();
+			if (getResizeRelocatePolicy(targetPart) != null) {
+				getResizeRelocatePolicy(targetPart).initResizeRelocate();
+			}
 		}
 	}
 
@@ -186,9 +188,14 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 			double[] newBounds = getBounds(sel, targetPart);
 			double dx = newBounds[0] - initialBounds[0];
 			double dy = newBounds[1] - initialBounds[1];
-			double dw = (newBounds[2] - newBounds[0]) - (initialBounds[2] - initialBounds[0]);
-			double dh = (newBounds[3] - newBounds[1]) - (initialBounds[3] - initialBounds[1]);
-			getResizeRelocatePolicy(targetPart).performResizeRelocate(dx, dy, dw, dh);
+			double dw = (newBounds[2] - newBounds[0])
+					- (initialBounds[2] - initialBounds[0]);
+			double dh = (newBounds[3] - newBounds[1])
+					- (initialBounds[3] - initialBounds[1]);
+			if (getResizeRelocatePolicy(targetPart) != null) {
+				getResizeRelocatePolicy(targetPart).performResizeRelocate(dx,
+						dy, dw, dh);
+			}
 		}
 	}
 
@@ -197,7 +204,7 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 		double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
 		double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
 		double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
-		return new double[] {x1, y1, x2, y2};
+		return new double[] { x1, y1, x2, y2 };
 	}
 
 	/**
@@ -239,8 +246,10 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 			double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
 			double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
 			double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
-			getResizeRelocatePolicy(targetPart).commitResizeRelocate(x1, y1,
-					x2 - x1, y2 - y1);
+			if (getResizeRelocatePolicy(targetPart) != null) {
+				getResizeRelocatePolicy(targetPart).commitResizeRelocate(x1,
+						y1, x2 - x1, y2 - y1);
+			}
 		}
 
 		// null resize context vars

@@ -3,20 +3,18 @@ package org.eclipse.gef4.mvc.fx.example;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.AbstractFXEdgeContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleCurvePart extends AbstractFXEdgeContentPart {
 
 	private GeometryNode<ICurve> visual;
-	
-	public FXExampleCurvePart(){
+
+	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
 	}
-	
+
 	@Override
 	public ICurve getModel() {
 		return (ICurve) super.getModel();
@@ -30,7 +28,6 @@ public class FXExampleCurvePart extends AbstractFXEdgeContentPart {
 		}
 		super.setModel(model);
 	}
-
 
 	@Override
 	public Node getVisual() {
@@ -46,8 +43,14 @@ public class FXExampleCurvePart extends AbstractFXEdgeContentPart {
 	}
 
 	@Override
-	public IAnchor<Node> getAnchor(IContentPart<Node> fixedPart) {
+	protected void linkAnchoredVisual(IVisualPart<Node> anchored) {
 		// TODO Auto-generated method stub
-		return null;
+		
+	}
+
+	@Override
+	protected void unlinkAnchoredVisual(IVisualPart<Node> anchored) {
+		// TODO Auto-generated method stub
+		
 	}
 }

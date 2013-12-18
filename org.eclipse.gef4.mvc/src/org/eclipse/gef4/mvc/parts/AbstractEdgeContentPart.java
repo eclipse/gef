@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 
 /**
  * The base implementation for
@@ -23,61 +18,60 @@ import org.eclipse.gef4.mvc.anchors.IAnchor;
 public abstract class AbstractEdgeContentPart<V> extends
 		AbstractContentEditPart<V> implements IEdgeContentPart<V> {
 
-	private List<IAnchor<V>> sourceAnchors;
-	private List<IAnchor<V>> targetAnchors;
-
-	@Override
-	public List<IAnchor<V>> getSourceAnchors() {
-		if (sourceAnchors == null) {
-			return Collections.emptyList();
-		}
-		return Collections.unmodifiableList(sourceAnchors);
-	}
-
-	@Override
-	public void addSourceAnchor(IAnchor<V> sourceAnchor) {
-		if (sourceAnchors == null) {
-			sourceAnchors = new ArrayList<IAnchor<V>>();
-		}
-		sourceAnchors.add(sourceAnchor);
-		refreshVisual();
-
-	}
-
-	@Override
-	public void removeSourceAnchor(IAnchor<V> sourceAnchor) {
-		sourceAnchors.remove(sourceAnchor);
-		if (sourceAnchors.size() == 0) {
-			sourceAnchors = null;
-		}
-		refreshVisual();
-	}
-
-	@Override
-	public List<IAnchor<V>> getTargetAnchors() {
-		if (targetAnchors == null) {
-			return Collections.emptyList();
-		}
-		return Collections.unmodifiableList(targetAnchors);
-	}
-
-	@Override
-	public void addTargetAnchor(IAnchor<V> targetAnchor) {
-		if (targetAnchors == null) {
-			targetAnchors = new ArrayList<IAnchor<V>>();
-		}
-		targetAnchors.add(targetAnchor);
-		refreshVisual();
-
-	}
-
-	@Override
-	public void removeTargetAnchor(IAnchor<V> targetAnchor) {
-		targetAnchors.remove(targetAnchor);
-		if (targetAnchors.size() == 0) {
-			targetAnchors = null;
-		}
-		refreshVisual();
-	}
+//	private List<IAnchor<V>> sourceAnchors;
+//	private List<IAnchor<V>> targetAnchors;
+//
+//	@Override
+//	public List<IAnchor<V>> getSourceAnchors() {
+//		if (sourceAnchors == null) {
+//			return Collections.emptyList();
+//		}
+//		return Collections.unmodifiableList(sourceAnchors);
+//	}
+//
+//	@Override
+//	public void addSourceAnchor(IAnchor<V> sourceAnchor) {
+//		if (sourceAnchors == null) {
+//			sourceAnchors = new ArrayList<IAnchor<V>>();
+//		}
+//		sourceAnchors.add(sourceAnchor);
+//		refreshVisual();
+//	}
+//
+//	@Override
+//	public void removeSourceAnchor(IAnchor<V> sourceAnchor) {
+//		sourceAnchors.remove(sourceAnchor);
+//		if (sourceAnchors.size() == 0) {
+//			sourceAnchors = null;
+//		}
+//		refreshVisual();
+//	}
+//
+//	@Override
+//	public List<IAnchor<V>> getTargetAnchors() {
+//		if (targetAnchors == null) {
+//			return Collections.emptyList();
+//		}
+//		return Collections.unmodifiableList(targetAnchors);
+//	}
+//
+//	@Override
+//	public void addTargetAnchor(IAnchor<V> targetAnchor) {
+//		if (targetAnchors == null) {
+//			targetAnchors = new ArrayList<IAnchor<V>>();
+//		}
+//		targetAnchors.add(targetAnchor);
+//		refreshVisual();
+//
+//	}
+//
+//	@Override
+//	public void removeTargetAnchor(IAnchor<V> targetAnchor) {
+//		targetAnchors.remove(targetAnchor);
+//		if (targetAnchors.size() == 0) {
+//			targetAnchors = null;
+//		}
+//		refreshVisual();
+//	}
 
 }

@@ -100,7 +100,7 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 		return handleParts;
 	}
 	
-	//TODO: return two lists (conent and handle parts, do not have to provide an on data field for contents parts)
+	//TODO: return two lists (content and handle parts, do not have to provide an on data field for contents parts)
 
 	/**
 	 * @see IRootVisualPart#setViewer(EditPartViewer)
@@ -109,6 +109,18 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 		if (viewer == newViewer)
 			return;
 		viewer = newViewer;
+	}
+	
+	@Override
+	protected void linkAnchoredVisual(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IRootVisualPart does not support anchoreds");
+	}
+
+	@Override
+	protected void unlinkAnchoredVisual(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IRootVisualPart does not support anchoreds");
 	}
 
 }

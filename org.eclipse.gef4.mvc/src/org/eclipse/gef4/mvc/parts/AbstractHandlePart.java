@@ -8,6 +8,16 @@ public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
 	private List<IContentPart<V>> targetContentParts;
 
 	@Override
+	public List<IContentPart<V>> getTargetContentParts() {
+		return targetContentParts;
+	}
+
+	@Override
+	public void setTargetContentParts(List<IContentPart<V>> targetContentParts) {
+		this.targetContentParts = targetContentParts;
+	}
+
+	@Override
 	protected void addChildVisual(IVisualPart<V> child, int index) {
 		// handles do not support children
 		throw new UnsupportedOperationException(
@@ -20,16 +30,17 @@ public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}
-	
-	
+
 	@Override
-	public List<IContentPart<V>> getTargetContentParts() {
-		return targetContentParts;
+	protected void linkAnchoredVisual(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IHandleParts do not support anchoreds");
 	}
-	
+
 	@Override
-	public void setTargetContentParts(List<IContentPart<V>> targetContentParts){
-		this.targetContentParts = targetContentParts;
+	protected void unlinkAnchoredVisual(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IHandleParts do not support anchoreds");
 	}
 
 }

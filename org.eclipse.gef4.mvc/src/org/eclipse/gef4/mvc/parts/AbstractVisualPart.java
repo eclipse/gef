@@ -38,10 +38,9 @@ import org.eclipse.gef4.mvc.policies.IEditPolicy;
  * AbstractEditPart provides support for children. All AbstractEditPart's can
  * potentially be containers for other EditParts.
  */
-public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptable {
-	
-	private IVisualPart<V> parent;
-	
+public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
+		IAdaptable {
+
 	/**
 	 * This flag is set during {@link #activate()}, and reset on
 	 * {@link #deactivate()}
@@ -58,7 +57,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	private int flags;
 
 	private Map<Class<? extends IEditPolicy<V>>, IEditPolicy<V>> editPolicies;
+
+	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
+
+	private List<IVisualPart<V>> anchoreds;
+	private List<IVisualPart<V>> anchorages;
 
 	/**
 	 * Activates this EditPart, which in turn activates its children and
@@ -90,10 +94,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	 * called from {@link #synchronizeContentChildren()}. The following events
 	 * occur in the order listed:
 	 * <OL>
-	 * <LI>The child is added to the {@link #children} List, and its parent
-	 * is set to <code>this</code>
-	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the
-	 * child's visual
+	 * <LI>The child is added to the {@link #children} List, and its parent is
+	 * set to <code>this</code>
+	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the child's
+	 * visual
 	 * <LI>{@link IEditPart#addNotify()} is called on the child.
 	 * <LI><code>activate()</code> is called if this part is active
 	 * <LI><code>EditPartListeners</code> are notified that the child has been
@@ -113,9 +117,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	public void addChild(IVisualPart<V> child, int index) {
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
-		
-		child.setParent(this);
 
+		child.setParent(this);
+		
 		addChildVisual(child, index);
 		child.refreshVisual();
 
@@ -190,7 +194,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 		return Platform.getAdapterManager().getAdapter(this, key);
 	}
 
-	public List<IVisualPart<V>> getChildren(){
+	public List<IVisualPart<V>> getChildren() {
 		if (children == null)
 			return Collections.emptyList();
 		return Collections.unmodifiableList(children);
@@ -209,7 +213,6 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	protected final boolean getFlag(int flag) {
 		return (flags & flag) != 0;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -268,8 +271,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	 * removed
 	 * <LI><code>deactivate()</code> is called if the child is active
 	 * <LI>{@link IEditPart#removeNotify()} is called on the child.
-	 * <LI>{@link #removeChildVisual(IEditPart)} is called to remove the
-	 * child's visual object.
+	 * <LI>{@link #removeChildVisual(IEditPart)} is called to remove the child's
+	 * visual object.
 	 * <LI>The child's parent is set to <code>null</code>
 	 * </OL>
 	 * <P>
@@ -325,7 +328,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 
 	/**
 	 * Moves a child <code>EditPart</code> into a lower index than it currently
-	 * occupies. This method is called from {@link #synchronizeContentChildren()}.
+	 * occupies. This method is called from
+	 * {@link #synchronizeContentChildren()}.
 	 * 
 	 * @param editpart
 	 *            the child being reordered
@@ -374,21 +378,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 		if (this.parent == parent)
 			return;
 
-		if(this.parent != null){
-			unregister();	
+		if (this.parent != null) {
+			unregisterVisual();
 		}
 		this.parent = parent;
 		if (this.parent != null) {
-			register();
+			registerVisual();
 		}
-	}
-	
-	protected void register(){
-		registerVisual();
-	}
-
-	protected void unregister() {
-		unregisterVisual();
 	}
 
 	/**
@@ -397,5 +393,69 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>, IAdaptabl
 	public IVisualPart<V> getParent() {
 		return parent;
 	}
-	
+
+	@Override
+	public void addAnchored(IVisualPart<V> anchored) {
+		if(anchoreds == null){
+			anchoreds = new ArrayList<IVisualPart<V>>();
+		}
+		anchoreds.add(anchored);
+		
+		anchored.addAnchorage(this);
+		
+		linkAnchoredVisual(anchored);
+	}
+
+	protected abstract void linkAnchoredVisual(IVisualPart<V> anchored);
+
+	@Override
+	public void removeAnchored(IVisualPart<V> anchored) {
+		unlinkAnchoredVisual(anchored);
+		
+		anchored.removeAnchorage(this);
+		
+		anchoreds.remove(anchored);
+		if(anchoreds.size() == 0){
+			anchoreds = null;
+		}
+	}
+
+	protected abstract void unlinkAnchoredVisual(IVisualPart<V> anchored);
+
+	@Override
+	public List<IVisualPart<V>> getAnchoreds() {
+		if(anchoreds == null){
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(anchoreds);
+	}
+
+	@Override
+	public void addAnchorage(IVisualPart<V> anchorage) {
+		if(anchorages == null){
+			anchorages = new ArrayList<IVisualPart<V>>();
+		}
+		anchorages.add(anchorage);
+		// TODO: add listener here so we can update our visuals accordingly....
+	}
+
+	//  counterpart to setParent(null) in case of hierarchy
+	@Override
+	public void removeAnchorage(IVisualPart<V> anchorage) {
+		// TODO: remove listener
+		
+		anchorages.remove(anchorage);
+		if(anchorages.size() == 0){
+			anchorages = null;
+		}
+	}
+
+	@Override
+	public List<IVisualPart<V>> getAnchorages() {
+		if(anchorages == null){
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(anchorages);
+	}
+
 }

@@ -1,11 +1,10 @@
 package org.eclipse.gef4.mvc.fx.example;
 
-import java.util.List;
-
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.mvc.fx.example.FXExampleViewPart.ExampleGeometricModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
@@ -15,8 +14,8 @@ public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 	@Override
 	public IContentPart<Node> createRootContentPart(IRootVisualPart<Node> root,
 			Object model) {
-		if (model instanceof List) {
-			return new FXExampleContainerPart();
+		if (model instanceof ExampleGeometricModel) {
+			return new FXExampleModelPart();
 		} else {
 			throw new IllegalArgumentException();
 		}

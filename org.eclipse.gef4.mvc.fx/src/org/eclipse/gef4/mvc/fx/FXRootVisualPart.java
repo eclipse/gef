@@ -110,7 +110,6 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 		return scrollPane;
 	}
 
-	// TODO: this contract should be enfored by superclass
 	@Override
 	protected void addChildVisual(IVisualPart<Node> child, int index) {
 		if (child instanceof IContentPart) {
