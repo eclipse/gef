@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
 
-public class CompositeTool<V> extends AbstractTool<V> implements ICompositeTool<V> {
+public class CompositeAndTool<V> extends AbstractTool<V> implements ICompositeTool<V> {
 
 	private List<ITool<V>> tools = new ArrayList<ITool<V>>();
 	

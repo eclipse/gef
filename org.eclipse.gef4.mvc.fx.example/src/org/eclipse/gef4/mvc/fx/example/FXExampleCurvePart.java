@@ -5,10 +5,12 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -48,6 +50,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements Propert
 		if (visual.getGeometry() != curve) {
 			visual.setGeometry(curve);
 		}
+		visual.toBack();
 	}
 
 	@Override
@@ -71,12 +74,28 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements Propert
 		}
 	}
 
+	/*
+	 * TODO:
+	 *  - position computation (currently somewhere inside the bounds)
+	 *  - source / target distinction
+	 *  - updatePathElements() should not be necessary
+	 */
 	private void updateModel() {
-		Line line = (Line) getModel();
 		if(anchors.size() == 2){
-			// 
+			// use anchors as start and end point
+			Point start = anchors.get(0).getPosition();
+			Point end = anchors.get(1).getPosition();
+			
+			// TODO: convert position to correct coordinate space
+			
+			// update model
+			Line line = (Line) getModel();
+			line.setP1(start);
+			line.setP2(end);
+			
+			// update geometry visual
+			visual.updatePathElements();
 		}
-		System.out.println("anchors changed");
 	}
 
 	@Override

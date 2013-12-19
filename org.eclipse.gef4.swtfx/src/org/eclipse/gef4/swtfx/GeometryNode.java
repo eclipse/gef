@@ -112,7 +112,13 @@ public class GeometryNode<T extends IGeometry> extends Path {
 		updatePathElements();
 	}
 
-	private void updatePathElements() {
+	/**
+	 * Updates the visual representation (Path) of this GeometryNode. This is
+	 * done automatically when setting the geometry. But in case you change
+	 * properties of a geometry, you have to call this method in order to update
+	 * its visual counter part.
+	 */
+	public void updatePathElements() {
 		getElements().clear();
 		getElements().addAll(toPathElements(geometry));
 	}
