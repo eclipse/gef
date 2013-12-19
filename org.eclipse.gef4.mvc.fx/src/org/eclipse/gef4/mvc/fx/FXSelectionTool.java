@@ -14,7 +14,7 @@ import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
-	private EventHandler<MouseEvent> pressedFilter = new EventHandler<MouseEvent>() {
+	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = getTargetPart(event);
@@ -70,14 +70,18 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 	@Override
 	public void activate() {
 		super.activate();
+//		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
+//				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
+		.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
 
 	@Override
 	public void deactivate() {
+//		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
+//				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedFilter);
+		.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		super.deactivate();
 	}
 
