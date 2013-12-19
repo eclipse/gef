@@ -6,22 +6,25 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
-import org.eclipse.gef4.mvc.fx.AbstractFXNodeContentPart;
+import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.FXSelectionPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
-public class FXExampleShapePart extends AbstractFXNodeContentPart {
+public class FXExampleShapePart extends AbstractFXContentPart {
 
 	private GeometryNode<IShape> visual;
+	private FXBoundsRelativeAnchor anchor;
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
+		// TODO: use a proper anchor that computes a position on the border
 		visual.setFill(Color.RED);
 		installEditPolicy(AbstractSelectionPolicy.class,
 				new FXSelectionPolicy());
@@ -70,17 +73,20 @@ public class FXExampleShapePart extends AbstractFXNodeContentPart {
 	}
 
 	@Override
-	protected void linkAnchoredVisual(IVisualPart<Node> anchored) {
-		
-		// TODO Auto-generated method stub
-		// FIND ANCHOR AND WIRE
-		System.out.println("link Anchored visual " + anchored);
+	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
 	}
 
 	@Override
-	protected void unlinkAnchoredVisual(IVisualPart<Node> anchored) {
-		// TODO Auto-generated method stub
-		
+	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
 	}
 
+	@Override
+	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
+		if(anchor == null){
+			anchor = new FXBoundsRelativeAnchor(new Point(10, 10));
+		}
+		// register listeners
+		anchor.setAnchorage(getVisual());
+		return anchor;
+	}
 }

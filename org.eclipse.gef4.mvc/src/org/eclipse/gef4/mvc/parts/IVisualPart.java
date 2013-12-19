@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivateable;
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
 public interface IVisualPart<V> extends IActivateable, IAdaptable {
@@ -24,12 +25,17 @@ public interface IVisualPart<V> extends IActivateable, IAdaptable {
 	public void setParent(IVisualPart<V> parent);
 
 	public IVisualPart<V> getParent();
-
+	
 	public List<IVisualPart<V>> getChildren();
-
+	
 	public void removeChild(IVisualPart<V> child);
-
+	
 	public void addChild(IVisualPart<V> child, int index);
+
+//	public void addVisualToParentVisual(V parentVisual);
+//	
+//	public void removeVisualFromParentVisual(/*V parentVisual*/);
+
 
 	public void addAnchored(IVisualPart<V> anchored);
 
@@ -42,6 +48,10 @@ public interface IVisualPart<V> extends IActivateable, IAdaptable {
 	public void removeAnchorage(IVisualPart<V> anchorage);
 
 	public List<IVisualPart<V>> getAnchorages();
+	
+	public void attachVisualToAnchorageVisual(IAnchor<V> anchor);
+	
+	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?

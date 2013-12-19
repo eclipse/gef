@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
@@ -141,6 +142,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * @see AbstractGraphicalEditPart#removeChildVisual(EditPart)
 	 */
 	protected abstract void addChildVisual(IVisualPart<V> child, int index);
+	//TODO: make concrete, passing over the visual container to the child (as in case of anchoreds)
+	
 
 	private void addChildWithoutNotify(IVisualPart<V> child, int index) {
 		if (children == null)
@@ -403,14 +406,19 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		
 		anchored.addAnchorage(this);
 		
-		linkAnchoredVisual(anchored);
+		attachAnchoredVisual(anchored);
 	}
 
-	protected abstract void linkAnchoredVisual(IVisualPart<V> anchored);
+	protected void attachAnchoredVisual(IVisualPart<V> anchored){
+		IAnchor<V> anchor = getAnchor(anchored);
+		anchored.attachVisualToAnchorageVisual(anchor);
+	}
 
+	protected abstract IAnchor<V> getAnchor(IVisualPart<V> anchored);
+	
 	@Override
 	public void removeAnchored(IVisualPart<V> anchored) {
-		unlinkAnchoredVisual(anchored);
+		detachAnchoredVisual(anchored);
 		
 		anchored.removeAnchorage(this);
 		
@@ -420,7 +428,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected abstract void unlinkAnchoredVisual(IVisualPart<V> anchored);
+	protected void detachAnchoredVisual(IVisualPart<V> anchored){
+		IAnchor<V> anchor = getAnchor(anchored);
+		anchored.detachVisualFromAnchorageVisual(anchor);
+	}
 
 	@Override
 	public List<IVisualPart<V>> getAnchoreds() {

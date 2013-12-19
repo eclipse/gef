@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 
 /**
@@ -112,15 +113,21 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 	}
 	
 	@Override
-	protected void linkAnchoredVisual(IVisualPart<V> anchored) {
+	public void attachVisualToAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
-				"IRootVisualPart does not support anchoreds");
+				"IRootVisualPart does not support this");
 	}
-
+	
 	@Override
-	protected void unlinkAnchoredVisual(IVisualPart<V> anchored) {
+	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
-				"IRootVisualPart does not support anchoreds");
+				"IRootVisualPart does not support this");
+	}
+	
+	@Override
+	protected IAnchor<V> getAnchor(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IRootVisualPart does not support this");
 	}
 
 }

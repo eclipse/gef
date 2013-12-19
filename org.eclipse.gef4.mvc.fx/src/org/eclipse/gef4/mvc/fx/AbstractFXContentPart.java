@@ -4,11 +4,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-import org.eclipse.gef4.mvc.parts.AbstractNodeContentPart;
+import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public abstract class AbstractFXNodeContentPart extends
-		AbstractNodeContentPart<Node> {
+public abstract class AbstractFXContentPart extends
+		AbstractContentPart<Node> {
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node> child, int index) {

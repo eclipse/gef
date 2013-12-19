@@ -7,11 +7,12 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.AbstractFXNodeContentPart;
+import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.example.FXExampleViewPart.ExampleGeometricModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class FXExampleModelPart extends AbstractFXNodeContentPart {
+public class FXExampleModelPart extends AbstractFXContentPart {
 
 	private Group g;
 
@@ -42,13 +43,22 @@ public class FXExampleModelPart extends AbstractFXNodeContentPart {
 	}
 
 	@Override
-	protected void linkAnchoredVisual(IVisualPart<Node> anchored) {
+	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
 		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	protected void unlinkAnchoredVisual(IVisualPart<Node> anchored) {
-		// TODO Auto-generated method stub	
+	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

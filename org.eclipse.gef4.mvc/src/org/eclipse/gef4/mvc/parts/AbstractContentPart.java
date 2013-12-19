@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 
-public abstract class AbstractContentEditPart<V> extends AbstractVisualPart<V>
+public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {
 
 	private Object model;

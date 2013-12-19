@@ -2,6 +2,8 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
+import org.eclipse.gef4.mvc.anchors.IAnchor;
+
 public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
 		implements IHandlePart<V> {
 
@@ -19,28 +21,32 @@ public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
 
 	@Override
 	protected void addChildVisual(IVisualPart<V> child, int index) {
-		// handles do not support children
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}
 
 	@Override
 	protected void removeChildVisual(IVisualPart<V> child) {
-		// handles do not support children
 		throw new UnsupportedOperationException(
-				"IHandleParts do not support children");
+				"IHandleParts do not support this");
 	}
 
 	@Override
-	protected void linkAnchoredVisual(IVisualPart<V> anchored) {
+	public void attachVisualToAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
-				"IHandleParts do not support anchoreds");
+				"IHandleParts do not support this");
 	}
 
 	@Override
-	protected void unlinkAnchoredVisual(IVisualPart<V> anchored) {
+	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
-				"IHandleParts do not support anchoreds");
+				"IHandleParts do not support this");
+	}
+
+	@Override
+	protected IAnchor<V> getAnchor(IVisualPart<V> anchored) {
+		throw new UnsupportedOperationException(
+				"IHandleParts do not support this");
 	}
 
 }
