@@ -126,7 +126,6 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<V> ep = trash.get(i);
 				removeChild(ep);
-				disposeIfObsolete(ep);
 			}
 		}
 	}
@@ -152,10 +151,25 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 
 	@Override
 	public void setParent(IVisualPart<V> parent) {
+		if (getParent() == parent) {
+			return;
+		}
+		if (parent == null) {
+			// remove all content children
+			for (IVisualPart<V> child : filterContentParts(getChildren())) {
+				removeChild(child);
+			}
+			// remove all content anchored
+			for (IVisualPart<V> anchored : filterContentParts(getAnchoreds())) {
+				removeAnchored(anchored);
+			}
+		}
 		super.setParent(parent);
 		if (parent != null) {
 			refreshVisual();
+			// create content children as needed
 			synchronizeContentChildren();
+			// create content anchored as needed
 			synchronizeContentAnchored();
 		}
 	}
@@ -181,6 +195,22 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			contentPart.setModel(model);
 			getViewer().getContentPartMap().put(model, contentPart);
 			return contentPart;
+		}
+	}
+
+	@Override
+	public void removeChild(IVisualPart<V> child) {
+		super.removeChild(child);
+		if (child instanceof IContentPart) {
+			disposeIfObsolete((IContentPart<V>) child);
+		}
+	}
+
+	@Override
+	public void removeAnchored(IVisualPart<V> anchored) {
+		super.removeAnchored(anchored);
+		if (anchored instanceof IContentPart) {
+			disposeIfObsolete((IContentPart<V>) anchored);
 		}
 	}
 
@@ -243,7 +273,6 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<V> ep = trash.get(i);
 				removeAnchored(ep);
-				disposeIfObsolete(ep);
 			}
 		}
 	}
