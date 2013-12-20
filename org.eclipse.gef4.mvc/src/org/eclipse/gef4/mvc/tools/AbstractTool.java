@@ -1,12 +1,6 @@
 package org.eclipse.gef4.mvc.tools;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.gef4.mvc.domain.IEditDomain;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public abstract class AbstractTool<V> implements ITool<V> {
 
@@ -33,7 +27,9 @@ public abstract class AbstractTool<V> implements ITool<V> {
 		this.isActive = false;
 	}
 
-	protected boolean isActive() {
+	@Override
+	public boolean isActive() {
 		return isActive;
 	}
+	
 }

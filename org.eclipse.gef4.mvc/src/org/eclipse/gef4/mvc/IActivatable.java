@@ -2,7 +2,7 @@ package org.eclipse.gef4.mvc;
 
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
-public interface IActivateable {
+public interface IActivatable {
 
 	/**
 	 * Activates the EditPart. EditParts that observe a dynamic model or support
@@ -46,6 +46,6 @@ public interface IActivateable {
 	 */
 	public void deactivate();
 	
-//	public boolean isActive();
+	public boolean isActive();
 
 }

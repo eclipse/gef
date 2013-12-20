@@ -29,9 +29,10 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 			} else if (targetPart instanceof IContentPart) {
 				select((IContentPart<Node>) targetPart, append);
 			} else if (targetPart instanceof IHandlePart) {
-				IHandlePart<Node> handlePart = (IHandlePart<Node>) targetPart;
-				ITool<Node> handleTool = handlePart.getHandleTool();
-				getDomain().pushTool(handleTool);
+				System.out.println("impossible");
+//				IHandlePart<Node> handlePart = (IHandlePart<Node>) targetPart;
+//				ITool<Node> handleTool = handlePart.getHandleTool();
+//				getDomain().pushTool(handleTool);
 			} else {
 				throw new IllegalArgumentException("Unsupported part type.");
 			}

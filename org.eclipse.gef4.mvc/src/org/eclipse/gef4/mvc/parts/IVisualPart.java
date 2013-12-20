@@ -3,11 +3,11 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef4.mvc.IActivateable;
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
 
-public interface IVisualPart<V> extends IActivateable, IAdaptable {
+public interface IVisualPart<V> extends IActivatable, IAdaptable {
 
 	/**
 	 * Returns the {@link IRootVisualPart}. This method should only be called

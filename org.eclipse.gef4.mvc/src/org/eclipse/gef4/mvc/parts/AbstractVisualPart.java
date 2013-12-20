@@ -253,7 +253,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	/**
 	 * @return <code>true</code> if this EditPart is active.
 	 */
-	protected boolean isActive() {
+	@Override
+	public boolean isActive() {
 		return getFlag(FLAG_ACTIVE);
 	}
 

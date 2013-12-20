@@ -1,6 +1,5 @@
 package org.eclipse.gef4.mvc.fx;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,7 +8,6 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocateTool;
-import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -17,20 +15,10 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 	
 	private Pos pos;
 	
-	private boolean performing = false;
-	
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {		
 		@Override
 		protected void release(Node target, MouseEvent e, double dx, double dy) {
-			// TODO: the resize tool should not know anything about this
-			// this responsibility should either be placed in the domain, the
-			// viewer, the selection tool or the handle tool (the most
-			// appropriate location probably)
-			// the handle tool should in this case also push the handle tool to
-			// the stack
-			// we need this to properly unregister
 			commitResize(new Point(e.getSceneX(), e.getSceneY()));
-			getDomain().popTool(); // remove ourselves from the tool stack
 		}
 		
 		@Override
@@ -50,7 +38,6 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 		
 		@Override
 		protected void drag(Node target, MouseEvent e, double dx, double dy) {
-			// TODO: pass in dx and dy directly
 			performResize(new Point(e.getSceneX(), e.getSceneY()));
 		}
 	};

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.IActivateable;
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -44,7 +44,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * added in the future.
  */
 
-public interface IEditPolicy<V> extends IActivateable{
+public interface IEditPolicy<V> extends IActivatable{
 
 	/**
 	 * @return the <i>host</i> EditPart on which this policy is installed.

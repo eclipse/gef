@@ -12,7 +12,7 @@ package org.eclipse.gef4.mvc.tools;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.IActivateable;
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -60,7 +60,7 @@ import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
  * {@link org.eclipse.gef4.mvc.tools.AbstractTool}. New methods may be added in the
  * future.
  */
-public interface ITool<V> extends IActivateable{
+public interface ITool<V> extends IActivatable{
 
 	/**
 	 * Called to set the EditDomain for this Tool. This is called right before

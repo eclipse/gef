@@ -23,6 +23,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractEditPolicy<V> implements IEditPolicy<V> {
 
 	private IVisualPart<V> host;
+	private boolean active;
 
 	/**
 	 * Does nothing by default.
@@ -30,6 +31,7 @@ public abstract class AbstractEditPolicy<V> implements IEditPolicy<V> {
 	 * @see org.eclipse.gef4.mvc.policies.IEditPolicy#activate()
 	 */
 	public void activate() {
+		active = true;
 	}
 
 	/**
@@ -38,6 +40,12 @@ public abstract class AbstractEditPolicy<V> implements IEditPolicy<V> {
 	 * @see org.eclipse.gef4.mvc.policies.IEditPolicy#deactivate()
 	 */
 	public void deactivate() {
+		active = false;
+	}
+	
+	@Override
+	public boolean isActive() {
+		return active;
 	}
 
 	/**
