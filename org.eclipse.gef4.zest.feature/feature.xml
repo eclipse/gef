@@ -57,7 +57,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.zest.layouts"
+         id="org.eclipse.gef4.layout"
          download-size="0"
          install-size="0"
          version="0.0.0"
