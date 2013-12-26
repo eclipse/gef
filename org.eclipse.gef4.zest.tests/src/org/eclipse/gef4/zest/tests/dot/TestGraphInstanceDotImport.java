@@ -10,6 +10,10 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
@@ -19,10 +23,6 @@ import org.eclipse.gef4.zest.dot.DotGraph;
 import org.eclipse.gef4.zest.internal.dot.DotAst;
 import org.eclipse.gef4.zest.internal.dot.DotImport;
 import org.eclipse.gef4.zest.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Item;

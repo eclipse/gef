@@ -16,18 +16,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.Animation;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentRectangle;
-import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.ContextListener;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.ExpandCollapseManager;
-import org.eclipse.gef4.zest.layouts.interfaces.GraphStructureListener;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutListener;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.PruningListener;
-import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
+import org.eclipse.gef4.layout.interfaces.ContextListener;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
+import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.LayoutListener;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.PruningListener;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 class InternalLayoutContext implements LayoutContext {
 

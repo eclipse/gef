@@ -10,10 +10,10 @@
 package org.eclipse.gef4.zest.core.widgets.custom;
 
 import org.eclipse.draw2d.Label;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.core.widgets.FigureSubgraph;
 import org.eclipse.gef4.zest.core.widgets.internal.GraphLabel;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
 import org.eclipse.swt.graphics.Color;
 
 /**

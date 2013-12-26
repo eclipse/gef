@@ -15,19 +15,18 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.core.widgets.custom.LabelSubgraph;
 import org.eclipse.gef4.zest.core.widgets.custom.TriangleSubgraph;
 import org.eclipse.gef4.zest.core.widgets.custom.TriangleSubgraph.TriangleParameters;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentRectangle;
-import org.eclipse.gef4.zest.layouts.interfaces.ConnectionLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Item;
 
 /**
  * Default implementation of {@link SubgraphLayout}. Every subgraph added to
@@ -328,7 +327,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return result2;
 	}
 
-	public Item[] getItems() {
+	public Object[] getItems() {
 		GraphNode[] result = new GraphNode[nodes.size()];
 		int i = 0;
 		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {

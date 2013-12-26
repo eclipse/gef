@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.swt;
 
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;

@@ -2,7 +2,8 @@ package org.eclipse.gef4.zest.examples.layouts;
 
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.DAGExpandCollapseManager;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
 import org.eclipse.gef4.zest.core.widgets.Graph;
@@ -10,7 +11,6 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;

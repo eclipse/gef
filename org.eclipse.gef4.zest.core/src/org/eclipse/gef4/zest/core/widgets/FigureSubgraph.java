@@ -17,11 +17,11 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.zest.layouts.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.zest.layouts.interfaces.EntityLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
+import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
+import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 /**
  * A subgraph layout that represents a subgraph as a single figure. An entity

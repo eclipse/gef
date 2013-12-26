@@ -10,6 +10,10 @@ package org.eclipse.gef4.zest.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.core.widgets.DAGExpandCollapseManager;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
 import org.eclipse.gef4.zest.core.widgets.Graph;
@@ -17,12 +21,7 @@ import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.LayoutFilter;
-import org.eclipse.gef4.zest.layouts.LayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.GridLayoutAlgorithm;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.Assert;
 
@@ -43,8 +42,8 @@ public class LayoutAlgorithmTests extends TestCase {
 		new GraphNode(graph, SWT.NONE);
 		graph.setLayoutAlgorithm(new LayoutAlgorithm() {
 			public void setLayoutContext(LayoutContext context) {
-				Item[] all = context.getEntities()[0].getItems();
-				Item[] nodes = context.getNodes()[0].getItems();
+				Object[] all = context.getEntities()[0].getItems();
+				Object[] nodes = context.getNodes()[0].getItems();
 				Assert.assertEquals(1, all.length);
 				Assert.assertEquals(1, nodes.length);
 				Assert.assertTrue(
@@ -82,7 +81,7 @@ public class LayoutAlgorithmTests extends TestCase {
 		graph.setLayoutAlgorithm(new LayoutAlgorithm() {
 			public void setLayoutContext(LayoutContext context) {
 				Assert.assertEquals(1, context.getSubgraphs().length);
-				Item[] sub = context.getSubgraphs()[0].getItems();
+				Object[] sub = context.getSubgraphs()[0].getItems();
 				Assert.assertEquals(3, sub.length);
 				Assert.assertTrue(
 						"All subgraph items should be wrapped in a GraphNode[]",
@@ -124,7 +123,7 @@ public class LayoutAlgorithmTests extends TestCase {
 		graph.setLayoutAlgorithm(new LayoutAlgorithm() {
 			public void setLayoutContext(LayoutContext context) {
 				Assert.assertEquals(1, context.getSubgraphs().length);
-				Item[] sub = context.getSubgraphs()[0].getItems();
+				Object[] sub = context.getSubgraphs()[0].getItems();
 				Assert.assertEquals(2, sub.length); // one filtered
 			}
 

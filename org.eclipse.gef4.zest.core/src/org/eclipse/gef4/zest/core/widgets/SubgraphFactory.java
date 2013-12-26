@@ -9,9 +9,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 /**
  * Factory used by {@link Graph} to create subgraphs. One instance of

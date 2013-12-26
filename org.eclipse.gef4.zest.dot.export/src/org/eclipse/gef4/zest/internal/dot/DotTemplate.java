@@ -2,8 +2,8 @@ package org.eclipse.gef4.zest.internal.dot;
 
 import org.eclipse.gef4.zest.core.widgets.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.gef4.zest.layouts.algorithms.*;
-import org.eclipse.gef4.zest.layouts.*;
+import org.eclipse.gef4.layout.algorithms.*;
+import org.eclipse.gef4.layout.*;
 
 public class DotTemplate
 {

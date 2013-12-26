@@ -1,0 +1,34 @@
+/*******************************************************************************
+ * Copyright (c) 2009 Fabian Steeg. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * <p/>
+ * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
+ *******************************************************************************/
+digraph SampleGraph {
+	/*-------------------------------------------------------------------------*/
+	/* Sample graph summarizing all that is currently supported in the DOT input.
+	   When defining the graph itself, specify 'digraph' (for directed connections)
+	   or 'graph' (for undirected connections) and a name, which will be the name 
+   	   of the generated Zest graph. */
+   	/*-------------------------------------------------------------------------*/
+	/* Specify global attributes for the graph (layout supported), nodes (label 
+	   supported) and edges (label and style supported), override these in 
+	   individual nodes or edges (see below): */
+	graph[layout=osage]
+   	node[label="node2"]
+   	edge[label="edge", style=dashed]
+	/*-------------------------------------------------------------------------*/
+	/* Nodes can have specified labels: */
+	1[label="one"]
+	2[label="two"]
+	/* If they don't, the ID is the label (unless a global label is defined): */
+	3; 4; 5
+	/*-------------------------------------------------------------------------*/
+	/* Edges can have labels and styles: */
+	1->2[label="style=dashed" style=dashed]
+	2->3[label="style=dotted" style=dotted]
+	3->4
+	/*-------------------------------------------------------------------------*/
+}

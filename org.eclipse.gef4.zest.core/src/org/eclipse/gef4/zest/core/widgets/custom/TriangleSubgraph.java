@@ -15,13 +15,13 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeListener;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 import org.eclipse.gef4.zest.core.widgets.FigureSubgraph;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver.TreeListener;
-import org.eclipse.gef4.zest.layouts.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.zest.layouts.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.layouts.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layouts.interfaces.SubgraphLayout;
 import org.eclipse.swt.graphics.Color;
 
 /**

@@ -1,0 +1,6 @@
+# Rename removing ".template" and set the directory containing the dot executable here:
+org.eclipse.gef4.zest.dot.bin.dir=
+
+# Some examples:
+#org.eclipse.gef4.zest.dot.bin.dir=/opt/local/bin/
+#org.eclipse.gef4.zest.dot.bin.dir=C:\\Program Files (x86)\\Graphviz2.20\\bin
