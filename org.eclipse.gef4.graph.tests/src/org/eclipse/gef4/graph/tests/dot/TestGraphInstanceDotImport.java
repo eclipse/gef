@@ -356,14 +356,25 @@ public final class TestGraphInstanceDotImport {
 		assertEquals(1, list.get(1).getSourceConnections(graph).size());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void faultyLayout() {
-		interpreter.create(parse("graph Sample{graph[layout=cool];1;}")); //$NON-NLS-1$
+	@Test
+	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
+	public void edgeStyleInvis() {
+		Graph graph = new Graph("digraph{1->2[style=invis]}"); //$NON-NLS-1$
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getEdges().size());
+	}
+
+	@Test
+	public void otherUnsupportedStyles() {
+		Graph graph = interpreter
+				.create(parse("graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")); //$NON-NLS-1$
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getEdges().size());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void faultyStyle() {
-		interpreter.create(parse("graph Sample{1;2;1->2[style=\"dashed++\"]}")); //$NON-NLS-1$
+	public void faultyLayout() {
+		interpreter.create(parse("graph Sample{graph[layout=cool];1;}")); //$NON-NLS-1$
 	}
 
 	private DotAst parse(String dot) {

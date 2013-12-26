@@ -428,16 +428,29 @@ public final class TestGraphInstanceDotImport {
 				.getSourceConnections().size());
 	}
 
+	@Test
+	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
+	public void edgeStyleInvis() {
+		Graph graph = new DotGraph(
+				"digraph{1->2[style=invis]}", new Shell(), SWT.NONE); //$NON-NLS-1$
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getConnections().size());
+	}
+
+	@Test
+	public void otherUnsupportedStyles() {
+		Graph graph = interpreter
+				.create(new Shell(),
+						SWT.NONE,
+						parse("graph Sample{node[style=other];edge[style=other];1[style=other];2;1->2[style=other]}")); //$NON-NLS-1$
+		assertEquals(2, graph.getNodes().size());
+		assertEquals(1, graph.getConnections().size());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void faultyLayout() {
 		interpreter.create(new Shell(), SWT.NONE,
 				parse("graph Sample{graph[layout=cool];1;}")); //$NON-NLS-1$
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void faultyStyle() {
-		interpreter.create(new Shell(), SWT.NONE,
-				parse("graph Sample{1;2;1->2[style=\"dashed++\"]}")); //$NON-NLS-1$
 	}
 
 	private DotAst parse(String dot) {

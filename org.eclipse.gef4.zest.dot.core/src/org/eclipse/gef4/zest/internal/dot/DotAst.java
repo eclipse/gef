@@ -28,7 +28,6 @@ import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.internal.dot.DotMessages;
 import org.eclipse.gef4.zest.internal.dot.parser.DotStandaloneSetup;
 import org.eclipse.swt.SWT;
 

@@ -23,7 +23,6 @@ import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.IContainer;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.internal.dot.DotMessages;
 import org.eclipse.gef4.zest.internal.dot.DotAst.Layout;
 import org.eclipse.gef4.zest.internal.dot.DotAst.Style;
 import org.eclipse.gef4.zest.internal.dot.parser.dot.AList;
@@ -150,15 +149,24 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		} else if (globalEdgeLabel != null) {
 			graphConnection.setText(globalEdgeLabel);
 		}
-		/* Set the optional style, if set in the DOT input: */
-		if (currentEdgeStyleValue != null) {
+		/* Set the optional style, if set in the DOT input and supported: */
+		if (supported(currentEdgeStyleValue, Style.values())) {
 			Style v = Enum.valueOf(Style.class,
 					currentEdgeStyleValue.toUpperCase());
 			graphConnection.setLineStyle(v.style);
-		} else if (globalEdgeStyle != null) {
+		} else if (supported(globalEdgeStyle, Style.values())) {
 			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
 			graphConnection.setLineStyle(v.style);
 		}
+	}
+
+	private boolean supported(String value, Enum<?>[] vals) {
+		if (value == null)
+			return false;
+		for (Enum<?> v : vals)
+			if (v.name().equalsIgnoreCase(value))
+				return true;
+		return false;
 	}
 
 	@Override

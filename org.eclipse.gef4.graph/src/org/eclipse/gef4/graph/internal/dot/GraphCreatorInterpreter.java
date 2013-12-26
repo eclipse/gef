@@ -144,18 +144,27 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 			graphConnection.withAttribute(Graph.Attr.LABEL.toString(),
 					globalEdgeLabel);
 		}
-		/* Set the optional style, if set in the DOT input: */
-		if (currentEdgeStyleValue != null) {
+		/* Set the optional style, if set in the DOT input and supported: */
+		if (supported(currentEdgeStyleValue, Style.values())) {
 			Style v = Enum.valueOf(Style.class,
 					currentEdgeStyleValue.toUpperCase());
 			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
 					v.style);
-		} else if (globalEdgeStyle != null) {
+		} else if (supported(globalEdgeStyle, Style.values())) {
 			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
 			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
 					v.style);
 		}
 		graph.withEdges(graphConnection);
+	}
+
+	private boolean supported(String value, Enum<?>[] vals) {
+		if (value == null)
+			return false;
+		for (Enum<?> v : vals)
+			if (v.name().equalsIgnoreCase(value))
+				return true;
+		return false;
 	}
 
 	@Override
