@@ -5,7 +5,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -56,19 +55,20 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements Propert
 	@Override
 	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
 		anchors.add(anchor);
+		anchor.addAnchored(this.getVisual());
 		anchor.addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
+		anchor.removeAnchored(this.getVisual());
 		anchors.remove(anchor);
 		anchor.removePropertyChangeListener(this);
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getPropertyName().equals(IAnchor.POSITION_PROPERTY)){
+		if(evt.getPropertyName().equals(IAnchor.POSITIONS_PROPERTY)){
 			updateModel();
 			refreshVisual();
 		}
@@ -83,8 +83,8 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements Propert
 	private void updateModel() {
 		if(anchors.size() == 2){
 			// use anchors as start and end point
-			Point start = anchors.get(0).getPosition();
-			Point end = anchors.get(1).getPosition();
+			Point start = anchors.get(0).getPosition(this.getVisual());
+			Point end = anchors.get(1).getPosition(this.getVisual());
 			
 			// TODO: convert position to correct coordinate space
 			

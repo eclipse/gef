@@ -15,9 +15,7 @@ public class FXBoundsRelativeAnchor extends AbstractFXAnchor {
 	}
 
 	@Override
-	protected Point calculatePositionInScene() {
-		// calculate position based on scene position
-		// TODO: Use GEF4 Geometry
+	protected Point calculatePosition(Node anchored) {
 		Bounds boundsInScene = getAnchorage().localToScene(
 				getAnchorage().getBoundsInLocal());
 		return new Point(boundsInScene.getMinX(), boundsInScene.getMinY())
