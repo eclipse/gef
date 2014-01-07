@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.gef4.geometry.source"
-      label="GEF4 Geometry Sources"
+      id="org.eclipse.gef4.geometry.convert.fx.source"
+      label="GEF4 Geometry JavaFX Conversions Sources"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org">
 
@@ -17,18 +17,8 @@
       %license
    </license>
 
-   <includes
-         id="org.eclipse.gef4.geometry.convert.swt.source"
-         version="0.0.0"
-         optional="true"/>
-
-   <includes
-         id="org.eclipse.gef4.geometry.convert.fx.source"
-         version="0.0.0"
-         optional="true"/>
-
    <plugin
-         id="org.eclipse.gef4.geometry.source"
+         id="org.eclipse.gef4.geometry.convert.fx.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
