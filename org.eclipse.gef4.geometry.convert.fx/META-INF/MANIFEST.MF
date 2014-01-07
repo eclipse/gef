@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Geometry JavaFX Conversions
 Bundle-SymbolicName: org.eclipse.gef4.geometry.convert.fx
 Bundle-Version: 0.1.0.qualifier
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.gef4.geometry.convert.fx
+Import-Package: javafx.geometry;version="2.2.0"

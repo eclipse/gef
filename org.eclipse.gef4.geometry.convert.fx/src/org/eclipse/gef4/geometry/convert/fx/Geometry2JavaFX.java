@@ -7,15 +7,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Ny��en (itemis AG) - initial API and implementation
- *     Matthias Wienand (itemis AG) - remove AffineTransform from resulting PathIterator
- *     
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *    
  *******************************************************************************/
 package org.eclipse.gef4.geometry.convert.fx;
 
-public class Geomtry2JavaFX {
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 
-	private Geomtry2JavaFX() {
+import org.eclipse.gef4.geometry.planar.Rectangle;
+
+public class Geometry2JavaFX {
+
+	private Geometry2JavaFX() {
 		// this class should not be instantiated by clients
+	}
+
+	public static final Bounds toFXBounds(Rectangle r) {
+		return new BoundingBox(r.getX(), r.getY(), r.getWidth(), r.getHeight());
 	}
 }
