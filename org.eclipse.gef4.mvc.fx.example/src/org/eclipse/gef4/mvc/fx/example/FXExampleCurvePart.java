@@ -7,6 +7,8 @@ import java.util.List;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -15,7 +17,8 @@ import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
-public class FXExampleCurvePart extends AbstractFXContentPart implements PropertyChangeListener {
+public class FXExampleCurvePart extends AbstractFXContentPart implements
+		PropertyChangeListener {
 
 	private GeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
@@ -65,34 +68,35 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements Propert
 		anchors.remove(anchor);
 		anchor.removePropertyChangeListener(this);
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getPropertyName().equals(IAnchor.POSITIONS_PROPERTY)){
+		if (evt.getPropertyName().equals(IAnchor.POSITIONS_PROPERTY)) {
 			updateModel();
 			refreshVisual();
 		}
 	}
 
 	/*
-	 * TODO:
-	 *  - position computation (currently somewhere inside the bounds)
-	 *  - source / target distinction
-	 *  - updatePathElements() should not be necessary
+	 * TODO: - position computation (currently somewhere inside the bounds) -
+	 * source / target distinction - updatePathElements() should not be
+	 * necessary
 	 */
 	private void updateModel() {
-		if(anchors.size() == 2){
+		if (anchors.size() == 2) {
 			// use anchors as start and end point
 			Point start = anchors.get(0).getPosition(this.getVisual());
 			Point end = anchors.get(1).getPosition(this.getVisual());
-			
-			// TODO: convert position to correct coordinate space
-			
+
+			// convert position to correct coordinate space
+			start = JavaFX2Geometry.toPoint(getVisual().sceneToLocal(Geometry2JavaFX.toFXPoint(start)));
+			end = JavaFX2Geometry.toPoint(getVisual().sceneToLocal(Geometry2JavaFX.toFXPoint(end)));
+
 			// update model
 			Line line = (Line) getModel();
 			line.setP1(start);
 			line.setP2(end);
-			
+
 			// update geometry visual
 			visual.updatePathElements();
 		}

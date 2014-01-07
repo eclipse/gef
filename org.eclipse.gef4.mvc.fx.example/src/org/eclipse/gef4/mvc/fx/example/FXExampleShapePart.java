@@ -14,14 +14,15 @@ import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
 import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.FXSelectionPolicy;
-import org.eclipse.gef4.mvc.fx.anchors.FXBoundsRelativeAnchor;
+import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.mvc.fx.anchors.FXFixPointAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleShapePart extends AbstractFXContentPart {
 
 	private GeometryNode<IShape> visual;
-	private FXBoundsRelativeAnchor anchor;
+	private IAnchor<Node> anchor;
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
@@ -84,7 +85,7 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
 		if(anchor == null){
-			anchor = new FXBoundsRelativeAnchor(new Point(10, 10));
+			anchor = new FXChopBoxAnchor();
 		}
 		// register listeners
 		anchor.setAnchorage(getVisual());

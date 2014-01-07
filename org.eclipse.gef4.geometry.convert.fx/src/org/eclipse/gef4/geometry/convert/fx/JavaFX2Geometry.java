@@ -13,7 +13,9 @@
 package org.eclipse.gef4.geometry.convert.fx;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class JavaFX2Geometry {
@@ -25,5 +27,9 @@ public class JavaFX2Geometry {
 	public static final Rectangle toRectangle(Bounds b) {
 		return new Rectangle(b.getMinX(), b.getMinY(), b.getWidth(),
 				b.getHeight());
+	}
+	
+	public static final Point toPoint(Point2D point){
+		return new Point(point.getX(), point.getY());
 	}
 }
