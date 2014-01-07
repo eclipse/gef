@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.anchors;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

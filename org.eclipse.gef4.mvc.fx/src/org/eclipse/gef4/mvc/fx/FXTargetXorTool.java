@@ -8,11 +8,9 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.CompositeAndTool;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.swt.custom.ST;
 
 /**
  * The FXTargetXorTool can be used to activate/deactivate tools depending on the
@@ -24,7 +22,7 @@ import org.eclipse.swt.custom.ST;
  * FXTargetXorTool tools = new FXTargetXorTool();
  * tools.addContentTools(new FXSelectionTool(), new FXRelocateTool());
  * tools.addHandleTools(new FXResizeTool());
- * tools.addVisualTools(new FXSelectionTool(), new HandleTool<Node>());
+ * tools.addVisualTools(new FXSelectionTool(), new HandleTool&lt;Node&gt;());
  * </pre>
  * 
  * </blockquote>

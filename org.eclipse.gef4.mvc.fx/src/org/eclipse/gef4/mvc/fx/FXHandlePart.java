@@ -4,7 +4,6 @@ import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,10 +13,10 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXHandlePart extends AbstractHandlePart<Node> {
@@ -122,26 +121,15 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 //					.localToScene(boundsInParent);
 			Bounds boundsInScene = cp.getVisual().localToScene(cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {
-				unionedBoundsInScene = boundsToRectangle(boundsInScene);
+				unionedBoundsInScene = JavaFX2Geometry.toRectangle(boundsInScene);
 			} else {
-				unionedBoundsInScene.union(boundsToRectangle(boundsInScene));
+				unionedBoundsInScene.union(JavaFX2Geometry.toRectangle(boundsInScene));
 			}
 		}
-		return rectangleToBounds(unionedBoundsInScene);
+		return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
 	}
 
-	// TODO: Move this into GEF4 Geometry Conversion JavaFX
-	private org.eclipse.gef4.geometry.planar.Rectangle boundsToRectangle(
-			Bounds b) {
-		return new org.eclipse.gef4.geometry.planar.Rectangle(b.getMinX(),
-				b.getMinY(), b.getWidth(), b.getHeight());
-	}
-
-	// TODO: Move this into GEF4 Geometry Conversion JavaFX
-	private Bounds rectangleToBounds(
-			org.eclipse.gef4.geometry.planar.Rectangle r) {
-		return new BoundingBox(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-	}
+	
 
 	@Override
 	public ITool<Node> getHandleTool() {

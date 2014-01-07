@@ -1,6 +1,5 @@
 package org.eclipse.gef4.mvc.fx;
 
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 

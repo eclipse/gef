@@ -14,6 +14,7 @@ import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
 import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.FXSelectionPolicy;
+import org.eclipse.gef4.mvc.fx.anchors.FXBoundsRelativeAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 

@@ -10,7 +10,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
@@ -30,9 +29,10 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 				select((IContentPart<Node>) targetPart, append);
 			} else if (targetPart instanceof IHandlePart) {
 				System.out.println("impossible");
-//				IHandlePart<Node> handlePart = (IHandlePart<Node>) targetPart;
-//				ITool<Node> handleTool = handlePart.getHandleTool();
-//				getDomain().pushTool(handleTool);
+				// IHandlePart<Node> handlePart = (IHandlePart<Node>)
+				// targetPart;
+				// ITool<Node> handleTool = handlePart.getHandleTool();
+				// getDomain().pushTool(handleTool);
 			} else {
 				throw new IllegalArgumentException("Unsupported part type.");
 			}
@@ -73,16 +73,16 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		super.activate();
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-//		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-//		.addEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		// ((FXViewer) getDomain().getViewer()).getCanvas().getScene()
+		// .addEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
 
 	@Override
 	public void deactivate() {
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-//		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-//		.removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		// ((FXViewer) getDomain().getViewer()).getCanvas().getScene()
+		// .removeEventFilter(MouseEvent.MOUSE_PRESSED, pressedHandler);
 		super.deactivate();
 	}
 

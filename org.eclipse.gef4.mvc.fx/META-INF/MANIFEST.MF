@@ -7,10 +7,12 @@ Bundle-Activator: org.eclipse.gef4.mvc.fx.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
- org.eclipse.gef4.geometry;bundle-version="0.1.0"
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.gef4.mvc.fx
+Export-Package: org.eclipse.gef4.mvc.fx,
+ org.eclipse.gef4.mvc.fx.anchors
 Import-Package: javafx.animation;version="2.0.0",
  javafx.application;version="2.0.0",
  javafx.beans;version="2.0.0",
