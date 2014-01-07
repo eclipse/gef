@@ -12,11 +12,10 @@ package org.eclipse.gef4.layout.algorithms;
 
 import java.util.HashMap;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutStyles;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -144,7 +143,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	private double[] sizeW, sizeH;
 
-	private DisplayIndependentRectangle bounds;
+	private Rectangle bounds;
 
 	// private double boundsScale = 0.2;
 	private double boundsScaleX = 0.2;
@@ -188,17 +187,6 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	}
 
-	/**
-	 * @deprecated Since Zest 2.0, use {@link #SpringLayoutAlgorithm()}.
-	 */
-	public SpringLayoutAlgorithm(int style) {
-		this();
-		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
-	}
-
-	public SpringLayoutAlgorithm() {
-	}
-
 	public void applyLayout(boolean clean) {
 		initLayout();
 		if (!clean)
@@ -211,13 +199,12 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			AlgorithmHelper.maximizeSizes(entities);
 
 		if (fitWithinBounds) {
-			DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
-					bounds);
+			Rectangle bounds2 = new Rectangle(bounds);
 			int insets = 4;
-			bounds2.x += insets;
-			bounds2.y += insets;
-			bounds2.width -= 2 * insets;
-			bounds2.height -= 2 * insets;
+			bounds2.setX(bounds2.getX() + insets);
+			bounds2.setY(bounds2.getY() + insets);
+			bounds2.setWidth(bounds2.getWidth() - 2 * insets);
+			bounds2.setHeight(bounds2.getHeight() - 2 * insets);
 			AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
 		}
 
@@ -473,10 +460,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			counterY = new int[length];
 		}
 		for (int i = 0; i < entities.length; i++) {
-			DisplayIndependentPoint location = entities[i].getLocation();
+			Point location = entities[i].getLocation();
 			locationsX[i] = location.x;
 			locationsY[i] = location.y;
-			DisplayIndependentDimension size = entities[i].getSize();
+			Dimension size = entities[i].getSize();
 			sizeW[i] = size.width;
 			sizeH[i] = size.height;
 		}
@@ -523,7 +510,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	protected void computeOneIteration() {
 		computeForces();
 		computePositions();
-		DisplayIndependentRectangle currentBounds = getLayoutBounds();
+		Rectangle currentBounds = getLayoutBounds();
 		improveBoundScaleX(currentBounds);
 		improveBoundScaleY(currentBounds);
 		moveToCenter(currentBounds);
@@ -540,16 +527,18 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		// If only one node in the data repository, put it in the middle
 		if (locationsX.length == 1) {
 			// If only one node in the data repository, put it in the middle
-			locationsX[0] = bounds.x + 0.5 * bounds.width;
-			locationsY[0] = bounds.y + 0.5 * bounds.height;
+			locationsX[0] = bounds.getX() + 0.5 * bounds.getWidth();
+			locationsY[0] = bounds.getY() + 0.5 * bounds.getHeight();
 		} else {
-			locationsX[0] = bounds.x;
-			locationsY[0] = bounds.y;
-			locationsX[1] = bounds.x + bounds.width;
-			locationsY[1] = bounds.y + bounds.height;
+			locationsX[0] = bounds.getX();
+			locationsY[0] = bounds.getY();
+			locationsX[1] = bounds.getX() + bounds.getWidth();
+			locationsY[1] = bounds.getY() + bounds.getHeight();
 			for (int i = 2; i < locationsX.length; i++) {
-				locationsX[i] = bounds.x + Math.random() * bounds.width;
-				locationsY[i] = bounds.y + Math.random() * bounds.height;
+				locationsX[i] = bounds.getX() + Math.random()
+						* bounds.getWidth();
+				locationsY[i] = bounds.getY() + Math.random()
+						* bounds.getHeight();
 			}
 		}
 	}
@@ -584,10 +573,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			for (int i = 0; i < this.locationsX.length; i++) {
 
 				for (int j = i + 1; j < locationsX.length; j++) {
-					double dx = (locationsX[i] - locationsX[j]) / bounds.width
-							/ boundsScaleX;
-					double dy = (locationsY[i] - locationsY[j]) / bounds.height
-							/ boundsScaleY;
+					double dx = (locationsX[i] - locationsX[j])
+							/ bounds.getWidth() / boundsScaleX;
+					double dy = (locationsY[i] - locationsY[j])
+							/ bounds.getHeight() / boundsScaleY;
 					double distance_sq = dx * dx + dy * dy;
 					// make sure distance and distance squared not too small
 					distance_sq = Math.max(MIN_DISTANCE * MIN_DISTANCE,
@@ -636,8 +625,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 						deltaY *= maxMovement / dist;
 					}
 
-					locationsX[i] += deltaX * bounds.width * boundsScaleX;
-					locationsY[i] += deltaY * bounds.height * boundsScaleY;
+					locationsX[i] += deltaX * bounds.getWidth() * boundsScaleX;
+					locationsY[i] += deltaY * bounds.getHeight() * boundsScaleY;
 				}
 			}
 
@@ -690,13 +679,13 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 					deltaY *= maxMovement / dist;
 				}
 
-				locationsX[i] += deltaX * bounds.width * boundsScaleX;
-				locationsY[i] += deltaY * bounds.height * boundsScaleY;
+				locationsX[i] += deltaX * bounds.getWidth() * boundsScaleX;
+				locationsY[i] += deltaY * bounds.getHeight() * boundsScaleY;
 			}
 		}
 	}
 
-	private DisplayIndependentRectangle getLayoutBounds() {
+	private Rectangle getLayoutBounds() {
 		double minX, maxX, minY, maxY;
 		minX = minY = Double.POSITIVE_INFINITY;
 		maxX = maxY = Double.NEGATIVE_INFINITY;
@@ -707,12 +696,12 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			maxY = Math.max(maxY, locationsY[i] + sizeH[i] / 2);
 			minY = Math.min(minY, locationsY[i] - sizeH[i] / 2);
 		}
-		return new DisplayIndependentRectangle(minX, minY, maxX - minX, maxY
-				- minY);
+		return new Rectangle(minX, minY, maxX - minX, maxY - minY);
 	}
 
-	private void improveBoundScaleX(DisplayIndependentRectangle currentBounds) {
-		double boundaryProportionX = currentBounds.width / bounds.width;
+	private void improveBoundScaleX(Rectangle currentBounds) {
+		double boundaryProportionX = currentBounds.getWidth()
+				/ bounds.getWidth();
 		// double boundaryProportion = Math.max(currentBounds.width /
 		// bounds.width, currentBounds.height / bounds.height);
 
@@ -737,8 +726,9 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
-	private void improveBoundScaleY(DisplayIndependentRectangle currentBounds) {
-		double boundaryProportionY = currentBounds.height / bounds.height;
+	private void improveBoundScaleY(Rectangle currentBounds) {
+		double boundaryProportionY = currentBounds.getHeight()
+				/ bounds.getHeight();
 		// double boundaryProportion = Math.max(currentBounds.width /
 		// bounds.width, currentBounds.height / bounds.height);
 
@@ -791,11 +781,11 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	//
 	// }
 
-	private void moveToCenter(DisplayIndependentRectangle currentBounds) {
-		double moveX = (currentBounds.x + currentBounds.width / 2)
-				- (bounds.x + bounds.width / 2);
-		double moveY = (currentBounds.y + currentBounds.height / 2)
-				- (bounds.y + bounds.height / 2);
+	private void moveToCenter(Rectangle currentBounds) {
+		double moveX = (currentBounds.getX() + currentBounds.getWidth() / 2)
+				- (bounds.getX() + bounds.getWidth() / 2);
+		double moveY = (currentBounds.getY() + currentBounds.getHeight() / 2)
+				- (bounds.getY() + bounds.getHeight() / 2);
 		for (int i = 0; i < locationsX.length; i++) {
 			locationsX[i] -= moveX;
 			locationsY[i] -= moveY;

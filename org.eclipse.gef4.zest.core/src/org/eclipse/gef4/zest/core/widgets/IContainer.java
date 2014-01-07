@@ -13,8 +13,8 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -60,7 +60,7 @@ public interface IContainer {
 	 * @return
 	 * @since 2.0
 	 */
-	public abstract DisplayIndependentRectangle getLayoutBounds();
+	public abstract Rectangle getLayoutBounds();
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.

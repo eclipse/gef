@@ -47,7 +47,7 @@ public class CustomLayout {
 			public void applyLayout(boolean clean) {
 				EntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
-				double distance = context.getBounds().width / totalSteps;
+				double distance = context.getBounds().getWidth() / totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {

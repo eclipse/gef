@@ -38,7 +38,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
 import org.eclipse.gef4.zest.core.widgets.decoration.DefaultConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.decoration.DirectedConnectionDecorator;
@@ -1285,10 +1284,10 @@ public class Graph extends FigureCanvas implements IContainer {
 	/**
 	 * @since 2.0
 	 */
-	public DisplayIndependentRectangle getLayoutBounds() {
+	public org.eclipse.gef4.geometry.planar.Rectangle getLayoutBounds() {
 		Dimension preferredSize = this.getPreferredSize();
-		return new DisplayIndependentRectangle(0, 0, preferredSize.width,
-				preferredSize.height);
+		return new org.eclipse.gef4.geometry.planar.Rectangle(0, 0,
+				preferredSize.width, preferredSize.height);
 	}
 
 	/**

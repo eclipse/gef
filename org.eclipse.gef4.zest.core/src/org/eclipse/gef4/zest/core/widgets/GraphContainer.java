@@ -37,7 +37,6 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.zest.core.widgets.internal.AspectRatioFreeformLayer;
 import org.eclipse.gef4.zest.core.widgets.internal.ContainerFigure;
 import org.eclipse.gef4.zest.core.widgets.internal.ZestRootLayer;
@@ -673,10 +672,11 @@ public class GraphContainer extends GraphNode implements IContainer {
 	/**
 	 * @since 2.0
 	 */
-	public DisplayIndependentRectangle getLayoutBounds() {
+	public org.eclipse.gef4.geometry.planar.Rectangle getLayoutBounds() {
 		double width = GraphContainer.SCALED_WIDTH - 10;
 		double height = GraphContainer.SCALED_HEIGHT - 10;
-		return new DisplayIndependentRectangle(25, 25, width - 50, height - 50);
+		return new org.eclipse.gef4.geometry.planar.Rectangle(25, 25,
+				width - 50, height - 50);
 	}
 
 	public void applyLayout() {

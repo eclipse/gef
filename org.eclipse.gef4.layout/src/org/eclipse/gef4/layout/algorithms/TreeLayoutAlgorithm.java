@@ -14,9 +14,9 @@ package org.eclipse.gef4.layout.algorithms;
 import java.util.Iterator;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -61,7 +61,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private LayoutContext context;
 
-	private DisplayIndependentRectangle bounds;
+	private Rectangle bounds;
 
 	private double leafSize, layerSize;
 
@@ -171,13 +171,12 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private void scaleEntities(EntityLayout[] entities) {
 		if (nodeSpace == null) {
-			DisplayIndependentRectangle bounds2 = new DisplayIndependentRectangle(
-					bounds);
+			Rectangle bounds2 = new Rectangle(bounds);
 			int insets = 4;
-			bounds2.x += insets;
-			bounds2.y += insets;
-			bounds2.width -= 2 * insets;
-			bounds2.height -= 2 * insets;
+			bounds2.setX(bounds2.getX() + insets);
+			bounds2.setY(bounds2.getY() + insets);
+			bounds2.setWidth(bounds2.getWidth() - 2 * insets);
+			bounds2.setHeight(bounds2.getHeight() - 2 * insets);
 			AlgorithmHelper.fitWithinBounds(entities, bounds2, resize);
 		}
 	}
@@ -207,11 +206,11 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		} else {
 			TreeNode superRoot = treeObserver.getSuperRoot();
 			if (direction == TOP_DOWN || direction == BOTTOM_UP) {
-				leafSize = bounds.width / superRoot.numOfLeaves;
-				layerSize = bounds.height / superRoot.height;
+				leafSize = bounds.getWidth() / superRoot.numOfLeaves;
+				layerSize = bounds.getHeight() / superRoot.height;
 			} else {
-				leafSize = bounds.height / superRoot.numOfLeaves;
-				layerSize = bounds.width / superRoot.height;
+				leafSize = bounds.getHeight() / superRoot.numOfLeaves;
+				layerSize = bounds.getWidth() / superRoot.height;
 			}
 		}
 	}
@@ -232,7 +231,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			break;
 		case BOTTOM_UP:
 			entityInfo.getNode().setLocation(breadthPosition * leafSize,
-					bounds.height - depthPosition * layerSize);
+					bounds.getHeight() - depthPosition * layerSize);
 			break;
 		case LEFT_RIGHT:
 			entityInfo.getNode().setLocation(depthPosition * layerSize,
@@ -240,7 +239,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			break;
 		case RIGHT_LEFT:
 			entityInfo.getNode().setLocation(
-					bounds.width - depthPosition * layerSize,
+					bounds.getWidth() - depthPosition * layerSize,
 					breadthPosition * leafSize);
 			break;
 		}

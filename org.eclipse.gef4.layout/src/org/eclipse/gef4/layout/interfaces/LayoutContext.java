@@ -9,8 +9,8 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 
 /**
  * Objects implementing LayoutContext interface are used for exchanging of
@@ -62,7 +62,7 @@ public interface LayoutContext {
 	 * 
 	 * @return bounds in which the graph elements can be placed
 	 */
-	public DisplayIndependentRectangle getBounds();
+	public Rectangle getBounds();
 
 	/**
 	 * 

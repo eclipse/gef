@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
@@ -172,8 +172,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.gef4.layout.LayoutAlgorithm#setLayoutContext(org.eclipse
+	 * @see org.eclipse.gef4.layout.LayoutAlgorithm#setLayoutContext(org.eclipse
 	 * .zest.layouts.interfaces.LayoutContext)
 	 */
 	public void setLayoutContext(LayoutContext context) {
@@ -386,12 +385,12 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private void calculatePositions() {
-		DisplayIndependentRectangle boundary = context.getBounds();
+		Rectangle boundary = context.getBounds();
 		if (dimension != null)
-			boundary = new DisplayIndependentRectangle(0, 0,
-					dimension.getWidth(), dimension.getHeight());
-		double dx = boundary.width / layers.size();
-		double dy = boundary.height / (last + 1);
+			boundary = new Rectangle(0, 0, dimension.getWidth(),
+					dimension.getHeight());
+		double dx = boundary.getWidth() / layers.size();
+		double dy = boundary.getHeight() / (last + 1);
 		if (direction == HORIZONTAL)
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);

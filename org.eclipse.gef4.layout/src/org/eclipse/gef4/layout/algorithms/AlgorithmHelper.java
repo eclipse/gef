@@ -10,9 +10,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 
 public class AlgorithmHelper {
@@ -30,25 +30,24 @@ public class AlgorithmHelper {
 	 * @param resize
 	 */
 	public static void fitWithinBounds(EntityLayout[] entities,
-			DisplayIndependentRectangle destinationBounds, boolean resize) {
-		DisplayIndependentRectangle startingBounds = getLayoutBounds(entities,
-				false);
-		double sizeScale = Math.min(destinationBounds.width
-				/ startingBounds.width, destinationBounds.height
-				/ startingBounds.height);
+			Rectangle destinationBounds, boolean resize) {
+		Rectangle startingBounds = getLayoutBounds(entities, false);
+		double sizeScale = Math.min(destinationBounds.getWidth()
+				/ startingBounds.getWidth(), destinationBounds.getHeight()
+				/ startingBounds.getHeight());
 		if (entities.length == 1) {
 			fitSingleEntity(entities[0], destinationBounds, resize);
 			return;
 		}
 		for (int i = 0; i < entities.length; i++) {
 			EntityLayout entity = entities[i];
-			DisplayIndependentDimension size = entity.getSize();
+			Dimension size = entity.getSize();
 			if (entity.isMovable()) {
-				DisplayIndependentPoint location = entity.getLocation();
-				double percentX = (location.x - startingBounds.x)
-						/ (startingBounds.width);
-				double percentY = (location.y - startingBounds.y)
-						/ (startingBounds.height);
+				Point location = entity.getLocation();
+				double percentX = (location.x - startingBounds.getX())
+						/ (startingBounds.getWidth());
+				double percentY = (location.y - startingBounds.getY())
+						/ (startingBounds.getHeight());
 
 				if (resize && entity.isResizable()) {
 					size.width *= sizeScale;
@@ -56,10 +55,12 @@ public class AlgorithmHelper {
 					entity.setSize(size.width, size.height);
 				}
 
-				location.x = destinationBounds.x + size.width / 2 + percentX
-						* (destinationBounds.width - size.width);
-				location.y = destinationBounds.y + size.height / 2 + percentY
-						* (destinationBounds.height - size.height);
+				location.x = destinationBounds.getX() + size.width / 2
+						+ percentX
+						* (destinationBounds.getWidth() - size.width);
+				location.y = destinationBounds.getY() + size.height / 2
+						+ percentY
+						* (destinationBounds.getHeight() - size.height);
 				entity.setLocation(location.x, location.y);
 
 			} else if (resize && entity.isResizable()) {
@@ -69,18 +70,20 @@ public class AlgorithmHelper {
 	}
 
 	private static void fitSingleEntity(EntityLayout entity,
-			DisplayIndependentRectangle destinationBounds, boolean resize) {
+			Rectangle destinationBounds, boolean resize) {
 		if (entity.isMovable()) {
-			entity.setLocation(destinationBounds.x + destinationBounds.width
-					/ 2, destinationBounds.y + destinationBounds.height / 2);
+			entity.setLocation(
+					destinationBounds.getX() + destinationBounds.getWidth() / 2,
+					destinationBounds.getY() + destinationBounds.getHeight()
+							/ 2);
 		}
 		if (resize && entity.isResizable()) {
-			double width = destinationBounds.width;
-			double height = destinationBounds.height;
+			double width = destinationBounds.getWidth();
+			double height = destinationBounds.getHeight();
 			double preferredAspectRatio = entity.getPreferredAspectRatio();
 			if (preferredAspectRatio > 0) {
-				DisplayIndependentDimension fixedSize = fixAspectRatio(width,
-						height, preferredAspectRatio);
+				Dimension fixedSize = fixAspectRatio(width, height,
+						preferredAspectRatio);
 				entity.setSize(fixedSize.width, fixedSize.height);
 			} else {
 				entity.setSize(width, height);
@@ -97,7 +100,7 @@ public class AlgorithmHelper {
 	 */
 	public static void maximizeSizes(EntityLayout[] entities) {
 		if (entities.length > 1) {
-			DisplayIndependentDimension minDistance = getMinimumDistance(entities);
+			Dimension minDistance = getMinimumDistance(entities);
 			double nodeSize = Math.max(minDistance.width, minDistance.height)
 					* PADDING_PERCENT;
 			double width = nodeSize;
@@ -107,8 +110,8 @@ public class AlgorithmHelper {
 				if (entity.isResizable()) {
 					double preferredRatio = entity.getPreferredAspectRatio();
 					if (preferredRatio > 0) {
-						DisplayIndependentDimension fixedSize = fixAspectRatio(
-								width, height, preferredRatio);
+						Dimension fixedSize = fixAspectRatio(width, height,
+								preferredRatio);
 						entity.setSize(fixedSize.width, fixedSize.height);
 					} else {
 						entity.setSize(width, height);
@@ -118,8 +121,8 @@ public class AlgorithmHelper {
 		}
 	}
 
-	private static DisplayIndependentDimension fixAspectRatio(double width,
-			double height, double preferredRatio) {
+	private static Dimension fixAspectRatio(double width, double height,
+			double preferredRatio) {
 		double actualRatio = width / height;
 		if (actualRatio > preferredRatio) {
 			width = height * preferredRatio;
@@ -135,7 +138,7 @@ public class AlgorithmHelper {
 				width = height * preferredRatio;
 			}
 		}
-		return new DisplayIndependentDimension(width, height);
+		return new Dimension(width, height);
 	}
 
 	/**
@@ -145,16 +148,16 @@ public class AlgorithmHelper {
 	 * size of the nodes or not. If the size is not included, the bounds will
 	 * only be guaranteed to include the center of each node.
 	 */
-	public static DisplayIndependentRectangle getLayoutBounds(
-			EntityLayout[] entities, boolean includeNodeSize) {
+	public static Rectangle getLayoutBounds(EntityLayout[] entities,
+			boolean includeNodeSize) {
 		double rightSide = Double.NEGATIVE_INFINITY;
 		double bottomSide = Double.NEGATIVE_INFINITY;
 		double leftSide = Double.POSITIVE_INFINITY;
 		double topSide = Double.POSITIVE_INFINITY;
 		for (int i = 0; i < entities.length; i++) {
 			EntityLayout entity = entities[i];
-			DisplayIndependentPoint location = entity.getLocation();
-			DisplayIndependentDimension size = entity.getSize();
+			Point location = entity.getLocation();
+			Dimension size = entity.getSize();
 			if (includeNodeSize) {
 				leftSide = Math.min(location.x - size.width / 2, leftSide);
 				topSide = Math.min(location.y - size.height / 2, topSide);
@@ -167,8 +170,8 @@ public class AlgorithmHelper {
 				bottomSide = Math.max(location.y, bottomSide);
 			}
 		}
-		return new DisplayIndependentRectangle(leftSide, topSide, rightSide
-				- leftSide, bottomSide - topSide);
+		return new Rectangle(leftSide, topSide, rightSide - leftSide,
+				bottomSide - topSide);
 	}
 
 	/**
@@ -195,17 +198,16 @@ public class AlgorithmHelper {
 	 * 
 	 * 
 	 */
-	public static DisplayIndependentDimension getMinimumDistance(
-			EntityLayout[] entities) {
-		DisplayIndependentDimension horAndVertdistance = new DisplayIndependentDimension(
-				Double.MAX_VALUE, Double.MAX_VALUE);
+	public static Dimension getMinimumDistance(EntityLayout[] entities) {
+		Dimension horAndVertdistance = new Dimension(Double.MAX_VALUE,
+				Double.MAX_VALUE);
 		double minDistance = Double.MAX_VALUE;
 
 		// TODO: Very Slow!
 		for (int i = 0; i < entities.length; i++) {
-			DisplayIndependentPoint location1 = entities[i].getLocation();
+			Point location1 = entities[i].getLocation();
 			for (int j = i + 1; j < entities.length; j++) {
-				DisplayIndependentPoint location2 = entities[j].getLocation();
+				Point location2 = entities[j].getLocation();
 				double distanceX = location1.x - location2.x;
 				double distanceY = location1.y - location2.y;
 				double distance = distanceX * distanceX + distanceY * distanceY;

@@ -18,8 +18,6 @@ import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -44,8 +42,8 @@ class InternalNodeLayout implements NodeLayout {
 	};
 	private final static HashMap figureToNode = new HashMap();
 
-	private DisplayIndependentPoint location;
-	private DisplayIndependentDimension size;
+	private org.eclipse.gef4.geometry.planar.Point location;
+	private org.eclipse.gef4.geometry.planar.Dimension size;
 	private boolean minimized = false;
 	private final GraphNode node;
 	private final InternalLayoutContext ownerLayoutContext;
@@ -59,18 +57,18 @@ class InternalNodeLayout implements NodeLayout {
 		figureToNode.put(graphNode.nodeFigure, graphNode);
 	}
 
-	public DisplayIndependentPoint getLocation() {
+	public org.eclipse.gef4.geometry.planar.Point getLocation() {
 		if (location == null) {
 			refreshLocation();
 		}
-		return new DisplayIndependentPoint(location);
+		return new org.eclipse.gef4.geometry.planar.Point(location);
 	}
 
-	public DisplayIndependentDimension getSize() {
+	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
 		if (size == null) {
 			refreshSize();
 		}
-		return new DisplayIndependentDimension(size);
+		return new org.eclipse.gef4.geometry.planar.Dimension(size);
 	}
 
 	public SubgraphLayout getSubgraph() {
@@ -125,7 +123,7 @@ class InternalNodeLayout implements NodeLayout {
 			location.x = x;
 			location.y = y;
 		} else {
-			location = new DisplayIndependentPoint(x, y);
+			location = new org.eclipse.gef4.geometry.planar.Point(x, y);
 		}
 	}
 
@@ -139,7 +137,7 @@ class InternalNodeLayout implements NodeLayout {
 			size.width = width;
 			size.height = height;
 		} else {
-			size = new DisplayIndependentDimension(width, height);
+			size = new org.eclipse.gef4.geometry.planar.Dimension(width, height);
 		}
 	}
 

@@ -9,8 +9,8 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * A common interface for entities that are displayed on a graph, that is
@@ -24,7 +24,7 @@ public interface EntityLayout {
 	 * 
 	 * @return position of the center of this node
 	 */
-	public DisplayIndependentPoint getLocation();
+	public Point getLocation();
 
 	/**
 	 * Sets the position of this entity. The node will be moved so that it's
@@ -37,7 +37,7 @@ public interface EntityLayout {
 	 */
 	public void setLocation(double x, double y);
 
-	public DisplayIndependentDimension getSize();
+	public Dimension getSize();
 
 	public void setSize(double width, double height);
 

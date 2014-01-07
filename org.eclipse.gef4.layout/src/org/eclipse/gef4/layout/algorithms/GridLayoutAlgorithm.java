@@ -10,10 +10,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutStyles;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -36,14 +35,6 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 
 	private LayoutContext context;
 
-	/**
-	 * @deprecated Since Zest 2.0, use {@link #GridLayoutAlgorithm()}.
-	 */
-	public GridLayoutAlgorithm(int style) {
-		this();
-		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
-	}
-
 	public GridLayoutAlgorithm() {
 	}
 
@@ -54,7 +45,7 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		DisplayIndependentRectangle bounds = context.getBounds();
+		Rectangle bounds = context.getBounds();
 		calculateGrid(bounds);
 		applyLayoutInternal(context.getEntities(), bounds);
 	}
@@ -67,15 +58,15 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 * 
 	 * @param bounds
 	 */
-	protected void calculateGrid(DisplayIndependentRectangle bounds) {
+	protected void calculateGrid(Rectangle bounds) {
 		numChildren = context.getNodes().length;
-		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.x,
-				bounds.y, bounds.width, bounds.height);
+		int[] result = calculateNumberOfRowsAndCols(numChildren, bounds.getX(),
+				bounds.getY(), bounds.getWidth(), bounds.getHeight());
 		cols = result[0];
 		rows = result[1];
 
-		colWidth = bounds.width / cols;
-		rowHeight = bounds.height / rows;
+		colWidth = bounds.getWidth() / cols;
+		rowHeight = bounds.getHeight() / rows;
 
 		double[] nodeSize = calculateNodeSize(colWidth, rowHeight);
 		childrenWidth = nodeSize[0];
@@ -97,7 +88,7 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	 *            the bounds in which the layout can place the entities.
 	 */
 	protected synchronized void applyLayoutInternal(
-			EntityLayout[] entitiesToLayout, DisplayIndependentRectangle bounds) {
+			EntityLayout[] entitiesToLayout, Rectangle bounds) {
 
 		int index = 0;
 		for (int i = 0; i < rows; i++) {
@@ -107,10 +98,10 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 					if (resize && node.isResizable())
 						node.setSize(Math.max(childrenWidth, MIN_ENTITY_SIZE),
 								Math.max(childrenHeight, MIN_ENTITY_SIZE));
-					DisplayIndependentDimension size = node.getSize();
-					double xmove = bounds.x + j * colWidth + offsetX
+					Dimension size = node.getSize();
+					double xmove = bounds.getX() + j * colWidth + offsetX
 							+ size.width / 2;
-					double ymove = bounds.y + i * rowHeight + offsetY
+					double ymove = bounds.getY() + i * rowHeight + offsetY
 							+ size.height / 2;
 					if (node.isMovable())
 						node.setLocation(xmove, ymove);

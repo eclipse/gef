@@ -16,8 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.Animation;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -119,11 +119,10 @@ class InternalLayoutContext implements LayoutContext {
 		eventsOn = true;
 	}
 
-	public DisplayIndependentRectangle getBounds() {
-		DisplayIndependentRectangle result = new DisplayIndependentRectangle(
-				container.getLayoutBounds());
-		result.width -= 20;
-		result.height -= 20;
+	public Rectangle getBounds() {
+		Rectangle result = new Rectangle(container.getLayoutBounds());
+		result.setWidth(result.getWidth() - 20);
+		result.setHeight(result.getHeight() - 20);
 		return result;
 	}
 

@@ -19,10 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -175,7 +175,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		 * 
 		 * @param preferredLocation
 		 */
-		public void adjustPosition(DisplayIndependentPoint preferredLocation) { // !
+		public void adjustPosition(Point preferredLocation) { // !
 			protectedNode = (SpaceTreeNode) owner.getSuperRoot();
 
 			double newPositionInLayer = (direction == BOTTOM_UP || direction == TOP_DOWN) ? preferredLocation.x
@@ -189,9 +189,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void refreshSubgraphLocation() {
 			if (subgraph != null && subgraph.isGraphEntity()) {
-				DisplayIndependentPoint nodeLocation = node.getLocation();
-				DisplayIndependentDimension nodeSize = node.getSize();
-				DisplayIndependentDimension subgraphSize = subgraph.getSize();
+				Point nodeLocation = node.getLocation();
+				Dimension nodeSize = node.getSize();
+				Dimension subgraphSize = subgraph.getSize();
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -395,29 +395,29 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		public boolean flushLocationChanges(double thicknessSoFar) {
 			boolean madeChanges = false;
 			if (node != null) {
-				DisplayIndependentDimension nodeSize = node.getSize();
+				Dimension nodeSize = node.getSize();
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
-					x = bounds.x + positionInLayer;
+					x = bounds.getX() + positionInLayer;
 					y = thicknessSoFar + nodeSize.height / 2;
 					break;
 				case BOTTOM_UP:
-					x = bounds.x + positionInLayer;
-					y = bounds.y + bounds.height - thicknessSoFar
+					x = bounds.getX() + positionInLayer;
+					y = bounds.getY() + bounds.getHeight() - thicknessSoFar
 							- nodeSize.height / 2;
 					break;
 				case LEFT_RIGHT:
 					x = thicknessSoFar + nodeSize.height / 2;
-					y = bounds.y + positionInLayer;
+					y = bounds.getY() + positionInLayer;
 					break;
 				case RIGHT_LEFT:
-					x = bounds.x + bounds.width - thicknessSoFar
+					x = bounds.getX() + bounds.getWidth() - thicknessSoFar
 							- nodeSize.height / 2;
-					y = bounds.y + positionInLayer;
+					y = bounds.getY() + positionInLayer;
 					break;
 				}
-				DisplayIndependentPoint currentLocation = node.getLocation();
+				Point currentLocation = node.getLocation();
 				if (currentLocation.x != x || currentLocation.y != y) {
 					node.setLocation(x, y);
 					refreshSubgraphLocation();
@@ -540,7 +540,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void checkThickness(SpaceTreeNode node) {
 			double nodeThickness = 0;
-			DisplayIndependentDimension size = node.node.getSize();
+			Dimension size = node.node.getSize();
 			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 					: size.width;
 			if (node.subgraph != null && node.subgraph.isGraphEntity()) {
@@ -1040,10 +1040,11 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private ContextListener contextListener = new ContextListener.Stub() {
 		public boolean boundsChanged(LayoutContext context) {
-			boolean previousBoundsWrong = (bounds == null || bounds.width
-					* bounds.height <= 0);
+			boolean previousBoundsWrong = (bounds == null || bounds.getWidth()
+					* bounds.getHeight() <= 0);
 			bounds = context.getBounds();
-			if (bounds.width * bounds.height > 0 && previousBoundsWrong) {
+			if (bounds.getWidth() * bounds.getHeight() > 0
+					&& previousBoundsWrong) {
 				expandCollapseManager
 						.maximizeExpansion((SpaceTreeNode) treeObserver
 								.getSuperRoot());
@@ -1107,7 +1108,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		private boolean defaultNodeHandle(LayoutContext context, NodeLayout node) {
-			if (bounds.width * bounds.height <= 0)
+			if (bounds.getWidth() * bounds.getHeight() <= 0)
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
@@ -1168,7 +1169,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	private LayoutContext context;
 
-	private DisplayIndependentRectangle bounds;
+	private Rectangle bounds;
 
 	private TreeLayoutObserver treeObserver;
 
@@ -1241,7 +1242,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		bounds = context.getBounds();
 
-		if (bounds.width * bounds.height == 0)
+		if (bounds.getWidth() * bounds.getHeight() == 0)
 			return;
 
 		if (clean) {
@@ -1328,8 +1329,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	 * @return
 	 */
 	private double getAvailableSpace() {
-		double result = (direction == TOP_DOWN || direction == BOTTOM_UP) ? bounds.width
-				: bounds.height;
+		double result = (direction == TOP_DOWN || direction == BOTTOM_UP) ? bounds
+				.getWidth() : bounds.getHeight();
 		result = Math.max(result, this.availableSpace);
 		for (Iterator iterator = spaceTreeLayers.iterator(); iterator.hasNext();) {
 			SpaceTreeLayer layer = (SpaceTreeLayer) iterator.next();

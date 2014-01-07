@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -257,9 +257,9 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return new EntityLayout[0];
 	}
 
-	public DisplayIndependentDimension getSize() {
-		DisplayIndependentRectangle bounds = context.getBounds();
-		return new DisplayIndependentDimension(bounds.width, bounds.height);
+	public Dimension getSize() {
+		Rectangle bounds = context.getBounds();
+		return new Dimension(bounds.getWidth(), bounds.getHeight());
 	}
 
 	public double getPreferredAspectRatio() {
@@ -270,10 +270,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 		return new EntityLayout[0];
 	}
 
-	public DisplayIndependentPoint getLocation() {
-		DisplayIndependentRectangle bounds = context.getBounds();
-		return new DisplayIndependentPoint(bounds.x + bounds.width / 2,
-				bounds.y + bounds.height / 2);
+	public Point getLocation() {
+		Rectangle bounds = context.getBounds();
+		return new Point(bounds.getX() + bounds.getWidth() / 2, bounds.getY()
+				+ bounds.getHeight() / 2);
 	}
 
 	public boolean isDirectionDependant() {

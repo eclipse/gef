@@ -17,8 +17,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -33,7 +31,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 public abstract class FigureSubgraph extends DefaultSubgraph {
 
 	protected IFigure figure;
-	private DisplayIndependentPoint location;
+	private org.eclipse.gef4.geometry.planar.Point location;
 	private boolean isLayoutBeingApplied = false;
 
 	/**
@@ -126,19 +124,20 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		return super.getPredecessingEntities();
 	}
 
-	public DisplayIndependentDimension getSize() {
+	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
 		Dimension size = getFigure().getSize();
-		return new DisplayIndependentDimension(size.width, size.height);
+		return new org.eclipse.gef4.geometry.planar.Dimension(size.width,
+				size.height);
 	}
 
-	public DisplayIndependentPoint getLocation() {
+	public org.eclipse.gef4.geometry.planar.Point getLocation() {
 		if (location == null) {
 			Point location2 = getFigure().getBounds().getLocation();
 			Dimension size = getFigure().getSize();
-			return new DisplayIndependentPoint(location2.x + size.width / 2,
-					location2.y + size.height / 2);
+			return new org.eclipse.gef4.geometry.planar.Point(location2.x
+					+ size.width / 2, location2.y + size.height / 2);
 		}
-		return new DisplayIndependentPoint(location);
+		return new org.eclipse.gef4.geometry.planar.Point(location);
 	}
 
 	public void setLocation(double x, double y) {
@@ -152,7 +151,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 			location.x = x;
 			location.y = y;
 		} else {
-			location = new DisplayIndependentPoint(x, y);
+			location = new org.eclipse.gef4.geometry.planar.Point(x, y);
 			// the first location change will be applied immediately
 			applyLayoutChanges();
 		}
@@ -161,7 +160,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 	protected void refreshLocation() {
 		Rectangle bounds = figure.getBounds();
 		if (location == null) {
-			location = new DisplayIndependentPoint(0, 0);
+			location = new org.eclipse.gef4.geometry.planar.Point(0, 0);
 		}
 		location.x = bounds.x + bounds.width / 2;
 		location.y = bounds.y + bounds.height / 2;

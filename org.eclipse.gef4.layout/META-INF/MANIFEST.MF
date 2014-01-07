@@ -7,7 +7,7 @@ Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.gef4.layout,
  org.eclipse.gef4.layout.algorithms,
- org.eclipse.gef4.layout.dataStructures,
  org.eclipse.gef4.layout.interfaces
 Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.eclipse.draw2d.geometry

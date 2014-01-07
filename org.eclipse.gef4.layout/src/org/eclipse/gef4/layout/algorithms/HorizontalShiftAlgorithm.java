@@ -16,9 +16,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentDimension;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -61,7 +61,7 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 						.getLocation().y);
 			}
 		};
-		DisplayIndependentRectangle bounds = context.getBounds();
+		Rectangle bounds = context.getBounds();
 		int heightSoFar = 0;
 
 		for (Iterator iterator = rowsList.iterator(); iterator.hasNext();) {
@@ -69,14 +69,14 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			Collections.sort(currentRow, entityComparator);
 
 			int i = 0;
-			int width = (int) (bounds.width / 2 - currentRow.size() * 75);
+			int width = (int) (bounds.getWidth() / 2 - currentRow.size() * 75);
 
 			heightSoFar += ((EntityLayout) currentRow.get(0)).getSize().height
 					+ VSPACING;
 			for (Iterator iterator2 = currentRow.iterator(); iterator2
 					.hasNext();) {
 				EntityLayout entity = (EntityLayout) iterator2.next();
-				DisplayIndependentDimension size = entity.getSize();
+				Dimension size = entity.getSize();
 				entity.setLocation(width + 10 * ++i + size.width / 2,
 						heightSoFar + size.height / 2);
 				width += size.width;

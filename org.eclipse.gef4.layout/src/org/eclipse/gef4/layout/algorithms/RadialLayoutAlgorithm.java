@@ -10,10 +10,9 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.algorithms;
 
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutStyles;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentPoint;
-import org.eclipse.gef4.layout.dataStructures.DisplayIndependentRectangle;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -35,14 +34,6 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 
 	private TreeLayoutAlgorithm treeLayout = new TreeLayoutAlgorithm();
 
-	/**
-	 * @deprecated Since Zest 2.0, use {@link #RadialLayoutAlgorithm()}.
-	 */
-	public RadialLayoutAlgorithm(int style) {
-		this();
-		setResizing(style != LayoutStyles.NO_LAYOUT_NODE_RESIZING);
-	}
-
 	public RadialLayoutAlgorithm() {
 	}
 
@@ -51,30 +42,30 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 			return;
 		treeLayout.internalApplyLayout();
 		EntityLayout[] entities = context.getEntities();
-		DisplayIndependentRectangle bounds = context.getBounds();
+		Rectangle bounds = context.getBounds();
 		computeRadialPositions(entities, bounds);
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
 		int insets = 4;
-		bounds.x += insets;
-		bounds.y += insets;
-		bounds.width -= 2 * insets;
-		bounds.height -= 2 * insets;
+		bounds.setX(bounds.getX() + insets);
+		bounds.setY(bounds.getY() + insets);
+		bounds.setWidth(bounds.getWidth() - 2 * insets);
+		bounds.setHeight(bounds.getHeight() - 2 * insets);
 		AlgorithmHelper.fitWithinBounds(entities, bounds, resize);
 	}
 
 	private void computeRadialPositions(EntityLayout[] entities,
-			DisplayIndependentRectangle bounds) {
-		DisplayIndependentRectangle layoutBounds = AlgorithmHelper
-				.getLayoutBounds(entities, false);
-		layoutBounds.x = bounds.x;
-		layoutBounds.width = bounds.width;
+			Rectangle bounds) {
+		Rectangle layoutBounds = AlgorithmHelper.getLayoutBounds(entities,
+				false);
+		layoutBounds.setX(bounds.getX());
+		layoutBounds.setWidth(bounds.getWidth());
 		for (int i = 0; i < entities.length; i++) {
-			DisplayIndependentPoint location = entities[i].getLocation();
-			double percenttheta = (location.x - layoutBounds.x)
-					/ layoutBounds.width;
-			double distance = (location.y - layoutBounds.y)
-					/ layoutBounds.height;
+			Point location = entities[i].getLocation();
+			double percenttheta = (location.x - layoutBounds.getX())
+					/ layoutBounds.getWidth();
+			double distance = (location.y - layoutBounds.getY())
+					/ layoutBounds.getHeight();
 			double theta = startDegree + Math.abs(endDegree - startDegree)
 					* percenttheta;
 			location.x = distance * Math.cos(theta);
