@@ -30,13 +30,13 @@ import org.eclipse.gef4.mvc.tools.ITool;
  * @author wienand
  * 
  */
-public class FXTargetXorTool extends AbstractFXCompositeXorTool {
+public class FXEventTargetCompositeXorTool extends AbstractFXCompositeXorTool {
 
 	private CompositeAndTool<Node> contentTools = new CompositeAndTool<Node>();
 	private CompositeAndTool<Node> handleTools = new CompositeAndTool<Node>();
 	private CompositeAndTool<Node> visualTools = new CompositeAndTool<Node>();
 
-	public FXTargetXorTool() {
+	public FXEventTargetCompositeXorTool() {
 		// listen to mouse events only
 		super(MouseEvent.ANY);
 		add(contentTools);

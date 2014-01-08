@@ -17,7 +17,6 @@ import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXHandlePart extends AbstractHandlePart<Node> {
 
@@ -41,8 +40,6 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 
 	private Rectangle visual = null;
 	private Pos pos;
-
-	private FXResizeTool fxResizeTool;
 
 	public FXHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
 		setTargetContentParts(targetParts);
@@ -116,27 +113,20 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 	private Bounds getUnionedBoundsInScene(List<IContentPart<Node>> selection) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
 		for (IContentPart<Node> cp : selection) {
-//			Bounds boundsInParent = cp.getVisual().getBoundsInParent();
-//			Bounds boundsInScene = cp.getVisual().getParent()
-//					.localToScene(boundsInParent);
-			Bounds boundsInScene = cp.getVisual().localToScene(cp.getVisual().getLayoutBounds());
+			// Bounds boundsInParent = cp.getVisual().getBoundsInParent();
+			// Bounds boundsInScene = cp.getVisual().getParent()
+			// .localToScene(boundsInParent);
+			Bounds boundsInScene = cp.getVisual().localToScene(
+					cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {
-				unionedBoundsInScene = JavaFX2Geometry.toRectangle(boundsInScene);
+				unionedBoundsInScene = JavaFX2Geometry
+						.toRectangle(boundsInScene);
 			} else {
-				unionedBoundsInScene.union(JavaFX2Geometry.toRectangle(boundsInScene));
+				unionedBoundsInScene.union(JavaFX2Geometry
+						.toRectangle(boundsInScene));
 			}
 		}
 		return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
-	}
-
-	
-
-	@Override
-	public ITool<Node> getHandleTool() {
-		if (fxResizeTool == null) {
-			fxResizeTool = new FXResizeTool();
-		}
-		return fxResizeTool;
 	}
 
 	public Pos getPos() {
