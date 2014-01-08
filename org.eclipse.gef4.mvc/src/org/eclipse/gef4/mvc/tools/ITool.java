@@ -10,27 +10,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
-import java.util.List;
-
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 
 /**
  * A <code>Tool</code> interprets Mouse and Keyboard input from an
- * {@link AbstractEditDomain} and its {@link IVisualPartViewer EditPartViewers}. The active
- * Tool and its state determines how the EditDomain will interpret input. Input
- * flows from a Viewer, to the EditDomain, to the EditDomain's active Tool.
+ * {@link AbstractEditDomain} and its {@link IVisualPartViewer EditPartViewers}.
+ * The active Tool and its state determines how the EditDomain will interpret
+ * input. Input flows from a Viewer, to the EditDomain, to the EditDomain's
+ * active Tool.
  * <P>
  * <code>Tools</code> process low-level events and turn them into higher-level
  * operations. These operations are encapsulated by {@link IRequest Requests}.
  * The Requests are then used to communicate with EditParts in the Viewer to
  * perform the User's operation. Using Requests, Tools will:
  * <UL>
- * <LI>Ask EditParts for {@link org.eclipse.gef4.mvc.commands.AbstractCommand Commands} to
- * perform changes on the model.
+ * <LI>Ask EditParts for {@link org.eclipse.gef4.mvc.commands.AbstractCommand
+ * Commands} to perform changes on the model.
  * <LI>Ask EditParts to show and erase feedback during an operation.
  * <LI>Ask EditParts to perform a generic function, using
  * {@link org.eclipse.gef4.mvc.parts.IEditPart#performRequest(IRequest)}.
@@ -57,10 +55,10 @@ import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
  * <p>
  * IMPORTANT: This interface is <EM>not</EM> intended to be implemented by
  * clients. Clients should inherit from
- * {@link org.eclipse.gef4.mvc.tools.AbstractTool}. New methods may be added in the
- * future.
+ * {@link org.eclipse.gef4.mvc.tools.AbstractTool}. New methods may be added in
+ * the future.
  */
-public interface ITool<V> extends IActivatable{
+public interface ITool<V> extends IActivatable {
 
 	/**
 	 * Called to set the EditDomain for this Tool. This is called right before
@@ -70,11 +68,8 @@ public interface ITool<V> extends IActivatable{
 	 *            The EditDomain to which this Tool belongs
 	 */
 	void setDomain(IEditDomain<V> domain);
-	
+
 	IEditDomain<V> getDomain();
-	
-//	List<IContentPart<V>> getTargetContentParts();
-	
-	//TODO: tools/handles should change the cursor
-	
+
+	// TODO: tools/handles should change the cursor
 }
