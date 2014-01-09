@@ -5,11 +5,10 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.tools.AbstractCompositeXorTool;
+import org.eclipse.gef4.mvc.tools.CompositeXorTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 
-public abstract class AbstractFXCompositeXorTool extends
-		AbstractCompositeXorTool<Node> {
+public abstract class AbstractFXCompositeXorTool extends CompositeXorTool<Node> {
 
 	private EventType<?> eventType = Event.ANY;
 
@@ -37,13 +36,15 @@ public abstract class AbstractFXCompositeXorTool extends
 	}
 
 	@Override
-	protected void register() {
+	public void registerListeners() {
+//		System.out.println(this + ".registerListeners()");
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventFilter(eventType, filter);
 	}
 
 	@Override
-	protected void unregister() {
+	public void unregisterListeners() {
+//		System.out.println(this + ".unregisterListeners()");
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventFilter(eventType, filter);
 	}

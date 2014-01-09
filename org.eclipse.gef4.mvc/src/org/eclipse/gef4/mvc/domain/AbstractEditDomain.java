@@ -56,6 +56,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		if (this.viewer != null) {
 			if (peekTool() != null) {
 				peekTool().deactivate();
+				peekTool().setDomain(null);
 			}
 			this.viewer.setEditDomain(null);
 		}
@@ -63,6 +64,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		if (viewer != null) {
 			viewer.setEditDomain(this);
 			if (peekTool() != null) {
+				peekTool().setDomain(this);
 				peekTool().activate();
 			}
 		}
@@ -122,11 +124,12 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 		if (tool != null) {
 			ITool<V> currentTool = peekTool();
 			toolsStack.push(tool);
-			tool.setDomain(this);
 			if (viewer != null) {
 				if (currentTool != null) {
 					currentTool.deactivate();
+					currentTool.setDomain(null);
 				}
+				tool.setDomain(this);
 				tool.activate();
 			}
 		}
@@ -143,6 +146,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 				}
 				// activate former tool, in case we are attached to a viewer
 				if (peekTool() != null) {
+					peekTool().setDomain(this);
 					peekTool().activate();
 				}
 			}

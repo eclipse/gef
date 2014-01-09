@@ -60,6 +60,18 @@ import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
  */
 public interface ITool<V> extends IActivatable {
 
+//	/**
+//	 * Initially called to register all relevant event handlers on the given
+//	 * {@link IEditDomain}. Using the domain you can access attached viewers,
+//	 * and so be able to register event handlers for various input events
+//	 * (mouse, keyboard, etc.). Moreover, you can register
+//	 * IPropertyChangeListeners to stay informed on other changes such as
+//	 * scroll/viewport model changes, selection model changes, etc.
+//	 * 
+//	 * @param domain The EditDomain to which this Tool belongs
+//	 */
+//	void register(IEditDomain<V> domain);
+
 	/**
 	 * Called to set the EditDomain for this Tool. This is called right before
 	 * {@link #activate()}.
