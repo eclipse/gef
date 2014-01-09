@@ -26,12 +26,10 @@ public class FXExampleViewPart extends ViewPart {
 
 		private IShape s1 = new Rectangle(50, 50, 50, 50);
 		private IShape s2 = new Rectangle(150, 50, 50, 50);
-		private IShape s3 = new Rectangle(400, 400, 50, 50);
-		private IShape s4 = new Rectangle(-5, -5, 10, 10);
 		private ICurve c1 = new Line(100, 75, 150, 75);
 
 		public IShape[] getShapes() {
-			return new IShape[] {s1, s2, s3, s4};
+			return new IShape[] {s1, s2};
 		}
 		
 		public ICurve[] getCurves() {
