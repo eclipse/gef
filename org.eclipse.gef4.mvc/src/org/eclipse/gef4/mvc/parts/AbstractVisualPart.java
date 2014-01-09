@@ -119,9 +119,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
 
+		addChildVisual(child, index);
+		
 		child.setParent(this);
 		
-		addChildVisual(child, index);
 		child.refreshVisual();
 
 		if (isActive())
@@ -293,9 +294,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			return;
 		if (isActive())
 			child.deactivate();
-		removeChildVisual(child);
 
 		child.setParent(null);
+		removeChildVisual(child);
 		removeChildWithoutNotify(child);
 	}
 
@@ -405,12 +406,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 		anchoreds.add(anchored);
 		
+		addAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
-		
-		attachAnchoredVisual(anchored);
 	}
 
-	protected void attachAnchoredVisual(IVisualPart<V> anchored){
+	protected void addAnchoredVisual(IVisualPart<V> anchored){
 		IAnchor<V> anchor = getAnchor(anchored);
 		anchored.attachVisualToAnchorageVisual(anchor);
 	}
@@ -419,9 +419,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	
 	@Override
 	public void removeAnchored(IVisualPart<V> anchored) {
-		detachAnchoredVisual(anchored);
-		
 		anchored.removeAnchorage(this);
+		removeAnchoredVisual(anchored);
 		
 		anchoreds.remove(anchored);
 		if(anchoreds.size() == 0){
@@ -429,7 +428,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void detachAnchoredVisual(IVisualPart<V> anchored){
+	protected void removeAnchoredVisual(IVisualPart<V> anchored){
 		IAnchor<V> anchor = getAnchor(anchored);
 		anchored.detachVisualFromAnchorageVisual(anchor);
 	}
@@ -448,14 +447,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			anchorages = new ArrayList<IVisualPart<V>>();
 		}
 		anchorages.add(anchorage);
-		// TODO: add listener here so we can update our visuals accordingly....
 	}
 
 	//  counterpart to setParent(null) in case of hierarchy
 	@Override
 	public void removeAnchorage(IVisualPart<V> anchorage) {
-		// TODO: remove listener
-		
 		anchorages.remove(anchorage);
 		if(anchorages.size() == 0){
 			anchorages = null;

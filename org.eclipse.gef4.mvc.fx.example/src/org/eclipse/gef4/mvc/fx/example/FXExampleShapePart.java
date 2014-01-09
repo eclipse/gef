@@ -7,7 +7,6 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
@@ -15,7 +14,6 @@ import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.FXSelectionPolicy;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.mvc.fx.anchors.FXFixPointAnchor;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 

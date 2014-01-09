@@ -50,18 +50,4 @@ public interface ICompositeTool<V> extends ITool<V> {
 	@Override
 	public void setDomain(IEditDomain<V> domain);
 
-	/**
-	 * This method is called when a valid {@link IEditDomain} is attached to
-	 * this tool so that you can register event listeners for various inputs
-	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
-	 */
-	public void registerListeners();
-
-	/**
-	 * This method is called when the attached {@link IEditDomain} is reset to
-	 * <code>null</code> so that you can unregister previously registered event
-	 * listeners.
-	 */
-	public void unregisterListeners();
-
 }

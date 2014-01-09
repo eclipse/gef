@@ -7,7 +7,6 @@ import java.util.List;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -58,20 +57,18 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 	@Override
 	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
 		anchors.add(anchor);
-		anchor.addAnchored(this.getVisual());
 		anchor.addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
-		anchor.removeAnchored(this.getVisual());
 		anchors.remove(anchor);
 		anchor.removePropertyChangeListener(this);
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(IAnchor.POSITIONS_PROPERTY)) {
+		if (evt.getPropertyName().equals(IAnchor.REPRESH)) {
 			updateModel();
 			refreshVisual();
 		}
@@ -85,20 +82,37 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 	private void updateModel() {
 		if (anchors.size() == 2) {
 			// use anchors as start and end point
-			Point start = anchors.get(0).getPosition(this.getVisual());
-			Point end = anchors.get(1).getPosition(this.getVisual());
+			Node startNode = anchors.get(0).getAnchorage();
+			Node endNode = anchors.get(1).getAnchorage();
 
-			// convert position to correct coordinate space
-			start = JavaFX2Geometry.toPoint(getVisual().sceneToLocal(Geometry2JavaFX.toFXPoint(start)));
-			end = JavaFX2Geometry.toPoint(getVisual().sceneToLocal(Geometry2JavaFX.toFXPoint(end)));
+			// compute reference points in local coordinate space
+			Point startReference = JavaFX2Geometry.toRectangle(
+					getVisual().sceneToLocal(
+							endNode.localToScene(endNode.getBoundsInLocal())))
+					.getCenter();
+			Point endReference = JavaFX2Geometry.toRectangle(
+					getVisual()
+							.sceneToLocal(
+									startNode.localToScene(startNode
+											.getBoundsInLocal()))).getCenter();
 
-			// update model
-			Line line = (Line) getModel();
-			line.setP1(start);
-			line.setP2(end);
+			try {
+				// compute new anchor positions
+				Point start = anchors.get(0).getPosition(this.getVisual(),
+						startReference);
+				Point end = anchors.get(1).getPosition(this.getVisual(),
+						endReference);
 
-			// update geometry visual
-			visual.updatePathElements();
+				// update model
+				Line line = (Line) getModel();
+				line.setP1(start);
+				line.setP2(end);
+				visual.updatePathElements();
+			} catch (IllegalArgumentException e) {
+				// When no intersection point can be found by the ChopBoxAnchor,
+				// the connection is invisible
+				// TODO: handle this proactively
+			}
 		}
 	}
 

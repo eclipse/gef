@@ -28,6 +28,23 @@ public abstract class AbstractCompositeTool<V> extends AbstractTool<V>
 			unregisterListeners();
 		}
 	}
+	
+
+	/**
+	 * This method is called when a valid {@link IEditDomain} is attached to
+	 * this tool so that you can register event listeners for various inputs
+	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
+	 */
+	protected void registerListeners() {
+	}
+
+	/**
+	 * This method is called when the attached {@link IEditDomain} is reset to
+	 * <code>null</code> so that you can unregister previously registered event
+	 * listeners.
+	 */
+	protected void unregisterListeners() {
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<ITool<V>> getSubTools() {
@@ -84,14 +101,6 @@ public abstract class AbstractCompositeTool<V> extends AbstractTool<V>
 			throw new IllegalArgumentException(
 					"May not manipulate nested tools while being active.");
 		}
-	}
-	
-	@Override
-	public void registerListeners() {	
-	}
-	
-	@Override
-	public void unregisterListeners() {	
 	}
 
 }
