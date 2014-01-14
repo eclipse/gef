@@ -26,8 +26,8 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 			IVisualPart<Node> handlePart = getDomain().getViewer()
 					.getVisualPartMap().get(target);
 
-			if (handlePart instanceof FXHandlePart) {
-				pos = ((FXHandlePart) handlePart).getPos();
+			if (handlePart instanceof FXBoxHandlePart) {
+				pos = ((FXBoxHandlePart) handlePart).getPos();
 			} else {
 				pos = Pos.BOTTOM_RIGHT;
 			}

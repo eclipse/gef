@@ -18,10 +18,9 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXHandlePart extends AbstractHandlePart<Node> {
+public class FXBoxHandlePart extends AbstractHandlePart<Node> {
 
 	private ChangeListener<Number> positionChangeListener = new ChangeListener<Number>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
@@ -30,7 +29,6 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 	};
 
 	private ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
@@ -41,7 +39,7 @@ public class FXHandlePart extends AbstractHandlePart<Node> {
 	private Rectangle visual = null;
 	private Pos pos;
 
-	public FXHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
+	public FXBoxHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
 		setTargetContentParts(targetParts);
 		this.pos = pos;
 		visual = new Rectangle();
