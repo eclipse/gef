@@ -11,7 +11,6 @@ import org.eclipse.gef4.mvc.anchors.IAnchor;
 public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 
 	private ChangeListener<Bounds> boundsListener = new ChangeListener<Bounds>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
@@ -26,7 +25,6 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 		if (oldAnchorage != null) {
 			// unregister listeners
 			unregisterLayoutListener(oldAnchorage);
-
 		}
 		super.setAnchorage(anchorage);
 		if (anchorage != null) {
@@ -39,19 +37,21 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 		// add bounds-in-parent listeners to the whole hierarchy to witness node
 		// resizing and container movement
 		Node current = anchorageOrAnchored;
-		while (current != null && current.getParent() != null) {
-			current.boundsInParentProperty().addListener(boundsListener);
-			current = current.getParent();
-		}
+		current.boundsInParentProperty().addListener(boundsListener);
+//		while (current != null && current.getParent() != null) {
+//			current.boundsInParentProperty().addListener(boundsListener);
+//			current = current.getParent();
+//		}
 	}
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {
 		// remove the previously added listeners
 		Node current = anchorageOrAnchored;
-		while (current != null && current.getParent() != null) {
-			current.boundsInParentProperty().removeListener(boundsListener);
-			current = current.getParent();
-		}
+		current.boundsInParentProperty().removeListener(boundsListener);
+//		while (current != null && current.getParent() != null) {
+//			current.boundsInParentProperty().removeListener(boundsListener);
+//			current = current.getParent();
+//		}
 	}
 
 }

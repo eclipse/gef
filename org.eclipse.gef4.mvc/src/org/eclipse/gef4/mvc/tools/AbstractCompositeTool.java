@@ -13,37 +13,11 @@ public abstract class AbstractCompositeTool<V> extends AbstractTool<V>
 
 	@Override
 	public void setDomain(IEditDomain<V> domain) {
-		IEditDomain<V> oldDomain = getDomain();
 		super.setDomain(domain);
-		
 		// propagate the domain to all sub-tools
 		for (ITool<V> subTool : getSubTools()) {
 			subTool.setDomain(domain);
 		}
-		
-		// (un-)register event listeners for tool selection
-		if (oldDomain == null && domain != null) {
-			registerListeners();
-		} else if (oldDomain != null && domain == null) {
-			unregisterListeners();
-		}
-	}
-	
-
-	/**
-	 * This method is called when a valid {@link IEditDomain} is attached to
-	 * this tool so that you can register event listeners for various inputs
-	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
-	 */
-	protected void registerListeners() {
-	}
-
-	/**
-	 * This method is called when the attached {@link IEditDomain} is reset to
-	 * <code>null</code> so that you can unregister previously registered event
-	 * listeners.
-	 */
-	protected void unregisterListeners() {
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,9 +1,10 @@
 package org.eclipse.gef4.mvc.tools;
 
-public class CompositeXorTool<V> extends AbstractCompositeTool<V> implements ICompositeTool<V> {
-	
+public class CompositeXorTool<V> extends AbstractCompositeTool<V> implements
+		ICompositeTool<V> {
+
 	private ITool<V> selectedTool = null;
-	
+
 	protected void selectTool(ITool<V> tool) {
 		if (tool == selectedTool) {
 			return;
@@ -20,14 +21,6 @@ public class CompositeXorTool<V> extends AbstractCompositeTool<V> implements ICo
 			}
 		}
 	}
-	
-	@Override
-	public void activate() {
-		super.activate();
-		if (selectedTool != null) {
-			selectedTool.activate();
-		}
-	}
 
 	@Override
 	public void deactivate() {
@@ -35,6 +28,14 @@ public class CompositeXorTool<V> extends AbstractCompositeTool<V> implements ICo
 			selectedTool.deactivate();
 		}
 		super.deactivate();
+	}
+	
+	@Override
+	public void activate() {
+		super.activate();
+		if (selectedTool != null) {
+			selectedTool.activate();
+		}
 	}
 
 }

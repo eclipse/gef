@@ -25,7 +25,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	protected IShape getAnchorageReferenceShape() {
 		return JavaFX2Geometry.toRectangle(getAnchorage().localToScene(
-				getAnchorage().getBoundsInLocal()));
+				getAnchorage().getLayoutBounds()));
 	}
 
 	protected Point getAnchorageReferencePoint() {
