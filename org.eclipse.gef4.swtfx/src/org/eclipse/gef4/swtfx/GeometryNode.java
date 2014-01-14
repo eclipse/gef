@@ -31,7 +31,7 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 public class GeometryNode<T extends IGeometry> extends Path {
 
-	private static PathElement[] toPathElements(IGeometry geom) {
+	public static PathElement[] toPathElements(IGeometry geom) {
 		Segment[] segments = geom.toPath().getSegments();
 		PathElement[] elements = new PathElement[segments.length];
 		for (int i = 0; i < segments.length; i++) {

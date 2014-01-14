@@ -8,9 +8,11 @@ import java.util.List;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -19,11 +21,19 @@ import org.eclipse.gef4.swtfx.GeometryNode;
 public class FXExampleCurvePart extends AbstractFXContentPart implements
 		PropertyChangeListener {
 
+	public Point anchorPoint = null;
+	
 	private GeometryNode<ICurve> visual;
+	
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
 	public FXExampleCurvePart() {
-		visual = new GeometryNode<ICurve>();
+		visual = new GeometryNode<ICurve>() {
+			@Override
+			public void updatePathElements() {
+				super.updatePathElements();
+			}
+		};
 	}
 
 	@Override
@@ -76,8 +86,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	/*
 	 * TODO: - position computation (currently somewhere inside the bounds) -
-	 * source / target distinction - updatePathElements() should not be
-	 * necessary
+	 * source / target distinction
 	 */
 	private void updateModel() {
 		if (anchors.size() == 2) {
@@ -104,10 +113,9 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 						endReference);
 
 				// update model
-				Line line = (Line) getModel();
-				line.setP1(start);
-				line.setP2(end);
-				visual.updatePathElements();
+				ICurve interpolation = anchorPoint == null ? new Line(start, end) : PolyBezier.interpolateCubic(start,
+						anchorPoint, end);
+				setModel(interpolation);
 			} catch (IllegalArgumentException e) {
 				// When no intersection point can be found by the ChopBoxAnchor,
 				// the connection is invisible
@@ -118,6 +126,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
+		System.out.println("getAnchor() == null ?!");
 		return null;
 	}
 
