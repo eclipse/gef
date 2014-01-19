@@ -1,6 +1,7 @@
 package org.eclipse.gef4.mvc.fx.example;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,7 +21,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXBendHandlePart extends AbstractHandlePart<Node> {
 	
-	private double parameter = 0.5;
+//	private double parameter = 0.5;
+	private int anchorIndex = 0;
 	private Rectangle visual;
 
 	private ChangeListener<Number> positionChangeListener = new ChangeListener<Number>() {
@@ -65,9 +67,10 @@ public class FXBendHandlePart extends AbstractHandlePart<Node> {
 		super.deactivate();
 	}
 	
-	public FXBendHandlePart(IContentPart<Node> contentPart, double parameter) {
+	public FXBendHandlePart(IContentPart<Node> contentPart, int anchorIndex) {
 		setTargetContentParts(Arrays.asList(contentPart));
-		this.parameter = parameter;
+//		this.parameter = parameter;
+		this.anchorIndex = anchorIndex;
 		visual = new Rectangle(5, 5);
 		visual.setTranslateY(- visual.getHeight() / 2);
 		visual.setFill(new LinearGradient(0, 0, 0, 5, true,
@@ -76,10 +79,6 @@ public class FXBendHandlePart extends AbstractHandlePart<Node> {
 						new Stop(0.5, Color.web("#a5d3fb")),
 						new Stop(1.0, Color.web("#d5faff")) }));
 		visual.setStroke(Color.web("#5a61af"));
-	}
-	
-	public double getParameter() {
-		return parameter;
 	}
 
 	@Override
@@ -90,21 +89,15 @@ public class FXBendHandlePart extends AbstractHandlePart<Node> {
 	@Override
 	public void refreshVisual() {
 		IContentPart<Node> part = getTargetContentParts().get(0);
-		Point point = ((FXExampleCurvePart) part).anchorPoint;
-		if (point != null) {
-			visual.setLayoutX(point.x);
-			visual.setLayoutY(point.y);
-		}
-		Object model = part.getModel();
-		if (model instanceof ICurve) {
-			BezierCurve[] bezier = ((ICurve) model).toBezier();
-			if (bezier.length == 1) {
-				BezierCurve curve = bezier[0];
-				point = curve.get(parameter);
-				visual.setLayoutX(point.x);
-				visual.setLayoutY(point.y);
-			}
-		}
+		FXExampleCurvePart cp = (FXExampleCurvePart) part;
+		List<Point> anchorPoints = cp.getAnchorPoints();
+		Point point = anchorPoints.get(anchorIndex);
+		visual.setLayoutX(point.x);
+		visual.setLayoutY(point.y);
+	}
+
+	public int getAnchorIndex() {
+		return anchorIndex;
 	}
 
 }

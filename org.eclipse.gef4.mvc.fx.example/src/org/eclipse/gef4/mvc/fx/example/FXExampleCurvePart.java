@@ -21,7 +21,7 @@ import org.eclipse.gef4.swtfx.GeometryNode;
 public class FXExampleCurvePart extends AbstractFXContentPart implements
 		PropertyChangeListener {
 
-	public Point anchorPoint = null;
+	private List<Point> anchorPoints = new ArrayList<Point>();
 	
 	private GeometryNode<ICurve> visual;
 	
@@ -113,9 +113,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 						endReference);
 
 				// update model
-				ICurve interpolation = anchorPoint == null ? new Line(start, end) : PolyBezier.interpolateCubic(start,
-						anchorPoint, end);
-				setModel(interpolation);
+				setModel(createCurve(start, end));
 			} catch (IllegalArgumentException e) {
 				// When no intersection point can be found by the ChopBoxAnchor,
 				// the connection is invisible
@@ -124,10 +122,24 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 		}
 	}
 
+	public ICurve createCurve(Point start, Point end) {
+		Point[] points = new Point[anchorPoints.size() + 2];
+		points[0] = start;
+		for (int i = 0; i < anchorPoints.size(); i++) {
+			points[i+1] = anchorPoints.get(i);
+		}
+		points[points.length - 1] = end;
+		return PolyBezier.interpolateCubic(points);
+	}
+
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-		System.out.println("getAnchor() == null ?!");
+//		System.out.println("getAnchor() == null ?!");
 		return null;
+	}
+
+	public List<Point> getAnchorPoints() {
+		return anchorPoints;
 	}
 
 }

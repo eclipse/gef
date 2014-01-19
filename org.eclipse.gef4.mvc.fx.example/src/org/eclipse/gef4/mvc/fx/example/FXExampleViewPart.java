@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.embed.swt.FXCanvas;
-import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -16,9 +15,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.fx.FXEditDomain;
-import org.eclipse.gef4.mvc.fx.FXEventTargetCompositeXorTool;
 import org.eclipse.gef4.mvc.fx.FXViewer;
-import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;

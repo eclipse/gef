@@ -41,9 +41,20 @@ public class FXBendTool extends AbstractTool<Node> {
 				IVisualPart<Node> handlePart = getDomain().getViewer()
 						.getVisualPartMap().get(target);
 				
+				int index = 0;
+				if (handlePart instanceof FXBendHandlePart) {
+					index = ((FXBendHandlePart) handlePart).getAnchorIndex();
+				}
+				
 				startX = handlePart.getVisual().getLayoutX();
 				startY = handlePart.getVisual().getLayoutY();
-				curvePart.anchorPoint = new Point(startX, startY);
+				
+				List<Point> anchorPoints = curvePart.getAnchorPoints();
+				if (anchorPoints.isEmpty()) {
+					anchorPoints.add(new Point(startX, startY));
+				} else {
+					anchorPoints.set(index, new Point(startX, startY));
+				}
 			} else {
 				throw new IllegalStateException("Illegal selection!");
 			}
@@ -56,14 +67,12 @@ public class FXBendTool extends AbstractTool<Node> {
 			if (!(handlePart instanceof FXBendHandlePart)) {
 				throw new IllegalStateException("Illegal handle part!");
 			}
-			curvePart.anchorPoint.x = startX + dx;
-			curvePart.anchorPoint.y = startY + dy;
+			List<Point> anchorPoints = curvePart.getAnchorPoints();
+			Point point = anchorPoints.get(((FXBendHandlePart) handlePart).getAnchorIndex());
+			point.x = startX + dx;
+			point.y = startY + dy;
 			ICurve curve = curvePart.getModel();
-			Point p1 = curve.getP1();
-			Point p2 = curve.getP2();
-			ICurve interpolation = curvePart.anchorPoint == null ? new Line(p1, p2) : PolyBezier.interpolateCubic(p1,
-					curvePart.anchorPoint, p2);
-			curvePart.setModel(interpolation);
+			curvePart.setModel(curvePart.createCurve(curve.getP1(), curve.getP2()));
 			curvePart.refreshVisual();
 		}
 	};
