@@ -48,8 +48,8 @@ public final class TestGraphInstanceDotImport {
 		DotImport importer = new DotImport("digraph Sample{1;2;1->2}"); //$NON-NLS-1$
 		Graph graph = importer.newGraphInstance();
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(ZestStyle.GRAPH_DIRECTED,
+				graph.getAttribute(Graph.Attr.GRAPH_TYPE.toString()));
 	}
 
 	@Test
@@ -73,16 +73,16 @@ public final class TestGraphInstanceDotImport {
 	public void digraphType() {
 		Graph graph = interpreter.create(parse("digraph Sample{1;2;1->2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(ZestStyle.GRAPH_DIRECTED,
+				graph.getAttribute(Graph.Attr.GRAPH_TYPE.toString()));
 	}
 
 	@Test
 	public void graphType() {
 		Graph graph = interpreter.create(parse("graph Sample{1;2;1--2}")); //$NON-NLS-1$
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
-		Assert.assertNotSame(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(ZestStyle.GRAPH,
+				graph.getAttribute(Graph.Attr.GRAPH_TYPE.toString()));
 	}
 
 	@Test

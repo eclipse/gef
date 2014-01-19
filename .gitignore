@@ -6,10 +6,9 @@ test.properties
 org.eclipse.gef4.zest.tests/resources/output/*.dot
 org.eclipse.gef4.zest.tests/resources/tests/*.png
 .DS_Store
-org.eclipse.gef4.zest.dot.ui/Graphviz_DOT_as_a_DSL_for_Zest
-org.eclipse.gef4.zest.dot.ui/Zest
-org.eclipse.gef4.zest.dot.ui/*-toc.xml
+org.eclipse.gef4.graph.ui/Graphviz_DOT_as_a_DSL_for_Zest
+org.eclipse.gef4.graph.ui/Zest
+org.eclipse.gef4.graph.ui/*-toc.xml
 src-gen
 *.orig
-org.eclipse.gef4.graph.ui
 org.eclipse.gef4.graph.tests/resources/output/*.dot

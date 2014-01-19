@@ -25,7 +25,7 @@ public class Graph {
 	private Map<String, Object> attr = new HashMap<String, Object>();
 
 	public static enum Attr {
-		NODE_STYLE, EDGE_STYLE, LABEL, STYLE, DATA, IMAGE, LAYOUT
+		NODE_STYLE, EDGE_STYLE, LABEL, STYLE, DATA, IMAGE, LAYOUT, GRAPH_TYPE
 	}
 
 	public Graph() {
@@ -70,5 +70,16 @@ public class Graph {
 
 	public String toDot() {
 		return new DotExport(this).toDotString();
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Graph {%s nodes, %s edges}", nodes.size(), //$NON-NLS-1$
+				edges.size());
+	}
+
+	public Map<String, Object> getAttributes() {
+		return new HashMap<String, Object>(attr);
+
 	}
 }

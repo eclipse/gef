@@ -185,9 +185,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
 				new TreeLayoutAlgorithm());
 		GraphType graphType = object.getType();
-		graph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-				graphType == GraphType.DIGRAPH ? ZestStyle.CONNECTIONS_DIRECTED
-						: ZestStyle.CONNECTIONS_SOLID);
+		graph.withAttribute(Graph.Attr.GRAPH_TYPE.toString(),
+				graphType == GraphType.DIGRAPH ? ZestStyle.GRAPH_DIRECTED
+						: ZestStyle.GRAPH);
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {

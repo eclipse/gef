@@ -29,21 +29,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.zest.dot.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.gef4.zest.dot.export"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.gef4.zest.dot.ui"
+         id="org.eclipse.gef4.graph.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -58,6 +44,20 @@
 
    <plugin
          id="org.eclipse.gef4.layout"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gef4.geometry"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gef4.graph"
          download-size="0"
          install-size="0"
          version="0.0.0"

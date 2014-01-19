@@ -50,8 +50,6 @@ public final class TestSnippetDotImport {
 		assertNodesEdgesCount(4, 1, graph);
 		new DotImport("5->6").into(graph); //$NON-NLS-1$
 		assertNodesEdgesCount(6, 2, graph);
-		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 	}
 
 	@Test
@@ -73,8 +71,8 @@ public final class TestSnippetDotImport {
 		assertNodesEdgesCount(2, 1, graph);
 		new DotImport("1->3").into(graph); // reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
-		Assert.assertEquals(ZestStyle.CONNECTIONS_DIRECTED,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(ZestStyle.GRAPH_DIRECTED,
+				graph.getAttribute(Graph.Attr.GRAPH_TYPE.toString()));
 	}
 
 	@Test
@@ -84,8 +82,6 @@ public final class TestSnippetDotImport {
 		assertNodesEdgesCount(2, 1, graph);
 		new DotImport("1--3").into(graph); // reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
-		Assert.assertEquals(ZestStyle.CONNECTIONS_SOLID,
-				graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
 	}
 
 	@Test

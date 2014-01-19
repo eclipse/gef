@@ -6,26 +6,26 @@
  * <p/>
  * Contributors: Fabian Steeg
  *******************************************************************************/
-package org.eclipse.gef4.zest.tests;
+package org.eclipse.gef4.graph.tests;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gef4.zest.tests.dot.TestDotGraph;
-import org.eclipse.gef4.zest.tests.dot.TestGraphInstanceDotImport;
+import org.eclipse.gef4.graph.tests.dot.TestDotDirStore;
+import org.eclipse.gef4.graph.tests.dot.TestDotExtractor;
+import org.eclipse.gef4.graph.tests.dot.TestZestGraphView;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Main test suite for all tests.
+ * Main test suite for all UI tests.
  * 
  * @author Fabian Steeg (fsteeg)
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ GraphTests.class, GraphViewerTests.class,
-		GraphSelectionTests.class, IFigureProviderTests.class,
-		TestDotGraph.class, TestGraphInstanceDotImport.class })
-public final class AllTests {
+@Suite.SuiteClasses({ TestDotDirStore.class, TestDotExtractor.class,
+		TestZestGraphView.class })
+public final class AllUiTests {
 	@Before
 	public void setup() {
 		if (!Platform.isRunning()) {

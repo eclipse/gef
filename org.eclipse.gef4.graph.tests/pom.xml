@@ -59,6 +59,7 @@
 					<argLine>${vmargs}</argLine>
 					<testSuite>org.eclipse.gef4.graph.tests</testSuite>
 					<testClass>org.eclipse.gef4.graph.tests.AllHeadlessTests</testClass>
+					<testFailureIgnore>false</testFailureIgnore>
 				</configuration>
 			</plugin>
 		</plugins>

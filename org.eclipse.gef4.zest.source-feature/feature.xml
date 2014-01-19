@@ -25,21 +25,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.zest.dot.core.source"
+         id="org.eclipse.gef4.graph.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.zest.dot.export.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.gef4.zest.dot.ui.source"
+         id="org.eclipse.gef4.graph.ui.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

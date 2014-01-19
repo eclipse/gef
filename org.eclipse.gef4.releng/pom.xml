@@ -277,13 +277,11 @@
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
 		<module>../org.eclipse.gef4.graph</module>
+		<module>../org.eclipse.gef4.graph.ui</module>
 		<module>../org.eclipse.gef4.graph.tests</module>
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
-		<module>../org.eclipse.gef4.zest.dot.core</module>
-		<module>../org.eclipse.gef4.zest.dot.export</module>
-		<module>../org.eclipse.gef4.zest.dot.ui</module>
 		<module>../org.eclipse.gef4.zest.feature</module>
 		<module>../org.eclipse.gef4.zest.source-feature</module>
 		<module>../org.eclipse.gef4.zest.tests</module>

@@ -58,9 +58,10 @@
 					<useUIThread>true</useUIThread>
 					<argLine>${vmargs}</argLine>
 					<testSuite>org.eclipse.gef4.zest.tests</testSuite>
-					<testClass>org.eclipse.gef4.zest.tests.AllHeadlessTests</testClass>
+					<testClass>org.eclipse.gef4.zest.tests.AllTests</testClass>
 					<product>org.eclipse.platform.ide</product>
 					<application>org.eclipse.ui.ide.workbench</application>
+					<testFailureIgnore>false</testFailureIgnore>
 					<dependencies>
 						<dependency>
 							<type>p2-installable-unit</type>
