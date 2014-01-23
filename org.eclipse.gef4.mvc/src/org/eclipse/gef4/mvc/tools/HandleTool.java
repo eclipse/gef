@@ -4,8 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
@@ -32,7 +32,7 @@ public class HandleTool<V> extends AbstractTool<V> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (IContentPartSelectionModel.SELECTION_PROPERTY.equals(evt
+		if (ISelectionModel.SELECTION_PROPERTY.equals(evt
 				.getPropertyName())) {
 			IRootVisualPart<V> rootPart = getRoot();
 			if (rootPart != null) {

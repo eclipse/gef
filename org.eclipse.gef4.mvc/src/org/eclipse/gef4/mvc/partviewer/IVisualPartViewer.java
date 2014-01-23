@@ -15,9 +15,9 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -220,9 +220,9 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	IContentPartFactory<V> getContentPartFactory();
 	
 	// selection based on content parts
-	IContentPartSelectionModel<V> getContentPartSelection();
+	ISelectionModel<V> getContentPartSelection();
 	
-	void setContentPartSelection(IContentPartSelectionModel<V> selection);
+	void setContentPartSelection(ISelectionModel<V> selection);
 	
 	IHandlePartFactory<V> getHandlePartFactory();
 	

@@ -1,10 +1,11 @@
-package org.eclipse.gef4.mvc.parts;
+package org.eclipse.gef4.mvc.models;
 
 import java.util.List;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public interface IContentPartSelectionModel<V> extends IPropertyChangeSupport {
+public interface ISelectionModel<V> extends IPropertyChangeSupport {
 
 	public static final String SELECTION_PROPERTY = "selection";
 	

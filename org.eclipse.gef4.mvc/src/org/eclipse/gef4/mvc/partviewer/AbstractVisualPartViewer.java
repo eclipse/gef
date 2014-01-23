@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
-import org.eclipse.gef4.mvc.parts.ContentPartMultiSelectionModel;
+import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -41,7 +41,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	private IEditDomain<V> editDomain;
 	private IRootVisualPart<V> rootPart;
 	private IContentPartFactory<V> contentPartFactory;
-	private IContentPartSelectionModel<V> contentPartSelection;
+	private ISelectionModel<V> contentPartSelection;
 	
 	private IHandlePartFactory<V> handlePartFactory;
 
@@ -63,7 +63,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 * Constructs the viewer and calls {@link #init()}.
 	 */
 	public AbstractVisualPartViewer() {
-		setContentPartSelection(new ContentPartMultiSelectionModel<V>());
+		setContentPartSelection(new DefaultSelectionModel<V>());
 	}
 
 	/**
@@ -142,13 +142,13 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	@Override
-	public IContentPartSelectionModel<V> getContentPartSelection() {
+	public ISelectionModel<V> getContentPartSelection() {
 		return contentPartSelection;
 	}
 
 	@Override
 	public void setContentPartSelection(
-			IContentPartSelectionModel<V> contentPartSelection) {
+			ISelectionModel<V> contentPartSelection) {
 		if (this.contentPartSelection == contentPartSelection) {
 			return;
 		}

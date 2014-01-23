@@ -8,8 +8,8 @@ import java.util.Map;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.tools.CompositeXorTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 
@@ -21,7 +21,7 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (evt.getPropertyName().equals(
-					IContentPartSelectionModel.SELECTION_PROPERTY)) {
+					ISelectionModel.SELECTION_PROPERTY)) {
 				Object newValue = evt.getNewValue();
 				if (newValue instanceof List) {
 					List<IContentPart<Node>> selection = (List<IContentPart<Node>>) newValue;

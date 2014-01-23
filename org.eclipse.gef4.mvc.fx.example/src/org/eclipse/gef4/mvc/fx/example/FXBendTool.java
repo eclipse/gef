@@ -93,10 +93,10 @@ public class FXBendTool extends AbstractTool<Node> {
 	
 	@Override
 	public void deactivate() {
-		super.deactivate();
 		if (scene != null) {
 			gesture.setScene(null);
 		}
+		super.deactivate();
 	}
 
 	@Override

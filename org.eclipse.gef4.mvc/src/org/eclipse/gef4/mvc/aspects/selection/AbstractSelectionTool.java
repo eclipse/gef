@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartSelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -36,7 +36,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 		// TODO: extract into tool policy
 		boolean changed = true;
 
-		IContentPartSelectionModel<V> selectionModel = getSelectionModel();
+		ISelectionModel<V> selectionModel = getSelectionModel();
 		// retrieve old selection
 		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(
 				selectionModel.getSelected());
@@ -97,7 +97,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 		}
 	}
 
-	protected IContentPartSelectionModel<V> getSelectionModel() {
+	protected ISelectionModel<V> getSelectionModel() {
 		return getDomain().getViewer().getContentPartSelection();
 	}
 	
