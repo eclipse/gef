@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {

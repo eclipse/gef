@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.tools;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * A <code>Tool</code> interprets Mouse and Keyboard input from an

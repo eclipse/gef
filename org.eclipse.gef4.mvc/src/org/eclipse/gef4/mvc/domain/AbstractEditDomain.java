@@ -16,8 +16,8 @@ import java.util.Stack;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.ITool;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * The collective state of a GEF "application", loosely defined by a

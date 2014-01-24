@@ -12,7 +12,7 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * A RootEditPart is the <i>root</i> of an EditPartViewer. It bridges the gap

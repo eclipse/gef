@@ -9,7 +9,7 @@ import javafx.scene.layout.StackPane;
 import org.eclipse.gef4.mvc.parts.AbstractRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 

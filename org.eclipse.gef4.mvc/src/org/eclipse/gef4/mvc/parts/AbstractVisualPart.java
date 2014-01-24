@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.policies.IEditPolicy;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * The baseline implementation for the {@link IEditPart} interface.

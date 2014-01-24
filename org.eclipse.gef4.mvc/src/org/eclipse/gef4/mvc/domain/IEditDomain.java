@@ -1,8 +1,8 @@
 package org.eclipse.gef4.mvc.domain;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.ITool;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public interface IEditDomain<V> {
 

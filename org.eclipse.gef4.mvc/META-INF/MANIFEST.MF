@@ -18,6 +18,6 @@ Export-Package: org.eclipse.gef4.mvc,
  org.eclipse.gef4.mvc.domain,
  org.eclipse.gef4.mvc.models,
  org.eclipse.gef4.mvc.parts,
- org.eclipse.gef4.mvc.partviewer,
  org.eclipse.gef4.mvc.policies,
- org.eclipse.gef4.mvc.tools
+ org.eclipse.gef4.mvc.tools,
+ org.eclipse.gef4.mvc.viewer

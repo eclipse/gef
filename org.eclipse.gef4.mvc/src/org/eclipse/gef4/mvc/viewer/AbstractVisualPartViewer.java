@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.mvc.partviewer;
+package org.eclipse.gef4.mvc.viewer;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

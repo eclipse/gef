@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.partviewer.AbstractVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer;
 
 public class FXViewer extends AbstractVisualPartViewer<Node> {
 

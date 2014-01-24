@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * A factory for creating new {@link IContentPart}s. The

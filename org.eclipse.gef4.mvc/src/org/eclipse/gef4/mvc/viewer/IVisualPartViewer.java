@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.mvc.partviewer;
+package org.eclipse.gef4.mvc.viewer;
 
 import java.util.Map;
 
@@ -66,7 +66,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * <P>
  * WARNING: This interface is not intended to be implemented. Clients should
- * extend {@link org.eclipse.gef4.mvc.partviewer.AbstractVisualPartViewer}.
+ * extend {@link org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer}.
  */
 public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 

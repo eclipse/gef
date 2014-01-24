@@ -9,8 +9,8 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.partviewer.IVisualPartViewer;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implements PropertyChangeListener {
 

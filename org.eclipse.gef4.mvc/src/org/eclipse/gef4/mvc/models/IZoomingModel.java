@@ -1,15 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
 /**
- * The IZoomingModel is used to store the current viewer's zoom factor. A
- * zooming tool is used to update the IZoomingModel which in turn asks the
- * {@link IRootVisualPart} for an {@link IZoomingPolicy} which is used to adapt
- * the zoom factor from the model to the view.
+ * The {@link IZoomingModel} is used to store the current viewer's zoom factor,
+ * which should get adjusted by a zooming tool as a response to user interaction
+ * (via mouse or gesture events, or by using scroll bars). 
+ * TODO: We should
+ * provide a base implementation for a zooming tool here
  * 
- * @author wienand
+ * A tool is also needed to propagate the current zoom factor to the
+ * {@link IZoomingPolicy} of the {@link IRootVisualPart}, which has to apply the
+ * zoom factor to the view. 
+ * TODO: Provide base implementations for this tool and the edit policy as well.
+ * 
+ * @author mwienand
  * 
  */
 public interface IZoomingModel extends IPropertyChangeSupport {
