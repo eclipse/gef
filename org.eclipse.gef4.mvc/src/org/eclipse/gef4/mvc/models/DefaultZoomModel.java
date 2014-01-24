@@ -14,6 +14,11 @@ package org.eclipse.gef4.mvc.models;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+/**
+ * 
+ * @author mwienand
+ *
+ */
 public class DefaultZoomModel implements IZoomModel {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);

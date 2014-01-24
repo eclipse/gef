@@ -16,6 +16,12 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+/**
+ * 
+ * @author mwienand
+ *
+ * @param <V>
+ */
 public class DefaultHoverModel<V> implements IHoverModel<V> {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);

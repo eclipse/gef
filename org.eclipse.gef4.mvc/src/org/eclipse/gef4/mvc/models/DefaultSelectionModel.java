@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ * Note: Parts of this class have been transferred from org.eclipse.gef.SelectionManager.
  *     
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
@@ -20,6 +22,12 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+/**
+ * 
+ * @author anyssen
+ *
+ * @param <V>
+ */
 public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(

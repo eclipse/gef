@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2014 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ * Note: Parts of this interface have been transferred from org.eclipse.gef.EditPartViewer.
+ * 
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
@@ -25,85 +28,15 @@ import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * An adapter on an SWT {@link org.eclipse.swt.widgets.Control} that manages the
- * {@link org.eclipse.gef4.mvc.parts.IEditPart EditParts}. The viewer is
- * responsible for the editpart lifecycle. Editparts have <i>visuals</i>, such
- * as <code>TreeItems</code> or <code>Figures</code>, which are hosted by the
- * viewer and its control. The viewer provides targeting of editparts via their
- * visuals.
  * 
- * <P>
- * A viewer is a {@link org.eclipse.jface.viewers.ISelectionProvider}. It
- * maintains a list of selected editparts. The last member of this list is the
- * <i>primary</i> member of the selection. The list should never be empty; when
- * no editparts are selected, the viewer's contents editpart is used.
- * 
- * <P>
- * A viewer is populated by setting its <i>contents</i>. This can be done by
- * passing the model corresponding to the contents. The viewer's
- * {@link org.eclipse.gef4.mvc.parts.IContentPartFactory EditPartFactory} is
- * then used to create the contents editpart, and add it to the <i>root</i>
- * editpart. Alternatively, the contents editpart itself can be provided. Once
- * the contents editpart is parented, it will populate the rest of the viewer by
- * calling its {@link IEditPart#refresh()} method.
- * 
- * <P>
- * The Root editpart does not correspond to anything in the model, it is used to
- * bootstrap the viewer, and to parent the contents. Depending on the type of
- * viewer being used, it may be common to replace the root editpart. See
- * implementations of {@link org.eclipse.gef4.mvc.parts.IRootVisualPart}.
- * 
- * <P>
- * An editpart's lifecycle is managed by the viewer. When the Viewer is
- * realized, meaning it has an SWT <code>Control</code>, it activates its root,
- * which in turn activates all editparts. Editparts are deactivated when they
- * are removed from the viewer. When the viewer's control is disposed, all
- * editparts are similarly deactivated by decativating the root.
- * 
- * <P>
- * A Viewer has an arbitrary collection of keyed properties that can be set and
- * queried. A value of <code>null</code> is used to remove a key from the
- * property map. A viewer will fire property change notification whenever these
- * values are updated.
- * 
- * <P>
- * WARNING: This interface is not intended to be implemented. Clients should
- * extend {@link org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer}.
+ * @author anyssen
+ *
+ * @param <V>
  */
 public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 
 	public static final String CONTENTS_PROPERTY = "contents";
-
-	// /**
-	// * Returns <code>null</code> or the <code>EditPart</code> associated with
-	// * the specified location. The location is relative to the client area of
-	// * the Viewer's <code>Control</code>. An EditPart is not directly visible.
-	// * It is targeted using its <i>visual part</i> which it registered using
-	// the
-	// * {@link #getVisualPartMap() visual part map}. What constitutes a
-	// <i>visual
-	// * part</i> is viewer-specific. Examples include Figures and TreeItems.
-	// *
-	// * @param location
-	// * The location
-	// * @return <code>null</code> or an EditPart
-	// */
-	// IEditPart getPartAt(Point location);
-	//
-	// /**
-	// * Returns <code>null</code> or the <code>EditPart</code> at the specified
-	// * location, excluding the specified set. This method behaves similarly to
-	// * {@link #findObjectAt(Point)}.
-	// *
-	// * @param location
-	// * The mouse location
-	// * @param exclusionSet
-	// * The set of EditParts to be excluded
-	// * @return <code>null</code> or an EditPart
-	// */
-	// IEditPart findObjectAtExcluding(Point location, Collection<IEditPart>
-	// exclusionSet);
-
+	
 	/**
 	 * Returns the <i>contents</i> of this Viewer. The contents is the EditPart
 	 * associated with the top-level model object. It is considered to be
