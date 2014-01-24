@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2014 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.SimpleRootEditPart.
+ * 
  *******************************************************************************/
-
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.ArrayList;
@@ -18,37 +20,28 @@ import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
- * Default implementation of RootEditPart for GraphicalViewers.
  * 
- * @author Pratik Shah
- * @since 3.2
+ * @author anyssen
+ *
+ * @param <V>
  */
 public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 		implements IRootVisualPart<V> {
 
 	private IVisualPartViewer<V> viewer;
 
-	/**
-	 * @see EditPart#getRoot()
-	 */
 	public IRootVisualPart<V> getRoot() {
 		return this;
 	}
 
-	/**
-	 * @see EditPart#getViewer()
-	 */
 	public IVisualPartViewer<V> getViewer() {
 		return viewer;
 	}
-	
-	/**
-	 * @see IRootVisualPart#getContents()
-	 */
+
 	public IContentPart<V> getRootContentPart() {
 		return rootContentPart;
 	}
-	
+
 	// TODO: remove this
 	private IContentPart<V> rootContentPart;
 
@@ -69,21 +62,21 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 			addChild(rootContentPart, 0);
 		}
 	}
-	
+
 	@Override
 	public void addHandleParts(List<IHandlePart<V>> handleParts) {
-		for(IHandlePart<V> h : handleParts){
-			addChild(h, getChildren().size()-1);
+		for (IHandlePart<V> h : handleParts) {
+			addChild(h, getChildren().size() - 1);
 		}
 	}
 
 	@Override
 	public void removeHandleParts(List<IHandlePart<V>> handleParts) {
-		for(IHandlePart<V> h : handleParts){
+		for (IHandlePart<V> h : handleParts) {
 			removeChild(h);
 		}
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<IHandlePart<V>> getHandleParts() {
@@ -93,15 +86,16 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 	@SuppressWarnings("unchecked")
 	private <T extends IVisualPart<V>> List<T> filterChildren(Class<T> type) {
 		List<T> handleParts = new ArrayList<T>();
-		for(IVisualPart<V> c : getChildren()){
-			if(type.isInstance(c)){
+		for (IVisualPart<V> c : getChildren()) {
+			if (type.isInstance(c)) {
 				handleParts.add((T) c);
 			}
 		}
 		return handleParts;
 	}
-	
-	//TODO: return two lists (content and handle parts, do not have to provide an on data field for contents parts)
+
+	// TODO: return two lists (content and handle parts, do not have to provide
+	// an on data field for contents parts)
 
 	/**
 	 * @see IRootVisualPart#setViewer(EditPartViewer)
@@ -111,19 +105,19 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 			return;
 		viewer = newViewer;
 	}
-	
+
 	@Override
 	public void attachVisualToAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
-	
+
 	@Override
 	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
-	
+
 	@Override
 	protected IAnchor<V> getAnchor(IVisualPart<V> anchored) {
 		throw new UnsupportedOperationException(

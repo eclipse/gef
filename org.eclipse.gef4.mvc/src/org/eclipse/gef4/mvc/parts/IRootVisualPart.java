@@ -8,6 +8,8 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
+ * Note: Parts of this interface have been transferred from org.eclipse.gef.RootEditPart
+ * 
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -23,6 +25,9 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * The {@link IRootVisualPart} does not correspond to anything in the model, and
  * typically can not be interacted with by the User. The Root provides a
  * homogeneous context for the applications "real" {@link IVisualPart}.
+ * 
+ * @author anyssen
+ * 
  */
 public interface IRootVisualPart<V> extends IVisualPart<V> {
 

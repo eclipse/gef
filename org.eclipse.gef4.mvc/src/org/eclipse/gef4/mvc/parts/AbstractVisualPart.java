@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2014 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
+ * 
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -24,20 +27,10 @@ import org.eclipse.gef4.mvc.policies.IEditPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
- * The baseline implementation for the {@link IEditPart} interface.
- * <P>
- * Since this is the default implementation of an interface, this document deals
- * with proper sub-classing of this implementation. This class is not the API.
- * For documentation on proper usage of the public API, see the documentation
- * for the interface itself: {@link IEditPart}.
- * <P>
- * This class assumes no visual representation. Subclasses
- * {@link AbstractGraphicalEditPart} and {@link AbstractTreeEditPart} add
- * support for {@link org.eclipse.draw2d.IFigure Figures} and
- * {@link org.eclipse.swt.widgets.TreeItem TreeItems} respectively.
- * <P>
- * AbstractEditPart provides support for children. All AbstractEditPart's can
- * potentially be containers for other EditParts.
+ * 
+ * @author anyssen
+ * 
+ * @param <V>
  */
 public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		IAdaptable {
@@ -120,9 +113,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		addChildWithoutNotify(child, index);
 
 		addChildVisual(child, index);
-		
+
 		child.setParent(this);
-		
+
 		child.refreshVisual();
 
 		if (isActive())
@@ -143,9 +136,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * @see AbstractGraphicalEditPart#removeChildVisual(EditPart)
 	 */
 	protected abstract void addChildVisual(IVisualPart<V> child, int index);
-	//TODO: make concrete, passing over the visual container to the child (as in case of anchoreds)
-	
 
+	// TODO: make concrete, passing over the visual container to the child (as
+	// in case of anchoreds)
 	private void addChildWithoutNotify(IVisualPart<V> child, int index) {
 		if (children == null)
 			children = new ArrayList<IVisualPart<V>>(2);
@@ -401,41 +394,41 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@Override
 	public void addAnchored(IVisualPart<V> anchored) {
-		if(anchoreds == null){
+		if (anchoreds == null) {
 			anchoreds = new ArrayList<IVisualPart<V>>();
 		}
 		anchoreds.add(anchored);
-		
+
 		addAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
 	}
 
-	protected void addAnchoredVisual(IVisualPart<V> anchored){
+	protected void addAnchoredVisual(IVisualPart<V> anchored) {
 		IAnchor<V> anchor = getAnchor(anchored);
 		anchored.attachVisualToAnchorageVisual(anchor);
 	}
 
 	protected abstract IAnchor<V> getAnchor(IVisualPart<V> anchored);
-	
+
 	@Override
 	public void removeAnchored(IVisualPart<V> anchored) {
 		anchored.removeAnchorage(this);
 		removeAnchoredVisual(anchored);
-		
+
 		anchoreds.remove(anchored);
-		if(anchoreds.size() == 0){
+		if (anchoreds.size() == 0) {
 			anchoreds = null;
 		}
 	}
 
-	protected void removeAnchoredVisual(IVisualPart<V> anchored){
+	protected void removeAnchoredVisual(IVisualPart<V> anchored) {
 		IAnchor<V> anchor = getAnchor(anchored);
 		anchored.detachVisualFromAnchorageVisual(anchor);
 	}
 
 	@Override
 	public List<IVisualPart<V>> getAnchoreds() {
-		if(anchoreds == null){
+		if (anchoreds == null) {
 			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList(anchoreds);
@@ -443,24 +436,24 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@Override
 	public void addAnchorage(IVisualPart<V> anchorage) {
-		if(anchorages == null){
+		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<V>>();
 		}
 		anchorages.add(anchorage);
 	}
 
-	//  counterpart to setParent(null) in case of hierarchy
+	// counterpart to setParent(null) in case of hierarchy
 	@Override
 	public void removeAnchorage(IVisualPart<V> anchorage) {
 		anchorages.remove(anchorage);
-		if(anchorages.size() == 0){
+		if (anchorages.size() == 0) {
 			anchorages = null;
 		}
 	}
 
 	@Override
 	public List<IVisualPart<V>> getAnchorages() {
-		if(anchorages == null){
+		if (anchorages == null) {
 			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList(anchorages);
