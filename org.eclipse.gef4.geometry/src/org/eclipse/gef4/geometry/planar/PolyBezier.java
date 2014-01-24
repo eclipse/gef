@@ -46,6 +46,24 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 * through the given {@link Point}s.
 	 * 
+	 * @see #interpolateCubic(Point...)
+	 * @param coordinates
+	 *            the coordinates of the points that are to be interpolated.
+	 * @return {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 *         through the points, specified via the given coordinates.
+	 */
+	public static PolyBezier interpolateCubic(double... coordinates) {
+		Point[] points = new Point[coordinates.length / 2];
+		for (int i = 0; i < coordinates.length / 2; i++) {
+			points[i] = new Point(coordinates[i * 2], coordinates[i * 2 + 1]);
+		}
+		return interpolateCubic(points);
+	}
+
+	/**
+	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
+	 * through the given {@link Point}s.
+	 * 
 	 * @param curveWidthCoefficient
 	 *            value in the range <code>]0;+Inf[</code> that adjusts the
 	 *            width of the curve. A value smaller than one sharpens the

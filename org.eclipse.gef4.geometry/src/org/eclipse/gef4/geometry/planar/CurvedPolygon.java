@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+import java.util.List;
+
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
@@ -65,6 +67,22 @@ public class CurvedPolygon extends AbstractGeometry implements IShape,
 			edges[i].setP2(curvedSides[i == edges.length - 1 ? 0 : i + 1]
 					.getP1());
 		}
+	}
+
+	/**
+	 * Constructs a new {@link CurvedPolygon} from the given list of
+	 * {@link BezierCurve}s. Subsequent {@link BezierCurve}s need to be
+	 * connected with each other and the closing segment has to be supplied,
+	 * too, otherwise an {@link IllegalArgumentException} is thrown.
+	 * 
+	 * @param curvedSides
+	 *            the {@link BezierCurve}s representing the edges of the new
+	 *            {@link CurvedPolygon}
+	 * 
+	 * @see #CurvedPolygon(BezierCurve...)
+	 */
+	public CurvedPolygon(List<BezierCurve> curvedSides) {
+		this(curvedSides.toArray(new BezierCurve[] {}));
 	}
 
 	private int computeLineWindingNumber(BezierCurve seg, Point p) {
