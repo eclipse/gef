@@ -61,7 +61,7 @@ public class FXExampleViewPart extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		canvas = new FXCanvas(parent, SWT.NONE);
-		FXEditDomain domain = new ExampleDomain();
+		FXEditDomain domain = new FXExampleDomain();
 		FXViewer viewer = new FXViewer(canvas);
 		viewer.setContentPartFactory(new FXExampleContentPartFactory());
 		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());

@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx.example;
+package org.eclipse.gef4.mvc.fx.example.tools;
 
 import java.util.List;
 
@@ -10,6 +10,8 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
+import org.eclipse.gef4.mvc.fx.example.parts.FXBendHandlePart;
+import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
 import org.eclipse.gef4.mvc.fx.tools.FXMouseDragGesture;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;

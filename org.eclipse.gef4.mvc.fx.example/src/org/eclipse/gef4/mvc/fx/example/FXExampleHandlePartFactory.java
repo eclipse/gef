@@ -9,6 +9,8 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.fx.example.parts.FXBendHandlePart;
+import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
 import org.eclipse.gef4.mvc.fx.parts.FXBoxHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;

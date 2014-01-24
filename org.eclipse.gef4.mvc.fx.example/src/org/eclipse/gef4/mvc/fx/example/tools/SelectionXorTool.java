@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx.example;
+package org.eclipse.gef4.mvc.fx.example.tools;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

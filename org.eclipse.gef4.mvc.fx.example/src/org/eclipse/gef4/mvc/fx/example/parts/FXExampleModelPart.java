@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx.example;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
