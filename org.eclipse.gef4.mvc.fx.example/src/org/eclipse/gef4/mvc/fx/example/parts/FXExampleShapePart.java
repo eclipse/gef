@@ -25,7 +25,7 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
 		// TODO: use a proper anchor that computes a position on the border
-		visual.setFill(Color.RED);
+		visual.setFill(Color.BLUE);
 		installEditPolicy(AbstractSelectionPolicy.class,
 				new FXSelectionPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
