@@ -16,8 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.DefaultHoverModel;
 import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
+import org.eclipse.gef4.mvc.models.DefaultZoomModel;
+import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -34,15 +38,19 @@ public abstract class AbstractVisualPartViewer<V> implements
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
-	
+
 	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
 
 	private IEditDomain<V> editDomain;
 	private IRootVisualPart<V> rootPart;
+
+	// TODO: Use dependency injection to bind default implementations.
+	private ISelectionModel<V> selectionModel;
+	private IZoomModel zoomModel;
+	private IHoverModel<V> hoverModel;
+
 	private IContentPartFactory<V> contentPartFactory;
-	private ISelectionModel<V> contentPartSelection;
-	
 	private IHandlePartFactory<V> handlePartFactory;
 
 	/**
@@ -57,13 +65,6 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 */
 	public IContentPartFactory<V> getContentPartFactory() {
 		return contentPartFactory;
-	}
-
-	/**
-	 * Constructs the viewer and calls {@link #init()}.
-	 */
-	public AbstractVisualPartViewer() {
-		setContentPartSelection(new DefaultSelectionModel<V>());
 	}
 
 	/**
@@ -114,16 +115,20 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 */
 	public void setContents(Object contents) {
 		Object oldContents = getContents();
-		if(contentPartFactory == null){
-			throw new IllegalStateException("ContentPartFactory has to be set before passing contents in.");
+		if (contentPartFactory == null) {
+			throw new IllegalStateException(
+					"ContentPartFactory has to be set before passing contents in.");
 		}
-		if(rootPart == null){
-			throw new IllegalStateException("Root part has to be set before passing contents in.");
+		if (rootPart == null) {
+			throw new IllegalStateException(
+					"Root part has to be set before passing contents in.");
 		}
-		IContentPart<V> rootContentPart = contentPartFactory.createRootContentPart(rootPart, contents);
+		IContentPart<V> rootContentPart = contentPartFactory
+				.createRootContentPart(rootPart, contents);
 		rootContentPart.setModel(contents);
 		rootPart.setRootContentPart(rootContentPart);
-		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY, oldContents, contents);
+		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY,
+				oldContents, contents);
 	}
 
 	/**
@@ -142,18 +147,30 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	@Override
-	public ISelectionModel<V> getContentPartSelection() {
-		return contentPartSelection;
+	public ISelectionModel<V> getSelectionModel() {
+		if (selectionModel == null) {
+			// TODO: use dependency injection to bind this
+			selectionModel = new DefaultSelectionModel<V>();
+		}
+		return selectionModel;
 	}
 
 	@Override
-	public void setContentPartSelection(
-			ISelectionModel<V> contentPartSelection) {
-		if (this.contentPartSelection == contentPartSelection) {
-			return;
+	public IHoverModel<V> getHoverModel() {
+		if (hoverModel == null) {
+			// TODO: use dependency injection to bind this
+			hoverModel = new DefaultHoverModel<V>();
 		}
-		// TODO: if tools may register on selection, we need to deactivate/activate them here
-		this.contentPartSelection = contentPartSelection;
+		return hoverModel;
+	}
+
+	@Override
+	public IZoomModel getZoomModel() {
+		if (zoomModel == null) {
+			// TODO: use dependency injection to bind this
+			zoomModel = new DefaultZoomModel();
+		}
+		return zoomModel;
 	}
 
 	/**
@@ -170,12 +187,12 @@ public abstract class AbstractVisualPartViewer<V> implements
 			this.rootPart.activate();
 		}
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);

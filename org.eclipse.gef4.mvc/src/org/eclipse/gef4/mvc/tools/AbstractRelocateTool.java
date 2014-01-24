@@ -17,7 +17,7 @@ public abstract class AbstractRelocateTool<V> extends AbstractTool<V> {
 	}
 
 	public List<IContentPart<V>> getTargetParts() {
-		return getDomain().getViewer().getContentPartSelection().getSelected();
+		return getDomain().getViewer().getSelectionModel().getSelected();
 	}
 
 	public void initRelocate(Point mouseLocation) {

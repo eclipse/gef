@@ -14,10 +14,10 @@ package org.eclipse.gef4.mvc.models;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class DefaultZoomingModel implements IZoomingModel {
+public class DefaultZoomModel implements IZoomModel {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private double zoom = IZoomingModel.DEFAULT_ZOOM_FACTOR;
+	private double zoom = IZoomModel.DEFAULT_ZOOM_FACTOR;
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

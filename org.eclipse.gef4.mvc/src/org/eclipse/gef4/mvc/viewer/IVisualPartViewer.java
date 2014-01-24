@@ -15,7 +15,9 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -71,7 +73,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 
 	public static final String CONTENTS_PROPERTY = "contents";
-	
+
 	// /**
 	// * Returns <code>null</code> or the <code>EditPart</code> associated with
 	// * the specified location. The location is relative to the client area of
@@ -218,14 +220,16 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * @return EditPartFactory
 	 */
 	IContentPartFactory<V> getContentPartFactory();
-	
-	// selection based on content parts
-	ISelectionModel<V> getContentPartSelection();
-	
-	void setContentPartSelection(ISelectionModel<V> selection);
-	
+
 	IHandlePartFactory<V> getHandlePartFactory();
-	
+
 	void setHandlePartFactory(IHandlePartFactory<V> factory);
-	
+
+	// selection based on content parts
+	ISelectionModel<V> getSelectionModel();
+
+	IHoverModel<V> getHoverModel();
+
+	IZoomModel getZoomModel();
+
 }

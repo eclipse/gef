@@ -18,13 +18,13 @@ public class HandleTool<V> extends AbstractTool<V> implements
 		super.activate();
 		// TODO: does the viewer need to provide a property change mechanism as
 		// well, so we are notified in case contentpartselection changes??
-		getDomain().getViewer().getContentPartSelection()
+		getDomain().getViewer().getSelectionModel()
 				.addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void deactivate() {
-		getDomain().getViewer().getContentPartSelection()
+		getDomain().getViewer().getSelectionModel()
 				.removePropertyChangeListener(this);
 		super.deactivate();
 	}

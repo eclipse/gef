@@ -30,7 +30,7 @@ public class FXBendTool extends AbstractTool<Node> {
 		@Override
 		protected void press(Node target, MouseEvent e) {
 			List<IContentPart<Node>> selected = getDomain().getViewer()
-					.getContentPartSelection().getSelected();
+					.getSelectionModel().getSelected();
 			if (selected.size() <= 0) {
 				throw new IllegalStateException("null selection!");
 			}

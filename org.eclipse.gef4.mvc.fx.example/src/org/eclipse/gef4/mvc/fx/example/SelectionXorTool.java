@@ -44,7 +44,7 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 	protected void registerListeners() {
 		// parent call first
 		super.registerListeners();
-		getDomain().getViewer().getContentPartSelection()
+		getDomain().getViewer().getSelectionModel()
 				.addPropertyChangeListener(pcl);
 	}
 	
@@ -55,7 +55,7 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		getDomain().getViewer().getContentPartSelection().removePropertyChangeListener(pcl);
+		getDomain().getViewer().getSelectionModel().removePropertyChangeListener(pcl);
 		// parent call last
 		super.unregisterListeners();
 	}

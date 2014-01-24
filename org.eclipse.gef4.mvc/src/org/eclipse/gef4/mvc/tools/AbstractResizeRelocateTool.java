@@ -95,7 +95,7 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 	}
 
 	public List<IContentPart<V>> getTargetParts() {
-		return getDomain().getViewer().getContentPartSelection().getSelected();
+		return getDomain().getViewer().getSelectionModel().getSelected();
 	}
 
 	/**

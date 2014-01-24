@@ -98,7 +98,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 	}
 
 	protected ISelectionModel<V> getSelectionModel() {
-		return getDomain().getViewer().getContentPartSelection();
+		return getDomain().getViewer().getSelectionModel();
 	}
 	
 	@Override

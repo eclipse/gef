@@ -15,7 +15,7 @@ import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
 /**
- * The {@link IZoomingModel} is used to store the current viewer's zoom factor,
+ * The {@link IZoomModel} is used to store the current viewer's zoom factor,
  * which should get adjusted by a zooming tool as a response to user interaction
  * (via mouse or gesture events, or by using scroll bars). 
  * TODO: We should
@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.parts.IRootVisualPart;
  * @author mwienand
  * 
  */
-public interface IZoomingModel extends IPropertyChangeSupport {
+public interface IZoomModel extends IPropertyChangeSupport {
 
 	/**
 	 * The IZoomingModel fires {@link PropertyChangeEvent}s when its zoom factor

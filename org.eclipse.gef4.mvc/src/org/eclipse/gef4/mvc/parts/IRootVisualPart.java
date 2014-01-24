@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2014 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -15,30 +16,34 @@ import java.util.List;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
- * A RootEditPart is the <i>root</i> of an EditPartViewer. It bridges the gap
- * between the EditPartViewer and its {@link IVisualPartViewer#getContents()
- * contents}. It does not correspond to anything in the model, and typically can
- * not be interacted with by the User. The Root provides a homogeneous context
- * for the applications "real" EditParts.
+ * A {@link IRootVisualPart} is the <i>root</i> controller of an
+ * {@link IVisualPartViewer}. It controls the root view and holds
+ * {@link IHandlePart} and {@link IContentPart} children.
+ * 
+ * The {@link IRootVisualPart} does not correspond to anything in the model, and
+ * typically can not be interacted with by the User. The Root provides a
+ * homogeneous context for the applications "real" {@link IVisualPart}.
  */
 public interface IRootVisualPart<V> extends IVisualPart<V> {
 
 	/**
-	 * Returns the root's EditPartViewer.
+	 * Returns the root's {@link IVisualPartViewer}.
 	 * 
-	 * @return The <code>EditPartViewer</code>
+	 * @return The {@link IVisualPartViewer} this {@link IRootVisualPart} is
+	 *         attached to.
 	 */
 	IVisualPartViewer<V> getViewer();
 
 	/**
-	 * Sets the root's EditPartViewer.
+	 * Sets the root's {@link IVisualPartViewer}.
 	 * 
 	 * @param viewer
-	 *            the EditPartViewer
+	 *            the {@link IVisualPartViewer} this {@link IRootVisualPart} should be
+	 *            attached to.
 	 */
 	void setViewer(IVisualPartViewer<V> viewer);
-	
-// TODO: support multiple content parts
+
+	// TODO: support multiple content parts
 	/**
 	 * Sets the <i>contents</i> EditPart. A RootEditPart only has a single
 	 * child, called its <i>contents</i>.
@@ -47,7 +52,7 @@ public interface IRootVisualPart<V> extends IVisualPart<V> {
 	 *            the contents
 	 */
 	void setRootContentPart(IContentPart<V> contents);
-	
+
 	/**
 	 * Returns the <i>contents</i> EditPart. A RootEditPart only has a single
 	 * child, called its <i>contents</i>.
@@ -56,15 +61,14 @@ public interface IRootVisualPart<V> extends IVisualPart<V> {
 	 */
 	IContentPart<V> getRootContentPart();
 
-//	void addContentPart(IContentPart<V> contents);
-//
-//	void removeContentPart(IContentPart<V> contents);
+	// void addContentPart(IContentPart<V> contents);
+	//
+	// void removeContentPart(IContentPart<V> contents);
 
-	
 	public void addHandleParts(List<IHandlePart<V>> handleParts);
 
 	public void removeHandleParts(List<IHandlePart<V>> handleParts);
-	
+
 	public List<IHandlePart<V>> getHandleParts();
 
 }
