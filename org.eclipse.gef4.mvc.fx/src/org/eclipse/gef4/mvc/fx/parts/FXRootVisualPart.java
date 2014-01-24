@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.parts;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;

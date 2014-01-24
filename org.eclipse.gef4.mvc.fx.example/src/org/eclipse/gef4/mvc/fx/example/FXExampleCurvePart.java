@@ -14,7 +14,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
 

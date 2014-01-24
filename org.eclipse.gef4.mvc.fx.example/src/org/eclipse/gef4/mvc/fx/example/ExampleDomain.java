@@ -2,11 +2,11 @@ package org.eclipse.gef4.mvc.fx.example;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.FXEditDomain;
-import org.eclipse.gef4.mvc.fx.FXEventTargetCompositeXorTool;
-import org.eclipse.gef4.mvc.fx.FXRelocateTool;
-import org.eclipse.gef4.mvc.fx.FXResizeTool;
-import org.eclipse.gef4.mvc.fx.FXSelectionTool;
+import org.eclipse.gef4.mvc.fx.domain.FXEditDomain;
+import org.eclipse.gef4.mvc.fx.tools.FXEventTargetCompositeXorTool;
+import org.eclipse.gef4.mvc.fx.tools.FXRelocateTool;
+import org.eclipse.gef4.mvc.fx.tools.FXResizeTool;
+import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
 import org.eclipse.gef4.mvc.tools.HandleTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 

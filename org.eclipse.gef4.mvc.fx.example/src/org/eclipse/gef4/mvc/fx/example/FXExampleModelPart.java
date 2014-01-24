@@ -8,8 +8,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.example.FXExampleViewPart.ExampleGeometricModel;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXExampleModelPart extends AbstractFXContentPart {

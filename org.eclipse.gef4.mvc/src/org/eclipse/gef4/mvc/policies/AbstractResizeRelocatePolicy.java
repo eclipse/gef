@@ -1,6 +1,5 @@
-package org.eclipse.gef4.mvc.aspects.resizerelocate;
+package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.policies.AbstractEditPolicy;
 
 public abstract class AbstractResizeRelocatePolicy<V> extends AbstractEditPolicy<V> {
 

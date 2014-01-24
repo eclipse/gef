@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;

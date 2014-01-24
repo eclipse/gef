@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.parts;
 
 import javafx.scene.Group;
 import javafx.scene.Node;

@@ -1,10 +1,11 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.tools.CompositeXorTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 

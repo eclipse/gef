@@ -1,10 +1,11 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractRelocateTool;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.tools.AbstractRelocateTool;
 
 public class FXRelocateTool extends AbstractRelocateTool<Node> {
 	

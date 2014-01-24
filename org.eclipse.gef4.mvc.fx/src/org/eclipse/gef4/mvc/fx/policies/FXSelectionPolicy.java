@@ -1,11 +1,11 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractSelectionPolicy;
 
 public class FXSelectionPolicy extends AbstractSelectionPolicy<Node> {
 

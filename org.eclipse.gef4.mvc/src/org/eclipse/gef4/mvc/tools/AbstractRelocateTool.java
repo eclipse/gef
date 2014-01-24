@@ -1,10 +1,10 @@
-package org.eclipse.gef4.mvc.aspects.resizerelocate;
+package org.eclipse.gef4.mvc.tools;
 
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 
 public abstract class AbstractRelocateTool<V> extends AbstractTool<V> {
 

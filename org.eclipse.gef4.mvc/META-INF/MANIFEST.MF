@@ -12,8 +12,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Export-Package: org.eclipse.gef4.mvc,
  org.eclipse.gef4.mvc.anchors,
- org.eclipse.gef4.mvc.aspects.resizerelocate,
- org.eclipse.gef4.mvc.aspects.selection,
  org.eclipse.gef4.mvc.commands,
  org.eclipse.gef4.mvc.domain,
  org.eclipse.gef4.mvc.models,

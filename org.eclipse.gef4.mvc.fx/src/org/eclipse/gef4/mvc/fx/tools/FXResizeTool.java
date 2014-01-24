@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -7,9 +7,11 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocateTool;
+import org.eclipse.gef4.mvc.fx.parts.FXBoxHandlePart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.tools.AbstractResizeRelocateTool;
 
 public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 

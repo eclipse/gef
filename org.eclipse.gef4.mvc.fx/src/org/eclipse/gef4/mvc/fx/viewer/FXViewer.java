@@ -1,10 +1,11 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.viewer;
 
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer;

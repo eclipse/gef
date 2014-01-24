@@ -12,7 +12,12 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.gef4.mvc.fx,
- org.eclipse.gef4.mvc.fx.anchors
+ org.eclipse.gef4.mvc.fx.anchors,
+ org.eclipse.gef4.mvc.fx.domain,
+ org.eclipse.gef4.mvc.fx.parts,
+ org.eclipse.gef4.mvc.fx.policies,
+ org.eclipse.gef4.mvc.fx.tools,
+ org.eclipse.gef4.mvc.fx.viewer
 Import-Package: javafx.animation;version="2.0.0",
  javafx.application;version="2.0.0",
  javafx.beans;version="2.0.0",

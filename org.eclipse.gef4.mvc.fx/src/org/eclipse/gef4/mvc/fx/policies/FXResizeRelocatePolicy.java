@@ -1,9 +1,9 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.aspects.resizerelocate.AbstractResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 
 public class FXResizeRelocatePolicy extends AbstractResizeRelocatePolicy<Node> {
 

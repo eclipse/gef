@@ -1,14 +1,16 @@
-package org.eclipse.gef4.mvc.fx;
+package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.aspects.selection.AbstractSelectionTool;
+import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.tools.AbstractSelectionTool;
 
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
