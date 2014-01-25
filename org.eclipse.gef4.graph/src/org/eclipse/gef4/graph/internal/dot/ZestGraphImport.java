@@ -35,14 +35,14 @@ final class ZestGraphImport {
 	 * @param targetGraph
 	 *            The graph to add content to
 	 */
-	void into(Graph targetGraph) {
+	void into(Graph.Builder targetGraph) {
 		Graph sourceGraph = graphFromDot;
-		targetGraph.withAttribute(Graph.Attr.NODE_STYLE.toString(),
-				sourceGraph.getAttribute(Graph.Attr.NODE_STYLE.toString()));
-		targetGraph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-				sourceGraph.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
-		targetGraph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				sourceGraph.getAttribute(Graph.Attr.LAYOUT.toString()));
+		targetGraph.attr(Graph.Attr.NODE_STYLE.toString(), sourceGraph
+				.getAttrs().get(Graph.Attr.NODE_STYLE.toString()));
+		targetGraph.attr(Graph.Attr.EDGE_STYLE.toString(), sourceGraph
+				.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()));
+		targetGraph.attr(Graph.Attr.LAYOUT.toString(), sourceGraph.getAttrs()
+				.get(Graph.Attr.LAYOUT.toString()));
 		for (Object edge : sourceGraph.getEdges()) {
 			copy((Edge) edge, targetGraph);
 		}
@@ -51,35 +51,37 @@ final class ZestGraphImport {
 		}
 	}
 
-	private Edge copy(Edge edge, Graph targetGraph) {
+	private Edge copy(Edge edge, Graph.Builder targetGraph) {
 		Node source = copy(edge.getSource(), targetGraph);
 		Node target = copy(edge.getTarget(), targetGraph);
-		Edge copy = new Edge(source, target)
-				.withAttribute(Graph.Attr.STYLE.toString(),
-						edge.getAttribute(Graph.Attr.STYLE.toString()))
-				.withAttribute(Graph.Attr.LABEL.toString(),
-						edge.getAttribute(Graph.Attr.LABEL.toString()))
-				.withAttribute(Graph.Attr.DATA.toString(),
-						edge.getAttribute(Graph.Attr.DATA.toString()))
-				.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-						edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()));
-		targetGraph.withEdges(copy);
+		Edge copy = new Edge.Builder(source, target)
+				.attr(Graph.Attr.STYLE.toString(),
+						edge.getAttrs().get(Graph.Attr.STYLE.toString()))
+				.attr(Graph.Attr.LABEL.toString(),
+						edge.getAttrs().get(Graph.Attr.LABEL.toString()))
+				.attr(Graph.Attr.ID.toString(),
+						edge.getAttrs().get(Graph.Attr.ID.toString()))
+				.attr(Graph.Attr.EDGE_STYLE.toString(),
+						edge.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()))
+				.build();
+		targetGraph.edges(copy);
 		return copy;
 	}
 
-	private Node copy(Node node, Graph targetGraph) {
-		Node find = find(node, targetGraph);
+	private Node copy(Node node, Graph.Builder targetGraph) {
+		Node find = find(node, targetGraph.build());
 		if (find == null) {
-			Node copy = new Node()
-					.withAttribute(Graph.Attr.LABEL.toString(),
-							node.getAttribute(Graph.Attr.LABEL.toString()))
-					.withAttribute(Graph.Attr.STYLE.toString(),
-							node.getAttribute(Graph.Attr.STYLE.toString()))
-					.withAttribute(Graph.Attr.IMAGE.toString(),
-							node.getAttribute(Graph.Attr.IMAGE.toString()))
-					.withAttribute(Graph.Attr.DATA.toString(),
-							node.getAttribute(Graph.Attr.DATA.toString()));
-			targetGraph.withNodes(copy);
+			Node copy = new Node.Builder()
+					.attr(Graph.Attr.LABEL.toString(),
+							node.getAttrs().get(Graph.Attr.LABEL.toString()))
+					.attr(Graph.Attr.STYLE.toString(),
+							node.getAttrs().get(Graph.Attr.STYLE.toString()))
+					.attr(Graph.Attr.IMAGE.toString(),
+							node.getAttrs().get(Graph.Attr.IMAGE.toString()))
+					.attr(Graph.Attr.ID.toString(),
+							node.getAttrs().get(Graph.Attr.ID.toString()))
+					.build();
+			targetGraph.nodes(copy);
 			return copy;
 		}
 		return find; // target already contains the node to copy over
@@ -88,10 +90,10 @@ final class ZestGraphImport {
 	private Node find(Node node, Graph graph) {
 		for (Object o : graph.getNodes()) {
 			Node n = (Node) o;
-			Object nodeData = node.getAttribute(Graph.Attr.DATA.toString());
+			Object nodeData = node.getAttrs().get(Graph.Attr.ID.toString());
 			if (nodeData != null
-					&& nodeData.equals(n.getAttribute(Graph.Attr.DATA
-							.toString()))) {
+					&& nodeData.equals(n.getAttrs().get(
+							Graph.Attr.ID.toString()))) {
 				return n;
 			}
 		}

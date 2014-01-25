@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
  * Transformation of DOT files or strings to Zest Graph instances.
@@ -23,6 +25,8 @@ import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
 public final class DotImport {
 	private String dotString;
 	private DotAst dotAst;
+
+	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new TreeLayoutAlgorithm();
 
 	/**
 	 * @param dotFile
@@ -105,7 +109,7 @@ public final class DotImport {
 	 * @param graph
 	 *            The graph to add the imported dot into
 	 */
-	public void into(Graph graph) {
+	public void into(Graph.Builder graph) {
 		new ZestGraphImport(newGraphInstance()).into(graph);
 	}
 

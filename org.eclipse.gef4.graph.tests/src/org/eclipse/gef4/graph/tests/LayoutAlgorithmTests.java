@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2011-2014 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -31,31 +31,29 @@ public class LayoutAlgorithmTests extends TestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=337144)
 	 */
 	public void testCustomLayoutSimpleItemAccess() {
-		Graph graph = new Graph().withNodes(new Node());
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new LayoutAlgorithm() {
-					public void setLayoutContext(LayoutContext context) {
-						Object[] all = context.getEntities()[0].getItems();
-						Object[] nodes = context.getNodes()[0].getItems();
-						Assert.assertEquals(1, all.length);
-						Assert.assertEquals(1, nodes.length);
-						Assert.assertTrue(
-								"All entity items should be wrapped in a Node[]",
-								all instanceof Node[]);
-						Assert.assertTrue(
-								"Node entity items should be wrapped in a Node[]",
-								nodes instanceof Node[]);
-						Assert.assertTrue(
-								"All entity items should be Node instances",
-								all[0] instanceof Node);
-						Assert.assertTrue(
-								"Node entity items should be Node instances",
-								nodes[0] instanceof Node);
-					}
+		Node node = new Node.Builder().build();
+		Graph.Builder graph = new Graph.Builder().nodes(node);
+		graph.attr(Graph.Attr.LAYOUT.toString(), new LayoutAlgorithm() {
+			public void setLayoutContext(LayoutContext context) {
+				Object[] all = context.getEntities()[0].getItems();
+				Object[] nodes = context.getNodes()[0].getItems();
+				Assert.assertEquals(1, all.length);
+				Assert.assertEquals(1, nodes.length);
+				Assert.assertTrue(
+						"All entity items should be wrapped in a Node[]",
+						all instanceof Node[]);
+				Assert.assertTrue(
+						"Node entity items should be wrapped in a Node[]",
+						nodes instanceof Node[]);
+				Assert.assertTrue("All entity items should be Node instances",
+						all[0] instanceof Node);
+				Assert.assertTrue("Node entity items should be Node instances",
+						nodes[0] instanceof Node);
+			}
 
-					public void applyLayout(boolean clean) {
-					}
-				});
+			public void applyLayout(boolean clean) {
+			}
+		});
 	}
 
 	/**
@@ -63,11 +61,10 @@ public class LayoutAlgorithmTests extends TestCase {
 	 * empty graph (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=382791)
 	 */
 	public void testGridLayoutAlgorithmEmptyGraph() {
-		Graph graph = new Graph();
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new GridLayoutAlgorithm());
-		Assert.assertEquals(GridLayoutAlgorithm.class,
-				graph.getAttribute(Graph.Attr.LAYOUT.toString()).getClass());
+		Graph.Builder graph = new Graph.Builder();
+		graph.attr(Graph.Attr.LAYOUT.toString(), new GridLayoutAlgorithm());
+		Assert.assertEquals(GridLayoutAlgorithm.class, graph.build().getAttrs()
+				.get(Graph.Attr.LAYOUT.toString()).getClass());
 	}
 
 	/**

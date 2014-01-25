@@ -10,30 +10,32 @@ package org.eclipse.gef4.graph.tests.dot.test_data;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
  * Minimal Zest graph sample input for the Zest-To-Dot transformation.
  */
-public class SimpleGraph extends Graph {
+public class SimpleGraph {
 	/**
 	 */
-	public SimpleGraph() {
+	public Graph getGraph() {
 		/* Set a layout algorithm: */
-		withAttribute(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		Graph.Builder graph = new Graph.Builder().attr(Attr.LAYOUT.toString(),
+				new TreeLayoutAlgorithm());
 
 		/* Set the nodes: */
-		Node n1 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "1"); //$NON-NLS-1$
-		Node n2 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "2"); //$NON-NLS-1$
-		Node n3 = new Node().withAttribute(Graph.Attr.LABEL.toString(), "3"); //$NON-NLS-1$ 
+		Node n1 = new Node.Builder().attr(Attr.LABEL.toString(), "1").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.LABEL.toString(), "2").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.LABEL.toString(), "3").build(); //$NON-NLS-1$ 
 
 		/* Connection from n1 to n2: */
-		Edge e1 = new Edge(n1, n2);
+		Edge e1 = new Edge.Builder(n1, n2).build();
 
 		/* Connection from n1 to n3: */
-		Edge e2 = new Edge(n1, n3);
+		Edge e2 = new Edge.Builder(n1, n3).build();
 
-		withNodes(n1, n2, n3).withEdges(e1, e2);
+		return graph.nodes(n1, n2, n3).edges(e1, e2).build();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 Fabian Steeg. All rights reserved. This program and
+ * Copyright (c) 2013-2014 Fabian Steeg. All rights reserved. This program and
  * the accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -8,40 +8,60 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Node {
+import org.eclipse.gef4.graph.Graph.Attr;
 
-	private Map<String, Object> attr = new HashMap<String, Object>();
+public final class Node {
 
-	public List<Edge> getSourceConnections(Graph graph) {
-		List<Edge> result = new ArrayList<Edge>();
-		List<Edge> edges = graph.getEdges();
-		for (Edge edge : edges)
-			if (edge.getTarget().equals(this))
-				result.add(edge);
-		return result;
+	public static class Builder {
+
+		private Map<String, Object> attrs = new HashMap<String, Object>();
+
+		public Node.Builder attr(String key, Object value) {
+			attrs.put(key, value);
+			return this;
+		}
+
+		public Builder attr(Attr attr, Object value) {
+			return attr(attr.toString(), value);
+		}
+
+		public Node build() {
+			return new Node(attrs);
+		}
+
 	}
 
-	public Object getAttribute(String key) {
-		return attr.get(key);
+	private final Map<String, Object> attrs;
+
+	public Node(Map<String, Object> attrs) {
+		this.attrs = attrs;
 	}
 
-	public Node withAttribute(String key, Object value) {
-		attr.put(key, value);
-		return this;
+	public Map<String, Object> getAttrs() {
+		return Collections.unmodifiableMap(attrs);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof Node && ((Node) obj).attr.equals(this.attr);
+	public boolean equals(Object that) {
+		if (this == that)
+			return true;
+		if (!(that instanceof Node))
+			return false;
+		boolean attrsEqual = this.getAttrs().equals(((Node) that).getAttrs());
+		return attrsEqual;
 	}
 
 	@Override
 	public int hashCode() {
-		return attr.hashCode();
+		return getAttrs().hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Node {%s attrs}", attrs.size()); //$NON-NLS-1$
 	}
 }

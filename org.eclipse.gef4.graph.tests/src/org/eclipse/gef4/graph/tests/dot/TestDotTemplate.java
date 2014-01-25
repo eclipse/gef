@@ -10,6 +10,7 @@ package org.eclipse.gef4.graph.tests.dot;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.graph.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.internal.dot.export.DotTemplate;
@@ -32,22 +33,21 @@ public class TestDotTemplate {
 	/** Zest-To-Dot transformation for a Zest graph itself (no subclass used). */
 	@Test
 	public void zestGraph() {
-		Graph graph = new Graph();
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new TreeLayoutAlgorithm(TreeLayoutAlgorithm.LEFT_RIGHT));
-		graph.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-				ZestStyle.CONNECTIONS_DIRECTED).withEdges(
-				new Edge(new Node().withAttribute(Graph.Attr.LABEL.toString(),
-						"Node 1"), new Node().withAttribute(
-						Graph.Attr.LABEL.toString(), "Node 2")).withAttribute(
-						Graph.Attr.LABEL.toString(), "A dotted edge")
-						.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-								ZestStyle.LINE_DOT));
-		String dot = new DotTemplate().generate(graph);
+		Graph.Builder graph = new Graph.Builder();
+		graph.attr(Graph.Attr.LAYOUT, new TreeLayoutAlgorithm(
+				TreeLayoutAlgorithm.LEFT_RIGHT));
+		Node node1 = new Node.Builder().attr(Attr.LABEL, "Node 1").build();
+		Node node2 = new Node.Builder().attr(Attr.LABEL, "Node 2").build();
+		Edge edge = new Edge.Builder(node1, node2)
+				.attr(Graph.Attr.LABEL, "A dotted edge")
+				.attr(Graph.Attr.EDGE_STYLE, ZestStyle.LINE_DOT).build();
+		graph.attr(Graph.Attr.EDGE_STYLE, ZestStyle.CONNECTIONS_DIRECTED)
+				.edges(edge);
+		String dot = new DotTemplate().generate(graph.build());
 		Assert.assertTrue(
 				"Graph with horizontal tree layout should contain rankdir=LR",
 				dot.contains("rankdir=LR"));
-		testDotGeneration(graph);
+		testDotGeneration(graph.build());
 	}
 
 	/**
@@ -56,31 +56,31 @@ public class TestDotTemplate {
 	 */
 	@Test
 	public void sampleGraph() {
-		testDotGeneration(new SampleGraph());
+		testDotGeneration(new SampleGraph().getGraph());
 	}
 
 	/** Zest-To-Dot transformation for a minimal undirected graph. */
 	@Test
 	public void simpleGraph() {
-		testDotGeneration(new SimpleGraph());
+		testDotGeneration(new SimpleGraph().getGraph());
 	}
 
 	/** Zest-To-Dot transformation for a minimal directed graph. */
 	@Test
 	public void directedGraph() {
-		testDotGeneration(new SimpleDigraph());
+		testDotGeneration(new SimpleDigraph().getGraph());
 	}
 
 	/** Zest-To-Dot transformation for a graph with edge and node labels. */
 	@Test
 	public void labeledGraph() {
-		testDotGeneration(new LabeledGraph());
+		testDotGeneration(new LabeledGraph().getGraph());
 	}
 
 	/** Zest-To-Dot transformation for a graph with styled edges (dotted, etc). */
 	@Test
 	public void styledGraph() {
-		testDotGeneration(new StyledGraph());
+		testDotGeneration(new StyledGraph().getGraph());
 	}
 
 	protected void testDotGeneration(final Graph graph) {
@@ -94,7 +94,8 @@ public class TestDotTemplate {
 		Assert.assertTrue(
 				"DOT representation must contain simple class name of Zest input!", //$NON-NLS-1$
 				dot.contains(graph.getClass().getSimpleName()));
-		Assert.assertTrue(graph.getAttribute(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.CONNECTIONS_DIRECTED ? dot
+		Assert.assertTrue(graph.getAttrs()
+				.get(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.CONNECTIONS_DIRECTED ? dot
 				.contains("digraph") : !dot.contains("digraph")); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(dot);
 	}

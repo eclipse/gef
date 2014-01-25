@@ -59,28 +59,24 @@ public class TestDotExport extends TestDotTemplate {
 	/** Test mapping of Zest layouts to Graphviz layouts. */
 	@Test
 	public void zestToGraphvizLayoutMapping() {
-		Graph graph = new Graph();
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new TreeLayoutAlgorithm());
+		Graph.Builder graph = new Graph.Builder();
+		graph.attr(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
 		assertTrue("TreeLayout -> 'dot'",
-				graph.toDot().contains("graph[layout=dot]"));
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new RadialLayoutAlgorithm());
+				graph.build().toDot().contains("graph[layout=dot]"));
+		graph.attr(Graph.Attr.LAYOUT.toString(), new RadialLayoutAlgorithm());
 		assertTrue("RadialLayout -> 'twopi'",
-				graph.toDot().contains("graph[layout=twopi]"));
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new GridLayoutAlgorithm());
+				graph.build().toDot().contains("graph[layout=twopi]"));
+		graph.attr(Graph.Attr.LAYOUT.toString(), new GridLayoutAlgorithm());
 		assertTrue("GridLayout -> 'osage'",
-				graph.toDot().contains("graph[layout=osage]"));
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new SpringLayoutAlgorithm());
-		assertTrue("SpringLayout, small -> 'fdp'",
-				graph.toDot().contains("graph[layout=fdp]"));
+				graph.build().toDot().contains("graph[layout=osage]"));
+		graph.attr(Graph.Attr.LAYOUT.toString(), new SpringLayoutAlgorithm());
+		assertTrue("SpringLayout, small -> 'fdp'", graph.build().toDot()
+				.contains("graph[layout=fdp]"));
 		for (int i = 0; i < 100; i++) {
-			graph.withNodes(new Node());
+			graph.nodes(new Node.Builder().build());
 		}
-		assertTrue("SpringLayout, large -> 'sfdp'",
-				graph.toDot().contains("graph[layout=sfdp]"));
+		assertTrue("SpringLayout, large -> 'sfdp'", graph.build().toDot()
+				.contains("graph[layout=sfdp]"));
 	}
 
 	private void assertNoBlankLines(final String dot) {

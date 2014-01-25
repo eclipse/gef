@@ -39,7 +39,7 @@ public class ZestGraph extends Graph {
 	private Map<ZestStyle, Integer> map = new HashMap<ZestStyle, Integer>() {
 		{
 			put(ZestStyle.GRAPH_DIRECTED, ZestStyles.CONNECTIONS_DIRECTED);
-			put(ZestStyle.GRAPH, ZestStyles.CONNECTIONS_SOLID);
+			put(ZestStyle.GRAPH_UNDIRECTED, ZestStyles.CONNECTIONS_SOLID);
 			put(ZestStyle.LINE_DASH, SWT.LINE_DASH);
 			put(ZestStyle.LINE_DASHDOT, SWT.LINE_DASHDOT);
 			put(ZestStyle.LINE_DASHDOTDOT, SWT.LINE_DASHDOTDOT);
@@ -74,20 +74,19 @@ public class ZestGraph extends Graph {
 
 	private void setLayout(org.eclipse.gef4.graph.Graph dotGraph) {
 		LayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
-		Object layout = dotGraph.getAttribute(Attr.LAYOUT.toString());
+		Object layout = dotGraph.getAttrs().get(Attr.LAYOUT.toString());
 		if (layout != null)
 			algorithm = (LayoutAlgorithm) layout;
 		this.setLayoutAlgorithm(algorithm, true);
 	}
 
 	private void setGraphData(org.eclipse.gef4.graph.Graph dotGraph) {
-		for (Map.Entry<String, Object> entry : dotGraph.getAttributes()
-				.entrySet())
+		for (Map.Entry<String, Object> entry : dotGraph.getAttrs().entrySet())
 			this.setData(entry.getKey(), entry.getValue());
 	}
 
 	private void setGraphType(org.eclipse.gef4.graph.Graph dotGraph) {
-		Object type = dotGraph.getAttribute(Attr.GRAPH_TYPE.toString());
+		Object type = dotGraph.getAttrs().get(Attr.GRAPH_TYPE.toString());
 		if (type != null)
 			this.setConnectionStyle(map.get(ZestStyle.valueOf(type.toString())));
 	}
@@ -95,21 +94,21 @@ public class ZestGraph extends Graph {
 	private GraphConnection dotEdgeToZestEdge(Edge edge,
 			GraphNode sourceZestNode, GraphNode targetZestNode) {
 		int graphType = SWT.NONE;
-		ZestStyle type = (ZestStyle) dotGraph.getAttribute(Attr.GRAPH_TYPE
-				.toString());
+		ZestStyle type = (ZestStyle) dotGraph.getAttrs().get(
+				Attr.GRAPH_TYPE.toString());
 		if (type != null)
 			graphType = map.get(type);
 		GraphConnection connection = new GraphConnection(this, graphType,
 				sourceZestNode, targetZestNode);
-		Object edgeStyle = edge.getAttribute(Attr.EDGE_STYLE.toString());
+		Object edgeStyle = edge.getAttrs().get(Attr.EDGE_STYLE.toString());
 		if (edgeStyle != null) {
 			Integer style = map.get(ZestStyle.valueOf(edgeStyle.toString()));
 			connection.setLineStyle(style);
 		}
-		Object label = edge.getAttribute(Attr.LABEL.toString());
+		Object label = edge.getAttrs().get(Attr.LABEL.toString());
 		if (label != null)
 			connection.setText(label.toString());
-		Object data = edge.getAttribute(Attr.DATA.toString());
+		Object data = edge.getAttrs().get(Attr.ID.toString());
 		if (data != null)
 			connection.setData(data);
 		return connection;
@@ -117,10 +116,10 @@ public class ZestGraph extends Graph {
 
 	private GraphNode dotNodeToZestNode(Node node) {
 		GraphNode graphNode = new GraphNode(this, SWT.NONE);
-		Object label = node.getAttribute(Attr.LABEL.toString());
+		Object label = node.getAttrs().get(Attr.LABEL.toString());
 		if (label != null)
 			graphNode.setText(label.toString());
-		Object data = node.getAttribute(Attr.DATA.toString());
+		Object data = node.getAttrs().get(Attr.ID.toString());
 		if (data != null)
 			graphNode.setData(data);
 		return graphNode;

@@ -23,24 +23,24 @@ public final class TestDotGraph {
 
 	@Test
 	public void sampleUsage() {
-		Graph graph = new Graph("digraph{1->2}"); //$NON-NLS-1$
+		Graph.Builder graph = new Graph.Builder("digraph{1->2}"); //$NON-NLS-1$
 		assertNodesEdgesCount(2, 1, graph);
-		graph.withDot("node[label=zested]; 2->3; 2->4"); //$NON-NLS-1$
+		graph.dot("node[label=zested]; 2->3; 2->4"); //$NON-NLS-1$
 		assertNodesEdgesCount(4, 3, graph);
-		graph.withDot("edge[style=dashed]; 3->5; 4->6"); //$NON-NLS-1$
+		graph.dot("edge[style=dashed]; 3->5; 4->6"); //$NON-NLS-1$
 		assertNodesEdgesCount(6, 5, graph);
 	}
 
 	@Test
 	public void graphAttributesToDataMapping() {
 		String dotInput = "digraph{ graph[key1=graph_value1 key2=graph_value2]; 1->2 }";
-		Graph graph = new Graph(dotInput);
-		assertEquals("graph_value1", graph.getAttribute("key1"));
-		assertEquals("graph_value2", graph.getAttribute("key2"));
+		Graph graph = new Graph.Builder(dotInput).build();
+		assertEquals("graph_value1", graph.getAttrs().get("key1"));
+		assertEquals("graph_value2", graph.getAttrs().get("key2"));
 	}
 
-	private void assertNodesEdgesCount(int n, int e, Graph graph) {
-		Assert.assertEquals(n, graph.getNodes().size());
-		Assert.assertEquals(e, graph.getEdges().size());
+	private void assertNodesEdgesCount(int n, int e, Graph.Builder graph) {
+		Assert.assertEquals(n, graph.build().getNodes().size());
+		Assert.assertEquals(e, graph.build().getEdges().size());
 	}
 }

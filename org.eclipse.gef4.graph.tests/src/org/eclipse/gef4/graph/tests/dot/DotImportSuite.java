@@ -19,8 +19,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestBasicDotImport.class, TestLayoutDotImport.class,
 		TestAnimationDotImport.class, TestGraphInstanceDotImport.class,
-		TestSnippetDotImport.class, TestDotGraph.class, TestDotAst.class,
-		SampleUsage.class })
+		TestSnippetDotImport.class, TestDotGraph.class, TestDotAst.class })
 public final class DotImportSuite {
 	private DotImportSuite() { /* Enforce non-instantiability */
 	}

@@ -28,20 +28,23 @@ public final class TestDotGraph {
 	@Test
 	public void sampleUsage() {
 		Shell shell = new Shell();
-		Graph dotGraph = new Graph("digraph{1->2}");
-		assertNodesEdgesCount(2, 1, new ZestGraph(shell, SWT.NONE, dotGraph));
-		dotGraph = dotGraph.withDot("node[label=zested]; 2->3; 2->4"); //$NON-NLS-1$
-		assertNodesEdgesCount(4, 3, new ZestGraph(shell, SWT.NONE, dotGraph));
-		dotGraph = dotGraph.withDot("edge[style=dashed]; 3->5; 4->6"); //$NON-NLS-1$
-		assertNodesEdgesCount(6, 5, new ZestGraph(shell, SWT.NONE, dotGraph));
+		Graph.Builder dotGraph = new Graph.Builder("digraph{1->2}");
+		assertNodesEdgesCount(2, 1,
+				new ZestGraph(shell, SWT.NONE, dotGraph.build()));
+		dotGraph = dotGraph.dot("node[label=zested]; 2->3; 2->4"); //$NON-NLS-1$
+		assertNodesEdgesCount(4, 3,
+				new ZestGraph(shell, SWT.NONE, dotGraph.build()));
+		dotGraph = dotGraph.dot("edge[style=dashed]; 3->5; 4->6"); //$NON-NLS-1$
+		assertNodesEdgesCount(6, 5,
+				new ZestGraph(shell, SWT.NONE, dotGraph.build()));
 		// open(shell);
 	}
 
 	@Test
 	public void graphAttributesToDataMapping() {
 		String dotInput = "digraph{ graph[key1=graph_value1 key2=graph_value2]; 1->2 }";
-		ZestGraph graph = new ZestGraph(new Shell(), SWT.NONE, new Graph(
-				dotInput));
+		ZestGraph graph = new ZestGraph(new Shell(), SWT.NONE,
+				new Graph.Builder(dotInput).build());
 		assertEquals("graph_value1", graph.getGraph().getData("key1"));
 		assertEquals("graph_value2", graph.getGraph().getData("key2"));
 	}

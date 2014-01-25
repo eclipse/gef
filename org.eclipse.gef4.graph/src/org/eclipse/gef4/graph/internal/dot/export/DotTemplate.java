@@ -49,8 +49,8 @@ public class DotTemplate
  *******************************************************************************/
      Graph graph = (Graph) argument; 
      boolean small = graph.getNodes().size() < 100; 
-     LayoutAlgorithm algo = (LayoutAlgorithm) (graph.getAttribute(Graph.Attr.LAYOUT.toString()) != null ? graph.getAttribute(Graph.Attr.LAYOUT.toString()) : new TreeLayoutAlgorithm());
-     boolean digraph = graph.getAttribute(Graph.Attr.EDGE_STYLE.toString())==ZestStyle.CONNECTIONS_DIRECTED; 
+     LayoutAlgorithm algo = (LayoutAlgorithm) (graph.getAttrs().get(Graph.Attr.LAYOUT.toString()) != null ? graph.getAttrs().get(Graph.Attr.LAYOUT.toString()) : new TreeLayoutAlgorithm());
+     boolean digraph = graph.getAttrs().get(Graph.Attr.EDGE_STYLE.toString())==ZestStyle.CONNECTIONS_DIRECTED; 
      String simpleClassName = graph.getClass().getSimpleName(); 
      /* The exact name 'Graph' is not valid for rendering with Graphviz: */ 
      simpleClassName = simpleClassName.equals("Graph") ? "Zest" + simpleClassName : simpleClassName; 
@@ -62,19 +62,19 @@ public class DotTemplate
     stringBuffer.append(TEXT_4);
     stringBuffer.append((algo.getClass() == RadialLayoutAlgorithm.class) ? "twopi" : (algo.getClass() == GridLayoutAlgorithm.class) ? "osage" : (algo.getClass() == SpringLayoutAlgorithm.class) ? (small ? "fdp" : "sfdp") : "dot");
     stringBuffer.append(TEXT_5);
-    stringBuffer.append((graph.getAttribute(Graph.Attr.LAYOUT.toString()) != null && graph.getAttribute(Graph.Attr.LAYOUT.toString()).getClass() == TreeLayoutAlgorithm.class && ((TreeLayoutAlgorithm)graph.getAttribute(Graph.Attr.LAYOUT.toString())).getDirection() == TreeLayoutAlgorithm.LEFT_RIGHT)?"LR":"TD");
+    stringBuffer.append((graph.getAttrs().get(Graph.Attr.LAYOUT.toString()) != null && graph.getAttrs().get(Graph.Attr.LAYOUT.toString()).getClass() == TreeLayoutAlgorithm.class && ((TreeLayoutAlgorithm)graph.getAttrs().get(Graph.Attr.LAYOUT.toString())).getDirection() == TreeLayoutAlgorithm.LEFT_RIGHT)?"LR":"TD");
     stringBuffer.append(TEXT_6);
      for(Object nodeObject : graph.getNodes()){ Node node = (Node) nodeObject; 
     stringBuffer.append(TEXT_7);
     stringBuffer.append(node.hashCode());
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(node.getAttribute(Graph.Attr.LABEL.toString()));
+    stringBuffer.append(node.getAttrs().get(Graph.Attr.LABEL.toString()));
     stringBuffer.append(TEXT_9);
      }
     stringBuffer.append(TEXT_10);
      for(Object edgeObject : graph.getEdges()){ Edge edge = (Edge) edgeObject; 
     stringBuffer.append(TEXT_11);
-    boolean dashed = edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.LINE_DASH; boolean dotted = edge.getAttribute(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.LINE_DOT;
+    boolean dashed = edge.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.LINE_DASH; boolean dotted = edge.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()) == ZestStyle.LINE_DOT;
     stringBuffer.append(TEXT_12);
     stringBuffer.append(edge.getSource().hashCode());
     stringBuffer.append(TEXT_13);
@@ -84,7 +84,7 @@ public class DotTemplate
     stringBuffer.append(TEXT_15);
     stringBuffer.append(dashed?"dashed":dotted?"dotted":"solid");
     stringBuffer.append(TEXT_16);
-    stringBuffer.append(edge.getAttribute(Graph.Attr.LABEL.toString()));
+    stringBuffer.append(edge.getAttrs().get(Graph.Attr.LABEL.toString()));
     stringBuffer.append(TEXT_17);
      }
     stringBuffer.append(TEXT_18);

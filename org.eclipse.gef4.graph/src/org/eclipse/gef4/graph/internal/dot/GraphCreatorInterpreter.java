@@ -45,8 +45,8 @@ import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
  */
 public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
-	private Map<String, Node> nodes;
-	private Graph graph;
+	private Map<String, Node.Builder> nodes;
+	private Graph.Builder graph;
 	private String globalEdgeStyle;
 	private String globalEdgeLabel;
 	private String globalNodeLabel;
@@ -56,23 +56,23 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private boolean gotSource;
 
 	public Graph create(DotAst dotAst) {
-		return create(dotAst, new Graph());
+		return create(dotAst, new Graph.Builder());
 	}
 
-	public Graph create(DotAst dotAst, Graph graph) {
+	public Graph create(DotAst dotAst, Graph.Builder graph) {
 		if (dotAst.errors().size() > 0) {
 			throw new IllegalArgumentException(String.format(
 					DotMessages.GraphCreatorInterpreter_0 + ": %s", dotAst //$NON-NLS-1$
 							.errors().toString()));
 		}
 		this.graph = graph;
-		nodes = new HashMap<String, Node>();
+		nodes = new HashMap<String, Node.Builder>();
 		TreeIterator<Object> contents = EcoreUtil.getAllProperContents(
 				dotAst.resource(), false);
 		while (contents.hasNext()) {
 			doSwitch((EObject) contents.next());
 		}
-		return graph;
+		return graph.build();
 	}
 
 	@Override
@@ -91,9 +91,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 				&& object.getValue().equals("LR")) { //$NON-NLS-1$
 			TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm(
 					TreeLayoutAlgorithm.LEFT_RIGHT);
-			graph.withAttribute(Graph.Attr.LAYOUT.toString(), algorithm);
+			graph.attr(Graph.Attr.LAYOUT.toString(), algorithm);
 		} else if (graph != null && object.getName().equals("label")) { //$NON-NLS-1$
-			graph.withAttribute(Graph.Attr.LABEL.toString(), object.getValue());
+			graph.attr(Graph.Attr.LABEL.toString(), object.getValue());
 		}
 		return super.caseAttribute(object);
 	}
@@ -134,28 +134,25 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	}
 
 	private void addConnectionTo(String targetNodeId) {
-		Edge graphConnection = new Edge(node(currentEdgeSourceNodeId),
-				node(targetNodeId));
+		Edge.Builder graphConnection = new Edge.Builder(
+				node(currentEdgeSourceNodeId), node(targetNodeId));
 		/* Set the optional label, if set in the DOT input: */
 		if (currentEdgeLabelValue != null) {
-			graphConnection.withAttribute(Graph.Attr.LABEL.toString(),
+			graphConnection.attr(Graph.Attr.LABEL.toString(),
 					currentEdgeLabelValue);
 		} else if (globalEdgeLabel != null) {
-			graphConnection.withAttribute(Graph.Attr.LABEL.toString(),
-					globalEdgeLabel);
+			graphConnection.attr(Graph.Attr.LABEL.toString(), globalEdgeLabel);
 		}
 		/* Set the optional style, if set in the DOT input and supported: */
 		if (supported(currentEdgeStyleValue, Style.values())) {
 			Style v = Enum.valueOf(Style.class,
 					currentEdgeStyleValue.toUpperCase());
-			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-					v.style);
+			graphConnection.attr(Graph.Attr.EDGE_STYLE.toString(), v.style);
 		} else if (supported(globalEdgeStyle, Style.values())) {
 			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
-			graphConnection.withAttribute(Graph.Attr.EDGE_STYLE.toString(),
-					v.style);
+			graphConnection.attr(Graph.Attr.EDGE_STYLE.toString(), v.style);
 		}
-		graph.withEdges(graphConnection);
+		graph.edges(graphConnection.build());
 	}
 
 	private boolean supported(String value, Enum<?>[] vals) {
@@ -182,12 +179,12 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	// private implementation of the cases above
 
 	private void createGraph(MainGraph object) {
-		graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-				new TreeLayoutAlgorithm());
+		graph.attr(Graph.Attr.LAYOUT.toString(),
+				DotImport.DEFAULT_LAYOUT_ALGORITHM);
 		GraphType graphType = object.getType();
-		graph.withAttribute(Graph.Attr.GRAPH_TYPE.toString(),
+		graph.attr(Graph.Attr.GRAPH_TYPE.toString(),
 				graphType == GraphType.DIGRAPH ? ZestStyle.GRAPH_DIRECTED
-						: ZestStyle.GRAPH);
+						: ZestStyle.GRAPH_UNDIRECTED);
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {
@@ -204,14 +201,13 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		}
 		case GRAPH: {
 			for (AList a : attrStmt.getAttributes().get(0).getA_list()) {
-				graph.withAttribute(a.getName(), a.getValue());
+				graph.attr(a.getName(), a.getValue());
 			}
 			String graphLayout = getAttributeValue(attrStmt, "layout"); //$NON-NLS-1$
 			if (graphLayout != null) {
 				Layout layout = Enum.valueOf(Layout.class,
 						graphLayout.toUpperCase());
-				graph.withAttribute(Graph.Attr.LAYOUT.toString(),
-						layout.algorithm);
+				graph.attr(Graph.Attr.LAYOUT.toString(), layout.algorithm);
 			}
 			break;
 		}
@@ -220,34 +216,33 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
 	private void createNode(final NodeStmt nodeStatement) {
 		String nodeId = escaped(nodeStatement.getName());
-		Node node = null;
+		Node.Builder node = new Node.Builder();
 		if (nodes.containsKey(nodeId)) {
 			node = nodes.get(nodeId);
 		} else {
-			node = new Node()
-					.withAttribute(Graph.Attr.LABEL.toString(), nodeId)
-					.withAttribute(Graph.Attr.DATA.toString(), nodeId);
-			graph = graph.withNodes(node);
+			node = node.attr(Graph.Attr.LABEL.toString(), nodeId).attr(
+					Graph.Attr.ID.toString(), nodeId);
+			graph = graph.nodes(node.build());
 		}
 		String value = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
 		if (value != null) {
-			node = node.withAttribute(Graph.Attr.LABEL.toString(), value);
+			node = node.attr(Graph.Attr.LABEL.toString(), value);
 		} else if (globalNodeLabel != null) {
-			node = node.withAttribute(Graph.Attr.LABEL.toString(),
-					globalNodeLabel);
+			node = node.attr(Graph.Attr.LABEL.toString(), globalNodeLabel);
 		}
 		nodes.put(nodeId, node);
 	}
 
 	private Node node(String id) {
 		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
-			Node node = new Node().withAttribute(Graph.Attr.LABEL.toString(),
-					globalNodeLabel != null ? globalNodeLabel : id)
-					.withAttribute(Graph.Attr.DATA.toString(), id);
+			Node.Builder node = new Node.Builder().attr(
+					Graph.Attr.LABEL.toString(),
+					globalNodeLabel != null ? globalNodeLabel : id).attr(
+					Graph.Attr.ID.toString(), id);
 			nodes.put(id, node);
-			graph = graph.withNodes(node);
+			graph = graph.nodes(node.build());
 		}
-		return nodes.get(id);
+		return nodes.get(id).build();
 	}
 
 	/**
