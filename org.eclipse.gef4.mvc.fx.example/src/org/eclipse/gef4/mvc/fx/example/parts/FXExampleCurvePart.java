@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Node;
+import javafx.scene.shape.Line;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveVisual;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectionPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
+import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleCurvePart extends AbstractFXContentPart implements
@@ -30,6 +32,20 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
+		installEditPolicy(AbstractSelectionFeedbackPolicy.class, new FXSelectionPolicy() {
+			private Line line;
+
+			@Override
+			public Node createFeedback(Node selectionVisual) {
+				if (selectionVisual instanceof Line) {
+					Line sl = (Line) selectionVisual;
+					return new Line(sl.getStartX(), sl.getStartY(), sl.getEndX(), sl.getEndY());
+				}
+				return super.createFeedback(selectionVisual);
+			}
+		});
+		installEditPolicy(AbstractHandlePolicy.class, new AbstractHandlePolicy<Node>() {
+		});
 	}
 
 	@Override

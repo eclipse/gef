@@ -20,7 +20,7 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -38,9 +38,9 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AbstractSelectionPolicy<V> getSelectionPolicy(
+	protected AbstractSelectionFeedbackPolicy<V> getSelectionPolicy(
 			IVisualPart<V> editPart) {
-		return editPart.getEditPolicy(AbstractSelectionPolicy.class);
+		return editPart.getEditPolicy(AbstractSelectionFeedbackPolicy.class);
 	}
 
 	/**
@@ -85,34 +85,8 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 				}
 			}
 		}
-		// handle adjustment of selection feedback (via edit policy)
-		List<IContentPart<V>> newSelection = selectionModel.getSelected();
-		oldSelection.removeAll(newSelection);
-		adjustFeedback(oldSelection, newSelection);
-
+		
 		return changed;
-	}
-
-	protected void adjustFeedback(List<IContentPart<V>> deselected,
-			List<IContentPart<V>> selected) {
-		// deselect unselected
-		for (IVisualPart<V> e : deselected) {
-			AbstractSelectionPolicy<V> policy = getSelectionPolicy(e);
-			if (policy != null)
-				policy.deselect();
-		}
-		// select newly selected
-		for (int i = 0; i < selected.size(); i++) {
-			AbstractSelectionPolicy<V> policy = getSelectionPolicy(selected
-					.get(i));
-			if (policy != null) {
-				if (i == 0) {
-					policy.selectPrimary();
-				} else {
-					policy.selectSecondary();
-				}
-			}
-		}
 	}
 
 	protected ISelectionModel<V> getSelectionModel() {
@@ -133,6 +107,9 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		/*
+		 * TODO: Viewer should flush interaction model data when contents changes.
+		 */
 		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
 			select(null, false);
 		}

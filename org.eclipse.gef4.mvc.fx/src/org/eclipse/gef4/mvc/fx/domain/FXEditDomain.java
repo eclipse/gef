@@ -7,7 +7,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXEventTargetCompositeXorTool;
 import org.eclipse.gef4.mvc.fx.tools.FXRelocateTool;
 import org.eclipse.gef4.mvc.fx.tools.FXResizeTool;
 import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
-import org.eclipse.gef4.mvc.tools.HandleTool;
+import org.eclipse.gef4.mvc.tools.BoxSelectionHandleTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 
 public class FXEditDomain extends AbstractEditDomain<Node> {
@@ -25,10 +25,10 @@ public class FXEditDomain extends AbstractEditDomain<Node> {
 		// TODO: may these tools remain active until a next event determines another tool,
 		// e.g. the handle tool does not have to pop itself...
 		defaultTool.addContentTools(new FXSelectionTool(),
-				new HandleTool<Node>(), new FXRelocateTool());
+				new BoxSelectionHandleTool<Node>(), new FXRelocateTool());
 		defaultTool.addHandleTools(new FXResizeTool());
 		defaultTool.addVisualTools(new FXSelectionTool(),
-				new HandleTool<Node>());
+				new BoxSelectionHandleTool<Node>());
 		return defaultTool;
 	}
 

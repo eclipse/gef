@@ -14,8 +14,9 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleShapePart extends AbstractFXContentPart {
@@ -25,10 +26,12 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
-		installEditPolicy(AbstractSelectionPolicy.class,
+		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy());
+		installEditPolicy(AbstractHandlePolicy.class, new AbstractHandlePolicy<Node>() {
+		});
 	}
 
 	@Override

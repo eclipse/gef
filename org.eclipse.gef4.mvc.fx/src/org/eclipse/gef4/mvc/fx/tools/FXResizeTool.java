@@ -25,13 +25,13 @@ public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
 
 		@Override
 		protected void press(Node target, MouseEvent e) {
-			IVisualPart<Node> handlePart = getDomain().getViewer()
+			IVisualPart<Node> part = getDomain().getViewer()
 					.getVisualPartMap().get(target);
 
-			if (handlePart instanceof FXBoxHandlePart) {
-				pos = ((FXBoxHandlePart) handlePart).getPos();
+			if (part instanceof FXBoxHandlePart) {
+				pos = ((FXBoxHandlePart) part).getPos();
 			} else {
-				pos = Pos.BOTTOM_RIGHT;
+				return;
 			}
 
 			initResize(new Point(e.getSceneX(), e.getSceneY()));

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
@@ -30,13 +31,18 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 
+	/*
+	 * TODO: add property registry similar to EditDomain. Provide interaction
+	 * models via this mechanism as well.
+	 */
+
 	public static final String CONTENTS_PROPERTY = "contents";
-	
+
 	/**
 	 * Returns the <i>contents</i> of this Viewer. The contents is the EditPart
 	 * associated with the top-level model object. It is considered to be
@@ -162,6 +168,8 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	ISelectionModel<V> getSelectionModel();
 
 	IHoverModel<V> getHoverModel();
+
+	IFocusModel<V> getFocusModel();
 
 	IZoomModel getZoomModel();
 

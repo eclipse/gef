@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.models.DefaultFocusModel;
 import org.eclipse.gef4.mvc.models.DefaultHoverModel;
 import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
 import org.eclipse.gef4.mvc.models.DefaultZoomModel;
+import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
@@ -53,6 +55,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	private ISelectionModel<V> selectionModel;
 	private IZoomModel zoomModel;
 	private IHoverModel<V> hoverModel;
+	private IFocusModel<V> focusModel;
 
 	private IContentPartFactory<V> contentPartFactory;
 	private IHandlePartFactory<V> handlePartFactory;
@@ -190,6 +193,15 @@ public abstract class AbstractVisualPartViewer<V> implements
 			this.rootPart.setViewer(this);
 			this.rootPart.activate();
 		}
+	}
+	
+	@Override
+	public IFocusModel<V> getFocusModel() {
+		if (focusModel == null) {
+			// TODO: use dependency injection to bind this
+			focusModel = new DefaultFocusModel<V>();
+		}
+		return focusModel;
 	}
 
 	@Override

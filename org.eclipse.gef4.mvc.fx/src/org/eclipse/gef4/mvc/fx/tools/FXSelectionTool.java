@@ -34,6 +34,9 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		}
 	};
 
+	/*
+	 * TODO: Merge with FXHoverTool which implements the same method.
+	 */
 	protected IVisualPart<Node> getTargetPart(MouseEvent event) {
 		EventTarget target = event.getTarget();
 
