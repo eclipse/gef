@@ -11,10 +11,13 @@
 - Ensure visual part and content part registries are based on scopes (hierarchy)
 - Add support for cursor changes to tools/handles
 
+- Marquee Selection
+
 - Show how shapes can be attached to each other via anchors (G shape of logo)
 - PropertySheet integration to change visual properties of FXGeometricVisuals (incl. UNDO)
 - Implement resize for arbitrary geometric shapes (by using scaling)
 - Implement undo/redo for resize and move
 - Implement zooming based on gesture
-- Add viewport/scrolling model and tools for scrolling and related birdeye view to UI feature)
+
+- Add viewport (scrolling) model and tools for scrolling and related birdeye view to UI feature)
 - Add focus model (keyboard focus)
