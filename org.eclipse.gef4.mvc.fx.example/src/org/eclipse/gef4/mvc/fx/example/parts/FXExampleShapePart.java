@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeVisual;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionPolicy;
@@ -24,8 +25,6 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
-		// TODO: use a proper anchor that computes a position on the border
-		visual.setFill(Color.BLUE);
 		installEditPolicy(AbstractSelectionPolicy.class,
 				new FXSelectionPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
@@ -33,13 +32,13 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public IShape getModel() {
-		return (IShape) super.getModel();
+	public FXGeometricShapeVisual getModel() {
+		return (FXGeometricShapeVisual) super.getModel();
 	}
 
 	@Override
 	public void setModel(Object model) {
-		if (!(model instanceof IShape)) {
+		if (!(model instanceof FXGeometricShapeVisual)) {
 			throw new IllegalArgumentException(
 					"Only IShape models are supported.");
 		}
@@ -53,9 +52,16 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 
 	@Override
 	public void refreshVisual() {
-		IShape shape = getModel();
-		if (visual.getGeometry() != shape) {
-			visual.setGeometry(shape);
+		FXGeometricShapeVisual shapeVisual = getModel();
+		if (visual.getGeometry() != shapeVisual.geometry) {
+			// TODO: respect offset, scaling, etc.
+			visual.setGeometry(shapeVisual.geometry);
+		}
+		if(visual.getEffect() != shapeVisual.effect){
+			visual.setEffect(shapeVisual.effect);
+		}
+		if(visual.getFill() != shapeVisual.fill){
+			visual.setFill(shapeVisual.fill);
 		}
 	}
 	
@@ -63,7 +69,7 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	@Override
 	protected List<Object> getModelAnchored() {
 		if(getParent() != null){
-			List anchored = ((FXExampleModelPart)getParent()).getModel().getAnchors().get(getModel());
+			List anchored = getModel().anchored;
 			if(anchored == null){
 				return Collections.emptyList();
 			}

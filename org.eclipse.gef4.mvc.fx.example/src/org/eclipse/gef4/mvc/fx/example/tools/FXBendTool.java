@@ -7,9 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.fx.example.parts.FXBendHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
 import org.eclipse.gef4.mvc.fx.tools.FXMouseDragGesture;
@@ -39,18 +37,18 @@ public class FXBendTool extends AbstractTool<Node> {
 			IContentPart<Node> contentPart = selected.get(0);
 			if (contentPart instanceof FXExampleCurvePart) {
 				curvePart = (FXExampleCurvePart) contentPart;
-				
+
 				IVisualPart<Node> handlePart = getDomain().getViewer()
 						.getVisualPartMap().get(target);
-				
+
 				int index = 0;
 				if (handlePart instanceof FXBendHandlePart) {
 					index = ((FXBendHandlePart) handlePart).getAnchorIndex();
 				}
-				
+
 				startX = handlePart.getVisual().getLayoutX();
 				startY = handlePart.getVisual().getLayoutY();
-				
+
 				List<Point> anchorPoints = curvePart.getAnchorPoints();
 				if (anchorPoints.isEmpty()) {
 					anchorPoints.add(new Point(startX, startY));
@@ -70,11 +68,13 @@ public class FXBendTool extends AbstractTool<Node> {
 				throw new IllegalStateException("Illegal handle part!");
 			}
 			List<Point> anchorPoints = curvePart.getAnchorPoints();
-			Point point = anchorPoints.get(((FXBendHandlePart) handlePart).getAnchorIndex());
+			Point point = anchorPoints.get(((FXBendHandlePart) handlePart)
+					.getAnchorIndex());
 			point.x = startX + dx;
 			point.y = startY + dy;
-			ICurve curve = curvePart.getModel();
-			curvePart.setModel(curvePart.createCurve(curve.getP1(), curve.getP2()));
+			ICurve curve = curvePart.getModel().geometry;
+			curvePart.getModel().geometry = curvePart.createCurve(curve.getP1(),
+					curve.getP2());
 			curvePart.refreshVisual();
 		}
 	};
@@ -92,7 +92,7 @@ public class FXBendTool extends AbstractTool<Node> {
 			gesture.setScene(scene);
 		}
 	}
-	
+
 	@Override
 	public void deactivate() {
 		if (scene != null) {

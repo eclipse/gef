@@ -14,6 +14,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveVisual;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.swtfx.GeometryNode;
@@ -28,22 +29,17 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
 	public FXExampleCurvePart() {
-		visual = new GeometryNode<ICurve>() {
-			@Override
-			public void updatePathElements() {
-				super.updatePathElements();
-			}
-		};
+		visual = new GeometryNode<ICurve>();
 	}
 
 	@Override
-	public ICurve getModel() {
-		return (ICurve) super.getModel();
+	public FXGeometricCurveVisual getModel() {
+		return (FXGeometricCurveVisual) super.getModel();
 	}
 
 	@Override
 	public void setModel(Object model) {
-		if (!(model instanceof ICurve)) {
+		if (!(model instanceof FXGeometricCurveVisual)) {
 			throw new IllegalArgumentException(
 					"Only ICurve models are supported.");
 		}
@@ -57,9 +53,9 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	@Override
 	public void refreshVisual() {
-		ICurve curve = getModel();
-		if (visual.getGeometry() != curve) {
-			visual.setGeometry(curve);
+		FXGeometricCurveVisual curveVisual = getModel();
+		if (visual.getGeometry() != curveVisual.geometry) {
+			visual.setGeometry(curveVisual.geometry);
 		}
 		visual.toBack();
 	}
@@ -113,7 +109,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 						endReference);
 
 				// update model
-				setModel(createCurve(start, end));
+				getModel().geometry = createCurve(start, end);
 			} catch (IllegalArgumentException e) {
 				// When no intersection point can be found by the ChopBoxAnchor,
 				// the connection is invisible

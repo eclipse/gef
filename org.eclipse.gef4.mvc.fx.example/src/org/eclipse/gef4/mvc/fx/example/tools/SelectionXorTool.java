@@ -20,8 +20,8 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 	private PropertyChangeListener pcl = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (evt.getPropertyName().equals(
-					ISelectionModel.SELECTION_PROPERTY)) {
+			if (evt.getPropertyName()
+					.equals(ISelectionModel.SELECTION_PROPERTY)) {
 				Object newValue = evt.getNewValue();
 				if (newValue instanceof List) {
 					List<IContentPart<Node>> selection = (List<IContentPart<Node>>) newValue;
@@ -47,7 +47,7 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 		getDomain().getViewer().getSelectionModel()
 				.addPropertyChangeListener(pcl);
 	}
-	
+
 	public void bindToolToType(Class<?> type, ITool<Node> tool) {
 		add(tool);
 		typeToolMap.put(type, tool);
@@ -55,7 +55,8 @@ public class SelectionXorTool extends CompositeXorTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		getDomain().getViewer().getSelectionModel().removePropertyChangeListener(pcl);
+		getDomain().getViewer().getSelectionModel()
+				.removePropertyChangeListener(pcl);
 		// parent call last
 		super.unregisterListeners();
 	}

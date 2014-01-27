@@ -32,7 +32,7 @@ public class FXExampleHandlePartFactory implements IHandlePartFactory<Node> {
 			FXExampleCurvePart cp = (FXExampleCurvePart) contentPart;
 			List<Point> anchorPoints = cp.getAnchorPoints();
 			anchorPoints.clear();
-			BezierCurve[] beziers = cp.getModel().toBezier();
+			BezierCurve[] beziers = cp.getModel().geometry.toBezier();
 			int p = 0;
 			for (int i = 0; i < beziers.length; i++) {
 				anchorPoints.add(beziers[i].get(0.5));
