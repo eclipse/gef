@@ -1,0 +1,20 @@
+- Convert example geometries to be origin-based, position them via affine transform
+- Implement HandlePolicy -> use to create selection/focus/hover handles for individual content parts, let HandleTool create  
+  selection box handles, maybe also via handle policy of root part
+- Add outline handles also for non-rectangle shapes; restrict resizing options for rectangle-based shapes via constraints on handles
+- Implement outline segment midpoint handles (like bendpoints) to allow "morphing" of shapes
+- Add support for removing bendpoints and outline segment midpoint handles
+
+- Ensure factories and policies can be obtained on a default/type/instance based binding registry
+- Ensure default model implementations can be binded (using DI or custom binding mechanism) per viewer (no type/instance binding)
+
+- Ensure visual part and content part registries are based on scopes (hierarchy)
+- Add support for cursor changes to tools/handles
+
+- Show how shapes can be attached to each other via anchors (G shape of logo)
+- PropertySheet integration to change visual properties of FXGeometricVisuals (incl. UNDO)
+- Implement resize for arbitrary geometric shapes (by using scaling)
+- Implement undo/redo for resize and move
+- Implement zooming based on gesture
+- Add viewport/scrolling model and tools for scrolling and related birdeye view to UI feature)
+- Add focus model (keyboard focus)
