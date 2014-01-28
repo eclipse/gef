@@ -12,7 +12,7 @@ import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeVisual;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
@@ -27,7 +27,7 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
-				new FXSelectionPolicy());
+				new FXSelectionFeedbackPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy());
 		installEditPolicy(AbstractHandlePolicy.class, new AbstractHandlePolicy<Node>() {

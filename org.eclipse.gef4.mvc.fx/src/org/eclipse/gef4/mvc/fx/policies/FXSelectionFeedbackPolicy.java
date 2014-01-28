@@ -14,7 +14,7 @@ import javafx.scene.shape.Shape;
 import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 
-public class FXSelectionPolicy extends AbstractSelectionFeedbackPolicy<Node> {
+public class FXSelectionFeedbackPolicy extends AbstractSelectionFeedbackPolicy<Node> {
 
 	private static final Paint INVISIBLE = new Color(0, 0, 0, 0);
 	private Group feedback;

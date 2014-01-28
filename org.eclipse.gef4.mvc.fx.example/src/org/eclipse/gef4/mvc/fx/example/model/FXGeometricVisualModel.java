@@ -21,18 +21,16 @@ public class FXGeometricVisualModel {
 	private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
-	private FXGeometricCurveVisual l1 = new FXGeometricCurveVisual(
-			new Line(100, 75, 150, 75));
+	private FXGeometricCurveVisual l1 = new FXGeometricCurveVisual(new Line(
+			100, 75, 150, 75));
 	private FXGeometricShapeVisual r1 = new FXGeometricShapeVisual(
-			new Rectangle(50, 50, 50, 50), null, Color.RED,
-			null, l1);
+			new Rectangle(50, 50, 50, 50), null, Color.RED, null, l1);
 	private FXGeometricShapeVisual r2 = new FXGeometricShapeVisual(
-			new Rectangle(150, 50, 50, 50), null, Color.RED,
-			null, l1);
+			new Rectangle(150, 50, 50, 50), null, Color.RED, null, l1);
 
 	public List<FXGeometricShapeVisual> getShapeVisuals() {
 		List<FXGeometricShapeVisual> visualShapes = new ArrayList<FXGeometricShapeVisual>();
-		
+
 		// g shape
 		visualShapes.add(new FXGeometricShapeVisual(createGBaseShape(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
@@ -46,11 +44,10 @@ public class FXGeometricVisualModel {
 		visualShapes.add(new FXGeometricShapeVisual(createEShape(),
 				new AffineTransform(1, 0, 0, 1, 101, 148), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		
-		
 		// f shape
-		visualShapes.add(new FXGeometricShapeVisual(createFShape(),
-				null, GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
-		
+		visualShapes.add(new FXGeometricShapeVisual(createFShape(), null,
+				GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
+
 		// gDotShape
 		visualShapes.add(new FXGeometricShapeVisual(createDotShape(), new
 		 AffineTransform(1, 0, 0, 1, 87, 224), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
@@ -222,4 +219,5 @@ public class FXGeometricVisualModel {
 				188, 157, 178, 155).toBezier()));
 		return new CurvedPolygon(segments);
 	}
+
 }

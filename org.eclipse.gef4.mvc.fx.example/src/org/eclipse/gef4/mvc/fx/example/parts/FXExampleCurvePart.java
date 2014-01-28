@@ -15,7 +15,7 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveVisual;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectionPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
@@ -32,7 +32,7 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
-		installEditPolicy(AbstractSelectionFeedbackPolicy.class, new FXSelectionPolicy() {
+		installEditPolicy(AbstractSelectionFeedbackPolicy.class, new FXSelectionFeedbackPolicy() {
 			private Line line;
 
 			@Override
