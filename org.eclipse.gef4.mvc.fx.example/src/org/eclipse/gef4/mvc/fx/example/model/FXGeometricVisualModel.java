@@ -35,7 +35,7 @@ public class FXGeometricVisualModel {
 		
 		// g shape
 		visualShapes.add(new FXGeometricShapeVisual(createGBaseShape(),
-				null, GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
+				new AffineTransform(1, 0, 0, 1, 27, 154), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		visualShapes.add(new FXGeometricShapeVisual(createGTopShape(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		visualShapes.add(new FXGeometricShapeVisual(
@@ -99,34 +99,34 @@ public class FXGeometricVisualModel {
 
 	private IShape createGBaseShape() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(27, 197, 37, 196));
-		segments.add(new Line(37, 196, 40, 184));
-		segments.add(new Line(40, 184, 50, 184));
-		segments.add(new Line(50, 184, 52, 174));
-		segments.add(new Line(52, 174, 64, 175));
-		segments.add(new Line(64, 175, 69, 164));
-		segments.add(new Line(69, 164, 81, 165));
-		segments.add(new Line(81, 165, 84, 154));
-		segments.add(new Line(84, 154, 92, 170));
-		segments.add(new Line(92, 170, 87, 173));
-		segments.add(new Line(87, 173, 84, 172));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(84, 172, 71,
-				177, 49, 195, 41, 215, 67, 211).toBezier()));
-		segments.add(new Line(67, 211, 66, 203));
-		segments.add(new Line(66, 203, 73, 200));
-		segments.add(new Line(73, 200, 81, 205));
-		segments.add(new Line(81, 205, 89, 199));
-		segments.add(new Line(89, 199, 94, 200));
-		segments.add(new Line(94, 200, 94, 209));
-		segments.add(new Line(94, 209, 82, 210));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(82, 210, 80,
-				219, 78, 228).toBezier()));
-		segments.add(new Line(78, 228, 74, 228));
-		segments.add(new Line(74, 228, 73, 213));
-		segments.add(new Line(73, 213, 52, 226));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(52, 226, 44,
-				228, 41, 226).toBezier()));
-		segments.add(new Line(41, 226, 27, 197));
+		segments.add(new Line(0, 43, 10, 42));
+		segments.add(new Line(10, 42, 13, 30));
+		segments.add(new Line(13, 30, 23, 30));
+		segments.add(new Line(23, 30, 25, 20));
+		segments.add(new Line(25, 20, 37, 21));
+		segments.add(new Line(37, 21, 42, 10));
+		segments.add(new Line(42, 10, 54, 11));
+		segments.add(new Line(54, 11, 57, 0));
+		segments.add(new Line(57, 0, 65, 16));
+		segments.add(new Line(65, 16, 60, 19));
+		segments.add(new Line(60, 19, 57, 18));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(57, 18, 45,
+				23, 22, 41, 14, 61, 40, 57).toBezier()));
+		segments.add(new Line(40, 57, 39, 49));
+		segments.add(new Line(39, 49, 46, 46));
+		segments.add(new Line(46, 46, 54, 51));
+		segments.add(new Line(54, 51, 62, 45));
+		segments.add(new Line(62, 45, 67, 46));
+		segments.add(new Line(67, 46, 67, 53));
+		segments.add(new Line(67, 53, 55, 54));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(55, 54, 53,
+				65, 51, 74).toBezier()));
+		segments.add(new Line(51, 74, 47, 74));
+		segments.add(new Line(47, 74, 46, 59));
+		segments.add(new Line(46, 59, 25, 72));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(25, 72, 17,
+				74, 14, 72).toBezier()));
+		segments.add(new Line(14, 72, 0, 43));
 		return new CurvedPolygon(segments);
 	}
 
