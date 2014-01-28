@@ -16,30 +16,33 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
-public class AbstractHoverTool<V> extends AbstractTool<V> implements PropertyChangeListener {
+public class AbstractHoverTool<V> extends AbstractTool<V> implements
+		PropertyChangeListener {
 
 	protected IHoverModel<V> getHoverModel() {
 		return getDomain().getViewer().getHoverModel();
 	}
-	
+
 	@Override
 	public void activate() {
 		super.activate();
 		getDomain().getViewer().addPropertyChangeListener(this);
 	}
-	
+
 	@Override
 	public void deactivate() {
 		getDomain().getViewer().removePropertyChangeListener(this);
 		super.deactivate();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		/*
-		 * TODO: Viewer should flush interaction model data when contents changes.
+		 * TODO: Viewer should flush interaction model data when contents
+		 * changes.
 		 */
 		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
 			hover(null);
@@ -47,7 +50,17 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements PropertyCha
 	}
 
 	public void hover(IContentPart<V> hovered) {
-		getHoverModel().setHover(hovered);
+		if (hovered == null || getToolPolicy(hovered) == null
+				|| !getToolPolicy(hovered).isHoverable()) {
+			getHoverModel().setHover(null);
+		} else {
+			getHoverModel().setHover(hovered);
+		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private IHoverToolPolicy<V> getToolPolicy(IContentPart<V> hovered) {
+		return hovered.getEditPolicy(IHoverToolPolicy.class);
+	}
+
 }

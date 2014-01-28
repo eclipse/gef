@@ -15,10 +15,16 @@ package org.eclipse.gef4.mvc.policies;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -56,35 +62,47 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 
 			boolean inOld = oldSelection.contains(getHost());
 			boolean inNew = newSelection.contains(getHost());
-			if (inOld && !inNew) {
-				deselect();
-			} else if (!inOld && inNew) {
+
+			if (inOld) {
+				hideFeedback();
+				removeHandles();
+			}
+
+			if (inNew) {
 				if (newSelection.get(0) == getHost()) {
-					selectPrimary();
+					if (newSelection.size() <= 1) {
+						addHandles();
+					}
+					showPrimaryFeedback();
 				} else {
-					selectSecondary();
+					showSecondaryFeedback();
 				}
 			}
 		}
 	}
 
-	public void selectSecondary() {
+	protected abstract void hideFeedback();
+
+	@Override
+	public List<IHandlePart<V>> createHandles() {
+		IVisualPart<V> host = getHost();
+		IHandlePartFactory<V> factory = getHandlePartFactory(host);
+		if (host instanceof IContentPart) {
+			List<IContentPart<V>> parts = new ArrayList<IContentPart<V>>(1);
+			parts.add((IContentPart<V>) host);
+			List<IHandlePart<V>> handleParts = factory
+					.createSelectionHandleParts(parts);
+			return handleParts;
+		}
+		return Collections.<IHandlePart<V>> emptyList();
 	}
 
-	public void deselect() {
-		hideFeedback();
+	private IHandlePartFactory<V> getHandlePartFactory(IVisualPart<V> host) {
+		return host.getRoot().getViewer().getHandlePartFactory();
 	}
 
-	public void selectPrimary() {
-		hideFeedback();
-		createFeedbackVisuals();
-		applyFeedbackEffect();
-		showFeedback();
-	}
+	protected abstract void showSecondaryFeedback();
 
-	/**
-	 * <pre>feedback.setEffect(dropShadow);</pre>
-	 */
-	public abstract void applyFeedbackEffect();
+	protected abstract void showPrimaryFeedback();
 
 }

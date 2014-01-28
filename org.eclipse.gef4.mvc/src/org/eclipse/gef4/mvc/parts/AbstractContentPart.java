@@ -19,12 +19,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.policies.DefaultHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultSelectionToolPolicy;
+import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.ISelectionToolPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {
 
 	private Object model;
+	
+	public AbstractContentPart() {
+		installEditPolicy(ISelectionToolPolicy.class, new DefaultSelectionToolPolicy<V>());
+		installEditPolicy(IHoverToolPolicy.class, new DefaultHoverToolPolicy<V>());
+	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getModel()

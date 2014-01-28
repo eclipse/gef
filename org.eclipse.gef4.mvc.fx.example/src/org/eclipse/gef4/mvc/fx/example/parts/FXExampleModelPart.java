@@ -8,7 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricVisualModel;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -31,8 +31,8 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 	}
 	
 	@Override
-	public FXGeometricVisualModel getModel() {
-		return (FXGeometricVisualModel)super.getModel();
+	public FXGeometricModel getModel() {
+		return (FXGeometricModel)super.getModel();
 	}
 
 	@Override

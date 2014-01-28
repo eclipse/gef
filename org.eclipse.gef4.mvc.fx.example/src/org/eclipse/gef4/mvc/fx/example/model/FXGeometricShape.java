@@ -12,19 +12,19 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 
-public class FXGeometricShapeElement extends
-		AbstractFXGeometricVisualElement<IShape> {
+public class FXGeometricShape extends
+		AbstractFXGeometricElement<IShape> {
 
 	// TODO: move to superclass
-	public List<AbstractFXGeometricVisualElement<? extends IGeometry>> anchored = new ArrayList<AbstractFXGeometricVisualElement<? extends IGeometry>>();
+	public List<AbstractFXGeometricElement<? extends IGeometry>> anchored = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 
 	public Dimension offset;
 	public Color fill;
 	public Effect effect;
 
 	@SafeVarargs
-	public FXGeometricShapeElement(IShape shape, AffineTransform transform, Color fill,
-			Effect effect, AbstractFXGeometricVisualElement<? extends IGeometry>... anchords) {
+	public FXGeometricShape(IShape shape, AffineTransform transform, Color fill,
+			Effect effect, AbstractFXGeometricElement<? extends IGeometry>... anchords) {
 		super(shape, transform);
 		this.fill = fill;
 		this.effect = effect;

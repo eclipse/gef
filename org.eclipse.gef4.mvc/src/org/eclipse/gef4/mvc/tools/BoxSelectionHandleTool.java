@@ -73,7 +73,7 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 		if (newSelection.size() > 1) {
 			// create multi selection handles
 			if (getHandlePartFactory() != null) {
-				handleParts = getHandlePartFactory().createHandleParts(newSelection);
+				handleParts = getHandlePartFactory().createSelectionHandleParts(newSelection);
 				rootPart.addHandleParts(handleParts);
 			}
 		}

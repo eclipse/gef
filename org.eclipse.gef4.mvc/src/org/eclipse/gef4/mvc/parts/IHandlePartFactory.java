@@ -16,11 +16,16 @@ import java.util.List;
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public interface IHandlePartFactory<V> {
 
-	public List<IHandlePart<V>> createHandleParts(
-			List<IContentPart<V>> selection);
+	public List<IHandlePart<V>> createFocusHandleParts(IContentPart<V> focused);
+
+	public List<IHandlePart<V>> createHoverHandleParts(IContentPart<V> hovered);
+
+	public List<IHandlePart<V>> createSelectionHandleParts(
+			List<IContentPart<V>> selected);
+
 }

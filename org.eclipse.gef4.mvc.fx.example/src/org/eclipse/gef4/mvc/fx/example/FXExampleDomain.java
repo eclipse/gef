@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.fx.domain.FXEditDomain;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleShapePart;
-import org.eclipse.gef4.mvc.fx.example.tools.FXBendPointTool;
+import org.eclipse.gef4.mvc.fx.example.tools.FXHandleDragTool;
 import org.eclipse.gef4.mvc.fx.example.tools.SelectionXorTool;
 import org.eclipse.gef4.mvc.fx.tools.FXEventTargetCompositeXorTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
@@ -39,7 +39,7 @@ public class FXExampleDomain extends FXEditDomain {
 				boxHandleTool, new FXRelocateTool());
 		SelectionXorTool handleXor = new SelectionXorTool();
 		handleXor.bindToolToType(FXExampleShapePart.class, new FXResizeTool());
-		handleXor.bindToolToType(FXExampleCurvePart.class, new FXBendPointTool());
+		handleXor.bindToolToType(FXExampleCurvePart.class, new FXHandleDragTool());
 		defaultTool.addHandleTools(handleXor);
 		defaultTool.addVisualTools(selectionTool, hoverTool, boxHandleTool);
 		return defaultTool;

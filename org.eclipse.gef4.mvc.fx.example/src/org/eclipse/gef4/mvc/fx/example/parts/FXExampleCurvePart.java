@@ -9,71 +9,118 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveElement;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackPolicy;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.example.policies.AbstractAnchorPointPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.AbstractNewAnchorPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackByEffectPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
-public class FXExampleCurvePart extends AbstractFXContentPart implements
+public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		PropertyChangeListener {
 
 	private GeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
-	@SuppressWarnings("unchecked")
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
-		installEditPolicy(AbstractSelectionFeedbackPolicy.class, new FXSelectionFeedbackPolicy() {
+		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
+				new FXSelectionFeedbackByEffectPolicy() {
+					@Override
+					public List<IHandlePart<Node>> createHandles() {
+						ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
+						List<Point> wayPoints = getModel().getWayPoints();
+						int i = 0;
+						for (Point wayPoint : wayPoints) {
+							handles.add(new FXAnchorPointHandlePart(
+									(IContentPart<Node>) getHost(), i++, wayPoint));
+						}
+						return handles;
+					}
+				});
+		installEditPolicy(AbstractHoverFeedbackPolicy.class,
+				new FXHoverFeedbackByEffectPolicy() {
+					@Override
+					public List<IHandlePart<Node>> createHandles() {
+						ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
+						int i = 0;
+						for (Line line : ((Polyline) visual.getGeometry()).getCurves()) {
+							Point midPoint = line.get(0.5);
+							handles.add(new FXInsertAnchorPointHandlePart(
+									(IContentPart<Node>) getHost(), i++, midPoint));
+						}
+						return handles;
+					}
+				});
+		installEditPolicy(AbstractNewAnchorPointPolicy.class, new AbstractNewAnchorPointPolicy() {
+			private List<Point> wayPoints = new ArrayList<Point>();
+			
 			@Override
-			public Node createFeedback(Node selectionVisual) {
-				if (selectionVisual instanceof GeometryNode) {
-					GeometryNode<ICurve> gn = (GeometryNode<ICurve>) selectionVisual;
-					return new GeometryNode<ICurve>((ICurve) gn.getGeometry().getCopy());
-				}
-				return super.createFeedback(selectionVisual);
-			}
-		});
-		installEditPolicy(AbstractHoverFeedbackPolicy.class, new FXHoverFeedbackPolicy() {
-			@Override
-			public Node createFeedback(Node selectionVisual) {
-				if (selectionVisual instanceof GeometryNode) {
-					GeometryNode<ICurve> gn = (GeometryNode<ICurve>) selectionVisual;
-					return new GeometryNode<ICurve>((ICurve) gn.getGeometry().getCopy());
-				}
-				return super.createFeedback(selectionVisual);
-			}
-		});
-		installEditPolicy(AbstractHandlePolicy.class, new AbstractHandlePolicy<Node>() {
-			@Override
-			public List<IHandlePart<Node>> createSelectionHandles() {
-				List<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
-//				handles.add(new FXBendHandlePart());
-				return handles;
+			public void moveAnchorPoint(int wayPointIndex, Point p) {
+				Point point = wayPoints.get(wayPointIndex);
+				point.x = p.x;
+				point.y = p.y;
+				refreshVisualWith(wayPoints);
 			}
 			
 			@Override
-			public List<IHandlePart<Node>> createHoverHandles() {
-				return super.createSelectionHandles();
+			public void initAnchorPoint(int wayPointIndex, Point p) {
+				FXGeometricCurve model = getModel();
+				List<Point> points = model.getWayPoints();
+				wayPoints.clear();
+				wayPoints.addAll(points);
+				wayPoints.add(wayPointIndex, new Point(p));
+			}
+			
+			@Override
+			public void commitAnchorPoint(int wayPointIndex, Point p) {
+				Point point = wayPoints.get(wayPointIndex);
+				point.x = p.x;
+				point.y = p.y;
+				getModel().addWayPoint(wayPointIndex, point);
+			}
+		});
+		installEditPolicy(AbstractAnchorPointPolicy.class, new AbstractAnchorPointPolicy() {
+			private List<Point> wayPoints = new ArrayList<Point>();
+			
+			@Override
+			public void initAnchorPoint(int wayPointIndex) {
+				wayPoints.clear();
+				wayPoints.addAll(getModel().getWayPoints());
+			}
+			
+			@Override
+			public void moveAnchorPoint(int wayPointIndex, Point p) {
+				Point point = wayPoints.get(wayPointIndex);
+				point.x = p.x;
+				point.y = p.y;
+				refreshVisualWith(wayPoints);
+			}
+			
+			@Override
+			public void commitAnchorPoint(int wayPointIndex, Point p) {
+				getModel().setWayPoint(wayPointIndex, p);
 			}
 		});
 	}
 
 	@Override
-	public FXGeometricCurveElement getModel() {
-		return (FXGeometricCurveElement) super.getModel();
+	public FXGeometricCurve getModel() {
+		return (FXGeometricCurve) super.getModel();
 	}
 
 	@Override
 	public void setModel(Object model) {
-		if (!(model instanceof FXGeometricCurveElement)) {
+		if (!(model instanceof FXGeometricCurve)) {
 			throw new IllegalArgumentException(
 					"Only ICurve models are supported.");
 		}
@@ -87,11 +134,43 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	@Override
 	public void refreshVisual() {
-		FXGeometricCurveElement curveVisual = getModel();
-		if (visual.getGeometry() != curveVisual.geometry) {
-			visual.setGeometry(curveVisual.geometry);
-		}
-		visual.toBack();
+		// TODO: compare way points to identify if we need to refresh
+		// use anchors as start and end point
+		FXGeometricCurve curveVisual = getModel();
+		List<Point> wayPoints = curveVisual.getWayPoints();
+		refreshVisualWith(wayPoints);
+	}
+	
+	private void refreshVisualWith(List<Point> wayPoints) {
+		Point[] startEnd = computeStartEnd();
+		ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
+		points.add(startEnd[0]);
+		points.addAll(wayPoints);
+		points.add(startEnd[1]);
+		visual.setGeometry(new Polyline(points.toArray(new Point[0])));
+	}
+
+	private Point[] computeStartEnd() {
+		Node startNode = anchors.get(0).getAnchorage();
+		Node endNode = anchors.get(1).getAnchorage();
+
+		// compute reference points in local coordinate space
+		Point startReference = JavaFX2Geometry.toRectangle(
+				getVisual().sceneToLocal(
+						endNode.localToScene(endNode.getBoundsInLocal())))
+				.getCenter();
+		Point endReference = JavaFX2Geometry.toRectangle(
+				getVisual().sceneToLocal(
+						startNode.localToScene(startNode.getBoundsInLocal())))
+				.getCenter();
+
+		// compute new anchor positions
+		Point start = anchors.get(0).getPosition(this.getVisual(),
+				startReference);
+		Point end = anchors.get(1).getPosition(this.getVisual(), endReference);
+		
+		Point[] startEnd = new Point[] { start, end };
+		return startEnd;
 	}
 
 	@Override
@@ -108,72 +187,18 @@ public class FXExampleCurvePart extends AbstractFXContentPart implements
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		super.propertyChange(evt);
 		if (evt.getPropertyName().equals(IAnchor.REPRESH)) {
-			updateModel();
-			refreshVisual();
-		}
-	}
-
-	/*
-	 * TODO: - position computation (currently somewhere inside the bounds) -
-	 * source / target distinction
-	 */
-	private void updateModel() {
-		if (anchors.size() == 2) {
-			// use anchors as start and end point
-			Node startNode = anchors.get(0).getAnchorage();
-			Node endNode = anchors.get(1).getAnchorage();
-
-			// compute reference points in local coordinate space
-			Point startReference = JavaFX2Geometry.toRectangle(
-					getVisual().sceneToLocal(
-							endNode.localToScene(endNode.getBoundsInLocal())))
-					.getCenter();
-			Point endReference = JavaFX2Geometry.toRectangle(
-					getVisual()
-							.sceneToLocal(
-									startNode.localToScene(startNode
-											.getBoundsInLocal()))).getCenter();
-
-			try {
-				// compute new anchor positions
-				Point start = anchors.get(0).getPosition(this.getVisual(),
-						startReference);
-				Point end = anchors.get(1).getPosition(this.getVisual(),
-						endReference);
-
-				// update model
-				getModel().geometry = createCurve(start, end);
-			} catch (IllegalArgumentException e) {
-				// When no intersection point can be found by the ChopBoxAnchor,
-				// the connection is invisible
-				// TODO: handle this proactively
+			if (anchors.size() == 2) {
+				refreshVisual();
 			}
 		}
 	}
 
-//	public ICurve createCurve(Point start, Point end) {
-//		Point[] points = new Point[anchorPoints.size() + 2];
-//		points[0] = start;
-//		for (int i = 0; i < anchorPoints.size(); i++) {
-//			points[i+1] = anchorPoints.get(i);
-//		}
-//		points[points.length - 1] = end;
-//		return PolyBezier.interpolateCubic(points);
-//	}
-	
-	public ICurve createCurve(Point start, Point end) {
-		return new org.eclipse.gef4.geometry.planar.Line(start, end);
-	}
-
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-//		System.out.println("getAnchor() == null ?!");
+		// System.out.println("getAnchor() == null ?!");
 		return null;
 	}
-
-//	public List<Point> getAnchorPoints() {
-//		return anchorPoints;
-//	}
 
 }

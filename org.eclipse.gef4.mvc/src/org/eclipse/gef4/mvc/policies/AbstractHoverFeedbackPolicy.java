@@ -15,11 +15,14 @@ package org.eclipse.gef4.mvc.policies;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -32,55 +35,42 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public abstract class AbstractHoverFeedbackPolicy<V> extends
 		AbstractFeedbackPolicy<V> implements PropertyChangeListener {
 
-	private boolean selected = false;
-
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getSelectionModel().addPropertyChangeListener(this);
 		getHost().getRoot().getViewer().getHoverModel().addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getSelectionModel().removePropertyChangeListener(this);
-		getHost().getRoot().getViewer().getSelectionModel().removePropertyChangeListener(this);
+		getHost().getRoot().getViewer().getHoverModel().removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@SuppressWarnings({"unchecked"})
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(ISelectionModel.SELECTION_PROPERTY)) {
-			List<IContentPart<V>> newSelection = (List<IContentPart<V>>) event.getNewValue();
-			selected = newSelection.contains(getHost());
-			if (selected) {
-				unhover();
-			}
-		} else if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
+		if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
 			IContentPart<V> oldHovered = (IContentPart<V>) event.getOldValue();
 			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
+			
 			if (oldHovered == getHost()) {
-				unhover();
+				removeHandles();
+				hideFeedback();
 			} else if (newHovered == getHost()) {
-				if (!selected) {
-					hover();
-				}
+				showFeedback();
+				addHandles();
 			}
 		}
 	}
+	
+	protected abstract void showFeedback();
 
-	public void hover() {
-		hideFeedback();
-		createFeedbackVisuals();
-		applyFeedbackEffect();
-		showFeedback();
-	}
-
-	public abstract void applyFeedbackEffect();
-
-	public void unhover() {
-		hideFeedback();
+	protected abstract void hideFeedback();
+	
+	@Override
+	protected List<IHandlePart<V>> createHandles() {
+		return Collections.emptyList();
 	}
 
 }

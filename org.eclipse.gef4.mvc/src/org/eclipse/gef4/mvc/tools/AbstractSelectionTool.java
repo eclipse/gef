@@ -21,26 +21,32 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
+import org.eclipse.gef4.mvc.policies.ISelectionToolPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * 
  * @author anyssen
  * @author mwienand
- *
+ * 
  * @param <V>
  */
-public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implements PropertyChangeListener {
+public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
+		implements PropertyChangeListener {
 
 	@Override
 	public void setDomain(IEditDomain<V> domain) {
 		super.setDomain(domain);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected AbstractSelectionFeedbackPolicy<V> getSelectionPolicy(
-			IVisualPart<V> editPart) {
-		return editPart.getEditPolicy(AbstractSelectionFeedbackPolicy.class);
+	// @SuppressWarnings("unchecked")
+	// protected AbstractSelectionFeedbackPolicy<V> getSelectionPolicy(
+	// IVisualPart<V> editPart) {
+	// return editPart.getEditPolicy(AbstractSelectionFeedbackPolicy.class);
+	// }
+
+	protected ISelectionToolPolicy getToolPolicy(IVisualPart<V> visualPart) {
+		return visualPart.getEditPolicy(ISelectionToolPolicy.class);
 	}
 
 	/**
@@ -59,7 +65,8 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(
 				selectionModel.getSelected());
 		// determine new selection
-		if (targetPart == null) {
+		if (targetPart == null || getToolPolicy(targetPart) == null
+				|| !getToolPolicy(targetPart).isSelectable()) {
 			// remove all selected
 			selectionModel.deselectAll();
 		} else {
@@ -85,30 +92,31 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V> implement
 				}
 			}
 		}
-		
+
 		return changed;
 	}
 
 	protected ISelectionModel<V> getSelectionModel() {
 		return getDomain().getViewer().getSelectionModel();
 	}
-	
+
 	@Override
 	public void activate() {
 		super.activate();
 		getDomain().getViewer().addPropertyChangeListener(this);
 	}
-	
+
 	@Override
 	public void deactivate() {
 		getDomain().getViewer().removePropertyChangeListener(this);
 		super.deactivate();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		/*
-		 * TODO: Viewer should flush interaction model data when contents changes.
+		 * TODO: Viewer should flush interaction model data when contents
+		 * changes.
 		 */
 		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
 			select(null, false);
