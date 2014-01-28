@@ -16,7 +16,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-public class FXBendTool extends AbstractTool<Node> {
+public class FXBendPointTool extends AbstractTool<Node> {
 
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		private FXExampleCurvePart curvePart;
@@ -41,20 +41,15 @@ public class FXBendTool extends AbstractTool<Node> {
 				IVisualPart<Node> handlePart = getDomain().getViewer()
 						.getVisualPartMap().get(target);
 
-				int index = 0;
-				if (handlePart instanceof FXBendHandlePart) {
-					index = ((FXBendHandlePart) handlePart).getAnchorIndex();
-				}
+//				int index = 0;
+//				if (handlePart instanceof FXBendHandlePart) {
+//					index = ((FXBendHandlePart) handlePart).getAnchorIndex();
+//				}
 
 				startX = handlePart.getVisual().getLayoutX();
 				startY = handlePart.getVisual().getLayoutY();
-
-				List<Point> anchorPoints = curvePart.getAnchorPoints();
-				if (anchorPoints.isEmpty()) {
-					anchorPoints.add(new Point(startX, startY));
-				} else {
-					anchorPoints.set(index, new Point(startX, startY));
-				}
+				
+				// TODO: policy.updateAnchorPoint(...);
 			} else {
 				throw new IllegalStateException("Illegal selection!");
 			}
@@ -67,15 +62,16 @@ public class FXBendTool extends AbstractTool<Node> {
 			if (!(handlePart instanceof FXBendHandlePart)) {
 				throw new IllegalStateException("Illegal handle part!");
 			}
-			List<Point> anchorPoints = curvePart.getAnchorPoints();
-			Point point = anchorPoints.get(((FXBendHandlePart) handlePart)
-					.getAnchorIndex());
-			point.x = startX + dx;
-			point.y = startY + dy;
-			ICurve curve = curvePart.getModel().geometry;
-			curvePart.getModel().geometry = curvePart.createCurve(curve.getP1(),
-					curve.getP2());
-			curvePart.refreshVisual();
+//			List<Point> anchorPoints = curvePart.getAnchorPoints();
+//			Point point = anchorPoints.get(((FXBendHandlePart) handlePart)
+//					.getAnchorIndex());
+//			point.x = startX + dx;
+//			point.y = startY + dy;
+//			ICurve curve = curvePart.getModel().geometry;
+//			curvePart.getModel().geometry = curvePart.createCurve(curve.getP1(),
+//					curve.getP2());
+//			curvePart.refreshVisual();
+			// TODO: policy.addAnchorPoint(...);
 		}
 	};
 	private Scene scene;

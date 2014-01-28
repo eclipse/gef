@@ -67,15 +67,7 @@ abstract public class AbstractHandlePolicy<V> extends AbstractEditPolicy<V>
 	 * Responsible for creating handle parts for the host content part if the
 	 * host content part is the only selected part.
 	 */
-	public void createSelectionHandles() {
-		selectionHandles = createHandles();
-		getHost().getRoot().addHandleParts(selectionHandles);
-	}
-
-	/*
-	 * TODO: Differentiate between different handle creation methods.
-	 */
-	private List<IHandlePart<V>> createHandles() {
+	public List<IHandlePart<V>> createSelectionHandles() {
 		IVisualPart<V> host = getHost();
 		IHandlePartFactory<V> factory = getHandlePartFactory(host);
 		if (host instanceof IContentPart) {
@@ -95,17 +87,16 @@ abstract public class AbstractHandlePolicy<V> extends AbstractEditPolicy<V>
 	 * Responsible for creating handle parts for the host content part if the
 	 * host content part has keyboard focus.
 	 */
-	public void createFocusHandles() {
-		focusHandles = createHandles();
+	public List<IHandlePart<V>> createFocusHandles() {
+		return Collections.emptyList();
 	}
 
 	/**
 	 * Responsible for creating handle parts for the host content part if the
 	 * host content part is hovered.
 	 */
-	public void createHoverHandles() {
-		hoverHandles = createHandles();
-		getHost().getRoot().addHandleParts(hoverHandles);
+	public List<IHandlePart<V>> createHoverHandles() {
+		return Collections.emptyList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -139,48 +130,43 @@ abstract public class AbstractHandlePolicy<V> extends AbstractEditPolicy<V>
 		boolean inOld = oldSelection.contains(getHost());
 		boolean inNew = newSelection.contains(getHost());
 		if (inOld && !inNew || newSelection.size() > 1) {
-			removeSelectionHandles();
+			removeHandles(selectionHandles);
 		} else if (!inOld && inNew) {
-			createSelectionHandles();
-		}
-	}
-
-	private void removeSelectionHandles() {
-		if (selectionHandles != null && !selectionHandles.isEmpty()) {
-			getHost().getRoot().removeHandleParts(selectionHandles);
-			selectionHandles.clear();
+			selectionHandles = createSelectionHandles();
+			addHandles(selectionHandles);
 		}
 	}
 
 	private void onHoverChange(IRootVisualPart<V> rootPart,
 			IContentPart<V> oldHovered, IContentPart<V> newHovered) {
 		if (oldHovered == getHost()) {
-			removeHoverHandles();
+			removeHandles(hoverHandles);
 		} else if (newHovered == getHost()) {
-			createHoverHandles();
+			hoverHandles = createHoverHandles();
+			addHandles(hoverHandles);
 		}
 	}
 
-	private void removeHoverHandles() {
-		if (hoverHandles != null && !hoverHandles.isEmpty()) {
-			getHost().getRoot().removeHandleParts(hoverHandles);
-			hoverHandles.clear();
-		}
-	}
-	
-	private void removeFocusHandles() {
-		if (focusHandles != null && !focusHandles.isEmpty()) {
-			getHost().getRoot().removeHandleParts(focusHandles);
-			focusHandles.clear();
+	private void removeHandles(List<IHandlePart<V>> handles) {
+		if (handles != null && !handles.isEmpty()) {
+			getHost().getRoot().removeHandleParts(handles);
+			handles.clear();
 		}
 	}
 
 	private void onFocusChange(IRootVisualPart<V> rootPart,
 			IContentPart<V> oldFocused, IContentPart<V> newFocused) {
 		if (oldFocused == getHost()) {
-			removeFocusHandles();
+			removeHandles(focusHandles);
 		} else if (newFocused == getHost()) {
-			createFocusHandles();
+			focusHandles = createFocusHandles();
+			addHandles(focusHandles);
+		}
+	}
+
+	private void addHandles(List<IHandlePart<V>> handles) {
+		if (handles != null && !handles.isEmpty()) {
+			getHost().getRoot().addHandleParts(handles);
 		}
 	}
 

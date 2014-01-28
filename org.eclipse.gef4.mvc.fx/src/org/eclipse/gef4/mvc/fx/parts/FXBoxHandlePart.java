@@ -18,23 +18,7 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXBoxHandlePart extends AbstractHandlePart<Node> {
-
-	private ChangeListener<Number> positionChangeListener = new ChangeListener<Number>() {
-		@Override
-		public void changed(ObservableValue<? extends Number> observable,
-				Number oldValue, Number newValue) {
-			refreshVisual();
-		}
-	};
-
-	private ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds newValue) {
-			refreshVisual();
-		}
-	};
+public class FXBoxHandlePart extends AbstractFXHandlePart {
 
 	private Rectangle visual = null;
 	private Pos pos;
@@ -51,32 +35,6 @@ public class FXBoxHandlePart extends AbstractHandlePart<Node> {
 		visual.setStroke(Color.web("#5a61af"));
 		visual.setWidth(5);
 		visual.setHeight(5);
-	}
-
-	@Override
-	public void activate() {
-		super.activate();
-		for (IContentPart<Node> target : getTargetContentParts()) {
-			target.getVisual().layoutXProperty()
-					.addListener(positionChangeListener);
-			target.getVisual().layoutYProperty()
-					.addListener(positionChangeListener);
-			target.getVisual().layoutBoundsProperty()
-					.addListener(boundsChangeListener);
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		for (IContentPart<Node> target : getTargetContentParts()) {
-			target.getVisual().layoutXProperty()
-					.removeListener(positionChangeListener);
-			target.getVisual().layoutYProperty()
-					.removeListener(positionChangeListener);
-			target.getVisual().layoutBoundsProperty()
-					.removeListener(boundsChangeListener);
-		}
-		super.deactivate();
 	}
 
 	@Override

@@ -4,17 +4,18 @@ import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeVisual;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHandlePolicy;
+import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
@@ -24,10 +25,13 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	private GeometryNode<IShape> visual;
 	private IAnchor<Node> anchor;
 
+	@SuppressWarnings("unchecked")
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackPolicy());
+		installEditPolicy(AbstractHoverFeedbackPolicy.class,
+				new FXHoverFeedbackPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy());
 		installEditPolicy(AbstractHandlePolicy.class, new AbstractHandlePolicy<Node>() {
@@ -35,13 +39,13 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public FXGeometricShapeVisual getModel() {
-		return (FXGeometricShapeVisual) super.getModel();
+	public FXGeometricShapeElement getModel() {
+		return (FXGeometricShapeElement) super.getModel();
 	}
 
 	@Override
 	public void setModel(Object model) {
-		if (!(model instanceof FXGeometricShapeVisual)) {
+		if (!(model instanceof FXGeometricShapeElement)) {
 			throw new IllegalArgumentException(
 					"Only IShape models are supported.");
 		}
@@ -55,7 +59,7 @@ public class FXExampleShapePart extends AbstractFXContentPart {
 
 	@Override
 	public void refreshVisual() {
-		FXGeometricShapeVisual shapeVisual = getModel();
+		FXGeometricShapeElement shapeVisual = getModel();
 		if (visual.getGeometry() != shapeVisual.geometry) {
 			// TODO: respect offset, scaling, etc.
 			visual.setGeometry(shapeVisual.geometry);

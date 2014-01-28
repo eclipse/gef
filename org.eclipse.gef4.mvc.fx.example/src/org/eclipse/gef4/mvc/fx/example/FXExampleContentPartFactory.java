@@ -2,8 +2,8 @@ package org.eclipse.gef4.mvc.fx.example;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveVisual;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeVisual;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurveElement;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShapeElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricVisualModel;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleModelPart;
@@ -27,9 +27,9 @@ public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 	@Override
 	public IContentPart<Node> createChildContentPart(IContentPart<Node> parent,
 			Object model) {
-		if (model instanceof FXGeometricShapeVisual) {
+		if (model instanceof FXGeometricShapeElement) {
 			return new FXExampleShapePart();
-		} else if (model instanceof FXGeometricCurveVisual) {
+		} else if (model instanceof FXGeometricCurveElement) {
 			return new FXExampleCurvePart();
 		} else {
 			throw new IllegalArgumentException(model.getClass().toString());

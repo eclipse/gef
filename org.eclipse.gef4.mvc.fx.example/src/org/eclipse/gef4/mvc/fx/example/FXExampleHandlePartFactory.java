@@ -29,19 +29,20 @@ public class FXExampleHandlePartFactory implements IHandlePartFactory<Node> {
 		IContentPart<Node> contentPart = selection.get(0);
 		if (contentPart instanceof FXExampleCurvePart) {
 			// generate handle parts for all beziers
-			FXExampleCurvePart cp = (FXExampleCurvePart) contentPart;
-			List<Point> anchorPoints = cp.getAnchorPoints();
-			anchorPoints.clear();
-			BezierCurve[] beziers = cp.getModel().geometry.toBezier();
-			int p = 0;
-			for (int i = 0; i < beziers.length; i++) {
-				anchorPoints.add(beziers[i].get(0.5));
-				handleParts.add(new FXBendHandlePart(contentPart, p++));
-				if (i != beziers.length - 1) {
-					anchorPoints.add(beziers[i].getP2());
-					handleParts.add(new FXBendHandlePart(contentPart, p++));
-				}
-			}
+			handleParts.add(new FXBendHandlePart(contentPart));
+//			FXExampleCurvePart cp = (FXExampleCurvePart) contentPart;
+//			List<Point> anchorPoints = cp.getAnchorPoints();
+//			anchorPoints.clear();
+//			BezierCurve[] beziers = cp.getModel().geometry.toBezier();
+//			int p = 0;
+//			for (int i = 0; i < beziers.length; i++) {
+//				anchorPoints.add(beziers[i].get(0.5));
+//				handleParts.add(new FXBendHandlePart(contentPart, p++));
+//				if (i != beziers.length - 1) {
+//					anchorPoints.add(beziers[i].getP2());
+//					handleParts.add(new FXBendHandlePart(contentPart, p++));
+//				}
+//			}
 		} else {
 			handleParts.add(new FXBoxHandlePart(selection, Pos.TOP_LEFT));
 			handleParts.add(new FXBoxHandlePart(selection, Pos.TOP_RIGHT));

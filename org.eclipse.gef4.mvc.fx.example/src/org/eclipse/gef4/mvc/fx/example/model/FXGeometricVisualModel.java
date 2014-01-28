@@ -21,43 +21,43 @@ public class FXGeometricVisualModel {
 	private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
-	private FXGeometricCurveVisual l1 = new FXGeometricCurveVisual(new Line(
+	private FXGeometricCurveElement l1 = new FXGeometricCurveElement(new Line(
 			100, 75, 150, 75));
-	private FXGeometricShapeVisual r1 = new FXGeometricShapeVisual(
+	private FXGeometricShapeElement r1 = new FXGeometricShapeElement(
 			new Rectangle(50, 50, 50, 50), null, Color.RED, null, l1);
-	private FXGeometricShapeVisual r2 = new FXGeometricShapeVisual(
+	private FXGeometricShapeElement r2 = new FXGeometricShapeElement(
 			new Rectangle(150, 50, 50, 50), null, Color.RED, null, l1);
 
-	public List<FXGeometricShapeVisual> getShapeVisuals() {
-		List<FXGeometricShapeVisual> visualShapes = new ArrayList<FXGeometricShapeVisual>();
+	public List<FXGeometricShapeElement> getShapeVisuals() {
+		List<FXGeometricShapeElement> visualShapes = new ArrayList<FXGeometricShapeElement>();
 
 		// g shape
-		visualShapes.add(new FXGeometricShapeVisual(createGBaseShape(),
+		visualShapes.add(new FXGeometricShapeElement(createGBaseShape(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShapeVisual(createGTopShape(),
+		visualShapes.add(new FXGeometricShapeElement(createGTopShape(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShapeVisual(
+		visualShapes.add(new FXGeometricShapeElement(
 				createGMiddleShape(), new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
 		
 		// e shape
-		visualShapes.add(new FXGeometricShapeVisual(createEShape(),
+		visualShapes.add(new FXGeometricShapeElement(createEShape(),
 				new AffineTransform(1, 0, 0, 1, 101, 148), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		
 		// f shape
-		visualShapes.add(new FXGeometricShapeVisual(createFShape(), null,
+		visualShapes.add(new FXGeometricShapeElement(createFShape(), null,
 				GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 
 		// gDotShape
-		visualShapes.add(new FXGeometricShapeVisual(createDotShape(), new
+		visualShapes.add(new FXGeometricShapeElement(createDotShape(), new
 		 AffineTransform(1, 0, 0, 1, 87, 224), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		
 		// eDotShape
-		visualShapes.add(new FXGeometricShapeVisual(createDotShape(), new
+		visualShapes.add(new FXGeometricShapeElement(createDotShape(), new
 				 AffineTransform(1, 0, 0, 1, 170, 224), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 		
 		// fDotShape
-		visualShapes.add(new FXGeometricShapeVisual(createDotShape(), new
+		visualShapes.add(new FXGeometricShapeElement(createDotShape(), new
 				 AffineTransform(1, 0, 0, 1, 225, 224), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 
 		visualShapes.add(r1);
@@ -72,8 +72,8 @@ public class FXGeometricVisualModel {
 		return outerShadow;
 	}
 
-	public List<FXGeometricCurveVisual> getCurveVisuals() {
-		List<FXGeometricCurveVisual> visualCurves = new ArrayList<FXGeometricCurveVisual>();
+	public List<FXGeometricCurveElement> getCurveVisuals() {
+		List<FXGeometricCurveElement> visualCurves = new ArrayList<FXGeometricCurveElement>();
 		visualCurves.add(l1);
 		return visualCurves;
 	}
