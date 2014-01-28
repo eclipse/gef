@@ -50,7 +50,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private int flags;
 
-	private Map<Class<? extends IEditPolicy<V>>, IEditPolicy<V>> editPolicies;
+	private Map<Class<?>, IEditPolicy<V>> editPolicies;
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -213,7 +213,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IEditPolicy<V>> P getEditPolicy(Class<P> key) {
+	public <P extends IEditPolicy<V>> P getEditPolicy(Class<? super P> key) {
 		if (editPolicies == null) {
 			return null;
 		}
@@ -232,10 +232,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IEditPolicy<V>> void installEditPolicy(Class<P> key,
-			P editPolicy) {
+	public <P extends IEditPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy){
 		if (editPolicies == null) {
-			editPolicies = new HashMap<Class<? extends IEditPolicy<V>>, IEditPolicy<V>>();
+			editPolicies = new HashMap<Class<?>, IEditPolicy<V>>();
 		}
 		editPolicies.put(key, editPolicy);
 		editPolicy.setHost(this);

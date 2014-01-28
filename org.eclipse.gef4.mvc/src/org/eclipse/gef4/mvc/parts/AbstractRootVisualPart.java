@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
@@ -22,7 +21,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
@@ -80,18 +79,7 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<IHandlePart<V>> getHandleParts() {
-		return filterChildren(IHandlePart.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T extends IVisualPart<V>> List<T> filterChildren(Class<T> type) {
-		List<T> handleParts = new ArrayList<T>();
-		for (IVisualPart<V> c : getChildren()) {
-			if (type.isInstance(c)) {
-				handleParts.add((T) c);
-			}
-		}
-		return handleParts;
+		return PartUtilities.filterParts(getChildren(), IHandlePart.class);
 	}
 
 	// TODO: return two lists (content and handle parts, do not have to provide

@@ -94,7 +94,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		IContentPart<V> editPart;
 		Object model;
 
-		List<IContentPart<V>> children = filterContentParts(getChildren());
+		@SuppressWarnings("unchecked")
+		List<IContentPart<V>> children = PartUtilities.filterParts(getChildren(), IContentPart.class);
 		int size = children.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {
@@ -143,17 +144,6 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 	}
 
-	private List<IContentPart<V>> filterContentParts(
-			List<IVisualPart<V>> visualParts) {
-		List<IContentPart<V>> contentParts = new ArrayList<IContentPart<V>>();
-		for (IVisualPart<V> visualPart : visualParts) {
-			if (visualPart instanceof IContentPart) {
-				contentParts.add((IContentPart<V>) visualPart);
-			}
-		}
-		return contentParts;
-	}
-
 	protected List<Object> getModelChildren() {
 		return Collections.emptyList();
 	}
@@ -162,6 +152,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		return Collections.emptyList();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setParent(IVisualPart<V> parent) {
 		if (getParent() == parent) {
@@ -169,11 +160,11 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 		if (parent == null) {
 			// remove all content children
-			for (IVisualPart<V> child : filterContentParts(getChildren())) {
+			for (IContentPart<V> child : (List<IContentPart<V>>)PartUtilities.filterParts(getChildren(), IContentPart.class)) {
 				removeChild(child);
 			}
 			// remove all content anchored
-			for (IVisualPart<V> anchored : filterContentParts(getAnchoreds())) {
+			for (IContentPart<V> anchored : (List<IContentPart<V>>)PartUtilities.filterParts(getAnchoreds(), IContentPart.class)) {
 				removeAnchored(anchored);
 			}
 		}
@@ -240,7 +231,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		IContentPart<V> editPart;
 		Object model;
 
-		List<IContentPart<V>> anchored = filterContentParts(getAnchoreds());
+		@SuppressWarnings("unchecked")
+		List<IContentPart<V>> anchored = PartUtilities.filterParts(getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {

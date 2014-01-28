@@ -38,19 +38,18 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	public void setParent(IVisualPart<V> parent);
 
 	public IVisualPart<V> getParent();
-	
+
 	public List<IVisualPart<V>> getChildren();
-	
+
 	public void removeChild(IVisualPart<V> child);
-	
+
 	public void addChild(IVisualPart<V> child, int index);
-	
+
 	public void reorderChild(IVisualPart<V> child, int index);
 
-//	public void addVisualToParentVisual(V parentVisual);
-//	
-//	public void removeVisualFromParentVisual(/*V parentVisual*/);
-
+	// public void addVisualToParentVisual(V parentVisual);
+	//
+	// public void removeVisualFromParentVisual(/*V parentVisual*/);
 
 	public void addAnchored(IVisualPart<V> anchored);
 
@@ -63,19 +62,18 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	public void removeAnchorage(IVisualPart<V> anchorage);
 
 	public List<IVisualPart<V>> getAnchorages();
-	
+
 	public void attachVisualToAnchorageVisual(IAnchor<V> anchor);
-	
+
 	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?
 	// TODO: maybe we can replace this with juice (so no need to register that
 	// externally)
-	public <P extends IEditPolicy<V>> P getEditPolicy(Class<P> key);
+	public <P extends IEditPolicy<V>> P getEditPolicy(Class<? super P> key);
 
-	public <P extends IEditPolicy<V>> void installEditPolicy(Class<P> key,
-			P editPolicy);
+	public <P extends IEditPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy);
 
 	public <P extends IEditPolicy<V>> void uninstallEditPolicy(Class<P> key);
 
