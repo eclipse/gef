@@ -334,7 +334,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * @param index
 	 *            new index for the child
 	 */
-	protected void reorderChild(IVisualPart<V> child, int index) {
+	public void reorderChild(IVisualPart<V> child, int index) {
 		removeChildVisual(child);
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);

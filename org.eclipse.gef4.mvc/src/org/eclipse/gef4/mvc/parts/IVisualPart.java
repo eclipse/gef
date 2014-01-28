@@ -44,6 +44,8 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	public void removeChild(IVisualPart<V> child);
 	
 	public void addChild(IVisualPart<V> child, int index);
+	
+	public void reorderChild(IVisualPart<V> child, int index);
 
 //	public void addVisualToParentVisual(V parentVisual);
 //	
