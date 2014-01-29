@@ -13,16 +13,17 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.example.policies.AbstractAnchorPointPolicy;
-import org.eclipse.gef4.mvc.fx.example.policies.AbstractNewAnchorPointPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
@@ -31,86 +32,102 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 	private GeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
+	public List<IHandlePart<Node>> createWayPointHandles() {
+		ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
+		
+		// create selection handles on the vertices
+		int i = 0;
+		for (Point wayPoint : getModel().getWayPoints()) {
+			handles.add(new FXWayPointHandlePart.Select(this, i, wayPoint));
+			i++;
+		}
+
+		// create insertion handles on the edges
+		i = 0;
+		for (Line line : ((Polyline) visual.getGeometry()).getCurves()) {
+			Point midPoint = line.get(0.5);
+			handles.add(new FXWayPointHandlePart.Create(this, i, midPoint));
+			i++;
+		}
+
+		return handles;
+	}
+
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy() {
 					@Override
-					public List<IHandlePart<Node>> createHandles() {
-						ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
-						List<Point> wayPoints = getModel().getWayPoints();
-						int i = 0;
-						for (Point wayPoint : wayPoints) {
-							handles.add(new FXAnchorPointHandlePart(
-									(IContentPart<Node>) getHost(), i++, wayPoint));
-						}
-						return handles;
+					public void activate() {
+						super.activate();
+						getModel().addPropertyChangeListener(this);
 					}
-				});
-		installEditPolicy(AbstractHoverFeedbackPolicy.class,
-				new FXHoverFeedbackByEffectPolicy() {
+
+					@Override
+					public void deactivate() {
+						getModel().removePropertyChangeListener(this);
+						super.deactivate();
+					}
+
+					@Override
+					public void propertyChange(PropertyChangeEvent event) {
+						super.propertyChange(event);
+						if (AbstractFXGeometricElement.GEOMETRY_PROPERTY
+								.equals(event.getPropertyName())) {
+							hideFeedback();
+							removeHandles();
+							addHandles();
+							showPrimaryFeedback();
+						}
+					}
+
 					@Override
 					public List<IHandlePart<Node>> createHandles() {
-						ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
-						int i = 0;
-						for (Line line : ((Polyline) visual.getGeometry()).getCurves()) {
-							Point midPoint = line.get(0.5);
-							handles.add(new FXInsertAnchorPointHandlePart(
-									(IContentPart<Node>) getHost(), i++, midPoint));
-						}
-						return handles;
+						return createWayPointHandles();
 					}
 				});
-		installEditPolicy(AbstractNewAnchorPointPolicy.class, new AbstractNewAnchorPointPolicy() {
-			private List<Point> wayPoints = new ArrayList<Point>();
-			
-			@Override
-			public void moveAnchorPoint(int wayPointIndex, Point p) {
-				Point point = wayPoints.get(wayPointIndex);
-				point.x = p.x;
-				point.y = p.y;
-				refreshVisualWith(wayPoints);
-			}
-			
-			@Override
-			public void initAnchorPoint(int wayPointIndex, Point p) {
-				FXGeometricCurve model = getModel();
-				List<Point> points = model.getWayPoints();
-				wayPoints.clear();
-				wayPoints.addAll(points);
-				wayPoints.add(wayPointIndex, new Point(p));
-			}
-			
-			@Override
-			public void commitAnchorPoint(int wayPointIndex, Point p) {
-				Point point = wayPoints.get(wayPointIndex);
-				point.x = p.x;
-				point.y = p.y;
-				getModel().addWayPoint(wayPointIndex, point);
-			}
-		});
-		installEditPolicy(AbstractAnchorPointPolicy.class, new AbstractAnchorPointPolicy() {
-			private List<Point> wayPoints = new ArrayList<Point>();
-			
-			@Override
-			public void initAnchorPoint(int wayPointIndex) {
-				wayPoints.clear();
-				wayPoints.addAll(getModel().getWayPoints());
-			}
-			
-			@Override
-			public void moveAnchorPoint(int wayPointIndex, Point p) {
-				Point point = wayPoints.get(wayPointIndex);
-				point.x = p.x;
-				point.y = p.y;
-				refreshVisualWith(wayPoints);
-			}
-			
-			@Override
-			public void commitAnchorPoint(int wayPointIndex, Point p) {
-				getModel().setWayPoint(wayPointIndex, p);
-			}
-		});
+		installEditPolicy(AbstractWayPointPolicy.class,
+				new AbstractWayPointPolicy() {
+					private List<Point> wayPoints = new ArrayList<Point>();
+					private boolean isCreate;
+
+					@Override
+					public void selectWayPoint(int wayPointIndex) {
+						isCreate = false;
+						wayPoints.clear();
+						wayPoints.addAll(getModel().getWayPoints());
+					}
+
+					@Override
+					public void createWayPoint(int wayPointIndex, Point p) {
+						isCreate = true;
+						wayPoints.clear();
+						wayPoints.addAll(getModel().getWayPoints());
+						wayPoints.add(wayPointIndex, new Point(p));
+					}
+
+					@Override
+					public void updateWayPoint(int wayPointIndex, Point p) {
+						Point point = wayPoints.get(wayPointIndex);
+						point.x = p.x;
+						point.y = p.y;
+						refreshVisualWith(wayPoints);
+					}
+
+					@Override
+					public void commitWayPoint(int wayPointIndex, Point p) {
+						if (isCreate) {
+							getModel().addWayPoint(wayPointIndex, p);
+						} else {
+							getModel().setWayPoint(wayPointIndex, p);
+						}
+					}
+
+					@Override
+					public void removeWayPoint(int wayPointIndex) {
+						getModel().removeWayPoint(wayPointIndex);
+					}
+				});
 	}
 
 	@Override
@@ -140,7 +157,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		List<Point> wayPoints = curveVisual.getWayPoints();
 		refreshVisualWith(wayPoints);
 	}
-	
+
 	private void refreshVisualWith(List<Point> wayPoints) {
 		Point[] startEnd = computeStartEnd();
 		ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
@@ -165,12 +182,15 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 				.getCenter();
 
 		// compute new anchor positions
-		Point start = anchors.get(0).getPosition(this.getVisual(),
-				startReference);
-		Point end = anchors.get(1).getPosition(this.getVisual(), endReference);
-		
-		Point[] startEnd = new Point[] { start, end };
-		return startEnd;
+		try {
+			Point start = anchors.get(0).getPosition(this.getVisual(),
+					startReference);
+			Point end = anchors.get(1).getPosition(this.getVisual(),
+					endReference);
+			return new Point[] { start, end };
+		} catch (IllegalArgumentException x) {
+			return new Point[] { startReference, endReference };
+		}
 	}
 
 	@Override

@@ -13,9 +13,12 @@ package org.eclipse.gef4.mvc.tools;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import org.eclipse.gef4.mvc.models.IHoverModel;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
@@ -30,14 +33,19 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	public void activate() {
 		super.activate();
 		getDomain().getViewer().addPropertyChangeListener(this);
+		getDomain().getViewer().getSelectionModel()
+				.addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void deactivate() {
+		getDomain().getViewer().getSelectionModel()
+				.removePropertyChangeListener(this);
 		getDomain().getViewer().removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		/*
@@ -46,10 +54,15 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		 */
 		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
 			hover(null);
+		} else if (ISelectionModel.SELECTION_PROPERTY.equals(evt
+				.getPropertyName())) {
+			if (((List<IContentPart<V>>) evt.getNewValue())
+					.contains(getHoverModel().getHover()))
+				hover(null);
 		}
 	}
 
-	public void hover(IContentPart<V> hovered) {
+	public void hover(IVisualPart<V> hovered) {
 		if (hovered == null || getToolPolicy(hovered) == null
 				|| !getToolPolicy(hovered).isHoverable()) {
 			getHoverModel().setHover(null);
@@ -59,7 +72,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private IHoverToolPolicy<V> getToolPolicy(IContentPart<V> hovered) {
+	private IHoverToolPolicy<V> getToolPolicy(IVisualPart<V> hovered) {
 		return hovered.getEditPolicy(IHoverToolPolicy.class);
 	}
 
