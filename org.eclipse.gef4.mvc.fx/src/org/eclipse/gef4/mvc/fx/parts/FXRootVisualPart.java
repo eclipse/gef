@@ -59,6 +59,7 @@ public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
 		return contentLayer;
 	}
 
+	// TODO: we need feedback parts if we want to differentiate this (otherwise remove this layer)
 	public Pane getFeedbackLayer() {
 		return feedbackLayer;
 	}

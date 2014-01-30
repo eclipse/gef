@@ -2,8 +2,6 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.List;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -15,7 +13,6 @@ import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXBoxHandlePart extends AbstractFXHandlePart {
@@ -69,9 +66,6 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 	private Bounds getUnionedBoundsInScene(List<IContentPart<Node>> selection) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
 		for (IContentPart<Node> cp : selection) {
-			// Bounds boundsInParent = cp.getVisual().getBoundsInParent();
-			// Bounds boundsInScene = cp.getVisual().getParent()
-			// .localToScene(boundsInParent);
 			Bounds boundsInScene = cp.getVisual().localToScene(
 					cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {

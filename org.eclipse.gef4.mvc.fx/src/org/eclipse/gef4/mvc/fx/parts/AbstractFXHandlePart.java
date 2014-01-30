@@ -1,7 +1,5 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Arrays;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;

@@ -62,9 +62,11 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 						.getSelected().contains(getHost());
 			}
 		});
+		// TODO: we need proper feedback for curves
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy() {
-					@Override
+					
+			@Override
 					public void activate() {
 						super.activate();
 						getModel().addPropertyChangeListener(this);
@@ -91,6 +93,21 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 					@Override
 					public List<IHandlePart<Node>> createHandles() {
 						return createWayPointHandles();
+					}
+
+					@Override
+					protected void hideFeedback() {
+						getHost().getVisual().setEffect(null);
+					}
+
+					@Override
+					protected void showSecondaryFeedback() {
+						getHost().getVisual().setEffect(getPrimarySelectionFeedbackEffect());
+					}
+
+					@Override
+					protected void showPrimaryFeedback() {
+						getHost().getVisual().setEffect(getSecondarySelectionFeedbackEffect());		
 					}
 				});
 		installEditPolicy(AbstractWayPointPolicy.class,

@@ -100,10 +100,9 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 						shapeVisual.getTransform()));
 			}
 		}
-		// TODO: this tamperes the feedback effect (which we will have to correct)
-//		if (visual.getEffect() != shapeVisual.effect) {
-//			visual.setEffect(shapeVisual.effect);
-//		}
+		if (visual.getEffect() != shapeVisual.effect) {
+			visual.setEffect(shapeVisual.effect);
+		}
 		if (visual.getFill() != shapeVisual.fill) {
 			visual.setFill(shapeVisual.fill);
 		}

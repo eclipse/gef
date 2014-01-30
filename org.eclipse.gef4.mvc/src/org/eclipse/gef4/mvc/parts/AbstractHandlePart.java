@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
@@ -28,12 +30,18 @@ public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
 
 	@Override
 	public List<IContentPart<V>> getTargetContentParts() {
+		if(targetContentParts == null){
+			return Collections.emptyList();
+		}
 		return targetContentParts;
 	}
 
 	@Override
 	public void setTargetContentParts(List<IContentPart<V>> targetContentParts) {
-		this.targetContentParts = targetContentParts;
+		if(this.targetContentParts == null){
+			this.targetContentParts = new ArrayList<IContentPart<V>>();
+		}
+		this.targetContentParts.addAll(targetContentParts);
 	}
 
 	@Override
