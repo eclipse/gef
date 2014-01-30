@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *
  * @param <V>
  */
-public abstract class AbstractEditPolicy<V> implements IPolicy<V> {
+public abstract class AbstractPolicy<V> implements IPolicy<V> {
 
 	private IVisualPart<V> host;
 	private boolean active;

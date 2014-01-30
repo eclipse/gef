@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
-public abstract class AbstractFeedbackPolicy<V> extends AbstractEditPolicy<V> {
+public abstract class AbstractFeedbackPolicy<V> extends AbstractPolicy<V> {
 	
 	private List<IHandlePart<V>> handles;
 	

@@ -13,7 +13,7 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
  * @author wienand
  * 
  */
-abstract public class AbstractZoomPolicy<V> extends AbstractEditPolicy<V>
+abstract public class AbstractZoomPolicy<V> extends AbstractPolicy<V>
 		implements PropertyChangeListener {
 
 	@Override

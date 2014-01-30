@@ -14,7 +14,7 @@ package org.eclipse.gef4.mvc.fx.example.policies;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.policies.AbstractEditPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 /*
  * TODO: Create marker IPolicy interface as base
@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.policies.AbstractEditPolicy;
  * @author mwienand
  * 
  */
-public abstract class AbstractWayPointPolicy extends AbstractEditPolicy<Node> {
+public abstract class AbstractWayPointPolicy extends AbstractPolicy<Node> {
 
 	/*
 	 * Initialization of behavior

@@ -5,7 +5,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public interface IDragPolicy<V> extends IPolicy<V>{
 	
-	public class Impl<V> extends AbstractEditPolicy<V> implements IDragPolicy<V> {
+	public class Impl<V> extends AbstractPolicy<V> implements IDragPolicy<V> {
 
 		@Override
 		public boolean isDraggable() {
