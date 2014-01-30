@@ -63,16 +63,16 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 			boolean inNew = newSelection.contains(getHost());
 
 			if (inOld) {
-				hideFeedback();
 				removeHandles();
+				hideFeedback();
 			}
 
 			if (inNew) {
 				if (newSelection.get(0) == getHost()) {
+					showPrimaryFeedback();
 					if (newSelection.size() <= 1) {
 						addHandles();
 					}
-					showPrimaryFeedback();
 				} else {
 					showSecondaryFeedback();
 				}
