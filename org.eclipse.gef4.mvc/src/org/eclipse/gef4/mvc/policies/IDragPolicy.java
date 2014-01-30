@@ -3,7 +3,7 @@ package org.eclipse.gef4.mvc.policies;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public interface IDragPolicy<V> extends IEditPolicy<V>{
+public interface IDragPolicy<V> extends IPolicy<V>{
 	
 	public class Impl<V> extends AbstractEditPolicy<V> implements IDragPolicy<V> {
 

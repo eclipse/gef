@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.policies.IEditPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -50,7 +50,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private int flags;
 
-	private Map<Class<?>, IEditPolicy<V>> editPolicies;
+	private Map<Class<?>, IPolicy<V>> editPolicies;
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -72,7 +72,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		setFlag(FLAG_ACTIVE, true);
 
 		if (editPolicies != null) {
-			for (IEditPolicy<V> p : editPolicies.values()) {
+			for (IPolicy<V> p : editPolicies.values()) {
 				p.activate();
 			}
 		}
@@ -169,7 +169,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			c.get(i).deactivate();
 
 		if (editPolicies != null) {
-			for (IEditPolicy<V> p : editPolicies.values()) {
+			for (IPolicy<V> p : editPolicies.values()) {
 				p.deactivate();
 			}
 		}
@@ -213,7 +213,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IEditPolicy<V>> P getEditPolicy(Class<? super P> key) {
+	public <P extends IPolicy<V>> P getEditPolicy(Class<? super P> key) {
 		if (editPolicies == null) {
 			return null;
 		}
@@ -232,9 +232,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IEditPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy){
+	public <P extends IPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy){
 		if (editPolicies == null) {
-			editPolicies = new HashMap<Class<?>, IEditPolicy<V>>();
+			editPolicies = new HashMap<Class<?>, IPolicy<V>>();
 		}
 		editPolicies.put(key, editPolicy);
 		editPolicy.setHost(this);
@@ -310,10 +310,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IEditPolicy<V>> void uninstallEditPolicy(Class<P> key) {
+	public <P extends IPolicy<V>> void uninstallEditPolicy(Class<P> key) {
 		if (editPolicies == null)
 			return;
-		IEditPolicy<V> editPolicy = editPolicies.remove(key);
+		IPolicy<V> editPolicy = editPolicies.remove(key);
 		if (editPolicy != null) {
 			editPolicy.deactivate();
 			editPolicy.setHost(null);

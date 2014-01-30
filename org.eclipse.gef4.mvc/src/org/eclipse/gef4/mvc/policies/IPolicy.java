@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *
  * @param <V>
  */
-public interface IEditPolicy<V> extends IActivatable {
+public interface IPolicy<V> extends IActivatable {
 
 	/**
 	 * @return the <i>host</i> EditPart on which this policy is installed.

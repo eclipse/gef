@@ -1,6 +1,6 @@
 package org.eclipse.gef4.mvc.policies;
 
-public interface ISelectionPolicy<V> extends IEditPolicy<V> {
+public interface ISelectionPolicy<V> extends IPolicy<V> {
 
 	public class Impl<V> extends AbstractEditPolicy<V> implements ISelectionPolicy<V> {
 

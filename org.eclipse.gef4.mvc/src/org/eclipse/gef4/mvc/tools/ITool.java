@@ -19,7 +19,7 @@ import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IEditPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -31,7 +31,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * As an reaction to input events, an {@link ITool} may manipulate the
  * {@link IVisualPartViewer}'s logical models, or interact with the
  * {@link IVisualPartViewer}'s {@link IVisualPart} via a respective
- * {@link IEditPolicy}.
+ * {@link IPolicy}.
  * 
  * @author anyssen
  * 

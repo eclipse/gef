@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.policies.IEditPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public interface IVisualPart<V> extends IActivatable, IAdaptable {
 
@@ -71,10 +71,10 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	// allow an instance binding?
 	// TODO: maybe we can replace this with juice (so no need to register that
 	// externally)
-	public <P extends IEditPolicy<V>> P getEditPolicy(Class<? super P> key);
+	public <P extends IPolicy<V>> P getEditPolicy(Class<? super P> key);
 
-	public <P extends IEditPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy);
+	public <P extends IPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy);
 
-	public <P extends IEditPolicy<V>> void uninstallEditPolicy(Class<P> key);
+	public <P extends IPolicy<V>> void uninstallEditPolicy(Class<P> key);
 
 }
