@@ -1,7 +1,6 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.Group;
@@ -29,10 +28,10 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 	@Override
 	public void refreshVisual() {
 	}
-	
+
 	@Override
 	public FXGeometricModel getModel() {
-		return (FXGeometricModel)super.getModel();
+		return (FXGeometricModel) super.getModel();
 	}
 
 	@Override
@@ -46,13 +45,13 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 	@Override
 	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -61,5 +60,4 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 		return null;
 	}
 
-	
 }

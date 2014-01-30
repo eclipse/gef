@@ -19,21 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.policies.DefaultHoverToolPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultSelectionToolPolicy;
-import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionToolPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {
 
 	private Object model;
-	
-	public AbstractContentPart() {
-		installEditPolicy(ISelectionToolPolicy.class, new DefaultSelectionToolPolicy<V>());
-		installEditPolicy(IHoverToolPolicy.class, new DefaultHoverToolPolicy<V>());
-	}
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getModel()
@@ -104,7 +95,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		Object model;
 
 		@SuppressWarnings("unchecked")
-		List<IContentPart<V>> children = PartUtilities.filterParts(getChildren(), IContentPart.class);
+		List<IContentPart<V>> children = PartUtilities.filterParts(
+				getChildren(), IContentPart.class);
 		int size = children.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {
@@ -169,11 +161,13 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 		if (parent == null) {
 			// remove all content children
-			for (IContentPart<V> child : (List<IContentPart<V>>)PartUtilities.filterParts(getChildren(), IContentPart.class)) {
+			for (IContentPart<V> child : (List<IContentPart<V>>) PartUtilities
+					.filterParts(getChildren(), IContentPart.class)) {
 				removeChild(child);
 			}
 			// remove all content anchored
-			for (IContentPart<V> anchored : (List<IContentPart<V>>)PartUtilities.filterParts(getAnchoreds(), IContentPart.class)) {
+			for (IContentPart<V> anchored : (List<IContentPart<V>>) PartUtilities
+					.filterParts(getAnchoreds(), IContentPart.class)) {
 				removeAnchored(anchored);
 			}
 		}
@@ -241,7 +235,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		Object model;
 
 		@SuppressWarnings("unchecked")
-		List<IContentPart<V>> anchored = PartUtilities.filterParts(getAnchoreds(), IContentPart.class);
+		List<IContentPart<V>> anchored = PartUtilities.filterParts(
+				getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {

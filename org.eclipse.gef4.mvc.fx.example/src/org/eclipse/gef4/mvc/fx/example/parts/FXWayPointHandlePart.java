@@ -12,26 +12,20 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.example.policies.AbstractHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IEditPolicy;
+import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXWayPointHandlePart extends AbstractFXHandlePart {
 
@@ -77,45 +71,38 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(VISUAL_STROKE);
 
 		// install policies
-		installEditPolicy(AbstractHandleDragPolicy.class,
-				new AbstractHandleDragPolicy() {
-					private boolean isRemove = false;
-			
-					@Override
-					public void init(MouseButton mouseButton) {
-						if (create) {
-							getPolicy().createWayPoint(wayPointIndex,
-									startPoint);
-						} else {
-							isRemove = mouseButton == MouseButton.SECONDARY;
-							if (isRemove) {
-								getPolicy().removeWayPoint(wayPointIndex);
-							} else {
-								getPolicy().selectWayPoint(wayPointIndex);								
-							}
-						}
-					}
+		installEditPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+			private boolean isRemove = false;
 
-					@Override
-					public void perform(double dx, double dy) {
-						if (isRemove) {
-							return;
-						}
-						currentPosition = startPoint.getTranslated(dx, dy);
-						getPolicy().updateWayPoint(wayPointIndex,
-								currentPosition);
-					}
+			@Override
+			public void press(Point mouseLocation) {
+				if (create) {
+					getPolicy().createWayPoint(wayPointIndex, startPoint);
+				} else {
+					getPolicy().selectWayPoint(wayPointIndex);
+				}
+			}
 
-					@Override
-					public void commit(double dx, double dy) {
-						if (isRemove) {
-							return;
-						}
-						currentPosition = startPoint.getTranslated(dx, dy);
-						getPolicy().commitWayPoint(wayPointIndex,
-								currentPosition);
-					}
-				});
+			@Override
+			public void drag(Point mouseLocation, Dimension delta) {
+				if (isRemove) {
+					return;
+				}
+				currentPosition = startPoint.getTranslated(delta.width,
+						delta.height);
+				getPolicy().updateWayPoint(wayPointIndex, currentPosition);
+			}
+
+			@Override
+			public void release(Point mouseLocation, Dimension delta) {
+				if (isRemove) {
+					return;
+				}
+				currentPosition = startPoint.getTranslated(delta.width,
+						delta.height);
+				getPolicy().commitWayPoint(wayPointIndex, currentPosition);
+			}
+		});
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {

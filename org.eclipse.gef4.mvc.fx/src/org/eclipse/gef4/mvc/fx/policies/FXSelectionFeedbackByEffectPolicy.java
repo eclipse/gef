@@ -15,6 +15,7 @@ public class FXSelectionFeedbackByEffectPolicy extends AbstractSelectionFeedback
 	
 	@Override
 	protected void showPrimaryFeedback() {
+		// refresh visuals will overwrite this effect.
 		DropShadow effect = new DropShadow();
 		effect.setColor(new Color(0, 0, 0, 1));
 		effect.setOffsetX(5);

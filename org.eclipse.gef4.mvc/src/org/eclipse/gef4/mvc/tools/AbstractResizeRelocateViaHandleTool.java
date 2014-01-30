@@ -40,7 +40,8 @@ import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
  * 
  * @param <V>
  */
-public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
+// TODO: remove -> this is replaced by policy in handles
+public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractTool<V> {
 
 	/*
 	 * TODO: allow negative scaling
@@ -194,6 +195,9 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 	}
 
 	public void performResize(Point mouseLocation) {
+		if(selectionBounds == null){
+			return;
+		}
 		Rectangle sel = updateSelectionBounds(mouseLocation);
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			double[] initialBounds = getBounds(selectionBounds, targetPart);
@@ -250,6 +254,9 @@ public abstract class AbstractResizeRelocateTool<V> extends AbstractTool<V> {
 	}
 
 	public void commitResize(Point mouseLocation) {
+		if(selectionBounds == null){
+			return;
+		}
 		Rectangle sel = updateSelectionBounds(mouseLocation);
 		for (IContentPart<V> targetPart : getTargetParts()) {
 			// use previously computed relative coordinates to get the visuals

@@ -24,16 +24,16 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 	private EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			IVisualPart<Node> targetPart = FXToolUtils.getTargetPart(getDomain()
-					.getViewer(), event);
+			IVisualPart<Node> targetPart = FXPartUtils.getMouseTargetPart(getDomain().getViewer(), event);
 			if (targetPart == null) {
 				hover(null);
 			} else if (targetPart instanceof IRootVisualPart) {
 				hover(null);
-			} else if (targetPart instanceof IVisualPart) {
-				hover((IVisualPart<Node>) targetPart);
-			} else {
-				throw new IllegalArgumentException("Unsupported part type.");
+//			} else if (targetPart instanceof IVisualPart) {
+//				hover((IVisualPart<Node>) targetPart);
+//			} else {
+//				throw new IllegalArgumentException("Unsupported part type.");
+				// IGNORE
 			}
 		}
 	};

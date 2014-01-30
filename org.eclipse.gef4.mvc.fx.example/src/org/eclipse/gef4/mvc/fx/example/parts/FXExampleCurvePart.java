@@ -16,14 +16,12 @@ import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultHoverToolPolicy;
-import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.IHoverPolicy;
+import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
@@ -34,7 +32,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	public List<IHandlePart<Node>> createWayPointHandles() {
 		ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
-		
+
 		// create selection handles on the vertices
 		int i = 0;
 		for (Point wayPoint : getModel().getWayPoints()) {
@@ -55,6 +53,15 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
+		installEditPolicy(ISelectionPolicy.class,
+				new ISelectionPolicy.Impl<Node>());
+		installEditPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+			@Override
+			public boolean isHoverable() {
+				return !getHost().getRoot().getViewer().getSelectionModel()
+						.getSelected().contains(getHost());
+			}
+		});
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy() {
 					@Override

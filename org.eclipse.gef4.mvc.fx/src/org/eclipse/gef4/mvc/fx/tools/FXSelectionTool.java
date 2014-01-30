@@ -10,12 +10,13 @@ import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractSelectionTool;
 
+// TODO: use drag tool?
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			IVisualPart<Node> targetPart = FXToolUtils.getTargetPart(
+			IVisualPart<Node> targetPart = FXPartUtils.getMouseTargetPart(
 					getDomain().getViewer(), event);
 			if (targetPart == null) {
 				return;
@@ -27,8 +28,9 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 			} else if (targetPart instanceof IContentPart) {
 				select((IContentPart<Node>) targetPart, append);
 			} else {
-				throw new IllegalArgumentException(
-						"This tool only supports IRootVisualPart and IContentPart targets");
+				// IGNORE
+				// throw new IllegalArgumentException(
+				// "This tool only supports IRootVisualPart and IContentPart targets");
 			}
 		}
 	};

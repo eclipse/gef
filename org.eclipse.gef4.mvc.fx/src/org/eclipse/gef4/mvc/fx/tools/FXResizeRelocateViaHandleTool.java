@@ -11,9 +11,10 @@ import org.eclipse.gef4.mvc.fx.parts.FXBoxHandlePart;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractResizeRelocateTool;
+import org.eclipse.gef4.mvc.tools.AbstractResizeRelocateViaHandleTool;
 
-public class FXResizeTool extends AbstractResizeRelocateTool<Node> {
+// TODO: re-implement this by using drag policy on resize handle
+public class FXResizeRelocateViaHandleTool extends AbstractResizeRelocateViaHandleTool<Node> {
 
 	private Pos pos;
 

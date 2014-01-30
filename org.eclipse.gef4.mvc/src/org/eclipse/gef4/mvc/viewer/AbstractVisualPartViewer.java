@@ -145,11 +145,19 @@ public abstract class AbstractVisualPartViewer<V> implements
 		if (editDomain == editdomain)
 			return;
 		if (editDomain != null) {
+			editDomain.setProperty(ISelectionModel.class, null);
+			editDomain.setProperty(IHoverModel.class, null);
+			editDomain.setProperty(IZoomModel.class, null);
+			editDomain.setProperty(IFocusModel.class, null);
 			editDomain.setViewer(null);
 		}
 		this.editDomain = editdomain;
 		if (editDomain != null) {
 			editDomain.setViewer(this);
+			editDomain.setProperty(ISelectionModel.class, getSelectionModel());
+			editDomain.setProperty(IHoverModel.class, getHoverModel());
+			editDomain.setProperty(IZoomModel.class, getZoomModel());
+			editDomain.setProperty(IFocusModel.class, getFocusModel());
 		}
 	}
 

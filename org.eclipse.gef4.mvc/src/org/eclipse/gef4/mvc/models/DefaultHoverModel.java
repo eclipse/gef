@@ -14,19 +14,20 @@ package org.eclipse.gef4.mvc.models;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
  * @author mwienand
- *
+ * 
  * @param <V>
  */
 public class DefaultHoverModel<V> implements IHoverModel<V> {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IVisualPart<V> hovered = null;
-	
+	private IContentPart<V> hovered = null;
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
@@ -38,12 +39,12 @@ public class DefaultHoverModel<V> implements IHoverModel<V> {
 	}
 
 	@Override
-	public IVisualPart<V> getHover() {
+	public IContentPart<V> getHover() {
 		return hovered;
 	}
 
 	@Override
-	public void setHover(IVisualPart<V> cp) {
+	public void setHover(IContentPart<V> cp) {
 		IVisualPart<V> oldHover = hovered;
 		hovered = cp;
 		pcs.firePropertyChange(HOVER_PROPERTY, oldHover, hovered);

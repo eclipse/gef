@@ -1,30 +1,29 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 
+// TODO: this class is a hack; do not use effect for feedback
 public class FXHoverFeedbackByEffectPolicy extends AbstractHoverFeedbackPolicy<Node> {
 
 	@Override
 	protected void hideFeedback() {
+		if(!getHost().getRoot().getViewer().getSelectionModel().getSelected().contains(getHost())){
+			getHost().getVisual().setEffect(null);
+		}
 	}
 	
 	@Override
 	protected void showFeedback() {
-	}
-	
-	public FXHoverFeedbackByEffectPolicy() {
+		DropShadow effect = new DropShadow();
+		effect.setColor(new Color(0.5, 0.5, 0.5, 1));
+		effect.setOffsetX(5);
+		effect.setOffsetY(5);
+		effect.setRadius(5);
+		getHost().getVisual().setEffect(effect);
 	}
 
 }

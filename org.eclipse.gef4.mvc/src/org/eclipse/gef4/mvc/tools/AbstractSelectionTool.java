@@ -20,8 +20,7 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionToolPolicy;
+import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -31,6 +30,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * 
  * @param <V>
  */
+// TODO: marquee selection can by performed by drag policy on root
 public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 		implements PropertyChangeListener {
 
@@ -39,14 +39,9 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 		super.setDomain(domain);
 	}
 
-	// @SuppressWarnings("unchecked")
-	// protected AbstractSelectionFeedbackPolicy<V> getSelectionPolicy(
-	// IVisualPart<V> editPart) {
-	// return editPart.getEditPolicy(AbstractSelectionFeedbackPolicy.class);
-	// }
-
-	protected ISelectionToolPolicy getToolPolicy(IVisualPart<V> visualPart) {
-		return visualPart.getEditPolicy(ISelectionToolPolicy.class);
+	@SuppressWarnings("unchecked")
+	protected ISelectionPolicy<V> getToolPolicy(IVisualPart<V> visualPart) {
+		return visualPart.getEditPolicy(ISelectionPolicy.class);
 	}
 
 	/**

@@ -19,10 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -38,22 +36,24 @@ public abstract class AbstractHoverFeedbackPolicy<V> extends
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getHoverModel().addPropertyChangeListener(this);
+		getHost().getRoot().getViewer().getHoverModel()
+				.addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getHoverModel().removePropertyChangeListener(this);
+		getHost().getRoot().getViewer().getHoverModel()
+				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
-	@SuppressWarnings({"unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
 			IContentPart<V> oldHovered = (IContentPart<V>) event.getOldValue();
 			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
-			
+
 			if (oldHovered == getHost()) {
 				removeHandles();
 				hideFeedback();
@@ -63,15 +63,14 @@ public abstract class AbstractHoverFeedbackPolicy<V> extends
 			}
 		}
 	}
-	
+
 	protected abstract void showFeedback();
 
 	protected abstract void hideFeedback();
-	
+
 	@Override
 	protected List<IHandlePart<V>> createHandles() {
 		return Collections.emptyList();
 	}
 
 }
-

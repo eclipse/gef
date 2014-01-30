@@ -17,6 +17,7 @@ package org.eclipse.gef4.mvc.policies;
  *
  * @param <V>
  */
+// TODO: split thiss
 public abstract class AbstractResizeRelocatePolicy<V> extends AbstractEditPolicy<V> {
 
 	public abstract void initResizeRelocate();

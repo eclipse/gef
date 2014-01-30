@@ -18,8 +18,7 @@ import java.util.List;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public class AbstractHoverTool<V> extends AbstractTool<V> implements
@@ -62,7 +61,9 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		}
 	}
 
-	public void hover(IVisualPart<V> hovered) {
+
+	public void hover(IContentPart<V> hovered) {
+		// TODO: move this into hover policy?
 		if (hovered == null || getToolPolicy(hovered) == null
 				|| !getToolPolicy(hovered).isHoverable()) {
 			getHoverModel().setHover(null);
@@ -71,9 +72,10 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		}
 	}
 
+
 	@SuppressWarnings("unchecked")
-	private IHoverToolPolicy<V> getToolPolicy(IVisualPart<V> hovered) {
-		return hovered.getEditPolicy(IHoverToolPolicy.class);
+	private IHoverPolicy<V> getToolPolicy(IContentPart<V> hovered) {
+		return hovered.getEditPolicy(IHoverPolicy.class);
 	}
 
 }

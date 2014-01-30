@@ -7,12 +7,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -21,8 +18,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultHoverToolPolicy;
-import org.eclipse.gef4.mvc.policies.IHoverToolPolicy;
+import org.eclipse.gef4.mvc.policies.IHoverPolicy;
+import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleShapePart extends AbstractFXExampleElementPart {
@@ -32,38 +29,44 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
+		installEditPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		installEditPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+			@Override
+			public boolean isHoverable() {
+				return !getHost().getRoot().getViewer().getSelectionModel()
+						.getSelected().contains(getHost());
+			}
+		});
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy());
 		installEditPolicy(AbstractHoverFeedbackPolicy.class,
 				new FXHoverFeedbackByEffectPolicy());
 		installEditPolicy(AbstractResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy() {
-			@Override
-			public void commitResizeRelocate(double dx, double dy,
-					double dw, double dh) {
-				Bounds bounds = visual.getLayoutBounds();
-				double width = bounds.getWidth();
-				double height = bounds.getHeight();
-				
-				double sx = width == 0 ? 1 : (width + dw) / width;
-				double sy = height == 0 ? 1 : (height + dh) / height;
-				
-				AffineTransform additionalTransform = new AffineTransform(sx, 0, 0, sy, dx, dy);
-				
-				AffineTransform oldTransform = getModel().getTransform();
-				if (oldTransform == null) {
-					getModel().setTransform(additionalTransform);
-				} else {
-					getModel().setTransform(oldTransform.getCopy().preConcatenate(additionalTransform));
-				}
-			}
-		});
-		installEditPolicy(IHoverToolPolicy.class, new DefaultHoverToolPolicy<Node>() {
-			@Override
-			public boolean isHoverable() {
-				return !getHost().getRoot().getViewer().getSelectionModel().getSelected().contains(getHost());
-			}
-		});
+					@Override
+					public void commitResizeRelocate(double dx, double dy,
+							double dw, double dh) {
+						Bounds bounds = visual.getLayoutBounds();
+						double width = bounds.getWidth();
+						double height = bounds.getHeight();
+
+						double sx = width == 0 ? 1 : (width + dw) / width;
+						double sy = height == 0 ? 1 : (height + dh) / height;
+
+						AffineTransform additionalTransform = new AffineTransform(
+								sx, 0, 0, sy, dx, dy);
+
+						AffineTransform oldTransform = getModel()
+								.getTransform();
+						if (oldTransform == null) {
+							getModel().setTransform(additionalTransform);
+						} else {
+							getModel().setTransform(
+									oldTransform.getCopy().preConcatenate(
+											additionalTransform));
+						}
+					}
+				});
 	}
 
 	@Override
@@ -93,23 +96,25 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 			if (shapeVisual.getTransform() == null) {
 				visual.setGeometry(shapeVisual.getGeometry());
 			} else {
-				visual.setGeometry(shapeVisual.getGeometry().getTransformed(shapeVisual.getTransform()));				
+				visual.setGeometry(shapeVisual.getGeometry().getTransformed(
+						shapeVisual.getTransform()));
 			}
 		}
-		if(visual.getEffect() != shapeVisual.effect){
-			visual.setEffect(shapeVisual.effect);
-		}
-		if(visual.getFill() != shapeVisual.fill){
+		// TODO: this tamperes the feedback effect (which we will have to correct)
+//		if (visual.getEffect() != shapeVisual.effect) {
+//			visual.setEffect(shapeVisual.effect);
+//		}
+		if (visual.getFill() != shapeVisual.fill) {
 			visual.setFill(shapeVisual.fill);
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected List<Object> getModelAnchored() {
-		if(getParent() != null) {
+		if (getParent() != null) {
 			List anchored = getModel().anchored;
-			if(anchored == null) {
+			if (anchored == null) {
 				return Collections.emptyList();
 			}
 			return anchored;
@@ -127,7 +132,7 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-		if(anchor == null){
+		if (anchor == null) {
 			anchor = new FXChopBoxAnchor();
 		}
 		// register listeners

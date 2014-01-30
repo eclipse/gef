@@ -23,7 +23,6 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**

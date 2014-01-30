@@ -23,7 +23,8 @@ import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
  *
  * @param <V>
  */
-public abstract class AbstractRelocateTool<V> extends AbstractTool<V> {
+// TODO: this could be a policy as result of dragging (on the selection model??)
+public abstract class AbstractRelocateSelectedTool<V> extends AbstractTool<V> {
 
 	private Point initialMouseLocation = null;
 
