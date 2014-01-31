@@ -7,6 +7,7 @@ import java.util.List;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -22,12 +23,11 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
-import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		PropertyChangeListener {
 
-	private GeometryNode<ICurve> visual;
+	private FXGeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
 	public List<IHandlePart<Node>> createWayPointHandles() {
@@ -52,7 +52,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 	}
 
 	public FXExampleCurvePart() {
-		visual = new GeometryNode<ICurve>();
+		visual = new FXGeometryNode<ICurve>();
 		installPolicy(ISelectionPolicy.class,
 				new ISelectionPolicy.Impl<Node>());
 		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {

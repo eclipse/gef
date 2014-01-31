@@ -57,7 +57,14 @@
    <feature url="features/org.eclipse.gef4.mvc.ui.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.ui.sdk" version="0.1.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.fx_0.1.0.qualifier.jar" id="org.eclipse.gef4.fx" version="0.1.0.qualifier">
+      <category name="GEF4 FX"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.fx.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.fx.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 FX"/>
+   </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
+   <category-def name="GEF4 FX" label="GEF4 FX"/>
    <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>
    <category-def name="GEF4 Cloudio" label="GEF4 Cloudio"/>

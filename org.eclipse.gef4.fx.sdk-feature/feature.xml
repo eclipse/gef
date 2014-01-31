@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.gef4.fx.sdk"
+      label="GEF4 FX SDK"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+   
+    <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.gef4.fx"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.fx.source"
+         version="0.0.0"/>
+
+</feature>

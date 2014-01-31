@@ -1,18 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 MVC FX Example
-Bundle-SymbolicName: org.eclipse.gef4.mvc.fx.example;singleton:=true
+Bundle-Name: GEF4 FX Examples
+Bundle-SymbolicName: org.eclipse.gef4.fx.examples
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.gef4.mvc.fx.example.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
- org.eclipse.gef4.geometry;bundle-version="0.1.0",
- org.eclipse.gef4.swtfx;bundle-version="0.1.0",
- org.eclipse.gef4.fx;bundle-version="0.1.0",
- org.eclipse.gef4.mvc;bundle-version="0.1.0",
- org.eclipse.gef4.mvc.fx;bundle-version="0.1.0"
+Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.gef4.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Import-Package: javafx.animation;version="2.0.0",
  javafx.application;version="2.0.0",
  javafx.beans;version="2.0.0",
@@ -40,5 +34,4 @@ Import-Package: javafx.animation;version="2.0.0",
  javafx.scene.transform;version="2.0.0",
  javafx.scene.web;version="2.0.0",
  javafx.stage;version="2.0.0",
- javafx.util;version="2.0.0",
- org.eclipse.gef4.geometry.convert.fx
+ javafx.util;version="2.0.0"

@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.tools;
+package org.eclipse.gef4.fx.gestures;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;

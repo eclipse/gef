@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.swtfx;
+package org.eclipse.gef4.fx.nodes;
 
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
@@ -29,7 +29,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
-public class GeometryNode<T extends IGeometry> extends Path {
+public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	public static PathElement[] toPathElements(IGeometry geom) {
 		Segment[] segments = geom.toPath().getSegments();
@@ -64,11 +64,11 @@ public class GeometryNode<T extends IGeometry> extends Path {
 
 	private T geometry;
 
-	public GeometryNode() {
+	public FXGeometryNode() {
 		super();
 	}
 
-	public GeometryNode(T geom) {
+	public FXGeometryNode(T geom) {
 		setGeometry(geom);
 	}
 

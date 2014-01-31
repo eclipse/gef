@@ -232,6 +232,7 @@
 
 	<modules>
 		<module>../org.eclipse.gef4.target</module>
+		
 		<module>../org.eclipse.gef4.geometry</module>
 		<module>../org.eclipse.gef4.geometry-feature</module>
 		<module>../org.eclipse.gef4.geometry.source-feature</module>
@@ -248,6 +249,16 @@
 		<module>../org.eclipse.gef4.geometry.doc</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
+		
+		<module>../org.eclipse.gef4.fx</module>
+		<module>../org.eclipse.gef4.fx-feature</module>
+		<module>../org.eclipse.gef4.fx.source-feature</module>
+		<!-- <module>../org.eclipse.gef4.fxfx.tests</module>
+		<module>../org.eclipse.gef4.fxfx.tests-feature</module> 
+		<module>../org.eclipse.gef4.fx.doc</module>
+		<module>../org.eclipse.gef4.fx.doc-feature</module>-->
+		<module>../org.eclipse.gef4.fx.sdk-feature</module>
+		
 		<module>../org.eclipse.gef4.swtfx</module>
 		<module>../org.eclipse.gef4.swtfx-feature</module>
 		<module>../org.eclipse.gef4.swtfx.source-feature</module>
@@ -256,6 +267,7 @@
 		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
+		
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
 		<module>../org.eclipse.gef4.mvc.source-feature</module>
@@ -268,6 +280,7 @@
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.source-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
+		
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>
 		<module>../org.eclipse.gef4.cloudio.source-feature</module>
@@ -276,10 +289,13 @@
 		<module>../org.eclipse.gef4.cloudio.doc</module>
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
+		
 		<module>../org.eclipse.gef4.graph</module>
 		<module>../org.eclipse.gef4.graph.ui</module>
 		<module>../org.eclipse.gef4.graph.tests</module>
+		
 		<module>../org.eclipse.gef4.layout</module>
+		
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
 		<module>../org.eclipse.gef4.zest.feature</module>

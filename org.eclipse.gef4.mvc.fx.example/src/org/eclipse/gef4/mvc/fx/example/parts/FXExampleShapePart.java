@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
@@ -20,15 +21,14 @@ import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
-import org.eclipse.gef4.swtfx.GeometryNode;
 
 public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
-	private GeometryNode<IShape> visual;
+	private FXGeometryNode<IShape> visual;
 	private IAnchor<Node> anchor;
 
 	public FXExampleShapePart() {
-		visual = new GeometryNode<IShape>();
+		visual = new FXGeometryNode<IShape>();
 		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
 		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
