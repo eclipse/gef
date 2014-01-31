@@ -67,14 +67,14 @@ public class FXRootVisualPart extends AbstractRootPart<Node> {
 	@Override
 	public void setViewer(IVisualPartViewer<Node> newViewer) {
 		if (getViewer() != null) {
-			unregisterVisual();
+			unregisterFromVisualPartMap();
 		}
 		if (newViewer != null && !(newViewer instanceof FXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setViewer(newViewer);
 		if (getViewer() != null) {
-			registerVisual();
+			registerAtVisualPartMap();
 		}
 	}
 
@@ -89,7 +89,7 @@ public class FXRootVisualPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	protected void registerVisual() {
+	protected void registerAtVisualPartMap() {
 		getViewer().getVisualPartMap().put(layers, this);
 		for (Node child : layers.getChildren()) {
 			// register root edit part also for the layers
@@ -98,7 +98,7 @@ public class FXRootVisualPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	protected void unregisterVisual() {
+	protected void unregisterFromVisualPartMap() {
 		getViewer().getVisualPartMap().remove(layers);
 		for (Node child : layers.getChildren()) {
 			// register root edit part also for the layers

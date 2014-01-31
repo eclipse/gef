@@ -35,7 +35,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 		// create selection handles on the vertices
 		int i = 0;
-		for (Point wayPoint : getModel().getWayPoints()) {
+		for (Point wayPoint : getContent().getWayPoints()) {
 			handles.add(new FXWayPointHandlePart.Select(this, i, wayPoint));
 			i++;
 		}
@@ -69,12 +69,12 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 					@Override
 					public void activate() {
 						super.activate();
-						getModel().addPropertyChangeListener(this);
+						getContent().addPropertyChangeListener(this);
 					}
 
 					@Override
 					public void deactivate() {
-						getModel().removePropertyChangeListener(this);
+						getContent().removePropertyChangeListener(this);
 						super.deactivate();
 					}
 
@@ -121,14 +121,14 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 					public void selectWayPoint(int wayPointIndex) {
 						isCreate = false;
 						wayPoints.clear();
-						wayPoints.addAll(getModel().getWayPoints());
+						wayPoints.addAll(getContent().getWayPoints());
 					}
 
 					@Override
 					public void createWayPoint(int wayPointIndex, Point p) {
 						isCreate = true;
 						wayPoints.clear();
-						wayPoints.addAll(getModel().getWayPoints());
+						wayPoints.addAll(getContent().getWayPoints());
 						wayPoints.add(wayPointIndex, new Point(p));
 					}
 
@@ -143,31 +143,31 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 					@Override
 					public void commitWayPoint(int wayPointIndex, Point p) {
 						if (isCreate) {
-							getModel().addWayPoint(wayPointIndex, p);
+							getContent().addWayPoint(wayPointIndex, p);
 						} else {
-							getModel().setWayPoint(wayPointIndex, p);
+							getContent().setWayPoint(wayPointIndex, p);
 						}
 					}
 
 					@Override
 					public void removeWayPoint(int wayPointIndex) {
-						getModel().removeWayPoint(wayPointIndex);
+						getContent().removeWayPoint(wayPointIndex);
 					}
 				});
 	}
 
 	@Override
-	public FXGeometricCurve getModel() {
-		return (FXGeometricCurve) super.getModel();
+	public FXGeometricCurve getContent() {
+		return (FXGeometricCurve) super.getContent();
 	}
 
 	@Override
-	public void setModel(Object model) {
+	public void setContent(Object model) {
 		if (!(model instanceof FXGeometricCurve)) {
 			throw new IllegalArgumentException(
 					"Only ICurve models are supported.");
 		}
-		super.setModel(model);
+		super.setContent(model);
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 	public void refreshVisual() {
 		// TODO: compare way points to identify if we need to refresh
 		// use anchors as start and end point
-		FXGeometricCurve curveVisual = getModel();
+		FXGeometricCurve curveVisual = getContent();
 		List<Point> wayPoints = curveVisual.getWayPoints();
 		refreshVisualWith(wayPoints);
 	}

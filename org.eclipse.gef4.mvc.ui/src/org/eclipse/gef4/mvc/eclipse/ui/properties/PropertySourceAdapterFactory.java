@@ -30,7 +30,7 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 			return adapter;
 		}
 		
-		Object model = part.getModel();
+		Object model = part.getContent();
 		// check if model is already of the desired adapter type
 		if (adapterType.isInstance(model)) {
 			return model;

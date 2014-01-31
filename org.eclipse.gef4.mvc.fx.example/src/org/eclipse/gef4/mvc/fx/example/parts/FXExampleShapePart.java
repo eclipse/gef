@@ -56,12 +56,12 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 						AffineTransform additionalTransform = new AffineTransform(
 								sx, 0, 0, sy, dx, dy);
 
-						AffineTransform oldTransform = getModel()
+						AffineTransform oldTransform = getContent()
 								.getTransform();
 						if (oldTransform == null) {
-							getModel().setTransform(additionalTransform);
+							getContent().setTransform(additionalTransform);
 						} else {
-							getModel().setTransform(
+							getContent().setTransform(
 									oldTransform.getCopy().preConcatenate(
 											additionalTransform));
 						}
@@ -70,17 +70,17 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 	}
 
 	@Override
-	public FXGeometricShape getModel() {
-		return (FXGeometricShape) super.getModel();
+	public FXGeometricShape getContent() {
+		return (FXGeometricShape) super.getContent();
 	}
 
 	@Override
-	public void setModel(Object model) {
+	public void setContent(Object model) {
 		if (!(model instanceof FXGeometricShape)) {
 			throw new IllegalArgumentException(
 					"Only IShape models are supported.");
 		}
-		super.setModel(model);
+		super.setContent(model);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
 	@Override
 	public void refreshVisual() {
-		FXGeometricShape shapeVisual = getModel();
+		FXGeometricShape shapeVisual = getContent();
 		if (visual.getGeometry() != shapeVisual.getGeometry()) {
 			// TODO: respect offset, scaling, etc.
 			if (shapeVisual.getTransform() == null) {
@@ -110,15 +110,15 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected List<Object> getModelAnchored() {
+	public List<Object> getContentAnchored() {
 		if (getParent() != null) {
-			List anchored = getModel().anchored;
+			List anchored = getContent().anchored;
 			if (anchored == null) {
 				return Collections.emptyList();
 			}
 			return anchored;
 		}
-		return super.getModelAnchored();
+		return super.getContentAnchored();
 	}
 
 	@Override

@@ -27,9 +27,9 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	private Object model;
 
 	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getModel()
+	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getContent()
 	 */
-	public Object getModel() {
+	public Object getContent() {
 		return model;
 	}
 
@@ -37,9 +37,9 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * Set the primary model object that this EditPart represents. This method
 	 * is used by an <code>EditPartFactory</code> when creating an EditPart.
 	 * 
-	 * @see IEditPart#setModel(Object)
+	 * @see IEditPart#setContent(Object)
 	 */
-	public void setModel(Object model) {
+	public void setContent(Object model) {
 		if (this.model == model) {
 			return;
 		}
@@ -52,8 +52,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * extend this method if they need to register this EditPart in additional
 	 * ways.
 	 */
-	protected void registerModel() {
-		getViewer().getContentPartMap().put(getModel(), this);
+	protected void registerAtContentPartMap() {
+		getViewer().getContentPartMap().put(getContent(), this);
 	}
 
 	/**
@@ -62,10 +62,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * extend this method if they need to unregister this EditPart in additional
 	 * ways.
 	 */
-	protected void unregisterModel() {
+	protected void unregisterFromContentPartMap() {
 		Map<Object, IContentPart<V>> registry = getViewer().getContentPartMap();
-		if (registry.get(getModel()) == this)
-			registry.remove(getModel());
+		if (registry.get(getContent()) == this)
+			registry.remove(getContent());
 	}
 
 	/**
@@ -85,7 +85,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * <P>
 	 * This method should <em>not</em> be overridden.
 	 * 
-	 * @see #getModelChildren()
+	 * @see #getContentChildren()
 	 */
 	protected void synchronizeContentChildren() {
 		// only synchronize ContentPart children
@@ -103,16 +103,16 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			modelToEditPart = new HashMap<Object, IContentPart<V>>(size);
 			for (i = 0; i < size; i++) {
 				editPart = (IContentPart<V>) children.get(i);
-				modelToEditPart.put(editPart.getModel(), editPart);
+				modelToEditPart.put(editPart.getContent(), editPart);
 			}
 		}
 
-		List<Object> modelObjects = getModelChildren();
+		List<Object> modelObjects = getContentChildren();
 		for (i = 0; i < modelObjects.size(); i++) {
 			model = modelObjects.get(i);
 
 			// Do a quick check to see if editPart[i] == model[i]
-			if (i < children.size() && children.get(i).getModel() == model)
+			if (i < children.size() && children.get(i).getContent() == model)
 				continue;
 
 			// Look to see if the EditPart is already around but in the
@@ -145,11 +145,13 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 	}
 
-	protected List<Object> getModelChildren() {
+	@Override
+	public List<Object> getContentChildren() {
 		return Collections.emptyList();
 	}
 
-	protected List<Object> getModelAnchored() {
+	@Override
+	public List<Object> getContentAnchored() {
 		return Collections.emptyList();
 	}
 
@@ -199,7 +201,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		} else {
 			IContentPart<V> contentPart = getViewer().getContentPartFactory()
 					.createChildContentPart(this, model);
-			contentPart.setModel(model);
+			contentPart.setContent(model);
 			getViewer().getContentPartMap().put(model, contentPart);
 			return contentPart;
 		}
@@ -224,8 +226,8 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	protected void disposeIfObsolete(IContentPart<V> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
-			getViewer().getContentPartMap().remove(contentPart.getModel());
-			contentPart.setModel(null);
+			getViewer().getContentPartMap().remove(contentPart.getContent());
+			contentPart.setContent(null);
 		}
 	}
 
@@ -243,16 +245,16 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			modelToEditPart = new HashMap<Object, IContentPart<V>>(size);
 			for (i = 0; i < size; i++) {
 				editPart = (IContentPart<V>) anchored.get(i);
-				modelToEditPart.put(editPart.getModel(), editPart);
+				modelToEditPart.put(editPart.getContent(), editPart);
 			}
 		}
 
-		List<Object> modelObjects = getModelAnchored();
+		List<Object> modelObjects = getContentAnchored();
 		for (i = 0; i < modelObjects.size(); i++) {
 			model = modelObjects.get(i);
 
 			// Do a quick check to see if editPart[i] == model[i]
-			if (i < anchored.size() && anchored.get(i).getModel() == model)
+			if (i < anchored.size() && anchored.get(i).getContent() == model)
 				continue;
 
 			// Look to see if the EditPart is already around but in the

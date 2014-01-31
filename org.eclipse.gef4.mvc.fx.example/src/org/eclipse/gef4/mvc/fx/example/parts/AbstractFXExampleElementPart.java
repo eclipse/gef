@@ -10,25 +10,25 @@ public abstract class AbstractFXExampleElementPart extends AbstractFXContentPart
 		PropertyChangeListener {
 	
 	@Override
-	public AbstractFXGeometricElement<?> getModel() {
-		return (AbstractFXGeometricElement<?>) super.getModel();
+	public AbstractFXGeometricElement<?> getContent() {
+		return (AbstractFXGeometricElement<?>) super.getContent();
 	}
 	
 	@Override
 	public void activate() {
 		super.activate();
-		getModel().addPropertyChangeListener(this);
+		getContent().addPropertyChangeListener(this);
 	}
 	
 	@Override
 	public void deactivate() {
-		getModel().removePropertyChangeListener(this);
+		getContent().removePropertyChangeListener(this);
 		super.deactivate();
 	}
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource() == getModel()) {
+		if (evt.getSource() == getContent()) {
 			refreshVisual();
 		}
 	}

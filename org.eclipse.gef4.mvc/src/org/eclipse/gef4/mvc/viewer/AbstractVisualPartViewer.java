@@ -86,7 +86,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 		if (contentRoot == null) {
 			return null;
 		}
-		return contentRoot.getModel();
+		return contentRoot.getContent();
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 		}
 		IContentPart<V> rootContentPart = contentPartFactory
 				.createRootContentPart(rootPart, contents);
-		rootContentPart.setModel(contents);
+		rootContentPart.setContent(contents);
 		rootPart.setRootContentPart(rootContentPart);
 		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY,
 				oldContents, contents);

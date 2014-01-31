@@ -358,11 +358,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			flags &= ~flag;
 	}
 
-	protected void registerVisual() {
+	protected void registerAtVisualPartMap() {
 		getViewer().getVisualPartMap().put(getVisual(), this);
 	}
 
-	protected void unregisterVisual() {
+	protected void unregisterFromVisualPartMap() {
 		getViewer().getVisualPartMap().remove(getVisual());
 	}
 
@@ -376,11 +376,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			return;
 
 		if (this.parent != null) {
-			unregisterVisual();
+			unregisterFromVisualPartMap();
 		}
 		this.parent = parent;
 		if (this.parent != null) {
-			registerVisual();
+			registerAtVisualPartMap();
 		}
 	}
 

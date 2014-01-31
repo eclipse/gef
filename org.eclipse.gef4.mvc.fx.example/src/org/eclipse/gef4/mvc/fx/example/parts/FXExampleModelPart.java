@@ -30,15 +30,15 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public FXGeometricModel getModel() {
-		return (FXGeometricModel) super.getModel();
+	public FXGeometricModel getContent() {
+		return (FXGeometricModel) super.getContent();
 	}
 
 	@Override
-	protected List<Object> getModelChildren() {
+	public List<Object> getContentChildren() {
 		List<Object> objs = new ArrayList<Object>();
-		objs.addAll(getModel().getShapeVisuals());
-		objs.addAll(getModel().getCurveVisuals());
+		objs.addAll(getContent().getShapeVisuals());
+		objs.addAll(getContent().getCurveVisuals());
 		return objs;
 	}
 
