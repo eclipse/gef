@@ -22,5 +22,4 @@ package org.eclipse.gef4.mvc.parts;
  */
 public interface IHandlePart<V> extends IVisualPart<V> {
 
-	// interaction part
 }
