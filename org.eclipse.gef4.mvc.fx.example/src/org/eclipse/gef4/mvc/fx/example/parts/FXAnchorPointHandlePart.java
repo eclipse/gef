@@ -1,7 +1,5 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import java.util.Arrays;
-
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -13,7 +11,6 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
@@ -23,9 +20,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 	private Point currentPosition;
 	private int wayPointIndex;
 
-	public FXAnchorPointHandlePart(IContentPart<Node> contentPart, int index,
-			Point wayPoint) {
-		setTargetContentParts(Arrays.asList(contentPart));
+	public FXAnchorPointHandlePart(int index, Point wayPoint) {
 		this.wayPointIndex = index;
 		startPoint = wayPoint;
 		currentPosition = new Point(startPoint);
@@ -64,7 +59,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {
-		return getTargetContentParts().get(0).getEditPolicy(
+		return getAnchorages().get(0).getEditPolicy(
 				AbstractWayPointPolicy.class);
 	}
 

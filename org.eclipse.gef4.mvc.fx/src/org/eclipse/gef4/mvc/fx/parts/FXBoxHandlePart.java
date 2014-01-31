@@ -14,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXBoxHandlePart extends AbstractFXHandlePart {
 
@@ -21,7 +22,6 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 	private Pos pos;
 
 	public FXBoxHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
-		setTargetContentParts(targetParts);
 		this.pos = pos;
 		visual = new Rectangle();
 		visual.setFill(new LinearGradient(0, 0, 0, 5, true,
@@ -41,31 +41,34 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 
 	@Override
 	public void refreshVisual() {
-		Bounds unionedBoundsInScene = getUnionedBoundsInScene(getTargetContentParts());
-		Bounds layoutBounds = visual.getParent().sceneToLocal(
-				unionedBoundsInScene);
-		double xInset = visual.getWidth() / 2.0;
-		double yInset = visual.getWidth() / 2.0;
-		if (Pos.TOP_LEFT == getPos()) {
-			visual.setLayoutX(layoutBounds.getMinX() - xInset);
-			visual.setLayoutY(layoutBounds.getMinY() - yInset);
-		} else if (Pos.TOP_RIGHT == getPos()) {
-			visual.setLayoutX(layoutBounds.getMaxX() - xInset);
-			visual.setLayoutY(layoutBounds.getMinY() - yInset);
-		} else if (Pos.BOTTOM_RIGHT == getPos()) {
-			visual.setLayoutX(layoutBounds.getMaxX() - xInset);
-			visual.setLayoutY(layoutBounds.getMaxY() - yInset);
-		} else if (Pos.BOTTOM_LEFT == getPos()) {
-			visual.setLayoutX(layoutBounds.getMinX() - xInset);
-			visual.setLayoutY(layoutBounds.getMaxY() - yInset);
-		} else {
-			throw new IllegalArgumentException("Unsupported position constant.");
+		Bounds unionedBoundsInScene = getUnionedBoundsInScene(getAnchorages());
+		if (unionedBoundsInScene != null) {
+			Bounds layoutBounds = visual.getParent().sceneToLocal(
+					unionedBoundsInScene);
+			double xInset = visual.getWidth() / 2.0;
+			double yInset = visual.getWidth() / 2.0;
+			if (Pos.TOP_LEFT == getPos()) {
+				visual.setLayoutX(layoutBounds.getMinX() - xInset);
+				visual.setLayoutY(layoutBounds.getMinY() - yInset);
+			} else if (Pos.TOP_RIGHT == getPos()) {
+				visual.setLayoutX(layoutBounds.getMaxX() - xInset);
+				visual.setLayoutY(layoutBounds.getMinY() - yInset);
+			} else if (Pos.BOTTOM_RIGHT == getPos()) {
+				visual.setLayoutX(layoutBounds.getMaxX() - xInset);
+				visual.setLayoutY(layoutBounds.getMaxY() - yInset);
+			} else if (Pos.BOTTOM_LEFT == getPos()) {
+				visual.setLayoutX(layoutBounds.getMinX() - xInset);
+				visual.setLayoutY(layoutBounds.getMaxY() - yInset);
+			} else {
+				throw new IllegalArgumentException(
+						"Unsupported position constant.");
+			}
 		}
 	}
 
-	private Bounds getUnionedBoundsInScene(List<IContentPart<Node>> selection) {
+	private Bounds getUnionedBoundsInScene(List<IVisualPart<Node>> selection) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
-		for (IContentPart<Node> cp : selection) {
+		for (IVisualPart<Node> cp : selection) {
 			Bounds boundsInScene = cp.getVisual().localToScene(
 					cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {
@@ -76,7 +79,11 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 						.toRectangle(boundsInScene));
 			}
 		}
-		return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
+		if (unionedBoundsInScene != null) {
+			return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
+		} else {
+			return null;
+		}
 	}
 
 	public Pos getPos() {

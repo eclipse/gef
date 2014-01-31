@@ -5,8 +5,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 
 abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 
@@ -25,31 +25,24 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 			refreshVisual();
 		}
 	};
-	
-	@Override
-	public void activate() {
-		super.activate();
-		for (IContentPart<Node> target : getTargetContentParts()) {
-			target.getVisual().layoutXProperty()
-					.addListener(positionChangeListener);
-			target.getVisual().layoutYProperty()
-					.addListener(positionChangeListener);
-			target.getVisual().layoutBoundsProperty()
-					.addListener(boundsChangeListener);
-		}
-	}
+
+	public void attachVisualToAnchorageVisual(Node anchorageVisual,
+			org.eclipse.gef4.mvc.anchors.IAnchor<Node> anchor) {
+		anchorageVisual.layoutXProperty().addListener(positionChangeListener);
+		anchorageVisual.layoutYProperty().addListener(positionChangeListener);
+		anchorageVisual.layoutBoundsProperty()
+				.addListener(boundsChangeListener);
+	};
 
 	@Override
-	public void deactivate() {
-		for (IContentPart<Node> target : getTargetContentParts()) {
-			target.getVisual().layoutXProperty()
-					.removeListener(positionChangeListener);
-			target.getVisual().layoutYProperty()
-					.removeListener(positionChangeListener);
-			target.getVisual().layoutBoundsProperty()
-					.removeListener(boundsChangeListener);
-		}
-		super.deactivate();
+	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
+			IAnchor<Node> anchor) {
+		anchorageVisual.layoutXProperty()
+				.removeListener(positionChangeListener);
+		anchorageVisual.layoutYProperty()
+				.removeListener(positionChangeListener);
+		anchorageVisual.layoutBoundsProperty().removeListener(
+				boundsChangeListener);
 	}
-	
+
 }

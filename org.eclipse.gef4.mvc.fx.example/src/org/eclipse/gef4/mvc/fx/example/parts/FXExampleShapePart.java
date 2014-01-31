@@ -122,20 +122,19 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
+	public void attachVisualToAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
 	}
 
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
-			anchor = new FXChopBoxAnchor();
+			// TODO: when to dispose the anchor properly??
+			anchor = new FXChopBoxAnchor(getVisual());
 		}
-		// register listeners
-		anchor.setAnchorage(getVisual());
 		return anchor;
 	}
 }

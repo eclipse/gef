@@ -26,9 +26,7 @@ public interface IAnchor<V> extends IPropertyChangeSupport {
 	public final static String REPRESH = "anchorageReferenceShape";
 
 	V getAnchorage();
-
-	void setAnchorage(V anchorage);
-
+	
 	Point getPosition(V anchored, Point referencePosition);
 	
 }

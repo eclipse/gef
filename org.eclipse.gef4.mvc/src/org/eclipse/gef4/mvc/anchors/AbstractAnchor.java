@@ -27,13 +27,15 @@ public abstract class AbstractAnchor<V> implements IAnchor<V> {
 	
 	private V anchorage;
 
-	@Override
+	public AbstractAnchor(V anchorage){
+		setAnchorage(anchorage);
+	}
+	
 	public V getAnchorage() {
 		return anchorage;
 	}
-
-	@Override
-	public void setAnchorage(V anchorage) {
+	
+	protected void setAnchorage(V anchorage){
 		this.anchorage = anchorage;
 	}
 	

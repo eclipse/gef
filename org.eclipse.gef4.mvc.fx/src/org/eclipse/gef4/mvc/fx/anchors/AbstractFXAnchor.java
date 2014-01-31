@@ -10,17 +10,14 @@ import org.eclipse.gef4.mvc.anchors.IAnchor;
 
 public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 
-	private ChangeListener<Bounds> boundsListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds newValue) {
-			propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
-					null);
-		}
-	};
+	private ChangeListener<Bounds> boundsListener;
+
+	public AbstractFXAnchor(Node anchorage) {
+		super(anchorage);
+	}
 
 	@Override
-	public void setAnchorage(Node anchorage) {
+	protected void setAnchorage(Node anchorage) {
 		Node oldAnchorage = getAnchorage();
 		if (oldAnchorage != null) {
 			// unregister listeners
@@ -36,22 +33,26 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 	private void registerLayoutListeners(Node anchorageOrAnchored) {
 		// add bounds-in-parent listeners to the whole hierarchy to witness node
 		// resizing and container movement
+		boundsListener = new ChangeListener<Bounds>() {
+			@Override
+			public void changed(
+					ObservableValue<? extends Bounds> observable,
+					Bounds oldValue, Bounds newValue) {
+				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH,
+						null, null);
+			}
+		};
+		
 		Node current = anchorageOrAnchored;
 		current.boundsInParentProperty().addListener(boundsListener);
-//		while (current != null && current.getParent() != null) {
-//			current.boundsInParentProperty().addListener(boundsListener);
-//			current = current.getParent();
-//		}
 	}
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {
 		// remove the previously added listeners
 		Node current = anchorageOrAnchored;
 		current.boundsInParentProperty().removeListener(boundsListener);
-//		while (current != null && current.getParent() != null) {
-//			current.boundsInParentProperty().removeListener(boundsListener);
-//			current = current.getParent();
-//		}
+		
+		// dispose listener
+		boundsListener = null;
 	}
-
 }

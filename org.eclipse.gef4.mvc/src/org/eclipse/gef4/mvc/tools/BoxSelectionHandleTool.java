@@ -22,11 +22,14 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * The HandleTool creates and removes handle parts dependent on the
- * {@link ISelectionModel}, {@link IHoverModel}, and {@link IFocusModel}. For single selection the selected part is asked to create the handles by itself via its Abstract
+ * {@link ISelectionModel}, {@link IHoverModel}, and {@link IFocusModel}. For
+ * single selection the selected part is asked to create the handles by itself
+ * via its Abstract
  * 
  * @author anyssen
  * 
@@ -69,19 +72,43 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 		@SuppressWarnings("unchecked")
 		List<IContentPart<V>> newSelection = (List<IContentPart<V>>) evt
 				.getNewValue();
-		removeOldHandles(rootPart);
+		@SuppressWarnings("unchecked")
+		List<IContentPart<V>> oldSelection = (List<IContentPart<V>>) evt
+				.getOldValue();
+		removeHandles(rootPart, oldSelection);
 		if (newSelection.size() > 1) {
 			// create multi selection handles
-			if (getHandlePartFactory() != null) {
-				handleParts = getHandlePartFactory().createSelectionHandleParts(newSelection);
-				rootPart.addHandleParts(handleParts);
+			addHandles(rootPart, newSelection);
+		}
+	}
+
+	private void addHandles(IRootPart<V> rootPart,
+			List<IContentPart<V>> newSelection) {
+		// attach to anchorages
+		if (getHandlePartFactory() != null) {
+			handleParts = getHandlePartFactory().createSelectionHandleParts(
+					newSelection);
+		}
+		if (handleParts != null && !handleParts.isEmpty()) {
+			rootPart.addHandleParts(handleParts);
+			for (IContentPart<V> selected : newSelection) {
+				for (IVisualPart<V> handlePart : handleParts) {
+					selected.addAnchored(handlePart);
+				}
 			}
 		}
 	}
 
-	private void removeOldHandles(IRootPart<V> rootPart) {
+	private void removeHandles(IRootPart<V> rootPart,
+			List<IContentPart<V>> oldSelection) {
+		// attach to anchorages
 		if (handleParts != null && !handleParts.isEmpty()) {
 			rootPart.removeHandleParts(handleParts);
+			for (IContentPart<V> selected : oldSelection) {
+				for (IVisualPart<V> handlePart : handleParts) {
+					selected.removeAnchored(handlePart);
+				}
+			}
 			handleParts.clear();
 		}
 	}

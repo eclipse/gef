@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import java.util.Arrays;
-
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -40,14 +38,14 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	public static class Select extends FXWayPointHandlePart {
 		public Select(IContentPart<Node> contentPart, int wayPointIndex,
 				Point wayPoint) {
-			super(contentPart, wayPointIndex, wayPoint, false);
+			super(wayPointIndex, wayPoint, false);
 		}
 	}
 
 	public static class Create extends FXWayPointHandlePart {
 		public Create(IContentPart<Node> contentPart, int wayPointIndex,
 				Point wayPoint) {
-			super(contentPart, wayPointIndex, wayPoint, true);
+			super(wayPointIndex, wayPoint, true);
 		}
 	}
 
@@ -56,10 +54,8 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	private Point currentPosition;
 	private int wayPointIndex;
 
-	private FXWayPointHandlePart(IContentPart<Node> contentPart, int index,
-			Point wayPoint, final boolean create) {
+	private FXWayPointHandlePart(int index, Point wayPoint, final boolean create) {
 		// store attributes
-		setTargetContentParts(Arrays.asList(contentPart));
 		wayPointIndex = index;
 		startPoint = wayPoint;
 		currentPosition = new Point(startPoint);
@@ -106,7 +102,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {
-		return getTargetContentParts().get(0).getEditPolicy(
+		return getAnchorages().get(0).getEditPolicy(
 				AbstractWayPointPolicy.class);
 	}
 

@@ -63,9 +63,11 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 
 	public List<IVisualPart<V>> getAnchorages();
 
-	public void attachVisualToAnchorageVisual(IAnchor<V> anchor);
+	// anchor is optional
+	public void attachVisualToAnchorageVisual(V anchorageVisual, IAnchor<V> anchor);
 
-	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor);
+	// anchor is optional
+	public void detachVisualFromAnchorageVisual(V anchorageVisual, IAnchor<V> anchor);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?

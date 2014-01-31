@@ -11,21 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Collections;
-
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
-
 /**
- * A handle part used for showing feedback based on layout bounds of an underlying target part
+ * A handle part used for showing feedback based on layout bounds of an
+ * underlying target part
  * 
  * @author nyssen
- *
+ * 
  */
 public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
@@ -34,9 +31,8 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 	private Rectangle feedbackVisual;
 	private Node targetVisual;
 
-	public FXBoundsFeedbackPart(IContentPart<Node> targetPart, Effect effect) {
-		setTargetContentParts(Collections.singletonList(targetPart));
-		this.targetVisual = targetPart.getVisual();
+	public FXBoundsFeedbackPart(Node targetVisual, Effect effect) {
+		this.targetVisual = targetVisual;
 		this.feedbackVisual = new Rectangle();
 		this.feedbackVisual.setStroke(Color.web("#5a61af"));
 		this.feedbackVisual.setStrokeWidth(1);

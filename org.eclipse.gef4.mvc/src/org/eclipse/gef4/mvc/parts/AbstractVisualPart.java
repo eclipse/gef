@@ -400,13 +400,16 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 		addAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
+		
+		anchored.refreshVisual();
 	}
 
 	protected void addAnchoredVisual(IVisualPart<V> anchored) {
 		IAnchor<V> anchor = getAnchor(anchored);
-		anchored.attachVisualToAnchorageVisual(anchor);
+		anchored.attachVisualToAnchorageVisual(getVisual(), anchor);
 	}
 
+	// may return an anchor if it wants to provide an reference point or null
 	protected abstract IAnchor<V> getAnchor(IVisualPart<V> anchored);
 
 	@Override
@@ -422,7 +425,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	protected void removeAnchoredVisual(IVisualPart<V> anchored) {
 		IAnchor<V> anchor = getAnchor(anchored);
-		anchored.detachVisualFromAnchorageVisual(anchor);
+		anchored.detachVisualFromAnchorageVisual(getVisual(), anchor);
 	}
 
 	@Override

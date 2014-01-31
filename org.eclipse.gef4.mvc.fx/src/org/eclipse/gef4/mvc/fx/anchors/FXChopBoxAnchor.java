@@ -10,6 +10,10 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
+	public FXChopBoxAnchor(Node anchorage){
+		super(anchorage);
+	}
+	
 	@Override
 	public Point getPosition(Node anchored, Point referencePoint) {
 		// compute intersection point between outline of anchorage reference

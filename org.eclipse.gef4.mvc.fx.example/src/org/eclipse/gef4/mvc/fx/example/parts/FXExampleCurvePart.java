@@ -65,8 +65,8 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		// TODO: we need proper feedback for curves
 		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy() {
-					
-			@Override
+
+					@Override
 					public void activate() {
 						super.activate();
 						getModel().addPropertyChangeListener(this);
@@ -102,12 +102,14 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 					@Override
 					protected void showSecondaryFeedback() {
-						getHost().getVisual().setEffect(getPrimarySelectionFeedbackEffect());
+						getHost().getVisual().setEffect(
+								getPrimarySelectionFeedbackEffect());
 					}
 
 					@Override
 					protected void showPrimaryFeedback() {
-						getHost().getVisual().setEffect(getSecondarySelectionFeedbackEffect());		
+						getHost().getVisual().setEffect(
+								getSecondarySelectionFeedbackEffect());
 					}
 				});
 		installEditPolicy(AbstractWayPointPolicy.class,
@@ -184,14 +186,19 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	private void refreshVisualWith(List<Point> wayPoints) {
 		Point[] startEnd = computeStartEnd();
-		ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
-		points.add(startEnd[0]);
-		points.addAll(wayPoints);
-		points.add(startEnd[1]);
-		visual.setGeometry(new Polyline(points.toArray(new Point[0])));
+		if (startEnd.length == 2) {
+			ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
+			points.add(startEnd[0]);
+			points.addAll(wayPoints);
+			points.add(startEnd[1]);
+			visual.setGeometry(new Polyline(points.toArray(new Point[0])));
+		}
 	}
 
 	private Point[] computeStartEnd() {
+		if (anchors.size() != 2) {
+			return new Point[] {};
+		}
 		Node startNode = anchors.get(0).getAnchorage();
 		Node endNode = anchors.get(1).getAnchorage();
 
@@ -218,13 +225,15 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
+	public void attachVisualToAnchorageVisual(Node anchorageVisual,
+			IAnchor<Node> anchor) {
 		anchors.add(anchor);
 		anchor.addPropertyChangeListener(this);
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
+			IAnchor<Node> anchor) {
 		anchors.remove(anchor);
 		anchor.removePropertyChangeListener(this);
 	}
@@ -241,7 +250,6 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	@Override
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-		// System.out.println("getAnchor() == null ?!");
 		return null;
 	}
 

@@ -95,13 +95,13 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IAnchor<V> anchor) {
+	public void attachVisualToAnchorageVisual(V anchorageVisual, IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IAnchor<V> anchor) {
+	public void detachVisualFromAnchorageVisual(V anchorageVisual, IAnchor<V> anchor) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

@@ -43,13 +43,13 @@ public class FXExampleModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IAnchor<Node> anchor) {
+	public void attachVisualToAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
 		// TODO Auto-generated method stub
 
 	}

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import java.util.List;
-
 /**
  * An {@link IHandlePart} is a controller that controls a visual, which is used
  * simply for feedback and/or tool interaction and does not correspond to
@@ -24,9 +22,5 @@ import java.util.List;
  */
 public interface IHandlePart<V> extends IVisualPart<V> {
 
-	// handles are not linked to a single host part, but to the content part
-	// selection
-	List<IContentPart<V>> getTargetContentParts();
-
-	void setTargetContentParts(List<IContentPart<V>> targetContentParts);
+	// interaction part
 }

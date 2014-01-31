@@ -1,7 +1,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -18,24 +17,34 @@ public class FXSelectionFeedbackByEffectPolicy extends
 
 	@Override
 	public void setHost(IVisualPart<Node> host) {
-		if(!(host instanceof IContentPart)){
-			throw new IllegalArgumentException("May only apply this policy to IContentParts.");
+		if (!(host instanceof IContentPart)) {
+			throw new IllegalArgumentException(
+					"May only apply this policy to IContentParts.");
 		}
 		super.setHost(host);
 	}
-	
-	private List<IHandlePart<Node>> feedbackParts = new ArrayList<IHandlePart<Node>>();
+
+	private IHandlePart<Node> feedbackPart;
 
 	private void showFeedback(Effect effect) {
-		// traverse target parts and create a feedback part for each
-		feedbackParts.add(new FXBoundsFeedbackPart((IContentPart<Node>)getHost(), effect));
-		getHost().getRoot().addHandleParts(feedbackParts);
+		feedbackPart = new FXBoundsFeedbackPart(
+				((IContentPart<Node>) getHost()).getVisual(), effect);
+		getHost().getRoot().addHandleParts(
+				Collections.<IHandlePart<Node>> singletonList(feedbackPart));
+		getHost().addAnchored(feedbackPart);
 	}
 
 	@Override
 	protected void hideFeedback() {
-		getHost().getRoot().removeHandleParts(feedbackParts);
-		feedbackParts.clear();
+		if (feedbackPart != null) {
+			getHost().removeAnchored(feedbackPart);
+			getHost()
+					.getRoot()
+					.removeHandleParts(
+							Collections
+									.<IHandlePart<Node>> singletonList(feedbackPart));
+			feedbackPart = null;
+		}
 	}
 
 	@Override
