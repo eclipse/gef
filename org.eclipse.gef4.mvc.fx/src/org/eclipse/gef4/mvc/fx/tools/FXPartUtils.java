@@ -4,7 +4,7 @@ import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
@@ -18,7 +18,7 @@ public class FXPartUtils {
 			Node targetNode = (Node) target;
 
 			// try to find the root visual in the target node's parent hierarchy
-			Node rootVisual = ((IRootVisualPart<Node>) viewer.getRootPart())
+			Node rootVisual = ((IRootPart<Node>) viewer.getRootPart())
 					.getVisual();
 
 			// look for the Node in the visual-part-map, traverse the hierarchy if needed
@@ -33,7 +33,7 @@ public class FXPartUtils {
 				return targetPart;
 			}
 			if (targetNode == rootVisual) {
-				return (IRootVisualPart<Node>) viewer.getRootPart();
+				return (IRootPart<Node>) viewer.getRootPart();
 			}
 		}
 

@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -54,7 +54,7 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		IRootVisualPart<V> rootPart = getRoot();
+		IRootPart<V> rootPart = getRoot();
 		if (rootPart == null) {
 			return;
 		}
@@ -64,7 +64,7 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 		}
 	}
 
-	private void onSelectionChange(IRootVisualPart<V> rootPart,
+	private void onSelectionChange(IRootPart<V> rootPart,
 			PropertyChangeEvent evt) {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<V>> newSelection = (List<IContentPart<V>>) evt
@@ -79,7 +79,7 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 		}
 	}
 
-	private void removeOldHandles(IRootVisualPart<V> rootPart) {
+	private void removeOldHandles(IRootPart<V> rootPart) {
 		if (handleParts != null && !handleParts.isEmpty()) {
 			rootPart.removeHandleParts(handleParts);
 			handleParts.clear();
@@ -90,7 +90,7 @@ public class BoxSelectionHandleTool<V> extends AbstractTool<V> implements
 		return getDomain().getViewer().getHandlePartFactory();
 	}
 
-	private IRootVisualPart<V> getRoot() {
+	private IRootPart<V> getRoot() {
 		return getDomain().getViewer().getRootPart();
 	}
 

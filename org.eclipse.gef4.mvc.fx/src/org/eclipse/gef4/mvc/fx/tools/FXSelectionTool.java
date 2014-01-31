@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractSelectionTool;
 
@@ -23,7 +23,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 			}
 
 			boolean append = event.isControlDown();
-			if (targetPart instanceof IRootVisualPart) {
+			if (targetPart instanceof IRootPart) {
 				select(null, append);
 			} else if (targetPart instanceof IContentPart) {
 				select((IContentPart<Node>) targetPart, append);

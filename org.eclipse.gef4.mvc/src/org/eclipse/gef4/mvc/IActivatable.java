@@ -1,13 +1,13 @@
 package org.eclipse.gef4.mvc;
 
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 
 public interface IActivatable {
 
 	/**
 	 * Activates the EditPart. EditParts that observe a dynamic model or support
 	 * editing must be <i>active</i>. Called by the managing EditPart, or the
-	 * Viewer in the case of the {@link IRootVisualPart}. This method may be
+	 * Viewer in the case of the {@link IRootPart}. This method may be
 	 * called again once {@link #deactivate()} has been called.
 	 * <P>
 	 * During activation the receiver should:
@@ -30,7 +30,7 @@ public interface IActivatable {
 	 * support editing must be <i>active</i>. <code>deactivate()</code> is
 	 * guaranteed to be called when an EditPart will no longer be used. Called
 	 * by the managing EditPart, or the Viewer in the case of the
-	 * {@link IRootVisualPart}. This method may be called multiple times.
+	 * {@link IRootPart}. This method may be called multiple times.
 	 * <P>
 	 * During deactivation the receiver should:
 	 * <UL>

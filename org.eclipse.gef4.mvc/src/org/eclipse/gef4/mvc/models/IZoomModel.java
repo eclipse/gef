@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.models;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 
 /**
  * The {@link IZoomModel} is used to store the current viewer's zoom factor,
@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.parts.IRootVisualPart;
  * provide a base implementation for a zooming tool here
  * 
  * A tool is also needed to propagate the current zoom factor to the
- * {@link IZoomingPolicy} of the {@link IRootVisualPart}, which has to apply the
+ * {@link IZoomingPolicy} of the {@link IRootPart}, which has to apply the
  * zoom factor to the view. 
  * TODO: Provide base implementations for this tool and the edit policy as well.
  * 

@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -95,10 +95,10 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * being used without affecting their own editpart implementation hierarchy.
 	 * 
 	 * @see #getContents()
-	 * @see #setRootPart(IRootVisualPart)
+	 * @see #setRootPart(IRootPart)
 	 * @return the RootEditPart
 	 */
-	IRootVisualPart<V> getRootPart();
+	IRootPart<V> getRootPart();
 
 	/**
 	 * Returns the {@link Map} for associating <i>visual parts</i> with their
@@ -138,7 +138,7 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * @see #getRootPart()
 	 * @see #getContents()
 	 */
-	void setRootPart(IRootVisualPart<V> root);
+	void setRootPart(IRootPart<V> root);
 
 	/**
 	 * Sets the EditPartFactory.

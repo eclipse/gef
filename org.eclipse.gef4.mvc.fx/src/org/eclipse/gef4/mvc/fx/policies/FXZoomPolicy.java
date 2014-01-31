@@ -15,7 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.AbstractZoomPolicy;
 
 public class FXZoomPolicy extends AbstractZoomPolicy<Node> {
@@ -27,7 +27,7 @@ public class FXZoomPolicy extends AbstractZoomPolicy<Node> {
 					"Expected: positive double. Given: <" + zoomFactor + ">.");
 		}
 
-		IRootVisualPart<Node> root = getHost().getRoot();
+		IRootPart<Node> root = getHost().getRoot();
 		if (root instanceof FXRootVisualPart) {
 			FXRootVisualPart fxRvp = (FXRootVisualPart) root;
 			Parent layers = fxRvp.getContentLayer().getParent();

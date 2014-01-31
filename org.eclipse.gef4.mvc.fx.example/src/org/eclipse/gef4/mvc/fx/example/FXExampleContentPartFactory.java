@@ -10,12 +10,12 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleModelPart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleShapePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 
 public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
 	@Override
-	public IContentPart<Node> createRootContentPart(IRootVisualPart<Node> root,
+	public IContentPart<Node> createRootContentPart(IRootPart<Node> root,
 			Object model) {
 		if (model instanceof FXGeometricModel) {
 			return new FXExampleModelPart();

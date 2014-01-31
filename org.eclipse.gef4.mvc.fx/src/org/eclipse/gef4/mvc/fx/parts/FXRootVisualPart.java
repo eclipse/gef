@@ -7,12 +7,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.AbstractRootVisualPart;
+import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
-public class FXRootVisualPart extends AbstractRootVisualPart<Node> {
+public class FXRootVisualPart extends AbstractRootPart<Node> {
 
 	/**
 	 * Per default, a ScrollPane draws a border and background color. We do not

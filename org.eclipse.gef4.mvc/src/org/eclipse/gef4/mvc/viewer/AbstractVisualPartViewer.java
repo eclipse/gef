@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -49,7 +49,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
 
 	private IEditDomain<V> editDomain;
-	private IRootVisualPart<V> rootPart;
+	private IRootPart<V> rootPart;
 
 	// TODO: Use dependency injection to bind default implementations.
 	private ISelectionModel<V> selectionModel;
@@ -78,7 +78,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 * @see IVisualPartViewer#getContents()
 	 */
 	public Object getContents() {
-		IRootVisualPart<V> rootPart = getRootPart();
+		IRootPart<V> rootPart = getRootPart();
 		if (rootPart == null) {
 			return null;
 		}
@@ -106,7 +106,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	/**
 	 * @see IVisualPartViewer#getRootPart()
 	 */
-	public IRootVisualPart<V> getRootPart() {
+	public IRootPart<V> getRootPart() {
 		return rootPart;
 	}
 
@@ -189,9 +189,9 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#setRootPart(IRootVisualPart)
+	 * @see IVisualPartViewer#setRootPart(IRootPart)
 	 */
-	public void setRootPart(IRootVisualPart<V> rootEditPart) {
+	public void setRootPart(IRootPart<V> rootEditPart) {
 		if (this.rootPart != null) {
 			this.rootPart.deactivate();
 			this.rootPart.setViewer(null);

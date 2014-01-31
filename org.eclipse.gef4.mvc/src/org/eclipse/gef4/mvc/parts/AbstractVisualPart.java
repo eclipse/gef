@@ -148,7 +148,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getRoot()
 	 */
-	public IRootVisualPart<V> getRoot() {
+	public IRootPart<V> getRoot() {
 		if (getParent() == null) {
 			return null;
 		}
@@ -224,7 +224,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getViewer()
 	 */
 	protected IVisualPartViewer<V> getViewer() {
-		IRootVisualPart<V> root = getRoot();
+		IRootPart<V> root = getRoot();
 		if (root == null) {
 			return null;
 		}

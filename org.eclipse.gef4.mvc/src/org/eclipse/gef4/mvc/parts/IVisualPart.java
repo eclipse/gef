@@ -23,13 +23,13 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 public interface IVisualPart<V> extends IActivatable, IAdaptable {
 
 	/**
-	 * Returns the {@link IRootVisualPart}. This method should only be called
+	 * Returns the {@link IRootPart}. This method should only be called
 	 * internally or by helpers such as edit policies. The root can be used to
 	 * get the viewer.
 	 * 
-	 * @return <code>null</code> or the {@link IRootVisualPart}
+	 * @return <code>null</code> or the {@link IRootPart}
 	 */
-	public IRootVisualPart<V> getRoot();
+	public IRootPart<V> getRoot();
 
 	public abstract V getVisual();
 

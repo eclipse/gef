@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer;
 
@@ -30,7 +30,7 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 	}
 
 	@Override
-	public void setRootPart(IRootVisualPart<Node> editpart) {
+	public void setRootPart(IRootPart<Node> editpart) {
 		super.setRootPart(editpart);
 		if (editpart != null) {
 			canvas.setScene(new Scene((Parent) editpart.getVisual()));

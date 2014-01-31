@@ -15,7 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.parts.IRootVisualPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractHoverTool;
 
@@ -27,7 +27,7 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 			IVisualPart<Node> targetPart = FXPartUtils.getMouseTargetPart(getDomain().getViewer(), event);
 			if (targetPart == null) {
 				hover(null);
-			} else if (targetPart instanceof IRootVisualPart) {
+			} else if (targetPart instanceof IRootPart) {
 				hover(null);
 //			} else if (targetPart instanceof IVisualPart) {
 //				hover((IVisualPart<Node>) targetPart);

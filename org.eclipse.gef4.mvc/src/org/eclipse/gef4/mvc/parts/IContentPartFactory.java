@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  */
 public interface IContentPartFactory<V> {
 
-	IContentPart<V> createRootContentPart(IRootVisualPart<V> root,
+	IContentPart<V> createRootContentPart(IRootPart<V> root,
 			Object objectOrLink);
 
 	IContentPart<V> createChildContentPart(IContentPart<V> parent,

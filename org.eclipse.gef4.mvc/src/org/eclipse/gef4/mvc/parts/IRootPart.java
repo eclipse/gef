@@ -18,23 +18,23 @@ import java.util.List;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
- * A {@link IRootVisualPart} is the <i>root</i> controller of an
+ * A {@link IRootPart} is the <i>root</i> controller of an
  * {@link IVisualPartViewer}. It controls the root view and holds
  * {@link IHandlePart} and {@link IContentPart} children.
  * 
- * The {@link IRootVisualPart} does not correspond to anything in the model, and
+ * The {@link IRootPart} does not correspond to anything in the model, and
  * typically can not be interacted with by the User. The Root provides a
  * homogeneous context for the applications "real" {@link IVisualPart}.
  * 
  * @author anyssen
  * 
  */
-public interface IRootVisualPart<V> extends IVisualPart<V> {
+public interface IRootPart<V> extends IVisualPart<V> {
 
 	/**
 	 * Returns the root's {@link IVisualPartViewer}.
 	 * 
-	 * @return The {@link IVisualPartViewer} this {@link IRootVisualPart} is
+	 * @return The {@link IVisualPartViewer} this {@link IRootPart} is
 	 *         attached to.
 	 */
 	IVisualPartViewer<V> getViewer();
@@ -43,7 +43,7 @@ public interface IRootVisualPart<V> extends IVisualPart<V> {
 	 * Sets the root's {@link IVisualPartViewer}.
 	 * 
 	 * @param viewer
-	 *            the {@link IVisualPartViewer} this {@link IRootVisualPart} should be
+	 *            the {@link IVisualPartViewer} this {@link IRootPart} should be
 	 *            attached to.
 	 */
 	void setViewer(IVisualPartViewer<V> viewer);

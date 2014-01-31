@@ -24,12 +24,12 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * 
  * @param <V>
  */
-public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
-		implements IRootVisualPart<V> {
+public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
+		implements IRootPart<V> {
 
 	private IVisualPartViewer<V> viewer;
 
-	public IRootVisualPart<V> getRoot() {
+	public IRootPart<V> getRoot() {
 		return this;
 	}
 
@@ -45,7 +45,7 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 	private IContentPart<V> rootContentPart;
 
 	/**
-	 * @see IRootVisualPart#setContents(EditPart)
+	 * @see IRootPart#setContents(EditPart)
 	 */
 	public void setRootContentPart(IContentPart<V> rootContentPart) {
 		if (this.rootContentPart == rootContentPart) {
@@ -86,7 +86,7 @@ public abstract class AbstractRootVisualPart<V> extends AbstractVisualPart<V>
 	// an on data field for contents parts)
 
 	/**
-	 * @see IRootVisualPart#setViewer(EditPartViewer)
+	 * @see IRootPart#setViewer(EditPartViewer)
 	 */
 	public void setViewer(IVisualPartViewer<V> newViewer) {
 		if (viewer == newViewer)
