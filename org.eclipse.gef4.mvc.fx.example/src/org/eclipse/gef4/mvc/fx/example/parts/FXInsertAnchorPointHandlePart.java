@@ -33,7 +33,7 @@ public class FXInsertAnchorPointHandlePart extends AbstractFXHandlePart {
 						new Stop(1.0, Color.web("#d5faff")) }));
 		visual.setStroke(Color.web("#5a61af"));
 
-		installEditPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+		installPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
 			@Override
 			public void press(Point mouseLocation) {
 				AbstractWayPointPolicy policy = getAnchorPointPolicy();
@@ -61,7 +61,7 @@ public class FXInsertAnchorPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getAnchorPointPolicy() {
-		return getAnchorages().get(0).getEditPolicy(
+		return getAnchorages().get(0).getPolicy(
 				AbstractWayPointPolicy.class);
 	}
 

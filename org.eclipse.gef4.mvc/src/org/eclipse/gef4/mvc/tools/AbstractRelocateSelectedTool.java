@@ -31,7 +31,7 @@ public abstract class AbstractRelocateSelectedTool<V> extends AbstractTool<V> {
 	@SuppressWarnings("unchecked")
 	protected AbstractResizeRelocatePolicy<V> getResizeRelocatePolicy(
 			IContentPart<V> editPart) {
-		return editPart.getEditPolicy(AbstractResizeRelocatePolicy.class);
+		return editPart.getPolicy(AbstractResizeRelocatePolicy.class);
 	}
 
 	public List<IContentPart<V>> getTargetParts() {

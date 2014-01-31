@@ -11,7 +11,7 @@ public abstract class AbstractDragTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("unchecked")
 	protected IDragPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
-		return targetPart.getEditPolicy(IDragPolicy.class);
+		return targetPart.getPolicy(IDragPolicy.class);
 	}
 
 	protected void press(List<IVisualPart<V>> targetParts,

@@ -53,9 +53,9 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	public FXExampleCurvePart() {
 		visual = new GeometryNode<ICurve>();
-		installEditPolicy(ISelectionPolicy.class,
+		installPolicy(ISelectionPolicy.class,
 				new ISelectionPolicy.Impl<Node>());
-		installEditPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
@@ -63,7 +63,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 			}
 		});
 		// TODO: we need proper feedback for curves
-		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
+		installPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy() {
 
 					@Override
@@ -112,7 +112,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 								getSecondarySelectionFeedbackEffect());
 					}
 				});
-		installEditPolicy(AbstractWayPointPolicy.class,
+		installPolicy(AbstractWayPointPolicy.class,
 				new AbstractWayPointPolicy() {
 					private List<Point> wayPoints = new ArrayList<Point>();
 					private boolean isCreate;

@@ -29,19 +29,19 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 
 	public FXExampleShapePart() {
 		visual = new GeometryNode<IShape>();
-		installEditPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		installEditPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
 						.getSelected().contains(getHost());
 			}
 		});
-		installEditPolicy(AbstractSelectionFeedbackPolicy.class,
+		installPolicy(AbstractSelectionFeedbackPolicy.class,
 				new FXSelectionFeedbackByEffectPolicy());
-		installEditPolicy(AbstractHoverFeedbackPolicy.class,
+		installPolicy(AbstractHoverFeedbackPolicy.class,
 				new FXHoverFeedbackByEffectPolicy());
-		installEditPolicy(AbstractResizeRelocatePolicy.class,
+		installPolicy(AbstractResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy() {
 					@Override
 					public void commitResizeRelocate(double dx, double dy,

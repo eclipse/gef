@@ -19,6 +19,7 @@ import java.util.List;
  * 
  * @param <V>
  */
+// TODO: Remove after BoxSelectionHandleTool has been converted into a policy.
 public interface IHandlePartFactory<V> {
 
 	public List<IHandlePart<V>> createFocusHandleParts(IContentPart<V> focused);

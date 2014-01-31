@@ -75,7 +75,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 
 	@SuppressWarnings("unchecked")
 	private IHoverPolicy<V> getToolPolicy(IContentPart<V> hovered) {
-		return hovered.getEditPolicy(IHoverPolicy.class);
+		return hovered.getPolicy(IHoverPolicy.class);
 	}
 
 }

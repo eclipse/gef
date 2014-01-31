@@ -67,7 +67,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(VISUAL_STROKE);
 
 		// install policies
-		installEditPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+		installPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
 			private boolean isRemove = false;
 
 			@Override
@@ -102,7 +102,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {
-		return getAnchorages().get(0).getEditPolicy(
+		return getAnchorages().get(0).getPolicy(
 				AbstractWayPointPolicy.class);
 	}
 

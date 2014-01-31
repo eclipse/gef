@@ -50,7 +50,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private int flags;
 
-	private Map<Class<?>, IPolicy<V>> editPolicies;
+	private Map<Class<?>, IPolicy<V>> policies;
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -59,20 +59,20 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	private List<IVisualPart<V>> anchorages;
 
 	/**
-	 * Activates this EditPart, which in turn activates its children and
-	 * EditPolicies. Subclasses should <em>extend</em> this method to add
-	 * listeners to the model. Activation indicates that the EditPart is
-	 * realized in an EditPartViewer. <code>deactivate()</code> is the inverse,
-	 * and is eventually called on all EditParts.
+	 * Activates this {@link IVisualPart}, which in turn activates its policies
+	 * and children. Subclasses should <em>extend</em> this method if they need
+	 * to register listeners to the content. Activation indicates that the
+	 * {@link IVisualPart} is realized in an {@link IVisualPartViewer}.
+	 * <code>deactivate()</code> is the inverse, and is eventually called on all
+	 * {@link IVisualPart}s.
 	 * 
-	 * @see IEditPart#activate()
 	 * @see #deactivate()
 	 */
 	public void activate() {
 		setFlag(FLAG_ACTIVE, true);
 
-		if (editPolicies != null) {
-			for (IPolicy<V> p : editPolicies.values()) {
+		if (policies != null) {
+			for (IPolicy<V> p : policies.values()) {
 				p.activate();
 			}
 		}
@@ -80,34 +80,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		List<IVisualPart<V>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
-
 	}
 
-	/**
-	 * Adds a child <code>EditPart</code> to this EditPart. This method is
-	 * called from {@link #synchronizeContentChildren()}. The following events
-	 * occur in the order listed:
-	 * <OL>
-	 * <LI>The child is added to the {@link #children} List, and its parent is
-	 * set to <code>this</code>
-	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the child's
-	 * visual
-	 * <LI>{@link IEditPart#addNotify()} is called on the child.
-	 * <LI><code>activate()</code> is called if this part is active
-	 * <LI><code>EditPartListeners</code> are notified that the child has been
-	 * added.
-	 * </OL>
-	 * <P>
-	 * Subclasses should implement {@link #addChildVisual(IEditPart, int)}.
-	 * 
-	 * @param child
-	 *            The <code>EditPart</code> to add
-	 * @param index
-	 *            The index
-	 * @see #addChildVisual(IEditPart, int)
-	 * @see #removeNodeChild(IEditPart)
-	 * @see #reorderChild(IEditPart,int)
-	 */
 	public void addChild(IVisualPart<V> child, int index) {
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
@@ -123,17 +97,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Performs the addition of the child's <i>visual</i> to this EditPart's
-	 * Visual. The provided subclasses {@link AbstractGraphicalEditPart} and
-	 * {@link AbstractTreeEditPart} already implement this method correctly, so
-	 * it is unlikely that this method should be overridden.
+	 * Performs the addition of the child's <i>visual</i> to this
+	 * {@link IVisualPart}'s visual.
 	 * 
 	 * @param child
-	 *            The EditPart being added
+	 *            The {@link IVisualPart} being added
 	 * @param index
 	 *            The child's position
-	 * @see #addChild(EditPart, int)
-	 * @see AbstractGraphicalEditPart#removeChildVisual(EditPart)
+	 * @see #addChild(IVisualPart, int)
 	 */
 	protected abstract void addChildVisual(IVisualPart<V> child, int index);
 
@@ -145,9 +116,6 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		children.add(index, child);
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getRoot()
-	 */
 	public IRootPart<V> getRoot() {
 		if (getParent() == null) {
 			return null;
@@ -156,11 +124,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Deactivates this EditPart, and in turn deactivates its children and
-	 * EditPolicies. Subclasses should <em>extend</em> this method to remove any
-	 * listeners established in {@link #activate()}
+	 * Deactivates this {@link IVisualPart}, and in turn deactivates its
+	 * policies and children. Subclasses should <em>extend</em> this method to
+	 * remove any listeners established in {@link #activate()}
 	 * 
-	 * @see IEditPart#deactivate()
 	 * @see #activate()
 	 */
 	public void deactivate() {
@@ -168,8 +135,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		if (editPolicies != null) {
-			for (IPolicy<V> p : editPolicies.values()) {
+		if (policies != null) {
+			for (IPolicy<V> p : policies.values()) {
 				p.deactivate();
 			}
 		}
@@ -178,7 +145,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Returns the specified adapter if recognized. Delegates to the workbench
+	 * Returns the specified adapter if recognized. Delegates to the Plaform
 	 * adapter mechanism.
 	 * <P>
 	 * Additional adapter types may be added in the future. Subclasses should
@@ -213,16 +180,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IPolicy<V>> P getEditPolicy(Class<? super P> key) {
-		if (editPolicies == null) {
+	public <P extends IPolicy<V>> P getPolicy(Class<? super P> key) {
+		if (policies == null) {
 			return null;
 		}
-		return (P) editPolicies.get(key);
+		return (P) policies.get(key);
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getViewer()
-	 */
 	protected IVisualPartViewer<V> getViewer() {
 		IRootPart<V> root = getRoot();
 		if (root == null) {
@@ -232,11 +196,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy){
-		if (editPolicies == null) {
-			editPolicies = new HashMap<Class<?>, IPolicy<V>>();
+	public <P extends IPolicy<V>> void installPolicy(Class<? super P> key,
+			P editPolicy) {
+		if (policies == null) {
+			policies = new HashMap<Class<?>, IPolicy<V>>();
 		}
-		editPolicies.put(key, editPolicy);
+		policies.put(key, editPolicy);
 		editPolicy.setHost(this);
 		if (isActive()) {
 			editPolicy.activate();
@@ -244,7 +209,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * @return <code>true</code> if this EditPart is active.
+	 * @return <code>true</code> if this {@link IVisualPart} is active.
 	 */
 	@Override
 	public boolean isActive() {
@@ -252,33 +217,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Refreshes this EditPart's <i>visuals</i>. This method is called by
-	 * {@link #refresh()}, and may also be called in response to notifications
-	 * from the model. This method does nothing by default. Subclasses may
-	 * override.
+	 * Refreshes this {@link IVisualPart}'s <i>visuals</i>. This method does
+	 * nothing by default. Subclasses may override.
 	 */
 	public abstract void refreshVisual();
 
-	/**
-	 * Removes a child <code>EditPart</code>. This method is called from
-	 * {@link #synchronizeContentChildren()}. The following events occur in the
-	 * order listed:
-	 * <OL>
-	 * <LI><code>EditPartListeners</code> are notified that the child is being
-	 * removed
-	 * <LI><code>deactivate()</code> is called if the child is active
-	 * <LI>{@link IEditPart#removeNotify()} is called on the child.
-	 * <LI>{@link #removeChildVisual(IEditPart)} is called to remove the child's
-	 * visual object.
-	 * <LI>The child's parent is set to <code>null</code>
-	 * </OL>
-	 * <P>
-	 * Subclasses should implement {@link #removeChildVisual(IEditPart)}.
-	 * 
-	 * @param child
-	 *            EditPart being removed
-	 * @see #addChild(IEditPart,int)
-	 */
 	public void removeChild(IVisualPart<V> child) {
 		Assert.isNotNull(child);
 		int index = getChildren().indexOf(child);
@@ -293,12 +236,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Removes the childs visual from this EditPart's visual. Subclasses should
-	 * implement this method to support the visual type they introduce, such as
-	 * Figures or TreeItems.
+	 * Removes the child's visual from this {@link IVisualPart}'s visual.
 	 * 
 	 * @param child
-	 *            the child EditPart
+	 *            the child {@link IVisualPart}
 	 */
 	protected abstract void removeChildVisual(IVisualPart<V> child);
 
@@ -310,26 +251,25 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IPolicy<V>> void uninstallEditPolicy(Class<P> key) {
-		if (editPolicies == null)
+	public <P extends IPolicy<V>> void uninstallPolicy(Class<P> key) {
+		if (policies == null)
 			return;
-		IPolicy<V> editPolicy = editPolicies.remove(key);
+		IPolicy<V> editPolicy = policies.remove(key);
 		if (editPolicy != null) {
 			editPolicy.deactivate();
 			editPolicy.setHost(null);
 		}
-		if (editPolicies.size() == 0) {
-			editPolicies = null;
+		if (policies.size() == 0) {
+			policies = null;
 		}
 	}
 
 	/**
-	 * Moves a child <code>EditPart</code> into a lower index than it currently
-	 * occupies. This method is called from
-	 * {@link #synchronizeContentChildren()}.
+	 * Moves a child {@link IVisualPart} into a lower index than it currently
+	 * occupies.
 	 * 
-	 * @param editpart
-	 *            the child being reordered
+	 * @param child
+	 *            the child {@link IVisualPart} being reordered
 	 * @param index
 	 *            new index for the child
 	 */
@@ -341,7 +281,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Sets the value of the specified flag. Flag values are decalared as static
+	 * Sets the value of the specified flag. Flag values are declared as static
 	 * constants. Subclasses may define additional constants above
 	 * {@link #MAX_FLAG}.
 	 * 
@@ -367,9 +307,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	/**
-	 * Sets the parent EditPart. There is no reason to override this method.
-	 * 
-	 * @see IEditPart#setParent(IEditPart)
+	 * Sets the parent {@link IVisualPart}.
 	 */
 	public void setParent(IVisualPart<V> parent) {
 		if (this.parent == parent)
@@ -384,9 +322,6 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getParent()
-	 */
 	public IVisualPart<V> getParent() {
 		return parent;
 	}
@@ -400,7 +335,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 		addAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
-		
+
 		anchored.refreshVisual();
 	}
 

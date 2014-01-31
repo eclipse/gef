@@ -49,21 +49,8 @@ public interface IRootPart<V> extends IVisualPart<V> {
 	void setViewer(IVisualPartViewer<V> viewer);
 
 	// TODO: support multiple content parts
-	/**
-	 * Sets the <i>contents</i> EditPart. A RootEditPart only has a single
-	 * child, called its <i>contents</i>.
-	 * 
-	 * @param editpart
-	 *            the contents
-	 */
 	void setRootContentPart(IContentPart<V> contents);
 
-	/**
-	 * Returns the <i>contents</i> EditPart. A RootEditPart only has a single
-	 * child, called its <i>contents</i>.
-	 * 
-	 * @return the contents.
-	 */
 	IContentPart<V> getRootContentPart();
 
 	// void addContentPart(IContentPart<V> contents);

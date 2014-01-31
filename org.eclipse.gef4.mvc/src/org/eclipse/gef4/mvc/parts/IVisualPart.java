@@ -73,10 +73,10 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	// allow an instance binding?
 	// TODO: maybe we can replace this with juice (so no need to register that
 	// externally)
-	public <P extends IPolicy<V>> P getEditPolicy(Class<? super P> key);
+	public <P extends IPolicy<V>> P getPolicy(Class<? super P> key);
 
-	public <P extends IPolicy<V>> void installEditPolicy(Class<? super P> key, P editPolicy);
+	public <P extends IPolicy<V>> void installPolicy(Class<? super P> key, P editPolicy);
 
-	public <P extends IPolicy<V>> void uninstallEditPolicy(Class<P> key);
+	public <P extends IPolicy<V>> void uninstallPolicy(Class<P> key);
 
 }
