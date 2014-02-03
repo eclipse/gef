@@ -23,7 +23,7 @@ public class FXExampleViewPart extends ViewPart {
 		FXViewer viewer = new FXViewer(canvas);
 		viewer.setContentPartFactory(new FXExampleContentPartFactory());
 		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());
-		viewer.setEditDomain(domain);
+		viewer.setDomain(domain);
 		viewer.setContents(new FXGeometricModel());
 	}
 

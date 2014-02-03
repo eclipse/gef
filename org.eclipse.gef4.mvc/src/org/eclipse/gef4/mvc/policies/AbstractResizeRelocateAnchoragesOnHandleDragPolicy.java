@@ -1,52 +1,21 @@
-/*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
- *******************************************************************************/
-package org.eclipse.gef4.mvc.tools;
+package org.eclipse.gef4.mvc.policies;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
 
-/**
- * <p>
- * Multi selection resize and relocate tool that preserves the relative visual
- * bounds of all selected target content parts within the collective selection
- * bounds.
- * </p>
- * <p>
- * The user controls a selection rectangle which encloses all selected content
- * parts. When the user alters the selection bounds by dragging its edges, this
- * tool computes new selection bounds for the change using the provided
- * {@link ReferencePoint}. The visuals are relocated and resized as if they
- * would be scaled to fit the new selection bounds.
- * </p>
- * 
- * @author anyssen
- * @author mwienand
- * 
- * @param <V>
- */
-// TODO: remove -> this is replaced by policy in handles
-public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractTool<V> {
-
+public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V> extends AbstractPolicy<V> implements IDragPolicy<V> {
+	
 	/*
 	 * TODO: allow negative scaling
 	 */
-
+	
 	/**
 	 * <p>
 	 * Specifies the position of the "resize handle" that is used to resize the
@@ -110,7 +79,7 @@ public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractToo
 	}
 
 	public List<IContentPart<V>> getTargetParts() {
-		return getDomain().getViewer().getSelectionModel().getSelected();
+		return getHost().getRoot().getViewer().getSelectionModel().getSelected();
 	}
 
 	/**
@@ -128,7 +97,8 @@ public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractToo
 	 */
 	protected abstract ReferencePoint getReferencePoint();
 
-	public void initResize(Point mouseLocation) {
+	@Override
+	public void press(Point mouseLocation) {
 		// init resize context vars
 		initialMouseLocation = mouseLocation;
 		selectionBounds = getSelectionBounds(getTargetParts());
@@ -194,7 +164,8 @@ public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractToo
 		return bounds;
 	}
 
-	public void performResize(Point mouseLocation) {
+	@Override
+	public void drag(Point mouseLocation, Dimension delta) {
 		if(selectionBounds == null){
 			return;
 		}
@@ -253,7 +224,8 @@ public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractToo
 		return sel;
 	}
 
-	public void commitResize(Point mouseLocation) {
+	@Override
+	public void release(Point mouseLocation, Dimension delta) {
 		if(selectionBounds == null){
 			return;
 		}
@@ -276,6 +248,11 @@ public abstract class AbstractResizeRelocateViaHandleTool<V> extends AbstractToo
 		initialMouseLocation = null;
 		referencePoint = null;
 		relX1 = relY1 = relX2 = relY2 = null;
+	}
+
+	@Override
+	public boolean isDraggable() {
+		return true;
 	}
 
 }

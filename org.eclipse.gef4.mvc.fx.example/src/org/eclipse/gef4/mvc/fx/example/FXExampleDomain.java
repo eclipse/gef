@@ -6,7 +6,6 @@ import org.eclipse.gef4.mvc.fx.domain.FXEditDomain;
 import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXRelocateSelectedTool;
-import org.eclipse.gef4.mvc.fx.tools.FXResizeRelocateViaHandleTool;
 import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
 import org.eclipse.gef4.mvc.tools.BoxSelectionHandleTool;
 import org.eclipse.gef4.mvc.tools.CompositeAndTool;
@@ -21,8 +20,8 @@ public class FXExampleDomain extends FXEditDomain {
 		baseTool.add(new BoxSelectionHandleTool<Node>()); // TODO: policy in
 															// root visual
 		baseTool.add(new FXRelocateSelectedTool()); // TODO use drag tool
-		baseTool.add(new FXResizeRelocateViaHandleTool()); // TODO implement via
-															// policy in handles
+//		baseTool.add(new FXResizeRelocateViaHandleTool()); // TODO implement via
+//															// policy in handles
 		baseTool.add(new FXDragTool());
 		baseTool.add(new FXHoverTool());
 		return baseTool;

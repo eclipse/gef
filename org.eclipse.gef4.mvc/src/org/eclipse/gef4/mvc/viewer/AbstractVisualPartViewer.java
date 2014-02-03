@@ -141,7 +141,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	/**
 	 * @see IVisualPartViewer#setDomain(EditDomain)
 	 */
-	public void setEditDomain(IDomain<V> editdomain) {
+	public void setDomain(IDomain<V> editdomain) {
 		if (editDomain == editdomain)
 			return;
 		if (editDomain != null) {

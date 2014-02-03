@@ -127,7 +127,7 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * @param domain
 	 *            The EditDomain
 	 */
-	void setEditDomain(IDomain<V> domain);
+	void setDomain(IDomain<V> domain);
 
 	/**
 	 * Sets the <i>root</i> of this viewer. The root should not be confused with

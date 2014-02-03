@@ -58,11 +58,11 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 				peekTool().deactivate();
 				peekTool().setDomain(null);
 			}
-			this.viewer.setEditDomain(null);
+			this.viewer.setDomain(null);
 		}
 		this.viewer = viewer;
 		if (viewer != null) {
-			viewer.setEditDomain(this);
+			viewer.setDomain(this);
 			if (peekTool() != null) {
 				peekTool().setDomain(this);
 				peekTool().activate();
