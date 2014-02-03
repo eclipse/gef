@@ -24,13 +24,13 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {
 
-	private Object model;
+	private Object content;
 
 	/**
 	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getContent()
 	 */
 	public Object getContent() {
-		return model;
+		return content;
 	}
 
 	/**
@@ -40,10 +40,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * @see IEditPart#setContent(Object)
 	 */
 	public void setContent(Object model) {
-		if (this.model == model) {
+		if (this.content == model) {
 			return;
 		}
-		this.model = model;
+		this.content = model;
 	}
 
 	/**
