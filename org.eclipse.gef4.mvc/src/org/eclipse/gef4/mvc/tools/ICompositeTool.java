@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 
 /**
  * 
@@ -24,8 +24,8 @@ public interface ICompositeTool<V> extends ITool<V> {
 	/**
 	 * Appends the given {@link ITool} to the list of sub-tools managed by this
 	 * {@link ICompositeTool}. If this {@link ICompositeTool} is already
-	 * registered on an {@link IEditDomain}, the added tool will be registered
-	 * on the same {@link IEditDomain}.
+	 * registered on an {@link IDomain}, the added tool will be registered
+	 * on the same {@link IDomain}.
 	 * 
 	 * @param tool
 	 */
@@ -34,8 +34,8 @@ public interface ICompositeTool<V> extends ITool<V> {
 	/**
 	 * Inserts the given {@link ITool} into the list of sub-tools managed by
 	 * this {@link ICompositeTool} at the given index. If this
-	 * {@link ICompositeTool} is already registered on an {@link IEditDomain},
-	 * the added tool will be registered on the same {@link IEditDomain}.
+	 * {@link ICompositeTool} is already registered on an {@link IDomain},
+	 * the added tool will be registered on the same {@link IDomain}.
 	 * 
 	 * @param index
 	 * @param tool
@@ -57,14 +57,14 @@ public interface ICompositeTool<V> extends ITool<V> {
 	public void remove(int index);
 
 	/**
-	 * Registers all sub-tools on the supplied {@link IEditDomain}. If the
-	 * supplied {@link IEditDomain} is <code>null</code> all sub-tools are
+	 * Registers all sub-tools on the supplied {@link IDomain}. If the
+	 * supplied {@link IDomain} is <code>null</code> all sub-tools are
 	 * unregistered. (Un-)registration is done via the designated
 	 * {@link #registerListeners()} and {@link #unregisterListeners()} methods.
 	 * 
 	 * @param domain
 	 */
 	@Override
-	public void setDomain(IEditDomain<V> domain);
+	public void setDomain(IDomain<V> domain);
 
 }

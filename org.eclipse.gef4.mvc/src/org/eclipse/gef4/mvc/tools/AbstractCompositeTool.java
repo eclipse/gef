@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 
 /**
  * 
@@ -29,7 +29,7 @@ public abstract class AbstractCompositeTool<V> extends AbstractTool<V>
 	private List<ITool<V>> subTools = null;
 
 	@Override
-	public void setDomain(IEditDomain<V> domain) {
+	public void setDomain(IDomain<V> domain) {
 		super.setDomain(domain);
 		// propagate the domain to all sub-tools
 		for (ITool<V> subTool : getSubTools()) {

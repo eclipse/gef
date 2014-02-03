@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -35,7 +35,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 		implements PropertyChangeListener {
 
 	@Override
-	public void setDomain(IEditDomain<V> domain) {
+	public void setDomain(IDomain<V> domain) {
 		super.setDomain(domain);
 	}
 

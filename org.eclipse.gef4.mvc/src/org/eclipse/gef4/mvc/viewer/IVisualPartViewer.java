@@ -16,8 +16,8 @@ package org.eclipse.gef4.mvc.viewer;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
-import org.eclipse.gef4.mvc.domain.AbstractEditDomain;
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.AbstractDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -59,12 +59,12 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	Object getContents();
 
 	/**
-	 * Returns the {@link AbstractEditDomain EditDomain} to which this viewer
+	 * Returns the {@link AbstractDomain EditDomain} to which this viewer
 	 * belongs.
 	 * 
 	 * @return the viewer's EditDomain
 	 */
-	IEditDomain<V> getEditDomain();
+	IDomain<V> getEditDomain();
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by
@@ -127,7 +127,7 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * @param domain
 	 *            The EditDomain
 	 */
-	void setEditDomain(IEditDomain<V> domain);
+	void setEditDomain(IDomain<V> domain);
 
 	/**
 	 * Sets the <i>root</i> of this viewer. The root should not be confused with

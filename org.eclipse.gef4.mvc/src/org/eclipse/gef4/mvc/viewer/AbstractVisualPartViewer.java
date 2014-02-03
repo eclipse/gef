@@ -18,7 +18,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
 import org.eclipse.gef4.mvc.models.DefaultHoverModel;
 import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
@@ -48,7 +48,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
 
-	private IEditDomain<V> editDomain;
+	private IDomain<V> editDomain;
 	private IRootPart<V> rootPart;
 
 	// TODO: Use dependency injection to bind default implementations.
@@ -92,7 +92,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	/**
 	 * @see IVisualPartViewer#getEditDomain()
 	 */
-	public IEditDomain<V> getEditDomain() {
+	public IDomain<V> getEditDomain() {
 		return editDomain;
 	}
 
@@ -141,7 +141,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	/**
 	 * @see IVisualPartViewer#setDomain(EditDomain)
 	 */
-	public void setEditDomain(IEditDomain<V> editdomain) {
+	public void setEditDomain(IDomain<V> editdomain) {
 		if (editDomain == editdomain)
 			return;
 		if (editDomain != null) {

@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  *
  * @param <V>
  */
-public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
+public abstract class AbstractDomain<V> implements IDomain<V> {
 
 	private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
 	private IVisualPartViewer<V> viewer;
@@ -37,7 +37,7 @@ public abstract class AbstractEditDomain<V> implements IEditDomain<V> {
 	/**
 	 * Constructs an EditDomain and loads the default tool.
 	 */
-	public AbstractEditDomain() {
+	public AbstractDomain() {
 		pushTool(getDefaultTool());
 	}
 

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
-import org.eclipse.gef4.mvc.domain.IEditDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 
 /**
  * 
@@ -22,16 +22,16 @@ import org.eclipse.gef4.mvc.domain.IEditDomain;
  */
 public abstract class AbstractTool<V> implements ITool<V> {
 
-	private IEditDomain<V> domain;
+	private IDomain<V> domain;
 	private boolean isActive;
 
 	@Override
-	public void setDomain(IEditDomain<V> domain) {
+	public void setDomain(IDomain<V> domain) {
 		if (isActive) {
 			throw new IllegalStateException(
 					"The reference to the IEditDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}
-		IEditDomain<V> oldDomain = getDomain();
+		IDomain<V> oldDomain = getDomain();
 
 		if (oldDomain != null && domain == null) {
 			unregisterListeners();
@@ -45,7 +45,7 @@ public abstract class AbstractTool<V> implements ITool<V> {
 	}
 
 	/**
-	 * This method is called when a valid {@link IEditDomain} is attached to
+	 * This method is called when a valid {@link IDomain} is attached to
 	 * this tool so that you can register event listeners for various inputs
 	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
 	 */
@@ -53,7 +53,7 @@ public abstract class AbstractTool<V> implements ITool<V> {
 	}
 
 	/**
-	 * This method is called when the attached {@link IEditDomain} is reset to
+	 * This method is called when the attached {@link IDomain} is reset to
 	 * <code>null</code> so that you can unregister previously registered event
 	 * listeners.
 	 */
@@ -61,7 +61,7 @@ public abstract class AbstractTool<V> implements ITool<V> {
 	}
 
 	@Override
-	public IEditDomain<V> getDomain() {
+	public IDomain<V> getDomain() {
 		return domain;
 	}
 

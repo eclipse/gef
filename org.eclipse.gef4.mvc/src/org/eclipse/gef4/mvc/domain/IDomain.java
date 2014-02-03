@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  *
  * @param <V>
  */
-public interface IEditDomain<V> {
+public interface IDomain<V> {
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
