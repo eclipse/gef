@@ -4,7 +4,9 @@ import javafx.embed.swt.FXCanvas;
 
 import org.eclipse.gef4.mvc.fx.domain.FXEditDomain;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -25,6 +27,11 @@ public class FXExampleViewPart extends ViewPart {
 		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());
 		viewer.setDomain(domain);
 		viewer.setContents(new FXGeometricModel());
+
+		// install selection feedback policy
+		viewer.getRootPart().installPolicy(
+				AbstractSelectionFeedbackPolicy.class,
+				new FXSelectionFeedbackByEffectPolicy());
 	}
 
 	@Override

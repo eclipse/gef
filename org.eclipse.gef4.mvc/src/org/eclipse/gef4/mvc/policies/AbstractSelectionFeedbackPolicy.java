@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - multi selection handles in root part
  *     
  * Note: Parts of this interface have been transferred from org.eclipse.gef.EditDomain.
  * 
@@ -23,6 +24,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -35,6 +37,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public abstract class AbstractSelectionFeedbackPolicy<V> extends
 		AbstractFeedbackPolicy<V> implements PropertyChangeListener {
+
+	private List<IHandlePart<V>> multiHandleParts;
 
 	@Override
 	public void activate() {
@@ -59,6 +63,14 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 			List<IContentPart<V>> newSelection = (List<IContentPart<V>>) event
 					.getNewValue();
 
+			if (getHost() instanceof IRootPart) {
+				removeMultiHandles((IRootPart<V>) getHost(), oldSelection);
+				if (newSelection.size() > 1) {
+					addMultiHandles((IRootPart<V>) getHost(), newSelection);
+				}
+				return;
+			}
+
 			boolean inOld = oldSelection.contains(getHost());
 			boolean inNew = newSelection.contains(getHost());
 
@@ -78,6 +90,41 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 				}
 			}
 		}
+	}
+
+	private void addMultiHandles(IRootPart<V> rootPart,
+			List<IContentPart<V>> newSelection) {
+		// attach to anchorages
+		if (getHandlePartFactory() != null) {
+			multiHandleParts = getHandlePartFactory()
+					.createSelectionHandleParts(newSelection);
+		}
+		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
+			rootPart.addHandleParts(multiHandleParts);
+			for (IContentPart<V> selected : newSelection) {
+				for (IVisualPart<V> handlePart : multiHandleParts) {
+					selected.addAnchored(handlePart);
+				}
+			}
+		}
+	}
+
+	private void removeMultiHandles(IRootPart<V> rootPart,
+			List<IContentPart<V>> oldSelection) {
+		// attach to anchorages
+		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
+			rootPart.removeHandleParts(multiHandleParts);
+			for (IContentPart<V> selected : oldSelection) {
+				for (IVisualPart<V> handlePart : multiHandleParts) {
+					selected.removeAnchored(handlePart);
+				}
+			}
+			multiHandleParts.clear();
+		}
+	}
+
+	private IHandlePartFactory<V> getHandlePartFactory() {
+		return getHost().getRoot().getViewer().getHandlePartFactory();
 	}
 
 	protected abstract void hideFeedback();

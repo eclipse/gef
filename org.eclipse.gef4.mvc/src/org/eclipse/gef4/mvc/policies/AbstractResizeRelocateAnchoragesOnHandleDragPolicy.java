@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
 import java.util.HashMap;
@@ -10,12 +21,13 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V> extends AbstractPolicy<V> implements IDragPolicy<V> {
-	
+public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V>
+		extends AbstractPolicy<V> implements IDragPolicy<V> {
+
 	/*
 	 * TODO: allow negative scaling
 	 */
-	
+
 	/**
 	 * <p>
 	 * Specifies the position of the "resize handle" that is used to resize the
@@ -79,7 +91,8 @@ public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V> exte
 	}
 
 	public List<IContentPart<V>> getTargetParts() {
-		return getHost().getRoot().getViewer().getSelectionModel().getSelected();
+		return getHost().getRoot().getViewer().getSelectionModel()
+				.getSelected();
 	}
 
 	/**
@@ -166,7 +179,7 @@ public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V> exte
 
 	@Override
 	public void drag(Point mouseLocation, Dimension delta) {
-		if(selectionBounds == null){
+		if (selectionBounds == null) {
 			return;
 		}
 		Rectangle sel = updateSelectionBounds(mouseLocation);
@@ -226,7 +239,7 @@ public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V> exte
 
 	@Override
 	public void release(Point mouseLocation, Dimension delta) {
-		if(selectionBounds == null){
+		if (selectionBounds == null) {
 			return;
 		}
 		Rectangle sel = updateSelectionBounds(mouseLocation);

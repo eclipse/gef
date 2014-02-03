@@ -17,10 +17,6 @@ public class FXSelectionFeedbackByEffectPolicy extends
 
 	@Override
 	public void setHost(IVisualPart<Node> host) {
-		if (!(host instanceof IContentPart)) {
-			throw new IllegalArgumentException(
-					"May only apply this policy to IContentParts.");
-		}
 		super.setHost(host);
 	}
 
