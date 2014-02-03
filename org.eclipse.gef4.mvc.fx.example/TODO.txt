@@ -1,6 +1,10 @@
+- Replace AbstractResizeRelocateViaHandleTool by ResizeRelocateAnchoragesOnHandleDragPoliy on HandlePart 
+	(Use FXBoxHandlePart and register this policy as drag policy within HandlePartFactory)
+- Replace BoxSelectionHandleTool by making SelectionFeedbackPolicy work with root host part as well
+    (Create box selection handles in case attached to root part and multiple selection, otherwise behave as current implementation)
+- Move synchronization behavior into policy, which is applicable to root part and content parts; remove restriction to have one root content part; add content model to viewer.
+
 - Convert example geometries to be origin-based, position them via affine transform
-- Implement HandlePolicy -> use to create selection/focus/hover handles for individual content parts, let HandleTool create  
-  selection box handles, maybe also via handle policy of root part
 - Add outline handles also for non-rectangle shapes; restrict resizing options for rectangle-based shapes via constraints on handles
 - Implement outline segment midpoint handles (like bendpoints) to allow "morphing" of shapes
 - Add support for removing bendpoints and outline segment midpoint handles
