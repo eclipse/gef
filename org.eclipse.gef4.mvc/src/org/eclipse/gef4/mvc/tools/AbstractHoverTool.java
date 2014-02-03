@@ -20,7 +20,6 @@ import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		PropertyChangeListener {
@@ -32,7 +31,8 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	@Override
 	public void activate() {
 		super.activate();
-		getDomain().getViewer().getContentModel().addPropertyChangeListener(this);
+		getDomain().getViewer().getContentModel()
+				.addPropertyChangeListener(this);
 		getDomain().getViewer().getSelectionModel()
 				.addPropertyChangeListener(this);
 	}
@@ -41,7 +41,8 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	public void deactivate() {
 		getDomain().getViewer().getSelectionModel()
 				.removePropertyChangeListener(this);
-		getDomain().getViewer().getContentModel().removePropertyChangeListener(this);
+		getDomain().getViewer().getContentModel()
+				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
@@ -62,7 +63,6 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		}
 	}
 
-
 	public void hover(IContentPart<V> hovered) {
 		// TODO: move this into hover policy?
 		if (hovered == null || getToolPolicy(hovered) == null
@@ -72,7 +72,6 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 			getHoverModel().setHover(hovered);
 		}
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private IHoverPolicy<V> getToolPolicy(IContentPart<V> hovered) {

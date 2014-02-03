@@ -77,7 +77,6 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		IContentPart<V> editPart;
 		Object model;
 
-		@SuppressWarnings("unchecked")
 		List<IContentPart<V>> contentPartChildren = PartUtilities.filterParts(
 				getHost().getChildren(), IContentPart.class);
 		int size = contentPartChildren.size();
@@ -110,7 +109,6 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 				// An EditPart for this model doesn't exist yet. Create and
 				// insert one.
 				editPart = findOrCreatePartFor(model);
-				System.out.println(getHost() + "Adding child for content " + editPart.getContent());
 				getHost().addChild(editPart, i);
 			}
 		}
@@ -126,7 +124,6 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 				trash.add(contentPartChildren.get(i));
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<V> ep = trash.get(i);
-				System.out.println(getHost() + " Removing child for content " + ep.getContent());
 				getHost().removeChild(ep);
 				disposeIfObsolete(ep);
 			}
@@ -166,7 +163,6 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		IContentPart<V> editPart;
 		Object model;
 
-		@SuppressWarnings("unchecked")
 		List<IContentPart<V>> anchored = PartUtilities.filterParts(
 				getHost().getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
