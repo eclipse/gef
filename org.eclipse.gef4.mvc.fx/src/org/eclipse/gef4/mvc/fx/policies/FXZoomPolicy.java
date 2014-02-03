@@ -14,7 +14,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
-import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.AbstractZoomPolicy;
 
@@ -28,8 +28,8 @@ public class FXZoomPolicy extends AbstractZoomPolicy<Node> {
 		}
 
 		IRootPart<Node> root = getHost().getRoot();
-		if (root instanceof FXRootVisualPart) {
-			FXRootVisualPart fxRvp = (FXRootVisualPart) root;
+		if (root instanceof FXRootPart) {
+			FXRootPart fxRvp = (FXRootPart) root;
 			Parent layers = fxRvp.getContentLayer().getParent();
 			if (layers != null) {
 				layers.setScaleX(zoomFactor);

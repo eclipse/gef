@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -31,7 +32,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	@Override
 	public void activate() {
 		super.activate();
-		getDomain().getViewer().addPropertyChangeListener(this);
+		getDomain().getViewer().getContentModel().addPropertyChangeListener(this);
 		getDomain().getViewer().getSelectionModel()
 				.addPropertyChangeListener(this);
 	}
@@ -40,7 +41,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	public void deactivate() {
 		getDomain().getViewer().getSelectionModel()
 				.removePropertyChangeListener(this);
-		getDomain().getViewer().removePropertyChangeListener(this);
+		getDomain().getViewer().getContentModel().removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
@@ -51,7 +52,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 		 * TODO: Viewer should flush interaction model data when contents
 		 * changes.
 		 */
-		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
+		if (evt.getPropertyName().equals(IContentModel.CONTENTS_PROPERTY)) {
 			hover(null);
 		} else if (ISelectionModel.SELECTION_PROPERTY.equals(evt
 				.getPropertyName())) {

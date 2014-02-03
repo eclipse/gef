@@ -47,20 +47,9 @@ public interface IRootPart<V> extends IVisualPart<V> {
 	 *            attached to.
 	 */
 	void setViewer(IVisualPartViewer<V> viewer);
+	
+	public List<IContentPart<V>> getContentPartChildren();
 
-	// TODO: support multiple content parts
-	void setRootContentPart(IContentPart<V> contents);
-
-	IContentPart<V> getRootContentPart();
-
-	// void addContentPart(IContentPart<V> contents);
-	//
-	// void removeContentPart(IContentPart<V> contents);
-
-	public void addHandleParts(List<IHandlePart<V>> handleParts);
-
-	public void removeHandleParts(List<IHandlePart<V>> handleParts);
-
-	public List<IHandlePart<V>> getHandleParts();
+	public List<IHandlePart<V>> getHandlePartChildren();
 
 }

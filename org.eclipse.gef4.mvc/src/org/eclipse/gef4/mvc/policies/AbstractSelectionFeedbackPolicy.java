@@ -100,7 +100,7 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 					.createSelectionHandleParts(newSelection);
 		}
 		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
-			rootPart.addHandleParts(multiHandleParts);
+			rootPart.addChildren(multiHandleParts);
 			for (IContentPart<V> selected : newSelection) {
 				for (IVisualPart<V> handlePart : multiHandleParts) {
 					selected.addAnchored(handlePart);
@@ -113,7 +113,7 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 			List<IContentPart<V>> oldSelection) {
 		// attach to anchorages
 		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
-			rootPart.removeHandleParts(multiHandleParts);
+			rootPart.removeChildren(multiHandleParts);
 			for (IContentPart<V> selected : oldSelection) {
 				for (IVisualPart<V> handlePart : multiHandleParts) {
 					selected.removeAnchored(handlePart);

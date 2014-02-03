@@ -13,16 +13,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
 import org.eclipse.gef4.mvc.models.DefaultHoverModel;
 import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
 import org.eclipse.gef4.mvc.models.DefaultZoomModel;
+import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -36,26 +37,17 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public abstract class AbstractVisualPartViewer<V> implements
 		IVisualPartViewer<V> {
 
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-			this);
-
 	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
 
-	private IDomain<V> editDomain;
+	private IDomain<V> domain;
 	private IRootPart<V> rootPart;
-
-	// TODO: Use dependency injection to bind default implementations.
-	private ISelectionModel<V> selectionModel;
-	private IZoomModel zoomModel;
-	private IHoverModel<V> hoverModel;
-	private IFocusModel<V> focusModel;
 
 	private IContentPartFactory<V> contentPartFactory;
 	private IHandlePartFactory<V> handlePartFactory;
@@ -75,25 +67,23 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#getContents()
+	 * @see IVisualPartViewer#getContentModel()
 	 */
-	public Object getContents() {
-		IRootPart<V> rootPart = getRootPart();
-		if (rootPart == null) {
-			return null;
+	public IContentModel getContentModel() {
+		IContentModel contentModel = getDomain().getProperty(
+				IContentModel.class);
+		if (contentModel == null) {
+			contentModel = new DefaultContentModel();
+			getDomain().setProperty(IContentModel.class, contentModel);
 		}
-		IContentPart<V> contentRoot = rootPart.getRootContentPart();
-		if (contentRoot == null) {
-			return null;
-		}
-		return contentRoot.getContent();
+		return contentModel;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getEditDomain()
+	 * @see IVisualPartViewer#getDomain()
 	 */
-	public IDomain<V> getEditDomain() {
-		return editDomain;
+	public IDomain<V> getDomain() {
+		return domain;
 	}
 
 	/**
@@ -117,11 +107,15 @@ public abstract class AbstractVisualPartViewer<V> implements
 		return visualsToVisualPartMap;
 	}
 
+	@Override
+	public List<Object> getContents() {
+		return getContentModel().getContents();
+	}
+
 	/**
 	 * @see IVisualPartViewer#setContents(Object)
 	 */
-	public void setContents(Object contents) {
-		Object oldContents = getContents();
+	public void setContents(List<Object> contents) {
 		if (contentPartFactory == null) {
 			throw new IllegalStateException(
 					"ContentPartFactory has to be set before passing contents in.");
@@ -130,60 +124,59 @@ public abstract class AbstractVisualPartViewer<V> implements
 			throw new IllegalStateException(
 					"Root part has to be set before passing contents in.");
 		}
-		IContentPart<V> rootContentPart = contentPartFactory
-				.createRootContentPart(rootPart, contents);
-		rootContentPart.setContent(contents);
-		rootPart.setRootContentPart(rootContentPart);
-		propertyChangeSupport.firePropertyChange(CONTENTS_PROPERTY,
-				oldContents, contents);
+		getContentModel().setContents(contents);
 	}
 
 	/**
-	 * @see IVisualPartViewer#setDomain(EditDomain)
+	 * @see IVisualPartViewer#setDomain(IDomain)
 	 */
-	public void setDomain(IDomain<V> editdomain) {
-		if (editDomain == editdomain)
+	public void setDomain(IDomain<V> domain) {
+		if (this.domain == domain)
 			return;
-		if (editDomain != null) {
-			editDomain.setProperty(ISelectionModel.class, null);
-			editDomain.setProperty(IHoverModel.class, null);
-			editDomain.setProperty(IZoomModel.class, null);
-			editDomain.setProperty(IFocusModel.class, null);
-			editDomain.setViewer(null);
+		if (this.domain != null) {
+			this.domain.setViewer(null);
+			if (rootPart != null && rootPart.isActive()) {
+				rootPart.deactivate();
+			}
 		}
-		this.editDomain = editdomain;
-		if (editDomain != null) {
-			editDomain.setViewer(this);
-			editDomain.setProperty(ISelectionModel.class, getSelectionModel());
-			editDomain.setProperty(IHoverModel.class, getHoverModel());
-			editDomain.setProperty(IZoomModel.class, getZoomModel());
-			editDomain.setProperty(IFocusModel.class, getFocusModel());
+		this.domain = domain;
+		if (this.domain != null) {
+			this.domain.setViewer(this);
+			if (rootPart != null && !rootPart.isActive()) {
+				rootPart.activate();
+			}
 		}
 	}
 
 	@Override
 	public ISelectionModel<V> getSelectionModel() {
+		@SuppressWarnings("unchecked")
+		ISelectionModel<V> selectionModel = getDomain().getProperty(
+				ISelectionModel.class);
 		if (selectionModel == null) {
-			// TODO: use dependency injection to bind this
 			selectionModel = new DefaultSelectionModel<V>();
+			getDomain().setProperty(ISelectionModel.class, selectionModel);
 		}
 		return selectionModel;
 	}
 
 	@Override
 	public IHoverModel<V> getHoverModel() {
+		@SuppressWarnings("unchecked")
+		IHoverModel<V> hoverModel = getDomain().getProperty(IHoverModel.class);
 		if (hoverModel == null) {
-			// TODO: use dependency injection to bind this
 			hoverModel = new DefaultHoverModel<V>();
+			getDomain().setProperty(IHoverModel.class, hoverModel);
 		}
 		return hoverModel;
 	}
 
 	@Override
 	public IZoomModel getZoomModel() {
+		IZoomModel zoomModel = getDomain().getProperty(IZoomModel.class);
 		if (zoomModel == null) {
-			// TODO: use dependency injection to bind this
 			zoomModel = new DefaultZoomModel();
+			getDomain().setProperty(IZoomModel.class, zoomModel);
 		}
 		return zoomModel;
 	}
@@ -193,33 +186,29 @@ public abstract class AbstractVisualPartViewer<V> implements
 	 */
 	public void setRootPart(IRootPart<V> rootEditPart) {
 		if (this.rootPart != null) {
-			this.rootPart.deactivate();
+			if (domain != null) {
+				this.rootPart.deactivate();
+			}
 			this.rootPart.setViewer(null);
 		}
 		this.rootPart = rootEditPart;
 		if (this.rootPart != null) {
 			this.rootPart.setViewer(this);
-			this.rootPart.activate();
+			if (domain != null) {
+				this.rootPart.activate();
+			}
 		}
 	}
-	
+
 	@Override
 	public IFocusModel<V> getFocusModel() {
+		@SuppressWarnings("unchecked")
+		IFocusModel<V> focusModel = getDomain().getProperty(IFocusModel.class);
 		if (focusModel == null) {
-			// TODO: use dependency injection to bind this
 			focusModel = new DefaultFocusModel<V>();
+			getDomain().setProperty(IFocusModel.class, focusModel);
 		}
 		return focusModel;
-	}
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
 	@Override

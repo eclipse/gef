@@ -9,10 +9,11 @@ import javafx.scene.layout.StackPane;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
-public class FXRootVisualPart extends AbstractRootPart<Node> {
+public class FXRootPart extends AbstractRootPart<Node> {
 
 	/**
 	 * Per default, a ScrollPane draws a border and background color. We do not
@@ -26,7 +27,7 @@ public class FXRootVisualPart extends AbstractRootPart<Node> {
 	private Pane handleLayer;
 	private Pane feedbackLayer;
 
-	public FXRootVisualPart() {
+	public FXRootPart() {
 		scrollPane = new ScrollPane();
 		scrollPane.setPannable(false);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
@@ -114,9 +115,21 @@ public class FXRootVisualPart extends AbstractRootPart<Node> {
 	@Override
 	protected void addChildVisual(IVisualPart<Node> child, int index) {
 		if (child instanceof IContentPart) {
-			contentLayer.getChildren().add(index, child.getVisual());
+			int contentLayerIndex = 0;
+			for(int i=0; i<index; i++){
+				if(i < getChildren().size() && getChildren().get(i) instanceof IContentPart){
+					contentLayerIndex++;
+				}
+			}
+			contentLayer.getChildren().add(contentLayerIndex, child.getVisual());
 		} else {
-			handleLayer.getChildren().add(index, child.getVisual());
+			int handleLayerIndex = 0;
+			for(int i=0; i<index; i++){
+				if(i < getChildren().size() && !(getChildren().get(i) instanceof IContentPart)){
+					handleLayerIndex++;
+				}
+			}
+			handleLayer.getChildren().add(handleLayerIndex, child.getVisual());
 		}
 	}
 

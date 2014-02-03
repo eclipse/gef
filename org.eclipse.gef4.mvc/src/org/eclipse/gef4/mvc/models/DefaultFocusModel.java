@@ -31,14 +31,14 @@ public class DefaultFocusModel<V> implements IFocusModel<V> {
 		pcs.addPropertyChangeListener(listener);
 	}
 	
-	@Override
-	public IContentPart<V> getFocused() {
-		return focused;
-	}
-	
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
+
+	@Override
+	public IContentPart<V> getFocused() {
+		return focused;
+	}	
 	
 	@Override
 	public void setFocused(IContentPart<V> focusPart) {

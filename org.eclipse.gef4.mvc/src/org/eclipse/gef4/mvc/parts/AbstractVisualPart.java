@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +52,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private int flags;
 
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
 	private Map<Class<?>, IPolicy<V>> policies;
 
 	private IVisualPart<V> parent;
@@ -81,6 +85,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
 	}
+	
+	@Override
+	public void addChild(IVisualPart<V> child) {
+		addChild(child, getChildren().size());
+	}
 
 	public void addChild(IVisualPart<V> child, int index) {
 		Assert.isNotNull(child);
@@ -95,6 +104,20 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (isActive())
 			child.activate();
 	}
+	
+	@Override
+	public void addChildren(List<? extends IVisualPart<V>> children) {
+		for(IVisualPart<V> child : children){
+			addChild(child);
+		}
+	}
+	
+	@Override
+	public void removeChildren(List<? extends IVisualPart<V>> children) {
+		for(IVisualPart<V> child : children){
+			removeChild(child);
+		}
+	}
 
 	/**
 	 * Performs the addition of the child's <i>visual</i> to this
@@ -106,10 +129,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
+	// TODO: make concrete, passing over the visual container to the child (as
+	// in case of anchoreds)	
 	protected abstract void addChildVisual(IVisualPart<V> child, int index);
 
-	// TODO: make concrete, passing over the visual container to the child (as
-	// in case of anchoreds)
 	private void addChildWithoutNotify(IVisualPart<V> child, int index) {
 		if (children == null)
 			children = new ArrayList<IVisualPart<V>>(2);
@@ -313,6 +336,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (this.parent == parent)
 			return;
 
+		IVisualPart<V> oldParent = this.parent;
 		if (this.parent != null) {
 			unregisterFromVisualPartMap();
 		}
@@ -320,6 +344,17 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (this.parent != null) {
 			registerAtVisualPartMap();
 		}
+		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, parent);
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	public IVisualPart<V> getParent() {
@@ -337,6 +372,20 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		anchored.addAnchorage(this);
 
 		anchored.refreshVisual();
+	}
+	
+	@Override
+	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
+		for(IVisualPart<V> anchored : anchoreds){
+			addAnchored(anchored);
+		}	
+	}
+	
+	@Override
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
+		for(IVisualPart<V> anchored : anchoreds){
+			removeAnchored(anchored);
+		}
 	}
 
 	protected void addAnchoredVisual(IVisualPart<V> anchored) {

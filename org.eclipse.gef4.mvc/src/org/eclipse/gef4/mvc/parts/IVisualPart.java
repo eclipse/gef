@@ -17,11 +17,15 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
+import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
-public interface IVisualPart<V> extends IActivatable, IAdaptable {
+public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChangeSupport {
 
+	// TODO: add others
+	public static final String PARENT_PROPERTY = "parent";
+	
 	/**
 	 * Returns the {@link IRootPart}. This method should only be called
 	 * internally or by helpers such as edit policies. The root can be used to
@@ -42,8 +46,14 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	public List<IVisualPart<V>> getChildren();
 
 	public void removeChild(IVisualPart<V> child);
+	
+	public void removeChildren(List<? extends IVisualPart<V>> children);
 
 	public void addChild(IVisualPart<V> child, int index);
+	
+	public void addChild(IVisualPart<V> child);
+	
+	public void addChildren(List<? extends IVisualPart<V>> children);
 
 	public void reorderChild(IVisualPart<V> child, int index);
 
@@ -52,8 +62,14 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable {
 	// public void removeVisualFromParentVisual(/*V parentVisual*/);
 
 	public void addAnchored(IVisualPart<V> anchored);
+	
+	// TODO: add by index and reordering of anchored
+	
+	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds);
 
 	public void removeAnchored(IVisualPart<V> anchored);
+	
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds);
 
 	public List<IVisualPart<V>> getAnchoreds();
 

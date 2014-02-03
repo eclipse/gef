@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
-import org.eclipse.gef4.mvc.fx.parts.FXRootVisualPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer;
@@ -16,7 +16,7 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 
 	public FXViewer(FXCanvas canvas) {
 		this.canvas = canvas;
-		setRootPart(createRootVisualPart());
+		setRootPart(createRootPart());
 	}
 
 	/**
@@ -25,8 +25,8 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 	 * 
 	 * @return an {@link FXRootVisualPart}
 	 */
-	protected FXRootVisualPart createRootVisualPart() {
-		return new FXRootVisualPart();
+	protected FXRootPart createRootPart() {
+		return new FXRootPart();
 	}
 
 	@Override

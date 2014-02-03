@@ -1,7 +1,5 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Collections;
-
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -25,8 +23,7 @@ public class FXSelectionFeedbackByEffectPolicy extends
 	private void showFeedback(Effect effect) {
 		feedbackPart = new FXBoundsFeedbackPart(
 				((IContentPart<Node>) getHost()).getVisual(), effect);
-		getHost().getRoot().addHandleParts(
-				Collections.<IHandlePart<Node>> singletonList(feedbackPart));
+		getHost().getRoot().addChild(feedbackPart);
 		getHost().addAnchored(feedbackPart);
 	}
 
@@ -34,11 +31,7 @@ public class FXSelectionFeedbackByEffectPolicy extends
 	protected void hideFeedback() {
 		if (feedbackPart != null) {
 			getHost().removeAnchored(feedbackPart);
-			getHost()
-					.getRoot()
-					.removeHandleParts(
-							Collections
-									.<IHandlePart<Node>> singletonList(feedbackPart));
+			getHost().getRoot().removeChild(feedbackPart);
 			feedbackPart = null;
 		}
 	}

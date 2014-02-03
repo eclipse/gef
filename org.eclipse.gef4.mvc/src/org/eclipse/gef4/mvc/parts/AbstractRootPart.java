@@ -16,6 +16,7 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.mvc.policies.ContentPartSynchronizationPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -28,6 +29,10 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 		implements IRootPart<V> {
 
 	private IVisualPartViewer<V> viewer;
+	
+	public AbstractRootPart() {
+		installPolicy(ContentPartSynchronizationPolicy.class, new ContentPartSynchronizationPolicy<V>());
+	}
 
 	public IRootPart<V> getRoot() {
 		return this;
@@ -37,53 +42,17 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 		return viewer;
 	}
 
-	public IContentPart<V> getRootContentPart() {
-		return rootContentPart;
-	}
-
-	// TODO: remove this
-	private IContentPart<V> rootContentPart;
-
-	/**
-	 * @see IRootPart#setContents(EditPart)
-	 */
-	public void setRootContentPart(IContentPart<V> rootContentPart) {
-		if (this.rootContentPart == rootContentPart) {
-			return;
-		}
-		if (this.rootContentPart != null) {
-			// unregister
-			removeChild(this.rootContentPart);
-		}
-		this.rootContentPart = rootContentPart;
-		if (rootContentPart != null) {
-			// register
-			addChild(rootContentPart, 0);
-		}
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public void addHandleParts(List<IHandlePart<V>> handleParts) {
-		for (IHandlePart<V> h : handleParts) {
-			addChild(h, getChildren().size() - 1);
-		}
+	public List<IContentPart<V>> getContentPartChildren() {
+		return PartUtilities.filterParts(getChildren(), IContentPart.class);
 	}
-
-	@Override
-	public void removeHandleParts(List<IHandlePart<V>> handleParts) {
-		for (IHandlePart<V> h : handleParts) {
-			removeChild(h);
-		}
-	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<IHandlePart<V>> getHandleParts() {
+	public List<IHandlePart<V>> getHandlePartChildren() {
 		return PartUtilities.filterParts(getChildren(), IHandlePart.class);
 	}
-
-	// TODO: return two lists (content and handle parts, do not have to provide
-	// an on data field for contents parts)
 
 	/**
 	 * @see IRootPart#setViewer(EditPartViewer)

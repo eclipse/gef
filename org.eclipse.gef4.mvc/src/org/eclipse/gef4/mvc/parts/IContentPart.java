@@ -22,6 +22,8 @@ import java.util.List;
  */
 // TODO: parameterize with content type
 public interface IContentPart<V> extends IVisualPart<V> {
+	
+	public static final String CONTENT_PROPERTY = "content";
 
 	public void setContent(Object content);
 

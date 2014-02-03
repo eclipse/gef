@@ -1,8 +1,10 @@
 package org.eclipse.gef4.mvc.fx.example;
 
+import java.util.Collections;
+
 import javafx.embed.swt.FXCanvas;
 
-import org.eclipse.gef4.mvc.fx.domain.FXEditDomain;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -21,12 +23,12 @@ public class FXExampleViewPart extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		canvas = new FXCanvas(parent, SWT.NONE);
-		FXEditDomain domain = new FXExampleDomain();
 		FXViewer viewer = new FXViewer(canvas);
+		FXDomain domain = new FXExampleDomain();
+		viewer.setDomain(domain);
 		viewer.setContentPartFactory(new FXExampleContentPartFactory());
 		viewer.setHandlePartFactory(new FXExampleHandlePartFactory());
-		viewer.setDomain(domain);
-		viewer.setContents(new FXGeometricModel());
+		viewer.setContents(Collections.<Object>singletonList(new FXGeometricModel()));
 
 		// install selection feedback policy
 		viewer.getRootPart().installPolicy(

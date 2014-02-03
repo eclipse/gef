@@ -16,10 +16,8 @@ public abstract class AbstractFeedbackPolicy<V> extends AbstractPolicy<V> {
 	protected void addHandles() {
 		handles = createHandles();
 		if (handles != null && !handles.isEmpty()) {
-			getHost().getRoot().addHandleParts(handles);
-			for(IHandlePart<V> handle : handles){
-				getHost().addAnchored(handle);
-			}
+			getHost().getRoot().addChildren(handles);
+			getHost().addAnchoreds(handles);
 		}
 	}
 	
@@ -27,10 +25,8 @@ public abstract class AbstractFeedbackPolicy<V> extends AbstractPolicy<V> {
 
 	protected void removeHandles() {
 		if (handles != null && !handles.isEmpty()) {
-			for(IHandlePart<V> handle : handles){
-				getHost().removeAnchored(handle);
-			}
-			getHost().getRoot().removeHandleParts(handles);
+			getHost().removeAnchoreds(handles);
+			getHost().getRoot().removeChildren(handles);
 			handles.clear();
 		}
 	}

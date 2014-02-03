@@ -9,7 +9,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
 import org.eclipse.gef4.mvc.tools.CompositeAndTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 
-public class FXEditDomain extends AbstractDomain<Node> {
+public class FXDomain extends AbstractDomain<Node> {
 
 	@Override
 	protected ITool<Node> getDefaultTool() {

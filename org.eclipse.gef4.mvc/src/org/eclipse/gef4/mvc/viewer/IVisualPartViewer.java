@@ -13,11 +13,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -34,29 +35,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <V>
  */
-public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
-
-	/*
-	 * TODO: add property registry similar to EditDomain. Provide interaction
-	 * models via this mechanism as well.
-	 */
-
-	public static final String CONTENTS_PROPERTY = "contents";
-
-	/**
-	 * Returns the <i>contents</i> of this Viewer. The contents is the EditPart
-	 * associated with the top-level model object. It is considered to be
-	 * "The Diagram". If the user has nothing selected, the <i>contents</i> is
-	 * implicitly the selected object.
-	 * <P>
-	 * The <i>Root</i> of the Viewer is different. By constrast, the root is
-	 * never selected or targeted, and does not correspond to something in the
-	 * model.
-	 * 
-	 * @see #getRootPart()
-	 * @return the <i>contents</i> <code>EditPart</code>
-	 */
-	Object getContents();
+public interface IVisualPartViewer<V> {
 
 	/**
 	 * Returns the {@link AbstractDomain EditDomain} to which this viewer
@@ -64,7 +43,7 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 * 
 	 * @return the viewer's EditDomain
 	 */
-	IDomain<V> getEditDomain();
+	IDomain<V> getDomain();
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by
@@ -140,6 +119,9 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	 */
 	void setRootPart(IRootPart<V> root);
 
+	List<Object> getContents();
+	
+	void setContents(List<Object> contents);
 	/**
 	 * Sets the EditPartFactory.
 	 * 
@@ -172,5 +154,7 @@ public interface IVisualPartViewer<V> extends IPropertyChangeSupport {
 	IFocusModel<V> getFocusModel();
 
 	IZoomModel getZoomModel();
+
+	IContentModel getContentModel();
 
 }

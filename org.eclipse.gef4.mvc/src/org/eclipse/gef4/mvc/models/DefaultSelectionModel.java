@@ -50,7 +50,7 @@ public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 		List<IContentPart<V>> oldSelection = getSelectionCopy();
 		selection.add(editpart);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelectionCopy());
+				getSelected());
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +61,7 @@ public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 		List<IContentPart<V>> oldSelection = getSelectionCopy();
 		selection.remove(editpart);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelectionCopy());
+				getSelected());
 	}
 
 	/* (non-Javadoc)
@@ -72,7 +72,7 @@ public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 		List<IContentPart<V>> oldSelection = getSelectionCopy();
 		selection.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelectionCopy());
+				getSelected());
 	}
 
 	/* (non-Javadoc)
@@ -81,11 +81,6 @@ public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 	@Override
 	public List<IContentPart<V>> getSelected() {
 		return Collections.unmodifiableList(selection);
-	}
-
-	private List<IContentPart<V>> getSelectionCopy() {
-		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(selection);
-		return oldSelection;
 	}
 
 	/* (non-Javadoc)
@@ -106,6 +101,11 @@ public class DefaultSelectionModel<V> implements ISelectionModel<V> {
 		selection.removeAll(newlySelected);
 		selection.addAll(0, newlySelected);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY, oldSelection,
-				getSelectionCopy());
+				getSelected());
+	}
+	
+	private List<IContentPart<V>> getSelectionCopy() {
+		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(selection);
+		return oldSelection;
 	}
 }

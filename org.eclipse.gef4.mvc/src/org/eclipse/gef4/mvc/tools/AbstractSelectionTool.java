@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * 
@@ -98,12 +98,12 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 	@Override
 	public void activate() {
 		super.activate();
-		getDomain().getViewer().addPropertyChangeListener(this);
+		getDomain().getViewer().getContentModel().addPropertyChangeListener(this);
 	}
 
 	@Override
 	public void deactivate() {
-		getDomain().getViewer().removePropertyChangeListener(this);
+		getDomain().getViewer().getContentModel().removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
@@ -113,7 +113,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 		 * TODO: Viewer should flush interaction model data when contents
 		 * changes.
 		 */
-		if (evt.getPropertyName().equals(IVisualPartViewer.CONTENTS_PROPERTY)) {
+		if (evt.getPropertyName().equals(IContentModel.CONTENTS_PROPERTY)) {
 			select(null, false);
 		}
 	}
