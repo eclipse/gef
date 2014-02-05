@@ -59,6 +59,10 @@ public abstract class AbstractRelocateSelectedTool<V> extends AbstractTool<V> {
 	}
 
 	public void commitRelocate(Point mouseLocation) {
+		if (initialMouseLocation == null) {
+			// TODO: This should not be possible! But sometimes it is...
+			return;
+		}
 		Point delta = mouseLocation.getTranslated(initialMouseLocation
 				.getNegated());
 		for (IContentPart<V> targetPart : getTargetParts()) {

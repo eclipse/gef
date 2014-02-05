@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import javafx.geometry.Bounds;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.LineTo;
@@ -20,10 +21,10 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
-import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -78,31 +79,43 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	@Override
 	public boolean isResizable() {
-		// up to now, support resize for all AbstractRectangleBasedGeometries
-		// TODO: we could enable this in general in case we know how to resize
-		// other geometries
 		return geometry instanceof Rectangle
 				|| geometry instanceof RoundedRectangle
-				|| geometry instanceof Ellipse || geometry instanceof Arc
-				|| geometry instanceof Pie;
+				|| geometry instanceof Ellipse || geometry instanceof Pie
+				|| geometry instanceof Path || super.isResizable();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void resize(double width, double height) {
-		if (geometry instanceof Rectangle) {
+		if (geometry instanceof org.eclipse.gef4.geometry.planar.Path) {
+			Bounds bounds = getLayoutBounds();
+			double sx = width / bounds.getWidth();
+			double sy = height / bounds.getHeight();
+			Point start = new Point(bounds.getMinX(), bounds.getMinY());
+			Point[] p = new Point[] { start.getCopy() };
+			Point.scale(p, sx, sy, 0, 0);
+			AffineTransform tx = new AffineTransform().scale(sx, sy).translate(
+					-p[0].x + start.x, -p[0].y + start.y);
+			geometry = (T) ((org.eclipse.gef4.geometry.planar.Path) geometry)
+					.getTransformed(tx);
+		} else if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof RoundedRectangle) {
 			((RoundedRectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof Ellipse) {
 			((Ellipse) geometry).setSize(width, height);
-		} else if (geometry instanceof Arc) {
-			((Arc) geometry).setSize(width, height);
 		} else if (geometry instanceof Pie) {
 			((Pie) geometry).setSize(width, height);
 		} else {
 			super.resize(width, height);
-			// TODO: we could resize by scaling the shape according to its
-			// bounds
+			// TODO: this should be done here, but it currently does not work:
+			// Bounds bounds = getLayoutBounds();
+			// double sx = width / bounds.getWidth();
+			// double sy = height / bounds.getHeight();
+			// if (getGeometry() instanceof CurvedPolygon) {
+			// ((CurvedPolygon) getGeometry()).scale(sx, sy);
+			// }
 		}
 		updatePathElements();
 	}

@@ -8,7 +8,13 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.CurvedPolygon;
+import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Pie;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
@@ -28,7 +34,29 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 	private IAnchor<Node> anchor;
 
 	public FXExampleShapePart() {
-		visual = new FXGeometryNode<IShape>();
+		visual = new FXGeometryNode<IShape>() {
+			@Override
+			public void resize(double width, double height) {
+				if (isResizable()) {
+					super.resize(width, height);
+				} else {
+					// TODO: this is duplicate code, share the transform with
+					// the visual, and only update the transform here
+					Bounds bounds = getLayoutBounds();
+					double sx = width / bounds.getWidth();
+					double sy = height / bounds.getHeight();
+					Point start = new Point(bounds.getMinX(), bounds.getMinY());
+					Point[] p = new Point[] { start.getCopy() };
+					Point.scale(p, sx, sy, 0, 0);
+					AffineTransform additionalTransform = new AffineTransform()
+							.scale(sx, sy).translate(-p[0].x + start.x,
+									-p[0].y + start.y);
+					setGeometry(getGeometry().getTransformed(
+							additionalTransform));
+				}
+				updatePathElements();
+			}
+		};
 		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
 		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
@@ -46,25 +74,26 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 					@Override
 					public void commitResizeRelocate(double dx, double dy,
 							double dw, double dh) {
-						Bounds bounds = visual.getLayoutBounds();
-						double width = bounds.getWidth();
-						double height = bounds.getHeight();
-
-						double sx = width == 0 ? 1 : (width + dw) / width;
-						double sy = height == 0 ? 1 : (height + dh) / height;
-
-						AffineTransform additionalTransform = new AffineTransform(
-								sx, 0, 0, sy, dx, dy);
-
-						AffineTransform oldTransform = getContent()
-								.getTransform();
-						if (oldTransform == null) {
-							getContent().setTransform(additionalTransform);
-						} else {
-							getContent().setTransform(
-									oldTransform.getCopy().preConcatenate(
-											additionalTransform));
-						}
+						// Bounds bounds = visual.getLayoutBounds();
+						// double width = bounds.getWidth();
+						// double height = bounds.getHeight();
+						//
+						// double sx = width == 0 ? 1 : (width + dw) / width;
+						// double sy = height == 0 ? 1 : (height + dh) / height;
+						//
+						// AffineTransform additionalTransform = new
+						// AffineTransform(
+						// sx, 0, 0, sy, dx, dy);
+						//
+						// AffineTransform oldTransform = getContent()
+						// .getTransform();
+						// if (oldTransform == null) {
+						// getContent().setTransform(additionalTransform);
+						// } else {
+						// getContent().setTransform(
+						// oldTransform.getCopy().preConcatenate(
+						// additionalTransform));
+						// }
 					}
 				});
 	}
@@ -122,11 +151,13 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
+	public void attachVisualToAnchorageVisual(Node anchorageVisual,
+			IAnchor<Node> anchor) {
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
+			IAnchor<Node> anchor) {
 	}
 
 	@Override
