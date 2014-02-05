@@ -61,10 +61,24 @@ public class FXGeometricModel {
 		visualShapes.add(new FXGeometricShape(createDotShape(), new
 				 AffineTransform(1, 0, 0, 1, 225, 224), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 
+		visualShapes.add(new FXGeometricShape(createHandleShape(), new AffineTransform(1, 0, 0, 1, 12, 135), Color.WHITE, GEF_SHADOW_EFFECT));
+		visualShapes.add(new FXGeometricShape(createHandleShape(), new AffineTransform(1, 0, 0, 1, 243, 135), Color.WHITE, GEF_SHADOW_EFFECT));
+		visualShapes.add(new FXGeometricShape(createHandleShape(), new AffineTransform(1, 0, 0, 1, 12, 229), Color.WHITE, GEF_SHADOW_EFFECT));
+		visualShapes.add(new FXGeometricShape(createHandleShape(), new AffineTransform(1, 0, 0, 1, 243, 229), Color.WHITE, GEF_SHADOW_EFFECT));
+		
 		visualShapes.add(r1);
 		visualShapes.add(r2);
 
 		return visualShapes;
+	}
+
+	private IShape createHandleShape() {
+		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(1, 1, 9, 0, 17, 1).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 1, 16, 8, 17, 16).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 16, 7, 15, 1, 16).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(1, 16, 0, 8, 1, 1).toBezier()));
+		return new CurvedPolygon(segments);
 	}
 
 	private static Effect createShadowEffect() {
