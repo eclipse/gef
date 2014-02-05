@@ -17,7 +17,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swt.tools.feature.feature.group" version="0.0.0"/>
-<repository location="http://www.eclipse.org/swt/updates/4.4"/>
+<repository location="http://www.eclipse.org/swt/updates/4.3"/>
 </location>
 </locations>
 </target>
