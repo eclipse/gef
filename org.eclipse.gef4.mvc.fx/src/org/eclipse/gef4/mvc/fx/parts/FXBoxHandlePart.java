@@ -45,8 +45,8 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
-			double xInset = visual.getWidth() / 2.0;
-			double yInset = visual.getWidth() / 2.0;
+			double xInset = getXInset();
+			double yInset = getYInset();
 			if (Pos.TOP_LEFT == getPos()) {
 				visual.setLayoutX(layoutBounds.getMinX() - xInset);
 				visual.setLayoutY(layoutBounds.getMinY() - yInset);
@@ -64,6 +64,16 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 						"Unsupported position constant.");
 			}
 		}
+	}
+
+	protected double getXInset() {
+		double xInset = visual.getWidth() / 2.0;
+		return xInset;
+	}
+	
+	protected double getYInset() {
+		double yInset = visual.getHeight() / 2.0;
+		return yInset;
 	}
 
 	private Bounds getUnionedBoundsInScene(List<IVisualPart<Node>> selection) {
