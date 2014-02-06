@@ -23,9 +23,14 @@ public class FXGeometricModel {
 
 	private FXGeometricCurve l1 = new FXGeometricCurve();
 	private FXGeometricShape r1 = new FXGeometricShape(new Rectangle(50, 50,
-			50, 50), null, Color.RED, null, l1);
+			50, 50), null, Color.RED, null);
 	private FXGeometricShape r2 = new FXGeometricShape(new Rectangle(150, 50,
-			50, 50), null, Color.RED, null, l1);
+			50, 50), null, Color.RED, null);
+	
+	public FXGeometricModel(){
+		r1.addAnchored(l1);
+		r2.addAnchored(l1);
+	}
 
 	public List<FXGeometricShape> getShapeVisuals() {
 		List<FXGeometricShape> visualShapes = new ArrayList<FXGeometricShape>();

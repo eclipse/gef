@@ -1,26 +1,19 @@
-- Replace AbstractResizeRelocateViaHandleTool by ResizeRelocateAnchoragesOnHandleDragPoliy on HandlePart 
-	(Use FXBoxHandlePart and register this policy as drag policy within HandlePartFactory)
-- Replace BoxSelectionHandleTool by making SelectionFeedbackPolicy work with root host part as well
-    (Create box selection handles in case attached to root part and multiple selection, otherwise behave as current implementation)
-- Move synchronization behavior into policy, which is applicable to root part and content parts; remove restriction to have one root content part; add content model to viewer.
-
 - Convert example geometries to be origin-based, position them via affine transform
-- Add outline handles also for non-rectangle shapes; restrict resizing options for rectangle-based shapes via constraints on handles
-- Implement outline segment midpoint handles (like bendpoints) to allow "morphing" of shapes
+- Use poly beziers as connection visuals; adjust ChopboxAnchor so they render properly
+- Add outline and midpoint handles for all kind of shapes; restrict resizing options for rectangle-based shapes via constraints on handles
 - Add support for removing bendpoints and outline segment midpoint handles
+- Add support for cursor changes to tools/handles
+- Marquee Selection
 
 - Ensure factories and policies can be obtained on a default/type/instance based binding registry
 - Ensure default model implementations can be binded (using DI or custom binding mechanism) per viewer (no type/instance binding)
-
 - Ensure visual part and content part registries are based on scopes (hierarchy)
-- Add support for cursor changes to tools/handles
-
-- Marquee Selection
 
 - Show how shapes can be attached to each other via anchors (G shape of logo)
 - PropertySheet integration to change visual properties of FXGeometricVisuals (incl. UNDO)
 - Implement resize for arbitrary geometric shapes (by using scaling)
 - Implement undo/redo for resize and move
+
 - Implement zooming based on gesture
 
 - Add viewport (scrolling) model and tools for scrolling and related birdeye view to UI feature)

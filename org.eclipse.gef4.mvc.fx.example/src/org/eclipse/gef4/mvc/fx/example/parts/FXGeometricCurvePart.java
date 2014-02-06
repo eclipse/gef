@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
-public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
+public class FXGeometricCurvePart extends AbstractFXGeometricElementPart implements
 		PropertyChangeListener {
 
 	private FXGeometryNode<ICurve> visual;
@@ -50,7 +50,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		return handles;
 	}
 
-	public FXExampleCurvePart() {
+	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
 		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
 		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
@@ -202,6 +202,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 		Node endNode = anchors.get(1).getAnchorage();
 
 		// compute reference points in local coordinate space
+		// TODO: use nearest way point if one exists
 		Point startReference = JavaFX2Geometry.toRectangle(
 				getVisual().sceneToLocal(
 						endNode.localToScene(endNode.getBoundsInLocal())))

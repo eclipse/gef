@@ -28,12 +28,12 @@ import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
-public class FXExampleShapePart extends AbstractFXExampleElementPart {
+public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	private FXGeometryNode<IShape> visual;
 	private IAnchor<Node> anchor;
 
-	public FXExampleShapePart() {
+	public FXGeometricShapePart() {
 		visual = new FXGeometryNode<IShape>() {
 			@Override
 			public void resize(double width, double height) {
@@ -141,7 +141,7 @@ public class FXExampleShapePart extends AbstractFXExampleElementPart {
 	@Override
 	public List<Object> getContentAnchored() {
 		if (getParent() != null) {
-			List anchored = getContent().anchored;
+			List anchored = getContent().getAnchoreds();
 			if (anchored == null) {
 				return Collections.emptyList();
 			}

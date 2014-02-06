@@ -6,7 +6,7 @@ import java.beans.PropertyChangeListener;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
-public abstract class AbstractFXExampleElementPart extends AbstractFXContentPart implements
+public abstract class AbstractFXGeometricElementPart extends AbstractFXContentPart implements
 		PropertyChangeListener {
 	
 	@Override

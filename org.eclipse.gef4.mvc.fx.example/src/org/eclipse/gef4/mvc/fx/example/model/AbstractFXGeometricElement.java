@@ -2,6 +2,9 @@ package org.eclipse.gef4.mvc.fx.example.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -13,8 +16,28 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 	public static final String TRANSFORM_PROPERTY = "Transform";
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
 	private G geometry;
 	private AffineTransform transform;
+	private List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	
+	
+	public AbstractFXGeometricElement(G geometry, AffineTransform transform) {
+		this(geometry);
+		setTransform(transform);
+	}
+	
+	public AbstractFXGeometricElement(G geometry) {
+		setGeometry(geometry);
+	}
+	
+	public void addAnchored(AbstractFXGeometricElement<? extends IGeometry> anchored){
+		anchoreds.add(anchored);
+	}
+	
+	public List<AbstractFXGeometricElement<? extends IGeometry>> getAnchoreds() {
+		return Collections.unmodifiableList(anchoreds);
+	}
 	
 	public G getGeometry() {
 		return geometry;
@@ -32,15 +55,6 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
-	}
-
-	public AbstractFXGeometricElement(G geometry) {
-		setGeometry(geometry);
-	}
-	
-	public AbstractFXGeometricElement(G geometry, AffineTransform transform) {
-		this(geometry);
-		setTransform(transform);
 	}
 	
 	public void setGeometry(G geometry) {

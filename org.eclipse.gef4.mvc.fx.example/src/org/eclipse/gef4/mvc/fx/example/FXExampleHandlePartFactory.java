@@ -7,7 +7,7 @@ import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.example.parts.FXExampleCurvePart;
+import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.parts.FXBoxHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateAnchoragesOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -28,7 +28,7 @@ public class FXExampleHandlePartFactory implements IHandlePartFactory<Node> {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 
 		IContentPart<Node> contentPart = selection.get(0);
-		if (contentPart instanceof FXExampleCurvePart) {
+		if (contentPart instanceof FXGeometricCurvePart) {
 		} else {
 			FXBoxHandlePart handlePart = new FXBoxHandlePart(selection,
 					Pos.TOP_LEFT);
