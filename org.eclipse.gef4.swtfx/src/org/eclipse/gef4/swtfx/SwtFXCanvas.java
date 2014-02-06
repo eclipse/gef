@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 itemis AG and others.
+ * Copyright (c) 2014 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,18 +8,21 @@
  * 
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Jan Köhnlein (itemis AG) - Support for multi-touch gestures (#427106)
  * 
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
 import javafx.embed.swt.FXCanvas;
 
+import org.eclipse.gef4.swtfx.gestures.SwtToFXGestureConverter;
 import org.eclipse.swt.widgets.Composite;
 
 public class SwtFXCanvas extends FXCanvas {
 
 	public SwtFXCanvas(Composite parent, int style) {
 		super(parent, style);
+		SwtToFXGestureConverter.register(this);
 	}
 
 	@Override
