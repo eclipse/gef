@@ -21,7 +21,7 @@ public class FXGeometricShape extends
 	public Dimension offset;
 	public Color fill;
 	public Effect effect;
-
+	
 	@SafeVarargs
 	public FXGeometricShape(IShape shape, AffineTransform transform, Color fill,
 			Effect effect, AbstractFXGeometricElement<? extends IGeometry>... anchords) {

@@ -9,10 +9,9 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
@@ -42,8 +41,8 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 		// create insertion handles on the edges
 		i = 0;
-		for (Line line : ((Polyline) visual.getGeometry()).getCurves()) {
-			Point midPoint = line.get(0.5);
+		for (BezierCurve c : visual.getGeometry().toBezier()) {
+			Point midPoint = c.get(0.5);
 			handles.add(new FXWayPointHandlePart.Create(this, i, midPoint));
 			i++;
 		}
@@ -53,8 +52,7 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 
 	public FXExampleCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
-		installPolicy(ISelectionPolicy.class,
-				new ISelectionPolicy.Impl<Node>());
+		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
 		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
@@ -191,7 +189,8 @@ public class FXExampleCurvePart extends AbstractFXExampleElementPart implements
 			points.add(startEnd[0]);
 			points.addAll(wayPoints);
 			points.add(startEnd[1]);
-			visual.setGeometry(new Polyline(points.toArray(new Point[0])));
+			visual.setGeometry(FXGeometricCurve
+					.constructCurveFromWayPoints(points.toArray(new Point[] {})));
 		}
 	}
 
