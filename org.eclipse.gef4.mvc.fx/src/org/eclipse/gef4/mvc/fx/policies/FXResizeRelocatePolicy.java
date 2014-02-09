@@ -23,14 +23,20 @@ public class FXResizeRelocatePolicy extends AbstractResizeRelocatePolicy<Node> {
 	@Override
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
 		Node visual = getHost().getVisual();
-		if (dx != 0) {
-			visual.setLayoutX(initialLayoutX + dx);
-		}
-		if (dy != 0) {
-			visual.setLayoutY(initialLayoutY + dy);
-		}
-		if (dw != 0 || dw != 0) {
-			visual.resize(initialWidth + dw, initialHeight + dh);
+		if (visual.isResizable()) {
+			if (dx != 0) {
+				visual.setLayoutX(initialLayoutX + dx);
+			}
+			if (dy != 0) {
+				visual.setLayoutY(initialLayoutY + dy);
+			}
+			if (dw != 0 || dw != 0) {
+				visual.resize(initialWidth + dw, initialHeight + dh);
+			}
+		} else {
+			// compute new position based on resized bounds
+			visual.setLayoutX(initialLayoutX + dx + dw / 2);
+			visual.setLayoutY(initialLayoutY + dy + dh / 2);
 		}
 	}
 
