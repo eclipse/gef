@@ -21,15 +21,29 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.IScalable;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
-import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
+import com.sun.javafx.geom.Shape;
+
+/**
+ * A {@link Shape} that can be constructed using an underlying {@link IGeometry}
+ * . In contrast to {@link Shape} {@link FXGeometryNode} is resizable,
+ * performing a scale in case the underlying {@link IGeometry} is not directly
+ * resizable.
+ * 
+ * @author nyssen
+ * 
+ * @param <T> An {@link IGeometry} used to define this {@link FXGeometryNode}
+ */
 public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	public static PathElement[] toPathElements(IGeometry geom) {
@@ -79,27 +93,13 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	@Override
 	public boolean isResizable() {
-		return geometry instanceof Rectangle
-				|| geometry instanceof RoundedRectangle
-				|| geometry instanceof Ellipse || geometry instanceof Pie
-				|| geometry instanceof Path || super.isResizable();
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void resize(double width, double height) {
-		if (geometry instanceof org.eclipse.gef4.geometry.planar.Path) {
-			Bounds bounds = getLayoutBounds();
-			double sx = width / bounds.getWidth();
-			double sy = height / bounds.getHeight();
-			Point start = new Point(bounds.getMinX(), bounds.getMinY());
-			Point[] p = new Point[] { start.getCopy() };
-			Point.scale(p, sx, sy, 0, 0);
-			AffineTransform tx = new AffineTransform().scale(sx, sy).translate(
-					-p[0].x + start.x, -p[0].y + start.y);
-			geometry = (T) ((org.eclipse.gef4.geometry.planar.Path) geometry)
-					.getTransformed(tx);
-		} else if (geometry instanceof Rectangle) {
+		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof RoundedRectangle) {
 			((RoundedRectangle) geometry).setSize(width, height);
@@ -107,15 +107,33 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 			((Ellipse) geometry).setSize(width, height);
 		} else if (geometry instanceof Pie) {
 			((Pie) geometry).setSize(width, height);
+		} else if (geometry instanceof Arc) {
+			((Arc) geometry).setSize(width, height);
 		} else {
-			super.resize(width, height);
-			// TODO: this should be done here, but it currently does not work:
-			// Bounds bounds = getLayoutBounds();
-			// double sx = width / bounds.getWidth();
-			// double sy = height / bounds.getHeight();
-			// if (getGeometry() instanceof CurvedPolygon) {
-			// ((CurvedPolygon) getGeometry()).scale(sx, sy);
-			// }
+			Bounds bounds = getLayoutBounds();
+			double sx = width / bounds.getWidth();
+			double sy = height / bounds.getHeight();
+			if (geometry instanceof IScalable) {
+				// Line, Polyline, PolyBezier, BezierCurve, CubicCurve,
+				// QuadraticCurve, Polygon, CurvedPolygon, Region, and Ring are
+				// not
+				// directly resizable but scalable
+				((IScalable<T>) geometry).scale(sx, sy, geometry.getBounds()
+						.getX(), geometry.getBounds().getY());
+			} else {
+				// apply transform to path
+				Point boundsOrigin = new Point(bounds.getMinX(),
+						bounds.getMinY());
+				geometry = (T) geometry
+						.getTransformed(
+								new AffineTransform(1, 0, 0, 1,
+										-boundsOrigin.x, -boundsOrigin.y))
+						.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
+						.getTransformed(
+								new AffineTransform(1, 0, 0, 1, boundsOrigin.x,
+										boundsOrigin.y));
+			}
+
 		}
 		updatePathElements();
 	}
@@ -135,5 +153,4 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		getElements().clear();
 		getElements().addAll(toPathElements(geometry));
 	}
-
 }
