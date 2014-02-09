@@ -89,6 +89,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return contains(new Point(x, y));
 	}
 
+	@Override
 	public boolean contains(Point p) {
 		for (int i = 0; i + 1 < points.length; i++) {
 			Point p1 = points[i];
@@ -132,6 +133,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 				|| Arrays.equals(this.points, Point.getReverseCopy(points));
 	}
 
+	@Override
 	public Polyline getCopy() {
 		return new Polyline(getPoints());
 	}
@@ -148,51 +150,62 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 		return PointListUtils.toSegmentsArray(points, false);
 	}
 
+	@Override
 	public Point[] getIntersections(ICurve c) {
 		return CurveUtils.getIntersections(c, this);
 	}
 
+	@Override
 	public Point getP1() {
 		return points[0].getCopy();
 	}
 
+	@Override
 	public Point getP2() {
 		return points[points.length - 1].getCopy();
 	}
 
 	@Override
-	public IGeometry getTransformed(AffineTransform t) {
+	public Polyline getTransformed(AffineTransform t) {
 		return new Polyline(t.getTransformed(points));
 	}
 
+	@Override
 	public double getX1() {
 		return getP1().x;
 	}
 
+	@Override
 	public double getX2() {
 		return getP2().x;
 	}
 
+	@Override
 	public double getY1() {
 		return getP1().y;
 	}
 
+	@Override
 	public double getY2() {
 		return getP2().y;
 	}
 
+	@Override
 	public boolean intersects(ICurve c) {
 		return CurveUtils.intersects(c, this);
 	}
 
+	@Override
 	public boolean overlaps(ICurve c) {
 		return CurveUtils.overlaps(c, this);
 	}
 
+	@Override
 	public Line[] toBezier() {
 		return PointListUtils.toSegmentsArray(points, false);
 	}
 
+	@Override
 	public Path toPath() {
 		Path path = new Path();
 		if (points.length > 0) {

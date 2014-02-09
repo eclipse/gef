@@ -14,6 +14,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.utils.PointListUtils;
@@ -258,6 +259,15 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	@Override
 	public PolyBezier getScaled(double factor, Point center) {
 		return getCopy().scale(factor, center);
+	}
+
+	@Override
+	public PolyBezier getTransformed(AffineTransform t) {
+		List<BezierCurve> transformedCurves = new ArrayList<BezierCurve>();
+		for (BezierCurve c : beziers) {
+			transformedCurves.add(c.getTransformed(t));
+		}
+		return new PolyBezier(beziers);
 	}
 
 	@Override

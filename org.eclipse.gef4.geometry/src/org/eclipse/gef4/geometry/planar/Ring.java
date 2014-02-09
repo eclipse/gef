@@ -15,6 +15,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -448,6 +449,15 @@ public class Ring extends AbstractMultiShape implements ITranslatable<Ring>,
 	@Override
 	public Polygon[] getShapes() {
 		return triangles.toArray(new Polygon[] {});
+	}
+
+	@Override
+	public Ring getTransformed(AffineTransform t) {
+		List<Polygon> transformedTriangles = new ArrayList<Polygon>();
+		for (Polygon p : triangles) {
+			transformedTriangles.add(p.getTransformed(t));
+		}
+		return new Ring(transformedTriangles.toArray(new Polygon[] {}));
 	}
 
 	@Override

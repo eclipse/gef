@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -315,6 +316,15 @@ public class Region extends AbstractMultiShape implements
 	@Override
 	public Rectangle[] getShapes() {
 		return rects.toArray(new Rectangle[] {});
+	}
+
+	@Override
+	public Ring getTransformed(AffineTransform t) {
+		List<Polygon> transformedRectangles = new ArrayList<Polygon>();
+		for (Rectangle r : rects) {
+			transformedRectangles.add(r.getTransformed(t));
+		}
+		return new Ring(transformedRectangles.toArray(new Polygon[] {}));
 	}
 
 	@Override
