@@ -37,6 +37,11 @@ public class QuadraticCurve extends BezierCurve {
 	public QuadraticCurve(double... coordinates) {
 		this(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
 				coordinates[4], coordinates[5]);
+		if (coordinates.length != 6) {
+			throw new IllegalArgumentException(
+					"A QuadraticCurve may only be defined by 6 coordinates (3 points), while "
+							+ coordinates.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -71,6 +76,11 @@ public class QuadraticCurve extends BezierCurve {
 	 */
 	public QuadraticCurve(Point... points) {
 		this(points[0], points[1], points[2]);
+		if (points.length != 3) {
+			throw new IllegalArgumentException(
+					"A QuadraticCurve may only be defined by three points, while "
+							+ points.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -172,6 +182,11 @@ public class QuadraticCurve extends BezierCurve {
 		controlPoints[3] = getP2();
 
 		return new CubicCurve(controlPoints);
+	}
+
+	@Override
+	public QuadraticCurve getTransformed(AffineTransform t) {
+		return new QuadraticCurve(t.getTransformed(getPoints()));
 	}
 
 	/**

@@ -40,6 +40,11 @@ public class CubicCurve extends BezierCurve {
 	public CubicCurve(double... coordinates) {
 		this(coordinates[0], coordinates[1], coordinates[2], coordinates[3],
 				coordinates[4], coordinates[5], coordinates[6], coordinates[7]);
+		if (coordinates.length != 8) {
+			throw new IllegalArgumentException(
+					"A CubicCurve may only be defined by 8 coordinates (4 points), while "
+							+ coordinates.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -83,6 +88,11 @@ public class CubicCurve extends BezierCurve {
 	public CubicCurve(Point... points) {
 		this(points[0].x, points[0].y, points[1].x, points[1].y, points[2].x,
 				points[2].y, points[3].x, points[3].y);
+		if (points.length != 4) {
+			throw new IllegalArgumentException(
+					"A CubicCurve may only be defined by 4 points, while "
+							+ points.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -185,6 +195,11 @@ public class CubicCurve extends BezierCurve {
 	 */
 	public double getCtrlY2() {
 		return getPoint(2).y;
+	}
+
+	@Override
+	public CubicCurve getTransformed(AffineTransform t) {
+		return new CubicCurve(t.getTransformed(getPoints()));
 	}
 
 	/**

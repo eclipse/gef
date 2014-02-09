@@ -41,11 +41,18 @@ public class Line extends BezierCurve {
 	/**
 	 * Constructs a new {@link Line} from the given coordinate values.
 	 * 
-	 * @param coordsLine
+	 * @param coordinates
+	 *            A varargs of 4 doubles, providing the x and y coordinates of
+	 *            the start point, followed by those of the end point
 	 * @see BezierCurve#BezierCurve(double[])
 	 */
-	public Line(double... coordsLine) {
-		super(coordsLine);
+	public Line(double... coordinates) {
+		super(coordinates);
+		if (coordinates.length != 4) {
+			throw new IllegalArgumentException(
+					"A Line may only be defined by 4 coordinates (2 points), while "
+							+ coordinates.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -63,6 +70,23 @@ public class Line extends BezierCurve {
 	 */
 	public Line(double x1, double y1, double x2, double y2) {
 		super(x1, y1, x2, y2);
+	}
+
+	/**
+	 * Constructs a new {@link Line}, which connects the two {@link Point}s
+	 * given.
+	 * 
+	 * @param points
+	 *            A varargs of two points serving as the start and end point of
+	 *            this line
+	 */
+	public Line(Point... points) {
+		super(points);
+		if (points.length != 2) {
+			throw new IllegalArgumentException(
+					"A Line may only be defined by two points, while "
+							+ points.length + " were passed in.");
+		}
 	}
 
 	/**
@@ -287,9 +311,8 @@ public class Line extends BezierCurve {
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
-	public Line getTransformed(AffineTransform localTransform) {
-		Point[] transformed = localTransform.getTransformed(getPoints());
-		return new Line(transformed[0], transformed[1]);
+	public Line getTransformed(AffineTransform t) {
+		return new Line(t.getTransformed(getPoints()));
 	}
 
 	@Override

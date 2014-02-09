@@ -62,7 +62,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_clip_with_CubicCurve() {
-		final int numPoints = 6;
+		final int numPoints = 4;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -101,7 +101,7 @@ public class CurveUtilsTests {
 				assertTrue(!Double.isNaN(points[j].y));
 			}
 
-			CubicCurve c = new CubicCurve(points);
+			BezierCurve c = new BezierCurve(points);
 			for (double t = 0; t <= 1; t += step) {
 				assertTrue(c.contains(c.get(t)));
 			}
@@ -115,7 +115,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_contains_with_QuadraticCurve() {
-		final int numPoints = 4;
+		final int numPoints = 3;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -197,7 +197,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_getClipped_with_QuadraticCurve() {
-		final int numPoints = 4;
+		final int numPoints = 3;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -223,7 +223,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_getControlBounds() {
-		final int numPoints = 6;
+		final int numPoints = 4;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -462,7 +462,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_split_with_CubicCurve() {
-		final int numPoints = 6;
+		final int numPoints = 4;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -486,7 +486,7 @@ public class CurveUtilsTests {
 
 	@Test
 	public void test_split_with_QuadraticCurve() {
-		final int numPoints = 4;
+		final int numPoints = 3;
 		final double step = 0.123456789;
 
 		Random rng = new Random(SEED);
@@ -497,9 +497,9 @@ public class CurveUtilsTests {
 				points[j] = new Point(rng.nextDouble(), rng.nextDouble());
 			}
 
-			QuadraticCurve c = new QuadraticCurve(points);
+			BezierCurve c = new BezierCurve(points);
 			for (double t = 0; t <= 1; t += step) {
-				QuadraticCurve[] cs = c.split(t);
+				BezierCurve[] cs = c.split(t);
 				assertEquals(c.get(t), cs[0].get(1));
 				assertEquals(c.get(t), cs[1].get(0));
 				assertEquals(c.get(0), cs[0].get(0));
