@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -57,7 +58,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	private FXWayPointHandlePart(int index, Point wayPoint, final boolean create) {
 		// store attributes
 		wayPointIndex = index;
-		startPoint = wayPoint;
+		startPoint = wayPoint.getCopy();
 		currentPosition = new Point(startPoint);
 
 		// create visual handle representation
@@ -68,8 +69,6 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 
 		// install policies
 		installPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
-			private boolean isRemove = false;
-
 			@Override
 			public void press(Point mouseLocation) {
 				if (create) {
@@ -81,9 +80,6 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 
 			@Override
 			public void drag(Point mouseLocation, Dimension delta) {
-				if (isRemove) {
-					return;
-				}
 				currentPosition = startPoint.getTranslated(delta.width,
 						delta.height);
 				getPolicy().updateWayPoint(wayPointIndex, currentPosition);
@@ -91,9 +87,6 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 
 			@Override
 			public void release(Point mouseLocation, Dimension delta) {
-				if (isRemove) {
-					return;
-				}
 				currentPosition = startPoint.getTranslated(delta.width,
 						delta.height);
 				getPolicy().commitWayPoint(wayPointIndex, currentPosition);

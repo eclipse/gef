@@ -35,6 +35,7 @@ public class FXGeometricModel {
 	public FXGeometricModel(){
 		l1.dashes = new double[] { 10, 5 };
 		l1.strokeWidth = 2.5;
+		l1.stroke = new Color(0.1, 0.7, 0.2, 1);
 		r1.addAnchored(l1);
 		r2.addAnchored(l1);
 	}

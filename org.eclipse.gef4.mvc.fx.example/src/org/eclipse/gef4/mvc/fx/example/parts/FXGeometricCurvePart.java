@@ -28,6 +28,7 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		implements PropertyChangeListener {
 
+	protected static final double REMOVE_THRESHOLD = 5;
 	private FXGeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
@@ -143,8 +144,22 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 					@Override
 					public void commitWayPoint(int wayPointIndex, Point p) {
 						if (isCreate) {
+							// create new way point
 							getContent().addWayPoint(wayPointIndex, p);
 						} else {
+							// check if we have to remove it
+							List<Point> points = getContent().getWayPoints();
+							for (int i = 0; i < points.size(); i++) {
+								if (i == wayPointIndex) {
+									continue;
+								}
+								if (p.getDistance(points.get(i)) < REMOVE_THRESHOLD) {
+									// remove the way point
+									getContent().removeWayPoint(wayPointIndex);
+									return;
+								}
+							}
+							// update existing way point
 							getContent().setWayPoint(wayPointIndex, p);
 						}
 					}

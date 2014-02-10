@@ -26,7 +26,6 @@ import org.eclipse.gef4.mvc.tools.AbstractDragTool;
 public class FXDragTool extends AbstractDragTool<Node> {
 
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
-
 		@Override
 		protected void press(Node target, MouseEvent e) {
 			FXDragTool.this.press(Collections.singletonList(FXPartUtils.getMouseTargetPart(getDomain().getViewer(), e)),
