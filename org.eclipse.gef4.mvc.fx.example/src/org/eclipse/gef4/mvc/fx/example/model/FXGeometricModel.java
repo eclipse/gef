@@ -133,9 +133,9 @@ public class FXGeometricModel {
 		visualShapes.add(bottomLeftSelectionHandle);
 		visualShapes.add(bottomRightSelectionHandle);
 
-		visualShapes.add(gBaseShape);
 		visualShapes.add(gTopShape);
 		visualShapes.add(gMiddleShape);
+		visualShapes.add(gBaseShape);
 
 		visualShapes.add(eShape);
 		visualShapes.add(fShape);
