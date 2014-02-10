@@ -15,89 +15,120 @@ import javafx.scene.paint.Color;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXGeometricModel {
 
-//	private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
+	private static final double GEF_STROKE_WIDTH = 3.5;
+	// private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
+	// private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
+	private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
+	private static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 
-	private FXGeometricCurve l1 = new FXGeometricCurve();
-	private FXGeometricShape r1 = new FXGeometricShape(new Rectangle(50, 50,
-			50, 50), null, Color.RED, null);
-	private FXGeometricShape r2 = new FXGeometricShape(new Rectangle(150, 50,
-			50, 50), null, Color.RED, null);
+	private FXGeometricShape topLeftSelectionHandle = new FXGeometricShape(
+			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 12,
+					135), Color.WHITE, GEF_SHADOW_EFFECT);
+	private FXGeometricShape topRightSelectionHandle = new FXGeometricShape(
+			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 243,
+					135), Color.WHITE, GEF_SHADOW_EFFECT);
+	private FXGeometricShape bottomLeftSelectionHandle = new FXGeometricShape(
+			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 12,
+					229), Color.WHITE, GEF_SHADOW_EFFECT);
+	private FXGeometricShape bottomRightSelectionHandle = new FXGeometricShape(
+			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 243,
+					229), Color.WHITE, GEF_SHADOW_EFFECT);
+
+	// TODO: add transform to the curves
+	private FXGeometricCurve selectionBoundsTopLine = new FXGeometricCurve(
+			new Point[] { new Point(140, 144) },
+			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
 	
-	public FXGeometricModel(){
-		l1.dashes = new double[] { 10, 5 };
-		l1.strokeWidth = 2.5;
-		l1.stroke = new Color(0.1, 0.7, 0.2, 1);
-		r1.addAnchored(l1);
-		r2.addAnchored(l1);
+	private FXGeometricCurve selectionBoundsLeftLine = new FXGeometricCurve(
+			new Point[] { new Point(19, 190) },
+			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
+
+	private FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(
+			new Point[] { new Point(140, 238)},
+			GEF_COLOR_GREEN, 3.5, new double[] { 15, 10 }, null);
+	
+	private FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(
+			new Point[] { new Point(250, 190)},
+			GEF_COLOR_GREEN, 3.5, new double[] { 15, 10 }, null);
+
+	public FXGeometricModel() {
+		// anchor curves to shapes
+		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine);
+		topRightSelectionHandle.addAnchored(selectionBoundsTopLine);
+		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine);
+		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine);
+		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine);
+		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine);
+		topRightSelectionHandle.addAnchored(selectionBoundsRightLine);
+		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine);
+		
+		// TODO: anchor points to letter shapes
 	}
 
-	public List<FXGeometricShape> getShapeVisuals() {
-		List<FXGeometricShape> visualShapes = new ArrayList<FXGeometricShape>();
+	public List<AbstractFXGeometricElement<? extends IGeometry>> getShapeVisuals() {
+		List<AbstractFXGeometricElement<? extends IGeometry>> visualShapes = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 
+		// add shapes in z-order
+		visualShapes.add(selectionBoundsTopLine);
+		visualShapes.add(selectionBoundsLeftLine);
+		visualShapes.add(selectionBoundsBottomLine);
+		visualShapes.add(selectionBoundsRightLine);
+
+		visualShapes.add(topLeftSelectionHandle);
+		visualShapes.add(topRightSelectionHandle);
+		visualShapes.add(bottomLeftSelectionHandle);
+		visualShapes.add(bottomRightSelectionHandle);
+		
+		// TODO: create multi shape visual for G shape
 		// g shape
-		visualShapes.add(new FXGeometricShape(createGBaseShape(),
+		visualShapes.add(new FXGeometricShape(createGBaseShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createGTopShape(),
+		visualShapes.add(new FXGeometricShape(createGTopShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createGMiddleShape(),
+		visualShapes.add(new FXGeometricShape(createGMiddleShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
 
 		// e shape
-		visualShapes.add(new FXGeometricShape(createEShape(),
+		visualShapes.add(new FXGeometricShape(createEShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 101, 148), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
 
 		// f shape
-		visualShapes.add(new FXGeometricShape(createFShape(), null,
+		visualShapes.add(new FXGeometricShape(createFShapeGeometry(), null,
 				GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
 
 		// gDotShape
-		visualShapes.add(new FXGeometricShape(createDotShape(),
+		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 87, 224), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
 
 		// eDotShape
-		visualShapes.add(new FXGeometricShape(createDotShape(),
+		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 170, 224), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
 
 		// fDotShape
-		visualShapes.add(new FXGeometricShape(createDotShape(),
+		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 225, 224), GEF_COLOR_BLUE,
 				GEF_SHADOW_EFFECT));
-
-		visualShapes.add(new FXGeometricShape(createHandleShape(),
-				new AffineTransform(1, 0, 0, 1, 12, 135), Color.WHITE,
-				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createHandleShape(),
-				new AffineTransform(1, 0, 0, 1, 243, 135), Color.WHITE,
-				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createHandleShape(),
-				new AffineTransform(1, 0, 0, 1, 12, 229), Color.WHITE,
-				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createHandleShape(),
-				new AffineTransform(1, 0, 0, 1, 243, 229), Color.WHITE,
-				GEF_SHADOW_EFFECT));
-
-		visualShapes.add(r1);
-		visualShapes.add(r2);
 
 		return visualShapes;
 	}
 
-	private IShape createHandleShape() {
+	private IShape createHandleShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(1, 1, 9, 0,
 				17, 1).toBezier()));
@@ -117,33 +148,22 @@ public class FXGeometricModel {
 		outerShadow.setOffsetX(3);
 		outerShadow.setOffsetY(3);
 		outerShadow.setColor(new Color(0.3, 0.3, 0.3, 1));
-		
-//		InnerShadow innerShadow = new InnerShadow();
-//		innerShadow.setOffsetX(-4);
-//		innerShadow.setOffsetY(-4);
-//		innerShadow.setColor(new Color(1,1,1,1));
-		
+
 		Distant light = new Distant();
-        light.setAzimuth(-135.0f);
- 
-        Lighting l = new Lighting();
-        l.setLight(light);
-        l.setSurfaceScale(3.0f);
-		
+		light.setAzimuth(-135.0f);
+
+		Lighting l = new Lighting();
+		l.setLight(light);
+		l.setSurfaceScale(3.0f);
+
 		Blend effects = new Blend(BlendMode.MULTIPLY);
 		effects.setTopInput(l);
 		effects.setBottomInput(outerShadow);
-		
+
 		return effects;
 	}
 
-	public List<FXGeometricCurve> getCurveVisuals() {
-		List<FXGeometricCurve> visualCurves = new ArrayList<FXGeometricCurve>();
-		visualCurves.add(l1);
-		return visualCurves;
-	}
-
-	private IShape createGTopShape() {
+	private IShape createGTopShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(0, 47, 8, 45));
 		segments.add(new Line(8, 45, 9, 34));
@@ -159,7 +179,7 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createGBaseShape() {
+	private IShape createGBaseShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(0, 51, 10, 50));
 		segments.add(new Line(10, 50, 13, 38));
@@ -192,7 +212,7 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createGMiddleShape() {
+	private IShape createGMiddleShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(37, 44, 38, 52));
 		segments.add(new Line(38, 52, 45, 48));
@@ -206,7 +226,7 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createDotShape() {
+	private IShape createDotShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(3, 0, 0, 4));
 		segments.add(new Line(0, 4, 4, 9));
@@ -215,7 +235,7 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createEShape() {
+	private IShape createEShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(0, 4, 5, 4));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(5, 4, 4, 19,
@@ -246,7 +266,7 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createFShape() {
+	private IShape createFShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(178, 155, 178, 165));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(178, 165,

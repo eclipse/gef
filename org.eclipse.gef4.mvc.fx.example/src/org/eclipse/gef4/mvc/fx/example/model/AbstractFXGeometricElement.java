@@ -23,11 +23,22 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 	private G geometry;
 	private AffineTransform transform;
 	private List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-	public Effect effect;
+	private Effect effect;
+	
+	public AbstractFXGeometricElement(G geometry, AffineTransform transform, Effect effect) {
+		this(geometry);
+		setTransform(transform);
+		setEffect(effect);
+	}
 	
 	public AbstractFXGeometricElement(G geometry, AffineTransform transform) {
 		this(geometry);
 		setTransform(transform);
+	}
+	
+	public AbstractFXGeometricElement(G geometry, Effect effect) {
+		setGeometry(geometry);
+		setEffect(effect);
 	}
 	
 	public AbstractFXGeometricElement(G geometry) {
@@ -70,6 +81,14 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 		AffineTransform old = this.transform;
 		this.transform = transform;
 		pcs.firePropertyChange(TRANSFORM_PROPERTY, old, transform);
+	}
+
+	public Effect getEffect() {
+		return effect;
+	}
+
+	public void setEffect(Effect effect) {
+		this.effect = effect;
 	}
 
 }

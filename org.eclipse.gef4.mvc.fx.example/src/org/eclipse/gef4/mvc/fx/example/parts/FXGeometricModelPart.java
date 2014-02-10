@@ -38,7 +38,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	public List<Object> getContentChildren() {
 		List<Object> objs = new ArrayList<Object>();
 		objs.addAll(getContent().getShapeVisuals());
-		objs.addAll(getContent().getCurveVisuals());
 		return objs;
 	}
 

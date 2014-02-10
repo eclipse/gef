@@ -39,8 +39,8 @@ public abstract class AbstractFXGeometricElementPart extends AbstractFXContentPa
 	public void refreshVisual() {
 		Node visual = getVisual();
 		AbstractFXGeometricElement<?> content = getContent();
-		if (visual.getEffect() != content.effect) {
-			visual.setEffect(content.effect);
+		if (visual.getEffect() != content.getEffect()) {
+			visual.setEffect(content.getEffect());
 		}
 	}
 	

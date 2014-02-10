@@ -11,9 +11,9 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	public Color fill;
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Color fill, Effect effect) {
-		super(shape, transform);
+		super(shape, transform, effect);
 		this.fill = fill;
-		this.effect = effect;
+		
 	}
 
 }
