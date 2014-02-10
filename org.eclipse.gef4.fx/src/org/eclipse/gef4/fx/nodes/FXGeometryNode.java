@@ -32,17 +32,16 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
-import com.sun.javafx.geom.Shape;
-
 /**
- * A {@link Shape} that can be constructed using an underlying {@link IGeometry}
- * . In contrast to {@link Shape} {@link FXGeometryNode} is resizable,
+ * A {@link Path} that can be constructed using an underlying {@link IGeometry}.
+ * In contrast to a normal {@link Path}, a {@link FXGeometryNode} is resizable,
  * performing a scale in case the underlying {@link IGeometry} is not directly
  * resizable.
  * 
  * @author nyssen
  * 
- * @param <T> An {@link IGeometry} used to define this {@link FXGeometryNode}
+ * @param <T>
+ *            An {@link IGeometry} used to define this {@link FXGeometryNode}
  */
 public class FXGeometryNode<T extends IGeometry> extends Path {
 
