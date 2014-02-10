@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.effect.Effect;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -23,22 +24,23 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 	private G geometry;
 	private AffineTransform transform;
 	private List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	private Paint stroke = new Color(0, 0, 0, 1);
 	private Effect effect;
+	private double strokeWidth = 0.5;
 	
-	public AbstractFXGeometricElement(G geometry, AffineTransform transform, Effect effect) {
+	public AbstractFXGeometricElement(G geometry, AffineTransform transform, Paint stroke, double strokeWidth, Effect effect) {
 		this(geometry);
 		setTransform(transform);
 		setEffect(effect);
+		setStroke(stroke);
+		setStrokeWidth(strokeWidth);
 	}
 	
-	public AbstractFXGeometricElement(G geometry, AffineTransform transform) {
-		this(geometry);
-		setTransform(transform);
-	}
-	
-	public AbstractFXGeometricElement(G geometry, Effect effect) {
+	public AbstractFXGeometricElement(G geometry, Paint stroke, double strokeWidth, Effect effect) {
 		setGeometry(geometry);
 		setEffect(effect);
+		setStroke(stroke);
+		setStrokeWidth(strokeWidth);
 	}
 	
 	public AbstractFXGeometricElement(G geometry) {
@@ -89,6 +91,22 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 
 	public void setEffect(Effect effect) {
 		this.effect = effect;
+	}
+
+	public Paint getStroke() {
+		return stroke;
+	}
+
+	public void setStroke(Paint stroke) {
+		this.stroke = stroke;
+	}
+
+	public double getStrokeWidth() {
+		return strokeWidth;
+	}
+
+	public void setStrokeWidth(double strokeWidth) {
+		this.strokeWidth = strokeWidth;
 	}
 
 }

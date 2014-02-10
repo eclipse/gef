@@ -202,13 +202,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		refreshVisualWith(Arrays.asList(wayPoints));
 
 		// apply stroke paint
-		if (visual.getStroke() != curveVisual.stroke) {
-			visual.setStroke(curveVisual.stroke);
+		if (visual.getStroke() != curveVisual.getStroke()) {
+			visual.setStroke(curveVisual.getStroke());
 		}
 
 		// stroke width
-		if (visual.getStrokeWidth() != curveVisual.strokeWidth) {
-			visual.setStrokeWidth(curveVisual.strokeWidth);
+		if (visual.getStrokeWidth() != curveVisual.getStrokeWidth()) {
+			visual.setStrokeWidth(curveVisual.getStrokeWidth());
 		}
 
 		// dashes

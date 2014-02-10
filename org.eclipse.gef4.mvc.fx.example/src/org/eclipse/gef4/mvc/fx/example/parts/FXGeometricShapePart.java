@@ -129,10 +129,21 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						shapeVisual.getTransform()));
 			}
 		}
+
+		// apply stroke paint
+		if (visual.getStroke() != shapeVisual.getStroke()) {
+			visual.setStroke(shapeVisual.getStroke());
+		}
+
+		// stroke width
+		if (visual.getStrokeWidth() != shapeVisual.getStrokeWidth()) {
+			visual.setStrokeWidth(shapeVisual.getStrokeWidth());
+		}
+
 		if (visual.getFill() != shapeVisual.fill) {
 			visual.setFill(shapeVisual.fill);
 		}
-		
+
 		// apply effect
 		super.refreshVisual();
 	}

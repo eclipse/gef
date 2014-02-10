@@ -29,13 +29,16 @@ public class FXGeometricModel {
 	private static final double GEF_STROKE_WIDTH = 3.5;
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 	private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
+
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
+
 	private static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 
 	// selection handles
 	private FXGeometricShape topLeftSelectionHandle = new FXGeometricShape(
-			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 12,
-					15), Color.WHITE, GEF_SHADOW_EFFECT);
+			createHandleShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 12, 15), Color.WHITE,
+			GEF_SHADOW_EFFECT);
 	private FXGeometricShape topRightSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 243,
 					15), Color.WHITE, GEF_SHADOW_EFFECT);
@@ -71,9 +74,8 @@ public class FXGeometricModel {
 			new AffineTransform(1, 0, 0, 1, 27, 22), GEF_COLOR_BLUE,
 			GEF_SHADOW_EFFECT);
 	private FXGeometricShape gTopShape = new FXGeometricShape(
-			createGTopShapeGeometry(),
-			new AffineTransform(1, 0, 0, 1, 27, 22), GEF_COLOR_BLUE,
-			GEF_SHADOW_EFFECT);
+			createGTopShapeGeometry(), new AffineTransform(1, 0, 0, 1, 27, 22),
+			GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
 	private FXGeometricShape gMiddleShape = new FXGeometricShape(
 			createGMiddleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 27,
 					22), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
@@ -104,6 +106,11 @@ public class FXGeometricModel {
 			createDotShapeGeometry(),
 			new AffineTransform(1, 0, 0, 1, 225, 104), GEF_COLOR_BLUE,
 			GEF_SHADOW_EFFECT);
+
+	// fDotShape
+	private FXGeometricShape crossShape = new FXGeometricShape(
+			createCrossShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227, 45),
+			Color.WHITE, 1.5, Color.BLACK, GEF_SHADOW_EFFECT);
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
@@ -142,6 +149,8 @@ public class FXGeometricModel {
 		visualShapes.add(gDotShape);
 		visualShapes.add(eDotShape);
 		visualShapes.add(fDotShape);
+
+		visualShapes.add(crossShape);
 
 		return visualShapes;
 	}
@@ -194,6 +203,35 @@ public class FXGeometricModel {
 		segments.add(new Line(54, 8, 52, 4));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(52, 4, 40, 9,
 				14, 28, 1, 43, 0, 51).toBezier()));
+		return new CurvedPolygon(segments);
+	}
+
+	private IShape createCrossShapeGeometry() {
+		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		segments.add(new Line(0, 31, 12, 41));
+		segments.add(new Line(12, 41, 12, 32));
+		segments.add(new Line(12, 32, 26, 32));
+		segments.add(new Line(26, 32, 26, 47));
+		segments.add(new Line(26, 47, 17, 48));
+		segments.add(new Line(17, 48, 29, 59));
+		segments.add(new Line(29, 59, 40, 47));
+		segments.add(new Line(40, 47, 30, 47));
+		segments.add(new Line(30, 47, 30, 32));
+		segments.add(new Line(30, 32, 46, 32));
+		segments.add(new Line(46, 32, 46, 41));
+		segments.add(new Line(46, 41, 57, 30));
+		segments.add(new Line(57, 30, 46, 18));
+		segments.add(new Line(46, 18, 46, 28));
+		segments.add(new Line(46, 28, 30, 28));
+		segments.add(new Line(30, 28, 30, 13));
+		segments.add(new Line(30, 13, 39, 13));
+		segments.add(new Line(39, 13, 28, 0));
+		segments.add(new Line(28, 0, 18, 12));
+		segments.add(new Line(18, 12, 25, 12));
+		segments.add(new Line(25, 12, 25, 28));
+		segments.add(new Line(25, 28, 12, 28));
+		segments.add(new Line(12, 28, 12, 18));
+		segments.add(new Line(12, 18, 0, 31));
 		return new CurvedPolygon(segments);
 	}
 
