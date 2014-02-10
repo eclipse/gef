@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.scene.effect.Effect;
+import javafx.scene.paint.Paint;
+
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
@@ -20,7 +23,7 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry> implements
 	private G geometry;
 	private AffineTransform transform;
 	private List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-	
+	public Effect effect;
 	
 	public AbstractFXGeometricElement(G geometry, AffineTransform transform) {
 		this(geometry);

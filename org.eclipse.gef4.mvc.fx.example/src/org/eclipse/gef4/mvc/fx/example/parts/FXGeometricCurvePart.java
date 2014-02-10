@@ -3,8 +3,10 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
@@ -23,8 +25,8 @@ import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
-public class FXGeometricCurvePart extends AbstractFXGeometricElementPart implements
-		PropertyChangeListener {
+public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
+		implements PropertyChangeListener {
 
 	private FXGeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
@@ -180,37 +182,97 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart impleme
 		FXGeometricCurve curveVisual = getContent();
 		List<Point> wayPoints = curveVisual.getWayPoints();
 		refreshVisualWith(wayPoints);
+
+		// apply stroke paint
+		if (visual.getStroke() != curveVisual.stroke) {
+			visual.setStroke(curveVisual.stroke);
+		}
+
+		// stroke width
+		if (visual.getStrokeWidth() != curveVisual.strokeWidth) {
+			visual.setStrokeWidth(curveVisual.strokeWidth);
+		}
+
+		// dashes
+		List<Double> dashList = new ArrayList<Double>(curveVisual.dashes.length);
+		for (double d : curveVisual.dashes) {
+			dashList.add(d);
+		}
+		if (!visual.getStrokeDashArray().equals(dashList)) {
+			visual.getStrokeDashArray().setAll(dashList);
+		}
+
+		// apply effect
+		super.refreshVisual();
 	}
 
 	private void refreshVisualWith(List<Point> wayPoints) {
-		Point[] startEnd = computeStartEnd();
+		Point[] startEnd = computeStartEnd(wayPoints);
 		if (startEnd.length == 2) {
 			ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
 			points.add(startEnd[0]);
-			points.addAll(wayPoints);
+			
+			if (anchors.size() == 2) {
+				// add uncontained way points
+				Node startNode = anchors.get(0).getAnchorage();
+				Node endNode = anchors.get(1).getAnchorage();
+				List<Point> uncontainedWayPoints = new ArrayList<Point>(wayPoints.size());
+				for (Point p : wayPoints) {
+					Point2D slp = startNode.sceneToLocal(p.x, p.y);
+					Point2D elp = endNode.sceneToLocal(p.x, p.y);
+					if (!startNode.contains(slp) && !endNode.contains(elp)) {
+						uncontainedWayPoints.add(p);
+					}
+				}
+				points.addAll(uncontainedWayPoints);
+			} else {
+				// add all way points
+				points.addAll(wayPoints);
+			}
+			
 			points.add(startEnd[1]);
 			visual.setGeometry(FXGeometricCurve
 					.constructCurveFromWayPoints(points.toArray(new Point[] {})));
 		}
 	}
 
-	private Point[] computeStartEnd() {
+	private Point[] computeStartEnd(List<Point> wayPoints) {
 		if (anchors.size() != 2) {
 			return new Point[] {};
 		}
 		Node startNode = anchors.get(0).getAnchorage();
 		Node endNode = anchors.get(1).getAnchorage();
 
-		// compute reference points in local coordinate space
-		// TODO: use nearest way point if one exists
-		Point startReference = JavaFX2Geometry.toRectangle(
-				getVisual().sceneToLocal(
-						endNode.localToScene(endNode.getBoundsInLocal())))
-				.getCenter();
-		Point endReference = JavaFX2Geometry.toRectangle(
+		// compute center points in local coordinate space
+		Point startCenter = JavaFX2Geometry.toRectangle(
 				getVisual().sceneToLocal(
 						startNode.localToScene(startNode.getBoundsInLocal())))
 				.getCenter();
+		Point endCenter = JavaFX2Geometry.toRectangle(
+				getVisual().sceneToLocal(
+						endNode.localToScene(endNode.getBoundsInLocal())))
+				.getCenter();
+
+		// find reference points
+		Point startReference = endCenter;
+		Point endReference = startCenter;
+
+		// first uncontained way point is start reference
+		for (Point p : wayPoints) {
+			Point2D local = startNode.sceneToLocal(p.x, p.y);
+			if (!startNode.contains(local)) {
+				startReference = p;
+				break;
+			}
+		}
+
+		// last uncontained way point is end reference
+		for (Point p : wayPoints) {
+			Point2D local = endNode.sceneToLocal(p.x, p.y);
+			if (!endNode.contains(local)) {
+				endReference = p;
+			}
+		}
 
 		// compute new anchor positions
 		try {
@@ -220,7 +282,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart impleme
 					endReference);
 			return new Point[] { start, end };
 		} catch (IllegalArgumentException x) {
-			return new Point[] { startReference, endReference };
+			// fallback to center if points if no intersection can be found
+			return new Point[] { startCenter, endCenter };
 		}
 	}
 

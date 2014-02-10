@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
@@ -12,6 +15,9 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
 	private List<Point> waypoints = new ArrayList<>();
+	public Paint stroke = new Color(0, 0, 0, 1);
+	public double[] dashes = new double[0];
+	public double strokeWidth = 0.5;
 
 	public FXGeometricCurve(Point... waypoints) {
 		super(constructCurveFromWayPoints(waypoints));

@@ -9,8 +9,6 @@ import org.eclipse.gef4.geometry.planar.IShape;
 public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 
 	public Color fill;
-	public Effect effect;
-
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Color fill, Effect effect) {
 		super(shape, transform);

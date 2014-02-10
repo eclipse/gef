@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.effect.Light.Distant;
+import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -18,7 +22,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXGeometricModel {
 
-	private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
+//	private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
+	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
 	private FXGeometricCurve l1 = new FXGeometricCurve();
@@ -28,6 +33,8 @@ public class FXGeometricModel {
 			50, 50), null, Color.RED, null);
 	
 	public FXGeometricModel(){
+		l1.dashes = new double[] { 10, 5 };
+		l1.strokeWidth = 2.5;
 		r1.addAnchored(l1);
 		r2.addAnchored(l1);
 	}
@@ -104,8 +111,29 @@ public class FXGeometricModel {
 
 	private static Effect createShadowEffect() {
 		DropShadow outerShadow = new DropShadow();
-		outerShadow.setColor(Color.GREY);
-		return outerShadow;
+		outerShadow.setRadius(3);
+		outerShadow.setSpread(0.2);
+		outerShadow.setOffsetX(3);
+		outerShadow.setOffsetY(3);
+		outerShadow.setColor(new Color(0.3, 0.3, 0.3, 1));
+		
+//		InnerShadow innerShadow = new InnerShadow();
+//		innerShadow.setOffsetX(-4);
+//		innerShadow.setOffsetY(-4);
+//		innerShadow.setColor(new Color(1,1,1,1));
+		
+		Distant light = new Distant();
+        light.setAzimuth(-135.0f);
+ 
+        Lighting l = new Lighting();
+        l.setLight(light);
+        l.setSurfaceScale(3.0f);
+		
+		Blend effects = new Blend(BlendMode.MULTIPLY);
+		effects.setTopInput(l);
+		effects.setBottomInput(outerShadow);
+		
+		return effects;
 	}
 
 	public List<FXGeometricCurve> getCurveVisuals() {

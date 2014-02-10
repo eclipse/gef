@@ -129,12 +129,12 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						shapeVisual.getTransform()));
 			}
 		}
-		if (visual.getEffect() != shapeVisual.effect) {
-			visual.setEffect(shapeVisual.effect);
-		}
 		if (visual.getFill() != shapeVisual.fill) {
 			visual.setFill(shapeVisual.fill);
 		}
+		
+		// apply effect
+		super.refreshVisual();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
