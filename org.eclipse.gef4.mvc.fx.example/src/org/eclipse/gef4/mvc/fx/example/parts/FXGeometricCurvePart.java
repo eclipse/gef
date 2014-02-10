@@ -195,8 +195,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		// TODO: compare way points to identify if we need to refresh
 		// use anchors as start and end point
 		FXGeometricCurve curveVisual = getContent();
-		List<Point> wayPoints = curveVisual.getWayPoints();
-		refreshVisualWith(wayPoints);
+		Point[] wayPoints = curveVisual.getWayPoints().toArray(new Point[]{});
+		if(curveVisual.getTransform() != null){
+			wayPoints = curveVisual.getTransform().getTransformed(wayPoints);
+		}
+		refreshVisualWith(Arrays.asList(wayPoints));
 
 		// apply stroke paint
 		if (visual.getStroke() != curveVisual.stroke) {

@@ -23,43 +23,87 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 public class FXGeometricModel {
 
-	private static final double GEF_STROKE_WIDTH = 3.5;
 	// private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
 	// private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
+
+	private static final double GEF_STROKE_WIDTH = 3.5;
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 	private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 	private static final double[] GEF_DASH_PATTERN = new double[] { 13, 8 };
 
+	// selection handles
 	private FXGeometricShape topLeftSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 12,
-					135), Color.WHITE, GEF_SHADOW_EFFECT);
+					15), Color.WHITE, GEF_SHADOW_EFFECT);
 	private FXGeometricShape topRightSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 243,
-					135), Color.WHITE, GEF_SHADOW_EFFECT);
+					15), Color.WHITE, GEF_SHADOW_EFFECT);
 	private FXGeometricShape bottomLeftSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 12,
-					229), Color.WHITE, GEF_SHADOW_EFFECT);
+					109), Color.WHITE, GEF_SHADOW_EFFECT);
 	private FXGeometricShape bottomRightSelectionHandle = new FXGeometricShape(
 			createHandleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 243,
-					229), Color.WHITE, GEF_SHADOW_EFFECT);
+					109), Color.WHITE, GEF_SHADOW_EFFECT);
 
+	// selection bounds
 	// TODO: add transform to the curves
 	private FXGeometricCurve selectionBoundsTopLine = new FXGeometricCurve(
-			new Point[] { new Point(140, 144) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
-	
+			new Point[] { new Point(140, 24) }, GEF_COLOR_GREEN,
+			GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
+
 	private FXGeometricCurve selectionBoundsLeftLine = new FXGeometricCurve(
-			new Point[] { new Point(19, 190) },
-			GEF_COLOR_GREEN, GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
+			new Point[] { new Point(19, 70) }, GEF_COLOR_GREEN,
+			GEF_STROKE_WIDTH, GEF_DASH_PATTERN, null);
 
 	private FXGeometricCurve selectionBoundsBottomLine = new FXGeometricCurve(
-			new Point[] { new Point(140, 238)},
-			GEF_COLOR_GREEN, 3.5, new double[] { 15, 10 }, null);
-	
+			new Point[] { new Point(140, 118) }, GEF_COLOR_GREEN, 3.5,
+			new double[] { 15, 10 }, null);
+
 	private FXGeometricCurve selectionBoundsRightLine = new FXGeometricCurve(
-			new Point[] { new Point(250, 190)},
-			GEF_COLOR_GREEN, 3.5, new double[] { 15, 10 }, null);
+			new Point[] { new Point(250, 70) }, GEF_COLOR_GREEN, 3.5,
+			new double[] { 15, 10 }, null);
+
+	// g shapes
+	// TODO: create multi shape visual for G shape
+	private FXGeometricShape gBaseShape = new FXGeometricShape(
+			createGBaseShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 27, 22), GEF_COLOR_BLUE,
+			GEF_SHADOW_EFFECT);
+	private FXGeometricShape gTopShape = new FXGeometricShape(
+			createGTopShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 27, 22), GEF_COLOR_BLUE,
+			GEF_SHADOW_EFFECT);
+	private FXGeometricShape gMiddleShape = new FXGeometricShape(
+			createGMiddleShapeGeometry(), new AffineTransform(1, 0, 0, 1, 27,
+					22), GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
+
+	// e shape
+	private FXGeometricShape eShape = new FXGeometricShape(
+			createEShapeGeometry(), new AffineTransform(1, 0, 0, 1, 100, 22),
+			GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
+
+	// f shape
+	private FXGeometricShape fShape = new FXGeometricShape(
+			createFShapeGeometry(), new AffineTransform(1, 0, 0, 1, 175, 22),
+			GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
+
+	// gDotShape
+	private FXGeometricShape gDotShape = new FXGeometricShape(
+			createDotShapeGeometry(), new AffineTransform(1, 0, 0, 1, 87, 104),
+			GEF_COLOR_BLUE, GEF_SHADOW_EFFECT);
+
+	// eDotShape
+	private FXGeometricShape eDotShape = new FXGeometricShape(
+			createDotShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 170, 104), GEF_COLOR_BLUE,
+			GEF_SHADOW_EFFECT);
+
+	// fDotShape
+	private FXGeometricShape fDotShape = new FXGeometricShape(
+			createDotShapeGeometry(),
+			new AffineTransform(1, 0, 0, 1, 225, 104), GEF_COLOR_BLUE,
+			GEF_SHADOW_EFFECT);
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
@@ -71,14 +115,14 @@ public class FXGeometricModel {
 		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine);
 		topRightSelectionHandle.addAnchored(selectionBoundsRightLine);
 		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine);
-		
+
 		// TODO: anchor points to letter shapes
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getShapeVisuals() {
 		List<AbstractFXGeometricElement<? extends IGeometry>> visualShapes = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 
-		// add shapes in z-order
+		// add all shapes in z-order
 		visualShapes.add(selectionBoundsTopLine);
 		visualShapes.add(selectionBoundsLeftLine);
 		visualShapes.add(selectionBoundsBottomLine);
@@ -88,42 +132,16 @@ public class FXGeometricModel {
 		visualShapes.add(topRightSelectionHandle);
 		visualShapes.add(bottomLeftSelectionHandle);
 		visualShapes.add(bottomRightSelectionHandle);
-		
-		// TODO: create multi shape visual for G shape
-		// g shape
-		visualShapes.add(new FXGeometricShape(createGBaseShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createGTopShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
-		visualShapes.add(new FXGeometricShape(createGMiddleShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 27, 146), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
 
-		// e shape
-		visualShapes.add(new FXGeometricShape(createEShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 101, 146), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
+		visualShapes.add(gBaseShape);
+		visualShapes.add(gTopShape);
+		visualShapes.add(gMiddleShape);
 
-		// f shape
-		visualShapes.add(new FXGeometricShape(createFShapeGeometry(), null,
-				GEF_COLOR_BLUE, GEF_SHADOW_EFFECT));
-
-		// gDotShape
-		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 87, 224), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
-
-		// eDotShape
-		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 170, 224), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
-
-		// fDotShape
-		visualShapes.add(new FXGeometricShape(createDotShapeGeometry(),
-				new AffineTransform(1, 0, 0, 1, 225, 224), GEF_COLOR_BLUE,
-				GEF_SHADOW_EFFECT));
+		visualShapes.add(eShape);
+		visualShapes.add(fShape);
+		visualShapes.add(gDotShape);
+		visualShapes.add(eDotShape);
+		visualShapes.add(fDotShape);
 
 		return visualShapes;
 	}
@@ -165,64 +183,64 @@ public class FXGeometricModel {
 
 	private IShape createGTopShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(0, 47, 8, 45));
-		segments.add(new Line(8, 45, 9, 34));
-		segments.add(new Line(9, 34, 20, 34));
-		segments.add(new Line(20, 34, 24, 22));
-		segments.add(new Line(24, 22, 35, 23));
-		segments.add(new Line(35, 23, 39, 11));
-		segments.add(new Line(39, 11, 51, 13));
-		segments.add(new Line(51, 13, 54, 4));
-		segments.add(new Line(54, 4, 52, 0));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(52, 0, 40, 5,
-				14, 24, 1, 39, 0, 47).toBezier()));
+		segments.add(new Line(0, 51, 8, 49));
+		segments.add(new Line(8, 49, 9, 38));
+		segments.add(new Line(9, 38, 20, 38));
+		segments.add(new Line(20, 38, 24, 26));
+		segments.add(new Line(24, 26, 35, 27));
+		segments.add(new Line(35, 27, 39, 15));
+		segments.add(new Line(39, 15, 51, 17));
+		segments.add(new Line(51, 17, 54, 8));
+		segments.add(new Line(54, 8, 52, 4));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(52, 4, 40, 9,
+				14, 28, 1, 43, 0, 51).toBezier()));
 		return new CurvedPolygon(segments);
 	}
 
 	private IShape createGBaseShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(0, 51, 10, 50));
-		segments.add(new Line(10, 50, 13, 38));
-		segments.add(new Line(13, 38, 23, 38));
-		segments.add(new Line(23, 38, 25, 28));
-		segments.add(new Line(25, 28, 37, 29));
-		segments.add(new Line(37, 29, 42, 19));
-		segments.add(new Line(42, 19, 54, 20));
-		segments.add(new Line(54, 20, 57, 8));
-		segments.add(new Line(57, 8, 65, 24));
-		segments.add(new Line(65, 24, 60, 27));
-		segments.add(new Line(60, 27, 57, 26));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(57, 26, 45,
-				31, 22, 49, 14, 69, 40, 65).toBezier()));
-		segments.add(new Line(40, 65, 39, 57));
-		segments.add(new Line(39, 57, 46, 54));
-		segments.add(new Line(46, 54, 54, 59));
-		segments.add(new Line(54, 59, 62, 53));
-		segments.add(new Line(62, 53, 67, 54));
-		segments.add(new Line(67, 54, 67, 61));
-		segments.add(new Line(67, 61, 55, 62));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(55, 62, 53,
-				73, 51, 82).toBezier()));
-		segments.add(new Line(51, 82, 47, 82));
-		segments.add(new Line(47, 82, 46, 67));
-		segments.add(new Line(46, 67, 25, 80));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(25, 80, 17,
-				82, 14, 80).toBezier()));
-		segments.add(new Line(14, 80, 0, 51));
+		segments.add(new Line(0, 55, 10, 54));
+		segments.add(new Line(10, 54, 13, 42));
+		segments.add(new Line(13, 42, 23, 42));
+		segments.add(new Line(23, 42, 25, 32));
+		segments.add(new Line(25, 32, 37, 33));
+		segments.add(new Line(37, 33, 42, 23));
+		segments.add(new Line(42, 23, 54, 24));
+		segments.add(new Line(54, 24, 57, 12));
+		segments.add(new Line(57, 12, 65, 28));
+		segments.add(new Line(65, 28, 60, 31));
+		segments.add(new Line(60, 31, 57, 30));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(57, 30, 45,
+				35, 22, 53, 14, 73, 40, 69).toBezier()));
+		segments.add(new Line(40, 69, 39, 61));
+		segments.add(new Line(39, 61, 46, 58));
+		segments.add(new Line(46, 58, 54, 63));
+		segments.add(new Line(54, 63, 62, 57));
+		segments.add(new Line(62, 57, 67, 58));
+		segments.add(new Line(67, 58, 67, 65));
+		segments.add(new Line(67, 65, 55, 66));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(55, 66, 53,
+				77, 51, 86).toBezier()));
+		segments.add(new Line(51, 86, 47, 86));
+		segments.add(new Line(47, 86, 46, 71));
+		segments.add(new Line(46, 71, 25, 84));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(25, 84, 17,
+				86, 14, 84).toBezier()));
+		segments.add(new Line(14, 84, 0, 55));
 		return new CurvedPolygon(segments);
 	}
 
 	private IShape createGMiddleShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(37, 44, 38, 52));
-		segments.add(new Line(38, 52, 45, 48));
-		segments.add(new Line(45, 48, 54, 53));
-		segments.add(new Line(54, 53, 62, 47));
-		segments.add(new Line(62, 47, 67, 50));
-		segments.add(new Line(67, 50, 67, 41));
-		segments.add(new Line(67, 41, 62, 40));
-		segments.add(new Line(62, 40, 62, 44));
-		segments.add(new Line(62, 44, 37, 44));
+		segments.add(new Line(37, 48, 38, 56));
+		segments.add(new Line(38, 56, 45, 52));
+		segments.add(new Line(45, 52, 54, 57));
+		segments.add(new Line(54, 57, 62, 51));
+		segments.add(new Line(62, 51, 67, 54));
+		segments.add(new Line(67, 54, 67, 45));
+		segments.add(new Line(67, 45, 62, 44));
+		segments.add(new Line(62, 44, 62, 48));
+		segments.add(new Line(62, 48, 37, 48));
 		return new CurvedPolygon(segments);
 	}
 
@@ -237,71 +255,71 @@ public class FXGeometricModel {
 
 	private IShape createEShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(0, 6, 5, 6));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(5, 6, 4, 21,
-				6, 48, 5, 66, 5, 77).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(5, 77, 4, 77,
-				2, 80).toBezier()));
-		segments.add(new Line(2, 80, 2, 83));
-		segments.add(new Line(2, 83, 63, 82));
-		segments.add(new Line(63, 82, 64, 75));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(64, 75, 58,
-				77, 50, 78).toBezier()));
-		segments.add(new Line(50, 78, 11, 78));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(11, 78, 10,
-				52, 10, 26).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(10, 26, 26,
-				26, 44, 27).toBezier()));
-		segments.add(new Line(44, 27, 47, 21));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(47, 21, 34,
-				23, 18, 23, 9, 22).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(9, 22, 9, 16,
-				10, 6).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(10, 6, 23, 7,
-				30, 7, 50, 8).toBezier()));
-		segments.add(new Line(50, 8, 54, 2));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(54, 2, 44, 3,
-				32, 4, 14, 3, 6, 2).toBezier()));
-		segments.add(new Line(6, 2, 0, 6));
+		segments.add(new Line(1, 10, 6, 10));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(6, 10, 5, 25,
+				7, 52, 6, 70, 6, 81).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(6, 81, 5, 81,
+				3, 84).toBezier()));
+		segments.add(new Line(3, 84, 3, 87));
+		segments.add(new Line(3, 87, 64, 86));
+		segments.add(new Line(64, 86, 65, 79));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(65, 79, 59,
+				81, 51, 82).toBezier()));
+		segments.add(new Line(51, 82, 12, 82));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(12, 82, 11,
+				56, 11, 30).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(11, 30, 27,
+				30, 45, 31).toBezier()));
+		segments.add(new Line(45, 31, 48, 25));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(48, 25, 35,
+				27, 19, 27, 10, 26).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(10, 26, 10,
+				20, 11, 10).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(11, 10, 24,
+				11, 31, 11, 51, 12).toBezier()));
+		segments.add(new Line(51, 12, 55, 6));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(55, 6, 45, 7,
+				33, 8, 15, 7, 7, 6).toBezier()));
+		segments.add(new Line(7, 6, 1, 10));
 		return new CurvedPolygon(segments);
 	}
 
 	private IShape createFShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
-		segments.add(new Line(178, 155, 178, 165));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(178, 165,
-				185, 167, 192, 168).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(192, 168,
-				191, 176, 189, 186, 185, 188).toBezier()));
-		segments.add(new Line(185, 188, 185, 195));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(185, 195,
-				183, 212, 182, 225).toBezier()));
-		segments.add(new Line(182, 225, 188, 231));
-		segments.add(new Line(188, 231, 192, 227));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(192, 227,
-				193, 211, 195, 196).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(195, 196,
-				207, 194, 220, 192).toBezier()));
-		segments.add(new Line(220, 192, 220, 187));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(220, 187,
-				208, 188, 197, 188).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(197, 188,
-				198, 176, 200, 168).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(200, 168,
-				217, 168, 225, 165, 237, 160, 242, 158).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(242, 158,
-				242, 154, 239, 152).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(239, 152,
-				229, 156, 217, 158, 203, 158).toBezier()));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(203, 158,
-				204, 153, 204, 150, 206, 142).toBezier()));
-		segments.add(new Line(206, 142, 199, 145));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(199, 145,
-				199, 150, 198, 154).toBezier()));
-		segments.add(new Line(198, 154, 195, 153));
-		segments.add(new Line(195, 153, 195, 157));
-		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(195, 157,
-				188, 157, 178, 155).toBezier()));
+		segments.add(new Line(3, 13, 3, 23));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(3, 23, 10,
+				25, 17, 27).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 27, 16,
+				34, 14, 44, 10, 46).toBezier()));
+		segments.add(new Line(10, 46, 10, 53));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(10, 53, 8,
+				70, 7, 83).toBezier()));
+		segments.add(new Line(7, 83, 13, 89));
+		segments.add(new Line(13, 89, 17, 85));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(17, 85, 18,
+				69, 20, 54).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(20, 54, 32,
+				52, 45, 50).toBezier()));
+		segments.add(new Line(45, 50, 45, 45));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(45, 45, 33,
+				46, 22, 46).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(22, 46, 23,
+				34, 25, 24).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(25, 24, 42,
+				24, 50, 21, 59, 18, 67, 16).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(67, 16, 67,
+				12, 64, 10).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(64, 10, 54,
+				14, 42, 16, 28, 16).toBezier()));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(28, 16, 29,
+				11, 29, 8, 31, 0).toBezier()));
+		segments.add(new Line(31, 0, 24, 3));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(24, 3, 24, 8,
+				23, 12).toBezier()));
+		segments.add(new Line(23, 12, 20, 11));
+		segments.add(new Line(20, 11, 20, 15));
+		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(20, 15, 13,
+				15, 3, 13).toBezier()));
 		return new CurvedPolygon(segments);
 	}
 
