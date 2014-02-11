@@ -108,9 +108,9 @@ public class FXGeometricModel {
 			GEF_SHADOW_EFFECT);
 
 	// fDotShape
-	private FXGeometricShape crossShape = new FXGeometricShape(
-			createCrossShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227, 45),
-			Color.WHITE, 1.5, Color.BLACK, GEF_SHADOW_EFFECT);
+	private FXGeometricShape cursorShape = new FXGeometricShape(
+			createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227, 45),
+			Color.WHITE, 2, Color.BLACK, GEF_SHADOW_EFFECT);
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
@@ -150,7 +150,7 @@ public class FXGeometricModel {
 		visualShapes.add(eDotShape);
 		visualShapes.add(fDotShape);
 
-		visualShapes.add(crossShape);
+		visualShapes.add(cursorShape);
 
 		return visualShapes;
 	}
@@ -206,15 +206,15 @@ public class FXGeometricModel {
 		return new CurvedPolygon(segments);
 	}
 
-	private IShape createCrossShapeGeometry() {
+	private IShape createCursorShapeGeometry() {
 		List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(0, 31, 12, 41));
 		segments.add(new Line(12, 41, 12, 32));
 		segments.add(new Line(12, 32, 26, 32));
 		segments.add(new Line(26, 32, 26, 47));
-		segments.add(new Line(26, 47, 17, 48));
-		segments.add(new Line(17, 48, 29, 59));
-		segments.add(new Line(29, 59, 40, 47));
+		segments.add(new Line(26, 47, 17, 47));
+		segments.add(new Line(17, 47, 28, 59));
+		segments.add(new Line(28, 59, 40, 47));
 		segments.add(new Line(40, 47, 30, 47));
 		segments.add(new Line(30, 47, 30, 32));
 		segments.add(new Line(30, 32, 46, 32));
@@ -223,13 +223,13 @@ public class FXGeometricModel {
 		segments.add(new Line(57, 30, 46, 18));
 		segments.add(new Line(46, 18, 46, 28));
 		segments.add(new Line(46, 28, 30, 28));
-		segments.add(new Line(30, 28, 30, 13));
-		segments.add(new Line(30, 13, 39, 13));
-		segments.add(new Line(39, 13, 28, 0));
-		segments.add(new Line(28, 0, 18, 12));
-		segments.add(new Line(18, 12, 25, 12));
-		segments.add(new Line(25, 12, 25, 28));
-		segments.add(new Line(25, 28, 12, 28));
+		segments.add(new Line(30, 28, 30, 12));
+		segments.add(new Line(30, 12, 39, 12));
+		segments.add(new Line(39, 12, 28, 0));
+		segments.add(new Line(28, 0, 17, 12));
+		segments.add(new Line(17, 12, 26, 12));
+		segments.add(new Line(26, 12, 26, 28));
+		segments.add(new Line(26, 28, 12, 28));
 		segments.add(new Line(12, 28, 12, 18));
 		segments.add(new Line(12, 18, 0, 31));
 		return new CurvedPolygon(segments);

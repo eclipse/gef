@@ -12,6 +12,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
+// TODO: parameterize with concrete ICurve and encapsulate construction of geometry; limit the number of waypoints if needed
 public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
 	private List<Point> waypoints = new ArrayList<>();
@@ -19,7 +20,8 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
 	public FXGeometricCurve(Point[] waypoints, Color stroke,
 			double strokeWidth, double[] dashes, Effect effect) {
-		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth, effect);
+		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
+				effect);
 		this.waypoints.addAll(Arrays.asList(waypoints));
 		this.dashes = dashes;
 	}
