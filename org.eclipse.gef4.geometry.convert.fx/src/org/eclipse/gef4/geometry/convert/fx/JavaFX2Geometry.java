@@ -14,7 +14,9 @@ package org.eclipse.gef4.geometry.convert.fx;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.transform.Transform;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
@@ -22,6 +24,11 @@ public class JavaFX2Geometry {
 
 	private JavaFX2Geometry() {
 		// this class should not be instantiated by clients
+	}
+	
+	public static final AffineTransform toAffineTransform(
+			Transform t) {
+		return new AffineTransform(t.getMxx(), t.getMxy(), t.getMyx(), t.getMyy(), t.getTx(), t.getTy());
 	}
 
 	public static final Rectangle toRectangle(Bounds b) {
