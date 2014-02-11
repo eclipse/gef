@@ -7,14 +7,10 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.CurvedPolygon;
-import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
@@ -113,8 +109,8 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public Node getVisual() {
-		return visual;
+	public FXGeometryNode<IShape> getVisual() {
+		return (FXGeometryNode<IShape>) visual;
 	}
 
 	@Override
@@ -175,7 +171,18 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
 			// TODO: when to dispose the anchor properly??
-			anchor = new FXChopBoxAnchor(getVisual());
+			anchor = new FXChopBoxAnchor(getVisual()) {
+				@Override
+				protected IShape getAnchorageReferenceShape() {
+					// return the visual's geometry, translated to scene
+					// coordinates
+					AffineTransform local2SceneAffineTransform = JavaFX2Geometry
+							.toAffineTransform(getAnchorage()
+									.getLocalToSceneTransform());
+					return getVisual().getGeometry().getTransformed(
+							local2SceneAffineTransform);
+				}
+			};
 		}
 		return anchor;
 	}
