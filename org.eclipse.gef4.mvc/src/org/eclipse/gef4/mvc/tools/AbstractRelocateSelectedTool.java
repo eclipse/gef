@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
  * 
  * @author anyssen
  *
+ * @deprecated Use {@link AbstractDragTool} instead.
  * @param <V>
  */
 // TODO: this could be a policy as result of dragging (on the selection model??)

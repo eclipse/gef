@@ -7,8 +7,14 @@ import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractRelocateSelectedTool;
 
+/**
+ * 
+ * @author nyssen
+ * @deprecated Use {@link FXDragTool} instead and implement a proper {@link IDragPolicy}.
+ */
 public class FXRelocateSelectedTool extends AbstractRelocateSelectedTool<Node> {
 
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
