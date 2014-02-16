@@ -280,6 +280,10 @@
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.source-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.ui</module>
+		<module>../org.eclipse.gef4.mvc.fx.ui-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.ui.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.ui.sdk-feature</module>
 		
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>

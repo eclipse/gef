@@ -9,7 +9,7 @@
 -splitIndex
 -windowtitle "GEF4 Cloudio API Reference"
 -doctitle "GEF4 Cloudio API Reference"
--header "<b>GEF4 Cloudio</b><br>@build@"
+-header "<b>GEF4 Cloudio</b><br>0.1.0.201402161901"
 -bottom "Copyright (c) 2000, 2012 IBM Corporation, itemis AG, and others. All rights reserved."
 -link http://docs.oracle.com/javase/1.5.0/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/

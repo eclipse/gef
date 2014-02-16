@@ -17,13 +17,14 @@ import java.util.Stack;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public abstract class AbstractDomain<V> implements IDomain<V> {
@@ -33,6 +34,7 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	private Map<Class<? extends Object>, Object> properties;
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
+	private IUndoContext undoContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;
 
 	/**
 	 * Constructs an EditDomain and loads the default tool.
@@ -184,6 +186,16 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 			return null;
 		}
 		return (P) properties.get(key);
+	}
+
+	@Override
+	public IUndoContext getUndoContext() {
+		return undoContext;
+	}
+
+	@Override
+	public void setUndoContext(IUndoContext undoContext) {
+		this.undoContext = undoContext;
 	}
 
 }

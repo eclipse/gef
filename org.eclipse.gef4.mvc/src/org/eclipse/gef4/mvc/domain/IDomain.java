@@ -14,6 +14,7 @@
 package org.eclipse.gef4.mvc.domain;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewerBound;
 
@@ -32,6 +33,8 @@ public interface IDomain<V> extends IViewerBound<V> {
 	 * @return The {@link IOperationHistory}.
 	 */
 	public abstract IOperationHistory getOperationHistory();
+	
+	public abstract IUndoContext getUndoContext();
 
 	public abstract <P extends Object> P getProperty(Class<P> key);
 
@@ -62,6 +65,8 @@ public interface IDomain<V> extends IViewerBound<V> {
 	 */
 	public abstract void setOperationHistory(IOperationHistory operationHistory);
 
+	public abstract void setUndoContext(IUndoContext undoContext);
+	
 	public abstract <P extends Object> void setProperty(Class<P> key, P property);
 
 }

@@ -80,26 +80,8 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					@Override
 					public void commitResizeRelocate(double dx, double dy,
 							double dw, double dh) {
-						// Bounds bounds = visual.getLayoutBounds();
-						// double width = bounds.getWidth();
-						// double height = bounds.getHeight();
-						//
-						// double sx = width == 0 ? 1 : (width + dw) / width;
-						// double sy = height == 0 ? 1 : (height + dh) / height;
-						//
-						// AffineTransform additionalTransform = new
-						// AffineTransform(
-						// sx, 0, 0, sy, dx, dy);
-						//
-						// AffineTransform oldTransform = getContent()
-						// .getTransform();
-						// if (oldTransform == null) {
-						// getContent().setTransform(additionalTransform);
-						// } else {
-						// getContent().setTransform(
-						// oldTransform.getCopy().preConcatenate(
-						// additionalTransform));
-						// }
+						super.commitResizeRelocate(dx, dy, dw, dh);
+						// TODO: chain an operation to apply changes to model
 					}
 				});
 	}

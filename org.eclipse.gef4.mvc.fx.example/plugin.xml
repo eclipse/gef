@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.eclipse.gef4.mvc.fx.example.FXExampleViewPart"
+            class="org.eclipse.gef4.mvc.fx.example.view.FXExampleView"
             id="org.eclipse.gef4.mvc.javafx.example.FXExampleView"
             name="GEF4 MVC FX Example View"
             restorable="true">

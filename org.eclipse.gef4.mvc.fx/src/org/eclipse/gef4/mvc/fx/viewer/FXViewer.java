@@ -44,10 +44,14 @@ public class FXViewer extends AbstractVisualPartViewer<Node> {
 	public void setRootPart(IRootPart<Node> editpart) {
 		super.setRootPart(editpart);
 		if (editpart != null) {
-			canvas.setScene(new Scene((Parent) editpart.getVisual()));
+			canvas.setScene(createScene((Parent) editpart.getVisual()));
 		} else {
 			canvas.setScene(null);
 		}
+	}
+
+	protected Scene createScene(Parent rootVisual) {
+		return new Scene(rootVisual);
 	}
 
 	public FXCanvas getCanvas() {
