@@ -8,7 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
- * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
+ * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
  * 
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.policies.ContentPartSynchronizationPolicy;
+import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
@@ -26,8 +26,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	private Object content;
 
 	public AbstractContentPart() {
-		installPolicy(ContentPartSynchronizationPolicy.class,
-				new ContentPartSynchronizationPolicy<V>());
+		installBound(new ContentPartSynchronizationBehavior<V>());
 	}
 
 	/**
@@ -92,10 +91,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 		if (parent == null) {
 			// remove all content children
-			getPolicy(ContentPartSynchronizationPolicy.class)
+			getBound(ContentPartSynchronizationBehavior.class)
 					.synchronizeContentChildren(Collections.emptyList());
 			// create content anchored as needed
-			getPolicy(ContentPartSynchronizationPolicy.class)
+			getBound(ContentPartSynchronizationBehavior.class)
 					.synchronizeContentAnchored(Collections.emptyList());
 		}
 		super.setParent(parent);
@@ -105,10 +104,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			// listen for the PARENT property of the host to change, rather than
 			// accessing the policy directly here
 			// create content children as needed
-			getPolicy(ContentPartSynchronizationPolicy.class)
+			getBound(ContentPartSynchronizationBehavior.class)
 					.synchronizeContentChildren(getContentChildren());
 			// create content anchored as needed
-			getPolicy(ContentPartSynchronizationPolicy.class)
+			getBound(ContentPartSynchronizationBehavior.class)
 					.synchronizeContentAnchored(getContentAnchored());
 		}
 	}

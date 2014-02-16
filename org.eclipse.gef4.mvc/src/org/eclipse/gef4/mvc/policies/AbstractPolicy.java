@@ -24,20 +24,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractPolicy<V> implements IPolicy<V> {
 
 	private IVisualPart<V> host;
-	private boolean active;
-
-	public void activate() {
-		active = true;
-	}
-
-	public void deactivate() {
-		active = false;
-	}
-	
-	@Override
-	public boolean isActive() {
-		return active;
-	}
 
 	public IVisualPart<V> getHost() {
 		return host;
@@ -45,16 +31,6 @@ public abstract class AbstractPolicy<V> implements IPolicy<V> {
 
 	public void setHost(IVisualPart<V> host) {
 		this.host = host;
-	}
-
-	public String toString() {
-		String c = getClass().getName();
-		c = c.substring(c.lastIndexOf('.') + 1);
-		if (getHost() != null) {
-			return getHost().toString() + "." + c; //$NON-NLS-1$
-		} else {
-			return c + " (no host for EditPolicy set yet)"; //$NON-NLS-1$
-		}
 	}
 
 }

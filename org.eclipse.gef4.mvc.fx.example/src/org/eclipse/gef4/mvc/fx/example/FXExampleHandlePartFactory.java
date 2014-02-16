@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example;
 
 import java.util.ArrayList;
@@ -9,12 +20,11 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.parts.FXBoxHandlePart;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateAnchoragesOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateAnchoragesOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateAnchoragesOnHandleDragPolicy.ReferencePoint;
+import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXExampleHandlePartFactory implements IHandlePartFactory<Node> {
@@ -32,26 +42,26 @@ public class FXExampleHandlePartFactory implements IHandlePartFactory<Node> {
 		} else {
 			FXBoxHandlePart handlePart = new FXBoxHandlePart(selection,
 					Pos.TOP_LEFT);
-			handlePart.installPolicy(IDragPolicy.class,
-					new FXResizeRelocateAnchoragesOnHandleDragPolicy(
+			handlePart.installBound(IDragPolicy.class,
+					new FXResizeRelocateSelectedOnHandleDragPolicy(
 							ReferencePoint.TOP_LEFT));
 			handleParts.add(handlePart);
 
 			handlePart = new FXBoxHandlePart(selection, Pos.TOP_RIGHT);
-			handlePart.installPolicy(IDragPolicy.class,
-					new FXResizeRelocateAnchoragesOnHandleDragPolicy(
+			handlePart.installBound(IDragPolicy.class,
+					new FXResizeRelocateSelectedOnHandleDragPolicy(
 							ReferencePoint.TOP_RIGHT));
 			handleParts.add(handlePart);
 
 			handlePart = new FXBoxHandlePart(selection, Pos.BOTTOM_RIGHT);
-			handlePart.installPolicy(IDragPolicy.class,
-					new FXResizeRelocateAnchoragesOnHandleDragPolicy(
+			handlePart.installBound(IDragPolicy.class,
+					new FXResizeRelocateSelectedOnHandleDragPolicy(
 							ReferencePoint.BOTTOM_RIGHT));
 			handleParts.add(handlePart);
 
 			handlePart = new FXBoxHandlePart(selection, Pos.BOTTOM_LEFT);
-			handlePart.installPolicy(IDragPolicy.class,
-					new FXResizeRelocateAnchoragesOnHandleDragPolicy(
+			handlePart.installBound(IDragPolicy.class,
+					new FXResizeRelocateSelectedOnHandleDragPolicy(
 							ReferencePoint.BOTTOM_LEFT));
 			handleParts.add(handlePart);
 		}

@@ -6,21 +6,25 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.parts;
 
-public interface IHoverPolicy<V> extends IPolicy<V> {
 
-	public class Impl<V> extends AbstractPolicy<V> implements IHoverPolicy<V>{
+public interface IPartBound<V> {
 
-		@Override
-		public boolean isHoverable() {
-			return true;
-		}
-	}
-	
-	public boolean isHoverable();
-	
+	/**
+	 * @return the <i>host</i> EditPart on which this policy is installed.
+	 */
+	public abstract IVisualPart<V> getHost();
+
+	/**
+	 * Sets the host in which this EditPolicy is installed.
+	 * 
+	 * @param editpart
+	 *            the host EditPart
+	 */
+	public abstract void setHost(IVisualPart<V> editpart);
+
 }

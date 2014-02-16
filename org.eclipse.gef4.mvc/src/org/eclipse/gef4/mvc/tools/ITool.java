@@ -14,7 +14,7 @@
 package org.eclipse.gef4.mvc.tools;
 
 import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.domain.IDomainBound;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
@@ -37,25 +37,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * 
  * @param <V>
  */
-public interface ITool<V> extends IActivatable {
-
-	/**
-	 * Called to set/change/unset the {@link IDomain} this {@link ITool} is
-	 * bound to. To set or change the {@link IDomain}, pass in a valid
-	 * {@link IDomain}, to unset it, pass in <code>null</code>.
-	 * 
-	 * An {@link ITool needs to obtain a reference to an {@link IDomain}
-	 * before being activated via {@link #activate()}, and this
-	 * {@link IDomain} may not be unset or changed while the tool is active.
-	 * After deactivation via {@link #deactivate()}, the {@link IDomain} may
-	 * be safely changed or unset.
-	 * 
-	 * @param domain
-	 *            The {@link IDomain} to which this {@link ITool} belongs
-	 */
-	void setDomain(IDomain<V> domain);
-
-	IDomain<V> getDomain();
+public interface ITool<V> extends IActivatable, IDomainBound<V> {
 
 	// TODO: tools/handles should change the cursor
 }

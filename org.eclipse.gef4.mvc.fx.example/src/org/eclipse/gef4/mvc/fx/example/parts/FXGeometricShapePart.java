@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.Collections;
@@ -13,15 +24,15 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.policies.FXHoverFeedbackByEffectPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRelocateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractHoverFeedbackPolicy;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
+import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
+import org.eclipse.gef4.mvc.policies.IResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
@@ -53,19 +64,18 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				updatePathElements();
 			}
 		};
-		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		installBound(new FXSelectionBehavior());
+		installBound(new FXHoverBehavior());
+		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		installBound(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
 						.getSelected().contains(getHost());
 			}
 		});
-		installPolicy(AbstractSelectionFeedbackPolicy.class,
-				new FXSelectionFeedbackByEffectPolicy());
-		installPolicy(AbstractHoverFeedbackPolicy.class,
-				new FXHoverFeedbackByEffectPolicy());
-		installPolicy(AbstractResizeRelocatePolicy.class,
+		installBound(IDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
+		installBound(IResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy() {
 					@Override
 					public void commitResizeRelocate(double dx, double dy,

@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V>
+public abstract class AbstractResizeRelocateSelectedOnHandleDragPolicy<V>
 		extends AbstractPolicy<V> implements IDragPolicy<V> {
 
 	/*
@@ -85,9 +85,9 @@ public abstract class AbstractResizeRelocateAnchoragesOnHandleDragPolicy<V>
 	private Map<IContentPart<V>, Double> relY2 = null;
 
 	@SuppressWarnings("unchecked")
-	protected AbstractResizeRelocatePolicy<V> getResizeRelocatePolicy(
+	protected IResizeRelocatePolicy<V> getResizeRelocatePolicy(
 			IContentPart<V> editPart) {
-		return editPart.getPolicy(AbstractResizeRelocatePolicy.class);
+		return editPart.getBound(IResizeRelocatePolicy.class);
 	}
 
 	public List<IContentPart<V>> getTargetParts() {

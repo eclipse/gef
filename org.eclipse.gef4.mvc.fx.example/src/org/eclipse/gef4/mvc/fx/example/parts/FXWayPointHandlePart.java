@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -68,7 +67,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(VISUAL_STROKE);
 
 		// install policies
-		installPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+		installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
 			@Override
 			public void press(Point mouseLocation) {
 				if (create) {
@@ -95,8 +94,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {
-		return getAnchorages().get(0).getPolicy(
-				AbstractWayPointPolicy.class);
+		return getAnchorages().get(0).getBound(AbstractWayPointPolicy.class);
 	}
 
 	@Override

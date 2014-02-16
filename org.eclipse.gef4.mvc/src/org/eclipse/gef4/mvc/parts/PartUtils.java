@@ -19,7 +19,7 @@ import java.util.List;
  * @author nyssen
  *
  */
-public class PartUtilities {
+public class PartUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends IVisualPart<V>, V> List<T> filterParts(List<? extends IVisualPart<V>> parts, Class<T> type) {

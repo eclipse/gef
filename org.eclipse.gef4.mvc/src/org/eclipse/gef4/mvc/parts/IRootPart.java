@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
+import org.eclipse.gef4.mvc.viewer.IViewerBound;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -29,25 +30,8 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
  * @author anyssen
  * 
  */
-public interface IRootPart<V> extends IVisualPart<V> {
+public interface IRootPart<V> extends IVisualPart<V>, IViewerBound<V> {
 
-	/**
-	 * Returns the root's {@link IVisualPartViewer}.
-	 * 
-	 * @return The {@link IVisualPartViewer} this {@link IRootPart} is
-	 *         attached to.
-	 */
-	IVisualPartViewer<V> getViewer();
-
-	/**
-	 * Sets the root's {@link IVisualPartViewer}.
-	 * 
-	 * @param viewer
-	 *            the {@link IVisualPartViewer} this {@link IRootPart} should be
-	 *            attached to.
-	 */
-	void setViewer(IVisualPartViewer<V> viewer);
-	
 	public List<IContentPart<V>> getContentPartChildren();
 
 	public List<IHandlePart<V>> getHandlePartChildren();

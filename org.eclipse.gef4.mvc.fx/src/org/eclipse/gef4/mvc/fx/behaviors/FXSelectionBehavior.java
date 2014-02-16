@@ -1,17 +1,28 @@
-package org.eclipse.gef4.mvc.fx.policies;
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
+package org.eclipse.gef4.mvc.fx.behaviors;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 
+import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXBoundsFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 
-public class FXSelectionFeedbackByEffectPolicy extends
-		AbstractSelectionFeedbackPolicy<Node> {
+public class FXSelectionBehavior extends
+		AbstractSelectionBehavior<Node> {
 
 	@Override
 	public void setHost(IVisualPart<Node> host) {

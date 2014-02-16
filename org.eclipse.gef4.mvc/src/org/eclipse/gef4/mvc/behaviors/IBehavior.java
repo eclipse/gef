@@ -6,21 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
+ * Note: Parts of this interface have been transferred from org.eclipse.gef.EditPolicy.
+ * 
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.behaviors;
 
-public interface IHoverPolicy<V> extends IPolicy<V> {
+import org.eclipse.gef4.mvc.IActivatable;
+import org.eclipse.gef4.mvc.parts.IPartBound;
 
-	public class Impl<V> extends AbstractPolicy<V> implements IHoverPolicy<V>{
+/**
+ * 
+ * @author anyssen
+ *
+ * @param <V>
+ */
+public interface IBehavior<V> extends IActivatable, IPartBound<V> {
 
-		@Override
-		public boolean isHoverable() {
-			return true;
-		}
-	}
-	
-	public boolean isHoverable();
-	
 }

@@ -9,14 +9,11 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - multi selection handles in root part
  *     
- * Note: Parts of this interface have been transferred from org.eclipse.gef.EditDomain.
- * 
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,10 +32,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <V>
  */
-public abstract class AbstractSelectionFeedbackPolicy<V> extends
-		AbstractFeedbackPolicy<V> implements PropertyChangeListener {
+public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
+		implements PropertyChangeListener {
 
-	private List<IHandlePart<V>> multiHandleParts;
+	private List<IHandlePart<V>> handles;
 
 	@Override
 	public void activate() {
@@ -64,9 +61,11 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 					.getNewValue();
 
 			if (getHost() instanceof IRootPart) {
-				removeMultiHandles((IRootPart<V>) getHost(), oldSelection);
+				if (oldSelection.size() > 1) {
+					removeHandles(oldSelection);
+				}
 				if (newSelection.size() > 1) {
-					addMultiHandles((IRootPart<V>) getHost(), newSelection);
+					addHandles(newSelection);
 				}
 				return;
 			}
@@ -75,7 +74,8 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 			boolean inNew = newSelection.contains(getHost());
 
 			if (inOld) {
-				removeHandles();
+				removeHandles(Collections
+						.singletonList((IContentPart<V>) getHost()));
 				hideFeedback();
 			}
 
@@ -83,7 +83,8 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 				if (newSelection.get(0) == getHost()) {
 					showPrimaryFeedback();
 					if (newSelection.size() <= 1) {
-						addHandles();
+						addHandles(Collections
+								.singletonList((IContentPart<V>) getHost()));
 					}
 				} else {
 					showSecondaryFeedback();
@@ -92,55 +93,27 @@ public abstract class AbstractSelectionFeedbackPolicy<V> extends
 		}
 	}
 
-	private void addMultiHandles(IRootPart<V> rootPart,
-			List<IContentPart<V>> newSelection) {
-		// attach to anchorages
-		if (getHandlePartFactory() != null) {
-			multiHandleParts = getHandlePartFactory()
-					.createSelectionHandleParts(newSelection);
-		}
-		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
-			rootPart.addChildren(multiHandleParts);
-			for (IContentPart<V> selected : newSelection) {
-				for (IVisualPart<V> handlePart : multiHandleParts) {
-					selected.addAnchored(handlePart);
-				}
-			}
-		}
+	protected void addHandles(List<IContentPart<V>> anchorages) {
+		handles = createHandles(anchorages);
+		BehaviorUtils.<V> addHandles(getHost().getRoot(), anchorages, handles);
 	}
 
-	private void removeMultiHandles(IRootPart<V> rootPart,
-			List<IContentPart<V>> oldSelection) {
-		// attach to anchorages
-		if (multiHandleParts != null && !multiHandleParts.isEmpty()) {
-			rootPart.removeChildren(multiHandleParts);
-			for (IContentPart<V> selected : oldSelection) {
-				for (IVisualPart<V> handlePart : multiHandleParts) {
-					selected.removeAnchored(handlePart);
-				}
-			}
-			multiHandleParts.clear();
+	protected void removeHandles(List<IContentPart<V>> anchorages) {
+		if (handles != null && !handles.isEmpty()) {
+			BehaviorUtils.<V> removeHandles(getHost().getRoot(), anchorages,
+					handles);
+			handles.clear();
 		}
-	}
-
-	private IHandlePartFactory<V> getHandlePartFactory() {
-		return getHost().getRoot().getViewer().getHandlePartFactory();
 	}
 
 	protected abstract void hideFeedback();
 
-	@Override
-	public List<IHandlePart<V>> createHandles() {
+	public List<IHandlePart<V>> createHandles(List<IContentPart<V>> targets) {
 		IVisualPart<V> host = getHost();
 		IHandlePartFactory<V> factory = getHandlePartFactory(host);
-		if (host instanceof IContentPart) {
-			List<IContentPart<V>> parts = new ArrayList<IContentPart<V>>(1);
-			parts.add((IContentPart<V>) host);
-			List<IHandlePart<V>> handleParts = factory
-					.createSelectionHandleParts(parts);
-			return handleParts;
-		}
-		return Collections.<IHandlePart<V>> emptyList();
+		List<IHandlePart<V>> handleParts = factory
+				.createSelectionHandleParts(targets);
+		return handleParts;
 	}
 
 	private IHandlePartFactory<V> getHandlePartFactory(IVisualPart<V> host) {

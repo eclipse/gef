@@ -16,8 +16,7 @@ package org.eclipse.gef4.mvc.viewer;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.domain.AbstractDomain;
-import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.domain.IDomainBound;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
@@ -35,15 +34,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <V>
  */
-public interface IVisualPartViewer<V> {
-
-	/**
-	 * Returns the {@link AbstractDomain EditDomain} to which this viewer
-	 * belongs.
-	 * 
-	 * @return the viewer's EditDomain
-	 */
-	IDomain<V> getDomain();
+public interface IVisualPartViewer<V> extends IDomainBound<V> {
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by
@@ -98,15 +89,6 @@ public interface IVisualPartViewer<V> {
 	 *            the EditPart to reveal
 	 */
 	void reveal(IVisualPart<V> visualPart);
-
-	/**
-	 * Sets the <code>EditDomain</code> for this viewer. The Viewer will route
-	 * all mouse and keyboard events to the EditDomain.
-	 * 
-	 * @param domain
-	 *            The EditDomain
-	 */
-	void setDomain(IDomain<V> domain);
 
 	/**
 	 * Sets the <i>root</i> of this viewer. The root should not be confused with

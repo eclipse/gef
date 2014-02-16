@@ -24,8 +24,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -53,8 +53,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	private int flags;
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	
-	private Map<Class<?>, IPolicy<V>> policies;
+
+	private Map<Class<?>, IPartBound<V>> boundeds;
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -75,9 +75,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	public void activate() {
 		setFlag(FLAG_ACTIVE, true);
 
-		if (policies != null) {
-			for (IPolicy<V> p : policies.values()) {
-				p.activate();
+		if (boundeds != null) {
+			for (IPartBound<V> b : boundeds.values()) {
+				if (b instanceof IActivatable) {
+					((IActivatable) b).activate();
+				}
 			}
 		}
 
@@ -85,7 +87,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
 	}
-	
+
 	@Override
 	public void addChild(IVisualPart<V> child) {
 		addChild(child, getChildren().size());
@@ -104,17 +106,17 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (isActive())
 			child.activate();
 	}
-	
+
 	@Override
 	public void addChildren(List<? extends IVisualPart<V>> children) {
-		for(IVisualPart<V> child : children){
+		for (IVisualPart<V> child : children) {
 			addChild(child);
 		}
 	}
-	
+
 	@Override
 	public void removeChildren(List<? extends IVisualPart<V>> children) {
-		for(IVisualPart<V> child : children){
+		for (IVisualPart<V> child : children) {
 			removeChild(child);
 		}
 	}
@@ -130,7 +132,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * @see #addChild(IVisualPart, int)
 	 */
 	// TODO: make concrete, passing over the visual container to the child (as
-	// in case of anchoreds)	
+	// in case of anchoreds)
 	protected abstract void addChildVisual(IVisualPart<V> child, int index);
 
 	private void addChildWithoutNotify(IVisualPart<V> child, int index) {
@@ -158,9 +160,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		if (policies != null) {
-			for (IPolicy<V> p : policies.values()) {
-				p.deactivate();
+		if (boundeds != null) {
+			for (IPartBound<V> b : boundeds.values()) {
+				if (b instanceof IActivatable) {
+					((IActivatable) b).deactivate();
+				}
 			}
 		}
 
@@ -203,11 +207,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IPolicy<V>> P getPolicy(Class<? super P> key) {
-		if (policies == null) {
+	public <B extends IPartBound<V>> B getBound(Class<? super B> key) {
+		if (boundeds == null) {
 			return null;
 		}
-		return (P) policies.get(key);
+		return (B) boundeds.get(key);
 	}
 
 	protected IVisualPartViewer<V> getViewer() {
@@ -219,16 +223,22 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IPolicy<V>> void installPolicy(Class<? super P> key,
-			P editPolicy) {
-		if (policies == null) {
-			policies = new HashMap<Class<?>, IPolicy<V>>();
+	public <P extends IPartBound<V>> void installBound(Class<? super P> key,
+			P bounded) {
+		if (boundeds == null) {
+			boundeds = new HashMap<Class<?>, IPartBound<V>>();
 		}
-		policies.put(key, editPolicy);
-		editPolicy.setHost(this);
-		if (isActive()) {
-			editPolicy.activate();
-		}
+		boundeds.put(key, bounded);
+		bounded.setHost(this);
+		if (isActive() && bounded instanceof IActivatable) {
+			((IActivatable) bounded).activate();
+		}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <P extends IPartBound<V>> void installBound(P bounded) {
+		installBound((Class<P>)bounded.getClass(), bounded);
 	}
 
 	/**
@@ -274,16 +284,18 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public <P extends IPolicy<V>> void uninstallPolicy(Class<P> key) {
-		if (policies == null)
+	public <B extends IPartBound<V>> void uninstallBound(Class<B> key) {
+		if (boundeds == null)
 			return;
-		IPolicy<V> editPolicy = policies.remove(key);
-		if (editPolicy != null) {
-			editPolicy.deactivate();
-			editPolicy.setHost(null);
+		IPartBound<V> bounded = boundeds.remove(key);
+		if (bounded != null) {
+			if (bounded instanceof IActivatable) {
+				((IActivatable) bounded).deactivate();
+			}
+			bounded.setHost(null);
 		}
-		if (policies.size() == 0) {
-			policies = null;
+		if (boundeds.size() == 0) {
+			boundeds = null;
 		}
 	}
 
@@ -346,12 +358,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, parent);
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
@@ -373,17 +385,17 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 		anchored.refreshVisual();
 	}
-	
+
 	@Override
 	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
-		for(IVisualPart<V> anchored : anchoreds){
+		for (IVisualPart<V> anchored : anchoreds) {
 			addAnchored(anchored);
-		}	
+		}
 	}
-	
+
 	@Override
 	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
-		for(IVisualPart<V> anchored : anchoreds){
+		for (IVisualPart<V> anchored : anchoreds) {
 			removeAnchored(anchored);
 		}
 	}

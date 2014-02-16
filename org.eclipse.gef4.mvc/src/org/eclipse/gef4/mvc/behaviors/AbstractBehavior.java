@@ -8,19 +8,43 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
- * Note: Parts of this interface have been transferred from org.eclipse.gef.EditPolicy.
+ * Note: Parts of this class have been transferred from org.eclipse.gef.editpolicies.AbstractEditPolicy.
  * 
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.behaviors;
 
-import org.eclipse.gef4.mvc.parts.IPartBound;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
  * @author anyssen
- * 
+ *
  * @param <V>
  */
-public interface IPolicy<V> extends IPartBound<V> {
+public abstract class AbstractBehavior<V> implements IBehavior<V> {
+
+	private IVisualPart<V> host;
+	private boolean active;
+
+	public void activate() {
+		active = true;
+	}
+
+	public void deactivate() {
+		active = false;
+	}
+	
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	public IVisualPart<V> getHost() {
+		return host;
+	}
+
+	public void setHost(IVisualPart<V> host) {
+		this.host = host;
+	}
 
 }

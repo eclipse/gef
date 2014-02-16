@@ -16,7 +16,7 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.policies.ContentPartSynchronizationPolicy;
+import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	private IVisualPartViewer<V> viewer;
 	
 	public AbstractRootPart() {
-		installPolicy(ContentPartSynchronizationPolicy.class, new ContentPartSynchronizationPolicy<V>());
+		installBound(new ContentPartSynchronizationBehavior<V>());
 	}
 
 	public IRootPart<V> getRoot() {
@@ -45,13 +45,13 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<V>> getContentPartChildren() {
-		return PartUtilities.filterParts(getChildren(), IContentPart.class);
+		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<IHandlePart<V>> getHandlePartChildren() {
-		return PartUtilities.filterParts(getChildren(), IHandlePart.class);
+		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
 
 	/**

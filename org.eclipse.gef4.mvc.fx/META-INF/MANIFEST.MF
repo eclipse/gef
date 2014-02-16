@@ -14,6 +14,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.gef4.mvc.fx,
  org.eclipse.gef4.mvc.fx.anchors,
+ org.eclipse.gef4.mvc.fx.behaviors,
  org.eclipse.gef4.mvc.fx.domain,
  org.eclipse.gef4.mvc.fx.parts,
  org.eclipse.gef4.mvc.fx.policies,

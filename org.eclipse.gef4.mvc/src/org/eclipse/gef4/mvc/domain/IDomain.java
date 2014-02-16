@@ -15,15 +15,16 @@ package org.eclipse.gef4.mvc.domain;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IViewerBound;
 
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
-public interface IDomain<V> {
+// TODO: it seems to be not nice that the domain is bound directly to the viewer.
+public interface IDomain<V> extends IViewerBound<V> {
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
@@ -33,9 +34,6 @@ public interface IDomain<V> {
 	public abstract IOperationHistory getOperationHistory();
 
 	public abstract <P extends Object> P getProperty(Class<P> key);
-
-	// TODO: support multiple viewer
-	public abstract IVisualPartViewer<V> getViewer();
 
 	/**
 	 * Returns the active Tool
@@ -56,7 +54,8 @@ public interface IDomain<V> {
 	public abstract void pushTool(ITool<V> tool);
 
 	/**
-	 * Sets the {@link IOperationHistory}, which can later be requested via {@link #getOperationHistory()}.
+	 * Sets the {@link IOperationHistory}, which can later be requested via
+	 * {@link #getOperationHistory()}.
 	 * 
 	 * @param operationHistory
 	 *            The new {@link IOperationHistory} to be used.
@@ -64,15 +63,5 @@ public interface IDomain<V> {
 	public abstract void setOperationHistory(IOperationHistory operationHistory);
 
 	public abstract <P extends Object> void setProperty(Class<P> key, P property);
-	
-	/**
-	 * Adds an EditPartViewer into the EditDomain. A viewer is most likely
-	 * placed in a {@link org.eclipse.ui.IWorkbenchPart WorkbenchPart} of some
-	 * form, such as the IEditorPart or an IViewPart.
-	 * 
-	 * @param viewer
-	 *            The EditPartViewer
-	 */
-	public abstract void setViewer(IVisualPartViewer<V> viewer);
 
 }

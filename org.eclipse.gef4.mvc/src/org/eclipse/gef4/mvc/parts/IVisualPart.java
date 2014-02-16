@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChangeSupport {
 
@@ -89,10 +88,12 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 	// allow an instance binding?
 	// TODO: maybe we can replace this with juice (so no need to register that
 	// externally)
-	public <P extends IPolicy<V>> P getPolicy(Class<? super P> key);
+	public <P extends IPartBound<V>> P getBound(Class<? super P> key);
 
-	public <P extends IPolicy<V>> void installPolicy(Class<? super P> key, P editPolicy);
+	public <P extends IPartBound<V>> void installBound(Class<? super P> key, P bounded);
+	
+	public <P extends IPartBound<V>> void installBound(P bounded);
 
-	public <P extends IPolicy<V>> void uninstallPolicy(Class<P> key);
+	public <P extends IPartBound<V>> void uninstallBound(Class<P> key);
 
 }

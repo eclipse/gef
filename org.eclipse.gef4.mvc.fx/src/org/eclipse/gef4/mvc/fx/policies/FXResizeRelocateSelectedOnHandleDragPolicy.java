@@ -16,14 +16,14 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateAnchoragesOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy;
 
-public class FXResizeRelocateAnchoragesOnHandleDragPolicy extends
-		AbstractResizeRelocateAnchoragesOnHandleDragPolicy<Node> {
+public class FXResizeRelocateSelectedOnHandleDragPolicy extends
+		AbstractResizeRelocateSelectedOnHandleDragPolicy<Node> {
 
 	private ReferencePoint refPoint;
 
-	public FXResizeRelocateAnchoragesOnHandleDragPolicy(ReferencePoint refPoint) {
+	public FXResizeRelocateSelectedOnHandleDragPolicy(ReferencePoint refPoint) {
 		this.refPoint = refPoint;
 	}
 

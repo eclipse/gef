@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.tools.AbstractDragTool;
 

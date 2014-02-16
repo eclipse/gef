@@ -1,4 +1,17 @@
-package org.eclipse.gef4.mvc.policies;
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart.
+ *     
+ *******************************************************************************/
+package org.eclipse.gef4.mvc.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -12,9 +25,9 @@ import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.parts.PartUtilities;
+import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> implements PropertyChangeListener {
+public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
@@ -77,7 +90,7 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		IContentPart<V> editPart;
 		Object model;
 
-		List<IContentPart<V>> contentPartChildren = PartUtilities.filterParts(
+		List<IContentPart<V>> contentPartChildren = PartUtils.filterParts(
 				getHost().getChildren(), IContentPart.class);
 		int size = contentPartChildren.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
@@ -114,7 +127,7 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		}
 
 		// remove the remaining EditParts
-		contentPartChildren = PartUtilities.filterParts(
+		contentPartChildren = PartUtils.filterParts(
 				getHost().getChildren(), IContentPart.class);
 		size = contentPartChildren.size();
 		if (i < size) {
@@ -163,7 +176,7 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		IContentPart<V> editPart;
 		Object model;
 
-		List<IContentPart<V>> anchored = PartUtilities.filterParts(
+		List<IContentPart<V>> anchored = PartUtils.filterParts(
 				getHost().getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
@@ -201,7 +214,7 @@ public class ContentPartSynchronizationPolicy<V> extends AbstractPolicy<V> imple
 		}
 
 		// remove the remaining EditParts
-		anchored = PartUtilities.filterParts(
+		anchored = PartUtils.filterParts(
 				getHost().getAnchoreds(), IContentPart.class);
 		size = anchored.size();
 		if (i < size) {

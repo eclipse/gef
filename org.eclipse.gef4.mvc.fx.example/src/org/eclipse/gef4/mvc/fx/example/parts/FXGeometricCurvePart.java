@@ -1,9 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -15,13 +27,13 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
+import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectionFeedbackByEffectPolicy;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractSelectionFeedbackPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
@@ -55,8 +67,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
-		installPolicy(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		installPolicy(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		installBound(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
@@ -64,56 +76,58 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 			}
 		});
 		// TODO: we need proper feedback for curves
-		installPolicy(AbstractSelectionFeedbackPolicy.class,
-				new FXSelectionFeedbackByEffectPolicy() {
+		installBound(new FXSelectionBehavior() {
 
-					@Override
-					public void activate() {
-						super.activate();
-						getContent().addPropertyChangeListener(this);
-					}
+			@Override
+			public void activate() {
+				super.activate();
+				getContent().addPropertyChangeListener(this);
+			}
 
-					@Override
-					public void deactivate() {
-						getContent().removePropertyChangeListener(this);
-						super.deactivate();
-					}
+			@Override
+			public void deactivate() {
+				getContent().removePropertyChangeListener(this);
+				super.deactivate();
+			}
 
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						super.propertyChange(event);
-						if (AbstractFXGeometricElement.GEOMETRY_PROPERTY
-								.equals(event.getPropertyName())) {
-							hideFeedback();
-							removeHandles();
-							addHandles();
-							showPrimaryFeedback();
-						}
-					}
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				super.propertyChange(event);
+				if (AbstractFXGeometricElement.GEOMETRY_PROPERTY.equals(event
+						.getPropertyName())) {
+					hideFeedback();
+					removeHandles(Collections
+							.singletonList((IContentPart<Node>) getHost()));
+					addHandles(Collections
+							.singletonList((IContentPart<Node>) getHost()));
+					showPrimaryFeedback();
+				}
+			}
+			
+			@Override
+			public List<IHandlePart<Node>> createHandles(
+					List<IContentPart<Node>> targets) {
+				return createWayPointHandles();
+			}
 
-					@Override
-					public List<IHandlePart<Node>> createHandles() {
-						return createWayPointHandles();
-					}
+			@Override
+			protected void hideFeedback() {
+				getHost().getVisual().setEffect(null);
+			}
 
-					@Override
-					protected void hideFeedback() {
-						getHost().getVisual().setEffect(null);
-					}
+			@Override
+			protected void showSecondaryFeedback() {
+				getHost().getVisual().setEffect(
+						getPrimarySelectionFeedbackEffect());
+			}
 
-					@Override
-					protected void showSecondaryFeedback() {
-						getHost().getVisual().setEffect(
-								getPrimarySelectionFeedbackEffect());
-					}
-
-					@Override
-					protected void showPrimaryFeedback() {
-						getHost().getVisual().setEffect(
-								getSecondarySelectionFeedbackEffect());
-					}
-				});
-		installPolicy(AbstractWayPointPolicy.class,
+			@Override
+			protected void showPrimaryFeedback() {
+				getHost().getVisual().setEffect(
+						getSecondarySelectionFeedbackEffect());
+			}
+		});
+		installBound(AbstractWayPointPolicy.class,
 				new AbstractWayPointPolicy() {
 					private List<Point> wayPoints = new ArrayList<Point>();
 					private boolean isCreate;
@@ -195,8 +209,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		// TODO: compare way points to identify if we need to refresh
 		// use anchors as start and end point
 		FXGeometricCurve curveVisual = getContent();
-		Point[] wayPoints = curveVisual.getWayPoints().toArray(new Point[]{});
-		if(curveVisual.getTransform() != null){
+		Point[] wayPoints = curveVisual.getWayPoints().toArray(new Point[] {});
+		if (curveVisual.getTransform() != null) {
 			wayPoints = curveVisual.getTransform().getTransformed(wayPoints);
 		}
 		refreshVisualWith(Arrays.asList(wayPoints));
@@ -229,12 +243,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		if (startEnd.length == 2) {
 			ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
 			points.add(startEnd[0]);
-			
+
 			if (anchors.size() == 2) {
 				// add uncontained way points
 				Node startNode = anchors.get(0).getAnchorage();
 				Node endNode = anchors.get(1).getAnchorage();
-				List<Point> uncontainedWayPoints = new ArrayList<Point>(wayPoints.size());
+				List<Point> uncontainedWayPoints = new ArrayList<Point>(
+						wayPoints.size());
 				for (Point p : wayPoints) {
 					Point2D slp = startNode.sceneToLocal(p.x, p.y);
 					Point2D elp = endNode.sceneToLocal(p.x, p.y);
@@ -247,7 +262,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 				// add all way points
 				points.addAll(wayPoints);
 			}
-			
+
 			points.add(startEnd[1]);
 			visual.setGeometry(FXGeometricCurve
 					.constructCurveFromWayPoints(points.toArray(new Point[] {})));

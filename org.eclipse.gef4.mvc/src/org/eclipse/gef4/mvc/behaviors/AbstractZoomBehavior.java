@@ -1,4 +1,15 @@
-package org.eclipse.gef4.mvc.policies;
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
+package org.eclipse.gef4.mvc.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -13,7 +24,7 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
  * @author wienand
  * 
  */
-abstract public class AbstractZoomPolicy<V> extends AbstractPolicy<V>
+abstract public class AbstractZoomBehavior<V> extends AbstractBehavior<V>
 		implements PropertyChangeListener {
 
 	@Override

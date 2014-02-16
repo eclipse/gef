@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import javafx.scene.Node;
@@ -32,7 +43,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 						new Stop(0.5, Color.web("#a5d3fb")),
 						new Stop(1.0, Color.web("#d5faff")) }));
 		visual.setStroke(Color.web("#5a61af"));
-		installPolicy(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+		installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
 
 			@Override
 			public void drag(Point mouseLocation, Dimension delta) {
@@ -59,7 +70,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected AbstractWayPointPolicy getPolicy() {
-		return getAnchorages().get(0).getPolicy(
+		return getAnchorages().get(0).getBound(
 				AbstractWayPointPolicy.class);
 	}
 

@@ -41,7 +41,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 
 	@SuppressWarnings("unchecked")
 	protected ISelectionPolicy<V> getToolPolicy(IVisualPart<V> visualPart) {
-		return visualPart.getPolicy(ISelectionPolicy.class);
+		return visualPart.getBound(ISelectionPolicy.class);
 	}
 
 	/**

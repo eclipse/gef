@@ -9,16 +9,16 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.policies;
+package org.eclipse.gef4.mvc.fx.behaviors;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
+import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.AbstractZoomPolicy;
 
-public class FXZoomPolicy extends AbstractZoomPolicy<Node> {
+public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 
 	@Override
 	protected void applyZoomFactor(Double zoomFactor) {

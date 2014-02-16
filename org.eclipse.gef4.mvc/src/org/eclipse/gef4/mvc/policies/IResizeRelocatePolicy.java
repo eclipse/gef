@@ -17,13 +17,12 @@ package org.eclipse.gef4.mvc.policies;
  *
  * @param <V>
  */
-// TODO: split thiss
-public abstract class AbstractResizeRelocatePolicy<V> extends AbstractPolicy<V> {
+public interface IResizeRelocatePolicy<V> extends IPolicy<V> {
 
-	public abstract void initResizeRelocate();
+	public void initResizeRelocate();
 
-	public abstract void performResizeRelocate(double dx, double dy, double dw, double dh);
+	public void performResizeRelocate(double dx, double dy, double dw, double dh);
 
-	public abstract void commitResizeRelocate(double dx, double dy, double dw, double dh);
+	public void commitResizeRelocate(double dx, double dy, double dw, double dh);
 	
 }

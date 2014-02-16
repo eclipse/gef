@@ -8,10 +8,8 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
- * Note: Parts of this interface have been transferred from org.eclipse.gef.EditDomain.
- * 
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -30,9 +28,11 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
  * 
  * @param <V>
  */
-public abstract class AbstractHoverFeedbackPolicy<V> extends
-		AbstractFeedbackPolicy<V> implements PropertyChangeListener {
+public abstract class AbstractHoverBehavior<V> extends
+		AbstractBehavior<V> implements PropertyChangeListener {
 
+	private List<IHandlePart<V>> handles;
+	
 	@Override
 	public void activate() {
 		super.activate();
@@ -55,11 +55,13 @@ public abstract class AbstractHoverFeedbackPolicy<V> extends
 			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
 
 			if (oldHovered == getHost()) {
-				removeHandles();
+				BehaviorUtils.removeHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
+				handles.clear();
 				hideFeedback();
 			} else if (newHovered == getHost()) {
 				showFeedback();
-				addHandles();
+				handles = createHandles();
+				BehaviorUtils.addHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
 			}
 		}
 	}
@@ -68,7 +70,6 @@ public abstract class AbstractHoverFeedbackPolicy<V> extends
 
 	protected abstract void hideFeedback();
 
-	@Override
 	protected List<IHandlePart<V>> createHandles() {
 		return Collections.emptyList();
 	}

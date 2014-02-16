@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Arrays;
@@ -7,7 +18,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -27,7 +37,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	private ScrollPane scrollPane;
 	private StackPane layersStackPane;
-	
+
 	private Pane contentLayer;
 	private Pane handleLayer;
 	private Pane feedbackLayer;
@@ -42,9 +52,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		contentLayer = createContentLayer();
 		handleLayer = createHandleLayer();
 		feedbackLayer = createFeedbackLayer();
-				
-		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[]{contentLayer, handleLayer, feedbackLayer}));
-		
+
+		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[] {
+				contentLayer, handleLayer, feedbackLayer }));
+
 		scrollPaneInput = createScrollPaneInput(layersStackPane);
 
 		scrollPane = createScrollPane(scrollPaneInput);
@@ -67,11 +78,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	protected Pane createContentLayer() {
 		return createLayer(false);
 	}
-	
+
 	protected Pane createHandleLayer() {
 		return createLayer(false);
 	}
-	
+
 	protected Pane createFeedbackLayer() {
 		return createLayer(true);
 	}
@@ -154,16 +165,19 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	protected void addChildVisual(IVisualPart<Node> child, int index) {
 		if (child instanceof IContentPart) {
 			int contentLayerIndex = 0;
-			for(int i=0; i<index; i++){
-				if(i < getChildren().size() && getChildren().get(i) instanceof IContentPart){
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& getChildren().get(i) instanceof IContentPart) {
 					contentLayerIndex++;
 				}
 			}
-			contentLayer.getChildren().add(contentLayerIndex, child.getVisual());
+			contentLayer.getChildren()
+					.add(contentLayerIndex, child.getVisual());
 		} else {
 			int handleLayerIndex = 0;
-			for(int i=0; i<index; i++){
-				if(i < getChildren().size() && !(getChildren().get(i) instanceof IContentPart)){
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& !(getChildren().get(i) instanceof IContentPart)) {
 					handleLayerIndex++;
 				}
 			}
