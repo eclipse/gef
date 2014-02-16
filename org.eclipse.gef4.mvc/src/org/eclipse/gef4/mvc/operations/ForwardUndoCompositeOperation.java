@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.commands;
+package org.eclipse.gef4.mvc.operations;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;

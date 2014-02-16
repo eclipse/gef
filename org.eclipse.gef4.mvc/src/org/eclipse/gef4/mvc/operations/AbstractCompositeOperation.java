@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.commands;
+package org.eclipse.gef4.mvc.operations;
 
 import java.util.ArrayList;
 import java.util.List;

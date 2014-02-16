@@ -16,8 +16,8 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.gef4.mvc.commands.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.commands.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 
