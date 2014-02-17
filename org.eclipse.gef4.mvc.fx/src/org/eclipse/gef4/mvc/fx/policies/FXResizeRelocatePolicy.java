@@ -16,6 +16,7 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -63,14 +64,9 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	@Override
 	public void commitResizeRelocate(double dx, double dy, double dw, double dh) {
-		IDomain<Node> domain = getHost().getRoot().getViewer().getDomain();
-		IOperationHistory operationHistory = domain.getOperationHistory();
-		FXResizeRelocateOperation operation = new FXResizeRelocateOperation("Resize/Relocate", getHost().getVisual(), new Point(initialLayoutX, initialLayoutY), new Dimension(initialWidth, initialHeight), new Point(getHost().getVisual().getLayoutX(),  getHost().getVisual().getLayoutY()), new Dimension(getHost().getVisual().getLayoutBounds().getWidth(), getHost().getVisual().getLayoutBounds().getHeight()));
-		operation.addContext(domain.getUndoContext());
-		try {
-			operationHistory.execute(operation, new NullProgressMonitor(), null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+		Node visual = getHost().getVisual();
+		Bounds layoutBounds = visual.getLayoutBounds();
+		FXResizeRelocateOperation operation = new FXResizeRelocateOperation("Resize/Relocate", visual, new Point(initialLayoutX, initialLayoutY), new Dimension(initialWidth, initialHeight), new Point(visual.getLayoutX(),  visual.getLayoutY()), new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()));
+		executeOperation(operation);
 	}
 }
