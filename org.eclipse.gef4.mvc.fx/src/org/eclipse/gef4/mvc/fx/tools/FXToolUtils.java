@@ -17,12 +17,12 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 public class FXToolUtils {
 
 	public static IVisualPart<Node> getTargetPart(
-			IVisualPartViewer<Node> viewer, MouseEvent event) {
+			IVisualViewer<Node> viewer, MouseEvent event) {
 		EventTarget target = event.getTarget();
 	
 		if (target instanceof Node) {

@@ -51,6 +51,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 	 * @return <code>true</code> on selection change, otherwise
 	 *         <code>false</code>
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean select(IContentPart<V> targetPart, boolean append) {
 		// TODO: extract into tool policy
 		boolean changed = true;

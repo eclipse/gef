@@ -40,8 +40,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <V>
  */
-public abstract class AbstractVisualPartViewer<V> implements
-		IVisualPartViewer<V> {
+public abstract class AbstractVisualViewer<V> implements
+		IVisualViewer<V> {
 
 	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
 	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
@@ -53,21 +53,21 @@ public abstract class AbstractVisualPartViewer<V> implements
 	private IHandlePartFactory<V> handlePartFactory;
 
 	/**
-	 * @see IVisualPartViewer#setContentPartFactory(org.eclipse.gef4.mvc.viewer.IContentPartFactory)
+	 * @see IVisualViewer#setContentPartFactory(org.eclipse.gef4.mvc.viewer.IContentPartFactory)
 	 */
 	public void setContentPartFactory(IContentPartFactory<V> factory) {
 		this.contentPartFactory = factory;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getContentPartFactory()
+	 * @see IVisualViewer#getContentPartFactory()
 	 */
 	public IContentPartFactory<V> getContentPartFactory() {
 		return contentPartFactory;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getContentModel()
+	 * @see IVisualViewer#getContentModel()
 	 */
 	public IContentModel getContentModel() {
 		IContentModel contentModel = getDomain().getProperty(
@@ -80,28 +80,28 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#getDomain()
+	 * @see IVisualViewer#getDomain()
 	 */
 	public IDomain<V> getDomain() {
 		return domain;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getContentPartMap()
+	 * @see IVisualViewer#getContentPartMap()
 	 */
 	public Map<Object, IContentPart<V>> getContentPartMap() {
 		return contentsToContentPartMap;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getRootPart()
+	 * @see IVisualViewer#getRootPart()
 	 */
 	public IRootPart<V> getRootPart() {
 		return rootPart;
 	}
 
 	/**
-	 * @see IVisualPartViewer#getVisualPartMap()
+	 * @see IVisualViewer#getVisualPartMap()
 	 */
 	public Map<V, IVisualPart<V>> getVisualPartMap() {
 		return visualsToVisualPartMap;
@@ -113,7 +113,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#setContents(Object)
+	 * @see IVisualViewer#setContents(Object)
 	 */
 	public void setContents(List<Object> contents) {
 		if (contentPartFactory == null) {
@@ -128,7 +128,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#setDomain(IDomain)
+	 * @see IVisualViewer#setDomain(IDomain)
 	 */
 	public void setDomain(IDomain<V> domain) {
 		if (this.domain == domain)
@@ -182,7 +182,7 @@ public abstract class AbstractVisualPartViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualPartViewer#setRootPart(IRootPart)
+	 * @see IVisualViewer#setRootPart(IRootPart)
 	 */
 	public void setRootPart(IRootPart<V> rootEditPart) {
 		if (this.rootPart != null) {

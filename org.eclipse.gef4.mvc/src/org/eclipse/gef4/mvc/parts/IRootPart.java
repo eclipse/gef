@@ -16,11 +16,11 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.viewer.IViewerBound;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * A {@link IRootPart} is the <i>root</i> controller of an
- * {@link IVisualPartViewer}. It controls the root view and holds
+ * {@link IVisualViewer}. It controls the root view and holds
  * {@link IHandlePart} and {@link IContentPart} children.
  * 
  * The {@link IRootPart} does not correspond to anything in the model, and

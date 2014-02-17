@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * 
@@ -28,7 +28,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 		implements IRootPart<V> {
 
-	private IVisualPartViewer<V> viewer;
+	private IVisualViewer<V> viewer;
 	
 	public AbstractRootPart() {
 		installBound(new ContentPartSynchronizationBehavior<V>());
@@ -38,7 +38,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 		return this;
 	}
 
-	public IVisualPartViewer<V> getViewer() {
+	public IVisualViewer<V> getViewer() {
 		return viewer;
 	}
 
@@ -57,7 +57,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	/**
 	 * @see IRootPart#setViewer(EditPartViewer)
 	 */
-	public void setViewer(IVisualPartViewer<V> newViewer) {
+	public void setViewer(IVisualViewer<V> newViewer) {
 		if (viewer == newViewer)
 			return;
 		viewer = newViewer;

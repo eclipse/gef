@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		implements IContentPart<V> {
@@ -53,7 +53,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 
 	/**
 	 * Registers the <i>model</i> in the
-	 * {@link IVisualPartViewer#getContentPartMap()}. Subclasses should only
+	 * {@link IVisualViewer#getContentPartMap()}. Subclasses should only
 	 * extend this method if they need to register this EditPart in additional
 	 * ways.
 	 */
@@ -63,7 +63,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 
 	/**
 	 * Unregisters the <i>model</i> in the
-	 * {@link IVisualPartViewer#getContentPartMap()}. Subclasses should only
+	 * {@link IVisualViewer#getContentPartMap()}. Subclasses should only
 	 * extend this method if they need to unregister this EditPart in additional
 	 * ways.
 	 */

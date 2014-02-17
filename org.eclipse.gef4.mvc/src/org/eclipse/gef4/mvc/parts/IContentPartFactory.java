@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * A factory for creating new {@link IContentPart}s. The
- * {@link IVisualPartViewer} can be configured with an
+ * {@link IVisualViewer} can be configured with an
  * {@link IContentPartFactory}. Whenever an {@link IContentPart} in that viewer
  * needs to create another child {@link IContentPart}, it can use the viewer's
  * {@link IContentPartFactory}. The factory is also used by the viewer whenever
- * {@link IVisualPartViewer#setContents(Object)} is called to create the root
+ * {@link IVisualViewer#setContents(Object)} is called to create the root
  * content parts.
  * 
  */

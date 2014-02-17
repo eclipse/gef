@@ -19,7 +19,7 @@ import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * 
@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
 public abstract class AbstractDomain<V> implements IDomain<V> {
 
 	private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
-	private IVisualPartViewer<V> viewer;
+	private IVisualViewer<V> viewer;
 	private Map<Class<? extends Object>, Object> properties;
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
@@ -51,7 +51,7 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	 * .IEditPartViewer)
 	 */
 	@Override
-	public void setViewer(IVisualPartViewer<V> viewer) {
+	public void setViewer(IVisualViewer<V> viewer) {
 		if (this.viewer == viewer) {
 			return;
 		}
@@ -98,7 +98,7 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	protected abstract ITool<V> getDefaultTool();
 
 	@Override
-	public IVisualPartViewer<V> getViewer() {
+	public IVisualViewer<V> getViewer() {
 		return viewer;
 	}
 

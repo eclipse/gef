@@ -16,20 +16,20 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 public interface IViewerBound<V> {
 
 	/**
-	 * Returns the {@link IVisualPartViewer} this {@link IViewerBound} is bound to.
+	 * Returns the {@link IVisualViewer} this {@link IViewerBound} is bound to.
 	 * 
-	 * @return The {@link IVisualPartViewer} this {@link IRootPart} is
+	 * @return The {@link IVisualViewer} this {@link IRootPart} is
 	 *         attached to.
 	 */
-	public abstract IVisualPartViewer<V> getViewer();
+	public abstract IVisualViewer<V> getViewer();
 
 	/**
-	 * Sets the {@link IVisualPartViewer} this {@link IViewerBound} is to be bound to.
+	 * Sets the {@link IVisualViewer} this {@link IViewerBound} is to be bound to.
 	 * 
 	 * @param viewer
-	 *            the {@link IVisualPartViewer} this {@link IViewerBound} should be
+	 *            the {@link IVisualViewer} this {@link IViewerBound} should be
 	 *            attached to.
 	 */
-	public abstract void setViewer(IVisualPartViewer<V> viewer);
+	public abstract void setViewer(IVisualViewer<V> viewer);
 
 }

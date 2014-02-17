@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 public class FXRootPart extends AbstractRootPart<Node> {
 
@@ -115,7 +115,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	public void setViewer(IVisualPartViewer<Node> newViewer) {
+	public void setViewer(IVisualViewer<Node> newViewer) {
 		if (getViewer() != null) {
 			unregisterFromVisualPartMap();
 		}

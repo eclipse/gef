@@ -19,9 +19,9 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.AbstractVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.AbstractVisualViewer;
 
-public class FXViewer extends AbstractVisualPartViewer<Node> {
+public class FXViewer extends AbstractVisualViewer<Node> {
 
 	private FXCanvas canvas;
 

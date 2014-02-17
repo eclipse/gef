@@ -20,17 +20,17 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * An {@link ITool} handles a certain aspect of user interaction. It may react
  * to input mouse, keyboard, and gesture events, as well as to changes to the
- * {@link IVisualPartViewer}'s logical models like {@link ISelectionModel},
+ * {@link IVisualViewer}'s logical models like {@link ISelectionModel},
  * {@link IZoomModel}, or {@link IHoverModel}.
  * 
  * As an reaction to input events, an {@link ITool} may manipulate the
- * {@link IVisualPartViewer}'s logical models, or interact with the
- * {@link IVisualPartViewer}'s {@link IVisualPart} via a respective
+ * {@link IVisualViewer}'s logical models, or interact with the
+ * {@link IVisualViewer}'s {@link IVisualPart} via a respective
  * {@link IPolicy}.
  * 
  * @author anyssen

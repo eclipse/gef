@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.viewer.IVisualPartViewer;
+import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
  * 
@@ -66,7 +66,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	 * Activates this {@link IVisualPart}, which in turn activates its policies
 	 * and children. Subclasses should <em>extend</em> this method if they need
 	 * to register listeners to the content. Activation indicates that the
-	 * {@link IVisualPart} is realized in an {@link IVisualPartViewer}.
+	 * {@link IVisualPart} is realized in an {@link IVisualViewer}.
 	 * <code>deactivate()</code> is the inverse, and is eventually called on all
 	 * {@link IVisualPart}s.
 	 * 
@@ -214,7 +214,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		return (B) boundeds.get(key);
 	}
 
-	protected IVisualPartViewer<V> getViewer() {
+	protected IVisualViewer<V> getViewer() {
 		IRootPart<V> root = getRoot();
 		if (root == null) {
 			return null;

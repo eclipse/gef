@@ -34,7 +34,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <V>
  */
-public interface IVisualPartViewer<V> extends IDomainBound<V> {
+public interface IVisualViewer<V> extends IDomainBound<V> {
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by
