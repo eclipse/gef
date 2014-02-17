@@ -40,7 +40,7 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		implements PropertyChangeListener {
 
-	protected static final double REMOVE_THRESHOLD = 5;
+	protected static final double REMOVE_THRESHOLD = 10;
 	private FXGeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
@@ -162,19 +162,23 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 							getContent().addWayPoint(wayPointIndex, p);
 						} else {
 							// check if we have to remove it
+							boolean remove = false;
 							List<Point> points = getContent().getWayPoints();
-							for (int i = 0; i < points.size(); i++) {
-								if (i == wayPointIndex) {
-									continue;
-								}
-								if (p.getDistance(points.get(i)) < REMOVE_THRESHOLD) {
-									// remove the way point
-									getContent().removeWayPoint(wayPointIndex);
-									return;
-								}
+							if (wayPointIndex > 0) {
+								remove = p.getDistance(points
+										.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
 							}
-							// update existing way point
-							getContent().setWayPoint(wayPointIndex, p);
+							if (!remove && wayPointIndex + 1 < points.size()) {
+								remove = p.getDistance(points
+										.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
+							}
+
+							if (remove) {
+								getContent().removeWayPoint(wayPointIndex);
+							} else {
+								// update existing way point
+								getContent().setWayPoint(wayPointIndex, p);
+							}
 						}
 					}
 
