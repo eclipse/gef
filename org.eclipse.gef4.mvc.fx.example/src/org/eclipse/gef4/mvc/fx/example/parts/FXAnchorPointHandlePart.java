@@ -44,7 +44,6 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 						new Stop(1.0, Color.web("#d5faff")) }));
 		visual.setStroke(Color.web("#5a61af"));
 		installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
-
 			@Override
 			public void drag(Point mouseLocation, Dimension delta) {
 				AbstractWayPointPolicy policy = getPolicy();

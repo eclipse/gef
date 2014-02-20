@@ -24,11 +24,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXSelectionBehavior extends
 		AbstractSelectionBehavior<Node> {
 
-	@Override
-	public void setHost(IVisualPart<Node> host) {
-		super.setHost(host);
-	}
-
 	private IHandlePart<Node> feedbackPart;
 
 	private void showFeedback(Effect effect) {
@@ -68,4 +63,5 @@ public class FXSelectionBehavior extends
 		effect.setRadius(5);
 		return effect;
 	}
+	
 }

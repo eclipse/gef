@@ -75,9 +75,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 						.getSelected().contains(getHost());
 			}
 		});
+
 		// TODO: we need proper feedback for curves
 		installBound(new FXSelectionBehavior() {
-
 			@Override
 			public void activate() {
 				super.activate();
@@ -103,7 +103,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 					showPrimaryFeedback();
 				}
 			}
-			
+
 			@Override
 			public List<IHandlePart<Node>> createHandles(
 					List<IContentPart<Node>> targets) {

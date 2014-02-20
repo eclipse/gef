@@ -13,28 +13,44 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
+import org.eclipse.gef4.mvc.fx.parts.FXBoundsFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 
 // TODO: this class is a hack; do not use effect for feedback
 public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 
+	private IHandlePart<Node> feedbackPart;
+
+	private void showFeedback(Effect effect) {
+		feedbackPart = new FXBoundsFeedbackPart(
+				((IContentPart<Node>) getHost()).getVisual(), effect);
+		getHost().getRoot().addChild(feedbackPart);
+		getHost().addAnchored(feedbackPart);
+	}
+
 	@Override
 	protected void hideFeedback() {
-		if(!getHost().getRoot().getViewer().getSelectionModel().getSelected().contains(getHost())){
-			getHost().getVisual().setEffect(null);
+		if (feedbackPart != null) {
+			getHost().removeAnchored(feedbackPart);
+			getHost().getRoot().removeChild(feedbackPart);
+			feedbackPart = null;
 		}
 	}
-	
+
 	@Override
 	protected void showFeedback() {
+		showFeedback(getFeedbackEffect());
+	}
+
+	protected Effect getFeedbackEffect() {
 		DropShadow effect = new DropShadow();
-		effect.setColor(new Color(0.5, 0.5, 0.5, 1));
-		effect.setOffsetX(5);
-		effect.setOffsetY(5);
 		effect.setRadius(5);
-		getHost().getVisual().setEffect(effect);
+		return effect;
 	}
 
 }

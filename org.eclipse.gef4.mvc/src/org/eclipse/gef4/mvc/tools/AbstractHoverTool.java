@@ -64,11 +64,8 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	}
 
 	public void hover(IContentPart<V> hovered) {
-		// TODO: move this into hover policy?
-		if (hovered == null || getToolPolicy(hovered) == null
-				|| !getToolPolicy(hovered).isHoverable()) {
-			getHoverModel().setHover(null);
-		} else {
+		if (hovered == null || getToolPolicy(hovered) != null
+				&& getToolPolicy(hovered).isHoverable()) {
 			getHoverModel().setHover(hovered);
 		}
 	}
