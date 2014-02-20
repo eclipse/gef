@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collections;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -23,30 +24,34 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractDragTool;
 
 public class FXDragTool extends AbstractDragTool<Node> {
 
+	@SuppressWarnings("unchecked")
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		@Override
 		protected void press(Node target, MouseEvent e) {
-			IVisualPart<Node> eventTargetPart = FXPartUtils.getEventTargetPart(getDomain().getViewer(), e);
-			FXDragTool.this.press(Collections.singletonList(eventTargetPart),
+			FXDragTool.this.press(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
-		
+
 		@Override
 		protected void release(Node target, MouseEvent e, double dx, double dy) {
-			FXDragTool.this.release(
-					Collections.singletonList(FXPartUtils.getEventTargetPart(getDomain().getViewer(), e)),
+			FXDragTool.this.release(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,
 							dy));
 		}
 
 		@Override
 		protected void drag(Node target, MouseEvent e, double dx, double dy) {
-			FXDragTool.this.drag(Collections.singletonList(FXPartUtils.getEventTargetPart(getDomain().getViewer(), e)),
-					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,dy));
+			FXDragTool.this.drag(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
+					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,
+							dy));
 		}
 	};
 

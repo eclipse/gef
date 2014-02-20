@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import java.util.Collections;
+import java.util.List;
+
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -49,13 +52,31 @@ public class FXPartUtils {
 			}
 		}
 
-		// TODO: make sure tools don't break if the target part cannot be found
 		return null;
 	}
-	
+
 	public static IVisualPart<Node> getEventTargetPart(
 			IVisualViewer<Node> viewer, Event event) {
 		return getEventTargetPart(viewer, event, null);
+	}
+
+	/**
+	 * Returns a list (currently containing zero or one element) containing the
+	 * viable target parts for the given viewer, event, and policy class.
+	 * 
+	 * @param viewer
+	 * @param event
+	 * @param policy
+	 * @return
+	 */
+	public static List<IVisualPart<Node>> getTargetParts(
+			IVisualViewer<Node> viewer, Event event, Class<IPolicy<Node>> policy) {
+		IVisualPart<Node> eventTargetPart = getEventTargetPart(viewer, event,
+				policy);
+		if (eventTargetPart == null) {
+			return Collections.emptyList();
+		}
+		return Collections.singletonList(eventTargetPart);
 	}
 
 }

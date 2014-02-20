@@ -17,12 +17,16 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public abstract class AbstractDragTool<V> extends AbstractTool<V> {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
+	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IDragPolicy.class;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected IDragPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
-		return targetPart.getBound(IDragPolicy.class);
+		return targetPart.getBound((Class<IPolicy>) TOOL_POLICY_KEY);
 	}
 
 	protected void press(List<IVisualPart<V>> targetParts,

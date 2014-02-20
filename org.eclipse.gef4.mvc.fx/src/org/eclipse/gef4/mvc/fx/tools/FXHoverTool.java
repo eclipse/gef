@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractHoverTool;
@@ -25,15 +26,16 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 	private EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(getDomain().getViewer(), event);
+			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
+					getDomain().getViewer(), event);
 			if (targetPart == null) {
 				hover(null);
 			} else if (targetPart instanceof IRootPart) {
 				hover(null);
-//			} else if (targetPart instanceof IVisualPart) {
-//				hover((IVisualPart<Node>) targetPart);
-//			} else {
-//				throw new IllegalArgumentException("Unsupported part type.");
+			} else if (targetPart instanceof IContentPart) {
+				hover((IContentPart<Node>) targetPart);
+			} else {
+				// throw new IllegalArgumentException("Unsupported part type.");
 				// IGNORE
 			}
 		}

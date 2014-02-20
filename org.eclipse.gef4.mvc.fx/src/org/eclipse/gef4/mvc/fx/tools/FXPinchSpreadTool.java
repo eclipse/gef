@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.util.Collections;
-import java.util.List;
-
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
@@ -21,7 +18,6 @@ import javafx.scene.input.ZoomEvent;
 import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractPinchSpreadTool;
 
@@ -31,57 +27,54 @@ public class FXPinchSpreadTool extends AbstractPinchSpreadTool<Node> {
 	}
 
 	private Scene scene;
+	
+	@SuppressWarnings("unchecked")
 	private FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
 		@Override
 		protected void spreadFinished(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.spreadFinished(findTargetParts(e),
+			FXPinchSpreadTool.this.spreadFinished(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					partialFactor, totalFactor);
 		}
 
 		@Override
 		protected void spreadDetected(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.spreadDetected(findTargetParts(e),
+			FXPinchSpreadTool.this.spreadDetected(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					partialFactor, totalFactor);
-		}
-
-		@SuppressWarnings({ "unchecked" })
-		private List<IVisualPart<Node>> findTargetParts(ZoomEvent e) {
-			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
-					getDomain().getViewer(), e,
-					(Class<IPolicy<Node>>) TOOL_POLICY_KEY);
-			if (targetPart == null) {
-				return Collections.emptyList();
-			}
-			return Collections.singletonList(targetPart);
 		}
 
 		@Override
 		protected void spread(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.spread(findTargetParts(e), partialFactor,
+			FXPinchSpreadTool.this.spread(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), partialFactor,
 					totalFactor);
 		}
 
 		@Override
 		protected void pinchFinished(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.pinchFinished(findTargetParts(e),
+			FXPinchSpreadTool.this.pinchFinished(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					partialFactor, totalFactor);
 		}
 
 		@Override
 		protected void pinchDetected(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.pinchDetected(findTargetParts(e),
+			FXPinchSpreadTool.this.pinchDetected(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					partialFactor, totalFactor);
 		}
 
 		@Override
 		protected void pinch(ZoomEvent e, double partialFactor,
 				double totalFactor) {
-			FXPinchSpreadTool.this.pinch(findTargetParts(e), partialFactor,
+			FXPinchSpreadTool.this.pinch(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), partialFactor,
 					totalFactor);
 		}
 	};
