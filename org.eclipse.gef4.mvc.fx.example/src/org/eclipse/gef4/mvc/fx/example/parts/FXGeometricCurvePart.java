@@ -50,7 +50,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		// create selection handles on the vertices
 		int i = 0;
 		for (Point wayPoint : getContent().getWayPoints()) {
-			handles.add(new FXWayPointHandlePart.Select(this, i, wayPoint));
+			handles.add(new FXWayPointHandlePart(i, wayPoint));
 			i++;
 		}
 
@@ -58,7 +58,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 		i = 0;
 		for (BezierCurve c : visual.getGeometry().toBezier()) {
 			Point midPoint = c.get(0.5);
-			handles.add(new FXWayPointHandlePart.Create(this, i, midPoint));
+			handles.add(new FXInsertAnchorPointHandlePart(i, midPoint));
 			i++;
 		}
 
