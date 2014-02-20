@@ -16,12 +16,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXInsertAnchorPointHandlePart extends AbstractFXHandlePart {
@@ -29,14 +31,14 @@ public class FXInsertAnchorPointHandlePart extends AbstractFXHandlePart {
 	private Point startPoint;
 	private Point currentPosition;
 	private int wayPointIndex;
-	private Rectangle visual;
+	private Circle visual;
 
 	public FXInsertAnchorPointHandlePart(int index, Point midPoint) {
 		this.wayPointIndex = index;
 		startPoint = midPoint;
 		currentPosition = new Point(startPoint);
-		visual = new Rectangle(5, 5);
-		visual.setTranslateY(-visual.getHeight() / 2);
+		visual = new Circle(5);
+		visual.setTranslateY(-visual.getRadius() / 2);
 		visual.setFill(new LinearGradient(0, 0, 0, 5, true,
 				CycleMethod.NO_CYCLE, new Stop[] {
 						new Stop(0.0, Color.web("#e4fbff")),
@@ -78,12 +80,13 @@ public class FXInsertAnchorPointHandlePart extends AbstractFXHandlePart {
 
 	@Override
 	public void refreshVisual() {
+//		IVisualPart<Node> part = getAnchorages().get(0);
 		visual.setLayoutX(currentPosition.x);
 		visual.setLayoutY(currentPosition.y);
 	}
 
 	@Override
-	public Rectangle getVisual() {
+	public Circle getVisual() {
 		return visual;
 	}
 

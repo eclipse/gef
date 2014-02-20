@@ -25,7 +25,7 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 	private EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			IVisualPart<Node> targetPart = FXPartUtils.getMouseTargetPart(getDomain().getViewer(), event);
+			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(getDomain().getViewer(), event);
 			if (targetPart == null) {
 				hover(null);
 			} else if (targetPart instanceof IRootPart) {

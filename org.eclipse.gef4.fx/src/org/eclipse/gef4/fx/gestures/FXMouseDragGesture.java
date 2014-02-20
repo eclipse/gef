@@ -16,7 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
-abstract public class FXMouseDragGesture {
+public abstract class FXMouseDragGesture {
 
 	/**
 	 * Represents the state of expectation regarding mouse events. Keeping track

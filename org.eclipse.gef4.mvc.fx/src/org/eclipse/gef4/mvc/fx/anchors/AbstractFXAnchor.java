@@ -11,17 +11,30 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.anchors;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.transform.Transform;
 
+import org.eclipse.gef4.fx.listener.VisualChangeListener;
 import org.eclipse.gef4.mvc.anchors.AbstractAnchor;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 
 public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 
-	private ChangeListener<Bounds> boundsListener;
+	private VisualChangeListener visualListener = new VisualChangeListener() {
+		@Override
+		protected void transformChanged(Transform oldTransform,
+				Transform newTransform) {
+			propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+					null);
+		}
+
+		@Override
+		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
+			propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+					null);
+		}
+	};
 
 	public AbstractFXAnchor(Node anchorage) {
 		super(anchorage);
@@ -31,39 +44,33 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 	protected void setAnchorage(Node anchorage) {
 		Node oldAnchorage = getAnchorage();
 		if (oldAnchorage != null) {
-			// unregister listeners
 			unregisterLayoutListener(oldAnchorage);
 		}
 		super.setAnchorage(anchorage);
 		if (anchorage != null) {
-			// register listeners
 			registerLayoutListeners(anchorage);
 		}
 	}
 
 	private void registerLayoutListeners(Node anchorageOrAnchored) {
-		// add bounds-in-parent listeners to the whole hierarchy to witness node
-		// resizing and container movement
-		boundsListener = new ChangeListener<Bounds>() {
+		visualListener = new VisualChangeListener() {
 			@Override
-			public void changed(
-					ObservableValue<? extends Bounds> observable,
-					Bounds oldValue, Bounds newValue) {
-				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH,
-						null, null);
+			protected void transformChanged(Transform oldTransform,
+					Transform newTransform) {
+				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+						null);
+			}
+
+			@Override
+			protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
+				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+						null);
 			}
 		};
-		
-		Node current = anchorageOrAnchored;
-		current.boundsInParentProperty().addListener(boundsListener);
+		visualListener.register(anchorageOrAnchored);
 	}
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {
-		// remove the previously added listeners
-		Node current = anchorageOrAnchored;
-		current.boundsInParentProperty().removeListener(boundsListener);
-		
-		// dispose listener
-		boundsListener = null;
+		visualListener.unregister();
 	}
 }

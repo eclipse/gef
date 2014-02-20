@@ -22,6 +22,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractDragTool;
 
 public class FXDragTool extends AbstractDragTool<Node> {
@@ -29,21 +30,25 @@ public class FXDragTool extends AbstractDragTool<Node> {
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		@Override
 		protected void press(Node target, MouseEvent e) {
-			FXDragTool.this.press(Collections.singletonList(FXPartUtils.getMouseTargetPart(getDomain().getViewer(), e)),
+			IVisualPart<Node> eventTargetPart = FXPartUtils.getEventTargetPart(getDomain().getViewer(), e);
+			
+			System.out.println("dragging: <" + eventTargetPart + ">");
+			
+			FXDragTool.this.press(Collections.singletonList(eventTargetPart),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
 		
 		@Override
 		protected void release(Node target, MouseEvent e, double dx, double dy) {
 			FXDragTool.this.release(
-					Collections.singletonList(FXPartUtils.getMouseTargetPart(getDomain().getViewer(), e)),
+					Collections.singletonList(FXPartUtils.getEventTargetPart(getDomain().getViewer(), e)),
 					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,
 							dy));
 		}
 
 		@Override
 		protected void drag(Node target, MouseEvent e, double dx, double dy) {
-			FXDragTool.this.drag(Collections.singletonList(FXPartUtils.getMouseTargetPart(getDomain().getViewer(), e)),
+			FXDragTool.this.drag(Collections.singletonList(FXPartUtils.getEventTargetPart(getDomain().getViewer(), e)),
 					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,dy));
 		}
 	};

@@ -34,5 +34,6 @@ Import-Package: javafx.animation;version="2.0.0",
  javafx.stage;version="2.0.0",
  javafx.util;version="2.0.0"
 Export-Package: org.eclipse.gef4.fx.gestures,
+ org.eclipse.gef4.fx.listener,
  org.eclipse.gef4.fx.nodes
 Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0"

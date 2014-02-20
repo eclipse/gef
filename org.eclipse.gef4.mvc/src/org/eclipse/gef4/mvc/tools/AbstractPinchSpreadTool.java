@@ -15,15 +15,16 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("rawtypes")
-	public static final Class<IPinchSpreadPolicy> TOOL_POLICY_KEY = IPinchSpreadPolicy.class;
+	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IPinchSpreadPolicy.class;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected IPinchSpreadPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
-		return targetPart.getBound(TOOL_POLICY_KEY);
+		return targetPart.getBound((Class<IPolicy>)TOOL_POLICY_KEY);
 	}
 
 	/**

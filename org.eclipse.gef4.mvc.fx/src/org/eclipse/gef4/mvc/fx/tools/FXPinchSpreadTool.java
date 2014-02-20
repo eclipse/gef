@@ -22,7 +22,6 @@ import org.eclipse.gef4.fx.gestures.FXPinchSpreadGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractPinchSpreadTool;
 
@@ -47,11 +46,11 @@ public class FXPinchSpreadTool extends AbstractPinchSpreadTool<Node> {
 					partialFactor, totalFactor);
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({ "unchecked" })
 		private List<IVisualPart<Node>> findTargetParts(ZoomEvent e) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
 					getDomain().getViewer(), e,
-					(Class<IPolicy>) (Class) TOOL_POLICY_KEY);
+					(Class<IPolicy<Node>>) TOOL_POLICY_KEY);
 			if (targetPart == null) {
 				return Collections.emptyList();
 			}

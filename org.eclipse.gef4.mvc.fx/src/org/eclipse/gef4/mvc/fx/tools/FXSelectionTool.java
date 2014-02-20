@@ -28,7 +28,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			IVisualPart<Node> targetPart = FXPartUtils.getMouseTargetPart(
+			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
 					getDomain().getViewer(), event);
 			if (targetPart == null) {
 				return;
