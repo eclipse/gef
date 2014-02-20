@@ -101,6 +101,17 @@ public abstract class FXPinchSpreadGesture {
 		if (this.scene == scene) {
 			return;
 		}
+		
+		if (this.scene != null) {
+			this.scene.removeEventHandler(ZoomEvent.ZOOM_FINISHED,
+					zoomFinishedHandler);
+			this.scene.removeEventHandler(ZoomEvent.ZOOM_STARTED,
+					zoomDetectedHandler);
+			this.scene.removeEventHandler(ZoomEvent.ZOOM,
+					zoomHandler);
+		}
+
+		this.scene = scene;
 
 		if (this.scene != null) {
 			this.scene.addEventHandler(ZoomEvent.ZOOM_FINISHED,
@@ -110,17 +121,7 @@ public abstract class FXPinchSpreadGesture {
 			this.scene.addEventHandler(ZoomEvent.ZOOM,
 					zoomHandler);
 		}
-
-		this.scene = scene;
-
-		if (scene != null) {
-			scene.removeEventHandler(ZoomEvent.ZOOM_FINISHED,
-					zoomFinishedHandler);
-			scene.removeEventHandler(ZoomEvent.ZOOM_STARTED,
-					zoomDetectedHandler);
-			scene.removeEventHandler(ZoomEvent.ZOOM,
-					zoomHandler);
-		}
+		
 	}
 
 }
