@@ -145,6 +145,9 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().put(child, this);
 		}
+		
+		// register root visual as well
+		getViewer().getVisualPartMap().put(getVisual(), this);
 	}
 
 	@Override
@@ -154,6 +157,9 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().remove(child);
 		}
+		
+		// unregister root visual as well
+		getViewer().getVisualPartMap().remove(getVisual());
 	}
 
 	@Override

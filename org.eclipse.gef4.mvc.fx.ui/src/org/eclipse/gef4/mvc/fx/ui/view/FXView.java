@@ -87,7 +87,6 @@ public abstract class FXView extends ViewPart {
 
 	protected FXViewer createViewer(final FXCanvas canvas) {
 		return new FXViewer(canvas) {
-
 			@Override
 			protected Scene createScene(Parent rootVisual) {
 				return new SwtFXScene(rootVisual);

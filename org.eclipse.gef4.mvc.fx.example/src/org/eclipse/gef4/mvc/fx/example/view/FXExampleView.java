@@ -18,7 +18,9 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.FXExampleContentPartFactory;
+import org.eclipse.gef4.mvc.fx.example.FXExampleDomain;
 import org.eclipse.gef4.mvc.fx.example.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
@@ -33,6 +35,11 @@ public class FXExampleView extends FXView {
 		FXViewer viewer = super.createViewer(canvas);
 		viewer.getRootPart().installBound(new FXSelectionBehavior());
 		return viewer;
+	}
+	
+	@Override
+	protected FXDomain createDomain() {
+		return new FXExampleDomain();
 	}
 
 	@Override

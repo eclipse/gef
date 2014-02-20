@@ -28,7 +28,7 @@ public class FXExampleDomain extends FXDomain {
 		CompositeAndTool<Node> baseTool = new CompositeAndTool<Node>();
 		baseTool.add(new FXSelectionTool()); // TODO use drag tool
 		baseTool.add(new FXDragTool());
-		baseTool.add(new FXHoverTool());
+//		baseTool.add(new FXHoverTool()); // TODO implement nice behavior
 		baseTool.add(new FXPinchSpreadTool());
 		return baseTool;
 	}
