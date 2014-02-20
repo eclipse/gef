@@ -8,4 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.gef4.geometry.convert.fx
 Import-Package: javafx.geometry;version="2.2.0",
+ javafx.scene.shape;version="2.2.0",
  javafx.scene.transform;version="2.2.0"
