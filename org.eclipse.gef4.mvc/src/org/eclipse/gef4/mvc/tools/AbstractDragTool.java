@@ -27,7 +27,6 @@ public abstract class AbstractDragTool<V> extends AbstractTool<V> {
 
 	protected void press(List<IVisualPart<V>> targetParts,
 			Point mouseLocation) {
-		
 		for (IVisualPart<V> targetPart : targetParts) {
 			IDragPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null && policy.isDraggable())
