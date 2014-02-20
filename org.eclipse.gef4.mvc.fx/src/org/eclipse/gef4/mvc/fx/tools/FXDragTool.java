@@ -31,9 +31,6 @@ public class FXDragTool extends AbstractDragTool<Node> {
 		@Override
 		protected void press(Node target, MouseEvent e) {
 			IVisualPart<Node> eventTargetPart = FXPartUtils.getEventTargetPart(getDomain().getViewer(), e);
-			
-			System.out.println("dragging: <" + eventTargetPart + ">");
-			
 			FXDragTool.this.press(Collections.singletonList(eventTargetPart),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
