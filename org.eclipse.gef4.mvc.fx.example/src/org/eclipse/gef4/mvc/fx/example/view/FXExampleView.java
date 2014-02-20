@@ -17,6 +17,7 @@ import java.util.List;
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.FXExampleContentPartFactory;
@@ -27,6 +28,7 @@ import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
 
 public class FXExampleView extends FXView {
 
@@ -34,6 +36,44 @@ public class FXExampleView extends FXView {
 	protected FXViewer createViewer(FXCanvas canvas) {
 		FXViewer viewer = super.createViewer(canvas);
 		viewer.getRootPart().installBound(new FXSelectionBehavior());
+		viewer.getRootPart().installBound(new AbstractZoomBehavior<Node>() {
+			@Override
+			protected void applyZoomFactor(Double zoomFactor) {
+				getHost().getVisual().setScaleX(zoomFactor);
+				getHost().getVisual().setScaleY(zoomFactor);
+			}
+		});
+		viewer.getRootPart().installBound(IPinchSpreadPolicy.class, new IPinchSpreadPolicy.Impl<Node>() {
+			@Override
+			public void pinchDetected(double partialFactor, double totalFactor) {
+				System.out.println("pinch detected...");
+			}
+
+			@Override
+			public void pinch(double partialFactor, double totalFactor) {
+				System.out.println("...total zoom factor <" + totalFactor + "> (this pinch <" + partialFactor + ">)");
+			}
+
+			@Override
+			public void pinchFinished(double partialFactor, double totalFactor) {
+				System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
+			}
+
+			@Override
+			public void spreadDetected(double partialFactor, double totalFactor) {
+				System.out.println("spread detected...");
+			}
+
+			@Override
+			public void spread(double partialFactor, double totalFactor) {
+				System.out.println("...total zoom factor <" + totalFactor + "> (this spread <" + partialFactor + ">)");
+			}
+
+			@Override
+			public void spreadFinished(double partialFactor, double totalFactor) {
+				System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
+			}
+		});
 		return viewer;
 	}
 	

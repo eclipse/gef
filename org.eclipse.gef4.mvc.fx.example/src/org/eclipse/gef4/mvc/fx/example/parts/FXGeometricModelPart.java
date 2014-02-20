@@ -28,52 +28,12 @@ import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
-
-	private static class PinchPolicy extends AbstractPolicy<Node> implements IPinchSpreadPolicy<Node> {
-		@Override
-		public void pinchDetected(double partialFactor, double totalFactor) {
-			System.out.println("pinch detected...");
-		}
-
-		@Override
-		public void pinch(double partialFactor, double totalFactor) {
-			System.out.println("...total zoom factor <" + totalFactor + "> (this pinch <" + partialFactor + ">)");
-		}
-
-		@Override
-		public void pinchFinished(double partialFactor, double totalFactor) {
-			System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
-		}
-
-		@Override
-		public void spreadDetected(double partialFactor, double totalFactor) {
-			System.out.println("spread detected...");
-		}
-
-		@Override
-		public void spread(double partialFactor, double totalFactor) {
-			System.out.println("...total zoom factor <" + totalFactor + "> (this spread <" + partialFactor + ">)");
-		}
-
-		@Override
-		public void spreadFinished(double partialFactor, double totalFactor) {
-			System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
-		}
-	}
 	
 	private Group g;
 
 	public FXGeometricModelPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
-		installBound(new AbstractZoomBehavior<Node>() {
-			@Override
-			protected void applyZoomFactor(Double zoomFactor) {
-				g.setScaleX(zoomFactor);
-				g.setScaleY(zoomFactor);
-			}
-		});
-		installBound(new PinchPolicy());
 	}
 
 	@Override

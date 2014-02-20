@@ -13,6 +13,34 @@ package org.eclipse.gef4.mvc.policies;
 
 public interface IPinchSpreadPolicy<V> extends IPolicy<V> {
 
+	public class Impl<V> extends AbstractPolicy<V> implements IPinchSpreadPolicy<V> {
+
+		@Override
+		public void pinchDetected(double partialFactor, double totalFactor) {
+		}
+
+		@Override
+		public void pinch(double partialFactor, double totalFactor) {
+		}
+
+		@Override
+		public void pinchFinished(double partialFactor, double totalFactor) {
+		}
+
+		@Override
+		public void spreadDetected(double partialFactor, double totalFactor) {
+		}
+
+		@Override
+		public void spread(double partialFactor, double totalFactor) {
+		}
+
+		@Override
+		public void spreadFinished(double partialFactor, double totalFactor) {
+		}
+		
+	}
+	
 	/**
 	 * Reaction to the detection of pinch (close fingers) gestures.
 	 */
