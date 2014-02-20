@@ -13,20 +13,14 @@
 package org.eclipse.gef4.fx.nodes;
 
 import javafx.geometry.Bounds;
-import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.CubicCurveTo;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.PathElement;
-import javafx.scene.shape.QuadCurveTo;
 
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IScalable;
-import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Pie;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -44,37 +38,6 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
  *            An {@link IGeometry} used to define this {@link FXGeometryNode}
  */
 public class FXGeometryNode<T extends IGeometry> extends Path {
-
-	public static PathElement[] toPathElements(IGeometry geom) {
-		Segment[] segments = geom.toPath().getSegments();
-		PathElement[] elements = new PathElement[segments.length];
-		for (int i = 0; i < segments.length; i++) {
-			Point[] points = segments[i].getPoints();
-			switch (segments[i].getType()) {
-			case Segment.MOVE_TO:
-				elements[i] = new MoveTo(points[0].x, points[0].y);
-				break;
-			case Segment.LINE_TO:
-				elements[i] = new LineTo(points[0].x, points[0].y);
-				break;
-			case Segment.QUAD_TO:
-				elements[i] = new QuadCurveTo(points[0].x, points[0].y,
-						points[1].x, points[1].y);
-				break;
-			case Segment.CUBIC_TO:
-				elements[i] = new CubicCurveTo(points[0].x, points[0].y,
-						points[1].x, points[1].y, points[2].x, points[2].y);
-				break;
-			case Segment.CLOSE:
-				elements[i] = new ClosePath();
-				break;
-			default:
-				throw new IllegalStateException("Unknown Path.Segment: <"
-						+ segments[i] + ">");
-			}
-		}
-		return elements;
-	}
 
 	private T geometry;
 
@@ -150,6 +113,6 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 */
 	public void updatePathElements() {
 		getElements().clear();
-		getElements().addAll(toPathElements(geometry));
+		getElements().addAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
 }

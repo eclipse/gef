@@ -14,11 +14,19 @@ package org.eclipse.gef4.geometry.convert.fx;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.ClosePath;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.PathElement;
+import javafx.scene.shape.QuadCurveTo;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.geometry.planar.Path.Segment;
 
 public class JavaFX2Geometry {
 
@@ -39,4 +47,5 @@ public class JavaFX2Geometry {
 	public static final Point toPoint(Point2D point){
 		return new Point(point.getX(), point.getY());
 	}
+	
 }
