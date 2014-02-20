@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.gef4.swtfx,
  org.eclipse.gef4.swtfx.controls
-Import-Package: javafx.animation;version="2.2.0",
+Import-Package: com.sun.javafx.tk;version="2.2.0",
+ javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",
  javafx.beans;version="2.2.0",
  javafx.beans.binding;version="2.2.0",
