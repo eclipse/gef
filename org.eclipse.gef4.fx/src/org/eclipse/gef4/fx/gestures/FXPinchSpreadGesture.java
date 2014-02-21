@@ -17,85 +17,34 @@ import javafx.scene.input.ZoomEvent;
 
 public abstract class FXPinchSpreadGesture {
 	
-	/**
-	 * Represents the type of gesture:
-	 * <ul>
-	 * <li>{@link #PINCH}: close fingers</li>
-	 * <li>{@link #SPREAD}: open fingers</li>
-	 * </ul>
-	 */
-	private static enum Type {
-		/**
-		 * If the detection zoom factor is < 1, the gesture type will be PINCH.
-		 */
-		PINCH,
-
-		/**
-		 * If the detection zoom factor is >= 1, the gesture type will be SPREAD.
-		 */
-		SPREAD
-	}
-
 	private Scene scene;
-	private Type type;
 	
 	private EventHandler<? super ZoomEvent> zoomDetectedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			double partialFactor = event.getZoomFactor();
-			double totalFactor = event.getTotalZoomFactor();
-			
-			if (totalFactor >= 1) {
-				type = Type.SPREAD;
-			} else {
-				type = Type.PINCH;
-			}
-			
-			if (type == Type.PINCH) {
-				pinchDetected(event, partialFactor, totalFactor);
-			} else {
-				spreadDetected(event, partialFactor, totalFactor);
-			}
+			zoomDetected(event);
 		}
 	};
 	
 	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			double partialFactor = event.getZoomFactor();
-			double totalFactor = event.getTotalZoomFactor();
-			if (type == Type.PINCH) {
-				pinch(event, partialFactor, totalFactor);
-			} else {
-				spread(event, partialFactor, totalFactor);
-			}
+			zoomed(event);
 		}
 	};
 	
 	private EventHandler<? super ZoomEvent> zoomFinishedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
-			double partialFactor = event.getZoomFactor();
-			double totalFactor = event.getTotalZoomFactor();
-			if (type == Type.PINCH) {
-				pinchFinished(event, partialFactor, totalFactor);
-			} else {
-				spreadFinished(event, partialFactor, totalFactor);
-			}
+			zoomFinished(event);
 		}
 	};
 
-	protected abstract void spreadDetected(ZoomEvent e, double partialFactor, double totalFactor);
+	protected abstract void zoomFinished(ZoomEvent event);
 
-	protected abstract void pinchDetected(ZoomEvent e, double partialFactor, double totalFactor);
+	protected abstract void zoomed(ZoomEvent event);
 
-	protected abstract void spread(ZoomEvent e, double partialFactor, double totalFactor);
-
-	protected abstract void pinch(ZoomEvent e, double partialFactor, double totalFactor);
-
-	protected abstract void spreadFinished(ZoomEvent e, double partialFactor, double totalFactor);
-
-	protected abstract void pinchFinished(ZoomEvent e, double partialFactor, double totalFactor);
+	protected abstract void zoomDetected(ZoomEvent event);
 
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {

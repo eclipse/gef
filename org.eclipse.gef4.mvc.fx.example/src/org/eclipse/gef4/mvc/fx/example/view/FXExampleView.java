@@ -43,40 +43,33 @@ public class FXExampleView extends FXView {
 				getHost().getVisual().setScaleY(zoomFactor);
 			}
 		});
-		viewer.getRootPart().installBound(IPinchSpreadPolicy.class, new IPinchSpreadPolicy.Impl<Node>() {
-			@Override
-			public void pinchDetected(double partialFactor, double totalFactor) {
-				System.out.println("pinch detected...");
-			}
+		viewer.getRootPart().installBound(IPinchSpreadPolicy.class,
+				new IPinchSpreadPolicy.Impl<Node>() {
+					@Override
+					public void zoomDetected(double partialFactor,
+							double totalFactor) {
+						System.out.println("pinch/spread detected... (total = "
+								+ totalFactor + ", partial = " + partialFactor
+								+ ")");
+					}
 
-			@Override
-			public void pinch(double partialFactor, double totalFactor) {
-				System.out.println("...total zoom factor <" + totalFactor + "> (this pinch <" + partialFactor + ">)");
-			}
+					@Override
+					public void zoomed(double partialFactor, double totalFactor) {
+						System.out.println("...total = " + totalFactor
+								+ ", partial = " + partialFactor);
+					}
 
-			@Override
-			public void pinchFinished(double partialFactor, double totalFactor) {
-				System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
-			}
-
-			@Override
-			public void spreadDetected(double partialFactor, double totalFactor) {
-				System.out.println("spread detected...");
-			}
-
-			@Override
-			public void spread(double partialFactor, double totalFactor) {
-				System.out.println("...total zoom factor <" + totalFactor + "> (this spread <" + partialFactor + ">)");
-			}
-
-			@Override
-			public void spreadFinished(double partialFactor, double totalFactor) {
-				System.out.println("...finished! (total = " + totalFactor + ", partial = " + partialFactor + ")");
-			}
-		});
+					@Override
+					public void zoomFinished(double partialFactor,
+							double totalFactor) {
+						System.out.println("...finished! (total = "
+								+ totalFactor + ", partial = " + partialFactor
+								+ ")");
+					}
+				});
 		return viewer;
 	}
-	
+
 	@Override
 	protected FXDomain createDomain() {
 		return new FXExampleDomain();
@@ -96,5 +89,5 @@ public class FXExampleView extends FXView {
 	protected List<Object> getContents() {
 		return Collections.<Object> singletonList(new FXGeometricModel());
 	}
-	
+
 }

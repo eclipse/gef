@@ -27,55 +27,31 @@ public class FXPinchSpreadTool extends AbstractPinchSpreadTool<Node> {
 	}
 
 	private Scene scene;
-	
+
 	@SuppressWarnings("unchecked")
 	private FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
 		@Override
-		protected void spreadFinished(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.spreadFinished(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					partialFactor, totalFactor);
+		protected void zoomFinished(ZoomEvent e) {
+			FXPinchSpreadTool.this.zoomFinished(FXPartUtils.getTargetParts(
+					getDomain().getViewer(), e,
+					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
+					e.getTotalZoomFactor());
 		}
 
 		@Override
-		protected void spreadDetected(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.spreadDetected(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					partialFactor, totalFactor);
+		protected void zoomDetected(ZoomEvent e) {
+			FXPinchSpreadTool.this.zoomDetected(FXPartUtils.getTargetParts(
+					getDomain().getViewer(), e,
+					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
+					e.getTotalZoomFactor());
 		}
 
 		@Override
-		protected void spread(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.spread(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), partialFactor,
-					totalFactor);
-		}
-
-		@Override
-		protected void pinchFinished(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.pinchFinished(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					partialFactor, totalFactor);
-		}
-
-		@Override
-		protected void pinchDetected(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.pinchDetected(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					partialFactor, totalFactor);
-		}
-
-		@Override
-		protected void pinch(ZoomEvent e, double partialFactor,
-				double totalFactor) {
-			FXPinchSpreadTool.this.pinch(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), partialFactor,
-					totalFactor);
+		protected void zoomed(ZoomEvent e) {
+			FXPinchSpreadTool.this.zoomed(FXPartUtils.getTargetParts(
+					getDomain().getViewer(), e,
+					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
+					e.getTotalZoomFactor());
 		}
 	};
 

@@ -13,66 +13,38 @@ package org.eclipse.gef4.mvc.policies;
 
 public interface IPinchSpreadPolicy<V> extends IPolicy<V> {
 
-	public class Impl<V> extends AbstractPolicy<V> implements IPinchSpreadPolicy<V> {
-
+	/**
+	 * Empty default implementation.
+	 */
+	public class Impl<V> extends AbstractPolicy<V> implements
+			IPinchSpreadPolicy<V> {
 		@Override
-		public void pinchDetected(double partialFactor, double totalFactor) {
+		public void zoomDetected(double partialFactor, double totalFactor) {
 		}
 
 		@Override
-		public void pinch(double partialFactor, double totalFactor) {
+		public void zoomed(double partialFactor, double totalFactor) {
 		}
 
 		@Override
-		public void pinchFinished(double partialFactor, double totalFactor) {
+		public void zoomFinished(double partialFactor, double totalFactor) {
 		}
-
-		@Override
-		public void spreadDetected(double partialFactor, double totalFactor) {
-		}
-
-		@Override
-		public void spread(double partialFactor, double totalFactor) {
-		}
-
-		@Override
-		public void spreadFinished(double partialFactor, double totalFactor) {
-		}
-		
 	}
-	
-	/**
-	 * Reaction to the detection of pinch (close fingers) gestures.
-	 */
-	public void pinchDetected(double partialFactor, double totalFactor);
 
 	/**
-	 * Continuous reaction to pinch (close fingers) gestures. Called
-	 * continuously on finger movement, after the gesture has been detected, and
-	 * before it has been finished.
+	 * Reaction to the detection of pinch or spread gestures.
 	 */
-	public void pinch(double partialFactor, double totalFactor);
+	public void zoomDetected(double partialFactor, double totalFactor);
 
 	/**
-	 * Reaction to the finish of pinch (close fingers) gestures.
+	 * Continuous reaction to pinch or spread gestures. Called continuously on
+	 * finger movement after detection and before finish.
 	 */
-	public void pinchFinished(double partialFactor, double totalFactor);
+	public void zoomed(double partialFactor, double totalFactor);
 
 	/**
-	 * Reaction to the detection of spread (open fingers) gestures.
+	 * Reaction to the finish of pinch or spread gestures.
 	 */
-	public void spreadDetected(double partialFactor, double totalFactor);
-
-	/**
-	 * Continuous reaction to spread (open fingers) gestures. Called
-	 * continuously on finger movement, after the gesture has been detected, and
-	 * before it has been finished.
-	 */
-	public void spread(double partialFactor, double totalFactor);
-
-	/**
-	 * Reaction to the finish of spread (open fingers) gestures.
-	 */
-	public void spreadFinished(double partialFactor, double totalFactor);
+	public void zoomFinished(double partialFactor, double totalFactor);
 
 }

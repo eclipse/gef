@@ -30,12 +30,12 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	/**
 	 * Reaction to the detection of pinch (close fingers) gestures.
 	 */
-	protected void pinchDetected(List<IVisualPart<V>> targetParts,
+	protected void zoomDetected(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
 			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
+				policy.zoomDetected(partialFactor, totalFactor);
 			}
 		}
 	}
@@ -45,12 +45,12 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	 * continuously on finger movement, after the gesture has been detected, and
 	 * before it has been finished.
 	 */
-	protected void pinch(List<IVisualPart<V>> targetParts, double partialFactor,
+	protected void zoomed(List<IVisualPart<V>> targetParts, double partialFactor,
 			double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
 			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
+				policy.zoomed(partialFactor, totalFactor);
 			}
 		}
 	}
@@ -58,53 +58,12 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	/**
 	 * Reaction to the finish of pinch (close fingers) gestures.
 	 */
-	protected void pinchFinished(List<IVisualPart<V>> targetParts,
+	protected void zoomFinished(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
 			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
-			}
-		}
-	}
-
-	/**
-	 * Reaction to the detection of spread (open fingers) gestures.
-	 */
-	protected void spreadDetected(List<IVisualPart<V>> targetParts,
-			double partialFactor, double totalFactor) {
-		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
-			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
-			}
-		}
-	}
-
-	/**
-	 * Continuous reaction to spread (open fingers) gestures. Called
-	 * continuously on finger movement, after the gesture has been detected, and
-	 * before it has been finished.
-	 */
-	protected void spread(List<IVisualPart<V>> targetParts, double partialFactor,
-			double totalFactor) {
-		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
-			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
-			}
-		}
-	}
-
-	/**
-	 * Reaction to the finish of spread (open fingers) gestures.
-	 */
-	protected void spreadFinished(List<IVisualPart<V>> targetParts,
-			double partialFactor, double totalFactor) {
-		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
-			if (policy != null) {
-				policy.pinchDetected(partialFactor, totalFactor);
+				policy.zoomFinished(partialFactor, totalFactor);
 			}
 		}
 	}
