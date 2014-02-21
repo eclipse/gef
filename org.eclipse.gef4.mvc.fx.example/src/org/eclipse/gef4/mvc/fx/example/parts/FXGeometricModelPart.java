@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
-import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.policies.IPinchPolicy;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
 	

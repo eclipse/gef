@@ -19,6 +19,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.FXExampleDomain;
@@ -28,7 +29,8 @@ import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.policies.IPinchPolicy;
+import org.eclipse.gef4.mvc.policies.ZoomOnPinchPolicy;
 
 public class FXExampleView extends FXView {
 
@@ -36,37 +38,8 @@ public class FXExampleView extends FXView {
 	protected FXViewer createViewer(FXCanvas canvas) {
 		FXViewer viewer = super.createViewer(canvas);
 		viewer.getRootPart().installBound(new FXSelectionBehavior());
-		viewer.getRootPart().installBound(new AbstractZoomBehavior<Node>() {
-			@Override
-			protected void applyZoomFactor(Double zoomFactor) {
-				getHost().getVisual().setScaleX(zoomFactor);
-				getHost().getVisual().setScaleY(zoomFactor);
-			}
-		});
-		viewer.getRootPart().installBound(IPinchSpreadPolicy.class,
-				new IPinchSpreadPolicy.Impl<Node>() {
-					@Override
-					public void zoomDetected(double partialFactor,
-							double totalFactor) {
-						System.out.println("pinch/spread detected... (total = "
-								+ totalFactor + ", partial = " + partialFactor
-								+ ")");
-					}
-
-					@Override
-					public void zoomed(double partialFactor, double totalFactor) {
-						System.out.println("...total = " + totalFactor
-								+ ", partial = " + partialFactor);
-					}
-
-					@Override
-					public void zoomFinished(double partialFactor,
-							double totalFactor) {
-						System.out.println("...finished! (total = "
-								+ totalFactor + ", partial = " + partialFactor
-								+ ")");
-					}
-				});
+		viewer.getRootPart().installBound(new FXZoomBehavior());
+		viewer.getRootPart().installBound(IPinchPolicy.class, new ZoomOnPinchPolicy<Node>());
 		return viewer;
 	}
 

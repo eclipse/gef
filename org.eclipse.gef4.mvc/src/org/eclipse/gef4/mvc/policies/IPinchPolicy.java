@@ -11,15 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-public interface IPinchSpreadPolicy<V> extends IPolicy<V> {
+public interface IPinchPolicy<V> extends IPolicy<V> {
 
 	/**
 	 * Empty default implementation.
 	 */
 	public class Impl<V> extends AbstractPolicy<V> implements
-			IPinchSpreadPolicy<V> {
+			IPinchPolicy<V> {
 		@Override
-		public void zoomDetected(double partialFactor, double totalFactor) {
+		public void zoomDetected(double partialFactor) {
 		}
 
 		@Override
@@ -27,14 +27,14 @@ public interface IPinchSpreadPolicy<V> extends IPolicy<V> {
 		}
 
 		@Override
-		public void zoomFinished(double partialFactor, double totalFactor) {
+		public void zoomFinished(double totalFactor) {
 		}
 	}
 
 	/**
 	 * Reaction to the detection of pinch or spread gestures.
 	 */
-	public void zoomDetected(double partialFactor, double totalFactor);
+	public void zoomDetected(double partialFactor);
 
 	/**
 	 * Continuous reaction to pinch or spread gestures. Called continuously on
@@ -45,6 +45,6 @@ public interface IPinchSpreadPolicy<V> extends IPolicy<V> {
 	/**
 	 * Reaction to the finish of pinch or spread gestures.
 	 */
-	public void zoomFinished(double partialFactor, double totalFactor);
+	public void zoomFinished(double totalFactor);
 
 }

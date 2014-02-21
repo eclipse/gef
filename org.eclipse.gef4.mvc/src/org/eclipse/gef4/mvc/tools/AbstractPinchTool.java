@@ -14,16 +14,16 @@ package org.eclipse.gef4.mvc.tools;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.policies.IPinchPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
-public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
+public class AbstractPinchTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("rawtypes")
-	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IPinchSpreadPolicy.class;
+	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IPinchPolicy.class;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected IPinchSpreadPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
+	protected IPinchPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
 		return targetPart.getBound((Class<IPolicy>)TOOL_POLICY_KEY);
 	}
 
@@ -33,9 +33,9 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	protected void zoomDetected(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
+			IPinchPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
-				policy.zoomDetected(partialFactor, totalFactor);
+				policy.zoomDetected(partialFactor);
 			}
 		}
 	}
@@ -48,7 +48,7 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	protected void zoomed(List<IVisualPart<V>> targetParts, double partialFactor,
 			double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
+			IPinchPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
 				policy.zoomed(partialFactor, totalFactor);
 			}
@@ -61,9 +61,9 @@ public class AbstractPinchSpreadTool<V> extends AbstractTool<V> {
 	protected void zoomFinished(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchSpreadPolicy<V> policy = getToolPolicy(targetPart);
+			IPinchPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
-				policy.zoomFinished(partialFactor, totalFactor);
+				policy.zoomFinished(totalFactor);
 			}
 		}
 	}

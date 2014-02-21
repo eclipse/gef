@@ -60,6 +60,7 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 			List<IContentPart<V>> newSelection = (List<IContentPart<V>>) event
 					.getNewValue();
 
+			// multi-selection handles for the root part
 			if (getHost() instanceof IRootPart) {
 				if (oldSelection.size() > 1) {
 					removeHandles(oldSelection);
