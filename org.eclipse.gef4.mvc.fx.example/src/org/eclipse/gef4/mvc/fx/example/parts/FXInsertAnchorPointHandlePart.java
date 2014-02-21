@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.shape.Circle;
 
 import org.eclipse.gef4.geometry.planar.Point;
@@ -20,12 +21,13 @@ public class FXInsertAnchorPointHandlePart extends FXWayPointHandlePart {
 	public FXInsertAnchorPointHandlePart(int wayPointIndex, Point wayPoint) {
 		super(wayPointIndex, wayPoint, true);
 	}
-	
+
 	@Override
 	protected void createVisual() {
-		visual = new Circle(VISUAL_SIZE / 2);
-		visual.setFill(VISUAL_FILL);
-		visual.setStroke(VISUAL_STROKE);
+		super.createVisual();
+		ColorAdjust scale = new ColorAdjust();
+		scale.setSaturation(-1);
+		visual.setEffect(scale);
 	}
-	
+
 }

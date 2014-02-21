@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -81,8 +81,7 @@ public class FXWayPointHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected void createVisual() {
-		visual = new Rectangle(VISUAL_SIZE, VISUAL_SIZE);
-		visual.setTranslateY(-0.5 * VISUAL_SIZE);
+		visual = new Circle(VISUAL_SIZE / 2);
 		visual.setFill(VISUAL_FILL);
 		visual.setStroke(VISUAL_STROKE);
 	}
