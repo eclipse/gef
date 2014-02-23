@@ -30,7 +30,7 @@ import org.eclipse.swt.graphics.Color;
 
 /**
  * Default implementation of {@link SubgraphLayout}. Every subgraph added to
- * Zest {@link Graph} should inherit from this class. The default implementation
+ * Zest {@link GraphWidget} should inherit from this class. The default implementation
  * is very simple. A node pruned to this subgraph is minimized and all
  * connections adjacent to it are made invisible. No additional graphic elements
  * are added to the graph, but subclasses may add them.

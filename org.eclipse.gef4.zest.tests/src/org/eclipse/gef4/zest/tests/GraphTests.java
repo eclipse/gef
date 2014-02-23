@@ -11,7 +11,7 @@ package org.eclipse.gef4.zest.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.draw2d.Figure;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -21,7 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * General tests for the {@link Graph} class.
+ * General tests for the {@link GraphWidget} class.
  * 
  * @author Fabian Steeg (fsteeg)
  * 
@@ -32,7 +32,7 @@ public class GraphTests extends TestCase {
 
 	private GraphNode[] nodes;
 
-	private Graph graph;
+	private GraphWidget graph;
 
 	private GraphConnection connection;
 
@@ -40,7 +40,7 @@ public class GraphTests extends TestCase {
 
 	protected void setUp() throws Exception {
 		shell = new Shell();
-		graph = new Graph(shell, STYLE);
+		graph = new GraphWidget(shell, STYLE);
 		nodes = new GraphNode[] { new GraphNode(graph, STYLE),
 				new GraphNode(graph, STYLE) };
 		connection = new GraphConnection(graph, STYLE, nodes[0], nodes[1]);
@@ -127,7 +127,7 @@ public class GraphTests extends TestCase {
 	 */
 	public void testZestGraphStyles() {
 		int style = ZestStyles.GESTURES_DISABLED;
-		Graph g = new Graph(shell, style);
+		GraphWidget g = new GraphWidget(shell, style);
 		assertTrue("Passed style should be set", (g.getStyle() & style) == 0);
 
 	}
@@ -137,7 +137,7 @@ public class GraphTests extends TestCase {
 	 * later (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=238529).
 	 */
 	public void testZestGraphAnimationEnabled() {
-		Graph g = new Graph(shell, ZestStyles.NONE);
+		GraphWidget g = new GraphWidget(shell, ZestStyles.NONE);
 		assertFalse("Graph should have animation disabled by default",
 				g.isAnimationEnabled());
 		g.setAnimationEnabled(true);

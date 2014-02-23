@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.examples.swt;
 import org.eclipse.draw2d.ConnectionRouter;
 import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
@@ -49,7 +49,7 @@ public class ManhattanLayoutGraphSnippet {
 		Button b = new Button(shell, SWT.PUSH);
 		b.setText("Change Router");
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 
 		GraphNode n = new GraphNode(g, SWT.NONE, "Paper");
 		GraphNode n2 = new GraphNode(g, SWT.NONE, "Rock");

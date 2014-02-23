@@ -37,7 +37,7 @@ public abstract class GraphItem extends Item {
 	}
 
 	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphItem(Graph, int)} and
+	 * @deprecated Since Zest 2.0, use {@link #GraphItem(GraphWidget, int)} and
 	 *             {@link #setData(Object)}
 	 */
 	public GraphItem(Widget parent, int style, Object data) {
@@ -96,7 +96,7 @@ public abstract class GraphItem extends Item {
 	 * 
 	 * @return the parent graph.
 	 */
-	public abstract Graph getGraphModel();
+	public abstract GraphWidget getGraphModel();
 
 	/**
 	 * Highlights the current GraphItem. A graph item is either a graph node or

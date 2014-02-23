@@ -24,7 +24,7 @@ import org.eclipse.draw2d.PolylineShape;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -106,7 +106,7 @@ public class GraphSnippet13 {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {

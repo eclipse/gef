@@ -6,7 +6,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.DAGExpandCollapseManager;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -36,7 +36,7 @@ public class TreeLayoutExample {
 		shell.setLayout(gridLayout);
 		shell.setSize(600, 500);
 
-		final Graph g = new Graph(shell, ZestStyles.NONE);
+		final GraphWidget g = new GraphWidget(shell, ZestStyles.NONE);
 		final TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
 		g.setSubgraphFactory(new DefaultSubgraph.PrunedSuccessorsSubgraphFactory());
 		g.setLayoutAlgorithm(algorithm, false);
@@ -132,7 +132,7 @@ public class TreeLayoutExample {
 		}
 	}
 
-	private static void hookMenu(final Graph g) {
+	private static void hookMenu(final GraphWidget g) {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 
 		Action expandAction = new Action() {

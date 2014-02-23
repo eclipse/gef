@@ -10,7 +10,7 @@
 package org.eclipse.gef4.zest.examples.swt;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
@@ -36,7 +36,7 @@ public class HelloWorld {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		Graph g = new Graph(shell, SWT.NONE);
+		GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		GraphNode hello = new GraphNode(g, SWT.NONE, "Hello");
 		GraphNode world = new GraphNode(g, SWT.NONE, "World");
 		new GraphConnection(g, SWT.NONE, hello, world);

@@ -11,7 +11,7 @@
 package org.eclipse.gef4.zest.core.widgets.custom;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 
@@ -27,7 +27,7 @@ public class CGraphNode extends GraphNode {
 	/**
 	 * @since 2.0
 	 */
-	public CGraphNode(Graph graphModel, int style, IFigure figure) {
+	public CGraphNode(GraphWidget graphModel, int style, IFigure figure) {
 		super(graphModel, style, figure);
 	}
 

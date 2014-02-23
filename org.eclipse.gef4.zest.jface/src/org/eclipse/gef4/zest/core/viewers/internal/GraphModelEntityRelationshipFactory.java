@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 
@@ -45,7 +45,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.AbstractStylingModelFactory
 	 * #createGraphModel()
 	 */
-	public Graph createGraphModel(Graph model) {
+	public GraphWidget createGraphModel(GraphWidget model) {
 		doBuildGraph(model);
 		return model;
 	}
@@ -57,7 +57,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.AbstractStylingModelFactory
 	 * #doBuildGraph(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel)
 	 */
-	protected void doBuildGraph(Graph model) {
+	protected void doBuildGraph(GraphWidget model) {
 		super.doBuildGraph(model);
 		Object[] nodes = getContentProvider().getElements(
 				getViewer().getInput());
@@ -73,7 +73,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * @param model
 	 *            the model to create the relationship on.
 	 */
-	private void createModelRelationships(Graph model) {
+	private void createModelRelationships(GraphWidget model) {
 		GraphNode[] modelNodes = getNodesArray(model);
 		List listOfNodes = new ArrayList();
 		for (int i = 0; i < modelNodes.length; i++) {
@@ -115,7 +115,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * @param nodes
 	 *            the external nodes.
 	 */
-	private void createModelNodes(Graph model, Object[] nodes) {
+	private void createModelNodes(GraphWidget model, Object[] nodes) {
 		for (int i = 0; i < nodes.length; i++) {
 			createNode(model, nodes[i]);
 		}
@@ -128,7 +128,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#refresh
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object)
 	 */
-	public void refresh(Graph graph, Object element) {
+	public void refresh(GraphWidget graph, Object element) {
 		refresh(graph, element, false);
 	}
 
@@ -140,7 +140,7 @@ public class GraphModelEntityRelationshipFactory extends
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object,
 	 * boolean)
 	 */
-	public void refresh(Graph graph, Object element, boolean updateLabels) {
+	public void refresh(GraphWidget graph, Object element, boolean updateLabels) {
 		// with this kind of graph, it is just as easy and cost-effective to
 		// rebuild the whole thing.
 		refreshGraph(graph);

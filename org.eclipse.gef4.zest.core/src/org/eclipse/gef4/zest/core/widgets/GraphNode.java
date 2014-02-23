@@ -61,7 +61,7 @@ public class GraphNode extends GraphItem {
 	private boolean cacheLabel;
 	private boolean visible = true;
 
-	protected Graph graph;
+	protected GraphWidget graph;
 	protected IContainer parent;
 
 	/** The internal node. */
@@ -482,7 +482,7 @@ public class GraphNode extends GraphItem {
 	 * 
 	 * @return The graph model that this node is contained in
 	 */
-	public Graph getGraphModel() {
+	public GraphWidget getGraphModel() {
 		return this.graph;
 	}
 

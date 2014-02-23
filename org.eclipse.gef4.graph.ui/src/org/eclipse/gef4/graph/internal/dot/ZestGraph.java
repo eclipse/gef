@@ -16,7 +16,7 @@ import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -25,13 +25,13 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Wrap {@link org.eclipse.gef4.graph.Graph} in
- * {@link org.eclipse.gef4.zest.core.widgets.Graph} API.
+ * {@link org.eclipse.gef4.zest.core.widgets.GraphWidget} API.
  * <p/>
  * http://bugs.eclipse.org/372365
  * 
  * @author Fabian Steeg (fsteeg)
  */
-public class ZestGraph extends Graph {
+public class ZestGraph extends GraphWidget {
 
 	private org.eclipse.gef4.graph.Graph dotGraph;
 

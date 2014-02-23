@@ -11,7 +11,7 @@
 package org.eclipse.gef4.zest.examples.swt;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -41,7 +41,7 @@ public class GraphSnippet2 {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		Graph g = new Graph(shell, SWT.NONE);
+		GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		GraphNode n1 = new GraphNode(g, SWT.NONE);
 		n1.setText("Information");

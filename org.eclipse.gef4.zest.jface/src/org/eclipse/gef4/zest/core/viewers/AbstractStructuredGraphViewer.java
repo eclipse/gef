@@ -24,7 +24,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
@@ -165,8 +165,8 @@ public abstract class AbstractStructuredGraphViewer extends
 		return nodeStyle;
 	}
 
-	public Graph getGraphControl() {
-		return (Graph) getControl();
+	public GraphWidget getGraphControl() {
+		return (GraphWidget) getControl();
 	}
 
 	/**
@@ -230,7 +230,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	public GraphNode addGraphModelContainer(Object element) {
 		GraphNode node = this.getGraphModelNode(element);
 		if (node == null) {
-			node = new GraphContainer((Graph) getControl(), SWT.NONE);
+			node = new GraphContainer((GraphWidget) getControl(), SWT.NONE);
 			this.nodesMap.put(element, node);
 			node.setData(element);
 		}
@@ -265,11 +265,11 @@ public abstract class AbstractStructuredGraphViewer extends
 		GraphNode node = this.getGraphModelNode(element);
 		if (node == null) {
 			if (figure != null) {
-				node = new CGraphNode((Graph) getControl(), SWT.NONE, figure);
+				node = new CGraphNode((GraphWidget) getControl(), SWT.NONE, figure);
 				this.nodesMap.put(element, node);
 				node.setData(element);
 			} else {
-				node = new GraphNode((Graph) getControl(), SWT.NONE);
+				node = new GraphNode((GraphWidget) getControl(), SWT.NONE);
 				this.nodesMap.put(element, node);
 				node.setData(element);
 			}
@@ -289,7 +289,7 @@ public abstract class AbstractStructuredGraphViewer extends
 			GraphNode source, GraphNode target) {
 		GraphConnection connection = this.getGraphModelConnection(element);
 		if (connection == null) {
-			connection = new GraphConnection((Graph) getControl(), SWT.NONE,
+			connection = new GraphConnection((GraphWidget) getControl(), SWT.NONE,
 					source, target);
 			this.connectionsMap.put(element, connection);
 			connection.setData(element);
@@ -448,7 +448,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * util.List, boolean)
 	 */
 	protected void setSelectionToWidget(List l, boolean reveal) {
-		Graph control = (Graph) getControl();
+		GraphWidget control = (GraphWidget) getControl();
 		List<GraphItem> selection = new LinkedList<GraphItem>();
 		for (Iterator i = l.iterator(); i.hasNext();) {
 			Object obj = i.next();
@@ -470,7 +470,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * @return
 	 */
 	protected List getWidgetSelection() {
-		Graph control = (Graph) getControl();
+		GraphWidget control = (GraphWidget) getControl();
 		return control.getSelection();
 	}
 
@@ -488,7 +488,7 @@ public abstract class AbstractStructuredGraphViewer extends
 		// Save the old map so we can set the size and position of any nodes
 		// that are the same
 		Map<Object, GraphItem> oldNodesMap = nodesMap;
-		Graph graph = (Graph) getControl();
+		GraphWidget graph = (GraphWidget) getControl();
 		graph.setSelection(new GraphNode[0]);
 
 		Iterator<GraphItem> iterator = nodesMap.values().iterator();
@@ -512,8 +512,8 @@ public abstract class AbstractStructuredGraphViewer extends
 
 		graph = factory.createGraphModel(graph);
 
-		((Graph) getControl()).setNodeStyle(getNodeStyle());
-		((Graph) getControl()).setConnectionStyle(getConnectionStyle());
+		((GraphWidget) getControl()).setNodeStyle(getNodeStyle());
+		((GraphWidget) getControl()).setConnectionStyle(getConnectionStyle());
 
 		// check if any of the pre-existing nodes are still present
 		// in this case we want them to keep the same location & size
@@ -801,7 +801,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @return GraphModelConnection[]
 	 */
-	protected GraphConnection[] getConnectionsArray(Graph graph) {
+	protected GraphConnection[] getConnectionsArray(GraphWidget graph) {
 		GraphConnection[] connsArray = new GraphConnection[graph
 				.getConnections().size()];
 		connsArray = (GraphConnection[]) graph.getConnections().toArray(
@@ -814,7 +814,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @return GraphModelNode[]
 	 */
-	protected GraphNode[] getNodesArray(Graph graph) {
+	protected GraphNode[] getNodesArray(GraphWidget graph) {
 		GraphNode[] nodesArray = new GraphNode[graph.getNodes().size()];
 		nodesArray = (GraphNode[]) graph.getNodes().toArray(nodesArray);
 		return nodesArray;

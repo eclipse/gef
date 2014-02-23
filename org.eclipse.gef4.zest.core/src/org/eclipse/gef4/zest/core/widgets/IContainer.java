@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public interface IContainer {
 
-	public abstract Graph getGraph();
+	public abstract GraphWidget getGraph();
 
 	/**
 	 * @since 2.0

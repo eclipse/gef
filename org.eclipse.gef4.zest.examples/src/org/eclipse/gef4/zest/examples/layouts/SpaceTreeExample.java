@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SpaceTreeExample {
 
-	static Graph g;
+	static GraphWidget g;
 
 	static GraphNode source;
 
@@ -36,7 +36,7 @@ public class SpaceTreeExample {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		g = new Graph(shell, SWT.NONE);
+		g = new GraphWidget(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		g.setNodeStyle(ZestStyles.NODES_FISHEYE);
 
@@ -64,7 +64,7 @@ public class SpaceTreeExample {
 		}
 	}
 
-	private static GraphNode createTree(Graph g, String rootTitle, int depth,
+	private static GraphNode createTree(GraphWidget g, String rootTitle, int depth,
 			int breadth) {
 		GraphNode root = new GraphNode(g, SWT.NONE, rootTitle);
 		if (depth > 0) {
@@ -77,7 +77,7 @@ public class SpaceTreeExample {
 		return root;
 	}
 
-	private static void hookMenu(final Graph g) {
+	private static void hookMenu(final GraphWidget g) {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {

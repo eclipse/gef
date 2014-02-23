@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -53,7 +53,7 @@ public class SpringLayoutProgress {
 		shell.setLayout(gridLayout);
 		shell.setSize(500, 500);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 5, 5));
 		g.setSize(500, 500);
 

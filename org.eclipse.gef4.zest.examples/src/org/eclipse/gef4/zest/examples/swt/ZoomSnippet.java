@@ -15,7 +15,7 @@ import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
@@ -35,7 +35,7 @@ public class ZoomSnippet {
 
 	private static Image classImage;
 
-	public static void createContainer(Graph g) {
+	public static void createContainer(GraphWidget g) {
 		GraphContainer a = new GraphContainer(g, SWT.NONE);
 		a.setText("SomeClass.java");
 		a.setImage(classImage);
@@ -62,7 +62,7 @@ public class ZoomSnippet {
 		}
 	}
 
-	public static void populateContainer(GraphContainer c, Graph g, int number,
+	public static void populateContainer(GraphContainer c, GraphWidget g, int number,
 			boolean radial) {
 		GraphNode a = new GraphNode(c, ZestStyles.NODES_FISHEYE
 				| ZestStyles.NODES_HIDE_TEXT);
@@ -132,7 +132,7 @@ public class ZoomSnippet {
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 800);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		createContainer(g);
 
 		CompositeLayoutAlgorithm compositeLayoutAlgorithm = new CompositeLayoutAlgorithm(

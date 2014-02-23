@@ -54,7 +54,7 @@ public class GraphConnection extends GraphItem {
 	private Color foreground;
 	private int lineWidth;
 	private int lineStyle;
-	private final Graph graph;
+	private final GraphWidget graph;
 
 	private int connectionStyle;
 	private int curveDepth;
@@ -80,7 +80,7 @@ public class GraphConnection extends GraphItem {
 
 	private IConnectionDecorator connectionDecorator = null;
 
-	public GraphConnection(Graph graphModel, int style, GraphNode source,
+	public GraphConnection(GraphWidget graphModel, int style, GraphNode source,
 			GraphNode destination) {
 		super(graphModel, style);
 
@@ -461,7 +461,7 @@ public class GraphConnection extends GraphItem {
 	 * 
 	 * @return The graph model that this connection is contained in
 	 */
-	public Graph getGraphModel() {
+	public GraphWidget getGraphModel() {
 		return this.graph;
 	}
 

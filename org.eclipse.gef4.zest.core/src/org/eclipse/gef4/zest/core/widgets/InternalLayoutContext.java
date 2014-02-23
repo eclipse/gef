@@ -50,7 +50,7 @@ class InternalLayoutContext implements LayoutContext {
 	 * @param graph
 	 *            the graph owning this context
 	 */
-	InternalLayoutContext(Graph graph) {
+	InternalLayoutContext(GraphWidget graph) {
 		this.container = graph;
 	}
 
@@ -114,7 +114,7 @@ class InternalLayoutContext implements LayoutContext {
 			subgraph.applyLayoutChanges();
 		}
 		if (animationHint) {
-			Animation.run(Graph.ANIMATION_TIME);
+			Animation.run(GraphWidget.ANIMATION_TIME);
 		}
 		eventsOn = true;
 	}

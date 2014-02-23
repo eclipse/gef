@@ -10,7 +10,7 @@
 package org.eclipse.gef4.zest.examples.layouts;
 
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -32,7 +32,7 @@ public class SugiyamaLayoutExample {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		Graph g = new Graph(shell, SWT.NONE);
+		GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 
 		GraphNode coal = new GraphNode(g, SWT.NONE, "Coal");

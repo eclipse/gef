@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.core.viewers.internal;
 
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -56,7 +56,7 @@ public interface IStylingGraphModelFactory {
 	 * 
 	 * @return the created graph model.
 	 */
-	public Graph createGraphModel(Graph model);
+	public GraphWidget createGraphModel(GraphWidget model);
 
 	/**
 	 * Creates and returns a node on the given graph based on the user model
@@ -71,7 +71,7 @@ public interface IStylingGraphModelFactory {
 	 *            the user model data to use in the node.
 	 * @return the node created or retrieved for the given graph.
 	 */
-	public GraphNode createNode(Graph graph, Object element);
+	public GraphNode createNode(GraphWidget graph, Object element);
 
 	/**
 	 * Creates and returns a connection with the given source and destination
@@ -93,7 +93,7 @@ public interface IStylingGraphModelFactory {
 	 *            the user model data used for the destination node.
 	 * @return the created or retrieved connection for the given graph.
 	 */
-	public GraphConnection createConnection(Graph graph, Object element,
+	public GraphConnection createConnection(GraphWidget graph, Object element,
 			Object source, Object dest);
 
 	/**
@@ -123,7 +123,7 @@ public interface IStylingGraphModelFactory {
 	 * @param element
 	 *            the element to restructure.
 	 */
-	public void refresh(Graph graph, Object element);
+	public void refresh(GraphWidget graph, Object element);
 
 	/**
 	 * Structurally refreshes the graph model nodes and connections associated
@@ -138,7 +138,7 @@ public interface IStylingGraphModelFactory {
 	 * @param updateLabels
 	 *            true if the labels should be updated as well.
 	 */
-	public void refresh(Graph graph, Object element, boolean updateLabels);
+	public void refresh(GraphWidget graph, Object element, boolean updateLabels);
 
 	/**
 	 * Structurally refreshes the entire graph.
@@ -146,7 +146,7 @@ public interface IStylingGraphModelFactory {
 	 * @param graph
 	 *            the graph to refresh;
 	 */
-	public void refreshGraph(Graph graph);
+	public void refreshGraph(GraphWidget graph);
 
 	/**
 	 * Returns the viewer that this factory is building the model for.

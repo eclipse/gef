@@ -12,7 +12,7 @@ package org.eclipse.gef4.zest.core.widgets;
 import org.eclipse.draw2d.IFigure;
 
 /**
- * Interface for listener that can be added to {@link Graph} and receive
+ * Interface for listener that can be added to {@link GraphWidget} and receive
  * notifications when fisheye figures are added, removed or replaced in it.
  * 
  * @since 2.0
@@ -29,7 +29,7 @@ public interface FisheyeListener {
 	 * @param fisheyeFigure
 	 *            the added fisheye figure
 	 */
-	public void fisheyeAdded(Graph graph, IFigure originalFigure,
+	public void fisheyeAdded(GraphWidget graph, IFigure originalFigure,
 			IFigure fisheyeFigure);
 
 	/**
@@ -42,7 +42,7 @@ public interface FisheyeListener {
 	 * @param fisheyeFigure
 	 *            the removed fisheye figure
 	 */
-	public void fisheyeRemoved(Graph graph, IFigure originalFigure,
+	public void fisheyeRemoved(GraphWidget graph, IFigure originalFigure,
 			IFigure fisheyeFigure);
 
 	/**
@@ -56,6 +56,6 @@ public interface FisheyeListener {
 	 * @param newFisheyeFigure
 	 *            fisheye figure that replaces the old figure
 	 */
-	public void fisheyeReplaced(Graph graph, IFigure oldFisheyeFigure,
+	public void fisheyeReplaced(GraphWidget graph, IFigure oldFisheyeFigure,
 			IFigure newFisheyeFigure);
 }

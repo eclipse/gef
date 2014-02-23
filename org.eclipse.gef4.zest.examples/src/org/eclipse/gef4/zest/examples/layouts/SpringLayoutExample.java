@@ -11,7 +11,7 @@ package org.eclipse.gef4.zest.examples.layouts;
 
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -34,7 +34,7 @@ public class SpringLayoutExample {
 		shell.setLayout(new GridLayout(2, false));
 		shell.setSize(500, 500);
 
-		final Graph g = new Graph(shell, SWT.BORDER);
+		final GraphWidget g = new GraphWidget(shell, SWT.BORDER);
 		g.setSize(500, 500);
 		GraphNode root = new GraphNode(g, SWT.NONE, "Root");
 		for (int i = 0; i < 3; i++) {

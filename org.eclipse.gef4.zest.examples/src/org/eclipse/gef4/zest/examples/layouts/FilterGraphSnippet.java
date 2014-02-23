@@ -11,7 +11,7 @@ package org.eclipse.gef4.zest.examples.layouts;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -41,7 +41,7 @@ public class FilterGraphSnippet {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		final Graph graph = new Graph(shell, SWT.NONE);
+		final GraphWidget graph = new GraphWidget(shell, SWT.NONE);
 
 		GraphNode a = new GraphNode(graph, SWT.NONE, "Root");
 		GraphNode b = new GraphNode(graph, SWT.NONE, "B");

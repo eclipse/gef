@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IFigureProvider;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 
@@ -39,7 +39,7 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 	 * 
 	 * @see ca.uvic.cs.zest.internal.graphmodel.IGraphModelFactory#createModel()
 	 */
-	public Graph createGraphModel(Graph model) {
+	public GraphWidget createGraphModel(GraphWidget model) {
 		doBuildGraph(model);
 		return model;
 	}
@@ -51,7 +51,7 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.AbstractStylingModelFactory
 	 * #doBuildGraph(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel)
 	 */
-	protected void doBuildGraph(Graph model) {
+	protected void doBuildGraph(GraphWidget model) {
 		super.doBuildGraph(model);
 		// make the model have the same styles as the viewer
 		Object rels[] = getContentProvider()
@@ -122,7 +122,7 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#refresh
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object)
 	 */
-	public void refresh(Graph graph, Object element) {
+	public void refresh(GraphWidget graph, Object element) {
 		refresh(graph, element, false);
 	}
 
@@ -134,7 +134,7 @@ public class GraphModelFactory extends AbstractStylingModelFactory {
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object,
 	 * boolean)
 	 */
-	public void refresh(Graph graph, Object element, boolean updateLabels) {
+	public void refresh(GraphWidget graph, Object element, boolean updateLabels) {
 		GraphConnection conn = viewer.getGraphModelConnection(element);
 		if (conn == null) {
 			// did the user send us a node? Check all of the connections on the

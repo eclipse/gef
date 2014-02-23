@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.graph.internal.dot.ZestGraphView;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -39,18 +39,18 @@ public final class TestZestGraphView {
 	@Test
 	public void loadGraphFromDot() throws PartInitException,
 			InterruptedException, IOException {
-		Graph g = loadGraphInView(DOT);
+		GraphWidget g = loadGraphInView(DOT);
 		Assert.assertEquals(2, g.getNodes().size());
 		Assert.assertEquals(1, g.getConnections().size());
 	}
 
-	private Graph loadGraphInView(String dot) throws PartInitException {
+	private GraphWidget loadGraphInView(String dot) throws PartInitException {
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
 		ZestGraphView graphView = (ZestGraphView) page
 				.showView(ZestGraphView.ID);
 		graphView.setGraph(dot, false);
-		Graph g = graphView.getGraph();
+		GraphWidget g = graphView.getGraph();
 		return g;
 	}
 }

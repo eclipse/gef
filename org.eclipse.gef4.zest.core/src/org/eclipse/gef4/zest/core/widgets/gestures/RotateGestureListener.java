@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Transform;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
@@ -28,7 +28,7 @@ import org.eclipse.swt.events.GestureListener;
  */
 public class RotateGestureListener implements GestureListener {
 
-	Graph graph;
+	GraphWidget graph;
 	double rotate;
 	List /* <GraphNode> */nodes;
 	List /* <Point> */originalLocations;
@@ -65,12 +65,12 @@ public class RotateGestureListener implements GestureListener {
 	 * .GestureEvent)
 	 */
 	public void gesture(GestureEvent e) {
-		if (!(e.widget instanceof Graph)) {
+		if (!(e.widget instanceof GraphWidget)) {
 			return;
 		}
 		switch (e.detail) {
 		case SWT.GESTURE_BEGIN:
-			graph = (Graph) e.widget;
+			graph = (GraphWidget) e.widget;
 			rotate = 0.0;
 			nodes = graph.getSelection();
 			if (nodes.isEmpty()) {

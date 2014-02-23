@@ -17,7 +17,7 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -86,7 +86,7 @@ public class GraphViewerTests extends TestCase {
 	 * Test creation of a graph viewer from a graph widget.
 	 */
 	public void testCreateFromGraph() {
-		Graph g = new Graph(shell, SWT.NONE);
+		GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		new GraphConnection(g, SWT.NONE, new GraphNode(g, SWT.NONE),
 				new GraphNode(g, SWT.NONE));
 		GraphViewer v = new GraphViewer(g);
@@ -109,7 +109,7 @@ public class GraphViewerTests extends TestCase {
 	 * viewer (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=356449)
 	 */
 	public void testValidSelection() {
-		Graph graph = new Graph(shell, SWT.NONE);
+		GraphWidget graph = new GraphWidget(shell, SWT.NONE);
 		GraphNode n1 = new GraphNode(graph, SWT.NONE);
 		GraphNode n2 = new GraphNode(graph, SWT.NONE);
 		GraphConnection c = new GraphConnection(graph, SWT.NONE, n1, n2);

@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.graph.DotUiMessages;
 import org.eclipse.gef4.graph.internal.dot.export.DotExport;
 import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -97,7 +97,7 @@ public final class ZestGraphView extends ViewPart {
 	private boolean linkImage = false;
 
 	private Composite composite;
-	private Graph graph;
+	private GraphWidget graph;
 	private org.eclipse.gef4.graph.Graph dotGraph;
 	private IFile file;
 
@@ -178,7 +178,7 @@ public final class ZestGraphView extends ViewPart {
 		addLinkModeButton();
 	}
 
-	public Graph getGraph() {
+	public GraphWidget getGraph() {
 		return graph;
 	}
 

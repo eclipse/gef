@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.widgets.DefaultSubgraph;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -31,7 +31,7 @@ public class SpaceTreeBuilding {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 
 		hookMenu(g);
 
@@ -55,14 +55,14 @@ public class SpaceTreeBuilding {
 		}
 	}
 
-	private static void tryToAddConnection(Graph g) {
+	private static void tryToAddConnection(GraphWidget g) {
 		if (parentNode != null && childNode != null) {
 			new GraphConnection(g, SWT.NONE, parentNode, childNode);
 			parentNode = childNode = null;
 		}
 	}
 
-	private static void hookMenu(final Graph g) {
+	private static void hookMenu(final GraphWidget g) {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 
 		Action parentAction = new Action() {

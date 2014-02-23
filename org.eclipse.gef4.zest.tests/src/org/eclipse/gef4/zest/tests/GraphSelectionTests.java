@@ -14,7 +14,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Selection-related tests for the {@link Graph} class.
+ * Selection-related tests for the {@link GraphWidget} class.
  * 
  * @author Fabian Steeg (fsteeg)
  * 
@@ -37,10 +37,10 @@ public class GraphSelectionTests extends TestCase {
 
 	private GraphNode[] nodes;
 
-	private Graph graph;
+	private GraphWidget graph;
 
 	protected void setUp() throws Exception {
-		graph = new Graph(new Shell(), STYLE);
+		graph = new GraphWidget(new Shell(), STYLE);
 		nodes = new GraphNode[] { new GraphNode(graph, STYLE),
 				new GraphNode(graph, STYLE) };
 		new GraphConnection(graph, STYLE, nodes[0], nodes[1]);

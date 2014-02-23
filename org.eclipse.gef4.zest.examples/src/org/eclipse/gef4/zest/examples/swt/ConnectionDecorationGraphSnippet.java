@@ -15,7 +15,7 @@ import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.decoration.AbstractConnectionDecorator;
@@ -51,7 +51,7 @@ public class ConnectionDecorationGraphSnippet {
 		Button b = new Button(shell, SWT.PUSH);
 		b.setText("Change Decoration");
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setDefaultConnectionDecorator(new AbstractConnectionDecorator() {
 
 			public RotatableDecoration createTargetDecoration(

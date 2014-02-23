@@ -21,7 +21,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IFigureProvider;
 import org.eclipse.gef4.zest.core.viewers.INestedContentProvider;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
@@ -160,7 +160,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
 	 * java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
-	public GraphConnection createConnection(Graph graph, Object element,
+	public GraphConnection createConnection(GraphWidget graph, Object element,
 			Object source, Object dest) {
 		if (source == null || dest == null) {
 			return null;
@@ -196,7 +196,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * createNode(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
 	 * java.lang.Object)
 	 */
-	public GraphNode createNode(Graph graph, Object element, IFigure figure) {
+	public GraphNode createNode(GraphWidget graph, Object element, IFigure figure) {
 		GraphNode node = null;
 		if (getContentProvider() instanceof INestedContentProvider) {
 			boolean isContainer = ((INestedContentProvider) getContentProvider())
@@ -224,7 +224,7 @@ public abstract class AbstractStylingModelFactory implements
 		return node;
 	}
 
-	public GraphNode createNode(Graph graph, Object element) {
+	public GraphNode createNode(GraphWidget graph, Object element) {
 		IFigure nodeFigure = null;
 		if (getLabelProvider() instanceof IFigureProvider) {
 			nodeFigure = ((IFigureProvider) getLabelProvider())
@@ -280,7 +280,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * refreshGraph(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel)
 	 */
-	public void refreshGraph(Graph graph) {
+	public void refreshGraph(GraphWidget graph) {
 		// with this kind of graph, it is just as easy and cost-effective to
 		// rebuild the whole thing.
 
@@ -328,7 +328,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * 
 	 * @param graph
 	 */
-	public void clearGraph(Graph graph) {
+	public void clearGraph(GraphWidget graph) {
 		graph.setSelection(null);
 		Object[] nodeElements = viewer.getNodeElements();
 		for (int i = 0; i < nodeElements.length; i++) {
@@ -346,7 +346,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * 
 	 * @param graph
 	 */
-	protected void doBuildGraph(Graph model) {
+	protected void doBuildGraph(GraphWidget model) {
 		clearGraph(model);
 		model.setConnectionStyle(getConnectionStyle());
 		model.setNodeStyle(getNodeStyle());
@@ -394,7 +394,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * #refresh (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel,
 	 * java.lang.Object)
 	 */
-	public void refresh(Graph graph, Object element) {
+	public void refresh(GraphWidget graph, Object element) {
 		refresh(graph, element, false);
 	}
 
@@ -403,7 +403,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * 
 	 * @return GraphModelNode[]
 	 */
-	protected GraphNode[] getNodesArray(Graph graph) {
+	protected GraphNode[] getNodesArray(GraphWidget graph) {
 		GraphNode[] nodesArray = new GraphNode[graph.getNodes().size()];
 		nodesArray = (GraphNode[]) graph.getNodes().toArray(nodesArray);
 		return nodesArray;
@@ -416,7 +416,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * @param graph
 	 * @return
 	 */
-	protected GraphConnection[] getConnectionArray(Graph graph) {
+	protected GraphConnection[] getConnectionArray(GraphWidget graph) {
 		GraphConnection[] connectionArray = new GraphConnection[graph
 				.getConnections().size()];
 		connectionArray = (GraphConnection[]) graph.getConnections().toArray(

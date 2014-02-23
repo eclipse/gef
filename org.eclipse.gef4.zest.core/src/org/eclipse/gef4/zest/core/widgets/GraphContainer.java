@@ -288,7 +288,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * 
 	 * @since 2.0
 	 */
-	public GraphContainer(Graph graph, int style) {
+	public GraphContainer(GraphWidget graph, int style) {
 		super(graph, style);
 		initModel(graph, "", null);
 		close(false);
@@ -297,17 +297,17 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)},
+	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(GraphWidget, int)},
 	 *             {@link #setText(String)}, and {@link #setImage(Image)}
 	 */
-	public GraphContainer(Graph graph, int style, String text, Image image) {
+	public GraphContainer(GraphWidget graph, int style, String text, Image image) {
 		this(graph, style);
 		setText(text);
 		setImage(image);
 	}
 
 	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(Graph, int)}.
+	 * @deprecated Since Zest 2.0, use {@link #GraphContainer(GraphWidget, int)}.
 	 */
 	public GraphContainer(GraphContainer container, int style) {
 		this(container.getGraph(), style);
@@ -417,7 +417,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 				+ node.getBounds().width > left);
 	}
 
-	void pack(Graph g) {
+	void pack(GraphWidget g) {
 		GraphNode highestNode = getHighestNode(g);
 		moveNodesUp(highestNode.getBounds(), highestNode);
 	}
@@ -427,7 +427,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * @param g
 	 * @return
 	 */
-	static GraphNode getHighestNode(Graph g) {
+	static GraphNode getHighestNode(GraphWidget g) {
 		Iterator iterator = g.getNodes().iterator();
 		GraphNode lowest /* highest on the screen */= null;
 
@@ -632,7 +632,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	/**
 	 * Gets the graph that this container has been added to.
 	 */
-	public Graph getGraph() {
+	public GraphWidget getGraph() {
 		return this.graph;
 	}
 

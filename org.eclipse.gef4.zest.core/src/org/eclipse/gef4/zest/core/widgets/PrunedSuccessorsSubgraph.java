@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Display;
 /**
  * A subgraph that for each unexpanded node in a graph adds a label showing
  * number of pruned successors (as unexpanded node is considered a node for
- * which {@link Graph#canExpand(GraphNode)} returns true AND
- * {@link Graph#canCollapse(GraphNode)} returns false). It doesn't matter which
+ * which {@link GraphWidget#canExpand(GraphNode)} returns true AND
+ * {@link GraphWidget#canCollapse(GraphNode)} returns false). It doesn't matter which
  * subgraph a node is pruned to, so the factory for this subgraph uses one
  * instance for whole layout context.
  */
@@ -83,7 +83,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private final FisheyeListener fisheyeListener = new FisheyeListener() {
 
-		public void fisheyeReplaced(Graph graph, IFigure oldFisheyeFigure,
+		public void fisheyeReplaced(GraphWidget graph, IFigure oldFisheyeFigure,
 				IFigure newFisheyeFigure) {
 			oldFisheyeFigure.removeFigureListener(nodeFigureListener);
 			newFisheyeFigure.addFigureListener(nodeFigureListener);
@@ -99,13 +99,13 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 			refreshLabelBounds(newFisheyeFigure, label);
 		}
 
-		public void fisheyeRemoved(Graph graph, IFigure originalFigure,
+		public void fisheyeRemoved(GraphWidget graph, IFigure originalFigure,
 				IFigure fisheyeFigure) {
 			// do nothing - labelAncestorListener will take care of cleaning
 			// up
 		}
 
-		public void fisheyeAdded(Graph graph, IFigure originalFigure,
+		public void fisheyeAdded(GraphWidget graph, IFigure originalFigure,
 				IFigure fisheyeFigure) {
 			originalFigure.removeFigureListener(nodeFigureListener);
 			fisheyeFigure.addFigureListener(nodeFigureListener);

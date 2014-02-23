@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer;
 import org.eclipse.gef4.zest.core.viewers.EntityConnectionData;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityContentProvider;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -42,7 +42,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 	 * @seeorg.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#
 	 * createGraphModel()
 	 */
-	public Graph createGraphModel(Graph model) {
+	public GraphWidget createGraphModel(GraphWidget model) {
 		doBuildGraph(model);
 		return model;
 	}
@@ -54,7 +54,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.AbstractStylingModelFactory
 	 * #doBuildGraph(org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel)
 	 */
-	protected void doBuildGraph(Graph model) {
+	protected void doBuildGraph(GraphWidget model) {
 		super.doBuildGraph(model);
 		Object inputElement = getViewer().getInput();
 		Object entities[] = getContentProvider().getElements(inputElement);
@@ -108,7 +108,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 	 * org.eclipse.gef4.zest.core.internal.graphmodel.IStylingGraphModelFactory#refresh
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object)
 	 */
-	public void refresh(Graph graph, Object element, boolean refreshLabels) {
+	public void refresh(GraphWidget graph, Object element, boolean refreshLabels) {
 		if (element == null) {
 			return;
 		}
@@ -148,7 +148,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 	 * @param element
 	 * @param refreshLabels
 	 */
-	private void reconnect(Graph graph, Object element, boolean refreshLabels) {
+	private void reconnect(GraphWidget graph, Object element, boolean refreshLabels) {
 		GraphNode node = viewer.getGraphModelNode(element);
 		Object[] related = ((IGraphEntityContentProvider) getContentProvider())
 				.getConnectedTo(element);
@@ -213,7 +213,7 @@ public class GraphModelEntityFactory extends AbstractStylingModelFactory {
 	 * (org.eclipse.gef4.zest.core.internal.graphmodel.GraphModel, java.lang.Object,
 	 * boolean)
 	 */
-	public void refresh(Graph graph, Object element) {
+	public void refresh(GraphWidget graph, Object element) {
 		refresh(graph, element, false);
 	}
 

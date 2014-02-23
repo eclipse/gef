@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * @since 1.0
  */
-public class Graph extends FigureCanvas implements IContainer {
+public class GraphWidget extends FigureCanvas implements IContainer {
 
 	// CLASS CONSTANTS
 	public static final int ANIMATION_TIME = 500;
@@ -127,7 +127,7 @@ public class Graph extends FigureCanvas implements IContainer {
 	 * @see ZestStyles#GESTURES_DISABLED
 	 * @see ZestStyles#ANIMATION_DISABLED
 	 */
-	public Graph(Composite parent, int style) {
+	public GraphWidget(Composite parent, int style) {
 		super(parent, (style | SWT.DOUBLE_BUFFERED) & ~ZestStyles.GRAPH_STYLES);
 		this.style = style;
 		this.setBackground(ColorConstants.white);
@@ -136,13 +136,13 @@ public class Graph extends FigureCanvas implements IContainer {
 
 		this.getVerticalBar().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Graph.this.redraw();
+				GraphWidget.this.redraw();
 			}
 
 		});
 		this.getHorizontalBar().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Graph.this.redraw();
+				GraphWidget.this.redraw();
 			}
 		});
 
@@ -450,7 +450,7 @@ public class Graph extends FigureCanvas implements IContainer {
 								}
 								getLightweightSystem().getUpdateManager()
 										.performUpdate();
-								synchronized (Graph.this) {
+								synchronized (GraphWidget.this) {
 									scheduledLayoutRunnable = null;
 									scheduledLayoutClean = false;
 								}
@@ -821,7 +821,7 @@ public class Graph extends FigureCanvas implements IContainer {
 				}
 				// If the figure under the mouse is the canvas, and CTRL/CMD is
 				// not being held down, then select nothing
-				if (figureUnderMouse == null || figureUnderMouse == Graph.this) {
+				if (figureUnderMouse == null || figureUnderMouse == GraphWidget.this) {
 					if ((me.getState() & SWT.MOD1) == 0) {
 						clearSelection();
 						if (hasSelection) {
@@ -1270,7 +1270,7 @@ public class Graph extends FigureCanvas implements IContainer {
 		return layoutContext.canCollapse(node.getLayout());
 	}
 
-	public Graph getGraph() {
+	public GraphWidget getGraph() {
 		return this;
 	}
 

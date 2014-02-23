@@ -14,7 +14,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 /**
- * Factory used by {@link Graph} to create subgraphs. One instance of
+ * Factory used by {@link GraphWidget} to create subgraphs. One instance of
  * SubgraphFactory can be used with multiple graphs unless explicitly stated
  * otherwise.
  * 

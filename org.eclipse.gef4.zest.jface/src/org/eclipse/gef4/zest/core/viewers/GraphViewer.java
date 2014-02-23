@@ -19,7 +19,7 @@ import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityRelationshipF
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.TreeModelEntityFactory;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.zooming.ZoomManager;
@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Widget;
 public class GraphViewer extends AbstractStructuredGraphViewer implements
 		ISelectionProvider {
 
-	protected Graph graph = null;
+	protected GraphWidget graph = null;
 	private IStylingGraphModelFactory modelFactory = null;
 	private List selectionChangedListeners = null;
 
@@ -75,7 +75,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 */
 	public GraphViewer(Composite composite, int style) {
 		super(style);
-		this.graph = new Graph(composite, style);
+		this.graph = new GraphWidget(composite, style);
 		hookControl(this.graph);
 	}
 
@@ -85,7 +85,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @param graph
 	 *            The initial graph widget
 	 */
-	public GraphViewer(Graph graph) {
+	public GraphViewer(GraphWidget graph) {
 		super(graph.getStyle());
 		this.graph = graph;
 		hookControl(this.graph);
@@ -156,7 +156,7 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#
 	 * getGraphControl()
 	 */
-	public Graph getGraphControl() {
+	public GraphWidget getGraphControl() {
 		return super.getGraphControl();
 	};
 

@@ -2,7 +2,7 @@ package org.eclipse.gef4.zest.examples.layouts;
 
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
@@ -19,7 +19,7 @@ public class RadialLayoutExample {
 		shell.setLayout(new FillLayout());
 		shell.setSize(500, 500);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setSize(500, 500);
 		GraphNode root = new GraphNode(g, SWT.NONE, "Root");
 		for (int i = 0; i < 3; i++) {

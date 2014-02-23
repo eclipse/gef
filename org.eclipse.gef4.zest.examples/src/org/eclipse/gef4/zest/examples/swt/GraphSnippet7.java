@@ -10,7 +10,7 @@
 package org.eclipse.gef4.zest.examples.swt;
 
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.swt.SWT;
@@ -39,7 +39,7 @@ public class GraphSnippet7 {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		final Graph g = new Graph(shell, SWT.NONE);
+		final GraphWidget g = new GraphWidget(shell, SWT.NONE);
 
 		GraphNode n = new GraphNode(g, SWT.NONE, "Paper");
 		GraphNode n2 = new GraphNode(g, SWT.NONE, "Rock");

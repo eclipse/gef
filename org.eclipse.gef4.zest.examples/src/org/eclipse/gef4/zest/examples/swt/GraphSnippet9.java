@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.examples.swt;
 
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
@@ -36,7 +36,7 @@ public class GraphSnippet9 {
 		shell.setLayout(new FillLayout());
 		shell.setSize(400, 400);
 
-		final Graph graph = new Graph(shell, SWT.NONE);
+		final GraphWidget graph = new GraphWidget(shell, SWT.NONE);
 
 		GraphNode a = new GraphNode(graph, ZestStyles.CONNECTIONS_DIRECTED,
 				"Root");

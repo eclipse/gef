@@ -11,7 +11,7 @@ package org.eclipse.gef4.zest.core.viewers.internal;
 
 import org.eclipse.gef4.zest.core.viewers.AbstractStructuredGraphViewer;
 import org.eclipse.gef4.zest.core.viewers.EntityConnectionData;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -31,13 +31,13 @@ public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 	}
 
 	@Override
-	public Graph createGraphModel(Graph model) {
+	public GraphWidget createGraphModel(GraphWidget model) {
 		doBuildGraph(model);
 		return model;
 	}
 
 	@Override
-	protected void doBuildGraph(Graph model) {
+	protected void doBuildGraph(GraphWidget model) {
 		super.doBuildGraph(model);
 		Object inputElement = getViewer().getInput();
 		ITreeContentProvider provider = (ITreeContentProvider) getContentProvider();
@@ -49,7 +49,7 @@ public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 		}
 	}
 
-	private GraphNode createGraphNodes(Graph model, Object data,
+	private GraphNode createGraphNodes(GraphWidget model, Object data,
 			ITreeContentProvider provider) {
 		GraphNode node = createNode(model, data);
 		if (provider.hasChildren(data)) {
@@ -64,7 +64,7 @@ public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 	}
 
 	@Override
-	public void refresh(Graph graph, Object element, boolean updateLabels) {
+	public void refresh(GraphWidget graph, Object element, boolean updateLabels) {
 		if (element == null) {
 			return;
 		}
@@ -93,7 +93,7 @@ public class TreeModelEntityFactory extends AbstractStylingModelFactory {
 	 * @param element
 	 * @param updateLabels
 	 */
-	private void reconnect(Graph graph, Object element, boolean updateLabels) {
+	private void reconnect(GraphWidget graph, Object element, boolean updateLabels) {
 		GraphNode sourceNode = viewer.getGraphModelNode(element);
 		Object[] children = ((ITreeContentProvider) getContentProvider())
 				.getChildren(element);

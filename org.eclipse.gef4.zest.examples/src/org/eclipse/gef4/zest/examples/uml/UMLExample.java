@@ -13,7 +13,7 @@ package org.eclipse.gef4.zest.examples.uml;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.Graph;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
@@ -112,7 +112,7 @@ public class UMLExample {
 		Image publicField = new Image(Display.getDefault(),
 				UMLClassFigure.class.getResourceAsStream("methpub_obj.gif"));
 
-		Graph g = new Graph(shell, SWT.NONE);
+		GraphWidget g = new GraphWidget(shell, SWT.NONE);
 		g.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		GraphContainer c = new GraphContainer(g, SWT.NONE);
 		c.setText("A UML Container");
