@@ -299,6 +299,11 @@
 		<module>../org.eclipse.gef4.graph.tests</module>
 		
 		<module>../org.eclipse.gef4.layout</module>
+		<module>../org.eclipse.gef4.layout-feature</module>
+		<module>../org.eclipse.gef4.layout.source-feature</module>
+		<module>../org.eclipse.gef4.layout.doc</module>
+		<module>../org.eclipse.gef4.layout.doc-feature</module>
+		<module>../org.eclipse.gef4.layout.sdk-feature</module>
 		
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>

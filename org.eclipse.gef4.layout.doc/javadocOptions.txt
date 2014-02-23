@@ -1,0 +1,19 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef4.layout/src"
+-d reference/api
+-classpath "@rt@@args.list.delimiter@@context@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF4 Layout API Reference"
+-doctitle "GEF4 Layout API Reference"
+-header "<b>GEF4 Layout</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
+-link http://docs.oracle.com/javase/1.5.0/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
+
+org.eclipse.gef4.layout
+org.eclipse.gef4.layout.algorithms
+org.eclipse.gef4.layout.interfaces
