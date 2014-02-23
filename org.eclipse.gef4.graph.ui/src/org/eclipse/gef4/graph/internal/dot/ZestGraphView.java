@@ -208,7 +208,7 @@ public final class ZestGraphView extends ViewPart {
 						return;
 					}
 					dotGraph = dotImport.newGraphInstance();
-					graph = new ZestGraph(composite, SWT.None, dotGraph);
+					graph = new GraphWidget(dotGraph, composite, SWT.None);
 					setupLayout();
 					composite.layout();
 					graph.applyLayout();

@@ -11,14 +11,13 @@ package org.eclipse.gef4.zest.tests.dot;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.gef4.graph.internal.dot.DotImport;
-import org.eclipse.gef4.graph.internal.dot.ZestGraph;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -39,8 +38,8 @@ public final class TestGraphInstanceDotImport {
 		/* The DOT input, can be given as a String, File or IFile: */
 		DotImport dotImport = new DotImport("digraph Simple { 1;2; 1->2 }"); //$NON-NLS-1$
 		/* Create a Zest graph instance in a parent, with a style: */
-		GraphWidget graph = new ZestGraph(shell, SWT.NONE,
-				dotImport.newGraphInstance());
+		GraphWidget graph = new GraphWidget(dotImport.newGraphInstance(),
+				shell, SWT.NONE);
 		// open(shell); // sets title, layout, and size, opens the shell
 		System.out.println(graph);
 	}
@@ -49,8 +48,8 @@ public final class TestGraphInstanceDotImport {
 	public void dotImport() {
 		Shell shell = new Shell();
 		DotImport importer = new DotImport("digraph Sample{1;2;1->2}"); //$NON-NLS-1$
-		GraphWidget graph = new ZestGraph(shell, SWT.NONE,
-				importer.newGraphInstance());
+		GraphWidget graph = new GraphWidget(importer.newGraphInstance(), shell,
+				SWT.NONE);
 		Assert.assertNotNull("Created graph must not be null", graph); //$NON-NLS-1$
 		Assert.assertEquals(ZestStyles.CONNECTIONS_DIRECTED,
 				graph.getConnectionStyle());
@@ -59,8 +58,9 @@ public final class TestGraphInstanceDotImport {
 
 	@Test
 	public void undeclaredNodes() {
-		GraphWidget graph = new ZestGraph(new Shell(), SWT.NONE, new DotImport(
-				"digraph{1->2;1->3}").newGraphInstance());
+		GraphWidget graph = new GraphWidget(
+				new DotImport("digraph{1->2;1->3}").newGraphInstance(),
+				new Shell(), SWT.NONE);
 		Assert.assertEquals(3, graph.getNodes().size());
 		Assert.assertEquals(2, graph.getConnections().size());
 	}
@@ -70,8 +70,8 @@ public final class TestGraphInstanceDotImport {
 		Shell shell = new Shell();
 		DotImport dotImport = new DotImport(
 				"digraph{subgraph {1->2}; subgraph {1->3}}");
-		GraphWidget graph = new ZestGraph(shell, SWT.NONE,
-				dotImport.newGraphInstance());
+		GraphWidget graph = new GraphWidget(dotImport.newGraphInstance(),
+				shell, SWT.NONE);
 		assertEquals("Non-cluster subgraphs should be ignored in rendering", 3,
 				graph.getNodes().size());
 		assertEquals(2, graph.getConnections().size());
@@ -82,8 +82,8 @@ public final class TestGraphInstanceDotImport {
 		Shell shell = new Shell();
 		DotImport dotImport = new DotImport(
 				"digraph{subgraph cluster_1{1->2}; subgraph cluster_2{1->3}}");
-		GraphWidget graph = new ZestGraph(shell, SWT.NONE,
-				dotImport.newGraphInstance());
+		GraphWidget graph = new GraphWidget(dotImport.newGraphInstance(),
+				shell, SWT.NONE);
 		assertEquals("Cluster subgraphs are ignored in rendering", 3, graph
 				.getNodes().size());
 		assertEquals(2, graph.getConnections().size());
@@ -376,9 +376,9 @@ public final class TestGraphInstanceDotImport {
 		parse("graph Sample{graph[layout=cool];1;}"); //$NON-NLS-1$
 	}
 
-	private ZestGraph parse(String dot) {
-		return new ZestGraph(new Shell(), SWT.NONE,
-				new DotImport(dot).newGraphInstance());
+	private GraphWidget parse(String dot) {
+		return new GraphWidget(new DotImport(dot).newGraphInstance(),
+				new Shell(), SWT.NONE);
 	}
 
 	@SuppressWarnings("unused")
