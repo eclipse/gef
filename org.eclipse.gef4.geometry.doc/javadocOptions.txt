@@ -10,7 +10,7 @@
 -windowtitle "GEF4 Geometry API Reference"
 -doctitle "GEF4 Geometry API Reference"
 -header "<b>GEF4 Geometry</b><br>@build@"
--bottom "Copyright (c) 2000, 2011 IBM Corporation, itemis AG, and others. All rights reserved."
+-bottom "Copyright (c) 2014 itemis AG, and others. All rights reserved."
 -link http://docs.oracle.com/javase/1.5.0/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
