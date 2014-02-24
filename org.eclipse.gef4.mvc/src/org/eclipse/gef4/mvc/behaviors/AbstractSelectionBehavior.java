@@ -106,7 +106,7 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 			handles.clear();
 		}
 	}
-
+	
 	protected abstract void hideFeedback();
 
 	public List<IHandlePart<V>> createHandles(List<IContentPart<V>> targets) {

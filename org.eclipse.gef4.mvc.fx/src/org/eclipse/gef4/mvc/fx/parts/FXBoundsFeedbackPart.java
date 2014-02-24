@@ -17,6 +17,9 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.planar.IGeometry;
+
 /**
  * A handle part used for showing feedback based on layout bounds of an
  * underlying target part
@@ -28,17 +31,20 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
 	private static final Color INVISIBLE = new Color(0, 0, 0, 0);
 
-	private Rectangle feedbackVisual;
+	private FXGeometryNode<? extends IGeometry> feedbackVisual;
+//	private Rectangle feedbackVisual;
 	private Node targetVisual;
 
-	public FXBoundsFeedbackPart(Node targetVisual, Effect effect) {
+	public FXBoundsFeedbackPart(Node targetVisual, FXGeometryNode<? extends IGeometry> feedbackVisual, Effect effect) {
 		this.targetVisual = targetVisual;
-		this.feedbackVisual = new Rectangle();
+		this.feedbackVisual = feedbackVisual;
+//		this.feedbackVisual = new Rectangle();
 		this.feedbackVisual.setStroke(Color.web("#5a61af"));
 		this.feedbackVisual.setStrokeWidth(1);
 		this.feedbackVisual.setFill(INVISIBLE);
 		this.feedbackVisual.setEffect(effect);
 		this.feedbackVisual.setMouseTransparent(true);
+		this.feedbackVisual.setManaged(false);
 	}
 
 	@Override
@@ -58,7 +64,8 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
 		feedbackVisual.setLayoutX(x);
 		feedbackVisual.setLayoutY(y);
-		feedbackVisual.setWidth(width);
-		feedbackVisual.setHeight(height);
+		feedbackVisual.resize(width, height);
+//		feedbackVisual.setWidth(width);
+//		feedbackVisual.setHeight(height);
 	}
 }

@@ -19,6 +19,19 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 
 public class BehaviorUtils {
 
+	/**
+	 * Adds the given list of {@link IHandlePart}s as children to the given
+	 * {@link IRootPart}. Additionally, all handles are added as anchoreds to
+	 * the given list of {@link IContentPart}s.
+	 * 
+	 * @param root
+	 *            root part
+	 * @param anchorages
+	 *            content parts
+	 * @param handles
+	 *            handle parts
+	 * @see #removeHandles(IRootPart, List, List)
+	 */
 	public static <V> void addHandles(IRootPart<V> root,
 			List<IContentPart<V>> anchorages, List<IHandlePart<V>> handles) {
 		if (handles != null && !handles.isEmpty()) {
@@ -29,13 +42,24 @@ public class BehaviorUtils {
 		}
 	}
 
+	/**
+	 * Removes the given list of {@link IHandlePart}s from the given
+	 * {@link IRootPart}. Additionally, all handles are removed from the
+	 * anchoreds of the given {@link IContentPart}s.
+	 * 
+	 * @param root
+	 * @param anchorages
+	 * @param handles
+	 * @see #addHandles(IRootPart, List, List)
+	 */
 	public static <V> void removeHandles(IRootPart<V> root,
 			List<IContentPart<V>> anchorages, List<IHandlePart<V>> handles) {
 		if (handles != null && !handles.isEmpty()) {
 			root.removeChildren(handles);
-			for(IContentPart<V> anchorage : anchorages){
+			for (IContentPart<V> anchorage : anchorages) {
 				anchorage.removeAnchoreds(handles);
 			}
 		}
 	}
+	
 }

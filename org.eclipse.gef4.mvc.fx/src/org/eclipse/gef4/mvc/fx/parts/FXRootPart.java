@@ -84,7 +84,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	protected Pane createFeedbackLayer() {
-		return createLayer(true);
+		Pane feedbackLayer = createLayer(true);
+		return feedbackLayer;
 	}
 
 	protected Parent createScrollPaneInput(StackPane layersStackPane) {

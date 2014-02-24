@@ -14,8 +14,9 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
-import javafx.scene.paint.Color;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXBoundsFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -28,7 +29,7 @@ public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 
 	private void showFeedback(Effect effect) {
 		feedbackPart = new FXBoundsFeedbackPart(
-				((IContentPart<Node>) getHost()).getVisual(), effect);
+				((IContentPart<Node>) getHost()).getVisual(), new FXGeometryNode<Rectangle>(new Rectangle()), effect);
 		getHost().getRoot().addChild(feedbackPart);
 		getHost().addAnchored(feedbackPart);
 	}
