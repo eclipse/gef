@@ -47,8 +47,15 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
-			if (state != State.INIT)
-				return;
+			if (state != State.INIT) {
+				/*
+				 * XXX: We got trapped in PERFORM state, which should not be
+				 * possible, but happens at times... As a workaround, we call
+				 * release with dx = 0 and dy = 0.
+				 */
+				state = State.INIT;
+				release(targetNode, e, 0, 0);
+			}
 
 			ox = e.getSceneX();
 			oy = e.getSceneY();
