@@ -29,8 +29,8 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 
 		IRootPart<Node> root = getHost().getRoot();
 		if (root instanceof FXRootPart) {
-			FXRootPart fxRvp = (FXRootPart) root;
-			Parent layers = fxRvp.getContentLayer().getParent();
+			FXRootPart fxRootPart = (FXRootPart) root;
+			Parent layers = fxRootPart.getLayerStackPane();
 			if (layers != null) {
 				layers.setScaleX(zoomFactor);
 				layers.setScaleY(zoomFactor);

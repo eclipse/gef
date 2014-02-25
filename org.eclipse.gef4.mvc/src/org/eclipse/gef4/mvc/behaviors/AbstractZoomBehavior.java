@@ -24,9 +24,21 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
  * @author wienand
  * 
  */
-abstract public class AbstractZoomBehavior<V> extends AbstractBehavior<V>
+public abstract class AbstractZoomBehavior<V> extends AbstractBehavior<V>
 		implements PropertyChangeListener {
 
+	@Override
+	public void activate() {
+		super.activate();
+		getHost().getRoot().getViewer().getZoomModel().addPropertyChangeListener(this);
+	}
+	
+	@Override
+	public void deactivate() {
+		getHost().getRoot().getViewer().getZoomModel().removePropertyChangeListener(this);
+		super.deactivate();
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (IZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {

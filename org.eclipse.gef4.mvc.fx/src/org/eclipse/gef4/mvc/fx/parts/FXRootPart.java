@@ -102,6 +102,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	public ScrollPane getScrollPane() {
 		return scrollPane;
 	}
+	
+	public StackPane getLayerStackPane(){
+		return layersStackPane;
+	}
 
 	public Pane getHandleLayer() {
 		return handleLayer;
