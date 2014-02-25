@@ -237,12 +237,10 @@
 		<module>../org.eclipse.gef4.geometry-feature</module>
 		<module>../org.eclipse.gef4.geometry.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.tests</module>
-		<module>../org.eclipse.gef4.geometry.tests-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt.tests</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt.tests-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx.source-feature</module>
@@ -253,8 +251,7 @@
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
 		<module>../org.eclipse.gef4.fx.source-feature</module>
-		<!-- <module>../org.eclipse.gef4.fxfx.tests</module>
-		<module>../org.eclipse.gef4.fxfx.tests-feature</module> 
+		<!-- <module>../org.eclipse.gef4.fx.tests</module>
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>-->
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
@@ -262,8 +259,7 @@
 		<module>../org.eclipse.gef4.swtfx</module>
 		<module>../org.eclipse.gef4.swtfx-feature</module>
 		<module>../org.eclipse.gef4.swtfx.source-feature</module>
-		<!-- <module>../org.eclipse.gef4.swtfx.tests</module>
-		<module>../org.eclipse.gef4.swtfx.tests-feature</module> -->
+		<!-- <module>../org.eclipse.gef4.swtfx.tests</module>-->
 		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
@@ -289,7 +285,6 @@
 		<module>../org.eclipse.gef4.cloudio-feature</module>
 		<module>../org.eclipse.gef4.cloudio.source-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests</module>
-		<module>../org.eclipse.gef4.cloudio.tests-feature</module>
 		<module>../org.eclipse.gef4.cloudio.doc</module>
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>

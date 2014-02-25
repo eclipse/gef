@@ -9,9 +9,6 @@
    <feature url="features/org.eclipse.gef4.geometry.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.geometry.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.tests" version="0.1.0.qualifier">
-      <category name="GEF4 Geometry"/>
-   </feature>
    <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
@@ -40,9 +37,6 @@
       <category name="GEF4 Cloudio"/>
    </feature>
    <feature url="features/org.eclipse.gef4.cloudio.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.sdk" version="0.1.0.qualifier">
-      <category name="GEF4 Cloudio"/>
-   </feature>
-   <feature url="features/org.eclipse.gef4.cloudio.tests_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.tests" version="0.1.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
    <feature url="features/org.eclipse.gef4.mvc_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc" version="0.1.0.qualifier">
