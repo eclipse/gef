@@ -24,45 +24,49 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> implements PropertyChangeListener {
+public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V>
+		implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
-		if(getHost() == getHost().getRoot()){
-			getHost().getRoot().getViewer().getContentModel().addPropertyChangeListener(this);;
-		}
-		else {
+		if (getHost() == getHost().getRoot()) {
+			getHost().getRoot().getViewer().getContentModel()
+					.addPropertyChangeListener(this);
+			;
+		} else {
 			getHost().addPropertyChangeListener(this);
 		}
 	}
-	
+
 	@Override
 	public void deactivate() {
-		if(getHost() == getHost().getRoot()){
-			getHost().getRoot().getViewer().getContentModel().removePropertyChangeListener(this);;
-		}
-		else {
+		if (getHost() == getHost().getRoot()) {
+			getHost().getRoot().getViewer().getContentModel()
+					.removePropertyChangeListener(this);
+			;
+		} else {
 			getHost().removePropertyChangeListener(this);
 		}
 		super.deactivate();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if(IContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())){
-			synchronizeContentChildren((List<Object>)event.getNewValue());
-		}
-		else if (IContentPart.CONTENT_PROPERTY.equals(event.getPropertyName())){
-			synchronizeContentChildren(((IContentPart<V>)getHost()).getContentChildren());
-			synchronizeContentAnchored(((IContentPart<V>)getHost()).getContentAnchored());
+		if (IContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())) {
+			synchronizeContentChildren((List<Object>) event.getNewValue());
+		} else if (IContentPart.CONTENT_PROPERTY
+				.equals(event.getPropertyName())) {
+			synchronizeContentChildren(((IContentPart<V>) getHost())
+					.getContentChildren());
+			synchronizeContentAnchored(((IContentPart<V>) getHost())
+					.getContentAnchored());
 		}
 	}
-	
+
 	/**
 	 * Updates the set of children EditParts so that it is in sync with the
 	 * model children. This method is called from {@link #refresh()}, and may
@@ -127,8 +131,8 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> i
 		}
 
 		// remove the remaining EditParts
-		contentPartChildren = PartUtils.filterParts(
-				getHost().getChildren(), IContentPart.class);
+		contentPartChildren = PartUtils.filterParts(getHost().getChildren(),
+				IContentPart.class);
 		size = contentPartChildren.size();
 		if (i < size) {
 			List<IContentPart<V>> trash = new ArrayList<IContentPart<V>>(size
@@ -142,7 +146,7 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> i
 			}
 		}
 	}
-	
+
 	/**
 	 * Create the child <code>EditPart</code> for the given model object. This
 	 * method is called from {@link #synchronizeContentChildren()}.
@@ -156,28 +160,29 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> i
 	 * @return The child EditPart
 	 */
 	protected IContentPart<V> findOrCreatePartFor(Object model) {
-		Map<Object, IContentPart<V>> contentPartMap = getHost().getRoot().getViewer().getContentPartMap();
+		Map<Object, IContentPart<V>> contentPartMap = getHost().getRoot()
+				.getViewer().getContentPartMap();
 		if (contentPartMap.containsKey(model)) {
 			return contentPartMap.get(model);
 		} else {
-			IContentPartFactory<V> contentPartFactory = getHost().getRoot().getViewer().getContentPartFactory();
-			IContentPart<V> contentPart = getHost() == getHost().getRoot() ? contentPartFactory
-					.createRootContentPart((IRootPart<V>) getHost(), model) : contentPartFactory.createChildContentPart((IContentPart<V>) getHost(), model);
+			IContentPartFactory<V> contentPartFactory = getHost().getRoot()
+					.getViewer().getContentPartFactory();
+			IContentPart<V> contentPart = contentPartFactory.createContentPart(
+					model, this);
 			contentPart.setContent(model);
 			contentPartMap.put(model, contentPart);
 			return contentPart;
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentAnchored(List<Object> contentAnchored) {
 		int i;
 		IContentPart<V> editPart;
 		Object model;
 
-		List<IContentPart<V>> anchored = PartUtils.filterParts(
-				getHost().getAnchoreds(), IContentPart.class);
+		List<IContentPart<V>> anchored = PartUtils.filterParts(getHost()
+				.getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
 		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {
@@ -214,8 +219,8 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> i
 		}
 
 		// remove the remaining EditParts
-		anchored = PartUtils.filterParts(
-				getHost().getAnchoreds(), IContentPart.class);
+		anchored = PartUtils.filterParts(getHost().getAnchoreds(),
+				IContentPart.class);
 		size = anchored.size();
 		if (i < size) {
 			List<IContentPart<V>> trash = new ArrayList<IContentPart<V>>(size
@@ -229,11 +234,12 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V> i
 			}
 		}
 	}
-	
+
 	protected void disposeIfObsolete(IContentPart<V> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
-			getHost().getRoot().getViewer().getContentPartMap().remove(contentPart.getContent());
+			getHost().getRoot().getViewer().getContentPartMap()
+					.remove(contentPart.getContent());
 			contentPart.setContent(null);
 		}
 	}

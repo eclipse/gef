@@ -13,38 +13,28 @@ package org.eclipse.gef4.mvc.fx.example;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 
 public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
-	@Override
-	public IContentPart<Node> createRootContentPart(IRootPart<Node> root,
-			Object model) {
-		if (model instanceof FXGeometricModel) {
+	public org.eclipse.gef4.mvc.parts.IContentPart<Node> createContentPart(
+			Object content, IBehavior<Node> contextBehavior) {
+		if (content instanceof FXGeometricModel) {
 			return new FXGeometricModelPart();
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
-
-	@Override
-	public IContentPart<Node> createChildContentPart(IContentPart<Node> parent,
-			Object model) {
-		if (model instanceof FXGeometricShape) {
+		} else if (content instanceof FXGeometricShape) {
 			return new FXGeometricShapePart();
-		} else if (model instanceof FXGeometricCurve) {
+		} else if (content instanceof FXGeometricCurve) {
 			return new FXGeometricCurvePart();
 		} else {
-			throw new IllegalArgumentException(model.getClass().toString());
+			throw new IllegalArgumentException(content.getClass().toString());
 		}
-	}
+	};
 
 }
