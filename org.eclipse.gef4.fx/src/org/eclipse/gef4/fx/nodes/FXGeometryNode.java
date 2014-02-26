@@ -115,4 +115,5 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		getElements().clear();
 		getElements().addAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
+	
 }
