@@ -15,42 +15,81 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
-	public FXChopBoxAnchor(Node anchorage){
+	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);
 	}
-	
+
+	/**
+	 * @param anchored
+	 *            The to be anchored {@link Node} for which the anchor position
+	 *            is to be determined.
+	 * @param referencePoint
+	 *            A reference {@link Point} used for calculation of the anchor
+	 *            position, provided within the local coordinate system of the
+	 *            to be anchored {@link Node}.
+	 * @return Point The anchor position within the local coordinate system of
+	 *         the to be anchored {@link Node}.
+	 */
 	@Override
 	public Point getPosition(Node anchored, Point referencePoint) {
 		// compute intersection point between outline of anchorage reference
 		// shape and line through anchorage and anchor reference points.
-		Line referenceLine = new Line(getAnchorageReferencePoint(), getAnchorReferencePoint(anchored, referencePoint));
-		IShape anchorageReferenceShape = getAnchorageReferenceShape();
-		Point[] intersectionPoints = anchorageReferenceShape.getOutline().getIntersections(referenceLine);
-		if(intersectionPoints.length > 0){
-			return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX.toFXPoint(intersectionPoints[0])));
+
+		AffineTransform anchorageToSceneTransform = JavaFX2Geometry
+				.toAffineTransform(getAnchorage().getLocalToSceneTransform());
+
+		AffineTransform anchoredToSceneTransform = JavaFX2Geometry
+				.toAffineTransform(anchored.getLocalToSceneTransform());
+
+		Point anchorageReferencePointInScene = anchorageToSceneTransform
+				.getTransformed(getAnchorageReferencePoint());
+		Point anchorReferencePointInScene = anchoredToSceneTransform
+				.getTransformed(referencePoint);
+		Line referenceLineInScene = new Line(anchorageReferencePointInScene,
+				anchorReferencePointInScene);
+
+		IShape anchorageReferenceShapeInScene = getAnchorageReferenceShape()
+				.getTransformed(anchorageToSceneTransform);
+
+		Point[] intersectionPoints = anchorageReferenceShapeInScene
+				.getOutline().getIntersections(referenceLineInScene);
+		if (intersectionPoints.length > 0) {
+			return JavaFX2Geometry.toPoint(anchored
+					.sceneToLocal(Geometry2JavaFX
+							.toFXPoint(intersectionPoints[0])));
 		}
-		throw new IllegalArgumentException("Invalid reference point " + referencePoint);
+		throw new IllegalArgumentException("Invalid reference point "
+				+ referencePoint);
 	}
 
+	/**
+	 * Returns the anchorage reference {@link IShape} which is used to compute
+	 * the intersection point which is used as the anchor position. By default,
+	 * a {@link Rectangle} matching the layout-bounds of the anchorage
+	 * {@link Node} is returned. Clients may override this method to use other
+	 * geometric shapes instead.
+	 * 
+	 * @return The anchorage reference {@link IShape} within the local
+	 *         coordinate system of the anchorage {@link Node}
+	 */
 	protected IShape getAnchorageReferenceShape() {
-		return JavaFX2Geometry.toRectangle(getAnchorage().localToScene(
-				getAnchorage().getLayoutBounds()));
+		return JavaFX2Geometry.toRectangle(getAnchorage().getLayoutBounds());
 	}
 
+	/**
+	 * @return The anchorage reference point within the local coordinate system
+	 *         of the anchorage {@link Node}.
+	 */
 	protected Point getAnchorageReferencePoint() {
 		return getAnchorageReferenceShape().getBounds().getCenter();
-	}
-
-	protected Point getAnchorReferencePoint(Node anchored, Point referencePoint) {
-		// this is the line...
-		return JavaFX2Geometry.toPoint(
-				anchored.localToScene(Geometry2JavaFX.toFXPoint(referencePoint)));
 	}
 
 }
