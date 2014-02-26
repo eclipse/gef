@@ -59,6 +59,7 @@ public class FXRelocateSelectedOnDragPolicy extends
 						0, 0);
 			}
 		}
+		initialMouseLocation = null;
 	}
 
 }
