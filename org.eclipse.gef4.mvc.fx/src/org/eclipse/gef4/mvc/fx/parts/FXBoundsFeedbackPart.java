@@ -11,14 +11,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.geometry.Bounds;
+import java.awt.geom.NoninvertibleTransformException;
+
 import javafx.scene.Node;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**
  * A handle part used for showing feedback based on layout bounds of an
@@ -31,20 +37,23 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
 	private static final Color INVISIBLE = new Color(0, 0, 0, 0);
 
-	private FXGeometryNode<? extends IGeometry> feedbackVisual;
-//	private Rectangle feedbackVisual;
-	private Node targetVisual;
+	private IContentPart<Node> targetPart;
+	private IProvider<IGeometry> feedbackGeometryProvider;
+	private FXGeometryNode<IGeometry> feedbackVisual;
 
-	public FXBoundsFeedbackPart(Node targetVisual, FXGeometryNode<? extends IGeometry> feedbackVisual, Effect effect) {
-		this.targetVisual = targetVisual;
-		this.feedbackVisual = feedbackVisual;
-//		this.feedbackVisual = new Rectangle();
-		this.feedbackVisual.setStroke(Color.web("#5a61af"));
-		this.feedbackVisual.setStrokeWidth(1);
-		this.feedbackVisual.setFill(INVISIBLE);
-		this.feedbackVisual.setEffect(effect);
-		this.feedbackVisual.setMouseTransparent(true);
-		this.feedbackVisual.setManaged(false);
+	public FXBoundsFeedbackPart(IContentPart<Node> targetPart,
+			IProvider<IGeometry> feedbackGeometryProvider, Paint stroke, Effect effect) {
+		this.targetPart = targetPart;
+		this.feedbackGeometryProvider = feedbackGeometryProvider;
+		feedbackVisual = new FXGeometryNode<IGeometry>(
+				feedbackGeometryProvider.get());
+		feedbackVisual.setFill(INVISIBLE);
+		feedbackVisual.setEffect(effect);
+		feedbackVisual.setMouseTransparent(true);
+		feedbackVisual.setManaged(false);
+		feedbackVisual.setStroke(stroke);
+		feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
+		feedbackVisual.setStrokeWidth(1);
 	}
 
 	@Override
@@ -54,18 +63,30 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
 	@Override
 	public void refreshVisual() {
-		Bounds feedbackVisualBounds = feedbackVisual.getParent().sceneToLocal(
-				targetVisual.localToScene(targetVisual.getLayoutBounds()));
+		// we need to combine several transformations to get the
+		// target-to-(feedback-handle-)parent-transform
+		Node targetVisual = targetPart.getVisual();
+		AffineTransform targetToSceneTx = JavaFX2Geometry
+				.toAffineTransform(targetVisual.getLocalToSceneTransform());
+		AffineTransform parentToSceneTx = JavaFX2Geometry
+				.toAffineTransform(feedbackVisual.getParent()
+						.getLocalToSceneTransform());
 
-		double x = feedbackVisualBounds.getMinX();
-		double y = feedbackVisualBounds.getMinY();
-		double width = feedbackVisualBounds.getWidth();
-		double height = feedbackVisualBounds.getHeight();
+		// invert parentToSceneTx
+		AffineTransform sceneToParentTx = null;
+		try {
+			sceneToParentTx = parentToSceneTx.getCopy().invert();
+		} catch (NoninvertibleTransformException e) {
+			// TODO: How do we recover from this?!
+			throw new IllegalStateException(e);
+		}
 
-		feedbackVisual.setLayoutX(x);
-		feedbackVisual.setLayoutY(y);
-		feedbackVisual.resize(width, height);
-//		feedbackVisual.setWidth(width);
-//		feedbackVisual.setHeight(height);
+		// transform feedback geometry from target space to local parent space
+		AffineTransform targetToParentTx = targetToSceneTx
+				.concatenate(sceneToParentTx);
+		IGeometry feedbackGeometry = feedbackGeometryProvider.get();
+		feedbackVisual.setGeometry(feedbackGeometry
+				.getTransformed(targetToParentTx));
 	}
+
 }
