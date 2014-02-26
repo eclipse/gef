@@ -33,18 +33,20 @@ import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragP
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
-	
+
 	@Override
-	public List<IHandlePart<Node>> createHandleParts(List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior) {
+	public List<IHandlePart<Node>> createHandleParts(
+			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior) {
 		// no targets
 		if (targets == null || targets.isEmpty())
 			return Collections.emptyList();
-		
+
 		// differentiate creation context
 		if (contextBehavior instanceof FXSelectionBehavior) {
-			return createSelectionHandleParts(targets, (FXSelectionBehavior) contextBehavior);
+			return createSelectionHandleParts(targets,
+					(FXSelectionBehavior) contextBehavior);
 		}
-		
+
 		// unknown creation context, do not create handles
 		return Collections.emptyList();
 	}
@@ -56,11 +58,11 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		if (targets.size() > 1) {
 			return createMultiSelectionHandleParts(targets, selectionBehavior);
 		}
-		
+
 		// single selection
 		final IContentPart<Node> targetPart = targets.get(0);
-		
-		IProvider<IGeometry> handleGeometryProvider = selectionBehavior.getHandleGeometryProvider();
+		IProvider<IGeometry> handleGeometryProvider = selectionBehavior
+				.getHandleGeometryProvider();
 
 		// generate handles from handle geometry
 		IGeometry geom = handleGeometryProvider.get();
@@ -71,12 +73,12 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			// beziers
 			BezierCurve[] beziers = ((ICurve) geom).toBezier();
 			for (int i = 0; i < beziers.length; i++) {
-				IHandlePart<Node> hp = new FXSelectionHandlePart(targetPart,
-						handleGeometryProvider, i);
+				IHandlePart<Node> hp = createCurveSelectionHandlePart(
+						targetPart, handleGeometryProvider, i, false);
 				handleParts.add(hp);
 				// create handlepart for the curve's end point, too
 				if (i == beziers.length - 1) {
-					hp = new FXSelectionHandlePart(targetPart,
+					hp = createCurveSelectionHandlePart(targetPart,
 							handleGeometryProvider, i, true);
 					handleParts.add(hp);
 				}
@@ -89,7 +91,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				ICurve[] edges = shape.getOutlineSegments();
 				// create a handle for each vertex
 				for (int i = 0; i < edges.length; i++) {
-					IHandlePart<Node> hp = new FXSelectionHandlePart(
+					IHandlePart<Node> hp = createShapeSelectionHandlePart(
 							targetPart, handleGeometryProvider, i);
 					handleParts.add(hp);
 				}
@@ -103,37 +105,107 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return handleParts;
 	}
 
+	/**
+	 * Creates an {@link IHandlePart} for the specified vertex of the
+	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
+	 * 
+	 * @param targetPart
+	 *            The {@link IContentPart} which is selected.
+	 * @param handleGeometryProvider
+	 *            Provides an {@link IGeometry} for which an {@link IHandlePart}
+	 *            is to be created.
+	 * @param vertexIndex
+	 *            Index of the vertex of the provided {@link IGeometry} for
+	 *            which an {@link IHandlePart} is to be created.
+	 * @return {@link IHandlePart} for the specified vertex of the
+	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
+	 */
+	public IHandlePart<Node> createShapeSelectionHandlePart(
+			IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
+		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
+				vertexIndex);
+	}
+
+	/**
+	 * Creates an {@link IHandlePart} for the specified segment vertex of the
+	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
+	 * 
+	 * @param targetPart
+	 *            The {@link IContentPart} which is selected.
+	 * @param handleGeometryProvider
+	 *            Provides an {@link IGeometry} for which an {@link IHandlePart}
+	 *            is to be created.
+	 * @param segmentIndex
+	 *            Index of the segment of the provided {@link IGeometry} for
+	 *            which an {@link IHandlePart} is to be created.
+	 * @param isEndPoint
+	 *            Signifies if the handle is to be created for the end point of
+	 *            the segment.
+	 * @return {@link IHandlePart} for the specified segment vertex of the
+	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
+	 */
+	public IHandlePart<Node> createCurveSelectionHandlePart(
+			final IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
+			boolean isEndPoint) {
+		return new FXSelectionHandlePart(targetPart, handleGeometryProvider, segmentIndex,
+				isEndPoint);
+	}
+
 	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
 			List<IContentPart<Node>> targets,
 			FXSelectionBehavior selectionBehavior) {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
-		
-		FXBoxHandlePart handlePart = new FXBoxHandlePart(targets,
-				Pos.TOP_LEFT);
+
+		// per default, handle parts are created for the 4 corners of the multi
+		// selection bounds
+		IHandlePart<Node> handlePart = createMultiSelectionCornerHandlePart(
+				targets, Pos.TOP_LEFT);
 		handlePart.installBound(IDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						ReferencePoint.TOP_LEFT));
 		handleParts.add(handlePart);
 
-		handlePart = new FXBoxHandlePart(targets, Pos.TOP_RIGHT);
+		handlePart = createMultiSelectionCornerHandlePart(targets,
+				Pos.TOP_RIGHT);
 		handlePart.installBound(IDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						ReferencePoint.TOP_RIGHT));
 		handleParts.add(handlePart);
 
-		handlePart = new FXBoxHandlePart(targets, Pos.BOTTOM_RIGHT);
+		handlePart = createMultiSelectionCornerHandlePart(targets,
+				Pos.BOTTOM_RIGHT);
 		handlePart.installBound(IDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						ReferencePoint.BOTTOM_RIGHT));
 		handleParts.add(handlePart);
 
-		handlePart = new FXBoxHandlePart(targets, Pos.BOTTOM_LEFT);
+		handlePart = createMultiSelectionCornerHandlePart(targets,
+				Pos.BOTTOM_LEFT);
 		handlePart.installBound(IDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						ReferencePoint.BOTTOM_LEFT));
 		handleParts.add(handlePart);
 
 		return handleParts;
+	}
+
+	/**
+	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
+	 * selection. The corner is specified via the <i>position</i> parameter.
+	 * 
+	 * @param targets
+	 *            All selected {@link IContentPart}s.
+	 * @param position
+	 *            Relative position of the {@link IHandlePart} on the collective
+	 *            bounds of the multi selection.
+	 * @return an {@link IHandlePart} for the specified corner of the bounds of
+	 *         the multi selection
+	 */
+	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
+			List<IContentPart<Node>> targets, Pos position) {
+		return new FXBoxHandlePart(targets, position);
 	}
 
 }
