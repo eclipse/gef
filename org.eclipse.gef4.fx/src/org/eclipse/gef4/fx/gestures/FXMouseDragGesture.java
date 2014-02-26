@@ -53,7 +53,12 @@ public abstract class FXMouseDragGesture {
 				 * possible, but happens at times... As a workaround, we call
 				 * release with dx = 0 and dy = 0.
 				 */
+				if (targetNode != e.getTarget()) {
+					throw new IllegalStateException("wrong target node!");
+					// TODO: JavaFX mouse event target selection bug => platform specific fix
+				}
 				state = State.INIT;
+				removeTargetHandlers();
 				release(targetNode, e, 0, 0);
 			}
 
@@ -79,6 +84,10 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> draggedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
+			if (targetNode != e.getTarget()) {
+				throw new IllegalStateException("wrong target node!");
+			}
+			
 			if (state != State.PERFORM)
 				return;
 
@@ -96,6 +105,10 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> releasedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
+			if (targetNode != e.getTarget()) {
+				throw new IllegalStateException("wrong target node!");
+			}
+			
 			if (state != State.PERFORM)
 				return;
 
