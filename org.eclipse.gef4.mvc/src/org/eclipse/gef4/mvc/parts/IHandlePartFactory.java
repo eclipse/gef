@@ -13,20 +13,16 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
+
 /**
  * 
  * @author anyssen
  * 
  * @param <V>
  */
-// TODO: Remove after BoxSelectionHandleTool has been converted into a policy.
 public interface IHandlePartFactory<V> {
-
-	public List<IHandlePart<V>> createFocusHandleParts(IContentPart<V> focused);
-
-	public List<IHandlePart<V>> createHoverHandleParts(IContentPart<V> hovered);
-
-	public List<IHandlePart<V>> createSelectionHandleParts(
-			List<IContentPart<V>> selected);
+	
+	public List<IHandlePart<V>> createHandleParts(List<IContentPart<V>> targets, IBehavior<V> contextBehavior);
 
 }
