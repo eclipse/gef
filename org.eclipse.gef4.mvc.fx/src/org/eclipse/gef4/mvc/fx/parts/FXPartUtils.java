@@ -39,14 +39,15 @@ public class FXPartUtils {
 			Node targetNode = (Node) target;
 			IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
 					targetNode);
-			while ((targetPart == null || supportedPolicy != null
-					&& targetPart
-							.getBound((Class<IPolicy<Node>>) supportedPolicy) == null)
+			while (targetNode != null
+					&& (targetPart == null || supportedPolicy != null
+							&& targetPart
+									.getBound((Class<IPolicy<Node>>) supportedPolicy) == null)
 					&& targetNode != rootVisual) {
-				targetNode = targetNode.getParent();				
+				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}
-			
+
 			if (targetPart != null) {
 				return targetPart;
 			}
