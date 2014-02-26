@@ -25,6 +25,7 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
@@ -76,56 +77,37 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 			}
 		});
 
-		// TODO: we need proper feedback for curves
 		installBound(new FXSelectionBehavior() {
 			@Override
-			public void activate() {
-				super.activate();
-				getContent().addPropertyChangeListener(this);
+			public IGeometry getFeedbackGeometry() {
+				return visual.getGeometry();
 			}
-
-			@Override
-			public void deactivate() {
-				getContent().removePropertyChangeListener(this);
-				super.deactivate();
-			}
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				super.propertyChange(event);
-				if (AbstractFXGeometricElement.GEOMETRY_PROPERTY.equals(event
-						.getPropertyName())) {
-					hideFeedback();
-					removeHandles(Collections
-							.singletonList((IContentPart<Node>) getHost()));
-					addHandles(Collections
-							.singletonList((IContentPart<Node>) getHost()));
-					showPrimaryFeedback();
-				}
-			}
-
-			@Override
-			public List<IHandlePart<Node>> createHandles(
-					List<IContentPart<Node>> targets) {
-				return createWayPointHandles();
-			}
-
-			@Override
-			protected void hideFeedback() {
-				getHost().getVisual().setEffect(null);
-			}
-
-			@Override
-			protected void showSecondaryFeedback() {
-				getHost().getVisual().setEffect(
-						getPrimarySelectionFeedbackEffect());
-			}
-
-			@Override
-			protected void showPrimaryFeedback() {
-				getHost().getVisual().setEffect(
-						getSecondarySelectionFeedbackEffect());
-			}
+			
+//			@Override
+//			public void activate() {
+//				super.activate();
+//				getContent().addPropertyChangeListener(this);
+//			}
+//
+//			@Override
+//			public void deactivate() {
+//				getContent().removePropertyChangeListener(this);
+//				super.deactivate();
+//			}
+//
+//			@Override
+//			public void propertyChange(PropertyChangeEvent event) {
+//				super.propertyChange(event);
+//				if (AbstractFXGeometricElement.GEOMETRY_PROPERTY.equals(event
+//						.getPropertyName())) {
+//					hideFeedback();
+//					removeHandles(Collections
+//							.singletonList((IContentPart<Node>) getHost()));
+//					addHandles(Collections
+//							.singletonList((IContentPart<Node>) getHost()));
+//					showPrimaryFeedback();
+//				}
+//			}
 		});
 		installBound(AbstractWayPointPolicy.class,
 				new AbstractWayPointPolicy() {

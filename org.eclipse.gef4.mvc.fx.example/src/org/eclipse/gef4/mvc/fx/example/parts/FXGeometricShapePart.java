@@ -75,15 +75,14 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			}
 		});
 		installBound(IDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
-		installBound(IResizeRelocatePolicy.class,
-				new FXResizeRelocatePolicy() {
-					@Override
-					public void commitResizeRelocate(double dx, double dy,
-							double dw, double dh) {
-						super.commitResizeRelocate(dx, dy, dw, dh);
-						// TODO: chain an operation to apply changes to model
-					}
-				});
+		installBound(IResizeRelocatePolicy.class, new FXResizeRelocatePolicy() {
+			@Override
+			public void commitResizeRelocate(double dx, double dy, double dw,
+					double dh) {
+				super.commitResizeRelocate(dx, dy, dw, dh);
+				// TODO: chain an operation to apply changes to model
+			}
+		});
 	}
 
 	@Override
@@ -166,13 +165,9 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			anchor = new FXChopBoxAnchor(getVisual()) {
 				@Override
 				protected IShape getAnchorageReferenceShape() {
-					// return the visual's geometry, translated to scene
-					// coordinates
-					AffineTransform local2SceneAffineTransform = JavaFX2Geometry
-							.toAffineTransform(getAnchorage()
-									.getLocalToSceneTransform());
-					return getVisual().getGeometry().getTransformed(
-							local2SceneAffineTransform);
+					// return the visual's geometry within the coordinate system
+					// of the anchorage Node
+					return getVisual().getGeometry();
 				}
 			};
 		}
