@@ -14,22 +14,36 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXBoundsFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
-public class FXSelectionBehavior extends
-		AbstractSelectionBehavior<Node> {
+public class FXSelectionBehavior extends AbstractSelectionBehavior<Node> {
 
 	private IHandlePart<Node> feedbackPart;
 
-	private void showFeedback(Effect effect) {
-		feedbackPart = new FXBoundsFeedbackPart(
-				((IContentPart<Node>) getHost()).getVisual(), new FXGeometryNode<Rectangle>(new Rectangle()), effect);
+	@Override
+	public IGeometry getFeedbackGeometry() {
+		Rectangle rectangle = JavaFX2Geometry.toRectangle(getHost().getVisual()
+				.getLayoutBounds());
+		return rectangle;
+	}
+
+	@Override
+	public IGeometry getHandleGeometry() {
+		return getFeedbackGeometry();
+	}
+
+	private void showFeedback(Paint stroke, Effect effect) {
+		feedbackPart = new FXBoundsFeedbackPart((IContentPart<Node>) getHost(),
+				getFeedbackGeometryProvider(), stroke, effect);
 		// TODO: use BehaviorUtils when migrating to explicit IFeedbackPart
 		getHost().getRoot().addChild(feedbackPart);
 		getHost().addAnchored(feedbackPart);
@@ -47,24 +61,25 @@ public class FXSelectionBehavior extends
 
 	@Override
 	protected void showPrimaryFeedback() {
-		showFeedback(getPrimarySelectionFeedbackEffect());
+		showFeedback(Color.web("#5a61af"), getPrimarySelectionFeedbackEffect());
 	}
 
 	@Override
 	protected void showSecondaryFeedback() {
-		showFeedback(getSecondarySelectionFeedbackEffect());
+		showFeedback(Color.web("#5a61af"),
+				getSecondarySelectionFeedbackEffect());
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect() {
 		DropShadow effect = new DropShadow();
+		effect.setColor(Color.web("#d5faff"));
 		effect.setRadius(5);
+		effect.setSpread(0.6);
 		return effect;
 	}
 
 	protected Effect getSecondarySelectionFeedbackEffect() {
-		DropShadow effect = new DropShadow();
-		effect.setRadius(5);
-		return effect;
+		return null;
 	}
-	
+
 }

@@ -17,6 +17,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -36,6 +38,47 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 		implements PropertyChangeListener {
 
 	private List<IHandlePart<V>> handles;
+
+	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
+		@Override
+		public IGeometry get() {
+			return getFeedbackGeometry();
+		}
+	};
+
+	private IProvider<IGeometry> handleGeometryProvider = new IProvider<IGeometry>() {
+		@Override
+		public IGeometry get() {
+			return getHandleGeometry();
+		}
+	};
+	
+	public IProvider<IGeometry> getFeedbackGeometryProvider() {
+		return feedbackGeometryProvider;
+	}
+	
+	public IProvider<IGeometry> getHandleGeometryProvider() {
+		return handleGeometryProvider;
+	}
+
+	/**
+	 * Returns an {@link IGeometry} for which visual selection feedback will be
+	 * provided.
+	 * 
+	 * @return an {@link IGeometry} determining feedback positions
+	 */
+	protected abstract IGeometry getFeedbackGeometry();
+
+	/**
+	 * Returns an {@link IGeometry} for which selection handles will be
+	 * provided.
+	 * <p>
+	 * Per default, the {@link #getFeedbackGeometry() feedback geometry} is
+	 * returned.
+	 * 
+	 * @return an {@link IGeometry} determining handle positions
+	 */
+	protected abstract IGeometry getHandleGeometry();
 
 	@Override
 	public void activate() {
@@ -106,14 +149,14 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 			handles.clear();
 		}
 	}
-	
+
 	protected abstract void hideFeedback();
 
 	public List<IHandlePart<V>> createHandles(List<IContentPart<V>> targets) {
 		IVisualPart<V> host = getHost();
 		IHandlePartFactory<V> factory = getHandlePartFactory(host);
-		List<IHandlePart<V>> handleParts = factory
-				.createSelectionHandleParts(targets);
+		List<IHandlePart<V>> handleParts = factory.createHandleParts(targets,
+				this);
 		return handleParts;
 	}
 
