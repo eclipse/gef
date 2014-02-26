@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  */
 public interface IContentPartFactory<V> {
-
+	
 	IContentPart<V> createContentPart(Object content,
 			IBehavior<V> contextBehavior);
 
