@@ -18,9 +18,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPoli
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
+import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	

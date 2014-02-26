@@ -15,7 +15,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -29,10 +28,8 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
@@ -82,32 +79,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 			public IGeometry getFeedbackGeometry() {
 				return visual.getGeometry();
 			}
-			
-//			@Override
-//			public void activate() {
-//				super.activate();
-//				getContent().addPropertyChangeListener(this);
-//			}
-//
-//			@Override
-//			public void deactivate() {
-//				getContent().removePropertyChangeListener(this);
-//				super.deactivate();
-//			}
-//
-//			@Override
-//			public void propertyChange(PropertyChangeEvent event) {
-//				super.propertyChange(event);
-//				if (AbstractFXGeometricElement.GEOMETRY_PROPERTY.equals(event
-//						.getPropertyName())) {
-//					hideFeedback();
-//					removeHandles(Collections
-//							.singletonList((IContentPart<Node>) getHost()));
-//					addHandles(Collections
-//							.singletonList((IContentPart<Node>) getHost()));
-//					showPrimaryFeedback();
-//				}
-//			}
 		});
 		installBound(AbstractWayPointPolicy.class,
 				new AbstractWayPointPolicy() {
