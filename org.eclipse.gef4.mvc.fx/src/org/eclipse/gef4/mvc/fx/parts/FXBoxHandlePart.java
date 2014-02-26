@@ -17,10 +17,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -35,14 +33,12 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 	public FXBoxHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
 		this.pos = pos;
 		visual = new Rectangle();
-		visual.setFill(new LinearGradient(0, 0, 0, 5, true,
-				CycleMethod.NO_CYCLE, new Stop[] {
-						new Stop(0.0, Color.web("#e4fbff")),
-						new Stop(0.5, Color.web("#a5d3fb")),
-						new Stop(1.0, Color.web("#d5faff")) }));
+		visual.setFill(Color.web("#d5faff"));
 		visual.setStroke(Color.web("#5a61af"));
 		visual.setWidth(5);
 		visual.setHeight(5);
+		visual.setStrokeWidth(1);
+		visual.setStrokeType(StrokeType.OUTSIDE);
 	}
 
 	@Override
@@ -81,7 +77,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 		double xInset = visual.getWidth() / 2.0;
 		return xInset;
 	}
-	
+
 	protected double getYInset() {
 		double yInset = visual.getHeight() / 2.0;
 		return yInset;
