@@ -149,8 +149,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
-		return new FXSelectionHandlePart(targetPart, handleGeometryProvider, segmentIndex,
-				isEndPoint);
+		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
+				segmentIndex, isEndPoint);
 	}
 
 	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
@@ -160,33 +160,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// per default, handle parts are created for the 4 corners of the multi
 		// selection bounds
-		IHandlePart<Node> handlePart = createMultiSelectionCornerHandlePart(
-				targets, Pos.TOP_LEFT);
-		handlePart.installBound(IDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
-						ReferencePoint.TOP_LEFT));
-		handleParts.add(handlePart);
-
-		handlePart = createMultiSelectionCornerHandlePart(targets,
-				Pos.TOP_RIGHT);
-		handlePart.installBound(IDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
-						ReferencePoint.TOP_RIGHT));
-		handleParts.add(handlePart);
-
-		handlePart = createMultiSelectionCornerHandlePart(targets,
-				Pos.BOTTOM_RIGHT);
-		handlePart.installBound(IDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
-						ReferencePoint.BOTTOM_RIGHT));
-		handleParts.add(handlePart);
-
-		handlePart = createMultiSelectionCornerHandlePart(targets,
-				Pos.BOTTOM_LEFT);
-		handlePart.installBound(IDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
-						ReferencePoint.BOTTOM_LEFT));
-		handleParts.add(handlePart);
+		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
+				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
+			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos));
+		}
 
 		return handleParts;
 	}
