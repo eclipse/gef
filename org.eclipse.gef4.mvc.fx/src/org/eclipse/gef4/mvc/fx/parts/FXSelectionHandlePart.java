@@ -111,6 +111,10 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 			ICurve[] segments = shape.getOutlineSegments();
 			position = segments[vertexIndex].getP1();
 		} else if (handleGeometry instanceof ICurve) {
+			/*
+			 * FIXME: ArrayIndexOutOfBoundsException when a way point is inside
+			 * of an anchorage, because the curve is a straight line then.
+			 */
 			ICurve curve = (ICurve) handleGeometry;
 			BezierCurve[] beziers = curve.toBezier();
 			BezierCurve bc = beziers[vertexIndex];
