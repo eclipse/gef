@@ -13,9 +13,6 @@ package org.eclipse.gef4.mvc.fx.anchors;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
@@ -70,19 +67,8 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 						null);
 			}
 		};
-		visualListener.register(anchorageOrAnchored, findLayerParent(anchorageOrAnchored));
-//		visualListener.register(anchorageOrAnchored);
-	}
-
-	protected Parent findLayerParent(Node anchorageOrAnchored) {
-		Parent parent = anchorageOrAnchored.getParent();
-		while (parent != null) {
-			if (parent instanceof Pane) {
-				return parent;
-			}
-			parent = parent.getParent();
-		}
-		return null;
+		visualListener.register(anchorageOrAnchored, anchorageOrAnchored
+				.getScene().getRoot());
 	}
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {

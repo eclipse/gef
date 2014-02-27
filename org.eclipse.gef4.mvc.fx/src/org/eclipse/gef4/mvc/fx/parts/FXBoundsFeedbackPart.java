@@ -45,6 +45,7 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 			IProvider<IGeometry> feedbackGeometryProvider, Paint stroke, Effect effect) {
 		this.targetPart = targetPart;
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
+		
 		feedbackVisual = new FXGeometryNode<IGeometry>(
 				feedbackGeometryProvider.get());
 		feedbackVisual.setFill(INVISIBLE);
@@ -83,7 +84,7 @@ public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
 
 		// transform feedback geometry from target space to local parent space
 		AffineTransform targetToParentTx = targetToSceneTx
-				.concatenate(sceneToParentTx);
+				.preConcatenate(sceneToParentTx);
 		IGeometry feedbackGeometry = feedbackGeometryProvider.get();
 		feedbackVisual.setGeometry(feedbackGeometry
 				.getTransformed(targetToParentTx));

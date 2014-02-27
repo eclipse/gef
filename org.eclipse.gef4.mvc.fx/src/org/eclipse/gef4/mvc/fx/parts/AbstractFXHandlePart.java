@@ -13,8 +13,6 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
@@ -38,19 +36,9 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 
 	public void attachVisualToAnchorageVisual(Node anchorageVisual,
 			org.eclipse.gef4.mvc.anchors.IAnchor<Node> anchor) {
-		visualListener.register(anchorageVisual, findParentLayer(anchorageVisual));
+		visualListener.register(anchorageVisual,
+				((FXRootPart) getRoot()).getLayerStackPane());
 	};
-
-	private Parent findParentLayer(Node anchorageVisual) {
-		Parent parent = anchorageVisual.getParent();
-		while (parent != null) {
-			if (parent instanceof Pane) {
-				return parent;
-			}
-			parent = parent.getParent();
-		}
-		return null;
-	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(Node anchorageVisual,

@@ -16,6 +16,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -31,6 +33,13 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 public abstract class AbstractHoverBehavior<V> extends
 		AbstractBehavior<V> implements PropertyChangeListener {
 
+	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
+		@Override
+		public IGeometry get() {
+			return getFeedbackGeometry();
+		}
+	};
+	
 	private List<IHandlePart<V>> handles;
 	
 	@Override
@@ -46,6 +55,14 @@ public abstract class AbstractHoverBehavior<V> extends
 				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
+	
+	/**
+	 * Returns an {@link IGeometry} for which visual selection feedback will be
+	 * provided.
+	 * 
+	 * @return an {@link IGeometry} determining feedback positions
+	 */
+	protected abstract IGeometry getFeedbackGeometry();
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -64,6 +81,10 @@ public abstract class AbstractHoverBehavior<V> extends
 				BehaviorUtils.addHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
 			}
 		}
+	}
+	
+	public IProvider<IGeometry> getFeedbackGeometryProvider() {
+		return feedbackGeometryProvider;
 	}
 
 	protected abstract void showFeedback();

@@ -52,11 +52,11 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 			return getHandleGeometry();
 		}
 	};
-	
+
 	public IProvider<IGeometry> getFeedbackGeometryProvider() {
 		return feedbackGeometryProvider;
 	}
-	
+
 	public IProvider<IGeometry> getHandleGeometryProvider() {
 		return handleGeometryProvider;
 	}

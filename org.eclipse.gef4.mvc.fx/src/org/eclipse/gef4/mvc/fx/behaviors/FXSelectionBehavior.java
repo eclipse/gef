@@ -19,7 +19,6 @@ import javafx.scene.paint.Paint;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXBoundsFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -30,14 +29,12 @@ public class FXSelectionBehavior extends AbstractSelectionBehavior<Node> {
 	private IHandlePart<Node> feedbackPart;
 
 	@Override
-	public IGeometry getFeedbackGeometry() {
-		Rectangle rectangle = JavaFX2Geometry.toRectangle(getHost().getVisual()
-				.getLayoutBounds());
-		return rectangle;
+	protected IGeometry getFeedbackGeometry() {
+		return JavaFX2Geometry.toRectangle(getHost().getVisual().getLayoutBounds());
 	}
 
 	@Override
-	public IGeometry getHandleGeometry() {
+	protected IGeometry getHandleGeometry() {
 		return getFeedbackGeometry();
 	}
 
