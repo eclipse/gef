@@ -72,8 +72,10 @@ public abstract class AbstractHoverBehavior<V> extends
 			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
 
 			if (oldHovered == getHost()) {
-				BehaviorUtils.removeHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
-				handles.clear();
+				if (handles != null && !handles.isEmpty()) {
+					BehaviorUtils.removeHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
+					handles.clear();
+				}
 				hideFeedback();
 			} else if (newHovered == getHost()) {
 				showFeedback();
