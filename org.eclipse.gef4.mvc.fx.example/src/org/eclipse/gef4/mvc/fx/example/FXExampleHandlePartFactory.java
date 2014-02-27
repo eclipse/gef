@@ -16,17 +16,20 @@ import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
+import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
@@ -57,6 +60,51 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 							+ position
 							+ ">. Expected any of: TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT.");
 		}
+	}
+
+	@Override
+	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
+			final IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
+		// create vertex handles
+		List<IHandlePart<Node>> parts = super.createCurveSelectionHandleParts(
+				targetPart, handleGeometryProvider, geom);
+
+		// create mid point (insertion) handles
+		BezierCurve[] beziers = ((ICurve) geom).toBezier();
+		for (int i = 0; i < beziers.length; i++) {
+			final int segmentIndex = i;
+			final IHandlePart<Node> hp = new FXMidPointHandlePart(targetPart, handleGeometryProvider, segmentIndex);
+			hp.installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+				private Point startPoint;
+
+				@Override
+				public void press(Point mouseLocation) {
+					startPoint = new Point(hp.getVisual().getLayoutX(), hp
+							.getVisual().getLayoutY());
+					getWayPointHandlePolicy(targetPart).createWayPoint(segmentIndex, startPoint);
+				}
+
+				@Override
+				public void drag(Point mouseLocation, Dimension delta) {
+					Point newPosition = startPoint.getTranslated(delta.width,
+							delta.height);
+					getWayPointHandlePolicy(targetPart).updateWayPoint(
+							segmentIndex, newPosition);
+				}
+
+				@Override
+				public void release(Point mouseLocation, Dimension delta) {
+					Point newPosition = startPoint.getTranslated(delta.width,
+							delta.height);
+					getWayPointHandlePolicy(targetPart).commitWayPoint(
+							segmentIndex, newPosition);
+				}
+			});
+			parts.add(hp);
+		}
+
+		return parts;
 	}
 
 	@Override

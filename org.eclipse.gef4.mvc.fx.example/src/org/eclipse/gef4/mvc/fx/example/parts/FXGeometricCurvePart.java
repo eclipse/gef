@@ -42,27 +42,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 	private FXGeometryNode<ICurve> visual;
 	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
 
-	public List<IHandlePart<Node>> createWayPointHandles() {
-		ArrayList<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
-
-		// create selection handles on the vertices
-		int i = 0;
-		for (Point wayPoint : getContent().getWayPoints()) {
-			handles.add(new FXWayPointHandlePart(i, wayPoint));
-			i++;
-		}
-
-		// create insertion handles on the edges
-		i = 0;
-		for (BezierCurve c : visual.getGeometry().toBezier()) {
-			Point midPoint = c.get(0.5);
-			handles.add(new FXInsertAnchorPointHandlePart(i, midPoint));
-			i++;
-		}
-
-		return handles;
-	}
-
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
 		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());

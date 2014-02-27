@@ -44,11 +44,11 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 
 	public static final double SIZE = 5d;
 
-	private Shape visual;
-	private IContentPart<Node> targetPart;
-	private IProvider<IGeometry> handleGeometryProvider;
-	private int vertexIndex;
-	private boolean isEndPoint;
+	protected Shape visual;
+	protected IContentPart<Node> targetPart;
+	protected IProvider<IGeometry> handleGeometryProvider;
+	protected int vertexIndex;
+	protected boolean isEndPoint;
 
 	public FXSelectionHandlePart(IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
@@ -102,8 +102,20 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 
 	@Override
 	public void refreshVisual() {
-		IGeometry handleGeometry = handleGeometryProvider.get();
+		// get new position (in local coordinate space)
+		Point position = getPosition(handleGeometryProvider.get());
+		
+		// transform to parent space
+		Node targetVisual = targetPart.getVisual();
+		Point2D point2d = visual.getParent().sceneToLocal(
+				targetVisual.localToScene(position.x, position.y));
+		
+		// update visual layout position
+		visual.setLayoutX(point2d.getX());
+		visual.setLayoutY(point2d.getY());
+	}
 
+	protected Point getPosition(IGeometry handleGeometry) {
 		Point position = null;
 
 		if (handleGeometry instanceof IShape) {
@@ -111,26 +123,25 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 			ICurve[] segments = shape.getOutlineSegments();
 			position = segments[vertexIndex].getP1();
 		} else if (handleGeometry instanceof ICurve) {
-			/*
-			 * FIXME: ArrayIndexOutOfBoundsException when a way point is inside
-			 * of an anchorage, because the curve is a straight line then.
-			 */
 			ICurve curve = (ICurve) handleGeometry;
 			BezierCurve[] beziers = curve.toBezier();
-			BezierCurve bc = beziers[vertexIndex];
-			position = isEndPoint ? bc.getP2() : bc.getP1();
+			if (beziers == null) {
+				// TODO: Choose meaningful position (maybe center of bounds) or throw exception
+				position = new Point();
+			} else if (vertexIndex >= beziers.length) {
+				// TODO: Choose meaningful position (maybe center of bounds) or throw exception
+				position = new Point();
+			} else {
+				BezierCurve bc = beziers[vertexIndex];
+				position = isEndPoint ? bc.getP2() : bc.getP1();
+			}
 		} else {
 			throw new IllegalStateException(
 					"Unable to determine handle position: Expected IShape or ICurve but got: "
 							+ handleGeometry);
 		}
 
-		Node targetVisual = targetPart.getVisual();
-		Point2D point2d = visual.getParent().sceneToLocal(
-				targetVisual.localToScene(position.x, position.y));
-
-		visual.setLayoutX(point2d.getX());
-		visual.setLayoutY(point2d.getY());
+		return position;
 	}
 
 }

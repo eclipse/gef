@@ -68,20 +68,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 
 		if (geom instanceof ICurve) {
-			// generate handles for the end/join points of the individual
-			// beziers
-			BezierCurve[] beziers = ((ICurve) geom).toBezier();
-			for (int i = 0; i < beziers.length; i++) {
-				IHandlePart<Node> hp = createCurveSelectionHandlePart(
-						targetPart, handleGeometryProvider, i, false);
-				handleParts.add(hp);
-				// create handlepart for the curve's end point, too
-				if (i == beziers.length - 1) {
-					hp = createCurveSelectionHandlePart(targetPart,
-							handleGeometryProvider, i, true);
-					handleParts.add(hp);
-				}
-			}
+			handleParts.addAll(createCurveSelectionHandleParts(
+					targetPart, handleGeometryProvider, geom));
 		} else {
 			// everything else is expected to be an IShape, even though the user
 			// could supply a Path
@@ -102,6 +90,33 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		}
 
 		return handleParts;
+	}
+
+	/**
+	 * Generate handles for the end/join points of the individual beziers.
+	 * 
+	 * @param targetPart
+	 * @param handleGeometryProvider
+	 * @param geom
+	 * @return
+	 */
+	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
+			final IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
+		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
+		BezierCurve[] beziers = ((ICurve) geom).toBezier();
+		for (int i = 0; i < beziers.length; i++) {
+			IHandlePart<Node> hp = createCurveSelectionHandlePart(
+					targetPart, handleGeometryProvider, i, false);
+			hps.add(hp);
+			// create handlepart for the curve's end point, too
+			if (i == beziers.length - 1) {
+				hp = createCurveSelectionHandlePart(targetPart,
+						handleGeometryProvider, i, true);
+				hps.add(hp);
+			}
+		}
+		return hps;
 	}
 
 	/**
