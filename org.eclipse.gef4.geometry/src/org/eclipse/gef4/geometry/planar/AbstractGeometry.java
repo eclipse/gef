@@ -34,6 +34,7 @@ abstract class AbstractGeometry implements IGeometry {
 	 * @return a transformed {@link Path} representation of this
 	 *         {@link IGeometry}
 	 */
+	@Override
 	public IGeometry getTransformed(final AffineTransform t) {
 		return toPath().getTransformed(t);
 	}
@@ -48,6 +49,7 @@ abstract class AbstractGeometry implements IGeometry {
 		return 0;
 	}
 
+	@Override
 	public boolean touches(final IGeometry g) {
 		if (this instanceof ICurve) {
 			if (g instanceof ICurve) {
