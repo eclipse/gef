@@ -57,6 +57,7 @@ public class FXDragTool extends AbstractDragTool<Node> {
 
 	private Scene scene;
 
+	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		scene = ((FXViewer) getDomain().getViewer()).getCanvas().getScene();

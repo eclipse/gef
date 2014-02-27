@@ -78,8 +78,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 			if (geometry instanceof IScalable) {
 				// Line, Polyline, PolyBezier, BezierCurve, CubicCurve,
 				// QuadraticCurve, Polygon, CurvedPolygon, Region, and Ring are
-				// not
-				// directly resizable but scalable
+				// not directly resizable but scalable
 				((IScalable<T>) geometry).scale(sx, sy, geometry.getBounds()
 						.getX(), geometry.getBounds().getY());
 			} else {
