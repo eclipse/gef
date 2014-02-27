@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example;
 
+import java.util.Map;
+
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -25,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
 	public org.eclipse.gef4.mvc.parts.IContentPart<Node> createContentPart(
-			Object content, IBehavior<Node> contextBehavior) {
+			Object content, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		if (content instanceof FXGeometricModel) {
 			return new FXGeometricModelPart();
 		} else if (content instanceof FXGeometricShape) {

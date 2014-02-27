@@ -17,15 +17,10 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
-import org.eclipse.gef4.mvc.policies.IPinchPolicy;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
 	

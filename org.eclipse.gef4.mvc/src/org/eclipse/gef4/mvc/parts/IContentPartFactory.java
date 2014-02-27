@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.util.Map;
+
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
@@ -22,8 +24,34 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  */
 public interface IContentPartFactory<V> {
-	
+
+	/**
+	 * Creates a specific {@link IContentPart} for the given <i>content</i>, in
+	 * the context specified by the given <i>contextBehavior</i> and
+	 * <i>contextMap</i>.
+	 * 
+	 * As all {@link IBehavior}s should be stateless, all data required for the
+	 * <i>contextBehavior</i> to be able to deliver certain information to the
+	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
+	 * 
+	 * <pre>
+	 * {@code}
+	 * create(Object target, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
+	 * 	if (ctxb instanceof ConcreteBehavior) {
+	 * 		SomeParam p = ((ConcreteBehavior) ctxb).getSomeParam(ctxm);
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * </quote>
+	 * 
+	 * 
+	 * @param content The model {@link Object} for which an {@link IContentPart} is to be created.
+	 * @param contextBehavior The {@link IBehavior} which uses this factory.
+	 * @param contextMap Additional context information to keep the IBehavior stateless.
+	 * @return an {@link IContentPart} for the given content and context
+	 */
 	IContentPart<V> createContentPart(Object content,
-			IBehavior<V> contextBehavior);
+			IBehavior<V> contextBehavior, Map<Object, Object> contextMap);
 
 }

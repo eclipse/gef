@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,18 +26,16 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	@Override
 	public List<IHandlePart<Node>> createHandleParts(
-			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior) {
+			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
 		// no targets
 		if (targets == null || targets.isEmpty())
 			return Collections.emptyList();

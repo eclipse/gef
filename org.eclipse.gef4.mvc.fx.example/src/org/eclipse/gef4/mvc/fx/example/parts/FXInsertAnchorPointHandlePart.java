@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.shape.Circle;
 
 import org.eclipse.gef4.geometry.planar.Point;
 

@@ -17,7 +17,6 @@ import java.util.List;
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;

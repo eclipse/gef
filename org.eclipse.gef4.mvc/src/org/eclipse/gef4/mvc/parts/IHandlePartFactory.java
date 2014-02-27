@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 
@@ -22,7 +23,34 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * @param <V>
  */
 public interface IHandlePartFactory<V> {
-	
-	public List<IHandlePart<V>> createHandleParts(List<IContentPart<V>> targets, IBehavior<V> contextBehavior);
+
+	/**
+	 * Creates specific {@link IHandlePart}s for the given <i>targets</i>, in
+	 * the context specified by the given <i>contextBehavior</i> and
+	 * <i>contextMap</i>.
+	 * 
+	 * As all {@link IBehavior}s should be stateless, all data required for the
+	 * <i>contextBehavior</i> to be able to deliver certain information to the
+	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
+	 * 
+	 * <pre>
+	 * {@code}
+	 * create(List targets, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
+	 * 	if (ctxb instanceof ConcreteBehavior) {
+	 * 		SomeParam p = ((ConcreteBehavior) ctxb).getSomeParam(ctxm);
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * </quote>
+	 * 
+	 * @param targets
+	 * @param contextBehavior
+	 * @param contextMap
+	 * @return
+	 */
+	public List<IHandlePart<V>> createHandleParts(
+			List<IContentPart<V>> targets, IBehavior<V> contextBehavior,
+			Map<Object, Object> contextMap);
 
 }

@@ -156,7 +156,7 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 		IVisualPart<V> host = getHost();
 		IHandlePartFactory<V> factory = getHandlePartFactory(host);
 		List<IHandlePart<V>> handleParts = factory.createHandleParts(targets,
-				this);
+				this, Collections.emptyMap());
 		return handleParts;
 	}
 

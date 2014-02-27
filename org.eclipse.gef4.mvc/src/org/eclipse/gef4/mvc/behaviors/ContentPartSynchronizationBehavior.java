@@ -168,7 +168,7 @@ public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V>
 			IContentPartFactory<V> contentPartFactory = getHost().getRoot()
 					.getViewer().getContentPartFactory();
 			IContentPart<V> contentPart = contentPartFactory.createContentPart(
-					model, this);
+					model, this, Collections.emptyMap());
 			contentPart.setContent(model);
 			contentPartMap.put(model, contentPart);
 			return contentPart;
