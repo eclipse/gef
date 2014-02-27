@@ -112,8 +112,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 * its visual counter part.
 	 */
 	public void updatePathElements() {
-		getElements().clear();
-		getElements().addAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
+		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
 	
 }
