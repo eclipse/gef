@@ -244,6 +244,7 @@
 		<module>../org.eclipse.gef4.geometry.convert.fx</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx.source-feature</module>
+		<module>../org.eclipse.gef4.geometry.convert.fx.tests</module>
 		<module>../org.eclipse.gef4.geometry.doc</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>

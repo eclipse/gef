@@ -13,6 +13,7 @@
 package org.eclipse.gef4.geometry.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
@@ -22,7 +23,10 @@ import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CubicCurve;
 import org.eclipse.gef4.geometry.planar.Line;
+import org.eclipse.gef4.geometry.planar.Path;
+import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.QuadraticCurve;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.utils.PrecisionUtils;
@@ -507,4 +511,22 @@ public class CurveUtilsTests {
 			}
 		}
 	}
+
+	@Test
+	public void test_toPath() {
+		Point start = new Point(20, 30);
+		Point mid = new Point(20, 70);
+		Point end = new Point(20, 90);
+		Path path = new Polyline(start, mid, end).toPolyBezier().toPath();
+		Segment[] segments = path.getSegments();
+		assertNotNull(segments);
+		assertEquals(3, segments.length);
+		assertEquals(Segment.MOVE_TO, segments[0].getType());
+		assertEquals(Segment.LINE_TO, segments[1].getType());
+		assertEquals(Segment.LINE_TO, segments[2].getType());
+		assertEquals(start, segments[0].getPoints()[0]);
+		assertEquals(mid, segments[1].getPoints()[0]);
+		assertEquals(end, segments[2].getPoints()[0]);
+	}
+
 }

@@ -17,6 +17,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.FillRule;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
@@ -46,6 +47,9 @@ public class Geometry2JavaFX {
 		PathElement[] elements = new PathElement[segments.length];
 		for (int i = 0; i < segments.length; i++) {
 			Point[] points = segments[i].getPoints();
+//			if (points.length > 0) {
+//				System.out.println(i + ": " + points[points.length - 1]);
+//			}
 			switch (segments[i].getType()) {
 			case Segment.MOVE_TO:
 				elements[i] = new MoveTo(points[0].x, points[0].y);
@@ -73,7 +77,9 @@ public class Geometry2JavaFX {
 	}
 	
 	public static javafx.scene.shape.Path toPath(Path path) {
-		return new javafx.scene.shape.Path(toPathElements(path));
+		javafx.scene.shape.Path fxPath = new javafx.scene.shape.Path(toPathElements(path));
+		fxPath.setFillRule(path.getWindingRule() == Path.WIND_EVEN_ODD ? FillRule.EVEN_ODD : FillRule.NON_ZERO);
+		return fxPath;
 	}
 	
 }
