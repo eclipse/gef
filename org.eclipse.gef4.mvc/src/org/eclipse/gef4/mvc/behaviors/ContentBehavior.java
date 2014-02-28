@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class ContentPartSynchronizationBehavior<V> extends AbstractBehavior<V>
+public class ContentBehavior<V> extends AbstractBehavior<V>
 		implements PropertyChangeListener {
 
 	@Override

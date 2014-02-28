@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
@@ -26,7 +26,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	private Object content;
 
 	public AbstractContentPart() {
-		installBound(new ContentPartSynchronizationBehavior<V>());
+		installBound(new ContentBehavior<V>());
 	}
 
 	/**
@@ -91,10 +91,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 		if (parent == null) {
 			// remove all content children
-			getBound(ContentPartSynchronizationBehavior.class)
+			getBound(ContentBehavior.class)
 					.synchronizeContentChildren(Collections.emptyList());
 			// create content anchored as needed
-			getBound(ContentPartSynchronizationBehavior.class)
+			getBound(ContentBehavior.class)
 					.synchronizeContentAnchored(Collections.emptyList());
 		}
 		super.setParent(parent);
@@ -104,10 +104,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			// listen for the PARENT property of the host to change, rather than
 			// accessing the policy directly here
 			// create content children as needed
-			getBound(ContentPartSynchronizationBehavior.class)
+			getBound(ContentBehavior.class)
 					.synchronizeContentChildren(getContentChildren());
 			// create content anchored as needed
-			getBound(ContentPartSynchronizationBehavior.class)
+			getBound(ContentBehavior.class)
 					.synchronizeContentAnchored(getContentAnchored());
 		}
 	}

@@ -16,7 +16,7 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.behaviors.ContentPartSynchronizationBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	private IVisualViewer<V> viewer;
 	
 	public AbstractRootPart() {
-		installBound(new ContentPartSynchronizationBehavior<V>());
+		installBound(new ContentBehavior<V>());
 	}
 
 	public IRootPart<V> getRoot() {
