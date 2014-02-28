@@ -11,9 +11,8 @@ public class FXConversionTests {
 
 	@Test
 	public void test_PathConversion() {
-		// Create a Path whose coordinate values are convertible from double to
-		// float without loosing precision so that we can compare the Path with
-		// an SWT equivalent as an SWT Path consists of float coordinates.
+		// create a simple path and convert it from geometry to javafx and back
+		// again!
 		Path p = new Path().moveTo(50, 50).lineTo(100, 100)
 				.quadTo(100, 150, 50, 150).cubicTo(20, 120, 20, 80, 50, 50)
 				.close();
