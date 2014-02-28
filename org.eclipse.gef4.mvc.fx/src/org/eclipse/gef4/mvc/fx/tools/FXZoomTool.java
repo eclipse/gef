@@ -18,9 +18,9 @@ import org.eclipse.gef4.fx.gestures.FXPinchGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.policies.IPolicy;
-import org.eclipse.gef4.mvc.tools.AbstractPinchTool;
+import org.eclipse.gef4.mvc.tools.AbstractZoomTool;
 
-public class FXZoomTool extends AbstractPinchTool<Node> {
+public class FXZoomTool extends AbstractZoomTool<Node> {
 
 	public FXZoomTool() {
 	}

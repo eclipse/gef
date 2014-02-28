@@ -17,7 +17,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
-public class AbstractPinchTool<V> extends AbstractTool<V> {
+public class AbstractZoomTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("rawtypes")
 	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IZoomPolicy.class;
