@@ -26,9 +26,9 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.policies.AbstractResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {

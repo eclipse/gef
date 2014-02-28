@@ -14,24 +14,18 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
-import org.eclipse.gef4.mvc.policies.IResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-		IResizeRelocatePolicy<Node> {
+		IPolicy<Node> {
 
 	protected double initialLayoutX, initialLayoutY, initialWidth,
 			initialHeight;
 
-	@Override
 	public void initResizeRelocate() {
 		Node visual = getHost().getVisual();
 		initialLayoutX = visual.getLayoutX();
@@ -42,7 +36,6 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		initialHeight = lb.getHeight();
 	}
 
-	@Override
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
 		Node visual = getHost().getVisual();
 		if (visual.isResizable()) {
@@ -62,7 +55,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	@Override
+	//TODO: return operation, so it can be combined with others and executed by caller (drag policy)
 	public void commitResizeRelocate(double dx, double dy, double dw, double dh) {
 		Node visual = getHost().getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();

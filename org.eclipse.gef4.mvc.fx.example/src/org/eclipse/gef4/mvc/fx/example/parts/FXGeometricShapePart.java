@@ -31,7 +31,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
-import org.eclipse.gef4.mvc.policies.IResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
@@ -74,14 +73,15 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			}
 		});
 		installBound(IDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
-		installBound(IResizeRelocatePolicy.class, new FXResizeRelocatePolicy() {
-			@Override
-			public void commitResizeRelocate(double dx, double dy, double dw,
-					double dh) {
-				super.commitResizeRelocate(dx, dy, dw, dh);
-				// TODO: chain an operation to apply changes to model
-			}
-		});
+		installBound(FXResizeRelocatePolicy.class,
+				new FXResizeRelocatePolicy() {
+					@Override
+					public void commitResizeRelocate(double dx, double dy,
+							double dw, double dh) {
+						super.commitResizeRelocate(dx, dy, dw, dh);
+						// TODO: chain an operation to apply changes to model
+					}
+				});
 	}
 
 	@Override
