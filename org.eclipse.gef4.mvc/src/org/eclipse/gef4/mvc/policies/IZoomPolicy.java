@@ -11,23 +11,34 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-public interface IPinchPolicy<V> extends IPolicy<V> {
+import org.eclipse.gef4.mvc.models.IZoomModel;
+
+public interface IZoomPolicy<V> extends IPolicy<V> {
 
 	/**
 	 * Empty default implementation.
 	 */
 	public class Impl<V> extends AbstractPolicy<V> implements
-			IPinchPolicy<V> {
+			IZoomPolicy<V> {
+		
+		private double initialZoomFactor;
+		private IZoomModel zoomModel;
+
 		@Override
 		public void zoomDetected(double partialFactor) {
+			zoomModel = getHost().getRoot().getViewer().getZoomModel();
+			initialZoomFactor = zoomModel.getZoomFactor();
+			zoomModel.setZoomFactor(initialZoomFactor * partialFactor);
 		}
 
 		@Override
 		public void zoomed(double partialFactor, double totalFactor) {
+			zoomModel.setZoomFactor(initialZoomFactor * totalFactor);
 		}
 
 		@Override
 		public void zoomFinished(double totalFactor) {
+			zoomModel.setZoomFactor(initialZoomFactor * totalFactor);
 		}
 	}
 

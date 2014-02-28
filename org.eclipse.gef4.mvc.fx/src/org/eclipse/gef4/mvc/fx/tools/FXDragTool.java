@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -22,12 +21,22 @@ import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
-import org.eclipse.gef4.mvc.tools.AbstractDragTool;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-public class FXDragTool extends AbstractDragTool<Node> {
+// TODO: refactor implementation
+public class FXDragTool extends AbstractTool<Node> {
+
+	@SuppressWarnings("rawtypes")
+	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected AbstractFXDragPolicy getToolPolicy(IVisualPart<Node> targetPart) {
+		return targetPart.getBound((Class<IPolicy>) TOOL_POLICY_KEY);
+	}
 
 	@SuppressWarnings("unchecked")
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
@@ -54,6 +63,32 @@ public class FXDragTool extends AbstractDragTool<Node> {
 							dy));
 		}
 	};
+
+	protected void press(List<IVisualPart<Node>> targetParts, Point mouseLocation) {
+		for (IVisualPart<Node> targetPart : targetParts) {
+			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
+			if (policy != null)
+				policy.press(mouseLocation);
+		}
+	}
+
+	protected void drag(List<IVisualPart<Node>> targetParts, Point mouseLocation,
+			Dimension delta) {
+		for (IVisualPart<Node> targetPart : targetParts) {
+			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
+			if (policy != null)
+				policy.drag(mouseLocation, delta);
+		}
+	}
+
+	protected void release(List<IVisualPart<Node>> targetParts,
+			Point mouseLocation, Dimension delta) {
+		for (IVisualPart<Node> targetPart : targetParts) {
+			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
+			if (policy != null)
+				policy.release(mouseLocation, delta);
+		}
+	}
 
 	private Scene scene;
 

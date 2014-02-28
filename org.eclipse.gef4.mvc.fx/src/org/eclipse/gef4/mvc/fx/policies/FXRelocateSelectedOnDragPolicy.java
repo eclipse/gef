@@ -18,15 +18,11 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
-public class FXRelocateSelectedOnDragPolicy extends AbstractPolicy<Node> implements
-		IDragPolicy<Node> {
+public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialMouseLocation = null;
 
-	@SuppressWarnings("unchecked")
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> part) {
 		return part.getBound(FXResizeRelocatePolicy.class);
@@ -35,11 +31,6 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractPolicy<Node> impleme
 	public List<IContentPart<Node>> getTargetParts() {
 		return getHost().getRoot().getViewer().getSelectionModel()
 				.getSelected();
-	}
-
-	@Override
-	public boolean isDraggable() {
-		return true;
 	}
 
 	@Override

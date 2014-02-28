@@ -28,8 +28,7 @@ import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.IPinchPolicy;
-import org.eclipse.gef4.mvc.policies.ZoomOnPinchPolicy;
+import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 public class FXExampleView extends FXView {
 
@@ -38,7 +37,7 @@ public class FXExampleView extends FXView {
 		FXViewer viewer = super.createViewer(canvas);
 		viewer.getRootPart().installBound(new FXSelectionBehavior());
 		viewer.getRootPart().installBound(new FXZoomBehavior());
-		viewer.getRootPart().installBound(IPinchPolicy.class, new ZoomOnPinchPolicy<Node>());
+		viewer.getRootPart().installBound(IZoomPolicy.class, new IZoomPolicy.Impl<Node>());
 		return viewer;
 	}
 

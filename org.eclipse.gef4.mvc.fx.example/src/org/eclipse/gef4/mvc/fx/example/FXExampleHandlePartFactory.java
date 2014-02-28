@@ -27,9 +27,9 @@ import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
@@ -38,7 +38,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			List<IContentPart<Node>> targets, Pos position) {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
 				targets, position);
-		part.installBound(IDragPolicy.class,
+		part.installBound(AbstractFXDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						toReferencePoint(position)));
 		return part;
@@ -74,15 +74,17 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			final int segmentIndex = i;
-			final IHandlePart<Node> hp = new FXMidPointHandlePart(targetPart, handleGeometryProvider, segmentIndex);
-			hp.installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+			final IHandlePart<Node> hp = new FXMidPointHandlePart(targetPart,
+					handleGeometryProvider, segmentIndex);
+			hp.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
 				private Point startPoint;
 
 				@Override
 				public void press(Point mouseLocation) {
 					startPoint = new Point(hp.getVisual().getLayoutX(), hp
 							.getVisual().getLayoutY());
-					getWayPointHandlePolicy(targetPart).createWayPoint(segmentIndex, startPoint);
+					getWayPointHandlePolicy(targetPart).createWayPoint(
+							segmentIndex, startPoint);
 				}
 
 				@Override
@@ -117,7 +119,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 		// make way points (middle segment vertices) draggable
 		if (segmentIndex > 0 && !isEndPoint) {
-			part.installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+			part.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
 				private Point startPoint;
 
 				@Override
@@ -160,7 +162,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex);
-		part.installBound(IDragPolicy.class,
+		part.installBound(AbstractFXDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						toReferencePoint(vertexIndex)));
 		return part;

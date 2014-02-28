@@ -23,11 +23,10 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 
+// TODO: refactor
 public class FXResizeRelocateSelectedOnHandleDragPolicy extends
-		AbstractPolicy<Node> implements IDragPolicy<Node> {
+		AbstractFXDragPolicy {
 
 	public FXResizeRelocateSelectedOnHandleDragPolicy(ReferencePoint refPoint) {
 		this.referencePoint = refPoint;
@@ -101,7 +100,6 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	private Map<IContentPart<Node>, Double> relX2 = null;
 	private Map<IContentPart<Node>, Double> relY2 = null;
 
-	@SuppressWarnings("unchecked")
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> editPart) {
 		return editPart.getBound(FXResizeRelocatePolicy.class);
@@ -259,11 +257,6 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		this.selectionBounds = null;
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
-	}
-
-	@Override
-	public boolean isDraggable() {
-		return true;
 	}
 
 }

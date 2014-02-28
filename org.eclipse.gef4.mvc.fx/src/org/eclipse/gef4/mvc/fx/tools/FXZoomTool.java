@@ -21,9 +21,9 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractPinchTool;
 
-public class FXPinchTool extends AbstractPinchTool<Node> {
+public class FXZoomTool extends AbstractPinchTool<Node> {
 
-	public FXPinchTool() {
+	public FXZoomTool() {
 	}
 
 	private Scene scene;
@@ -32,7 +32,7 @@ public class FXPinchTool extends AbstractPinchTool<Node> {
 	private FXPinchGesture gesture = new FXPinchGesture() {
 		@Override
 		protected void zoomFinished(ZoomEvent e) {
-			FXPinchTool.this.zoomFinished(FXPartUtils.getTargetParts(
+			FXZoomTool.this.zoomFinished(FXPartUtils.getTargetParts(
 					getDomain().getViewer(), e,
 					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
 					e.getTotalZoomFactor());
@@ -40,7 +40,7 @@ public class FXPinchTool extends AbstractPinchTool<Node> {
 
 		@Override
 		protected void zoomDetected(ZoomEvent e) {
-			FXPinchTool.this.zoomDetected(FXPartUtils.getTargetParts(
+			FXZoomTool.this.zoomDetected(FXPartUtils.getTargetParts(
 					getDomain().getViewer(), e,
 					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
 					e.getTotalZoomFactor());
@@ -48,7 +48,7 @@ public class FXPinchTool extends AbstractPinchTool<Node> {
 
 		@Override
 		protected void zoomed(ZoomEvent e) {
-			FXPinchTool.this.zoomed(FXPartUtils.getTargetParts(
+			FXZoomTool.this.zoomed(FXPartUtils.getTargetParts(
 					getDomain().getViewer(), e,
 					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
 					e.getTotalZoomFactor());

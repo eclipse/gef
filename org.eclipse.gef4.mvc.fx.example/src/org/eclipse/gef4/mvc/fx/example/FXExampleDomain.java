@@ -16,7 +16,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
-import org.eclipse.gef4.mvc.fx.tools.FXPinchTool;
+import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
 import org.eclipse.gef4.mvc.tools.CompositeAndTool;
 import org.eclipse.gef4.mvc.tools.ITool;
@@ -29,7 +29,7 @@ public class FXExampleDomain extends FXDomain {
 		baseTool.add(new FXSelectionTool()); // TODO use drag tool
 		baseTool.add(new FXDragTool());
 		baseTool.add(new FXHoverTool());
-		baseTool.add(new FXPinchTool());
+		baseTool.add(new FXZoomTool());
 		return baseTool;
 	}
 

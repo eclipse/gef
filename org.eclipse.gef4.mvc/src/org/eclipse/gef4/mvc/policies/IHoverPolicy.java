@@ -23,4 +23,6 @@ public interface IHoverPolicy<V> extends IPolicy<V> {
 	
 	public boolean isHoverable();
 	
+	// TODO: we need to add the manipulation of the hover model here and in Impl.
+	
 }

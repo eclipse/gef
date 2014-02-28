@@ -9,19 +9,19 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
-public interface ISelectionPolicy<V> extends IPolicy<V> {
+import javafx.scene.Node;
 
-	public class Impl<V> extends AbstractPolicy<V> implements ISelectionPolicy<V> {
-		@Override
-		public boolean isSelectable() {
-			return true;
-		}
-	}
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+
+public abstract class AbstractFXDragPolicy extends AbstractPolicy<Node> {
 	
-	public boolean isSelectable();
+	public abstract void press(Point mouseLocation);
 	
-	// TODO: we need to add the manipulation of the selection model here and in Impl.
+	public abstract void drag(Point mouseLocation, Dimension delta);
 	
+	public abstract void release(Point mouseLocation, Dimension delta);
 }

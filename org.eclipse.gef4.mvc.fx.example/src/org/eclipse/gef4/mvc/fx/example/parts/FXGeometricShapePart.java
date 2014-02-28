@@ -28,8 +28,8 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
@@ -72,7 +72,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(IDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
+		installBound(AbstractFXDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
 		installBound(FXResizeRelocatePolicy.class,
 				new FXResizeRelocatePolicy() {
 					@Override

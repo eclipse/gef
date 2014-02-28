@@ -14,16 +14,16 @@ package org.eclipse.gef4.mvc.tools;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IPinchPolicy;
+import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class AbstractPinchTool<V> extends AbstractTool<V> {
 
 	@SuppressWarnings("rawtypes")
-	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IPinchPolicy.class;
+	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IZoomPolicy.class;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected IPinchPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
+	protected IZoomPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
 		return targetPart.getBound((Class<IPolicy>)TOOL_POLICY_KEY);
 	}
 
@@ -33,7 +33,7 @@ public class AbstractPinchTool<V> extends AbstractTool<V> {
 	protected void zoomDetected(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchPolicy<V> policy = getToolPolicy(targetPart);
+			IZoomPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
 				policy.zoomDetected(partialFactor);
 			}
@@ -48,7 +48,7 @@ public class AbstractPinchTool<V> extends AbstractTool<V> {
 	protected void zoomed(List<IVisualPart<V>> targetParts, double partialFactor,
 			double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchPolicy<V> policy = getToolPolicy(targetPart);
+			IZoomPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
 				policy.zoomed(partialFactor, totalFactor);
 			}
@@ -61,7 +61,7 @@ public class AbstractPinchTool<V> extends AbstractTool<V> {
 	protected void zoomFinished(List<IVisualPart<V>> targetParts,
 			double partialFactor, double totalFactor) {
 		for (IVisualPart<V> targetPart : targetParts) {
-			IPinchPolicy<V> policy = getToolPolicy(targetPart);
+			IZoomPolicy<V> policy = getToolPolicy(targetPart);
 			if (policy != null) {
 				policy.zoomFinished(totalFactor);
 			}

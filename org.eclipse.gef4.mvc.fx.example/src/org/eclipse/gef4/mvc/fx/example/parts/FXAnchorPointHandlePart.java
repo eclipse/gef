@@ -22,7 +22,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
-import org.eclipse.gef4.mvc.policies.IDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 
 public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 
@@ -43,7 +43,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 						new Stop(0.5, Color.web("#a5d3fb")),
 						new Stop(1.0, Color.web("#d5faff")) }));
 		visual.setStroke(Color.web("#5a61af"));
-		installBound(IDragPolicy.class, new IDragPolicy.Impl<Node>() {
+		installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
 			@Override
 			public void drag(Point mouseLocation, Dimension delta) {
 				AbstractWayPointPolicy policy = getPolicy();
