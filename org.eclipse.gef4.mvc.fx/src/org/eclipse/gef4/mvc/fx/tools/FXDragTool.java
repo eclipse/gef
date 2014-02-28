@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.List;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
@@ -90,28 +89,10 @@ public class FXDragTool extends AbstractTool<Node> {
 		}
 	}
 
-	private Scene scene;
-
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		scene = ((FXViewer) getDomain().getViewer()).getCanvas().getScene();
-	}
-
-	@Override
-	public void activate() {
-		super.activate();
-		if (scene != null) {
-			gesture.setScene(scene);
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		if (scene != null) {
-			gesture.setScene(null);
-		}
-		super.deactivate();
+		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas().getScene());
 	}
 
 	@Override

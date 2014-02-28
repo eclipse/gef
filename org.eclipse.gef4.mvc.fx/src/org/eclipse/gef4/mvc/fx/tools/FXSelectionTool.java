@@ -47,18 +47,15 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		}
 	};
 
-	@Override
-	public void activate() {
-		super.activate();
+	protected void registerListeners() {
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-	}
+	};
 
 	@Override
-	public void deactivate() {
+	protected void unregisterListeners() {
 		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
 				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-		super.deactivate();
 	}
 
 }

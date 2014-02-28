@@ -17,7 +17,7 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  * 
  * @author anyssen
  * @author mwienand
- *
+ * 
  * @param <V>
  */
 public abstract class AbstractTool<V> implements ITool<V> {
@@ -31,22 +31,12 @@ public abstract class AbstractTool<V> implements ITool<V> {
 			throw new IllegalStateException(
 					"The reference to the IEditDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}
-		IDomain<V> oldDomain = getDomain();
-
-		if (oldDomain != null && domain == null) {
-			unregisterListeners();
-		}
-
 		this.domain = domain;
-
-		if (oldDomain == null && domain != null) {
-			registerListeners();
-		}
 	}
 
 	/**
-	 * This method is called when a valid {@link IDomain} is attached to
-	 * this tool so that you can register event listeners for various inputs
+	 * This method is called when a valid {@link IDomain} is attached to this
+	 * tool so that you can register event listeners for various inputs
 	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
 	 */
 	protected void registerListeners() {
@@ -72,10 +62,12 @@ public abstract class AbstractTool<V> implements ITool<V> {
 					"The IEditDomain has to be set via setDomain(IEditDomain) before activation.");
 		}
 		this.isActive = true;
+		registerListeners();
 	}
 
 	@Override
 	public void deactivate() {
+		unregisterListeners();
 		this.isActive = false;
 	}
 

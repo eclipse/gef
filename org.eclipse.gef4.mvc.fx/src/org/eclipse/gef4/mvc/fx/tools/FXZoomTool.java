@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
 import org.eclipse.gef4.fx.gestures.FXPinchGesture;
@@ -26,54 +25,35 @@ public class FXZoomTool extends AbstractPinchTool<Node> {
 	public FXZoomTool() {
 	}
 
-	private Scene scene;
-
 	@SuppressWarnings("unchecked")
 	private FXPinchGesture gesture = new FXPinchGesture() {
 		@Override
 		protected void zoomFinished(ZoomEvent e) {
-			FXZoomTool.this.zoomFinished(FXPartUtils.getTargetParts(
-					getDomain().getViewer(), e,
-					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
-					e.getTotalZoomFactor());
+			FXZoomTool.this.zoomFinished(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
+					.getZoomFactor(), e.getTotalZoomFactor());
 		}
 
 		@Override
 		protected void zoomDetected(ZoomEvent e) {
-			FXZoomTool.this.zoomDetected(FXPartUtils.getTargetParts(
-					getDomain().getViewer(), e,
-					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
-					e.getTotalZoomFactor());
+			FXZoomTool.this.zoomDetected(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
+					.getZoomFactor(), e.getTotalZoomFactor());
 		}
 
 		@Override
 		protected void zoomed(ZoomEvent e) {
-			FXZoomTool.this.zoomed(FXPartUtils.getTargetParts(
-					getDomain().getViewer(), e,
-					(Class<IPolicy<Node>>) TOOL_POLICY_KEY), e.getZoomFactor(),
-					e.getTotalZoomFactor());
+			FXZoomTool.this.zoomed(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
+					.getZoomFactor(), e.getTotalZoomFactor());
 		}
 	};
 
+	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		scene = ((FXViewer) getDomain().getViewer()).getCanvas().getScene();
-	}
-
-	@Override
-	public void activate() {
-		super.activate();
-		if (scene != null) {
-			gesture.setScene(scene);
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		if (scene != null) {
-			gesture.setScene(null);
-		}
-		super.deactivate();
+		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas()
+				.getScene());
 	}
 
 	@Override

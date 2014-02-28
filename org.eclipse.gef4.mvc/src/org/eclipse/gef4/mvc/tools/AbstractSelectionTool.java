@@ -97,17 +97,15 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 	}
 
 	@Override
-	public void activate() {
-		super.activate();
+	protected void registerListeners() {
 		getDomain().getViewer().getContentModel()
 				.addPropertyChangeListener(this);
 	}
 
 	@Override
-	public void deactivate() {
+	protected void unregisterListeners() {
 		getDomain().getViewer().getContentModel()
 				.removePropertyChangeListener(this);
-		super.deactivate();
 	}
 
 	@Override

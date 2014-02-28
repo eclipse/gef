@@ -29,8 +29,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	}
 
 	@Override
-	public void activate() {
-		super.activate();
+	protected void registerListeners() {
 		getDomain().getViewer().getContentModel()
 				.addPropertyChangeListener(this);
 		getDomain().getViewer().getSelectionModel()
@@ -38,12 +37,11 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	}
 
 	@Override
-	public void deactivate() {
+	protected void unregisterListeners() {
 		getDomain().getViewer().getSelectionModel()
 				.removePropertyChangeListener(this);
 		getDomain().getViewer().getContentModel()
 				.removePropertyChangeListener(this);
-		super.deactivate();
 	}
 
 	@SuppressWarnings("unchecked")

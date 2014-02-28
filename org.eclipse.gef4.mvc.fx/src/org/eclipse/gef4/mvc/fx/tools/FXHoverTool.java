@@ -41,18 +41,15 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 		}
 	};
 
-	@Override
-	public void activate() {
-		super.activate();
+	protected void registerListeners() {
 		getDomain().getViewer().getRootPart().getVisual().getScene()
 				.addEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
-	}
+	};
 
 	@Override
-	public void deactivate() {
+	protected void unregisterListeners() {
 		getDomain().getViewer().getRootPart().getVisual().getScene()
 				.removeEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
-		super.deactivate();
 	}
 
 }
