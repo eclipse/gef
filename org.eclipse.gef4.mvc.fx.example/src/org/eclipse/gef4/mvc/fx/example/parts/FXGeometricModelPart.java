@@ -17,13 +17,11 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
-	
+
 	private Group g;
 
 	public FXGeometricModelPart() {
@@ -50,24 +48,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 		List<Object> objs = new ArrayList<Object>();
 		objs.addAll(getContent().getShapeVisuals());
 		return objs;
-	}
-
-	@Override
-	public void attachVisualToAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void detachVisualFromAnchorageVisual(Node anchorageVisual, IAnchor<Node> anchor) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

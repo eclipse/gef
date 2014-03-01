@@ -20,17 +20,16 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
@@ -40,7 +39,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 
 	protected static final double REMOVE_THRESHOLD = 10;
 	private FXGeometryNode<ICurve> visual;
-	private List<IAnchor<Node>> anchors = new ArrayList<IAnchor<Node>>();
+	private List<IFXNodeAnchor> anchors = new ArrayList<IFXNodeAnchor>();
 
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
@@ -257,15 +256,19 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(Node anchorageVisual,
-			IAnchor<Node> anchor) {
+	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
+			Node anchorageVisual) {
+		IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
+				.getAnchor(this);
 		anchors.add(anchor);
 		anchor.addPropertyChangeListener(this);
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
-			IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
+			Node anchorageVisual) {
+		IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
+				.getAnchor(this);
 		anchors.remove(anchor);
 		anchor.removePropertyChangeListener(this);
 	}
@@ -273,16 +276,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		super.propertyChange(evt);
-		if (evt.getPropertyName().equals(IAnchor.REPRESH)) {
+		if (evt.getPropertyName().equals(IFXNodeAnchor.REPRESH)) {
 			if (anchors.size() == 2) {
 				refreshVisual();
 			}
 		}
-	}
-
-	@Override
-	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
-		return null;
 	}
 
 }

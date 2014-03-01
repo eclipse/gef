@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
@@ -380,7 +379,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 		anchoreds.add(anchored);
 
-		addAnchoredVisual(anchored);
+		attachAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
 
 		anchored.refreshVisual();
@@ -400,18 +399,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void addAnchoredVisual(IVisualPart<V> anchored) {
-		IAnchor<V> anchor = getAnchor(anchored);
-		anchored.attachVisualToAnchorageVisual(getVisual(), anchor);
+	protected void attachAnchoredVisual(IVisualPart<V> anchored) {
+		anchored.attachVisualToAnchorageVisual(this, getVisual());
 	}
-
-	// may return an anchor if it wants to provide an reference point or null
-	protected abstract IAnchor<V> getAnchor(IVisualPart<V> anchored);
 
 	@Override
 	public void removeAnchored(IVisualPart<V> anchored) {
 		anchored.removeAnchorage(this);
-		removeAnchoredVisual(anchored);
+		detachAnchoredVisual(anchored);
 
 		anchoreds.remove(anchored);
 		if (anchoreds.size() == 0) {
@@ -419,9 +414,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void removeAnchoredVisual(IVisualPart<V> anchored) {
-		IAnchor<V> anchor = getAnchor(anchored);
-		anchored.detachVisualFromAnchorageVisual(getVisual(), anchor);
+	protected void detachAnchoredVisual(IVisualPart<V> anchored) {
+		anchored.detachVisualFromAnchorageVisual(this, getVisual());
 	}
 
 	@Override

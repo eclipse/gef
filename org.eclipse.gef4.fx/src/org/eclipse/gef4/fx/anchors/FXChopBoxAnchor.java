@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Ny??en (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.anchors;
+package org.eclipse.gef4.fx.anchors;
 
 import javafx.scene.Node;
 
@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-public class FXChopBoxAnchor extends AbstractFXAnchor {
+public class FXChopBoxAnchor extends AbstractFXNodeAnchor {
 
 	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);

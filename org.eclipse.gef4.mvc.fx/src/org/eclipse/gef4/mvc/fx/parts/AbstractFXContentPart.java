@@ -15,11 +15,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
+import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public abstract class AbstractFXContentPart extends
-		AbstractContentPart<Node> {
+public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node> child, int index) {
@@ -41,6 +41,23 @@ public abstract class AbstractFXContentPart extends
 		} else {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
+			Node anchorageVisual) {
+		// do nothing by default
+	}
+
+	@Override
+	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
+			Node anchorageVisual) {
+		// do nothing by default
+	}
+
+	public IFXNodeAnchor getAnchor(IVisualPart<Node> anchored) {
+		// no anchor by default
+		return null;
 	}
 
 }

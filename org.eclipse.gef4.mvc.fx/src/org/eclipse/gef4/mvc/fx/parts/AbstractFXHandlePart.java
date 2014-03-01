@@ -16,8 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 
@@ -34,15 +34,14 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 		}
 	};
 
-	public void attachVisualToAnchorageVisual(Node anchorageVisual,
-			org.eclipse.gef4.mvc.anchors.IAnchor<Node> anchor) {
+	@Override
+	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage, Node anchorageVisual) {
 		visualListener.register(anchorageVisual,
 				((FXRootPart) getRoot()).getLayerStackPane());
 	};
 
 	@Override
-	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
-			IAnchor<Node> anchor) {
+	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage, Node anchorageVisual) {
 		visualListener.unregister();
 	}
 

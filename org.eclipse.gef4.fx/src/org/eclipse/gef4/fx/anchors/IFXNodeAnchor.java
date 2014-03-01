@@ -6,13 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Ny??en (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.anchors;
+package org.eclipse.gef4.fx.anchors;
+
+import java.beans.PropertyChangeListener;
+
+import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 
 /**
  * 
@@ -20,13 +23,17 @@ import org.eclipse.gef4.mvc.IPropertyChangeSupport;
  *
  * @param <V>
  */
-public interface IAnchor<V> extends IPropertyChangeSupport {
+public interface IFXNodeAnchor {
 
-	// TODO: create dedicated interface to notify that position is invalidated and has to be re-retrieved via the getPosition callback. 
+	// TODO: use FX observable property to notify about position changes 
 	public final static String REPRESH = "anchorageReferenceShape";
-
-	V getAnchorage();
 	
-	Point getPosition(V anchored, Point referencePosition);
+	public void addPropertyChangeListener(PropertyChangeListener listener);
+
+	public void removePropertyChangeListener(PropertyChangeListener listener);
+
+	Node getAnchorage();
+	
+	Point getPosition(Node anchored, Point referencePosition);
 	
 }

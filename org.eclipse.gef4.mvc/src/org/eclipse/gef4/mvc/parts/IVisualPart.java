@@ -18,13 +18,13 @@ import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 
-public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChangeSupport {
+public interface IVisualPart<V> extends IActivatable, IAdaptable,
+		IPropertyChangeSupport {
 
 	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
-	
+
 	/**
 	 * Returns the {@link IRootPart}. This method should only be called
 	 * internally or by helpers such as edit policies. The root can be used to
@@ -45,29 +45,29 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 	public List<IVisualPart<V>> getChildren();
 
 	public void removeChild(IVisualPart<V> child);
-	
+
 	public void removeChildren(List<? extends IVisualPart<V>> children);
 
 	public void addChild(IVisualPart<V> child, int index);
-	
+
 	public void addChild(IVisualPart<V> child);
-	
+
 	public void addChildren(List<? extends IVisualPart<V>> children);
 
 	public void reorderChild(IVisualPart<V> child, int index);
 
-	// public void addVisualToParentVisual(V parentVisual);
+	// public void addVisualToParentVisual(IVisualPart<V> parent, V parentVisual);
 	//
-	// public void removeVisualFromParentVisual(/*V parentVisual*/);
+	// public void removeVisualFromParentVisual(IVisualPart<V> parent, V parentVisual);
 
 	public void addAnchored(IVisualPart<V> anchored);
-	
+
 	// TODO: add by index and reordering of anchored
-	
+
 	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds);
 
 	public void removeAnchored(IVisualPart<V> anchored);
-	
+
 	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds);
 
 	public List<IVisualPart<V>> getAnchoreds();
@@ -78,11 +78,10 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 
 	public List<IVisualPart<V>> getAnchorages();
 
-	// anchor is optional
-	public void attachVisualToAnchorageVisual(V anchorageVisual, IAnchor<V> anchor);
+	// anchorage visual may not be the visual of the anchorage itself!
+	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual);
 
-	// anchor is optional
-	public void detachVisualFromAnchorageVisual(V anchorageVisual, IAnchor<V> anchor);
+	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?
@@ -90,8 +89,9 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 	// externally)
 	public <P extends IPartBound<V>> P getBound(Class<? super P> key);
 
-	public <P extends IPartBound<V>> void installBound(Class<? super P> key, P bounded);
-	
+	public <P extends IPartBound<V>> void installBound(Class<? super P> key,
+			P bounded);
+
 	public <P extends IPartBound<V>> void installBound(P bounded);
 
 	public <P extends IPartBound<V>> void uninstallBound(Class<P> key);

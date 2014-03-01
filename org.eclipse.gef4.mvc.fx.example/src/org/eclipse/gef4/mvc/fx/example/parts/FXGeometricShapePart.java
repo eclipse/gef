@@ -17,12 +17,12 @@ import java.util.List;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
-import org.eclipse.gef4.mvc.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
@@ -36,7 +36,7 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	private FXGeometryNode<IShape> visual;
-	private IAnchor<Node> anchor;
+	private IFXNodeAnchor anchor;
 
 	public FXGeometricShapePart() {
 		visual = new FXGeometryNode<IShape>() {
@@ -148,17 +148,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(Node anchorageVisual,
-			IAnchor<Node> anchor) {
-	}
-
-	@Override
-	public void detachVisualFromAnchorageVisual(Node anchorageVisual,
-			IAnchor<Node> anchor) {
-	}
-
-	@Override
-	protected IAnchor<Node> getAnchor(IVisualPart<Node> anchored) {
+	public IFXNodeAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
 			// TODO: when to dispose the anchor properly??
 			anchor = new FXChopBoxAnchor(getVisual()) {

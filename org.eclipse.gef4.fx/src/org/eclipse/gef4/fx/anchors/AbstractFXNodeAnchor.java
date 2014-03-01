@@ -6,47 +6,49 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Ny??en (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.anchors;
+package org.eclipse.gef4.fx.anchors;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
-import org.eclipse.gef4.mvc.anchors.AbstractAnchor;
-import org.eclipse.gef4.mvc.anchors.IAnchor;
 
-public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
-
+public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
+	
+	private Node anchorage;
+	
 	private VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
 		protected void transformChanged(Transform oldTransform,
 				Transform newTransform) {
-			propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+			propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
 					null);
 		}
 
 		@Override
 		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-			propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+			propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
 					null);
 		}
 	};
 
-	public AbstractFXAnchor(Node anchorage) {
-		super(anchorage);
+	public AbstractFXNodeAnchor(Node anchorage) {
+		setAnchorage(anchorage);
 	}
 
-	@Override
 	protected void setAnchorage(Node anchorage) {
 		Node oldAnchorage = getAnchorage();
 		if (oldAnchorage != null) {
 			unregisterLayoutListener(oldAnchorage);
 		}
-		super.setAnchorage(anchorage);
+		this.anchorage = anchorage;
 		if (anchorage != null) {
 			registerLayoutListeners(anchorage);
 		}
@@ -57,13 +59,13 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 			@Override
 			protected void transformChanged(Transform oldTransform,
 					Transform newTransform) {
-				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+				propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
 						null);
 			}
 
 			@Override
 			protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-				propertyChangeSupport.firePropertyChange(IAnchor.REPRESH, null,
+				propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
 						null);
 			}
 		};
@@ -73,5 +75,22 @@ public abstract class AbstractFXAnchor extends AbstractAnchor<Node> {
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {
 		visualListener.unregister();
+	}
+	
+	protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
+			this);
+		
+	public Node getAnchorage() {
+		return anchorage;
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 }
