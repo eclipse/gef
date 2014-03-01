@@ -26,7 +26,8 @@
 					</includes>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<!--<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 					<frameworkExtensions>
 						<frameworkExtension>
 							<groupId>org.eclipse.fx.runtime</groupId>
@@ -34,6 +35,7 @@
 							<version>0.9.0</version>
 						</frameworkExtension>
 					</frameworkExtensions>
+					-->
 				</configuration>
 			</plugin>
 		</plugins>
