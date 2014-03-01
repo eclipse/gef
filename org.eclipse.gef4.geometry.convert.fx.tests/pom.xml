@@ -13,30 +13,6 @@
 	<artifactId>org.eclipse.gef4.geometry.convert.fx.tests</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
-	<profiles>
-		<profile>
-			<id>macosx</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<properties>
-				<test.vmargs>-Xmx512m -XX:MaxPermSize=256m -XstartOnFirstThread</test.vmargs>
-			</properties>
-		</profile>
-		<profile>
-			<id>other-os</id>
-			<activation>
-				<os>
-					<family>!mac</family>
-				</os>
-			</activation>
-			<properties>
-				<test.vmargs>-Xmx512m -XX:MaxPermSize=256m</test.vmargs>
-			</properties>
-		</profile>
-	</profiles>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -50,7 +26,14 @@
 					</includes>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
-					<argLine>${test.vmargs}</argLine>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.fx.osgi</artifactId>
+							<version>0.0.0</version>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>
