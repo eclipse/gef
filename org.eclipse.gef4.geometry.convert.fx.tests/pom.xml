@@ -26,14 +26,10 @@
 					</includes>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
-					<dependencies>
-						<dependency>
-							<artifactId>org.eclipse.fx.osgi</artifactId>
-							<version>0.0.0</version>
-							<type>eclipse-plugin</type>
-						</dependency>
-					</dependencies>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<additionalClasspathElements>
+						<additionalClasspathElement>${java.home}/lib/jfxrt.jar</additionalClasspathElement>
+					</additionalClasspathElements>
 				</configuration>
 			</plugin>
 		</plugins>
