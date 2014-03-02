@@ -222,6 +222,20 @@
 			</build>
 		</profile>
 	</profiles>
+	
+	<repositories>
+		<repository>
+			<id>juno</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/kepler</url>
+		</repository>
+
+		<repository>
+			<id>efxclipse-0-9-0-repo</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/efxclipse/updates-released/0.9.0/site</url>
+		</repository>
+	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
