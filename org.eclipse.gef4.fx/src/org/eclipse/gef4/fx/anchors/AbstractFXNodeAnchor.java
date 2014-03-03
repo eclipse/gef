@@ -21,7 +21,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -31,17 +30,13 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
 
-	// FIXME: read-only
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
-//	private SimpleObjectProperty<Node> anchorageProperty = new SimpleObjectProperty<Node>();
 
-	// FIXME: inline (trouble with generics)
-	private ObservableMap<Node, Point> _referencePointMap = FXCollections.observableHashMap();
-	private SimpleMapProperty<Node, Point> referencePointProperty = new SimpleMapProperty<Node, Point>(_referencePointMap);
+	private SimpleMapProperty<Node, Point> referencePointProperty = new SimpleMapProperty<Node, Point>(
+			FXCollections.<Node, Point>observableHashMap());
 
-	// FIXME: inline (trouble with generics)
-	private ObservableMap<Node, Point> _positionMap = FXCollections.observableHashMap();
-	private ReadOnlyMapWrapper<Node, Point> positionProperty = new ReadOnlyMapWrapper<Node, Point>(_positionMap);
+	private ReadOnlyMapWrapper<Node, Point> positionProperty = new ReadOnlyMapWrapper<Node, Point>(
+			FXCollections.<Node, Point>observableHashMap());
 
 	private VisualChangeListener anchorageVisualListener = new VisualChangeListener() {
 		@Override

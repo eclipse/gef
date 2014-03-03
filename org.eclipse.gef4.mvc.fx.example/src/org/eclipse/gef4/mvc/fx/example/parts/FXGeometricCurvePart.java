@@ -214,9 +214,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	private Point[] computeReferencePoints() {
 		if (anchors.size() != 2) {
-			System.out
-					.println("Cannot compute reference points: Exactly two anchors expected, but <"
-							+ anchors.size() + "> given.");
 			return new Point[] { end, start };
 		}
 
@@ -304,8 +301,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 			private void recomputeReferencePoint(final boolean isEndPoint) {
 				if (anchors.size() != 2) {
-					System.out
-							.println("not enough anchors to recompute reference points");
 					return;
 				}
 
@@ -336,7 +331,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			Node anchorageVisual) {
 		IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
+		anchor.positionProperty().removeListener(mapChangeListeners.get(anchor));
 		mapChangeListeners.remove(anchor);
+		visualChangeListeners.get(anchor).unregister();
 		visualChangeListeners.remove(anchor);
 		anchors.remove(anchor);
 	}
