@@ -141,22 +141,6 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	public static PolyBezier interpolateCubic(Point... points) {
 		PolyBezier interp = interpolateCubic(
 				INTERPOLATION_CURVE_WIDTH_COEFFICIENT, points);
-		// recognize interpolation failures
-		if (interp.beziers.length != points.length - 1) {
-			String message = "interpolation error:\n  points:\n";
-			for (int i = 0; i < points.length; i++) {
-				message = message
-						+ String.format("    %2d: %3.2f, %3.2f%n", i,
-								points[i].x, points[i].y);
-			}
-			message = message + "  curves:";
-			for (int i = 0; i < interp.beziers.length; i++) {
-				message = message
-						+ String.format("    %2d: %s%n", i,
-								interp.beziers[i].toString());
-			}
-			throw new IllegalStateException(message);
-		}
 		return interp;
 	}
 
