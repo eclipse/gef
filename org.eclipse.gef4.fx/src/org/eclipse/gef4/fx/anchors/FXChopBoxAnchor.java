@@ -39,7 +39,7 @@ public class FXChopBoxAnchor extends AbstractFXNodeAnchor {
 	 *         the to be anchored {@link Node}.
 	 */
 	@Override
-	public Point getPosition(Node anchored, Point referencePoint) {
+	public Point computePosition(Node anchored, Point referencePoint) {
 		// compute intersection point between outline of anchorage reference
 		// shape and line through anchorage and anchor reference points.
 

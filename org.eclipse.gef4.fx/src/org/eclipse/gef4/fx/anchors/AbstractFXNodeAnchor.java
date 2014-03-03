@@ -11,86 +11,134 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyMapWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
+import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
-	
-	private Node anchorage;
-	
-	private VisualChangeListener visualListener = new VisualChangeListener() {
+
+	// FIXME: read-only
+	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
+//	private SimpleObjectProperty<Node> anchorageProperty = new SimpleObjectProperty<Node>();
+
+	// FIXME: inline (trouble with generics)
+	private ObservableMap<Node, Point> _referencePointMap = FXCollections.observableHashMap();
+	private SimpleMapProperty<Node, Point> referencePointProperty = new SimpleMapProperty<Node, Point>(_referencePointMap);
+
+	// FIXME: inline (trouble with generics)
+	private ObservableMap<Node, Point> _positionMap = FXCollections.observableHashMap();
+	private ReadOnlyMapWrapper<Node, Point> positionProperty = new ReadOnlyMapWrapper<Node, Point>(_positionMap);
+
+	private VisualChangeListener anchorageVisualListener = new VisualChangeListener() {
 		@Override
 		protected void transformChanged(Transform oldTransform,
 				Transform newTransform) {
-			propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
-					null);
+			recomputePositions();
 		}
 
 		@Override
 		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-			propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
-					null);
+			recomputePositions();
+		}
+	};
+
+	private void recomputePositions() {
+		for (Node anchored : referencePointProperty.get().keySet()) {
+			recomputePosition(anchored, referencePointProperty.get(anchored));
+		}
+	}
+
+	private void recomputePosition(Node anchored, Point referencePoint) {
+		positionProperty.put(anchored,
+				computePosition(anchored, referencePoint));
+	}
+
+	private ChangeListener<Node> anchorageChangeListener = new ChangeListener<Node>() {
+		@Override
+		public void changed(ObservableValue<? extends Node> observable,
+				Node oldAnchorage, Node newAnchorage) {
+			if (oldAnchorage != null) {
+				unregisterLayoutListener(oldAnchorage);
+			}
+			if (newAnchorage != null) {
+				registerLayoutListeners(newAnchorage);
+			}
+		}
+	};
+
+	private MapChangeListener<Node, Point> referencePointChangeListener = new MapChangeListener<Node, Point>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
+			recomputePosition(change.getKey(), change.getValueAdded());
 		}
 	};
 
 	public AbstractFXNodeAnchor(Node anchorage) {
+		anchorageProperty.addListener(anchorageChangeListener);
+		referencePointProperty.addListener(referencePointChangeListener);
 		setAnchorage(anchorage);
 	}
 
+	@Override
+	public ReadOnlyObjectProperty<Node> anchorageProperty() {
+		return anchorageProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public ReadOnlyMapProperty<Node, Point> positionProperty() {
+		return positionProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public MapProperty<Node, Point> referencePointProperty() {
+		return referencePointProperty;
+	}
+
+	@Override
+	public void setReferencePoint(Node anchored, Point referencePoint) {
+		referencePointProperty.put(anchored, referencePoint);
+	}
+
+	@Override
+	public Point getReferencePoint(Node anchored) {
+		return referencePointProperty.get(anchored);
+	}
+
 	protected void setAnchorage(Node anchorage) {
-		Node oldAnchorage = getAnchorage();
-		if (oldAnchorage != null) {
-			unregisterLayoutListener(oldAnchorage);
-		}
-		this.anchorage = anchorage;
-		if (anchorage != null) {
-			registerLayoutListeners(anchorage);
-		}
+		anchorageProperty.set(anchorage);
+	}
+
+	public Node getAnchorage() {
+		return anchorageProperty.get();
+	}
+
+	@Override
+	public Point getPosition(Node anchored) {
+		return positionProperty.get(anchored);
 	}
 
 	private void registerLayoutListeners(Node anchorageOrAnchored) {
-		visualListener = new VisualChangeListener() {
-			@Override
-			protected void transformChanged(Transform oldTransform,
-					Transform newTransform) {
-				propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
-						null);
-			}
-
-			@Override
-			protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-				propertyChangeSupport.firePropertyChange(IFXNodeAnchor.REPRESH, null,
-						null);
-			}
-		};
-		visualListener.register(anchorageOrAnchored, anchorageOrAnchored
-				.getScene().getRoot());
+		anchorageVisualListener.register(anchorageOrAnchored,
+				anchorageOrAnchored.getScene().getRoot());
 	}
 
 	private void unregisterLayoutListener(Node anchorageOrAnchored) {
-		visualListener.unregister();
-	}
-	
-	protected PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-			this);
-		
-	public Node getAnchorage() {
-		return anchorage;
-	}
-	
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(listener);
+		anchorageVisualListener.unregister();
 	}
 
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(listener);
-	}
 }

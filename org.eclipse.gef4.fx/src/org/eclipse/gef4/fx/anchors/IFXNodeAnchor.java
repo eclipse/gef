@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import java.beans.PropertyChangeListener;
-
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.ReadOnlyMapProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
@@ -25,15 +26,20 @@ import org.eclipse.gef4.geometry.planar.Point;
  */
 public interface IFXNodeAnchor {
 
-	// TODO: use FX observable property to notify about position changes 
-	public final static String REPRESH = "anchorageReferenceShape";
+	ReadOnlyObjectProperty<Node> anchorageProperty();
 	
-	public void addPropertyChangeListener(PropertyChangeListener listener);
-
-	public void removePropertyChangeListener(PropertyChangeListener listener);
+	MapProperty<Node, Point> referencePointProperty();
+	
+	ReadOnlyMapProperty<Node, Point> positionProperty();
+	
+	void setReferencePoint(Node anchored, Point referencePoint);
+	
+	Point getReferencePoint(Node anchored);
 
 	Node getAnchorage();
 	
-	Point getPosition(Node anchored, Point referencePosition);
+	Point getPosition(Node anchored);
+	
+	Point computePosition(Node anchored, Point referencePosition);
 	
 }
