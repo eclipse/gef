@@ -24,6 +24,8 @@ import org.eclipse.gef4.mvc.fx.example.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.FXExampleDomain;
 import org.eclipse.gef4.mvc.fx.example.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
+import org.eclipse.gef4.mvc.fx.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -38,6 +40,7 @@ public class FXExampleView extends FXView {
 		viewer.getRootPart().installBound(new FXSelectionBehavior());
 		viewer.getRootPart().installBound(new FXZoomBehavior());
 		viewer.getRootPart().installBound(IZoomPolicy.class, new IZoomPolicy.Impl<Node>());
+		viewer.getRootPart().installBound(IScrollPolicy.class, new FXZoomOnScrollPolicy());
 		return viewer;
 	}
 

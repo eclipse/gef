@@ -42,8 +42,8 @@ public class FXMidPointHandlePart extends FXSelectionHandlePart {
 			IProvider<IGeometry> handleGeometryProvider, int segmentIndex) {
 		super(targetPart, handleGeometryProvider, segmentIndex);
 		
-		// adjust fill
-		visual.setFill(Color.web("#ADFF2F"));
+		// adjust fill (strong white: #F3F0E1, decent green: #ADFF2F)
+		visual.setFill(Color.web("#F3F0E1"));
 	}
 
 	@Override
