@@ -13,6 +13,7 @@
 		<maven-antrun-plugin.version>1.6</maven-antrun-plugin.version>
 		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
 		<tycho-version>0.18.1</tycho-version>
+		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<cbi-plugins.version>1.0.4</cbi-plugins.version>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
 	</properties>
@@ -141,6 +142,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-extras-version}</version>
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- workaround for bug #398250, which affects source feature generation -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attach-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -232,80 +262,70 @@
 
 	<modules>
 		<module>../org.eclipse.gef4.target</module>
-		
+
 		<module>../org.eclipse.gef4.geometry</module>
 		<module>../org.eclipse.gef4.geometry-feature</module>
-		<module>../org.eclipse.gef4.geometry.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.tests</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt-feature</module>
-		<module>../org.eclipse.gef4.geometry.convert.swt.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.swt.tests</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx-feature</module>
-		<module>../org.eclipse.gef4.geometry.convert.fx.source-feature</module>
 		<module>../org.eclipse.gef4.geometry.convert.fx.tests</module>
 		<module>../org.eclipse.gef4.geometry.doc</module>
 		<module>../org.eclipse.gef4.geometry.doc-feature</module>
 		<module>../org.eclipse.gef4.geometry.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
-		<module>../org.eclipse.gef4.fx.source-feature</module>
-		<!-- <module>../org.eclipse.gef4.fx.tests</module>
-		<module>../org.eclipse.gef4.fx.doc</module>
-		<module>../org.eclipse.gef4.fx.doc-feature</module>-->
+		<!-- <module>../org.eclipse.gef4.fx.tests</module> <module>../org.eclipse.gef4.fx.doc</module> 
+			<module>../org.eclipse.gef4.fx.doc-feature</module> -->
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.swtfx</module>
 		<module>../org.eclipse.gef4.swtfx-feature</module>
-		<module>../org.eclipse.gef4.swtfx.source-feature</module>
-		<!-- <module>../org.eclipse.gef4.swtfx.tests</module>-->
+		<!-- <module>../org.eclipse.gef4.swtfx.tests</module> -->
 		<module>../org.eclipse.gef4.swtfx.doc</module>
 		<module>../org.eclipse.gef4.swtfx.doc-feature</module>
 		<module>../org.eclipse.gef4.swtfx.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
-		<module>../org.eclipse.gef4.mvc.source-feature</module>
-		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
-		<module>../org.eclipse.gef4.mvc.ui</module>
 		<module>../org.eclipse.gef4.mvc.ui-feature</module>
-		<module>../org.eclipse.gef4.mvc.ui.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.ui</module>
+		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui.sdk-feature</module>
+
 		<module>../org.eclipse.gef4.mvc.fx</module>
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.source-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.ui.source-feature</module>
+		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>
-		<module>../org.eclipse.gef4.cloudio.source-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests</module>
 		<module>../org.eclipse.gef4.cloudio.doc</module>
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.graph</module>
 		<module>../org.eclipse.gef4.graph.ui</module>
 		<module>../org.eclipse.gef4.graph.tests</module>
-		
+
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>
-		<module>../org.eclipse.gef4.layout.source-feature</module>
 		<module>../org.eclipse.gef4.layout.doc</module>
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
-		
+
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
-		<module>../org.eclipse.gef4.zest.feature</module>
-		<module>../org.eclipse.gef4.zest.source-feature</module>
+		<module>../org.eclipse.gef4.zest-feature</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
+		<module>../org.eclipse.gef4.zest.sdk-feature</module>
+
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
 

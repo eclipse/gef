@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.gef4.swtfx"
-      label="GEF4 SwtFX"
+      id="org.eclipse.gef4.zest"
+      label="GEF4 Zest"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
-      plugin="org.eclipse.gef4.swtfx">
+      plugin="org.eclipse.gef4.zest.core">
 
    <description>
       %description
@@ -19,7 +19,14 @@
    </license>
 
    <plugin
-         id="org.eclipse.gef4.swtfx"
+         id="org.eclipse.gef4.zest.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.gef4.zest.jface"
          download-size="0"
          install-size="0"
          version="0.0.0"

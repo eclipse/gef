@@ -10,19 +10,7 @@
 		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
 	</parent>
 	<groupId>org.eclipse.gef4.features</groupId>
-	<artifactId>org.eclipse.gef4.fx.sdk</artifactId>
+	<artifactId>org.eclipse.gef4.zest</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-extras-version}</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
