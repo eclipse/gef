@@ -16,13 +16,6 @@
 	<properties>
 		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
 	</properties>
-	<repositories>
-		<repository>
-			<id>juno</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno/</url>
-		</repository>
-	</repositories>
 	<profiles>
 		<profile>
 			<id>skip-tests</id>

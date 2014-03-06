@@ -16,13 +16,6 @@
 	<properties>
 		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
 	</properties>
-	<repositories>
-		<repository>
-			<id>juno</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno/</url>
-		</repository>
-	</repositories>
 	<profiles>
 		<profile>
 			<id>skip-tests</id>
@@ -64,7 +57,7 @@
 					<dependencies>
 						<dependency>
 							<type>p2-installable-unit</type>
-							<artifactId>org.eclipse.platform.ide</artifactId>
+							<artifactId>org.eclipse.platform.feature.group</artifactId>
 							<version>0.0.0</version>
 						</dependency>
 					</dependencies>
