@@ -11,9 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.gestures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
 public abstract class FXMouseDragGesture {
@@ -54,12 +59,12 @@ public abstract class FXMouseDragGesture {
 				 * release with dx = 0 and dy = 0.
 				 */
 				if (targetNode != e.getTarget()) {
-					throw new IllegalStateException("wrong target node!");
+					System.err.println("wrong target node!");
 					// TODO: JavaFX mouse event target selection bug => platform specific fix
 				}
 				state = State.INIT;
 				removeTargetHandlers();
-				release(targetNode, e, 0, 0);
+				// TODO: IPolicy.cancel() - cancel policy to notify the gesture ended unexpectedly
 			}
 
 			ox = e.getSceneX();
@@ -74,9 +79,53 @@ public abstract class FXMouseDragGesture {
 		}
 	};
 
-	private void addTargetHandlers() {
-		targetNode.addEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
+	private EventHandler<? super MouseEvent> dragDetectedHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			targetNode.startFullDrag();
+		}
+	};
+	
+	private List<Node> nodesUnderMouse = new ArrayList<Node>();
+
+	private EventHandler<? super MouseDragEvent> dragEnteredHandler = new EventHandler<MouseDragEvent>() {
+		@Override
+		public void handle(MouseDragEvent event) {
+			EventTarget target = event.getTarget();
+			if (target instanceof Node) {
+				Node node = (Node) target;
+				if (targetNode != node) {
+					if (!nodesUnderMouse.contains(node)) {
+						nodesUnderMouse.add(node);
+					}
+				}
+			}
+		}
+	};
+
+	private EventHandler<? super MouseDragEvent> dragExitedHandler = new EventHandler<MouseDragEvent>() {
+		@Override
+		public void handle(MouseDragEvent event) {
+			EventTarget target = event.getTarget();
+			if (target instanceof Node) {
+				Node node = (Node) target;
+				if (targetNode != node) {
+					if (nodesUnderMouse.contains(node)) {
+						nodesUnderMouse.remove(node);
+					}
+				}
+			}
+		}
+	};
+
+	protected void addTargetHandlers() {
+		nodesUnderMouse.clear();
+		targetNode.setMouseTransparent(true);
 		targetNode.addEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
+		targetNode.addEventHandler(MouseEvent.DRAG_DETECTED, dragDetectedHandler);
+		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET, dragEnteredHandler);
+		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET, dragExitedHandler);
+		targetNode.addEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
 	}
 
 	abstract protected void press(Node target, MouseEvent event);
@@ -95,12 +144,12 @@ public abstract class FXMouseDragGesture {
 			double y = e.getSceneY();
 			double dx = x - ox;
 			double dy = y - oy;
-			drag(targetNode, e, dx, dy);
+			drag(targetNode, e, dx, dy, nodesUnderMouse);
 		}
 	};
 
 	abstract protected void drag(Node target, MouseEvent event, double dx,
-			double dy);
+			double dy, List<Node> nodesUnderMouse);
 
 	private EventHandler<? super MouseEvent> releasedHandler = new EventHandler<MouseEvent>() {
 		@Override
@@ -116,7 +165,7 @@ public abstract class FXMouseDragGesture {
 			double y = e.getSceneY();
 			double dx = x - ox;
 			double dy = y - oy;
-			release(targetNode, e, dx, dy);
+			release(targetNode, e, dx, dy, nodesUnderMouse);
 			removeTargetHandlers();
 			targetNode = null;
 			state = State.INIT;
@@ -124,8 +173,16 @@ public abstract class FXMouseDragGesture {
 	};
 
 	abstract protected void release(Node target, MouseEvent event, double dx,
-			double dy);
+			double dy, List<Node> nodesUnderMouse);
 
+	public Scene getScene() {
+		return scene;
+	}
+	
+	public Node getTargetNode() {
+		return targetNode;
+	}
+	
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;
@@ -148,10 +205,13 @@ public abstract class FXMouseDragGesture {
 		}
 	}
 
-	private void removeTargetHandlers() {
+	protected void removeTargetHandlers() {
+		targetNode.setMouseTransparent(false);
 		targetNode.removeEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
-		targetNode.removeEventHandler(MouseEvent.MOUSE_RELEASED,
-				releasedHandler);
+		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET, dragExitedHandler);
+		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET, dragEnteredHandler);
+		targetNode.removeEventHandler(MouseEvent.DRAG_DETECTED, dragDetectedHandler);
+		targetNode.removeEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
 	}
 
 }

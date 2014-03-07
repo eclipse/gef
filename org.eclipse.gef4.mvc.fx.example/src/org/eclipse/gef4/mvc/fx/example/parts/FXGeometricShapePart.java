@@ -162,4 +162,5 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		}
 		return anchor;
 	}
+	
 }

@@ -17,6 +17,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -111,15 +112,14 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	}
 
 	@Override
-	public void press(Point mouseLocation) {
+	public void press(MouseEvent e) {
 		// init resize context vars
-		initialMouseLocation = mouseLocation;
+		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		selectionBounds = getSelectionBounds(getTargetParts());
 		relX1 = new HashMap<IContentPart<Node>, Double>();
 		relY1 = new HashMap<IContentPart<Node>, Double>();
 		relX2 = new HashMap<IContentPart<Node>, Double>();
 		relY2 = new HashMap<IContentPart<Node>, Double>();
-
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			computeRelatives(targetPart);
 			if (getResizeRelocatePolicy(targetPart) != null) {
@@ -177,11 +177,11 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	}
 
 	@Override
-	public void drag(Point mouseLocation, Dimension delta) {
+	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		if (selectionBounds == null) {
 			return;
 		}
-		Rectangle sel = updateSelectionBounds(mouseLocation);
+		Rectangle sel = updateSelectionBounds(e);
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			double[] initialBounds = getBounds(selectionBounds, targetPart);
 			double[] newBounds = getBounds(sel, targetPart);
@@ -214,11 +214,11 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	 * @param mouseLocation
 	 * @return
 	 */
-	private Rectangle updateSelectionBounds(Point mouseLocation) {
+	private Rectangle updateSelectionBounds(MouseEvent e) {
 		Rectangle sel = selectionBounds.getCopy();
 
-		double dx = mouseLocation.x - initialMouseLocation.x;
-		double dy = mouseLocation.y - initialMouseLocation.y;
+		double dx = e.getSceneX() - initialMouseLocation.x;
+		double dy = e.getSceneY() - initialMouseLocation.y;
 
 		if (referencePoint.isLeft()) {
 			sel.shrink(dx, 0, 0, 0);
@@ -235,11 +235,11 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	}
 
 	@Override
-	public void release(Point mouseLocation, Dimension delta) {
+	public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		if (selectionBounds == null) {
 			return;
 		}
-		Rectangle sel = updateSelectionBounds(mouseLocation);
+		Rectangle sel = updateSelectionBounds(e);
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			// use previously computed relative coordinates to get the visuals
 			// bounds in the new selection area

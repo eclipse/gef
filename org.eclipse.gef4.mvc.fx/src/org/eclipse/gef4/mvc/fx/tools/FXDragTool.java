@@ -11,17 +11,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
@@ -41,58 +43,72 @@ public class FXDragTool extends AbstractTool<Node> {
 	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		@Override
 		protected void press(Node target, MouseEvent e) {
-			FXDragTool.this.press(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					new Point(e.getSceneX(), e.getSceneY()));
+			FXDragTool.this
+					.press(FXPartUtils.getTargetParts(getDomain().getViewer(),
+							e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e);
 		}
 
 		@Override
-		protected void release(Node target, MouseEvent e, double dx, double dy) {
-			FXDragTool.this.release(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,
-							dy));
-		}
-
-		@Override
-		protected void drag(Node target, MouseEvent e, double dx, double dy) {
+		protected void drag(Node target, MouseEvent e, double dx, double dy, List<Node> nodesUnderMouse) {
 			FXDragTool.this.drag(FXPartUtils.getTargetParts(getDomain()
 					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					new Point(e.getSceneX(), e.getSceneY()), new Dimension(dx,
-							dy));
+					e, new Dimension(dx, dy), nodesUnderMouse);
+		}
+
+		@Override
+		protected void release(Node target, MouseEvent e, double dx, double dy, List<Node> nodesUnderMouse) {
+			FXDragTool.this.release(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
+					e, new Dimension(dx, dy), nodesUnderMouse);
 		}
 	};
 
-	protected void press(List<IVisualPart<Node>> targetParts, Point mouseLocation) {
+	protected void press(List<IVisualPart<Node>> targetParts, MouseEvent e) {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
 			if (policy != null)
-				policy.press(mouseLocation);
+				policy.press(e);
 		}
 	}
 
-	protected void drag(List<IVisualPart<Node>> targetParts, Point mouseLocation,
-			Dimension delta) {
+	protected void drag(List<IVisualPart<Node>> targetParts, MouseEvent e,
+			Dimension delta, List<Node> nodesUnderMouse) {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
 			if (policy != null)
-				policy.drag(mouseLocation, delta);
+				policy.drag(e, delta, nodesUnderMouse, getPartsUnderMouse(nodesUnderMouse));
 		}
 	}
 
-	protected void release(List<IVisualPart<Node>> targetParts,
-			Point mouseLocation, Dimension delta) {
+	protected void release(List<IVisualPart<Node>> targetParts, MouseEvent e,
+			Dimension delta, List<Node> nodesUnderMouse) {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
 			if (policy != null)
-				policy.release(mouseLocation, delta);
+				policy.release(e, delta, nodesUnderMouse, getPartsUnderMouse(nodesUnderMouse));
 		}
+	}
+
+	private List<IContentPart<Node>> getPartsUnderMouse(
+			List<Node> nodesUnderMouse) {
+		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
+		Map<Node, IVisualPart<Node>> partMap = getDomain().getViewer().getVisualPartMap();
+		for (Node node : nodesUnderMouse) {
+			if (partMap.containsKey(node)) {
+				IVisualPart<Node> part = partMap.get(node);
+				if (part instanceof IContentPart) {
+					parts.add((IContentPart<Node>) part);
+				}
+			}
+		}
+		return parts;
 	}
 
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas().getScene());
+		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas()
+				.getScene());
 	}
 
 	@Override

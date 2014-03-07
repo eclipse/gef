@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import java.util.List;
+
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -23,6 +26,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 
@@ -45,7 +49,7 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(Color.web("#5a61af"));
 		installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
 			@Override
-			public void drag(Point mouseLocation, Dimension delta) {
+			public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 				AbstractWayPointPolicy policy = getPolicy();
 				currentPosition = startPoint.getTranslated(delta.width,
 						delta.height);
@@ -53,13 +57,13 @@ public class FXAnchorPointHandlePart extends AbstractFXHandlePart {
 			}
 
 			@Override
-			public void press(Point mouseLocation) {
+			public void press(MouseEvent e) {
 				AbstractWayPointPolicy policy = getPolicy();
 				policy.selectWayPoint(wayPointIndex);
 			}
 
 			@Override
-			public void release(Point mouseLocation, Dimension delta) {
+			public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 				AbstractWayPointPolicy policy = getPolicy();
 				currentPosition = startPoint.getTranslated(delta.width,
 						delta.height);

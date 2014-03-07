@@ -15,6 +15,7 @@ import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -80,7 +81,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				private Point startPoint;
 
 				@Override
-				public void press(Point mouseLocation) {
+				public void press(MouseEvent e) {
 					startPoint = new Point(hp.getVisual().getLayoutX(), hp
 							.getVisual().getLayoutY());
 					getWayPointHandlePolicy(targetPart).createWayPoint(
@@ -88,7 +89,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				}
 
 				@Override
-				public void drag(Point mouseLocation, Dimension delta) {
+				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 					Point newPosition = startPoint.getTranslated(delta.width,
 							delta.height);
 					getWayPointHandlePolicy(targetPart).updateWayPoint(
@@ -96,7 +97,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				}
 
 				@Override
-				public void release(Point mouseLocation, Dimension delta) {
+				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 					Point newPosition = startPoint.getTranslated(delta.width,
 							delta.height);
 					getWayPointHandlePolicy(targetPart).commitWayPoint(
@@ -117,13 +118,13 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		final IHandlePart<Node> part = super.createCurveSelectionHandlePart(
 				targetPart, handleGeometryProvider, segmentIndex, isEndPoint);
 
-		// make way points (middle segment vertices) draggable
 		if (segmentIndex > 0 && !isEndPoint) {
+			// make way points (middle segment vertices) draggable
 			part.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
 				private Point startPoint;
 
 				@Override
-				public void press(Point mouseLocation) {
+				public void press(MouseEvent e) {
 					getWayPointHandlePolicy(targetPart).selectWayPoint(
 							segmentIndex - 1);
 					startPoint = new Point(part.getVisual().getLayoutX(), part
@@ -131,7 +132,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				}
 
 				@Override
-				public void drag(Point mouseLocation, Dimension delta) {
+				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 					Point newPosition = startPoint.getTranslated(delta.width,
 							delta.height);
 					getWayPointHandlePolicy(targetPart).updateWayPoint(
@@ -139,7 +140,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				}
 
 				@Override
-				public void release(Point mouseLocation, Dimension delta) {
+				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 					Point newPosition = startPoint.getTranslated(delta.width,
 							delta.height);
 					getWayPointHandlePolicy(targetPart).commitWayPoint(
