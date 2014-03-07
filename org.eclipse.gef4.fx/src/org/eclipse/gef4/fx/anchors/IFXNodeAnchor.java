@@ -21,25 +21,25 @@ import org.eclipse.gef4.geometry.planar.Point;
 /**
  * 
  * @author anyssen
- *
+ * 
  * @param <V>
  */
 public interface IFXNodeAnchor {
 
-	ReadOnlyObjectProperty<Node> anchorageProperty();
+	ReadOnlyObjectProperty<Node> anchorageNodeProperty();
 	
+	Node getAnchorageNode();
+
 	MapProperty<Node, Point> referencePointProperty();
-	
+
 	ReadOnlyMapProperty<Node, Point> positionProperty();
-	
+
 	void setReferencePoint(Node anchored, Point referencePoint);
-	
+
 	Point getReferencePoint(Node anchored);
 
-	Node getAnchorage();
-	
 	Point getPosition(Node anchored);
-	
-	Point computePosition(Node anchored, Point referencePosition);
-	
+
+	Point computePosition(Node anchored, Point referencePoint);
+
 }
