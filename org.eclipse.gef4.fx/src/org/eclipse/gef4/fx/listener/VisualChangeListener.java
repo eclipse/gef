@@ -21,7 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
 /**
- * You can use a NodeVisualListener to register/unregister specific listeners
+ * You can use a VisualChangeListener to register/unregister specific listeners
  * for catching changes in the visual representation of a JavaFX {@link Node}.
  * Depending on the changed property, either the
  * {@link #boundsChanged(Bounds, Bounds)} or the
@@ -88,11 +88,6 @@ public abstract class VisualChangeListener {
 
 	private Node node;
 	private Node parent;
-
-//	public void register(Node node) {
-//		register(node, null);
-//		
-//	}
 
 	/**
 	 * Registers change listeners on the given node. Transformation changes are
