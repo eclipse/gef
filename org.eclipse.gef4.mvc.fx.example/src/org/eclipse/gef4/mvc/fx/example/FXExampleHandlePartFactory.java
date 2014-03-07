@@ -24,11 +24,12 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
+import org.eclipse.gef4.mvc.fx.example.policies.AbstractReconnectionPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.AbstractWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
@@ -145,6 +146,32 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 							delta.height);
 					getWayPointHandlePolicy(targetPart).commitWayPoint(
 							segmentIndex - 1, newPosition);
+				}
+			});
+		} else {
+			// make end points reconnectable
+			part.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
+				@Override
+				public void press(MouseEvent e) {
+					AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
+					if (p != null) {
+						p.loosen(isEndPoint ? 1 : 0);
+					}
+				}
+				
+				@Override
+				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+					getReconnectionPolicy(targetPart).dragTo(delta, partsUnderMouse);
+				}
+				
+				@Override
+				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+					getReconnectionPolicy(targetPart).releaseAt(delta, partsUnderMouse);
+				}
+
+				private AbstractReconnectionPolicy getReconnectionPolicy(
+						IContentPart<Node> targetPart) {
+					return targetPart.getBound(AbstractReconnectionPolicy.class);
 				}
 			});
 		}
