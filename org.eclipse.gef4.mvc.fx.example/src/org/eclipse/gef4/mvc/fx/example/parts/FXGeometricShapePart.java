@@ -72,16 +72,9 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(AbstractFXDragPolicy.class, new FXRelocateSelectedOnDragPolicy());
-		installBound(FXResizeRelocatePolicy.class,
-				new FXResizeRelocatePolicy() {
-					@Override
-					public void commitResizeRelocate(double dx, double dy,
-							double dw, double dh) {
-						super.commitResizeRelocate(dx, dy, dw, dh);
-						// TODO: chain an operation to apply changes to model
-					}
-				});
+		installBound(AbstractFXDragPolicy.class,
+				new FXRelocateSelectedOnDragPolicy());
+		installBound(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
 	}
 
 	@Override
@@ -162,5 +155,5 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		}
 		return anchor;
 	}
-	
+
 }

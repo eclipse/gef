@@ -177,7 +177,8 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
+			List<IContentPart<Node>> partsUnderMouse) {
 		if (selectionBounds == null) {
 			return;
 		}
@@ -235,7 +236,8 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta,
+			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		if (selectionBounds == null) {
 			return;
 		}
@@ -247,9 +249,11 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 			double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
 			double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
 			double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
-			if (getResizeRelocatePolicy(targetPart) != null) {
-				getResizeRelocatePolicy(targetPart).commitResizeRelocate(x1,
-						y1, x2 - x1, y2 - y1);
+			FXResizeRelocatePolicy resizeRelocatePolicy = getResizeRelocatePolicy(targetPart);
+			if (resizeRelocatePolicy != null) {
+				resizeRelocatePolicy.performResizeRelocate(x1, y1, x2 - x1, y2
+						- y1);
+				executeOperation(resizeRelocatePolicy.commit());
 			}
 		}
 
@@ -258,5 +262,4 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
 	}
-
 }

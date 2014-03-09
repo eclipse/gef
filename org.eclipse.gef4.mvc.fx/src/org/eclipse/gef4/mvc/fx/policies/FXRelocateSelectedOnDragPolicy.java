@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
@@ -47,31 +48,43 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
+			List<IContentPart<Node>> partsUnderMouse) {
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				Point2D initialPos = part.getVisual().sceneToLocal(initialMouseLocation.x, initialMouseLocation.y);
-				Point2D currentPos = part.getVisual().sceneToLocal(e.getSceneX(), e.getSceneY());
-				Point2D offset = new Point2D(currentPos.getX() - initialPos.getX(), currentPos.getY() - initialPos.getY());
-				policy.performResizeRelocate(offset.getX(), offset.getY(),
-						0, 0);
+				Point2D initialPos = part.getVisual().sceneToLocal(
+						initialMouseLocation.x, initialMouseLocation.y);
+				Point2D currentPos = part.getVisual().sceneToLocal(
+						e.getSceneX(), e.getSceneY());
+				Point2D offset = new Point2D(currentPos.getX()
+						- initialPos.getX(), currentPos.getY()
+						- initialPos.getY());
+				policy.performResizeRelocate(offset.getX(), offset.getY(), 0, 0);
 			}
 		}
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta,
+			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
+				"Resize/Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				Point2D initialPos = part.getVisual().sceneToLocal(initialMouseLocation.x, initialMouseLocation.y);
-				Point2D currentPos = part.getVisual().sceneToLocal(e.getSceneX(), e.getSceneY());
-				Point2D offset = new Point2D(currentPos.getX() - initialPos.getX(), currentPos.getY() - initialPos.getY());
-				policy.commitResizeRelocate(offset.getX(), offset.getY(),
-						0, 0);
+				Point2D initialPos = part.getVisual().sceneToLocal(
+						initialMouseLocation.x, initialMouseLocation.y);
+				Point2D currentPos = part.getVisual().sceneToLocal(
+						e.getSceneX(), e.getSceneY());
+				Point2D offset = new Point2D(currentPos.getX()
+						- initialPos.getX(), currentPos.getY()
+						- initialPos.getY());
+				policy.performResizeRelocate(offset.getX(), offset.getY(), 0, 0);
+				operation.add(policy.commit());
 			}
 		}
+		executeOperation(operation);
 		initialMouseLocation = null;
 	}
 
