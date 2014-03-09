@@ -57,7 +57,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 				for (IVisualPart<Node> targetPart : targetParts) {
 					IScrollPolicy<Node> policy = getToolPolicy(targetPart);
 					if (policy != null) {
-						policy.zoom(deltaY);
+						policy.scroll(deltaY);
 					}
 				}
 			}

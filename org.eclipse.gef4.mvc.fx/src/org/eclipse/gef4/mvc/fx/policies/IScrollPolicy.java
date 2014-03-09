@@ -16,6 +16,6 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 // TODO: generalize API, move to MVC
 public interface IScrollPolicy<V> extends IPolicy<V> {
 
-	public void zoom(double deltaY);
+	public void scroll(double deltaY);
 	
 }
