@@ -19,10 +19,12 @@ import java.util.Map;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // TODO: refactor
@@ -238,27 +240,25 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		if (selectionBounds == null) {
-			return;
-		}
-		Rectangle sel = updateSelectionBounds(e);
-		for (IContentPart<Node> targetPart : getTargetParts()) {
-			// use previously computed relative coordinates to get the visuals
-			// bounds in the new selection area
-			double x1 = sel.getX() + sel.getWidth() * relX1.get(targetPart);
-			double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
-			double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
-			double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
-			FXResizeRelocatePolicy resizeRelocatePolicy = getResizeRelocatePolicy(targetPart);
-			if (resizeRelocatePolicy != null) {
-				resizeRelocatePolicy.performResizeRelocate(x1, y1, x2 - x1, y2
-						- y1);
-				executeOperation(resizeRelocatePolicy.commit());
+		boolean performCommit = false;
+		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
+				"Relocate");
+		for (IContentPart<Node> part : getTargetParts()) {
+			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			if (policy != null) {
+				IUndoableOperation commit = policy.commit();
+				if (commit != null) {
+					operation.add(commit);
+					performCommit = true;
+				}
 			}
+		}
+		if(performCommit){
+			executeOperation(operation);
 		}
 
 		// null resize context vars
-		this.selectionBounds = null;
+		selectionBounds = null;
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
 	}

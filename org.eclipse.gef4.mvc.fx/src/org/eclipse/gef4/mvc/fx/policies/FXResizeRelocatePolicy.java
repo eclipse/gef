@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -40,30 +41,34 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
 		Node visual = getHost().getVisual();
-		
-		// create undoable operation
-		Bounds layoutBounds = visual.getLayoutBounds();
-		operation = new FXResizeRelocateOperation("Resize/Relocate", visual, new Point(initialLayoutX, initialLayoutY), new Dimension(initialWidth, initialHeight), new Point(visual.getLayoutX(),  visual.getLayoutY()), new Dimension(layoutBounds.getWidth(), layoutBounds.getHeight()));
+		boolean resizable = visual.isResizable();
 
-		// perform operation on visuals
-		if (visual.isResizable()) {
-			if (dx != 0) {
-				visual.setLayoutX(initialLayoutX + dx);
-			}
-			if (dy != 0) {
-				visual.setLayoutY(initialLayoutY + dy);
-			}
-			if (dw != 0 || dw != 0) {
-				visual.resize(initialWidth + dw, initialHeight + dh);
-			}
+		// convert resize into relocate in case node is not resizable
+		double layoutDx = resizable ? dx : dx + dw / 2;
+		double layoutDy = resizable ? dy : dy + dh / 2;
+		double layoutDw = resizable ? dw : 0;
+		double layoutDh = resizable ? dh : 0;
+
+		// create undoable operation
+		if (layoutDx == 0 && layoutDy == 0 && layoutDw == 0 && layoutDh == 0) {
+			operation = null;
 		} else {
-			// compute new position based on resized bounds
-			visual.setLayoutX(initialLayoutX + dx + dw / 2);
-			visual.setLayoutY(initialLayoutY + dy + dh / 2);
-		}	
+			operation = new FXResizeRelocateOperation("Resize/Relocate",
+					visual, new Point(initialLayoutX, initialLayoutY),
+					new Dimension(initialWidth, initialHeight), layoutDx,
+					layoutDy, layoutDw, layoutDh);
+			try {
+				// execute locally only
+				operation.execute(null, null);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public IUndoableOperation commit() {
-		return operation;
+		IUndoableOperation commit = operation;
+		operation = null;
+		return commit;
 	}
 }

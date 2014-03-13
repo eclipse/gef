@@ -17,6 +17,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
@@ -68,23 +69,23 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+		// perform operation
+		boolean performCommit = false;
 		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
 				"Resize/Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				Point2D initialPos = part.getVisual().sceneToLocal(
-						initialMouseLocation.x, initialMouseLocation.y);
-				Point2D currentPos = part.getVisual().sceneToLocal(
-						e.getSceneX(), e.getSceneY());
-				Point2D offset = new Point2D(currentPos.getX()
-						- initialPos.getX(), currentPos.getY()
-						- initialPos.getY());
-				policy.performResizeRelocate(offset.getX(), offset.getY(), 0, 0);
-				operation.add(policy.commit());
+				IUndoableOperation commit = policy.commit();
+				if (commit != null) {
+					operation.add(commit);
+					performCommit = true;
+				}
 			}
 		}
-		executeOperation(operation);
+		if (performCommit) {
+			executeOperation(operation);
+		}
 		initialMouseLocation = null;
 	}
 

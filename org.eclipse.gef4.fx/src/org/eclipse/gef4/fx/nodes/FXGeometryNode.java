@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import javafx.geometry.Bounds;
 import javafx.scene.shape.Path;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -72,19 +71,18 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		} else if (geometry instanceof Arc) {
 			((Arc) geometry).setSize(width, height);
 		} else {
-			Bounds bounds = getLayoutBounds();
+			Rectangle bounds = geometry.getBounds();
 			double sx = width / bounds.getWidth();
 			double sy = height / bounds.getHeight();
 			if (geometry instanceof IScalable) {
 				// Line, Polyline, PolyBezier, BezierCurve, CubicCurve,
 				// QuadraticCurve, Polygon, CurvedPolygon, Region, and Ring are
 				// not directly resizable but scalable
-				((IScalable<T>) geometry).scale(sx, sy, geometry.getBounds()
-						.getX(), geometry.getBounds().getY());
+				((IScalable<T>) geometry).scale(sx, sy, bounds.getX(),
+						bounds.getY());
 			} else {
 				// apply transform to path
-				Point boundsOrigin = new Point(bounds.getMinX(),
-						bounds.getMinY());
+				Point boundsOrigin = new Point(bounds.getX(), bounds.getY());
 				geometry = (T) geometry
 						.getTransformed(
 								new AffineTransform(1, 0, 0, 1,
@@ -113,5 +111,4 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	public void updatePathElements() {
 		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
-	
 }

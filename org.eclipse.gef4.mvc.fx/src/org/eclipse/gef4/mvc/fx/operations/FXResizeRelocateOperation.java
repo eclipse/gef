@@ -25,28 +25,38 @@ import org.eclipse.gef4.geometry.planar.Point;
 public class FXResizeRelocateOperation extends AbstractOperation {
 
 	private Node visual;
-	private Point newLocation;
-	private Dimension newSize;
 	private Point oldLocation;
 	private Dimension oldSize;
+	private double dx;
+	private double dy;
+	private double dw;
+	private double dh;
 
 	public FXResizeRelocateOperation(String label, Node visual,
-			Point oldLocation, Dimension oldSize, Point newLocation,
-			Dimension newSize) {
+			Point oldLocation, Dimension oldSize, double dx, double dy,
+			double dw, double dh) {
 		super(label);
 		this.visual = visual;
 		this.oldLocation = oldLocation;
 		this.oldSize = oldSize;
-		this.newLocation = newLocation;
-		this.newSize = newSize;
+		this.dx = dx;
+		this.dy = dy;
+		this.dw = dw;
+		this.dh = dh;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.setLayoutX(newLocation.x);
-		visual.setLayoutY(newLocation.y);
-		visual.resize(newSize.width, newSize.height);
+		if (dx != 0) {
+			visual.setLayoutX(oldLocation.x + dx);
+		}
+		if (dy != 0) {
+			visual.setLayoutY(oldLocation.y + dy);
+		}	
+		if(dw != 0 || dh != 0){
+			visual.resize(oldSize.getWidth() + dw, oldSize.getHeight() + dh);
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -59,9 +69,15 @@ public class FXResizeRelocateOperation extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		visual.setLayoutX(oldLocation.x);
-		visual.setLayoutY(oldLocation.y);
-		visual.resize(oldSize.width, oldSize.height);
+		if (dx != 0) {
+			visual.setLayoutX(oldLocation.x);
+		}
+		if (dy != 0) {
+			visual.setLayoutY(oldLocation.y);
+		}	
+		if(dw != 0 || dh != 0){
+			visual.resize(oldSize.getWidth(), oldSize.getHeight());
+		}
 		return Status.OK_STATUS;
 	}
 
