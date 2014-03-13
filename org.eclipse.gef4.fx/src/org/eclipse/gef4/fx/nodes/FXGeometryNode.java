@@ -17,6 +17,7 @@ import javafx.scene.shape.Path;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IScalable;
@@ -60,6 +61,14 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void resize(double width, double height) {
+		Rectangle bounds = geometry.getBounds();
+		
+		// prevent unnecessary updates
+		if (bounds.getSize().equals(new Dimension(width, height))) {
+			return;
+		}
+		
+		// set the new size, either by resizing or scaling the underlying geometry
 		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof RoundedRectangle) {
@@ -71,7 +80,6 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		} else if (geometry instanceof Arc) {
 			((Arc) geometry).setSize(width, height);
 		} else {
-			Rectangle bounds = geometry.getBounds();
 			double sx = width / bounds.getWidth();
 			double sy = height / bounds.getHeight();
 			if (geometry instanceof IScalable) {
@@ -108,7 +116,7 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	 * properties of a geometry, you have to call this method in order to update
 	 * its visual counter part.
 	 */
-	public void updatePathElements() {
+	private void updatePathElements() {
 		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
 }
