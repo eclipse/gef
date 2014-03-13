@@ -59,7 +59,6 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					setGeometry(getGeometry().getTransformed(
 							additionalTransform));
 				}
-				updatePathElements();
 			}
 		};
 		installBound(new FXSelectionBehavior());
