@@ -9,6 +9,7 @@ public abstract class FXApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setScene(createScene());
+		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
 
