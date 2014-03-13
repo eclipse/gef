@@ -1,7 +1,7 @@
 - Add snap-to behavior when re-connecting an edge, ensure handles are updated instantly
 - Add undo for all operations (pull up commit() operation from RelocateResizePolicy)
 
-- Fix clipping problems related to zoom
+- Fix moving bendpoints does not reflect zoom level.
 
 - Add support for cursor changes to tools/handles
 - Marquee Selection
