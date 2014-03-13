@@ -1,7 +1,8 @@
-- Convert example geometries to be origin-based, position them via affine transform
-- Use poly beziers as connection visuals; adjust ChopboxAnchor so they render properly
-- Add outline and midpoint handles for all kind of shapes; restrict resizing options for rectangle-based shapes via constraints on handles
-- Add support for removing bendpoints and outline segment midpoint handles
+- Add snap-to behavior when re-connecting an edge, ensure handles are updated instantly
+- Add undo for all operations (pull up commit() operation from RelocateResizePolicy)
+
+- Fix clipping problems related to zoom
+
 - Add support for cursor changes to tools/handles
 - Marquee Selection
 
@@ -11,10 +12,8 @@
 
 - Show how shapes can be attached to each other via anchors (G shape of logo)
 - PropertySheet integration to change visual properties of FXGeometricVisuals (incl. UNDO)
-- Implement resize for arbitrary geometric shapes (by using scaling)
-- Implement undo/redo for resize and move
 
-- Implement zooming based on gesture
+- Implement resize for arbitrary geometric shapes (by using scaling)
 
 - Add viewport (scrolling) model and tools for scrolling and related birdeye view to UI feature)
 - Add focus model (keyboard focus)
