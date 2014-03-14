@@ -44,23 +44,24 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	protected static final double REMOVE_THRESHOLD = 10;
-	
+
 	private FXGeometryNode<ICurve> visual;
-	
+
 	// TODO: move anchor management to helper class
 	private List<IFXNodeAnchor> anchors = new ArrayList<IFXNodeAnchor>(2);
-	
+
 	private MapChangeListener<Node, Point> startPosCL;
 	private MapChangeListener<Node, Point> endPosCL;
-	
+
 	private VisualChangeListener startVisCL;
 	private VisualChangeListener endVisCL;
-	
+
 	private int replaceAnchorIndex = 0;
-	
+
 	// TODO: remove start/end (always use anchors)
 	private Point startPoint = new Point(); // TODO: replace by FXStaticAnchor
 	private Point endPoint = new Point(); // TODO: replace by FXStaticAnchor
+	private boolean doRefreshVisual = true;
 
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
@@ -83,60 +84,89 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				new AbstractWayPointPolicy() {
 					private List<Point> wayPoints = new ArrayList<Point>();
 					private boolean isCreate;
+					Point2D startPointInScene;
+					Point startPoint;
 
 					@Override
-					public void selectWayPoint(int wayPointIndex) {
+					public void selectWayPoint(int wayPointIndex, Point p) {
+						init(p);
 						isCreate = false;
+					}
+
+					private void init(Point p) {
+						doRefreshVisual = false; // deactivate model refresh
+
 						wayPoints.clear();
 						wayPoints.addAll(getContent().getWayPoints());
+
+						startPointInScene = new Point2D(p.x, p.y);
+						Point2D pLocal = getVisual().sceneToLocal(
+								startPointInScene);
+						startPoint = new Point(pLocal.getX(), pLocal.getY());
 					}
 
 					@Override
 					public void createWayPoint(int wayPointIndex, Point p) {
+						init(p);
 						isCreate = true;
-						wayPoints.clear();
-						wayPoints.addAll(getContent().getWayPoints());
-						wayPoints.add(wayPointIndex, new Point(p));
+						wayPoints.add(wayPointIndex, new Point(startPoint));
 					}
 
 					@Override
 					public void updateWayPoint(int wayPointIndex, Point p) {
-						Point point = wayPoints.get(wayPointIndex);
-						point.x = p.x;
-						point.y = p.y;
+						Point newWayPoint = transformToLocal(p);
+						wayPoints.set(wayPointIndex, newWayPoint);
 						refreshVisualWith(wayPoints);
+					}
+
+					private Point transformToLocal(Point p) {
+						Point2D pLocal = getVisual().sceneToLocal(p.x, p.y);
+						Point2D initialPos = getVisual().sceneToLocal(
+								startPointInScene);
+
+						Point delta = new Point(pLocal.getX()
+								- initialPos.getX(), pLocal.getY()
+								- initialPos.getY());
+
+						return new Point(startPoint.x + delta.x, startPoint.y
+								+ delta.y);
 					}
 
 					@Override
 					public void commitWayPoint(int wayPointIndex, Point p) {
-						if (isCreate) {
-							// create new way point
-							getContent().addWayPoint(wayPointIndex, p);
-						} else {
-							// check if we have to remove it
-							boolean remove = false;
-							List<Point> points = getContent().getWayPoints();
-							if (wayPointIndex > 0) {
-								remove = p.getDistance(points
-										.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
-							}
-							if (!remove && wayPointIndex + 1 < points.size()) {
-								remove = p.getDistance(points
-										.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
-							}
+						doRefreshVisual = true; // activate model refresh
 
-							if (remove) {
+						Point newWayPoint = transformToLocal(p);
+
+						// create or update/remove?
+						if (isCreate) {
+							getContent()
+									.addWayPoint(wayPointIndex, newWayPoint);
+						} else {
+							// remove or update?
+							if (isRemove(wayPointIndex, newWayPoint)) {
 								getContent().removeWayPoint(wayPointIndex);
 							} else {
-								// update existing way point
-								getContent().setWayPoint(wayPointIndex, p);
+								getContent().setWayPoint(wayPointIndex,
+										newWayPoint);
 							}
 						}
+						refreshVisual();
 					}
 
-					@Override
-					public void removeWayPoint(int wayPointIndex) {
-						getContent().removeWayPoint(wayPointIndex);
+					private boolean isRemove(int wayPointIndex,
+							Point newWayPoint) {
+						boolean remove = false;
+						List<Point> points = getContent().getWayPoints();
+						if (wayPointIndex > 0) {
+							remove = newWayPoint.getDistance(points
+									.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
+						}
+						if (!remove && wayPointIndex + 1 < points.size()) {
+							remove = newWayPoint.getDistance(points
+									.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
+						}
+						return remove;
 					}
 				});
 		installBound(AbstractReconnectionPolicy.class,
@@ -148,28 +178,29 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						// determine anchor index and offset
 						replaceAnchorIndex = anchorIndex;
 						offset = anchorIndex == 0 ? startPoint : endPoint;
-						
+
 						// remove current anchor
 						IFXNodeAnchor currentAnchor = anchors.get(anchorIndex);
 						Node anchorageNode = currentAnchor.getAnchorageNode();
 						if (anchorageNode != null)
-							getViewer().getVisualPartMap().get(anchorageNode).removeAnchored(FXGeometricCurvePart.this);
+							getViewer().getVisualPartMap().get(anchorageNode)
+									.removeAnchored(FXGeometricCurvePart.this);
 					}
 
 					@Override
 					public void dragTo(Dimension delta,
 							List<IContentPart<Node>> partsUnderMouse) {
 						Point position = offset.getTranslated(delta);
-						anchors.get(replaceAnchorIndex).setReferencePoint(getVisual(),
-								position);
-						
+						anchors.get(replaceAnchorIndex).setReferencePoint(
+								getVisual(), position);
+
 						// TODO: remove start/end
 						if (replaceAnchorIndex == 1) {
 							endPoint = position;
 						} else {
 							startPoint = position;
 						}
-						
+
 						// TODO: automatic refresh
 						refreshVisual();
 					}
@@ -183,7 +214,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 								return;
 							}
 						}
-						
+
 						// TODO: automatic refresh
 						refreshVisual();
 					}
@@ -211,6 +242,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void refreshVisual() {
+		if (!doRefreshVisual) {
+			return;
+		}
+
 		// TODO: compare way points to identify if we need to refresh
 
 		// use anchors as start and end point
@@ -295,8 +330,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				.getCenter();
 
 		// find reference points
-		Point startReference = endCenter == null ? anchors.get(1).getReferencePoint(getVisual()) : endCenter;
-		Point endReference = startCenter == null ? anchors.get(0).getReferencePoint(getVisual()) : startCenter;
+		Point startReference = endCenter == null ? anchors.get(1)
+				.getReferencePoint(getVisual()) : endCenter;
+		Point endReference = startCenter == null ? anchors.get(0)
+				.getReferencePoint(getVisual()) : startCenter;
 
 		// first uncontained way point is start reference
 		List<Point> wayPoints = getContent().getWayPoints();
@@ -356,7 +393,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				}
 			}
 		};
-		
+
 		if (isEndPoint) {
 			endPosCL = positionChangeListener;
 			anchor.positionProperty().addListener(endPosCL);
@@ -364,7 +401,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			startPosCL = positionChangeListener;
 			anchor.positionProperty().addListener(startPosCL);
 		}
-		
+
 		// add visual change listener to anchorage visual in order to update the
 		// other end point reference point
 		VisualChangeListener visualChangeListener = new VisualChangeListener() {
@@ -388,35 +425,37 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				if (isEndPoint) {
 					if (anchors.get(0) instanceof FXChopBoxAnchor) {
 						anchors.get(0).setReferencePoint(getVisual(),
-							referencePoints[0]);
+								referencePoints[0]);
 					}
 				} else {
 					if (anchors.get(1) instanceof FXChopBoxAnchor) {
 						anchors.get(1).setReferencePoint(getVisual(),
-							referencePoints[1]);
+								referencePoints[1]);
 					}
 				}
 			}
 		};
-		
+
 		if (isEndPoint) {
 			endVisCL = visualChangeListener;
-			visualChangeListener.register(anchorageVisual, getVisual().getScene()
-					.getRoot());
+			visualChangeListener.register(anchorageVisual, getVisual()
+					.getScene().getRoot());
 		} else {
 			startVisCL = visualChangeListener;
-			visualChangeListener.register(anchorageVisual, getVisual().getScene()
-					.getRoot());
+			visualChangeListener.register(anchorageVisual, getVisual()
+					.getScene().getRoot());
 		}
 
 		// set reference points when we are fully initialized (both anchors set)
 		if (anchors.size() == 2) {
 			Point[] referencePoints = computeReferencePoints();
 			if (anchors.get(0) instanceof FXChopBoxAnchor) {
-				anchors.get(0).setReferencePoint(getVisual(), referencePoints[0]);
+				anchors.get(0).setReferencePoint(getVisual(),
+						referencePoints[0]);
 			}
 			if (anchors.get(1) instanceof FXChopBoxAnchor) {
-				anchors.get(1).setReferencePoint(getVisual(), referencePoints[1]);
+				anchors.get(1).setReferencePoint(getVisual(),
+						referencePoints[1]);
 			}
 		}
 	}
@@ -426,7 +465,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			Node anchorageVisual) {
 		IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
-		
+
 		// remove listeners
 		if (anchor == anchors.get(0)) {
 			anchor.positionProperty().removeListener(startPosCL);
@@ -443,11 +482,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				endVisCL = null;
 			}
 		}
-		
+
 		// replace with static anchor
 		int index = anchors.indexOf(anchor);
 		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
-		staticAnchor.setReferencePoint(getVisual(), index == 0 ? startPoint : endPoint);
+		staticAnchor.setReferencePoint(getVisual(), index == 0 ? startPoint
+				: endPoint);
 		anchors.set(index, staticAnchor);
 	}
 

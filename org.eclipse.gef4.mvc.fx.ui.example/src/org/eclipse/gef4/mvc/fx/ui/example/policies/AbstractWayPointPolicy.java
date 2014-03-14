@@ -42,7 +42,7 @@ public abstract class AbstractWayPointPolicy extends AbstractPolicy<Node> {
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 */
-	public abstract void selectWayPoint(int wayPointIndex);
+	public abstract void selectWayPoint(int wayPointIndex, Point p);
 
 	/**
 	 * Creates a new way point on the curve at the specified index. Selects the
@@ -54,13 +54,6 @@ public abstract class AbstractWayPointPolicy extends AbstractPolicy<Node> {
 	 *            {@link Point} providing start coordinates of the new way point
 	 */
 	public abstract void createWayPoint(int wayPointIndex, Point p);
-	
-	/**
-	 * Removes the way point specified by the given index from the curves way points.
-	 * 
-	 * @param wayPointIndex
-	 */
-	public abstract void removeWayPoint(int wayPointIndex);
 
 	/*
 	 * Visual updates

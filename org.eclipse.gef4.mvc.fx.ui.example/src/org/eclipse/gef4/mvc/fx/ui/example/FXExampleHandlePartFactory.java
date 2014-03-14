@@ -78,33 +78,33 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final int segmentIndex = i;
 			final IHandlePart<Node> hp = new FXMidPointHandlePart(targetPart,
 					handleGeometryProvider, segmentIndex);
-			hp.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
-				private Point startPoint;
+			hp.installBound(AbstractFXDragPolicy.class,
+					new AbstractFXDragPolicy() {
+						@Override
+						public void press(MouseEvent e) {
+							getWayPointHandlePolicy(targetPart).createWayPoint(
+									segmentIndex,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
 
-				@Override
-				public void press(MouseEvent e) {
-					startPoint = new Point(hp.getVisual().getLayoutX(), hp
-							.getVisual().getLayoutY());
-					getWayPointHandlePolicy(targetPart).createWayPoint(
-							segmentIndex, startPoint);
-				}
+						@Override
+						public void drag(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getWayPointHandlePolicy(targetPart).updateWayPoint(
+									segmentIndex,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
 
-				@Override
-				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					Point newPosition = startPoint.getTranslated(delta.width,
-							delta.height);
-					getWayPointHandlePolicy(targetPart).updateWayPoint(
-							segmentIndex, newPosition);
-				}
-
-				@Override
-				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					Point newPosition = startPoint.getTranslated(delta.width,
-							delta.height);
-					getWayPointHandlePolicy(targetPart).commitWayPoint(
-							segmentIndex, newPosition);
-				}
-			});
+						@Override
+						public void release(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getWayPointHandlePolicy(targetPart).commitWayPoint(
+									segmentIndex,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
+					});
 			parts.add(hp);
 		}
 
@@ -121,59 +121,67 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
-			part.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
-				private Point startPoint;
+			part.installBound(AbstractFXDragPolicy.class,
+					new AbstractFXDragPolicy() {
+						@Override
+						public void press(MouseEvent e) {
+							getWayPointHandlePolicy(targetPart).selectWayPoint(
+									segmentIndex - 1,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
 
-				@Override
-				public void press(MouseEvent e) {
-					getWayPointHandlePolicy(targetPart).selectWayPoint(
-							segmentIndex - 1);
-					startPoint = new Point(part.getVisual().getLayoutX(), part
-							.getVisual().getLayoutY());
-				}
+						@Override
+						public void drag(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getWayPointHandlePolicy(targetPart).updateWayPoint(
+									segmentIndex - 1,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
 
-				@Override
-				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					Point newPosition = startPoint.getTranslated(delta.width,
-							delta.height);
-					getWayPointHandlePolicy(targetPart).updateWayPoint(
-							segmentIndex - 1, newPosition);
-				}
-
-				@Override
-				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					Point newPosition = startPoint.getTranslated(delta.width,
-							delta.height);
-					getWayPointHandlePolicy(targetPart).commitWayPoint(
-							segmentIndex - 1, newPosition);
-				}
-			});
+						@Override
+						public void release(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getWayPointHandlePolicy(targetPart).commitWayPoint(
+									segmentIndex - 1,
+									new Point(e.getSceneX(), e.getSceneY()));
+						}
+					});
 		} else {
 			// make end points reconnectable
-			part.installBound(AbstractFXDragPolicy.class, new AbstractFXDragPolicy() {
-				@Override
-				public void press(MouseEvent e) {
-					AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
-					if (p != null) {
-						p.loosen(isEndPoint ? 1 : 0);
-					}
-				}
-				
-				@Override
-				public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					getReconnectionPolicy(targetPart).dragTo(delta, partsUnderMouse);
-				}
-				
-				@Override
-				public void release(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-					getReconnectionPolicy(targetPart).releaseAt(delta, partsUnderMouse);
-				}
+			part.installBound(AbstractFXDragPolicy.class,
+					new AbstractFXDragPolicy() {
+						@Override
+						public void press(MouseEvent e) {
+							AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
+							if (p != null) {
+								p.loosen(isEndPoint ? 1 : 0);
+							}
+						}
 
-				private AbstractReconnectionPolicy getReconnectionPolicy(
-						IContentPart<Node> targetPart) {
-					return targetPart.getBound(AbstractReconnectionPolicy.class);
-				}
-			});
+						@Override
+						public void drag(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getReconnectionPolicy(targetPart).dragTo(delta,
+									partsUnderMouse);
+						}
+
+						@Override
+						public void release(MouseEvent e, Dimension delta,
+								List<Node> nodesUnderMouse,
+								List<IContentPart<Node>> partsUnderMouse) {
+							getReconnectionPolicy(targetPart).releaseAt(delta,
+									partsUnderMouse);
+						}
+
+						private AbstractReconnectionPolicy getReconnectionPolicy(
+								IContentPart<Node> targetPart) {
+							return targetPart
+									.getBound(AbstractReconnectionPolicy.class);
+						}
+					});
 		}
 
 		return part;
