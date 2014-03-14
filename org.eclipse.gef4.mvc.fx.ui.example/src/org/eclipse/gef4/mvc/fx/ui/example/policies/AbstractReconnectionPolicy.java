@@ -20,11 +20,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 public abstract class AbstractReconnectionPolicy extends AbstractPolicy<Node> {
-	
+
 	public abstract void loosen(int anchorIndex);
-	
-	public abstract void dragTo(Dimension delta, List<IContentPart<Node>> partsUnderMouse);
-	
-	public abstract void releaseAt(Dimension delta, List<IContentPart<Node>> partsUnderMouse);
-	
+
+	public abstract void dragTo(Dimension delta,
+			List<IContentPart<Node>> partsUnderMouse);
+
+	public abstract void releaseAt(Dimension delta,
+			List<IContentPart<Node>> partsUnderMouse);
+
 }

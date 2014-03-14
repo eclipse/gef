@@ -23,8 +23,8 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 /**
  * The AbstractWayPointPolicy implements way point operations on the curve part
- * side. It handles creation, selection, merge (removal), update, and commit of way
- * points on the curve.
+ * side. It handles creation, selection, merge (removal), update, and commit of
+ * way points on the curve.
  * 
  * @author mwienand
  * 

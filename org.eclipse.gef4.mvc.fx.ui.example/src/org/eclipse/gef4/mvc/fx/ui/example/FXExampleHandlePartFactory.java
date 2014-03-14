@@ -16,6 +16,7 @@ import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -24,6 +25,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
@@ -69,22 +71,48 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
 		// create vertex handles
-		List<IHandlePart<Node>> parts = super.createCurveSelectionHandleParts(
-				targetPart, handleGeometryProvider, geom);
+		final List<IHandlePart<Node>> parts = super
+				.createCurveSelectionHandleParts(targetPart,
+						handleGeometryProvider, geom);
 
 		// create mid point (insertion) handles
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
-			final int segmentIndex = i;
-			final IHandlePart<Node> hp = new FXMidPointHandlePart(targetPart,
-					handleGeometryProvider, segmentIndex);
+			int segmentIndex = i;
+			final FXMidPointHandlePart hp = new FXMidPointHandlePart(
+					targetPart, handleGeometryProvider, segmentIndex);
 			hp.installBound(AbstractFXDragPolicy.class,
 					new AbstractFXDragPolicy() {
 						@Override
 						public void press(MouseEvent e) {
-							getWayPointHandlePolicy(targetPart).createWayPoint(
-									segmentIndex,
-									new Point(e.getSceneX(), e.getSceneY()));
+							// TODO: merge mid point and vertex handle parts
+							if (hp.isVertex()) {
+								getWayPointHandlePolicy(targetPart)
+										.selectWayPoint(
+												hp.getVertexIndex() - 1,
+												new Point(e.getSceneX(), e
+														.getSceneY()));
+							} else {
+								getWayPointHandlePolicy(targetPart)
+										.createWayPoint(
+												hp.getVertexIndex(),
+												new Point(e.getSceneX(), e
+														.getSceneY()));
+								for (IHandlePart<Node> vertexHp : parts) {
+									FXSelectionHandlePart part = (FXSelectionHandlePart) vertexHp;
+									if (part.getVertexIndex() > hp
+											.getVertexIndex()
+											|| (part.getVertexIndex() == hp
+													.getVertexIndex() && part
+													.isEndPoint())) {
+										part.incVertexIndex();
+									}
+								}
+								// become vertex handle part
+								hp.toVertex();
+								((Shape) hp.getVisual())
+										.setFill(FXSelectionHandlePart.FILL_BLUE);
+							}
 						}
 
 						@Override
@@ -92,7 +120,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
 							getWayPointHandlePolicy(targetPart).updateWayPoint(
-									segmentIndex,
+									hp.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
 						}
 
@@ -101,7 +129,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
 							getWayPointHandlePolicy(targetPart).commitWayPoint(
-									segmentIndex,
+									hp.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
 						}
 					});
@@ -115,9 +143,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
 			final IProvider<IGeometry> handleGeometryProvider,
-			final int segmentIndex, final boolean isEndPoint) {
-		final IHandlePart<Node> part = super.createCurveSelectionHandlePart(
-				targetPart, handleGeometryProvider, segmentIndex, isEndPoint);
+			int segmentIndex, final boolean isEndPoint) {
+		final FXSelectionHandlePart part = (FXSelectionHandlePart) super
+				.createCurveSelectionHandlePart(targetPart,
+						handleGeometryProvider, segmentIndex, isEndPoint);
 
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
@@ -126,7 +155,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						@Override
 						public void press(MouseEvent e) {
 							getWayPointHandlePolicy(targetPart).selectWayPoint(
-									segmentIndex - 1,
+									part.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
 						}
 
@@ -135,7 +164,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
 							getWayPointHandlePolicy(targetPart).updateWayPoint(
-									segmentIndex - 1,
+									part.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
 						}
 
@@ -144,7 +173,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
 							getWayPointHandlePolicy(targetPart).commitWayPoint(
-									segmentIndex - 1,
+									part.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
 						}
 					});

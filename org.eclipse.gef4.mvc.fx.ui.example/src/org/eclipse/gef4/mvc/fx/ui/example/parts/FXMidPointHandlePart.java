@@ -31,6 +31,10 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
  */
 public class FXMidPointHandlePart extends FXSelectionHandlePart {
 
+	public static final Color FILL_WHITE = Color.web("#F3F0E1");
+	
+	private boolean isVertex = false;
+
 	/**
 	 * Creates a new {@link IHandlePart} for the mid-point of the specified segment of the provided geometry.
 	 * 
@@ -43,11 +47,24 @@ public class FXMidPointHandlePart extends FXSelectionHandlePart {
 		super(targetPart, handleGeometryProvider, segmentIndex);
 		
 		// adjust fill (strong white: #F3F0E1, decent green: #ADFF2F)
-		visual.setFill(Color.web("#F3F0E1"));
+		visual.setFill(FILL_WHITE);
+	}
+	
+	public void toVertex() {
+		isVertex = true;
+		incVertexIndex();
+	}
+	
+	public boolean isVertex() {
+		return isVertex;
 	}
 
 	@Override
 	protected Point getPosition(IGeometry handleGeometry) {
+		if (isVertex) {
+			return super.getPosition(handleGeometry);
+		}
+		
 		Point position = null;
 		if (handleGeometry instanceof ICurve) {
 			ICurve curve = (ICurve) handleGeometry;

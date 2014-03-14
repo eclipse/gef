@@ -52,6 +52,10 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 	protected IProvider<IGeometry> handleGeometryProvider;
 	protected int vertexIndex;
 	protected boolean isEndPoint;
+	
+	public boolean isEndPoint() {
+		return isEndPoint;
+	}
 
 	public FXSelectionHandlePart(IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
@@ -73,6 +77,14 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(STROKE_DARK_BLUE);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
+	}
+	
+	public int getVertexIndex() {
+		return vertexIndex;
+	}
+	
+	public void incVertexIndex() {
+		vertexIndex++;
 	}
 
 	/**
