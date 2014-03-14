@@ -58,10 +58,10 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 						initialMouseLocation.x, initialMouseLocation.y);
 				Point2D currentPos = part.getVisual().sceneToLocal(
 						e.getSceneX(), e.getSceneY());
-				Point2D offset = new Point2D(currentPos.getX()
+				Point2D deltaPoint = new Point2D(currentPos.getX()
 						- initialPos.getX(), currentPos.getY()
 						- initialPos.getY());
-				policy.performResizeRelocate(offset.getX(), offset.getY(), 0, 0);
+				policy.performResizeRelocate(deltaPoint.getX(), deltaPoint.getY(), 0, 0);
 			}
 		}
 	}
