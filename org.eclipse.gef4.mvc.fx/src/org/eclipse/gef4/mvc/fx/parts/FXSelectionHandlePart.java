@@ -42,7 +42,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  */
 public class FXSelectionHandlePart extends AbstractFXHandlePart {
-
+	
+	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
+	public static final Color FILL_BLUE = Color.web("#d5faff");
 	public static final double SIZE = 5d;
 
 	protected Shape visual;
@@ -67,8 +69,8 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 
 		visual = createHandleVisual(handleGeometryProvider.get());
 
-		visual.setFill(Color.web("#d5faff"));
-		visual.setStroke(Color.web("#5a61af"));
+		visual.setFill(FILL_BLUE);
+		visual.setStroke(STROKE_DARK_BLUE);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
 	}
