@@ -6,11 +6,10 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
-package org.eclipse.gef4.graph.internal.dot;
+package org.eclipse.gef4.zest.internal.ui;
 
 import java.io.File;
 
-import org.eclipse.gef4.graph.DotUiMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -29,14 +28,14 @@ public final class DotDirStore {
 	private DotDirStore() {/* Enforce non-instantiability */
 	}
 
-	public static final String DOTPATH_KEY = DotUiActivator.PLUGIN_ID
+	public static final String DOTPATH_KEY = ZestUiActivator.PLUGIN_ID
 			+ ".dotpath"; //$NON-NLS-1$
 
 	private enum Caption {
-		DOT_SELECT_SHORT(DotUiMessages.DotDirStore_0), /***/
-		DOT_SELECT_LONG(DotUiMessages.DotDirStore_1), /***/
-		NOT_FOUND_LONG(DotUiMessages.DotDirStore_2), /***/
-		NOT_FOUND_SHORT(DotUiMessages.DotDirStore_3);
+		DOT_SELECT_SHORT(ZestUiMessages.DotDirStore_0), /***/
+		DOT_SELECT_LONG(ZestUiMessages.DotDirStore_1), /***/
+		NOT_FOUND_LONG(ZestUiMessages.DotDirStore_2), /***/
+		NOT_FOUND_SHORT(ZestUiMessages.DotDirStore_3);
 		private String s;
 
 		Caption(final String s) {
@@ -70,7 +69,7 @@ public final class DotDirStore {
 				MessageDialog.openError(parent.getShell(),
 						Caption.NOT_FOUND_SHORT.s, Caption.NOT_FOUND_LONG.s);
 			} else {
-				DotUiActivator.getDefault().getPreferenceStore()
+				ZestUiActivator.getDefault().getPreferenceStore()
 						.setValue(DOTPATH_KEY, selectedPath + File.separator);
 			}
 		}
@@ -87,7 +86,7 @@ public final class DotDirStore {
 	}
 
 	private static String dotPathFromPreferences() {
-		return DotUiActivator.getDefault().getPreferenceStore()
+		return ZestUiActivator.getDefault().getPreferenceStore()
 				.getString(DOTPATH_KEY);
 	}
 }

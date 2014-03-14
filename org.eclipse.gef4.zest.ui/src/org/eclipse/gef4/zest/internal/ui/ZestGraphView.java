@@ -7,7 +7,7 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
 
-package org.eclipse.gef4.graph.internal.dot;
+package org.eclipse.gef4.zest.internal.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -30,7 +30,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.graph.DotUiMessages;
+import org.eclipse.gef4.graph.internal.dot.DotExtractor;
+import org.eclipse.gef4.graph.internal.dot.DotImport;
 import org.eclipse.gef4.graph.internal.dot.export.DotExport;
 import org.eclipse.gef4.graph.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.zest.core.widgets.GraphWidget;
@@ -68,17 +69,17 @@ public final class ZestGraphView extends ViewPart {
 
 	public static final String ID = "org.eclipse.gef4.graph.dot.ZestView"; //$NON-NLS-1$
 
-	private static final String ADD_EXPORT_QUESTION = DotUiMessages.ZestGraphView_0;
-	private static final String ADD_EXPORT_MESSAGE = DotUiMessages.ZestGraphView_1
-			+ DotUiMessages.ZestGraphView_2 + DotUiMessages.ZestGraphView_3;
+	private static final String ADD_EXPORT_QUESTION = ZestUiMessages.ZestGraphView_0;
+	private static final String ADD_EXPORT_MESSAGE = ZestUiMessages.ZestGraphView_1
+			+ ZestUiMessages.ZestGraphView_2 + ZestUiMessages.ZestGraphView_3;
 
-	private static final String LOAD = DotUiMessages.ZestGraphView_4;
-	private static final String RESET = DotUiMessages.ZestGraphView_5;
-	private static final String LAYOUT = DotUiMessages.ZestGraphView_6;
-	private static final String EXPORT = DotUiMessages.ZestGraphView_7;
-	private static final String EXPORT_MODE = DotUiMessages.ZestGraphView_8;
-	private static final String UPDATE_MODE = DotUiMessages.ZestGraphView_9;
-	private static final String LINK_MODE = DotUiMessages.ZestGraphView_10;
+	private static final String LOAD = ZestUiMessages.ZestGraphView_4;
+	private static final String RESET = ZestUiMessages.ZestGraphView_5;
+	private static final String LAYOUT = ZestUiMessages.ZestGraphView_6;
+	private static final String EXPORT = ZestUiMessages.ZestGraphView_7;
+	private static final String EXPORT_MODE = ZestUiMessages.ZestGraphView_8;
+	private static final String UPDATE_MODE = ZestUiMessages.ZestGraphView_9;
+	private static final String LINK_MODE = ZestUiMessages.ZestGraphView_10;
 
 	private static final String RESOURCES_ICONS_OPEN_GIF = "resources/icons/open.gif"; //$NON-NLS-1$
 	private static final String RESOURCES_ICONS_EXPORT_GIF = "resources/icons/export.gif"; //$NON-NLS-1$
@@ -200,11 +201,11 @@ public final class ZestGraphView extends ViewPart {
 						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
 								dotImport.getErrors(), dotString);
-						DotUiActivator
+						ZestUiActivator
 								.getDefault()
 								.getLog()
 								.log(new Status(Status.ERROR,
-										DotUiActivator.PLUGIN_ID, message));
+										ZestUiActivator.PLUGIN_ID, message));
 						return;
 					}
 					dotGraph = dotImport.newGraphInstance();
@@ -254,7 +255,7 @@ public final class ZestGraphView extends ViewPart {
 			}
 		};
 		toggleUpdateModeAction.setId(toggleUpdateModeAction.getText());
-		toggleUpdateModeAction.setImageDescriptor(DotUiActivator
+		toggleUpdateModeAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_UPDATE_MODE));
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(toggleUpdateModeAction);
@@ -267,7 +268,7 @@ public final class ZestGraphView extends ViewPart {
 			}
 		};
 		toggleRenderingAction.setId(toggleRenderingAction.getText());
-		toggleRenderingAction.setImageDescriptor(DotUiActivator
+		toggleRenderingAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_EXPORT_MODE));
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(toggleRenderingAction);
@@ -294,7 +295,7 @@ public final class ZestGraphView extends ViewPart {
 				}
 			}
 		};
-		layoutAction.setImageDescriptor(DotUiActivator
+		layoutAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_LAYOUT));
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(layoutAction);
@@ -311,7 +312,7 @@ public final class ZestGraphView extends ViewPart {
 				}
 			}
 		};
-		exportAction.setImageDescriptor(DotUiActivator
+		exportAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_EXPORT_GIF));
 		getViewSite().getActionBars().getToolBarManager().add(exportAction);
 	}
@@ -355,7 +356,7 @@ public final class ZestGraphView extends ViewPart {
 			}
 		};
 		linkModeAction.setId(linkModeAction.getText());
-		linkModeAction.setImageDescriptor(DotUiActivator
+		linkModeAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_LINK_MODE));
 		getViewSite().getActionBars().getToolBarManager().add(linkModeAction);
 	}
@@ -366,7 +367,7 @@ public final class ZestGraphView extends ViewPart {
 				DotDirStore.setDotDirPath();
 			}
 		};
-		resetAction.setImageDescriptor(DotUiActivator
+		resetAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_RESET));
 		getViewSite().getActionBars().getToolBarManager().add(resetAction);
 	}
@@ -388,7 +389,7 @@ public final class ZestGraphView extends ViewPart {
 				}
 			}
 		};
-		loadAction.setImageDescriptor(DotUiActivator
+		loadAction.setImageDescriptor(ZestUiActivator
 				.getImageDescriptor(RESOURCES_ICONS_OPEN_GIF));
 		getViewSite().getActionBars().getToolBarManager().add(loadAction);
 	}

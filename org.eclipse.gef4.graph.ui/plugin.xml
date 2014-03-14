@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   
-   <!-- Graph view -->
-   <extension
-         point="org.eclipse.ui.views">
-         <category
-            id="org.eclipse.gef4.zest"
-            name="Visualization">
-      </category>
-	   <view
-	            name="Zest Graph"
-	            icon="resources/icons/graph.gif"
-	            category="org.eclipse.gef4.zest"
-	            class="org.eclipse.gef4.graph.internal.dot.ZestGraphView"
-	            id="org.eclipse.gef4.graph.dot.ZestView">
-		</view>
-	</extension>
-	
 	<!-- Help contents -->
     <extension point="org.eclipse.help.toc">
         <toc file="Zest-DOT-toc.xml" primary="true"/>

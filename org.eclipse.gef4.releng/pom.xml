@@ -324,6 +324,7 @@
 		<module>../org.eclipse.gef4.zest.jface</module>
 		<module>../org.eclipse.gef4.zest-feature</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
+		<module>../org.eclipse.gef4.zest.ui</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.repository</module>

@@ -6,13 +6,13 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
-package org.eclipse.gef4.graph.tests.dot;
+package org.eclipse.gef4.zest.tests.dot;
 
 import java.io.IOException;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gef4.graph.internal.dot.ZestGraphView;
 import org.eclipse.gef4.zest.core.widgets.GraphWidget;
+import org.eclipse.gef4.zest.internal.ui.ZestGraphView;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;

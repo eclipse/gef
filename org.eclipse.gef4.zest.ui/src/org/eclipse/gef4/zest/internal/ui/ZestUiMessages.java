@@ -7,12 +7,12 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
 
-package org.eclipse.gef4.graph;
+package org.eclipse.gef4.zest.internal.ui;
 
 import org.eclipse.osgi.util.NLS;
 
-public class DotUiMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.gef4.graph.messages"; //$NON-NLS-1$
+public class ZestUiMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.gef4.zest.internal.ui.messages"; //$NON-NLS-1$
 	public static String DotDirStore_0;
 	public static String DotDirStore_1;
 	public static String DotDirStore_2;
@@ -59,9 +59,9 @@ public class DotUiMessages extends NLS {
 	public static String ZestProjectWizard_7;
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, DotUiMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, ZestUiMessages.class);
 	}
 
-	private DotUiMessages() {
+	private ZestUiMessages() {
 	}
 }

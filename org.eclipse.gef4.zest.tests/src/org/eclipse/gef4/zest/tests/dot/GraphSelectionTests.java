@@ -6,7 +6,7 @@
  * <p/>
  * Contributors: Fabian Steeg - initial tests
  *******************************************************************************/
-package org.eclipse.gef4.graph.tests;
+package org.eclipse.gef4.zest.tests.dot;
 
 import java.util.ArrayList;
 import java.util.Iterator;

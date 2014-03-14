@@ -6,13 +6,14 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
-package org.eclipse.gef4.graph.tests.dot;
+package org.eclipse.gef4.zest.tests.dot;
 
 import java.io.File;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gef4.graph.internal.dot.DotDirStore;
 import org.eclipse.gef4.graph.internal.dot.DotUiActivator;
+import org.eclipse.gef4.graph.tests.dot.TestImageExport;
+import org.eclipse.gef4.zest.internal.ui.DotDirStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
