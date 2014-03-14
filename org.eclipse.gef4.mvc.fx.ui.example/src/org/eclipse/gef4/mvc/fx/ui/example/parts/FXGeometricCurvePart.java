@@ -59,8 +59,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	private int replaceAnchorIndex = 0;
 	
 	// TODO: remove start/end (always use anchors)
-	private Point start = new Point(); // TODO: replace by FXStaticAnchor
-	private Point end = new Point(); // TODO: replace by FXStaticAnchor
+	private Point startPoint = new Point(); // TODO: replace by FXStaticAnchor
+	private Point endPoint = new Point(); // TODO: replace by FXStaticAnchor
 
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
@@ -147,7 +147,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					public void loosen(int anchorIndex) {
 						// determine anchor index and offset
 						replaceAnchorIndex = anchorIndex;
-						offset = anchorIndex == 0 ? start : end;
+						offset = anchorIndex == 0 ? startPoint : endPoint;
 						
 						// remove current anchor
 						IFXNodeAnchor currentAnchor = anchors.get(anchorIndex);
@@ -165,9 +165,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						
 						// TODO: remove start/end
 						if (replaceAnchorIndex == 1) {
-							end = position;
+							endPoint = position;
 						} else {
-							start = position;
+							startPoint = position;
 						}
 						
 						// TODO: automatic refresh
@@ -246,7 +246,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	private void refreshVisualWith(List<Point> wayPoints) {
 		ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
-		points.add(start);
+		points.add(startPoint);
 
 		if (anchors.size() == 2) {
 			// filter contained way points, so that only uncontained way
@@ -270,14 +270,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			points.addAll(wayPoints);
 		}
 
-		points.add(end);
+		points.add(endPoint);
 		visual.setGeometry(FXGeometricCurve.constructCurveFromWayPoints(points
 				.toArray(new Point[] {})));
 	}
 
 	private Point[] computeReferencePoints() {
 		if (anchors.size() != 2) {
-			return new Point[] { end, start };
+			return new Point[] { endPoint, startPoint };
 		}
 
 		Node startNode = anchors.get(0).getAnchorageNode();
@@ -348,9 +348,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					Point newPosition = change.getValueAdded();
 					// store start/end point & refresh visual
 					if (isEndPoint) {
-						end = newPosition;
+						endPoint = newPosition;
 					} else {
-						start = newPosition;
+						startPoint = newPosition;
 					}
 					refreshVisual();
 				}
@@ -447,7 +447,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// replace with static anchor
 		int index = anchors.indexOf(anchor);
 		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
-		staticAnchor.setReferencePoint(getVisual(), index == 0 ? start : end);
+		staticAnchor.setReferencePoint(getVisual(), index == 0 ? startPoint : endPoint);
 		anchors.set(index, staticAnchor);
 	}
 
