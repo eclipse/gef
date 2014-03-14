@@ -67,9 +67,12 @@ public class FXChopBoxAnchor extends AbstractFXNodeAnchor {
 							.toFXPoint(intersectionPoints[0])));
 		}
 		
+		// do not fail hard... use center
+		return anchorageReferencePointInScene;
+		
 		// TODO: investigate where the wrong reference point is set
-		throw new IllegalArgumentException("Invalid reference point "
-				+ referencePoint);
+//		throw new IllegalArgumentException("Invalid reference point "
+//				+ referencePoint);
 	}
 
 	/**
