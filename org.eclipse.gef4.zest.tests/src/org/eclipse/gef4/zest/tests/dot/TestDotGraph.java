@@ -10,7 +10,7 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.dot.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

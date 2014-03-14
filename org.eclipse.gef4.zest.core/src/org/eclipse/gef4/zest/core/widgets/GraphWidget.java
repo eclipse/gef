@@ -38,11 +38,11 @@ import org.eclipse.draw2d.TreeSearch;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.graph.Graph.Attr;
-import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.graph.internal.dot.ZestStyle;
+import org.eclipse.gef4.dot.Edge;
+import org.eclipse.gef4.dot.Graph;
+import org.eclipse.gef4.dot.Node;
+import org.eclipse.gef4.dot.Graph.Attr;
+import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
@@ -244,7 +244,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 		}
 	};
 
-	private org.eclipse.gef4.graph.Graph dotGraph;
+	private org.eclipse.gef4.dot.Graph dotGraph;
 
 	/**
 	 * Constructor for a GraphWidget, created from a given Graph data structure.
@@ -275,7 +275,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 		setGraphType(dotGraph);
 	}
 
-	private void setLayout(org.eclipse.gef4.graph.Graph dotGraph) {
+	private void setLayout(org.eclipse.gef4.dot.Graph dotGraph) {
 		LayoutAlgorithm algorithm = new TreeLayoutAlgorithm();
 		Object layout = dotGraph.getAttrs().get(Attr.LAYOUT.toString());
 		if (layout != null)
@@ -283,12 +283,12 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 		this.setLayoutAlgorithm(algorithm, true);
 	}
 
-	private void setGraphData(org.eclipse.gef4.graph.Graph dotGraph) {
+	private void setGraphData(org.eclipse.gef4.dot.Graph dotGraph) {
 		for (Map.Entry<String, Object> entry : dotGraph.getAttrs().entrySet())
 			this.setData(entry.getKey(), entry.getValue());
 	}
 
-	private void setGraphType(org.eclipse.gef4.graph.Graph dotGraph) {
+	private void setGraphType(org.eclipse.gef4.dot.Graph dotGraph) {
 		Object type = dotGraph.getAttrs().get(Attr.GRAPH_TYPE.toString());
 		if (type != null)
 			this.setConnectionStyle(map.get(ZestStyle.valueOf(type.toString())));

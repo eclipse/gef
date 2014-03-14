@@ -11,7 +11,7 @@ package org.eclipse.gef4.zest.tests.dot;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.graph.internal.dot.DotExtractor;
+import org.eclipse.gef4.dot.internal.dot.DotExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 

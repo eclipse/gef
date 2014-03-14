@@ -10,7 +10,7 @@ package org.eclipse.gef4.zest.tests.dot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.graph.internal.dot.DotImport;
+import org.eclipse.gef4.dot.internal.dot.DotImport;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;

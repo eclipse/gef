@@ -26,20 +26,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.gef4.graph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.gef4.graph.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.gef4.layout"
          download-size="0"
          install-size="0"
@@ -48,6 +34,20 @@
 
    <plugin
          id="org.eclipse.gef4.geometry"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gef4.dot"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gef4.dot.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

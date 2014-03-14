@@ -310,9 +310,9 @@
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
 
-		<module>../org.eclipse.gef4.graph</module>
-		<module>../org.eclipse.gef4.graph.ui</module>
-		<module>../org.eclipse.gef4.graph.tests</module>
+		<module>../org.eclipse.gef4.dot</module>
+		<module>../org.eclipse.gef4.dot.ui</module>
+		<module>../org.eclipse.gef4.dot.tests</module>
 
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>

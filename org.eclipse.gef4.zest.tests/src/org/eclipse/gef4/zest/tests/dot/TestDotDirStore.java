@@ -11,8 +11,8 @@ package org.eclipse.gef4.zest.tests.dot;
 import java.io.File;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.gef4.graph.internal.dot.DotUiActivator;
-import org.eclipse.gef4.graph.tests.dot.TestImageExport;
+import org.eclipse.gef4.dot.internal.dot.DotUiActivator;
+import org.eclipse.gef4.dot.tests.dot.TestImageExport;
 import org.eclipse.gef4.zest.internal.ui.DotDirStore;
 import org.junit.Assert;
 import org.junit.Before;
