@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -188,12 +189,27 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			double[] initialBounds = getBounds(selectionBounds, targetPart);
 			double[] newBounds = getBounds(sel, targetPart);
-			double dx = newBounds[0] - initialBounds[0];
-			double dy = newBounds[1] - initialBounds[1];
-			double dw = (newBounds[2] - newBounds[0])
-					- (initialBounds[2] - initialBounds[0]);
-			double dh = (newBounds[3] - newBounds[1])
-					- (initialBounds[3] - initialBounds[1]);
+
+			// transform initialBounds to target space
+			Node visual = targetPart.getVisual();
+			Point2D initialTopLeft = visual.sceneToLocal(initialBounds[0],
+					initialBounds[1]);
+			Point2D initialBotRight = visual.sceneToLocal(initialBounds[2],
+					initialBounds[3]);
+
+			// transform newBounds to target space
+			Point2D newTopLeft = visual
+					.sceneToLocal(newBounds[0], newBounds[1]);
+			Point2D newBotRight = visual.sceneToLocal(newBounds[2],
+					newBounds[3]);
+
+			double dx = newTopLeft.getX() - initialTopLeft.getX();
+			double dy = newTopLeft.getY() - initialTopLeft.getY();
+			double dw = (newBotRight.getX() - newTopLeft.getX())
+					- (initialBotRight.getX() - initialTopLeft.getX());
+			double dh = (newBotRight.getY() - newTopLeft.getY())
+					- (initialBotRight.getY() - initialTopLeft.getY());
+
 			if (getResizeRelocatePolicy(targetPart) != null) {
 				getResizeRelocatePolicy(targetPart).performResizeRelocate(dx,
 						dy, dw, dh);
@@ -253,7 +269,7 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 				}
 			}
 		}
-		if(performCommit){
+		if (performCommit) {
 			executeOperation(operation);
 		}
 
