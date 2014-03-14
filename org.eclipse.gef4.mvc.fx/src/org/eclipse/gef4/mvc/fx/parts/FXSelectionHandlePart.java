@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -105,9 +106,10 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		// get new position (in local coordinate space)
 		Point position = getPosition(handleGeometryProvider.get());
 		
-		// transform to parent space
+		// transform to handle space
 		Node targetVisual = targetPart.getVisual();
-		Point2D point2d = visual.getParent().sceneToLocal(
+		Pane handleLayer = ((FXRootPart) getRoot()).getHandleLayer();
+		Point2D point2d = handleLayer.sceneToLocal(
 				targetVisual.localToScene(position.x, position.y));
 		
 		// update visual layout position
