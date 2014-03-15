@@ -34,12 +34,12 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
@@ -55,12 +55,12 @@ public abstract class FXView extends ViewPart {
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		
+
 		IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
 		undoContext = workbench.getOperationSupport().getUndoContext();
 		operationHistory = workbench.getOperationSupport()
 				.getOperationHistory();
-		
+
 		UndoRedoActionGroup undoRedoActionGroup = new UndoRedoActionGroup(
 				getSite(), undoContext, true);
 		undoRedoActionGroup.fillActionBars(site.getActionBars());
@@ -102,6 +102,7 @@ public abstract class FXView extends ViewPart {
 	private void configureViewer(FXViewer viewer) {
 		viewer.setHandlePartFactory(getHandlePartFactory());
 		viewer.setContentPartFactory(getContentPartFactory());
+		viewer.setFeedbackPartFactory(getFeedbackPartFactory());
 	}
 
 	protected abstract List<Object> getContents();
@@ -109,6 +110,8 @@ public abstract class FXView extends ViewPart {
 	protected abstract IContentPartFactory<Node> getContentPartFactory();
 
 	protected abstract IHandlePartFactory<Node> getHandlePartFactory();
+
+	protected abstract IFeedbackPartFactory<Node> getFeedbackPartFactory();
 
 	@Override
 	public void setFocus() {

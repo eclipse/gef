@@ -14,13 +14,11 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IHandlePart;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -30,8 +28,8 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
  * 
  * @param <V>
  */
-public abstract class AbstractHoverBehavior<V> extends
-		AbstractBehavior<V> implements PropertyChangeListener {
+public abstract class AbstractHoverBehavior<V> extends AbstractBehavior<V>
+		implements PropertyChangeListener {
 
 	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
 		@Override
@@ -39,9 +37,7 @@ public abstract class AbstractHoverBehavior<V> extends
 			return getFeedbackGeometry();
 		}
 	};
-	
-	private List<IHandlePart<V>> handles;
-	
+
 	@Override
 	public void activate() {
 		super.activate();
@@ -55,7 +51,7 @@ public abstract class AbstractHoverBehavior<V> extends
 				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
-	
+
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
@@ -72,29 +68,21 @@ public abstract class AbstractHoverBehavior<V> extends
 			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
 
 			if (oldHovered == getHost()) {
-				if (handles != null && !handles.isEmpty()) {
-					BehaviorUtils.removeHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
-					handles.clear();
-				}
-				hideFeedback();
+				removeHandles(Collections
+						.singletonList((IContentPart<V>) getHost()));
+				removeFeedback(Collections
+						.singletonList((IContentPart<V>) getHost()));
 			} else if (newHovered == getHost()) {
-				showFeedback();
-				handles = createHandles();
-				BehaviorUtils.addHandles(getHost().getRoot(), Collections.singletonList((IContentPart<V>)getHost()), handles);
+				addFeedback(Collections
+						.singletonList((IContentPart<V>) getHost()));
+				addHandles(Collections
+						.singletonList((IContentPart<V>) getHost()));
 			}
 		}
 	}
-	
+
 	public IProvider<IGeometry> getFeedbackGeometryProvider() {
 		return feedbackGeometryProvider;
-	}
-
-	protected abstract void showFeedback();
-
-	protected abstract void hideFeedback();
-
-	protected List<IHandlePart<V>> createHandles() {
-		return Collections.emptyList();
 	}
 
 }

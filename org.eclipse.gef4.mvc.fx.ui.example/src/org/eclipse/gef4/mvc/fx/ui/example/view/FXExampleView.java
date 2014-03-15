@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.FXExampleContentPartFactory;
@@ -29,6 +30,7 @@ import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
@@ -57,6 +59,11 @@ public class FXExampleView extends FXView {
 	@Override
 	protected IHandlePartFactory<Node> getHandlePartFactory() {
 		return new FXExampleHandlePartFactory();
+	}
+	
+	@Override
+	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
+		return new FXDefaultFeedbackPartFactory();
 	}
 
 	@Override

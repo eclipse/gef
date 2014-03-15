@@ -24,6 +24,8 @@ import javafx.scene.layout.StackPane;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
@@ -50,11 +52,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	protected void createRootVisual() {
 		contentLayer = createContentLayer();
-		handleLayer = createHandleLayer();
 		feedbackLayer = createFeedbackLayer();
+		handleLayer = createHandleLayer();
 
 		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[] {
-				contentLayer, handleLayer, feedbackLayer }));
+				contentLayer, feedbackLayer, handleLayer }));
 
 		scrollPaneInput = createScrollPaneInput(layersStackPane);
 
@@ -102,8 +104,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	public ScrollPane getScrollPane() {
 		return scrollPane;
 	}
-	
-	public StackPane getLayerStackPane(){
+
+	public StackPane getLayerStackPane() {
 		return layersStackPane;
 	}
 
@@ -150,7 +152,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().put(child, this);
 		}
-		
+
 		// register root visual as well
 		getViewer().getVisualPartMap().put(getVisual(), this);
 	}
@@ -162,7 +164,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().remove(child);
 		}
-		
+
 		// unregister root visual as well
 		getViewer().getVisualPartMap().remove(getVisual());
 	}
@@ -184,11 +186,21 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			}
 			contentLayer.getChildren()
 					.add(contentLayerIndex, child.getVisual());
+		} else if (child instanceof IFeedbackPart) {
+			int feedbackLayerIndex = 0;
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& (getChildren().get(i) instanceof IFeedbackPart)) {
+					feedbackLayerIndex++;
+				}
+			}
+			feedbackLayer.getChildren().add(feedbackLayerIndex,
+					child.getVisual());
 		} else {
 			int handleLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
 				if (i < getChildren().size()
-						&& !(getChildren().get(i) instanceof IContentPart)) {
+						&& (getChildren().get(i) instanceof IHandlePart)) {
 					handleLayerIndex++;
 				}
 			}
@@ -200,6 +212,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	protected void removeChildVisual(IVisualPart<Node> child) {
 		if (child instanceof IContentPart) {
 			contentLayer.getChildren().remove(child.getVisual());
+		} else if (child instanceof IFeedbackPart) {
+			feedbackLayer.getChildren().remove(child.getVisual());
 		} else {
 			handleLayer.getChildren().remove(child.getVisual());
 		}

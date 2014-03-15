@@ -12,14 +12,14 @@
 package org.eclipse.gef4.mvc.parts;
 
 /**
- * An {@link IHandlePart} is a controller that controls a visual, which is used
- * simply for tool interaction and does not correspond to anything in the
+ * An {@link IFeedbackPart} is a controller that controls a visual, which is
+ * used simply for feedback and does not correspond to anything in the
  * visualized model.
  * 
  * @author anyssen
  * 
  * @param <V>
  */
-public interface IHandlePart<V> extends IVisualPart<V> {
+public interface IFeedbackPart<V> extends IVisualPart<V> {
 
 }

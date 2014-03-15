@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -127,6 +128,10 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	IHandlePartFactory<V> getHandlePartFactory();
 
 	void setHandlePartFactory(IHandlePartFactory<V> factory);
+	
+	IFeedbackPartFactory<V> getFeedbackPartFactory();
+
+	void setFeedbackPartFactory(IFeedbackPartFactory<V> factory);
 
 	// selection based on content parts
 	ISelectionModel<V> getSelectionModel();
