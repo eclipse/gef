@@ -7,11 +7,14 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
 
-package org.eclipse.gef4.dot.internal.dot.export;
+package org.eclipse.gef4.dot;
 
 import java.io.File;
 import java.util.Scanner;
 
+import org.eclipse.gef4.dot.internal.dot.export.DotDrawer;
+import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.dot.internal.dot.export.DotTemplate;
 import org.eclipse.gef4.graph.Graph;
 
 /**
@@ -24,8 +27,7 @@ public final class DotExport {
 	public static final String DOT_BIN_DIR_KEY = "org.eclipse.gef4.zest.dot.bin.dir"; //$NON-NLS-1$
 	private static final String DEFAULT_OUTPUT_FORMAT = "pdf"; //$NON-NLS-1$
 	private String dotString;
-	private String graphName = "Unnamed" + System.currentTimeMillis();
-	private Graph graph;
+	private String graphName = "Unnamed" + System.currentTimeMillis(); //$NON-NLS-1$
 
 	/**
 	 * @param graph
@@ -34,7 +36,6 @@ public final class DotExport {
 	public DotExport(final Graph graph) {
 		this.dotString = graphToDot(graph);
 		this.graphName = graph.getClass().getSimpleName();
-		this.graph = graph;
 	}
 
 	/**

@@ -11,10 +11,10 @@ package org.eclipse.gef4.zest.tests;
 import junit.framework.TestCase;
 
 import org.eclipse.draw2d.Figure;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.internal.ZestRootLayer;
 import org.eclipse.swt.SWT;

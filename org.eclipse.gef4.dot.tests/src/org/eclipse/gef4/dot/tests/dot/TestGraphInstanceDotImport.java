@@ -13,8 +13,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.DotAst;
-import org.eclipse.gef4.dot.internal.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.GraphCreatorInterpreter;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.Edge;

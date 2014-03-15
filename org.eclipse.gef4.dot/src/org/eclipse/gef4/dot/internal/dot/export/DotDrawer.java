@@ -18,11 +18,11 @@ import java.util.Arrays;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-final class DotDrawer {
+final public class DotDrawer {
 	private DotDrawer() {/* Enforce non-instantiability */
 	}
 
-	static File renderImage(final File dotExecutableDir,
+	public static File renderImage(final File dotExecutableDir,
 			final File dotInputFile, final String format,
 			final String imageResultFile) {
 		String outputFormat = "-T" + format; //$NON-NLS-1$
@@ -59,10 +59,10 @@ final class DotDrawer {
 		String errors = read(p.getErrorStream());
 		String output = read(p.getInputStream());
 		if (errors.trim().length() > 0) {
-			System.err.println("Errors from dot call: " + errors);
+			System.err.println("Errors from dot call: " + errors); //$NON-NLS-1$
 		}
 		if (output.trim().length() > 0) {
-			System.out.println("Output from dot call: " + output);
+			System.out.println("Output from dot call: " + output); //$NON-NLS-1$
 		}
 	}
 

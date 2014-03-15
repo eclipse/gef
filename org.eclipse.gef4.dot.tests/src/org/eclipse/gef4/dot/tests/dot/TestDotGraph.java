@@ -10,7 +10,7 @@ package org.eclipse.gef4.dot.tests.dot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.dot.internal.dot.DotImport;
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.Test;

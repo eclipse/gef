@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.DotAst.Layout;
 import org.eclipse.gef4.dot.internal.dot.DotAst.Style;
 import org.eclipse.gef4.dot.internal.dot.parser.dot.AList;

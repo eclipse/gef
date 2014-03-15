@@ -11,7 +11,7 @@ package org.eclipse.gef4.dot.tests.dot;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.dot.internal.dot.DotImport;
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;

@@ -13,7 +13,7 @@ import static org.eclipse.gef4.dot.tests.dot.DotImportTestUtils.importFrom;
 
 import java.io.File;
 
-import org.eclipse.gef4.dot.internal.dot.DotImport;
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;

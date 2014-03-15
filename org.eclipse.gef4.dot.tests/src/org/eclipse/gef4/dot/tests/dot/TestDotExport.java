@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.internal.dot.export.DotExport;
+import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;

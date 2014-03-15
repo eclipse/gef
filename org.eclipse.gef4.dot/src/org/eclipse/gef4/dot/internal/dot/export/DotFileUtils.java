@@ -100,6 +100,7 @@ public final class DotFileUtils {
 			while (s.hasNextLine()) {
 				builder.append(s.nextLine()).append("\n"); //$NON-NLS-1$
 			}
+			s.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

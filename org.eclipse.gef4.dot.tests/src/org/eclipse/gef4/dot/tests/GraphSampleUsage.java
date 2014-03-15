@@ -14,7 +14,7 @@ import static org.eclipse.gef4.graph.Graph.Attr.LABEL;
 import static org.eclipse.gef4.graph.Graph.Attr.LAYOUT;
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.dot.internal.dot.DotImport;
+import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;

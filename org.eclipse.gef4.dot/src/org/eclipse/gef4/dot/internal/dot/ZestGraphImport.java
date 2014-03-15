@@ -18,7 +18,7 @@ import org.eclipse.gef4.graph.Node;
  * 
  * @author Fabian Steeg (fsteeg)
  */
-final class ZestGraphImport {
+final public class ZestGraphImport {
 	private Graph graphFromDot;
 
 	/**
@@ -27,7 +27,7 @@ final class ZestGraphImport {
 	 *            this will only support a subset of the graph attributes, as it
 	 *            is used for import of Zest graphs created from DOT input.
 	 */
-	ZestGraphImport(Graph sourceGraph) {
+	public ZestGraphImport(Graph sourceGraph) {
 		this.graphFromDot = sourceGraph;
 	}
 
@@ -35,7 +35,7 @@ final class ZestGraphImport {
 	 * @param targetGraph
 	 *            The graph to add content to
 	 */
-	void into(Graph.Builder targetGraph) {
+	public void into(Graph.Builder targetGraph) {
 		Graph sourceGraph = graphFromDot;
 		targetGraph.attr(Graph.Attr.NODE_STYLE.toString(), sourceGraph
 				.getAttrs().get(Graph.Attr.NODE_STYLE.toString()));
