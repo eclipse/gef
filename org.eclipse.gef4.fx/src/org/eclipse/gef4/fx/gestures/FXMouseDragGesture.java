@@ -56,15 +56,19 @@ public abstract class FXMouseDragGesture {
 				/*
 				 * XXX: We got trapped in PERFORM state, which should not be
 				 * possible, but happens at times... As a workaround, we call
-				 * release with dx = 0 and dy = 0.
+				 * releasedHandler#handle(MouseEvent).
+				 * 
+				 * We give it the pressed event, although it might be a good
+				 * idea to pass-in dx = 0 and dy = 0.
 				 */
 				if (targetNode != e.getTarget()) {
+					// TODO: JavaFX mouse event target selection bug => platform
+					// specific fix
 					System.err.println("wrong target node!");
-					// TODO: JavaFX mouse event target selection bug => platform specific fix
 				}
-				state = State.INIT;
-				removeTargetHandlers();
-				// TODO: IPolicy.cancel() - cancel policy to notify the gesture ended unexpectedly
+				// TODO: IPolicy#cancel() - cancel policy to notify the gesture
+				// ended unexpectedly
+				releasedHandler.handle(e);
 			}
 
 			ox = e.getSceneX();
@@ -85,7 +89,7 @@ public abstract class FXMouseDragGesture {
 			targetNode.startFullDrag();
 		}
 	};
-	
+
 	private List<Node> nodesUnderMouse = new ArrayList<Node>();
 
 	private EventHandler<? super MouseDragEvent> dragEnteredHandler = new EventHandler<MouseDragEvent>() {
@@ -122,9 +126,12 @@ public abstract class FXMouseDragGesture {
 		nodesUnderMouse.clear();
 		targetNode.setMouseTransparent(true);
 		targetNode.addEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
-		targetNode.addEventHandler(MouseEvent.DRAG_DETECTED, dragDetectedHandler);
-		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET, dragEnteredHandler);
-		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET, dragExitedHandler);
+		targetNode.addEventHandler(MouseEvent.DRAG_DETECTED,
+				dragDetectedHandler);
+		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET,
+				dragEnteredHandler);
+		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET,
+				dragExitedHandler);
 		targetNode.addEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
 	}
 
@@ -134,9 +141,9 @@ public abstract class FXMouseDragGesture {
 		@Override
 		public void handle(MouseEvent e) {
 			if (targetNode != e.getTarget()) {
-				throw new IllegalStateException("wrong target node!");
+				System.err.println("wrong target node!");
 			}
-			
+
 			if (state != State.PERFORM)
 				return;
 
@@ -155,9 +162,9 @@ public abstract class FXMouseDragGesture {
 		@Override
 		public void handle(MouseEvent e) {
 			if (targetNode != e.getTarget()) {
-				throw new IllegalStateException("wrong target node!");
+				// FIXME: System.err.println("wrong target node!");
 			}
-			
+
 			if (state != State.PERFORM)
 				return;
 
@@ -178,11 +185,11 @@ public abstract class FXMouseDragGesture {
 	public Scene getScene() {
 		return scene;
 	}
-	
+
 	public Node getTargetNode() {
 		return targetNode;
 	}
-	
+
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;
@@ -208,10 +215,14 @@ public abstract class FXMouseDragGesture {
 	protected void removeTargetHandlers() {
 		targetNode.setMouseTransparent(false);
 		targetNode.removeEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
-		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET, dragExitedHandler);
-		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET, dragEnteredHandler);
-		targetNode.removeEventHandler(MouseEvent.DRAG_DETECTED, dragDetectedHandler);
-		targetNode.removeEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
+		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET,
+				dragExitedHandler);
+		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET,
+				dragEnteredHandler);
+		targetNode.removeEventHandler(MouseEvent.DRAG_DETECTED,
+				dragDetectedHandler);
+		targetNode.removeEventHandler(MouseEvent.MOUSE_RELEASED,
+				releasedHandler);
 	}
 
 }
