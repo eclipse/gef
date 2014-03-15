@@ -16,7 +16,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.dot.Graph;
+import org.eclipse.gef4.graph.Graph;
 
 /**
  * Experimental stuff for transformation of DOT files or strings to Zest Graph

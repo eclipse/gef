@@ -11,11 +11,11 @@ package org.eclipse.gef4.dot.tests.dot;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.gef4.dot.Edge;
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
 import org.eclipse.gef4.dot.internal.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +53,8 @@ public final class TestSnippetDotImport {
 
 	@Test
 	public void useExistingNodes() {
-		Graph.Builder graph = new Graph.Builder("digraph{1->2}");
+		Graph.Builder graph = new Graph.Builder();
+		new DotImport("digraph{1->2}").into(graph);
 		assertNodesEdgesCount(2, 1, graph);
 		new DotImport("1->3").into(graph); // should reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
@@ -63,15 +64,13 @@ public final class TestSnippetDotImport {
 
 	@Test
 	public void useExistingLabeledNodes() {
-		Graph.Builder graph = new Graph.Builder(
-				"digraph{1[label=one];2[label=two]}");
+		Graph.Builder graph = new Graph.Builder();
+		new DotImport("digraph{1[label=one];2[label=two]}").into(graph);
 		assertNodesEdgesCount(2, 0, graph);
 		new DotImport("1->2").into(graph); // reuse nodes 1 and 2 from above
 		assertNodesEdgesCount(2, 1, graph);
 		new DotImport("1->3").into(graph); // reuse node 1 from above
 		assertNodesEdgesCount(3, 2, graph);
-		Assert.assertEquals(ZestStyle.GRAPH_DIRECTED, graph.build().getAttrs()
-				.get(Graph.Attr.GRAPH_TYPE.toString()));
 	}
 
 	@Test
@@ -86,8 +85,6 @@ public final class TestSnippetDotImport {
 	@Test
 	public void addLayoutAlgorithm() {
 		Graph.Builder graph = new Graph.Builder();
-		Assert.assertNotNull("Expect some default layout algorithm", graph
-				.build().getAttrs().get(Graph.Attr.LAYOUT.toString()));
 		new DotImport("rankdir=LR").into(graph);
 		Assert.assertEquals(TreeLayoutAlgorithm.class, graph.build().getAttrs()
 				.get(Graph.Attr.LAYOUT.toString()).getClass());

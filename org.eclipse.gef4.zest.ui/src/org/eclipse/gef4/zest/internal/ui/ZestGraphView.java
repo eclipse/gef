@@ -34,6 +34,7 @@ import org.eclipse.gef4.dot.internal.dot.DotExtractor;
 import org.eclipse.gef4.dot.internal.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.export.DotExport;
 import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -99,7 +100,7 @@ public final class ZestGraphView extends ViewPart {
 
 	private Composite composite;
 	private GraphWidget graph;
-	private org.eclipse.gef4.dot.Graph dotGraph;
+	private Graph dotGraph;
 	private IFile file;
 
 	private String dotString = ""; //$NON-NLS-1$

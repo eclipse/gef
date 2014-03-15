@@ -10,7 +10,8 @@ package org.eclipse.gef4.dot.tests.dot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.gef4.dot.Graph;
+import org.eclipse.gef4.dot.internal.dot.DotImport;
+import org.eclipse.gef4.graph.Graph;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,18 +24,19 @@ public final class TestDotGraph {
 
 	@Test
 	public void sampleUsage() {
-		Graph.Builder graph = new Graph.Builder("digraph{1->2}"); //$NON-NLS-1$
+		Graph.Builder graph = new Graph.Builder(); //$NON-NLS-1$
+		new DotImport("digraph{1->2}").into(graph);
 		assertNodesEdgesCount(2, 1, graph);
-		graph.dot("node[label=zested]; 2->3; 2->4"); //$NON-NLS-1$
+		new DotImport("node[label=zested]; 2->3; 2->4").into(graph); //$NON-NLS-1$
 		assertNodesEdgesCount(4, 3, graph);
-		graph.dot("edge[style=dashed]; 3->5; 4->6"); //$NON-NLS-1$
+		new DotImport("edge[style=dashed]; 3->5; 4->6").into(graph); //$NON-NLS-1$
 		assertNodesEdgesCount(6, 5, graph);
 	}
 
 	@Test
 	public void graphAttributesToDataMapping() {
 		String dotInput = "digraph{ graph[key1=graph_value1 key2=graph_value2]; 1->2 }";
-		Graph graph = new Graph.Builder(dotInput).build();
+		Graph graph = new DotImport(dotInput).newGraphInstance();
 		assertEquals("graph_value1", graph.getAttrs().get("key1"));
 		assertEquals("graph_value2", graph.getAttrs().get("key2"));
 	}

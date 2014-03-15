@@ -16,9 +16,6 @@ import java.util.Map;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef4.dot.Edge;
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
 import org.eclipse.gef4.dot.internal.dot.DotAst.Layout;
 import org.eclipse.gef4.dot.internal.dot.DotAst.Style;
 import org.eclipse.gef4.dot.internal.dot.parser.dot.AList;
@@ -35,6 +32,9 @@ import org.eclipse.gef4.dot.internal.dot.parser.dot.NodeStmt;
 import org.eclipse.gef4.dot.internal.dot.parser.dot.Stmt;
 import org.eclipse.gef4.dot.internal.dot.parser.dot.Subgraph;
 import org.eclipse.gef4.dot.internal.dot.parser.dot.util.DotSwitch;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
@@ -56,7 +56,8 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private boolean gotSource;
 
 	public Graph create(DotAst dotAst) {
-		return create(dotAst, new Graph.Builder());
+		return create(dotAst, new Graph.Builder().attr(Graph.Attr.LAYOUT,
+				DotImport.DEFAULT_LAYOUT_ALGORITHM));
 	}
 
 	public Graph create(DotAst dotAst, Graph.Builder graph) {

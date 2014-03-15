@@ -6,9 +6,7 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
  *******************************************************************************/
-package org.eclipse.gef4.dot;
-
-import static org.eclipse.gef4.dot.Graph.Attr.LAYOUT;
+package org.eclipse.gef4.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.gef4.dot.internal.dot.DotImport;
-import org.eclipse.gef4.dot.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.dot.internal.dot.export.DotExport;
 
 public final class Graph {
 
@@ -29,12 +23,6 @@ public final class Graph {
 		private Map<String, Object> attrs = new HashMap<String, Object>();
 
 		public Builder() {
-			attr(LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM);
-		}
-
-		public Builder(String dot) {
-			new GraphCreatorInterpreter().create(
-					new DotImport(dot).getDotAst(), this);
 		}
 
 		public Graph.Builder nodes(Node... nodes) {
@@ -44,11 +32,6 @@ public final class Graph {
 
 		public Graph.Builder edges(Edge... edges) {
 			this.edges.addAll(Arrays.asList(edges));
-			return this;
-		}
-
-		public Graph.Builder dot(String dot) {
-			new DotImport(dot).into(this);
 			return this;
 		}
 
@@ -91,10 +74,6 @@ public final class Graph {
 
 	public List<Node> getNodes() {
 		return Collections.unmodifiableList(nodes);
-	}
-
-	public String toDot() {
-		return new DotExport(this).toDotString();
 	}
 
 	@Override

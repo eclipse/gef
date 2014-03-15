@@ -1,6 +1,6 @@
 package org.eclipse.gef4.dot.internal.dot.export;
 
-import org.eclipse.gef4.dot.*;
+import org.eclipse.gef4.graph.*;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.*;
 import org.eclipse.gef4.layout.*;

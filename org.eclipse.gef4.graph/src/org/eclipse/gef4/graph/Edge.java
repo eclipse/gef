@@ -6,13 +6,13 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
  *******************************************************************************/
-package org.eclipse.gef4.dot;
+package org.eclipse.gef4.graph;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.dot.Graph.Attr;
+import org.eclipse.gef4.graph.Graph.Attr;
 
 public final class Edge {
 

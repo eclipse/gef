@@ -12,7 +12,7 @@ package org.eclipse.gef4.dot.internal.dot.export;
 import java.io.File;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.Graph;
+import org.eclipse.gef4.graph.Graph;
 
 /**
  * Transformation of Zest Graph instances to DOT strings or files, or via DOT to

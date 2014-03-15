@@ -10,8 +10,8 @@ package org.eclipse.gef4.dot.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;

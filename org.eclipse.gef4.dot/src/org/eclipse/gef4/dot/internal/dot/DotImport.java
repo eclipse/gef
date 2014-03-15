@@ -12,8 +12,8 @@ package org.eclipse.gef4.dot.internal.dot;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.gef4.dot.Graph;
 import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 

@@ -8,9 +8,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.internal.dot;
 
-import org.eclipse.gef4.dot.Edge;
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 
 /**
  * Imports the content of a Zest graph generated from DOT into an existing Zest

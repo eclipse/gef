@@ -13,13 +13,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.dot.Edge;
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
 import org.eclipse.gef4.dot.internal.dot.DotAst;
 import org.eclipse.gef4.dot.internal.dot.DotImport;
 import org.eclipse.gef4.dot.internal.dot.GraphCreatorInterpreter;
 import org.eclipse.gef4.dot.internal.dot.ZestStyle;
+import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
@@ -357,7 +357,7 @@ public final class TestGraphInstanceDotImport {
 
 	@Test
 	public void multiEdgeStatements() {
-		Graph graph = new Graph.Builder("digraph{1->2->3->4}").build(); //$NON-NLS-1$
+		Graph graph = new DotImport("digraph{1->2->3->4}").newGraphInstance(); //$NON-NLS-1$
 		assertEquals(4, graph.getNodes().size());
 		assertEquals(3, graph.getEdges().size());
 		/* Each node should be connected to one other, the previous node: */
@@ -379,7 +379,7 @@ public final class TestGraphInstanceDotImport {
 	@Test
 	/* see http://www.graphviz.org/doc/info/attrs.html#d:style */
 	public void edgeStyleInvis() {
-		Graph graph = new Graph.Builder("digraph{1->2[style=invis]}").build(); //$NON-NLS-1$
+		Graph graph = new DotImport("digraph{1->2[style=invis]}").newGraphInstance(); //$NON-NLS-1$
 		assertEquals(2, graph.getNodes().size());
 		assertEquals(1, graph.getEdges().size());
 	}

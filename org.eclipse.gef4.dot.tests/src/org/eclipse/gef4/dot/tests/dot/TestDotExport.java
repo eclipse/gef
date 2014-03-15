@@ -14,9 +14,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.Graph;
-import org.eclipse.gef4.dot.Node;
 import org.eclipse.gef4.dot.internal.dot.export.DotExport;
+import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
@@ -61,22 +61,24 @@ public class TestDotExport extends TestDotTemplate {
 	public void zestToGraphvizLayoutMapping() {
 		Graph.Builder graph = new Graph.Builder();
 		graph.attr(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
-		assertTrue("TreeLayout -> 'dot'",
-				graph.build().toDot().contains("graph[layout=dot]"));
+		assertTrue("TreeLayout -> 'dot'", new DotExport(graph.build())
+				.toDotString().contains("graph[layout=dot]"));
 		graph.attr(Graph.Attr.LAYOUT.toString(), new RadialLayoutAlgorithm());
-		assertTrue("RadialLayout -> 'twopi'",
-				graph.build().toDot().contains("graph[layout=twopi]"));
+		assertTrue("RadialLayout -> 'twopi'", new DotExport(graph.build())
+				.toDotString().contains("graph[layout=twopi]"));
 		graph.attr(Graph.Attr.LAYOUT.toString(), new GridLayoutAlgorithm());
-		assertTrue("GridLayout -> 'osage'",
-				graph.build().toDot().contains("graph[layout=osage]"));
+		assertTrue("GridLayout -> 'osage'", new DotExport(graph.build())
+				.toDotString().contains("graph[layout=osage]"));
 		graph.attr(Graph.Attr.LAYOUT.toString(), new SpringLayoutAlgorithm());
-		assertTrue("SpringLayout, small -> 'fdp'", graph.build().toDot()
-				.contains("graph[layout=fdp]"));
+		assertTrue("SpringLayout, small -> 'fdp'", new DotExport(graph.build())
+				.toDotString().contains("graph[layout=fdp]"));
 		for (int i = 0; i < 100; i++) {
 			graph.nodes(new Node.Builder().build());
 		}
-		assertTrue("SpringLayout, large -> 'sfdp'", graph.build().toDot()
-				.contains("graph[layout=sfdp]"));
+		assertTrue(
+				"SpringLayout, large -> 'sfdp'",
+				new DotExport(graph.build()).toDotString().contains(
+						"graph[layout=sfdp]"));
 	}
 
 	private void assertNoBlankLines(final String dot) {

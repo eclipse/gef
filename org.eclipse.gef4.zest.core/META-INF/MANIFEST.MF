@@ -8,7 +8,8 @@ Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.swt;bundle-version="3.7.0";visibility:=reexport,
  org.eclipse.draw2d;visibility:=reexport,
  org.eclipse.gef4.layout;visibility:=reexport,
- org.eclipse.gef4.dot;visibility:=reexport
+ org.eclipse.gef4.dot;visibility:=reexport,
+ org.eclipse.gef4.graph
 Eclipse-LazyStart: false
 Export-Package: org.eclipse.gef4.zest.core.widgets,
  org.eclipse.gef4.zest.core.widgets.custom,
