@@ -59,7 +59,8 @@ public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
 		}
 	};
 
-	private void recomputePositions() {
+	@Override
+	public void recomputePositions() {
 		for (Node anchored : referencePointProperty().get().keySet()) {
 			recomputePosition(anchored, referencePointProperty().get(anchored));
 		}

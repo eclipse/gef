@@ -42,4 +42,6 @@ public interface IFXNodeAnchor {
 
 	Point computePosition(Node anchored, Point referencePoint);
 
+	void recomputePositions();
+
 }
