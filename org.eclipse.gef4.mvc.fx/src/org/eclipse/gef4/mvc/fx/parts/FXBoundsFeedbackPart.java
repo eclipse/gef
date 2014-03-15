@@ -33,7 +33,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * @author nyssen
  * 
  */
-public class FXBoundsFeedbackPart extends AbstractFXHandlePart {
+public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 
 	private static final Color INVISIBLE = new Color(0, 0, 0, 0);
 

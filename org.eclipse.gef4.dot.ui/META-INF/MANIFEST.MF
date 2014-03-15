@@ -45,4 +45,3 @@ Export-Package: org.eclipse.gef4.dot.internal.dot,
  org.eclipse.gef4.dot.internal.dot.parser.ui.labeling,
  org.eclipse.gef4.dot.internal.dot.parser.ui.outline,
  org.eclipse.gef4.dot.internal.dot.parser.ui.quickfix
-

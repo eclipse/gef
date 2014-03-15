@@ -12,14 +12,24 @@
 package org.eclipse.gef4.mvc.parts;
 
 /**
- * An {@link IHandlePart} is a controller that controls a visual, which is used
- * simply for tool interaction and does not correspond to anything in the
- * visualized model.
  * 
  * @author anyssen
  * 
  * @param <V>
  */
-public interface IHandlePart<V> extends IVisualPart<V> {
+public abstract class AbstractFeedbackPart<V> extends AbstractVisualPart<V>
+		implements IFeedbackPart<V> {
+
+	@Override
+	protected void addChildVisual(IVisualPart<V> child, int index) {
+		throw new UnsupportedOperationException(
+				"IFeedbackParts do not support children");
+	}
+
+	@Override
+	protected void removeChildVisual(IVisualPart<V> child) {
+		throw new UnsupportedOperationException(
+				"IFeedbackParts do not support this");
+	}
 
 }

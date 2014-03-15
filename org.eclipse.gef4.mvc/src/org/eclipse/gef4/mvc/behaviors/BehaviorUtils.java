@@ -11,11 +11,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class BehaviorUtils {
 
@@ -30,14 +35,15 @@ public class BehaviorUtils {
 	 *            content parts
 	 * @param handles
 	 *            handle parts
-	 * @see #removeHandles(IRootPart, List, List)
+	 * @see #removeAnchoreds(IRootPart, List, List)
 	 */
-	public static <V> void addHandles(IRootPart<V> root,
-			List<IContentPart<V>> anchorages, List<IHandlePart<V>> handles) {
-		if (handles != null && !handles.isEmpty()) {
-			root.addChildren(handles);
+	public static <V> void addAnchoreds(IRootPart<V> root,
+			List<IContentPart<V>> anchorages,
+			List<? extends IVisualPart<V>> anchords) {
+		if (anchords != null && !anchords.isEmpty()) {
+			root.addChildren(anchords);
 			for (IContentPart<V> anchorage : anchorages) {
-				anchorage.addAnchoreds(handles);
+				anchorage.addAnchoreds(anchords);
 			}
 		}
 	}
@@ -50,16 +56,37 @@ public class BehaviorUtils {
 	 * @param root
 	 * @param anchorages
 	 * @param handles
-	 * @see #addHandles(IRootPart, List, List)
+	 * @see #addAnchoreds(IRootPart, List, List)
 	 */
-	public static <V> void removeHandles(IRootPart<V> root,
-			List<IContentPart<V>> anchorages, List<IHandlePart<V>> handles) {
-		if (handles != null && !handles.isEmpty()) {
-			root.removeChildren(handles);
+	public static <V> void removeAnchoreds(IRootPart<V> root,
+			List<IContentPart<V>> anchorages,
+			List<? extends IVisualPart<V>> anchords) {
+		if (anchords != null && !anchords.isEmpty()) {
+			root.removeChildren(anchords);
 			for (IContentPart<V> anchorage : anchorages) {
-				anchorage.removeAnchoreds(handles);
+				anchorage.removeAnchoreds(anchords);
 			}
 		}
+	}
+
+	public static <V> List<IFeedbackPart<V>> createFeedback(IBehavior<V> behavior,
+			List<IContentPart<V>> targets) {
+		IVisualPart<V> host = behavior.getHost();
+		IFeedbackPartFactory<V> factory = host.getRoot().getViewer()
+				.getFeedbackPartFactory();
+		List<IFeedbackPart<V>> feedbackParts = factory.createFeedbackParts(
+				targets, behavior, Collections.emptyMap());
+		return feedbackParts;
+	}
+
+	
+	public static <V> List<IHandlePart<V>> createHandles(IBehavior<V> behavior, List<IContentPart<V>> targets) {
+		IVisualPart<V> host = behavior.getHost();
+		IHandlePartFactory<V> factory = host.getRoot().getViewer()
+				.getHandlePartFactory();
+		List<IHandlePart<V>> handleParts = factory.createHandleParts(targets,
+				behavior, Collections.emptyMap());
+		return handleParts;
 	}
 	
 }

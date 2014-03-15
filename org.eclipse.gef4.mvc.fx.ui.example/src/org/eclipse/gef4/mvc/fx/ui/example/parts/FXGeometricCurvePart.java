@@ -171,13 +171,19 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				});
 		installBound(AbstractReconnectionPolicy.class,
 				new AbstractReconnectionPolicy() {
-					private Point offset;
+					private Point2D startPointScene;
+					private Point startPointLocal;
 
 					@Override
-					public void loosen(int anchorIndex) {
+					public void loosen(int anchorIndex, Point startPointInScene) {
+						this.startPointScene = new Point2D(startPointInScene.x,
+								startPointInScene.y);
+
 						// determine anchor index and offset
 						replaceAnchorIndex = anchorIndex;
-						offset = anchorIndex == 0 ? startPoint : endPoint;
+						Point2D pLocal = getVisual().sceneToLocal(
+								startPointScene);
+						startPointLocal = new Point(pLocal.getX(), pLocal.getY());
 
 						// remove current anchor
 						IFXNodeAnchor currentAnchor = anchors.get(anchorIndex);
@@ -187,10 +193,23 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 									.removeAnchored(FXGeometricCurvePart.this);
 					}
 
+					private Point transformToLocal(Point p) {
+						Point2D pLocal = getVisual().sceneToLocal(p.x, p.y);
+						Point2D initialPosLocal = getVisual().sceneToLocal(
+								startPointScene);
+
+						Point delta = new Point(pLocal.getX()
+								- initialPosLocal.getX(), pLocal.getY()
+								- initialPosLocal.getY());
+
+						return new Point(startPointLocal.x + delta.x, startPointLocal.y
+								+ delta.y);
+					}
+
 					@Override
-					public void dragTo(Dimension delta,
+					public void dragTo(Point pointInScene,
 							List<IContentPart<Node>> partsUnderMouse) {
-						Point position = offset.getTranslated(delta);
+						Point position = transformToLocal(pointInScene);
 						anchors.get(replaceAnchorIndex).setReferencePoint(
 								getVisual(), position);
 
@@ -206,7 +225,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					}
 
 					@Override
-					public void releaseAt(Dimension delta,
+					public void releaseAt(Point pointInScene,
 							List<IContentPart<Node>> partsUnderMouse) {
 						for (IContentPart<Node> cp : partsUnderMouse) {
 							if (cp instanceof FXGeometricShapePart) {

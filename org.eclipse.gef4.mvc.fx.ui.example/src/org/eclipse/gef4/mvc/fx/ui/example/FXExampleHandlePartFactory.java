@@ -185,7 +185,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void press(MouseEvent e) {
 							AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
 							if (p != null) {
-								p.loosen(isEndPoint ? 1 : 0);
+								p.loosen(isEndPoint ? 1 : 0,
+										new Point(e.getSceneX(), e.getSceneY()));
 							}
 						}
 
@@ -193,7 +194,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void drag(MouseEvent e, Dimension delta,
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
-							getReconnectionPolicy(targetPart).dragTo(delta,
+							getReconnectionPolicy(targetPart).dragTo(
+									new Point(e.getSceneX(), e.getSceneY()),
 									partsUnderMouse);
 						}
 
@@ -201,7 +203,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void release(MouseEvent e, Dimension delta,
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
-							getReconnectionPolicy(targetPart).releaseAt(delta,
+							getReconnectionPolicy(targetPart).releaseAt(
+									new Point(e.getSceneX(), e.getSceneY()),
 									partsUnderMouse);
 						}
 

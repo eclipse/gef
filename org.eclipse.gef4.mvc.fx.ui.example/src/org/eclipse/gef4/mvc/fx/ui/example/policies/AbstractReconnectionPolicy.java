@@ -16,17 +16,18 @@ import java.util.List;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 public abstract class AbstractReconnectionPolicy extends AbstractPolicy<Node> {
 
-	public abstract void loosen(int anchorIndex);
+	public abstract void loosen(int anchorIndex, Point startPointInScene);
 
-	public abstract void dragTo(Dimension delta,
+	public abstract void dragTo(Point pointInScene,
 			List<IContentPart<Node>> partsUnderMouse);
 
-	public abstract void releaseAt(Dimension delta,
+	public abstract void releaseAt(Point pointInScene,
 			List<IContentPart<Node>> partsUnderMouse);
 
 }

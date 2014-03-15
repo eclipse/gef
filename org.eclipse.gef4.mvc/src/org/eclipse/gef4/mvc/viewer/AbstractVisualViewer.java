@@ -30,6 +30,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -51,6 +52,7 @@ public abstract class AbstractVisualViewer<V> implements
 
 	private IContentPartFactory<V> contentPartFactory;
 	private IHandlePartFactory<V> handlePartFactory;
+	private IFeedbackPartFactory<V> feedbackPartFactory;
 
 	/**
 	 * @see IVisualViewer#setContentPartFactory(org.eclipse.gef4.mvc.viewer.IContentPartFactory)
@@ -219,6 +221,16 @@ public abstract class AbstractVisualViewer<V> implements
 	@Override
 	public void setHandlePartFactory(IHandlePartFactory<V> factory) {
 		this.handlePartFactory = factory;
+	}
+	
+	@Override
+	public IFeedbackPartFactory<V> getFeedbackPartFactory() {
+		return feedbackPartFactory;
+	}
+
+	@Override
+	public void setFeedbackPartFactory(IFeedbackPartFactory<V> factory) {
+		this.feedbackPartFactory = factory;
 	}
 
 }
