@@ -18,7 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
@@ -27,7 +27,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	protected double initialLayoutX, initialLayoutY, initialWidth,
 			initialHeight;
-	private FXResizeRelocateOperation operation;
+	private FXResizeRelocateNodeOperation operation;
 
 	public void initResizeRelocate() {
 		Node visual = getHost().getVisual();
@@ -53,7 +53,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		if (layoutDx == 0 && layoutDy == 0 && layoutDw == 0 && layoutDh == 0) {
 			operation = null;
 		} else {
-			operation = new FXResizeRelocateOperation("Resize/Relocate",
+			operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
 					visual, new Point(initialLayoutX, initialLayoutY),
 					new Dimension(initialWidth, initialHeight), layoutDx,
 					layoutDy, layoutDw, layoutDh);

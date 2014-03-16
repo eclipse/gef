@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class FXResizeRelocateOperation extends AbstractOperation {
+public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
 	private Node visual;
 	private Point oldLocation;
@@ -32,7 +32,7 @@ public class FXResizeRelocateOperation extends AbstractOperation {
 	private double dw;
 	private double dh;
 
-	public FXResizeRelocateOperation(String label, Node visual,
+	public FXResizeRelocateNodeOperation(String label, Node visual,
 			Point oldLocation, Dimension oldSize, double dx, double dy,
 			double dw, double dh) {
 		super(label);
