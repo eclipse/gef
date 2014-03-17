@@ -362,29 +362,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	private void refreshVisualWith(List<Point> wayPoints) {
 		ArrayList<Point> points = new ArrayList<Point>(wayPoints.size() + 2);
 		points.add(startPoint);
-
-		if (anchors.size() == 2) {
-			// filter contained way points, so that only uncontained way
-			// points are used to compute the curve
-			Node startNode = anchors.get(0).getAnchorageNode();
-			Node endNode = anchors.get(1).getAnchorageNode();
-			List<Point> uncontainedWayPoints = new ArrayList<Point>(
-					wayPoints.size());
-			for (Point p : wayPoints) {
-				boolean inStart = startNode != null
-						&& startNode.contains(startNode.sceneToLocal(p.x, p.y));
-				boolean inEnd = endNode != null
-						&& endNode.contains(endNode.sceneToLocal(p.x, p.y));
-				if (!inStart && !inEnd) {
-					uncontainedWayPoints.add(p);
-				}
-			}
-			points.addAll(uncontainedWayPoints);
-		} else {
-			// add all way points
-			points.addAll(wayPoints);
-		}
-
+		points.addAll(wayPoints);
 		points.add(endPoint);
 		visual.setGeometry(FXGeometricCurve.constructCurveFromWayPoints(points
 				.toArray(new Point[] {})));
