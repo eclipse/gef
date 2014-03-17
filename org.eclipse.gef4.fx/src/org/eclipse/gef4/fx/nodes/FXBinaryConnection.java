@@ -99,8 +99,8 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 	 */
 	public Point[] computeReferencePoints() {
 		// compute start/end point in local coordinate space
-		Point start = startAnchor.getPosition(this);
-		Point end = endAnchor.getPosition(this);
+		Point start = getStartPoint();
+		Point end = getEndPoint();
 
 		// find reference points
 		Point startReference = end;
@@ -173,6 +173,26 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 	public IFXNodeAnchor getEndAnchor() {
 		return endAnchor;
 	}
+	
+	public void loosenStartAnchor() {
+		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
+		staticAnchor.setReferencePoint(this, getStartPoint());
+		setStartAnchor(staticAnchor);
+	}
+	
+	public void loosenEndAnchor() {
+		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
+		staticAnchor.setReferencePoint(this, getEndPoint());
+		setEndAnchor(staticAnchor);
+	}
+
+	public Point getStartPoint() {
+		return startAnchor.getPosition(this);
+	}
+	
+	public Point getEndPoint() {
+		return endAnchor.getPosition(this);
+	}
 
 	public void setEndAnchor(IFXNodeAnchor endAnchor) {
 		if (endPosCL == null) {
@@ -218,11 +238,11 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 
 	public Point[] getPoints() {
 		Point[] points = new Point[wayPoints.size() + 2];
-		points[0] = startAnchor.getPosition(this);
+		points[0] = getStartPoint();
 		for (int i = 0; i < wayPoints.size(); i++) {
 			points[i + 1] = wayPoints.get(i);
 		}
-		points[points.length - 1] = endAnchor.getPosition(this);
+		points[points.length - 1] = getEndPoint();
 		return points;
 	}
 
