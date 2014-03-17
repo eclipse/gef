@@ -27,7 +27,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 
-public class FXCurveConnection extends FXGeometryNode<ICurve> {
+public class FXCurveConnection extends FXGeometryNode<ICurve> implements IFXConnection {
 
 	// start and end point anchors (static (0,0) by default)
 	private IFXAnchor startAnchor = new FXStaticAnchor(null) {
@@ -132,25 +132,36 @@ public class FXCurveConnection extends FXGeometryNode<ICurve> {
 		return new Point[] { startReference, endReference };
 	}
 
-	/**
-	 * Returns an unmodifiable list of way points.
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getWayPoints()
 	 */
+	@Override
 	public List<Point> getWayPoints() {
 		return Collections.unmodifiableList(wayPoints);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#setWayPoints(java.util.List)
+	 */
+	@Override
 	public void setWayPoints(List<Point> wayPoints) {
 		this.wayPoints.clear();
 		this.wayPoints.addAll(wayPoints);
 		refreshGeometry();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#setWayPoints(org.eclipse.gef4.geometry.planar.Point)
+	 */
+	@Override
 	public void setWayPoints(Point... wayPoints) {
 		setWayPoints(Arrays.asList(wayPoints));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#setWayPoint(int, org.eclipse.gef4.geometry.planar.Point)
+	 */
+	@Override
 	public void setWayPoint(int index, Point wayPoint) {
 		wayPoints.set(index, wayPoint);
 		refreshGeometry();
@@ -160,40 +171,72 @@ public class FXCurveConnection extends FXGeometryNode<ICurve> {
 		setGeometry(computeCurveGeometry());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#removeWayPoint(int)
+	 */
+	@Override
 	public void removeWayPoint(int index) {
 		wayPoints.remove(index);
 		refreshGeometry();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#addWayPoint(int, org.eclipse.gef4.geometry.planar.Point)
+	 */
+	@Override
 	public void addWayPoint(int index, Point wayPoint) {
 		wayPoints.add(index, wayPoint);
 		refreshGeometry();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getEndAnchor()
+	 */
+	@Override
 	public IFXAnchor getEndAnchor() {
 		return endAnchor;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#loosenStartAnchor()
+	 */
+	@Override
 	public void loosenStartAnchor() {
 		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
 		staticAnchor.setReferencePoint(this, getStartPoint());
 		setStartAnchor(staticAnchor);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#loosenEndAnchor()
+	 */
+	@Override
 	public void loosenEndAnchor() {
 		FXStaticAnchor staticAnchor = new FXStaticAnchor(null);
 		staticAnchor.setReferencePoint(this, getEndPoint());
 		setEndAnchor(staticAnchor);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getStartPoint()
+	 */
+	@Override
 	public Point getStartPoint() {
 		return startAnchor.getPosition(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getEndPoint()
+	 */
+	@Override
 	public Point getEndPoint() {
 		return endAnchor.getPosition(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#setEndAnchor(org.eclipse.gef4.fx.anchors.IFXAnchor)
+	 */
+	@Override
 	public void setEndAnchor(IFXAnchor endAnchor) {
 		if (endPosCL == null) {
 			endPosCL = createEndPositionListener();
@@ -206,10 +249,18 @@ public class FXCurveConnection extends FXGeometryNode<ICurve> {
 		refreshGeometry();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getStartAnchor()
+	 */
+	@Override
 	public IFXAnchor getStartAnchor() {
 		return startAnchor;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#setStartAnchor(org.eclipse.gef4.fx.anchors.IFXAnchor)
+	 */
+	@Override
 	public void setStartAnchor(IFXAnchor startAnchor) {
 		if (startPosCL == null) {
 			startPosCL = createStartPositionListener();
@@ -236,6 +287,10 @@ public class FXCurveConnection extends FXGeometryNode<ICurve> {
 		return new Polyline(getPoints());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef4.fx.nodes.IFXConnection#getPoints()
+	 */
+	@Override
 	public Point[] getPoints() {
 		Point[] points = new Point[wayPoints.size() + 2];
 		points[0] = getStartPoint();

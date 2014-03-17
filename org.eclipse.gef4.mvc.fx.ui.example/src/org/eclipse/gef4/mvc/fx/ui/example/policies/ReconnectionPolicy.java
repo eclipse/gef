@@ -18,7 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.ui.example.FXExampleHandlePartFactory;
@@ -74,11 +74,11 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 			} else {
 				// update reference position (static anchor)
 				Point position = transformToLocal(pointInScene);
-				FXCurveConnection visual = (FXCurveConnection) curvePart
+				IFXConnection visual = (IFXConnection) curvePart
 						.getVisual();
 				IFXAnchor anchor = isStartAnchor ? visual.getStartAnchor()
 						: visual.getEndAnchor();
-				anchor.setReferencePoint(visual, position);
+				anchor.setReferencePoint(curvePart.getVisual(), position);
 				anchor.recomputePositions();
 			}
 		}
@@ -96,7 +96,7 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 		curvePart.setReplaceStartAnchor(isStartAnchor);
 		cp.addAnchored(curvePart);
 		((Shape) part.getVisual()).setFill(FXExampleHandlePartFactory.FILL_RED);
-		FXCurveConnection visual = (FXCurveConnection) curvePart.getVisual();
+		IFXConnection visual = (IFXConnection) curvePart.getVisual();
 		if (isStartAnchor) {
 			visual.getStartAnchor().recomputePositions();
 		} else {
@@ -118,7 +118,7 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 	}
 
 	private void removeCurrentAnchor() {
-		FXCurveConnection visual = (FXCurveConnection) curvePart.getVisual();
+		IFXConnection visual = (IFXConnection) curvePart.getVisual();
 		IFXAnchor currentAnchor = isStartAnchor ? visual.getStartAnchor()
 				: visual.getEndAnchor();
 		Node anchorageNode = currentAnchor.getAnchorageNode();

@@ -21,7 +21,7 @@ import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -228,7 +228,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			// TODO: move to somewhere else
 			if (targetPart instanceof FXGeometricCurvePart) {
 				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
-				FXCurveConnection connection = (FXCurveConnection) cp
+				IFXConnection connection = (IFXConnection) cp
 						.getVisual();
 				IFXAnchor anchor = isEndPoint ? connection.getEndAnchor()
 						: connection.getStartAnchor();
