@@ -15,7 +15,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class FXStaticAnchor extends AbstractFXNodeAnchor {
+public class FXStaticAnchor extends AbstractFXAnchor {
 
 	public FXStaticAnchor(Node anchorage) {
 		super(anchorage);

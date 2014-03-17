@@ -28,7 +28,7 @@ import javafx.scene.transform.Transform;
 import org.eclipse.gef4.fx.listener.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
+public abstract class AbstractFXAnchor implements IFXAnchor {
 	
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
 
@@ -91,7 +91,7 @@ public abstract class AbstractFXNodeAnchor implements IFXNodeAnchor {
 		}
 	};
 	
-	public AbstractFXNodeAnchor(Node anchorage) {
+	public AbstractFXAnchor(Node anchorage) {
 		referencePointProperty.addListener(referencePointChangeListener);
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorageNode(anchorage);

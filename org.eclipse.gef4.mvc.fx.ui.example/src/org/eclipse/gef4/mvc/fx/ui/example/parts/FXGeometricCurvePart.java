@@ -16,8 +16,8 @@ import java.util.List;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
-import org.eclipse.gef4.fx.nodes.FXBinaryConnection;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -41,7 +41,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	};
 
-	private FXBinaryConnection visual;
+	private FXCurveConnection visual;
 
 	private boolean doRefreshVisual = true;
 
@@ -64,7 +64,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	public FXGeometricCurvePart() {
-		visual = new FXBinaryConnection() {
+		visual = new FXCurveConnection() {
 			@Override
 			public ICurve computeCurveGeometry() {
 				return FXGeometricCurve
@@ -148,7 +148,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	@Override
 	public void attachVisualToAnchorageVisual(
 			final IVisualPart<Node> anchorage, Node anchorageVisual) {
-		final IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
+		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
 		if (setStartAnchor) {
 			visual.setStartAnchor(anchor);
@@ -161,7 +161,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
 			Node anchorageVisual) {
-		final IFXNodeAnchor anchor = ((AbstractFXContentPart) anchorage)
+		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
 		if (anchor == visual.getStartAnchor()) {
 			visual.loosenStartAnchor();

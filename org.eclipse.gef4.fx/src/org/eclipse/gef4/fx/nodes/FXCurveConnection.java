@@ -22,22 +22,22 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 
-public class FXBinaryConnection extends FXGeometryNode<ICurve> {
+public class FXCurveConnection extends FXGeometryNode<ICurve> {
 
 	// start and end point anchors (static (0,0) by default)
-	private IFXNodeAnchor startAnchor = new FXStaticAnchor(null) {
+	private IFXAnchor startAnchor = new FXStaticAnchor(null) {
 		{
-			setReferencePoint(FXBinaryConnection.this, new Point());
+			setReferencePoint(FXCurveConnection.this, new Point());
 		}
 	};
-	private IFXNodeAnchor endAnchor = new FXStaticAnchor(null) {
+	private IFXAnchor endAnchor = new FXStaticAnchor(null) {
 		{
-			setReferencePoint(FXBinaryConnection.this, new Point());
+			setReferencePoint(FXCurveConnection.this, new Point());
 		}
 	};
 
@@ -51,10 +51,10 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
 				Node anchored = change.getKey();
-				if (anchored == FXBinaryConnection.this) {
+				if (anchored == FXCurveConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
 					if (!(endAnchor instanceof FXStaticAnchor)) {
-						endAnchor.setReferencePoint(FXBinaryConnection.this,
+						endAnchor.setReferencePoint(FXCurveConnection.this,
 								referencePoints[1]);
 					}
 					refreshGeometry();
@@ -69,10 +69,10 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
 				Node anchored = change.getKey();
-				if (anchored == FXBinaryConnection.this) {
+				if (anchored == FXCurveConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
 					if (!(startAnchor instanceof FXStaticAnchor)) {
-						startAnchor.setReferencePoint(FXBinaryConnection.this,
+						startAnchor.setReferencePoint(FXCurveConnection.this,
 								referencePoints[0]);
 					}
 					refreshGeometry();
@@ -83,10 +83,10 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 
 	private List<Point> wayPoints = new ArrayList<Point>();
 
-	public FXBinaryConnection() {
+	public FXCurveConnection() {
 	}
 
-	public FXBinaryConnection(IFXNodeAnchor startAnchor, IFXNodeAnchor endAnchor) {
+	public FXCurveConnection(IFXAnchor startAnchor, IFXAnchor endAnchor) {
 		setStartAnchor(startAnchor);
 		setEndAnchor(endAnchor);
 	}
@@ -170,7 +170,7 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 		refreshGeometry();
 	}
 
-	public IFXNodeAnchor getEndAnchor() {
+	public IFXAnchor getEndAnchor() {
 		return endAnchor;
 	}
 	
@@ -194,7 +194,7 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 		return endAnchor.getPosition(this);
 	}
 
-	public void setEndAnchor(IFXNodeAnchor endAnchor) {
+	public void setEndAnchor(IFXAnchor endAnchor) {
 		if (endPosCL == null) {
 			endPosCL = createEndPositionListener();
 		} else {
@@ -206,11 +206,11 @@ public class FXBinaryConnection extends FXGeometryNode<ICurve> {
 		refreshGeometry();
 	}
 
-	public IFXNodeAnchor getStartAnchor() {
+	public IFXAnchor getStartAnchor() {
 		return startAnchor;
 	}
 
-	public void setStartAnchor(IFXNodeAnchor startAnchor) {
+	public void setStartAnchor(IFXAnchor startAnchor) {
 		if (startPosCL == null) {
 			startPosCL = createStartPositionListener();
 		} else {

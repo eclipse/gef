@@ -20,8 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
-import org.eclipse.gef4.fx.nodes.FXBinaryConnection;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -228,9 +228,9 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			// TODO: move to somewhere else
 			if (targetPart instanceof FXGeometricCurvePart) {
 				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
-				FXBinaryConnection connection = (FXBinaryConnection) cp
+				FXCurveConnection connection = (FXCurveConnection) cp
 						.getVisual();
-				IFXNodeAnchor anchor = isEndPoint ? connection.getEndAnchor()
+				IFXAnchor anchor = isEndPoint ? connection.getEndAnchor()
 						: connection.getStartAnchor();
 				if (!(anchor instanceof FXStaticAnchor)) {
 					((Shape) part.getVisual()).setFill(FILL_RED);

@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-public class FXChopBoxAnchor extends AbstractFXNodeAnchor {
+public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);

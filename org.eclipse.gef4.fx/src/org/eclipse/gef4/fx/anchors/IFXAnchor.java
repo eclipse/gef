@@ -24,7 +24,7 @@ import org.eclipse.gef4.geometry.planar.Point;
  * 
  * @param <V>
  */
-public interface IFXNodeAnchor {
+public interface IFXAnchor {
 
 	ReadOnlyObjectProperty<Node> anchorageNodeProperty();
 	

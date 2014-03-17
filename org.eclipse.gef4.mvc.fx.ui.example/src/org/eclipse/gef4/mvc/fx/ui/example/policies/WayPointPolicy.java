@@ -15,7 +15,7 @@ import java.util.List;
 
 import javafx.geometry.Point2D;
 
-import org.eclipse.gef4.fx.nodes.FXBinaryConnection;
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
@@ -52,13 +52,13 @@ public class WayPointPolicy extends AbstractWayPointPolicy {
 	public void createWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = true;
-		((FXBinaryConnection) curvePart.getVisual()).addWayPoint(wayPointIndex, new Point(startPoint));
+		((FXCurveConnection) curvePart.getVisual()).addWayPoint(wayPointIndex, new Point(startPoint));
 	}
 
 	@Override
 	public void updateWayPoint(int wayPointIndex, Point p) {
 		Point newWayPoint = transformToLocal(p);
-		((FXBinaryConnection) curvePart.getVisual()).setWayPoint(wayPointIndex, newWayPoint);
+		((FXCurveConnection) curvePart.getVisual()).setWayPoint(wayPointIndex, newWayPoint);
 	}
 
 	private Point transformToLocal(Point p) {

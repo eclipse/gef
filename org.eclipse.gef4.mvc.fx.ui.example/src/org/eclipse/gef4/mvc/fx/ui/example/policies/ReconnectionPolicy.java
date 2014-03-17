@@ -17,8 +17,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
-import org.eclipse.gef4.fx.nodes.FXBinaryConnection;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.ui.example.FXExampleHandlePartFactory;
@@ -74,9 +74,9 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 			} else {
 				// update reference position (static anchor)
 				Point position = transformToLocal(pointInScene);
-				FXBinaryConnection visual = (FXBinaryConnection) curvePart
+				FXCurveConnection visual = (FXCurveConnection) curvePart
 						.getVisual();
-				IFXNodeAnchor anchor = isStartAnchor ? visual.getStartAnchor()
+				IFXAnchor anchor = isStartAnchor ? visual.getStartAnchor()
 						: visual.getEndAnchor();
 				anchor.setReferencePoint(visual, position);
 				anchor.recomputePositions();
@@ -96,7 +96,7 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 		curvePart.setReplaceStartAnchor(isStartAnchor);
 		cp.addAnchored(curvePart);
 		((Shape) part.getVisual()).setFill(FXExampleHandlePartFactory.FILL_RED);
-		FXBinaryConnection visual = (FXBinaryConnection) curvePart.getVisual();
+		FXCurveConnection visual = (FXCurveConnection) curvePart.getVisual();
 		if (isStartAnchor) {
 			visual.getStartAnchor().recomputePositions();
 		} else {
@@ -118,8 +118,8 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 	}
 
 	private void removeCurrentAnchor() {
-		FXBinaryConnection visual = (FXBinaryConnection) curvePart.getVisual();
-		IFXNodeAnchor currentAnchor = isStartAnchor ? visual.getStartAnchor()
+		FXCurveConnection visual = (FXCurveConnection) curvePart.getVisual();
+		IFXAnchor currentAnchor = isStartAnchor ? visual.getStartAnchor()
 				: visual.getEndAnchor();
 		Node anchorageNode = currentAnchor.getAnchorageNode();
 		if (anchorageNode != null) {

@@ -18,7 +18,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -36,7 +36,7 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	private FXGeometryNode<IShape> visual;
-	private IFXNodeAnchor anchor;
+	private IFXAnchor anchor;
 
 	public FXGeometricShapePart() {
 		visual = new FXGeometryNode<IShape>() {
@@ -140,7 +140,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public IFXNodeAnchor getAnchor(IVisualPart<Node> anchored) {
+	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
 			// TODO: when to dispose the anchor properly??
 			anchor = new FXChopBoxAnchor(getVisual()) {
