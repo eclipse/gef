@@ -142,10 +142,10 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 			ICurve curve = (ICurve) handleGeometry;
 			BezierCurve[] beziers = curve.toBezier();
 			if (beziers == null) {
-				// TODO: Choose meaningful position (maybe center of bounds) or throw exception
+				// TODO: hide visual
 				position = new Point();
 			} else if (vertexIndex >= beziers.length) {
-				// TODO: Choose meaningful position (maybe center of bounds) or throw exception
+				// TODO: hide visual
 				position = new Point();
 			} else {
 				BezierCurve bc = beziers[vertexIndex];
