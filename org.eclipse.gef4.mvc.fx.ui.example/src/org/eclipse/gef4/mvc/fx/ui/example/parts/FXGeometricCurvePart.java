@@ -16,16 +16,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.collections.MapChangeListener;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
-import org.eclipse.gef4.fx.listener.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -54,9 +51,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	private MapChangeListener<Node, Point> startPosCL;
 	private MapChangeListener<Node, Point> endPosCL;
-
-	private VisualChangeListener startVisCL;
-	private VisualChangeListener endVisCL;
 
 	private int replaceAnchorIndex = 0;
 
@@ -233,10 +227,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					@Override
 					public void releaseAt(Point pointInScene,
 							List<IContentPart<Node>> partsUnderMouse) {
-						FXGeometricShapePart cp = getAnchorPart(partsUnderMouse);
-						if (cp != null) {
-							addAnchorPart(cp);
-						}
+						// TODO: commit new anchor to model?
 						refreshVisual();
 					}
 
@@ -469,6 +460,21 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					} else {
 						startPoint = newPosition;
 					}
+
+					if (anchors.size() == 2) {
+						Point[] referencePoints = computeReferencePoints();
+						if (isEndPoint) {
+							if (anchors.get(0) instanceof FXChopBoxAnchor) {
+								anchors.get(0).setReferencePoint(getVisual(),
+										referencePoints[0]);
+							}
+						} else {
+							if (anchors.get(1) instanceof FXChopBoxAnchor) {
+								anchors.get(1).setReferencePoint(getVisual(),
+										referencePoints[1]);
+							}
+						}
+					}
 					refreshVisual();
 				}
 			}
@@ -480,50 +486,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		} else {
 			startPosCL = positionChangeListener;
 			anchor.positionProperty().addListener(startPosCL);
-		}
-
-		// add visual change listener to anchorage visual in order to update the
-		// other end point reference point
-		VisualChangeListener visualChangeListener = new VisualChangeListener() {
-			@Override
-			protected void transformChanged(Transform oldTransform,
-					Transform newTransform) {
-				recomputeReferencePoint();
-			}
-
-			@Override
-			protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-				recomputeReferencePoint();
-			}
-
-			private void recomputeReferencePoint() {
-				if (anchors.size() != 2) {
-					return;
-				}
-
-				Point[] referencePoints = computeReferencePoints();
-				if (isEndPoint) {
-					if (anchors.get(0) instanceof FXChopBoxAnchor) {
-						anchors.get(0).setReferencePoint(getVisual(),
-								referencePoints[0]);
-					}
-				} else {
-					if (anchors.get(1) instanceof FXChopBoxAnchor) {
-						anchors.get(1).setReferencePoint(getVisual(),
-								referencePoints[1]);
-					}
-				}
-			}
-		};
-
-		if (isEndPoint) {
-			endVisCL = visualChangeListener;
-			visualChangeListener.register(anchorageVisual, getVisual()
-					.getScene().getRoot());
-		} else {
-			startVisCL = visualChangeListener;
-			visualChangeListener.register(anchorageVisual, getVisual()
-					.getScene().getRoot());
 		}
 
 		// set reference points when we are fully initialized (both anchors set)
@@ -550,17 +512,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		if (anchor == anchors.get(0)) {
 			anchor.positionProperty().removeListener(startPosCL);
 			startPosCL = null;
-			if (anchorageVisual != null) {
-				startVisCL.unregister();
-				startVisCL = null;
-			}
 		} else {
 			anchor.positionProperty().removeListener(endPosCL);
 			endPosCL = null;
-			if (anchorageVisual != null) {
-				endVisCL.unregister();
-				endVisCL = null;
-			}
 		}
 
 		// replace with static anchor
