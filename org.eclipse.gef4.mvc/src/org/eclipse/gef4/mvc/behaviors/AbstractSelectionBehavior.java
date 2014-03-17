@@ -89,6 +89,20 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 		super.deactivate();
 	}
 
+	public void refreshFeedback() {
+		List<IContentPart<V>> selected = getHost().getRoot().getViewer()
+				.getSelectionModel().getSelected();
+		removeFeedback(selected);
+		addFeedback(selected);
+	}
+
+	public void refreshHandles() {
+		List<IContentPart<V>> selected = getHost().getRoot().getViewer()
+				.getSelectionModel().getSelected();
+		removeHandles(selected);
+		addHandles(selected);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
