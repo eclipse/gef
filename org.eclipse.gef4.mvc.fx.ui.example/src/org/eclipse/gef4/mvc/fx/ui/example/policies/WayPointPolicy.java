@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.example.policies;
@@ -20,7 +20,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 
-public final class WayPointPolicy extends AbstractWayPointPolicy {
+public class WayPointPolicy extends AbstractWayPointPolicy {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 	
