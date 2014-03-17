@@ -27,6 +27,7 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
@@ -58,6 +59,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	private Point endPoint = new Point(); // TODO: replace by FXStaticAnchor
 	private boolean doRefreshVisual = true;
 
+	private FXSelectionBehavior selectionBehavior = null;
+
 	public FXGeometricCurvePart() {
 		visual = new FXGeometryNode<ICurve>();
 		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
@@ -69,12 +72,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		});
 
-		installBound(new FXSelectionBehavior() {
+		selectionBehavior = new FXSelectionBehavior() {
 			@Override
 			public IGeometry getFeedbackGeometry() {
 				return visual.getGeometry();
 			}
-		});
+		};
+		installBound(selectionBehavior);
 		installBound(AbstractWayPointPolicy.class,
 				new AbstractWayPointPolicy() {
 					private List<Point> wayPoints = new ArrayList<Point>();
@@ -127,6 +131,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 								+ delta.y);
 					}
 
+					@SuppressWarnings({ "unchecked", "rawtypes" })
 					@Override
 					public void commitWayPoint(int wayPointIndex, Point p) {
 						doRefreshVisual = true; // activate model refresh
@@ -146,6 +151,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 										newWayPoint);
 							}
 						}
+						AbstractSelectionBehavior selectionBehavior = FXGeometricCurvePart.this
+								.getBound((Class) FXGeometricCurvePart.this.selectionBehavior
+										.getClass());
+						selectionBehavior.refreshFeedback();
+						selectionBehavior.refreshHandles();
 						refreshVisual();
 					}
 
