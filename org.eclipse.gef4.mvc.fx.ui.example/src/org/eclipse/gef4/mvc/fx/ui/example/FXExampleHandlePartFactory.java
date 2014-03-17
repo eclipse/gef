@@ -21,6 +21,7 @@ import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
+import org.eclipse.gef4.fx.nodes.FXBinaryConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -42,7 +43,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	public final static Color FILL_RED = Color.web("#ff0000");
-	
+
 	@Override
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
 			List<IContentPart<Node>> targets, Pos position) {
@@ -191,8 +192,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void press(MouseEvent e) {
 							AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
 							if (p != null) {
-								p.loosen(isEndPoint ? 1 : 0,
-										new Point(e.getSceneX(), e.getSceneY()), part);
+								p.loosen(
+										isEndPoint ? 1 : 0,
+										new Point(e.getSceneX(), e.getSceneY()),
+										part);
 							}
 						}
 
@@ -220,11 +223,15 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 									.getBound(AbstractReconnectionPolicy.class);
 						}
 					});
-			
+
 			// change color to red if they are connected
+			// TODO: move to somewhere else
 			if (targetPart instanceof FXGeometricCurvePart) {
 				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
-				IFXNodeAnchor anchor = isEndPoint ? cp.getEndAnchor() : cp.getStartAnchor();
+				FXBinaryConnection connection = (FXBinaryConnection) cp
+						.getVisual();
+				IFXNodeAnchor anchor = isEndPoint ? connection.getEndAnchor()
+						: connection.getStartAnchor();
 				if (!(anchor instanceof FXStaticAnchor)) {
 					((Shape) part.getVisual()).setFill(FILL_RED);
 				}
