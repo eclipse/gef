@@ -68,7 +68,9 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 		
 		// do not fail hard... use center
-		return anchorageReferencePointInScene;
+		return JavaFX2Geometry.toPoint(anchored
+				.sceneToLocal(Geometry2JavaFX
+						.toFXPoint(anchorageReferencePointInScene)));
 		
 		// TODO: investigate where the wrong reference point is set
 //		throw new IllegalArgumentException("Invalid reference point "
