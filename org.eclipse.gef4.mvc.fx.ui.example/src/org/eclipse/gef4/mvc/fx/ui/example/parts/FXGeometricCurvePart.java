@@ -24,7 +24,6 @@ import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXNodeAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -268,8 +267,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 									.removeAnchored(FXGeometricCurvePart.this);
 							((Shape) part.getVisual())
 									.setFill(FXSelectionHandlePart.FILL_BLUE);
-							connected = false;
 						}
+						connected = false;
 					}
 
 					private FXGeometricShapePart getAnchorPart(
@@ -382,47 +381,39 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	private Point[] computeReferencePoints() {
-		if (anchors.size() != 2) {
-			return new Point[] { endPoint, startPoint };
-		}
+		IFXNodeAnchor startAnchor = anchors.get(0);
+		IFXNodeAnchor endAnchor = anchors.get(1);
 
-		Node startNode = anchors.get(0).getAnchorageNode();
-		Node endNode = anchors.get(1).getAnchorageNode();
-
-		// compute center points in local coordinate space
-		Point startCenter = startNode == null ? null : JavaFX2Geometry
-				.toRectangle(
-						getVisual().sceneToLocal(
-								startNode.localToScene(startNode
-										.getBoundsInLocal()))).getCenter();
-		Point endCenter = endNode == null ? null : JavaFX2Geometry.toRectangle(
-				getVisual().sceneToLocal(
-						endNode.localToScene(endNode.getBoundsInLocal())))
-				.getCenter();
+		// compute start/end point in local coordinate space
+		Point start = startAnchor.getPosition(getVisual());
+		Point end = endAnchor.getPosition(getVisual());
 
 		// find reference points
-		Point startReference = endCenter == null ? anchors.get(1)
-				.getReferencePoint(getVisual()) : endCenter;
-		Point endReference = startCenter == null ? anchors.get(0)
-				.getReferencePoint(getVisual()) : startCenter;
+		Point startReference = end;
+		Point endReference = start;
 
 		// first uncontained way point is start reference
-		List<Point> wayPoints = getContent().getWayPoints();
-		for (Point p : wayPoints) {
-			Point2D local = startNode == null ? new Point2D(p.x, p.y)
-					: startNode.sceneToLocal(p.x, p.y);
-			if (startNode != null && !startNode.contains(local)) {
-				startReference = p;
-				break;
+		Node startNode = startAnchor.getAnchorageNode();
+		if (startNode != null) {
+			for (Point p : getContent().getWayPoints()) {
+				Point2D local = startNode.sceneToLocal(getVisual()
+						.localToScene(p.x, p.y));
+				if (!startNode.contains(local)) {
+					startReference = p;
+					break;
+				}
 			}
 		}
 
 		// last uncontained way point is end reference
-		for (Point p : wayPoints) {
-			Point2D local = endNode == null ? new Point2D(p.x, p.y) : endNode
-					.sceneToLocal(p.x, p.y);
-			if (endNode != null && !endNode.contains(local)) {
-				endReference = p;
+		Node endNode = endAnchor.getAnchorageNode();
+		if (endNode != null) {
+			for (Point p : getContent().getWayPoints()) {
+				Point2D local = endNode.sceneToLocal(getVisual().localToScene(
+						p.x, p.y));
+				if (!endNode.contains(local)) {
+					endReference = p;
+				}
 			}
 		}
 
