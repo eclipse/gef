@@ -126,7 +126,7 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			computeRelatives(targetPart);
 			if (getResizeRelocatePolicy(targetPart) != null) {
-				getResizeRelocatePolicy(targetPart).initResizeRelocate();
+				getResizeRelocatePolicy(targetPart).init();
 			}
 		}
 	}

@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
@@ -35,8 +36,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPoli
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractReconnectionPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleReconnectionPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
@@ -190,7 +191,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 					new AbstractFXDragPolicy() {
 						@Override
 						public void press(MouseEvent e) {
-							AbstractReconnectionPolicy p = getReconnectionPolicy(targetPart);
+							FXExampleReconnectionPolicy p = getReconnectionPolicy(targetPart);
 							if (p != null) {
 								p.loosen(
 										isEndPoint ? 1 : 0,
@@ -212,15 +213,15 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void release(MouseEvent e, Dimension delta,
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
-							getReconnectionPolicy(targetPart).releaseAt(
-									new Point(e.getSceneX(), e.getSceneY()),
-									partsUnderMouse);
+							IUndoableOperation operation = getReconnectionPolicy(
+									targetPart).commit();
+							executeOperation(operation);
 						}
 
-						private AbstractReconnectionPolicy getReconnectionPolicy(
+						private FXExampleReconnectionPolicy getReconnectionPolicy(
 								IContentPart<Node> targetPart) {
 							return targetPart
-									.getBound(AbstractReconnectionPolicy.class);
+									.getBound(FXExampleReconnectionPolicy.class);
 						}
 					});
 
@@ -228,8 +229,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			// TODO: move to somewhere else
 			if (targetPart instanceof FXGeometricCurvePart) {
 				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
-				IFXConnection connection = (IFXConnection) cp
-						.getVisual();
+				IFXConnection connection = (IFXConnection) cp.getVisual();
 				IFXAnchor anchor = isEndPoint ? connection.getEndAnchor()
 						: connection.getStartAnchor();
 				if (!(anchor instanceof FXStaticAnchor)) {
@@ -241,9 +241,9 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		return part;
 	}
 
-	private AbstractWayPointPolicy getWayPointHandlePolicy(
+	private FXExampleWayPointPolicy getWayPointHandlePolicy(
 			IContentPart<Node> targetPart) {
-		return targetPart.getBound(AbstractWayPointPolicy.class);
+		return targetPart.getBound(FXExampleWayPointPolicy.class);
 	}
 
 	@Override

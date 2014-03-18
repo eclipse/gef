@@ -29,7 +29,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 			initialHeight;
 	private FXResizeRelocateNodeOperation operation;
 
-	public void initResizeRelocate() {
+	public void init() {
 		Node visual = getHost().getVisual();
 		initialLayoutX = visual.getLayoutX();
 		initialLayoutY = visual.getLayoutY();

@@ -43,7 +43,7 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				policy.initResizeRelocate();
+				policy.init();
 			}
 		}
 	}

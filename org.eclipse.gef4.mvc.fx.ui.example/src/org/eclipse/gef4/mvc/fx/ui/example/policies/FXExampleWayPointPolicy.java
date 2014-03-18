@@ -14,19 +14,21 @@ package org.eclipse.gef4.mvc.fx.ui.example.policies;
 import java.util.List;
 
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public class WayPointPolicy extends AbstractWayPointPolicy {
+public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 	
 	private final FXGeometricCurvePart curvePart;
 
-	public WayPointPolicy(FXGeometricCurvePart fxGeometricCurvePart) {
+	public FXExampleWayPointPolicy(FXGeometricCurvePart fxGeometricCurvePart) {
 		curvePart = fxGeometricCurvePart;
 	}
 
@@ -34,7 +36,13 @@ public class WayPointPolicy extends AbstractWayPointPolicy {
 	private Point2D startPointInScene;
 	private Point startPoint;
 
-	@Override
+	/**
+	 * Selects a way point on the curve to be manipulated. The way point is
+	 * identified by its index.
+	 * 
+	 * @param wayPointIndex
+	 *            index of the way point to select
+	 */
 	public void selectWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = false;
@@ -48,14 +56,30 @@ public class WayPointPolicy extends AbstractWayPointPolicy {
 		startPoint = new Point(pLocal.getX(), pLocal.getY());
 	}
 
-	@Override
+	/**
+	 * Creates a new way point on the curve at the specified index. Selects the
+	 * new way point for manipulation
+	 * 
+	 * @param wayPointIndex
+	 *            index of the way point to select
+	 * @param p
+	 *            {@link Point} providing start coordinates of the new way point
+	 */
 	public void createWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = true;
 		((IFXConnection) curvePart.getVisual()).addWayPoint(wayPointIndex, new Point(startPoint));
 	}
 
-	@Override
+	/**
+	 * Updates the selected way point. Sets its coordinates to the coordinates
+	 * of the given point.
+	 * 
+	 * @param wayPointIndex
+	 *            index of the selected way point
+	 * @param p
+	 *            {@link Point} providing new way point coordinates
+	 */
 	public void updateWayPoint(int wayPointIndex, Point p) {
 		Point newWayPoint = transformToLocal(p);
 		((IFXConnection) curvePart.getVisual()).setWayPoint(wayPointIndex, newWayPoint);
@@ -74,7 +98,14 @@ public class WayPointPolicy extends AbstractWayPointPolicy {
 				+ delta.y);
 	}
 
-	@Override
+	/**
+	 * Commits updates to the model.
+	 * 
+	 * @param wayPointIndex
+	 *            index of the selected way point
+	 * @param p
+	 *            {@link Point} providing new way point coordinates
+	 */
 	public void commitWayPoint(int wayPointIndex, Point p) {
 		curvePart.setModelRefresh(true);
 

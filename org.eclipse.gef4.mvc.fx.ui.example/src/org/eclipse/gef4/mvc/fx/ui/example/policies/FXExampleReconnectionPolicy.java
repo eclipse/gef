@@ -17,20 +17,24 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.ui.example.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.ui.example.operations.FXExampleReconnectOperation;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public class ReconnectionPolicy extends AbstractReconnectionPolicy {
+public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 
 	private final FXGeometricCurvePart curvePart;
 
-	public ReconnectionPolicy(FXGeometricCurvePart fxGeometricCurvePart) {
+	public FXExampleReconnectionPolicy(FXGeometricCurvePart fxGeometricCurvePart) {
 		curvePart = fxGeometricCurvePart;
 	}
 
@@ -40,7 +44,9 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 	private Point startPointLocal;
 	private boolean connected;
 
-	@Override
+	private FXGeometricShapePart oldShapePart;
+	private FXGeometricShapePart newShapePart;
+
 	public void loosen(int anchorIndex, Point startPointInScene,
 			FXSelectionHandlePart part) {
 		curvePart.setModelRefresh(false);
@@ -57,7 +63,6 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 		removeCurrentAnchor();
 	}
 
-	@Override
 	public void dragTo(Point pointInScene,
 			List<IContentPart<Node>> partsUnderMouse) {
 		FXGeometricShapePart anchorPart = getAnchorPart(partsUnderMouse);
@@ -74,8 +79,7 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 			} else {
 				// update reference position (static anchor)
 				Point position = transformToLocal(pointInScene);
-				IFXConnection visual = (IFXConnection) curvePart
-						.getVisual();
+				IFXConnection visual = (IFXConnection) curvePart.getVisual();
 				IFXAnchor anchor = isStartAnchor ? visual.getStartAnchor()
 						: visual.getEndAnchor();
 				anchor.setReferencePoint(curvePart.getVisual(), position);
@@ -84,16 +88,17 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 		}
 	}
 
-	@Override
-	public void releaseAt(Point pointInScene,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public IUndoableOperation commit() {
 		curvePart.setModelRefresh(true);
-		// TODO: commit new anchor to model
+		FXExampleReconnectOperation operation = new FXExampleReconnectOperation("Reconnect",
+				curvePart, isStartAnchor, oldShapePart, newShapePart);
 		curvePart.refreshVisual();
+		return operation;
 	}
 
 	private void addAnchorPart(FXGeometricShapePart cp) {
 		curvePart.setReplaceStartAnchor(isStartAnchor);
+		newShapePart = cp;
 		cp.addAnchored(curvePart);
 		((Shape) part.getVisual()).setFill(FXExampleHandlePartFactory.FILL_RED);
 		IFXConnection visual = (IFXConnection) curvePart.getVisual();
@@ -124,8 +129,12 @@ public class ReconnectionPolicy extends AbstractReconnectionPolicy {
 		Node anchorageNode = currentAnchor.getAnchorageNode();
 		if (anchorageNode != null) {
 			curvePart.setReplaceStartAnchor(isStartAnchor);
-			getHost().getRoot().getViewer().getVisualPartMap()
-					.get(anchorageNode).removeAnchored(curvePart);
+			IVisualPart<Node> shapePart = getHost().getRoot().getViewer().getVisualPartMap()
+					.get(anchorageNode);
+			if (oldShapePart == null) {
+				oldShapePart = (FXGeometricShapePart) shapePart;
+			}
+			shapePart.removeAnchored(curvePart);
 			((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
 		}
 		connected = false;
