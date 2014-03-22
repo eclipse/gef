@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
- * 
+ *     Alexander Nyßen (itemis AG) - filter for emulated scroll events (#430940)
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.gestures;
 
@@ -30,15 +31,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import com.sun.javafx.tk.TKSceneListener;
 
 /**
  * A gesture listener that converts and transfers SWT {@link GestureEvent}s to
  * an {@link FXCanvas}.
- * 
+ *
  * @author Jan Koehnlein
+ * @author anyssen
  */
+@SuppressWarnings("restriction")
 public class SwtToFXGestureConverter implements GestureListener {
 
 	protected class State {
@@ -59,18 +65,34 @@ public class SwtToFXGestureConverter implements GestureListener {
 		IDLE, SCROLLING, ROTATING, ZOOMING;
 	}
 
-	public static void register(FXCanvas canvas) {
-		new SwtToFXGestureConverter(canvas);
-	}
-
 	private FXCanvas canvas;
 
 	private State currentState;
 
-	private SwtToFXGestureConverter(FXCanvas canvas) {
+	private Listener mouseWheelEmulatedEventFilter;
+
+	public SwtToFXGestureConverter(final FXCanvas canvas) {
 		this.canvas = canvas;
 		this.currentState = new State(StateType.IDLE);
 		canvas.addGestureListener(this);
+		Display display = canvas.getDisplay();
+		if (display.getTouchEnabled()) {
+			// register a filter to suppress emulated scroll events that
+			// originate from mouse wheel events on devices that support touch
+			// events (see #430940)
+			mouseWheelEmulatedEventFilter = new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					if (event.widget == canvas) {
+						event.type = SWT.None;
+					}
+				}
+			};
+			display.addFilter(SWT.MouseVerticalWheel,
+					mouseWheelEmulatedEventFilter);
+			display.addFilter(SWT.MouseHorizontalWheel,
+					mouseWheelEmulatedEventFilter);
+		}
 	}
 
 	protected boolean changeState(StateType newStateType, GestureEvent event,
@@ -132,6 +154,16 @@ public class SwtToFXGestureConverter implements GestureListener {
 			// do nothing
 		}
 		return false;
+	}
+
+	public void dispose() {
+		Display display = canvas.getDisplay();
+		if (mouseWheelEmulatedEventFilter != null) {
+			display.removeFilter(SWT.MouseVerticalWheel,
+					mouseWheelEmulatedEventFilter);
+			display.removeFilter(SWT.MouseHorizontalWheel,
+					mouseWheelEmulatedEventFilter);
+		}
 	}
 
 	@Override
