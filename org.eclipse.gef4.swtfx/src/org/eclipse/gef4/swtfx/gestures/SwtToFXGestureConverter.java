@@ -164,6 +164,8 @@ public class SwtToFXGestureConverter implements GestureListener {
 			display.removeFilter(SWT.MouseHorizontalWheel,
 					mouseWheelEmulatedEventFilter);
 		}
+		canvas.removeGestureListener(this);
+		canvas = null;
 	}
 
 	@Override
