@@ -18,4 +18,4 @@ Export-Package: org.eclipse.gef4.zest.core.widgets,
  org.eclipse.gef4.zest.core.widgets.internal;x-internal:=true,
  org.eclipse.gef4.zest.core.widgets.zooming
 Import-Package: com.ibm.icu.text;version="3.8.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
