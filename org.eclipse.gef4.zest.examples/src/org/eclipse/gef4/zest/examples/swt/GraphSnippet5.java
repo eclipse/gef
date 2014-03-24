@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -55,7 +55,7 @@ public class GraphSnippet5 {
 		final StringBuffer stringBuffer = new StringBuffer();
 		final Display d = new Display();
 		FontData fontData = d.getSystemFont().getFontData()[0];
-		fontData.height = 42;
+		fontData.setHeight(42);
 
 		final Font font = new Font(d, fontData);
 
