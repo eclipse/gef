@@ -16,7 +16,5 @@
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
 
 org.eclipse.gef4.swtfx
-org.eclipse.gef4.swtfx.event
-org.eclipse.gef4.swtfx.layout
-org.eclipse.gef4.swtfx.animation
-org.eclipse.gef4.swtfx.gc
+org.eclipse.gef4.swtfx.controls
+org.eclipse.gef4.swtfx.gestures
