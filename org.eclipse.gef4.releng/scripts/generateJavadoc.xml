@@ -40,7 +40,7 @@
 		<replace file="${basedir}/javadocOptions.txt" token="@context@" value="${api.context.libs.classpath}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@rt@" value="${bootclasspath}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@args.list.delimiter@" value="${args.list.delimiter}" />
-		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="${linkoffline-target}" />
+		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
 		<echo message="Done." />
 
 		<echo message="Generating javadoc..." />
