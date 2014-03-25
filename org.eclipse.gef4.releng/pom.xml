@@ -10,7 +10,7 @@
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
-		<maven-antrun-plugin.version>1.6</maven-antrun-plugin.version>
+		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
 		<tycho-version>0.18.1</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
@@ -52,7 +52,7 @@
 				<executions>
 					<execution>
 						<id>replace-build-token</id>
-						<phase>generate-sources</phase>
+						<phase>process-resources</phase>
 						<configuration>
 							<tasks>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
@@ -60,6 +60,9 @@
 								<if>
 									<available file="about.mappings" />
 									<then>
+										<echo message="Creating backup of about.mappings." />
+										<copy file="about.mappings" tofile="about.mappings.backup"
+											overwrite="true" />
 										<echo
 											message="Replacing @build@ token within about.mappings with build id." />
 										<replace file="about.mappings">
@@ -71,8 +74,9 @@
 								<if>
 									<available file="javadocOptions.txt" />
 									<then>
-										<echo
-											message="Replacing @build@ token within javadocOptions.txt with build id." />
+										<copy file="javadocOptions.txt" tofile="javadocOptions.txt.backup"
+											overwrite="true" />
+										<echo message="Creating backup of javadocOptions.txt" />
 										<replace file="javadocOptions.txt">
 											<replacefilter token="@build@"
 												value="${unqualifiedVersion}.${buildQualifier}" />
@@ -86,32 +90,56 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>replace-back-build-token</id>
-						<phase>install</phase>
+						<id>generate-doc</id>
+						<phase>process-resources</phase>
 						<configuration>
-							<tasks>
+							<target>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
-									<available file="about.mappings" />
+									<available file="wikitextOptions.txt" />
 									<then>
-										<echo
-											message="Replacing back build id within about.mappings with @build@ token." />
-										<replace file="about.mappings">
-											<replacefilter token="${unqualifiedVersion}.${buildQualifier}"
-												value="@build@" />
-										</replace>
+										<ant antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateWikitext.xml"
+											inheritRefs="true" />
 									</then>
 								</if>
 								<if>
 									<available file="javadocOptions.txt" />
 									<then>
+										<ant antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateJavadoc.xml"
+											inheritRefs="true" />
+									</then>
+								</if>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>replace-back-build-token</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+								<if>
+									<available file="about.mappings.backup" />
+									<then>
+										<echo message="Replacing back modified about.mappings with backup." />
+										<copy file="about.mappings.backup" tofile="about.mappings"
+											overwrite="true" />
+										<delete file="about.mappings.backup" />
+									</then>
+								</if>
+								<if>
+									<available file="javadocOptions.txt.backup" />
+									<then>
 										<echo
-											message="Replacing back build id within javadocOptions.txt with @build@ token." />
-										<replace file="javadocOptions.txt">
-											<replacefilter token="${unqualifiedVersion}.${buildQualifier}"
-												value="@build@" />
-										</replace>
+											message="Replacing back modified javadocOptions.txt with backup." />
+										<copy file="javadocOptions.txt.backup" tofile="javadocOptions.txt"
+											overwrite="true" />
+										<delete file="javadocOptions.txt.backup" />
 									</then>
 								</if>
 							</tasks>

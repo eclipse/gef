@@ -24,7 +24,19 @@
 						<configuration>
 							<outputDirectory>api-context-libs</outputDirectory>
 							<stripVersion>true</stripVersion>
-							<excludeArtifactIds>org.eclipse.gef4.geometry.doc</excludeArtifactIds>
+							<excludeArtifactIds>org.eclipse.platform.doc.isv</excludeArtifactIds>
+						</configuration>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>prepare-linkoffline-target</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>linkoffline-target</outputDirectory>
+							<stripVersion>true</stripVersion>
+							<includeArtifactIds>org.eclipse.platform.doc.isv</includeArtifactIds>
 						</configuration>
 						<goals>
 							<goal>copy-dependencies</goal>
@@ -35,15 +47,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
+				<version>${maven-antrun-plugin.version}</version>
 				<executions>
 					<execution>
-						<id>generate-doc</id>
-						<phase>generate-sources</phase>
+						<id>prepare-offline-link-targets</id>
+						<phase>process-sources</phase>
 						<configuration>
-							<target>
-								<ant antfile="generateDoc.xml" inheritRefs="true" />
-							</target>
+							<tasks>
+								<echo message="Preparing linkoffline-target" />
+								<unzip src="linkoffline-target/org.eclipse.platform.doc.isv.jar"
+									dest="linkoffline-target/org.eclipse.platform.doc.isv/" />
+								<echo
+									message="Done: linkoffline-target contains unzipped offline link target." />
+							</tasks>
 						</configuration>
 						<goals>
 							<goal>run</goal>
