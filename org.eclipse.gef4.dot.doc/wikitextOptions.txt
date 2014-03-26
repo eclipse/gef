@@ -1,0 +1,2 @@
+wiki.title=GEF4 DOT Documentation
+wiki.path=GEF/GEF4/DOT

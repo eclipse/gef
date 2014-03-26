@@ -1,0 +1,22 @@
+-verbose
+-encoding "UTF-8"
+-charset "UTF-8"
+-sourcepath "../org.eclipse.gef4.zest.core/src@args.list.delimiter@../org.eclipse.gef4.zest.jface/src"
+-d reference/api
+-classpath "@rt@@args.list.delimiter@@context@"
+-use
+-breakiterator
+-splitIndex
+-windowtitle "GEF4 Zest API Reference"
+-doctitle "GEF4 Zest API Reference"
+-header "<b>GEF4 Zest</b><br>@build@"
+-bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
+-link http://docs.oracle.com/javase/1.5.0/docs/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+
+org.eclipse.gef4.zest.core.widgets
+org.eclipse.gef4.zest.core.widgets.custom
+org.eclipse.gef4.zest.core.widgets.decoration
+org.eclipse.gef4.zest.core.widgets.gestures
+org.eclipse.gef4.zest.core.widgets.zooming
+org.eclipse.gef4.zest.core.viewers

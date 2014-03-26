@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-	<!-- Help contents -->
-    <extension point="org.eclipse.help.toc">
-        <toc file="Zest-DOT-toc.xml" primary="true"/>
-        <toc file="Zest-toc.xml" primary="true"/>
-    </extension>
-    
-    <!-- DOT editor -->
+	<!-- DOT editor -->
     <extension
             point="org.eclipse.ui.editors">
         <editor

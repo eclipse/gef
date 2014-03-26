@@ -342,6 +342,7 @@
 
 		<module>../org.eclipse.gef4.dot</module>
 		<module>../org.eclipse.gef4.dot.ui</module>
+		<module>../org.eclipse.gef4.dot.doc</module>
 		<module>../org.eclipse.gef4.dot.tests</module>
 
 		<module>../org.eclipse.gef4.layout</module>
@@ -353,8 +354,9 @@
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
 		<module>../org.eclipse.gef4.zest-feature</module>
-		<module>../org.eclipse.gef4.zest.tests</module>
 		<module>../org.eclipse.gef4.zest.ui</module>
+		<module>../org.eclipse.gef4.zest.doc</module>
+		<module>../org.eclipse.gef4.zest.tests</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.repository</module>
