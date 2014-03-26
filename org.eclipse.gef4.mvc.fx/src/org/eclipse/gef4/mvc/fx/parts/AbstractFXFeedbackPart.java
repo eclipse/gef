@@ -15,7 +15,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.fx.listener.VisualChangeListener;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 

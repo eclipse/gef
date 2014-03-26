@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.fx.listener;
+package org.eclipse.gef4.fx.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
