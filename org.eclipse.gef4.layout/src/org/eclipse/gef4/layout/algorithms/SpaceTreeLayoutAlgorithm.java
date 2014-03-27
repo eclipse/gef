@@ -1231,9 +1231,11 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		if (direction == TOP_DOWN || direction == BOTTOM_UP
 				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT) {
 			this.direction = direction;
-			directionChanged = true;
-			if (context.isBackgroundLayoutEnabled())
-				checkPendingChangeDirection();
+			if (context != null) {
+				directionChanged = true;
+				if (context.isBackgroundLayoutEnabled())
+					checkPendingChangeDirection();
+			}
 		} else
 			throw new IllegalArgumentException("Invalid direction: "
 					+ direction);

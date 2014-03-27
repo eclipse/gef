@@ -225,7 +225,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 
 	public void setDirection(int direction) {
 		super.setDirection(direction);
-		if (parameters.direction == direction) {
+		if (figure == null || parameters.direction == direction) {
 			return;
 		}
 		if (direction == TOP_DOWN || direction == BOTTOM_UP
