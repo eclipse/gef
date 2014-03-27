@@ -1,0 +1,2 @@
+wiki.title=GEF4 FX Documentation
+wiki.path=GEF/GEF4/FX

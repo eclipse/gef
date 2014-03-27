@@ -306,8 +306,9 @@
 
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
-		<!-- <module>../org.eclipse.gef4.fx.tests</module> <module>../org.eclipse.gef4.fx.doc</module> 
-			<module>../org.eclipse.gef4.fx.doc-feature</module> -->
+		<!-- <module>../org.eclipse.gef4.fx.tests</module>  -->
+		<module>../org.eclipse.gef4.fx.doc</module> 
+		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.swtfx</module>
@@ -319,11 +320,10 @@
 
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
-		<module>../org.eclipse.gef4.mvc.ui-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui</module>
+		<module>../org.eclipse.gef4.mvc.ui-feature</module>
 		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui.sdk-feature</module>
-
 		<module>../org.eclipse.gef4.mvc.fx</module>
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui</module>
@@ -339,14 +339,23 @@
 		<module>../org.eclipse.gef4.cloudio.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.graph</module>
+		<!-- <module>../org.eclipse.gef4.graph-feature</module> -->
+		<!-- <module>../org.eclipse.gef4.graph.tests</module> -->
+		<!-- <module>../org.eclipse.gef4.graph.doc</module> -->
+		<!-- <module>../org.eclipse.gef4.graph.doc-feature</module> -->
+		<!-- <module>../org.eclipse.gef4.graph.sdk-feature</module> -->
 
 		<module>../org.eclipse.gef4.dot</module>
 		<module>../org.eclipse.gef4.dot.ui</module>
+		<!-- <module>../org.eclipse.gef4.dot-feature</module> -->
 		<module>../org.eclipse.gef4.dot.doc</module>
+		<!-- <module>../org.eclipse.gef4.dot.doc-feature</module> -->
 		<module>../org.eclipse.gef4.dot.tests</module>
+		<!-- <module>../org.eclipse.gef4.dot.sdk-feature</module> -->
 
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>
+		<!-- <module>../org.eclipse.gef4.layout.tests</module> -->
 		<module>../org.eclipse.gef4.layout.doc</module>
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
