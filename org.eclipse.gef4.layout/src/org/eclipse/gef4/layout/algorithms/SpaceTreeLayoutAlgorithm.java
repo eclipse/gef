@@ -1183,7 +1183,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	 */
 	private SpaceTreeNode protectedNode = null;
 
-	private boolean animate = true;
+	private boolean animate = false;
 
 	/**
 	 * Constructs an instance of <code>SpaceTreeLayoutAlgorithm</code> that
