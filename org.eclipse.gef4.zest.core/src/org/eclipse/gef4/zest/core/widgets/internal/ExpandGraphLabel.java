@@ -118,7 +118,6 @@ public class ExpandGraphLabel extends Figure implements ActionListener {
 
 	public ExpandGraphLabel(GraphContainer container, String text, Image image,
 			boolean cacheLabel) {
-		int graphStyle = container.getGraph().getStyle();
 		this.animate = container.getGraph().isAnimationEnabled();
 		this.label = new Label(text) {
 

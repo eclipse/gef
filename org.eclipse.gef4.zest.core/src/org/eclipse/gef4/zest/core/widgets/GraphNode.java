@@ -46,8 +46,8 @@ public class GraphNode extends GraphItem {
 
 	private int nodeStyle;
 
-	private List /* IGraphModelConnection */sourceConnections;
-	private List /* IGraphModelConnection */targetConnections;
+	private List<GraphConnection> sourceConnections;
+	private List<GraphConnection> targetConnections;
 
 	private Color foreColor;
 	private Color backColor;
@@ -125,8 +125,8 @@ public class GraphNode extends GraphItem {
 	protected void initModel(IContainer graphModel, String text, Image image) {
 		this.nodeStyle |= graphModel.getGraph().getNodeStyle();
 		this.parent = graphModel;
-		this.sourceConnections = new ArrayList();
-		this.targetConnections = new ArrayList();
+		this.sourceConnections = new ArrayList<GraphConnection>();
+		this.targetConnections = new ArrayList<GraphConnection>();
 		this.foreColor = graphModel.getGraph().DARK_BLUE;
 		this.backColor = graphModel.getGraph().LIGHT_BLUE;
 		this.highlightColor = graphModel.getGraph().HIGHLIGHT_COLOR;
@@ -213,8 +213,8 @@ public class GraphNode extends GraphItem {
 	 * 
 	 * @return List a new list of GraphModelConnect objects
 	 */
-	public List getSourceConnections() {
-		return new ArrayList(sourceConnections);
+	public List<GraphConnection> getSourceConnections() {
+		return new ArrayList<GraphConnection>(sourceConnections);
 	}
 
 	/**
@@ -223,8 +223,8 @@ public class GraphNode extends GraphItem {
 	 * 
 	 * @return List a new list of GraphModelConnect objects
 	 */
-	public List getTargetConnections() {
-		return new ArrayList(targetConnections);
+	public List<GraphConnection> getTargetConnections() {
+		return new ArrayList<GraphConnection>(targetConnections);
 	}
 
 	/**
@@ -530,15 +530,15 @@ public class GraphNode extends GraphItem {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 		this.getFigure().setVisible(visible);
-		for (Iterator iterator2 = sourceConnections.iterator(); iterator2
+		for (Iterator<GraphConnection> iterator2 = sourceConnections.iterator(); iterator2
 				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator2.next();
+			GraphConnection connection = iterator2.next();
 			connection.setVisible(visible);
 		}
 
-		for (Iterator iterator2 = targetConnections.iterator(); iterator2
+		for (Iterator<GraphConnection> iterator2 = targetConnections.iterator(); iterator2
 				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator2.next();
+			GraphConnection connection = iterator2.next();
 			connection.setVisible(visible);
 		}
 	}

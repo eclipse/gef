@@ -51,7 +51,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 		public void ancestorRemoved(IFigure ancestor) {
 			if (fisheyeFigure != null) {
-				final GraphLabel label = (GraphLabel) nodeFigureToLabel
+				final GraphLabel label = nodeFigureToLabel
 						.get(fisheyeFigure);
 				if (label == null) {
 					return;
@@ -74,7 +74,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private final FigureListener nodeFigureListener = new FigureListener() {
 		public void figureMoved(IFigure source) {
-			GraphLabel label = (GraphLabel) nodeFigureToLabel.get(source);
+			GraphLabel label = nodeFigureToLabel.get(source);
 			if (label != null) {
 				refreshLabelBounds(source, label);
 			}
@@ -87,11 +87,11 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				IFigure newFisheyeFigure) {
 			oldFisheyeFigure.removeFigureListener(nodeFigureListener);
 			newFisheyeFigure.addFigureListener(nodeFigureListener);
-			GraphLabel label = (GraphLabel) nodeFigureToLabel
+			GraphLabel label = nodeFigureToLabel
 					.remove(oldFisheyeFigure);
 			nodeFigureToLabel.put(newFisheyeFigure, label);
 
-			LabelAncestorListener ancestorListener = (LabelAncestorListener) labelToAncestorListener
+			LabelAncestorListener ancestorListener = labelToAncestorListener
 					.get(label);
 			ancestorListener.fisheyeFigure = null;
 			addLabelForFigure(newFisheyeFigure, label);
@@ -109,7 +109,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				IFigure fisheyeFigure) {
 			originalFigure.removeFigureListener(nodeFigureListener);
 			fisheyeFigure.addFigureListener(nodeFigureListener);
-			GraphLabel label = (GraphLabel) nodeFigureToLabel
+			GraphLabel label = nodeFigureToLabel
 					.get(originalFigure);
 			if (label == null) {
 				return;
@@ -128,9 +128,9 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 	 * Maps from figures of nodes to labels showing number of nodes hidden
 	 * successors
 	 */
-	private HashMap nodeFigureToLabel = new HashMap();
+	private HashMap<IFigure, GraphLabel> nodeFigureToLabel = new HashMap<IFigure, GraphLabel>();
 
-	private HashMap labelToAncestorListener = new HashMap();
+	private HashMap<GraphLabel, LabelAncestorListener> labelToAncestorListener = new HashMap<GraphLabel, LabelAncestorListener>();
 
 	protected PrunedSuccessorsSubgraph(LayoutContext context2) {
 		super(context2);
@@ -139,12 +139,12 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	public void addNodes(NodeLayout[] nodes) {
 		super.addNodes(nodes);
-		HashSet nodesToUpdate = new HashSet();
+		HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
 		for (int i = 0; i < nodes.length; i++) {
 			nodesToUpdate
 					.addAll(Arrays.asList(nodes[i].getPredecessingNodes()));
 		}
-		for (Iterator iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
 			InternalNodeLayout nodeToUpdate = (InternalNodeLayout) iterator
 					.next();
 			updateNodeLabel(nodeToUpdate);
@@ -154,7 +154,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	public void removeNodes(NodeLayout[] nodes) {
 		super.removeNodes(nodes);
-		HashSet nodesToUpdate = new HashSet();
+		HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
 		for (int i = 0; i < nodes.length; i++) {
 			nodesToUpdate
 					.addAll(Arrays.asList(nodes[i].getPredecessingNodes()));
@@ -164,7 +164,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				nodesToUpdate.add(nodes[i]);
 			}
 		}
-		for (Iterator iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
 			InternalNodeLayout predecessor = (InternalNodeLayout) iterator
 					.next();
 			updateNodeLabel(predecessor);
@@ -208,7 +208,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 			return;
 		}
 		IFigure figure = internalNode.getNode().getFigure();
-		GraphLabel label = (GraphLabel) nodeFigureToLabel.get(figure);
+		GraphLabel label = nodeFigureToLabel.get(figure);
 		IFigure fisheye = getFisheyeFigure(figure);
 		if (fisheye != null) {
 			figure = fisheye;
@@ -252,8 +252,8 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private IFigure getFisheyeFigure(IFigure originalFigure) {
 		// a node has a fisheye if and only if its label has an AncestorListener
-		GraphLabel label = (GraphLabel) nodeFigureToLabel.get(originalFigure);
-		LabelAncestorListener ancestorListener = (LabelAncestorListener) labelToAncestorListener
+		GraphLabel label = nodeFigureToLabel.get(originalFigure);
+		LabelAncestorListener ancestorListener = labelToAncestorListener
 				.get(label);
 		if (ancestorListener != null) {
 			return ancestorListener.fisheyeFigure;
@@ -263,7 +263,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private void removeFigureForNode(InternalNodeLayout internalNode) {
 		IFigure figure = internalNode.getNode().getFigure();
-		GraphLabel label = (GraphLabel) nodeFigureToLabel.get(figure);
+		GraphLabel label = nodeFigureToLabel.get(figure);
 		if (label != null && label.getParent() != null) {
 			label.getParent().remove(label);
 		}

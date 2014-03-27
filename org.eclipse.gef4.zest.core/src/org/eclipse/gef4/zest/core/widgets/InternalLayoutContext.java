@@ -32,16 +32,16 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 class InternalLayoutContext implements LayoutContext {
 
 	final IContainer container;
-	private final List filters = new ArrayList();
-	private final List contextListeners = new ArrayList();
-	private final List graphStructureListeners = new ArrayList();
-	private final List layoutListeners = new ArrayList();
-	private final List pruningListeners = new ArrayList();
+	private final List<LayoutFilter> filters = new ArrayList<LayoutFilter>();
+	private final List<ContextListener> contextListeners = new ArrayList<ContextListener>();
+	private final List<GraphStructureListener> graphStructureListeners = new ArrayList<GraphStructureListener>();
+	private final List<LayoutListener> layoutListeners = new ArrayList<LayoutListener>();
+	private final List<PruningListener> pruningListeners = new ArrayList<PruningListener>();
 	private LayoutAlgorithm mainAlgorithm;
 	private LayoutAlgorithm layoutAlgorithm;
 	private ExpandCollapseManager expandCollapseManager;
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
-	private final HashSet subgraphs = new HashSet();
+	private final HashSet<SubgraphLayout> subgraphs = new HashSet<SubgraphLayout>();
 	private boolean eventsOn = true;
 	private boolean backgorundLayoutEnabled = false;
 	private boolean externalLayoutInvocation = true;
@@ -99,17 +99,18 @@ class InternalLayoutContext implements LayoutContext {
 		if (animationHint) {
 			Animation.markBegin();
 		}
-		for (Iterator iterator = container.getNodes().iterator(); iterator
+		for (Iterator<GraphNode> iterator = container.getNodes().iterator(); iterator
 				.hasNext();) {
-			GraphNode node = (GraphNode) iterator.next();
+			GraphNode node = iterator.next();
 			node.applyLayoutChanges();
 		}
-		for (Iterator iterator = container.getConnections().iterator(); iterator
-				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		for (Iterator<GraphConnection> iterator = container.getConnections()
+				.iterator(); iterator.hasNext();) {
+			GraphConnection connection = iterator.next();
 			connection.applyLayoutChanges();
 		}
-		for (Iterator iterator = subgraphs.iterator(); iterator.hasNext();) {
+		for (Iterator<SubgraphLayout> iterator = subgraphs.iterator(); iterator
+				.hasNext();) {
 			DefaultSubgraph subgraph = (DefaultSubgraph) iterator.next();
 			subgraph.applyLayoutChanges();
 		}
@@ -135,23 +136,23 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public NodeLayout[] getNodes() {
-		ArrayList result = new ArrayList();
-		for (Iterator iterator = this.container.getNodes().iterator(); iterator
-				.hasNext();) {
-			GraphNode node = (GraphNode) iterator.next();
+		ArrayList<InternalNodeLayout> result = new ArrayList<InternalNodeLayout>();
+		for (Iterator<GraphNode> iterator = this.container.getNodes()
+				.iterator(); iterator.hasNext();) {
+			GraphNode node = iterator.next();
 			if (!isLayoutItemFiltered(node)) {
 				result.add(node.getLayout());
 			}
 		}
-		return (NodeLayout[]) result.toArray(new NodeLayout[result.size()]);
+		return result.toArray(new NodeLayout[result.size()]);
 	}
 
 	public EntityLayout[] getEntities() {
-		HashSet addedSubgraphs = new HashSet();
-		ArrayList result = new ArrayList();
-		for (Iterator iterator = this.container.getNodes().iterator(); iterator
-				.hasNext();) {
-			GraphNode node = (GraphNode) iterator.next();
+		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
+		ArrayList<EntityLayout> result = new ArrayList<EntityLayout>();
+		for (Iterator<GraphNode> iterator = this.container.getNodes()
+				.iterator(); iterator.hasNext();) {
+			GraphNode node = iterator.next();
 			if (!isLayoutItemFiltered(node)) {
 				InternalNodeLayout nodeLayout = node.getLayout();
 				if (!nodeLayout.isPruned()) {
@@ -166,14 +167,15 @@ class InternalLayoutContext implements LayoutContext {
 				}
 			}
 		}
-		return (EntityLayout[]) result.toArray(new EntityLayout[result.size()]);
+		return result.toArray(new EntityLayout[result.size()]);
 	}
 
 	public SubgraphLayout[] getSubgraphs() {
 		SubgraphLayout[] result = new SubgraphLayout[subgraphs.size()];
 		int subgraphCount = 0;
-		for (Iterator iterator = subgraphs.iterator(); iterator.hasNext();) {
-			SubgraphLayout subgraph = (SubgraphLayout) iterator.next();
+		for (Iterator<SubgraphLayout> iterator = subgraphs.iterator(); iterator
+				.hasNext();) {
+			SubgraphLayout subgraph = iterator.next();
 			NodeLayout[] nodes = subgraph.getNodes();
 			for (int i = 0; i < nodes.length; i++) {
 				if (!isLayoutItemFiltered(((InternalNodeLayout) nodes[i])
@@ -238,11 +240,12 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public ConnectionLayout[] getConnections() {
-		List connections = container.getConnections();
+		List<GraphConnection> connections = container.getConnections();
 		ConnectionLayout[] result = new ConnectionLayout[connections.size()];
 		int i = 0;
-		for (Iterator iterator = connections.iterator(); iterator.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		for (Iterator<GraphConnection> iterator = connections.iterator(); iterator
+				.hasNext();) {
+			GraphConnection connection = iterator.next();
 			if (!isLayoutItemFiltered(connection)) {
 				result[i++] = connection.getLayout();
 			}
@@ -257,9 +260,9 @@ class InternalLayoutContext implements LayoutContext {
 
 	public ConnectionLayout[] getConnections(EntityLayout source,
 			EntityLayout target) {
-		ArrayList result = new ArrayList();
+		ArrayList<ConnectionLayout> result = new ArrayList<ConnectionLayout>();
 
-		ArrayList sourcesList = new ArrayList();
+		ArrayList<EntityLayout> sourcesList = new ArrayList<EntityLayout>();
 		if (source instanceof NodeLayout) {
 			sourcesList.add(source);
 		}
@@ -268,7 +271,7 @@ class InternalLayoutContext implements LayoutContext {
 					.getNodes()));
 		}
 
-		HashSet targets = new HashSet();
+		HashSet<EntityLayout> targets = new HashSet<EntityLayout>();
 		if (target instanceof NodeLayout) {
 			targets.add(target);
 		}
@@ -276,7 +279,8 @@ class InternalLayoutContext implements LayoutContext {
 			targets.addAll(Arrays.asList(((SubgraphLayout) target).getNodes()));
 		}
 
-		for (Iterator iterator = sourcesList.iterator(); iterator.hasNext();) {
+		for (Iterator<EntityLayout> iterator = sourcesList.iterator(); iterator
+				.hasNext();) {
 			NodeLayout source2 = (NodeLayout) iterator.next();
 			ConnectionLayout[] outgoingConnections = source2
 					.getOutgoingConnections();
@@ -291,8 +295,7 @@ class InternalLayoutContext implements LayoutContext {
 			}
 
 		}
-		return (ConnectionLayout[]) result.toArray(new ConnectionLayout[result
-				.size()]);
+		return result.toArray(new ConnectionLayout[result.size()]);
 	}
 
 	void addFilter(LayoutFilter filter) {
@@ -304,8 +307,8 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	boolean isLayoutItemFiltered(GraphItem item) {
-		for (Iterator it = filters.iterator(); it.hasNext();) {
-			LayoutFilter filter = (LayoutFilter) it.next();
+		for (Iterator<LayoutFilter> it = filters.iterator(); it.hasNext();) {
+			LayoutFilter filter = it.next();
 			if (filter.isObjectFiltered(item)) {
 				return true;
 			}
@@ -378,7 +381,7 @@ class InternalLayoutContext implements LayoutContext {
 
 	void fireNodeAddedEvent(NodeLayout node) {
 		boolean intercepted = !eventsOn;
-		GraphStructureListener[] listeners = (GraphStructureListener[]) graphStructureListeners
+		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
 						.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -391,7 +394,7 @@ class InternalLayoutContext implements LayoutContext {
 
 	void fireNodeRemovedEvent(NodeLayout node) {
 		boolean intercepted = !eventsOn;
-		GraphStructureListener[] listeners = (GraphStructureListener[]) graphStructureListeners
+		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
 						.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -412,7 +415,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 		if (sourceContext == this) {
 			boolean intercepted = !eventsOn;
-			GraphStructureListener[] listeners = (GraphStructureListener[]) graphStructureListeners
+			GraphStructureListener[] listeners = graphStructureListeners
 					.toArray(new GraphStructureListener[graphStructureListeners
 							.size()]);
 			for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -436,7 +439,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 		if (sourceContext == this) {
 			boolean intercepted = !eventsOn;
-			GraphStructureListener[] listeners = (GraphStructureListener[]) graphStructureListeners
+			GraphStructureListener[] listeners = graphStructureListeners
 					.toArray(new GraphStructureListener[graphStructureListeners
 							.size()]);
 			for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -452,7 +455,7 @@ class InternalLayoutContext implements LayoutContext {
 
 	void fireBoundsChangedEvent() {
 		boolean intercepted = !eventsOn;
-		ContextListener[] listeners = (ContextListener[]) contextListeners
+		ContextListener[] listeners = contextListeners
 				.toArray(new ContextListener[contextListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
 			intercepted = listeners[i].boundsChanged(this);
@@ -463,7 +466,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	void fireBackgroundEnableChangedEvent() {
-		ContextListener[] listeners = (ContextListener[]) contextListeners
+		ContextListener[] listeners = contextListeners
 				.toArray(new ContextListener[contextListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].backgroundEnableChanged(this);
@@ -475,7 +478,7 @@ class InternalLayoutContext implements LayoutContext {
 			node.refreshLocation();
 		}
 		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = (LayoutListener[]) layoutListeners
+		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		node.setLocation(node.getNode().getLocation().x, node.getNode()
 				.getLocation().y);
@@ -493,7 +496,7 @@ class InternalLayoutContext implements LayoutContext {
 			node.refreshLocation();
 		}
 		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = (LayoutListener[]) layoutListeners
+		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
 			intercepted = listeners[i].nodeResized(this, node);
@@ -508,7 +511,7 @@ class InternalLayoutContext implements LayoutContext {
 			subgraph.refreshLocation();
 		}
 		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = (LayoutListener[]) layoutListeners
+		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
 			intercepted = listeners[i].subgraphMoved(this, subgraph);
@@ -524,7 +527,7 @@ class InternalLayoutContext implements LayoutContext {
 			subgraph.refreshLocation();
 		}
 		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = (LayoutListener[]) layoutListeners
+		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
 			intercepted = listeners[i].subgraphResized(this, subgraph);

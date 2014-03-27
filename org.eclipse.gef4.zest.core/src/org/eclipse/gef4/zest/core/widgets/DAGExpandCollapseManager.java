@@ -48,13 +48,13 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private InternalLayoutContext context;
 
-	private HashSet expandedNodes = new HashSet();
+	private HashSet<NodeLayout> expandedNodes = new HashSet<NodeLayout>();
 
-	private HashSet nodesToPrune = new HashSet();
+	private HashSet<NodeLayout> nodesToPrune = new HashSet<NodeLayout>();
 
-	private HashSet nodesToUnprune = new HashSet();
+	private HashSet<NodeLayout> nodesToUnprune = new HashSet<NodeLayout>();
 
-	private HashSet nodesToUpdate = new HashSet();
+	private HashSet<NodeLayout> nodesToUpdate = new HashSet<NodeLayout>();
 
 	private boolean cleanLayoutScheduled = false;
 
@@ -274,19 +274,19 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 			return;
 		}
 
-		for (Iterator iterator = nodesToUnprune.iterator(); iterator.hasNext();) {
-			NodeLayout node = (NodeLayout) iterator.next();
+		for (Iterator<NodeLayout> iterator = nodesToUnprune.iterator(); iterator.hasNext();) {
+			NodeLayout node = iterator.next();
 			node.prune(null);
 		}
 		nodesToUnprune.clear();
 
 		if (!nodesToPrune.isEmpty()) {
-			context.createSubgraph((NodeLayout[]) nodesToPrune
+			context.createSubgraph(nodesToPrune
 					.toArray(new NodeLayout[nodesToPrune.size()]));
 			nodesToPrune.clear();
 		}
 
-		for (Iterator iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
 			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
 			updateNodeLabel2(node);
 		}

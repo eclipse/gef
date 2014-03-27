@@ -22,6 +22,7 @@ import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
+import org.eclipse.gef4.zest.core.widgets.GraphConnection.InternalConnectionLayout;
 
 class InternalNodeLayout implements NodeLayout {
 
@@ -32,7 +33,7 @@ class InternalNodeLayout implements NodeLayout {
 	private final static FigureListener figureListener = new FigureListener() {
 		public void figureMoved(IFigure source) {
 			// hide figures of minimized nodes
-			GraphNode node = (GraphNode) figureToNode.get(source);
+			GraphNode node = figureToNode.get(source);
 			if (node.getLayout().isMinimized() && source.getSize().equals(0, 0)) {
 				source.setVisible(false);
 			} else {
@@ -40,7 +41,7 @@ class InternalNodeLayout implements NodeLayout {
 			}
 		}
 	};
-	private final static HashMap figureToNode = new HashMap();
+	private final static HashMap<IFigure, GraphNode> figureToNode = new HashMap<IFigure, GraphNode>();
 
 	private org.eclipse.gef4.geometry.planar.Point location;
 	private org.eclipse.gef4.geometry.planar.Dimension size;
@@ -179,8 +180,8 @@ class InternalNodeLayout implements NodeLayout {
 		if (isPruned()) {
 			return new NodeLayout[0];
 		}
-		ArrayList result = new ArrayList();
-		HashSet addedSubgraphs = new HashSet();
+		ArrayList<EntityLayout> result = new ArrayList<EntityLayout>();
+		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] successingNodes = getSuccessingNodes();
 		for (int i = 0; i < successingNodes.length; i++) {
 			if (!successingNodes[i].isPruned()) {
@@ -195,15 +196,15 @@ class InternalNodeLayout implements NodeLayout {
 				}
 			}
 		}
-		return (EntityLayout[]) result.toArray(new EntityLayout[result.size()]);
+		return result.toArray(new EntityLayout[result.size()]);
 	}
 
 	public EntityLayout[] getPredecessingEntities() {
 		if (isPruned()) {
 			return new NodeLayout[0];
 		}
-		ArrayList result = new ArrayList();
-		HashSet addedSubgraphs = new HashSet();
+		ArrayList<EntityLayout> result = new ArrayList<EntityLayout>();
+		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] predecessingNodes = getPredecessingNodes();
 		for (int i = 0; i < predecessingNodes.length; i++) {
 			if (!predecessingNodes[i].isPruned()) {
@@ -218,49 +219,47 @@ class InternalNodeLayout implements NodeLayout {
 				}
 			}
 		}
-		return (EntityLayout[]) result.toArray(new EntityLayout[result.size()]);
+		return result.toArray(new EntityLayout[result.size()]);
 	}
 
 	public ConnectionLayout[] getIncomingConnections() {
-		ArrayList result = new ArrayList();
-		for (Iterator iterator = node.getTargetConnections().iterator(); iterator
-				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		ArrayList<InternalConnectionLayout> result = new ArrayList<InternalConnectionLayout>();
+		for (Iterator<GraphConnection> iterator = node.getTargetConnections()
+				.iterator(); iterator.hasNext();) {
+			GraphConnection connection = iterator.next();
 			if (!ownerLayoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
-		for (Iterator iterator = node.getSourceConnections().iterator(); iterator
-				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		for (Iterator<GraphConnection> iterator = node.getSourceConnections()
+				.iterator(); iterator.hasNext();) {
+			GraphConnection connection = iterator.next();
 			if (!connection.isDirected()
 					&& !ownerLayoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
-		return (ConnectionLayout[]) result.toArray(new ConnectionLayout[result
-				.size()]);
+		return result.toArray(new ConnectionLayout[result.size()]);
 	}
 
 	public ConnectionLayout[] getOutgoingConnections() {
-		ArrayList result = new ArrayList();
-		for (Iterator iterator = node.getSourceConnections().iterator(); iterator
-				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		ArrayList<InternalConnectionLayout> result = new ArrayList<InternalConnectionLayout>();
+		for (Iterator<GraphConnection> iterator = node.getSourceConnections()
+				.iterator(); iterator.hasNext();) {
+			GraphConnection connection = iterator.next();
 			if (!ownerLayoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
-		for (Iterator iterator = node.getTargetConnections().iterator(); iterator
-				.hasNext();) {
-			GraphConnection connection = (GraphConnection) iterator.next();
+		for (Iterator<GraphConnection> iterator = node.getTargetConnections()
+				.iterator(); iterator.hasNext();) {
+			GraphConnection connection = iterator.next();
 			if (!connection.isDirected()
 					&& !ownerLayoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
-		return (ConnectionLayout[]) result.toArray(new ConnectionLayout[result
-				.size()]);
+		return result.toArray(new ConnectionLayout[result.size()]);
 	}
 
 	public double getPreferredAspectRatio() {

@@ -128,7 +128,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 		}
 	}
 
-	private static HashMap contextToTree = new HashMap();
+	private static HashMap<LayoutContext, TreeLayoutObserver> contextToTree = new HashMap<LayoutContext, TreeLayoutObserver>();
 
 	private TriangleParameters parameters;
 
@@ -163,7 +163,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 	}
 
 	protected void updateFigure() {
-		TreeLayoutObserver tree = (TreeLayoutObserver) contextToTree
+		TreeLayoutObserver tree = contextToTree
 				.get(context);
 		TreeNode subgraphRoot = tree.getTreeNode((NodeLayout) nodes.iterator()
 				.next());

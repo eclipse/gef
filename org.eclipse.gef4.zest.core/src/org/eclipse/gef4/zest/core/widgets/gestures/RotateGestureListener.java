@@ -14,8 +14,9 @@ import java.util.List;
 
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Transform;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
+import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.events.GestureListener;
@@ -30,13 +31,13 @@ public class RotateGestureListener implements GestureListener {
 
 	GraphWidget graph;
 	double rotate;
-	List /* <GraphNode> */nodes;
-	List /* <Point> */originalLocations;
+	List<GraphItem> nodes;
+	List<Point> originalLocations;
 	double xCenter, yCenter;
 
-	void storePosition(List nodes) {
-		originalLocations = new ArrayList();
-		Iterator it = nodes.iterator();
+	void storePosition(List<GraphItem> nodes) {
+		originalLocations = new ArrayList<Point>();
+		Iterator<GraphItem> it = nodes.iterator();
 		Transform t = new Transform();
 		t.setTranslation(-xCenter, -yCenter);
 		while (it.hasNext()) {
@@ -74,11 +75,11 @@ public class RotateGestureListener implements GestureListener {
 			rotate = 0.0;
 			nodes = graph.getSelection();
 			if (nodes.isEmpty()) {
-				nodes = graph.getNodes();
+				nodes.addAll(graph.getNodes());
 			}
 			xCenter = 0;// e.x;
 			yCenter = 0;// e.y;
-			Iterator it = nodes.iterator();
+			Iterator<GraphItem> it = nodes.iterator();
 			while (it.hasNext()) {
 				GraphNode node = (GraphNode) it.next();
 				Point location = node.getLocation();
