@@ -116,7 +116,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 	}
 
 	public SugiyamaLayoutAlgorithm() {
-		this(Direction.VERTICAL, null, new SimpleLayerProvider(),
+		this(Direction.VERTICAL, null, new DFSLayerProvider(),
 				new BarycentricCrossingReducer());
 	}
 
