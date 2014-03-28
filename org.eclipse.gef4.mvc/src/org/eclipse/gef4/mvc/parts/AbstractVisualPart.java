@@ -60,6 +60,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private List<IVisualPart<V>> anchoreds;
 	private List<IVisualPart<V>> anchorages;
+	
+	private boolean refreshFromModel = true;
 
 	/**
 	 * Activates this {@link IVisualPart}, which in turn activates its policies
@@ -247,6 +249,16 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	public boolean isActive() {
 		return getFlag(FLAG_ACTIVE);
 	}
+	
+	@Override
+	public boolean isRefreshFromModel() {
+		return refreshFromModel;
+	}
+	
+	@Override
+	public void setRefreshFromModel(boolean refreshFromModel) {
+		this.refreshFromModel = refreshFromModel;
+	}
 
 	/**
 	 * Refreshes this {@link IVisualPart}'s <i>visuals</i>. This method does
@@ -373,40 +385,40 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public void addAnchored(IVisualPart<V> anchored) {
+	public void addAnchored(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
 		if (anchoreds == null) {
 			anchoreds = new ArrayList<IVisualPart<V>>();
 		}
 		anchoreds.add(anchored);
 
-		attachAnchoredVisual(anchored);
+		attachAnchoredVisual(anchored, contextMap);
 		anchored.addAnchorage(this);
 
 		anchored.refreshVisual();
 	}
 
 	@Override
-	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
+	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds, Map<Object, Object> contextMap) {
 		for (IVisualPart<V> anchored : anchoreds) {
-			addAnchored(anchored);
+			addAnchored(anchored, contextMap);
 		}
 	}
 
 	@Override
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds, Map<Object, Object> contextMap) {
 		for (IVisualPart<V> anchored : anchoreds) {
-			removeAnchored(anchored);
+			removeAnchored(anchored, contextMap);
 		}
 	}
 
-	protected void attachAnchoredVisual(IVisualPart<V> anchored) {
-		anchored.attachVisualToAnchorageVisual(this, getVisual());
+	protected void attachAnchoredVisual(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
+		anchored.attachVisualToAnchorageVisual(this, getVisual(), contextMap);
 	}
 
 	@Override
-	public void removeAnchored(IVisualPart<V> anchored) {
+	public void removeAnchored(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
 		anchored.removeAnchorage(this);
-		detachAnchoredVisual(anchored);
+		detachAnchoredVisual(anchored, contextMap);
 
 		anchoreds.remove(anchored);
 		if (anchoreds.size() == 0) {
@@ -414,8 +426,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void detachAnchoredVisual(IVisualPart<V> anchored) {
-		anchored.detachVisualFromAnchorageVisual(this, getVisual());
+	protected void detachAnchoredVisual(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
+		anchored.detachVisualFromAnchorageVisual(this, getVisual(), contextMap);
 	}
 
 	@Override

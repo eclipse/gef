@@ -49,7 +49,7 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	}
 
 	private void init(Point p) {
-		curvePart.setModelRefresh(false);
+		curvePart.setRefreshFromModel(false);
 		startPointInScene = new Point2D(p.x, p.y);
 		Point2D pLocal = curvePart.getVisual().sceneToLocal(
 				startPointInScene);
@@ -107,7 +107,7 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	 *            {@link Point} providing new way point coordinates
 	 */
 	public void commitWayPoint(int wayPointIndex, Point p) {
-		curvePart.setModelRefresh(true);
+		curvePart.setRefreshFromModel(true);
 
 		Point newWayPoint = transformToLocal(p);
 

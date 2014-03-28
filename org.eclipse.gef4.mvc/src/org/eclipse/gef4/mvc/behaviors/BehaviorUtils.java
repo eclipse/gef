@@ -43,7 +43,7 @@ public class BehaviorUtils {
 		if (anchords != null && !anchords.isEmpty()) {
 			root.addChildren(anchords);
 			for (IContentPart<V> anchorage : anchorages) {
-				anchorage.addAnchoreds(anchords);
+				anchorage.addAnchoreds(anchords, Collections.emptyMap());
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class BehaviorUtils {
 		if (anchords != null && !anchords.isEmpty()) {
 			root.removeChildren(anchords);
 			for (IContentPart<V> anchorage : anchorages) {
-				anchorage.removeAnchoreds(anchords);
+				anchorage.removeAnchoreds(anchords, Collections.emptyMap());
 			}
 		}
 	}

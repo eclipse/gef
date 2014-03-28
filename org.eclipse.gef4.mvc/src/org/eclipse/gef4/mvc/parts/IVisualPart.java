@@ -14,6 +14,7 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
@@ -36,6 +37,17 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 
 	public abstract V getVisual();
 
+	public boolean isRefreshFromModel();
+
+	/**
+	 * While interacting with IVisualParts the visual representation should not
+	 * be fetched from the model. To suppress {@link #refreshVisual()} from
+	 * doing so, you can set this flag to <code>false</code>.
+	 * 
+	 * @param refreshFromModel
+	 */
+	public void setRefreshFromModel(boolean refreshFromModel);
+
 	public void refreshVisual();
 
 	public void setParent(IVisualPart<V> parent);
@@ -56,19 +68,25 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 
 	public void reorderChild(IVisualPart<V> child, int index);
 
-	// public void addVisualToParentVisual(IVisualPart<V> parent, V parentVisual);
+	// public void addVisualToParentVisual(IVisualPart<V> parent, V
+	// parentVisual);
 	//
-	// public void removeVisualFromParentVisual(IVisualPart<V> parent, V parentVisual);
+	// public void removeVisualFromParentVisual(IVisualPart<V> parent, V
+	// parentVisual);
 
-	public void addAnchored(IVisualPart<V> anchored);
+	public void addAnchored(IVisualPart<V> anchored,
+			Map<Object, Object> contextMap);
 
 	// TODO: add by index and reordering of anchored
 
-	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds);
+	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds,
+			Map<Object, Object> contextMap);
 
-	public void removeAnchored(IVisualPart<V> anchored);
+	public void removeAnchored(IVisualPart<V> anchored,
+			Map<Object, Object> contextMap);
 
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds);
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds,
+			Map<Object, Object> contextMap);
 
 	public List<IVisualPart<V>> getAnchoreds();
 
@@ -79,9 +97,11 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 	public List<IVisualPart<V>> getAnchorages();
 
 	// anchorage visual may not be the visual of the anchorage itself!
-	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual);
+	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage,
+			V anchorageVisual, Map<Object, Object> contextMap);
 
-	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual);
+	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
+			V anchorageVisual, Map<Object, Object> contextMap);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?

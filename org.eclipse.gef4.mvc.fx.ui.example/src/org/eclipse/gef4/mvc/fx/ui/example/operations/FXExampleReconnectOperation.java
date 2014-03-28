@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.example.operations;
 
+import java.util.HashMap;
+
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -22,7 +24,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXExampleReconnectOperation extends AbstractOperation {
@@ -32,9 +33,9 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 	private IVisualPart<Node> oldAnchoragePart;
 	private IVisualPart<Node> newAnchoragePart;
 
-	public FXExampleReconnectOperation(String label, FXGeometricCurvePart curvePart,
-			boolean isStart, IVisualPart<Node> oldShapePart,
-			IVisualPart<Node> newShapePart) {
+	public FXExampleReconnectOperation(String label,
+			FXGeometricCurvePart curvePart, boolean isStart,
+			IVisualPart<Node> oldShapePart, IVisualPart<Node> newShapePart) {
 		super(label);
 		this.curvePart = curvePart;
 		this.isStartAnchor = isStart;
@@ -43,8 +44,11 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 	}
 
 	private void addAnchoragePart(IVisualPart<Node> shapePart) {
-		curvePart.setReplaceStartAnchor(isStartAnchor);
-		shapePart.addAnchored(curvePart);
+		shapePart.addAnchored(curvePart, new HashMap<Object, Object>() {
+			{
+				put("vertex", isStartAnchor ? 0 : 1);
+			}
+		});
 		IFXConnection visual = (IFXConnection) curvePart.getVisual();
 		if (isStartAnchor) {
 			visual.getStartAnchor().recomputePositions();
@@ -59,9 +63,13 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 				: visual.getEndAnchor();
 		Node anchorageNode = currentAnchor.getAnchorageNode();
 		if (anchorageNode != null) {
-			curvePart.setReplaceStartAnchor(isStartAnchor);
 			curvePart.getRoot().getViewer().getVisualPartMap()
-					.get(anchorageNode).removeAnchored(curvePart);
+					.get(anchorageNode)
+					.removeAnchored(curvePart, new HashMap<Object, Object>() {
+						{
+							put("vertex", isStartAnchor ? 0 : 1);
+						}
+					});
 		}
 	}
 

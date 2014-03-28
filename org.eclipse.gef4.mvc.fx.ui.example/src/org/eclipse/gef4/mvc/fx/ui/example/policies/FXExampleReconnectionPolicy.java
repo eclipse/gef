@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.example.policies;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -49,7 +50,7 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 
 	public void loosen(int anchorIndex, Point startPointInScene,
 			FXSelectionHandlePart part) {
-		curvePart.setModelRefresh(false);
+		curvePart.setRefreshFromModel(false);
 		this.part = part;
 		this.startPointScene = new Point2D(startPointInScene.x,
 				startPointInScene.y);
@@ -89,17 +90,21 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 	}
 
 	public IUndoableOperation commit() {
-		curvePart.setModelRefresh(true);
-		FXExampleReconnectOperation operation = new FXExampleReconnectOperation("Reconnect",
-				curvePart, isStartAnchor, oldShapePart, newShapePart);
+		curvePart.setRefreshFromModel(true);
+		FXExampleReconnectOperation operation = new FXExampleReconnectOperation(
+				"Reconnect", curvePart, isStartAnchor, oldShapePart,
+				newShapePart);
 		curvePart.refreshVisual();
 		return operation;
 	}
 
 	private void addAnchorPart(FXGeometricShapePart cp) {
-		curvePart.setReplaceStartAnchor(isStartAnchor);
 		newShapePart = cp;
-		cp.addAnchored(curvePart);
+		cp.addAnchored(curvePart, new HashMap<Object, Object>() {
+			{
+				put("vertex", isStartAnchor ? 0 : 1);
+			}
+		});
 		((Shape) part.getVisual()).setFill(FXExampleHandlePartFactory.FILL_RED);
 		IFXConnection visual = (IFXConnection) curvePart.getVisual();
 		if (isStartAnchor) {
@@ -128,13 +133,16 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 				: visual.getEndAnchor();
 		Node anchorageNode = currentAnchor.getAnchorageNode();
 		if (anchorageNode != null) {
-			curvePart.setReplaceStartAnchor(isStartAnchor);
-			IVisualPart<Node> shapePart = getHost().getRoot().getViewer().getVisualPartMap()
-					.get(anchorageNode);
+			IVisualPart<Node> shapePart = getHost().getRoot().getViewer()
+					.getVisualPartMap().get(anchorageNode);
 			if (oldShapePart == null) {
 				oldShapePart = (FXGeometricShapePart) shapePart;
 			}
-			shapePart.removeAnchored(curvePart);
+			shapePart.removeAnchored(curvePart, new HashMap<Object, Object>() {
+				{
+					put("vertex", isStartAnchor ? 0 : 1);
+				}
+			});
 			((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
 		}
 		connected = false;

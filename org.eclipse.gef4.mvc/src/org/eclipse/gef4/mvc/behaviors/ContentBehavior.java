@@ -214,7 +214,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 				// insert one.
 				editPart = findOrCreatePartFor(model);
 				// what if it does not exist??
-				getHost().addAnchored(editPart);
+				getHost().addAnchored(editPart, Collections.emptyMap());
 			}
 		}
 
@@ -229,7 +229,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 				trash.add(anchored.get(i));
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<V> ep = trash.get(i);
-				getHost().removeAnchored(ep);
+				getHost().removeAnchored(ep, Collections.emptyMap());
 				disposeIfObsolete(ep);
 			}
 		}

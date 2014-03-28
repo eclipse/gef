@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.example.parts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.Node;
 
@@ -41,25 +42,25 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	private FXCurveConnection visual;
 
-	private boolean doRefreshVisual = true;
+//	private boolean doRefreshVisual = true;
 
-	private boolean setStartAnchor = true;
+//	private boolean setStartAnchor = true;
 
-	public void setReplaceStartAnchor(boolean isReplaceStartAnchor) {
-		setStartAnchor = isReplaceStartAnchor;
-	}
+//	public void setReplaceStartAnchor(boolean isReplaceStartAnchor) {
+//		setStartAnchor = isReplaceStartAnchor;
+//	}
+//
+//	public boolean isReplaceStartAnchor() {
+//		return setStartAnchor;
+//	}
 
-	public boolean isReplaceStartAnchor() {
-		return setStartAnchor;
-	}
-
-	public void setModelRefresh(boolean isModelRefresh) {
-		doRefreshVisual = isModelRefresh;
-	}
-
-	public boolean isModelRefresh() {
-		return doRefreshVisual;
-	}
+//	public void setModelRefresh(boolean isModelRefresh) {
+//		doRefreshVisual = isModelRefresh;
+//	}
+//
+//	public boolean isModelRefresh() {
+//		return doRefreshVisual;
+//	}
 
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
@@ -105,7 +106,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void refreshVisual() {
-		if (!doRefreshVisual) {
+		if (!isRefreshFromModel()) {
 			return;
 		}
 
@@ -145,12 +146,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void attachVisualToAnchorageVisual(
-			final IVisualPart<Node> anchorage, Node anchorageVisual) {
+			final IVisualPart<Node> anchorage, Node anchorageVisual, Map<Object, Object> contextMap) {
+		boolean isStartAnchor = true;
+		if (contextMap.containsKey("vertex")) {
+			Object vertexIndex = contextMap.get("vertex");
+			if (vertexIndex instanceof Integer) {
+				isStartAnchor = ((Integer) vertexIndex).intValue() == 0;
+			}
+		}
+		
 		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
-		if (setStartAnchor) {
+		if (isStartAnchor) {
 			visual.setStartAnchor(anchor);
-			setStartAnchor = false;
+			isStartAnchor = false;
 		} else {
 			visual.setEndAnchor(anchor);
 		}
@@ -158,7 +167,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+			Node anchorageVisual, Map<Object, Object> contextMap) {
 		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
 		if (anchor == visual.getStartAnchor()) {
