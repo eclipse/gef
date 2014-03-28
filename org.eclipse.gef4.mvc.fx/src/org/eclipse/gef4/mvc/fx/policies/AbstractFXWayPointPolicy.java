@@ -9,32 +9,30 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
+import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 
 	protected static final double REMOVE_THRESHOLD = 10;
-	
-	private final FXGeometricCurvePart curvePart;
-
-	public FXExampleWayPointPolicy(FXGeometricCurvePart fxGeometricCurvePart) {
-		curvePart = fxGeometricCurvePart;
-	}
 
 	private boolean isCreate;
 	private Point2D startPointInScene;
 	private Point startPoint;
+	private List<Point> initialWayPoints;
+	private List<Point> currentWayPoints;
+	private FXChangeWayPointsOperation op;
 
 	/**
 	 * Selects a way point on the curve to be manipulated. The way point is
@@ -49,11 +47,12 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	}
 
 	private void init(Point p) {
-		curvePart.setRefreshVisual(false);
+		getHost().setRefreshVisual(false);
 		startPointInScene = new Point2D(p.x, p.y);
-		Point2D pLocal = curvePart.getVisual().sceneToLocal(
-				startPointInScene);
+		Point2D pLocal = getHost().getVisual().sceneToLocal(startPointInScene);
 		startPoint = new Point(pLocal.getX(), pLocal.getY());
+		initialWayPoints = getConnection().getWayPoints();
+		currentWayPoints = new ArrayList<Point>(initialWayPoints);
 	}
 
 	/**
@@ -68,7 +67,16 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	public void createWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = true;
-		((IFXConnection) curvePart.getVisual()).addWayPoint(wayPointIndex, new Point(startPoint));
+		currentWayPoints.add(wayPointIndex, startPoint);
+		op = new FXChangeWayPointsOperation("Change way points",
+				getConnection(), initialWayPoints, currentWayPoints);
+
+		// execute locally
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -82,20 +90,28 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	 */
 	public void updateWayPoint(int wayPointIndex, Point p) {
 		Point newWayPoint = transformToLocal(p);
-		((IFXConnection) curvePart.getVisual()).setWayPoint(wayPointIndex, newWayPoint);
+		currentWayPoints.set(wayPointIndex, newWayPoint);
+
+		op = new FXChangeWayPointsOperation("Change way points",
+				getConnection(), initialWayPoints, currentWayPoints);
+
+		// execute locally
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private Point transformToLocal(Point p) {
-		Point2D pLocal = curvePart.getVisual().sceneToLocal(p.x, p.y);
-		Point2D initialPos = curvePart.getVisual().sceneToLocal(
+		Point2D pLocal = getHost().getVisual().sceneToLocal(p.x, p.y);
+		Point2D initialPos = getHost().getVisual().sceneToLocal(
 				startPointInScene);
 
-		Point delta = new Point(pLocal.getX()
-				- initialPos.getX(), pLocal.getY()
-				- initialPos.getY());
+		Point delta = new Point(pLocal.getX() - initialPos.getX(),
+				pLocal.getY() - initialPos.getY());
 
-		return new Point(startPoint.x + delta.x, startPoint.y
-				+ delta.y);
+		return new Point(startPoint.x + delta.x, startPoint.y + delta.y);
 	}
 
 	/**
@@ -107,43 +123,37 @@ public class FXExampleWayPointPolicy extends AbstractPolicy<Node> {
 	 *            {@link Point} providing new way point coordinates
 	 */
 	public void commitWayPoint(int wayPointIndex, Point p) {
-		curvePart.setRefreshVisual(true);
+		updateWayPoint(wayPointIndex, p);
+		getHost().setRefreshVisual(true);
 
 		Point newWayPoint = transformToLocal(p);
 
-		// create or update/remove?
-		if (isCreate) {
-			curvePart.getContent()
-					.addWayPoint(wayPointIndex, newWayPoint);
-		} else {
-			// remove or update?
-			if (isRemove(wayPointIndex, newWayPoint)) {
-				curvePart.getContent().removeWayPoint(wayPointIndex);
-			} else {
-				curvePart.getContent().setWayPoint(wayPointIndex,
-						newWayPoint);
-			}
+		if (!isCreate && isRemove(wayPointIndex, newWayPoint)) {
+			currentWayPoints.remove(wayPointIndex);
+			op = new FXChangeWayPointsOperation("Change way points",
+					getConnection(), initialWayPoints, currentWayPoints);
 		}
-		
-		FXSelectionBehavior selectionBehavior = curvePart.getSelectionBehavior();
-		selectionBehavior.refreshFeedback();
-		selectionBehavior.refreshHandles();
-		curvePart.refreshVisual();
+
+		// execute locally
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
-	private boolean isRemove(int wayPointIndex,
-			Point newWayPoint) {
+	private boolean isRemove(int wayPointIndex, Point newWayPoint) {
 		boolean remove = false;
-		List<Point> points = curvePart.getContent().getWayPoints();
+		List<Point> points = currentWayPoints;
 		if (wayPointIndex > 0) {
-			remove = newWayPoint.getDistance(points
-					.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
+			remove = newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
 		}
 		if (!remove && wayPointIndex + 1 < points.size()) {
-			remove = newWayPoint.getDistance(points
-					.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
+			remove = newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
 		}
 		return remove;
 	}
-	
+
+	public abstract IFXConnection getConnection();
+
 }

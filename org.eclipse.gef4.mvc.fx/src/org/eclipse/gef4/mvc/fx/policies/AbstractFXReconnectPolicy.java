@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
 import java.util.Map;

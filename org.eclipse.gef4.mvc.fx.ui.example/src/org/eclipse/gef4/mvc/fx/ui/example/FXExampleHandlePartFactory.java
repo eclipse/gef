@@ -22,7 +22,6 @@ import javafx.scene.shape.Shape;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -33,12 +32,12 @@ import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractFXReconnectPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
@@ -207,6 +206,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 							policy.dragTo(
 									new Point(e.getSceneX(), e.getSceneY()),
 									partsUnderMouse);
+							// TODO: move color change to some other place?
 							if (policy.isConnected()) {
 								((Shape) part.getVisual()).setFill(FILL_RED);
 							} else {
@@ -246,9 +246,9 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		return part;
 	}
 
-	private FXExampleWayPointPolicy getWayPointHandlePolicy(
+	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
 			IContentPart<Node> targetPart) {
-		return targetPart.getBound(FXExampleWayPointPolicy.class);
+		return targetPart.getBound(AbstractFXWayPointPolicy.class);
 	}
 
 	@Override

@@ -25,9 +25,9 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractFXReconnectPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
@@ -61,7 +61,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(new FXExampleWayPointPolicy(this));
+		installBound(AbstractFXWayPointPolicy.class, new AbstractFXWayPointPolicy() {
+			@Override
+			public IFXConnection getConnection() {
+				return visual;
+			}
+			
+			@Override
+			public void commitWayPoint(int wayPointIndex, Point p) {
+				super.commitWayPoint(wayPointIndex, p);
+				selectionBehavior.refreshFeedback();
+				selectionBehavior.refreshHandles();
+				refreshVisual();
+			}
+		});
 		installBound(AbstractFXReconnectPolicy.class, new AbstractFXReconnectPolicy() {
 			@Override
 			public IFXConnection getConnection() {
