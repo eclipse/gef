@@ -23,25 +23,26 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricShapePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXExampleReconnectOperation extends AbstractOperation {
 
 	private FXGeometricCurvePart curvePart;
 	private boolean isStartAnchor;
-	private FXGeometricShapePart oldShapePart;
-	private FXGeometricShapePart newShapePart;
+	private IVisualPart<Node> oldAnchoragePart;
+	private IVisualPart<Node> newAnchoragePart;
 
 	public FXExampleReconnectOperation(String label, FXGeometricCurvePart curvePart,
-			boolean isStart, FXGeometricShapePart oldShapePart,
-			FXGeometricShapePart newShapePart) {
+			boolean isStart, IVisualPart<Node> oldShapePart,
+			IVisualPart<Node> newShapePart) {
 		super(label);
 		this.curvePart = curvePart;
 		this.isStartAnchor = isStart;
-		this.oldShapePart = oldShapePart;
-		this.newShapePart = newShapePart;
+		this.oldAnchoragePart = oldShapePart;
+		this.newAnchoragePart = newShapePart;
 	}
 
-	private void addAnchorPart(FXGeometricShapePart shapePart) {
+	private void addAnchoragePart(IVisualPart<Node> shapePart) {
 		curvePart.setReplaceStartAnchor(isStartAnchor);
 		shapePart.addAnchored(curvePart);
 		IFXConnection visual = (IFXConnection) curvePart.getVisual();
@@ -74,7 +75,7 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		removeCurrentAnchor();
-		addAnchorPart(newShapePart);
+		addAnchoragePart(newAnchoragePart);
 		return Status.OK_STATUS;
 	}
 
@@ -82,7 +83,7 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		removeCurrentAnchor();
-		addAnchorPart(oldShapePart);
+		addAnchoragePart(oldAnchoragePart);
 		return Status.OK_STATUS;
 	}
 
