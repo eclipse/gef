@@ -251,12 +251,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 	
 	@Override
-	public boolean isRefreshFromModel() {
+	public boolean isRefreshVisual() {
 		return refreshFromModel;
 	}
 	
 	@Override
-	public void setRefreshFromModel(boolean refreshFromModel) {
+	public void setRefreshVisual(boolean refreshFromModel) {
 		this.refreshFromModel = refreshFromModel;
 	}
 

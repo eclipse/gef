@@ -37,16 +37,17 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 
 	public abstract V getVisual();
 
-	public boolean isRefreshFromModel();
+	public boolean isRefreshVisual();
 
 	/**
 	 * While interacting with IVisualParts the visual representation should not
-	 * be fetched from the model. To suppress {@link #refreshVisual()} from
-	 * doing so, you can set this flag to <code>false</code>.
+	 * be updated to correspond with its model. To suppress
+	 * {@link #refreshVisual()} from doing so, you can set this flag to
+	 * <code>false</code>.
 	 * 
-	 * @param refreshFromModel
+	 * @param refreshVisual
 	 */
-	public void setRefreshFromModel(boolean refreshFromModel);
+	public void setRefreshVisual(boolean refreshVisual);
 
 	public void refreshVisual();
 

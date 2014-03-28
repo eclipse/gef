@@ -85,7 +85,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void refreshVisual() {
-		if (!isRefreshFromModel()) {
+		if (!isRefreshVisual()) {
 			return;
 		}
 

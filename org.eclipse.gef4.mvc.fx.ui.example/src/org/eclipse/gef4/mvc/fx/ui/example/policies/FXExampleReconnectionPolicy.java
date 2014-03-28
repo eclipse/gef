@@ -50,7 +50,7 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 
 	public void loosen(int anchorIndex, Point startPointInScene,
 			FXSelectionHandlePart part) {
-		curvePart.setRefreshFromModel(false);
+		curvePart.setRefreshVisual(false);
 		this.part = part;
 		this.startPointScene = new Point2D(startPointInScene.x,
 				startPointInScene.y);
@@ -90,7 +90,7 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 	}
 
 	public IUndoableOperation commit() {
-		curvePart.setRefreshFromModel(true);
+		curvePart.setRefreshVisual(true);
 		FXExampleReconnectOperation operation = new FXExampleReconnectOperation(
 				"Reconnect", curvePart, isStartAnchor, oldShapePart,
 				newShapePart);
