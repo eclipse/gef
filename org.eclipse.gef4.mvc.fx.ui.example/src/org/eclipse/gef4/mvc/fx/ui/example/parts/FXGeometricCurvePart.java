@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.ui.example.parts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
 			@Override
-			public ICurve computeCurveGeometry() {
+			public ICurve computeGeometry() {
 				return FXGeometricCurve
 						.constructCurveFromWayPoints(getPoints());
 			}
@@ -116,7 +117,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		if (curve.getTransform() != null) {
 			Point[] transformedWayPoints = curve.getTransform().getTransformed(
 					wayPoints.toArray(new Point[] {}));
-			visual.setWayPoints(transformedWayPoints);
+			visual.setWayPoints(Arrays.asList(transformedWayPoints));
 		} else {
 			visual.setWayPoints(wayPoints);
 		}
@@ -171,9 +172,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
 				.getAnchor(this);
 		if (anchor == visual.getStartAnchor()) {
-			visual.loosenStartAnchor();
+			visual.setStartPoint(visual.getStartPoint());
 		} else if (anchor == visual.getEndAnchor()) {
-			visual.loosenEndAnchor();
+			visual.setEndPoint(visual.getEndPoint());
 		} else {
 			throw new IllegalStateException("Detach unknown anchor: " + anchor);
 		}
