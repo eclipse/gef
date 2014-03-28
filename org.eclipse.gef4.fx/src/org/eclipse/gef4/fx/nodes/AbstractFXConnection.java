@@ -3,6 +3,7 @@ package org.eclipse.gef4.fx.nodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
@@ -99,7 +100,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 			addWayPoint(wayPointAnchors.size(), wp);
 		}
 	}
-	
+
 	@Override
 	public void removeAllWayPoints() {
 		for (int i = wayPointAnchors.size() - 1; i >= 0; i--) {
@@ -141,14 +142,82 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 	public Point[] getPoints() {
 		List<Point> wayPoints = getWayPoints();
 		Point[] points = new Point[wayPoints.size() + 2];
-		
+
 		points[0] = getStartPoint();
 		int i = 1;
 		for (Point wp : wayPoints)
 			points[i++] = wp;
 		points[points.length - 1] = getEndPoint();
-		
+
 		return points;
+	}
+
+	@Override
+	public void attachTo(IFXAnchor anchor, Map<Object, Object> context) {
+		if (context.containsKey(ANCHOR_CONTEXT_TYPE)) {
+			Object value = context.get(ANCHOR_CONTEXT_TYPE);
+			if (value instanceof AnchorType) {
+				AnchorType type = (AnchorType) value;
+				switch (type) {
+				case START:
+					setStartAnchor(anchor);
+					break;
+				case END:
+					setEndAnchor(anchor);
+					break;
+				case WAY_POINT:
+					if (context.containsKey(ANCHOR_CONTEXT_INDEX)) {
+						value = context.get(ANCHOR_CONTEXT_INDEX);
+						if (value instanceof Integer) {
+							Integer index = (Integer) value;
+							if (0 <= index && index < wayPointAnchors.size()) {
+								setWayPointAnchor(index, anchor);
+							} else {
+								throw new IllegalStateException(
+										"<index> out of range: " + index);
+							}
+						} else {
+							throw new IllegalStateException(
+									"<index> of wrong type. expected Integer, but got: "
+											+ value.getClass());
+						}
+					} else {
+						throw new IllegalStateException("no <index> specified");
+					}
+					break;
+				}
+			} else {
+				throw new IllegalStateException(
+						"<type> of wrong type. expected AnchorType, but got: "
+								+ value.getClass());
+			}
+		} else {
+			throw new IllegalStateException("no <type> specified");
+		}
+	}
+
+	@Override
+	public void detachFrom(IFXAnchor anchor) {
+		if (anchor == startAnchor) {
+			setStartPoint(getStartPoint());
+		} else if (anchor == endAnchor) {
+			setEndPoint(getEndPoint());
+		} else {
+			for (int i = 0; i < wayPointAnchors.size(); i++) {
+				if (anchor == wayPointAnchors.get(i)) {
+					setWayPoint(i, getWayPoint(i));
+					return;
+				}
+			}
+			throw new IllegalStateException(
+					"Cannot detach from unknown anchor: " + anchor);
+		}
+		// TODO: what if multiple points are bound to the same anchor?
+	}
+
+	@Override
+	public Point getWayPoint(int index) {
+		return wayPointAnchors.get(index).getPosition(this);
 	}
 
 	protected void refreshGeometry() {
@@ -156,7 +225,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 	}
 
 	public abstract T computeGeometry();
-	
+
 	/**
 	 * Updates the start and end anchor reference points after computing them
 	 * using {@link #computeReferencePoints()}.
@@ -247,7 +316,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 			}
 		};
 	}
-	
+
 	private MapChangeListener<Node, Point> createWayPositionListener() {
 		return new MapChangeListener<Node, Point>() {
 			@Override

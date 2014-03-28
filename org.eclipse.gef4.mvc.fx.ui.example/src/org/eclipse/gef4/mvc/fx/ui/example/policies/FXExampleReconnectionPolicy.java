@@ -138,11 +138,7 @@ public class FXExampleReconnectionPolicy extends AbstractPolicy<Node> {
 			if (oldShapePart == null) {
 				oldShapePart = (FXGeometricShapePart) shapePart;
 			}
-			shapePart.removeAnchored(curvePart, new HashMap<Object, Object>() {
-				{
-					put("vertex", isStartAnchor ? 0 : 1);
-				}
-			});
+			shapePart.removeAnchored(curvePart);
 			((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
 		}
 		connected = false;

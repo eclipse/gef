@@ -231,7 +231,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 				trash.add(anchored.get(i));
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<V> ep = trash.get(i);
-				getHost().removeAnchored(ep, Collections.emptyMap());
+				getHost().removeAnchored(ep);
 				disposeIfObsolete(ep);
 			}
 		}
@@ -245,5 +245,5 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 			contentPart.setContent(null);
 		}
 	}
-	
+
 }

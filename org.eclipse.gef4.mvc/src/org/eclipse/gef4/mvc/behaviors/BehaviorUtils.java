@@ -64,7 +64,7 @@ public class BehaviorUtils {
 		if (anchords != null && !anchords.isEmpty()) {
 			root.removeChildren(anchords);
 			for (IContentPart<V> anchorage : anchorages) {
-				anchorage.removeAnchoreds(anchords, Collections.emptyMap());
+				anchorage.removeAnchoreds(anchords);
 			}
 		}
 	}

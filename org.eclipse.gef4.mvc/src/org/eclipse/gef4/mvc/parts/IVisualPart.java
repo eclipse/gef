@@ -82,11 +82,9 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds,
 			Map<Object, Object> contextMap);
 
-	public void removeAnchored(IVisualPart<V> anchored,
-			Map<Object, Object> contextMap);
+	public void removeAnchored(IVisualPart<V> anchored);
 
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds,
-			Map<Object, Object> contextMap);
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds);
 
 	public List<IVisualPart<V>> getAnchoreds();
 
@@ -101,7 +99,7 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 			V anchorageVisual, Map<Object, Object> contextMap);
 
 	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
-			V anchorageVisual, Map<Object, Object> contextMap);
+			V anchorageVisual);
 
 	// TODO: add something similar to @Named, i.e. some additional name key to
 	// allow an instance binding?

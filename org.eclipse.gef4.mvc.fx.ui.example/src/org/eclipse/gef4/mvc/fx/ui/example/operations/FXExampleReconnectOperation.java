@@ -65,11 +65,7 @@ public class FXExampleReconnectOperation extends AbstractOperation {
 		if (anchorageNode != null) {
 			curvePart.getRoot().getViewer().getVisualPartMap()
 					.get(anchorageNode)
-					.removeAnchored(curvePart, new HashMap<Object, Object>() {
-						{
-							put("vertex", isStartAnchor ? 0 : 1);
-						}
-					});
+					.removeAnchored(curvePart);
 		}
 	}
 

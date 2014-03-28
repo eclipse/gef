@@ -45,7 +45,7 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual, Map<Object, Object> contextMap) {
+			Node anchorageVisual) {
 		visualListener.unregister();
 	}
 

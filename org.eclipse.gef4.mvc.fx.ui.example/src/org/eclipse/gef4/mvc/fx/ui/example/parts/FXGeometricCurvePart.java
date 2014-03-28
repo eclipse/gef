@@ -18,7 +18,6 @@ import java.util.Map;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -43,26 +42,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	private FXCurveConnection visual;
 
-//	private boolean doRefreshVisual = true;
-
-//	private boolean setStartAnchor = true;
-
-//	public void setReplaceStartAnchor(boolean isReplaceStartAnchor) {
-//		setStartAnchor = isReplaceStartAnchor;
-//	}
-//
-//	public boolean isReplaceStartAnchor() {
-//		return setStartAnchor;
-//	}
-
-//	public void setModelRefresh(boolean isModelRefresh) {
-//		doRefreshVisual = isModelRefresh;
-//	}
-//
-//	public boolean isModelRefresh() {
-//		return doRefreshVisual;
-//	}
-
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
 			@Override
@@ -82,8 +61,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		});
 		installBound(new FXExampleWayPointPolicy(this));
-		installBound(new FXExampleReconnectionPolicy(
-				this));
+		installBound(new FXExampleReconnectionPolicy(this));
 	}
 
 	@Override
@@ -147,37 +125,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void attachVisualToAnchorageVisual(
-			final IVisualPart<Node> anchorage, Node anchorageVisual, Map<Object, Object> contextMap) {
-		boolean isStartAnchor = true;
-		if (contextMap.containsKey("vertex")) {
-			Object vertexIndex = contextMap.get("vertex");
-			if (vertexIndex instanceof Integer) {
-				isStartAnchor = ((Integer) vertexIndex).intValue() == 0;
-			}
-		}
-		
-		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
-				.getAnchor(this);
-		if (isStartAnchor) {
-			visual.setStartAnchor(anchor);
-			isStartAnchor = false;
-		} else {
-			visual.setEndAnchor(anchor);
-		}
+			final IVisualPart<Node> anchorage, Node anchorageVisual,
+			Map<Object, Object> contextMap) {
+		visual.attachTo(((AbstractFXContentPart) anchorage).getAnchor(this),
+				contextMap);
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual, Map<Object, Object> contextMap) {
-		final IFXAnchor anchor = ((AbstractFXContentPart) anchorage)
-				.getAnchor(this);
-		if (anchor == visual.getStartAnchor()) {
-			visual.setStartPoint(visual.getStartPoint());
-		} else if (anchor == visual.getEndAnchor()) {
-			visual.setEndPoint(visual.getEndPoint());
-		} else {
-			throw new IllegalStateException("Detach unknown anchor: " + anchor);
-		}
+			Node anchorageVisual) {
+		visual.detachFrom(((AbstractFXContentPart) anchorage).getAnchor(this));
 	}
 
 	public FXSelectionBehavior getSelectionBehavior() {

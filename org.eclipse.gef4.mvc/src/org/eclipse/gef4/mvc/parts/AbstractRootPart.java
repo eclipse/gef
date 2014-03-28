@@ -70,7 +70,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual, Map<Object, Object> contextMap) {
+	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

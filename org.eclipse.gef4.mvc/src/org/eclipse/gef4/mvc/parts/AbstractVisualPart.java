@@ -405,9 +405,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds, Map<Object, Object> contextMap) {
+	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
 		for (IVisualPart<V> anchored : anchoreds) {
-			removeAnchored(anchored, contextMap);
+			removeAnchored(anchored);
 		}
 	}
 
@@ -416,9 +416,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public void removeAnchored(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
+	public void removeAnchored(IVisualPart<V> anchored) {
 		anchored.removeAnchorage(this);
-		detachAnchoredVisual(anchored, contextMap);
+		detachAnchoredVisual(anchored);
 
 		anchoreds.remove(anchored);
 		if (anchoreds.size() == 0) {
@@ -426,8 +426,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void detachAnchoredVisual(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
-		anchored.detachVisualFromAnchorageVisual(this, getVisual(), contextMap);
+	protected void detachAnchoredVisual(IVisualPart<V> anchored) {
+		anchored.detachVisualFromAnchorageVisual(this, getVisual());
 	}
 
 	@Override
