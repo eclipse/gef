@@ -19,13 +19,14 @@ import java.util.Map;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleReconnectionPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
@@ -61,7 +62,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		});
 		installBound(new FXExampleWayPointPolicy(this));
-		installBound(new FXExampleReconnectionPolicy(this));
+		installBound(AbstractFXReconnectPolicy.class, new AbstractFXReconnectPolicy() {
+			@Override
+			public IFXConnection getConnection() {
+				return visual;
+			}
+		});
 	}
 
 	@Override

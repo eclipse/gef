@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -24,6 +25,7 @@ import javafx.scene.effect.Light.Distant;
 import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
@@ -127,39 +129,23 @@ public class FXGeometricModel {
 	public FXGeometricModel() {
 		// anchor curves to shapes
 		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine,
-				getStartContext());
+				FXCurveConnection.START_CONTEXT);
 		topRightSelectionHandle.addAnchored(selectionBoundsTopLine,
-				getEndContext());
+				FXCurveConnection.END_CONTEXT);
 		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				getStartContext());
+				FXCurveConnection.START_CONTEXT);
 		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				getEndContext());
+				FXCurveConnection.END_CONTEXT);
 		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				getStartContext());
+				FXCurveConnection.START_CONTEXT);
 		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				getEndContext());
+				FXCurveConnection.END_CONTEXT);
 		topRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				getStartContext());
+				FXCurveConnection.START_CONTEXT);
 		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				getEndContext());
+				FXCurveConnection.END_CONTEXT);
 
 		// TODO: anchor points to letter shapes
-	}
-
-	private HashMap<Object, Object> getEndContext() {
-		return new HashMap<Object, Object>() {
-			{
-				put("vertex", 1);
-			}
-		};
-	}
-
-	private HashMap<Object, Object> getStartContext() {
-		return new HashMap<Object, Object>() {
-			{
-				put("vertex", 0);
-			}
-		};
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getShapeVisuals() {

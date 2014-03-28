@@ -2,6 +2,7 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,25 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends IGeometry> extends
 		FXGeometryNode<T> implements IFXConnection {
+
+	public static Map<Object, Object> createWayPointContext(int index) {
+		return createContext(AnchorType.WAY_POINT, index);
+	}
+
+	public static Map<Object, Object> createContext(final AnchorType type,
+			final int index) {
+		return new HashMap<Object, Object>() {
+			{
+				put(ANCHOR_CONTEXT_TYPE, type);
+				put(ANCHOR_CONTEXT_INDEX, index);
+			}
+		};
+	}
+
+	public static final Map<Object, Object> START_CONTEXT = createContext(
+			AnchorType.START, 0);
+	public static final Map<Object, Object> END_CONTEXT = createContext(
+			AnchorType.END, 0);
 
 	private IFXAnchor startAnchor = new FXStaticAnchor(this, new Point());
 	private IFXAnchor endAnchor = new FXStaticAnchor(this, new Point());

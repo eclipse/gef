@@ -22,6 +22,7 @@ import javafx.scene.shape.Shape;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -36,7 +37,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPoli
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleReconnectionPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.policies.FXExampleWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -191,12 +192,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 					new AbstractFXDragPolicy() {
 						@Override
 						public void press(MouseEvent e) {
-							FXExampleReconnectionPolicy p = getReconnectionPolicy(targetPart);
+							AbstractFXReconnectPolicy p = getReconnectionPolicy(targetPart);
 							if (p != null) {
-								p.loosen(
-										isEndPoint ? 1 : 0,
-										new Point(e.getSceneX(), e.getSceneY()),
-										part);
+								p.press(!isEndPoint,
+										new Point(e.getSceneX(), e.getSceneY()));
 							}
 						}
 
@@ -204,9 +203,15 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void drag(MouseEvent e, Dimension delta,
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
-							getReconnectionPolicy(targetPart).dragTo(
+							AbstractFXReconnectPolicy policy = getReconnectionPolicy(targetPart);
+							policy.dragTo(
 									new Point(e.getSceneX(), e.getSceneY()),
 									partsUnderMouse);
+							if (policy.isConnected()) {
+								((Shape) part.getVisual()).setFill(FILL_RED);
+							} else {
+								((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
+							}
 						}
 
 						@Override
@@ -218,10 +223,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 							executeOperation(operation);
 						}
 
-						private FXExampleReconnectionPolicy getReconnectionPolicy(
+						private AbstractFXReconnectPolicy getReconnectionPolicy(
 								IContentPart<Node> targetPart) {
 							return targetPart
-									.getBound(FXExampleReconnectionPolicy.class);
+									.getBound(AbstractFXReconnectPolicy.class);
 						}
 					});
 

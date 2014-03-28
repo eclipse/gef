@@ -17,7 +17,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Polyline;
 
 public class FXCurveConnection extends AbstractFXConnection<ICurve> {
-	
+
 	public FXCurveConnection() {
 	}
 
@@ -25,7 +25,7 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 		setStartAnchor(startAnchor);
 		setEndAnchor(endAnchor);
 	}
-	
+
 	@Override
 	public ICurve computeGeometry() {
 		return new Polyline(getPoints());
