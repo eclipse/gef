@@ -16,6 +16,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -24,72 +25,77 @@ import javafx.scene.paint.Paint;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.mvc.Pair;
 
-abstract public class AbstractFXGeometricElement<G extends IGeometry> implements IPropertyChangeSupport {
+abstract public class AbstractFXGeometricElement<G extends IGeometry>
+		implements IPropertyChangeSupport {
 
 	public static final String GEOMETRY_PROPERTY = "Geometry";
 	public static final String TRANSFORM_PROPERTY = "Transform";
-	
+
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	
+
 	private G geometry;
 	private AffineTransform transform;
-	private List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	private List<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>> anchoreds = new ArrayList<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>>();
 	private Paint stroke = new Color(0, 0, 0, 1);
 	private Effect effect;
 	private double strokeWidth = 0.5;
-	
-	public AbstractFXGeometricElement(G geometry, AffineTransform transform, Paint stroke, double strokeWidth, Effect effect) {
+
+	public AbstractFXGeometricElement(G geometry, AffineTransform transform,
+			Paint stroke, double strokeWidth, Effect effect) {
 		this(geometry);
 		setTransform(transform);
 		setEffect(effect);
 		setStroke(stroke);
 		setStrokeWidth(strokeWidth);
 	}
-	
-	public AbstractFXGeometricElement(G geometry, Paint stroke, double strokeWidth, Effect effect) {
+
+	public AbstractFXGeometricElement(G geometry, Paint stroke,
+			double strokeWidth, Effect effect) {
 		setGeometry(geometry);
 		setEffect(effect);
 		setStroke(stroke);
 		setStrokeWidth(strokeWidth);
 	}
-	
+
 	public AbstractFXGeometricElement(G geometry) {
 		setGeometry(geometry);
 	}
-	
-	public void addAnchored(AbstractFXGeometricElement<? extends IGeometry> anchored){
-		anchoreds.add(anchored);
+
+	public void addAnchored(
+			AbstractFXGeometricElement<? extends IGeometry> anchored, Map<Object, Object> contextMap) {
+		anchoreds.add(new Pair(anchored, contextMap));
 	}
-	
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getAnchoreds() {
+
+	public List<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>> getAnchoreds() {
 		return Collections.unmodifiableList(anchoreds);
 	}
-	
+
 	public G getGeometry() {
 		return geometry;
 	}
-	
+
 	public AffineTransform getTransform() {
 		return transform;
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
-	
+
 	public void setGeometry(G geometry) {
 		G old = this.geometry;
 		this.geometry = geometry;
 		pcs.firePropertyChange(GEOMETRY_PROPERTY, old, geometry);
 	}
-	
+
 	public void setTransform(AffineTransform transform) {
 		AffineTransform old = this.transform;
 		this.transform = transform;

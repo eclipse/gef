@@ -14,6 +14,9 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.gef4.mvc.Pair;
 
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
@@ -31,6 +34,6 @@ public interface IContentPart<V> extends IVisualPart<V> {
 
 	public List<Object> getContentChildren();
 
-	public List<Object> getContentAnchored();
+	public List<Pair<Object, Map<Object, Object>>> getContentAnchored();
 
 }

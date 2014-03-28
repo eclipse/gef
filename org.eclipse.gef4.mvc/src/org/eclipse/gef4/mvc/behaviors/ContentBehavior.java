@@ -21,13 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.Pair;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class ContentBehavior<V> extends AbstractBehavior<V>
-		implements PropertyChangeListener {
+public class ContentBehavior<V> extends AbstractBehavior<V> implements
+		PropertyChangeListener {
 
 	@Override
 	public void activate() {
@@ -176,7 +177,8 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 	}
 
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentAnchored(List<Object> contentAnchored) {
+	public void synchronizeContentAnchored(
+			List<Pair<Object, Map<Object, Object>>> contentAnchored) {
 		int i;
 		IContentPart<V> editPart;
 		Object model;
@@ -193,9 +195,8 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 			}
 		}
 
-		List<Object> modelObjects = contentAnchored;
-		for (i = 0; i < modelObjects.size(); i++) {
-			model = modelObjects.get(i);
+		for (i = 0; i < contentAnchored.size(); i++) {
+			model = contentAnchored.get(i).getFirst();
 
 			// Do a quick check to see if editPart[i] == model[i]
 			if (i < anchored.size() && anchored.get(i).getContent() == model)
@@ -214,7 +215,8 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 				// insert one.
 				editPart = findOrCreatePartFor(model);
 				// what if it does not exist??
-				getHost().addAnchored(editPart, Collections.emptyMap());
+				getHost().addAnchored(editPart,
+						contentAnchored.get(i).getSecond());
 			}
 		}
 
@@ -243,4 +245,5 @@ public class ContentBehavior<V> extends AbstractBehavior<V>
 			contentPart.setContent(null);
 		}
 	}
+	
 }

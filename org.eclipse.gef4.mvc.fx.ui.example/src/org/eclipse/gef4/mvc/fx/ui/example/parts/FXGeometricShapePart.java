@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.example.parts;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -23,11 +24,12 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.Pair;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateSelectedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
@@ -128,7 +130,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<Object> getContentAnchored() {
+	public List<Pair<Object, Map<Object, Object>>> getContentAnchored() {
 		if (getParent() != null) {
 			List anchored = getContent().getAnchoreds();
 			if (anchored == null) {

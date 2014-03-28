@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.Pair;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
@@ -79,7 +80,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	}
 
 	@Override
-	public List<Object> getContentAnchored() {
+	public List<Pair<Object, Map<Object, Object>>> getContentAnchored() {
 		return Collections.emptyList();
 	}
 

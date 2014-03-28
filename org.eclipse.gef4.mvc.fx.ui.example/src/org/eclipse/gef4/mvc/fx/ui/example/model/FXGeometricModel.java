@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.example.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.effect.Blend;
@@ -120,21 +121,45 @@ public class FXGeometricModel {
 
 	// fDotShape
 	private FXGeometricShape cursorShape = new FXGeometricShape(
-			createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227, 45),
-			Color.WHITE, 2, Color.BLACK, GEF_SHADOW_EFFECT);
+			createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227,
+					45), Color.WHITE, 2, Color.BLACK, GEF_SHADOW_EFFECT);
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
-		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine);
-		topRightSelectionHandle.addAnchored(selectionBoundsTopLine);
-		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine);
-		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine);
-		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine);
-		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine);
-		topRightSelectionHandle.addAnchored(selectionBoundsRightLine);
-		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine);
+		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine,
+				getStartContext());
+		topRightSelectionHandle.addAnchored(selectionBoundsTopLine,
+				getEndContext());
+		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
+				getStartContext());
+		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
+				getEndContext());
+		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine,
+				getStartContext());
+		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine,
+				getEndContext());
+		topRightSelectionHandle.addAnchored(selectionBoundsRightLine,
+				getStartContext());
+		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine,
+				getEndContext());
 
 		// TODO: anchor points to letter shapes
+	}
+
+	private HashMap<Object, Object> getEndContext() {
+		return new HashMap<Object, Object>() {
+			{
+				put("vertex", 1);
+			}
+		};
+	}
+
+	private HashMap<Object, Object> getStartContext() {
+		return new HashMap<Object, Object>() {
+			{
+				put("vertex", 0);
+			}
+		};
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getShapeVisuals() {
