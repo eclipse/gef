@@ -180,9 +180,11 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 						public void release(MouseEvent e, Dimension delta,
 								List<Node> nodesUnderMouse,
 								List<IContentPart<Node>> partsUnderMouse) {
-							getWayPointHandlePolicy(targetPart).commitWayPoint(
+							IUndoableOperation operation = getWayPointHandlePolicy(targetPart).commitWayPoint(
 									part.getVertexIndex() - 1,
 									new Point(e.getSceneX(), e.getSceneY()));
+							// FIXME: change way point operation bug: NPE
+//							executeOperation(operation);
 						}
 					});
 		} else {

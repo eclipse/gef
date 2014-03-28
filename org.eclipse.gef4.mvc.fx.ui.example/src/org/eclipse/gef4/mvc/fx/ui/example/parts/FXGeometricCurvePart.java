@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javafx.scene.Node;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -68,11 +69,23 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 			
 			@Override
-			public void commitWayPoint(int wayPointIndex, Point p) {
-				super.commitWayPoint(wayPointIndex, p);
+			public IUndoableOperation commitWayPoint(int wayPointIndex, Point p) {
+				IUndoableOperation op = super.commitWayPoint(wayPointIndex, p);
+				setRefreshVisual(false);
+				FXGeometricCurve curve = getContent();
+				List<Point> curveWPs = curve.getWayPoints();
+				for (int i = curveWPs.size() - 1; i >= 0; i--) {
+					curve.removeWayPoint(i);
+				}
+				List<Point> wayPoints = visual.getWayPoints();
+				for (int i = 0; i < wayPoints.size(); i++) {
+					curve.addWayPoint(i, wayPoints.get(i));
+				}
 				selectionBehavior.refreshFeedback();
 				selectionBehavior.refreshHandles();
+				setRefreshVisual(true);
 				refreshVisual();
+				return op;
 			}
 		});
 		installBound(AbstractFXReconnectPolicy.class, new AbstractFXReconnectPolicy() {

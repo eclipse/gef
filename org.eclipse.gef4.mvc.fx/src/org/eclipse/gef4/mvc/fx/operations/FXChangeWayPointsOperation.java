@@ -13,6 +13,8 @@ package org.eclipse.gef4.mvc.fx.operations;
 
 import java.util.List;
 
+import javax.naming.InitialContext;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -53,6 +55,19 @@ public class FXChangeWayPointsOperation extends AbstractOperation {
 			throws ExecutionException {
 		connection.setWayPoints(oldWayPoints);
 		return Status.OK_STATUS;
+	}
+	
+	@Override
+	public String toString() {
+		String str = "ChangeWayPoints:\n  from:\n";
+		for (int i = 0; i < oldWayPoints.size(); i++) {
+			str = str + "   - " + oldWayPoints.get(i) + "\n";
+		}
+		str = str + "  to:\n";
+		for (int i = 0; i < newWayPoints.size(); i++) {
+			str = str + "   - " + newWayPoints.get(i) + "\n";
+		}
+		return str;
 	}
 
 }

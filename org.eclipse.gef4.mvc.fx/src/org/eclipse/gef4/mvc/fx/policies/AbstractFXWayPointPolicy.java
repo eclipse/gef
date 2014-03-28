@@ -18,6 +18,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
@@ -52,7 +53,10 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 		Point2D pLocal = getHost().getVisual().sceneToLocal(startPointInScene);
 		startPoint = new Point(pLocal.getX(), pLocal.getY());
 		initialWayPoints = getConnection().getWayPoints();
-		currentWayPoints = new ArrayList<Point>(initialWayPoints);
+		currentWayPoints = new ArrayList<Point>(initialWayPoints.size());
+		for (int i = 0; i < initialWayPoints.size(); i++) {
+			currentWayPoints.add(initialWayPoints.get(i).getCopy());
+		}
 	}
 
 	/**
@@ -122,7 +126,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	 * @param p
 	 *            {@link Point} providing new way point coordinates
 	 */
-	public void commitWayPoint(int wayPointIndex, Point p) {
+	public IUndoableOperation commitWayPoint(int wayPointIndex, Point p) {
 		updateWayPoint(wayPointIndex, p);
 		getHost().setRefreshVisual(true);
 
@@ -133,13 +137,10 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 			op = new FXChangeWayPointsOperation("Change way points",
 					getConnection(), initialWayPoints, currentWayPoints);
 		}
+		
+//		System.out.println("op: " + op);
 
-		// execute locally
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
+		return op;
 	}
 
 	private boolean isRemove(int wayPointIndex, Point newWayPoint) {
