@@ -13,9 +13,7 @@ package org.eclipse.gef4.mvc.fx.ui.example.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -25,7 +23,6 @@ import javafx.scene.effect.Light.Distant;
 import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
@@ -36,6 +33,10 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 public class FXGeometricModel {
+
+	public static enum AnchorType {
+		START, END,
+	}
 
 	// private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
 	// private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
@@ -129,21 +130,21 @@ public class FXGeometricModel {
 	public FXGeometricModel() {
 		// anchor curves to shapes
 		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine,
-				FXCurveConnection.START_CONTEXT);
+				AnchorType.START);
 		topRightSelectionHandle.addAnchored(selectionBoundsTopLine,
-				FXCurveConnection.END_CONTEXT);
+				AnchorType.END);
 		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				FXCurveConnection.START_CONTEXT);
+				AnchorType.START);
 		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				FXCurveConnection.END_CONTEXT);
+				AnchorType.END);
 		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				FXCurveConnection.START_CONTEXT);
+				AnchorType.START);
 		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				FXCurveConnection.END_CONTEXT);
+				AnchorType.END);
 		topRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				FXCurveConnection.START_CONTEXT);
+				AnchorType.START);
 		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				FXCurveConnection.END_CONTEXT);
+				AnchorType.END);
 
 		// TODO: anchor points to letter shapes
 	}

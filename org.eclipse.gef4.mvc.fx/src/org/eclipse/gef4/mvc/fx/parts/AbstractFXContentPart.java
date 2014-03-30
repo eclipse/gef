@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Map;
-
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -47,7 +45,7 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 
 	@Override
 	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual, Map<Object, Object> contextMap) {
+			Node anchorageVisual) {
 		// do nothing by default
 	}
 

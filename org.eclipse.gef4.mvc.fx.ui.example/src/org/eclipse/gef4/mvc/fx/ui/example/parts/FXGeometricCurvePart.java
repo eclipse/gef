@@ -14,11 +14,11 @@ package org.eclipse.gef4.mvc.fx.ui.example.parts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -28,7 +28,9 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel.AnchorType;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
@@ -62,38 +64,42 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(AbstractFXWayPointPolicy.class, new AbstractFXWayPointPolicy() {
-			@Override
-			public IFXConnection getConnection() {
-				return visual;
-			}
-			
-			@Override
-			public IUndoableOperation commitWayPoint(int wayPointIndex, Point p) {
-				IUndoableOperation op = super.commitWayPoint(wayPointIndex, p);
-				setRefreshVisual(false);
-				FXGeometricCurve curve = getContent();
-				List<Point> curveWPs = curve.getWayPoints();
-				for (int i = curveWPs.size() - 1; i >= 0; i--) {
-					curve.removeWayPoint(i);
-				}
-				List<Point> wayPoints = visual.getWayPoints();
-				for (int i = 0; i < wayPoints.size(); i++) {
-					curve.addWayPoint(i, wayPoints.get(i));
-				}
-				selectionBehavior.refreshFeedback();
-				selectionBehavior.refreshHandles();
-				setRefreshVisual(true);
-				refreshVisual();
-				return op;
-			}
-		});
-		installBound(AbstractFXReconnectPolicy.class, new AbstractFXReconnectPolicy() {
-			@Override
-			public IFXConnection getConnection() {
-				return visual;
-			}
-		});
+		installBound(AbstractFXWayPointPolicy.class,
+				new AbstractFXWayPointPolicy() {
+					@Override
+					public IFXConnection getConnection() {
+						return visual;
+					}
+
+					@Override
+					public IUndoableOperation commitWayPoint(int wayPointIndex,
+							Point p) {
+						IUndoableOperation op = super.commitWayPoint(
+								wayPointIndex, p);
+						setRefreshVisual(false);
+						FXGeometricCurve curve = getContent();
+						List<Point> curveWPs = curve.getWayPoints();
+						for (int i = curveWPs.size() - 1; i >= 0; i--) {
+							curve.removeWayPoint(i);
+						}
+						List<Point> wayPoints = visual.getWayPoints();
+						for (int i = 0; i < wayPoints.size(); i++) {
+							curve.addWayPoint(i, wayPoints.get(i));
+						}
+						selectionBehavior.refreshFeedback();
+						selectionBehavior.refreshHandles();
+						setRefreshVisual(true);
+						refreshVisual();
+						return op;
+					}
+				});
+		installBound(AbstractFXReconnectPolicy.class,
+				new AbstractFXReconnectPolicy() {
+					@Override
+					public IFXConnection getConnection() {
+						return visual;
+					}
+				});
 	}
 
 	@Override
@@ -157,16 +163,57 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void attachVisualToAnchorageVisual(
-			final IVisualPart<Node> anchorage, Node anchorageVisual,
-			Map<Object, Object> contextMap) {
-		visual.attachTo(((AbstractFXContentPart) anchorage).getAnchor(this),
-				contextMap);
+			final IVisualPart<Node> anchorage, Node anchorageVisual) {
+		// TODO: the context should not be stored in the model, but created here
+		// based on the model
+		AbstractFXGeometricElement<?> anchorageContent = ((AbstractFXGeometricElementPart) anchorage)
+				.getContent();
+		AnchorType type = anchorageContent
+				.getAnchorType(getContent());
+		attachTo(visual, ((AbstractFXContentPart) anchorage).getAnchor(this),
+				type);
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
 			Node anchorageVisual) {
-		visual.detachFrom(((AbstractFXContentPart) anchorage).getAnchor(this));
+		detachFrom(visual, ((AbstractFXContentPart) anchorage).getAnchor(this));
+	}
+
+	private void attachTo(IFXConnection visual, IFXAnchor anchor,
+			AnchorType anchorType) {
+		if (anchorType != null) {
+			switch (anchorType) {
+			case START:
+				visual.setStartAnchor(anchor);
+				break;
+			case END:
+				visual.setEndAnchor(anchor);
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported anchor type.");
+			}
+		} else {
+			throw new IllegalStateException("no <type> specified");
+		}
+	}
+
+	private void detachFrom(IFXConnection visual, IFXAnchor anchor) {
+		if (anchor == visual.getStartAnchor()) {
+			visual.setStartPoint(visual.getStartPoint());
+		} else if (anchor == visual.getEndAnchor()) {
+			visual.setEndPoint(visual.getEndPoint());
+		} else {
+			for (int i = 0; i < visual.getWayPointAnchors().size(); i++) {
+				if (anchor == visual.getWayPointAnchors().get(i)) {
+					visual.setWayPoint(i, visual.getWayPoint(i));
+					return;
+				}
+			}
+			throw new IllegalStateException(
+					"Cannot detach from unknown anchor: " + anchor);
+		}
+		// TODO: what if multiple points are bound to the same anchor?
 	}
 
 	public FXSelectionBehavior getSelectionBehavior() {

@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
-import java.util.Map;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -21,10 +20,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation.AnchorKind;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -38,7 +37,6 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
 	private boolean connected;
 	private IFXAnchor initialAnchor;
 	private IFXAnchor currentAnchor;
-	private Map<Object, Object> anchorContext;
 	private FXReconnectOperation op;
 
 	protected boolean isLoose(IFXAnchor anchor) {
@@ -65,15 +63,14 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
 		connection = getConnection();
 		if (isStartAnchor) {
 			initialAnchor = connection.getStartAnchor();
-			anchorContext = FXCurveConnection.START_CONTEXT;
 		} else {
 			initialAnchor = connection.getEndAnchor();
-			anchorContext = FXCurveConnection.END_CONTEXT;
 		}
 		currentAnchor = initialAnchor;
 		connected = !isLoose(initialAnchor);
 		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
-				currentAnchor, anchorContext);
+				currentAnchor, isStartAnchor ? AnchorKind.START
+						: AnchorKind.END);
 	}
 
 	public void dragTo(Point pointInScene,
@@ -99,7 +96,8 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
 			}
 		}
 		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
-				currentAnchor, anchorContext);
+				currentAnchor, isStartAnchor ? AnchorKind.START
+						: AnchorKind.END);
 
 		// execute locally
 		try {

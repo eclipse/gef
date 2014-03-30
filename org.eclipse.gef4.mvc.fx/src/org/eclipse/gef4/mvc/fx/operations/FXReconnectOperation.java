@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
-import java.util.Map;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,24 +22,37 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 
 public class FXReconnectOperation extends AbstractOperation {
 
+	public static enum AnchorKind {
+		START, END
+	}
+
 	private IFXConnection connection;
 	private IFXAnchor oldAnchor;
 	private IFXAnchor newAnchor;
-	private Map<Object, Object> context;
+	private AnchorKind anchorKind;
 
 	public FXReconnectOperation(String label, IFXConnection connection,
-			IFXAnchor oldAnchor, IFXAnchor newAnchor, Map<Object, Object> context) {
+			IFXAnchor oldAnchor, IFXAnchor newAnchor, AnchorKind anchorKind) {
 		super(label);
 		this.connection = connection;
 		this.oldAnchor = oldAnchor;
 		this.newAnchor = newAnchor;
-		this.context = context;
+		this.anchorKind = anchorKind;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		connection.attachTo(newAnchor, context);
+		switch (anchorKind) {
+		case START:
+			connection.setStartAnchor(newAnchor);
+			break;
+		case END:
+			connection.setEndAnchor(newAnchor);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported AnchorKind");
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -54,7 +65,16 @@ public class FXReconnectOperation extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		connection.attachTo(oldAnchor, context);
+		switch (anchorKind) {
+		case START:
+			connection.setStartAnchor(oldAnchor);
+			break;
+		case END:
+			connection.setEndAnchor(oldAnchor);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported AnchorKind");
+		}
 		return Status.OK_STATUS;
 	}
 

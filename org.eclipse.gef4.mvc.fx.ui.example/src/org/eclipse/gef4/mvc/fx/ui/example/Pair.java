@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc;
+package org.eclipse.gef4.mvc.fx.ui.example;
 
 /**
  * Generic class for holding any two values.

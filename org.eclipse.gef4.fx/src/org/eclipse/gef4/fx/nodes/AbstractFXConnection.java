@@ -2,9 +2,7 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
@@ -17,25 +15,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends IGeometry> extends
 		FXGeometryNode<T> implements IFXConnection {
-
-	public static Map<Object, Object> createWayPointContext(int index) {
-		return createContext(AnchorType.WAY_POINT, index);
-	}
-
-	public static Map<Object, Object> createContext(final AnchorType type,
-			final int index) {
-		return new HashMap<Object, Object>() {
-			{
-				put(ANCHOR_CONTEXT_TYPE, type);
-				put(ANCHOR_CONTEXT_INDEX, index);
-			}
-		};
-	}
-
-	public static final Map<Object, Object> START_CONTEXT = createContext(
-			AnchorType.START, 0);
-	public static final Map<Object, Object> END_CONTEXT = createContext(
-			AnchorType.END, 0);
 
 	private IFXAnchor startAnchor = new FXStaticAnchor(this, new Point());
 	private IFXAnchor endAnchor = new FXStaticAnchor(this, new Point());
@@ -170,69 +149,6 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 		points[points.length - 1] = getEndPoint();
 
 		return points;
-	}
-
-	@Override
-	public void attachTo(IFXAnchor anchor, Map<Object, Object> context) {
-		if (context.containsKey(ANCHOR_CONTEXT_TYPE)) {
-			Object value = context.get(ANCHOR_CONTEXT_TYPE);
-			if (value instanceof AnchorType) {
-				AnchorType type = (AnchorType) value;
-				switch (type) {
-				case START:
-					setStartAnchor(anchor);
-					break;
-				case END:
-					setEndAnchor(anchor);
-					break;
-				case WAY_POINT:
-					if (context.containsKey(ANCHOR_CONTEXT_INDEX)) {
-						value = context.get(ANCHOR_CONTEXT_INDEX);
-						if (value instanceof Integer) {
-							Integer index = (Integer) value;
-							if (0 <= index && index < wayPointAnchors.size()) {
-								setWayPointAnchor(index, anchor);
-							} else {
-								throw new IllegalStateException(
-										"<index> out of range: " + index);
-							}
-						} else {
-							throw new IllegalStateException(
-									"<index> of wrong type. expected Integer, but got: "
-											+ value.getClass());
-						}
-					} else {
-						throw new IllegalStateException("no <index> specified");
-					}
-					break;
-				}
-			} else {
-				throw new IllegalStateException(
-						"<type> of wrong type. expected AnchorType, but got: "
-								+ value.getClass());
-			}
-		} else {
-			throw new IllegalStateException("no <type> specified");
-		}
-	}
-
-	@Override
-	public void detachFrom(IFXAnchor anchor) {
-		if (anchor == startAnchor) {
-			setStartPoint(getStartPoint());
-		} else if (anchor == endAnchor) {
-			setEndPoint(getEndPoint());
-		} else {
-			for (int i = 0; i < wayPointAnchors.size(); i++) {
-				if (anchor == wayPointAnchors.get(i)) {
-					setWayPoint(i, getWayPoint(i));
-					return;
-				}
-			}
-			throw new IllegalStateException(
-					"Cannot detach from unknown anchor: " + anchor);
-		}
-		// TODO: what if multiple points are bound to the same anchor?
 	}
 
 	@Override

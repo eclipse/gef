@@ -14,7 +14,6 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
@@ -29,7 +28,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 		implements IRootPart<V> {
 
 	private IVisualViewer<V> viewer;
-	
+
 	public AbstractRootPart() {
 		installBound(new ContentBehavior<V>());
 	}
@@ -47,7 +46,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	public List<IContentPart<V>> getContentPartChildren() {
 		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<IHandlePart<V>> getHandlePartChildren() {
@@ -64,13 +63,15 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual, Map<Object, Object> contextMap) {
+	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage,
+			V anchorageVisual) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage, V anchorageVisual) {
+	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
+			V anchorageVisual) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

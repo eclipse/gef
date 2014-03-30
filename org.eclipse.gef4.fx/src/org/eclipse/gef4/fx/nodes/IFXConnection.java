@@ -1,28 +1,11 @@
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public interface IFXConnection {
-
-	/**
-	 * Anchor context information specifying the type of anchor changed (start,
-	 * end, way-point).
-	 */
-	public static final String ANCHOR_CONTEXT_TYPE = "type";
-
-	public static enum AnchorType {
-		START, END, WAY_POINT,
-	}
-
-	/**
-	 * Anchor context information identifying the concrete anchor changed (index
-	 * of way-point). This information is not necessary for start/end anchors.
-	 */
-	public static final String ANCHOR_CONTEXT_INDEX = "index";
 
 	/**
 	 * Returns the {@link IFXAnchor} which specifies the start position of this
@@ -169,23 +152,5 @@ public interface IFXConnection {
 	 * @return an array containing all points constituting this connection
 	 */
 	public Point[] getPoints();
-
-	/**
-	 * Attaches this connection to the given anchor. Replaces either start-,
-	 * end-, or way-point-anchor depending on context.
-	 * 
-	 * @param anchor
-	 * @param context
-	 */
-	public void attachTo(IFXAnchor anchor, Map<Object, Object> context);
-
-	/**
-	 * Detaches this connection from the given anchor. Replaces either start-,
-	 * end-, or way-point-anchor depending on context.
-	 * 
-	 * @param anchor
-	 * @param context
-	 */
-	public void detachFrom(IFXAnchor anchor);
 
 }

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.Pair;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -177,8 +176,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentAnchored(
-			List<Pair<Object, Map<Object, Object>>> contentAnchored) {
+	public void synchronizeContentAnchored(List<Object> contentAnchored) {
 		int i;
 		IContentPart<V> editPart;
 		Object model;
@@ -196,7 +194,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 		}
 
 		for (i = 0; i < contentAnchored.size(); i++) {
-			model = contentAnchored.get(i).getFirst();
+			model = contentAnchored.get(i);
 
 			// Do a quick check to see if editPart[i] == model[i]
 			if (i < anchored.size() && anchored.get(i).getContent() == model)
@@ -215,8 +213,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 				// insert one.
 				editPart = findOrCreatePartFor(model);
 				// what if it does not exist??
-				getHost().addAnchored(editPart,
-						contentAnchored.get(i).getSecond());
+				getHost().addAnchored(editPart);
 			}
 		}
 

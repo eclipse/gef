@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Map;
-
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
@@ -38,7 +36,7 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 
 	@Override
 	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual, Map<Object, Object> contextMap) {
+			Node anchorageVisual) {
 		visualListener.register(anchorageVisual,
 				((FXRootPart) getRoot()).getLayerStackPane());
 	};

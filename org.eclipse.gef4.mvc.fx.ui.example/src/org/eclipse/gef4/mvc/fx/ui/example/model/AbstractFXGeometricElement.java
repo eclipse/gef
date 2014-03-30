@@ -16,7 +16,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -25,7 +24,8 @@ import javafx.scene.paint.Paint;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
-import org.eclipse.gef4.mvc.Pair;
+import org.eclipse.gef4.mvc.fx.ui.example.Pair;
+import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel.AnchorType;
 
 abstract public class AbstractFXGeometricElement<G extends IGeometry>
 		implements IPropertyChangeSupport {
@@ -37,7 +37,7 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 
 	private G geometry;
 	private AffineTransform transform;
-	private List<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>> anchoreds = new ArrayList<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>>();
+	private List<Pair<AbstractFXGeometricElement<? extends IGeometry>, AnchorType>> anchoredsWithContext = new ArrayList<Pair<AbstractFXGeometricElement<? extends IGeometry>, AnchorType>>();
 	private Paint stroke = new Color(0, 0, 0, 1);
 	private Effect effect;
 	private double strokeWidth = 0.5;
@@ -64,11 +64,16 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	}
 
 	public void addAnchored(
-			AbstractFXGeometricElement<? extends IGeometry> anchored, Map<Object, Object> contextMap) {
-		anchoreds.add(new Pair(anchored, contextMap));
+			AbstractFXGeometricElement<? extends IGeometry> anchored,
+			AnchorType type) {
+		anchoredsWithContext.add(new Pair(anchored, type));
 	}
 
-	public List<Pair<AbstractFXGeometricElement<? extends IGeometry>, Map<Object, Object>>> getAnchoreds() {
+	public List<AbstractFXGeometricElement<? extends IGeometry>> getAnchoreds() {
+		List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+		for (int i = 0; i < anchoredsWithContext.size(); i++) {
+			anchoreds.add(anchoredsWithContext.get(i).getFirst());
+		}
 		return Collections.unmodifiableList(anchoreds);
 	}
 
@@ -124,6 +129,16 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 
 	public void setStrokeWidth(double strokeWidth) {
 		this.strokeWidth = strokeWidth;
+	}
+
+	public AnchorType getAnchorType(FXGeometricCurve content) {
+		for (int i = 0; i < anchoredsWithContext.size(); i++) {
+			if (anchoredsWithContext.get(i).getFirst() == content) {
+				return anchoredsWithContext.get(i).getSecond();
+			}
+		}
+		return null;
+
 	}
 
 }

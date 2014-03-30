@@ -385,22 +385,22 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	@Override
-	public void addAnchored(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
+	public void addAnchored(IVisualPart<V> anchored) {
 		if (anchoreds == null) {
 			anchoreds = new ArrayList<IVisualPart<V>>();
 		}
 		anchoreds.add(anchored);
 
-		attachAnchoredVisual(anchored, contextMap);
+		attachAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
 
 		anchored.refreshVisual();
 	}
 
 	@Override
-	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds, Map<Object, Object> contextMap) {
+	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
 		for (IVisualPart<V> anchored : anchoreds) {
-			addAnchored(anchored, contextMap);
+			addAnchored(anchored);
 		}
 	}
 
@@ -411,8 +411,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
-	protected void attachAnchoredVisual(IVisualPart<V> anchored, Map<Object, Object> contextMap) {
-		anchored.attachVisualToAnchorageVisual(this, getVisual(), contextMap);
+	protected void attachAnchoredVisual(IVisualPart<V> anchored) {
+		anchored.attachVisualToAnchorageVisual(this, getVisual());
 	}
 
 	@Override

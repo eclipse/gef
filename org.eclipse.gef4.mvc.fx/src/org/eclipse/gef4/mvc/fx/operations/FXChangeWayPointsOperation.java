@@ -13,8 +13,6 @@ package org.eclipse.gef4.mvc.fx.operations;
 
 import java.util.List;
 
-import javax.naming.InitialContext;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -29,8 +27,9 @@ public class FXChangeWayPointsOperation extends AbstractOperation {
 	private IFXConnection connection;
 	private List<Point> oldWayPoints;
 	private List<Point> newWayPoints;
-	
-	public FXChangeWayPointsOperation(String label, IFXConnection connection, List<Point> oldWayPoints, List<Point> newWayPoints) {
+
+	public FXChangeWayPointsOperation(String label, IFXConnection connection,
+			List<Point> oldWayPoints, List<Point> newWayPoints) {
 		super(label);
 		this.connection = connection;
 		this.oldWayPoints = oldWayPoints;
@@ -56,7 +55,7 @@ public class FXChangeWayPointsOperation extends AbstractOperation {
 		connection.setWayPoints(oldWayPoints);
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
 	public String toString() {
 		String str = "ChangeWayPoints:\n  from:\n";
