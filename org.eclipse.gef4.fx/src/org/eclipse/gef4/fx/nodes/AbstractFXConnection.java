@@ -8,6 +8,7 @@ import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.transform.Rotate;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -31,7 +32,13 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	private MapChangeListener<Node, Point> startPosCL = createStartPositionListener();
 	private MapChangeListener<Node, Point> endPosCL = createEndPositionListener();
 	private MapChangeListener<Node, Point> wayPosCL = createWayPositionListener();
-	
+
+	{
+		// disable resizing children which would change their layout positions
+		// in some cases
+		setAutoSizeChildren(false);
+	}
+
 	@Override
 	public IFXDecoration getEndDecoration() {
 		return endDecoration;
@@ -270,14 +277,17 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	private Point arrangeDecoration(IFXDecoration deco, Point start,
 			Vector direction, Point decoStart, Vector decoDirection) {
 		Node visual = deco.getVisual();
-		Point2D posInParent = visual.localToParent(visual.sceneToLocal(start.x, start.y));
+		Point2D posInParent = visual.localToParent(visual.sceneToLocal(start.x,
+				start.y));
 		visual.setLayoutX(posInParent.getX());
 		visual.setLayoutY(posInParent.getY());
-//		if (!direction.isNull() && !decoDirection.isNull()) {
-//			Angle angleCW = decoDirection.getAngleCW(direction);
-//			visual.setRotate(angleCW.deg());
-//		}
-		return start;
+		Angle angleCW = null;
+		if (!direction.isNull() && !decoDirection.isNull()) {
+			angleCW = decoDirection.getAngleCW(direction);
+			visual.getTransforms().clear();
+			visual.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
+		}
+		return angleCW == null ? start : start.getTranslated(decoDirection.getRotatedCW(angleCW).toPoint());
 	}
 
 	/**
