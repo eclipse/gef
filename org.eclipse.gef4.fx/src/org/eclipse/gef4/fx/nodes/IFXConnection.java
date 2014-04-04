@@ -1,6 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.List;
+
+import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -15,6 +29,42 @@ public interface IFXConnection {
 	 *         connection
 	 */
 	public IFXAnchor getStartAnchor();
+
+	/**
+	 * Returns the current start decoration of this connection. Per default, a
+	 * connection does not have a start decoration, i.e. it is set to
+	 * <code>null</code>.
+	 * 
+	 * @return the current start decoration of this connection
+	 */
+	public IFXDecoration getStartDecoration();
+
+	/**
+	 * Sets the start decoration for this connection. Setting the start
+	 * decoration to <code>null</code> disables it.
+	 * 
+	 * @param startDeco
+	 *            new start decoration for this connection
+	 */
+	public void setStartDecoration(IFXDecoration startDeco);
+
+	/**
+	 * Returns the current end decoration of this connection. Per default, a
+	 * connection does not have an end decoration, i.e. it is set to
+	 * <code>null</code>.
+	 * 
+	 * @return the current end decoration of this connection
+	 */
+	public IFXDecoration getEndDecoration();
+
+	/**
+	 * Sets the end decoration for this connection. Setting the end decoration
+	 * to <code>null</code> disables it.
+	 * 
+	 * @param endDeco
+	 *            new end decoration for this connection
+	 */
+	public void setEndDecoration(IFXDecoration endDeco);
 
 	/**
 	 * Returns the {@link IFXAnchor} which specifies the end position of this
@@ -152,5 +202,7 @@ public interface IFXConnection {
 	 * @return an array containing all points constituting this connection
 	 */
 	public Point[] getPoints();
+
+	public Node getCurveNode();
 
 }

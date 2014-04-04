@@ -40,7 +40,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	private final FXSelectionBehavior selectionBehavior = new FXSelectionBehavior() {
 		@Override
 		public IGeometry getFeedbackGeometry() {
-			return visual.getGeometry();
+			return visual.getCurveNode().getGeometry();
 		}
 	};
 
@@ -49,9 +49,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
 			@Override
-			public ICurve computeGeometry() {
+			public ICurve computeGeometry(Point[] points) {
 				return FXGeometricCurve
-						.constructCurveFromWayPoints(getPoints());
+						.constructCurveFromWayPoints(points);
 			}
 		};
 
@@ -90,6 +90,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						selectionBehavior.refreshHandles();
 						setRefreshVisual(true);
 						refreshVisual();
+						
+						// TODO: remove way point juggling here, just execute the operation
+						
 						return op;
 					}
 				});
@@ -139,13 +142,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 
 		// apply stroke paint
-		if (visual.getStroke() != curve.getStroke()) {
-			visual.setStroke(curve.getStroke());
+		if (visual.getCurveNode().getStroke() != curve.getStroke()) {
+			visual.getCurveNode().setStroke(curve.getStroke());
 		}
 
 		// stroke width
-		if (visual.getStrokeWidth() != curve.getStrokeWidth()) {
-			visual.setStrokeWidth(curve.getStrokeWidth());
+		if (visual.getCurveNode().getStrokeWidth() != curve.getStrokeWidth()) {
+			visual.getCurveNode().setStrokeWidth(curve.getStrokeWidth());
 		}
 
 		// dashes
@@ -153,8 +156,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		for (double d : curve.dashes) {
 			dashList.add(d);
 		}
-		if (!visual.getStrokeDashArray().equals(dashList)) {
-			visual.getStrokeDashArray().setAll(dashList);
+		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
+			visual.getCurveNode().getStrokeDashArray().setAll(dashList);
 		}
 
 		// apply effect

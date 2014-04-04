@@ -6,15 +6,23 @@ import java.util.List;
 
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.geometry.euclidean.Angle;
+import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public abstract class AbstractFXConnection<T extends IGeometry> extends
-		FXGeometryNode<T> implements IFXConnection {
+public abstract class AbstractFXConnection<T extends IGeometry> extends Group
+		implements IFXConnection {
+
+	// visuals
+	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
+	private IFXDecoration startDecoration = null;
+	private IFXDecoration endDecoration = null;
 
 	private IFXAnchor startAnchor = new FXStaticAnchor(this, new Point());
 	private IFXAnchor endAnchor = new FXStaticAnchor(this, new Point());
@@ -23,6 +31,28 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 	private MapChangeListener<Node, Point> startPosCL = createStartPositionListener();
 	private MapChangeListener<Node, Point> endPosCL = createEndPositionListener();
 	private MapChangeListener<Node, Point> wayPosCL = createWayPositionListener();
+	
+	@Override
+	public IFXDecoration getEndDecoration() {
+		return endDecoration;
+	}
+
+	@Override
+	public IFXDecoration getStartDecoration() {
+		return startDecoration;
+	}
+
+	@Override
+	public void setEndDecoration(IFXDecoration endDeco) {
+		endDecoration = endDeco;
+		refreshGeometry();
+	}
+
+	@Override
+	public void setStartDecoration(IFXDecoration startDeco) {
+		startDecoration = startDeco;
+		refreshGeometry();
+	}
 
 	@Override
 	public IFXAnchor getStartAnchor() {
@@ -32,6 +62,11 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 	@Override
 	public IFXAnchor getEndAnchor() {
 		return endAnchor;
+	}
+
+	@Override
+	public FXGeometryNode<T> getCurveNode() {
+		return curveNode;
 	}
 
 	@Override
@@ -157,10 +192,116 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends
 	}
 
 	protected void refreshGeometry() {
-		setGeometry(computeGeometry());
+		// clear current visuals
+		getChildren().clear();
+
+		// compute new curve
+		curveNode.setGeometry(computeGeometry(getCurvePoints()));
+
+		// z-order decorations above curve
+		getChildren().add(curveNode);
+		if (startDecoration != null) {
+			getChildren().add(startDecoration.getVisual());
+		}
+		if (endDecoration != null) {
+			getChildren().add(endDecoration.getVisual());
+		}
 	}
 
-	public abstract T computeGeometry();
+	public abstract T computeGeometry(Point[] points);
+
+	/**
+	 * Returns all points of this connection which are relevant for computing
+	 * the curveNode, which are:
+	 * <ol>
+	 * <li>curve start point: computed using start anchor, start decoration, and
+	 * first way point (or end anchor)</li>
+	 * <li>way points</li>
+	 * <li>curve end point: computed using end anchor, end decoration, and last
+	 * way point (or start anchor)</li>
+	 * </ol>
+	 * 
+	 * @return all curve relevant points
+	 */
+	public Point[] getCurvePoints() {
+		Point[] points = new Point[wayPointAnchors.size() + 2];
+		points[0] = getCurveStartPoint();
+		for (int i = 0; i < wayPointAnchors.size(); i++) {
+			points[1 + i] = wayPointAnchors.get(i).getPosition(this);
+		}
+		points[points.length - 1] = getCurveEndPoint();
+		return points;
+	}
+
+	/**
+	 * Returns the start point for computing this connection's curve visual.
+	 * 
+	 * @return the start point for computing this connection's curve visual
+	 */
+	private Point getCurveStartPoint() {
+		if (startDecoration == null) {
+			return getStartPoint();
+		}
+
+		Point sp = getStartPoint();
+		Point next = wayPointAnchors.size() > 0 ? wayPointAnchors.get(0)
+				.getPosition(this) : getEndPoint();
+		Vector sv = new Vector(sp, next);
+
+		Point dsp = startDecoration.getLocalStartPoint();
+		Point dep = startDecoration.getLocalEndPoint();
+		Vector dv = new Vector(dsp, dep);
+
+		// TODO: move arrangement to somewhere else
+		return arrangeDecoration(startDecoration, sp, sv, dsp, dv);
+	}
+
+	/**
+	 * Arranges the given decoration according to the passed-in values. Returns
+	 * the transformed end point of the arranged decoration.
+	 * 
+	 * @param deco
+	 * @param start
+	 * @param direction
+	 * @param decoStart
+	 * @param decoDirection
+	 * @return the transformed end point of the arranged decoration
+	 */
+	private Point arrangeDecoration(IFXDecoration deco, Point start,
+			Vector direction, Point decoStart, Vector decoDirection) {
+		Node visual = deco.getVisual();
+		Point2D posInParent = visual.localToParent(visual.sceneToLocal(start.x, start.y));
+		visual.setLayoutX(posInParent.getX());
+		visual.setLayoutY(posInParent.getY());
+//		if (!direction.isNull() && !decoDirection.isNull()) {
+//			Angle angleCW = decoDirection.getAngleCW(direction);
+//			visual.setRotate(angleCW.deg());
+//		}
+		return start;
+	}
+
+	/**
+	 * Returns the end point for computing this connection's curve visual.
+	 * 
+	 * @return the end point for computing this connection's curve visual
+	 */
+	private Point getCurveEndPoint() {
+		if (endDecoration == null) {
+			return getEndPoint();
+		}
+
+		Point sp = getEndPoint();
+		Point next = wayPointAnchors.size() > 0 ? wayPointAnchors.get(
+				wayPointAnchors.size() - 1).getPosition(this) : getStartPoint();
+		Vector sv = new Vector(sp, next);
+
+		Point dsp = endDecoration.getLocalStartPoint();
+		Point dep = endDecoration.getLocalEndPoint();
+		Vector dv = new Vector(dsp, dep);
+
+		// TODO: move arrangement to somewhere else
+		return arrangeDecoration(endDecoration, sp, sv, dsp, dv);
+	}
 
 	/**
 	 * Updates the start and end anchor reference points after computing them

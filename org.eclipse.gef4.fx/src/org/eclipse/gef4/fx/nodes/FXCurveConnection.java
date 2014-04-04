@@ -14,6 +14,7 @@ package org.eclipse.gef4.fx.nodes;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polyline;
 
 public class FXCurveConnection extends AbstractFXConnection<ICurve> {
@@ -27,8 +28,8 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 	}
 
 	@Override
-	public ICurve computeGeometry() {
-		return new Polyline(getPoints());
+	public ICurve computeGeometry(Point[] points) {
+		return new Polyline(points);
 	}
 
 }
