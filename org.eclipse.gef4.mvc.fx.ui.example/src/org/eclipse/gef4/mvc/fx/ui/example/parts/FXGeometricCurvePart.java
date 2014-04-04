@@ -16,11 +16,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.Node;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Shape;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
+import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -37,6 +41,49 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
+	public static class ArrowHead extends Polyline implements IFXDecoration {
+		public ArrowHead() {
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0,
+					10.0, 0.0);
+		}
+
+		@Override
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Point getLocalEndPoint() {
+			return new Point(15, 0);
+		}
+
+		@Override
+		public Node getVisual() {
+			return this;
+		}
+	}
+	
+	public static class CircleHead extends Circle implements IFXDecoration {
+		public CircleHead() {
+			super(5);
+		}
+
+		@Override
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Point getLocalEndPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Node getVisual() {
+			return this;
+		}
+	}
+
 	private final FXSelectionBehavior selectionBehavior = new FXSelectionBehavior() {
 		@Override
 		public IGeometry getFeedbackGeometry() {
@@ -48,10 +95,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
+			{
+				setStartDecoration(new ArrowHead());
+				setEndDecoration(new CircleHead());
+			}
+
 			@Override
 			public ICurve computeGeometry(Point[] points) {
-				return FXGeometricCurve
-						.constructCurveFromWayPoints(points);
+				return FXGeometricCurve.constructCurveFromWayPoints(points);
 			}
 		};
 
@@ -90,9 +141,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						selectionBehavior.refreshHandles();
 						setRefreshVisual(true);
 						refreshVisual();
-						
-						// TODO: remove way point juggling here, just execute the operation
-						
+
+						// TODO: remove way point juggling here, just execute
+						// the operation
+
 						return op;
 					}
 				});
@@ -144,11 +196,27 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// apply stroke paint
 		if (visual.getCurveNode().getStroke() != curve.getStroke()) {
 			visual.getCurveNode().setStroke(curve.getStroke());
+			IFXDecoration startDecoration = visual.getStartDecoration();
+			if (startDecoration != null) {
+				((Shape) startDecoration.getVisual()).setStroke(curve.getStroke());
+			}
+			IFXDecoration endDecoration = visual.getEndDecoration();
+			if (endDecoration != null) {
+				((Shape) endDecoration.getVisual()).setStroke(curve.getStroke());
+			}
 		}
 
 		// stroke width
 		if (visual.getCurveNode().getStrokeWidth() != curve.getStrokeWidth()) {
 			visual.getCurveNode().setStrokeWidth(curve.getStrokeWidth());
+			IFXDecoration startDecoration = visual.getStartDecoration();
+			if (startDecoration != null) {
+				((Shape) startDecoration.getVisual()).setStrokeWidth(curve.getStrokeWidth());
+			}
+			IFXDecoration endDecoration = visual.getEndDecoration();
+			if (endDecoration != null) {
+				((Shape) endDecoration.getVisual()).setStrokeWidth(curve.getStrokeWidth());
+			}
 		}
 
 		// dashes
@@ -171,8 +239,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// based on the model
 		AbstractFXGeometricElement<?> anchorageContent = ((AbstractFXGeometricElementPart) anchorage)
 				.getContent();
-		AnchorType type = anchorageContent
-				.getAnchorType(getContent());
+		AnchorType type = anchorageContent.getAnchorType(getContent());
 		attachTo(visual, ((AbstractFXContentPart) anchorage).getAnchor(this),
 				type);
 	}
