@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013 itemis AG and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ * 
+ *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
@@ -213,6 +225,8 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 		if (endDecoration != null) {
 			getChildren().add(endDecoration.getVisual());
 		}
+
+		// FIXME: #432035 rotation of decorations is slightly off right now
 	}
 
 	public abstract T computeGeometry(Point[] points);
@@ -277,17 +291,24 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	private Point arrangeDecoration(IFXDecoration deco, Point start,
 			Vector direction, Point decoStart, Vector decoDirection) {
 		Node visual = deco.getVisual();
+
+		// position
 		Point2D posInParent = visual.localToParent(visual.sceneToLocal(start.x,
 				start.y));
 		visual.setLayoutX(posInParent.getX());
 		visual.setLayoutY(posInParent.getY());
+
+		// rotation
 		Angle angleCW = null;
 		if (!direction.isNull() && !decoDirection.isNull()) {
 			angleCW = decoDirection.getAngleCW(direction);
 			visual.getTransforms().clear();
 			visual.getTransforms().add(new Rotate(angleCW.deg(), 0, 0));
 		}
-		return angleCW == null ? start : start.getTranslated(decoDirection.getRotatedCW(angleCW).toPoint());
+
+		// return corresponding curve point
+		return angleCW == null ? start : start.getTranslated(decoDirection
+				.getRotatedCW(angleCW).toPoint());
 	}
 
 	/**
