@@ -239,36 +239,19 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// based on the model
 		AbstractFXGeometricElement<?> anchorageContent = ((AbstractFXGeometricElementPart) anchorage)
 				.getContent();
-		AnchorType type = anchorageContent.getAnchorType(getContent());
-		attachTo(visual, ((AbstractFXContentPart) anchorage).getAnchor(this),
-				type);
+		boolean isStart = anchorageContent.getSourceAnchoreds().contains(getContent());
+		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
+		if (isStart) {
+			visual.setStartAnchor(anchor);
+		} else {
+			visual.setEndAnchor(anchor);
+		}
 	}
 
 	@Override
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
 			Node anchorageVisual) {
-		detachFrom(visual, ((AbstractFXContentPart) anchorage).getAnchor(this));
-	}
-
-	private void attachTo(IFXConnection visual, IFXAnchor anchor,
-			AnchorType anchorType) {
-		if (anchorType != null) {
-			switch (anchorType) {
-			case START:
-				visual.setStartAnchor(anchor);
-				break;
-			case END:
-				visual.setEndAnchor(anchor);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported anchor type.");
-			}
-		} else {
-			throw new IllegalStateException("no <type> specified");
-		}
-	}
-
-	private void detachFrom(IFXConnection visual, IFXAnchor anchor) {
+		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (anchor == visual.getStartAnchor()) {
 			visual.setStartPoint(visual.getStartPoint());
 		} else if (anchor == visual.getEndAnchor()) {

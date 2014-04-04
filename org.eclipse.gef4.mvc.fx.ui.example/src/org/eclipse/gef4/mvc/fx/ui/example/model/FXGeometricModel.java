@@ -129,22 +129,14 @@ public class FXGeometricModel {
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
-		topLeftSelectionHandle.addAnchored(selectionBoundsTopLine,
-				AnchorType.START);
-		topRightSelectionHandle.addAnchored(selectionBoundsTopLine,
-				AnchorType.END);
-		topLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				AnchorType.START);
-		bottomLeftSelectionHandle.addAnchored(selectionBoundsLeftLine,
-				AnchorType.END);
-		bottomLeftSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				AnchorType.START);
-		bottomRightSelectionHandle.addAnchored(selectionBoundsBottomLine,
-				AnchorType.END);
-		topRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				AnchorType.START);
-		bottomRightSelectionHandle.addAnchored(selectionBoundsRightLine,
-				AnchorType.END);
+		topLeftSelectionHandle.addSourceAnchored(selectionBoundsTopLine);
+		topRightSelectionHandle.addTargetAnchored(selectionBoundsTopLine);
+		topLeftSelectionHandle.addSourceAnchored(selectionBoundsLeftLine);
+		bottomLeftSelectionHandle.addTargetAnchored(selectionBoundsLeftLine);
+		bottomLeftSelectionHandle.addSourceAnchored(selectionBoundsBottomLine);
+		bottomRightSelectionHandle.addTargetAnchored(selectionBoundsBottomLine);
+		topRightSelectionHandle.addSourceAnchored(selectionBoundsRightLine);
+		bottomRightSelectionHandle.addTargetAnchored(selectionBoundsRightLine);
 
 		// TODO: anchor points to letter shapes
 	}
