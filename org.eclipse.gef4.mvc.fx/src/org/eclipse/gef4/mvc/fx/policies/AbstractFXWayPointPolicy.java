@@ -137,9 +137,14 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 			op = new FXChangeWayPointsOperation("Change way points",
 					getConnection(), initialWayPoints, currentWayPoints);
 		}
-		
-//		System.out.println("op: " + op);
 
+		// execute locally
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
+		
 		return op;
 	}
 
