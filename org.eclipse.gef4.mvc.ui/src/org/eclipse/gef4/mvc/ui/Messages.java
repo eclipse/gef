@@ -1,4 +1,4 @@
-package org.eclipse.gef4.mvc.eclipse.ui;
+package org.eclipse.gef4.mvc.ui;
 
 import org.eclipse.osgi.util.NLS;
 

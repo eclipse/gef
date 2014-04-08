@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef4.mvc.eclipse.ui.properties;
+package org.eclipse.gef4.mvc.ui.properties;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.ICompositeOperation;

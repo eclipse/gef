@@ -8,4 +8,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.views,
  org.eclipse.gef4.mvc;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.eclipse.ui.properties
+Export-Package: org.eclipse.gef4.mvc.ui.properties
