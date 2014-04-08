@@ -16,8 +16,8 @@
    <license url="%licenseURL">
       %license
    </license>
-   
-    <url>
+
+   <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
    </url>
@@ -32,6 +32,14 @@
 
    <includes
          id="org.eclipse.gef4.geometry.doc"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.geometry.convert.fx"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.geometry.convert.swt"
          version="0.0.0"/>
 
 </feature>
