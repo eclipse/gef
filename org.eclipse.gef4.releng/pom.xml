@@ -331,15 +331,14 @@
 		<module>../org.eclipse.gef4.mvc-feature</module>
 		<module>../org.eclipse.gef4.mvc.ui</module>
 		<module>../org.eclipse.gef4.mvc.ui-feature</module>
-		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
-		<module>../org.eclipse.gef4.mvc.ui.sdk-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx</module>
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.sdk-feature</module>
-		<module>../org.eclipse.gef4.mvc.fx.ui.sdk-feature</module>
-
+		<module>../org.eclipse.gef4.mvc.doc</module>
+		<module>../org.eclipse.gef4.mvc.doc-feature</module>
+		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
+		
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests</module>

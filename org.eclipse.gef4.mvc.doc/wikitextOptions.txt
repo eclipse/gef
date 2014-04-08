@@ -1,0 +1,2 @@
+wiki.title=GEF4 MVC Documentation
+wiki.path=GEF/GEF4/MVC

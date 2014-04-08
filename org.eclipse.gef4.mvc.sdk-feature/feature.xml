@@ -16,8 +16,8 @@
    <license url="%licenseURL">
       %license
    </license>
-   
-    <url>
+
+   <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
    </url>
@@ -28,6 +28,34 @@
 
    <includes
          id="org.eclipse.gef4.mvc.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.ui"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.ui.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.fx"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.fx.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.fx.ui"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.fx.ui.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.mvc.doc"
          version="0.0.0"/>
 
 </feature>
