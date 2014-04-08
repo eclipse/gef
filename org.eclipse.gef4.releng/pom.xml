@@ -24,8 +24,7 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<encoding>UTF-8</encoding>
 					<!-- add JavaFX to classpath -->
 					<extraClasspathElements>
 						<extraClasspathElement>
@@ -99,14 +98,16 @@
 								<if>
 									<available file="wikitextOptions.txt" />
 									<then>
-										<ant antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateWikitext.xml"
+										<ant
+											antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateWikitext.xml"
 											inheritRefs="true" />
 									</then>
 								</if>
 								<if>
 									<available file="javadocOptions.txt" />
 									<then>
-										<ant antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateJavadoc.xml"
+										<ant
+											antfile="${project.basedir}/../org.eclipse.gef4.releng/scripts/generateJavadoc.xml"
 											inheritRefs="true" />
 									</then>
 								</if>
@@ -263,6 +264,14 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-compiler-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<useJDK>BREE</useJDK>
+						</configuration>
+					</plugin>
+					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
 						<version>${cbi-plugins.version}</version>
@@ -306,8 +315,8 @@
 
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
-		<!-- <module>../org.eclipse.gef4.fx.tests</module>  -->
-		<module>../org.eclipse.gef4.fx.doc</module> 
+		<!-- <module>../org.eclipse.gef4.fx.tests</module> -->
+		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
 
