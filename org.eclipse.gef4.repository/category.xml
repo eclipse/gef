@@ -69,6 +69,12 @@
    <feature url="features/org.eclipse.gef4.mvc.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.doc" version="0.1.0.qualifier">
       <category name="GEF4 MVC"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.geometry.convert.fx_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.fx" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.geometry.convert.swt_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.swt" version="0.1.0.qualifier">
+      <category name="GEF4 Geometry"/>
+   </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 FX" label="GEF4 FX"/>
    <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
