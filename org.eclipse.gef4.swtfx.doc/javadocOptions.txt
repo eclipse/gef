@@ -10,8 +10,9 @@
 -windowtitle "GEF4 SwtFX API Reference"
 -doctitle "GEF4 SwtFX API Reference"
 -header "<b>GEF4 SwtFX</b><br>@build@"
--bottom "Copyright (c) 2013 itemis AG, and others. All rights reserved."
--link http://docs.oracle.com/javase/1.5.0/docs/api/
+-bottom "Copyright (c) 2014 itemis AG, and others. All rights reserved."
+-link http://docs.oracle.com/javase/7/docs/api/
+-link http://docs.oracle.com/javafx/2/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
 
