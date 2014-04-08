@@ -21,7 +21,6 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  * value changes also in case the editor is not active.
  * 
  * @author anyssen
- * @since 3.7
  */
 public class UndoablePropertySheetPage extends PropertySheetPage {
 
@@ -29,16 +28,11 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	private final IOperationHistoryListener operationHistoryListener;
 
 	/**
-	 * Constructs a new {@link UndoablePropertySheetPage}.
+	 * Constructs a new {@link UndoablePropertySheetPage} using the provided
+	 * {@link IOperationHistory}.
 	 * 
 	 * @param operationHistory
 	 *            The {@link IOperationHistory} shared with the editor.
-	 * @param undoAction
-	 *            The global action handler to be registered for undo
-	 *            operations.
-	 * @param redoAction
-	 *            The global action handler to be registered for redo
-	 *            operations.
 	 */
 	public UndoablePropertySheetPage(IOperationHistory operationHistory) {
 		this.operationHistory = operationHistory;

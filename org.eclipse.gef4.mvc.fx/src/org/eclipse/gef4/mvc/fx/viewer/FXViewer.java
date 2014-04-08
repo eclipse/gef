@@ -31,10 +31,10 @@ public class FXViewer extends AbstractVisualViewer<Node> {
 	}
 
 	/**
-	 * Creates the {@link FXRootVisualPart} which provides the root element for
+	 * Creates the {@link FXRootPart} which provides the root element for
 	 * the JavaFX {@link Scene}.
 	 * 
-	 * @return an {@link FXRootVisualPart}
+	 * @return an {@link FXRootPart}
 	 */
 	protected FXRootPart createRootPart() {
 		return new FXRootPart();

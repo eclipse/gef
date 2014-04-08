@@ -27,7 +27,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
  * IPropertySources by the PropertySheetViewer. Clients can construct a
  * {@link org.eclipse.ui.views.properties.PropertySheetPage} and use this class
  * as the root entry. All changes made to property sources displayed on that
- * page will be done using the provided command stack.
+ * page will be done using the provided {@link IOperationHistory}.
  * <p>
  * <b>NOTE:</b> If you intend to use an IPropertySourceProvider for a
  * PropertySheetPage whose root entry is an instance of of
@@ -40,20 +40,18 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	private IOperationHistoryListener operationHistoryListener;
 
 	/**
-	 * Constructs a non-root, i.e. child entry, which may obtain the command
-	 * stack from its parent.
+	 * Constructs a non-root, i.e. child entry, which may obtain the
+	 * {@link IOperationHistory} from its parent.
 	 * 
-	 * @since 3.1
 	 */
 	private UndoablePropertySheetEntry() {
 	}
 
 	/**
-	 * Constructs the root entry using the given command stack.
+	 * Constructs the root entry using the given {@link IOperationHistory}.
 	 * 
 	 * @param operationHistory
-	 *            the command stack to use
-	 * @since 3.1
+	 *            the operation history to use
 	 */
 	public UndoablePropertySheetEntry(IOperationHistory operationHistory) {
 		this.operationHistory = operationHistory;
@@ -64,7 +62,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 				refreshFromRoot();
 			}
 		};
-		this.operationHistory.addOperationHistoryListener(operationHistoryListener);
+		this.operationHistory
+				.addOperationHistoryListener(operationHistoryListener);
 	}
 
 	/**
@@ -79,21 +78,22 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 */
 	public void dispose() {
 		if (operationHistory != null)
-			operationHistory.removeOperationHistoryListener(operationHistoryListener);
+			operationHistory
+					.removeOperationHistoryListener(operationHistoryListener);
 		super.dispose();
 	}
 
 	/**
-	 * Returns the {@link CommandStack} that is used by this entry. It is
+	 * Returns the {@link IOperationHistory} that is used by this entry. It is
 	 * obtained from the parent in case the entry is not a root entry.
 	 * 
-	 * @return the {@link CommandStack} to be used.
-	 * @since 3.7
+	 * @return the {@link IOperationHistory} to be used.
 	 */
 	protected IOperationHistory getOperationHistory() {
-		// only the root has, and is listening too, the command stack
+		// only the root has, and is listening too, the IOperationHistory
 		if (getParent() != null)
-			return ((UndoablePropertySheetEntry) getParent()).getOperationHistory();
+			return ((UndoablePropertySheetEntry) getParent())
+					.getOperationHistory();
 		return operationHistory;
 	}
 
@@ -122,7 +122,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 		}
 		if (change) {
 			try {
-				getOperationHistory().execute(cc, new NullProgressMonitor(), null);
+				getOperationHistory().execute(cc, new NullProgressMonitor(),
+						null);
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -158,7 +159,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 		else {
 			// I am the root entry
 			try {
-				operationHistory.execute(command, new NullProgressMonitor(), null);
+				operationHistory.execute(command, new NullProgressMonitor(),
+						null);
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}

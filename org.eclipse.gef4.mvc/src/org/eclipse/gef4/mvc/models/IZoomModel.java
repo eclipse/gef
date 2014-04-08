@@ -11,20 +11,22 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
+import java.beans.PropertyChangeEvent;
+
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 /**
  * The {@link IZoomModel} is used to store the current viewer's zoom factor,
  * which should get adjusted by a zooming tool as a response to user interaction
- * (via mouse or gesture events, or by using scroll bars). 
- * TODO: We should
+ * (via mouse or gesture events, or by using scroll bars). TODO: We should
  * provide a base implementation for a zooming tool here
  * 
  * A tool is also needed to propagate the current zoom factor to the
- * {@link IZoomingPolicy} of the {@link IRootPart}, which has to apply the
- * zoom factor to the view. 
- * TODO: Provide base implementations for this tool and the edit policy as well.
+ * {@link IZoomPolicy} of the {@link IRootPart}, which has to apply the zoom
+ * factor to the view. TODO: Provide base implementations for this tool and the
+ * edit policy as well.
  * 
  * @author mwienand
  * 

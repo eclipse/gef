@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 public class ContentBehavior<V> extends AbstractBehavior<V> implements
@@ -68,23 +69,9 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 	}
 
 	/**
-	 * Updates the set of children EditParts so that it is in sync with the
-	 * model children. This method is called from {@link #refresh()}, and may
-	 * also be called in response to notification from the model. This method
-	 * requires linear time to complete. Clients should call this method as few
-	 * times as possible. Consider also calling
-	 * {@link #removeNodeChild(IEditPart)} and {@link #addChild(IEditPart, int)}
-	 * which run in constant time.
-	 * <P>
-	 * The update is performed by comparing the existing EditParts with the set
-	 * of model children returned from {@link #getModelNodeChildren()}.
-	 * EditParts whose models no longer exist are
-	 * {@link #removeNodeChild(IEditPart) removed}. New models have their
-	 * EditParts {@link #createNodeChild(Object) created}.
-	 * <P>
-	 * This method should <em>not</em> be overridden.
-	 * 
-	 * @see #getContentChildren()
+	 * Updates the host {@link IVisualPart}'s children {@link IContentPart}s (see
+	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
+	 * content children that is passed in.
 	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(List<Object> contentChildren) {
@@ -147,18 +134,6 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 		}
 	}
 
-	/**
-	 * Create the child <code>EditPart</code> for the given model object. This
-	 * method is called from {@link #synchronizeContentChildren()}.
-	 * <P>
-	 * By default, the implementation will delegate to the
-	 * <code>EditPartViewer</code>'s {@link IContentPartFactory}. Subclasses may
-	 * override this method instead of using a Factory.
-	 * 
-	 * @param model
-	 *            the Child model object
-	 * @return The child EditPart
-	 */
 	protected IContentPart<V> findOrCreatePartFor(Object model) {
 		Map<Object, IContentPart<V>> contentPartMap = getHost().getRoot()
 				.getViewer().getContentPartMap();
@@ -175,6 +150,11 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 		}
 	}
 
+	/**
+	 * Updates the host {@link IVisualPart}'s anchored {@link IContentPart}s
+	 * (see {@link IVisualPart#getAnchoreds()}) so that it is in sync with the
+	 * set of content anchored that is passed in.
+	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentAnchored(List<Object> contentAnchored) {
 		int i;

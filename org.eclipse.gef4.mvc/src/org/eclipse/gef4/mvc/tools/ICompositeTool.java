@@ -59,8 +59,7 @@ public interface ICompositeTool<V> extends ITool<V> {
 	/**
 	 * Registers all sub-tools on the supplied {@link IDomain}. If the
 	 * supplied {@link IDomain} is <code>null</code> all sub-tools are
-	 * unregistered. (Un-)registration is done via the designated
-	 * {@link #registerListeners()} and {@link #unregisterListeners()} methods.
+	 * deactivated using the {@link #deactivate()} .
 	 * 
 	 * @param domain
 	 */

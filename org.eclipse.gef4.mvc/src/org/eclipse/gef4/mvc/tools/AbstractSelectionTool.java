@@ -46,7 +46,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 
 	/**
 	 * 
-	 * @param targetEditPart
+	 * @param targetPart
 	 * @param append
 	 * @return <code>true</code> on selection change, otherwise
 	 *         <code>false</code>

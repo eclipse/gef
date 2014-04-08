@@ -30,11 +30,13 @@ public class BehaviorUtils {
 	 * the given list of {@link IContentPart}s.
 	 * 
 	 * @param root
-	 *            root part
+	 *            The {@link IRootPart}, the anchored {@link IVisualPart}s are
+	 *            to be added to as children
 	 * @param anchorages
-	 *            content parts
-	 * @param handles
-	 *            handle parts
+	 *            the {@link IVisualPart}s, the anchored {@link IVisualPart}s
+	 *            are to be added to as anchoreds
+	 * @param anchords
+	 *            the {@link IVisualPart}s to be anchored
 	 * @see #removeAnchoreds(IRootPart, List, List)
 	 */
 	public static <V> void addAnchoreds(IRootPart<V> root,
@@ -69,8 +71,8 @@ public class BehaviorUtils {
 		}
 	}
 
-	public static <V> List<IFeedbackPart<V>> createFeedback(IBehavior<V> behavior,
-			List<IContentPart<V>> targets) {
+	public static <V> List<IFeedbackPart<V>> createFeedback(
+			IBehavior<V> behavior, List<IContentPart<V>> targets) {
 		IVisualPart<V> host = behavior.getHost();
 		IFeedbackPartFactory<V> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
@@ -79,8 +81,8 @@ public class BehaviorUtils {
 		return feedbackParts;
 	}
 
-	
-	public static <V> List<IHandlePart<V>> createHandles(IBehavior<V> behavior, List<IContentPart<V>> targets) {
+	public static <V> List<IHandlePart<V>> createHandles(IBehavior<V> behavior,
+			List<IContentPart<V>> targets) {
 		IVisualPart<V> host = behavior.getHost();
 		IHandlePartFactory<V> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
@@ -88,5 +90,5 @@ public class BehaviorUtils {
 				behavior, Collections.emptyMap());
 		return handleParts;
 	}
-	
+
 }

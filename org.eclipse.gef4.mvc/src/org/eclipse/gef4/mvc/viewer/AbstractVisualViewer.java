@@ -55,7 +55,7 @@ public abstract class AbstractVisualViewer<V> implements
 	private IFeedbackPartFactory<V> feedbackPartFactory;
 
 	/**
-	 * @see IVisualViewer#setContentPartFactory(org.eclipse.gef4.mvc.viewer.IContentPartFactory)
+	 * @see IVisualViewer#setContentPartFactory(IContentPartFactory)
 	 */
 	public void setContentPartFactory(IContentPartFactory<V> factory) {
 		this.contentPartFactory = factory;
@@ -115,7 +115,7 @@ public abstract class AbstractVisualViewer<V> implements
 	}
 
 	/**
-	 * @see IVisualViewer#setContents(Object)
+	 * @see IVisualViewer#setContents(List)
 	 */
 	public void setContents(List<Object> contents) {
 		if (contentPartFactory == null) {

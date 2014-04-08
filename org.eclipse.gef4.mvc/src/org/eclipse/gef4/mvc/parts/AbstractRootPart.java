@@ -54,7 +54,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	}
 
 	/**
-	 * @see IRootPart#setViewer(EditPartViewer)
+	 * @see IRootPart#setViewer(IVisualViewer)
 	 */
 	public void setViewer(IVisualViewer<V> newViewer) {
 		if (viewer == newViewer)

@@ -42,12 +42,18 @@ public interface IFeedbackPartFactory<V> {
 	 * }
 	 * </pre>
 	 * 
-	 * </quote>
-	 * 
 	 * @param targets
+	 *            The target {@link IContentPart}s for which feedback is to be
+	 *            created
 	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiated the creation of
+	 *            feedback
 	 * @param contextMap
-	 * @return
+	 *            A map to fill in additional state-based context information
+	 *            that cannot be queried from the state-less context
+	 *            {@link IBehavior}
+	 * @return A list of {@link IFeedbackPart}s that are to be used to indicate
+	 *         feedback of the given targets.
 	 */
 	public List<IFeedbackPart<V>> createFeedbackParts(
 			List<IContentPart<V>> targets, IBehavior<V> contextBehavior,

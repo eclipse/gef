@@ -159,7 +159,7 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 	 * target parts.
 	 * 
 	 * @param targetParts
-	 * @return
+	 * @return the unioned visual bounds of all target parts
 	 */
 	private Rectangle getSelectionBounds(List<IContentPart<Node>> targetParts) {
 		if (targetParts.isEmpty()) {

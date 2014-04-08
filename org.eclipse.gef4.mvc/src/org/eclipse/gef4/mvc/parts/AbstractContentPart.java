@@ -30,7 +30,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	}
 
 	/**
-	 * @see org.eclipse.gef4.mvc.parts.IEditPart#getContent()
+	 * @see IContentPart#getContent()
 	 */
 	public Object getContent() {
 		return content;
@@ -40,7 +40,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * Set the primary model object that this EditPart represents. This method
 	 * is used by an <code>EditPartFactory</code> when creating an EditPart.
 	 * 
-	 * @see IEditPart#setContent(Object)
+	 * @see IContentPart#setContent(Object)
 	 */
 	public void setContent(Object content) {
 		if (this.content == content) {
