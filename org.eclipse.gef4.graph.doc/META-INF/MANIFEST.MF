@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 Graph Documentation
+Bundle-SymbolicName: org.eclipse.gef4.graph.doc;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.gef4.graph;bundle-version="0.1.0"

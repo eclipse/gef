@@ -75,6 +75,15 @@
    <feature url="features/org.eclipse.gef4.geometry.convert.swt_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry.convert.swt" version="0.1.0.qualifier">
       <category name="GEF4 Geometry"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.graph_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph" version="0.1.0.qualifier">
+      <category name="GEF4 Graph"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.graph.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph.doc" version="0.1.0.qualifier">
+      <category name="GEF4 Graph"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.graph.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.graph.sdk" version="0.1.0.qualifier">
+      <category name="GEF4 Graph"/>
+   </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 FX" label="GEF4 FX"/>
    <category-def name="GEF4 SwtFX" label="GEF4 SwtFX"/>
@@ -82,4 +91,5 @@
    <category-def name="GEF4 Cloudio" label="GEF4 Cloudio"/>
    <category-def name="GEF4 MVC" label="GEF4 MVC"/>
    <category-def name="GEF4 Layout" label="GEF4 Layout"/>
+   <category-def name="GEF4 Graph" label="GEF4 Graph"/>
 </site>

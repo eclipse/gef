@@ -1,0 +1,2 @@
+wiki.title=GEF4 Graph Documentation
+wiki.path=GEF/GEF4/Graph
