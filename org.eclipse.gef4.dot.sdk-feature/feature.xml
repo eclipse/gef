@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.gef4.dot.sdk"
+      label="GEF4 DOT SDK"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.gef4.dot"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.dot.source"
+         version="0.0.0"/>
+         
+   <includes
+         id="org.eclipse.gef4.dot.ui"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.dot.ui.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.dot.doc"
+         version="0.0.0"/>
+
+   <requires>
+      <import feature="org.eclipse.gef4.graph.sdk" version="0.1.0.qualifier"/>
+   </requires>
+
+</feature>

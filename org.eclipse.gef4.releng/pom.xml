@@ -355,12 +355,13 @@
 		<module>../org.eclipse.gef4.graph.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.dot</module>
+		<module>../org.eclipse.gef4.dot-feature</module>
 		<module>../org.eclipse.gef4.dot.ui</module>
-		<!-- <module>../org.eclipse.gef4.dot-feature</module> -->
+		<module>../org.eclipse.gef4.dot.ui-feature</module>
 		<module>../org.eclipse.gef4.dot.doc</module>
-		<!-- <module>../org.eclipse.gef4.dot.doc-feature</module> -->
+		<module>../org.eclipse.gef4.dot.doc-feature</module>
 		<module>../org.eclipse.gef4.dot.tests</module>
-		<!-- <module>../org.eclipse.gef4.dot.sdk-feature</module> -->
+		<module>../org.eclipse.gef4.dot.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.layout</module>
 		<module>../org.eclipse.gef4.layout-feature</module>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.gef4.dot.doc"
+      label="GEF4 DOT Documentation"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org"
+      plugin="org.eclipse.gef4.dot.doc">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.eclipse.gef4.dot.doc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
