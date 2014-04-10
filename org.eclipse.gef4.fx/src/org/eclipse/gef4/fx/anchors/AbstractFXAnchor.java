@@ -43,7 +43,9 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
-			recomputePosition(change.getKey(), change.getValueAdded());
+			if(change.getValueAdded() != null){
+				recomputePosition(change.getKey(), change.getValueAdded());
+			}
 		}
 	};
 	
