@@ -36,6 +36,7 @@ import org.eclipse.gef4.dot.internal.dot.parser.dot.util.DotSwitch;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.graph.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**

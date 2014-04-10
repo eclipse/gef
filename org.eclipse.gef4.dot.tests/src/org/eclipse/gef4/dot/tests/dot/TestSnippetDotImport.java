@@ -12,10 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef4.dot.DotImport;
-import org.eclipse.gef4.dot.internal.dot.ZestStyle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.graph.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;

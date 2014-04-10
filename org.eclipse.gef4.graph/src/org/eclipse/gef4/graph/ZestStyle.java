@@ -6,7 +6,7 @@
  * <p/>
  * Contributors: Fabian Steeg - initial API and implementation; see bug 372365
  *******************************************************************************/
-package org.eclipse.gef4.dot.internal.dot;
+package org.eclipse.gef4.graph;
 
 public enum ZestStyle {
 	CONNECTIONS_DIRECTED, CONNECTIONS_SOLID, LINE_SOLID, LINE_DASHDOT, LINE_DOT, LINE_DASH, LINE_DASHDOTDOT, NONE, GRAPH_DIRECTED, GRAPH_UNDIRECTED
