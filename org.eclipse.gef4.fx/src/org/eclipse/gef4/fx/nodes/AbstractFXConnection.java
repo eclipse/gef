@@ -425,8 +425,8 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 				Node anchored = change.getKey();
 				if (anchored == AbstractFXConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
-					if (!(startAnchor instanceof FXStaticAnchor)) {
-						startAnchor.setReferencePoint(
+					if (!(getStartAnchor() instanceof FXStaticAnchor)) {
+						getStartAnchor().setReferencePoint(
 								AbstractFXConnection.this, referencePoints[0]);
 					}
 					refreshGeometry();
