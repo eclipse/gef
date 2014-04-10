@@ -23,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
@@ -46,7 +47,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		}
 	};
 	
-	private VisualChangeListener anchorageVisualListener = new VisualChangeListener() {
+	private VisualChangeListener anchorageVisualChangeListener = new VisualChangeListener() {
 		@Override
 		protected void transformChanged(Transform oldTransform,
 				Transform newTransform) {
@@ -56,6 +57,20 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		@Override
 		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
 			recomputePositions();
+		}
+	};
+	
+	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
+
+		@Override
+		public void changed(ObservableValue<? extends Scene> observable, Scene oldValue,
+				Scene newValue) {
+			if(oldValue != null){
+				anchorageVisualChangeListener.unregister();
+			}
+			if(newValue != null){
+				anchorageVisualChangeListener.register(getAnchorageNode(), newValue.getRoot());
+			}
 		}
 	};
 
@@ -83,10 +98,17 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
-				anchorageVisualListener.unregister();
+				anchorageVisualChangeListener.unregister();
+				oldAnchorage.sceneProperty().removeListener(anchorageVisualSceneChangeListener);
 			}
 			if (newAnchorage != null) {
-				anchorageVisualListener.register(newAnchorage, newAnchorage.getScene().getRoot());
+				// register listener on scene property, so we can react to changes of the scene property of the anchorage node
+				newAnchorage.sceneProperty().addListener(anchorageVisualSceneChangeListener);
+				// if scene is already set, register anchorage visual listener directly (else do this within scene change listener)
+				Scene scene = newAnchorage.getScene();
+				if(scene != null){
+					anchorageVisualChangeListener.register(newAnchorage, scene.getRoot());
+				}
 			}
 		}
 	};
