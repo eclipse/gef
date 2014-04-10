@@ -32,7 +32,8 @@ import javafx.scene.Scene;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -69,7 +70,7 @@ public abstract class FXView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		canvas = createCanvas(parent);
-		FXViewer viewer = createViewer(canvas);
+		FXCanvasViewer viewer = createViewer(canvas);
 		configureViewer(viewer);
 		FXDomain domain = createDomain();
 		configureDomain(domain);
@@ -85,8 +86,8 @@ public abstract class FXView extends ViewPart {
 		return new FXDomain();
 	}
 
-	protected FXViewer createViewer(final FXCanvas canvas) {
-		return new FXViewer(canvas) {
+	protected FXCanvasViewer createViewer(final FXCanvas canvas) {
+		return new FXCanvasViewer(canvas) {
 			@Override
 			protected Scene createScene(Parent rootVisual) {
 				return new SwtFXScene(rootVisual);
@@ -99,7 +100,8 @@ public abstract class FXView extends ViewPart {
 		domain.setUndoContext(undoContext);
 	}
 
-	private void configureViewer(FXViewer viewer) {
+	protected void configureViewer(FXCanvasViewer viewer) {
+		viewer.setRootPart(new FXRootPart());
 		viewer.setHandlePartFactory(getHandlePartFactory());
 		viewer.setContentPartFactory(getContentPartFactory());
 		viewer.setFeedbackPartFactory(getFeedbackPartFactory());

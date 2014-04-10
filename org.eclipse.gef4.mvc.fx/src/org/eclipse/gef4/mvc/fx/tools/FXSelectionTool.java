@@ -16,7 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -48,14 +48,14 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 	};
 
 	protected void registerListeners() {
-		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		((IFXViewer) getDomain().getViewer()).getScene().addEventHandler(
+				MouseEvent.MOUSE_PRESSED, pressedHandler);
 	};
 
 	@Override
 	protected void unregisterListeners() {
-		((FXViewer) getDomain().getViewer()).getCanvas().getScene()
-				.removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		((IFXViewer) getDomain().getViewer()).getScene().removeEventHandler(
+				MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
 
 }

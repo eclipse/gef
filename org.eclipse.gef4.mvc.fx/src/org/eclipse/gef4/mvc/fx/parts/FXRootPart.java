@@ -21,7 +21,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -126,7 +126,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		if (getViewer() != null) {
 			unregisterFromVisualPartMap();
 		}
-		if (newViewer != null && !(newViewer instanceof FXViewer)) {
+		if (newViewer != null && !(newViewer instanceof IFXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setViewer(newViewer);
@@ -136,8 +136,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	public FXViewer getViewer() {
-		return (FXViewer) super.getViewer();
+	public IFXViewer getViewer() {
+		return (IFXViewer) super.getViewer();
 	}
 
 	@Override

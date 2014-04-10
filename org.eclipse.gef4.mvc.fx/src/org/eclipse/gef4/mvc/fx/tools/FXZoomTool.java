@@ -16,7 +16,7 @@ import javafx.scene.input.ZoomEvent;
 
 import org.eclipse.gef4.fx.gestures.FXPinchGesture;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractZoomTool;
 
@@ -52,8 +52,7 @@ public class FXZoomTool extends AbstractZoomTool<Node> {
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas()
-				.getScene());
+		gesture.setScene(((IFXViewer) getDomain().getViewer()).getScene());
 	}
 
 	@Override

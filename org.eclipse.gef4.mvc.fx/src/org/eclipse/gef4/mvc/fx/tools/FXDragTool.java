@@ -22,7 +22,7 @@ import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -49,14 +49,16 @@ public class FXDragTool extends AbstractTool<Node> {
 		}
 
 		@Override
-		protected void drag(Node target, MouseEvent e, double dx, double dy, List<Node> nodesUnderMouse) {
+		protected void drag(Node target, MouseEvent e, double dx, double dy,
+				List<Node> nodesUnderMouse) {
 			FXDragTool.this.drag(FXPartUtils.getTargetParts(getDomain()
 					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					e, new Dimension(dx, dy), nodesUnderMouse);
 		}
 
 		@Override
-		protected void release(Node target, MouseEvent e, double dx, double dy, List<Node> nodesUnderMouse) {
+		protected void release(Node target, MouseEvent e, double dx, double dy,
+				List<Node> nodesUnderMouse) {
 			FXDragTool.this.release(FXPartUtils.getTargetParts(getDomain()
 					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					e, new Dimension(dx, dy), nodesUnderMouse);
@@ -76,7 +78,8 @@ public class FXDragTool extends AbstractTool<Node> {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
 			if (policy != null)
-				policy.drag(e, delta, nodesUnderMouse, getPartsUnderMouse(nodesUnderMouse));
+				policy.drag(e, delta, nodesUnderMouse,
+						getPartsUnderMouse(nodesUnderMouse));
 		}
 	}
 
@@ -85,14 +88,16 @@ public class FXDragTool extends AbstractTool<Node> {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
 			if (policy != null)
-				policy.release(e, delta, nodesUnderMouse, getPartsUnderMouse(nodesUnderMouse));
+				policy.release(e, delta, nodesUnderMouse,
+						getPartsUnderMouse(nodesUnderMouse));
 		}
 	}
 
 	private List<IContentPart<Node>> getPartsUnderMouse(
 			List<Node> nodesUnderMouse) {
 		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
-		Map<Node, IVisualPart<Node>> partMap = getDomain().getViewer().getVisualPartMap();
+		Map<Node, IVisualPart<Node>> partMap = getDomain().getViewer()
+				.getVisualPartMap();
 		for (Node node : nodesUnderMouse) {
 			if (partMap.containsKey(node)) {
 				IVisualPart<Node> part = partMap.get(node);
@@ -107,8 +112,7 @@ public class FXDragTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		gesture.setScene(((FXViewer) getDomain().getViewer()).getCanvas()
-				.getScene());
+		gesture.setScene(((IFXViewer) getDomain().getViewer()).getScene());
 	}
 
 	@Override

@@ -84,14 +84,6 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	Map<V, IVisualPart<V>> getVisualPartMap();
 
 	/**
-	 * Reveals the given EditPart if it is not visible.
-	 * 
-	 * @param editpart
-	 *            the EditPart to reveal
-	 */
-	void reveal(IVisualPart<V> visualPart);
-
-	/**
 	 * Sets the <i>root</i> of this viewer. The root should not be confused with
 	 * the <i>contents</i>.
 	 * 
