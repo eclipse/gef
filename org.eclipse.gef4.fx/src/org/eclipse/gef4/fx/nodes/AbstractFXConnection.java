@@ -37,8 +37,8 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
 
-	private IFXAnchor startAnchor = new FXStaticAnchor(this, new Point());
-	private IFXAnchor endAnchor = new FXStaticAnchor(this, new Point());
+	private IFXAnchor startAnchor = null;
+	private IFXAnchor endAnchor = null;
 	private List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>();
 
 	private MapChangeListener<Node, Point> startPosCL = createStartPositionListener();
@@ -75,11 +75,17 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public IFXAnchor getStartAnchor() {
+		if (startAnchor == null) {
+			startAnchor = new FXStaticAnchor(this, new Point());
+		}
 		return startAnchor;
 	}
 
 	@Override
 	public IFXAnchor getEndAnchor() {
+		if (endAnchor == null) {
+			endAnchor = new FXStaticAnchor(this, new Point());
+		}
 		return endAnchor;
 	}
 
@@ -90,7 +96,9 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public void setStartAnchor(IFXAnchor startAnchor) {
-		this.startAnchor.positionProperty().removeListener(startPosCL);
+		if (this.startAnchor != null) {
+			this.startAnchor.positionProperty().removeListener(startPosCL);
+		}
 		this.startAnchor = startAnchor;
 		startAnchor.positionProperty().addListener(startPosCL);
 		refreshReferencePoints();
@@ -99,7 +107,9 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public void setEndAnchor(IFXAnchor endAnchor) {
-		this.endAnchor.positionProperty().removeListener(endPosCL);
+		if (this.endAnchor != null) {
+			this.endAnchor.positionProperty().removeListener(endPosCL);
+		}
 		this.endAnchor = endAnchor;
 		endAnchor.positionProperty().addListener(endPosCL);
 		refreshReferencePoints();
@@ -173,7 +183,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public Point getStartPoint() {
-		return startAnchor.getPosition(this);
+		return getStartAnchor().getPosition(this);
 	}
 
 	@Override
@@ -183,7 +193,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public Point getEndPoint() {
-		return endAnchor.getPosition(this);
+		return getEndAnchor().getPosition(this);
 	}
 
 	@Override
@@ -340,11 +350,11 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	 */
 	protected void refreshReferencePoints() {
 		Point[] referencePoints = computeReferencePoints();
-		if (!(startAnchor instanceof FXStaticAnchor)) {
-			startAnchor.setReferencePoint(this, referencePoints[0]);
+		if (!(getStartAnchor() instanceof FXStaticAnchor)) {
+			getStartAnchor().setReferencePoint(this, referencePoints[0]);
 		}
-		if (!(endAnchor instanceof FXStaticAnchor)) {
-			endAnchor.setReferencePoint(this, referencePoints[1]);
+		if (!(getEndAnchor() instanceof FXStaticAnchor)) {
+			getEndAnchor().setReferencePoint(this, referencePoints[1]);
 		}
 	}
 
@@ -364,7 +374,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 		Point endReference = start;
 
 		// first uncontained way point is start reference
-		Node startNode = startAnchor.getAnchorageNode();
+		Node startNode = getStartAnchor().getAnchorageNode();
 		if (startNode != null) {
 			for (Point p : getWayPoints()) {
 				Point2D local = startNode.sceneToLocal(localToScene(p.x, p.y));
@@ -376,7 +386,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 		}
 
 		// last uncontained way point is end reference
-		Node endNode = endAnchor.getAnchorageNode();
+		Node endNode = getEndAnchor().getAnchorageNode();
 		if (endNode != null) {
 			for (Point p : getWayPoints()) {
 				Point2D local = endNode.sceneToLocal(localToScene(p.x, p.y));
@@ -397,8 +407,8 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 				Node anchored = change.getKey();
 				if (anchored == AbstractFXConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
-					if (!(endAnchor instanceof FXStaticAnchor)) {
-						endAnchor.setReferencePoint(AbstractFXConnection.this,
+					if (!(getEndAnchor() instanceof FXStaticAnchor)) {
+						getEndAnchor().setReferencePoint(AbstractFXConnection.this,
 								referencePoints[1]);
 					}
 					refreshGeometry();
