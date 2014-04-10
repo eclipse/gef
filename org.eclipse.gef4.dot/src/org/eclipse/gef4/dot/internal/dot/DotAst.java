@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.gef4.dot.internal.dot.parser.DotStandaloneSetup;
-import org.eclipse.gef4.graph.ZestStyle;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
@@ -42,12 +42,15 @@ public final class DotAst {
 
 	/** Edge style attributes in the DOT input and their Zest/SWT styles. */
 	enum Style {
-		DASHED(ZestStyle.LINE_DASH), DOTTED(ZestStyle.LINE_DOT), SOLID(
-				ZestStyle.LINE_SOLID), DASHDOT(ZestStyle.LINE_DASHDOT), DASHDOTDOT(
-				ZestStyle.LINE_DASHDOTDOT);
-		ZestStyle style;
+		DASHED(Graph.Attr.Value.LINE_DASH), //
+		DOTTED(Graph.Attr.Value.LINE_DOT), //
+		SOLID(Graph.Attr.Value.LINE_SOLID), //
+		DASHDOT(Graph.Attr.Value.LINE_DASHDOT), //
+		DASHDOTDOT(Graph.Attr.Value.LINE_DASHDOTDOT);
 
-		Style(final ZestStyle style) {
+		Graph.Attr.Value style;
+
+		Style(final Graph.Attr.Value style) {
 			this.style = style;
 		}
 	}

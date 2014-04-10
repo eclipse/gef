@@ -22,13 +22,13 @@ public class SimpleGraph {
 	 */
 	public Graph getGraph() {
 		/* Set a layout algorithm: */
-		Graph.Builder graph = new Graph.Builder().attr(Attr.LAYOUT.toString(),
+		Graph.Builder graph = new Graph.Builder().attr(Attr.Key.LAYOUT,
 				new TreeLayoutAlgorithm());
 
 		/* Set the nodes: */
-		Node n1 = new Node.Builder().attr(Attr.LABEL.toString(), "1").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder().attr(Attr.LABEL.toString(), "2").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder().attr(Attr.LABEL.toString(), "3").build(); //$NON-NLS-1$ 
+		Node n1 = new Node.Builder().attr(Attr.Key.LABEL, "1").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.Key.LABEL, "2").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.LABEL, "3").build(); //$NON-NLS-1$ 
 
 		/* Connection from n1 to n2: */
 		Edge e1 = new Edge.Builder(n1, n2).build();

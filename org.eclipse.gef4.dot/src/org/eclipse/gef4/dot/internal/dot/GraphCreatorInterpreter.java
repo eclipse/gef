@@ -36,7 +36,6 @@ import org.eclipse.gef4.dot.internal.dot.parser.dot.util.DotSwitch;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.graph.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
@@ -58,7 +57,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private boolean gotSource;
 
 	public Graph create(DotAst dotAst) {
-		return create(dotAst, new Graph.Builder().attr(Graph.Attr.LAYOUT,
+		return create(dotAst, new Graph.Builder().attr(Graph.Attr.Key.LAYOUT,
 				DotImport.DEFAULT_LAYOUT_ALGORITHM));
 	}
 
@@ -94,9 +93,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 				&& object.getValue().equals("LR")) { //$NON-NLS-1$
 			TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm(
 					TreeLayoutAlgorithm.LEFT_RIGHT);
-			graph.attr(Graph.Attr.LAYOUT.toString(), algorithm);
+			graph.attr(Graph.Attr.Key.LAYOUT.toString(), algorithm);
 		} else if (graph != null && object.getName().equals("label")) { //$NON-NLS-1$
-			graph.attr(Graph.Attr.LABEL.toString(), object.getValue());
+			graph.attr(Graph.Attr.Key.LABEL.toString(), object.getValue());
 		}
 		return super.caseAttribute(object);
 	}
@@ -141,19 +140,20 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 				node(currentEdgeSourceNodeId), node(targetNodeId));
 		/* Set the optional label, if set in the DOT input: */
 		if (currentEdgeLabelValue != null) {
-			graphConnection.attr(Graph.Attr.LABEL.toString(),
+			graphConnection.attr(Graph.Attr.Key.LABEL.toString(),
 					currentEdgeLabelValue);
 		} else if (globalEdgeLabel != null) {
-			graphConnection.attr(Graph.Attr.LABEL.toString(), globalEdgeLabel);
+			graphConnection.attr(Graph.Attr.Key.LABEL.toString(),
+					globalEdgeLabel);
 		}
 		/* Set the optional style, if set in the DOT input and supported: */
 		if (supported(currentEdgeStyleValue, Style.values())) {
 			Style v = Enum.valueOf(Style.class,
 					currentEdgeStyleValue.toUpperCase());
-			graphConnection.attr(Graph.Attr.EDGE_STYLE.toString(), v.style);
+			graphConnection.attr(Graph.Attr.Key.EDGE_STYLE.toString(), v.style);
 		} else if (supported(globalEdgeStyle, Style.values())) {
 			Style v = Enum.valueOf(Style.class, globalEdgeStyle.toUpperCase());
-			graphConnection.attr(Graph.Attr.EDGE_STYLE.toString(), v.style);
+			graphConnection.attr(Graph.Attr.Key.EDGE_STYLE.toString(), v.style);
 		}
 		graph.edges(graphConnection.build());
 	}
@@ -182,12 +182,13 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	// private implementation of the cases above
 
 	private void createGraph(MainGraph object) {
-		graph.attr(Graph.Attr.LAYOUT.toString(),
+		graph.attr(Graph.Attr.Key.LAYOUT.toString(),
 				DotImport.DEFAULT_LAYOUT_ALGORITHM);
 		GraphType graphType = object.getType();
-		graph.attr(Graph.Attr.GRAPH_TYPE.toString(),
-				graphType == GraphType.DIGRAPH ? ZestStyle.GRAPH_DIRECTED
-						: ZestStyle.GRAPH_UNDIRECTED);
+		graph.attr(
+				Graph.Attr.Key.GRAPH_TYPE.toString(),
+				graphType == GraphType.DIGRAPH ? Graph.Attr.Value.GRAPH_DIRECTED
+						: Graph.Attr.Value.GRAPH_UNDIRECTED);
 	}
 
 	private void createAttributes(final AttrStmt attrStmt) {
@@ -210,7 +211,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 			if (graphLayout != null) {
 				Layout layout = Enum.valueOf(Layout.class,
 						graphLayout.toUpperCase());
-				graph.attr(Graph.Attr.LAYOUT.toString(), layout.algorithm);
+				graph.attr(Graph.Attr.Key.LAYOUT.toString(), layout.algorithm);
 			}
 			break;
 		}
@@ -223,15 +224,15 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 		if (nodes.containsKey(nodeId)) {
 			node = nodes.get(nodeId);
 		} else {
-			node = node.attr(Graph.Attr.LABEL.toString(), nodeId).attr(
-					Graph.Attr.ID.toString(), nodeId);
+			node = node.attr(Graph.Attr.Key.LABEL.toString(), nodeId).attr(
+					Graph.Attr.Key.ID.toString(), nodeId);
 			graph = graph.nodes(node.build());
 		}
 		String value = getAttributeValue(nodeStatement, "label"); //$NON-NLS-1$
 		if (value != null) {
-			node = node.attr(Graph.Attr.LABEL.toString(), value);
+			node = node.attr(Graph.Attr.Key.LABEL.toString(), value);
 		} else if (globalNodeLabel != null) {
-			node = node.attr(Graph.Attr.LABEL.toString(), globalNodeLabel);
+			node = node.attr(Graph.Attr.Key.LABEL.toString(), globalNodeLabel);
 		}
 		nodes.put(nodeId, node);
 	}
@@ -239,9 +240,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private Node node(String id) {
 		if (!nodes.containsKey(id)) { // undeclared node, as in "graph{1->2}"
 			Node.Builder node = new Node.Builder().attr(
-					Graph.Attr.LABEL.toString(),
+					Graph.Attr.Key.LABEL.toString(),
 					globalNodeLabel != null ? globalNodeLabel : id).attr(
-					Graph.Attr.ID.toString(), id);
+					Graph.Attr.Key.ID.toString(), id);
 			nodes.put(id, node);
 			graph = graph.nodes(node.build());
 		}

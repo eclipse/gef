@@ -60,16 +60,16 @@ public class TestDotExport extends TestDotTemplate {
 	@Test
 	public void zestToGraphvizLayoutMapping() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT, new TreeLayoutAlgorithm());
 		assertTrue("TreeLayout -> 'dot'", new DotExport(graph.build())
 				.toDotString().contains("graph[layout=dot]"));
-		graph.attr(Graph.Attr.LAYOUT.toString(), new RadialLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT, new RadialLayoutAlgorithm());
 		assertTrue("RadialLayout -> 'twopi'", new DotExport(graph.build())
 				.toDotString().contains("graph[layout=twopi]"));
-		graph.attr(Graph.Attr.LAYOUT.toString(), new GridLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT, new GridLayoutAlgorithm());
 		assertTrue("GridLayout -> 'osage'", new DotExport(graph.build())
 				.toDotString().contains("graph[layout=osage]"));
-		graph.attr(Graph.Attr.LAYOUT.toString(), new SpringLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT, new SpringLayoutAlgorithm());
 		assertTrue("SpringLayout, small -> 'fdp'", new DotExport(graph.build())
 				.toDotString().contains("graph[layout=fdp]"));
 		for (int i = 0; i < 100; i++) {

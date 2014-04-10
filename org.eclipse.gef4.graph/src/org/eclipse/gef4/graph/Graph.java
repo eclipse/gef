@@ -40,7 +40,7 @@ public final class Graph {
 			return this;
 		}
 
-		public Builder attr(Attr attr, Object value) {
+		public Builder attr(Attr.Key attr, Object value) {
 			return attr(attr.toString(), value);
 		}
 
@@ -54,8 +54,15 @@ public final class Graph {
 	private final List<Edge> edges;
 	private final Map<String, Object> attrs;
 
-	public static enum Attr {
-		NODE_STYLE, EDGE_STYLE, LABEL, STYLE, ID, IMAGE, LAYOUT, GRAPH_TYPE
+	public static class Attr {
+		public static enum Key {
+			NODE_STYLE, EDGE_STYLE, LABEL, STYLE, ID, IMAGE, LAYOUT, GRAPH_TYPE
+		}
+
+		public static enum Value {
+			LINE_DASH, LINE_DOT, LINE_SOLID, LINE_DASHDOT, LINE_DASHDOTDOT, //
+			GRAPH_DIRECTED, GRAPH_UNDIRECTED, CONNECTIONS_DIRECTED, NONE
+		}
 	}
 
 	public Graph(Map<String, Object> attrs, List<Node> nodes, List<Edge> edges) {

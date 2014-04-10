@@ -12,7 +12,6 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.graph.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 
 /**
@@ -26,26 +25,27 @@ public class SampleGraph {
 	public Graph getGraph() {
 		/* Global settings: */
 		Graph.Builder graph = new Graph.Builder()//
-				.attr(Attr.EDGE_STYLE, ZestStyle.CONNECTIONS_DIRECTED)//
-				.attr(Attr.LAYOUT, new TreeLayoutAlgorithm());
+				.attr(Attr.Key.EDGE_STYLE,
+						Graph.Attr.Value.CONNECTIONS_DIRECTED)//
+				.attr(Attr.Key.LAYOUT, new TreeLayoutAlgorithm());
 
 		/* Nodes: */
-		Node n1 = new Node.Builder().attr(Attr.LABEL, "Node").build(); //$NON-NLS-1$
-		Node n2 = new Node.Builder().attr(Attr.LABEL, "Node").build(); //$NON-NLS-1$
-		Node n3 = new Node.Builder().attr(Attr.LABEL, "Leaf1").build(); //$NON-NLS-1$
-		Node n4 = new Node.Builder().attr(Attr.LABEL, "Leaf2").build(); //$NON-NLS-1$
+		Node n1 = new Node.Builder().attr(Attr.Key.LABEL, "Node").build(); //$NON-NLS-1$
+		Node n2 = new Node.Builder().attr(Attr.Key.LABEL, "Node").build(); //$NON-NLS-1$
+		Node n3 = new Node.Builder().attr(Attr.Key.LABEL, "Leaf1").build(); //$NON-NLS-1$
+		Node n4 = new Node.Builder().attr(Attr.Key.LABEL, "Leaf2").build(); //$NON-NLS-1$
 
 		/* Connection from n1 to n2: */
-		new Edge.Builder(n1, n2).attr(Attr.LABEL, "Edge")
-				.attr(Attr.EDGE_STYLE, ZestStyle.LINE_DASH).build();
+		new Edge.Builder(n1, n2).attr(Attr.Key.LABEL, "Edge")
+				.attr(Attr.Key.EDGE_STYLE, Graph.Attr.Value.LINE_DASH).build();
 
 		/* Connection from n2 to n3: */
-		Edge e1 = new Edge.Builder(n2, n3).attr(Attr.LABEL, "Edge")
-				.attr(Attr.EDGE_STYLE, ZestStyle.LINE_DASH).build();
+		Edge e1 = new Edge.Builder(n2, n3).attr(Attr.Key.LABEL, "Edge")
+				.attr(Attr.Key.EDGE_STYLE, Graph.Attr.Value.LINE_DASH).build();
 
 		/* Connection from n2 to n4: */
-		Edge e2 = new Edge.Builder(n2, n4).attr(Attr.LABEL, "Dotted")
-				.attr(Attr.EDGE_STYLE, ZestStyle.LINE_DOT).build();
+		Edge e2 = new Edge.Builder(n2, n4).attr(Attr.Key.LABEL, "Dotted")
+				.attr(Attr.Key.EDGE_STYLE, Graph.Attr.Value.LINE_DOT).build();
 
 		return graph.nodes(n1, n2, n3, n4).edges(e1, e2).build();
 	}

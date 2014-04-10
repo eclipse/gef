@@ -33,7 +33,7 @@ public class LayoutAlgorithmTests extends TestCase {
 	public void testCustomLayoutSimpleItemAccess() {
 		Node node = new Node.Builder().build();
 		Graph.Builder graph = new Graph.Builder().nodes(node);
-		graph.attr(Graph.Attr.LAYOUT.toString(), new LayoutAlgorithm() {
+		graph.attr(Graph.Attr.Key.LAYOUT, new LayoutAlgorithm() {
 			public void setLayoutContext(LayoutContext context) {
 				Object[] all = context.getEntities()[0].getItems();
 				Object[] nodes = context.getNodes()[0].getItems();
@@ -62,9 +62,9 @@ public class LayoutAlgorithmTests extends TestCase {
 	 */
 	public void testGridLayoutAlgorithmEmptyGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(Graph.Attr.LAYOUT.toString(), new GridLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT, new GridLayoutAlgorithm());
 		Assert.assertEquals(GridLayoutAlgorithm.class, graph.build().getAttrs()
-				.get(Graph.Attr.LAYOUT.toString()).getClass());
+				.get(Graph.Attr.Key.LAYOUT.toString()).getClass());
 	}
 
 	/**

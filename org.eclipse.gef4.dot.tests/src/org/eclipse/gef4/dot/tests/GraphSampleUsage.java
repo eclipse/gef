@@ -8,17 +8,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests;
 
-import static org.eclipse.gef4.graph.Graph.Attr.GRAPH_TYPE;
-import static org.eclipse.gef4.graph.Graph.Attr.ID;
-import static org.eclipse.gef4.graph.Graph.Attr.LABEL;
-import static org.eclipse.gef4.graph.Graph.Attr.LAYOUT;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.graph.Graph.Attr.Key;
+import org.eclipse.gef4.graph.Graph.Attr.Value;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.graph.ZestStyle;
 import org.junit.Test;
 
 /**
@@ -33,9 +30,9 @@ public class GraphSampleUsage {
 	Graph digraph = new DotImport("digraph { 1->2 ; 1->3 }").newGraphInstance();
 
 	/* Nodes are basically key-value attribute mappings: */
-	Node n1 = new Node.Builder().attr(LABEL, "1").attr(ID, "1").build();
-	Node n2 = new Node.Builder().attr(LABEL, "2").attr(ID, "2").build();
-	Node n3 = new Node.Builder().attr(LABEL, "3").attr(ID, "3").build();
+	Node n1 = new Node.Builder().attr(Key.LABEL, "1").attr(Key.ID, "1").build();
+	Node n2 = new Node.Builder().attr(Key.LABEL, "2").attr(Key.ID, "2").build();
+	Node n3 = new Node.Builder().attr(Key.LABEL, "3").attr(Key.ID, "3").build();
 
 	/* Edges connect a source and a target node: */
 	Edge e1 = new Edge.Builder(n1, n2).build();
@@ -45,8 +42,8 @@ public class GraphSampleUsage {
 	public void graph() {
 		/* With the builders, we incrementally create the immutable objects: */
 		Graph.Builder expected = new Graph.Builder();
-		expected.attr(GRAPH_TYPE, ZestStyle.GRAPH_UNDIRECTED);
-		expected.attr(LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM);
+		expected.attr(Key.GRAPH_TYPE, Value.GRAPH_UNDIRECTED);
+		expected.attr(Key.LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM);
 		expected.nodes(n1, n2, n3);
 		expected.edges(e1, e2);
 		assertEquals(expected.build(), graph);
@@ -56,8 +53,8 @@ public class GraphSampleUsage {
 	public void digraph() {
 		/* The builders can be chained: */
 		Graph expected = new Graph.Builder()
-				.attr(GRAPH_TYPE, ZestStyle.GRAPH_DIRECTED)
-				.attr(LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM)
+				.attr(Key.GRAPH_TYPE, Value.GRAPH_DIRECTED)
+				.attr(Key.LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM)
 				.nodes(n1, n2, n3) //
 				.edges(e1, e2).build();
 		assertEquals(expected, digraph);
@@ -69,10 +66,11 @@ public class GraphSampleUsage {
 		String attrGraph = "graph { graph[g_attr=g1] 1--2[label=e1] ; 1--3 }";
 		Graph graph = new DotImport(attrGraph).newGraphInstance();
 		Graph.Builder expected = new Graph.Builder();
-		expected.attr(GRAPH_TYPE, ZestStyle.GRAPH_UNDIRECTED);
+		expected.attr(Key.GRAPH_TYPE, Value.GRAPH_UNDIRECTED);
 		expected.attr("g_attr", "g1");
-		expected.attr(LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM);
-		expected.edges(new Edge.Builder(n1, n2).attr(LABEL, "e1").build(), e2);
+		expected.attr(Key.LAYOUT, DotImport.DEFAULT_LAYOUT_ALGORITHM);
+		expected.edges(new Edge.Builder(n1, n2).attr(Key.LABEL, "e1").build(),
+				e2);
 		expected.nodes(n1, n2, n3).build();
 		assertEquals(expected.build(), graph);
 	}

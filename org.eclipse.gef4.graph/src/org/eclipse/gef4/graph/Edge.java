@@ -32,7 +32,7 @@ public final class Edge {
 			return this;
 		}
 
-		public Builder attr(Attr attr, Object value) {
+		public Builder attr(Attr.Key attr, Object value) {
 			return attr(attr.toString(), value);
 		}
 

@@ -15,7 +15,6 @@ import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.graph.ZestStyle;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public final class TestSnippetDotImport {
 	@Test
 	public void addToEmptyGraph() {
 		Graph.Builder graph = new Graph.Builder();
-		graph.attr(Graph.Attr.LAYOUT.toString(), new TreeLayoutAlgorithm());
+		graph.attr(Graph.Attr.Key.LAYOUT.toString(), new TreeLayoutAlgorithm());
 		Assert.assertEquals(0, graph.build().getNodes().size());
 		Assert.assertEquals(0, graph.build().getEdges().size());
 		/* The DOT input, can be given as a String, File or IFile: */
@@ -87,61 +86,61 @@ public final class TestSnippetDotImport {
 		Graph.Builder graph = new Graph.Builder();
 		new DotImport("rankdir=LR").into(graph);
 		Assert.assertEquals(TreeLayoutAlgorithm.class, graph.build().getAttrs()
-				.get(Graph.Attr.LAYOUT.toString()).getClass());
+				.get(Graph.Attr.Key.LAYOUT.toString()).getClass());
 		Assert.assertEquals(TreeLayoutAlgorithm.LEFT_RIGHT,
 				((TreeLayoutAlgorithm) (graph.build().getAttrs()
-						.get(Graph.Attr.LAYOUT.toString()))).getDirection());
+						.get(Graph.Attr.Key.LAYOUT.toString()))).getDirection());
 		new DotImport("rankdir=TD").into(graph);
 		Assert.assertEquals(TreeLayoutAlgorithm.class, graph.build().getAttrs()
-				.get(Graph.Attr.LAYOUT.toString()).getClass());
+				.get(Graph.Attr.Key.LAYOUT.toString()).getClass());
 		Assert.assertEquals(TreeLayoutAlgorithm.TOP_DOWN,
 				((TreeLayoutAlgorithm) (graph.build().getAttrs()
-						.get(Graph.Attr.LAYOUT.toString()))).getDirection());
+						.get(Graph.Attr.Key.LAYOUT.toString()))).getDirection());
 	}
 
 	@Test
 	public void addStyledEdge() {
 		Graph.Builder graph = new Graph.Builder();
 		Assert.assertNull(graph.build().getAttrs()
-				.get(Graph.Attr.EDGE_STYLE.toString()));
+				.get(Graph.Attr.Key.EDGE_STYLE.toString()));
 		assertNodesEdgesCount(0, 0, graph);
 		new DotImport("1->2[style=dashed label=dashed]").into(graph);
 		assertNodesEdgesCount(2, 1, graph);
 		Iterator<Edge> iterator = graph.build().getEdges().iterator();
 		Edge edge = iterator.next();
-		Assert.assertEquals(ZestStyle.LINE_DASH,
-				edge.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(Graph.Attr.Value.LINE_DASH,
+				edge.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString()));
 		Assert.assertEquals("dashed",
-				edge.getAttrs().get(Graph.Attr.LABEL.toString()));
+				edge.getAttrs().get(Graph.Attr.Key.LABEL.toString()));
 		new DotImport("2->3[style=dotted label=dotted]").into(graph);
 		assertNodesEdgesCount(3, 2, graph);
 		iterator = graph.build().getEdges().iterator();
 		iterator.next();
 		edge = iterator.next();
-		Assert.assertEquals(ZestStyle.LINE_DOT,
-				edge.getAttrs().get(Graph.Attr.EDGE_STYLE.toString()));
+		Assert.assertEquals(Graph.Attr.Value.LINE_DOT,
+				edge.getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString()));
 		Assert.assertEquals("dotted",
-				edge.getAttrs().get(Graph.Attr.LABEL.toString()));
+				edge.getAttrs().get(Graph.Attr.Key.LABEL.toString()));
 	}
 
 	@Test
 	public void addStyledNode() {
 		Graph.Builder graph = new Graph.Builder();
 		Assert.assertNull(graph.build().getAttrs()
-				.get(Graph.Attr.EDGE_STYLE.toString()));
+				.get(Graph.Attr.Key.EDGE_STYLE.toString()));
 		assertNodesEdgesCount(0, 0, graph);
 		new DotImport("1[label=one]").into(graph);
 		assertNodesEdgesCount(1, 0, graph);
 		List<Node> list = graph.build().getNodes();
 		Assert.assertEquals("one",
-				list.get(0).getAttrs().get(Graph.Attr.LABEL.toString()));
+				list.get(0).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
 		new DotImport("2[label=two]; 3[label=three]").into(graph);
 		assertNodesEdgesCount(3, 0, graph);
 		list = graph.build().getNodes();
 		Assert.assertEquals("two",
-				list.get(1).getAttrs().get(Graph.Attr.LABEL.toString()));
+				list.get(1).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
 		Assert.assertEquals("three",
-				list.get(2).getAttrs().get(Graph.Attr.LABEL.toString()));
+				list.get(2).getAttrs().get(Graph.Attr.Key.LABEL.toString()));
 	}
 
 	private void assertNodesEdgesCount(int n, int e, Graph.Builder builder) {
