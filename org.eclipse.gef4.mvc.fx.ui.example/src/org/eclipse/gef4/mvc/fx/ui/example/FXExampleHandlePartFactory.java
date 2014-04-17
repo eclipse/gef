@@ -15,35 +15,32 @@ import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.InsertWayPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.MoveWayPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.ui.example.policies.ReconnectWayPointOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
-	public final static Color FILL_RED = Color.web("#ff0000");
+	private final static Color FILL_CONNECTED = Color.web("#ff0000");
 
 	@Override
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
@@ -52,26 +49,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				targets, position);
 		part.installBound(AbstractFXDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
-						toReferencePoint(position)));
+						position));
 		return part;
-	}
-
-	private ReferencePoint toReferencePoint(Pos position) {
-		switch (position) {
-		case TOP_LEFT:
-			return ReferencePoint.TOP_LEFT;
-		case TOP_RIGHT:
-			return ReferencePoint.TOP_RIGHT;
-		case BOTTOM_LEFT:
-			return ReferencePoint.BOTTOM_LEFT;
-		case BOTTOM_RIGHT:
-			return ReferencePoint.BOTTOM_RIGHT;
-		default:
-			throw new IllegalStateException(
-					"Unknown Pos: <"
-							+ position
-							+ ">. Expected any of: TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT.");
-		}
 	}
 
 	@Override
@@ -90,57 +69,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final FXMidPointHandlePart hp = new FXMidPointHandlePart(
 					targetPart, handleGeometryProvider, segmentIndex);
 			hp.installBound(AbstractFXDragPolicy.class,
-					new AbstractFXDragPolicy() {
-						@Override
-						public void press(MouseEvent e) {
-							// TODO: merge mid point and vertex handle parts
-							if (hp.isVertex()) {
-								getWayPointHandlePolicy(targetPart)
-										.selectWayPoint(
-												hp.getVertexIndex() - 1,
-												new Point(e.getSceneX(), e
-														.getSceneY()));
-							} else {
-								getWayPointHandlePolicy(targetPart)
-										.createWayPoint(
-												hp.getVertexIndex(),
-												new Point(e.getSceneX(), e
-														.getSceneY()));
-								for (IHandlePart<Node> vertexHp : parts) {
-									FXSelectionHandlePart part = (FXSelectionHandlePart) vertexHp;
-									if (part.getVertexIndex() > hp
-											.getVertexIndex()
-											|| (part.getVertexIndex() == hp
-													.getVertexIndex() && part
-													.isEndPoint())) {
-										part.incVertexIndex();
-									}
-								}
-								// become vertex handle part
-								hp.toVertex();
-								((Shape) hp.getVisual())
-										.setFill(FXSelectionHandlePart.FILL_BLUE);
-							}
-						}
-
-						@Override
-						public void drag(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							getWayPointHandlePolicy(targetPart).updateWayPoint(
-									hp.getVertexIndex() - 1,
-									new Point(e.getSceneX(), e.getSceneY()));
-						}
-
-						@Override
-						public void release(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							getWayPointHandlePolicy(targetPart).commitWayPoint(
-									hp.getVertexIndex() - 1,
-									new Point(e.getSceneX(), e.getSceneY()));
-						}
-					});
+					new InsertWayPointOnHandleDragPolicy(hp, parts, targetPart));
 			parts.add(hp);
 		}
 
@@ -159,78 +88,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
 			part.installBound(AbstractFXDragPolicy.class,
-					new AbstractFXDragPolicy() {
-						@Override
-						public void press(MouseEvent e) {
-							getWayPointHandlePolicy(targetPart).selectWayPoint(
-									part.getVertexIndex() - 1,
-									new Point(e.getSceneX(), e.getSceneY()));
-						}
-
-						@Override
-						public void drag(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							getWayPointHandlePolicy(targetPart).updateWayPoint(
-									part.getVertexIndex() - 1,
-									new Point(e.getSceneX(), e.getSceneY()));
-						}
-
-						@Override
-						public void release(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							IUndoableOperation operation = getWayPointHandlePolicy(targetPart).commitWayPoint(
-									part.getVertexIndex() - 1,
-									new Point(e.getSceneX(), e.getSceneY()));
-							// FIXME: change way point operation bug: NPE
-//							executeOperation(operation);
-						}
-					});
+					new MoveWayPointOnHandleDragPolicy(targetPart, part));
 		} else {
 			// make end points reconnectable
 			part.installBound(AbstractFXDragPolicy.class,
-					new AbstractFXDragPolicy() {
-						@Override
-						public void press(MouseEvent e) {
-							AbstractFXReconnectPolicy p = getReconnectionPolicy(targetPart);
-							if (p != null) {
-								p.press(!isEndPoint,
-										new Point(e.getSceneX(), e.getSceneY()));
-							}
-						}
-
-						@Override
-						public void drag(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							AbstractFXReconnectPolicy policy = getReconnectionPolicy(targetPart);
-							policy.dragTo(
-									new Point(e.getSceneX(), e.getSceneY()),
-									partsUnderMouse);
-							// TODO: move color change to some other place?
-							if (policy.isConnected()) {
-								((Shape) part.getVisual()).setFill(FILL_RED);
-							} else {
-								((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
-							}
-						}
-
-						@Override
-						public void release(MouseEvent e, Dimension delta,
-								List<Node> nodesUnderMouse,
-								List<IContentPart<Node>> partsUnderMouse) {
-							IUndoableOperation operation = getReconnectionPolicy(
-									targetPart).commit();
-							executeOperation(operation);
-						}
-
-						private AbstractFXReconnectPolicy getReconnectionPolicy(
-								IContentPart<Node> targetPart) {
-							return targetPart
-									.getBound(AbstractFXReconnectPolicy.class);
-						}
-					});
+					new ReconnectWayPointOnHandleDragPolicy(targetPart, part,
+							isEndPoint));
 
 			// change color to red if they are connected
 			// TODO: move to somewhere else
@@ -240,17 +103,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 				IFXAnchor anchor = isEndPoint ? connection.getEndAnchor()
 						: connection.getStartAnchor();
 				if (!(anchor instanceof FXStaticAnchor)) {
-					((Shape) part.getVisual()).setFill(FILL_RED);
+					((Shape) part.getVisual()).setFill(FILL_CONNECTED);
 				}
 			}
 		}
 
 		return part;
-	}
-
-	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
-			IContentPart<Node> targetPart) {
-		return targetPart.getBound(AbstractFXWayPointPolicy.class);
 	}
 
 	@Override
