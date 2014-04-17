@@ -17,7 +17,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -32,26 +31,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		AbstractFXDragPolicy {
 
-	public FXResizeRelocateSelectedOnHandleDragPolicy(Pos refPos) {
-		this.referencePoint = toReferencePoint(refPos);
-	}
-	
-	private static ReferencePoint toReferencePoint(Pos position) {
-		switch (position) {
-		case TOP_LEFT:
-			return ReferencePoint.TOP_LEFT;
-		case TOP_RIGHT:
-			return ReferencePoint.TOP_RIGHT;
-		case BOTTOM_LEFT:
-			return ReferencePoint.BOTTOM_LEFT;
-		case BOTTOM_RIGHT:
-			return ReferencePoint.BOTTOM_RIGHT;
-		default:
-			throw new IllegalStateException(
-					"Unknown Pos: <"
-							+ position
-							+ ">. Expected any of: TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT.");
-		}
+	public FXResizeRelocateSelectedOnHandleDragPolicy(ReferencePoint refPoint) {
+		this.referencePoint = refPoint;
 	}
 
 	protected Rectangle getVisualBounds(IContentPart<Node> contentPart) {
