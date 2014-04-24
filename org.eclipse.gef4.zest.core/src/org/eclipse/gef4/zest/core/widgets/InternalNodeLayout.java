@@ -22,7 +22,6 @@ import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
-import org.eclipse.gef4.zest.core.widgets.GraphConnection.InternalConnectionLayout;
 
 class InternalNodeLayout implements NodeLayout {
 

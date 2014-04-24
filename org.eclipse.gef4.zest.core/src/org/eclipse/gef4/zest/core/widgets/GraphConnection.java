@@ -23,8 +23,6 @@ import org.eclipse.draw2d.MidpointLocator;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
 import org.eclipse.gef4.zest.core.widgets.internal.LoopAnchor;
 import org.eclipse.gef4.zest.core.widgets.internal.PolylineArcConnection;
@@ -694,45 +692,9 @@ public class GraphConnection extends GraphItem {
 
 	InternalConnectionLayout getLayout() {
 		if (layout == null) {
-			layout = new InternalConnectionLayout();
+			layout = new InternalConnectionLayout(this);
 		}
 		return layout;
-	}
-
-	class InternalConnectionLayout implements ConnectionLayout {
-		private boolean visible = GraphConnection.this.isVisible();
-
-		public NodeLayout getSource() {
-			return sourceNode.getLayout();
-		}
-
-		public NodeLayout getTarget() {
-			return destinationNode.getLayout();
-		}
-
-		public double getWeight() {
-			return GraphConnection.this.getWeightInLayout();
-		}
-
-		public boolean isDirected() {
-			return !ZestStyles.checkStyle(getConnectionStyle(),
-					ZestStyles.CONNECTIONS_DIRECTED);
-		}
-
-		public boolean isVisible() {
-			return visible;
-		}
-
-		public void setVisible(boolean visible) {
-			graph.getLayoutContext().checkChangesAllowed();
-			this.visible = visible;
-		}
-
-		void applyLayout() {
-			if (GraphConnection.this.isVisible() != this.visible) {
-				GraphConnection.this.setVisible(this.visible);
-			}
-		}
 	}
 
 	void applyLayoutChanges() {
