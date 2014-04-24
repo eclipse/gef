@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="26">
+<?pde version="3.8"?><target name="KEPLER_4_3" sequenceNumber="27">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.sdk.ide" version="4.3.0.I20130605-2000"/>
@@ -21,6 +21,10 @@
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.4.2.v201306120542"/>
 <unit id="org.eclipse.gef.sdk.feature.group" version="3.9.1.201308190730"/>
 <repository location="http://download.eclipse.org/releases/kepler"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+<repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 </locations>
 </target>

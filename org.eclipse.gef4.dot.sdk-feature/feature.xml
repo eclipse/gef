@@ -3,7 +3,9 @@
       id="org.eclipse.gef4.dot.sdk"
       label="GEF4 DOT SDK"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
 
    <description>
       %description

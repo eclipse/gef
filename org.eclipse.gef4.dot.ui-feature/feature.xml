@@ -4,7 +4,9 @@
       label="GEF4 DOT.UI"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
-      plugin="org.eclipse.gef4.dot.ui">
+      plugin="org.eclipse.gef4.dot.ui"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
 
    <description>
       %description

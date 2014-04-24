@@ -3,7 +3,9 @@
       id="org.eclipse.gef4.cloudio.sdk"
       label="GEF4 Cloudio SDK"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
 
    <description>
       %description
@@ -12,12 +14,12 @@
    <copyright>
       %copyright
    </copyright>
-
-   <license url="%licenseURL">
-      %license
-   </license>
    
-    <url>
+   <license url="%licenseURL">
+     %license
+   </license>
+     
+   <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
       <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
    </url>

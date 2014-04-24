@@ -3,7 +3,9 @@
       id="org.eclipse.gef4.geometry.sdk"
       label="GEF4 Geometry SDK"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org">
+      provider-name="Eclipse.org"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
 
    <description>
       %description
@@ -12,9 +14,9 @@
    <copyright>
       %copyright
    </copyright>
-
+   
    <license url="%licenseURL">
-      %license
+     %license
    </license>
 
    <url>
