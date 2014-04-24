@@ -692,7 +692,8 @@ public class GraphConnection extends GraphItem {
 
 	InternalConnectionLayout getLayout() {
 		if (layout == null) {
-			layout = new InternalConnectionLayout(this);
+			layout = new InternalConnectionLayout(this, getGraphWidget()
+					.getLayoutContext());
 		}
 		return layout;
 	}

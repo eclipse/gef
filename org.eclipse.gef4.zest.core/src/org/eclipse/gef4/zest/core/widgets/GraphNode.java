@@ -802,7 +802,7 @@ public class GraphNode extends GraphItem {
 	 */
 	public InternalNodeLayout getLayout() {
 		if (layout == null) {
-			layout = new InternalNodeLayout(this);
+			layout = new InternalNodeLayout(this, parent.getLayoutContext());
 		}
 		return layout;
 	}

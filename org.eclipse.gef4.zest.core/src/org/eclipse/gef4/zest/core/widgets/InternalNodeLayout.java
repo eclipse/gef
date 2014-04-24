@@ -50,9 +50,10 @@ class InternalNodeLayout implements NodeLayout {
 	private DefaultSubgraph subgraph;
 	private boolean isDisposed = false;
 
-	public InternalNodeLayout(GraphNode graphNode) {
+	public InternalNodeLayout(GraphNode graphNode,
+			InternalLayoutContext layoutContext) {
 		this.node = graphNode;
-		this.layoutContext = node.parent.getLayoutContext();
+		this.layoutContext = layoutContext;
 		graphNode.nodeFigure.addFigureListener(figureListener);
 		figureToNode.put(graphNode.nodeFigure, graphNode);
 	}

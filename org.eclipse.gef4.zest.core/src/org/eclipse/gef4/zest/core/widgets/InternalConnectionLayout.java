@@ -6,15 +6,18 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 class InternalConnectionLayout implements ConnectionLayout {
 
 	private final GraphConnection graphConnection;
+	private InternalLayoutContext layoutContext;
+	private boolean visible;
 
 	/**
 	 * @param graphConnection
 	 */
-	InternalConnectionLayout(GraphConnection graphConnection) {
+	InternalConnectionLayout(GraphConnection graphConnection,
+			InternalLayoutContext layoutContext) {
 		this.graphConnection = graphConnection;
+		this.layoutContext = layoutContext;
+		this.visible = graphConnection.isVisible();
 	}
-
-	private boolean visible = this.graphConnection.isVisible();
 
 	public NodeLayout getSource() {
 		return this.graphConnection.getSource().getLayout();
@@ -39,8 +42,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public void setVisible(boolean visible) {
-		this.graphConnection.getGraphWidget().getLayoutContext()
-				.checkChangesAllowed();
+		layoutContext.checkChangesAllowed();
 		this.visible = visible;
 	}
 
