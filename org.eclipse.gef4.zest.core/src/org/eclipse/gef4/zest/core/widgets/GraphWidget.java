@@ -480,7 +480,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public void applyLayoutNow() {
-		getLayoutContext().applyLayout(true);
+		getLayoutContext().applyFullLayout(true);
 		layoutContext.flushChanges(false);
 	}
 
@@ -549,7 +549,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 								if (animate) {
 									Animation.markBegin();
 								}
-								getLayoutContext().applyLayout(
+								getLayoutContext().applyFullLayout(
 										scheduledLayoutClean);
 								layoutContext.flushChanges(false);
 								if (animate) {

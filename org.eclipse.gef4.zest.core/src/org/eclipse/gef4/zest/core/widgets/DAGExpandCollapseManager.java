@@ -292,7 +292,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		}
 		nodesToUpdate.clear();
 
-		(context).applyLayout(cleanLayoutScheduled);
+		(context).applyFullLayout(cleanLayoutScheduled);
 		cleanLayoutScheduled = false;
 		context.flushChanges(animate);
 	}

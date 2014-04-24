@@ -125,6 +125,22 @@ public interface LayoutContext {
 	public void setIncrementalLayoutEnabled(boolean enabled);
 
 	/**
+	 * Sets the full layout algorithm for this context. Full algorithm is used
+	 * to layout a newly initialized graph or after heavy changes to it.
+	 * 
+	 * @param algorithm
+	 */
+	public void setFullLayoutAlgorithm(LayoutAlgorithm algorithm);
+
+	/**
+	 * Returns the full layout algorithm used to layout a newly initialized
+	 * graph or after heavy changes to it.
+	 * 
+	 * @return the full layout algorithm
+	 */
+	public LayoutAlgorithm getFullLayoutAlgorithm();
+
+	/**
 	 * @return the incremental algorithm of this context (see
 	 *         {@link #setIncrementalLayoutAlgorithm(LayoutAlgorithm)} for
 	 *         details)

@@ -37,8 +37,8 @@ class InternalLayoutContext implements LayoutContext {
 	private final List<GraphStructureListener> graphStructureListeners = new ArrayList<GraphStructureListener>();
 	private final List<LayoutListener> layoutListeners = new ArrayList<LayoutListener>();
 	private final List<PruningListener> pruningListeners = new ArrayList<PruningListener>();
-	private LayoutAlgorithm mainAlgorithm;
-	private LayoutAlgorithm layoutAlgorithm;
+	private LayoutAlgorithm incrementalAlgorithm;
+	private LayoutAlgorithm fullAlgorithm;
 	private ExpandCollapseManager expandCollapseManager;
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
 	private final HashSet<SubgraphLayout> subgraphs = new HashSet<SubgraphLayout>();
@@ -128,7 +128,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public LayoutAlgorithm getIncrementalLayoutAlgorithm() {
-		return mainAlgorithm;
+		return incrementalAlgorithm;
 	}
 
 	public ExpandCollapseManager getExpandCollapseManager() {
@@ -230,7 +230,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void setIncrementalLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		mainAlgorithm = algorithm;
+		incrementalAlgorithm = algorithm;
 	}
 
 	public void setExpandCollapseManager(
@@ -342,9 +342,9 @@ class InternalLayoutContext implements LayoutContext {
 		return subgraphFactory;
 	}
 
-	void applyMainAlgorithm() {
-		if (backgorundLayoutEnabled && mainAlgorithm != null) {
-			mainAlgorithm.applyLayout(true);
+	void applyIncrementalLayout() {
+		if (backgorundLayoutEnabled && incrementalAlgorithm != null) {
+			incrementalAlgorithm.applyLayout(true);
 			flushChanges(false);
 		}
 	}
@@ -356,20 +356,28 @@ class InternalLayoutContext implements LayoutContext {
 	 * after firing of events.
 	 */
 	void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		this.layoutAlgorithm = algorithm;
-		this.layoutAlgorithm.setLayoutContext(this);
+		this.fullAlgorithm = algorithm;
+		this.fullAlgorithm.setLayoutContext(this);
 	}
 
 	LayoutAlgorithm getLayoutAlgorithm() {
-		return layoutAlgorithm;
+		return fullAlgorithm;
 	}
 
-	void applyLayout(boolean clean) {
-		if (layoutAlgorithm != null) {
+	void applyFullLayout(boolean clean) {
+		if (fullAlgorithm != null) {
 			externalLayoutInvocation = true;
-			layoutAlgorithm.applyLayout(clean);
+			fullAlgorithm.applyLayout(clean);
 			externalLayoutInvocation = false;
 		}
+	}
+
+	public LayoutAlgorithm getFullLayoutAlgorithm() {
+		return fullAlgorithm;
+	}
+
+	public void setFullLayoutAlgorithm(LayoutAlgorithm algorithm) {
+		fullAlgorithm = algorithm;
 	}
 
 	void checkChangesAllowed() {
@@ -388,7 +396,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeAdded(this, node);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -401,7 +409,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeRemoved(this, node);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -422,7 +430,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionAdded(this, connection);
 			}
 			if (!intercepted) {
-				applyMainAlgorithm();
+				applyIncrementalLayout();
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -446,7 +454,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionRemoved(this, connection);
 			}
 			if (!intercepted) {
-				applyMainAlgorithm();
+				applyIncrementalLayout();
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -461,7 +469,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].boundsChanged(this);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -486,7 +494,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeMoved(this, node);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -502,7 +510,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeResized(this, node);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -517,7 +525,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphMoved(this, subgraph);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 
@@ -533,7 +541,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphResized(this, subgraph);
 		}
 		if (!intercepted) {
-			applyMainAlgorithm();
+			applyIncrementalLayout();
 		}
 	}
 }
