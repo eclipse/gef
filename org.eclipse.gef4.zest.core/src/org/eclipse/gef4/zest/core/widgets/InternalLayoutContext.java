@@ -342,8 +342,9 @@ class InternalLayoutContext implements LayoutContext {
 		return subgraphFactory;
 	}
 
-	void applyIncrementalLayout() {
+	public void applyIncrementalLayout(boolean clear) {
 		if (backgorundLayoutEnabled && incrementalAlgorithm != null) {
+
 			incrementalAlgorithm.applyLayout(true);
 			flushChanges(false);
 		}
@@ -364,7 +365,7 @@ class InternalLayoutContext implements LayoutContext {
 		return fullAlgorithm;
 	}
 
-	void applyFullLayout(boolean clean) {
+	public void applyFullLayout(boolean clean) {
 		if (fullAlgorithm != null) {
 			externalLayoutInvocation = true;
 			fullAlgorithm.applyLayout(clean);
@@ -396,7 +397,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeAdded(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -409,7 +410,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeRemoved(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -430,7 +431,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionAdded(this, connection);
 			}
 			if (!intercepted) {
-				applyIncrementalLayout();
+				applyIncrementalLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -454,7 +455,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionRemoved(this, connection);
 			}
 			if (!intercepted) {
-				applyIncrementalLayout();
+				applyIncrementalLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -469,7 +470,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].boundsChanged(this);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -494,7 +495,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeMoved(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -510,7 +511,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeResized(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -525,7 +526,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphMoved(this, subgraph);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 
@@ -541,7 +542,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphResized(this, subgraph);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout();
+			applyIncrementalLayout(true);
 		}
 	}
 }

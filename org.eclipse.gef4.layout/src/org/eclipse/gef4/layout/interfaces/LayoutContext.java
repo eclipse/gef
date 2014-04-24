@@ -20,6 +20,16 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 public interface LayoutContext {
 
 	/**
+	 * Applies the incremental layout algorithm of this LayoutContext.
+	 */
+	public void applyIncrementalLayout(boolean clear);
+
+	/**
+	 * Applies the full layout algorithm of this LayoutContext.
+	 */
+	public void applyFullLayout(boolean clear);
+
+	/**
 	 * Returns all the nodes that should be laid out. Replacing elements in the
 	 * returned array does not affect this context.
 	 * 
