@@ -46,13 +46,13 @@ class InternalNodeLayout implements NodeLayout {
 	private org.eclipse.gef4.geometry.planar.Dimension size;
 	private boolean minimized = false;
 	private final GraphNode node;
-	private final InternalLayoutContext ownerLayoutContext;
+	private final InternalLayoutContext layoutContext;
 	private DefaultSubgraph subgraph;
 	private boolean isDisposed = false;
 
 	public InternalNodeLayout(GraphNode graphNode) {
 		this.node = graphNode;
-		this.ownerLayoutContext = node.parent.getLayoutContext();
+		this.layoutContext = node.parent.getLayoutContext();
 		graphNode.nodeFigure.addFigureListener(figureListener);
 		figureToNode.put(graphNode.nodeFigure, graphNode);
 	}
@@ -80,7 +80,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public boolean isPrunable() {
-		return ownerLayoutContext.isPruningEnabled();
+		return layoutContext.isPruningEnabled();
 	}
 
 	public boolean isPruned() {
@@ -96,7 +96,7 @@ class InternalNodeLayout implements NodeLayout {
 			throw new RuntimeException(
 					"InternalNodeLayout can be pruned only to instance of DefaultSubgraph.");
 		}
-		ownerLayoutContext.checkChangesAllowed();
+		layoutContext.checkChangesAllowed();
 		if (subgraph == this.subgraph) {
 			return;
 		}
@@ -112,8 +112,8 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public void setLocation(double x, double y) {
-		if (!ownerLayoutContext.isLayoutItemFiltered(this.getNode())) {
-			ownerLayoutContext.checkChangesAllowed();
+		if (!layoutContext.isLayoutItemFiltered(this.getNode())) {
+			layoutContext.checkChangesAllowed();
 			internalSetLocation(x, y);
 		}
 	}
@@ -128,7 +128,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public void setSize(double width, double height) {
-		ownerLayoutContext.checkChangesAllowed();
+		layoutContext.checkChangesAllowed();
 		internalSetSize(width, height);
 	}
 
@@ -142,7 +142,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public void setMinimized(boolean minimized) {
-		ownerLayoutContext.checkChangesAllowed();
+		layoutContext.checkChangesAllowed();
 		getSize();
 		this.minimized = minimized;
 	}
@@ -226,7 +226,7 @@ class InternalNodeLayout implements NodeLayout {
 		for (Iterator<GraphConnection> iterator = node.getTargetConnections()
 				.iterator(); iterator.hasNext();) {
 			GraphConnection connection = iterator.next();
-			if (!ownerLayoutContext.isLayoutItemFiltered(connection)) {
+			if (!layoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
@@ -234,7 +234,7 @@ class InternalNodeLayout implements NodeLayout {
 				.iterator(); iterator.hasNext();) {
 			GraphConnection connection = iterator.next();
 			if (!connection.isDirected()
-					&& !ownerLayoutContext.isLayoutItemFiltered(connection)) {
+					&& !layoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
@@ -246,7 +246,7 @@ class InternalNodeLayout implements NodeLayout {
 		for (Iterator<GraphConnection> iterator = node.getSourceConnections()
 				.iterator(); iterator.hasNext();) {
 			GraphConnection connection = iterator.next();
-			if (!ownerLayoutContext.isLayoutItemFiltered(connection)) {
+			if (!layoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
@@ -254,7 +254,7 @@ class InternalNodeLayout implements NodeLayout {
 				.iterator(); iterator.hasNext();) {
 			GraphConnection connection = iterator.next();
 			if (!connection.isDirected()
-					&& !ownerLayoutContext.isLayoutItemFiltered(connection)) {
+					&& !layoutContext.isLayoutItemFiltered(connection)) {
 				result.add(connection.getLayout());
 			}
 		}
@@ -296,7 +296,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	InternalLayoutContext getOwnerLayoutContext() {
-		return ownerLayoutContext;
+		return layoutContext;
 	}
 
 	void refreshSize() {
@@ -319,7 +319,7 @@ class InternalNodeLayout implements NodeLayout {
 		if (subgraph != null) {
 			subgraph.removeDisposedNodes();
 		}
-		ownerLayoutContext.fireNodeRemovedEvent(node.getLayout());
+		layoutContext.fireNodeRemovedEvent(node.getLayout());
 		figureToNode.remove(node.nodeFigure);
 	}
 

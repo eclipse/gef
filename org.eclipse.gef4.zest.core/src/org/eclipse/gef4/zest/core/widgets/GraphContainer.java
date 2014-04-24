@@ -636,7 +636,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * Gets the graph that this container has been added to.
 	 */
 	public GraphWidget getGraph() {
-		return this.graph;
+		return this.graphWidget;
 	}
 
 	/**
@@ -925,7 +925,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 */
 	public void addSubgraphFigure(IFigure figure) {
 		zestLayer.addSubgraph(figure);
-		graph.subgraphFigures.add(figure);
+		graphWidget.subgraphFigures.add(figure);
 	}
 
 	void addConnectionFigure(IFigure figure) {

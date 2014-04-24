@@ -41,8 +41,8 @@ public class GraphItemStyler {
 		if (item instanceof GraphNode) {
 			GraphNode node = (GraphNode) item;
 			// set defaults.
-			if (node.getGraphModel().getNodeStyle() != ZestStyles.NONE) {
-				node.setNodeStyle(node.getGraphModel().getNodeStyle());
+			if (node.getGraphWidget().getNodeStyle() != ZestStyles.NONE) {
+				node.setNodeStyle(node.getGraphWidget().getNodeStyle());
 			} else {
 				node.setNodeStyle(SWT.NONE);
 			}
@@ -74,8 +74,8 @@ public class GraphItemStyler {
 			GraphConnection conn = (GraphConnection) item;
 
 			// set defaults
-			if (conn.getGraphModel().getConnectionStyle() != ZestStyles.NONE) {
-				int s = conn.getGraphModel().getConnectionStyle();
+			if (conn.getGraphWidget().getConnectionStyle() != ZestStyles.NONE) {
+				int s = conn.getGraphWidget().getConnectionStyle();
 				conn.setConnectionStyle(s);
 			} else {
 				conn.setConnectionStyle(SWT.NONE);

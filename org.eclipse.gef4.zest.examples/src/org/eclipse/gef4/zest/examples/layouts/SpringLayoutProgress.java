@@ -188,7 +188,7 @@ public class SpringLayoutProgress {
 
 			public boolean isObjectFiltered(GraphItem item) {
 				if (item instanceof GraphNode) {
-					return item.getGraphModel().getSelection().contains(item)
+					return item.getGraphWidget().getSelection().contains(item)
 							&& MouseDown; // MouseDown;
 				}
 				return false;

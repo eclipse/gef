@@ -52,7 +52,7 @@ public class GraphConnection extends GraphItem {
 	private Color foreground;
 	private int lineWidth;
 	private int lineStyle;
-	private final GraphWidget graph;
+	private final GraphWidget graphWidget;
 
 	private int connectionStyle;
 	private int curveDepth;
@@ -93,7 +93,7 @@ public class GraphConnection extends GraphItem {
 		this.lineWidth = 1;
 		this.lineStyle = Graphics.LINE_SOLID;
 		setWeight(1.0);
-		this.graph = graphModel;
+		this.graphWidget = graphModel;
 		this.curveDepth = 0;
 		this.font = Display.getDefault().getSystemFont();
 		registerConnection(source, destination);
@@ -115,9 +115,9 @@ public class GraphConnection extends GraphItem {
 			// 196189: Edges should not draw on the edge layer if both the src
 			// and dest are in the same container
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196189
-			graph.addConnection(this, false);
+			graphWidget.addConnection(this, false);
 		} else {
-			graph.addConnection(this, true);
+			graphWidget.addConnection(this, true);
 		}
 
 		if ((source.getParent()).getItemType() == GraphItem.CONTAINER) {
@@ -143,7 +143,7 @@ public class GraphConnection extends GraphItem {
 					.addConnectionFigure(targetContainerConnectionFigure);
 			this.setVisible(false);
 		}
-		graph.registerItem(this);
+		graphWidget.registerItem(this);
 	}
 
 	void removeFigure() {
@@ -169,7 +169,7 @@ public class GraphConnection extends GraphItem {
 		this.isDisposed = true;
 		(getSource()).removeSourceConnection(this);
 		(getDestination()).removeTargetConnection(this);
-		graph.removeConnection(this);
+		graphWidget.removeConnection(this);
 		if (sourceContainerConnectionFigure != null) {
 			sourceContainerConnectionFigure.getParent().remove(
 					sourceContainerConnectionFigure);
@@ -455,12 +455,12 @@ public class GraphConnection extends GraphItem {
 	}
 
 	/**
-	 * Gets the graph model that this connection is in
+	 * Gets the graph widget that this connection is in
 	 * 
-	 * @return The graph model that this connection is contained in
+	 * @return The graph widget that this connection is contained in
 	 */
-	public GraphWidget getGraphModel() {
-		return this.graph;
+	public GraphWidget getGraphWidget() {
+		return this.graphWidget;
 	}
 
 	/**
@@ -480,7 +480,7 @@ public class GraphConnection extends GraphItem {
 			// There is currently no curve, so we have to create
 			// a curved connection
 			this.cachedConnectionFigure = connectionFigure;
-			graph.removeConnection(this);
+			graphWidget.removeConnection(this);
 			this.curveDepth = depth;
 			this.connectionFigure = doCreateFigure();
 			registerConnection(sourceNode, destinationNode);
@@ -713,16 +713,16 @@ public class GraphConnection extends GraphItem {
 	void applyConnectionRouter(Connection conn) {
 		if (router != null) {
 			conn.setConnectionRouter(router);
-		} else if (graph.getDefaultConnectionRouter() != null) {
-			conn.setConnectionRouter(graph.getDefaultConnectionRouter());
+		} else if (graphWidget.getDefaultConnectionRouter() != null) {
+			conn.setConnectionRouter(graphWidget.getDefaultConnectionRouter());
 		}
 	}
 
 	void applyDecoration(PolylineArcConnection conn) {
 		IConnectionDecorator decorator = connectionDecorator;
 		if (decorator == null) {
-			decorator = ((connectionStyle & ZestStyles.CONNECTIONS_DIRECTED) > 0) ? getGraphModel()
-					.getDefaultDirectedConnectionDecorator() : getGraphModel()
+			decorator = ((connectionStyle & ZestStyles.CONNECTIONS_DIRECTED) > 0) ? getGraphWidget()
+					.getDefaultDirectedConnectionDecorator() : getGraphWidget()
 					.getDefaultConnectionDecorator();
 		}
 		decorator.decorateConnection(this, conn);

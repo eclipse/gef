@@ -344,7 +344,7 @@ public abstract class AbstractStylingModelFactory implements
 	 * Builds the graph model from the viewer's content provider. There is no
 	 * guarantee that the model will be cleared before this method is called.
 	 * 
-	 * @param graph
+	 * @param graphWidget
 	 */
 	protected void doBuildGraph(GraphWidget model) {
 		clearGraph(model);

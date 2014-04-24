@@ -61,7 +61,7 @@ public class GraphNode extends GraphItem {
 	private boolean cacheLabel;
 	private boolean visible = true;
 
-	protected GraphWidget graph;
+	protected GraphWidget graphWidget;
 	protected IContainer parent;
 
 	/** The internal node. */
@@ -136,7 +136,7 @@ public class GraphNode extends GraphItem {
 		this.currentLocation = new PrecisionPoint(0, 0);
 		this.size = new Dimension(-1, -1);
 		this.font = Display.getDefault().getSystemFont();
-		this.graph = graphModel.getGraph();
+		this.graphWidget = graphModel.getGraph();
 		this.cacheLabel = false;
 		this.setText(text);
 		if (image != null) {
@@ -185,7 +185,7 @@ public class GraphNode extends GraphItem {
 				removeTargetConnection(connection);
 			}
 		}
-		graph.removeNode(this);
+		graphWidget.removeNode(this);
 	}
 
 	/*
@@ -265,7 +265,7 @@ public class GraphNode extends GraphItem {
 			currentLocation.setPreciseX(x);
 			currentLocation.setPreciseY(y);
 			refreshBounds();
-			if (getGraphModel().isDynamicLayoutEnabled()) {
+			if (getGraphWidget().isDynamicLayoutEnabled()) {
 				parent.getLayoutContext().fireNodeMovedEvent(this.getLayout());
 			}
 		}
@@ -478,12 +478,12 @@ public class GraphNode extends GraphItem {
 	}
 
 	/**
-	 * Gets the graphModel that this node is contained in
+	 * Gets the graph widget that this node is contained in
 	 * 
-	 * @return The graph model that this node is contained in
+	 * @return The graph widget that this node is contained in
 	 */
-	public GraphWidget getGraphModel() {
-		return this.graph;
+	public GraphWidget getGraphWidget() {
+		return this.graphWidget;
 	}
 
 	/**
@@ -579,7 +579,7 @@ public class GraphNode extends GraphItem {
 			}
 
 			// Add the fisheye
-			this.getGraphModel().fishEye(nodeFigure, fishEyeFigure, rectangle,
+			this.getGraphWidget().fishEye(nodeFigure, fishEyeFigure, rectangle,
 					animate);
 			if (fishEyeFigure != null) {
 				isFisheyeEnabled = true;
@@ -588,7 +588,7 @@ public class GraphNode extends GraphItem {
 
 		} else {
 			isFisheyeEnabled = false;
-			this.getGraphModel().removeFishEye(fishEyeFigure, nodeFigure,
+			this.getGraphWidget().removeFishEye(fishEyeFigure, nodeFigure,
 					animate);
 			return null;
 		}
@@ -654,7 +654,8 @@ public class GraphNode extends GraphItem {
 
 		if (isFisheyeEnabled) {
 			IFigure newFisheyeFigure = createFishEyeFigure();
-			if (graph.replaceFishFigure(this.fishEyeFigure, newFisheyeFigure)) {
+			if (graphWidget.replaceFishFigure(this.fishEyeFigure,
+					newFisheyeFigure)) {
 				this.fishEyeFigure = newFisheyeFigure;
 			}
 		}

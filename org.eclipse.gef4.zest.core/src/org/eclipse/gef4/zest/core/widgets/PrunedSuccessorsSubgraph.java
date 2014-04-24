@@ -227,8 +227,8 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 		}
 
 		GraphNode graphNode = internalNode.getNode();
-		if (!graphNode.getGraphModel().canExpand(graphNode)
-				|| graphNode.getGraphModel().canCollapse(graphNode)
+		if (!graphNode.getGraphWidget().canExpand(graphNode)
+				|| graphNode.getGraphWidget().canCollapse(graphNode)
 				|| internalNode.isPruned()) {
 			label.setVisible(false);
 		} else {

@@ -96,7 +96,7 @@ public abstract class GraphItem extends Item {
 	 * 
 	 * @return the parent graph.
 	 */
-	public abstract GraphWidget getGraphModel();
+	public abstract GraphWidget getGraphWidget();
 
 	/**
 	 * Highlights the current GraphItem. A graph item is either a graph node or

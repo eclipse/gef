@@ -39,7 +39,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public void setVisible(boolean visible) {
-		this.graphConnection.getGraphModel().getLayoutContext()
+		this.graphConnection.getGraphWidget().getLayoutContext()
 				.checkChangesAllowed();
 		this.visible = visible;
 	}
