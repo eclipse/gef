@@ -103,25 +103,33 @@ public interface LayoutContext {
 	 * {@link LayoutAlgorithm#applyLayout(boolean)} is called (otherwise a
 	 * runtime exception will be thrown).
 	 * 
-	 * @return true if background layout changes are enabled
+	 * @return true if incremental layout changes are enabled
 	 */
-	public boolean isBackgroundLayoutEnabled();
+	public boolean isIncrementalLayoutEnabled();
 
 	/**
-	 * Sets the main layout algorithm for this context. Main algorithm will be
-	 * used to relayout graph items using {@link LayoutAlgorithm#applyLayout()}
-	 * after every event that is not intercepted by any listener.
+	 * Sets the incremental layout algorithm for this context. Main algorithm
+	 * will be used to relayout graph items using
+	 * {@link LayoutAlgorithm#applyLayout()} after every event that is not
+	 * intercepted by any listener.
 	 * 
 	 * @param algorithm
 	 */
-	public void setMainLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setIncrementalLayoutAlgorithm(LayoutAlgorithm algorithm);
 
 	/**
+	 * Enables or disables incremental layout depending on the given boolean.
 	 * 
-	 * @return the main algorithm of this context (see
-	 *         {@link #setMainLayoutAlgorithm(LayoutAlgorithm)} for details)
+	 * @param enabled
 	 */
-	public LayoutAlgorithm getMainLayoutAlgorithm();
+	public void setIncrementalLayoutEnabled(boolean enabled);
+
+	/**
+	 * @return the incremental algorithm of this context (see
+	 *         {@link #setIncrementalLayoutAlgorithm(LayoutAlgorithm)} for
+	 *         details)
+	 */
+	public LayoutAlgorithm getIncrementalLayoutAlgorithm();
 
 	/**
 	 * Sets the expand/collapse manager for this context. The manger will be

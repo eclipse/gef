@@ -1097,7 +1097,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			}
 			if (node != null && node.subgraph == subgraph) {
 				node.adjustPosition(subgraph.getLocation());
-				if (context.isBackgroundLayoutEnabled()) {
+				if (context.isIncrementalLayoutEnabled()) {
 					((SpaceTreeNode) treeObserver.getSuperRoot())
 							.flushLocationChanges(0);
 					node.refreshSubgraphLocation();
@@ -1113,7 +1113,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
 			spaceTreeNode.adjustPosition(node.getLocation());
-			if (context.isBackgroundLayoutEnabled()) {
+			if (context.isIncrementalLayoutEnabled()) {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);
 				spaceTreeNode.refreshSubgraphLocation();
@@ -1233,7 +1233,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			this.direction = direction;
 			if (context != null) {
 				directionChanged = true;
-				if (context.isBackgroundLayoutEnabled())
+				if (context.isIncrementalLayoutEnabled())
 					checkPendingChangeDirection();
 			}
 		} else
@@ -1308,7 +1308,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	protected void refreshLayout(boolean animation) {
-		if (!context.isBackgroundLayoutEnabled())
+		if (!context.isIncrementalLayoutEnabled())
 			return;
 		SpaceTreeNode superRoot = (SpaceTreeNode) treeObserver.getSuperRoot();
 		if (animation && superRoot.flushCollapseChanges())

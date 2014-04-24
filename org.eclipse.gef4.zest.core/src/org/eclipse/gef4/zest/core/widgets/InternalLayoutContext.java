@@ -127,7 +127,7 @@ class InternalLayoutContext implements LayoutContext {
 		return result;
 	}
 
-	public LayoutAlgorithm getMainLayoutAlgorithm() {
+	public LayoutAlgorithm getIncrementalLayoutAlgorithm() {
 		return mainAlgorithm;
 	}
 
@@ -198,11 +198,11 @@ class InternalLayoutContext implements LayoutContext {
 		return false;
 	}
 
-	public boolean isBackgroundLayoutEnabled() {
+	public boolean isIncrementalLayoutEnabled() {
 		return backgorundLayoutEnabled;
 	}
 
-	void setBackgroundLayoutEnabled(boolean enabled) {
+	public void setIncrementalLayoutEnabled(boolean enabled) {
 		if (this.backgorundLayoutEnabled != enabled) {
 			this.backgorundLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
@@ -229,7 +229,7 @@ class InternalLayoutContext implements LayoutContext {
 		pruningListeners.remove(listener);
 	}
 
-	public void setMainLayoutAlgorithm(LayoutAlgorithm algorithm) {
+	public void setIncrementalLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		mainAlgorithm = algorithm;
 	}
 
@@ -351,8 +351,8 @@ class InternalLayoutContext implements LayoutContext {
 
 	/**
 	 * Sets layout algorithm for this context. It differs from
-	 * {@link #setMainLayoutAlgorithm(LayoutAlgorithm) main algorithm} in that
-	 * it's always used when {@link #applyLayoutAlgorithm(boolean)} and not
+	 * {@link #setIncrementalLayoutAlgorithm(LayoutAlgorithm) main algorithm} in
+	 * that it's always used when {@link #applyLayoutAlgorithm(boolean)} and not
 	 * after firing of events.
 	 */
 	void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
