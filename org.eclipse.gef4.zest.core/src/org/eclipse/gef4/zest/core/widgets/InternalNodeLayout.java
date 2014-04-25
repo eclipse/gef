@@ -318,7 +318,7 @@ class InternalNodeLayout implements NodeLayout {
 	void dispose() {
 		isDisposed = true;
 		if (subgraph != null) {
-			subgraph.removeDisposedNodes();
+			subgraph.removeNodes(new NodeLayout[] { this });
 		}
 		layoutContext.fireNodeRemovedEvent(node.getLayout());
 		figureToNode.remove(node.nodeFigure);

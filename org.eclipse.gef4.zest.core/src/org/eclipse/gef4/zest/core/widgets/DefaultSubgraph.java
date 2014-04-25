@@ -300,16 +300,6 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
-	public void removeDisposedNodes() {
-		for (Iterator<NodeLayout> iterator = nodes.iterator(); iterator
-				.hasNext();) {
-			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
-			if (node.isDisposed()) {
-				iterator.remove();
-			}
-		}
-	}
-
 	public NodeLayout[] getNodes() {
 		InternalNodeLayout[] result = new InternalNodeLayout[nodes.size()];
 		int i = 0;
