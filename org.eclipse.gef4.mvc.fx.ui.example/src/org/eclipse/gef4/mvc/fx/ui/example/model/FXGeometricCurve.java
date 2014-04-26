@@ -26,8 +26,31 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 // TODO: parameterize with concrete ICurve and encapsulate construction of geometry; limit the number of waypoints if needed
 public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
-	private List<Point> waypoints = new ArrayList<>();
+	public enum Decoration {
+		NONE, ARROW, CIRCLE
+	}
+	
 	public double[] dashes = new double[0];
+	
+	private List<Point> waypoints = new ArrayList<>();
+	private Decoration sourceDecoration = Decoration.NONE;
+	private Decoration targetDecoration = Decoration.NONE;
+
+	public Decoration getSourceDecoration() {
+		return sourceDecoration;
+	}
+
+	public void setSourceDecoration(Decoration sourceDecoration) {
+		this.sourceDecoration = sourceDecoration;
+	}
+
+	public Decoration getTargetDecoration() {
+		return targetDecoration;
+	}
+
+	public void setTargetDecoration(Decoration targetDecoration) {
+		this.targetDecoration = targetDecoration;
+	}
 
 	public FXGeometricCurve(Point[] waypoints, Color stroke,
 			double strokeWidth, double[] dashes, Effect effect) {

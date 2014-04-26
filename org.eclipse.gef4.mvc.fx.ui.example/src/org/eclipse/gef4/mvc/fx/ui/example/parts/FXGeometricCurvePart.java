@@ -42,8 +42,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0,
-					10.0, 0.0);
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
+					0.0);
 		}
 
 		@Override
@@ -61,7 +61,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return this;
 		}
 	}
-	
+
 	public static class CircleHead extends Circle implements IFXDecoration {
 		public CircleHead() {
 			super(5);
@@ -94,11 +94,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
-			{
-//				setStartDecoration(new ArrowHead());
-//				setEndDecoration(new CircleHead());
-			}
-
 			@Override
 			public ICurve computeGeometry(Point[] points) {
 				return FXGeometricCurve.constructCurveFromWayPoints(points);
@@ -181,46 +176,92 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return;
 		}
 
+		FXGeometricCurve content = getContent();
+
 		// TODO: compare way points to identify if we need to refresh
-		FXGeometricCurve curve = getContent();
-		List<Point> wayPoints = curve.getWayPoints();
-		if (curve.getTransform() != null) {
-			Point[] transformedWayPoints = curve.getTransform().getTransformed(
-					wayPoints.toArray(new Point[] {}));
+		List<Point> wayPoints = content.getWayPoints();
+		if (content.getTransform() != null) {
+			Point[] transformedWayPoints = content.getTransform()
+					.getTransformed(wayPoints.toArray(new Point[] {}));
 			visual.setWayPoints(Arrays.asList(transformedWayPoints));
 		} else {
 			visual.setWayPoints(wayPoints);
 		}
 
-		// apply stroke paint
-		if (visual.getCurveNode().getStroke() != curve.getStroke()) {
-			visual.getCurveNode().setStroke(curve.getStroke());
+		// decorations
+		switch (content.getSourceDecoration()) {
+		case NONE:
+			if (visual.getStartDecoration() != null) {
+				visual.setStartDecoration(null);
+			}
+			break;
+		case CIRCLE:
+			if (visual.getStartDecoration() == null
+					|| !(visual.getStartDecoration() instanceof CircleHead)) {
+				visual.setStartDecoration(new CircleHead());
+			}
+			break;
+		case ARROW:
+			if (visual.getStartDecoration() == null
+					|| !(visual.getStartDecoration() instanceof ArrowHead)) {
+				visual.setStartDecoration(new ArrowHead());
+			}
+			break;
+		}
+		switch (content.getTargetDecoration()) {
+		case NONE:
+			if (visual.getEndDecoration() != null) {
+				visual.setEndDecoration(null);
+			}
+			break;
+		case CIRCLE:
+			if (visual.getEndDecoration() == null
+					|| !(visual.getEndDecoration() instanceof CircleHead)) {
+				visual.setEndDecoration(new CircleHead());
+			}
+			break;
+		case ARROW:
+			if (visual.getEndDecoration() == null
+					|| !(visual.getEndDecoration() instanceof ArrowHead)) {
+				visual.setEndDecoration(new ArrowHead());
+			}
+			break;
+		}
+
+		// stroke paint
+		if (visual.getCurveNode().getStroke() != content.getStroke()) {
+			visual.getCurveNode().setStroke(content.getStroke());
+
 			IFXDecoration startDecoration = visual.getStartDecoration();
 			if (startDecoration != null) {
-				((Shape) startDecoration.getVisual()).setStroke(curve.getStroke());
+				((Shape) startDecoration.getVisual()).setStroke(content
+						.getStroke());
 			}
 			IFXDecoration endDecoration = visual.getEndDecoration();
 			if (endDecoration != null) {
-				((Shape) endDecoration.getVisual()).setStroke(curve.getStroke());
+				((Shape) endDecoration.getVisual()).setStroke(content
+						.getStroke());
 			}
 		}
 
 		// stroke width
-		if (visual.getCurveNode().getStrokeWidth() != curve.getStrokeWidth()) {
-			visual.getCurveNode().setStrokeWidth(curve.getStrokeWidth());
+		if (visual.getCurveNode().getStrokeWidth() != content.getStrokeWidth()) {
+			visual.getCurveNode().setStrokeWidth(content.getStrokeWidth());
 			IFXDecoration startDecoration = visual.getStartDecoration();
 			if (startDecoration != null) {
-				((Shape) startDecoration.getVisual()).setStrokeWidth(curve.getStrokeWidth());
+				((Shape) startDecoration.getVisual()).setStrokeWidth(content
+						.getStrokeWidth());
 			}
 			IFXDecoration endDecoration = visual.getEndDecoration();
 			if (endDecoration != null) {
-				((Shape) endDecoration.getVisual()).setStrokeWidth(curve.getStrokeWidth());
+				((Shape) endDecoration.getVisual()).setStrokeWidth(content
+						.getStrokeWidth());
 			}
 		}
 
 		// dashes
-		List<Double> dashList = new ArrayList<Double>(curve.dashes.length);
-		for (double d : curve.dashes) {
+		List<Double> dashList = new ArrayList<Double>(content.dashes.length);
+		for (double d : content.dashes) {
 			dashList.add(d);
 		}
 		if (!visual.getCurveNode().getStrokeDashArray().equals(dashList)) {
@@ -238,7 +279,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// based on the model
 		AbstractFXGeometricElement<?> anchorageContent = ((AbstractFXGeometricElementPart) anchorage)
 				.getContent();
-		boolean isStart = anchorageContent.getSourceAnchoreds().contains(getContent());
+		boolean isStart = anchorageContent.getSourceAnchoreds().contains(
+				getContent());
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (isStart) {
 			visual.setStartAnchor(anchor);
@@ -266,10 +308,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					"Cannot detach from unknown anchor: " + anchor);
 		}
 		// TODO: what if multiple points are bound to the same anchor?
-	}
-
-	public FXSelectionBehavior getSelectionBehavior() {
-		return selectionBehavior;
 	}
 
 }
