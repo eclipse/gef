@@ -52,6 +52,8 @@ public abstract class FXView extends ViewPart {
 	private FXCanvas canvas = null;
 	private IUndoContext undoContext;
 	private IOperationHistory operationHistory;
+	private FXDomain domain;
+	private FXCanvasViewer viewer;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {
@@ -70,14 +72,26 @@ public abstract class FXView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		canvas = createCanvas(parent);
-		FXCanvasViewer viewer = createViewer(canvas);
+		viewer = createViewer(canvas);
 		configureViewer(viewer);
-		FXDomain domain = createDomain();
+		domain = createDomain();
 		configureDomain(domain);
 		viewer.setDomain(domain);
 		viewer.setContents(getContents());
 	}
+	
+	protected FXCanvas getCanvas() {
+		return canvas;
+	}
 
+	protected FXDomain getDomain() {
+		return domain;
+	}
+	
+	protected FXCanvasViewer getViewer() {
+		return viewer;
+	}
+	
 	protected FXCanvas createCanvas(Composite parent) {
 		return new SwtFXCanvas(parent, SWT.NONE);
 	}

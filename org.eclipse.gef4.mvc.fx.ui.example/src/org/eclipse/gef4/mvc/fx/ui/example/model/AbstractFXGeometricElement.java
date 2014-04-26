@@ -61,12 +61,14 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	public AbstractFXGeometricElement(G geometry) {
 		setGeometry(geometry);
 	}
-	
-	public void addSourceAnchored(AbstractFXGeometricElement<? extends IGeometry> anchored) {
+
+	public void addSourceAnchored(
+			AbstractFXGeometricElement<? extends IGeometry> anchored) {
 		sourceAnchoreds.add(anchored);
 	}
-	
-	public void addTargetAnchored(AbstractFXGeometricElement<? extends IGeometry> anchored) {
+
+	public void addTargetAnchored(
+			AbstractFXGeometricElement<? extends IGeometry> anchored) {
 		targetAnchoreds.add(anchored);
 	}
 
@@ -130,11 +132,11 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	public void setStrokeWidth(double strokeWidth) {
 		this.strokeWidth = strokeWidth;
 	}
-	
+
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchoreds() {
 		return Collections.unmodifiableList(sourceAnchoreds);
 	}
-	
+
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchoreds() {
 		return Collections.unmodifiableList(targetAnchoreds);
 	}
