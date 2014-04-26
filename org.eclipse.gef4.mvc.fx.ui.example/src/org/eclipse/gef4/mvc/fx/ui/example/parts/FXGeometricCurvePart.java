@@ -34,7 +34,6 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.fx.ui.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel.AnchorType;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
@@ -96,8 +95,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public FXGeometricCurvePart() {
 		visual = new FXCurveConnection() {
 			{
-				setStartDecoration(new ArrowHead());
-				setEndDecoration(new CircleHead());
+//				setStartDecoration(new ArrowHead());
+//				setEndDecoration(new CircleHead());
 			}
 
 			@Override
