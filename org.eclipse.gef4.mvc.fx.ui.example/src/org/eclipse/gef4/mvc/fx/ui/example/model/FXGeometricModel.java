@@ -34,10 +34,6 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 public class FXGeometricModel {
 
-	public static enum AnchorType {
-		START, END,
-	}
-
 	// private static final Color GEF_COLOR_BLUE = Color.rgb(97, 102, 170);
 	// private static final Color GEF_COLOR_GREEN = Color.rgb(99, 123, 71);
 
