@@ -17,19 +17,22 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class PropertySourceAdapterFactory implements IAdapterFactory {
+/**
+ * An {@link IAdapterFactory} that adapts the {@link IContentPart#getContent()}
+ * to {@link IPropertySource}.
+ * 
+ * @author anyssen
+ *
+ */
+public class ContentPropertySourceAdapterFactory implements IAdapterFactory {
 
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		IContentPart part = (IContentPart) adaptableObject;
-		if(adapterType.isInstance(part)){
-			return part;
-		}
-		Object adapter = part.getAdapter(adapterType);
-		if(adapter != null){
-			return adapter;
-		}
-		
+		// Check model of content part for adaptability
+		// IMPORTANT: as all IVisualParts are adaptable, this
+		// here is only called in case IPropertySource is not handled inside
+		// getAdapter() of the content part)
+		IContentPart<?> part = (IContentPart<?>) adaptableObject;
 		Object model = part.getContent();
 		// check if model is already of the desired adapter type
 		if (adapterType.isInstance(model)) {
@@ -38,12 +41,12 @@ public class PropertySourceAdapterFactory implements IAdapterFactory {
 		// check if model is adaptable and does provide an adapter of the
 		// desired type
 		if (model instanceof IAdaptable) {
-			adapter = ((IAdaptable) model).getAdapter(adapterType);
+			Object adapter = ((IAdaptable) model).getAdapter(adapterType);
 			if (adapter != null) {
 				return adapter;
 			}
 		}
-		// fall back to platform's adapter manager
+		// fall back to adapter manager
 		return Platform.getAdapterManager().getAdapter(model, adapterType);
 	}
 

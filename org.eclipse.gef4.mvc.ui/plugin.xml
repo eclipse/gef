@@ -3,7 +3,7 @@
 <plugin>
   <extension point="org.eclipse.core.runtime.adapters">
 		<factory
-				class="org.eclipse.gef4.mvc.ui.properties.PropertySourceAdapterFactory"
+				class="org.eclipse.gef4.mvc.ui.properties.ContentPropertySourceAdapterFactory"
 				adaptableType="org.eclipse.gef4.mvc.parts.IContentPart">
 			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
 		</factory>
