@@ -31,7 +31,7 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 	public static final String GEOMETRY_PROPERTY = "Geometry";
 	public static final String TRANSFORM_PROPERTY = "Transform";
 
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private G geometry;
 	private AffineTransform transform;

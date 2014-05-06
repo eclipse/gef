@@ -118,8 +118,8 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			visual.setStrokeWidth(shapeVisual.getStrokeWidth());
 		}
 
-		if (visual.getFill() != shapeVisual.fill) {
-			visual.setFill(shapeVisual.fill);
+		if (visual.getFill() != shapeVisual.getFill()) {
+			visual.setFill(shapeVisual.getFill());
 		}
 
 		// apply effect

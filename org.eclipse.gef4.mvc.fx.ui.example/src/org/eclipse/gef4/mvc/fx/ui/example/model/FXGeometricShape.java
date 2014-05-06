@@ -17,10 +17,17 @@ import javafx.scene.paint.Paint;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.mvc.fx.ui.properties.FXFillPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
+public class FXGeometricShape extends AbstractFXGeometricElement<IShape>
+		implements IPropertySource {
 
-	public Paint fill;
+	private static final IPropertyDescriptor FILL_PROPERTY_DESCRIPTOR = new FXFillPropertyDescriptor(
+			"fillColor", "Fill");
+
+	private Paint fill;
 
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Paint fill, Effect effect) {
@@ -30,7 +37,60 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape> {
 	public FXGeometricShape(IShape shape, AffineTransform transform,
 			Color stroke, double strokeWidth, Paint fill, Effect effect) {
 		super(shape, transform, stroke, strokeWidth, effect);
+		setFill(fill);
+	}
+
+	public void setFill(Paint fill) {
+		Paint oldFill = this.fill;
 		this.fill = fill;
+		pcs.firePropertyChange("fill", oldFill, fill);
+	}
+
+	@Override
+	public Object getEditableValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		return new IPropertyDescriptor[] { FILL_PROPERTY_DESCRIPTOR };
+	}
+
+	@Override
+	public Object getPropertyValue(Object id) {
+		if (FILL_PROPERTY_DESCRIPTOR.getId().equals(id)) {
+			return fill;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isPropertySet(Object id) {
+		if (FILL_PROPERTY_DESCRIPTOR.getId().equals(id)) {
+			return fill != null;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void resetPropertyValue(Object id) {
+		if (FILL_PROPERTY_DESCRIPTOR.getId().equals(id)) {
+			setFill(null);
+		}
+	}
+
+	@Override
+	public void setPropertyValue(Object id, Object value) {
+		if (FILL_PROPERTY_DESCRIPTOR.getId().equals(id)) {
+			setFill((Paint) value);
+		}
+	}
+
+	public Paint getFill() {
+		return fill;
 	}
 
 }
