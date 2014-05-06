@@ -8,6 +8,7 @@ Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt,
  org.eclipse.core.runtime,
  org.eclipse.ui,
+ org.eclipse.ui.views,
  org.eclipse.ui.workbench,
  org.eclipse.gef4.swtfx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
@@ -27,6 +28,7 @@ Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.fxml;version="[2.0.0,3.0.0)",
  javafx.geometry;version="[2.0.0,3.0.0)",
  javafx.scene;version="[2.0.0,3.0.0)",
+ javafx.scene.canvas;version="2.2.0",
  javafx.scene.chart;version="[2.0.0,3.0.0)",
  javafx.scene.control;version="[2.0.0,3.0.0)",
  javafx.scene.control.cell;version="[2.0.0,3.0.0)",
@@ -44,5 +46,6 @@ Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.util;version="[2.0.0,3.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.gef4.mvc.fx.ui.view,
+Export-Package: org.eclipse.gef4.mvc.fx.ui.properties,
+ org.eclipse.gef4.mvc.fx.ui.view,
  org.eclipse.gef4.mvc.fx.ui.viewer

@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.properties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.text.MessageFormat;
 
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.SnapshotParameters;
@@ -22,10 +23,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -34,6 +36,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -43,29 +46,38 @@ import org.eclipse.swt.widgets.Label;
  * @author anyssen
  *
  */
-public class FXColorChooser extends Composite {
+public class FXColorPicker implements IPropertyChangeSupport {
 
+	PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
 	private Color color;
 	private Button colorButton;
 	private Label imageLabel;
 
-	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
+	private Control control;
 
-	public FXColorChooser(final Composite parent) {
-		super(parent, SWT.BORDER);
+	public FXColorPicker(final Composite parent) {
+		control = createControl(parent);
+		setColor(Color.WHITE);
+	}
+	
+	public Control getControl() {
+		return control;
+	}
+
+	protected Control createControl(final Composite parent) {
+		Composite composite = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 1;
 		layout.marginHeight = 1;
 		layout.horizontalSpacing = 1;
-		setLayout(layout);
-		imageLabel = new Label(this, SWT.LEFT);
-		colorButton = new Button(this, SWT.ARROW);
-
+		composite.setLayout(layout);
+		imageLabel = new Label(composite, SWT.LEFT);
 		imageLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
 				false, false));
+		colorButton = new Button(composite, SWT.ARROW);
 		colorButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
 				false, false));
-
 		colorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -77,29 +89,10 @@ public class FXColorChooser extends Composite {
 				RGB newRgb = cd.open();
 				if (newRgb != null) {
 					setColor(Color.rgb(newRgb.red, newRgb.green, newRgb.blue));
-					// notify listeners that value has changed
-					for (SelectionListener l : listeners) {
-						// TODO: this is dirty handle this differently
-						l.widgetSelected(e);
-					}
 				}
 			}
 		});
-		setColor(Color.WHITE);
-	}
-
-	public void addSelectionListener(SelectionListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeSelectionListener(SelectionListener listener) {
-		listeners.remove(listener);
-	}
-
-	@Override
-	public void dispose() {
-		listeners.clear();
-		super.dispose();
+		return composite;
 	}
 
 	protected void updateImageLabel() {
@@ -137,11 +130,23 @@ public class FXColorChooser extends Composite {
 	}
 
 	public void setColor(Color color) {
+        Color oldColor = this.color;
 		this.color = color;
 		updateImageLabel();
+		pcs.firePropertyChange("color", oldColor, color);
 	}
 
 	public Color getColor() {
 		return color;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 }
