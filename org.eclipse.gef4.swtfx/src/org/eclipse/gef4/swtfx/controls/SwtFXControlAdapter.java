@@ -1,33 +1,20 @@
-/*******************************************************************************
- * Copyright (c) 2013 itemis AG and others.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *
- *******************************************************************************/
-package org.eclipse.gef4.swtfx;
+package org.eclipse.gef4.swtfx.controls;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 
+import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-public abstract class AbstractSwtFXControl<T extends Control> extends Region {
+public class SwtFXControlAdapter<T extends Control> extends Region {
 
 	private static final int[] FORWARD_EVENT_TYPES = new int[] {
 			SWT.HardKeyDown, SWT.HardKeyUp, SWT.KeyDown, SWT.KeyUp,
@@ -35,70 +22,42 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 			SWT.MouseHorizontalWheel, SWT.MouseHover, SWT.MouseMove,
 			SWT.MouseUp, SWT.MouseVerticalWheel, SWT.Move, SWT.Traverse,
 			SWT.Verify };
-
 	private static final int[] FOCUS_EVENT_TYPES = new int[] { SWT.FocusIn,
 			SWT.FocusOut };
 
-	/**
-	 * Retrieves the underlying {@link SwtFXCanvas} from a given {@link Node}.
-	 * In case no {@link SwtFXCanvas} can be found, <code>null</code> is
-	 * returned.
-	 *
-	 * @param node
-	 * @return the {@link SwtFXCanvas} of the given {@link Node} or
-	 *         <code>null</code>
-	 */
-	protected static SwtFXCanvas getSwtFXCanvas(Node node) {
-		if (node == null) {
-			return null;
-		}
-		Scene scene = node.getScene();
-		if (scene != null) {
-			if (!(scene instanceof SwtFXScene)) {
-				throw new IllegalArgumentException();
+	protected static SwtFXCanvas getSwtFXCanvas(Control control) {
+		Control candidate = control;
+		while (candidate != null) {
+			candidate = candidate.getParent();
+			if (candidate instanceof SwtFXCanvas) {
+				return (SwtFXCanvas) candidate;
 			}
-			SwtFXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
-			return fxCanvas;
 		}
 		return null;
 	}
 
-	private SwtFXCanvas canvas;
-
 	private T control;
-
 	private Listener swtForwardListener;
-
 	private Listener swtFocusListener;
-
 	private ChangeListener<Boolean> focusChangeListener;
 
-	public AbstractSwtFXControl() {
-		parentProperty().addListener(new ChangeListener<Parent>() {
+	public SwtFXControlAdapter() {
+		super();
+		// forward JavaFX focus events to SWT control
+		focusChangeListener = new ChangeListener<Boolean>() {
 			@Override
-			public void changed(ObservableValue<? extends Parent> observable,
-					Parent oldValue, Parent newValue) {
-				SwtFXCanvas newCanvas = getSwtFXCanvas(newValue);
-				canvasChanged(newCanvas);
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean hadFocus, Boolean hasFocus) {
+				if (getControl() != null && !hadFocus && hasFocus) {
+					getControl().forceFocus();
+				}
 			}
-		});
+		};
+		focusedProperty().addListener(focusChangeListener);
 	}
 
-	protected void canvasChanged(SwtFXCanvas newCanvas) {
-
-		if (this.canvas != null && this.canvas != newCanvas) {
-			unhookControl(control);
-			unregisterEventForwarding();
-			unregisterFocusForwarding();
-			control.dispose();
-			control = null;
-		}
-		if (newCanvas != null && this.canvas != newCanvas) {
-			control = createControl(newCanvas);
-			registerEventForwarding(newCanvas);
-			registerFocusForwarding();
-			hookControl(control);
-		}
+	public SwtFXControlAdapter(T control) {
+		setControl(control);
 	}
 
 	@Override
@@ -137,7 +96,9 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 		return control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 	}
 
-	abstract protected T createControl(SwtFXCanvas fxCanvas);
+	public void dispose() {
+		focusedProperty().removeListener(focusChangeListener);
+	}
 
 	/**
 	 * We do not manage children. Therefore, it is illegal to alter the children
@@ -156,10 +117,16 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 	 * Used to register special listeners on the specific {@link Control}.
 	 */
 	protected void hookControl(T control) {
-
+		SwtFXCanvas swtFXCanvas = getSwtFXCanvas(control);
+		if (swtFXCanvas == null) {
+			throw new IllegalArgumentException(
+					"Control needs to be hooked to SwtFXCanvas before passing in here.");
+		}
+		registerEventForwarding(swtFXCanvas);
+		registerFocusForwarding();
 	}
 
-	private void registerEventForwarding(final SwtFXCanvas newCanvas) {
+	protected void registerEventForwarding(final SwtFXCanvas newCanvas) {
 		swtForwardListener = new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -174,7 +141,7 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 		}
 	}
 
-	private void registerFocusForwarding() {
+	protected void registerFocusForwarding() {
 		swtFocusListener = new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -194,17 +161,6 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 		for (int eventType : FOCUS_EVENT_TYPES) {
 			control.addListener(eventType, swtFocusListener);
 		}
-
-		focusChangeListener = new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean hadFocus, Boolean hasFocus) {
-				if (control != null && !hadFocus && hasFocus) {
-					control.forceFocus();
-				}
-			}
-		};
-		focusedProperty().addListener(focusChangeListener);
 	}
 
 	@Override
@@ -219,20 +175,33 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 		updateSwtBounds();
 	}
 
+	public void setControl(T control) {
+		T oldControl = this.control;
+		if (oldControl != null) {
+			unhookControl(oldControl);
+		}
+		this.control = control;
+		if (control != null) {
+			hookControl(control);
+		}
+	}
+
 	/**
 	 * Used to unregister special listeners from the specific {@link Control}.
 	 */
 	protected void unhookControl(T control) {
+		unregisterEventForwarding();
+		unregisterFocusForwarding();
 	}
 
-	private void unregisterEventForwarding() {
+	protected void unregisterEventForwarding() {
 		for (int eventType : FORWARD_EVENT_TYPES) {
 			control.removeListener(eventType, swtForwardListener);
 		}
 		swtForwardListener = null;
 	}
 
-	private void unregisterFocusForwarding() {
+	protected void unregisterFocusForwarding() {
 		for (int eventType : FOCUS_EVENT_TYPES) {
 			control.removeListener(eventType, swtFocusListener);
 		}

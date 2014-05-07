@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.controls;
 
-import org.eclipse.gef4.swtfx.AbstractSwtFXControl;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;

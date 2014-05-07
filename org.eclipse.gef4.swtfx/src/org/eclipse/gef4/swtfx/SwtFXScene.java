@@ -12,16 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javafx.scene.Node;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Parent;
 import javafx.scene.paint.Paint;
 
 public class SwtFXScene extends javafx.scene.Scene {
 
-	private SwtFXCanvas canvas;
+	private SimpleObjectProperty<SwtFXCanvas> canvasProperty;
 
 	public SwtFXScene(Parent root) {
 		super(root);
@@ -44,27 +42,19 @@ public class SwtFXScene extends javafx.scene.Scene {
 		super(root, fill);
 	}
 
+	public ObjectProperty<SwtFXCanvas> canvasProperty() {
+		if (canvasProperty == null) {
+			canvasProperty = new SimpleObjectProperty<SwtFXCanvas>();
+		}
+		return canvasProperty;
+	}
+
 	public SwtFXCanvas getFXCanvas() {
-		return canvas;
+		return canvasProperty().getValue();
 	}
 
 	public void setFXCanvas(SwtFXCanvas canvas) {
-		this.canvas = canvas;
-
-		// unhook/hook all nested nodes in case they are control adapters
-		List<Node> nodes = new LinkedList<Node>();
-		if (getRoot() != null) {
-			nodes.add(getRoot());
-		}
-		while (!nodes.isEmpty()) {
-			Node node = nodes.remove(0);
-			if (node instanceof AbstractSwtFXControl) {
-				((AbstractSwtFXControl<?>) node).canvasChanged(canvas);
-			}
-			if (node instanceof Parent) {
-				nodes.addAll(((Parent) node).getChildrenUnmodifiable());
-			}
-		}
+		canvasProperty().setValue(canvas);
 	}
 
 }
