@@ -16,7 +16,6 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
@@ -54,9 +53,9 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		// operation =
-		getWayPointHandlePolicy(targetPart)
-				.commitWayPoint(part.getVertexIndex() - 1,
-						new Point(e.getSceneX(), e.getSceneY()));
+		getWayPointHandlePolicy(targetPart).commitWayPoint(
+				part.getVertexIndex() - 1,
+				new Point(e.getSceneX(), e.getSceneY()));
 		// FIXME: change way point operation bug: NPE
 		// executeOperation(operation);
 	}
