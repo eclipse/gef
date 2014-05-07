@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
@@ -39,13 +39,37 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 	private static final int[] FOCUS_EVENT_TYPES = new int[] { SWT.FocusIn,
 			SWT.FocusOut };
 
+	/**
+	 * Retrieves the underlying {@link SwtFXCanvas} from a given {@link Node}.
+	 * In case no {@link SwtFXCanvas} can be found, <code>null</code> is
+	 * returned.
+	 *
+	 * @param node
+	 * @return the {@link SwtFXCanvas} of the given {@link Node} or
+	 *         <code>null</code>
+	 */
+	protected static SwtFXCanvas getSwtFXCanvas(Node node) {
+		if (node == null) {
+			return null;
+		}
+		Scene scene = node.getScene();
+		if (scene != null) {
+			if (!(scene instanceof SwtFXScene)) {
+				throw new IllegalArgumentException();
+			}
+			SwtFXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
+			return fxCanvas;
+		}
+		return null;
+	}
+
+	private SwtFXCanvas canvas;
+
 	private T control;
 
 	private Listener swtForwardListener;
 
 	private Listener swtFocusListener;
-
-	private SwtFXCanvas canvas = null;
 
 	private ChangeListener<Boolean> focusChangeListener;
 
@@ -55,43 +79,25 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 			public void changed(ObservableValue<? extends Parent> observable,
 					Parent oldValue, Parent newValue) {
 				SwtFXCanvas newCanvas = getSwtFXCanvas(newValue);
-				canvasChanged(canvas, newCanvas);
-				canvas = newCanvas;
+				canvasChanged(newCanvas);
 			}
 		});
 	}
 
-	private void _hookControl(final SwtFXCanvas newCanvas) {
-		if (newCanvas == null) {
-			return;
-		}
-		setControl(createControl(newCanvas));
-		registerEventForwarding(newCanvas);
-		registerFocusForwarding();
-		hookControl();
-	}
+	protected void canvasChanged(SwtFXCanvas newCanvas) {
 
-	protected void _unhookControl(SwtFXCanvas oldCanvas) {
-		if (swtForwardListener == null) {
-			return;
+		if (this.canvas != null && this.canvas != newCanvas) {
+			unhookControl(control);
+			unregisterEventForwarding();
+			unregisterFocusForwarding();
+			control.dispose();
+			control = null;
 		}
-		unregisterEventForwarding();
-		unregisterFocusForwarding();
-		unhookControl();
-		getControl().dispose();
-		control = null;
-	}
-
-	protected void canvasChanged(SwtFXCanvas oldCanvas, SwtFXCanvas newCanvas) {
-		if (oldCanvas != null) {
-			if (oldCanvas != newCanvas) {
-				_unhookControl(oldCanvas);
-			}
-		}
-		if (newCanvas != null) {
-			if (oldCanvas != newCanvas) {
-				_hookControl(newCanvas);
-			}
+		if (newCanvas != null && this.canvas != newCanvas) {
+			control = createControl(newCanvas);
+			registerEventForwarding(newCanvas);
+			registerFocusForwarding();
+			hookControl(control);
 		}
 	}
 
@@ -147,33 +153,10 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 	}
 
 	/**
-	 * Retrieves the underlying {@link SwtFXCanvas} from a given {@link Node}.
-	 * In case no {@link SwtFXCanvas} can be found, <code>null</code> is
-	 * returned.
-	 * 
-	 * @param node
-	 * @return the {@link SwtFXCanvas} of the given {@link Node} or
-	 *         <code>null</code>
-	 */
-	protected SwtFXCanvas getSwtFXCanvas(Node node) {
-		if (node == null) {
-			return null;
-		}
-		Scene scene = node.getScene();
-		if (scene != null) {
-			if (!(scene instanceof SwtFXScene)) {
-				throw new IllegalArgumentException();
-			}
-			SwtFXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
-			return fxCanvas;
-		}
-		return null;
-	}
-
-	/**
 	 * Used to register special listeners on the specific {@link Control}.
 	 */
-	protected void hookControl() {
+	protected void hookControl(T control) {
+
 	}
 
 	private void registerEventForwarding(final SwtFXCanvas newCanvas) {
@@ -236,14 +219,10 @@ public abstract class AbstractSwtFXControl<T extends Control> extends Region {
 		updateSwtBounds();
 	}
 
-	protected void setControl(T control) {
-		this.control = control;
-	}
-
 	/**
 	 * Used to unregister special listeners from the specific {@link Control}.
 	 */
-	protected void unhookControl() {
+	protected void unhookControl(T control) {
 	}
 
 	private void unregisterEventForwarding() {

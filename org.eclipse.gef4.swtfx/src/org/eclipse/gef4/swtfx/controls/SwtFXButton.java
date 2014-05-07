@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.controls;
 
@@ -61,9 +61,9 @@ public class SwtFXButton extends AbstractSwtFXControl<Button> {
 						@Override
 						public void handle(ActionEvent event) {
 							for (SwtFXButton btn : radios) {
-								btn.setSelection(false);
+								btn.getControl().setSelection(false);
 							}
-							btn.setSelection(true);
+							btn.getControl().setSelection(true);
 						}
 					});
 		}
@@ -73,6 +73,8 @@ public class SwtFXButton extends AbstractSwtFXControl<Button> {
 
 	private Type type;
 	private boolean sel;
+
+	private SelectionListener selectionListener;
 
 	public SwtFXButton(String text) {
 		this(text, Type.PUSH);
@@ -93,8 +95,13 @@ public class SwtFXButton extends AbstractSwtFXControl<Button> {
 		Button button = new Button(fxCanvas, type.getSwtFlags());
 		button.setText(text);
 		button.setSelection(sel);
+		return button;
+	}
 
-		button.addSelectionListener(new SelectionListener() {
+	@Override
+	protected void hookControl(Button control) {
+		super.hookControl(control);
+		selectionListener = new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -105,42 +112,14 @@ public class SwtFXButton extends AbstractSwtFXControl<Button> {
 				SwtFXButton target = SwtFXButton.this;
 				Event.fireEvent(target, new ActionEvent(target, target));
 			}
-		});
-
-		return button;
-	}
-
-	public boolean getSelection() {
-		if (getControl() != null) {
-			sel = getControl().getSelection();
-		}
-		return sel;
-	}
-
-	public String getText() {
-		if (getControl() != null) {
-			text = getControl().getText();
-		}
-		return text;
+		};
+		control.addSelectionListener(selectionListener);
 	}
 
 	@Override
-	public void resize(double width, double height) {
-		super.resize(width, height);
-	}
-
-	public void setSelection(boolean sel) {
-		this.sel = sel;
-		if (getControl() != null) {
-			getControl().setSelection(sel);
-		}
-	}
-
-	public void setText(String text) {
-		this.text = text;
-		if (getControl() != null) {
-			getControl().setText(text);
-		}
+	protected void unhookControl(Button control) {
+		control.removeSelectionListener(selectionListener);
+		super.unhookControl(control);
 	}
 
 }

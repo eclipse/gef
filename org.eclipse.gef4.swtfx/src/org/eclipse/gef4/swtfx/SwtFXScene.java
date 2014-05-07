@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx;
 
@@ -49,18 +49,17 @@ public class SwtFXScene extends javafx.scene.Scene {
 	}
 
 	public void setFXCanvas(SwtFXCanvas canvas) {
-		SwtFXCanvas old = this.canvas;
 		this.canvas = canvas;
 
+		// unhook/hook all nested nodes in case they are control adapters
 		List<Node> nodes = new LinkedList<Node>();
 		if (getRoot() != null) {
 			nodes.add(getRoot());
 		}
-
 		while (!nodes.isEmpty()) {
 			Node node = nodes.remove(0);
 			if (node instanceof AbstractSwtFXControl) {
-				((AbstractSwtFXControl<?>) node).canvasChanged(old, canvas);
+				((AbstractSwtFXControl<?>) node).canvasChanged(canvas);
 			}
 			if (node instanceof Parent) {
 				nodes.addAll(((Parent) node).getChildrenUnmodifiable());
