@@ -13,7 +13,6 @@ package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.text.MessageFormat;
 
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.SnapshotParameters;
@@ -24,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -49,7 +47,7 @@ import org.eclipse.swt.widgets.Label;
 public class FXColorPicker implements IPropertyChangeSupport {
 
 	PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	
+
 	private Color color;
 	private Button colorButton;
 	private Label imageLabel;
@@ -60,7 +58,7 @@ public class FXColorPicker implements IPropertyChangeSupport {
 		control = createControl(parent);
 		setColor(Color.WHITE);
 	}
-	
+
 	public Control getControl() {
 		return control;
 	}
@@ -130,7 +128,7 @@ public class FXColorPicker implements IPropertyChangeSupport {
 	}
 
 	public void setColor(Color color) {
-        Color oldColor = this.color;
+		Color oldColor = this.color;
 		this.color = color;
 		updateImageLabel();
 		pcs.firePropertyChange("color", oldColor, color);
