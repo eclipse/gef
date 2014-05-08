@@ -227,36 +227,35 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 			break;
 		}
+		Shape startDecorationVisual = visual.getStartDecoration() != null ? ((Shape) visual
+				.getStartDecoration().getVisual()) : null;
+		Shape endDecorationVisual = visual.getEndDecoration() != null ? ((Shape) visual
+				.getEndDecoration().getVisual()) : null;
 
 		// stroke paint
 		if (visual.getCurveNode().getStroke() != content.getStroke()) {
 			visual.getCurveNode().setStroke(content.getStroke());
-
-			IFXDecoration startDecoration = visual.getStartDecoration();
-			if (startDecoration != null) {
-				((Shape) startDecoration.getVisual()).setStroke(content
-						.getStroke());
-			}
-			IFXDecoration endDecoration = visual.getEndDecoration();
-			if (endDecoration != null) {
-				((Shape) endDecoration.getVisual()).setStroke(content
-						.getStroke());
-			}
+		}
+		if (startDecorationVisual != null
+				&& startDecorationVisual.getStroke() != content.getStroke()) {
+			startDecorationVisual.setStroke(content.getStroke());
+		}
+		if (endDecorationVisual != null
+				&& endDecorationVisual.getStroke() != content.getStroke()) {
+			endDecorationVisual.setStroke(content.getStroke());
 		}
 
 		// stroke width
 		if (visual.getCurveNode().getStrokeWidth() != content.getStrokeWidth()) {
 			visual.getCurveNode().setStrokeWidth(content.getStrokeWidth());
-			IFXDecoration startDecoration = visual.getStartDecoration();
-			if (startDecoration != null) {
-				((Shape) startDecoration.getVisual()).setStrokeWidth(content
-						.getStrokeWidth());
-			}
-			IFXDecoration endDecoration = visual.getEndDecoration();
-			if (endDecoration != null) {
-				((Shape) endDecoration.getVisual()).setStrokeWidth(content
-						.getStrokeWidth());
-			}
+		}
+		if (startDecorationVisual != null
+				&& startDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
+			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
+		}
+		if (endDecorationVisual != null
+				&& endDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
+			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
 		// dashes
