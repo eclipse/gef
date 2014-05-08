@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2013, 2014 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples;
 
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
@@ -9,11 +21,14 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class SwtFXApplication {
 
+	protected Shell shell;
+	protected SwtFXCanvas canvas;
+
 	public SwtFXApplication() {
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		SwtFXCanvas canvas = new SwtFXCanvas(shell, SWT.NONE);
+		canvas = new SwtFXCanvas(shell, SWT.NONE);
 
 		SwtFXScene scene = createScene();
 		canvas.setScene(scene);
