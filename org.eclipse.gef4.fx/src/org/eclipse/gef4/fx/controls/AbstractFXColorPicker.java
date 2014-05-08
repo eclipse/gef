@@ -13,81 +13,72 @@
 package org.eclipse.gef4.fx.controls;
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.image.PixelWriter;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Scale;
 
 public abstract class AbstractFXColorPicker extends Group {
-	
+
 	public static final Color DEFAULT_COLOR = Color.WHITE;
-	
-	private SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(DEFAULT_COLOR);
 
-	public static class ColorWheel extends Canvas {
-		private Color backgroundColor = new Color(1, 1, 1, 0);
-		private Scale scale = new Scale();
-		private int genSize;
-		private double width = 25, height = 25;
+	private SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
+			DEFAULT_COLOR);
 
-		public ColorWheel() {
-			getTransforms().add(scale);
-			setGenSize(51);
+	public static class ColorWheel extends Group {
+		private int size;
+		private Canvas canvas;
+		private Color backgroundColor = Color.TRANSPARENT;
+
+		public ColorWheel(int size) {
+			super();
+			canvas = new Canvas();
+			getChildren().add(canvas);
+			setSize(size);
 		}
 
-		public ColorWheel(double w, double h) {
-			this();
-			setDisplayWidth(w);
-			setDisplayHeight(h);
+		public void setSize(int size) {
+			this.size = size;
+			canvas.setWidth(size);
+			canvas.setHeight(size);
+			render();
 		}
 
-		private void setDisplayHeight(double h) {
-			height = h;
-			scale.setY(height / genSize);
+		public int getSize() {
+			return size;
 		}
 
-		private void setDisplayWidth(double w) {
-			width = w;
-			scale.setX(width / genSize);
-		}
-
-		private void setGenSize(int genSize) {
-			this.genSize = genSize;
-			setWidth(genSize);
-			setHeight(genSize);
-			
-			// adjust scaling
-			scale.setX(width / genSize);
-			scale.setY(height / genSize);
-			
-			// compute donut
-			Point2D mid = new Point2D(genSize / 2, genSize / 2);
-			double donutMin = genSize / 6;
-			double donutMax = genSize / 2 - 2;
-
-			// render color wheel
-			GraphicsContext g2d = getGraphicsContext2D();
+		private void render() {
+			GraphicsContext g2d = canvas.getGraphicsContext2D();
 			PixelWriter px = g2d.getPixelWriter();
-			for (int y = 0; y < genSize; y++) {
-				for (int x = 0; x < genSize; x++) {
+			
+			double radius = size / 2;
+			Point2D mid = new Point2D(radius, radius);
+			
+			for (int y = 0; y < size; y++) {
+				for (int x = 0; x < size; x++) {
 					double d = mid.distance(x, y);
-					if (donutMin < d && d < donutMax) {
-						// inside donut
-						double angleRad = Math.atan2(y - mid.getY(), x
-								- mid.getX());
-						Color color = Color.hsb(angleRad * 180 / Math.PI,
-								1, 1);
-						// TODO: anti-aliasing at borders
+					if (d <= radius) {
+						// compute hue angle
+						double angleRad = d == 0 ? 0 : Math.atan2(
+								y - mid.getY(), x - mid.getX());
+
+						// compute saturation depending on distance to middle
+						double sat = d / radius;
+
+						// soften saturation
+						sat *= sat;
+
+						Color color = Color.hsb(angleRad * 180 / Math.PI, sat,
+								1);
 						px.setColor(x, y, color);
 					} else {
 						px.setColor(x, y, backgroundColor);
@@ -102,20 +93,19 @@ public abstract class AbstractFXColorPicker extends Group {
 		getChildren().add(hbox);
 		hbox.setStyle("-fx-border-color: black");
 
-		ColorWheel colorWheel = new ColorWheel(20, 20);
-		Button button = new Button(null, new Group(colorWheel));
-		button.setStyle("-fx-padding: 3; -fx-focus-color: transparent;");
+		ColorWheel colorWheel = new ColorWheel(64);
+		colorWheel.setScaleX(0.25); // 64 * 0.25 = 16
+		colorWheel.setScaleY(0.25);
+		Rectangle colorRect = new Rectangle(40, 16);
 
-		Rectangle colorRect = new Rectangle(75, 25);
-		colorRect.heightProperty().bind(button.heightProperty());
-
-		hbox.getChildren().addAll(colorRect, new Separator(Orientation.VERTICAL), button);
+		hbox.getChildren().addAll(colorRect,
+				new Separator(Orientation.VERTICAL), new Group(colorWheel));
 
 		colorRect.fillProperty().bind(colorProperty);
-		
-		button.setOnAction(new EventHandler<ActionEvent>() {
+
+		colorWheel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(MouseEvent event) {
 				Color colorOrNull = pickColor();
 				if (colorOrNull != null) {
 					setColor(colorOrNull);
@@ -123,19 +113,19 @@ public abstract class AbstractFXColorPicker extends Group {
 			}
 		});
 	}
-	
+
 	public abstract Color pickColor();
-	
+
 	public SimpleObjectProperty<Color> colorProperty() {
 		return colorProperty;
 	}
-	
+
 	public Color getColor() {
 		return colorProperty.get();
 	}
-	
+
 	public void setColor(Color color) {
 		colorProperty.set(color);
 	}
-	
+
 }
