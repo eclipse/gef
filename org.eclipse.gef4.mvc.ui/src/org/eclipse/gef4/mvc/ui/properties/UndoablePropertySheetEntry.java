@@ -14,6 +14,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.ICompositeOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -38,6 +40,7 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 
 	private IOperationHistory operationHistory;
 	private IOperationHistoryListener operationHistoryListener;
+	private IUndoContext undoContext;
 
 	/**
 	 * Constructs a non-root, i.e. child entry, which may obtain the
@@ -53,8 +56,9 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @param operationHistory
 	 *            the operation history to use
 	 */
-	public UndoablePropertySheetEntry(IOperationHistory operationHistory) {
+	public UndoablePropertySheetEntry(IOperationHistory operationHistory, IUndoContext undoContext) {
 		this.operationHistory = operationHistory;
+		this.undoContext = undoContext;
 		this.operationHistoryListener = new IOperationHistoryListener() {
 
 			@Override
@@ -135,31 +139,28 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
 	 */
 	protected void valueChanged(PropertySheetEntry child) {
-		valueChanged((UndoablePropertySheetEntry) child,
-				new ForwardUndoCompositeOperation(""));
+		// the update of values into a command and pass that to our parent (or execute it on the operation history, if we have no parent)
+		ForwardUndoCompositeOperation compositeOperation = new ForwardUndoCompositeOperation("Update child property values"); // TODO: externalize string
+		for (int i = 0; i < getValues().length; i++) {
+			SetPropertyValueOperation setOperation = new SetPropertyValueOperation(child.getDisplayName(),
+					getPropertySource(getValues()[i]), ((UndoablePropertySheetEntry)child).getDescriptor()
+							.getId(), child.getValues()[i]);
+			compositeOperation.add(setOperation);
+		}
+		valueChanged((UndoablePropertySheetEntry) child, compositeOperation.unwrap());
 	}
 
 	private void valueChanged(UndoablePropertySheetEntry child,
-			ICompositeOperation command) {
-		ICompositeOperation cc = new ReverseUndoCompositeOperation("");
-		command.add(cc);
-
-		SetPropertyValueOperation setCommand;
-		for (int i = 0; i < getValues().length; i++) {
-			setCommand = new SetPropertyValueOperation(child.getDisplayName(),
-					getPropertySource(getValues()[i]), child.getDescriptor()
-							.getId(), child.getValues()[i]);
-			cc.add(setCommand);
-		}
-
+			IUndoableOperation operation) {
 		// inform our parent
 		if (getParent() != null)
 			((UndoablePropertySheetEntry) getParent()).valueChanged(this,
-					command);
+					operation);
 		else {
 			// I am the root entry
 			try {
-				operationHistory.execute(command, new NullProgressMonitor(),
+				operation.addContext(undoContext);
+				operationHistory.execute(operation, new NullProgressMonitor(),
 						null);
 			} catch (ExecutionException e) {
 				e.printStackTrace();
