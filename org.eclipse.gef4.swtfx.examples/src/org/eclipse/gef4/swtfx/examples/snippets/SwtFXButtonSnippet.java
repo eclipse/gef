@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
@@ -22,11 +22,30 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
-import org.eclipse.gef4.swtfx.controls.SwtFXButton;
+import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
+import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
+import org.eclipse.swt.SWT;
 
 public class SwtFXButtonSnippet extends SwtFXApplication {
+
+	protected static SwtFXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
+			final String text) {
+		return new SwtFXControlAdapter<org.eclipse.swt.widgets.Button>(
+				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+
+					@Override
+					public org.eclipse.swt.widgets.Button createControl(
+							SwtFXCanvas canvas) {
+						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
+								canvas, SWT.PUSH);
+						b.setText(text);
+						return b;
+					}
+				});
+	}
 
 	public static void main(String[] args) {
 		new SwtFXButtonSnippet();
@@ -52,11 +71,11 @@ public class SwtFXButtonSnippet extends SwtFXApplication {
 					{
 						setType(ArcType.ROUND);
 					}
-				}, 0.52, 0.49, 0.15), new SwtFXButton("SwtFX 1"));
+				}, 0.52, 0.49, 0.15), createButtonAdapter("SwtFX 1"));
 
 		col2.getChildren().addAll(
 				shape(new Rectangle(0, 0, 100, 50), 0.49, 0.36, 0.20),
-				new SwtFXButton("SwtFX 2"),
+				createButtonAdapter("SwtFX 2"),
 				shape(new Rectangle(0, 0, 100, 100) {
 					{
 						setArcHeight(20);

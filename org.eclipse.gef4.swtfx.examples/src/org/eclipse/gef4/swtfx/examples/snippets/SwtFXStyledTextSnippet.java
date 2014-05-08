@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
@@ -22,13 +22,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
-import org.eclipse.gef4.swtfx.controls.SwtFXButton;
-import org.eclipse.gef4.swtfx.controls.SwtFXStyledText;
+import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
+import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
@@ -40,7 +43,8 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		new SwtFXStyledTextSnippet();
 	}
 
-	private void colorAction(Node actionNode, final SwtFXStyledText stNode,
+	private void colorAction(Node actionNode,
+			final SwtFXControlAdapter<StyledText> stNode,
 			final int fgSwtColorId, final int bgSwtColorId) {
 		actionNode.addEventHandler(ActionEvent.ACTION,
 				new EventHandler<ActionEvent>() {
@@ -83,8 +87,61 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		Button italicButton = new Button("Italic");
 		Button underlineButton = new Button("Underline");
 		Button clearStyleButton = new Button("Clear style");
-		SwtFXButton loremIpsumButton = new SwtFXButton("Lorem Ipsum");
-		SwtFXButton newButton = new SwtFXButton("New");
+
+		// create styled text
+		final SwtFXControlAdapter<StyledText> stNode = new SwtFXControlAdapter<StyledText>(
+				new ISwtFXControlFactory<StyledText>() {
+					@Override
+					public StyledText createControl(SwtFXCanvas canvas) {
+						return new StyledText(canvas, SWT.BORDER);
+					}
+				});
+		stNode.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+		SwtFXControlAdapter<org.eclipse.swt.widgets.Button> loremIpsumButton = new SwtFXControlAdapter<>(
+				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+
+					@Override
+					public org.eclipse.swt.widgets.Button createControl(
+							SwtFXCanvas canvas) {
+						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
+								canvas, SWT.PUSH);
+						b.setText("Lorem Ipsum");
+						b.addSelectionListener(new SelectionListener() {
+							@Override
+							public void widgetDefaultSelected(SelectionEvent e) {
+							}
+
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								stNode.getControl().setText(LOREM_IPSUM);
+							}
+						});
+						return b;
+					}
+				});
+		SwtFXControlAdapter<org.eclipse.swt.widgets.Button> newButton = new SwtFXControlAdapter<>(
+				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+
+					@Override
+					public org.eclipse.swt.widgets.Button createControl(
+							SwtFXCanvas canvas) {
+						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
+								canvas, SWT.PUSH);
+						b.setText("New");
+						b.addSelectionListener(new SelectionListener() {
+							@Override
+							public void widgetDefaultSelected(SelectionEvent e) {
+							}
+
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								stNode.getControl().setText("");
+							}
+						});
+						return b;
+					}
+				});
 		ToolBar toolBar = new ToolBar(whiteBlackButton, yellowGrayButton,
 				new Separator(), boldButton, italicButton, underlineButton,
 				clearStyleButton, new Separator(), loremIpsumButton, newButton);
@@ -94,9 +151,6 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		AnchorPane.setTopAnchor(toolBar, 10d);
 		AnchorPane.setLeftAnchor(toolBar, 10d);
 		AnchorPane.setRightAnchor(toolBar, 10d);
-
-		// create styled text
-		final SwtFXStyledText stNode = new SwtFXStyledText();
 
 		// layout styled text
 		stPane.getChildren().add(stNode);
@@ -113,14 +167,13 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		styleAction(italicButton, stNode, SWT.ITALIC, false);
 		styleAction(underlineButton, stNode, SWT.NORMAL, true);
 		styleAction(clearStyleButton, stNode, SWT.NORMAL, false);
-		textAction(newButton, stNode, "");
-		textAction(loremIpsumButton, stNode, LOREM_IPSUM);
 
 		return new SwtFXScene(vbox, 800, 600);
 	}
 
-	private void styleAction(Node actionNode, final SwtFXStyledText stNode,
-			final int fontStyle, final boolean underline) {
+	private void styleAction(Node actionNode,
+			final SwtFXControlAdapter<StyledText> stNode, final int fontStyle,
+			final boolean underline) {
 		actionNode.addEventHandler(ActionEvent.ACTION,
 				new EventHandler<ActionEvent>() {
 					@Override
@@ -136,17 +189,6 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 						styleRange.fontStyle = fontStyle;
 						styleRange.underline = underline;
 						st.setStyleRange(styleRange);
-					}
-				});
-	}
-
-	private void textAction(Node actionNode, final SwtFXStyledText stNode,
-			final String text) {
-		actionNode.addEventHandler(ActionEvent.ACTION,
-				new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent event) {
-						stNode.getControl().setText(text);
 					}
 				});
 	}
