@@ -125,9 +125,10 @@ public abstract class FXView extends ViewPart {
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 
-		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
-				(IUndoContext) getAdapter(IUndoContext.class), true);
-		undoRedoActionGroup.fillActionBars(site.getActionBars());
+		UndoRedoActionGroup undoRedoActionGroup = (UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class);
+		if (undoRedoActionGroup != null) {
+			undoRedoActionGroup.fillActionBars(site.getActionBars());
+		}
 
 		// register selection provider (if we want to a provide selection)
 		ISelectionProvider selectionProvider = (ISelectionProvider) getAdapter(ISelectionProvider.class);
@@ -141,7 +142,6 @@ public abstract class FXView extends ViewPart {
 		// unregister listener to provide selections
 		getViewer().getSelectionModel().removePropertyChangeListener(
 				selectionPropertyChangeListener);
-
 		super.dispose();
 	}
 
@@ -234,6 +234,13 @@ public abstract class FXView extends ViewPart {
 						undoRedoActionGroup);
 			}
 			return propertySheetPage;
+		}
+		if(UndoRedoActionGroup.class.equals(key)){
+			if(undoRedoActionGroup == null){
+				undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+						(IUndoContext) getAdapter(IUndoContext.class), true);
+			}
+			return undoRedoActionGroup;
 		}
 		if (IUndoContext.class.equals(key)) {
 			if (undoContext == null) {
