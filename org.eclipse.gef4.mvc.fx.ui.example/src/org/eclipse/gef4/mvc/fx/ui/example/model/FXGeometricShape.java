@@ -43,7 +43,7 @@ public class FXGeometricShape extends AbstractFXGeometricElement<IShape>
 	public void setFill(Paint fill) {
 		Paint oldFill = this.fill;
 		this.fill = fill;
-		pcs.firePropertyChange("fill", oldFill, fill);
+		pcs.firePropertyChange((String) FILL_PROPERTY_DESCRIPTOR.getId(), oldFill, fill);
 	}
 
 	@Override

@@ -81,7 +81,7 @@ public class FXExampleView extends FXView {
 		if (IPropertySheetPage.class.equals(adapterType)) {
 			if (propertySheetPage == null) {
 				propertySheetPage = new UndoablePropertySheetPage(getDomain()
-						.getOperationHistory());
+						.getOperationHistory(), getDomain().getUndoContext());
 			}
 			return propertySheetPage;
 		}

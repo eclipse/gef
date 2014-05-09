@@ -48,6 +48,15 @@ public abstract class AbstractCompositeOperation extends AbstractOperation imple
 		operations.remove(operation);
 	}
 	
+	public IUndoableOperation unwrap(){
+		if(operations.size() == 1){
+			return operations.get(0);
+		}
+		else {
+			return this;
+		}
+	}
+	
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.ui.Messages;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 
@@ -28,8 +29,6 @@ import org.eclipse.ui.views.properties.IPropertySource2;
  * 
  * @author pshah
  * @author anyssen
- * 
- * @since 3.7
  * 
  */
 public class SetPropertyValueOperation extends AbstractOperation {
@@ -64,15 +63,35 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 *            The new value to set for the property or
 	 *            {@link #DEFAULT_VALUE} to indicate that the property should be
 	 *            reset.
-	 * @since 3.7
 	 */
 	public SetPropertyValueOperation(String propertyLabel,
 			IPropertySource propertySource, Object propertyId, Object newValue) {
-		super(MessageFormat.format(Messages.SetPropertyValueCommand_Label,
-				new Object[] { propertyLabel }).trim());
+		super(MessageFormat.format(
+				Messages.SetPropertyValueCommand_Label,
+				new Object[] { propertyLabel,
+						getValueLabel(propertySource, propertyId, newValue) })
+				.trim());
 		this.propertySource = propertySource;
 		this.propertyId = propertyId;
 		this.newValue = newValue;
+	}
+
+	private static String getValueLabel(IPropertySource propertySource,
+			Object propertyId, Object newValue) {
+		IPropertyDescriptor propertyDescriptor = getPropertyDescriptor(
+				propertySource, propertyId);
+		return propertyDescriptor.getLabelProvider().getText(newValue);
+	}
+
+	private static IPropertyDescriptor getPropertyDescriptor(
+			IPropertySource propertySource, Object propertyId) {
+		for (IPropertyDescriptor propertyDescriptor : propertySource
+				.getPropertyDescriptors()) {
+			if (propertyDescriptor.getId().equals(propertyId)) {
+				return propertyDescriptor;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -102,7 +121,6 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 * 
 	 * @return the new value or {@link #DEFAULT_VALUE} to indicate that the
 	 *         default value should be set as the new value.
-	 * @since 3.7
 	 */
 	protected Object getNewValue() {
 		return newValue;
@@ -114,7 +132,6 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 * value before.
 	 * 
 	 * @return the old value of the property or {@link #DEFAULT_VALUE}.
-	 * @since 3.7
 	 */
 	protected Object getOldValue() {
 		return oldValue;
@@ -125,7 +142,6 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 * set.
 	 * 
 	 * @return the id of the property whose value is to be set.
-	 * @since 3.7
 	 */
 	protected Object getPropertyId() {
 		return propertyId;
@@ -136,13 +152,11 @@ public class SetPropertyValueOperation extends AbstractOperation {
 	 * value is to be set.
 	 * 
 	 * @return the {@link IPropertySource} which provides the property.
-	 * @since 3.7
 	 */
 	protected IPropertySource getPropertySource() {
 		return propertySource;
 	}
 
-	
 	private Object unwrapValue(Object value) {
 		if (value instanceof IPropertySource)
 			return ((IPropertySource) value).getEditableValue();

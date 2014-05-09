@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.ui.properties;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
@@ -34,7 +35,7 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 * @param operationHistory
 	 *            The {@link IOperationHistory} shared with the editor.
 	 */
-	public UndoablePropertySheetPage(IOperationHistory operationHistory) {
+	public UndoablePropertySheetPage(IOperationHistory operationHistory, IUndoContext undoContext) {
 		this.operationHistory = operationHistory;
 		this.operationHistoryListener = new IOperationHistoryListener() {
 
@@ -48,7 +49,7 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 			}
 		};
 		operationHistory.addOperationHistoryListener(operationHistoryListener);
-		setRootEntry(new UndoablePropertySheetEntry(operationHistory));
+		setRootEntry(new UndoablePropertySheetEntry(operationHistory, undoContext));
 	}
 
 	/**

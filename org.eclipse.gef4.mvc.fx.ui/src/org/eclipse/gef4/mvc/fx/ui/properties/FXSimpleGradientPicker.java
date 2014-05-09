@@ -16,6 +16,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -23,9 +25,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.swtfx.SwtFXCanvas;
+import org.eclipse.gef4.swtfx.SwtFXScene;
+import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -34,7 +37,7 @@ import org.eclipse.swt.widgets.Control;
  *
  */
 public class FXSimpleGradientPicker implements IPropertyChangeSupport {
-
+	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	private LinearGradient simpleGradient;
@@ -53,29 +56,44 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
 	}
 
 	protected Control createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		color1Editor = new FXColorPicker(composite);
-		color1Editor.getControl().setLayoutData(new GridData());
+		// create an SwtFXCanvas that contains the two color pickers as well as JavaFX controls
+		SwtFXCanvas canvas = new SwtFXCanvas(parent, SWT.NONE);
+		HBox root = new HBox();
+		VBox colorEditorsBox = new VBox();
+		root.getChildren().add(colorEditorsBox);
+
+		color1Editor = new FXColorPicker(canvas);
+		SwtFXControlAdapter<Control> color1EditorNode = new SwtFXControlAdapter<Control>(
+				color1Editor.getControl());
+		colorEditorsBox.getChildren().add(color1EditorNode);
+
+		// color1Editor.getControl().setLayoutData(new GridData());
 		color1Editor.addPropertyChangeListener(new PropertyChangeListener() {
-			
+
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				setSimpleGradient(createSimpleGradient(color1Editor.getColor(), color2Editor.getColor()));
+				setSimpleGradient(createSimpleGradient(color1Editor.getColor(),
+						color2Editor.getColor()));
 			}
 		});
-		
-		
-		color2Editor = new FXColorPicker(composite);
-		color2Editor.getControl().setLayoutData(new GridData());
+
+		color2Editor = new FXColorPicker(canvas);
+		SwtFXControlAdapter<Control> color2EditorNode = new SwtFXControlAdapter<Control>(
+				color2Editor.getControl());
+		colorEditorsBox.getChildren().add(color2EditorNode);
+		// color2Editor.getControl().setLayoutData(new GridData());
 		color2Editor.addPropertyChangeListener(new PropertyChangeListener() {
-			
+
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				setSimpleGradient(createSimpleGradient(color1Editor.getColor(), color2Editor.getColor()));
+				setSimpleGradient(createSimpleGradient(color1Editor.getColor(),
+						color2Editor.getColor()));
 			}
 		});
-		return composite;
+		
+		SwtFXScene scene = new SwtFXScene(root);
+		canvas.setScene(scene);
+		return canvas;
 	}
 	
 	public void setSimpleGradient(LinearGradient simpleGradient) {
