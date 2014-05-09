@@ -60,7 +60,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	private List<IVisualPart<V>> anchoreds;
 	private List<IVisualPart<V>> anchorages;
-	
+
 	private boolean refreshFromModel = true;
 
 	/**
@@ -143,10 +143,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	}
 
 	public IRootPart<V> getRoot() {
-		if (getParent() == null) {
-			return null;
+		if (getParent() != null) {
+			return getParent().getRoot();
 		}
-		return getParent().getRoot();
+		if (getAnchorages().size() > 0) {
+			return getAnchorages().get(0).getRoot();
+		}
+		return null;
 	}
 
 	/**
@@ -233,13 +236,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		bounded.setHost(this);
 		if (isActive() && bounded instanceof IActivatable) {
 			((IActivatable) bounded).activate();
-		}	
+		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <P extends IPartBound<V>> void installBound(P bounded) {
-		installBound((Class<P>)bounded.getClass(), bounded);
+		installBound((Class<P>) bounded.getClass(), bounded);
 	}
 
 	/**
@@ -249,12 +252,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	public boolean isActive() {
 		return getFlag(FLAG_ACTIVE);
 	}
-	
+
 	@Override
 	public boolean isRefreshVisual() {
 		return refreshFromModel;
 	}
-	
+
 	@Override
 	public void setRefreshVisual(boolean refreshFromModel) {
 		this.refreshFromModel = refreshFromModel;
