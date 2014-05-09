@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.eclipse.gef4.swtfx.examples
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.gef4.swtfx;bundle-version="0.1.0",
- org.eclipse.gef4.fx
+ org.eclipse.gef4.swtfx;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",
