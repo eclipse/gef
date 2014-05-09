@@ -20,7 +20,10 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -33,36 +36,12 @@ public abstract class AbstractFXColorPicker extends Group {
 	private SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<Color>(
 			DEFAULT_COLOR);
 
-	public static class ColorWheel extends Group {
-		private int size;
-		private Canvas canvas;
-		private Color backgroundColor = Color.TRANSPARENT;
-
-		public ColorWheel(int size) {
-			super();
-			canvas = new Canvas();
-			getChildren().add(canvas);
-			setSize(size);
-		}
-
-		public void setSize(int size) {
-			this.size = size;
-			canvas.setWidth(size);
-			canvas.setHeight(size);
-			render();
-		}
-
-		public int getSize() {
-			return size;
-		}
-
-		private void render() {
-			GraphicsContext g2d = canvas.getGraphicsContext2D();
-			PixelWriter px = g2d.getPixelWriter();
-			
+	public static class ColorWheel {
+		public static void render(WritableImage image, int offsetX,
+				int offsetY, int size) {
+			PixelWriter px = image.getPixelWriter();
 			double radius = size / 2;
 			Point2D mid = new Point2D(radius, radius);
-			
 			for (int y = 0; y < size; y++) {
 				for (int x = 0; x < size; x++) {
 					double d = mid.distance(x, y);
@@ -70,18 +49,18 @@ public abstract class AbstractFXColorPicker extends Group {
 						// compute hue angle
 						double angleRad = d == 0 ? 0 : Math.atan2(
 								y - mid.getY(), x - mid.getX());
-
 						// compute saturation depending on distance to middle
+						// ([0;1])
 						double sat = d / radius;
-
-						// soften saturation
+						// multiply saturation by itself to produce a bigger
+						// white area in the middle
 						sat *= sat;
 
 						Color color = Color.hsb(angleRad * 180 / Math.PI, sat,
 								1);
-						px.setColor(x, y, color);
+						px.setColor(offsetX + x, offsetY + y, color);
 					} else {
-						px.setColor(x, y, backgroundColor);
+						px.setColor(offsetX + x, offsetY + y, Color.TRANSPARENT);
 					}
 				}
 			}
@@ -89,20 +68,26 @@ public abstract class AbstractFXColorPicker extends Group {
 	}
 
 	public AbstractFXColorPicker() {
+		// container
 		HBox hbox = new HBox();
 		getChildren().add(hbox);
-		hbox.setStyle("-fx-border-color: black");
+		hbox.setStyle("-fx-border-color: black; -fx-background-color: lightgrey");
 
-		ColorWheel colorWheel = new ColorWheel(64);
-		colorWheel.setScaleX(0.25); // 64 * 0.25 = 16
-		colorWheel.setScaleY(0.25);
+		// color wheel
+		WritableImage colorWheelImage = new WritableImage(64, 64);
+		ColorWheel.render(colorWheelImage, 0, 0, 64);
+		ImageView colorWheel = new ImageView(colorWheelImage);
+		colorWheel.setFitWidth(16);
+		colorWheel.setFitHeight(16);
+
+		// color rect
 		Rectangle colorRect = new Rectangle(40, 16);
-
-		hbox.getChildren().addAll(colorRect,
-				new Separator(Orientation.VERTICAL), new Group(colorWheel));
-
 		colorRect.fillProperty().bind(colorProperty);
 
+		hbox.getChildren().addAll(colorRect,
+				new Separator(Orientation.VERTICAL), colorWheel);
+
+		// interaction
 		colorWheel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
