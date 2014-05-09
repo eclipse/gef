@@ -15,6 +15,8 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -27,16 +29,25 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 
 	private final IOperationHistory operationHistory;
 	private final IOperationHistoryListener operationHistoryListener;
+	private UndoRedoActionGroup actionGroup;
 
 	/**
 	 * Constructs a new {@link UndoablePropertySheetPage} using the provided
 	 * {@link IOperationHistory}.
 	 * 
 	 * @param operationHistory
-	 *            The {@link IOperationHistory} shared with the editor.
+	 *            The {@link IOperationHistory} shared with the editor/view.
+	 * @param undoContext
+	 *            The {@link IUndoContext} shared with the editor/view.
+	 * @param actionGroup
+	 *            The {@link UndoRedoActionGroup} shared with the editor/view,
+	 *            used to contribute UNDO/REDO actions. May be <code>null</code>.
+	 *            
 	 */
-	public UndoablePropertySheetPage(IOperationHistory operationHistory, IUndoContext undoContext) {
+	public UndoablePropertySheetPage(IOperationHistory operationHistory,
+			IUndoContext undoContext, UndoRedoActionGroup actionGroup) {
 		this.operationHistory = operationHistory;
+		this.actionGroup = actionGroup;
 		this.operationHistoryListener = new IOperationHistoryListener() {
 
 			@Override
@@ -49,7 +60,16 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 			}
 		};
 		operationHistory.addOperationHistoryListener(operationHistoryListener);
-		setRootEntry(new UndoablePropertySheetEntry(operationHistory, undoContext));
+		setRootEntry(new UndoablePropertySheetEntry(operationHistory,
+				undoContext));
+	}
+
+	@Override
+	public void setActionBars(IActionBars actionBars) {
+		super.setActionBars(actionBars);
+		if (actionGroup != null) {
+			actionGroup.fillActionBars(actionBars);
+		}
 	}
 
 	/**

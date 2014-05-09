@@ -32,12 +32,8 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.policies.IZoomPolicy;
-import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FXExampleView extends FXView {
-
-	private Object propertySheetPage;
 
 	@Override
 	protected void configureViewer(FXCanvasViewer viewer) {
@@ -73,19 +69,6 @@ public class FXExampleView extends FXView {
 	@Override
 	protected List<Object> getContents() {
 		return Collections.<Object> singletonList(new FXGeometricModel());
-	}
-
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapterType) {
-		// contribute to Properties view
-		if (IPropertySheetPage.class.equals(adapterType)) {
-			if (propertySheetPage == null) {
-				propertySheetPage = new UndoablePropertySheetPage(getDomain()
-						.getOperationHistory(), getDomain().getUndoContext());
-			}
-			return propertySheetPage;
-		}
-		return super.getAdapter(adapterType);
 	}
 
 }

@@ -31,6 +31,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.jface.util.SafeRunnable;
@@ -46,6 +47,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public abstract class FXView extends ViewPart {
 
@@ -56,7 +58,8 @@ public abstract class FXView extends ViewPart {
 		public void propertyChange(PropertyChangeEvent event) {
 			if (ISelectionModel.SELECTION_PROPERTY.equals(event
 					.getPropertyName())) {
-				// forward selection changes to selection provider (in case there is any)
+				// forward selection changes to selection provider (in case
+				// there is any)
 				ISelectionProvider selectionProvider = (ISelectionProvider) getAdapter(ISelectionProvider.class);
 				if (selectionProvider != null) {
 					if (event.getNewValue() == null) {
@@ -115,20 +118,15 @@ public abstract class FXView extends ViewPart {
 
 	private ISelectionProvider selectionProvider = null;
 	private PropertyChangeListener selectionPropertyChangeListener = new SelectionPropertyChangeListener();
+	private UndoRedoActionGroup undoRedoActionGroup;
+	private IPropertySheetPage propertySheetPage;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 
-		// hook into workbench operation history
-		IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
-		undoContext = workbench.getOperationSupport().getUndoContext();
-		operationHistory = workbench.getOperationSupport()
-				.getOperationHistory();
-
-		// register undo redo actions
-		UndoRedoActionGroup undoRedoActionGroup = new UndoRedoActionGroup(
-				getSite(), undoContext, true);
+		undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+				(IUndoContext) getAdapter(IUndoContext.class), true);
 		undoRedoActionGroup.fillActionBars(site.getActionBars());
 
 		// register selection provider (if we want to a provide selection)
@@ -162,13 +160,6 @@ public abstract class FXView extends ViewPart {
 				selectionPropertyChangeListener);
 	}
 
-	public ISelectionProvider getSelectionProvider() {
-		if (selectionProvider == null) {
-			selectionProvider = new DefaultSelectionProvider();
-		}
-		return selectionProvider;
-	}
-
 	protected FXCanvas getCanvas() {
 		return canvas;
 	}
@@ -199,8 +190,8 @@ public abstract class FXView extends ViewPart {
 	}
 
 	protected void configureDomain(FXDomain domain) {
-		domain.setOperationHistory(operationHistory);
-		domain.setUndoContext(undoContext);
+		domain.setOperationHistory((IOperationHistory) getAdapter(IOperationHistory.class));
+		domain.setUndoContext((IUndoContext) getAdapter(IUndoContext.class));
 	}
 
 	protected void configureViewer(FXCanvasViewer viewer) {
@@ -233,6 +224,33 @@ public abstract class FXView extends ViewPart {
 				selectionProvider = new DefaultSelectionProvider();
 			}
 			return selectionProvider;
+		}
+		// contribute to Properties view
+		if (IPropertySheetPage.class.equals(key)) {
+			if (propertySheetPage == null) {
+				propertySheetPage = new UndoablePropertySheetPage(
+						(IOperationHistory) getAdapter(IOperationHistory.class),
+						(IUndoContext) getAdapter(IUndoContext.class),
+						undoRedoActionGroup);
+			}
+			return propertySheetPage;
+		}
+		if (IUndoContext.class.equals(key)) {
+			if (undoContext == null) {
+				IWorkbench workbench = getSite().getWorkbenchWindow()
+						.getWorkbench();
+				undoContext = workbench.getOperationSupport().getUndoContext();
+			}
+			return undoContext;
+		}
+		if (IOperationHistory.class.equals(key)) {
+			if (operationHistory == null) {
+				IWorkbench workbench = getSite().getWorkbenchWindow()
+						.getWorkbench();
+				operationHistory = workbench.getOperationSupport()
+						.getOperationHistory();
+			}
+			return operationHistory;
 		}
 		return super.getAdapter(key);
 	}
