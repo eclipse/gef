@@ -27,7 +27,6 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 
 	private final IOperationHistory operationHistory;
 	private final IOperationHistoryListener operationHistoryListener;
-	private IUndoContext undoContext;
 
 	/**
 	 * Constructs a new {@link UndoablePropertySheetPage} using the provided
@@ -38,7 +37,6 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 */
 	public UndoablePropertySheetPage(IOperationHistory operationHistory, IUndoContext undoContext) {
 		this.operationHistory = operationHistory;
-		this.undoContext = undoContext;
 		this.operationHistoryListener = new IOperationHistoryListener() {
 
 			@Override
