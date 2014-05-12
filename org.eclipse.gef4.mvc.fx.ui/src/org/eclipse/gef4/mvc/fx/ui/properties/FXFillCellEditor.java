@@ -65,7 +65,7 @@ public class FXFillCellEditor extends DialogCellEditor {
 		} else if (w instanceof TableTree) {
 			height = ((TableTree) w).getItemHeight() - 1;
 		}
-		return FXColorPicker.createPaintImage(width, height, paint);
+		return FXFillSelectionDialog.createPaintImage(width, height, paint);
 	}
 
 	@Override

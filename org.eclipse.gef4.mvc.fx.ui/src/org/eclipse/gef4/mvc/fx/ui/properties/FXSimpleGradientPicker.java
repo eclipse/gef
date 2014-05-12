@@ -60,7 +60,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
 		return control;
 	}
 
-	protected Control createControl(Composite parent) {
+	protected Control createControl(final Composite parent) {
 		// create an SwtFXCanvas that contains the two color pickers as well as JavaFX controls
 		final SwtFXCanvas canvas = new SwtFXCanvas(parent, SWT.NONE);
 		HBox root = new HBox();
@@ -71,17 +71,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
 
 			@Override
 			public Color pickColor() {
-				Color currentColor = getColor();
-				ColorDialog cd = new ColorDialog(canvas.getShell());
-				RGB rgb = new RGB((int) (255 * currentColor.getRed()),
-						(int) (255 * currentColor.getGreen()),
-						(int) (255 * currentColor.getBlue()));
-				cd.setRGB(rgb);
-				RGB newRgb = cd.open();
-				if (newRgb != null) {
-					return Color.rgb(newRgb.red, newRgb.green, newRgb.blue);
-				}
-				return null;
+				return FXColorPicker.pickColor(parent.getShell(), getColor());
 			}
 		
 		};

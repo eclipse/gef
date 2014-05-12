@@ -15,8 +15,6 @@ package org.eclipse.gef4.fx.controls;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -102,7 +100,10 @@ public abstract class AbstractFXColorPicker extends Group {
 		// color rect
 		Rectangle colorRect = new Rectangle(50, 20);
 		// bind to ColorWheel instead of buttonPane to prevent layout problems.
-		colorRect.widthProperty().bind(colorWheel.fitWidthProperty().add(insets.getLeft()).add(insets.getRight()).multiply(2.5).subtract(l.strokeWidthProperty()));
+		colorRect.widthProperty().bind(
+				colorWheel.fitWidthProperty().add(insets.getLeft())
+						.add(insets.getRight()).multiply(2.5)
+						.subtract(l.strokeWidthProperty()));
 		colorRect.heightProperty().bind(buttonPane.heightProperty());
 		colorRect.fillProperty().bind(colorProperty);
 
@@ -112,7 +113,7 @@ public abstract class AbstractFXColorPicker extends Group {
 			{
 				bind(borderColorProperty, backgroundColorProperty);
 			}
-			
+
 			@Override
 			protected String computeValue() {
 				return "-fx-border-color: "
@@ -121,7 +122,6 @@ public abstract class AbstractFXColorPicker extends Group {
 						+ toRgbString(backgroundColorProperty.get());
 			}
 		});
-		
 
 		hbox.getChildren().addAll(colorRect, l, buttonPane);
 
