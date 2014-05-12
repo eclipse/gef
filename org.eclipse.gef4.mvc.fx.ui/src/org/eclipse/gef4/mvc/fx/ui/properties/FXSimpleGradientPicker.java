@@ -32,8 +32,6 @@ import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -47,7 +45,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
 	
 	private LinearGradient simpleGradient;
 	private AbstractFXColorPicker color1Picker;
-	private FXColorPicker color2Editor;
+	private FXColorPicker color2Picker;
 
 	private Control control;
 	
@@ -84,22 +82,22 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
 			public void changed(ObservableValue<? extends Color> observable,
 					Color oldValue, Color newValue) {
 				setSimpleGradient(createSimpleGradient(color1Picker.getColor(),
-						color2Editor.getColor()));
+						color2Picker.getColor()));
 			}
 			
 		});
 
-		color2Editor = new FXColorPicker(canvas);
+		color2Picker = new FXColorPicker(canvas);
 		SwtFXControlAdapter<Control> color2EditorNode = new SwtFXControlAdapter<Control>(
-				color2Editor.getControl());
+				color2Picker.getControl());
 		colorEditorsBox.getChildren().add(color2EditorNode);
 		// color2Editor.getControl().setLayoutData(new GridData());
-		color2Editor.addPropertyChangeListener(new PropertyChangeListener() {
+		color2Picker.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				setSimpleGradient(createSimpleGradient(color1Picker.getColor(),
-						color2Editor.getColor()));
+						color2Picker.getColor()));
 			}
 		});
 		
@@ -122,8 +120,8 @@ public class FXSimpleGradientPicker implements IPropertyChangeSupport {
         if(!color1Picker.getColor().equals(stops.get(0).getColor())){
         	color1Picker.setColor(stops.get(0).getColor());
         }
-        if(!color2Editor.getColor().equals(stops.get(1).getColor())){
-        	color2Editor.setColor(stops.get(1).getColor());
+        if(!color2Picker.getColor().equals(stops.get(1).getColor())){
+        	color2Picker.setColor(stops.get(1).getColor());
         }
         pcs.firePropertyChange("simpleGradient", oldSimpleGradient, simpleGradient);
 	}
