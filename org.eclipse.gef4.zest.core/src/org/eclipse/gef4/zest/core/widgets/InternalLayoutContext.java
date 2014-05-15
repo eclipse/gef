@@ -37,14 +37,19 @@ class InternalLayoutContext implements LayoutContext {
 	private final List<GraphStructureListener> graphStructureListeners = new ArrayList<GraphStructureListener>();
 	private final List<LayoutListener> layoutListeners = new ArrayList<LayoutListener>();
 	private final List<PruningListener> pruningListeners = new ArrayList<PruningListener>();
-	private LayoutAlgorithm backgroundAlgorithm;
-	private LayoutAlgorithm fullAlgorithm;
+	private LayoutAlgorithm dynamicAlgorithm;
+	private LayoutAlgorithm staticAlgorithm;
 	private ExpandCollapseManager expandCollapseManager;
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
 	private final HashSet<SubgraphLayout> subgraphs = new HashSet<SubgraphLayout>();
-	private boolean eventsOn = true;
-	private boolean backgorundLayoutEnabled = false;
-	private boolean externalLayoutInvocation = true;
+	private boolean dynamicLayoutEnabled = false;
+
+	// guard method calls
+	// TODO: Remove if setExpandedInvocation is not really needed; you can
+	// bypass it by using getExpandCM() anyway.
+	private boolean setExpandedInvocation = false;
+	private boolean flushChangesInvocation = false;
+	private boolean staticLayoutInvocation = false;
 
 	/**
 	 * @param graph
@@ -95,7 +100,7 @@ class InternalLayoutContext implements LayoutContext {
 		if (!container.getGraph().isVisible() && animationHint) {
 			return;
 		}
-		eventsOn = false;
+		flushChangesInvocation = true;
 		if (animationHint) {
 			Animation.markBegin();
 		}
@@ -117,7 +122,7 @@ class InternalLayoutContext implements LayoutContext {
 		if (animationHint) {
 			Animation.run(GraphWidget.ANIMATION_TIME);
 		}
-		eventsOn = true;
+		flushChangesInvocation = false;
 	}
 
 	public Rectangle getBounds() {
@@ -128,7 +133,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public LayoutAlgorithm getDynamicLayoutAlgorithm() {
-		return backgroundAlgorithm;
+		return dynamicAlgorithm;
 	}
 
 	public ExpandCollapseManager getExpandCollapseManager() {
@@ -199,12 +204,12 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public boolean isDynamicLayoutEnabled() {
-		return backgorundLayoutEnabled;
+		return dynamicLayoutEnabled;
 	}
 
 	public void setDynamicLayoutEnabled(boolean enabled) {
-		if (this.backgorundLayoutEnabled != enabled) {
-			this.backgorundLayoutEnabled = enabled;
+		if (this.dynamicLayoutEnabled != enabled) {
+			this.dynamicLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
 		}
 	}
@@ -230,7 +235,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		backgroundAlgorithm = algorithm;
+		dynamicAlgorithm = algorithm;
 	}
 
 	public void setExpandCollapseManager(
@@ -317,13 +322,14 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	void setExpanded(NodeLayout node, boolean expanded) {
-		externalLayoutInvocation = true;
+		setExpandedInvocation = true;
 		if (expandCollapseManager != null) {
 			expandCollapseManager.setExpanded(this, node, expanded);
 		}
-		externalLayoutInvocation = false;
+		setExpandedInvocation = false;
 	}
 
+	// TODO: remove
 	boolean canExpand(NodeLayout node) {
 		return expandCollapseManager != null
 				&& expandCollapseManager.canExpand(this, node);
@@ -342,12 +348,13 @@ class InternalLayoutContext implements LayoutContext {
 		return subgraphFactory;
 	}
 
-	public void applyDynamicLayout(boolean clear) {
-		if (backgorundLayoutEnabled && backgroundAlgorithm != null) {
-			if (this != backgroundAlgorithm.getLayoutContext()) {
-				backgroundAlgorithm.setLayoutContext(this);
+	public void applyDynamicLayout(boolean clean) {
+		if (dynamicLayoutEnabled && dynamicAlgorithm != null) {
+			if (this != dynamicAlgorithm.getLayoutContext()) {
+				throw new IllegalStateException(
+						"Dynamic algorithm is bound to a different context!");
 			}
-			backgroundAlgorithm.applyLayout(true);
+			dynamicAlgorithm.applyLayout(clean);
 			flushChanges(false);
 		}
 	}
@@ -359,46 +366,44 @@ class InternalLayoutContext implements LayoutContext {
 	 * after firing of events.
 	 */
 	void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		this.fullAlgorithm = algorithm;
-		this.fullAlgorithm.setLayoutContext(this);
+		this.staticAlgorithm = algorithm;
+		this.staticAlgorithm.setLayoutContext(this);
 	}
 
 	LayoutAlgorithm getLayoutAlgorithm() {
-		return fullAlgorithm;
+		return staticAlgorithm;
 	}
 
 	public void applyStaticLayout(boolean clean) {
-		if (fullAlgorithm != null) {
-			if (this != fullAlgorithm.getLayoutContext()) {
-				fullAlgorithm.setLayoutContext(this);
+		if (staticAlgorithm != null) {
+			if (this != staticAlgorithm.getLayoutContext()) {
+				throw new IllegalStateException(
+						"Static algorithm is bound to a different context!");
 			}
-			externalLayoutInvocation = true;
-			fullAlgorithm.applyLayout(clean);
-			externalLayoutInvocation = false;
+			staticLayoutInvocation = true;
+			staticAlgorithm.applyLayout(clean);
+			staticLayoutInvocation = false;
 		}
 	}
 
 	public LayoutAlgorithm getStaticLayoutAlgorithm() {
-		return fullAlgorithm;
+		return staticAlgorithm;
 	}
 
 	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		fullAlgorithm = algorithm;
+		staticAlgorithm = algorithm;
 	}
 
 	void checkChangesAllowed() {
-		if (!backgorundLayoutEnabled && !externalLayoutInvocation) {
-			throw new RuntimeException(
-					"Layout not allowed to perform changes in layout context!");
+		if (!dynamicLayoutEnabled
+				&& !(staticLayoutInvocation || setExpandedInvocation)) {
+			throw new IllegalStateException(
+					"As dynamic layout is disabled, this context may currently not be changed, because static layout or node expansion is in progress.");
 		}
 	}
 
-	public boolean isFlushingChanges() {
-		return !eventsOn;
-	}
-
 	public void fireNodeAddedEvent(NodeLayout node) {
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
 						.size()]);
@@ -411,7 +416,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void fireNodeRemovedEvent(NodeLayout node) {
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
 						.size()]);
@@ -432,7 +437,7 @@ class InternalLayoutContext implements LayoutContext {
 			return;
 		}
 		if (sourceContext == this) {
-			boolean intercepted = !eventsOn;
+			boolean intercepted = flushChangesInvocation;
 			GraphStructureListener[] listeners = graphStructureListeners
 					.toArray(new GraphStructureListener[graphStructureListeners
 							.size()]);
@@ -456,7 +461,7 @@ class InternalLayoutContext implements LayoutContext {
 			return;
 		}
 		if (sourceContext == this) {
-			boolean intercepted = !eventsOn;
+			boolean intercepted = flushChangesInvocation;
 			GraphStructureListener[] listeners = graphStructureListeners
 					.toArray(new GraphStructureListener[graphStructureListeners
 							.size()]);
@@ -472,7 +477,7 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void fireBoundsChangedEvent() {
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		ContextListener[] listeners = contextListeners
 				.toArray(new ContextListener[contextListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -493,11 +498,11 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void fireNodeResizedEvent(NodeLayout nodeLayout) {
 		InternalNodeLayout node = (InternalNodeLayout) nodeLayout;
-		if (eventsOn) {
+		if (!flushChangesInvocation) {
 			node.refreshSize();
 			node.refreshLocation();
 		}
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -510,10 +515,10 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void fireSubgraphMovedEvent(SubgraphLayout subgraphLayout) {
 		DefaultSubgraph subgraph = (DefaultSubgraph) subgraphLayout;
-		if (eventsOn) {
+		if (!flushChangesInvocation) {
 			subgraph.refreshLocation();
 		}
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -526,11 +531,11 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void fireSubgraphResizedEvent(SubgraphLayout subgraphLayout) {
 		DefaultSubgraph subgraph = (DefaultSubgraph) subgraphLayout;
-		if (eventsOn) {
+		if (!flushChangesInvocation) {
 			subgraph.refreshSize();
 			subgraph.refreshLocation();
 		}
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		for (int i = 0; i < listeners.length && !intercepted; i++) {
@@ -543,10 +548,10 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void fireNodeMovedEvent(NodeLayout nodeLayout) {
 		InternalNodeLayout node = (InternalNodeLayout) nodeLayout;
-		if (eventsOn) {
+		if (!flushChangesInvocation) {
 			node.refreshLocation();
 		}
-		boolean intercepted = !eventsOn;
+		boolean intercepted = flushChangesInvocation;
 		LayoutListener[] listeners = layoutListeners
 				.toArray(new LayoutListener[layoutListeners.size()]);
 		node.setLocation(node.getNode().getLocation().x, node.getNode()

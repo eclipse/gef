@@ -137,15 +137,6 @@ public interface LayoutContext {
 	 */
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm);
 
-	/**
-	 * Returns <code>true</code> when {@link #flushChanges(boolean)} is
-	 * currently in progress. Otherwise returns <code>false</code>.
-	 * 
-	 * @return <code>true</code> during {@link #flushChanges(boolean)},
-	 *         otherwise <code>false</code>
-	 */
-	public boolean isFlushingChanges();
-
 	// TODO: attributes
 	/**
 	 * Enables or disables incremental layout depending on the given boolean.
