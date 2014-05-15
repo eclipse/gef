@@ -388,7 +388,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireNodeAddedEvent(NodeLayout node) {
+	public void fireNodeAddedEvent(NodeLayout node) {
 		boolean intercepted = !eventsOn;
 		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
@@ -401,7 +401,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireNodeRemovedEvent(NodeLayout node) {
+	public void fireNodeRemovedEvent(NodeLayout node) {
 		boolean intercepted = !eventsOn;
 		GraphStructureListener[] listeners = graphStructureListeners
 				.toArray(new GraphStructureListener[graphStructureListeners
@@ -414,7 +414,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireConnectionAddedEvent(ConnectionLayout connection) {
+	public void fireConnectionAddedEvent(ConnectionLayout connection) {
 		InternalLayoutContext sourceContext = ((InternalNodeLayout) connection
 				.getSource()).getOwnerLayoutContext();
 		InternalLayoutContext targetContext = ((InternalNodeLayout) connection
@@ -438,7 +438,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireConnectionRemovedEvent(ConnectionLayout connection) {
+	public void fireConnectionRemovedEvent(ConnectionLayout connection) {
 		InternalLayoutContext sourceContext = ((InternalNodeLayout) connection
 				.getSource()).getOwnerLayoutContext();
 		InternalLayoutContext targetContext = ((InternalNodeLayout) connection
@@ -462,7 +462,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireBoundsChangedEvent() {
+	public void fireBoundsChangedEvent() {
 		boolean intercepted = !eventsOn;
 		ContextListener[] listeners = contextListeners
 				.toArray(new ContextListener[contextListeners.size()]);
@@ -474,7 +474,7 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireBackgroundEnableChangedEvent() {
+	public void fireBackgroundEnableChangedEvent() {
 		ContextListener[] listeners = contextListeners
 				.toArray(new ContextListener[contextListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {
@@ -482,7 +482,58 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
-	void fireNodeMovedEvent(InternalNodeLayout node) {
+	public void fireNodeResizedEvent(NodeLayout nodeLayout) {
+		InternalNodeLayout node = (InternalNodeLayout) nodeLayout;
+		if (eventsOn) {
+			node.refreshSize();
+			node.refreshLocation();
+		}
+		boolean intercepted = !eventsOn;
+		LayoutListener[] listeners = layoutListeners
+				.toArray(new LayoutListener[layoutListeners.size()]);
+		for (int i = 0; i < listeners.length && !intercepted; i++) {
+			intercepted = listeners[i].nodeResized(this, node);
+		}
+		if (!intercepted) {
+			applyBackgroundLayout(true);
+		}
+	}
+
+	public void fireSubgraphMovedEvent(SubgraphLayout subgraphLayout) {
+		DefaultSubgraph subgraph = (DefaultSubgraph) subgraphLayout;
+		if (eventsOn) {
+			subgraph.refreshLocation();
+		}
+		boolean intercepted = !eventsOn;
+		LayoutListener[] listeners = layoutListeners
+				.toArray(new LayoutListener[layoutListeners.size()]);
+		for (int i = 0; i < listeners.length && !intercepted; i++) {
+			intercepted = listeners[i].subgraphMoved(this, subgraph);
+		}
+		if (!intercepted) {
+			applyBackgroundLayout(true);
+		}
+	}
+
+	public void fireSubgraphResizedEvent(SubgraphLayout subgraphLayout) {
+		DefaultSubgraph subgraph = (DefaultSubgraph) subgraphLayout;
+		if (eventsOn) {
+			subgraph.refreshSize();
+			subgraph.refreshLocation();
+		}
+		boolean intercepted = !eventsOn;
+		LayoutListener[] listeners = layoutListeners
+				.toArray(new LayoutListener[layoutListeners.size()]);
+		for (int i = 0; i < listeners.length && !intercepted; i++) {
+			intercepted = listeners[i].subgraphResized(this, subgraph);
+		}
+		if (!intercepted) {
+			applyBackgroundLayout(true);
+		}
+	}
+
+	public void fireNodeMovedEvent(NodeLayout nodeLayout) {
+		InternalNodeLayout node = (InternalNodeLayout) nodeLayout;
 		if (eventsOn) {
 			node.refreshLocation();
 		}
@@ -495,54 +546,16 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeMoved(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout(true);
+			applyBackgroundLayout(true);
 		}
 	}
 
-	void fireNodeResizedEvent(InternalNodeLayout node) {
-		if (eventsOn) {
-			node.refreshSize();
-			node.refreshLocation();
-		}
-		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = layoutListeners
-				.toArray(new LayoutListener[layoutListeners.size()]);
-		for (int i = 0; i < listeners.length && !intercepted; i++) {
-			intercepted = listeners[i].nodeResized(this, node);
-		}
-		if (!intercepted) {
-			applyIncrementalLayout(true);
+	public void firePruningEnableChangedEvent() {
+		ContextListener[] listeners = contextListeners
+				.toArray(new ContextListener[contextListeners.size()]);
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].pruningEnablementChanged(this);
 		}
 	}
 
-	void fireSubgraphMovedEvent(DefaultSubgraph subgraph) {
-		if (eventsOn) {
-			subgraph.refreshLocation();
-		}
-		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = layoutListeners
-				.toArray(new LayoutListener[layoutListeners.size()]);
-		for (int i = 0; i < listeners.length && !intercepted; i++) {
-			intercepted = listeners[i].subgraphMoved(this, subgraph);
-		}
-		if (!intercepted) {
-			applyIncrementalLayout(true);
-		}
-	}
-
-	void fireSubgraphResizedEvent(DefaultSubgraph subgraph) {
-		if (eventsOn) {
-			subgraph.refreshSize();
-			subgraph.refreshLocation();
-		}
-		boolean intercepted = !eventsOn;
-		LayoutListener[] listeners = layoutListeners
-				.toArray(new LayoutListener[layoutListeners.size()]);
-		for (int i = 0; i < listeners.length && !intercepted; i++) {
-			intercepted = listeners[i].subgraphResized(this, subgraph);
-		}
-		if (!intercepted) {
-			applyIncrementalLayout(true);
-		}
-	}
 }

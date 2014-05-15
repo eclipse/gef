@@ -262,11 +262,102 @@ public interface LayoutContext {
 
 	/**
 	 * Causes all the changes made to elements in this context to affect the
-	 * display.
+	 * display. Called from layout algorithms on finish of layout.
 	 * 
 	 * @param animationHint
 	 *            a hint for display mechanism indicating whether changes are
 	 *            major and should be animated (if true) or not.
 	 */
 	public void flushChanges(boolean animationHint);
+
+	/**
+	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * the newly added node.
+	 * 
+	 * @param node
+	 *            NodeLayout of newly added node
+	 */
+	public void fireNodeAddedEvent(NodeLayout node);
+
+	/**
+	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * the to be removed node.
+	 * 
+	 * @param node
+	 *            NodeLayout of to be removed node
+	 */
+	public void fireNodeRemovedEvent(NodeLayout node);
+
+	/**
+	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * the newly added connection.
+	 * 
+	 * @param connection
+	 *            ConnectionLayout of newly added connection
+	 */
+	public void fireConnectionAddedEvent(ConnectionLayout connection);
+
+	/**
+	 * Notifies all previously registered {@link GraphStructureListener}s about
+	 * the to be removed connection.
+	 * 
+	 * @param connection
+	 *            ConnectionLayout of to be removed connection
+	 */
+	public void fireConnectionRemovedEvent(ConnectionLayout connection);
+
+	/**
+	 * Notifies all previously registered {@link ContextListener}s about the
+	 * bounds change.
+	 */
+	public void fireBoundsChangedEvent();
+
+	/**
+	 * Notifies all previously registered {@link ContextListener}s about the
+	 * state of the background layout flag.
+	 */
+	public void fireBackgroundEnableChangedEvent();
+
+	/**
+	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * moved node.
+	 * 
+	 * @param node
+	 *            NodeLayout of moved node
+	 */
+	public void fireNodeMovedEvent(NodeLayout node);
+
+	/**
+	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * resized node.
+	 * 
+	 * @param node
+	 *            NodeLayout of resized node
+	 */
+	public void fireNodeResizedEvent(NodeLayout node);
+
+	/**
+	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * moved subgraph.
+	 * 
+	 * @param subgraph
+	 *            SubgraphLayout of moved subgraph
+	 */
+	public void fireSubgraphMovedEvent(SubgraphLayout subgraph);
+
+	/**
+	 * Notifies all previously registered {@link LayoutListener}s about the
+	 * resized subgraph.
+	 * 
+	 * @param subgraph
+	 *            SubgraphLayout of resized subgraph
+	 */
+	public void fireSubgraphResizedEvent(SubgraphLayout subgraph);
+
+	/**
+	 * Notifies all previously registered {@link ContextListener}s about the
+	 * state of the pruning flag.
+	 */
+	public void firePruningEnableChangedEvent();
+
 }
