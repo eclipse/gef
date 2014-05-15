@@ -498,8 +498,8 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public void setDynamicLayout(boolean enabled) {
-		if (getLayoutContext().isIncrementalLayoutEnabled() != enabled) {
-			layoutContext.setIncrementalLayoutEnabled(enabled);
+		if (getLayoutContext().isBackgroundLayoutEnabled() != enabled) {
+			layoutContext.setBackgroundLayoutEnabled(enabled);
 			if (enabled) {
 				scheduleLayoutOnReveal(false);
 			}
@@ -513,7 +513,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public boolean isDynamicLayoutEnabled() {
-		return getLayoutContext().isIncrementalLayoutEnabled();
+		return getLayoutContext().isBackgroundLayoutEnabled();
 	}
 
 	private void release() {

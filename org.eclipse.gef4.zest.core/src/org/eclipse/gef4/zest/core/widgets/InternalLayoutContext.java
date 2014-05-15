@@ -127,7 +127,7 @@ class InternalLayoutContext implements LayoutContext {
 		return result;
 	}
 
-	public LayoutAlgorithm getIncrementalLayoutAlgorithm() {
+	public LayoutAlgorithm getBackgroundLayoutAlgorithm() {
 		return incrementalAlgorithm;
 	}
 
@@ -198,11 +198,11 @@ class InternalLayoutContext implements LayoutContext {
 		return false;
 	}
 
-	public boolean isIncrementalLayoutEnabled() {
+	public boolean isBackgroundLayoutEnabled() {
 		return backgorundLayoutEnabled;
 	}
 
-	public void setIncrementalLayoutEnabled(boolean enabled) {
+	public void setBackgroundLayoutEnabled(boolean enabled) {
 		if (this.backgorundLayoutEnabled != enabled) {
 			this.backgorundLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
@@ -229,7 +229,7 @@ class InternalLayoutContext implements LayoutContext {
 		pruningListeners.remove(listener);
 	}
 
-	public void setIncrementalLayoutAlgorithm(LayoutAlgorithm algorithm) {
+	public void setBackgroundLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		incrementalAlgorithm = algorithm;
 	}
 
@@ -342,7 +342,7 @@ class InternalLayoutContext implements LayoutContext {
 		return subgraphFactory;
 	}
 
-	public void applyIncrementalLayout(boolean clear) {
+	public void applyBackgroundLayout(boolean clear) {
 		if (backgorundLayoutEnabled && incrementalAlgorithm != null) {
 
 			incrementalAlgorithm.applyLayout(true);
@@ -352,7 +352,7 @@ class InternalLayoutContext implements LayoutContext {
 
 	/**
 	 * Sets layout algorithm for this context. It differs from
-	 * {@link #setIncrementalLayoutAlgorithm(LayoutAlgorithm) main algorithm} in
+	 * {@link #setBackgroundLayoutAlgorithm(LayoutAlgorithm) main algorithm} in
 	 * that it's always used when {@link #applyLayoutAlgorithm(boolean)} and not
 	 * after firing of events.
 	 */
@@ -397,7 +397,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeAdded(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout(true);
+			applyBackgroundLayout(true);
 		}
 	}
 
@@ -410,7 +410,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeRemoved(this, node);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout(true);
+			applyBackgroundLayout(true);
 		}
 	}
 
@@ -431,7 +431,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionAdded(this, connection);
 			}
 			if (!intercepted) {
-				applyIncrementalLayout(true);
+				applyBackgroundLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -455,7 +455,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionRemoved(this, connection);
 			}
 			if (!intercepted) {
-				applyIncrementalLayout(true);
+				applyBackgroundLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -470,7 +470,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].boundsChanged(this);
 		}
 		if (!intercepted) {
-			applyIncrementalLayout(true);
+			applyBackgroundLayout(true);
 		}
 	}
 

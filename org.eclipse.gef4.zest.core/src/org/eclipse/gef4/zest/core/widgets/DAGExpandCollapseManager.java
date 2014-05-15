@@ -270,7 +270,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private void flushChanges(boolean force, boolean clean) {
 		cleanLayoutScheduled = cleanLayoutScheduled || clean;
-		if (!force && !context.isIncrementalLayoutEnabled()) {
+		if (!force && !context.isBackgroundLayoutEnabled()) {
 			return;
 		}
 

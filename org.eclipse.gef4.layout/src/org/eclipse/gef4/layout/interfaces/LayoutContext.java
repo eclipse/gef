@@ -20,9 +20,9 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 public interface LayoutContext {
 
 	/**
-	 * Applies the incremental layout algorithm of this LayoutContext.
+	 * Applies the background layout algorithm of this LayoutContext.
 	 */
-	public void applyIncrementalLayout(boolean clear);
+	public void applyBackgroundLayout(boolean clear);
 
 	/**
 	 * Applies the full layout algorithm of this LayoutContext.
@@ -115,24 +115,26 @@ public interface LayoutContext {
 	 * 
 	 * @return true if incremental layout changes are enabled
 	 */
-	public boolean isIncrementalLayoutEnabled();
+	public boolean isBackgroundLayoutEnabled();
 
 	/**
-	 * Sets the incremental layout algorithm for this context. Main algorithm
+	 * Sets the background layout algorithm for this context. This algorithm
 	 * will be used to relayout graph items using
 	 * {@link LayoutAlgorithm#applyLayout()} after every event that is not
-	 * intercepted by any listener.
+	 * intercepted by any listener when currently no layout is in process and
+	 * background layout is {@link #isBackgroundLayoutEnabled() enabled}.
 	 * 
 	 * @param algorithm
 	 */
-	public void setIncrementalLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setBackgroundLayoutAlgorithm(LayoutAlgorithm algorithm);
 
+	// TODO: attributes
 	/**
 	 * Enables or disables incremental layout depending on the given boolean.
 	 * 
 	 * @param enabled
 	 */
-	public void setIncrementalLayoutEnabled(boolean enabled);
+	public void setBackgroundLayoutEnabled(boolean enabled);
 
 	/**
 	 * Sets the full layout algorithm for this context. Full algorithm is used
@@ -151,12 +153,13 @@ public interface LayoutContext {
 	public LayoutAlgorithm getFullLayoutAlgorithm();
 
 	/**
-	 * @return the incremental algorithm of this context (see
-	 *         {@link #setIncrementalLayoutAlgorithm(LayoutAlgorithm)} for
+	 * @return the background algorithm of this context (see
+	 *         {@link #setBackgroundLayoutAlgorithm(LayoutAlgorithm)} for
 	 *         details)
 	 */
-	public LayoutAlgorithm getIncrementalLayoutAlgorithm();
+	public LayoutAlgorithm getBackgroundLayoutAlgorithm();
 
+	// TODO: move to algorithms
 	/**
 	 * Sets the expand/collapse manager for this context. The manger will be
 	 * used to handle expansion related methods called on the owner of this
