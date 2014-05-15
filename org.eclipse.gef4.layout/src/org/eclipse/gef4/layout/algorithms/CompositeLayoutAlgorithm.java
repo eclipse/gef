@@ -15,6 +15,7 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 public class CompositeLayoutAlgorithm implements LayoutAlgorithm {
 
+	private LayoutContext context = null;
 	private LayoutAlgorithm[] algorithms = null;
 
 	public CompositeLayoutAlgorithm(LayoutAlgorithm[] algorithms) {
@@ -37,8 +38,14 @@ public class CompositeLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	public void setLayoutContext(LayoutContext context) {
+		this.context = context;
 		for (int i = 0; i < algorithms.length; i++) {
 			algorithms[i].setLayoutContext(context);
 		}
 	}
+
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 }

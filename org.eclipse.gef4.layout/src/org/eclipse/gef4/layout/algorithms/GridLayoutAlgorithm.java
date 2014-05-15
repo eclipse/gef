@@ -234,4 +234,8 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 		resize = resizing;
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 }

@@ -88,6 +88,10 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 		this.context = context;
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	private void addToRowList(EntityLayout entity, ArrayList rowsList) {
 		double layoutY = entity.getLocation().y;
 

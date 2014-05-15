@@ -3,9 +3,9 @@ package org.eclipse.gef4.zest.examples.layouts;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -42,6 +42,10 @@ public class CustomLayout {
 
 			public void setLayoutContext(LayoutContext context) {
 				this.context = context;
+			}
+
+			public LayoutContext getLayoutContext() {
+				return context;
 			}
 
 			public void applyLayout(boolean clean) {

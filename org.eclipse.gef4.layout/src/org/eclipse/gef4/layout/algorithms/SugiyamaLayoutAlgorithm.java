@@ -130,6 +130,10 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 		this.context = context;
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

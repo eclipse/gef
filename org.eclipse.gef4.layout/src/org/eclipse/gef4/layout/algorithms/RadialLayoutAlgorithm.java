@@ -79,6 +79,10 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		treeLayout.setLayoutContext(context);
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	/**
 	 * Set the range the radial layout will use when applyLayout is called. Both
 	 * values must be in radians.

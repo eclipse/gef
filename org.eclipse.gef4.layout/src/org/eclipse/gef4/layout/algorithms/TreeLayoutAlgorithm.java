@@ -156,6 +156,10 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;

@@ -1273,6 +1273,10 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		bounds = context.getBounds();
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	/**
 	 * 
 	 * @return <code>ExpandCollapseManager</code> that can (and should) be used

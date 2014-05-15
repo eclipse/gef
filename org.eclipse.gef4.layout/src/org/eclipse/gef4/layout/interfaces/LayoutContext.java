@@ -68,12 +68,14 @@ public interface LayoutContext {
 	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
 			EntityLayout layoutEntity2);
 
+	// TODO: attributes
 	/**
 	 * 
 	 * @return bounds in which the graph elements can be placed
 	 */
 	public Rectangle getBounds();
 
+	// TODO: attributes, ContextListener?
 	/**
 	 * 
 	 * @return true if a layout algorithm is allowed to place graph elements
@@ -99,6 +101,7 @@ public interface LayoutContext {
 	 */
 	public SubgraphLayout createSubgraph(NodeLayout[] nodes);
 
+	// TODO: attributes
 	/**
 	 * 
 	 * @return true if this layout context allows pruning nodes into subgraphs
@@ -170,6 +173,7 @@ public interface LayoutContext {
 	public void setExpandCollapseManager(
 			ExpandCollapseManager expandCollapseManager);
 
+	// TODO: move to algorithms
 	/**
 	 * 
 	 * @return current expand/collapse manager (can be null, which means that

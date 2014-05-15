@@ -32,6 +32,14 @@ public interface LayoutAlgorithm {
 	 */
 	public void setLayoutContext(LayoutContext context);
 
+	// TODO: API change => really do this?
+	/**
+	 * Returns the previously set {@link LayoutContext}.
+	 * 
+	 * @return the previously set {@link LayoutContext}
+	 */
+	public LayoutContext getLayoutContext();
+
 	/**
 	 * Makes this algorithm perform layout computation and apply it to its
 	 * context.

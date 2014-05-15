@@ -216,6 +216,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		initLayout();
 	}
 
+	public LayoutContext getLayoutContext() {
+		return context;
+	}
+
 	public void performNIteration(int n) {
 		if (iteration == 0) {
 			entities = context.getEntities();
