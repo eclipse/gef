@@ -20,14 +20,18 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 public interface LayoutContext {
 
 	/**
-	 * Applies the background layout algorithm of this LayoutContext.
+	 * Applies the background layout algorithm of this LayoutContext. The clean
+	 * flag is passed-in to the background layout algorithm to indicate whether
+	 * the context changed significantly since the last layout pass.
 	 */
-	public void applyBackgroundLayout(boolean clear);
+	public void applyDynamicLayout(boolean clean);
 
 	/**
-	 * Applies the full layout algorithm of this LayoutContext.
+	 * Applies the static layout algorithm of this LayoutContext. The clean flag
+	 * is passed-in to the static layout algorithm to indicate whether the
+	 * context changed significantly since the last layout pass.
 	 */
-	public void applyFullLayout(boolean clear);
+	public void applyStaticLayout(boolean clean);
 
 	/**
 	 * Returns all the nodes that should be laid out. Replacing elements in the
@@ -111,25 +115,27 @@ public interface LayoutContext {
 	/**
 	 * Checks if this layout context allows layout algorithms to work
 	 * continuously in background and change the layout with time or in reaction
-	 * to some events. If background changes are not allowed, a layout algorithm
+	 * to some events. If dynamic changes are not allowed, a layout algorithm
 	 * can make changes in layout context only when
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} is called (otherwise a
-	 * runtime exception will be thrown).
+	 * {@link LayoutAlgorithm#applyLayout(boolean)} is called on the respective
+	 * algorithm.
 	 * 
 	 * @return true if incremental layout changes are enabled
 	 */
-	public boolean isBackgroundLayoutEnabled();
+	public boolean isDynamicLayoutEnabled();
 
 	/**
-	 * Sets the background layout algorithm for this context. This algorithm
-	 * will be used to relayout graph items using
+	 * Sets the dynamic layout algorithm for this context. This algorithm will
+	 * be used to relayout graph items using
 	 * {@link LayoutAlgorithm#applyLayout()} after every event that is not
-	 * intercepted by any listener when currently no layout is in process and
-	 * background layout is {@link #isBackgroundLayoutEnabled() enabled}.
+	 * intercepted by any listener when currently changes are not being flushed
+	 * and background layout is {@link #isDynamicLayoutEnabled() enabled}. The
+	 * clean flag for the background layout algorithm can be set to
+	 * <code>false</code> by the context when reacting to events.
 	 * 
 	 * @param algorithm
 	 */
-	public void setBackgroundLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm);
 
 	/**
 	 * Returns <code>true</code> when {@link #flushChanges(boolean)} is
@@ -146,30 +152,30 @@ public interface LayoutContext {
 	 * 
 	 * @param enabled
 	 */
-	public void setBackgroundLayoutEnabled(boolean enabled);
+	public void setDynamicLayoutEnabled(boolean enabled);
 
 	/**
-	 * Sets the full layout algorithm for this context. Full algorithm is used
-	 * to layout a newly initialized graph or after heavy changes to it.
+	 * Sets the static layout algorithm for this context. The static algorithm
+	 * has to be manually invoked, for example, after significant changes to the
+	 * context.
 	 * 
 	 * @param algorithm
 	 */
-	public void setFullLayoutAlgorithm(LayoutAlgorithm algorithm);
+	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm);
 
 	/**
-	 * Returns the full layout algorithm used to layout a newly initialized
+	 * Returns the static layout algorithm used to layout a newly initialized
 	 * graph or after heavy changes to it.
 	 * 
-	 * @return the full layout algorithm
+	 * @return the static layout algorithm
 	 */
-	public LayoutAlgorithm getFullLayoutAlgorithm();
+	public LayoutAlgorithm getStaticLayoutAlgorithm();
 
 	/**
 	 * @return the background algorithm of this context (see
-	 *         {@link #setBackgroundLayoutAlgorithm(LayoutAlgorithm)} for
-	 *         details)
+	 *         {@link #setDynamicLayoutAlgorithm(LayoutAlgorithm)} for details)
 	 */
-	public LayoutAlgorithm getBackgroundLayoutAlgorithm();
+	public LayoutAlgorithm getDynamicLayoutAlgorithm();
 
 	// TODO: move to algorithms
 	/**

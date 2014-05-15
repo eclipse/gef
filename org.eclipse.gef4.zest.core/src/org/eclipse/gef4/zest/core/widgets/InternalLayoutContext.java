@@ -37,7 +37,7 @@ class InternalLayoutContext implements LayoutContext {
 	private final List<GraphStructureListener> graphStructureListeners = new ArrayList<GraphStructureListener>();
 	private final List<LayoutListener> layoutListeners = new ArrayList<LayoutListener>();
 	private final List<PruningListener> pruningListeners = new ArrayList<PruningListener>();
-	private LayoutAlgorithm incrementalAlgorithm;
+	private LayoutAlgorithm backgroundAlgorithm;
 	private LayoutAlgorithm fullAlgorithm;
 	private ExpandCollapseManager expandCollapseManager;
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
@@ -127,8 +127,8 @@ class InternalLayoutContext implements LayoutContext {
 		return result;
 	}
 
-	public LayoutAlgorithm getBackgroundLayoutAlgorithm() {
-		return incrementalAlgorithm;
+	public LayoutAlgorithm getDynamicLayoutAlgorithm() {
+		return backgroundAlgorithm;
 	}
 
 	public ExpandCollapseManager getExpandCollapseManager() {
@@ -198,11 +198,11 @@ class InternalLayoutContext implements LayoutContext {
 		return false;
 	}
 
-	public boolean isBackgroundLayoutEnabled() {
+	public boolean isDynamicLayoutEnabled() {
 		return backgorundLayoutEnabled;
 	}
 
-	public void setBackgroundLayoutEnabled(boolean enabled) {
+	public void setDynamicLayoutEnabled(boolean enabled) {
 		if (this.backgorundLayoutEnabled != enabled) {
 			this.backgorundLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
@@ -229,8 +229,8 @@ class InternalLayoutContext implements LayoutContext {
 		pruningListeners.remove(listener);
 	}
 
-	public void setBackgroundLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		incrementalAlgorithm = algorithm;
+	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
+		backgroundAlgorithm = algorithm;
 	}
 
 	public void setExpandCollapseManager(
@@ -342,17 +342,19 @@ class InternalLayoutContext implements LayoutContext {
 		return subgraphFactory;
 	}
 
-	public void applyBackgroundLayout(boolean clear) {
-		if (backgorundLayoutEnabled && incrementalAlgorithm != null) {
-
-			incrementalAlgorithm.applyLayout(true);
+	public void applyDynamicLayout(boolean clear) {
+		if (backgorundLayoutEnabled && backgroundAlgorithm != null) {
+			if (this != backgroundAlgorithm.getLayoutContext()) {
+				backgroundAlgorithm.setLayoutContext(this);
+			}
+			backgroundAlgorithm.applyLayout(true);
 			flushChanges(false);
 		}
 	}
 
 	/**
 	 * Sets layout algorithm for this context. It differs from
-	 * {@link #setBackgroundLayoutAlgorithm(LayoutAlgorithm) main algorithm} in
+	 * {@link #setDynamicLayoutAlgorithm(LayoutAlgorithm) main algorithm} in
 	 * that it's always used when {@link #applyLayoutAlgorithm(boolean)} and not
 	 * after firing of events.
 	 */
@@ -365,19 +367,22 @@ class InternalLayoutContext implements LayoutContext {
 		return fullAlgorithm;
 	}
 
-	public void applyFullLayout(boolean clean) {
+	public void applyStaticLayout(boolean clean) {
 		if (fullAlgorithm != null) {
+			if (this != fullAlgorithm.getLayoutContext()) {
+				fullAlgorithm.setLayoutContext(this);
+			}
 			externalLayoutInvocation = true;
 			fullAlgorithm.applyLayout(clean);
 			externalLayoutInvocation = false;
 		}
 	}
 
-	public LayoutAlgorithm getFullLayoutAlgorithm() {
+	public LayoutAlgorithm getStaticLayoutAlgorithm() {
 		return fullAlgorithm;
 	}
 
-	public void setFullLayoutAlgorithm(LayoutAlgorithm algorithm) {
+	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		fullAlgorithm = algorithm;
 	}
 
@@ -401,7 +406,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeAdded(this, node);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -414,7 +419,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeRemoved(this, node);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -435,7 +440,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionAdded(this, connection);
 			}
 			if (!intercepted) {
-				applyBackgroundLayout(true);
+				applyDynamicLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -459,7 +464,7 @@ class InternalLayoutContext implements LayoutContext {
 				intercepted = listeners[i].connectionRemoved(this, connection);
 			}
 			if (!intercepted) {
-				applyBackgroundLayout(true);
+				applyDynamicLayout(true);
 			}
 		} else {
 			sourceContext.fireConnectionAddedEvent(connection);
@@ -474,7 +479,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].boundsChanged(this);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -499,7 +504,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeResized(this, node);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -515,7 +520,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphMoved(this, subgraph);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -532,7 +537,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].subgraphResized(this, subgraph);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 
@@ -550,7 +555,7 @@ class InternalLayoutContext implements LayoutContext {
 			intercepted = listeners[i].nodeMoved(this, node);
 		}
 		if (!intercepted) {
-			applyBackgroundLayout(true);
+			applyDynamicLayout(true);
 		}
 	}
 

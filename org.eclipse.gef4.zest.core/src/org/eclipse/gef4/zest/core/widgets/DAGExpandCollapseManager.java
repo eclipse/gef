@@ -270,7 +270,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private void flushChanges(boolean force, boolean clean) {
 		cleanLayoutScheduled = cleanLayoutScheduled || clean;
-		if (!force && !context.isBackgroundLayoutEnabled()) {
+		if (!force && !context.isDynamicLayoutEnabled()) {
 			return;
 		}
 
@@ -292,7 +292,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		}
 		nodesToUpdate.clear();
 
-		(context).applyFullLayout(cleanLayoutScheduled);
+		(context).applyStaticLayout(cleanLayoutScheduled);
 		cleanLayoutScheduled = false;
 		context.flushChanges(animate);
 	}

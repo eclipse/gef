@@ -480,7 +480,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public void applyLayoutNow() {
-		getLayoutContext().applyFullLayout(true);
+		getLayoutContext().applyStaticLayout(true);
 		layoutContext.flushChanges(false);
 	}
 
@@ -498,8 +498,8 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public void setDynamicLayout(boolean enabled) {
-		if (getLayoutContext().isBackgroundLayoutEnabled() != enabled) {
-			layoutContext.setBackgroundLayoutEnabled(enabled);
+		if (getLayoutContext().isDynamicLayoutEnabled() != enabled) {
+			layoutContext.setDynamicLayoutEnabled(enabled);
 			if (enabled) {
 				scheduleLayoutOnReveal(false);
 			}
@@ -513,7 +513,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @since 2.0
 	 */
 	public boolean isDynamicLayoutEnabled() {
-		return getLayoutContext().isBackgroundLayoutEnabled();
+		return getLayoutContext().isDynamicLayoutEnabled();
 	}
 
 	private void release() {
@@ -549,7 +549,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 								if (animate) {
 									Animation.markBegin();
 								}
-								getLayoutContext().applyFullLayout(
+								getLayoutContext().applyStaticLayout(
 										scheduledLayoutClean);
 								layoutContext.flushChanges(false);
 								if (animate) {
