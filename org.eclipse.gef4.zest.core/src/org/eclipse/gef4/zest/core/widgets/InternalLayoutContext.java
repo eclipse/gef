@@ -388,6 +388,10 @@ class InternalLayoutContext implements LayoutContext {
 		}
 	}
 
+	public boolean isFlushingChanges() {
+		return !eventsOn;
+	}
+
 	public void fireNodeAddedEvent(NodeLayout node) {
 		boolean intercepted = !eventsOn;
 		GraphStructureListener[] listeners = graphStructureListeners
