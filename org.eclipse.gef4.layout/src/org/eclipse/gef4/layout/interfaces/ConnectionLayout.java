@@ -9,31 +9,15 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-public interface ConnectionLayout {
+import org.eclipse.gef4.layout.IPropertyStore;
+
+public interface ConnectionLayout extends IPropertyStore {
+
+	public static final String VISIBLE_PROPERTY = "visible";
 
 	public NodeLayout getSource();
 
 	public NodeLayout getTarget();
-
-	/**
-	 * Sets the value of the property specified by <i>key</i> with the passed-in
-	 * <i>value</i>.
-	 * 
-	 * @param key
-	 *            property name
-	 * @param value
-	 *            property value
-	 */
-	public void setAttr(String key, Object value);
-
-	/**
-	 * Returns the value of the property specified by <i>key</i>.
-	 * 
-	 * @param key
-	 *            property name
-	 * @return property value
-	 */
-	public Object getAttr(String key);
 
 	/**
 	 * 

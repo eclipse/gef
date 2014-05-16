@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -45,12 +45,7 @@ class InternalNodeLayout implements NodeLayout {
 	// FIXME: *static* figure-to-node map?!
 	private final static HashMap<IFigure, GraphNode> figureToNode = new HashMap<IFigure, GraphNode>();
 
-	// properties
-	private static final String MINIMIZED_PROPERTY = "minimized";
-	private static final String LOCATION_PROPERTY = "location";
-	private static final String SIZE_PROPERTY = "size";
-	private static final String MOVABLE_PROPERTY = "movable";
-	private Map<String, Object> attr = new HashMap<String, Object>();
+	private PropertyStoreSupport ps = new PropertyStoreSupport();
 
 	// internal/layout things
 	private final GraphNode node;
@@ -60,8 +55,8 @@ class InternalNodeLayout implements NodeLayout {
 
 	{
 		// fill default properties
-		setAttr(MINIMIZED_PROPERTY, false);
-		setAttr(MOVABLE_PROPERTY, true);
+		setProperty(NodeLayout.MINIMIZED_PROPERTY, false);
+		setProperty(EntityLayout.MOVABLE_PROPERTY, true);
 	}
 
 	public InternalNodeLayout(GraphNode graphNode,
@@ -73,20 +68,20 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public org.eclipse.gef4.geometry.planar.Point getLocation() {
-		Object location = getAttr(LOCATION_PROPERTY);
+		Object location = getProperty(EntityLayout.LOCATION_PROPERTY);
 		if (location == null) {
 			refreshLocation();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Point) getAttr(LOCATION_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Point) getProperty(EntityLayout.LOCATION_PROPERTY))
 				.getCopy();
 	}
 
 	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
-		Object size = getAttr(SIZE_PROPERTY);
+		Object size = getProperty(EntityLayout.SIZE_PROPERTY);
 		if (size == null) {
 			refreshSize();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Dimension) getAttr(SIZE_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Dimension) getProperty(EntityLayout.SIZE_PROPERTY))
 				.getCopy();
 	}
 
@@ -95,7 +90,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public boolean isMovable() {
-		return (Boolean) getAttr(MOVABLE_PROPERTY);
+		return (Boolean) getProperty(EntityLayout.MOVABLE_PROPERTY);
 	}
 
 	public boolean isPrunable() {
@@ -138,12 +133,12 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetLocation(double x, double y) {
-		Object location = getAttr(LOCATION_PROPERTY);
+		Object location = getProperty(EntityLayout.LOCATION_PROPERTY);
 		if (location != null) {
 			((org.eclipse.gef4.geometry.planar.Point) location).setLocation(x,
 					y);
 		} else {
-			setAttr(LOCATION_PROPERTY,
+			setProperty(EntityLayout.LOCATION_PROPERTY,
 					new org.eclipse.gef4.geometry.planar.Point(x, y));
 		}
 	}
@@ -154,12 +149,12 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetSize(double width, double height) {
-		Object size = getAttr(SIZE_PROPERTY);
+		Object size = getProperty(EntityLayout.SIZE_PROPERTY);
 		if (size != null) {
 			((org.eclipse.gef4.geometry.planar.Dimension) size).setSize(width,
 					height);
 		} else {
-			setAttr(SIZE_PROPERTY,
+			setProperty(EntityLayout.SIZE_PROPERTY,
 					new org.eclipse.gef4.geometry.planar.Dimension(width,
 							height));
 		}
@@ -168,11 +163,11 @@ class InternalNodeLayout implements NodeLayout {
 	public void setMinimized(boolean minimized) {
 		layoutContext.checkChangesAllowed();
 		getSize(); // FIXME: strange action at a distance!
-		setAttr(MINIMIZED_PROPERTY, minimized);
+		setProperty(NodeLayout.MINIMIZED_PROPERTY, minimized);
 	}
 
 	public boolean isMinimized() {
-		return (Boolean) getAttr(MINIMIZED_PROPERTY);
+		return (Boolean) getProperty(NodeLayout.MINIMIZED_PROPERTY);
 	}
 
 	public NodeLayout[] getPredecessingNodes() {
@@ -300,15 +295,15 @@ class InternalNodeLayout implements NodeLayout {
 	void applyLayout() {
 		if (isMinimized()) {
 			node.setSize(0, 0);
-			Object location = getAttr(LOCATION_PROPERTY);
+			Object location = getProperty(EntityLayout.LOCATION_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				node.setLocation(p.x, p.y);
 			}
 		} else {
 			node.setSize(-1, -1);
-			Object location = getAttr(LOCATION_PROPERTY);
-			Object size = getAttr(SIZE_PROPERTY);
+			Object location = getProperty(EntityLayout.LOCATION_PROPERTY);
+			Object size = getProperty(EntityLayout.SIZE_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				org.eclipse.gef4.geometry.planar.Dimension d = (org.eclipse.gef4.geometry.planar.Dimension) size;
@@ -337,7 +332,7 @@ class InternalNodeLayout implements NodeLayout {
 
 	void refreshLocation() {
 		Point location = node.getLocation();
-		Object sizeObj = getAttr(SIZE_PROPERTY);
+		Object sizeObj = getProperty(EntityLayout.SIZE_PROPERTY);
 		org.eclipse.gef4.geometry.planar.Dimension size = (org.eclipse.gef4.geometry.planar.Dimension) sizeObj;
 		internalSetLocation(location.x + getSize().width / 2, location.y
 				+ size.height / 2);
@@ -360,12 +355,12 @@ class InternalNodeLayout implements NodeLayout {
 		return isDisposed;
 	}
 
-	public void setAttr(String key, Object value) {
-		attr.put(key, value);
+	public void setProperty(String name, Object value) {
+		ps.setProperty(name, value);
 	}
 
-	public Object getAttr(String key) {
-		return attr.get(key);
+	public Object getProperty(String name) {
+		return ps.getProperty(name);
 	}
 
 }

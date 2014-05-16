@@ -31,7 +31,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 public abstract class FigureSubgraph extends DefaultSubgraph {
 
 	protected IFigure figure;
-	private org.eclipse.gef4.geometry.planar.Point location;
+	private org.eclipse.gef4.geometry.planar.Point location; // center of figure
 	private boolean isLayoutBeingApplied = false;
 
 	/**

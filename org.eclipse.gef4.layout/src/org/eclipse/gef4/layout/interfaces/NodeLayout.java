@@ -11,6 +11,9 @@ package org.eclipse.gef4.layout.interfaces;
 
 public interface NodeLayout extends EntityLayout {
 
+	// properties
+	public static final String MINIMIZED_PROPERTY = "minimized";
+
 	/**
 	 * Returns <code>true</code> if this node can be pruned to a subgraph.
 	 * Otherwise returns <code>false</code>.

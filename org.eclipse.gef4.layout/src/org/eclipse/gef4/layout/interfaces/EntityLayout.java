@@ -11,32 +11,17 @@ package org.eclipse.gef4.layout.interfaces;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.layout.IPropertyStore;
 
 /**
  * A common interface for entities that are displayed on a graph, that is
  * {@link NodeLayout nodes} and {@link SubgraphLayout subgraphs}.
  */
-public interface EntityLayout {
+public interface EntityLayout extends IPropertyStore {
 
-	/**
-	 * Sets the value of the property specified by <i>key</i> with the passed-in
-	 * <i>value</i>.
-	 * 
-	 * @param key
-	 *            property name
-	 * @param value
-	 *            property value
-	 */
-	public void setAttr(String key, Object value);
-
-	/**
-	 * Returns the value of the property specified by <i>key</i>.
-	 * 
-	 * @param key
-	 *            property name
-	 * @return property value
-	 */
-	public Object getAttr(String key);
+	public static final String LOCATION_PROPERTY = "location";
+	public static final String SIZE_PROPERTY = "size";
+	public static final String MOVABLE_PROPERTY = "movable";
 
 	/**
 	 * Returns a point laying in the center of this entity. Any subsequent

@@ -18,6 +18,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -39,9 +40,11 @@ import org.eclipse.swt.graphics.Color;
  */
 public class DefaultSubgraph implements SubgraphLayout {
 
+	private PropertyStoreSupport ps = new PropertyStoreSupport();
+
 	/**
 	 * Default factory for {@link DefaultSubgraph}. It creates one subgraph for
-	 * a whole graph and throws every node intimageo it.
+	 * a whole graph and throws every node into it.
 	 */
 	public static class DefaultSubgraphFactory implements SubgraphFactory {
 		private HashMap<LayoutContext, EntityLayout> contextToSubgraph = new HashMap<LayoutContext, EntityLayout>();
@@ -392,14 +395,12 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
-	public void setAttr(String key, Object value) {
-		// TODO Auto-generated method stub
-
+	public Object getProperty(String name) {
+		return ps.getProperty(name);
 	}
 
-	public Object getAttr(String key) {
-		// TODO Auto-generated method stub
-		return null;
+	public void setProperty(String name, Object value) {
+		ps.setProperty(name, value);
 	}
 
 };

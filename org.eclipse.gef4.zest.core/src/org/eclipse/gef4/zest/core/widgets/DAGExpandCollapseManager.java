@@ -295,6 +295,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	}
 
 	private boolean isExpanded(NodeLayout node) {
+		// return !node.isPruned();
 		return expandedNodes.contains(node);
 	}
 

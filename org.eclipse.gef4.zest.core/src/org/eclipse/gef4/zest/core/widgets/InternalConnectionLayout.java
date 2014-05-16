@@ -1,19 +1,14 @@
 package org.eclipse.gef4.zest.core.widgets;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 class InternalConnectionLayout implements ConnectionLayout {
 
-	private static final String VISIBLE_PROPERTY = "visible";
-
 	private final GraphConnection graphConnection;
 	private InternalLayoutContext layoutContext;
-
-	private Map<String, Object> attr = new HashMap<String, Object>();
+	private PropertyStoreSupport ps = new PropertyStoreSupport();
 
 	/**
 	 * @param graphConnection
@@ -22,7 +17,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 			InternalLayoutContext layoutContext) {
 		this.graphConnection = graphConnection;
 		this.layoutContext = layoutContext;
-		setAttr(VISIBLE_PROPERTY, graphConnection.isVisible());
+		setProperty(ConnectionLayout.VISIBLE_PROPERTY, graphConnection.isVisible());
 	}
 
 	public NodeLayout getSource() {
@@ -44,12 +39,12 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public boolean isVisible() {
-		return ((Boolean) getAttr(VISIBLE_PROPERTY)).booleanValue();
+		return ((Boolean) getProperty(ConnectionLayout.VISIBLE_PROPERTY)).booleanValue();
 	}
 
 	public void setVisible(boolean visible) {
 		layoutContext.checkChangesAllowed();
-		setAttr(VISIBLE_PROPERTY, visible);
+		setProperty(ConnectionLayout.VISIBLE_PROPERTY, visible);
 	}
 
 	void applyLayout() {
@@ -59,12 +54,12 @@ class InternalConnectionLayout implements ConnectionLayout {
 		}
 	}
 
-	public void setAttr(String key, Object value) {
-		attr.put(key, value);
+	public void setProperty(String name, Object value) {
+		ps.setProperty(name, value);
 	}
 
-	public Object getAttr(String key) {
-		return attr.get(key);
+	public Object getProperty(String name) {
+		return ps.getProperty(name);
 	}
 
 }
