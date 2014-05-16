@@ -98,9 +98,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
 
-		addChildVisual(child, index);
-
 		child.setParent(this);
+		addChildVisual(child, index);
 
 		child.refreshVisual();
 
@@ -363,13 +362,21 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			return;
 
 		IVisualPart<V> oldParent = this.parent;
+		
+		// unregister if we have no (remaining) link to the viewer
 		if (this.parent != null) {
-			unregisterFromVisualPartMap();
+			if (parent == null && anchorages == null) {
+				unregister();
+			}
 		}
+		
 		this.parent = parent;
-		if (this.parent != null) {
-			registerAtVisualPartMap();
+		
+		// if we obtain a link to the viewer (via parent) then register visuals
+		if (this.parent != null && anchorages == null) {
+			register();
 		}
+		
 		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, parent);
 	}
 
@@ -394,8 +401,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 		anchoreds.add(anchored);
 
-		attachAnchoredVisual(anchored);
 		anchored.addAnchorage(this);
+		attachAnchoredVisual(anchored);
 
 		anchored.refreshVisual();
 	}
@@ -443,19 +450,56 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	@Override
 	public void addAnchorage(IVisualPart<V> anchorage) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
+		}
+		
 		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<V>>();
 		}
 		anchorages.add(anchorage);
+		
+		// if we obtain a link to the viewer (via anchorage) then register visuals
+		if (parent == null) {
+			if (anchorages.size() == 1) {
+				register();
+			}
+		}
+	}
+
+	/**
+	 * Called when a link to the Viewer is obtained.
+	 */
+	protected void register() {
+		registerAtVisualPartMap();
 	}
 
 	// counterpart to setParent(null) in case of hierarchy
 	@Override
 	public void removeAnchorage(IVisualPart<V> anchorage) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
+		}
+		if (anchorages == null || !anchorages.contains(anchorage)) {
+			throw new IllegalArgumentException("Anchorage has to be contained.");
+		}
+		
+		if (parent == null) {
+			if (anchorages.size() == 1) {
+				unregister();
+			}
+		}
 		anchorages.remove(anchorage);
 		if (anchorages.size() == 0) {
 			anchorages = null;
 		}
+	}
+
+	/**
+	 * Called when the link to the Viewer is lost.
+	 */
+	protected void unregister() {
+		unregisterFromVisualPartMap();
 	}
 
 	@Override

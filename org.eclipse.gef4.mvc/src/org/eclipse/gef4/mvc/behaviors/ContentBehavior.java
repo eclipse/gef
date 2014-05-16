@@ -145,7 +145,6 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 			IContentPart<V> contentPart = contentPartFactory.createContentPart(
 					model, this, Collections.emptyMap());
 			contentPart.setContent(model);
-			contentPartMap.put(model, contentPart);
 			return contentPart;
 		}
 	}
@@ -217,8 +216,6 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 	protected void disposeIfObsolete(IContentPart<V> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
-			getHost().getRoot().getViewer().getContentPartMap()
-					.remove(contentPart.getContent());
 			contentPart.setContent(null);
 		}
 	}

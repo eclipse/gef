@@ -46,9 +46,33 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		if (this.content == content) {
 			return;
 		}
+		
 		Object oldContent = this.content;
+		if (oldContent != null && oldContent != content && getRoot() != null) {
+			unregisterFromContentPartMap();
+		}
 		this.content = content;
-		pcs.firePropertyChange(PARENT_PROPERTY, oldContent, content);
+		if (content != null && content != oldContent && getRoot() != null) {
+			registerAtContentPartMap();
+		}
+		
+		pcs.firePropertyChange(CONTENT_PROPERTY, oldContent, content);
+	}
+	
+	@Override
+	protected void register() {
+		super.register();
+		if (content != null) {
+			registerAtContentPartMap();
+		}
+	}
+	
+	@Override
+	protected void unregister() {
+		super.unregister();
+		if (content != null) {
+			unregisterFromContentPartMap();
+		}
 	}
 
 	/**
