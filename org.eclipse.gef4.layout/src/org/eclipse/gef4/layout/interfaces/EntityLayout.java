@@ -19,6 +19,26 @@ import org.eclipse.gef4.geometry.planar.Point;
 public interface EntityLayout {
 
 	/**
+	 * Sets the value of the property specified by <i>key</i> with the passed-in
+	 * <i>value</i>.
+	 * 
+	 * @param key
+	 *            property name
+	 * @param value
+	 *            property value
+	 */
+	public void setAttr(String key, Object value);
+
+	/**
+	 * Returns the value of the property specified by <i>key</i>.
+	 * 
+	 * @param key
+	 *            property name
+	 * @return property value
+	 */
+	public Object getAttr(String key);
+
+	/**
 	 * Returns a point laying in the center of this entity. Any subsequent
 	 * changes to the returned point won't affect this node.
 	 * 
@@ -37,8 +57,21 @@ public interface EntityLayout {
 	 */
 	public void setLocation(double x, double y);
 
+	/**
+	 * Returns the size (dimension) of this entity, i.e. its width and height.
+	 * 
+	 * @return the width and height of this entity
+	 */
 	public Dimension getSize();
 
+	/**
+	 * Sets the size (dimension) of this entity to the given width and height.
+	 * 
+	 * @param width
+	 *            new entity width
+	 * @param height
+	 *            new entity height
+	 */
 	public void setSize(double width, double height);
 
 	/**
@@ -49,8 +82,24 @@ public interface EntityLayout {
 	 */
 	public double getPreferredAspectRatio();
 
+	/**
+	 * Returns <code>true</code> if layout algorithms are allowed to call
+	 * {@link #setSize(double, double)} on this entity. Otherwise returns
+	 * <code>false</code>.
+	 * 
+	 * @return <code>true</code> if {@link #setSize(double, double)} is allowed,
+	 *         otherwise <code>false</code>
+	 */
 	public boolean isResizable();
 
+	/**
+	 * Returns <code>true</code> if layout algorithms are allowed to call
+	 * {@link #setLocation(double, double)} on this entity. Otherwise returns
+	 * <code>false</code>.
+	 * 
+	 * @return <code>true</code> if {@link #setLocation(double, double)} is
+	 *         allowed, otherwise <code>false</code>
+	 */
 	public boolean isMovable();
 
 	/**
@@ -112,4 +161,5 @@ public interface EntityLayout {
 	 * @return an array of graph items
 	 */
 	public Object[] getItems();
+
 }

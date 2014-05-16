@@ -197,6 +197,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 			return subgraph;
 		}
 
+		// TODO: move to Subgraph implementation
 		/**
 		 * Updates a label for given node (creates the label if necessary).
 		 * 
@@ -389,6 +390,16 @@ public class DefaultSubgraph implements SubgraphLayout {
 			context.removeSubgrah(this);
 			disposed = true;
 		}
+	}
+
+	public void setAttr(String key, Object value) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Object getAttr(String key) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 };

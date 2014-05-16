@@ -11,19 +11,31 @@ package org.eclipse.gef4.layout.interfaces;
 
 public interface NodeLayout extends EntityLayout {
 
+	/**
+	 * Returns <code>true</code> if this node can be pruned to a subgraph.
+	 * Otherwise returns <code>false</code>.
+	 * 
+	 * @return <code>true</code> if this node can be pruned to a subgraph,
+	 *         otherwise <code>false</code>
+	 */
 	public boolean isPrunable();
 
+	/**
+	 * Returns <code>true</code> if this node is currently pruned to a subgraph.
+	 * Otherwise returns <code>false</code>.
+	 * 
+	 * @return <code>true</code> if this node is currently pruned to a subgraph,
+	 *         otherwise <code>false</code>
+	 */
 	public boolean isPruned();
 
 	/**
-	 * 
 	 * @return a subgraph this node belongs to or null if this node is not
 	 *         pruned
 	 */
 	public SubgraphLayout getSubgraph();
 
 	/**
-	 * 
 	 * @param subgraph
 	 *            a subgraph this node should belong to or null if this node
 	 *            should not be pruned

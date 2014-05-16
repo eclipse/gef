@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
@@ -40,15 +41,28 @@ class InternalNodeLayout implements NodeLayout {
 			}
 		}
 	};
+
+	// FIXME: *static* figure-to-node map?!
 	private final static HashMap<IFigure, GraphNode> figureToNode = new HashMap<IFigure, GraphNode>();
 
-	private org.eclipse.gef4.geometry.planar.Point location;
-	private org.eclipse.gef4.geometry.planar.Dimension size;
-	private boolean minimized = false;
+	// properties
+	private static final String MINIMIZED_PROPERTY = "minimized";
+	private static final String LOCATION_PROPERTY = "location";
+	private static final String SIZE_PROPERTY = "size";
+	private static final String MOVABLE_PROPERTY = "movable";
+	private Map<String, Object> attr = new HashMap<String, Object>();
+
+	// internal/layout things
 	private final GraphNode node;
 	private final InternalLayoutContext layoutContext;
 	private DefaultSubgraph subgraph;
 	private boolean isDisposed = false;
+
+	{
+		// fill default properties
+		setAttr(MINIMIZED_PROPERTY, false);
+		setAttr(MOVABLE_PROPERTY, true);
+	}
 
 	public InternalNodeLayout(GraphNode graphNode,
 			InternalLayoutContext layoutContext) {
@@ -59,17 +73,21 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public org.eclipse.gef4.geometry.planar.Point getLocation() {
+		Object location = getAttr(LOCATION_PROPERTY);
 		if (location == null) {
 			refreshLocation();
 		}
-		return new org.eclipse.gef4.geometry.planar.Point(location);
+		return ((org.eclipse.gef4.geometry.planar.Point) getAttr(LOCATION_PROPERTY))
+				.getCopy();
 	}
 
 	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
+		Object size = getAttr(SIZE_PROPERTY);
 		if (size == null) {
 			refreshSize();
 		}
-		return new org.eclipse.gef4.geometry.planar.Dimension(size);
+		return ((org.eclipse.gef4.geometry.planar.Dimension) getAttr(SIZE_PROPERTY))
+				.getCopy();
 	}
 
 	public SubgraphLayout getSubgraph() {
@@ -77,7 +95,7 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public boolean isMovable() {
-		return true;
+		return (Boolean) getAttr(MOVABLE_PROPERTY);
 	}
 
 	public boolean isPrunable() {
@@ -120,11 +138,13 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetLocation(double x, double y) {
+		Object location = getAttr(LOCATION_PROPERTY);
 		if (location != null) {
-			location.x = x;
-			location.y = y;
+			((org.eclipse.gef4.geometry.planar.Point) location).setLocation(x,
+					y);
 		} else {
-			location = new org.eclipse.gef4.geometry.planar.Point(x, y);
+			setAttr(LOCATION_PROPERTY,
+					new org.eclipse.gef4.geometry.planar.Point(x, y));
 		}
 	}
 
@@ -134,22 +154,25 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetSize(double width, double height) {
+		Object size = getAttr(SIZE_PROPERTY);
 		if (size != null) {
-			size.width = width;
-			size.height = height;
+			((org.eclipse.gef4.geometry.planar.Dimension) size).setSize(width,
+					height);
 		} else {
-			size = new org.eclipse.gef4.geometry.planar.Dimension(width, height);
+			setAttr(SIZE_PROPERTY,
+					new org.eclipse.gef4.geometry.planar.Dimension(width,
+							height));
 		}
 	}
 
 	public void setMinimized(boolean minimized) {
 		layoutContext.checkChangesAllowed();
-		getSize();
-		this.minimized = minimized;
+		getSize(); // FIXME: strange action at a distance!
+		setAttr(MINIMIZED_PROPERTY, minimized);
 	}
 
 	public boolean isMinimized() {
-		return minimized;
+		return (Boolean) getAttr(MINIMIZED_PROPERTY);
 	}
 
 	public NodeLayout[] getPredecessingNodes() {
@@ -275,22 +298,29 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	void applyLayout() {
-		if (minimized) {
+		if (isMinimized()) {
 			node.setSize(0, 0);
+			Object location = getAttr(LOCATION_PROPERTY);
 			if (location != null) {
-				node.setLocation(location.x, location.y);
+				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
+				node.setLocation(p.x, p.y);
 			}
 		} else {
 			node.setSize(-1, -1);
+			Object location = getAttr(LOCATION_PROPERTY);
+			Object size = getAttr(SIZE_PROPERTY);
 			if (location != null) {
-				node.setLocation(location.x - getSize().width / 2, location.y
-						- size.height / 2);
+				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
+				org.eclipse.gef4.geometry.planar.Dimension d = (org.eclipse.gef4.geometry.planar.Dimension) size;
+				// FIXME: what if size == null?
+				node.setLocation(p.x - getSize().width / 2, p.y - d.height / 2);
 			}
 			if (size != null) {
+				org.eclipse.gef4.geometry.planar.Dimension d = (org.eclipse.gef4.geometry.planar.Dimension) size;
 				Dimension currentSize = node.getSize();
-				if (size.width != currentSize.width
-						|| size.height != currentSize.height) {
-					node.setSize(size.width, size.height);
+				if (d.width != currentSize.width
+						|| d.height != currentSize.height) {
+					node.setSize(d.width, d.height);
 				}
 			}
 		}
@@ -301,13 +331,15 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	void refreshSize() {
-		Dimension size2 = node.getSize();
-		internalSetSize(size2.width, size2.height);
+		Dimension size = node.getSize();
+		internalSetSize(size.width, size.height);
 	}
 
 	void refreshLocation() {
-		Point location2 = node.getLocation();
-		internalSetLocation(location2.x + getSize().width / 2, location2.y
+		Point location = node.getLocation();
+		Object sizeObj = getAttr(SIZE_PROPERTY);
+		org.eclipse.gef4.geometry.planar.Dimension size = (org.eclipse.gef4.geometry.planar.Dimension) sizeObj;
+		internalSetLocation(location.x + getSize().width / 2, location.y
 				+ size.height / 2);
 	}
 
@@ -327,4 +359,13 @@ class InternalNodeLayout implements NodeLayout {
 	boolean isDisposed() {
 		return isDisposed;
 	}
+
+	public void setAttr(String key, Object value) {
+		attr.put(key, value);
+	}
+
+	public Object getAttr(String key) {
+		return attr.get(key);
+	}
+
 }

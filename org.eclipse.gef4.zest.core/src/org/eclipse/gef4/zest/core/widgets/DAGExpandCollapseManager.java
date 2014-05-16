@@ -46,8 +46,6 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  */
 public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
-	private InternalLayoutContext context;
-
 	private HashSet<NodeLayout> expandedNodes = new HashSet<NodeLayout>();
 
 	private HashSet<NodeLayout> nodesToPrune = new HashSet<NodeLayout>();
@@ -60,6 +58,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private boolean animate = true;
 
+	private LayoutContext context;
+
 	/**
 	 * @param animate
 	 *            if true, implicit animations are enabled (e.g. on layout
@@ -69,13 +69,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		this.animate = animate;
 	}
 
-	public void initExpansion(final LayoutContext context2) {
-		if (!(context2 instanceof InternalLayoutContext)) {
-			throw new RuntimeException(
-					"This manager works only with org.eclipse.gef4.zest.core.widgets.InternalLayoutContext");
-		}
-		context = (InternalLayoutContext) context2;
-
+	public void initExpansion(final LayoutContext context) {
+		this.context = context;
 		context.addGraphStructureListener(new GraphStructureListener() {
 			public boolean nodeRemoved(LayoutContext context, NodeLayout node) {
 				if (isExpanded(node)) {
@@ -274,7 +269,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 			return;
 		}
 
-		for (Iterator<NodeLayout> iterator = nodesToUnprune.iterator(); iterator.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUnprune.iterator(); iterator
+				.hasNext();) {
 			NodeLayout node = iterator.next();
 			node.prune(null);
 		}
@@ -286,7 +282,8 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 			nodesToPrune.clear();
 		}
 
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
+				.hasNext();) {
 			InternalNodeLayout node = (InternalNodeLayout) iterator.next();
 			updateNodeLabel2(node);
 		}
