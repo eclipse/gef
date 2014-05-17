@@ -26,7 +26,6 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
-import org.eclipse.gef4.fx.controls.AbstractFXColorPicker;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;

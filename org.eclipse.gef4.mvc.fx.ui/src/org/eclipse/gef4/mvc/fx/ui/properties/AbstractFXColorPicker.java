@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.fx.controls;
+package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;

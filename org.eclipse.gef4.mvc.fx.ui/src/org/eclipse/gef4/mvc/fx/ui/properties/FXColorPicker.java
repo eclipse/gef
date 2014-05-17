@@ -18,7 +18,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.fx.controls.AbstractFXColorPicker;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
