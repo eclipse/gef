@@ -149,7 +149,10 @@ public final class DotAst {
 	}
 
 	private static Resource loadResource(final String dot) {
-		DotStandaloneSetup.doSetup();
+		if (!Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
+				.containsKey("dot")) { //$NON-NLS-1$
+			DotStandaloneSetup.doSetup();
+		}
 		ResourceSet set = new ResourceSetImpl();
 		Resource res = set.createResource(URI.createURI("*.dot")); //$NON-NLS-1$
 		try {
