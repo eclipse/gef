@@ -22,11 +22,13 @@ import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
 import org.eclipse.gef4.mvc.models.DefaultHoverModel;
 import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
+import org.eclipse.gef4.mvc.models.DefaultViewportModel;
 import org.eclipse.gef4.mvc.models.DefaultZoomModel;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.IViewportModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -211,6 +213,16 @@ public abstract class AbstractVisualViewer<V> implements
 			getDomain().setProperty(IFocusModel.class, focusModel);
 		}
 		return focusModel;
+	}
+	
+	@Override
+	public IViewportModel getViewportModel() {
+		IViewportModel viewportModel = getDomain().getProperty(IViewportModel.class);
+		if (viewportModel == null) {
+			viewportModel = new DefaultViewportModel();
+			getDomain().setProperty(IViewportModel.class, viewportModel);
+		}
+		return viewportModel;
 	}
 
 	@Override

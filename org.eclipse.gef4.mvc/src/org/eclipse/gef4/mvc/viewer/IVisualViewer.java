@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.IViewportModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -135,5 +136,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	IZoomModel getZoomModel();
 
 	IContentModel getContentModel();
+	
+	IViewportModel getViewportModel();
 
 }
