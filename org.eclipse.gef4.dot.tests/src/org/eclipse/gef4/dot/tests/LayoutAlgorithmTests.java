@@ -34,7 +34,10 @@ public class LayoutAlgorithmTests extends TestCase {
 		Node node = new Node.Builder().build();
 		Graph.Builder graph = new Graph.Builder().nodes(node);
 		graph.attr(Graph.Attr.Key.LAYOUT, new LayoutAlgorithm() {
+			private LayoutContext context;
+
 			public void setLayoutContext(LayoutContext context) {
+				this.context = context;
 				Object[] all = context.getEntities()[0].getItems();
 				Object[] nodes = context.getNodes()[0].getItems();
 				Assert.assertEquals(1, all.length);
@@ -52,6 +55,10 @@ public class LayoutAlgorithmTests extends TestCase {
 			}
 
 			public void applyLayout(boolean clean) {
+			}
+
+			public LayoutContext getLayoutContext() {
+				return context;
 			}
 		});
 	}
