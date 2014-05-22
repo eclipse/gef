@@ -273,7 +273,6 @@ public class GraphContainer extends GraphNode implements IContainer {
 
 	private ZestRootLayer zestLayer;
 	private ScrollPane scrollPane;
-	private LayoutAlgorithm layoutAlgorithm;
 	private boolean isExpanded = false;
 	private AspectRatioFreeformLayer scalledLayer;
 	private InternalLayoutContext layoutContext;
@@ -655,8 +654,7 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm,
 			boolean applyLayout) {
-		this.layoutAlgorithm = algorithm;
-		this.layoutAlgorithm.setLayoutContext(getLayoutContext());
+		getLayoutContext().setStaticLayoutAlgorithm(algorithm);
 		if (applyLayout) {
 			applyLayout();
 		}
@@ -683,14 +681,14 @@ public class GraphContainer extends GraphNode implements IContainer {
 	}
 
 	public void applyLayout() {
-		if (layoutAlgorithm == null) {
+		if (getLayoutAlgorithm() == null) {
 			setLayoutAlgorithm(new TreeLayoutAlgorithm(), false);
 		}
 		if (getGraph().animate) {
 			Animation.markBegin();
 		}
-		layoutAlgorithm.applyLayout(true);
-		layoutContext.flushChanges(false);
+		getLayoutContext().applyStaticLayout(true);
+		getLayoutContext().flushChanges(false);
 		if (getGraph().animate) {
 			Animation.run(ANIMATION_TIME);
 		}
@@ -971,6 +969,6 @@ public class GraphContainer extends GraphNode implements IContainer {
 	 * @since 2.0
 	 */
 	public LayoutAlgorithm getLayoutAlgorithm() {
-		return layoutAlgorithm;
+		return getLayoutContext().getStaticLayoutAlgorithm();
 	}
 }

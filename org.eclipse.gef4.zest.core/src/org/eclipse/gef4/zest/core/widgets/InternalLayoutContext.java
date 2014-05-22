@@ -236,6 +236,7 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		dynamicAlgorithm = algorithm;
+		dynamicAlgorithm.setLayoutContext(this);
 	}
 
 	public void setExpandCollapseManager(
@@ -392,13 +393,15 @@ class InternalLayoutContext implements LayoutContext {
 
 	public void setStaticLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		staticAlgorithm = algorithm;
+		staticAlgorithm.setLayoutContext(this);
 	}
 
 	void checkChangesAllowed() {
-		if (!dynamicLayoutEnabled
-				&& !(staticLayoutInvocation || setExpandedInvocation)) {
+		boolean externalLayoutInvocation = staticLayoutInvocation
+				|| setExpandedInvocation;
+		if (!dynamicLayoutEnabled && !externalLayoutInvocation) {
 			throw new IllegalStateException(
-					"As dynamic layout is disabled, this context may currently not be changed, because static layout or node expansion is in progress.");
+					"no dynamic layout and no external layout invocation");
 		}
 	}
 

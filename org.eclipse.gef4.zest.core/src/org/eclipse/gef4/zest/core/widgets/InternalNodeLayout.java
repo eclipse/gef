@@ -162,7 +162,6 @@ class InternalNodeLayout implements NodeLayout {
 
 	public void setMinimized(boolean minimized) {
 		layoutContext.checkChangesAllowed();
-		getSize(); // FIXME: strange action at a distance!
 		setProperty(NodeLayout.MINIMIZED_PROPERTY, minimized);
 	}
 
@@ -306,9 +305,8 @@ class InternalNodeLayout implements NodeLayout {
 			Object size = getProperty(EntityLayout.SIZE_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
-				org.eclipse.gef4.geometry.planar.Dimension d = (org.eclipse.gef4.geometry.planar.Dimension) size;
-				// FIXME: what if size == null?
-				node.setLocation(p.x - getSize().width / 2, p.y - d.height / 2);
+				org.eclipse.gef4.geometry.planar.Dimension d = getSize();
+				node.setLocation(p.x - d.width / 2, p.y - d.height / 2);
 			}
 			if (size != null) {
 				org.eclipse.gef4.geometry.planar.Dimension d = (org.eclipse.gef4.geometry.planar.Dimension) size;
@@ -332,9 +330,8 @@ class InternalNodeLayout implements NodeLayout {
 
 	void refreshLocation() {
 		Point location = node.getLocation();
-		Object sizeObj = getProperty(EntityLayout.SIZE_PROPERTY);
-		org.eclipse.gef4.geometry.planar.Dimension size = (org.eclipse.gef4.geometry.planar.Dimension) sizeObj;
-		internalSetLocation(location.x + getSize().width / 2, location.y
+		org.eclipse.gef4.geometry.planar.Dimension size = getSize();
+		internalSetLocation(location.x + size.width / 2, location.y
 				+ size.height / 2);
 	}
 
