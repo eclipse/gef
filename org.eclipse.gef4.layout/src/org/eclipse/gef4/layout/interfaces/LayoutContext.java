@@ -287,10 +287,10 @@ public interface LayoutContext {
 
 	/**
 	 * Notifies all previously registered {@link GraphStructureListener}s about
-	 * the to be removed node.
+	 * the removed node.
 	 * 
 	 * @param node
-	 *            NodeLayout of to be removed node
+	 *            NodeLayout of removed node
 	 */
 	public void fireNodeRemovedEvent(NodeLayout node);
 
@@ -305,10 +305,10 @@ public interface LayoutContext {
 
 	/**
 	 * Notifies all previously registered {@link GraphStructureListener}s about
-	 * the to be removed connection.
+	 * the removed connection.
 	 * 
 	 * @param connection
-	 *            ConnectionLayout of to be removed connection
+	 *            ConnectionLayout of removed connection
 	 */
 	public void fireConnectionRemovedEvent(ConnectionLayout connection);
 
