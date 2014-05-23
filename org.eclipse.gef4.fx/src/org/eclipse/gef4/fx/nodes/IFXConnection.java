@@ -22,6 +22,57 @@ import org.eclipse.gef4.geometry.planar.Point;
 public interface IFXConnection {
 
 	/**
+	 * Adds a new static anchored way point at the specified position.
+	 * 
+	 * @param index
+	 * @param wayPoint
+	 */
+	public void addWayPoint(int index, Point wayPoint);
+
+	/**
+	 * Inserts a new way point (anchor) at the specified index.
+	 * 
+	 * @param index
+	 * @param wayPointAnchor
+	 */
+	public void addWayPointAnchor(int index, IFXAnchor wayPointAnchor);
+
+	public Node getCurveNode();
+
+	/**
+	 * Returns the {@link IFXAnchor} which specifies the end position of this
+	 * connection.
+	 * 
+	 * @return the {@link IFXAnchor} which specifies the end position of this
+	 *         connection
+	 */
+	public IFXAnchor getEndAnchor();
+
+	/**
+	 * Returns the current end decoration of this connection. Per default, a
+	 * connection does not have an end decoration, i.e. it is set to
+	 * <code>null</code>.
+	 * 
+	 * @return the current end decoration of this connection
+	 */
+	public IFXDecoration getEndDecoration();
+
+	/**
+	 * Returns the end point (not anchor) of this connection.
+	 * 
+	 * @return the end point of this connection
+	 */
+	public Point getEndPoint();
+
+	/**
+	 * Returns an array containing all points (not anchors) constituting this
+	 * connection, i.e. start point, way points, and end point.
+	 * 
+	 * @return an array containing all points constituting this connection
+	 */
+	public Point[] getPoints();
+
+	/**
 	 * Returns the {@link IFXAnchor} which specifies the start position of this
 	 * connection.
 	 * 
@@ -40,52 +91,19 @@ public interface IFXConnection {
 	public IFXDecoration getStartDecoration();
 
 	/**
-	 * Sets the start decoration for this connection. Setting the start
-	 * decoration to <code>null</code> disables it.
+	 * Returns the start point (not anchor) of this connection.
 	 * 
-	 * @param startDeco
-	 *            new start decoration for this connection
+	 * @return the start point of this connection
 	 */
-	public void setStartDecoration(IFXDecoration startDeco);
+	public Point getStartPoint();
 
 	/**
-	 * Returns the current end decoration of this connection. Per default, a
-	 * connection does not have an end decoration, i.e. it is set to
-	 * <code>null</code>.
+	 * Returns the specified way point (not anchor).
 	 * 
-	 * @return the current end decoration of this connection
+	 * @param index
+	 * @return the specified way point
 	 */
-	public IFXDecoration getEndDecoration();
-
-	/**
-	 * Sets the end decoration for this connection. Setting the end decoration
-	 * to <code>null</code> disables it.
-	 * 
-	 * @param endDeco
-	 *            new end decoration for this connection
-	 */
-	public void setEndDecoration(IFXDecoration endDeco);
-
-	/**
-	 * Returns the {@link IFXAnchor} which specifies the end position of this
-	 * connection.
-	 * 
-	 * @return the {@link IFXAnchor} which specifies the end position of this
-	 *         connection
-	 */
-	public IFXAnchor getEndAnchor();
-
-	/**
-	 * Changes the start anchor of this connection to the passed-in
-	 * {@link IFXAnchor}.
-	 */
-	public void setStartAnchor(IFXAnchor startAnchor);
-
-	/**
-	 * Changes the end anchor of this connection to the passed-in
-	 * {@link IFXAnchor}.
-	 */
-	public void setEndAnchor(IFXAnchor endAnchor);
+	public Point getWayPoint(int index);
 
 	/**
 	 * Returns an unmodifiable list of {@link IFXAnchor}s which specify the
@@ -97,21 +115,16 @@ public interface IFXConnection {
 	public List<IFXAnchor> getWayPointAnchors();
 
 	/**
-	 * Sets the way point anchor at the given index to the given
-	 * {@link IFXAnchor}.
+	 * Returns an unmodifiable list of way points (not their anchors).
 	 * 
-	 * @param index
-	 * @param wayPointAnchor
+	 * @return an unmodifiable list of way points
 	 */
-	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor);
+	public List<Point> getWayPoints();
 
 	/**
-	 * Inserts a new way point (anchor) at the specified index.
-	 * 
-	 * @param index
-	 * @param wayPointAnchor
+	 * Removes all way points from this connection.
 	 */
-	public void addWayPointAnchor(int index, IFXAnchor wayPointAnchor);
+	public void removeAllWayPoints();
 
 	/**
 	 * Removes the specified way point from this connection.
@@ -121,32 +134,50 @@ public interface IFXConnection {
 	public void removeWayPoint(int index);
 
 	/**
-	 * Removes all way points from this connection.
+	 * Changes the end anchor of this connection to the passed-in
+	 * {@link IFXAnchor}.
 	 */
-	public void removeAllWayPoints();
+	public void setEndAnchor(IFXAnchor endAnchor);
 
 	/**
-	 * Returns the specified way point (not anchor).
+	 * Sets the end decoration for this connection. Setting the end decoration
+	 * to <code>null</code> disables it.
 	 * 
-	 * @param index
-	 * @return the specified way point
+	 * @param endDeco
+	 *            new end decoration for this connection
 	 */
-	public Point getWayPoint(int index);
+	public void setEndDecoration(IFXDecoration endDeco);
 
 	/**
-	 * Returns an unmodifiable list of way points (not their anchors).
+	 * Sets the end point anchor of this connection to a static anchor pointing
+	 * to the given endPoint.
 	 * 
-	 * @return an unmodifiable list of way points
+	 * @param endPoint
 	 */
-	public List<Point> getWayPoints();
+	public void setEndPoint(Point endPoint);
 
 	/**
-	 * Sets all way point anchors of this connection to static anchors pointing
-	 * to the given list of points.
-	 * 
-	 * @param wayPoints
+	 * Changes the start anchor of this connection to the passed-in
+	 * {@link IFXAnchor}.
 	 */
-	public void setWayPoints(List<Point> wayPoints);
+	public void setStartAnchor(IFXAnchor startAnchor);
+
+	/**
+	 * Sets the start decoration for this connection. Setting the start
+	 * decoration to <code>null</code> disables it.
+	 * 
+	 * @param startDeco
+	 *            new start decoration for this connection
+	 */
+	public void setStartDecoration(IFXDecoration startDeco);
+
+	/**
+	 * Sets the start point anchor of this connection to a static anchor
+	 * pointing to the given startPoint.
+	 * 
+	 * @param startPoint
+	 */
+	public void setStartPoint(Point startPoint);
 
 	/**
 	 * Sets the specified way point anchor to a static anchor pointing to the
@@ -158,51 +189,20 @@ public interface IFXConnection {
 	public void setWayPoint(int index, Point wayPoint);
 
 	/**
-	 * Adds a new static anchored way point at the specified position.
+	 * Sets the way point anchor at the given index to the given
+	 * {@link IFXAnchor}.
 	 * 
 	 * @param index
-	 * @param wayPoint
+	 * @param wayPointAnchor
 	 */
-	public void addWayPoint(int index, Point wayPoint);
+	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor);
 
 	/**
-	 * Returns the start point (not anchor) of this connection.
+	 * Sets all way point anchors of this connection to static anchors pointing
+	 * to the given list of points.
 	 * 
-	 * @return the start point of this connection
+	 * @param wayPoints
 	 */
-	public Point getStartPoint();
-
-	/**
-	 * Sets the start point anchor of this connection to a static anchor
-	 * pointing to the given startPoint.
-	 * 
-	 * @param startPoint
-	 */
-	public void setStartPoint(Point startPoint);
-
-	/**
-	 * Returns the end point (not anchor) of this connection.
-	 * 
-	 * @return the end point of this connection
-	 */
-	public Point getEndPoint();
-
-	/**
-	 * Sets the end point anchor of this connection to a static anchor pointing
-	 * to the given endPoint.
-	 * 
-	 * @param endPoint
-	 */
-	public void setEndPoint(Point endPoint);
-
-	/**
-	 * Returns an array containing all points (not anchors) constituting this
-	 * connection, i.e. start point, way points, and end point.
-	 * 
-	 * @return an array containing all points constituting this connection
-	 */
-	public Point[] getPoints();
-
-	public Node getCurveNode();
+	public void setWayPoints(List<Point> wayPoints);
 
 }

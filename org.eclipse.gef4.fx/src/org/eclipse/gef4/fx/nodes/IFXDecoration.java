@@ -19,20 +19,20 @@ import org.eclipse.gef4.geometry.planar.Point;
 public interface IFXDecoration {
 
 	/**
-	 * Returns the start point of this decoration in the local coordinate space
-	 * of its {@link #getVisual() visual}.
-	 * 
-	 * @return the (local) start point of this decoration
-	 */
-	public Point getLocalStartPoint();
-
-	/**
 	 * Returns the end point of this decoration in the local coordinate space of
 	 * its {@link #getVisual() visual}.
 	 * 
 	 * @return the (local) end point of this decoration
 	 */
 	public Point getLocalEndPoint();
+
+	/**
+	 * Returns the start point of this decoration in the local coordinate space
+	 * of its {@link #getVisual() visual}.
+	 * 
+	 * @return the (local) start point of this decoration
+	 */
+	public Point getLocalStartPoint();
 
 	/**
 	 * Returns the decoration's visual, for example, an arrow shape.

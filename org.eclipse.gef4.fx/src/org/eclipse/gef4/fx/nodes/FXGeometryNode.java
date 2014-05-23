@@ -62,13 +62,14 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	@Override
 	public void resize(double width, double height) {
 		Rectangle bounds = geometry.getBounds();
-		
+
 		// prevent unnecessary updates
 		if (bounds.getSize().equals(new Dimension(width, height))) {
 			return;
 		}
-		
-		// set the new size, either by resizing or scaling the underlying geometry
+
+		// set the new size, either by resizing or scaling the underlying
+		// geometry
 		if (geometry instanceof Rectangle) {
 			((Rectangle) geometry).setSize(width, height);
 		} else if (geometry instanceof RoundedRectangle) {
@@ -119,4 +120,5 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	private void updatePathElements() {
 		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
+
 }

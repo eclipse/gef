@@ -16,23 +16,23 @@ import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
 public abstract class FXPinchGesture {
-	
+
 	private Scene scene;
-	
+
 	private EventHandler<? super ZoomEvent> zoomDetectedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
 			zoomDetected(event);
 		}
 	};
-	
+
 	private EventHandler<? super ZoomEvent> zoomHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
 			zoomed(event);
 		}
 	};
-	
+
 	private EventHandler<? super ZoomEvent> zoomFinishedHandler = new EventHandler<ZoomEvent>() {
 		@Override
 		public void handle(ZoomEvent event) {
@@ -40,24 +40,17 @@ public abstract class FXPinchGesture {
 		}
 	};
 
-	protected abstract void zoomFinished(ZoomEvent event);
-
-	protected abstract void zoomed(ZoomEvent event);
-
-	protected abstract void zoomDetected(ZoomEvent event);
-
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;
 		}
-		
+
 		if (this.scene != null) {
 			this.scene.removeEventHandler(ZoomEvent.ZOOM_FINISHED,
 					zoomFinishedHandler);
 			this.scene.removeEventHandler(ZoomEvent.ZOOM_STARTED,
 					zoomDetectedHandler);
-			this.scene.removeEventHandler(ZoomEvent.ZOOM,
-					zoomHandler);
+			this.scene.removeEventHandler(ZoomEvent.ZOOM, zoomHandler);
 		}
 
 		this.scene = scene;
@@ -67,10 +60,15 @@ public abstract class FXPinchGesture {
 					zoomFinishedHandler);
 			this.scene.addEventHandler(ZoomEvent.ZOOM_STARTED,
 					zoomDetectedHandler);
-			this.scene.addEventHandler(ZoomEvent.ZOOM,
-					zoomHandler);
+			this.scene.addEventHandler(ZoomEvent.ZOOM, zoomHandler);
 		}
-		
+
 	}
+
+	protected abstract void zoomDetected(ZoomEvent event);
+
+	protected abstract void zoomed(ZoomEvent event);
+
+	protected abstract void zoomFinished(ZoomEvent event);
 
 }
