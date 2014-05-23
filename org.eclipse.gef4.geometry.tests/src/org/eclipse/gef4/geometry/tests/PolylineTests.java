@@ -55,4 +55,10 @@ public class PolylineTests {
 		assertEquals(POLYLINE, new Polyline(points.toArray(new Point[] {})));
 	}
 
+	@Test
+	public void test_toBezier() {
+		Line[] beziers = new Polyline(new double[] {}).toBezier();
+		assertEquals(0, beziers.length);
+	}
+
 }

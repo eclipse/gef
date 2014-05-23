@@ -40,6 +40,10 @@ public class PointListUtils {
 	 *         given {@link Point}s
 	 */
 	public static double[] toCoordinatesArray(Point[] points) {
+		if (points == null || points.length == 0) {
+			return new double[] {};
+		}
+
 		double[] coordinates = new double[points.length * 2];
 		for (int i = 0; i < points.length; i++) {
 			coordinates[i * 2] = points[i].x;
@@ -58,6 +62,10 @@ public class PointListUtils {
 	 *         double values
 	 */
 	public static int[] toIntegerArray(double[] doubles) {
+		if (doubles == null || doubles.length == 0) {
+			return new int[] {};
+		}
+
 		int[] ints = new int[doubles.length];
 		for (int i = 0; i < doubles.length; i++) {
 			ints[i] = (int) doubles[i];
@@ -102,6 +110,10 @@ public class PointListUtils {
 	 *         <code>open</code>
 	 */
 	public static Point[] toPointsArray(Line[] segmentsArray, boolean open) {
+		if (segmentsArray == null || segmentsArray.length == 0) {
+			return new Point[] {};
+		}
+
 		Point[] points = new Point[segmentsArray.length + (open ? 0 : 1)];
 
 		for (int i = 0; i < segmentsArray.length; i++) {
@@ -135,6 +147,11 @@ public class PointListUtils {
 	 *         parameter close is given as <code>true</code>
 	 */
 	public static Line[] toSegmentsArray(Point[] points, boolean close) {
+		// cannot construct lines for less than 2 points
+		if (points == null || points.length < 2) {
+			return new Line[] {};
+		}
+
 		int segmentCount = close ? points.length : points.length - 1;
 		Line[] segments = new Line[segmentCount];
 		for (int i = 0; i < segmentCount; i++) {
