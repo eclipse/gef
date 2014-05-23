@@ -16,13 +16,15 @@ import java.util.List;
 
 /**
  * Provides utilities neeeded in the context of {@link IVisualPart}s.
+ * 
  * @author nyssen
- *
+ * 
  */
 public class PartUtils {
 
 	@SuppressWarnings("unchecked")
-	public static <T extends IVisualPart<V>, V> List<T> filterParts(List<? extends IVisualPart<V>> parts, Class<T> type) {
+	public static <T extends IVisualPart<V>, V> List<T> filterParts(
+			List<? extends IVisualPart<V>> parts, Class<T> type) {
 		List<T> handleParts = new ArrayList<T>();
 		for (IVisualPart<V> c : parts) {
 			if (type.isInstance(c)) {
@@ -31,4 +33,19 @@ public class PartUtils {
 		}
 		return handleParts;
 	}
+
+	/*
+	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
+	 * 
+	 * Searches the visual part hierarchy for a common ancestor of the given
+	 * parts. Returns this ancestor if one is found, otherwise returns null.
+	 * 
+	 * @param parts
+	 * 
+	 * @return common ancestor of given parts, or null
+	 * 
+	 * Note: This method can be transferred to here from the GEF 3.x
+	 * ToolUtilities class.
+	 */
+
 }
