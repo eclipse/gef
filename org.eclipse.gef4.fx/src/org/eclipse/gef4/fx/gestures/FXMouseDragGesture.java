@@ -86,7 +86,9 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> dragDetectedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			targetNode.startFullDrag();
+			if (targetNode.getScene() != null) {
+				targetNode.startFullDrag();
+			}
 		}
 	};
 
