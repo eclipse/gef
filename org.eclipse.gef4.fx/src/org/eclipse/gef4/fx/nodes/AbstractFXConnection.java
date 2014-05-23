@@ -22,6 +22,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.euclidean.Angle;
@@ -96,22 +97,42 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public void setStartAnchor(IFXAnchor startAnchor) {
+		// to keep it simple, we do not allow null anchors
+		if (startAnchor == null) {
+			throw new IllegalArgumentException("Start anchor may not be null.");
+		}
+
+		// unregister listener if we already had a start anchor assigned
 		if (this.startAnchor != null) {
 			this.startAnchor.positionProperty().removeListener(startPosCL);
 		}
+
+		// assign new start anchor and register listener
 		this.startAnchor = startAnchor;
 		startAnchor.positionProperty().addListener(startPosCL);
+
+		// refresh connection
 		refreshReferencePoints();
 		refreshGeometry();
 	}
 
 	@Override
 	public void setEndAnchor(IFXAnchor endAnchor) {
+		// to keep it simple, we do not allow null anchors
+		if (endAnchor == null) {
+			throw new IllegalArgumentException("End anchor may not be null.");
+		}
+
+		// unregister old listener if we had an end anchor assigned previously
 		if (this.endAnchor != null) {
 			this.endAnchor.positionProperty().removeListener(endPosCL);
 		}
+
+		// assign new end anchor and register listener
 		this.endAnchor = endAnchor;
 		endAnchor.positionProperty().addListener(endPosCL);
+
+		// refresh connection
 		refreshReferencePoints();
 		refreshGeometry();
 	}
@@ -123,26 +144,68 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 
 	@Override
 	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor) {
+		// check index out of range
+		if (index < 0 || index >= wayPointAnchors.size()) {
+			throw new IllegalArgumentException(
+					"The specified way point anchor does not exist. (index: "
+							+ index + ", size: " + wayPointAnchors.size() + ")");
+		}
+
+		// to keep it simple, we do not allow null anchors
+		if (wayPointAnchor == null) {
+			throw new IllegalArgumentException(
+					"Way point anchor may not be null.");
+		}
+
+		// unregister listener from previous anchor
 		wayPointAnchors.get(index).positionProperty().removeListener(wayPosCL);
+
+		// assign new anchor and register listener
 		wayPointAnchors.set(index, wayPointAnchor);
 		wayPointAnchor.positionProperty().addListener(wayPosCL);
+
+		// refresh connection
 		refreshReferencePoints();
 		refreshGeometry();
 	}
 
 	@Override
 	public void addWayPointAnchor(int index, IFXAnchor wayPointAnchor) {
+		// check index out of range
+		if (index < 0 || index > wayPointAnchors.size()) {
+			throw new IllegalArgumentException("Index out of range (index: "
+					+ index + ", size: " + wayPointAnchors.size() + ").");
+		}
+
+		// to keep it simple, we do not allow null anchors
+		if (wayPointAnchor == null) {
+			throw new IllegalArgumentException(
+					"Way point anchor may not be null.");
+		}
+
+		// add new way point and register position listener
 		wayPointAnchors.add(index, wayPointAnchor);
 		wayPointAnchor.positionProperty().addListener(wayPosCL);
+
+		// refresh connection
 		refreshReferencePoints();
 		refreshGeometry();
 	}
 
 	@Override
 	public void removeWayPoint(int index) {
+		// check index out of range
+		if (index < 0 || index >= wayPointAnchors.size()) {
+			throw new IllegalArgumentException("Index out of range (index: "
+					+ index + ", size: " + wayPointAnchors.size() + ").");
+		}
+
+		// remove anchor and listener
 		IFXAnchor anchor = wayPointAnchors.get(index);
 		anchor.positionProperty().removeListener(wayPosCL);
 		wayPointAnchors.remove(index);
+
+		// refresh connection
 		refreshReferencePoints();
 		refreshGeometry();
 	}
@@ -242,6 +305,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	public abstract T computeGeometry(Point[] points);
 
 	/**
+	 * <p>
 	 * Returns all points of this connection which are relevant for computing
 	 * the curveNode, which are:
 	 * <ol>
@@ -251,16 +315,35 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	 * <li>curve end point: computed using end anchor, end decoration, and last
 	 * way point (or start anchor)</li>
 	 * </ol>
+	 * </p>
+	 * <p>
+	 * In case an assigned anchor returns <code>null</code> as the position for
+	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
+	 * compute the position) this method returns an empty array.
+	 * </p>
 	 * 
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
 		Point[] points = new Point[wayPointAnchors.size() + 2];
+
 		points[0] = getCurveStartPoint();
+		if (points[0] == null) {
+			return new Point[] {};
+		}
+
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
 			points[1 + i] = wayPointAnchors.get(i).getPosition(this);
+			if (points[i+1] == null) {
+				return new Point[] {};
+			}
 		}
+
 		points[points.length - 1] = getCurveEndPoint();
+		if (points[points.length - 1] == null) {
+			return new Point[] {};
+		}
+
 		return points;
 	}
 
@@ -350,12 +433,8 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 	 */
 	protected void refreshReferencePoints() {
 		Point[] referencePoints = computeReferencePoints();
-		if (!(getStartAnchor() instanceof FXStaticAnchor)) {
-			getStartAnchor().setReferencePoint(this, referencePoints[0]);
-		}
-		if (!(getEndAnchor() instanceof FXStaticAnchor)) {
-			getEndAnchor().setReferencePoint(this, referencePoints[1]);
-		}
+		updateStartReferencePoint(referencePoints[0]);
+		updateEndReferencePoint(referencePoints[1]);
 	}
 
 	/**
@@ -407,14 +486,28 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 				Node anchored = change.getKey();
 				if (anchored == AbstractFXConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
-					if (!(getEndAnchor() instanceof FXStaticAnchor)) {
-						getEndAnchor().setReferencePoint(AbstractFXConnection.this,
-								referencePoints[1]);
-					}
+					updateEndReferencePoint(referencePoints[1]);
 					refreshGeometry();
 				}
 			}
 		};
+	}
+
+	private void updateStartReferencePoint(Point ref) {
+		if (getStartAnchor() instanceof FXChopBoxAnchor) {
+			if (ref != null) {
+				((FXChopBoxAnchor) getStartAnchor()).setReferencePoint(this,
+						ref);
+			}
+		}
+	}
+
+	private void updateEndReferencePoint(Point ref) {
+		if (getEndAnchor() instanceof FXChopBoxAnchor) {
+			if (ref != null) {
+				((FXChopBoxAnchor) getEndAnchor()).setReferencePoint(this, ref);
+			}
+		}
 	}
 
 	private MapChangeListener<Node, Point> createEndPositionListener() {
@@ -425,10 +518,7 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 				Node anchored = change.getKey();
 				if (anchored == AbstractFXConnection.this) {
 					Point[] referencePoints = computeReferencePoints();
-					if (!(getStartAnchor() instanceof FXStaticAnchor)) {
-						getStartAnchor().setReferencePoint(
-								AbstractFXConnection.this, referencePoints[0]);
-					}
+					updateStartReferencePoint(referencePoints[0]);
 					refreshGeometry();
 				}
 			}

@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -23,8 +27,34 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
+	private SimpleMapProperty<Node, Point> referencePointProperty = new SimpleMapProperty<Node, Point>(
+			FXCollections.<Node, Point> observableHashMap());
+
+	private MapChangeListener<Node, Point> referencePointChangeListener = new MapChangeListener<Node, Point>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
+			if (change.wasAdded()) {
+				recomputePosition(change.getKey(), change.getValueAdded());
+			}
+
+			// TODO: remove invariants check later
+			// check invariants
+			for (Node anchored : referencePointProperty().get().keySet()) {
+				if (anchored == null) {
+					throw new IllegalStateException();
+				}
+				Point referencePoint = referencePointProperty().get(anchored);
+				if (referencePoint == null) {
+					throw new IllegalStateException();
+				}
+			}
+		}
+	};
+
 	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);
+		referencePointProperty.addListener(referencePointChangeListener);
 	}
 
 	/**
@@ -38,13 +68,13 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @return Point The anchor position within the local coordinate system of
 	 *         the to be anchored {@link Node}.
 	 */
-	@Override
 	public Point computePosition(Node anchored, Point referencePoint) {
 		// compute intersection point between outline of anchorage reference
 		// shape and line through anchorage and anchor reference points.
 
 		AffineTransform anchorageToSceneTransform = JavaFX2Geometry
-				.toAffineTransform(getAnchorageNode().getLocalToSceneTransform());
+				.toAffineTransform(getAnchorageNode()
+						.getLocalToSceneTransform());
 
 		AffineTransform anchoredToSceneTransform = JavaFX2Geometry
 				.toAffineTransform(anchored.getLocalToSceneTransform());
@@ -66,15 +96,22 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 					.sceneToLocal(Geometry2JavaFX
 							.toFXPoint(intersectionPoints[0])));
 		}
-		
+
 		// do not fail hard... use center
-		return JavaFX2Geometry.toPoint(anchored
-				.sceneToLocal(Geometry2JavaFX
-						.toFXPoint(anchorageReferencePointInScene)));
-		
+		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
+				.toFXPoint(anchorageReferencePointInScene)));
+
 		// TODO: investigate where the wrong reference point is set
-//		throw new IllegalArgumentException("Invalid reference point "
-//				+ referencePoint);
+		// throw new IllegalArgumentException("Invalid reference point "
+		// + referencePoint);
+	}
+
+	/**
+	 * @return The anchorage reference point within the local coordinate system
+	 *         of the anchorage {@link Node}.
+	 */
+	protected Point getAnchorageReferencePoint() {
+		return getAnchorageReferenceShape().getBounds().getCenter();
 	}
 
 	/**
@@ -88,15 +125,58 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *         coordinate system of the anchorage {@link Node}
 	 */
 	protected IShape getAnchorageReferenceShape() {
-		return JavaFX2Geometry.toRectangle(getAnchorageNode().getLayoutBounds());
+		return JavaFX2Geometry
+				.toRectangle(getAnchorageNode().getLayoutBounds());
 	}
 
 	/**
-	 * @return The anchorage reference point within the local coordinate system
-	 *         of the anchorage {@link Node}.
+	 * @param anchored
+	 * @return reference point for the given anchored
 	 */
-	protected Point getAnchorageReferencePoint() {
-		return getAnchorageReferenceShape().getBounds().getCenter();
+	public Point getReferencePoint(Node anchored) {
+		return referencePointProperty.get(anchored);
+	}
+
+	/**
+	 * Recomputes the position of this anchor w.r.t. the given anchored
+	 * {@link Node} and reference {@link Point}. The
+	 * {@link #computePosition(Node, Point)} method is used to determine the new
+	 * position, which in turn is put into the {@link #positionProperty()}.
+	 * 
+	 * @param anchored
+	 * @param referencePoint
+	 */
+	protected void recomputePosition(Node anchored, Point referencePoint) {
+		positionProperty().put(anchored,
+				computePosition(anchored, referencePoint));
+	}
+
+	@Override
+	public void recomputePositions() {
+		for (Node anchored : referencePointProperty().get().keySet()) {
+			Point referencePoint = referencePointProperty().get(anchored);
+			if (referencePoint != null) {
+				recomputePosition(anchored, referencePoint);
+			}
+		}
+	}
+
+	/**
+	 * @return property storing reference points for anchoreds (map)
+	 */
+	public MapProperty<Node, Point> referencePointProperty() {
+		return referencePointProperty;
+	}
+
+	/**
+	 * Assigns the given reference point to the given anchored in the reference
+	 * point map.
+	 * 
+	 * @param anchored
+	 * @param referencePoint
+	 */
+	public void setReferencePoint(Node anchored, Point referencePoint) {
+		referencePointProperty.put(anchored, referencePoint);
 	}
 
 }

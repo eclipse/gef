@@ -20,15 +20,15 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	public FXStaticAnchor(Node anchorage) {
 		super(anchorage);
 	}
-	
+
 	public FXStaticAnchor(Node anchored, Point position) {
 		this(null);
-		setReferencePoint(anchored, position);
+		positionProperty().put(anchored, position);
 	}
 
 	@Override
-	public Point computePosition(Node anchored, Point referencePoint) {
-		return referencePoint;
+	protected void recomputePositions() {
+		// static position => nothing to compute
 	}
-	
+
 }

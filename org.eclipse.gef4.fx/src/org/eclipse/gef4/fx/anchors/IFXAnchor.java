@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import javafx.beans.property.MapProperty;
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
@@ -26,22 +25,25 @@ import org.eclipse.gef4.geometry.planar.Point;
  */
 public interface IFXAnchor {
 
+	/**
+	 * @return property storing the anchorage {@link Node}
+	 */
 	ReadOnlyObjectProperty<Node> anchorageNodeProperty();
-	
+
+	/**
+	 * @return value of {@link #anchorageNodeProperty()}
+	 */
 	Node getAnchorageNode();
 
-	MapProperty<Node, Point> referencePointProperty();
-
-	ReadOnlyMapProperty<Node, Point> positionProperty();
-
-	void setReferencePoint(Node anchored, Point referencePoint);
-
-	Point getReferencePoint(Node anchored);
-
+	/**
+	 * @param anchored
+	 * @return position for the given anchored
+	 */
 	Point getPosition(Node anchored);
 
-	Point computePosition(Node anchored, Point referencePoint);
-
-	void recomputePositions();
+	/**
+	 * @return property storing positions for anchoreds (map)
+	 */
+	ReadOnlyMapProperty<Node, Point> positionProperty();
 
 }
