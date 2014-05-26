@@ -3,17 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC FX
 Bundle-SymbolicName: org.eclipse.gef4.mvc.fx
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.gef4.mvc.fx.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.commands,
  org.eclipse.gef4.fx;bundle-version="0.1.0",
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
  org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.gef4.mvc.fx,
- org.eclipse.gef4.mvc.fx.behaviors,
+Export-Package: org.eclipse.gef4.mvc.fx.behaviors,
  org.eclipse.gef4.mvc.fx.domain,
  org.eclipse.gef4.mvc.fx.operations,
  org.eclipse.gef4.mvc.fx.parts,
@@ -46,3 +43,6 @@ Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.scene.web;version="[2.0.0,3.0.0)",
  javafx.stage;version="[2.0.0,3.0.0)",
  javafx.util;version="[2.0.0,3.0.0)"
+Bundle-Vendor: Eclipse.org
+Bundle-Activator: org.eclipse.gef4.mvc.fx.Activator
+Bundle-ActivationPolicy: lazy
