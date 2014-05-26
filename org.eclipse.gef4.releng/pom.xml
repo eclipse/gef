@@ -12,7 +12,7 @@
 	<properties>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 		<maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
-		<tycho-version>0.18.1</tycho-version>
+		<tycho-version>0.19.0</tycho-version>
 		<tycho-extras-version>${tycho-version}</tycho-extras-version>
 		<cbi-plugins.version>1.0.4</cbi-plugins.version>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
