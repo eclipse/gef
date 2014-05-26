@@ -10,5 +10,11 @@
             restorable="true">
       </view>
    </extension>
-
+   <extension point="org.eclipse.core.runtime.adapters">
+		<factory
+				class="org.eclipse.gef4.mvc.fx.ui.example.properties.PropertySourceAdapterFactory"
+				adaptableType="org.eclipse.gef4.mvc.fx.ui.example.model.AbstractFXGeometricElement">
+			<adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
+		</factory>
+	</extension>
 </plugin>

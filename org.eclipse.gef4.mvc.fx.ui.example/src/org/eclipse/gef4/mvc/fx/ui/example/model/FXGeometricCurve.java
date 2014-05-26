@@ -22,26 +22,16 @@ import javafx.scene.paint.Color;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
 
 // TODO: parameterize with concrete ICurve and encapsulate construction of geometry; limit the number of waypoints if needed
-public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve>
-		implements IPropertySource {
+public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
+
+	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
+	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
 
 	public enum Decoration {
 		NONE, ARROW, CIRCLE
 	}
-
-	private static final IPropertyDescriptor SOURCE_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
-			"sourceDecoration", "Source Decoration", new String[] {
-					Decoration.NONE.name(), Decoration.ARROW.name(),
-					Decoration.CIRCLE.name() });
-	private static final IPropertyDescriptor TARGET_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
-			"targetDecoration", "Target Decoration", new String[] {
-					Decoration.NONE.name(), Decoration.ARROW.name(),
-					Decoration.CIRCLE.name() });
 
 	public double[] dashes = new double[0];
 
@@ -57,7 +47,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve>
 	public void setSourceDecoration(Decoration sourceDecoration) {
 		Decoration oldSourceDecoration = this.sourceDecoration;
 		this.sourceDecoration = sourceDecoration;
-		pcs.firePropertyChange((String) SOURCE_DECORATION_PROPERTY.getId(),
+		pcs.firePropertyChange((String) SOURCE_DECORATION_PROPERTY,
 				oldSourceDecoration, sourceDecoration);
 	}
 
@@ -68,7 +58,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve>
 	public void setTargetDecoration(Decoration targetDecoration) {
 		Decoration oldTargetDecoration = this.targetDecoration;
 		this.targetDecoration = targetDecoration;
-		pcs.firePropertyChange((String) TARGET_DECORATION_PROPERTY.getId(),
+		pcs.firePropertyChange((String) TARGET_DECORATION_PROPERTY,
 				oldTargetDecoration, targetDecoration);
 	}
 
@@ -118,58 +108,6 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve>
 		List<Point> points = getWayPointsCopy();
 		points.set(i, p);
 		setWayPoints(points.toArray(new Point[] {}));
-	}
-
-	@Override
-	public Object getEditableValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return new IPropertyDescriptor[] { SOURCE_DECORATION_PROPERTY,
-				TARGET_DECORATION_PROPERTY };
-	}
-
-	@Override
-	public Object getPropertyValue(Object id) {
-		if (SOURCE_DECORATION_PROPERTY.getId().equals(id)) {
-			return getSourceDecoration().ordinal();
-		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
-			return getTargetDecoration().ordinal();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public boolean isPropertySet(Object id) {
-		if (SOURCE_DECORATION_PROPERTY.getId().equals(id)) {
-			return !getSourceDecoration().equals(Decoration.NONE);
-		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
-			return !getTargetDecoration().equals(Decoration.NONE);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public void resetPropertyValue(Object id) {
-		if (SOURCE_DECORATION_PROPERTY.getId().equals(id)) {
-			setSourceDecoration(Decoration.NONE);
-		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
-			setTargetDecoration(Decoration.NONE);
-		}
-	}
-
-	@Override
-	public void setPropertyValue(Object id, Object value) {
-		if (SOURCE_DECORATION_PROPERTY.getId().equals(id)) {
-			setSourceDecoration(Decoration.values()[(int) value]);
-		} else if (TARGET_DECORATION_PROPERTY.getId().equals(id)) {
-			setTargetDecoration(Decoration.values()[(int) value]);
-		}
 	}
 
 }
