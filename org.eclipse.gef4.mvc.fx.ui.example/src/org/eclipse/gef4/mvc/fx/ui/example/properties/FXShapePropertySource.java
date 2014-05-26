@@ -2,7 +2,7 @@ package org.eclipse.gef4.mvc.fx.ui.example.properties;
 
 import javafx.scene.paint.Paint;
 
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.ui.properties.FXFillPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;

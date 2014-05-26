@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -194,7 +195,7 @@ public abstract class FXView extends ViewPart {
 		domain.setUndoContext((IUndoContext) getAdapter(IUndoContext.class));
 	}
 
-	protected void configureViewer(FXCanvasViewer viewer) {
+	protected void configureViewer(IFXViewer viewer) {
 		viewer.setRootPart(new FXRootPart());
 		viewer.setHandlePartFactory(getHandlePartFactory());
 		viewer.setContentPartFactory(getContentPartFactory());

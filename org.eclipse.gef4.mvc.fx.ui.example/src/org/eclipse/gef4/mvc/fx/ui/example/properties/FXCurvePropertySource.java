@@ -1,7 +1,7 @@
 package org.eclipse.gef4.mvc.fx.ui.example.properties;
 
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve.Decoration;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve.Decoration;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;

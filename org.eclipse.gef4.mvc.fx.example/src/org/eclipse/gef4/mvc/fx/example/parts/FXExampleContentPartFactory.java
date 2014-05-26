@@ -9,19 +9,16 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.Map;
 
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricModelPart;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricShapePart;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 
 public class FXExampleContentPartFactory implements IContentPartFactory<Node> {

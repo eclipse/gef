@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example;
+package org.eclipse.gef4.mvc.fx.example.domain;
 
 import javafx.scene.Node;
 

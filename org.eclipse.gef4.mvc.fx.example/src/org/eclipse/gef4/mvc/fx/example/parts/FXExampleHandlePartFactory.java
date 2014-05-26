@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.List;
 
@@ -25,16 +25,14 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.fx.example.policies.InsertWayPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.MoveWayPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.ReconnectWayPointOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXGeometricCurvePart;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.InsertWayPointOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.MoveWayPointOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.policies.ReconnectWayPointOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 

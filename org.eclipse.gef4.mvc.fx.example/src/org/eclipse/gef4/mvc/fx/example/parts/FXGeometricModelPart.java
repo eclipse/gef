@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.parts;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +17,9 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricModel;
+
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
 

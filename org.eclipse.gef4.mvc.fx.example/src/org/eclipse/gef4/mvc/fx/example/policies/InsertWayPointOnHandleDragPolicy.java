@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.policies;
+package org.eclipse.gef4.mvc.fx.example.policies;
 
 import java.util.List;
 
@@ -19,10 +19,10 @@ import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.parts.FXMidPointHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 

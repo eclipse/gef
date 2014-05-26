@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.parts;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +29,11 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
-import org.eclipse.gef4.mvc.fx.ui.example.model.AbstractFXGeometricElement;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;

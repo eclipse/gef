@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.parts;
+package org.eclipse.gef4.mvc.fx.example.parts;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;

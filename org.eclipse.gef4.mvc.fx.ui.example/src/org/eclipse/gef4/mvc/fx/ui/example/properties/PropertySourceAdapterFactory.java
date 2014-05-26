@@ -1,8 +1,8 @@
 package org.eclipse.gef4.mvc.fx.ui.example.properties;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.ui.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class PropertySourceAdapterFactory implements IAdapterFactory {

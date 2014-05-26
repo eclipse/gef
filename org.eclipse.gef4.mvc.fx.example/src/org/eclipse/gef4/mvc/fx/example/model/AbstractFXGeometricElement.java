@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Alexander Ny??en (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.example.model;
+package org.eclipse.gef4.mvc.fx.example.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
