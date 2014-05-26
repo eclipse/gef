@@ -14,15 +14,15 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="1.0.0.201405040703"/>
+<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201403111231"/>
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140306-1200"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.0.v201403111428"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140310-0546"/>
-<unit id="org.eclipse.gef.sdk.feature.group" version="3.9.2.201403090306"/>
+<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201405200714"/>
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140515-1230"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.0.v201405210727"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
+<unit id="org.eclipse.gef.sdk.feature.group" version="3.9.100.201405050205"/>
 <repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 </locations>
