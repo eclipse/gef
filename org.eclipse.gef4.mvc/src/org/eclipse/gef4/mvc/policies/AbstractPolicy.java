@@ -16,7 +16,6 @@ package org.eclipse.gef4.mvc.policies;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -37,13 +36,13 @@ public abstract class AbstractPolicy<V> implements IPolicy<V> {
 	public void setHost(IVisualPart<V> host) {
 		this.host = host;
 	}
-	
+
 	protected void executeOperation(IUndoableOperation operation) {
 		IDomain<V> domain = getHost().getRoot().getViewer().getDomain();
 		IOperationHistory operationHistory = domain.getOperationHistory();
 		operation.addContext(domain.getUndoContext());
 		try {
-			operationHistory.execute(operation, new NullProgressMonitor(), null);
+			operationHistory.execute(operation, null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
