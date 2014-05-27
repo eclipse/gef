@@ -2,6 +2,7 @@ package org.eclipse.gef4.mvc.fx.ui.properties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 import javafx.embed.swt.SWTFXUtils;
 import javafx.scene.SnapshotParameters;
@@ -12,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -272,6 +275,36 @@ public class FXFillSelectionDialog extends Dialog {
 	// }
 
 	public void setPaint(Paint paint) {
+		// initialize history with initial values (if not initialized before)
+		if (this.paint == null) {
+			if (paint instanceof Color) {
+				if (!Color.TRANSPARENT.equals(paint)) {
+					lastFillColor = paint;
+					lastSimpleGradient = FXSimpleGradientPicker
+							.createSimpleGradient(Color.WHITE, (Color) paint);
+					lastAdvancedGradient = FXAdvancedGradientPicker
+							.createAdvancedLinearGradient(Color.WHITE,
+									((Color) paint).brighter(), ((Color) paint));
+				}
+			} else if (FXSimpleGradientPicker.isSimpleGradient(paint)) {
+				lastSimpleGradient = paint;
+				List<Stop> stops = ((LinearGradient) paint).getStops();
+				lastFillColor = stops.get(1).getColor();
+				lastAdvancedGradient = FXAdvancedGradientPicker
+						.createAdvancedLinearGradient(stops.get(0).getColor(),
+								stops.get(1).getColor().brighter(), stops
+										.get(1).getColor());
+			} else if (FXAdvancedGradientPicker.isAdvancedGradient(paint)) {
+				lastAdvancedGradient = paint;
+				List<Stop> stops = paint instanceof LinearGradient ? ((LinearGradient) paint)
+						.getStops() : ((RadialGradient) paint).getStops();
+				lastFillColor = stops.get(stops.size() - 1).getColor();
+				lastSimpleGradient = FXSimpleGradientPicker
+						.createSimpleGradient(stops.get(0).getColor(), stops
+								.get(stops.size() - 1).getColor());
+			}
+		}
+
 		// assign new value
 		this.paint = paint;
 
