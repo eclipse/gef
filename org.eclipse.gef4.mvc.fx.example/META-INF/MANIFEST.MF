@@ -2,12 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC FX Example
 Bundle-SymbolicName: org.eclipse.gef4.mvc.fx.example
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.fx.example.domain,
+Export-Package: org.eclipse.gef4.mvc.fx.example,
+ org.eclipse.gef4.mvc.fx.example.domain,
  org.eclipse.gef4.mvc.fx.example.model,
- org.eclipse.gef4.mvc.fx.example.parts
+ org.eclipse.gef4.mvc.fx.example.parts,
+ org.eclipse.gef4.mvc.fx.example.policies
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
