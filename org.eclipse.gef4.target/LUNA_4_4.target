@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="40">
+<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="41">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.swt.tools" version="3.101.0.201302211459"/>
 <repository location="http://www.eclipse.org/swt/updates/4.3"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.0.v201308291703"/>
-<repository location="http://download.itemis.de/updates/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
@@ -24,6 +20,10 @@
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
 <unit id="org.eclipse.gef.sdk.feature.group" version="3.9.100.201405050205"/>
 <repository location="http://download.eclipse.org/releases/luna"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.0.v201308291703"/>
+<repository location="http://download.itemis.de/updates/"/>
 </location>
 </locations>
 </target>
