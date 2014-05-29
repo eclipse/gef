@@ -105,7 +105,11 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${basedir}/sign-thirdparty.sh</executable>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>curl -o ${project.build.directory}/web-files/javax.xml_1.3.4.v201005080400.jar -F filedata=@${project.build.directory}/web-files/javax.xml_1.3.4.v201005080400.jar http://build.eclipse.org:31338/sign</argument>
+									</arguments>
 								</configuration>
 							</execution>
 						</executions>
