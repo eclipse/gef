@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.gef4</groupId>
+		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
+	</parent>
+	<groupId>org.eclipse.gef4.examples</groupId>
+	<artifactId>org.eclipse.gef4.mvc.fx.example.web</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>eclipse-repository</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>deploy-jnlp-and-html</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+								<if>
+									<available file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template" />
+									<then>
+										<echo message="Deploying org.eclipse.gef4.mvc.fx.example.web.jnlp." />
+										<copy file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template"
+											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp"
+											overwrite="true" />
+										<echo
+											message="Replacing qualifier token within org.eclipse.gef4.mvc.fx.example.web.jnlp with build qualifier." />
+										<replace
+											file="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp">
+											<replacefilter token="qualifier" value="${buildQualifier}" />
+										</replace>
+									</then>
+								</if>
+								<if>
+									<available file="org.eclipse.gef4.mvc.fx.example.web.html.template" />
+									<then>
+										<echo message="Deploying org.eclipse.gef4.mvc.fx.example.web.html." />
+										<copy file="org.eclipse.gef4.mvc.fx.example.web.html.template"
+											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.html"
+											overwrite="true" />
+									</then>
+								</if>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>deploy-jars</id>
+						<phase>verify</phase>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+
+								<echo message="Deploying jars." />
+								<copy todir="${project.build.directory}/web-files">
+									<fileset dir="${project.build.directory}/repository/plugins/" >
+										<exclude name="**/*.jar.pack.gz"/>
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>
