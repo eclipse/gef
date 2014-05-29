@@ -67,8 +67,8 @@
 
 								<echo message="Deploying jars." />
 								<copy todir="${project.build.directory}/web-files">
-									<fileset dir="${project.build.directory}/repository/plugins/" >
-										<exclude name="**/*.jar.pack.gz"/>
+									<fileset dir="${project.build.directory}/repository/plugins/">
+										<exclude name="**/*.jar.pack.gz" />
 									</fileset>
 								</copy>
 							</tasks>
@@ -88,4 +88,29 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>hudson.eclipse.org</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<executions>
+							<execution>
+								<id>sign-thirdparty</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>${basedir}/sign-thirdparty.sh</executable>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

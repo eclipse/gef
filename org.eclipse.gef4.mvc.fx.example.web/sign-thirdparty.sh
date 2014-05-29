@@ -1,0 +1,1 @@
+ curl -o target/web-files/javax.xml_1.3.4.v201005080400.jar -F filedata=@javax.xml_1.3.4.v201005080400.jar http://build.eclipse.org:31338/sign
