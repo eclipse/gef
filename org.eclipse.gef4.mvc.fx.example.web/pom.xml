@@ -43,11 +43,11 @@
 									</then>
 								</if>
 								<if>
-									<available file="org.eclipse.gef4.mvc.fx.example.web.html.template" />
+									<available file="index.html" />
 									<then>
-										<echo message="Deploying org.eclipse.gef4.mvc.fx.example.web.html." />
-										<copy file="org.eclipse.gef4.mvc.fx.example.web.html.template"
-											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.html"
+										<echo message="Deploying index.html." />
+										<copy file="index.html"
+											tofile="${project.build.directory}/web-files/index.html"
 											overwrite="true" />
 									</then>
 								</if>

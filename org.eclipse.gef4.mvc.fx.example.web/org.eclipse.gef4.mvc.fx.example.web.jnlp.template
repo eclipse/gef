@@ -14,8 +14,8 @@
 		<j2se version="1.7+" />
 		<property name="jnlp.packEnabled" value="true"/>
         <property name="jnlp.versionEnabled" value="true"/>
-        <jar href="javax.xml_1.3.4.v201005080400.jar"/>
-		<jar href="org.eclipse.fx.javafx_2.2.0.201401250701.jar"/>
+        <!--<jar href="javax.xml_1.3.4.v201005080400.jar"/>
+		<jar href="org.eclipse.fx.javafx_2.2.0.201401250701.jar"/>-->
 		<jar href="org.eclipse.osgi_3.9.0.v20130529-1710.jar"/>
 		<jar href="org.eclipse.equinox.app_1.3.100.v20130327-1442.jar"/>
 		<jar href="org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
