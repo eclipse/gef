@@ -23,7 +23,7 @@
 		<condition property="args.list.delimiter" value=";">
 			<os family="windows" />
 		</condition>
-		<echo message="Done: ${args.list.delimiter}" />
+		<echo message="Done: '${args.list.delimiter}'" />
 
 		<echo message="Determining context libs for javadoc generation ..." />
 		<path id="api.context.libs">
