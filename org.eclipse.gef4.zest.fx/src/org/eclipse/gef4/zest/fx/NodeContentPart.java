@@ -12,7 +12,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.widgets.LabelNode;
+import org.eclipse.gef4.fx.widgets.FXLabeledNode;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
@@ -37,7 +37,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 	};
 
 	private org.eclipse.gef4.graph.Node node; // FIXME: same as 'content'
-	private LabelNode visual = new LabelNode();
+	private FXLabeledNode visual = new FXLabeledNode();
 	private boolean isAdaptLayout;
 
 	{

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 
-import org.eclipse.gef4.fx.widgets.LabelNode;
+import org.eclipse.gef4.fx.widgets.FXLabeledNode;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
@@ -53,7 +53,7 @@ public class LayoutToViewTests {
 		// adapt data
 		part.adaptLayout();
 		// check if visual properties equal layout data
-		LabelNode node = (LabelNode) part.getVisual();
+		FXLabeledNode node = (FXLabeledNode) part.getVisual();
 		assertEquals(w, node.getBoxWidth(), DELTA);
 		assertEquals(h, node.getBoxHeight(), DELTA);
 		assertEquals(x, node.getLayoutX(), DELTA);
@@ -101,12 +101,12 @@ public class LayoutToViewTests {
 		part1.adaptLayout();
 		part2.adaptLayout();
 		// check if visual properties equal layout data
-		LabelNode node = (LabelNode) part1.getVisual();
+		FXLabeledNode node = (FXLabeledNode) part1.getVisual();
 		assertEquals(w1, node.getBoxWidth(), DELTA);
 		assertEquals(h1, node.getBoxHeight(), DELTA);
 		assertEquals(x1, node.getLayoutX(), DELTA);
 		assertEquals(y1, node.getLayoutY(), DELTA);
-		node = (LabelNode) part2.getVisual();
+		node = (FXLabeledNode) part2.getVisual();
 		assertEquals(w2, node.getBoxWidth(), DELTA);
 		assertEquals(h2, node.getBoxHeight(), DELTA);
 		assertEquals(x2, node.getLayoutX(), DELTA);
@@ -148,7 +148,7 @@ public class LayoutToViewTests {
 		// adapt data
 		part.adaptLayout();
 		// check if visual properties equal layout data
-		LabelNode node = (LabelNode) part.getVisual();
+		FXLabeledNode node = (FXLabeledNode) part.getVisual();
 		assertEquals(x, node.getLayoutX(), DELTA);
 		assertEquals(y, node.getLayoutY(), DELTA);
 		assertNotEquals(w, node.getBoxWidth(), DELTA);
@@ -189,7 +189,7 @@ public class LayoutToViewTests {
 		// adapt data
 		part.adaptLayout();
 		// check if visual properties equal layout data
-		LabelNode node = (LabelNode) part.getVisual();
+		FXLabeledNode node = (FXLabeledNode) part.getVisual();
 		assertEquals(w, node.getBoxWidth(), DELTA);
 		assertEquals(h, node.getBoxHeight(), DELTA);
 		assertNotEquals(x, node.getLayoutX(), DELTA);

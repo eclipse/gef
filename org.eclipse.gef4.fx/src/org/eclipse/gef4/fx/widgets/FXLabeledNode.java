@@ -24,7 +24,7 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class LabelNode extends Group {
+public class FXLabeledNode extends Group {
 
 	public static final String DEFAULT_LABEL = "-";
 
