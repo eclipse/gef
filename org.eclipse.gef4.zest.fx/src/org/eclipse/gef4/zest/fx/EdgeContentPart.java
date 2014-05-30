@@ -3,19 +3,17 @@ package org.eclipse.gef4.zest.fx;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
-import javafx.scene.text.Text;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
+import org.eclipse.gef4.fx.widgets.FXLabeledConnection;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
@@ -55,21 +53,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	private Edge edge;
 	private GraphEdgeLayout edgeLayout;
-	private Group visuals = new Group();
-	private Text text = new Text();
-	private FXCurveConnection curveVisual = new FXCurveConnection() {
-		@Override
-		protected void refreshGeometry() {
-			super.refreshGeometry();
-			Bounds textBounds = text.getLayoutBounds();
-			Rectangle bounds = curveVisual.getCurveNode().getGeometry()
-					.getBounds();
-			text.setTranslateX(bounds.getX() + bounds.getWidth() / 2
-					- textBounds.getWidth() / 2);
-			text.setTranslateY(bounds.getY() + bounds.getHeight() / 2
-					- textBounds.getHeight());
-		}
-	};
+	private FXLabeledConnection visual = new FXLabeledConnection();
 
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@Override
@@ -88,12 +72,9 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	public EdgeContentPart(Edge content) {
 		edge = content;
-		visuals.setAutoSizeChildren(false);
-		visuals.getChildren().addAll(curveVisual, text);
-		text.setTextOrigin(VPos.TOP);
 		Object label = edge.getAttrs().get(Attr.Key.LABEL.toString());
 		if (label instanceof String) {
-			text.setText((String) label);
+			visual.setLabel((String) label);
 		}
 	}
 
@@ -114,9 +95,9 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (anchorage == sourcePart) {
-			curveVisual.setStartAnchor(anchor);
+			visual.getConnection().setStartAnchor(anchor);
 		} else if (anchorage == targetPart) {
-			curveVisual.setEndAnchor(anchor);
+			visual.getConnection().setEndAnchor(anchor);
 		}
 
 		super.attachVisualToAnchorageVisual(anchorage, anchorageVisual);
@@ -124,7 +105,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	@Override
 	public Node getVisual() {
-		return visuals;
+		return visual;
 	}
 
 	protected void initEdgeLayout() {
@@ -133,39 +114,36 @@ public class EdgeContentPart extends AbstractFXContentPart {
 				.getEdgeLayout(edge);
 
 		// decoration
+		FXCurveConnection connection = visual.getConnection();
 		if (edgeLayout.isDirected()) {
-			curveVisual.setEndDecoration(new ArrowHead());
+			connection.setEndDecoration(new ArrowHead());
 		} else {
-			curveVisual.setEndDecoration(null);
+			connection.setEndDecoration(null);
 		}
 
 		// color
+		FXGeometryNode<ICurve> curveNode = connection.getCurveNode();
 		if (!edgeLayout.isVisible()) {
-			curveVisual.getCurveNode().setStroke(Color.TRANSPARENT);
+			curveNode.setStroke(Color.TRANSPARENT);
 		} else {
-			curveVisual.getCurveNode().setStroke(Color.BLACK);
+			curveNode.setStroke(Color.BLACK);
 		}
 
 		// dashes
 		Object style = edge.getAttrs()
 				.get(Graph.Attr.Key.EDGE_STYLE.toString());
 		if (style == Graph.Attr.Value.LINE_DASH) {
-			curveVisual.getCurveNode().getStrokeDashArray()
-					.setAll(DASH_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOT) {
-			curveVisual.getCurveNode().getStrokeDashArray()
-					.setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
+					DOT_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOTDOT) {
-			curveVisual
-					.getCurveNode()
-					.getStrokeDashArray()
-					.setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH,
-							DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
+					DOT_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DOT) {
-			curveVisual.getCurveNode().getStrokeDashArray()
-					.setAll(DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
-			curveVisual.getCurveNode().getStrokeDashArray().clear();
+			curveNode.getStrokeDashArray().clear();
 		}
 	}
 
