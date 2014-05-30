@@ -16,14 +16,11 @@ import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.zest.layout.GraphEdgeLayout;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
 
 public class GraphView extends FXView {
-
-	private static int ID = 0;
 
 	public static Graph DEFAULT_GRAPH = build09();
 
@@ -42,20 +39,23 @@ public class GraphView extends FXView {
 				e(nodes.get(2), nodes.get(8)), e(nodes.get(3), nodes.get(5)),
 				e(nodes.get(4), nodes.get(7)), e(nodes.get(5), nodes.get(1))));
 
-		// TODO: fill with general graph attributes
+		// default: directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
+		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
+				Graph.Attr.Value.GRAPH_DIRECTED);
 		return new Graph(attrs, nodes, edges);
 	}
 
 	private static Edge e(org.eclipse.gef4.graph.Node n,
 			org.eclipse.gef4.graph.Node m) {
-		return new Edge.Builder(n, m).attr(GraphEdgeLayout.DIRECTED_PROPERTY,
-				true).build();
+		String label = (String) n.getAttrs().get(Key.LABEL.toString())
+				+ (String) m.getAttrs().get(Key.LABEL.toString());
+		return new Edge.Builder(n, m).attr(Key.LABEL, label).build();
 	}
 
 	private static org.eclipse.gef4.graph.Node n(String label) {
 		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
-				.attr(Key.ID, ID++).build();
+				.build();
 	}
 
 	private Graph graph = DEFAULT_GRAPH;

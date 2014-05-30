@@ -3,6 +3,7 @@ package org.eclipse.gef4.zest.layout;
 import java.util.Map.Entry;
 
 import org.eclipse.gef4.graph.Edge;
+import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -25,6 +26,15 @@ public class GraphEdgeLayout implements ConnectionLayout {
 	public GraphEdgeLayout(GraphLayoutContext context, Edge edge) {
 		this.context = context;
 		this.edge = edge;
+
+		// graph directed?
+		Object type = context.getGraph().getAttrs()
+				.get(Graph.Attr.Key.GRAPH_TYPE.toString());
+		if (type == Graph.Attr.Value.CONNECTIONS_DIRECTED
+				|| type == Graph.Attr.Value.GRAPH_DIRECTED) {
+			setProperty(DIRECTED_PROPERTY, true);
+		}
+
 		// copy properties
 		for (Entry<String, Object> e : edge.getAttrs().entrySet()) {
 			setProperty(e.getKey(), e.getValue());
