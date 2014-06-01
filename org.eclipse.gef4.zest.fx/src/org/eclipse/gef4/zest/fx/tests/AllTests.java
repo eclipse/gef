@@ -10,17 +10,13 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.tests;
 
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-public interface ILayoutModel extends IPropertyChangeSupport {
-
-	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
-
-	public LayoutContext getLayoutContext();
-
-	public void setLayoutContext(LayoutContext context);
-
+@RunWith(Suite.class)
+@SuiteClasses({ DataToLayoutTests.class, LayoutToViewTests.class })
+public class AllTests {
 }
