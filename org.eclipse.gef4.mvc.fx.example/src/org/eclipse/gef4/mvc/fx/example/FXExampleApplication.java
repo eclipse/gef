@@ -47,6 +47,7 @@ public class FXExampleApplication extends Application {
 		viewer.setContents(Collections
 				.<Object> singletonList(new FXGeometricModel()));
 
+		primaryStage.setTitle("GEF4 MVC.FX Example");
 		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
