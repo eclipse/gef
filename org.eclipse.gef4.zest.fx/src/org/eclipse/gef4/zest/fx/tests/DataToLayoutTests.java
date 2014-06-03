@@ -204,7 +204,7 @@ public class DataToLayoutTests {
 	@Test
 	public void test_4_4() {
 		List<Node> nodes = nodes("1", "2", "3", "4");
-		List<Edge> edges = edges(nodes, 0, 1, 1, 2, 2, 3, 3, 0);
+		List<Edge> edges = edges(nodes, 0, 1, 1, 2, 2, 3, 0, 3);
 		checkIntegrity(nodes, edges);
 	}
 
