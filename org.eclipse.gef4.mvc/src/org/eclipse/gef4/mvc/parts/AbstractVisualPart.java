@@ -17,13 +17,11 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
@@ -51,7 +49,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private Map<Class<?>, Object> partBounds;
+	protected AdaptableSupport<IVisualPart<V>> as = new AdaptableSupport<IVisualPart<V>>(
+			this);
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -74,11 +73,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	public void activate() {
 		setFlag(FLAG_ACTIVE, true);
 
-		if (partBounds != null) {
-			for (Object b : partBounds.values()) {
-				if (b instanceof IActivatable) {
-					((IActivatable) b).activate();
-				}
+		for (Object b : as.getAdapters().values()) {
+			if (b instanceof IActivatable) {
+				((IActivatable) b).activate();
 			}
 		}
 
@@ -161,11 +158,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		if (partBounds != null) {
-			for (Object b : partBounds.values()) {
-				if (b instanceof IActivatable) {
-					((IActivatable) b).deactivate();
-				}
+		for (Object b : as.getAdapters().values()) {
+			if (b instanceof IActivatable) {
+				((IActivatable) b).deactivate();
 			}
 		}
 
@@ -191,14 +186,10 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	protected final boolean getFlag(int flag) {
 		return (flags & flag) != 0;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public <T> T getAdapter(Class<T> key) {
-		if (partBounds == null) {
-			return null;
-		}
-		return (T) partBounds.get(key);
+		return as.getAdapter(key);
 	}
 
 	protected IVisualViewer<V> getViewer() {
@@ -208,27 +199,19 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		}
 		return root.getViewer();
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public <T> void setAdapter(Class<T> key, T adapter) {
-		if (partBounds == null) {
-			partBounds = new HashMap<Class<?>, Object>();
-		}
-		partBounds.put(key, adapter);
-		if(adapter instanceof IAdaptable.Bound){
-			((IAdaptable.Bound<IVisualPart<V>>)adapter).setAdaptable(this);
-		}
+		as.setAdapter(key, adapter);
 		if (isActive() && adapter instanceof IActivatable) {
 			((IActivatable) adapter).activate();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> void setAdapter(T adapter) {
-		setAdapter((Class<T>)adapter.getClass(), adapter);
-		
+		setAdapter((Class<T>) adapter.getClass(), adapter);
 	}
 
 	/**
@@ -283,23 +266,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> void unsetAdapter(Class<T> key) {
-		if (partBounds == null)
-			return;
-		Object bounded = partBounds.remove(key);
-		if (bounded != null) {
-			if (bounded instanceof IActivatable) {
-				((IActivatable) bounded).deactivate();
-			}
-			if(bounded instanceof IAdaptable.Bound){
-				((IAdaptable.Bound<IVisualPart<V>>)bounded).setAdaptable(null);
-			}
+	public <T> T unsetAdapter(Class<T> key) {
+		T adapter = as.unsetAdapter(key);
+		if (adapter != null && adapter instanceof IActivatable) {
+			((IActivatable) adapter).deactivate();
 		}
-		if (partBounds.size() == 0) {
-			partBounds = null;
-		}	
+		return adapter;
 	}
 
 	/**

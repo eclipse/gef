@@ -24,11 +24,10 @@ public interface IAdaptable {
 	
 	public <T> void setAdapter(Class<T> key, T adapter);
 
-	public <T> void unsetAdapter(Class<T> key);
+	public <T> T unsetAdapter(Class<T> key);
 	
-	public static interface Bound<S> {
-		public S getAdaptable();
-		
-		void setAdaptable(S adaptable);
+	public static interface Bound<A extends IAdaptable> {
+		public A getAdaptable();
+		void setAdaptable(A adaptable);
 	}
 }
