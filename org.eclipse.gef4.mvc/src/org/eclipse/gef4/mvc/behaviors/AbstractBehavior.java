@@ -46,13 +46,23 @@ public abstract class AbstractBehavior<V> implements IBehavior<V> {
 	public boolean isActive() {
 		return active;
 	}
-
-	public IVisualPart<V> getHost() {
-		return host;
+	
+	@Override
+	public void setAdaptable(IVisualPart<V> adaptable){
+		setHost(adaptable);
 	}
-
+	
 	public void setHost(IVisualPart<V> host) {
 		this.host = host;
+	}
+
+	@Override
+	public IVisualPart<V> getAdaptable() {
+		return getHost();
+	}
+	
+	public IVisualPart<V> getHost() {
+		return host;
 	}
 
 	protected void addHandles(List<IContentPart<V>> anchorages) {

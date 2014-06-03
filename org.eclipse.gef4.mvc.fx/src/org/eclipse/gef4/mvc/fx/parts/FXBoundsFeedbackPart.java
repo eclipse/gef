@@ -23,7 +23,7 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**

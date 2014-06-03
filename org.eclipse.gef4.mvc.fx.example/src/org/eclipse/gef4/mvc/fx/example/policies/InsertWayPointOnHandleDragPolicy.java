@@ -36,7 +36,7 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
 			IContentPart<Node> targetPart) {
-		return targetPart.getBound(AbstractFXWayPointPolicy.class);
+		return targetPart.getAdapter(AbstractFXWayPointPolicy.class);
 	}
 
 	public InsertWayPointOnHandleDragPolicy(FXMidPointHandlePart hp,

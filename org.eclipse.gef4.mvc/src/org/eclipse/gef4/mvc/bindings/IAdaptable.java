@@ -9,22 +9,26 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.parts;
+package org.eclipse.gef4.mvc.bindings;
 
+/**
+ *
+ * @author anyssen
+ *
+ */
+public interface IAdaptable {
+	
+	public <T> T getAdapter(Class<T> key);
+	
+	public <T> void setAdapter(T adapter);
+	
+	public <T> void setAdapter(Class<T> key, T adapter);
 
-public interface IPartBound<V> {
-
-	/**
-	 * @return the <i>host</i> EditPart on which this policy is installed.
-	 */
-	public abstract IVisualPart<V> getHost();
-
-	/**
-	 * Sets the host in which this EditPolicy is installed.
-	 * 
-	 * @param editpart
-	 *            the host EditPart
-	 */
-	public abstract void setHost(IVisualPart<V> editpart);
-
+	public <T> void unsetAdapter(Class<T> key);
+	
+	public static interface Bound<S> {
+		public S getAdaptable();
+		
+		void setAdaptable(S adaptable);
+	}
 }

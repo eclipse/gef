@@ -22,9 +22,9 @@ public class AbstractZoomTool<V> extends AbstractTool<V> {
 	@SuppressWarnings("rawtypes")
 	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IZoomPolicy.class;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	protected IZoomPolicy<V> getToolPolicy(IVisualPart<V> targetPart) {
-		return targetPart.getBound((Class<IPolicy>)TOOL_POLICY_KEY);
+		return (IZoomPolicy<V>) targetPart.getAdapter(TOOL_POLICY_KEY);
 	}
 
 	/**

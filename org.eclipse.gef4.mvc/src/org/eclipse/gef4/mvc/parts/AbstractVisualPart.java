@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.mvc.IActivatable;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
@@ -33,8 +32,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @param <V>
  */
-public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
-		IAdaptable {
+public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 
 	/**
 	 * This flag is set during {@link #activate()}, and reset on
@@ -53,7 +51,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private Map<Class<?>, IPartBound<V>> boundeds;
+	private Map<Class<?>, Object> partBounds;
 
 	private IVisualPart<V> parent;
 	private List<IVisualPart<V>> children;
@@ -76,8 +74,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	public void activate() {
 		setFlag(FLAG_ACTIVE, true);
 
-		if (boundeds != null) {
-			for (IPartBound<V> b : boundeds.values()) {
+		if (partBounds != null) {
+			for (Object b : partBounds.values()) {
 				if (b instanceof IActivatable) {
 					((IActivatable) b).activate();
 				}
@@ -163,8 +161,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		if (boundeds != null) {
-			for (IPartBound<V> b : boundeds.values()) {
+		if (partBounds != null) {
+			for (Object b : partBounds.values()) {
 				if (b instanceof IActivatable) {
 					((IActivatable) b).deactivate();
 				}
@@ -172,20 +170,6 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 
 		setFlag(FLAG_ACTIVE, false);
-	}
-
-	/**
-	 * Returns the specified adapter if recognized. Delegates to the Plaform
-	 * adapter mechanism.
-	 * <P>
-	 * Additional adapter types may be added in the future. Subclasses should
-	 * extend this method as needed.
-	 * 
-	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 */
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class key) {
-		return Platform.getAdapterManager().getAdapter(this, key);
 	}
 
 	public List<IVisualPart<V>> getChildren() {
@@ -207,14 +191,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 	protected final boolean getFlag(int flag) {
 		return (flags & flag) != 0;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <B extends IPartBound<V>> B getBound(Class<? super B> key) {
-		if (boundeds == null) {
+	public <T> T getAdapter(Class<T> key) {
+		if (partBounds == null) {
 			return null;
 		}
-		return (B) boundeds.get(key);
+		return (T) partBounds.get(key);
 	}
 
 	protected IVisualViewer<V> getViewer() {
@@ -224,24 +208,27 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 		return root.getViewer();
 	}
-
-	@Override
-	public <P extends IPartBound<V>> void installBound(Class<? super P> key,
-			P bounded) {
-		if (boundeds == null) {
-			boundeds = new HashMap<Class<?>, IPartBound<V>>();
-		}
-		boundeds.put(key, bounded);
-		bounded.setHost(this);
-		if (isActive() && bounded instanceof IActivatable) {
-			((IActivatable) bounded).activate();
-		}
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <P extends IPartBound<V>> void installBound(P bounded) {
-		installBound((Class<P>) bounded.getClass(), bounded);
+	public <T> void setAdapter(Class<T> key, T adapter) {
+		if (partBounds == null) {
+			partBounds = new HashMap<Class<?>, Object>();
+		}
+		partBounds.put(key, adapter);
+		if(adapter instanceof IAdaptable.Bound){
+			((IAdaptable.Bound<IVisualPart<V>>)adapter).setAdaptable(this);
+		}
+		if (isActive() && adapter instanceof IActivatable) {
+			((IActivatable) adapter).activate();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> void setAdapter(T adapter) {
+		setAdapter((Class<T>)adapter.getClass(), adapter);
+		
 	}
 
 	/**
@@ -296,20 +283,23 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <B extends IPartBound<V>> void uninstallBound(Class<B> key) {
-		if (boundeds == null)
+	public <T> void unsetAdapter(Class<T> key) {
+		if (partBounds == null)
 			return;
-		IPartBound<V> bounded = boundeds.remove(key);
+		Object bounded = partBounds.remove(key);
 		if (bounded != null) {
 			if (bounded instanceof IActivatable) {
 				((IActivatable) bounded).deactivate();
 			}
-			bounded.setHost(null);
+			if(bounded instanceof IAdaptable.Bound){
+				((IAdaptable.Bound<IVisualPart<V>>)bounded).setAdaptable(null);
+			}
 		}
-		if (boundeds.size() == 0) {
-			boundeds = null;
-		}
+		if (partBounds.size() == 0) {
+			partBounds = null;
+		}	
 	}
 
 	/**
@@ -362,21 +352,21 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 			return;
 
 		IVisualPart<V> oldParent = this.parent;
-		
+
 		// unregister if we have no (remaining) link to the viewer
 		if (this.parent != null) {
 			if (parent == null && anchorages == null) {
 				unregister();
 			}
 		}
-		
+
 		this.parent = parent;
-		
+
 		// if we obtain a link to the viewer (via parent) then register visuals
 		if (this.parent != null && anchorages == null) {
 			register();
 		}
-		
+
 		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, parent);
 	}
 
@@ -453,13 +443,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-		
+
 		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<V>>();
 		}
 		anchorages.add(anchorage);
-		
-		// if we obtain a link to the viewer (via anchorage) then register visuals
+
+		// if we obtain a link to the viewer (via anchorage) then register
+		// visuals
 		if (parent == null) {
 			if (anchorages.size() == 1) {
 				register();
@@ -483,7 +474,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V>,
 		if (anchorages == null || !anchorages.contains(anchorage)) {
 			throw new IllegalArgumentException("Anchorage has to be contained.");
 		}
-		
+
 		if (parent == null) {
 			if (anchorages.size() == 1) {
 				unregister();

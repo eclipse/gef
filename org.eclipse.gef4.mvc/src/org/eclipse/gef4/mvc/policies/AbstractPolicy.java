@@ -29,14 +29,24 @@ public abstract class AbstractPolicy<V> implements IPolicy<V> {
 
 	private IVisualPart<V> host;
 
-	public IVisualPart<V> getHost() {
-		return host;
+	@Override
+	public void setAdaptable(IVisualPart<V> adaptable){
+		setHost(adaptable);
 	}
-
+	
 	public void setHost(IVisualPart<V> host) {
 		this.host = host;
 	}
 
+	@Override
+	public IVisualPart<V> getAdaptable() {
+		return getHost();
+	}
+	
+	public IVisualPart<V> getHost() {
+		return host;
+	}
+	
 	protected void executeOperation(IUndoableOperation operation) {
 		IDomain<V> domain = getHost().getRoot().getViewer().getDomain();
 		IOperationHistory operationHistory = domain.getOperationHistory();

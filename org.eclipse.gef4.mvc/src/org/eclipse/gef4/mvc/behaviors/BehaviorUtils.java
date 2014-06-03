@@ -73,7 +73,7 @@ public class BehaviorUtils {
 
 	public static <V> List<IFeedbackPart<V>> createFeedback(
 			IBehavior<V> behavior, List<IContentPart<V>> targets) {
-		IVisualPart<V> host = behavior.getHost();
+		IVisualPart<V> host = behavior.getAdaptable();
 		IFeedbackPartFactory<V> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
 		List<IFeedbackPart<V>> feedbackParts = factory.createFeedbackParts(
@@ -83,7 +83,7 @@ public class BehaviorUtils {
 
 	public static <V> List<IHandlePart<V>> createHandles(IBehavior<V> behavior,
 			List<IContentPart<V>> targets) {
-		IVisualPart<V> host = behavior.getHost();
+		IVisualPart<V> host = behavior.getAdaptable();
 		IHandlePartFactory<V> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
 		List<IHandlePart<V>> handleParts = factory.createHandleParts(targets,

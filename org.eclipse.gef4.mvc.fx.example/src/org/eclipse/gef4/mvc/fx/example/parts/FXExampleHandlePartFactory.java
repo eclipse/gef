@@ -24,7 +24,7 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.fx.example.policies.InsertWayPointOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.MoveWayPointOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.ReconnectWayPointOnHandleDragPolicy;
@@ -45,7 +45,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			List<IContentPart<Node>> targets, Pos position) {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
 				targets, position);
-		part.installBound(AbstractFXDragPolicy.class,
+		part.setAdapter(AbstractFXDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						toReferencePoint(position)));
 		return part;
@@ -84,7 +84,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			int segmentIndex = i;
 			final FXMidPointHandlePart hp = new FXMidPointHandlePart(
 					targetPart, handleGeometryProvider, segmentIndex);
-			hp.installBound(AbstractFXDragPolicy.class,
+			hp.setAdapter(AbstractFXDragPolicy.class,
 					new InsertWayPointOnHandleDragPolicy(hp, parts, targetPart));
 			parts.add(hp);
 		}
@@ -103,11 +103,11 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
-			part.installBound(AbstractFXDragPolicy.class,
+			part.setAdapter(AbstractFXDragPolicy.class,
 					new MoveWayPointOnHandleDragPolicy(targetPart, part));
 		} else {
 			// make end points reconnectable
-			part.installBound(AbstractFXDragPolicy.class,
+			part.setAdapter(AbstractFXDragPolicy.class,
 					new ReconnectWayPointOnHandleDragPolicy(targetPart, part,
 							isEndPoint));
 
@@ -133,7 +133,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex);
-		part.installBound(AbstractFXDragPolicy.class,
+		part.setAdapter(AbstractFXDragPolicy.class,
 				new FXResizeRelocateSelectedOnHandleDragPolicy(
 						toReferencePoint(vertexIndex)));
 		return part;

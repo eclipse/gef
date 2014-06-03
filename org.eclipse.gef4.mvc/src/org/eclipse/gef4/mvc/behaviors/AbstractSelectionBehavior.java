@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;

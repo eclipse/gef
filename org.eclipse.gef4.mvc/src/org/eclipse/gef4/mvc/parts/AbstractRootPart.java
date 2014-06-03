@@ -30,7 +30,7 @@ public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
 	private IVisualViewer<V> viewer;
 
 	public AbstractRootPart() {
-		installBound(new ContentBehavior<V>());
+		setAdapter(new ContentBehavior<V>());
 	}
 
 	public IRootPart<V> getRoot() {

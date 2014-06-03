@@ -15,12 +15,11 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
 
-public interface IVisualPart<V> extends IActivatable, IAdaptable,
-		IPropertyChangeSupport {
+public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChangeSupport {
 
 	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
@@ -98,18 +97,4 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable,
 
 	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
 			V anchorageVisual);
-
-	// TODO: add something similar to @Named, i.e. some additional name key to
-	// allow an instance binding?
-	// TODO: maybe we can replace this with juice (so no need to register that
-	// externally)
-	public <P extends IPartBound<V>> P getBound(Class<? super P> key);
-
-	public <P extends IPartBound<V>> void installBound(Class<? super P> key,
-			P bounded);
-
-	public <P extends IPartBound<V>> void installBound(P bounded);
-
-	public <P extends IPartBound<V>> void uninstallBound(Class<P> key);
-
 }

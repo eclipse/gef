@@ -38,11 +38,11 @@ public class FXExampleView extends FXView {
 	@Override
 	protected void configureViewer(IFXViewer viewer) {
 		super.configureViewer(viewer);
-		viewer.getRootPart().installBound(new FXSelectionBehavior());
-		viewer.getRootPart().installBound(new FXZoomBehavior());
-		viewer.getRootPart().installBound(IZoomPolicy.class,
+		viewer.getRootPart().setAdapter(new FXSelectionBehavior());
+		viewer.getRootPart().setAdapter(new FXZoomBehavior());
+		viewer.getRootPart().setAdapter(IZoomPolicy.class,
 				new IZoomPolicy.Impl<Node>());
-		viewer.getRootPart().installBound(IScrollPolicy.class,
+		viewer.getRootPart().setAdapter(IScrollPolicy.class,
 				new FXZoomOnScrollPolicy());
 	}
 

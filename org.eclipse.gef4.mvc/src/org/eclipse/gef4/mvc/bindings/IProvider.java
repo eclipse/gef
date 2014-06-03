@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc;
+package org.eclipse.gef4.mvc.bindings;
 
 // TODO: replace with corresponding guice interface when migrating to guice
 public interface IProvider<T> {

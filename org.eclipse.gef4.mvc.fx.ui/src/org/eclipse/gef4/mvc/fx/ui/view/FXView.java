@@ -220,6 +220,7 @@ public abstract class FXView extends ViewPart {
 	public Object getAdapter(Class key) {
 		// Provide a default selection provider (subclasses may overwrite by
 		// handling the key and returning a different implementation
+		// replace with binding
 		if (ISelectionProvider.class.equals(key)) {
 			if (selectionProvider == null) {
 				selectionProvider = new DefaultSelectionProvider();
@@ -227,6 +228,7 @@ public abstract class FXView extends ViewPart {
 			return selectionProvider;
 		}
 		// contribute to Properties view
+		// replace with binding
 		if (IPropertySheetPage.class.equals(key)) {
 			if (propertySheetPage == null) {
 				propertySheetPage = new UndoablePropertySheetPage(
@@ -236,6 +238,7 @@ public abstract class FXView extends ViewPart {
 			}
 			return propertySheetPage;
 		}
+		// replace with binding
 		if(UndoRedoActionGroup.class.equals(key)){
 			if(undoRedoActionGroup == null){
 				undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
@@ -243,6 +246,7 @@ public abstract class FXView extends ViewPart {
 			}
 			return undoRedoActionGroup;
 		}
+		// replace with binding
 		if (IUndoContext.class.equals(key)) {
 			if (undoContext == null) {
 				IWorkbench workbench = getSite().getWorkbenchWindow()
@@ -251,6 +255,7 @@ public abstract class FXView extends ViewPart {
 			}
 			return undoContext;
 		}
+		// replace with binding
 		if (IOperationHistory.class.equals(key)) {
 			if (operationHistory == null) {
 				IWorkbench workbench = getSite().getWorkbenchWindow()

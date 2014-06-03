@@ -42,7 +42,7 @@ public class FXPartUtils {
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
 							&& targetPart
-									.getBound((Class<IPolicy<Node>>) supportedPolicy) == null)
+									.getAdapter((Class<IPolicy<Node>>) supportedPolicy) == null)
 					&& targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);

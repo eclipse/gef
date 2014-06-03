@@ -105,7 +105,7 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> editPart) {
-		return editPart.getBound(FXResizeRelocatePolicy.class);
+		return editPart.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {

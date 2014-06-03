@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.parts.IPartBound;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
@@ -21,6 +22,7 @@ import org.eclipse.gef4.mvc.parts.IPartBound;
  * 
  * @param <V>
  */
-public interface IPolicy<V> extends IPartBound<V> {
+public interface IPolicy<V> extends IAdaptable.Bound<IVisualPart<V>> {
 
+	public IVisualPart<V> getHost();
 }

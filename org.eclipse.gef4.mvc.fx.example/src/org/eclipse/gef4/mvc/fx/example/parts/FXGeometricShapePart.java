@@ -61,19 +61,19 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				}
 			}
 		};
-		installBound(new FXSelectionBehavior());
-		installBound(new FXHoverBehavior());
-		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		installBound(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		setAdapter(new FXSelectionBehavior());
+		setAdapter(new FXHoverBehavior());
+		setAdapter(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		setAdapter(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(AbstractFXDragPolicy.class,
+		setAdapter(AbstractFXDragPolicy.class,
 				new FXRelocateSelectedOnDragPolicy());
-		installBound(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
+		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
 	}
 
 	@Override

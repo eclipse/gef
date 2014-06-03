@@ -100,16 +100,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		};
 
-		installBound(selectionBehavior);
-		installBound(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		installBound(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		setAdapter(selectionBehavior);
+		setAdapter(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
+		setAdapter(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
 			@Override
 			public boolean isHoverable() {
 				return !getHost().getRoot().getViewer().getSelectionModel()
 						.getSelected().contains(getHost());
 			}
 		});
-		installBound(AbstractFXWayPointPolicy.class,
+		setAdapter(AbstractFXWayPointPolicy.class,
 				new AbstractFXWayPointPolicy() {
 					@Override
 					public IFXConnection getConnection() {
@@ -142,7 +142,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						return op;
 					}
 				});
-		installBound(AbstractFXReconnectPolicy.class,
+		setAdapter(AbstractFXReconnectPolicy.class,
 				new AbstractFXReconnectPolicy() {
 					@Override
 					public IFXConnection getConnection() {

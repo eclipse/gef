@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.IProvider;
+import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 

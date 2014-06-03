@@ -73,7 +73,7 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private AbstractFXReconnectPolicy getReconnectionPolicy(
 			IContentPart<Node> targetPart) {
-		return targetPart.getBound(AbstractFXReconnectPolicy.class);
+		return targetPart.getAdapter(AbstractFXReconnectPolicy.class);
 	}
 	
 }

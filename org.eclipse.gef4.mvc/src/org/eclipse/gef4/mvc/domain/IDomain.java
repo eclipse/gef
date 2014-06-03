@@ -24,7 +24,8 @@ import org.eclipse.gef4.mvc.viewer.IViewerBound;
  * 
  * @param <V>
  */
-// TODO: it seems to be not nice that the domain is bound directly to the viewer.
+// TODO: it seems to be not nice that the domain is bound directly to the
+// viewer.
 public interface IDomain<V> extends IViewerBound<V> {
 
 	/**
@@ -32,8 +33,10 @@ public interface IDomain<V> extends IViewerBound<V> {
 	 * 
 	 * @return The {@link IOperationHistory}.
 	 */
+	// replace by binding
 	public abstract IOperationHistory getOperationHistory();
-	
+
+	// replace by binding
 	public abstract IUndoContext getUndoContext();
 
 	public abstract <P extends Object> P getProperty(Class<P> key);
@@ -63,10 +66,12 @@ public interface IDomain<V> extends IViewerBound<V> {
 	 * @param operationHistory
 	 *            The new {@link IOperationHistory} to be used.
 	 */
+	// replace by binding
 	public abstract void setOperationHistory(IOperationHistory operationHistory);
 
+	// replace by binding
 	public abstract void setUndoContext(IUndoContext undoContext);
-	
+
 	public abstract <P extends Object> void setProperty(Class<P> key, P property);
 
 }

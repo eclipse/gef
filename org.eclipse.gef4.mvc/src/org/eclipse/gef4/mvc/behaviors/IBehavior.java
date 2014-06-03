@@ -14,7 +14,8 @@
 package org.eclipse.gef4.mvc.behaviors;
 
 import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.parts.IPartBound;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
@@ -22,6 +23,6 @@ import org.eclipse.gef4.mvc.parts.IPartBound;
  *
  * @param <V>
  */
-public interface IBehavior<V> extends IActivatable, IPartBound<V> {
-
+public interface IBehavior<V> extends IActivatable,
+		IAdaptable.Bound<IVisualPart<V>> {
 }

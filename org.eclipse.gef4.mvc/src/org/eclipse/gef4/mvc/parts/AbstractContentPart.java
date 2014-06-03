@@ -26,7 +26,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	private Object content;
 
 	public AbstractContentPart() {
-		installBound(new ContentBehavior<V>());
+		setAdapter(new ContentBehavior<V>());
 	}
 
 	/**
@@ -115,10 +115,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 		}
 		if (parent == null) {
 			// remove all content children
-			getBound(ContentBehavior.class)
+			getAdapter(ContentBehavior.class)
 					.synchronizeContentChildren(Collections.emptyList());
 			// create content anchored as needed
-			getBound(ContentBehavior.class)
+			getAdapter(ContentBehavior.class)
 					.synchronizeContentAnchored(Collections.emptyList());
 		}
 		super.setParent(parent);
@@ -128,10 +128,10 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 			// listen for the PARENT property of the host to change, rather than
 			// accessing the policy directly here
 			// create content children as needed
-			getBound(ContentBehavior.class)
+			getAdapter(ContentBehavior.class)
 					.synchronizeContentChildren(getContentChildren());
 			// create content anchored as needed
-			getBound(ContentBehavior.class)
+			getAdapter(ContentBehavior.class)
 					.synchronizeContentAnchored(getContentAnchored());
 		}
 	}

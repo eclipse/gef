@@ -29,7 +29,7 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> part) {
-		return part.getBound(FXResizeRelocatePolicy.class);
+		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {

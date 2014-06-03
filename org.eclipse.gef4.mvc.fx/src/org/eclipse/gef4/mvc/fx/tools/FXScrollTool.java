@@ -33,9 +33,9 @@ public class FXScrollTool extends AbstractTool<Node> {
 	public FXScrollTool() {
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	protected IScrollPolicy<Node> getToolPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getBound((Class<IPolicy>) TOOL_POLICY_KEY);
+		return (IScrollPolicy<Node>) targetPart.getAdapter(TOOL_POLICY_KEY);
 	}
 
 	private Scene scene;

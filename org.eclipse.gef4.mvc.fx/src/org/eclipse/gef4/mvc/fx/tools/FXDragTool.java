@@ -34,9 +34,8 @@ public class FXDragTool extends AbstractTool<Node> {
 	@SuppressWarnings("rawtypes")
 	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected AbstractFXDragPolicy getToolPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getBound((Class<IPolicy>) TOOL_POLICY_KEY);
+		return (AbstractFXDragPolicy) targetPart.getAdapter(TOOL_POLICY_KEY);
 	}
 
 	@SuppressWarnings("unchecked")
