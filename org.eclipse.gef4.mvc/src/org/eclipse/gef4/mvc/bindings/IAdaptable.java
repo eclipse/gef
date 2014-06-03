@@ -12,22 +12,36 @@
 package org.eclipse.gef4.mvc.bindings;
 
 /**
- *
+ * An {@link IAdaptable} allows to register, unregister, and retrieve
+ * (registered) adapters under a given class key. If a to be registered adapter
+ * implements the {@link Bound} interface, it is expected that the
+ * {@link IAdaptable} on which the adapter is registered binds the adapter to
+ * itself via {@link Bound#setAdaptable(IAdaptable)} within
+ * {@link #setAdapter(Object)}, and accordingly unbinds it (setAdaptable(null))
+ * within {@link #unsetAdapter(Class)}.
+ * 
  * @author anyssen
  *
  */
 public interface IAdaptable {
-	
+
 	public <T> T getAdapter(Class<T> key);
-	
+
 	public <T> void setAdapter(T adapter);
-	
+
 	public <T> void setAdapter(Class<T> key, T adapter);
 
 	public <T> T unsetAdapter(Class<T> key);
-	
+
+	/**
+	 * To be implemented by an adapter to indicate that it intends to be bounded
+	 * to the respective {@link IAdaptable} it is registered at.
+	 *
+	 * @param <A>
+	 */
 	public static interface Bound<A extends IAdaptable> {
 		public A getAdaptable();
+
 		void setAdaptable(A adaptable);
 	}
 }

@@ -11,13 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
@@ -29,9 +28,12 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  */
 public abstract class AbstractDomain<V> implements IDomain<V> {
 
-	private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
+	private AdaptableSupport<IDomain<V>> as = new AdaptableSupport<IDomain<V>>(
+			this);
+
+			private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
 	private IVisualViewer<V> viewer;
-	private Map<Class<? extends Object>, Object> properties;
+
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
 	private IUndoContext undoContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;
@@ -41,6 +43,26 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	 */
 	public AbstractDomain() {
 		pushTool(getDefaultTool());
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> key) {
+		return as.getAdapter(key);
+	}
+
+	@Override
+	public <T> void setAdapter(T adapter) {
+		as.setAdapter(adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(Class<T> key, T adapter) {
+		as.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> T unsetAdapter(Class<T> key) {
+		return as.unsetAdapter(key);
 	}
 
 	/*
@@ -155,37 +177,6 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 			return currentTool;
 		}
 		return null;
-	}
-
-	@Override
-	public <P extends Object> void setProperty(Class<P> key, P property) {
-		// unregister old property
-		if (properties != null && properties.get(key) != null) {
-			properties.remove(key);
-		}
-
-		// register new property
-		if (property != null) {
-			// create map
-			if (properties == null) {
-				properties = new HashMap<Class<? extends Object>, Object>();
-			}
-			properties.put(key, property);
-		} else {
-			// dispose map
-			if (properties != null && properties.size() == 0) {
-				properties = null;
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <P extends Object> P getProperty(Class<P> key) {
-		if (properties == null) {
-			return null;
-		}
-		return (P) properties.get(key);
 	}
 
 	@Override

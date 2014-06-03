@@ -74,11 +74,11 @@ public abstract class AbstractVisualViewer<V> implements
 	 * @see IVisualViewer#getContentModel()
 	 */
 	public IContentModel getContentModel() {
-		IContentModel contentModel = getDomain().getProperty(
+		IContentModel contentModel = getDomain().getAdapter(
 				IContentModel.class);
 		if (contentModel == null) {
 			contentModel = new DefaultContentModel();
-			getDomain().setProperty(IContentModel.class, contentModel);
+			getDomain().setAdapter(IContentModel.class, contentModel);
 		}
 		return contentModel;
 	}
@@ -155,11 +155,11 @@ public abstract class AbstractVisualViewer<V> implements
 	@Override
 	public ISelectionModel<V> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<V> selectionModel = getDomain().getProperty(
+		ISelectionModel<V> selectionModel = getDomain().getAdapter(
 				ISelectionModel.class);
 		if (selectionModel == null) {
 			selectionModel = new DefaultSelectionModel<V>();
-			getDomain().setProperty(ISelectionModel.class, selectionModel);
+			getDomain().setAdapter(ISelectionModel.class, selectionModel);
 		}
 		return selectionModel;
 	}
@@ -167,20 +167,20 @@ public abstract class AbstractVisualViewer<V> implements
 	@Override
 	public IHoverModel<V> getHoverModel() {
 		@SuppressWarnings("unchecked")
-		IHoverModel<V> hoverModel = getDomain().getProperty(IHoverModel.class);
+		IHoverModel<V> hoverModel = getDomain().getAdapter(IHoverModel.class);
 		if (hoverModel == null) {
 			hoverModel = new DefaultHoverModel<V>();
-			getDomain().setProperty(IHoverModel.class, hoverModel);
+			getDomain().setAdapter(IHoverModel.class, hoverModel);
 		}
 		return hoverModel;
 	}
 
 	@Override
 	public IZoomModel getZoomModel() {
-		IZoomModel zoomModel = getDomain().getProperty(IZoomModel.class);
+		IZoomModel zoomModel = getDomain().getAdapter(IZoomModel.class);
 		if (zoomModel == null) {
 			zoomModel = new DefaultZoomModel();
-			getDomain().setProperty(IZoomModel.class, zoomModel);
+			getDomain().setAdapter(IZoomModel.class, zoomModel);
 		}
 		return zoomModel;
 	}
@@ -207,20 +207,20 @@ public abstract class AbstractVisualViewer<V> implements
 	@Override
 	public IFocusModel<V> getFocusModel() {
 		@SuppressWarnings("unchecked")
-		IFocusModel<V> focusModel = getDomain().getProperty(IFocusModel.class);
+		IFocusModel<V> focusModel = getDomain().getAdapter(IFocusModel.class);
 		if (focusModel == null) {
 			focusModel = new DefaultFocusModel<V>();
-			getDomain().setProperty(IFocusModel.class, focusModel);
+			getDomain().setAdapter(IFocusModel.class, focusModel);
 		}
 		return focusModel;
 	}
 	
 	@Override
 	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getDomain().getProperty(IViewportModel.class);
+		IViewportModel viewportModel = getDomain().getAdapter(IViewportModel.class);
 		if (viewportModel == null) {
 			viewportModel = new DefaultViewportModel();
-			getDomain().setProperty(IViewportModel.class, viewportModel);
+			getDomain().setAdapter(IViewportModel.class, viewportModel);
 		}
 		return viewportModel;
 	}

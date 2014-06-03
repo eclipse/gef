@@ -49,7 +49,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	protected AdaptableSupport<IVisualPart<V>> as = new AdaptableSupport<IVisualPart<V>>(
+	private AdaptableSupport<IVisualPart<V>> as = new AdaptableSupport<IVisualPart<V>>(
 			this);
 
 	private IVisualPart<V> parent;

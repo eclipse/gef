@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.domain;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewerBound;
 
@@ -26,20 +27,7 @@ import org.eclipse.gef4.mvc.viewer.IViewerBound;
  */
 // TODO: it seems to be not nice that the domain is bound directly to the
 // viewer.
-public interface IDomain<V> extends IViewerBound<V> {
-
-	/**
-	 * Returns the {@link IOperationHistory} that is used by this domain.
-	 * 
-	 * @return The {@link IOperationHistory}.
-	 */
-	// replace by binding
-	public abstract IOperationHistory getOperationHistory();
-
-	// replace by binding
-	public abstract IUndoContext getUndoContext();
-
-	public abstract <P extends Object> P getProperty(Class<P> key);
+public interface IDomain<V> extends IAdaptable, IViewerBound<V> {
 
 	/**
 	 * Returns the active Tool
@@ -59,6 +47,18 @@ public interface IDomain<V> extends IViewerBound<V> {
 	 */
 	public abstract void pushTool(ITool<V> tool);
 
+	
+	/**
+	 * Returns the {@link IOperationHistory} that is used by this domain.
+	 * 
+	 * @return The {@link IOperationHistory}.
+	 */
+	// replace by binding
+	public abstract IOperationHistory getOperationHistory();
+
+	// replace by binding
+	public abstract IUndoContext getUndoContext();
+	
 	/**
 	 * Sets the {@link IOperationHistory}, which can later be requested via
 	 * {@link #getOperationHistory()}.
@@ -71,7 +71,5 @@ public interface IDomain<V> extends IViewerBound<V> {
 
 	// replace by binding
 	public abstract void setUndoContext(IUndoContext undoContext);
-
-	public abstract <P extends Object> void setProperty(Class<P> key, P property);
 
 }
