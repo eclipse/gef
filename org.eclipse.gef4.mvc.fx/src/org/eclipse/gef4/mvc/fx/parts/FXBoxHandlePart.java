@@ -20,10 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXBoxHandlePart extends AbstractFXHandlePart {
 
@@ -48,7 +45,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 
 	@Override
 	public void refreshVisual() {
-		Bounds unionedBoundsInScene = getUnionedBoundsInScene(getAnchorages());
+		Bounds unionedBoundsInScene = FXPartUtils.getUnionedVisualBoundsInScene(getAnchorages());
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
@@ -81,26 +78,6 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 	protected double getYInset() {
 		double yInset = visual.getHeight() / 2.0;
 		return yInset;
-	}
-
-	private Bounds getUnionedBoundsInScene(List<IVisualPart<Node>> selection) {
-		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
-		for (IVisualPart<Node> cp : selection) {
-			Bounds boundsInScene = cp.getVisual().localToScene(
-					cp.getVisual().getLayoutBounds());
-			if (unionedBoundsInScene == null) {
-				unionedBoundsInScene = JavaFX2Geometry
-						.toRectangle(boundsInScene);
-			} else {
-				unionedBoundsInScene.union(JavaFX2Geometry
-						.toRectangle(boundsInScene));
-			}
-		}
-		if (unionedBoundsInScene != null) {
-			return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
-		} else {
-			return null;
-		}
 	}
 
 	public Pos getPos() {

@@ -16,8 +16,11 @@ import java.util.List;
 
 import javafx.event.Event;
 import javafx.event.EventTarget;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -78,6 +81,26 @@ public class FXPartUtils {
 			return Collections.emptyList();
 		}
 		return Collections.singletonList(eventTargetPart);
+	}
+	
+	public static Bounds getUnionedVisualBoundsInScene(List<IVisualPart<Node>> parts) {
+		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
+		for (IVisualPart<Node> cp : parts) {
+			Bounds boundsInScene = cp.getVisual().localToScene(
+					cp.getVisual().getLayoutBounds());
+			if (unionedBoundsInScene == null) {
+				unionedBoundsInScene = JavaFX2Geometry
+						.toRectangle(boundsInScene);
+			} else {
+				unionedBoundsInScene.union(JavaFX2Geometry
+						.toRectangle(boundsInScene));
+			}
+		}
+		if (unionedBoundsInScene != null) {
+			return Geometry2JavaFX.toFXBounds(unionedBoundsInScene);
+		} else {
+			return null;
+		}
 	}
 
 }
