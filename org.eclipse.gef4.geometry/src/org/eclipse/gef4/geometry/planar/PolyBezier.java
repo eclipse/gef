@@ -44,6 +44,46 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	}
 
 	/**
+	 * <p>
+	 * Creates a {@link PolyBezier} consisting of continuous {@link CubicCurve}
+	 * segments through the given {@link Point}s.
+	 * </p>
+	 * <p>
+	 * The start angle and start length constrain the curve. Way points are
+	 * added to assure the curve starts off with a straight line of said length
+	 * in the direction specified by said angle.
+	 * </p>
+	 * <p>
+	 * The end angle and end length constrain the curve. Way points are added to
+	 * assure the curve ends in a straight line of said length in the direction
+	 * specified by said angle.
+	 * </p>
+	 * 
+	 * @param startAngle
+	 *            start direction of the curve
+	 * @param startLength
+	 *            length of the straight start segment of the curve
+	 * @param endAngle
+	 *            end direction of the curve
+	 * @param endLength
+	 *            length of the straight end segment of the curve
+	 * @param curveWidthCoefficient
+	 *            value in the range <code>]0;+Inf[</code> that adjusts the
+	 *            width of the curve. A value smaller than 1 sharpens the curve
+	 *            and a value greater than 1 thickens the curve.
+	 * @param wayPoints
+	 * @return {@link PolyBezier} consisting of continuous {@link CubicCurve}
+	 *         segments through the given {@link Point}s
+	 */
+	public static PolyBezier interpolateCubic(Angle startAngle,
+			double startLength, Angle endAngle, double endLength,
+			double curveWidthCoefficient, Point... wayPoints) {
+		// TODO: add way points to assure curve constraints given by startAngle,
+		// endAngle, startLength, and endLength.
+		return interpolateCubic(curveWidthCoefficient, wayPoints);
+	}
+
+	/**
 	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 * through the given {@link Point}s.
 	 * 
