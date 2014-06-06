@@ -19,9 +19,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 /**
  * @author mwienand
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IHoverModel<V> extends IPropertyChangeSupport {
+public interface IHoverModel<VR> extends IPropertyChangeSupport {
 
 	/**
 	 * The {@link IHoverModel} fires {@link PropertyChangeEvent}s when the
@@ -36,7 +36,7 @@ public interface IHoverModel<V> extends IPropertyChangeSupport {
 	 * 
 	 * @return the currently hovered {@link IContentPart} or <code>null</code>
 	 */
-	public IContentPart<V> getHover();
+	public IContentPart<VR> getHover();
 
 	/**
 	 * Sets the hovered {@link IContentPart} to the given value. The given part
@@ -47,7 +47,7 @@ public interface IHoverModel<V> extends IPropertyChangeSupport {
 	 * @param cp
 	 *            hovered {@link IContentPart} or <code>null</code>
 	 */
-	public void setHover(IContentPart<V> cp);
+	public void setHover(IContentPart<VR> cp);
 
 	/**
 	 * Sets the hovered part to <code>null</code>.

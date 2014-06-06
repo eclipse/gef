@@ -26,9 +26,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractHoverBehavior<V> extends AbstractBehavior<V>
+public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
 
 	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
@@ -64,19 +64,19 @@ public abstract class AbstractHoverBehavior<V> extends AbstractBehavior<V>
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
-			IContentPart<V> oldHovered = (IContentPart<V>) event.getOldValue();
-			IContentPart<V> newHovered = (IContentPart<V>) event.getNewValue();
+			IContentPart<VR> oldHovered = (IContentPart<VR>) event.getOldValue();
+			IContentPart<VR> newHovered = (IContentPart<VR>) event.getNewValue();
 
 			if (oldHovered == getHost()) {
 				removeHandles(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 				removeFeedback(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 			} else if (newHovered == getHost()) {
 				addFeedback(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 				addHandles(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 			}
 		}
 	}

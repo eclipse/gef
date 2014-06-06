@@ -20,9 +20,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * The IFocusModel stores the IContentPart which has keyboard focus. Note that
  * you are responsible for synchronizing keyboard focus with the model.
  * 
- * @param <V> type of visual
+ * @param <VR> type of visual
  */
-public interface IFocusModel<V> extends IPropertyChangeSupport {
+public interface IFocusModel<VR> extends IPropertyChangeSupport {
 	
 	/**
 	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the
@@ -37,7 +37,7 @@ public interface IFocusModel<V> extends IPropertyChangeSupport {
 	 * 
 	 * @return the IContentPart which has keyboard focus, or <code>null</code>
 	 */
-	public IContentPart<V> getFocused();
+	public IContentPart<VR> getFocused();
 
 	/**
 	 * Selects the given IContentPart as the focus part. Note that setting the
@@ -45,6 +45,6 @@ public interface IFocusModel<V> extends IPropertyChangeSupport {
 	 * 
 	 * @param focusPart
 	 */
-	public void setFocused(IContentPart<V> focusPart);
+	public void setFocused(IContentPart<VR> focusPart);
 
 }

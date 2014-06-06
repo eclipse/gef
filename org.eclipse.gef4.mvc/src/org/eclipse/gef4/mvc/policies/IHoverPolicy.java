@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-public interface IHoverPolicy<V> extends IPolicy<V> {
+public interface IHoverPolicy<VR> extends IPolicy<VR> {
 
-	public class Impl<V> extends AbstractPolicy<V> implements IHoverPolicy<V>{
+	public class Impl<VR> extends AbstractPolicy<VR> implements IHoverPolicy<VR>{
 
 		@Override
 		public boolean isHoverable() {

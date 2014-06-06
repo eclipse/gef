@@ -18,8 +18,8 @@ package org.eclipse.gef4.mvc.parts;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IFeedbackPart<V> extends IVisualPart<V> {
+public interface IFeedbackPart<VR> extends IVisualPart<VR> {
 
 }

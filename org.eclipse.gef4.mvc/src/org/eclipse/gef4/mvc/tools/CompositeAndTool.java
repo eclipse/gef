@@ -21,34 +21,34 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  * 
  * @author mwienand
  * 
- * @param <V>
+ * @param <VR>
  */
-public class CompositeAndTool<V> extends AbstractTool<V> {
+public class CompositeAndTool<VR> extends AbstractTool<VR> {
 
-	private List<ITool<V>> subTools = null;
+	private List<ITool<VR>> subTools = null;
 
 	@Override
-	public void setDomain(IDomain<V> domain) {
+	public void setDomain(IDomain<VR> domain) {
 		super.setDomain(domain);
 		// propagate the domain to all sub-tools
-		for (ITool<V> subTool : getSubTools()) {
+		for (ITool<VR> subTool : getSubTools()) {
 			subTool.setDomain(domain);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ITool<V>> getSubTools() {
-		return (List<ITool<V>>) (subTools == null ? Collections.emptyList()
+	public List<ITool<VR>> getSubTools() {
+		return (List<ITool<VR>>) (subTools == null ? Collections.emptyList()
 				: Collections.unmodifiableList(subTools));
 	}
 
-	public void add(int index, ITool<V> tool) {
+	public void add(int index, ITool<VR> tool) {
 		assertNotActive();
 		initSubToolsList();
 		subTools.add(index, tool);
 	}
 
-	public void add(ITool<V> tool) {
+	public void add(ITool<VR> tool) {
 		assertNotActive();
 		initSubToolsList();
 		subTools.add(tool);
@@ -62,7 +62,7 @@ public class CompositeAndTool<V> extends AbstractTool<V> {
 		}
 	}
 
-	public void remove(ITool<V> tool) {
+	public void remove(ITool<VR> tool) {
 		assertNotActive();
 		if (subTools != null) {
 			subTools.remove(tool);
@@ -78,7 +78,7 @@ public class CompositeAndTool<V> extends AbstractTool<V> {
 
 	private void initSubToolsList() {
 		if (subTools == null) {
-			subTools = new ArrayList<ITool<V>>(1);
+			subTools = new ArrayList<ITool<VR>>(1);
 		}
 	}
 
@@ -92,14 +92,14 @@ public class CompositeAndTool<V> extends AbstractTool<V> {
 	@Override
 	public void activate() {
 		super.activate();
-		for (ITool<V> tool : getSubTools()) {
+		for (ITool<VR> tool : getSubTools()) {
 			tool.activate();
 		}
 	}
 
 	@Override
 	public void deactivate() {
-		for (ITool<V> tool : getSubTools()) {
+		for (ITool<VR> tool : getSubTools()) {
 			tool.deactivate();
 		}
 		super.deactivate();

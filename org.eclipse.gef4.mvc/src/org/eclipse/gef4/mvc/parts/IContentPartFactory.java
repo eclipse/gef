@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * passing in itself as context behavior.
  * 
  */
-public interface IContentPartFactory<V> {
+public interface IContentPartFactory<VR> {
 
 	/**
 	 * Creates a specific {@link IContentPart} for the given <i>content</i>, in
@@ -51,7 +51,7 @@ public interface IContentPartFactory<V> {
 	 * @param contextMap Additional context information to keep the IBehavior stateless.
 	 * @return an {@link IContentPart} for the given content and context
 	 */
-	IContentPart<V> createContentPart(Object content,
-			IBehavior<V> contextBehavior, Map<Object, Object> contextMap);
+	IContentPart<VR> createContentPart(Object content,
+			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap);
 
 }

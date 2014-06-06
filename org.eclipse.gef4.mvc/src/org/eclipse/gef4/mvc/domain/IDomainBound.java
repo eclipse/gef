@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
-public interface IDomainBound<V> {
+public interface IDomainBound<VR> {
 
 	/**
 	 * Returns the {@link IDomain} this {@link IDomainBound} is bound to.
@@ -20,7 +20,7 @@ public interface IDomainBound<V> {
 	 *         <code>null</code> if this {@link IDomainBound} is not (yet) bound
 	 *         to an {@link IDomain}.
 	 */
-	public abstract IDomain<V> getDomain();
+	public abstract IDomain<VR> getDomain();
 
 	/**
 	 * Called to set/change/unset the {@link IDomain} this {@link IDomainBound}
@@ -31,6 +31,6 @@ public interface IDomainBound<V> {
 	 *            The {@link IDomain} to which this {@link IDomainBound} is
 	 *            bound to
 	 */
-	public abstract void setDomain(IDomain<V> domain);
+	public abstract void setDomain(IDomain<VR> domain);
 
 }

@@ -35,9 +35,9 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface ITool<V> extends IActivatable, IDomainBound<V> {
+public interface ITool<VR> extends IActivatable, IDomainBound<VR> {
 
 	// TODO: tools/handles should change the cursor
 }

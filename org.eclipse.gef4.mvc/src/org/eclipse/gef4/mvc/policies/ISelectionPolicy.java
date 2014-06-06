@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-public interface ISelectionPolicy<V> extends IPolicy<V> {
+public interface ISelectionPolicy<VR> extends IPolicy<VR> {
 
-	public class Impl<V> extends AbstractPolicy<V> implements ISelectionPolicy<V> {
+	public class Impl<VR> extends AbstractPolicy<VR> implements ISelectionPolicy<VR> {
 		@Override
 		public boolean isSelectable() {
 			return true;

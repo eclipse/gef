@@ -28,9 +28,9 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
+public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	/**
 	 * This flag is set during {@link #activate()}, and reset on
@@ -49,14 +49,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private AdaptableSupport<IVisualPart<V>> as = new AdaptableSupport<IVisualPart<V>>(
+	private AdaptableSupport<IVisualPart<VR>> as = new AdaptableSupport<IVisualPart<VR>>(
 			this);
 
-	private IVisualPart<V> parent;
-	private List<IVisualPart<V>> children;
+	private IVisualPart<VR> parent;
+	private List<IVisualPart<VR>> children;
 
-	private List<IVisualPart<V>> anchoreds;
-	private List<IVisualPart<V>> anchorages;
+	private List<IVisualPart<VR>> anchoreds;
+	private List<IVisualPart<VR>> anchorages;
 
 	private boolean refreshFromModel = true;
 
@@ -79,17 +79,17 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 			}
 		}
 
-		List<IVisualPart<V>> c = getChildren();
+		List<IVisualPart<VR>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
 	}
 
 	@Override
-	public void addChild(IVisualPart<V> child) {
+	public void addChild(IVisualPart<VR> child) {
 		addChild(child, getChildren().size());
 	}
 
-	public void addChild(IVisualPart<V> child, int index) {
+	public void addChild(IVisualPart<VR> child, int index) {
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
 
@@ -103,15 +103,15 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	}
 
 	@Override
-	public void addChildren(List<? extends IVisualPart<V>> children) {
-		for (IVisualPart<V> child : children) {
+	public void addChildren(List<? extends IVisualPart<VR>> children) {
+		for (IVisualPart<VR> child : children) {
 			addChild(child);
 		}
 	}
 
 	@Override
-	public void removeChildren(List<? extends IVisualPart<V>> children) {
-		for (IVisualPart<V> child : children) {
+	public void removeChildren(List<? extends IVisualPart<VR>> children) {
+		for (IVisualPart<VR> child : children) {
 			removeChild(child);
 		}
 	}
@@ -128,15 +128,15 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	 */
 	// TODO: make concrete, passing over the visual container to the child (as
 	// in case of anchoreds)
-	protected abstract void addChildVisual(IVisualPart<V> child, int index);
+	protected abstract void addChildVisual(IVisualPart<VR> child, int index);
 
-	private void addChildWithoutNotify(IVisualPart<V> child, int index) {
+	private void addChildWithoutNotify(IVisualPart<VR> child, int index) {
 		if (children == null)
-			children = new ArrayList<IVisualPart<V>>(2);
+			children = new ArrayList<IVisualPart<VR>>(2);
 		children.add(index, child);
 	}
 
-	public IRootPart<V> getRoot() {
+	public IRootPart<VR> getRoot() {
 		if (getParent() != null) {
 			return getParent().getRoot();
 		}
@@ -154,7 +154,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	 * @see #activate()
 	 */
 	public void deactivate() {
-		List<IVisualPart<V>> c = getChildren();
+		List<IVisualPart<VR>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
@@ -167,7 +167,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		setFlag(FLAG_ACTIVE, false);
 	}
 
-	public List<IVisualPart<V>> getChildren() {
+	public List<IVisualPart<VR>> getChildren() {
 		if (children == null)
 			return Collections.emptyList();
 		return Collections.unmodifiableList(children);
@@ -192,8 +192,8 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		return as.getAdapter(key);
 	}
 
-	protected IVisualViewer<V> getViewer() {
-		IRootPart<V> root = getRoot();
+	protected IVisualViewer<VR> getViewer() {
+		IRootPart<VR> root = getRoot();
 		if (root == null) {
 			return null;
 		}
@@ -238,7 +238,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	 */
 	public abstract void refreshVisual();
 
-	public void removeChild(IVisualPart<V> child) {
+	public void removeChild(IVisualPart<VR> child) {
 		Assert.isNotNull(child);
 		int index = getChildren().indexOf(child);
 		if (index < 0)
@@ -257,9 +257,9 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	 * @param child
 	 *            the child {@link IVisualPart}
 	 */
-	protected abstract void removeChildVisual(IVisualPart<V> child);
+	protected abstract void removeChildVisual(IVisualPart<VR> child);
 
-	private void removeChildWithoutNotify(IVisualPart<V> child) {
+	private void removeChildWithoutNotify(IVisualPart<VR> child) {
 		children.remove(child);
 		if (children.size() == 0) {
 			children = null;
@@ -284,7 +284,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	 * @param index
 	 *            new index for the child
 	 */
-	public void reorderChild(IVisualPart<V> child, int index) {
+	public void reorderChild(IVisualPart<VR> child, int index) {
 		removeChildVisual(child);
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);
@@ -320,11 +320,11 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	/**
 	 * Sets the parent {@link IVisualPart}.
 	 */
-	public void setParent(IVisualPart<V> parent) {
+	public void setParent(IVisualPart<VR> parent) {
 		if (this.parent == parent)
 			return;
 
-		IVisualPart<V> oldParent = this.parent;
+		IVisualPart<VR> oldParent = this.parent;
 
 		// unregister if we have no (remaining) link to the viewer
 		if (this.parent != null) {
@@ -353,14 +353,14 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public IVisualPart<V> getParent() {
+	public IVisualPart<VR> getParent() {
 		return parent;
 	}
 
 	@Override
-	public void addAnchored(IVisualPart<V> anchored) {
+	public void addAnchored(IVisualPart<VR> anchored) {
 		if (anchoreds == null) {
-			anchoreds = new ArrayList<IVisualPart<V>>();
+			anchoreds = new ArrayList<IVisualPart<VR>>();
 		}
 		anchoreds.add(anchored);
 
@@ -371,25 +371,25 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	}
 
 	@Override
-	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
-		for (IVisualPart<V> anchored : anchoreds) {
+	public void addAnchoreds(List<? extends IVisualPart<VR>> anchoreds) {
+		for (IVisualPart<VR> anchored : anchoreds) {
 			addAnchored(anchored);
 		}
 	}
 
 	@Override
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds) {
-		for (IVisualPart<V> anchored : anchoreds) {
+	public void removeAnchoreds(List<? extends IVisualPart<VR>> anchoreds) {
+		for (IVisualPart<VR> anchored : anchoreds) {
 			removeAnchored(anchored);
 		}
 	}
 
-	protected void attachAnchoredVisual(IVisualPart<V> anchored) {
+	protected void attachAnchoredVisual(IVisualPart<VR> anchored) {
 		anchored.attachVisualToAnchorageVisual(this, getVisual());
 	}
 
 	@Override
-	public void removeAnchored(IVisualPart<V> anchored) {
+	public void removeAnchored(IVisualPart<VR> anchored) {
 		anchored.removeAnchorage(this);
 		detachAnchoredVisual(anchored);
 
@@ -399,12 +399,12 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 		}
 	}
 
-	protected void detachAnchoredVisual(IVisualPart<V> anchored) {
+	protected void detachAnchoredVisual(IVisualPart<VR> anchored) {
 		anchored.detachVisualFromAnchorageVisual(this, getVisual());
 	}
 
 	@Override
-	public List<IVisualPart<V>> getAnchoreds() {
+	public List<IVisualPart<VR>> getAnchoreds() {
 		if (anchoreds == null) {
 			return Collections.emptyList();
 		}
@@ -412,13 +412,13 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	}
 
 	@Override
-	public void addAnchorage(IVisualPart<V> anchorage) {
+	public void addAnchorage(IVisualPart<VR> anchorage) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
 
 		if (anchorages == null) {
-			anchorages = new ArrayList<IVisualPart<V>>();
+			anchorages = new ArrayList<IVisualPart<VR>>();
 		}
 		anchorages.add(anchorage);
 
@@ -440,7 +440,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 
 	// counterpart to setParent(null) in case of hierarchy
 	@Override
-	public void removeAnchorage(IVisualPart<V> anchorage) {
+	public void removeAnchorage(IVisualPart<VR> anchorage) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
@@ -467,7 +467,7 @@ public abstract class AbstractVisualPart<V> implements IVisualPart<V> {
 	}
 
 	@Override
-	public List<IVisualPart<V>> getAnchorages() {
+	public List<IVisualPart<VR>> getAnchorages() {
 		if (anchorages == null) {
 			return Collections.emptyList();
 		}

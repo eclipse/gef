@@ -29,9 +29,9 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
+public abstract class AbstractSelectionBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
 
 	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
@@ -90,14 +90,14 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 	}
 
 	public void refreshFeedback() {
-		List<IContentPart<V>> selected = getHost().getRoot().getViewer()
+		List<IContentPart<VR>> selected = getHost().getRoot().getViewer()
 				.getSelectionModel().getSelected();
 		removeFeedback(selected);
 		addFeedback(selected);
 	}
 
 	public void refreshHandles() {
-		List<IContentPart<V>> selected = getHost().getRoot().getViewer()
+		List<IContentPart<VR>> selected = getHost().getRoot().getViewer()
 				.getSelectionModel().getSelected();
 		removeHandles(selected);
 		addHandles(selected);
@@ -107,9 +107,9 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(ISelectionModel.SELECTION_PROPERTY)) {
-			List<IContentPart<V>> oldSelection = (List<IContentPart<V>>) event
+			List<IContentPart<VR>> oldSelection = (List<IContentPart<VR>>) event
 					.getOldValue();
-			List<IContentPart<V>> newSelection = (List<IContentPart<V>>) event
+			List<IContentPart<VR>> newSelection = (List<IContentPart<VR>>) event
 					.getNewValue();
 
 			// multi-selection handles for the root part
@@ -130,18 +130,18 @@ public abstract class AbstractSelectionBehavior<V> extends AbstractBehavior<V>
 
 			if (inOld) {
 				removeHandles(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 				removeFeedback(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 			}
 
 			if (inNew) {
 				addFeedback(Collections
-						.singletonList((IContentPart<V>) getHost()));
+						.singletonList((IContentPart<VR>) getHost()));
 				if (newSelection.get(0) == getHost()) {
 					if (newSelection.size() <= 1) {
 						addHandles(Collections
-								.singletonList((IContentPart<V>) getHost()));
+								.singletonList((IContentPart<VR>) getHost()));
 					}
 				}
 			}

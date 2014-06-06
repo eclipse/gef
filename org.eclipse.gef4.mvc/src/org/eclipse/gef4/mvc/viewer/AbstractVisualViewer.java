@@ -41,32 +41,32 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractVisualViewer<V> implements
-		IVisualViewer<V> {
+public abstract class AbstractVisualViewer<VR> implements
+		IVisualViewer<VR> {
 
-	private Map<Object, IContentPart<V>> contentsToContentPartMap = new HashMap<Object, IContentPart<V>>();
-	private Map<V, IVisualPart<V>> visualsToVisualPartMap = new HashMap<V, IVisualPart<V>>();
+	private Map<Object, IContentPart<VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR>>();
+	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
 
-	private IDomain<V> domain;
-	private IRootPart<V> rootPart;
+	private IDomain<VR> domain;
+	private IRootPart<VR> rootPart;
 
-	private IContentPartFactory<V> contentPartFactory;
-	private IHandlePartFactory<V> handlePartFactory;
-	private IFeedbackPartFactory<V> feedbackPartFactory;
+	private IContentPartFactory<VR> contentPartFactory;
+	private IHandlePartFactory<VR> handlePartFactory;
+	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	/**
 	 * @see IVisualViewer#setContentPartFactory(IContentPartFactory)
 	 */
-	public void setContentPartFactory(IContentPartFactory<V> factory) {
+	public void setContentPartFactory(IContentPartFactory<VR> factory) {
 		this.contentPartFactory = factory;
 	}
 
 	/**
 	 * @see IVisualViewer#getContentPartFactory()
 	 */
-	public IContentPartFactory<V> getContentPartFactory() {
+	public IContentPartFactory<VR> getContentPartFactory() {
 		return contentPartFactory;
 	}
 
@@ -86,28 +86,28 @@ public abstract class AbstractVisualViewer<V> implements
 	/**
 	 * @see IVisualViewer#getDomain()
 	 */
-	public IDomain<V> getDomain() {
+	public IDomain<VR> getDomain() {
 		return domain;
 	}
 
 	/**
 	 * @see IVisualViewer#getContentPartMap()
 	 */
-	public Map<Object, IContentPart<V>> getContentPartMap() {
+	public Map<Object, IContentPart<VR>> getContentPartMap() {
 		return contentsToContentPartMap;
 	}
 
 	/**
 	 * @see IVisualViewer#getRootPart()
 	 */
-	public IRootPart<V> getRootPart() {
+	public IRootPart<VR> getRootPart() {
 		return rootPart;
 	}
 
 	/**
 	 * @see IVisualViewer#getVisualPartMap()
 	 */
-	public Map<V, IVisualPart<V>> getVisualPartMap() {
+	public Map<VR, IVisualPart<VR>> getVisualPartMap() {
 		return visualsToVisualPartMap;
 	}
 
@@ -134,7 +134,7 @@ public abstract class AbstractVisualViewer<V> implements
 	/**
 	 * @see IVisualViewer#setDomain(IDomain)
 	 */
-	public void setDomain(IDomain<V> domain) {
+	public void setDomain(IDomain<VR> domain) {
 		if (this.domain == domain)
 			return;
 		if (this.domain != null) {
@@ -153,23 +153,23 @@ public abstract class AbstractVisualViewer<V> implements
 	}
 
 	@Override
-	public ISelectionModel<V> getSelectionModel() {
+	public ISelectionModel<VR> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<V> selectionModel = getDomain().getAdapter(
+		ISelectionModel<VR> selectionModel = getDomain().getAdapter(
 				ISelectionModel.class);
 		if (selectionModel == null) {
-			selectionModel = new DefaultSelectionModel<V>();
+			selectionModel = new DefaultSelectionModel<VR>();
 			getDomain().setAdapter(ISelectionModel.class, selectionModel);
 		}
 		return selectionModel;
 	}
 
 	@Override
-	public IHoverModel<V> getHoverModel() {
+	public IHoverModel<VR> getHoverModel() {
 		@SuppressWarnings("unchecked")
-		IHoverModel<V> hoverModel = getDomain().getAdapter(IHoverModel.class);
+		IHoverModel<VR> hoverModel = getDomain().getAdapter(IHoverModel.class);
 		if (hoverModel == null) {
-			hoverModel = new DefaultHoverModel<V>();
+			hoverModel = new DefaultHoverModel<VR>();
 			getDomain().setAdapter(IHoverModel.class, hoverModel);
 		}
 		return hoverModel;
@@ -188,7 +188,7 @@ public abstract class AbstractVisualViewer<V> implements
 	/**
 	 * @see IVisualViewer#setRootPart(IRootPart)
 	 */
-	public void setRootPart(IRootPart<V> rootEditPart) {
+	public void setRootPart(IRootPart<VR> rootEditPart) {
 		if (this.rootPart != null) {
 			if (domain != null) {
 				this.rootPart.deactivate();
@@ -205,11 +205,11 @@ public abstract class AbstractVisualViewer<V> implements
 	}
 
 	@Override
-	public IFocusModel<V> getFocusModel() {
+	public IFocusModel<VR> getFocusModel() {
 		@SuppressWarnings("unchecked")
-		IFocusModel<V> focusModel = getDomain().getAdapter(IFocusModel.class);
+		IFocusModel<VR> focusModel = getDomain().getAdapter(IFocusModel.class);
 		if (focusModel == null) {
-			focusModel = new DefaultFocusModel<V>();
+			focusModel = new DefaultFocusModel<VR>();
 			getDomain().setAdapter(IFocusModel.class, focusModel);
 		}
 		return focusModel;
@@ -226,22 +226,22 @@ public abstract class AbstractVisualViewer<V> implements
 	}
 
 	@Override
-	public IHandlePartFactory<V> getHandlePartFactory() {
+	public IHandlePartFactory<VR> getHandlePartFactory() {
 		return handlePartFactory;
 	}
 
 	@Override
-	public void setHandlePartFactory(IHandlePartFactory<V> factory) {
+	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
 		this.handlePartFactory = factory;
 	}
 	
 	@Override
-	public IFeedbackPartFactory<V> getFeedbackPartFactory() {
+	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
 		return feedbackPartFactory;
 	}
 
 	@Override
-	public void setFeedbackPartFactory(IFeedbackPartFactory<V> factory) {
+	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
 		this.feedbackPartFactory = factory;
 	}
 

@@ -30,10 +30,10 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * @author anyssen
  * 
  */
-public interface IRootPart<V> extends IVisualPart<V>, IViewerBound<V> {
+public interface IRootPart<VR> extends IVisualPart<VR>, IViewerBound<VR> {
 
-	public List<IContentPart<V>> getContentPartChildren();
+	public List<IContentPart<VR>> getContentPartChildren();
 
-	public List<IHandlePart<V>> getHandlePartChildren();
+	public List<IHandlePart<VR>> getHandlePartChildren();
 
 }

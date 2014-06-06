@@ -24,15 +24,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractBehavior<V> implements IBehavior<V> {
+public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
-	private IVisualPart<V> host;
+	private IVisualPart<VR> host;
 	private boolean active;
 
-	private List<IHandlePart<V>> handleParts;
-	private List<IFeedbackPart<V>> feedbackParts;
+	private List<IHandlePart<VR>> handleParts;
+	private List<IFeedbackPart<VR>> feedbackParts;
 
 	public void activate() {
 		active = true;
@@ -48,46 +48,46 @@ public abstract class AbstractBehavior<V> implements IBehavior<V> {
 	}
 	
 	@Override
-	public void setAdaptable(IVisualPart<V> adaptable){
+	public void setAdaptable(IVisualPart<VR> adaptable){
 		setHost(adaptable);
 	}
 	
-	public void setHost(IVisualPart<V> host) {
+	public void setHost(IVisualPart<VR> host) {
 		this.host = host;
 	}
 
 	@Override
-	public IVisualPart<V> getAdaptable() {
+	public IVisualPart<VR> getAdaptable() {
 		return getHost();
 	}
 	
-	public IVisualPart<V> getHost() {
+	public IVisualPart<VR> getHost() {
 		return host;
 	}
 
-	protected void addHandles(List<IContentPart<V>> anchorages) {
+	protected void addHandles(List<IContentPart<VR>> anchorages) {
 		handleParts = BehaviorUtils.createHandles(this, anchorages);
-		BehaviorUtils.<V> addAnchoreds(getHost().getRoot(), anchorages,
+		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), anchorages,
 				handleParts);
 	}
 
-	protected void removeHandles(List<IContentPart<V>> anchorages) {
+	protected void removeHandles(List<IContentPart<VR>> anchorages) {
 		if (handleParts != null && !handleParts.isEmpty()) {
-			BehaviorUtils.<V> removeAnchoreds(getHost().getRoot(), anchorages,
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), anchorages,
 					handleParts);
 			handleParts.clear();
 		}
 	}
 
-	protected void addFeedback(List<IContentPart<V>> targets) {
+	protected void addFeedback(List<IContentPart<VR>> targets) {
 		feedbackParts = BehaviorUtils.createFeedback(this, targets);
-		BehaviorUtils.<V> addAnchoreds(getHost().getRoot(), targets,
+		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), targets,
 				feedbackParts);
 	}
 
-	protected void removeFeedback(List<IContentPart<V>> targets) {
+	protected void removeFeedback(List<IContentPart<VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
-			BehaviorUtils.<V> removeAnchoreds(getHost().getRoot(), targets,
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
 					feedbackParts);
 			feedbackParts.clear();
 		}

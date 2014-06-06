@@ -18,8 +18,8 @@ package org.eclipse.gef4.mvc.parts;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IHandlePart<V> extends IVisualPart<V> {
+public interface IHandlePart<VR> extends IVisualPart<VR> {
 
 }

@@ -20,8 +20,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IPolicy<V> extends IAdaptable.Bound<IVisualPart<V>> {
+public interface IPolicy<VR> extends IAdaptable.Bound<IVisualPart<VR>> {
 
 }

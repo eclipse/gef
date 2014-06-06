@@ -18,15 +18,15 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  * @author anyssen
  * @author mwienand
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractTool<V> implements ITool<V> {
+public abstract class AbstractTool<VR> implements ITool<VR> {
 
-	private IDomain<V> domain;
+	private IDomain<VR> domain;
 	private boolean isActive;
 
 	@Override
-	public void setDomain(IDomain<V> domain) {
+	public void setDomain(IDomain<VR> domain) {
 		if (isActive) {
 			throw new IllegalStateException(
 					"The reference to the IEditDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
@@ -51,7 +51,7 @@ public abstract class AbstractTool<V> implements ITool<V> {
 	}
 
 	@Override
-	public IDomain<V> getDomain() {
+	public IDomain<VR> getDomain() {
 		return domain;
 	}
 

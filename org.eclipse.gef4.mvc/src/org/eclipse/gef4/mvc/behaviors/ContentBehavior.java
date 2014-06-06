@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
-public class ContentBehavior<V> extends AbstractBehavior<V> implements
+public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
 
 	@Override
@@ -61,9 +61,9 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 			synchronizeContentChildren((List<Object>) event.getNewValue());
 		} else if (IContentPart.CONTENT_PROPERTY
 				.equals(event.getPropertyName())) {
-			synchronizeContentChildren(((IContentPart<V>) getHost())
+			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
-			synchronizeContentAnchored(((IContentPart<V>) getHost())
+			synchronizeContentAnchored(((IContentPart<VR>) getHost())
 					.getContentAnchored());
 		}
 	}
@@ -78,17 +78,17 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 		// only synchronize ContentPart children
 
 		int i;
-		IContentPart<V> editPart;
+		IContentPart<VR> editPart;
 		Object model;
 
-		List<IContentPart<V>> contentPartChildren = PartUtils.filterParts(
+		List<IContentPart<VR>> contentPartChildren = PartUtils.filterParts(
 				getHost().getChildren(), IContentPart.class);
 		int size = contentPartChildren.size();
-		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
+		Map<Object, IContentPart<VR>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {
-			modelToEditPart = new HashMap<Object, IContentPart<V>>(size);
+			modelToEditPart = new HashMap<Object, IContentPart<VR>>(size);
 			for (i = 0; i < size; i++) {
-				editPart = (IContentPart<V>) contentPartChildren.get(i);
+				editPart = (IContentPart<VR>) contentPartChildren.get(i);
 				modelToEditPart.put(editPart.getContent(), editPart);
 			}
 		}
@@ -103,7 +103,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 
 			// Look to see if the EditPart is already around but in the
 			// wrong location
-			editPart = (IContentPart<V>) modelToEditPart.get(model);
+			editPart = (IContentPart<VR>) modelToEditPart.get(model);
 
 			if (editPart != null) {
 				// TODO: this is wrong, it has to take into consideration the
@@ -122,27 +122,27 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 				IContentPart.class);
 		size = contentPartChildren.size();
 		if (i < size) {
-			List<IContentPart<V>> trash = new ArrayList<IContentPart<V>>(size
+			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(size
 					- i);
 			for (; i < size; i++)
 				trash.add(contentPartChildren.get(i));
 			for (i = 0; i < trash.size(); i++) {
-				IContentPart<V> ep = trash.get(i);
+				IContentPart<VR> ep = trash.get(i);
 				getHost().removeChild(ep);
 				disposeIfObsolete(ep);
 			}
 		}
 	}
 
-	protected IContentPart<V> findOrCreatePartFor(Object model) {
-		Map<Object, IContentPart<V>> contentPartMap = getHost().getRoot()
+	protected IContentPart<VR> findOrCreatePartFor(Object model) {
+		Map<Object, IContentPart<VR>> contentPartMap = getHost().getRoot()
 				.getViewer().getContentPartMap();
 		if (contentPartMap.containsKey(model)) {
 			return contentPartMap.get(model);
 		} else {
-			IContentPartFactory<V> contentPartFactory = getHost().getRoot()
+			IContentPartFactory<VR> contentPartFactory = getHost().getRoot()
 					.getViewer().getContentPartFactory();
-			IContentPart<V> contentPart = contentPartFactory.createContentPart(
+			IContentPart<VR> contentPart = contentPartFactory.createContentPart(
 					model, this, Collections.emptyMap());
 			contentPart.setContent(model);
 			return contentPart;
@@ -157,17 +157,17 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentAnchored(List<Object> contentAnchored) {
 		int i;
-		IContentPart<V> editPart;
+		IContentPart<VR> editPart;
 		Object model;
 
-		List<IContentPart<V>> anchored = PartUtils.filterParts(getHost()
+		List<IContentPart<VR>> anchored = PartUtils.filterParts(getHost()
 				.getAnchoreds(), IContentPart.class);
 		int size = anchored.size();
-		Map<Object, IContentPart<V>> modelToEditPart = Collections.emptyMap();
+		Map<Object, IContentPart<VR>> modelToEditPart = Collections.emptyMap();
 		if (size > 0) {
-			modelToEditPart = new HashMap<Object, IContentPart<V>>(size);
+			modelToEditPart = new HashMap<Object, IContentPart<VR>>(size);
 			for (i = 0; i < size; i++) {
-				editPart = (IContentPart<V>) anchored.get(i);
+				editPart = (IContentPart<VR>) anchored.get(i);
 				modelToEditPart.put(editPart.getContent(), editPart);
 			}
 		}
@@ -181,7 +181,7 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 
 			// Look to see if the EditPart is already around but in the
 			// wrong location
-			editPart = (IContentPart<V>) modelToEditPart.get(model);
+			editPart = (IContentPart<VR>) modelToEditPart.get(model);
 
 			if (editPart != null) {
 				// TODO: this is wrong, it has to take into consideration the
@@ -201,19 +201,19 @@ public class ContentBehavior<V> extends AbstractBehavior<V> implements
 				IContentPart.class);
 		size = anchored.size();
 		if (i < size) {
-			List<IContentPart<V>> trash = new ArrayList<IContentPart<V>>(size
+			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(size
 					- i);
 			for (; i < size; i++)
 				trash.add(anchored.get(i));
 			for (i = 0; i < trash.size(); i++) {
-				IContentPart<V> ep = trash.get(i);
+				IContentPart<VR> ep = trash.get(i);
 				getHost().removeAnchored(ep);
 				disposeIfObsolete(ep);
 			}
 		}
 	}
 
-	protected void disposeIfObsolete(IContentPart<V> contentPart) {
+	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
 			contentPart.setContent(null);

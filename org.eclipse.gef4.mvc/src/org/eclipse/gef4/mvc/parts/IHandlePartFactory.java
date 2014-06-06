@@ -20,9 +20,9 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IHandlePartFactory<V> {
+public interface IHandlePartFactory<VR> {
 
 	/**
 	 * Creates specific {@link IHandlePart}s for the given <i>targets</i>, in
@@ -49,8 +49,8 @@ public interface IHandlePartFactory<V> {
 	 * @param contextMap
 	 * @return
 	 */
-	public List<IHandlePart<V>> createHandleParts(
-			List<IContentPart<V>> targets, IBehavior<V> contextBehavior,
+	public List<IHandlePart<VR>> createHandleParts(
+			List<IContentPart<VR>> targets, IBehavior<VR> contextBehavior,
 			Map<Object, Object> contextMap);
 
 }

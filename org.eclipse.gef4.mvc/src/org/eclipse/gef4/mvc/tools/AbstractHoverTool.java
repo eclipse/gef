@@ -21,10 +21,10 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 
-public class AbstractHoverTool<V> extends AbstractTool<V> implements
+public class AbstractHoverTool<VR> extends AbstractTool<VR> implements
 		PropertyChangeListener {
 
-	protected IHoverModel<V> getHoverModel() {
+	protected IHoverModel<VR> getHoverModel() {
 		return getDomain().getViewer().getHoverModel();
 	}
 
@@ -55,13 +55,13 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 			hover(null);
 		} else if (ISelectionModel.SELECTION_PROPERTY.equals(evt
 				.getPropertyName())) {
-			if (((List<IContentPart<V>>) evt.getNewValue())
+			if (((List<IContentPart<VR>>) evt.getNewValue())
 					.contains(getHoverModel().getHover()))
 				hover(null);
 		}
 	}
 
-	public void hover(IContentPart<V> hovered) {
+	public void hover(IContentPart<VR> hovered) {
 		if (hovered == null || getToolPolicy(hovered) != null
 				&& getToolPolicy(hovered).isHoverable()) {
 			getHoverModel().setHover(hovered);
@@ -69,7 +69,7 @@ public class AbstractHoverTool<V> extends AbstractTool<V> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private IHoverPolicy<V> getToolPolicy(IContentPart<V> hovered) {
+	private IHoverPolicy<VR> getToolPolicy(IContentPart<VR> hovered) {
 		return hovered.getAdapter(IHoverPolicy.class);
 	}
 

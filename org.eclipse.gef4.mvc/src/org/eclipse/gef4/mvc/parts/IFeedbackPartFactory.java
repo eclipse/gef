@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * 
  * @param <V>
  */
-public interface IFeedbackPartFactory<V> {
+public interface IFeedbackPartFactory<VR> {
 
 	/**
 	 * Creates specific {@link IFeedbackPart}s for the given <i>targets</i>, in
@@ -55,8 +55,8 @@ public interface IFeedbackPartFactory<V> {
 	 * @return A list of {@link IFeedbackPart}s that are to be used to indicate
 	 *         feedback of the given targets.
 	 */
-	public List<IFeedbackPart<V>> createFeedbackParts(
-			List<IContentPart<V>> targets, IBehavior<V> contextBehavior,
+	public List<IFeedbackPart<VR>> createFeedbackParts(
+			List<IContentPart<VR>> targets, IBehavior<VR> contextBehavior,
 			Map<Object, Object> contextMap);
 
 }

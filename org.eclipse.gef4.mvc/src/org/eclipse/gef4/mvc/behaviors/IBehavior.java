@@ -21,8 +21,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  *
- * @param <V>
+ * @param <VR>
  */
-public interface IBehavior<V> extends IActivatable,
-		IAdaptable.Bound<IVisualPart<V>> {
+public interface IBehavior<VR> extends IActivatable,
+		IAdaptable.Bound<IVisualPart<VR>> {
 }

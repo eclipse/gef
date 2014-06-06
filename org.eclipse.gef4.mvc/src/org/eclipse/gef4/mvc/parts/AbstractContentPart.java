@@ -20,13 +20,13 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
-public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
-		implements IContentPart<V> {
+public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
+		implements IContentPart<VR> {
 
 	private Object content;
 
 	public AbstractContentPart() {
-		setAdapter(new ContentBehavior<V>());
+		setAdapter(new ContentBehavior<VR>());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 	 * ways.
 	 */
 	protected void unregisterFromContentPartMap() {
-		Map<Object, IContentPart<V>> registry = getViewer().getContentPartMap();
+		Map<Object, IContentPart<VR>> registry = getViewer().getContentPartMap();
 		if (registry.get(getContent()) == this)
 			registry.remove(getContent());
 	}
@@ -109,7 +109,7 @@ public abstract class AbstractContentPart<V> extends AbstractVisualPart<V>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setParent(IVisualPart<V> parent) {
+	public void setParent(IVisualPart<VR> parent) {
 		if (getParent() == parent) {
 			return;
 		}

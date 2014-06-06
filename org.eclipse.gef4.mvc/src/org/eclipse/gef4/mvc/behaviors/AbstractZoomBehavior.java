@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
  * @author wienand
  * 
  */
-public abstract class AbstractZoomBehavior<V> extends AbstractBehavior<V>
+public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
 
 	@Override

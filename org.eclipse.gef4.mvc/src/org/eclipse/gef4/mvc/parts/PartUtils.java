@@ -23,10 +23,10 @@ import java.util.List;
 public class PartUtils {
 
 	@SuppressWarnings("unchecked")
-	public static <T extends IVisualPart<V>, V> List<T> filterParts(
-			List<? extends IVisualPart<V>> parts, Class<T> type) {
+	public static <T extends IVisualPart<VR>, VR> List<T> filterParts(
+			List<? extends IVisualPart<VR>> parts, Class<T> type) {
 		List<T> handleParts = new ArrayList<T>();
-		for (IVisualPart<V> c : parts) {
+		for (IVisualPart<VR> c : parts) {
 			if (type.isInstance(c)) {
 				handleParts.add((T) c);
 			}

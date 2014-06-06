@@ -39,12 +39,12 @@ public class BehaviorUtils {
 	 *            the {@link IVisualPart}s to be anchored
 	 * @see #removeAnchoreds(IRootPart, List, List)
 	 */
-	public static <V> void addAnchoreds(IRootPart<V> root,
-			List<IContentPart<V>> anchorages,
-			List<? extends IVisualPart<V>> anchords) {
+	public static <VR> void addAnchoreds(IRootPart<VR> root,
+			List<IContentPart<VR>> anchorages,
+			List<? extends IVisualPart<VR>> anchords) {
 		if (anchords != null && !anchords.isEmpty()) {
 			root.addChildren(anchords);
-			for (IContentPart<V> anchorage : anchorages) {
+			for (IContentPart<VR> anchorage : anchorages) {
 				anchorage.addAnchoreds(anchords);
 			}
 		}
@@ -60,33 +60,33 @@ public class BehaviorUtils {
 	 * @param handles
 	 * @see #addAnchoreds(IRootPart, List, List)
 	 */
-	public static <V> void removeAnchoreds(IRootPart<V> root,
-			List<IContentPart<V>> anchorages,
-			List<? extends IVisualPart<V>> anchords) {
+	public static <VR> void removeAnchoreds(IRootPart<VR> root,
+			List<IContentPart<VR>> anchorages,
+			List<? extends IVisualPart<VR>> anchords) {
 		if (anchords != null && !anchords.isEmpty()) {
 			root.removeChildren(anchords);
-			for (IContentPart<V> anchorage : anchorages) {
+			for (IContentPart<VR> anchorage : anchorages) {
 				anchorage.removeAnchoreds(anchords);
 			}
 		}
 	}
 
-	public static <V> List<IFeedbackPart<V>> createFeedback(
-			IBehavior<V> behavior, List<IContentPart<V>> targets) {
-		IVisualPart<V> host = behavior.getAdaptable();
-		IFeedbackPartFactory<V> factory = host.getRoot().getViewer()
+	public static <VR> List<IFeedbackPart<VR>> createFeedback(
+			IBehavior<VR> behavior, List<IContentPart<VR>> targets) {
+		IVisualPart<VR> host = behavior.getAdaptable();
+		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
-		List<IFeedbackPart<V>> feedbackParts = factory.createFeedbackParts(
+		List<IFeedbackPart<VR>> feedbackParts = factory.createFeedbackParts(
 				targets, behavior, Collections.emptyMap());
 		return feedbackParts;
 	}
 
-	public static <V> List<IHandlePart<V>> createHandles(IBehavior<V> behavior,
-			List<IContentPart<V>> targets) {
-		IVisualPart<V> host = behavior.getAdaptable();
-		IHandlePartFactory<V> factory = host.getRoot().getViewer()
+	public static <VR> List<IHandlePart<VR>> createHandles(IBehavior<VR> behavior,
+			List<IContentPart<VR>> targets) {
+		IVisualPart<VR> host = behavior.getAdaptable();
+		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
-		List<IHandlePart<V>> handleParts = factory.createHandleParts(targets,
+		List<IHandlePart<VR>> handleParts = factory.createHandleParts(targets,
 				behavior, Collections.emptyMap());
 		return handleParts;
 	}

@@ -23,32 +23,32 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  *
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractPolicy<V> implements IPolicy<V> {
+public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
-	private IVisualPart<V> host;
+	private IVisualPart<VR> host;
 
 	@Override
-	public void setAdaptable(IVisualPart<V> adaptable){
+	public void setAdaptable(IVisualPart<VR> adaptable){
 		setHost(adaptable);
 	}
 	
-	public void setHost(IVisualPart<V> host) {
+	public void setHost(IVisualPart<VR> host) {
 		this.host = host;
 	}
 
 	@Override
-	public IVisualPart<V> getAdaptable() {
+	public IVisualPart<VR> getAdaptable() {
 		return getHost();
 	}
 	
-	public IVisualPart<V> getHost() {
+	public IVisualPart<VR> getHost() {
 		return host;
 	}
 	
 	protected void executeOperation(IUndoableOperation operation) {
-		IDomain<V> domain = getHost().getRoot().getViewer().getDomain();
+		IDomain<VR> domain = getHost().getRoot().getViewer().getDomain();
 		IOperationHistory operationHistory = domain.getOperationHistory();
 		operation.addContext(domain.getUndoContext());
 		try {

@@ -19,7 +19,16 @@ import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
 
-public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChangeSupport {
+/**
+ * 
+ * @author nyssen
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ */
+public interface IVisualPart<VR> extends IActivatable, IAdaptable,
+		IPropertyChangeSupport {
 
 	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
@@ -31,9 +40,9 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 	 * 
 	 * @return <code>null</code> or the {@link IRootPart}
 	 */
-	public IRootPart<V> getRoot();
+	public IRootPart<VR> getRoot();
 
-	public abstract V getVisual();
+	public abstract VR getVisual();
 
 	public boolean isRefreshVisual();
 
@@ -49,52 +58,52 @@ public interface IVisualPart<V> extends IActivatable, IAdaptable, IPropertyChang
 
 	public void refreshVisual();
 
-	public void setParent(IVisualPart<V> parent);
+	public void setParent(IVisualPart<VR> parent);
 
-	public IVisualPart<V> getParent();
+	public IVisualPart<VR> getParent();
 
-	public List<IVisualPart<V>> getChildren();
+	public List<IVisualPart<VR>> getChildren();
 
-	public void removeChild(IVisualPart<V> child);
+	public void removeChild(IVisualPart<VR> child);
 
-	public void removeChildren(List<? extends IVisualPart<V>> children);
+	public void removeChildren(List<? extends IVisualPart<VR>> children);
 
-	public void addChild(IVisualPart<V> child, int index);
+	public void addChild(IVisualPart<VR> child, int index);
 
-	public void addChild(IVisualPart<V> child);
+	public void addChild(IVisualPart<VR> child);
 
-	public void addChildren(List<? extends IVisualPart<V>> children);
+	public void addChildren(List<? extends IVisualPart<VR>> children);
 
-	public void reorderChild(IVisualPart<V> child, int index);
+	public void reorderChild(IVisualPart<VR> child, int index);
 
-	// public void addVisualToParentVisual(IVisualPart<V> parent, V
+	// public void addVisualToParentVisual(IVisualPart<VR> parent, V
 	// parentVisual);
 	//
-	// public void removeVisualFromParentVisual(IVisualPart<V> parent, V
+	// public void removeVisualFromParentVisual(IVisualPart<VR> parent, V
 	// parentVisual);
 
-	public void addAnchored(IVisualPart<V> anchored);
+	public void addAnchored(IVisualPart<VR> anchored);
 
 	// TODO: add by index and reordering of anchored
 
-	public void addAnchoreds(List<? extends IVisualPart<V>> anchoreds);
+	public void addAnchoreds(List<? extends IVisualPart<VR>> anchoreds);
 
-	public void removeAnchored(IVisualPart<V> anchored);
+	public void removeAnchored(IVisualPart<VR> anchored);
 
-	public void removeAnchoreds(List<? extends IVisualPart<V>> anchoreds);
+	public void removeAnchoreds(List<? extends IVisualPart<VR>> anchoreds);
 
-	public List<IVisualPart<V>> getAnchoreds();
+	public List<IVisualPart<VR>> getAnchoreds();
 
-	public void addAnchorage(IVisualPart<V> anchorage);
+	public void addAnchorage(IVisualPart<VR> anchorage);
 
-	public void removeAnchorage(IVisualPart<V> anchorage);
+	public void removeAnchorage(IVisualPart<VR> anchorage);
 
-	public List<IVisualPart<V>> getAnchorages();
+	public List<IVisualPart<VR>> getAnchorages();
 
 	// anchorage visual may not be the visual of the anchorage itself!
-	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage,
-			V anchorageVisual);
+	public void attachVisualToAnchorageVisual(IVisualPart<VR> anchorage,
+			VR anchorageVisual);
 
-	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
-			V anchorageVisual);
+	public void detachVisualFromAnchorageVisual(IVisualPart<VR> anchorage,
+			VR anchorageVisual);
 }

@@ -17,9 +17,9 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  * 
  * @author anyssen
  *
- * @param <V>
+ * @param <VR>
  */
-public interface ICompositeTool<V> extends ITool<V> {
+public interface ICompositeTool<VR> extends ITool<VR> {
 
 	/**
 	 * Appends the given {@link ITool} to the list of sub-tools managed by this
@@ -29,7 +29,7 @@ public interface ICompositeTool<V> extends ITool<V> {
 	 * 
 	 * @param tool
 	 */
-	public void add(ITool<V> tool);
+	public void add(ITool<VR> tool);
 
 	/**
 	 * Inserts the given {@link ITool} into the list of sub-tools managed by
@@ -40,14 +40,14 @@ public interface ICompositeTool<V> extends ITool<V> {
 	 * @param index
 	 * @param tool
 	 */
-	public void add(int index, ITool<V> tool);
+	public void add(int index, ITool<VR> tool);
 
 	/**
 	 * Removes the given {@link ITool} from the list of sub-tools.
 	 * 
 	 * @param tool
 	 */
-	public void remove(ITool<V> tool);
+	public void remove(ITool<VR> tool);
 
 	/**
 	 * Removes the {@link ITool} at the given index from the list of sub-tools.
@@ -64,6 +64,6 @@ public interface ICompositeTool<V> extends ITool<V> {
 	 * @param domain
 	 */
 	@Override
-	public void setDomain(IDomain<V> domain);
+	public void setDomain(IDomain<VR> domain);
 
 }

@@ -22,56 +22,56 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractRootPart<V> extends AbstractVisualPart<V>
-		implements IRootPart<V> {
+public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
+		implements IRootPart<VR> {
 
-	private IVisualViewer<V> viewer;
+	private IVisualViewer<VR> viewer;
 
 	public AbstractRootPart() {
-		setAdapter(new ContentBehavior<V>());
+		setAdapter(new ContentBehavior<VR>());
 	}
 
-	public IRootPart<V> getRoot() {
+	public IRootPart<VR> getRoot() {
 		return this;
 	}
 
-	public IVisualViewer<V> getViewer() {
+	public IVisualViewer<VR> getViewer() {
 		return viewer;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IContentPart<V>> getContentPartChildren() {
+	public List<IContentPart<VR>> getContentPartChildren() {
 		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<IHandlePart<V>> getHandlePartChildren() {
+	public List<IHandlePart<VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
 
 	/**
 	 * @see IRootPart#setViewer(IVisualViewer)
 	 */
-	public void setViewer(IVisualViewer<V> newViewer) {
+	public void setViewer(IVisualViewer<VR> newViewer) {
 		if (viewer == newViewer)
 			return;
 		viewer = newViewer;
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<V> anchorage,
-			V anchorageVisual) {
+	public void attachVisualToAnchorageVisual(IVisualPart<VR> anchorage,
+			VR anchorageVisual) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<V> anchorage,
-			V anchorageVisual) {
+	public void detachVisualFromAnchorageVisual(IVisualPart<VR> anchorage,
+			VR anchorageVisual) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

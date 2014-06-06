@@ -13,13 +13,13 @@ package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.gef4.mvc.models.IZoomModel;
 
-public interface IZoomPolicy<V> extends IPolicy<V> {
+public interface IZoomPolicy<VR> extends IPolicy<VR> {
 
 	/**
 	 * Empty default implementation.
 	 */
-	public class Impl<V> extends AbstractPolicy<V> implements
-			IZoomPolicy<V> {
+	public class Impl<VR> extends AbstractPolicy<VR> implements
+			IZoomPolicy<VR> {
 		
 		private double initialZoomFactor;
 		private IZoomModel zoomModel;

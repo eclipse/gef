@@ -21,7 +21,7 @@ import java.util.List;
  * @author anyssen
  */
 // TODO: parameterize with content type
-public interface IContentPart<V> extends IVisualPart<V> {
+public interface IContentPart<VR> extends IVisualPart<VR> {
 	
 	public static final String CONTENT_PROPERTY = "content";
 

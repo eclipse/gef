@@ -28,19 +28,19 @@ import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
  * @author anyssen
  * @author mwienand
  * 
- * @param <V>
+ * @param <VR>
  */
 // TODO: marquee selection can by performed by drag policy on root
-public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
+public abstract class AbstractSelectionTool<VR> extends AbstractTool<VR>
 		implements PropertyChangeListener {
 
 	@Override
-	public void setDomain(IDomain<V> domain) {
+	public void setDomain(IDomain<VR> domain) {
 		super.setDomain(domain);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ISelectionPolicy<V> getToolPolicy(IVisualPart<V> visualPart) {
+	protected ISelectionPolicy<VR> getToolPolicy(IVisualPart<VR> visualPart) {
 		return visualPart.getAdapter(ISelectionPolicy.class);
 	}
 
@@ -52,13 +52,13 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 	 *         <code>false</code>
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean select(IContentPart<V> targetPart, boolean append) {
+	public boolean select(IContentPart<VR> targetPart, boolean append) {
 		// TODO: extract into tool policy
 		boolean changed = true;
 
-		ISelectionModel<V> selectionModel = getSelectionModel();
+		ISelectionModel<VR> selectionModel = getSelectionModel();
 		// retrieve old selection
-		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(
+		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
 				selectionModel.getSelected());
 		// determine new selection
 		if (targetPart == null || getToolPolicy(targetPart) == null
@@ -92,7 +92,7 @@ public abstract class AbstractSelectionTool<V> extends AbstractTool<V>
 		return changed;
 	}
 
-	protected ISelectionModel<V> getSelectionModel() {
+	protected ISelectionModel<VR> getSelectionModel() {
 		return getDomain().getViewer().getSelectionModel();
 	}
 

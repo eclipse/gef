@@ -24,18 +24,18 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * @author anyssen
  * 
  */
-public interface ISelectionModel<V> extends IPropertyChangeSupport {
+public interface ISelectionModel<VR> extends IPropertyChangeSupport {
 
 	public static final String SELECTION_PROPERTY = "selection";
 
-	public abstract void appendSelection(IContentPart<V> editpart);
+	public abstract void appendSelection(IContentPart<VR> editpart);
 
-	public abstract void deselect(IContentPart<V> editpart);
+	public abstract void deselect(IContentPart<VR> editpart);
 
 	public abstract void deselectAll();
 
-	public abstract List<IContentPart<V>> getSelected();
+	public abstract List<IContentPart<VR>> getSelected();
 
-	public abstract void select(IContentPart<V>... editparts);
+	public abstract void select(IContentPart<VR>... editparts);
 
 }

@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.viewer;
 
 import org.eclipse.gef4.mvc.parts.IRootPart;
 
-public interface IViewerBound<V> {
+public interface IViewerBound<VR> {
 
 	/**
 	 * Returns the {@link IVisualViewer} this {@link IViewerBound} is bound to.
@@ -21,7 +21,7 @@ public interface IViewerBound<V> {
 	 * @return The {@link IVisualViewer} this {@link IRootPart} is
 	 *         attached to.
 	 */
-	public abstract IVisualViewer<V> getViewer();
+	public abstract IVisualViewer<VR> getViewer();
 
 	/**
 	 * Sets the {@link IVisualViewer} this {@link IViewerBound} is to be bound to.
@@ -30,6 +30,6 @@ public interface IViewerBound<V> {
 	 *            the {@link IVisualViewer} this {@link IViewerBound} should be
 	 *            attached to.
 	 */
-	public abstract void setViewer(IVisualViewer<V> viewer);
+	public abstract void setViewer(IVisualViewer<VR> viewer);
 
 }

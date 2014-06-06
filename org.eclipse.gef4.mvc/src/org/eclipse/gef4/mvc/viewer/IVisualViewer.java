@@ -34,9 +34,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public interface IVisualViewer<V> extends IDomainBound<V> {
+public interface IVisualViewer<VR> extends IDomainBound<VR> {
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by
@@ -51,7 +51,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 * 
 	 * @return the registry map
 	 */
-	Map<Object, IContentPart<V>> getContentPartMap();
+	Map<Object, IContentPart<VR>> getContentPartMap();
 
 	/**
 	 * Returns the <code>RootEditPart</code>. The RootEditPart is a special
@@ -70,7 +70,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 * @see #setRootPart(IRootPart)
 	 * @return the RootEditPart
 	 */
-	IRootPart<V> getRootPart();
+	IRootPart<VR> getRootPart();
 
 	/**
 	 * Returns the {@link Map} for associating <i>visual parts</i> with their
@@ -82,7 +82,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 * 
 	 * @return the visual part map
 	 */
-	Map<V, IVisualPart<V>> getVisualPartMap();
+	Map<VR, IVisualPart<VR>> getVisualPartMap();
 
 	/**
 	 * Sets the <i>root</i> of this viewer. The root should not be confused with
@@ -93,7 +93,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 * @see #getRootPart()
 	 * @see #getContents()
 	 */
-	void setRootPart(IRootPart<V> root);
+	void setRootPart(IRootPart<VR> root);
 
 	List<Object> getContents();
 	
@@ -105,7 +105,7 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 *            the factory
 	 * @see #getContentPartFactory()
 	 */
-	void setContentPartFactory(IContentPartFactory<V> factory);
+	void setContentPartFactory(IContentPartFactory<VR> factory);
 
 	/**
 	 * Returns the <code>EditPartFactory</code> for this viewer. The
@@ -116,22 +116,22 @@ public interface IVisualViewer<V> extends IDomainBound<V> {
 	 * 
 	 * @return EditPartFactory
 	 */
-	IContentPartFactory<V> getContentPartFactory();
+	IContentPartFactory<VR> getContentPartFactory();
 
-	IHandlePartFactory<V> getHandlePartFactory();
+	IHandlePartFactory<VR> getHandlePartFactory();
 
-	void setHandlePartFactory(IHandlePartFactory<V> factory);
+	void setHandlePartFactory(IHandlePartFactory<VR> factory);
 	
-	IFeedbackPartFactory<V> getFeedbackPartFactory();
+	IFeedbackPartFactory<VR> getFeedbackPartFactory();
 
-	void setFeedbackPartFactory(IFeedbackPartFactory<V> factory);
+	void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory);
 
 	// selection based on content parts
-	ISelectionModel<V> getSelectionModel();
+	ISelectionModel<VR> getSelectionModel();
 
-	IHoverModel<V> getHoverModel();
+	IHoverModel<VR> getHoverModel();
 
-	IFocusModel<V> getFocusModel();
+	IFocusModel<VR> getFocusModel();
 
 	IZoomModel getZoomModel();
 

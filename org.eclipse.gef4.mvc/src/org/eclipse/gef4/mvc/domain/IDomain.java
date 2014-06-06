@@ -23,20 +23,20 @@ import org.eclipse.gef4.mvc.viewer.IViewerBound;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
 // TODO: it seems to be not nice that the domain is bound directly to the
 // viewer.
-public interface IDomain<V> extends IAdaptable, IViewerBound<V> {
+public interface IDomain<VR> extends IAdaptable, IViewerBound<VR> {
 
 	/**
 	 * Returns the active Tool
 	 * 
 	 * @return the active Tool
 	 */
-	public abstract ITool<V> peekTool();
+	public abstract ITool<VR> peekTool();
 
-	public abstract ITool<V> popTool();
+	public abstract ITool<VR> popTool();
 
 	/**
 	 * Sets the active Tool for this EditDomain. If a current Tool is active, it
@@ -45,7 +45,7 @@ public interface IDomain<V> extends IAdaptable, IViewerBound<V> {
 	 * @param tool
 	 *            the Tool
 	 */
-	public abstract void pushTool(ITool<V> tool);
+	public abstract void pushTool(ITool<VR> tool);
 
 	
 	/**

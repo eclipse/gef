@@ -17,17 +17,17 @@ package org.eclipse.gef4.mvc.parts;
  * 
  * @param <V>
  */
-public abstract class AbstractHandlePart<V> extends AbstractVisualPart<V>
-		implements IHandlePart<V> {
+public abstract class AbstractHandlePart<VR> extends AbstractVisualPart<VR>
+		implements IHandlePart<VR> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<V> child, int index) {
+	protected void addChildVisual(IVisualPart<VR> child, int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<V> child) {
+	protected void removeChildVisual(IVisualPart<VR> child) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support this");
 	}

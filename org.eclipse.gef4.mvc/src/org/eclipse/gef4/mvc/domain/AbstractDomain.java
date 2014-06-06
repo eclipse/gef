@@ -24,15 +24,15 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
-public abstract class AbstractDomain<V> implements IDomain<V> {
+public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
-	private AdaptableSupport<IDomain<V>> as = new AdaptableSupport<IDomain<V>>(
+	private AdaptableSupport<IDomain<VR>> as = new AdaptableSupport<IDomain<VR>>(
 			this);
 
-			private Stack<ITool<V>> toolsStack = new Stack<ITool<V>>();
-	private IVisualViewer<V> viewer;
+			private Stack<ITool<VR>> toolsStack = new Stack<ITool<VR>>();
+	private IVisualViewer<VR> viewer;
 
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
@@ -73,7 +73,7 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	 * .IEditPartViewer)
 	 */
 	@Override
-	public void setViewer(IVisualViewer<V> viewer) {
+	public void setViewer(IVisualViewer<VR> viewer) {
 		if (this.viewer == viewer) {
 			return;
 		}
@@ -100,7 +100,7 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	 * @see org.eclipse.gef.ui.parts.IEditDomain#getActiveTool()
 	 */
 	@Override
-	public ITool<V> peekTool() {
+	public ITool<VR> peekTool() {
 		if (toolsStack.isEmpty()) {
 			return null;
 		}
@@ -117,10 +117,10 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 		return operationHistory;
 	}
 
-	protected abstract ITool<V> getDefaultTool();
+	protected abstract ITool<VR> getDefaultTool();
 
 	@Override
-	public IVisualViewer<V> getViewer() {
+	public IVisualViewer<VR> getViewer() {
 		return viewer;
 	}
 
@@ -144,9 +144,9 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	 * .ITool)
 	 */
 	@Override
-	public void pushTool(ITool<V> tool) {
+	public void pushTool(ITool<VR> tool) {
 		if (tool != null) {
-			ITool<V> currentTool = peekTool();
+			ITool<VR> currentTool = peekTool();
 			toolsStack.push(tool);
 			if (viewer != null) {
 				if (currentTool != null) {
@@ -160,9 +160,9 @@ public abstract class AbstractDomain<V> implements IDomain<V> {
 	}
 
 	@Override
-	public ITool<V> popTool() {
+	public ITool<VR> popTool() {
 		if (!toolsStack.isEmpty()) {
-			ITool<V> currentTool = toolsStack.pop();
+			ITool<VR> currentTool = toolsStack.pop();
 			if (viewer != null) {
 				if (currentTool != null) {
 					currentTool.deactivate();
