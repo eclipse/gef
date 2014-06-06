@@ -19,6 +19,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
+import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -58,6 +59,14 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		if (layoutDx == 0 && layoutDy == 0 && layoutDw == 0 && layoutDh == 0) {
 			operation = null;
 		} else {
+			// ensure visual is not resized below threshold
+			if (initialWidth + layoutDw < getMinimumWidth()) {
+				layoutDw = getMinimumWidth() - initialWidth;
+			}
+			if (initialHeight + layoutDh < getMinimumHeight()) {
+				layoutDh = getMinimumHeight() - initialHeight;
+			}
+			
 			operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
 					visual, new Point(initialLayoutX, initialLayoutY),
 					new Dimension(initialWidth, initialHeight), layoutDx,
@@ -71,10 +80,14 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#commit()
-	 */
-	@Override
+	protected double getMinimumHeight() {
+		return FXSelectionHandlePart.SIZE;
+	}
+
+	protected double getMinimumWidth() {
+		return FXSelectionHandlePart.SIZE;
+	}
+
 	public IUndoableOperation commit() {
 		IUndoableOperation commit = operation;
 		// TODO: build a compound operation that comprises model changes.

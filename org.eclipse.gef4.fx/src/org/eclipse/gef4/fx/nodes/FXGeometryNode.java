@@ -61,6 +61,13 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void resize(double width, double height) {
+		if (width < 0) {
+			throw new IllegalArgumentException("Cannot resize: width < 0.");
+		}
+		if (height < 0) {
+			throw new IllegalArgumentException("Cannot resize: height < 0.");
+		}
+
 		Rectangle bounds = geometry.getBounds();
 
 		// prevent unnecessary updates

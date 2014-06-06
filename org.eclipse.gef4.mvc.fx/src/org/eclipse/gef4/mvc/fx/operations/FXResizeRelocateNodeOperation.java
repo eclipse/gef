@@ -38,6 +38,14 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		super(label);
 		this.visual = visual;
 		this.oldLocation = oldLocation;
+		
+		if (oldSize.width + dw < 0) {
+			throw new IllegalArgumentException("Cannot resize below zero.");
+		}
+		if (oldSize.height + dh < 0) {
+			throw new IllegalArgumentException("Cannot resize below zero.");
+		}
+		
 		this.oldSize = oldSize;
 		this.dx = dx;
 		this.dy = dy;
