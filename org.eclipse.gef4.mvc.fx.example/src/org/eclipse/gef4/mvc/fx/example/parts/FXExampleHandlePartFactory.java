@@ -104,7 +104,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new MoveWayPointOnHandleDragPolicy(targetPart, part));
+					new MoveWayPointOnHandleDragPolicy());
 		} else {
 			// make end points reconnectable
 			part.setAdapter(AbstractFXDragPolicy.class,

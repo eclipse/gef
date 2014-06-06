@@ -22,30 +22,29 @@ import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
-	private final IContentPart<Node> targetPart;
-	private final FXSelectionHandlePart part;
-
-	public MoveWayPointOnHandleDragPolicy(IContentPart<Node> targetPart /* getAnchorages().get(0) */,
-			FXSelectionHandlePart part /* getHost()*/) {
-		this.targetPart = targetPart;
-		this.part = part;
+	public MoveWayPointOnHandleDragPolicy() {
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		getWayPointHandlePolicy(targetPart).selectWayPoint(
-				part.getVertexIndex() - 1,
+		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).selectWayPoint(
+				getVertexIndex(),
 				new Point(e.getSceneX(), e.getSceneY()));
+	}
+
+	private int getVertexIndex() {
+		return ((FXSelectionHandlePart) getHost()).getVertexIndex() - 1;
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		getWayPointHandlePolicy(targetPart).updateWayPoint(
-				part.getVertexIndex() - 1,
+		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).updateWayPoint(
+				getVertexIndex(),
 				new Point(e.getSceneX(), e.getSceneY()));
 	}
 
@@ -53,15 +52,16 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		// operation =
-		getWayPointHandlePolicy(targetPart).commitWayPoint(
-				part.getVertexIndex() - 1,
+		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).commitWayPoint(
+				getVertexIndex(),
 				new Point(e.getSceneX(), e.getSceneY()));
 		// FIXME: change way point operation bug: NPE
 		// executeOperation(operation);
 	}
 
 	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
-			IContentPart<Node> targetPart) {
+			IVisualPart<Node> targetPart) {
 		return targetPart.getAdapter(AbstractFXWayPointPolicy.class);
 	}
+	
 }
