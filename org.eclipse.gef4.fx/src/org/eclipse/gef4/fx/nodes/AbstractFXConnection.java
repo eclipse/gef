@@ -263,6 +263,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
+		/*
+		 * FIXME: Actually, the functionality of getCurvePoints() should really
+		 * be that of getCurvePointsSimple() and the position and orientation of
+		 * the decorations should be computed afterwards (currently inside of
+		 * getCurveStartPoint() and getCurveEndPoint()).
+		 */
+		curveNode.setGeometry(computeGeometry(getCurvePointsSimple()));
+
 		Point[] points = new Point[wayPointAnchors.size() + 2];
 
 		points[0] = getCurveStartPoint();
@@ -285,6 +293,29 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return points;
 	}
 
+	private Point[] getCurvePointsSimple() {
+		Point[] points = new Point[wayPointAnchors.size() + 2];
+
+		points[0] = getStartPoint();
+		if (points[0] == null) {
+			return new Point[] {};
+		}
+
+		for (int i = 0; i < wayPointAnchors.size(); i++) {
+			points[1 + i] = wayPointAnchors.get(i).getPosition(this);
+			if (points[i + 1] == null) {
+				return new Point[] {};
+			}
+		}
+
+		points[points.length - 1] = getEndPoint();
+		if (points[points.length - 1] == null) {
+			return new Point[] {};
+		}
+
+		return points;
+	}
+
 	/**
 	 * Returns the start point for computing this connection's curve visual.
 	 * 
@@ -298,6 +329,16 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		// determine curve start point and curve start direction
 		Point startPoint = getStartPoint();
 		ICurve curve = getCurveNode().getGeometry();
+
+		/*
+		 * TODO: In order to compute the curve node, we have to determine the
+		 * curve's points. But in order to determine the curve's points, we need
+		 * the computed curve here (because of the decoration).
+		 */
+		if (curve == null) {
+			return getStartPoint();
+		}
+
 		BezierCurve startDerivative = curve.toBezier()[0].getDerivative();
 		Point slope = startDerivative.get(0);
 		if (slope.equals(0, 0)) {
