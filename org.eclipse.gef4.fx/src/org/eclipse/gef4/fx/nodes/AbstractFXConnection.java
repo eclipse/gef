@@ -27,10 +27,11 @@ import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.BezierCurve;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public abstract class AbstractFXConnection<T extends IGeometry> extends Group
+public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		implements IFXConnection {
 
 	// visuals
@@ -211,17 +212,29 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 			return getEndPoint();
 		}
 
-		Point sp = getEndPoint();
-		Point next = wayPointAnchors.size() > 0 ? wayPointAnchors.get(
-				wayPointAnchors.size() - 1).getPosition(this) : getStartPoint();
-		Vector sv = new Vector(sp, next);
+		// determine curve end point and curve end direction
+		Point endPoint = getEndPoint();
+		ICurve curve = getCurveNode().getGeometry();
+		BezierCurve[] beziers = curve.toBezier();
+		BezierCurve endDerivative = beziers[beziers.length - 1].getDerivative();
+		Point slope = endDerivative.get(1);
+		if (slope.equals(0, 0)) {
+			/*
+			 * This is the case when beziers[-1] is a degenerated curve where
+			 * the last control point equals the end point. As a work around, we
+			 * evaluate the derivative at t = 0.99.
+			 */
+			slope = endDerivative.get(0.99);
+		}
+		Vector endDirection = new Vector(slope.getNegated());
 
-		Point dsp = endDecoration.getLocalStartPoint();
-		Point dep = endDecoration.getLocalEndPoint();
-		Vector dv = new Vector(dsp, dep);
+		// determine decoration start point and decoration direction
+		Point decoStartPoint = endDecoration.getLocalStartPoint();
+		Point decoEndPoint = endDecoration.getLocalEndPoint();
+		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
 
-		// TODO: move arrangement to somewhere else
-		return arrangeDecoration(endDecoration, sp, sv, dsp, dv);
+		return arrangeDecoration(endDecoration, endPoint, endDirection,
+				decoStartPoint, decoDirection);
 	}
 
 	@Override
@@ -282,17 +295,28 @@ public abstract class AbstractFXConnection<T extends IGeometry> extends Group
 			return getStartPoint();
 		}
 
-		Point sp = getStartPoint();
-		Point next = wayPointAnchors.size() > 0 ? wayPointAnchors.get(0)
-				.getPosition(this) : getEndPoint();
-		Vector sv = new Vector(sp, next);
+		// determine curve start point and curve start direction
+		Point startPoint = getStartPoint();
+		ICurve curve = getCurveNode().getGeometry();
+		BezierCurve startDerivative = curve.toBezier()[0].getDerivative();
+		Point slope = startDerivative.get(0);
+		if (slope.equals(0, 0)) {
+			/*
+			 * This is the case when beziers[0] is a degenerated curve where the
+			 * start point equals the first control point. As a work around, we
+			 * evaluate the derivative at t = 0.01.
+			 */
+			slope = startDerivative.get(0.01);
+		}
+		Vector curveStartDirection = new Vector(slope);
 
-		Point dsp = startDecoration.getLocalStartPoint();
-		Point dep = startDecoration.getLocalEndPoint();
-		Vector dv = new Vector(dsp, dep);
+		// determine decoration start point and decoration start direction
+		Point decoStartPoint = startDecoration.getLocalStartPoint();
+		Point decoEndPoint = startDecoration.getLocalEndPoint();
+		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
 
-		// TODO: move arrangement to somewhere else
-		return arrangeDecoration(startDecoration, sp, sv, dsp, dv);
+		return arrangeDecoration(startDecoration, startPoint,
+				curveStartDirection, decoStartPoint, decoDirection);
 	}
 
 	@Override
