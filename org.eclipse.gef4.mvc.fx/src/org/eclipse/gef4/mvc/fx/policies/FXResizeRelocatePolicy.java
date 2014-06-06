@@ -68,6 +68,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	public IUndoableOperation commit() {
 		IUndoableOperation commit = operation;
+		// TODO: build a compound operation that comprises model changes.
 		operation = null;
 		return commit;
 	}

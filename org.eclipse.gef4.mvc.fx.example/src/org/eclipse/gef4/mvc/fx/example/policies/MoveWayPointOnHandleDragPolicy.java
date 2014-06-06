@@ -28,8 +28,8 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	private final IContentPart<Node> targetPart;
 	private final FXSelectionHandlePart part;
 
-	public MoveWayPointOnHandleDragPolicy(IContentPart<Node> targetPart,
-			FXSelectionHandlePart part) {
+	public MoveWayPointOnHandleDragPolicy(IContentPart<Node> targetPart /* getAnchorages().get(0) */,
+			FXSelectionHandlePart part /* getHost()*/) {
 		this.targetPart = targetPart;
 		this.part = part;
 	}

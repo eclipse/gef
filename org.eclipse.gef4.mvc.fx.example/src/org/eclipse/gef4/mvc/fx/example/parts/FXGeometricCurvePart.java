@@ -123,6 +123,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 								wayPointIndex, p);
 						setRefreshVisual(false);
 						FXGeometricCurve curve = getContent();
+						// TODO: encapsulate the following (model changes) in operation and return as compound operation
 						List<Point> curveWPs = curve.getWayPoints();
 						for (int i = curveWPs.size() - 1; i >= 0; i--) {
 							curve.removeWayPoint(i);
