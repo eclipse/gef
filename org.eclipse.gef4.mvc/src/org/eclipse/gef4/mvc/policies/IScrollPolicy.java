@@ -9,11 +9,10 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.policies;
+package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.policies.IPolicy;
 
-// TODO: generalize API, move to MVC
+// TODO: generalize API
 public interface IScrollPolicy<V> extends IPolicy<V> {
 
 	public void scroll(double deltaY);

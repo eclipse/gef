@@ -19,10 +19,10 @@ import javafx.scene.Scene;
 import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.fx.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
+import org.eclipse.gef4.mvc.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 
 public class FXScrollTool extends AbstractTool<Node> {

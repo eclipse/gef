@@ -16,8 +16,8 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
-import org.eclipse.gef4.mvc.fx.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageViewer;
+import org.eclipse.gef4.mvc.policies.IScrollPolicy;
 import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 public class FXExampleApplication extends Application {

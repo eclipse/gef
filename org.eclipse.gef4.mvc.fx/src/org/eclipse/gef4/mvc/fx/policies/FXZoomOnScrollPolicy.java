@@ -15,6 +15,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.IScrollPolicy;
 
 // TODO: adjust API, move to MVC
 public class FXZoomOnScrollPolicy extends AbstractPolicy<Node> implements IScrollPolicy<Node> {
