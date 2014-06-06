@@ -73,7 +73,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			if (ILayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
 					.getPropertyName())) {
 				GraphLayoutContext layoutContext = (GraphLayoutContext) getViewer()
-						.getDomain().getProperty(ILayoutModel.class)
+						.getDomain().getAdapter(ILayoutModel.class)
 						.getLayoutContext();
 				if (layoutContext != null) {
 					initEdgeLayout();
@@ -93,7 +93,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	@Override
 	public void activate() {
 		super.activate();
-		getViewer().getDomain().getProperty(ILayoutModel.class)
+		getViewer().getDomain().getAdapter(ILayoutModel.class)
 				.addPropertyChangeListener(layoutContextListener);
 	}
 
@@ -122,7 +122,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	protected void initEdgeLayout() {
 		edgeLayout = ((GraphLayoutContext) getViewer().getDomain()
-				.getProperty(ILayoutModel.class).getLayoutContext())
+				.getAdapter(ILayoutModel.class).getLayoutContext())
 				.getEdgeLayout(edge);
 
 		// decoration

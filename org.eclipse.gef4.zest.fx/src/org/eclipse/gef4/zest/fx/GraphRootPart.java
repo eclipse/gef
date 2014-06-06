@@ -59,7 +59,7 @@ public class GraphRootPart extends FXRootPart {
 
 				// set layout context. other parts listen for the layout model
 				// to send in their layout data
-				getViewer().getDomain().getProperty(ILayoutModel.class)
+				getViewer().getDomain().getAdapter(ILayoutModel.class)
 						.setLayoutContext(context);
 				applyLayout(context);
 			}
@@ -131,7 +131,7 @@ public class GraphRootPart extends FXRootPart {
 	}
 
 	protected GraphLayoutContext getLayoutContext() {
-		ILayoutModel layoutModel = getViewer().getDomain().getProperty(
+		ILayoutModel layoutModel = getViewer().getDomain().getAdapter(
 				ILayoutModel.class);
 		if (layoutModel == null) {
 			return null;

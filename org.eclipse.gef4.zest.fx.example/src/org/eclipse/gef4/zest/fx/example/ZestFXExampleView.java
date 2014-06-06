@@ -80,7 +80,7 @@ public class ZestFXExampleView extends FXView {
 	@Override
 	protected void configureDomain(FXDomain domain) {
 		super.configureDomain(domain);
-		domain.setProperty(ILayoutModel.class, new DefaultLayoutModel());
+		domain.setAdapter(ILayoutModel.class, new DefaultLayoutModel());
 	}
 
 	@Override
