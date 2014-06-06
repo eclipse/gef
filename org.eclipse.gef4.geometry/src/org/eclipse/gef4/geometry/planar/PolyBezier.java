@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 itemis AG and others.
+ * Copyright (c) 2012, 2014 itemis AG and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -30,7 +30,12 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
 
-	private static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
+	/**
+	 * The default curve width coefficient used in interpolateCubic(...)
+	 * methods.
+	 */
+	public static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
+
 	private static final long serialVersionUID = 1L;
 
 	private static BezierCurve[] copy(BezierCurve... beziers) {
@@ -78,9 +83,11 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	public static PolyBezier interpolateCubic(Angle startAngle,
 			double startLength, Angle endAngle, double endLength,
 			double curveWidthCoefficient, Point... wayPoints) {
-		// TODO: add way points to assure curve constraints given by startAngle,
-		// endAngle, startLength, and endLength.
-		return interpolateCubic(curveWidthCoefficient, wayPoints);
+		// TODO: alter way points => leave space for start/end segments
+		PolyBezier interpolation = interpolateCubic(curveWidthCoefficient,
+				wayPoints);
+		// TODO: compute cubic curves for start/end segments
+		return interpolation;
 	}
 
 	/**
