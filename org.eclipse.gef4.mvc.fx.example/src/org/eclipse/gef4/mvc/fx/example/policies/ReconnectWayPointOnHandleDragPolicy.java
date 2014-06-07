@@ -45,6 +45,7 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	public void press(MouseEvent e) {
 		AbstractFXReconnectPolicy p = getReconnectionPolicy(targetPart);
 		if (p != null) {
+			p.init();
 			p.press(!isEndPoint, new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}

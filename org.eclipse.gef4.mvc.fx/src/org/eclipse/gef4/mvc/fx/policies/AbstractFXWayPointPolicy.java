@@ -24,6 +24,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+// TODO: implement ITransactional
 public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 
 	protected static final double REMOVE_THRESHOLD = 10;
@@ -144,7 +145,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 		} catch (ExecutionException e) {
 			throw new IllegalStateException(e);
 		}
-		
+
 		return op;
 	}
 

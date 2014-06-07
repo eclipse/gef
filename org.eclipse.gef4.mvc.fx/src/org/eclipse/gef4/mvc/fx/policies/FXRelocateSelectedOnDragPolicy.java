@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
@@ -41,7 +42,7 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 	public void press(MouseEvent e) {
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		for (IContentPart<Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			ITransactional policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				policy.init();
 			}
@@ -74,7 +75,7 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
 				"Resize/Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			ITransactional policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				IUndoableOperation commit = policy.commit();
 				if (commit != null) {

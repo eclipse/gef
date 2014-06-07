@@ -25,10 +25,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation.AnchorKind;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node>
+		implements ITransactional {
 
 	private boolean isStartAnchor;
 	private Point2D startPointScene;
@@ -56,7 +58,6 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
 	}
 
 	public void press(boolean isStart, Point startPointInScene) {
-		getHost().setRefreshVisual(false);
 		isStartAnchor = isStart;
 		startPointScene = new Point2D(startPointInScene.x, startPointInScene.y);
 		startPointLocal = getHost().getVisual().sceneToLocal(startPointScene);
@@ -111,6 +112,11 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node> {
 		return connected;
 	}
 
+	@Override
+	public void init() {
+		getHost().setRefreshVisual(false);
+	}
+	
 	public IUndoableOperation commit() {
 		getHost().setRefreshVisual(true);
 		return op;
