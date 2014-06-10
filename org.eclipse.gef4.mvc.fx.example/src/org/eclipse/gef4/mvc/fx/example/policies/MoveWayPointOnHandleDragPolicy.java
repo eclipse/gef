@@ -17,35 +17,53 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
+	
+	private List<IHandlePart<Node>> parts;
 
-	public MoveWayPointOnHandleDragPolicy() {
+	public MoveWayPointOnHandleDragPolicy(List<IHandlePart<Node>> parts) {
+		this.parts = parts;
 	}
-
+	
 	@Override
 	public void press(MouseEvent e) {
 		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).selectWayPoint(
-				getVertexIndex(),
+				getSegmentIndex(),
 				new Point(e.getSceneX(), e.getSceneY()));
 	}
 
-	private int getVertexIndex() {
-		return ((FXSelectionHandlePart) getHost()).getVertexIndex() - 1;
+	private int getSegmentIndex() {
+		return ((FXSelectionHandlePart) getHost()).getSegmentIndex() - 1;
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
+		IFXConnection connection = getWayPointHandlePolicy(getHost().getAnchorages().get(0)).getConnection();
+		List<Point> before = connection.getWayPoints();
+		
 		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).moveWayPoint(
 				new Point(e.getSceneX(), e.getSceneY()));
+		
+		List<Point> after = connection.getWayPoints();
+		
+		if (before.size() != after.size()) {
+			// re-assign segment index
+			for (int i = 0; i < parts.size(); i++) {
+				FXSelectionHandlePart part = (FXSelectionHandlePart) parts.get(i);
+				part.setSegmentIndex(i);
+			}
+		}
 	}
 
 	@Override

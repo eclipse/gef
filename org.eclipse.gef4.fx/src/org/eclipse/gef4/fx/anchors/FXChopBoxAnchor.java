@@ -154,7 +154,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	@Override
 	public void recomputePositions() {
-		ObservableMap<Node, Point> ref = referencePointProperty().get();
+		ObservableMap<Node, Point> ref = referencePointProperty == null ? null
+				: referencePointProperty.get();
 		if (ref == null) {
 			return;
 		}

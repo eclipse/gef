@@ -45,6 +45,8 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 
 	@Override
 	public IUndoableOperation commit() {
+		removed = null;
+		removedIndex = -1;
 		getHost().setRefreshVisual(true);
 		return op;
 	}
@@ -80,6 +82,9 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 	private void hideShowOverlaid() {
 		// put removed back in
 		if (removed != null) {
+			if (removedIndex <= wayPointIndex) {
+				wayPointIndex++;
+			}
 			currentWayPoints.add(removedIndex, removed);
 			removed = null;
 		}
@@ -100,6 +105,9 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 
 		// remove neighbor if overlaid
 		if (removedIndex != -1) {
+			if (wayPointIndex > removedIndex) {
+				wayPointIndex--;
+			}
 			removed = currentWayPoints.get(removedIndex);
 			currentWayPoints.remove(removedIndex);
 		}

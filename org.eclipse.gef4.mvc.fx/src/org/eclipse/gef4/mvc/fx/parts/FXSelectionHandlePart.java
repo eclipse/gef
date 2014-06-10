@@ -42,7 +42,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  */
 public class FXSelectionHandlePart extends AbstractFXHandlePart {
-	
+
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 	public static final Color FILL_BLUE = Color.web("#d5faff");
 	public static final double SIZE = 5d;
@@ -50,26 +50,30 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 	protected Shape visual;
 	protected IContentPart<Node> targetPart;
 	protected IProvider<IGeometry> handleGeometryProvider;
-	protected int vertexIndex;
-	protected boolean isEndPoint;
-	
-	public boolean isEndPoint() {
-		return isEndPoint;
+
+	/**
+	 * See {@link #getSegmentIndex()}.
+	 */
+	protected int segmentIndex;
+
+	/**
+	 * See #getsegmentparameter().
+	 */
+	protected double segmentParameter;
+
+	public FXSelectionHandlePart(IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, int segmentIndex) {
+		this(targetPart, handleGeometryProvider, segmentIndex, 0);
 	}
 
 	public FXSelectionHandlePart(IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
-		this(targetPart, handleGeometryProvider, vertexIndex, false);
-	}
-
-	public FXSelectionHandlePart(IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int vertexIndex,
-			boolean isEndPoint) {
+			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
+			double segmentParameter) {
 		super();
 		this.targetPart = targetPart;
 		this.handleGeometryProvider = handleGeometryProvider;
-		this.vertexIndex = vertexIndex;
-		this.isEndPoint = isEndPoint;
+		this.segmentIndex = segmentIndex;
+		this.segmentParameter = segmentParameter;
 
 		visual = createHandleVisual(handleGeometryProvider.get());
 
@@ -77,14 +81,6 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		visual.setStroke(STROKE_DARK_BLUE);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
-	}
-	
-	public int getVertexIndex() {
-		return vertexIndex;
-	}
-	
-	public void incVertexIndex() {
-		vertexIndex++;
 	}
 
 	/**
@@ -110,46 +106,23 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		return shape;
 	}
 
-	@Override
-	public Node getVisual() {
-		return visual;
-	}
-
-	@Override
-	public void refreshVisual() {
-		// get new position (in local coordinate space)
-		Point position = getPosition(handleGeometryProvider.get());
-		
-		// transform to handle space
-		Node targetVisual = targetPart.getVisual();
-		Pane handleLayer = ((FXRootPart) getRoot()).getHandleLayer();
-		Point2D point2d = handleLayer.sceneToLocal(
-				targetVisual.localToScene(position.x, position.y));
-		
-		// update visual layout position
-		visual.setLayoutX(point2d.getX());
-		visual.setLayoutY(point2d.getY());
-	}
-
 	protected Point getPosition(IGeometry handleGeometry) {
 		Point position = null;
 
 		if (handleGeometry instanceof IShape) {
 			IShape shape = (IShape) handleGeometry;
 			ICurve[] segments = shape.getOutlineSegments();
-			position = segments[vertexIndex].getP1();
+			position = segments[segmentIndex].toBezier()[0]
+					.get(segmentParameter);
 		} else if (handleGeometry instanceof ICurve) {
 			ICurve curve = (ICurve) handleGeometry;
 			BezierCurve[] beziers = curve.toBezier();
 			if (beziers == null) {
-				// TODO: hide visual
 				position = new Point();
-			} else if (vertexIndex >= beziers.length) {
-				// TODO: hide visual
+			} else if (segmentIndex >= beziers.length) {
 				position = new Point();
 			} else {
-				BezierCurve bc = beziers[vertexIndex];
-				position = isEndPoint ? bc.getP2() : bc.getP1();
+				position = beziers[segmentIndex].get(segmentParameter);
 			}
 		} else {
 			throw new IllegalStateException(
@@ -158,6 +131,84 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		}
 
 		return position;
+	}
+
+	/**
+	 * The segmentIndex specifies the segment of the IGeometry provided by the
+	 * handle geometry provider on which this selection handle part is
+	 * positioned.
+	 * 
+	 * For a shape geometry, segments are determined by the
+	 * {@link IShape#getOutlineSegments()} method.
+	 * 
+	 * For a curve geometry, segments are determined by the
+	 * {@link ICurve#toBezier()} method.
+	 * 
+	 * The exact position on the segment is specified by the
+	 * {@link #getSegmentParameter() segmentParameter}.
+	 * 
+	 * @return segmentIndex
+	 */
+	public int getSegmentIndex() {
+		return segmentIndex;
+	}
+
+	/**
+	 * The segmentParameter is a value between 0 and 1. It determines the final
+	 * point on the segment which this selection handle part belongs to.
+	 * 
+	 * @return segmentParameter
+	 */
+	public double getSegmentParameter() {
+		return segmentParameter;
+	}
+
+	@Override
+	public Node getVisual() {
+		return visual;
+	}
+
+	@Override
+	public void refreshVisual() {
+		FXRootPart rootPart = (FXRootPart) getRoot();
+		if (rootPart == null) {
+			return;
+		}
+
+		// get new position (in local coordinate space)
+		Point position = getPosition(handleGeometryProvider.get());
+
+		// transform to handle space
+		Node targetVisual = targetPart.getVisual();
+		Pane handleLayer = rootPart.getHandleLayer();
+		Point2D point2d = handleLayer.sceneToLocal(targetVisual.localToScene(
+				position.x, position.y));
+
+		// update visual layout position
+		visual.setLayoutX(point2d.getX());
+		visual.setLayoutY(point2d.getY());
+	}
+
+	/**
+	 * Sets the segment index. Refreshs the handle visual.
+	 * 
+	 * @param segmentIndex
+	 * @see #getSegmentIndex()
+	 */
+	public void setSegmentIndex(int segmentIndex) {
+		this.segmentIndex = segmentIndex;
+		refreshVisual();
+	}
+
+	/**
+	 * Sets the segment parameter. Refreshs the handle visual.
+	 * 
+	 * @param segmentParameter
+	 * @see #getSegmentParameter()
+	 */
+	public void setSegmentParameter(double segmentParameter) {
+		this.segmentParameter = segmentParameter;
+		refreshVisual();
 	}
 
 }

@@ -114,6 +114,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				throws ExecutionException {
 			removeCurveWayPoints();
 			addCurveWayPoints(newWayPoints);
+//			System.out.println(toString());
 			return Status.OK_STATUS;
 		}
 

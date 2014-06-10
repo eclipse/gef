@@ -39,6 +39,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	private final static Color FILL_CONNECTED = Color.web("#ff0000");
+	private List<IHandlePart<Node>> parts;
 
 	@Override
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
@@ -73,8 +74,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
-		// create vertex handles
-		final List<IHandlePart<Node>> parts = super
+		parts = super
 				.createCurveSelectionHandleParts(targetPart,
 						handleGeometryProvider, geom);
 
@@ -82,10 +82,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			int segmentIndex = i;
-			final FXMidPointHandlePart hp = new FXMidPointHandlePart(
-					targetPart, handleGeometryProvider, segmentIndex);
+			final FXSelectionHandlePart hp = new FXSelectionHandlePart(
+					targetPart, handleGeometryProvider, segmentIndex, 0.5);
 			hp.setAdapter(AbstractFXDragPolicy.class,
-					new InsertWayPointOnHandleDragPolicy(hp, parts, targetPart));
+					new InsertWayPointOnHandleDragPolicy(parts));
 			parts.add(hp);
 		}
 
@@ -104,15 +104,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new MoveWayPointOnHandleDragPolicy());
+					new MoveWayPointOnHandleDragPolicy(parts));
 		} else {
 			// make end points reconnectable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new ReconnectWayPointOnHandleDragPolicy(targetPart, part,
-							isEndPoint));
-
+					new ReconnectWayPointOnHandleDragPolicy(isEndPoint));
 			// change color to red if they are connected
-			// TODO: move to somewhere else
 			if (targetPart instanceof FXGeometricCurvePart) {
 				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
 				IFXConnection connection = (IFXConnection) cp.getVisual();

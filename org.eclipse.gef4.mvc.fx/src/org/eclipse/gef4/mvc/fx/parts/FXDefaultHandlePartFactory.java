@@ -32,115 +32,6 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
-	@Override
-	public List<IHandlePart<Node>> createHandleParts(
-			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
-		// no targets
-		if (targets == null || targets.isEmpty())
-			return Collections.emptyList();
-
-		// differentiate creation context
-		if (contextBehavior instanceof FXSelectionBehavior) {
-			return createSelectionHandleParts(targets,
-					(FXSelectionBehavior) contextBehavior);
-		}
-
-		// unknown creation context, do not create handles
-		return Collections.emptyList();
-	}
-
-	public List<IHandlePart<Node>> createSelectionHandleParts(
-			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior) {
-		// multiple selection
-		if (targets.size() > 1) {
-			return createMultiSelectionHandleParts(targets, selectionBehavior);
-		}
-
-		// single selection
-		final IContentPart<Node> targetPart = targets.get(0);
-		IProvider<IGeometry> handleGeometryProvider = selectionBehavior
-				.getHandleGeometryProvider();
-
-		// generate handles from handle geometry
-		IGeometry geom = handleGeometryProvider.get();
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
-
-		if (geom instanceof ICurve) {
-			handleParts.addAll(createCurveSelectionHandleParts(
-					targetPart, handleGeometryProvider, geom));
-		} else {
-			// everything else is expected to be an IShape, even though the user
-			// could supply a Path
-			if (geom instanceof IShape) {
-				IShape shape = (IShape) geom;
-				ICurve[] edges = shape.getOutlineSegments();
-				// create a handle for each vertex
-				for (int i = 0; i < edges.length; i++) {
-					IHandlePart<Node> hp = createShapeSelectionHandlePart(
-							targetPart, handleGeometryProvider, i);
-					handleParts.add(hp);
-				}
-			} else {
-				throw new IllegalStateException(
-						"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
-								+ geom);
-			}
-		}
-
-		return handleParts;
-	}
-
-	/**
-	 * Generate handles for the end/join points of the individual beziers.
-	 * 
-	 * @param targetPart
-	 * @param handleGeometryProvider
-	 * @param geom
-	 * @return
-	 */
-	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
-			final IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
-		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
-		BezierCurve[] beziers = ((ICurve) geom).toBezier();
-		for (int i = 0; i < beziers.length; i++) {
-			IHandlePart<Node> hp = createCurveSelectionHandlePart(
-					targetPart, handleGeometryProvider, i, false);
-			hps.add(hp);
-			// create handlepart for the curve's end point, too
-			if (i == beziers.length - 1) {
-				hp = createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, i, true);
-				hps.add(hp);
-			}
-		}
-		return hps;
-	}
-
-	/**
-	 * Creates an {@link IHandlePart} for the specified vertex of the
-	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
-	 * @param targetPart
-	 *            The {@link IContentPart} which is selected.
-	 * @param handleGeometryProvider
-	 *            Provides an {@link IGeometry} for which an {@link IHandlePart}
-	 *            is to be created.
-	 * @param vertexIndex
-	 *            Index of the vertex of the provided {@link IGeometry} for
-	 *            which an {@link IHandlePart} is to be created.
-	 * @return {@link IHandlePart} for the specified vertex of the
-	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
-	 */
-	public IHandlePart<Node> createShapeSelectionHandlePart(
-			IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
-		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
-				vertexIndex);
-	}
-
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
@@ -164,22 +55,53 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
 		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
-				segmentIndex, isEndPoint);
+				segmentIndex, isEndPoint ? 1 : 0);
 	}
 
-	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
-			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior) {
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+	/**
+	 * Generate handles for the end/join points of the individual beziers.
+	 * 
+	 * @param targetPart
+	 * @param handleGeometryProvider
+	 * @param geom
+	 * @return
+	 */
+	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
+			final IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
+		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
+		BezierCurve[] beziers = ((ICurve) geom).toBezier();
+		for (int i = 0; i < beziers.length; i++) {
+			IHandlePart<Node> hp = createCurveSelectionHandlePart(targetPart,
+					handleGeometryProvider, i, false);
+			hps.add(hp);
+			// create handlepart for the curve's end point, too
+			if (i == beziers.length - 1) {
+				hp = createCurveSelectionHandlePart(targetPart,
+						handleGeometryProvider, i, true);
+				hps.add(hp);
+			}
+		}
+		return hps;
+	}
 
-		// per default, handle parts are created for the 4 corners of the multi
-		// selection bounds
-		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
-				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
-			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos));
+	@Override
+	public List<IHandlePart<Node>> createHandleParts(
+			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
+		// no targets
+		if (targets == null || targets.isEmpty()) {
+			return Collections.emptyList();
 		}
 
-		return handleParts;
+		// differentiate creation context
+		if (contextBehavior instanceof FXSelectionBehavior) {
+			return createSelectionHandleParts(targets,
+					(FXSelectionBehavior) contextBehavior);
+		}
+
+		// unknown creation context, do not create handles
+		return Collections.emptyList();
 	}
 
 	/**
@@ -197,6 +119,85 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
 			List<IContentPart<Node>> targets, Pos position) {
 		return new FXBoxHandlePart(targets, position);
+	}
+
+	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
+			List<IContentPart<Node>> targets,
+			FXSelectionBehavior selectionBehavior) {
+		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+
+		// per default, handle parts are created for the 4 corners of the multi
+		// selection bounds
+		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
+				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
+			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos));
+		}
+
+		return handleParts;
+	}
+
+	public List<IHandlePart<Node>> createSelectionHandleParts(
+			List<IContentPart<Node>> targets,
+			FXSelectionBehavior selectionBehavior) {
+		// multiple selection
+		if (targets.size() > 1) {
+			return createMultiSelectionHandleParts(targets, selectionBehavior);
+		}
+
+		// single selection
+		final IContentPart<Node> targetPart = targets.get(0);
+		IProvider<IGeometry> handleGeometryProvider = selectionBehavior
+				.getHandleGeometryProvider();
+
+		// generate handles from handle geometry
+		IGeometry geom = handleGeometryProvider.get();
+		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+
+		if (geom instanceof ICurve) {
+			handleParts.addAll(createCurveSelectionHandleParts(targetPart,
+					handleGeometryProvider, geom));
+		} else {
+			// everything else is expected to be an IShape, even though the user
+			// could supply a Path
+			if (geom instanceof IShape) {
+				IShape shape = (IShape) geom;
+				ICurve[] edges = shape.getOutlineSegments();
+				// create a handle for each vertex
+				for (int i = 0; i < edges.length; i++) {
+					IHandlePart<Node> hp = createShapeSelectionHandlePart(
+							targetPart, handleGeometryProvider, i);
+					handleParts.add(hp);
+				}
+			} else {
+				throw new IllegalStateException(
+						"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
+								+ geom);
+			}
+		}
+
+		return handleParts;
+	}
+
+	/**
+	 * Creates an {@link IHandlePart} for the specified vertex of the
+	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
+	 * 
+	 * @param targetPart
+	 *            The {@link IContentPart} which is selected.
+	 * @param handleGeometryProvider
+	 *            Provides an {@link IGeometry} for which an {@link IHandlePart}
+	 *            is to be created.
+	 * @param vertexIndex
+	 *            Index of the vertex of the provided {@link IGeometry} for
+	 *            which an {@link IHandlePart} is to be created.
+	 * @return {@link IHandlePart} for the specified vertex of the
+	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
+	 */
+	public IHandlePart<Node> createShapeSelectionHandlePart(
+			IContentPart<Node> targetPart,
+			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
+		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
+				vertexIndex);
 	}
 
 }

@@ -25,25 +25,21 @@ import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private final static Color FILL_CONNECTED = Color.web("#ff0000");
-	
-	private final IContentPart<Node> targetPart;
-	private final FXSelectionHandlePart part;
 	private final boolean isEndPoint;
 
-	public ReconnectWayPointOnHandleDragPolicy(IContentPart<Node> targetPart,
-			FXSelectionHandlePart part, boolean isEndPoint) {
-		this.targetPart = targetPart;
-		this.part = part;
+	public ReconnectWayPointOnHandleDragPolicy(boolean isEndPoint) {
 		this.isEndPoint = isEndPoint;
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		AbstractFXReconnectPolicy p = getReconnectionPolicy(targetPart);
+		AbstractFXReconnectPolicy p = getReconnectionPolicy(getHost()
+				.getAnchorages().get(0));
 		if (p != null) {
 			p.init();
 			p.press(!isEndPoint, new Point(e.getSceneX(), e.getSceneY()));
@@ -53,28 +49,28 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		AbstractFXReconnectPolicy policy = getReconnectionPolicy(targetPart);
+		AbstractFXReconnectPolicy policy = getReconnectionPolicy(getHost()
+				.getAnchorages().get(0));
 		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
-		// TODO: move color change to some other place?
 		if (policy.isConnected()) {
-			((Shape) part.getVisual())
-					.setFill(FILL_CONNECTED);
+			((Shape) getHost().getVisual()).setFill(FILL_CONNECTED);
 		} else {
-			((Shape) part.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
+			((Shape) getHost().getVisual())
+					.setFill(FXSelectionHandlePart.FILL_BLUE);
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		IUndoableOperation operation = getReconnectionPolicy(targetPart)
-				.commit();
+		IUndoableOperation operation = getReconnectionPolicy(
+				getHost().getAnchorages().get(0)).commit();
 		executeOperation(operation);
 	}
 
 	private AbstractFXReconnectPolicy getReconnectionPolicy(
-			IContentPart<Node> targetPart) {
-		return targetPart.getAdapter(AbstractFXReconnectPolicy.class);
+			IVisualPart<Node> part) {
+		return part.getAdapter(AbstractFXReconnectPolicy.class);
 	}
-	
+
 }

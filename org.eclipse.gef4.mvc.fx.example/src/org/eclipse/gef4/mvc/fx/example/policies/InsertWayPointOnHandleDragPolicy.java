@@ -20,62 +20,56 @@ import javafx.scene.shape.Shape;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
-	// TODO: generalize (user should be able to bind this policy to any handle
-	// port, not just FXMidPointHandleParts..)
-	private final FXMidPointHandlePart hp;
-	private final List<IHandlePart<Node>> parts;
-	private final IContentPart<Node> targetPart;
+	private List<IHandlePart<Node>> parts;
 
 	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
-			IContentPart<Node> targetPart) {
-		return targetPart.getAdapter(AbstractFXWayPointPolicy.class);
+			IVisualPart<Node> part) {
+		return part.getAdapter(AbstractFXWayPointPolicy.class);
 	}
 
-	public InsertWayPointOnHandleDragPolicy(FXMidPointHandlePart hp,
-			List<IHandlePart<Node>> parts, IContentPart<Node> targetPart) {
-		this.hp = hp;
+	public InsertWayPointOnHandleDragPolicy(List<IHandlePart<Node>> parts) {
 		this.parts = parts;
-		this.targetPart = targetPart;
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		// TODO: merge mid point and vertex handle parts
-		if (hp.isVertex()) {
-			getWayPointHandlePolicy(targetPart).selectWayPoint(
-					hp.getVertexIndex() - 1,
+		FXSelectionHandlePart hp = (FXSelectionHandlePart) getHost();
+		
+		if (hp.getSegmentParameter() == 0.5) {
+			getWayPointHandlePolicy(getHost().getAnchorages().get(0)).createWayPoint(
+					hp.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
-		} else {
-			getWayPointHandlePolicy(targetPart).createWayPoint(
-					hp.getVertexIndex(),
-					new Point(e.getSceneX(), e.getSceneY()));
-			for (IHandlePart<Node> vertexHp : parts) {
-				FXSelectionHandlePart part = (FXSelectionHandlePart) vertexHp;
-				if (part.getVertexIndex() > hp.getVertexIndex()
-						|| (part.getVertexIndex() == hp.getVertexIndex() && part
-								.isEndPoint())) {
-					part.incVertexIndex();
+			for (IHandlePart<Node> part : parts) {
+				FXSelectionHandlePart p = (FXSelectionHandlePart) part;
+				if (p.getSegmentIndex() > hp.getSegmentIndex()
+						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
+								.getSegmentParameter() == 1)) {
+					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
-			// become vertex handle part
-			hp.toVertex();
+			hp.setSegmentParameter(1);
 			((Shape) hp.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
+		} else {
+			getWayPointHandlePolicy(getHost().getAnchorages().get(0)).selectWayPoint(
+					hp.getSegmentIndex() - 1,
+					new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		getWayPointHandlePolicy(targetPart).moveWayPoint(new Point(e.getSceneX(), e.getSceneY()));
+		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).moveWayPoint(
+				new Point(e.getSceneX(), e.getSceneY()));
 	}
 
 	@Override
@@ -83,7 +77,8 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		// defensively fire at least one drag() before a release()
 		drag(e, delta, nodesUnderMouse, partsUnderMouse);
-		IUndoableOperation operation = getWayPointHandlePolicy(targetPart).commit();
+		IUndoableOperation operation = getWayPointHandlePolicy(getHost().getAnchorages().get(0))
+				.commit();
 		executeOperation(operation);
 	}
 
