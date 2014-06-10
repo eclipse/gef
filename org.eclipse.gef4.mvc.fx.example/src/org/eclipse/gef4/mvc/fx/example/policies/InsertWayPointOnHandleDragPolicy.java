@@ -22,7 +22,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -31,9 +31,9 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private List<IHandlePart<Node>> parts;
 
-	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
+	private FXWayPointPolicy getWayPointHandlePolicy(
 			IVisualPart<Node> part) {
-		return part.getAdapter(AbstractFXWayPointPolicy.class);
+		return part.getAdapter(FXWayPointPolicy.class);
 	}
 
 	public InsertWayPointOnHandleDragPolicy(List<IHandlePart<Node>> parts) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -25,8 +25,8 @@ import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
+public class FXWayPointPolicy extends AbstractPolicy<Node> implements
+		ITransactional {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
@@ -54,7 +54,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 	/**
 	 * Creates a new way point on the curve at the specified index. Selects the
 	 * new way point for manipulation
-	 * 
+	 *
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 * @param p
@@ -77,7 +77,9 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 		}
 	}
 
-	public abstract IFXConnection getConnection();
+	private IFXConnection getConnection() {
+		return (IFXConnection) getHost().getVisual();
+	}
 
 	private void hideShowOverlaid() {
 		// put removed back in
@@ -131,7 +133,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 
 	/**
 	 * Moves the previously selected/created way point to the given position.
-	 * 
+	 *
 	 * @param wayPointIndex
 	 *            index of the selected way point
 	 * @param p
@@ -159,7 +161,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
 	/**
 	 * Selects a way point on the curve to be manipulated. The way point is
 	 * identified by its index.
-	 * 
+	 *
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 */

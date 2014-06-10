@@ -22,7 +22,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXWayPointPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -49,7 +49,7 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		IFXConnection connection = getWayPointHandlePolicy(getHost().getAnchorages().get(0)).getConnection();
+		IFXConnection connection = (IFXConnection) getHost().getAnchorages().get(0).getVisual();
 		List<Point> before = connection.getWayPoints();
 		
 		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).moveWayPoint(
@@ -73,9 +73,9 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		executeOperation(operation);
 	}
 
-	private AbstractFXWayPointPolicy getWayPointHandlePolicy(
+	private FXWayPointPolicy getWayPointHandlePolicy(
 			IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(AbstractFXWayPointPolicy.class);
+		return targetPart.getAdapter(FXWayPointPolicy.class);
 	}
 	
 }

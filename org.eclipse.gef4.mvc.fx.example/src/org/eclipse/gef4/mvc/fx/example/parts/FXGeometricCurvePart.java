@@ -39,7 +39,7 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXWayPointPolicy;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -195,12 +195,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		setAdapter(AbstractFXWayPointPolicy.class,
-				new AbstractFXWayPointPolicy() {
-					@Override
-					public IFXConnection getConnection() {
-						return visual;
-					}
+		setAdapter(FXWayPointPolicy.class,
+				new FXWayPointPolicy() {
 
 					@Override
 					public IUndoableOperation commit() {
