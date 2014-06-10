@@ -34,25 +34,21 @@ public class FXDragTool extends AbstractTool<Node> {
 	@SuppressWarnings("rawtypes")
 	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
 
-	protected AbstractFXDragPolicy getToolPolicy(IVisualPart<Node> targetPart) {
-		return (AbstractFXDragPolicy) targetPart.getAdapter(TOOL_POLICY_KEY);
-	}
-
 	@SuppressWarnings("unchecked")
-	private FXMouseDragGesture gesture = new FXMouseDragGesture() {
-		@Override
-		protected void press(Node target, MouseEvent e) {
-			FXDragTool.this
-					.press(FXPartUtils.getTargetParts(getDomain().getViewer(),
-							e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e);
-		}
-
+	private final FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		@Override
 		protected void drag(Node target, MouseEvent e, double dx, double dy,
 				List<Node> nodesUnderMouse) {
 			FXDragTool.this.drag(FXPartUtils.getTargetParts(getDomain()
 					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
 					e, new Dimension(dx, dy), nodesUnderMouse);
+		}
+
+		@Override
+		protected void press(Node target, MouseEvent e) {
+			FXDragTool.this
+					.press(FXPartUtils.getTargetParts(getDomain().getViewer(),
+							e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e);
 		}
 
 		@Override
@@ -64,31 +60,14 @@ public class FXDragTool extends AbstractTool<Node> {
 		}
 	};
 
-	protected void press(List<IVisualPart<Node>> targetParts, MouseEvent e) {
-		for (IVisualPart<Node> targetPart : targetParts) {
-			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
-			if (policy != null)
-				policy.press(e);
-		}
-	}
-
 	protected void drag(List<IVisualPart<Node>> targetParts, MouseEvent e,
 			Dimension delta, List<Node> nodesUnderMouse) {
 		for (IVisualPart<Node> targetPart : targetParts) {
 			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
-			if (policy != null)
+			if (policy != null) {
 				policy.drag(e, delta, nodesUnderMouse,
 						getPartsUnderMouse(nodesUnderMouse));
-		}
-	}
-
-	protected void release(List<IVisualPart<Node>> targetParts, MouseEvent e,
-			Dimension delta, List<Node> nodesUnderMouse) {
-		for (IVisualPart<Node> targetPart : targetParts) {
-			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
-			if (policy != null)
-				policy.release(e, delta, nodesUnderMouse,
-						getPartsUnderMouse(nodesUnderMouse));
+			}
 		}
 	}
 
@@ -108,10 +87,34 @@ public class FXDragTool extends AbstractTool<Node> {
 		return parts;
 	}
 
+	protected AbstractFXDragPolicy getToolPolicy(IVisualPart<Node> targetPart) {
+		return (AbstractFXDragPolicy) targetPart.getAdapter(TOOL_POLICY_KEY);
+	}
+
+	protected void press(List<IVisualPart<Node>> targetParts, MouseEvent e) {
+		for (IVisualPart<Node> targetPart : targetParts) {
+			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
+			if (policy != null) {
+				policy.press(e);
+			}
+		}
+	}
+
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
 		gesture.setScene(((IFXViewer) getDomain().getViewer()).getScene());
+	}
+
+	protected void release(List<IVisualPart<Node>> targetParts, MouseEvent e,
+			Dimension delta, List<Node> nodesUnderMouse) {
+		for (IVisualPart<Node> targetPart : targetParts) {
+			AbstractFXDragPolicy policy = getToolPolicy(targetPart);
+			if (policy != null) {
+				policy.release(e, delta, nodesUnderMouse,
+						getPartsUnderMouse(nodesUnderMouse));
+			}
+		}
 	}
 
 	@Override

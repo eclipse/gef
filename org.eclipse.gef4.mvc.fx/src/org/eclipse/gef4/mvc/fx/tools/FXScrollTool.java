@@ -30,17 +30,9 @@ public class FXScrollTool extends AbstractTool<Node> {
 	@SuppressWarnings("rawtypes")
 	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = IScrollPolicy.class;
 
-	public FXScrollTool() {
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	protected IScrollPolicy<Node> getToolPolicy(IVisualPart<Node> targetPart) {
-		return (IScrollPolicy<Node>) targetPart.getAdapter(TOOL_POLICY_KEY);
-	}
-
 	private Scene scene;
 
-	private EventHandler<ScrollEvent> scrollListener = new EventHandler<ScrollEvent>() {
+	private final EventHandler<ScrollEvent> scrollListener = new EventHandler<ScrollEvent>() {
 		@SuppressWarnings({ "unchecked" })
 		@Override
 		public void handle(ScrollEvent event) {
@@ -64,6 +56,9 @@ public class FXScrollTool extends AbstractTool<Node> {
 		}
 	};
 
+	public FXScrollTool() {
+	}
+
 	@Override
 	public void activate() {
 		super.activate();
@@ -80,6 +75,19 @@ public class FXScrollTool extends AbstractTool<Node> {
 		super.deactivate();
 	}
 
+	private void doRegisterListeners() {
+		scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
+	}
+
+	private void doUnregisterListeners() {
+		scene.removeEventFilter(ScrollEvent.SCROLL, scrollListener);
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	protected IScrollPolicy<Node> getToolPolicy(IVisualPart<Node> targetPart) {
+		return (IScrollPolicy<Node>) targetPart.getAdapter(TOOL_POLICY_KEY);
+	}
+
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
@@ -92,14 +100,6 @@ public class FXScrollTool extends AbstractTool<Node> {
 			doUnregisterListeners();
 		}
 		super.unregisterListeners();
-	}
-
-	private void doRegisterListeners() {
-		scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
-	}
-
-	private void doUnregisterListeners() {
-		scene.removeEventFilter(ScrollEvent.SCROLL, scrollListener);
 	}
 
 }

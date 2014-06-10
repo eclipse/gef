@@ -24,9 +24,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChangeWayPointsOperation extends AbstractOperation {
 
-	private IFXConnection connection;
-	private List<Point> oldWayPoints;
-	private List<Point> newWayPoints;
+	private final IFXConnection connection;
+	private final List<Point> oldWayPoints;
+	private final List<Point> newWayPoints;
 
 	public FXChangeWayPointsOperation(String label, IFXConnection connection,
 			List<Point> oldWayPoints, List<Point> newWayPoints) {
@@ -50,13 +50,6 @@ public class FXChangeWayPointsOperation extends AbstractOperation {
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		connection.setWayPoints(oldWayPoints);
-		return Status.OK_STATUS;
-	}
-
-	@Override
 	public String toString() {
 		String str = "ChangeWayPoints:\n  from:\n";
 		for (int i = 0; i < oldWayPoints.size(); i++) {
@@ -67,6 +60,13 @@ public class FXChangeWayPointsOperation extends AbstractOperation {
 			str = str + "   - " + newWayPoints.get(i) + "\n";
 		}
 		return str;
+	}
+
+	@Override
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		connection.setWayPoints(oldWayPoints);
+		return Status.OK_STATUS;
 	}
 
 }

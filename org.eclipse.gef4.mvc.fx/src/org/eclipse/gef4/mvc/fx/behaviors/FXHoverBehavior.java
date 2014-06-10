@@ -20,7 +20,7 @@ import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 /**
  * 
  * @author anyssen
- *
+ * 
  */
 public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 

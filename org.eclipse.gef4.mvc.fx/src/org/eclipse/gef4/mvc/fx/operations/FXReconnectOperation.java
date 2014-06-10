@@ -26,10 +26,10 @@ public class FXReconnectOperation extends AbstractOperation {
 		START, END
 	}
 
-	private IFXConnection connection;
-	private IFXAnchor oldAnchor;
-	private IFXAnchor newAnchor;
-	private AnchorKind anchorKind;
+	private final IFXConnection connection;
+	private final IFXAnchor oldAnchor;
+	private final IFXAnchor newAnchor;
+	private final AnchorKind anchorKind;
 
 	public FXReconnectOperation(String label, IFXConnection connection,
 			IFXAnchor oldAnchor, IFXAnchor newAnchor, AnchorKind anchorKind) {

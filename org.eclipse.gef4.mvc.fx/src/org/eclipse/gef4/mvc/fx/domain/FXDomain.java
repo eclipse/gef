@@ -16,8 +16,8 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
-import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
+import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.tools.CompositeAndTool;
 import org.eclipse.gef4.mvc.tools.ITool;
 

@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 public class FXStageViewer extends AbstractFXViewer {
 
-	private Stage stage;
+	private final Stage stage;
 
 	public FXStageViewer(Stage stage) {
 		this.stage = stage;

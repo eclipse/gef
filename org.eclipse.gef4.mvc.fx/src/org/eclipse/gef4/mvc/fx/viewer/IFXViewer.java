@@ -16,7 +16,7 @@ import javafx.scene.Scene;
 
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
-public interface IFXViewer extends IVisualViewer<Node>{
+public interface IFXViewer extends IVisualViewer<Node> {
 
 	public Scene getScene();
 

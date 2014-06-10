@@ -22,18 +22,8 @@ import org.eclipse.gef4.mvc.tools.AbstractZoomTool;
 
 public class FXZoomTool extends AbstractZoomTool<Node> {
 
-	public FXZoomTool() {
-	}
-
 	@SuppressWarnings("unchecked")
-	private FXPinchGesture gesture = new FXPinchGesture() {
-		@Override
-		protected void zoomFinished(ZoomEvent e) {
-			FXZoomTool.this.zoomFinished(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
-					.getZoomFactor(), e.getTotalZoomFactor());
-		}
-
+	private final FXPinchGesture gesture = new FXPinchGesture() {
 		@Override
 		protected void zoomDetected(ZoomEvent e) {
 			FXZoomTool.this.zoomDetected(FXPartUtils.getTargetParts(getDomain()
@@ -47,7 +37,17 @@ public class FXZoomTool extends AbstractZoomTool<Node> {
 					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
 					.getZoomFactor(), e.getTotalZoomFactor());
 		}
+
+		@Override
+		protected void zoomFinished(ZoomEvent e) {
+			FXZoomTool.this.zoomFinished(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e
+					.getZoomFactor(), e.getTotalZoomFactor());
+		}
 	};
+
+	public FXZoomTool() {
+	}
 
 	@Override
 	protected void registerListeners() {

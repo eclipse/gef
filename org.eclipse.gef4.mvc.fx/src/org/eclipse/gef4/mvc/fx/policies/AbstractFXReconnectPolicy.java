@@ -41,37 +41,10 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node>
 	private IFXAnchor currentAnchor;
 	private FXReconnectOperation op;
 
-	protected boolean isLoose(IFXAnchor anchor) {
-		return anchor instanceof FXStaticAnchor;
-	}
-
-	protected AbstractFXContentPart getAnchorPart(
-			List<IContentPart<Node>> partsUnderMouse) {
-		for (IContentPart<Node> cp : partsUnderMouse) {
-			AbstractFXContentPart part = (AbstractFXContentPart) cp;
-			IFXAnchor anchor = part.getAnchor(getHost());
-			if (anchor != null) {
-				return part;
-			}
-		}
-		return null;
-	}
-
-	public void press(boolean isStart, Point startPointInScene) {
-		isStartAnchor = isStart;
-		startPointScene = new Point2D(startPointInScene.x, startPointInScene.y);
-		startPointLocal = getHost().getVisual().sceneToLocal(startPointScene);
-		connection = getConnection();
-		if (isStartAnchor) {
-			initialAnchor = connection.getStartAnchor();
-		} else {
-			initialAnchor = connection.getEndAnchor();
-		}
-		currentAnchor = initialAnchor;
-		connected = !isLoose(initialAnchor);
-		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
-				currentAnchor, isStartAnchor ? AnchorKind.START
-						: AnchorKind.END);
+	@Override
+	public IUndoableOperation commit() {
+		getHost().setRefreshVisual(true);
+		return op;
 	}
 
 	public void dragTo(Point pointInScene,
@@ -108,21 +81,49 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node>
 		}
 	}
 
-	public boolean isConnected() {
-		return connected;
+	protected AbstractFXContentPart getAnchorPart(
+			List<IContentPart<Node>> partsUnderMouse) {
+		for (IContentPart<Node> cp : partsUnderMouse) {
+			AbstractFXContentPart part = (AbstractFXContentPart) cp;
+			IFXAnchor anchor = part.getAnchor(getHost());
+			if (anchor != null) {
+				return part;
+			}
+		}
+		return null;
 	}
+
+	public abstract IFXConnection getConnection();
 
 	@Override
 	public void init() {
 		getHost().setRefreshVisual(false);
 	}
-	
-	public IUndoableOperation commit() {
-		getHost().setRefreshVisual(true);
-		return op;
+
+	public boolean isConnected() {
+		return connected;
 	}
 
-	public abstract IFXConnection getConnection();
+	protected boolean isLoose(IFXAnchor anchor) {
+		return anchor instanceof FXStaticAnchor;
+	}
+
+	public void press(boolean isStart, Point startPointInScene) {
+		isStartAnchor = isStart;
+		startPointScene = new Point2D(startPointInScene.x, startPointInScene.y);
+		startPointLocal = getHost().getVisual().sceneToLocal(startPointScene);
+		connection = getConnection();
+		if (isStartAnchor) {
+			initialAnchor = connection.getStartAnchor();
+		} else {
+			initialAnchor = connection.getEndAnchor();
+		}
+		currentAnchor = initialAnchor;
+		connected = !isLoose(initialAnchor);
+		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
+				currentAnchor, isStartAnchor ? AnchorKind.START
+						: AnchorKind.END);
+	}
 
 	protected Point transformToLocal(Point p) {
 		Point2D pLocal = getHost().getVisual().sceneToLocal(p.x, p.y);

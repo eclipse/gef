@@ -1,4 +1,5 @@
 package org.eclipse.gef4.mvc.fx;
+
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
@@ -10,7 +11,6 @@ package org.eclipse.gef4.mvc.fx;
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -36,6 +36,7 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
@@ -46,6 +47,7 @@ public class Activator implements BundleActivator {
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}

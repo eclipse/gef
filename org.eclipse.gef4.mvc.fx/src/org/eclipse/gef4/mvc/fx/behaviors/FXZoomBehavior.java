@@ -37,5 +37,5 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 			}
 		}
 	}
-	
+
 }

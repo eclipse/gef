@@ -31,22 +31,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		AbstractFXDragPolicy {
 
-	public FXResizeRelocateSelectedOnHandleDragPolicy(ReferencePoint refPoint) {
-		this.referencePoint = refPoint;
-	}
-
-	protected Rectangle getVisualBounds(IContentPart<Node> contentPart) {
-		if (contentPart == null) {
-			throw new IllegalArgumentException("contentPart may not be null!");
-		}
-		return JavaFX2Geometry.toRectangle(contentPart.getVisual()
-				.localToScene(contentPart.getVisual().getBoundsInLocal()));
-	}
-
-	/*
-	 * TODO: allow negative scaling
-	 */
-
 	/**
 	 * <p>
 	 * Specifies the position of the "resize handle" that is used to resize the
@@ -78,8 +62,8 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 			b = bottom;
 		}
 
-		public boolean isTop() {
-			return t;
+		public boolean isBottom() {
+			return b;
 		}
 
 		public boolean isLeft() {
@@ -90,44 +74,27 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 			return r;
 		}
 
-		public boolean isBottom() {
-			return b;
+		public boolean isTop() {
+			return t;
 		}
 	}
 
 	private Point initialMouseLocation = null;
+
+	/*
+	 * TODO: allow negative scaling
+	 */
+
 	private Rectangle selectionBounds;
+
 	private ReferencePoint referencePoint = null;
 	private Map<IContentPart<Node>, Double> relX1 = null;
 	private Map<IContentPart<Node>, Double> relY1 = null;
 	private Map<IContentPart<Node>, Double> relX2 = null;
 	private Map<IContentPart<Node>, Double> relY2 = null;
 
-	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
-			IContentPart<Node> editPart) {
-		return editPart.getAdapter(FXResizeRelocatePolicy.class);
-	}
-
-	public List<IContentPart<Node>> getTargetParts() {
-		return getHost().getRoot().getViewer().getSelectionModel()
-				.getSelected();
-	}
-
-	@Override
-	public void press(MouseEvent e) {
-		// init resize context vars
-		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
-		selectionBounds = getSelectionBounds(getTargetParts());
-		relX1 = new HashMap<IContentPart<Node>, Double>();
-		relY1 = new HashMap<IContentPart<Node>, Double>();
-		relX2 = new HashMap<IContentPart<Node>, Double>();
-		relY2 = new HashMap<IContentPart<Node>, Double>();
-		for (IContentPart<Node> targetPart : getTargetParts()) {
-			computeRelatives(targetPart);
-			if (getResizeRelocatePolicy(targetPart) != null) {
-				getResizeRelocatePolicy(targetPart).init();
-			}
-		}
+	public FXResizeRelocateSelectedOnHandleDragPolicy(ReferencePoint refPoint) {
+		this.referencePoint = refPoint;
 	}
 
 	/**
@@ -151,31 +118,6 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 
 		double bottom = top + bounds.getHeight();
 		relY2.put(targetPart, bottom / selectionBounds.getHeight());
-	}
-
-	/**
-	 * Returns the unioned {@link #getVisualBounds(IContentPart) bounds} of all
-	 * target parts.
-	 * 
-	 * @param targetParts
-	 * @return the unioned visual bounds of all target parts
-	 */
-	private Rectangle getSelectionBounds(List<IContentPart<Node>> targetParts) {
-		if (targetParts.isEmpty()) {
-			throw new IllegalArgumentException("No target parts given.");
-		}
-
-		Rectangle bounds = getVisualBounds(targetParts.get(0));
-		if (targetParts.size() == 1) {
-			return bounds;
-		}
-
-		ListIterator<IContentPart<Node>> iterator = targetParts.listIterator(1);
-		while (iterator.hasNext()) {
-			IContentPart<Node> cp = iterator.next();
-			bounds.union(getVisualBounds(cp));
-		}
-		return bounds;
 	}
 
 	@Override
@@ -224,32 +166,64 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		return new double[] { x1, y1, x2, y2 };
 	}
 
+	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
+			IContentPart<Node> editPart) {
+		return editPart.getAdapter(FXResizeRelocatePolicy.class);
+	}
+
 	/**
-	 * Returns updated selection bounds. The initial selection bounds are copied
-	 * and the copy is shrinked or expanded depending on the mouse location
-	 * change and the {@link #getReferencePoint() handle-edge}.
+	 * Returns the unioned {@link #getVisualBounds(IContentPart) bounds} of all
+	 * target parts.
 	 * 
-	 * @param mouseLocation
-	 * @return
+	 * @param targetParts
+	 * @return the unioned visual bounds of all target parts
 	 */
-	private Rectangle updateSelectionBounds(MouseEvent e) {
-		Rectangle sel = selectionBounds.getCopy();
-
-		double dx = e.getSceneX() - initialMouseLocation.x;
-		double dy = e.getSceneY() - initialMouseLocation.y;
-
-		if (referencePoint.isLeft()) {
-			sel.shrink(dx, 0, 0, 0);
-		} else if (referencePoint.isRight()) {
-			sel.expand(0, 0, dx, 0);
+	private Rectangle getSelectionBounds(List<IContentPart<Node>> targetParts) {
+		if (targetParts.isEmpty()) {
+			throw new IllegalArgumentException("No target parts given.");
 		}
 
-		if (referencePoint.isTop()) {
-			sel.shrink(0, dy, 0, 0);
-		} else if (referencePoint.isBottom()) {
-			sel.expand(0, 0, 0, dy);
+		Rectangle bounds = getVisualBounds(targetParts.get(0));
+		if (targetParts.size() == 1) {
+			return bounds;
 		}
-		return sel;
+
+		ListIterator<IContentPart<Node>> iterator = targetParts.listIterator(1);
+		while (iterator.hasNext()) {
+			IContentPart<Node> cp = iterator.next();
+			bounds.union(getVisualBounds(cp));
+		}
+		return bounds;
+	}
+
+	public List<IContentPart<Node>> getTargetParts() {
+		return getHost().getRoot().getViewer().getSelectionModel()
+				.getSelected();
+	}
+
+	protected Rectangle getVisualBounds(IContentPart<Node> contentPart) {
+		if (contentPart == null) {
+			throw new IllegalArgumentException("contentPart may not be null!");
+		}
+		return JavaFX2Geometry.toRectangle(contentPart.getVisual()
+				.localToScene(contentPart.getVisual().getBoundsInLocal()));
+	}
+
+	@Override
+	public void press(MouseEvent e) {
+		// init resize context vars
+		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
+		selectionBounds = getSelectionBounds(getTargetParts());
+		relX1 = new HashMap<IContentPart<Node>, Double>();
+		relY1 = new HashMap<IContentPart<Node>, Double>();
+		relX2 = new HashMap<IContentPart<Node>, Double>();
+		relY2 = new HashMap<IContentPart<Node>, Double>();
+		for (IContentPart<Node> targetPart : getTargetParts()) {
+			computeRelatives(targetPart);
+			if (getResizeRelocatePolicy(targetPart) != null) {
+				getResizeRelocatePolicy(targetPart).init();
+			}
+		}
 	}
 
 	@Override
@@ -279,5 +253,33 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 		selectionBounds = null;
 		initialMouseLocation = null;
 		relX1 = relY1 = relX2 = relY2 = null;
+	}
+
+	/**
+	 * Returns updated selection bounds. The initial selection bounds are copied
+	 * and the copy is shrinked or expanded depending on the mouse location
+	 * change and the {@link #getReferencePoint() handle-edge}.
+	 * 
+	 * @param mouseLocation
+	 * @return
+	 */
+	private Rectangle updateSelectionBounds(MouseEvent e) {
+		Rectangle sel = selectionBounds.getCopy();
+
+		double dx = e.getSceneX() - initialMouseLocation.x;
+		double dy = e.getSceneY() - initialMouseLocation.y;
+
+		if (referencePoint.isLeft()) {
+			sel.shrink(dx, 0, 0, 0);
+		} else if (referencePoint.isRight()) {
+			sel.expand(0, 0, dx, 0);
+		}
+
+		if (referencePoint.isTop()) {
+			sel.shrink(0, dy, 0, 0);
+		} else if (referencePoint.isBottom()) {
+			sel.expand(0, 0, 0, dy);
+		}
+		return sel;
 	}
 }

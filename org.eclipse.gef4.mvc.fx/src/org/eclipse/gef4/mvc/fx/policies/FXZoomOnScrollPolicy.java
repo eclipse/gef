@@ -18,12 +18,14 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IScrollPolicy;
 
 // TODO: adjust API, move to MVC
-public class FXZoomOnScrollPolicy extends AbstractPolicy<Node> implements IScrollPolicy<Node> {
+public class FXZoomOnScrollPolicy extends AbstractPolicy<Node> implements
+		IScrollPolicy<Node> {
 
+	@Override
 	public void scroll(double deltaY) {
 		double factor = deltaY > 0 ? 1.25 : 0.8;
 		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
 		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * factor);
 	}
-	
+
 }

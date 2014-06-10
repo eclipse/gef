@@ -27,6 +27,20 @@ public abstract class AbstractFXViewer extends AbstractVisualViewer<Node>
 		super();
 	}
 
+	protected Scene createScene(Parent rootVisual) {
+		return new Scene(rootVisual);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.gef4.mvc.fx.viewer.IFXVisualViewer#getScene()
+	 */
+	@Override
+	public Scene getScene() {
+		return scene;
+	}
+
 	@Override
 	public void setRootPart(IRootPart<Node> rootPart) {
 		super.setRootPart(rootPart);
@@ -43,20 +57,6 @@ public abstract class AbstractFXViewer extends AbstractVisualViewer<Node>
 
 	protected void setScene(Scene scene) {
 		this.scene = scene;
-	}
-
-	protected Scene createScene(Parent rootVisual) {
-		return new Scene(rootVisual);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.fx.viewer.IFXVisualViewer#getScene()
-	 */
-	@Override
-	public Scene getScene() {
-		return scene;
 	}
 
 }

@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.tools.AbstractSelectionTool;
 // TODO: use drag tool?
 public class FXSelectionTool extends AbstractSelectionTool<Node> {
 
-	private EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
+	private final EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
@@ -47,6 +47,7 @@ public class FXSelectionTool extends AbstractSelectionTool<Node> {
 		}
 	};
 
+	@Override
 	protected void registerListeners() {
 		((IFXViewer) getDomain().getViewer()).getScene().addEventHandler(
 				MouseEvent.MOUSE_PRESSED, pressedHandler);

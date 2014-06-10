@@ -24,13 +24,13 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
-	private Node visual;
-	private Point oldLocation;
-	private Dimension oldSize;
-	private double dx;
-	private double dy;
-	private double dw;
-	private double dh;
+	private final Node visual;
+	private final Point oldLocation;
+	private final Dimension oldSize;
+	private final double dx;
+	private final double dy;
+	private final double dw;
+	private final double dh;
 
 	public FXResizeRelocateNodeOperation(String label, Node visual,
 			Point oldLocation, Dimension oldSize, double dx, double dy,
@@ -38,14 +38,14 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		super(label);
 		this.visual = visual;
 		this.oldLocation = oldLocation;
-		
+
 		if (oldSize.width + dw < 0) {
 			throw new IllegalArgumentException("Cannot resize below zero.");
 		}
 		if (oldSize.height + dh < 0) {
 			throw new IllegalArgumentException("Cannot resize below zero.");
 		}
-		
+
 		this.oldSize = oldSize;
 		this.dx = dx;
 		this.dy = dy;
@@ -61,8 +61,8 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		}
 		if (dy != 0) {
 			visual.setLayoutY(oldLocation.y + dy);
-		}	
-		if(dw != 0 || dh != 0){
+		}
+		if (dw != 0 || dh != 0) {
 			visual.resize(oldSize.getWidth() + dw, oldSize.getHeight() + dh);
 		}
 		return Status.OK_STATUS;
@@ -82,8 +82,8 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		}
 		if (dy != 0) {
 			visual.setLayoutY(oldLocation.y);
-		}	
-		if(dw != 0 || dh != 0){
+		}
+		if (dw != 0 || dh != 0) {
 			visual.resize(oldSize.getWidth(), oldSize.getHeight());
 		}
 		return Status.OK_STATUS;

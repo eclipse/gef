@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.tools.AbstractHoverTool;
 
 public class FXHoverTool extends AbstractHoverTool<Node> {
 
-	private EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
+	private final EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
@@ -41,6 +41,7 @@ public class FXHoverTool extends AbstractHoverTool<Node> {
 		}
 	};
 
+	@Override
 	protected void registerListeners() {
 		getDomain().getViewer().getRootPart().getVisual().getScene()
 				.addEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);

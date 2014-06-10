@@ -22,10 +22,11 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-// TODO: implement ITransactional
-public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node>
+		implements ITransactional {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
@@ -40,32 +41,12 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 
 	private FXChangeWayPointsOperation op;
 	private int wayPointIndex;
-	private Point newWayPoint = new Point();
+	private final Point newWayPoint = new Point();
 
-	/**
-	 * Selects a way point on the curve to be manipulated. The way point is
-	 * identified by its index.
-	 * 
-	 * @param wayPointIndex
-	 *            index of the way point to select
-	 */
-	public void selectWayPoint(int wayPointIndex, Point p) {
-		init(p);
-		isCreate = false;
-		this.wayPointIndex = wayPointIndex;
-		newWayPoint.setLocation(p);
-	}
-
-	private void init(Point p) {
-		getHost().setRefreshVisual(false);
-		startPointInScene = new Point2D(p.x, p.y);
-		Point2D pLocal = getHost().getVisual().sceneToLocal(startPointInScene);
-		startPoint = new Point(pLocal.getX(), pLocal.getY());
-		initialWayPoints = getConnection().getWayPoints();
-		currentWayPoints = new ArrayList<Point>(initialWayPoints.size());
-		for (int i = 0; i < initialWayPoints.size(); i++) {
-			currentWayPoints.add(initialWayPoints.get(i).getCopy());
-		}
+	@Override
+	public IUndoableOperation commit() {
+		getHost().setRefreshVisual(true);
+		return op;
 	}
 
 	/**
@@ -94,31 +75,7 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 		}
 	}
 
-	/**
-	 * Moves the previously selected/created way point to the given position.
-	 * 
-	 * @param wayPointIndex
-	 *            index of the selected way point
-	 * @param p
-	 *            {@link Point} providing new way point coordinates
-	 */
-	public void moveWayPoint(Point p) {
-		newWayPoint.setLocation(transformToLocal(p));
-		currentWayPoints.set(wayPointIndex, newWayPoint);
-
-		if (!isCreate)
-			hideShowOverlaid();
-
-		op = new FXChangeWayPointsOperation("Change way points",
-				getConnection(), initialWayPoints, currentWayPoints);
-
-		// execute locally
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
-	}
+	public abstract IFXConnection getConnection();
 
 	private void hideShowOverlaid() {
 		// put removed back in
@@ -148,6 +105,63 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 		}
 	}
 
+	@Override
+	public void init() {
+		getHost().setRefreshVisual(false);
+	}
+
+	private void init(Point p) {
+		startPointInScene = new Point2D(p.x, p.y);
+		Point2D pLocal = getHost().getVisual().sceneToLocal(startPointInScene);
+		startPoint = new Point(pLocal.getX(), pLocal.getY());
+		initialWayPoints = getConnection().getWayPoints();
+		currentWayPoints = new ArrayList<Point>(initialWayPoints.size());
+		for (int i = 0; i < initialWayPoints.size(); i++) {
+			currentWayPoints.add(initialWayPoints.get(i).getCopy());
+		}
+	}
+
+	/**
+	 * Moves the previously selected/created way point to the given position.
+	 * 
+	 * @param wayPointIndex
+	 *            index of the selected way point
+	 * @param p
+	 *            {@link Point} providing new way point coordinates
+	 */
+	public void moveWayPoint(Point p) {
+		newWayPoint.setLocation(transformToLocal(p));
+		currentWayPoints.set(wayPointIndex, newWayPoint);
+
+		if (!isCreate) {
+			hideShowOverlaid();
+		}
+
+		op = new FXChangeWayPointsOperation("Change way points",
+				getConnection(), initialWayPoints, currentWayPoints);
+
+		// execute locally
+		try {
+			op.execute(null, null);
+		} catch (ExecutionException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Selects a way point on the curve to be manipulated. The way point is
+	 * identified by its index.
+	 * 
+	 * @param wayPointIndex
+	 *            index of the way point to select
+	 */
+	public void selectWayPoint(int wayPointIndex, Point p) {
+		init(p);
+		isCreate = false;
+		this.wayPointIndex = wayPointIndex;
+		newWayPoint.setLocation(p);
+	}
+
 	private Point transformToLocal(Point p) {
 		Point2D pLocal = getHost().getVisual().sceneToLocal(p.x, p.y);
 		Point2D initialPos = getHost().getVisual().sceneToLocal(
@@ -158,20 +172,5 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 
 		return new Point(startPoint.x + delta.x, startPoint.y + delta.y);
 	}
-
-	/**
-	 * Commits updates to the model.
-	 * 
-	 * @param wayPointIndex
-	 *            index of the selected way point
-	 * @param p
-	 *            {@link Point} providing new way point coordinates
-	 */
-	public IUndoableOperation commit() {
-		getHost().setRefreshVisual(true);
-		return op;
-	}
-
-	public abstract IFXConnection getConnection();
 
 }

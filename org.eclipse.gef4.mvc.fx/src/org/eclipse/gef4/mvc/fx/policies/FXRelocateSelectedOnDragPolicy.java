@@ -28,6 +28,25 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialMouseLocation = null;
 
+	@Override
+	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
+			List<IContentPart<Node>> partsUnderMouse) {
+		for (IContentPart<Node> part : getTargetParts()) {
+			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			if (policy != null) {
+				Point2D initialPos = part.getVisual().sceneToLocal(
+						initialMouseLocation.x, initialMouseLocation.y);
+				Point2D currentPos = part.getVisual().sceneToLocal(
+						e.getSceneX(), e.getSceneY());
+				Point2D deltaPoint = new Point2D(currentPos.getX()
+						- initialPos.getX(), currentPos.getY()
+						- initialPos.getY());
+				policy.performResizeRelocate(deltaPoint.getX(),
+						deltaPoint.getY(), 0, 0);
+			}
+		}
+	}
+
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> part) {
 		return part.getAdapter(FXResizeRelocatePolicy.class);
@@ -45,24 +64,6 @@ public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
 			ITransactional policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				policy.init();
-			}
-		}
-	}
-
-	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
-		for (IContentPart<Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
-			if (policy != null) {
-				Point2D initialPos = part.getVisual().sceneToLocal(
-						initialMouseLocation.x, initialMouseLocation.y);
-				Point2D currentPos = part.getVisual().sceneToLocal(
-						e.getSceneX(), e.getSceneY());
-				Point2D deltaPoint = new Point2D(currentPos.getX()
-						- initialPos.getX(), currentPos.getY()
-						- initialPos.getY());
-				policy.performResizeRelocate(deltaPoint.getX(), deltaPoint.getY(), 0, 0);
 			}
 		}
 	}

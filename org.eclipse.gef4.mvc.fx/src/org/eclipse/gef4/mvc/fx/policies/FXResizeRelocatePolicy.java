@@ -31,7 +31,26 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 			initialHeight;
 	private FXResizeRelocateNodeOperation operation;
 
-	/* (non-Javadoc)
+	// can be overridden by subclasses to add an operation for model changes
+	// TODO: pull up to IPolicy interface
+	@Override
+	public IUndoableOperation commit() {
+		IUndoableOperation commit = operation;
+		operation = null;
+		return commit;
+	}
+
+	protected double getMinimumHeight() {
+		return FXSelectionHandlePart.SIZE;
+	}
+
+	protected double getMinimumWidth() {
+		return FXSelectionHandlePart.SIZE;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -66,7 +85,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 			if (initialHeight + layoutDh < getMinimumHeight()) {
 				layoutDh = getMinimumHeight() - initialHeight;
 			}
-			
+
 			operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
 					visual, new Point(initialLayoutX, initialLayoutY),
 					new Dimension(initialWidth, initialHeight), layoutDx,
@@ -80,20 +99,4 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	protected double getMinimumHeight() {
-		return FXSelectionHandlePart.SIZE;
-	}
-
-	protected double getMinimumWidth() {
-		return FXSelectionHandlePart.SIZE;
-	}
-
-	// can be overridden by subclasses to add an operation for model changes
-	// TODO: pull up to IPolicy interface
-	public IUndoableOperation commit() {
-		IUndoableOperation commit = operation;
-		operation = null;
-		return commit;
-	}
-	
 }
