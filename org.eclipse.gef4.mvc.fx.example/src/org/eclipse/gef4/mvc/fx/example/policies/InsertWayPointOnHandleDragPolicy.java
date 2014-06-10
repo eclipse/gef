@@ -15,7 +15,6 @@ import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Shape;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -31,8 +30,7 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private List<IHandlePart<Node>> parts;
 
-	private FXWayPointPolicy getWayPointHandlePolicy(
-			IVisualPart<Node> part) {
+	private FXWayPointPolicy getWayPointHandlePolicy(IVisualPart<Node> part) {
 		return part.getAdapter(FXWayPointPolicy.class);
 	}
 
@@ -43,11 +41,10 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void press(MouseEvent e) {
 		FXSelectionHandlePart hp = (FXSelectionHandlePart) getHost();
-		
 		if (hp.getSegmentParameter() == 0.5) {
-			getWayPointHandlePolicy(getHost().getAnchorages().get(0)).createWayPoint(
-					hp.getSegmentIndex(),
-					new Point(e.getSceneX(), e.getSceneY()));
+			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
+					.createWayPoint(hp.getSegmentIndex(),
+							new Point(e.getSceneX(), e.getSceneY()));
 			for (IHandlePart<Node> part : parts) {
 				FXSelectionHandlePart p = (FXSelectionHandlePart) part;
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
@@ -57,17 +54,17 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 				}
 			}
 			hp.setSegmentParameter(1);
-			((Shape) hp.getVisual()).setFill(FXSelectionHandlePart.FILL_BLUE);
 		} else {
-			getWayPointHandlePolicy(getHost().getAnchorages().get(0)).selectWayPoint(
-					hp.getSegmentIndex() - 1,
-					new Point(e.getSceneX(), e.getSceneY()));
+			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
+					.selectWayPoint(hp.getSegmentIndex() - 1,
+							new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
+		// TODO: if moved onto an existing waypoint, we should probably delete that (as when moving bendpoints)
 		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).moveWayPoint(
 				new Point(e.getSceneX(), e.getSceneY()));
 	}
@@ -77,8 +74,8 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		// defensively fire at least one drag() before a release()
 		drag(e, delta, nodesUnderMouse, partsUnderMouse);
-		IUndoableOperation operation = getWayPointHandlePolicy(getHost().getAnchorages().get(0))
-				.commit();
+		IUndoableOperation operation = getWayPointHandlePolicy(
+				getHost().getAnchorages().get(0)).commit();
 		executeOperation(operation);
 	}
 

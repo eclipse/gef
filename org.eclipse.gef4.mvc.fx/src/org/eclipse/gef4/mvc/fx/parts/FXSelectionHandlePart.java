@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -37,10 +37,11 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * selected {@link IVisualPart}. To exchange the default handle implementation,
  * the user has to override the corresponding method in
  * {@link FXSelectionBehavior}.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
+// TODO: rename to something more reasonable
 public class FXSelectionHandlePart extends AbstractFXHandlePart {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
@@ -76,11 +77,6 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		this.segmentParameter = segmentParameter;
 
 		visual = createHandleVisual(handleGeometryProvider.get());
-
-		visual.setFill(FILL_BLUE);
-		visual.setStroke(STROKE_DARK_BLUE);
-		visual.setStrokeWidth(1);
-		visual.setStrokeType(StrokeType.OUTSIDE);
 	}
 
 	/**
@@ -88,12 +84,13 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 	 * the given handle geometry. Per default, rectangular handles are created
 	 * if the handle geometry is a {@link Rectangle}. Otherwise, round handles
 	 * are created.
-	 * 
+	 *
 	 * @param handleGeometry
 	 * @return {@link Shape} representing the handle visually
 	 */
 	protected Shape createHandleVisual(IGeometry handleGeometry) {
 		Shape shape = null;
+		// create shape dependent on passed in selection geometry
 		if (handleGeometry instanceof org.eclipse.gef4.geometry.planar.Rectangle) {
 			shape = new Rectangle();
 			((Rectangle) shape).setWidth(SIZE);
@@ -103,6 +100,11 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		} else {
 			shape = new Circle(SIZE / 2d);
 		}
+
+		// initialize invariant visual properties
+		shape.setStroke(STROKE_DARK_BLUE);
+		shape.setStrokeWidth(1);
+		shape.setStrokeType(StrokeType.OUTSIDE);
 		return shape;
 	}
 
@@ -137,16 +139,16 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 	 * The segmentIndex specifies the segment of the IGeometry provided by the
 	 * handle geometry provider on which this selection handle part is
 	 * positioned.
-	 * 
+	 *
 	 * For a shape geometry, segments are determined by the
 	 * {@link IShape#getOutlineSegments()} method.
-	 * 
+	 *
 	 * For a curve geometry, segments are determined by the
 	 * {@link ICurve#toBezier()} method.
-	 * 
+	 *
 	 * The exact position on the segment is specified by the
 	 * {@link #getSegmentParameter() segmentParameter}.
-	 * 
+	 *
 	 * @return segmentIndex
 	 */
 	public int getSegmentIndex() {
@@ -156,7 +158,7 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 	/**
 	 * The segmentParameter is a value between 0 and 1. It determines the final
 	 * point on the segment which this selection handle part belongs to.
-	 * 
+	 *
 	 * @return segmentParameter
 	 */
 	public double getSegmentParameter() {
@@ -187,11 +189,18 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		// update visual layout position
 		visual.setLayoutX(point2d.getX());
 		visual.setLayoutY(point2d.getY());
+
+		// update color
+		if (getSegmentParameter() == 0.5) {
+			visual.setFill(Color.WHITE);
+		} else {
+			visual.setFill(FILL_BLUE);
+		}
 	}
 
 	/**
 	 * Sets the segment index. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentIndex
 	 * @see #getSegmentIndex()
 	 */
@@ -202,7 +211,7 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 
 	/**
 	 * Sets the segment parameter. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentParameter
 	 * @see #getSegmentParameter()
 	 */
