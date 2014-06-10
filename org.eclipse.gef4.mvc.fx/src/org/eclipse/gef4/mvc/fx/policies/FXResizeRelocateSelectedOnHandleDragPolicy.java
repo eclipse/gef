@@ -269,6 +269,9 @@ public class FXResizeRelocateSelectedOnHandleDragPolicy extends
 			}
 		}
 		if (performCommit) {
+			// TODO: for performance optimization, refreshing visuals could be
+			// disabled during execution (so that model changes do not trigger
+			// refresh)
 			executeOperation(operation);
 		}
 

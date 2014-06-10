@@ -34,7 +34,13 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	private Point startPoint;
 	private List<Point> initialWayPoints;
 	private List<Point> currentWayPoints;
+
+	private Point removed;
+	private int removedIndex;
+
 	private FXChangeWayPointsOperation op;
+	private int wayPointIndex;
+	private Point newWayPoint = new Point();
 
 	/**
 	 * Selects a way point on the curve to be manipulated. The way point is
@@ -46,6 +52,8 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	public void selectWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = false;
+		this.wayPointIndex = wayPointIndex;
+		newWayPoint.setLocation(p);
 	}
 
 	private void init(Point p) {
@@ -72,6 +80,8 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	public void createWayPoint(int wayPointIndex, Point p) {
 		init(p);
 		isCreate = true;
+		this.wayPointIndex = wayPointIndex;
+		newWayPoint.setLocation(p);
 		currentWayPoints.add(wayPointIndex, startPoint);
 		op = new FXChangeWayPointsOperation("Change way points",
 				getConnection(), initialWayPoints, currentWayPoints);
@@ -85,17 +95,19 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	}
 
 	/**
-	 * Updates the selected way point. Sets its coordinates to the coordinates
-	 * of the given point.
+	 * Moves the previously selected/created way point to the given position.
 	 * 
 	 * @param wayPointIndex
 	 *            index of the selected way point
 	 * @param p
 	 *            {@link Point} providing new way point coordinates
 	 */
-	public void updateWayPoint(int wayPointIndex, Point p) {
-		Point newWayPoint = transformToLocal(p);
+	public void moveWayPoint(Point p) {
+		newWayPoint.setLocation(transformToLocal(p));
 		currentWayPoints.set(wayPointIndex, newWayPoint);
+
+		if (!isCreate)
+			hideShowOverlaid();
 
 		op = new FXChangeWayPointsOperation("Change way points",
 				getConnection(), initialWayPoints, currentWayPoints);
@@ -105,6 +117,34 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 			op.execute(null, null);
 		} catch (ExecutionException e) {
 			throw new IllegalStateException(e);
+		}
+	}
+
+	private void hideShowOverlaid() {
+		// put removed back in
+		if (removed != null) {
+			currentWayPoints.add(removedIndex, removed);
+			removed = null;
+		}
+
+		// determine overlaid neihbor
+		removedIndex = -1;
+		List<Point> points = currentWayPoints;
+		if (wayPointIndex > 0) {
+			if (newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD) {
+				removedIndex = wayPointIndex - 1;
+			}
+		}
+		if (removedIndex == -1 && wayPointIndex + 1 < points.size()) {
+			if (newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD) {
+				removedIndex = wayPointIndex + 1;
+			}
+		}
+
+		// remove neighbor if overlaid
+		if (removedIndex != -1) {
+			removed = currentWayPoints.get(removedIndex);
+			currentWayPoints.remove(removedIndex);
 		}
 	}
 
@@ -127,38 +167,9 @@ public abstract class AbstractFXWayPointPolicy extends AbstractPolicy<Node> {
 	 * @param p
 	 *            {@link Point} providing new way point coordinates
 	 */
-	public IUndoableOperation commitWayPoint(int wayPointIndex, Point p) {
-		updateWayPoint(wayPointIndex, p);
+	public IUndoableOperation commit() {
 		getHost().setRefreshVisual(true);
-
-		Point newWayPoint = transformToLocal(p);
-
-		if (!isCreate && isRemove(wayPointIndex, newWayPoint)) {
-			currentWayPoints.remove(wayPointIndex);
-			op = new FXChangeWayPointsOperation("Change way points",
-					getConnection(), initialWayPoints, currentWayPoints);
-		}
-
-		// execute locally
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
-
 		return op;
-	}
-
-	private boolean isRemove(int wayPointIndex, Point newWayPoint) {
-		boolean remove = false;
-		List<Point> points = currentWayPoints;
-		if (wayPointIndex > 0) {
-			remove = newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD;
-		}
-		if (!remove && wayPointIndex + 1 < points.size()) {
-			remove = newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD;
-		}
-		return remove;
 	}
 
 	public abstract IFXConnection getConnection();

@@ -88,10 +88,12 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return FXSelectionHandlePart.SIZE;
 	}
 
+	// can be overridden by subclasses to add an operation for model changes
+	// TODO: pull up to IPolicy interface
 	public IUndoableOperation commit() {
 		IUndoableOperation commit = operation;
-		// TODO: build a compound operation that comprises model changes.
 		operation = null;
 		return commit;
 	}
+	
 }

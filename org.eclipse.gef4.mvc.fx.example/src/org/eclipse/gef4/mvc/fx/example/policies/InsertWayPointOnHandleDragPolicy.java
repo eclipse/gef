@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.parts.FXMidPointHandlePart;
@@ -74,17 +75,16 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		getWayPointHandlePolicy(targetPart).updateWayPoint(
-				hp.getVertexIndex() - 1,
-				new Point(e.getSceneX(), e.getSceneY()));
+		getWayPointHandlePolicy(targetPart).moveWayPoint(new Point(e.getSceneX(), e.getSceneY()));
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		getWayPointHandlePolicy(targetPart).commitWayPoint(
-				hp.getVertexIndex() - 1,
-				new Point(e.getSceneX(), e.getSceneY()));
+		// defensively fire at least one drag() before a release()
+		drag(e, delta, nodesUnderMouse, partsUnderMouse);
+		IUndoableOperation operation = getWayPointHandlePolicy(targetPart).commit();
+		executeOperation(operation);
 	}
 
 }

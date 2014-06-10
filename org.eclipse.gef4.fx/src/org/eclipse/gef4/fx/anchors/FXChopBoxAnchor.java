@@ -15,6 +15,7 @@ import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -153,7 +154,11 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	@Override
 	public void recomputePositions() {
-		for (Node anchored : referencePointProperty().get().keySet()) {
+		ObservableMap<Node, Point> ref = referencePointProperty().get();
+		if (ref == null) {
+			return;
+		}
+		for (Node anchored : ref.keySet()) {
 			Point referencePoint = referencePointProperty().get(anchored);
 			if (referencePoint != null) {
 				recomputePosition(anchored, referencePoint);

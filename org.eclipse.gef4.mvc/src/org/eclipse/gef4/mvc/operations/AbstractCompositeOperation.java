@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,6 +64,21 @@ public abstract class AbstractCompositeOperation extends AbstractOperation imple
 		IStatus status = Status.OK_STATUS;
 		for(IUndoableOperation operation : operations){
 			combine(status, operation.execute(monitor, info));
+		}
+		return status;
+	}
+	
+	@Override
+	public void addContext(IUndoContext context) {
+		super.addContext(context);
+	}
+	
+	@Override
+	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		IStatus status = Status.OK_STATUS;
+		for(IUndoableOperation operation : operations){
+			combine(status, operation.undo(monitor, info));
 		}
 		return status;
 	}

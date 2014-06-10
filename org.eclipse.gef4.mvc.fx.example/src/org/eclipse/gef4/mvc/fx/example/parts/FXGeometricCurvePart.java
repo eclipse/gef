@@ -20,7 +20,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
@@ -34,6 +40,8 @@ import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXWayPointPolicy;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
@@ -83,6 +91,83 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
+	private static class WayPointModelOperation extends AbstractOperation {
+
+		private FXGeometricCurvePart part;
+		private List<Point> oldWayPoints = new ArrayList<Point>();
+		private List<Point> newWayPoints = new ArrayList<Point>();
+
+		public WayPointModelOperation(FXGeometricCurvePart part,
+				List<Point> oldWayPoints, List<Point> newWayPoints) {
+			super("Change way points in model.");
+			this.part = part;
+			for (Point p : oldWayPoints) {
+				this.oldWayPoints.add(p.getCopy());
+			}
+			for (Point p : newWayPoints) {
+				this.newWayPoints.add(p.getCopy());
+			}
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			removeCurveWayPoints();
+			addCurveWayPoints(newWayPoints);
+			return Status.OK_STATUS;
+		}
+
+		@SuppressWarnings("unchecked")
+		private void addCurveWayPoints(List<Point> wayPoints) {
+			FXGeometricCurve curve = part.getContent();
+			int i = 0;
+			for (Point p : wayPoints) {
+				curve.addWayPoint(i++, new Point(p));
+			}
+			ISelectionModel<Node> selm = part.getViewer().getSelectionModel();
+			if (selm.getSelected().contains(part)) {
+				selm.deselect(part);
+				selm.select(part);
+			}
+		}
+
+		private void removeCurveWayPoints() {
+			FXGeometricCurve curve = part.getContent();
+			List<Point> wayPoints = curve.getWayPoints();
+			for (int i = wayPoints.size() - 1; i >= 0; --i) {
+				curve.removeWayPoint(i);
+			}
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			removeCurveWayPoints();
+			addCurveWayPoints(oldWayPoints);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public String toString() {
+			String str = "ChangeWayPoints (model):\n  from:\n";
+			for (int i = 0; i < oldWayPoints.size(); i++) {
+				str = str + "   - " + oldWayPoints.get(i) + "\n";
+			}
+			str = str + "  to:\n";
+			for (int i = 0; i < newWayPoints.size(); i++) {
+				str = str + "   - " + newWayPoints.get(i) + "\n";
+			}
+			return str;
+		}
+
+	}
+
 	private final FXSelectionBehavior selectionBehavior = new FXSelectionBehavior() {
 		@Override
 		public IGeometry getFeedbackGeometry() {
@@ -117,30 +202,26 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					}
 
 					@Override
-					public IUndoableOperation commitWayPoint(int wayPointIndex,
-							Point p) {
-						IUndoableOperation op = super.commitWayPoint(
-								wayPointIndex, p);
-						setRefreshVisual(false);
+					public IUndoableOperation commit() {
+						final IUndoableOperation op = super.commit();
+
 						FXGeometricCurve curve = getContent();
-						// TODO: encapsulate the following (model changes) in operation and return as compound operation
-						List<Point> curveWPs = curve.getWayPoints();
-						for (int i = curveWPs.size() - 1; i >= 0; i--) {
-							curve.removeWayPoint(i);
-						}
-						List<Point> wayPoints = visual.getWayPoints();
-						for (int i = 0; i < wayPoints.size(); i++) {
-							curve.addWayPoint(i, wayPoints.get(i));
-						}
-						selectionBehavior.refreshFeedback();
-						selectionBehavior.refreshHandles();
-						setRefreshVisual(true);
-						refreshVisual();
+						List<Point> oldWayPoints = curve.getWayPoints();
+						List<Point> newWayPoints = visual.getWayPoints();
+						final WayPointModelOperation modelOp = new WayPointModelOperation(
+								FXGeometricCurvePart.this, oldWayPoints,
+								newWayPoints);
 
-						// TODO: remove way point juggling here, just execute
-						// the operation
+						// compose both operations
+						IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+								"Change way points.") {
+							{
+								add(op);
+								add(modelOp);
+							}
+						};
 
-						return op;
+						return compositeOperation;
 					}
 				});
 		setAdapter(AbstractFXReconnectPolicy.class,
@@ -251,11 +332,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			visual.getCurveNode().setStrokeWidth(content.getStrokeWidth());
 		}
 		if (startDecorationVisual != null
-				&& startDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
+				&& startDecorationVisual.getStrokeWidth() != content
+						.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 		if (endDecorationVisual != null
-				&& endDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
+				&& endDecorationVisual.getStrokeWidth() != content
+						.getStrokeWidth()) {
 			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
