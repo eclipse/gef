@@ -177,24 +177,42 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 			return;
 		}
 
-		// get new position (in local coordinate space)
-		Point position = getPosition(handleGeometryProvider.get());
-
-		// transform to handle space
-		Node targetVisual = targetPart.getVisual();
-		Pane handleLayer = rootPart.getHandleLayer();
-		Point2D point2d = handleLayer.sceneToLocal(targetVisual.localToScene(
-				position.x, position.y));
-
-		// update visual layout position
-		visual.setLayoutX(point2d.getX());
-		visual.setLayoutY(point2d.getY());
-
-		// update color
-		if (getSegmentParameter() == 0.5) {
-			visual.setFill(Color.WHITE);
+		if (getSegmentIndex() == -1) {
+			// hide those that have "invalid" index (this may happen during
+			// life-feedback, when a waypoint is removed)
+			visual.setVisible(false);
 		} else {
-			visual.setFill(FILL_BLUE);
+			visual.setVisible(true);
+
+			// get new position (in local coordinate space)
+			Point position = getPosition(handleGeometryProvider.get());
+
+			// transform to handle space
+			Node targetVisual = targetPart.getVisual();
+			Pane handleLayer = rootPart.getHandleLayer();
+			Point2D point2d = handleLayer.sceneToLocal(targetVisual
+					.localToScene(position.x, position.y));
+
+			// update visual layout position
+			visual.setLayoutX(point2d.getX());
+			visual.setLayoutY(point2d.getY());
+
+			// update color
+			if (getSegmentParameter() == 0.5) {
+				// if (getSegmentIndex() == 0) {
+				// visual.setFill(Color.RED);
+				// } else if (getSegmentIndex() == 1) {
+				// visual.setFill(Color.YELLOW);
+				// } else if (getSegmentIndex() == 2) {
+				// visual.setFill(Color.GREEN);
+				// } else if (getSegmentIndex() == 3) {
+				// visual.setFill(Color.PURPLE);
+				// } else {
+				visual.setFill(Color.WHITE);
+				// }
+			} else {
+				visual.setFill(FILL_BLUE);
+			}
 		}
 	}
 

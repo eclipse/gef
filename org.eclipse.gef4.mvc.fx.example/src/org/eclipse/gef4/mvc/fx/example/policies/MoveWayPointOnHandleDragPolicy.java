@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - Fixes related to bug #437076
  *     
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
@@ -31,9 +32,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
-
-	public MoveWayPointOnHandleDragPolicy() {
-	}
 
 	@Override
 	public void press(MouseEvent e) {
@@ -61,8 +59,8 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 		if (before.size() != after.size()) {
 			// re-assign segment index and segment parameter
-//			System.out.println("Before: " + before.size() + " waypoints");
-//			System.out.println("After: " + after.size() + " waypoints");
+			// System.out.println("Before: " + before.size() + " waypoints");
+			// System.out.println("After: " + after.size() + " waypoints");
 			List<FXSelectionHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
 					FXSelectionHandlePart.class);
@@ -80,40 +78,55 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 					}
 				}
 			});
-//			System.out.println("Found " + parts.size()
-//					+ " FXSelectionHandleParts");
+			// System.out.println("Found " + parts.size()
+			// + " FXSelectionHandleParts");
 			Iterator<FXSelectionHandlePart> it = parts.iterator();
 			FXSelectionHandlePart part = null;
 			for (int i = 0; i <= after.size(); i++) {
 				// param 0
 				part = it.next();
-//				System.out.println("Reassigned index " + part.getSegmentIndex()
-//						+ " - " + part.getSegmentParameter() + " to " + i
-//						+ " - " + 0.0);
-				part.setSegmentIndex(i);
-				part.setSegmentParameter(0.0);
+				// System.out.println("Reassigned index " +
+				// part.getSegmentIndex()
+				// + " - " + part.getSegmentParameter() + " to " + i
+				// + " - " + 0.0);
+				setSegmentIndex(part, i);
+				setSegmentParameter(part, 0.0);
 				// param 0.5
 				part = it.next();
-//				System.out.println("Reassigned index " + part.getSegmentIndex()
-//						+ " - " + part.getSegmentParameter() + " to " + i
-//						+ " - " + 0.5);
-				part.setSegmentIndex(i);
+				// System.out.println("Reassigned index " +
+				// part.getSegmentIndex()
+				// + " - " + part.getSegmentParameter() + " to " + i
+				// + " - " + 0.5);
+				setSegmentIndex(part, i);
+				setSegmentParameter(part, 0.5);
 			}
 			// param 1
 			part = it.next();
-//			System.out.println("Reassigned index " + part.getSegmentIndex()
-//					+ " - " + part.getSegmentParameter() + " to " + (after.size())
-//					+ " - " + 1.0);
-			part.setSegmentIndex(after.size());
-			part.setSegmentParameter(1.0);
-			
+			// System.out.println("Reassigned index " + part.getSegmentIndex()
+			// + " - " + part.getSegmentParameter() + " to " + (after.size())
+			// + " - " + 1.0);
+			setSegmentIndex(part, after.size());
+			setSegmentParameter(part, 1.0);
+
 			// not used -> could be removed (and re-added)
-			while(it.hasNext()){
+			while (it.hasNext()) {
 				part = it.next();
-//				System.out.println("Superfluous " + part.getSegmentIndex()
-//						+ " - " + part.getSegmentParameter());
+				// hide (but do not remove from root part and anchorage yet
+				// (this will be initiated upon commit)
+				setSegmentIndex(part, -1);
 			}
-//			System.out.println("");
+		}
+	}
+
+	private void setSegmentParameter(FXSelectionHandlePart part, double value) {
+		if (part.getSegmentParameter() != value) {
+			part.setSegmentParameter(value);
+		}
+	}
+
+	private void setSegmentIndex(FXSelectionHandlePart part, int value) {
+		if (part.getSegmentIndex() != value) {
+			part.setSegmentIndex(value);
 		}
 	}
 

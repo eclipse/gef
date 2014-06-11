@@ -42,6 +42,14 @@ public class PartUtils {
 		return anchoreds;
 	}
 	
+	public static <VR> List<IVisualPart<VR>> getAnchorages(List<? extends IVisualPart<VR>> anchoreds){
+		List<IVisualPart<VR>> anchorages = new ArrayList<IVisualPart<VR>>();
+		for (IVisualPart<VR> a : anchoreds) {
+			anchorages.addAll(a.getAnchorages());
+		}
+		return anchorages;
+	}
+	
 	/*
 	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
 	 * 
