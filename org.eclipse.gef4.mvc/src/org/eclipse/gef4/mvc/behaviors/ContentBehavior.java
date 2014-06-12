@@ -36,7 +36,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		if (getHost() == getHost().getRoot()) {
 			getHost().getRoot().getViewer().getContentModel()
 					.addPropertyChangeListener(this);
-			;
 		} else {
 			getHost().addPropertyChangeListener(this);
 		}
@@ -69,9 +68,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	/**
-	 * Updates the host {@link IVisualPart}'s children {@link IContentPart}s (see
-	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
-	 * content children that is passed in.
+	 * Updates the host {@link IVisualPart}'s children {@link IContentPart}s
+	 * (see {@link IVisualPart#getChildren()}) so that it is in sync with the
+	 * set of content children that is passed in.
 	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(List<Object> contentChildren) {
@@ -142,8 +141,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		} else {
 			IContentPartFactory<VR> contentPartFactory = getHost().getRoot()
 					.getViewer().getContentPartFactory();
-			IContentPart<VR> contentPart = contentPartFactory.createContentPart(
-					model, this, Collections.emptyMap());
+			IContentPart<VR> contentPart = contentPartFactory
+					.createContentPart(model, this, Collections.emptyMap());
 			contentPart.setContent(model);
 			return contentPart;
 		}
