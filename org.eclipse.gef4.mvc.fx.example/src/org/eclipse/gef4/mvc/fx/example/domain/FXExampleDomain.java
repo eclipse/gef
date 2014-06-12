@@ -17,7 +17,7 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
-import org.eclipse.gef4.mvc.fx.tools.FXSelectionTool;
+import org.eclipse.gef4.mvc.fx.tools.FXClickTool;
 import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.tools.CompositeTool;
 import org.eclipse.gef4.mvc.tools.ITool;
@@ -27,7 +27,7 @@ public class FXExampleDomain extends FXDomain {
 	@Override
 	protected ITool<Node> getDefaultTool() {
 		CompositeTool<Node> baseTool = new CompositeTool<Node>();
-		baseTool.add(new FXSelectionTool()); // TODO use drag tool
+		baseTool.add(new FXClickTool());
 		baseTool.add(new FXDragTool());
 		baseTool.add(new FXHoverTool());
 		baseTool.add(new FXZoomTool());

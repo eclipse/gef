@@ -7,62 +7,57 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.tools;
+package org.eclipse.gef4.mvc.fx.policies;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.models.IContentModel;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
-/**
- * 
- * @author anyssen
- * @author mwienand
- * 
- * @param <VR>
- */
-// TODO: marquee selection can by performed by drag policy on root
-public abstract class AbstractSelectionTool<VR> extends AbstractTool<VR>
-		implements PropertyChangeListener {
+public class FXSelectOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
-	public void setDomain(IDomain<VR> domain) {
-		super.setDomain(domain);
+	public void click(MouseEvent e) {
+		boolean append = e.isControlDown();
+		IVisualPart<Node> host = getHost();
+		if (host instanceof IRootPart) {
+			select(null, append);
+		} else if (host instanceof IContentPart) {
+			select((IContentPart<Node>) host, append);
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected ISelectionPolicy<VR> getToolPolicy(IVisualPart<VR> visualPart) {
-		return visualPart.getAdapter(ISelectionPolicy.class);
+	protected ISelectionModel<Node> getSelectionModel() {
+		return getHost().getRoot().getViewer().getSelectionModel();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param targetPart
 	 * @param append
 	 * @return <code>true</code> on selection change, otherwise
 	 *         <code>false</code>
 	 */
+	// TODO: move this into selection policy
 	@SuppressWarnings("unchecked")
-	public boolean select(IContentPart<VR> targetPart, boolean append) {
+	public boolean select(IContentPart<Node> targetPart, boolean append) {
 		// TODO: extract into tool policy
 		boolean changed = true;
 
-		ISelectionModel<VR> selectionModel = getSelectionModel();
+		ISelectionModel<Node> selectionModel = getSelectionModel();
 		// retrieve old selection
-		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
+		List<IContentPart<Node>> oldSelection = new ArrayList<IContentPart<Node>>(
 				selectionModel.getSelected());
 		// determine new selection
-		if (targetPart == null || getToolPolicy(targetPart) == null
-				|| !getToolPolicy(targetPart).isSelectable()) {
+		if (targetPart == null) {
 			// remove all selected
 			selectionModel.deselectAll();
 		} else {
@@ -88,35 +83,7 @@ public abstract class AbstractSelectionTool<VR> extends AbstractTool<VR>
 				}
 			}
 		}
-
 		return changed;
-	}
-
-	protected ISelectionModel<VR> getSelectionModel() {
-		return getDomain().getViewer().getSelectionModel();
-	}
-
-	@Override
-	protected void registerListeners() {
-		getDomain().getViewer().getContentModel()
-				.addPropertyChangeListener(this);
-	}
-
-	@Override
-	protected void unregisterListeners() {
-		getDomain().getViewer().getContentModel()
-				.removePropertyChangeListener(this);
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		/*
-		 * TODO: Viewer should flush interaction model data when contents
-		 * changes.
-		 */
-		if (evt.getPropertyName().equals(IContentModel.CONTENTS_PROPERTY)) {
-			select(null, false);
-		}
 	}
 
 }

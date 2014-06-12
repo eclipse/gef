@@ -3,7 +3,6 @@ package org.eclipse.gef4.mvc.fx.example;
 import java.util.Collections;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
@@ -15,10 +14,7 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageViewer;
-import org.eclipse.gef4.mvc.policies.IScrollPolicy;
-import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 public class FXExampleApplication extends Application {
 
@@ -34,12 +30,10 @@ public class FXExampleApplication extends Application {
 		viewer.setContentPartFactory(new FXExampleContentPartFactory());
 		viewer.setFeedbackPartFactory(new FXDefaultFeedbackPartFactory());
 
-		viewer.getRootPart().setAdapter(new FXSelectionBehavior());
-		viewer.getRootPart().setAdapter(new FXZoomBehavior());
-		viewer.getRootPart().setAdapter(IZoomPolicy.class,
-				new IZoomPolicy.Impl<Node>());
-		viewer.getRootPart().setAdapter(IScrollPolicy.class,
-				new FXZoomOnScrollPolicy());
+		viewer.getRootPart().setAdapter(FXSelectionBehavior.class,
+				new FXSelectionBehavior());
+		viewer.getRootPart().setAdapter(FXZoomBehavior.class,
+				new FXZoomBehavior());
 
 		FXDomain domain = new FXExampleDomain();
 		viewer.setDomain(domain);

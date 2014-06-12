@@ -27,8 +27,6 @@ public interface IAdaptable {
 
 	public <T> T getAdapter(Class<T> key);
 
-	public <T> void setAdapter(T adapter);
-
 	public <T> void setAdapter(Class<T> key, T adapter);
 
 	public <T> T unsetAdapter(Class<T> key);

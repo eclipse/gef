@@ -7,21 +7,20 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
-public interface ISelectionPolicy<VR> extends IPolicy<VR> {
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
-	public class Impl<VR> extends AbstractPolicy<VR> implements ISelectionPolicy<VR> {
-		@Override
-		public boolean isSelectable() {
-			return true;
-		}
-	}
-	
-	public boolean isSelectable();
-	
-	// TODO: we need to add the manipulation of the selection model here and in Impl.
-	
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+
+/**
+ * @author anyssen
+ *
+ */
+public abstract class AbstractFXClickPolicy extends AbstractPolicy<Node> {
+
+	public abstract void click(MouseEvent e);
 }

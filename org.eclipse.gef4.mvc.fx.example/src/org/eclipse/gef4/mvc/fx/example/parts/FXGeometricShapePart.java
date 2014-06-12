@@ -26,12 +26,10 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IHoverPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
@@ -61,18 +59,14 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				}
 			}
 		};
-		setAdapter(new FXSelectionBehavior());
-		setAdapter(new FXHoverBehavior());
-		setAdapter(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		setAdapter(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
-			@Override
-			public boolean isHoverable() {
-				return !getHost().getRoot().getViewer().getSelectionModel()
-						.getSelected().contains(getHost());
-			}
-		});
-		setAdapter(AbstractFXDragPolicy.class,
-				new FXRelocateOnDragPolicy());
+		// behaviors
+		setAdapter(FXSelectionBehavior.class, new FXSelectionBehavior());
+		setAdapter(FXHoverBehavior.class, new FXHoverBehavior());
+
+		// interaction policies
+		setAdapter(FXDragTool.TOOL_POLICY_KEY, new FXRelocateOnDragPolicy());
+
+		// transaction policies
 		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
 	}
 

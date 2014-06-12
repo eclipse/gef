@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -21,6 +21,17 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
+import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXZoomOnZoomPolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXClickTool;
+import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
+import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
+import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -47,7 +58,79 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	private Parent scrollPaneInput;
 
 	public FXRootPart() {
+		// register (default) interaction policies (which are based on viewer
+		// models and do not depend on transaction policies)
+		setAdapter(FXClickTool.TOOL_POLICY_KEY, new FXSelectOnClickPolicy());
+		setAdapter(FXHoverTool.TOOL_POLICY_KEY, new FXHoverOnHoverPolicy());
+		setAdapter(FXScrollTool.TOOL_POLICY_KEY, new FXZoomOnScrollPolicy());
+		setAdapter(FXZoomTool.TOOL_POLICY_KEY, new FXZoomOnZoomPolicy());
+
+		// register (default) behaviors (which are based on viewer models)
+		setAdapter(FXSelectionBehavior.class, new FXSelectionBehavior());
+		setAdapter(FXHoverBehavior.class, new FXHoverBehavior());
+		setAdapter(FXZoomBehavior.class, new FXZoomBehavior());
+
 		createRootVisual();
+	}
+
+	@Override
+	protected void addChildVisual(IVisualPart<Node> child, int index) {
+		if (child instanceof IContentPart) {
+			int contentLayerIndex = 0;
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& getChildren().get(i) instanceof IContentPart) {
+					contentLayerIndex++;
+				}
+			}
+			contentLayer.getChildren()
+			.add(contentLayerIndex, child.getVisual());
+		} else if (child instanceof IFeedbackPart) {
+			int feedbackLayerIndex = 0;
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& (getChildren().get(i) instanceof IFeedbackPart)) {
+					feedbackLayerIndex++;
+				}
+			}
+			feedbackLayer.getChildren().add(feedbackLayerIndex,
+					child.getVisual());
+		} else {
+			int handleLayerIndex = 0;
+			for (int i = 0; i < index; i++) {
+				if (i < getChildren().size()
+						&& (getChildren().get(i) instanceof IHandlePart)) {
+					handleLayerIndex++;
+				}
+			}
+			handleLayer.getChildren().add(handleLayerIndex, child.getVisual());
+		}
+	}
+
+	protected Pane createContentLayer() {
+		return createLayer(false);
+	}
+
+	protected Pane createFeedbackLayer() {
+		Pane feedbackLayer = createLayer(true);
+		return feedbackLayer;
+	}
+
+	protected Pane createHandleLayer() {
+		return createLayer(false);
+	}
+
+	protected Pane createLayer(boolean mouseTransparent) {
+		Pane layer = new Pane();
+		layer.setPickOnBounds(false);
+		layer.setMouseTransparent(mouseTransparent);
+		return layer;
+	}
+
+	protected StackPane createLayersStackPane(List<Pane> layers) {
+		StackPane layersStackPane = new StackPane();
+		layersStackPane.getChildren().addAll(layers);
+		return layersStackPane;
 	}
 
 	protected void createRootVisual() {
@@ -71,46 +154,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		return scrollPane;
 	}
 
-	protected StackPane createLayersStackPane(List<Pane> layers) {
-		StackPane layersStackPane = new StackPane();
-		layersStackPane.getChildren().addAll(layers);
-		return layersStackPane;
-	}
-
-	protected Pane createContentLayer() {
-		return createLayer(false);
-	}
-
-	protected Pane createHandleLayer() {
-		return createLayer(false);
-	}
-
-	protected Pane createFeedbackLayer() {
-		Pane feedbackLayer = createLayer(true);
-		return feedbackLayer;
-	}
-
 	protected Parent createScrollPaneInput(StackPane layersStackPane) {
 		return new Group(layersStackPane);
-	}
-
-	protected Pane createLayer(boolean mouseTransparent) {
-		Pane layer = new Pane();
-		layer.setPickOnBounds(false);
-		layer.setMouseTransparent(mouseTransparent);
-		return layer;
-	}
-
-	public ScrollPane getScrollPane() {
-		return scrollPane;
-	}
-
-	public StackPane getLayerStackPane() {
-		return layersStackPane;
-	}
-
-	public Pane getHandleLayer() {
-		return handleLayer;
 	}
 
 	public Pane getContentLayer() {
@@ -121,23 +166,26 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		return feedbackLayer;
 	}
 
-	@Override
-	public void setViewer(IVisualViewer<Node> newViewer) {
-		if (getViewer() != null) {
-			unregisterFromVisualPartMap();
-		}
-		if (newViewer != null && !(newViewer instanceof IFXViewer)) {
-			throw new IllegalArgumentException();
-		}
-		super.setViewer(newViewer);
-		if (getViewer() != null) {
-			registerAtVisualPartMap();
-		}
+	public Pane getHandleLayer() {
+		return handleLayer;
+	}
+
+	public StackPane getLayerStackPane() {
+		return layersStackPane;
+	}
+
+	public ScrollPane getScrollPane() {
+		return scrollPane;
 	}
 
 	@Override
 	public IFXViewer getViewer() {
 		return (IFXViewer) super.getViewer();
+	}
+
+	@Override
+	public Node getVisual() {
+		return scrollPane;
 	}
 
 	@Override
@@ -158,6 +206,31 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
+	protected void removeChildVisual(IVisualPart<Node> child) {
+		if (child instanceof IContentPart) {
+			contentLayer.getChildren().remove(child.getVisual());
+		} else if (child instanceof IFeedbackPart) {
+			feedbackLayer.getChildren().remove(child.getVisual());
+		} else {
+			handleLayer.getChildren().remove(child.getVisual());
+		}
+	}
+
+	@Override
+	public void setViewer(IVisualViewer<Node> newViewer) {
+		if (getViewer() != null) {
+			unregisterFromVisualPartMap();
+		}
+		if (newViewer != null && !(newViewer instanceof IFXViewer)) {
+			throw new IllegalArgumentException();
+		}
+		super.setViewer(newViewer);
+		if (getViewer() != null) {
+			registerAtVisualPartMap();
+		}
+	}
+
+	@Override
 	protected void unregisterFromVisualPartMap() {
 		getViewer().getVisualPartMap().remove(layersStackPane);
 		for (Node child : layersStackPane.getChildren()) {
@@ -167,56 +240,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 		// unregister root visual as well
 		getViewer().getVisualPartMap().remove(getVisual());
-	}
-
-	@Override
-	public Node getVisual() {
-		return scrollPane;
-	}
-
-	@Override
-	protected void addChildVisual(IVisualPart<Node> child, int index) {
-		if (child instanceof IContentPart) {
-			int contentLayerIndex = 0;
-			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& getChildren().get(i) instanceof IContentPart) {
-					contentLayerIndex++;
-				}
-			}
-			contentLayer.getChildren()
-					.add(contentLayerIndex, child.getVisual());
-		} else if (child instanceof IFeedbackPart) {
-			int feedbackLayerIndex = 0;
-			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& (getChildren().get(i) instanceof IFeedbackPart)) {
-					feedbackLayerIndex++;
-				}
-			}
-			feedbackLayer.getChildren().add(feedbackLayerIndex,
-					child.getVisual());
-		} else {
-			int handleLayerIndex = 0;
-			for (int i = 0; i < index; i++) {
-				if (i < getChildren().size()
-						&& (getChildren().get(i) instanceof IHandlePart)) {
-					handleLayerIndex++;
-				}
-			}
-			handleLayer.getChildren().add(handleLayerIndex, child.getVisual());
-		}
-	}
-
-	@Override
-	protected void removeChildVisual(IVisualPart<Node> child) {
-		if (child instanceof IContentPart) {
-			contentLayer.getChildren().remove(child.getVisual());
-		} else if (child instanceof IFeedbackPart) {
-			feedbackLayer.getChildren().remove(child.getVisual());
-		} else {
-			handleLayer.getChildren().remove(child.getVisual());
-		}
 	}
 
 }

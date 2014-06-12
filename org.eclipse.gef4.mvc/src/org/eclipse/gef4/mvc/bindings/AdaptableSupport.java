@@ -45,11 +45,6 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(T adapter) {
-		setAdapter((Class<T>) adapter.getClass(), adapter);
-	}
-
-	@SuppressWarnings("unchecked")
 	public <T> void setAdapter(Class<T> key, T adapter) {
 		if (adapters == null) {
 			adapters = new HashMap<Class<?>, Object>();

@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * @author mwienand
@@ -36,18 +37,18 @@ public interface IHoverModel<VR> extends IPropertyChangeSupport {
 	 * 
 	 * @return the currently hovered {@link IContentPart} or <code>null</code>
 	 */
-	public IContentPart<VR> getHover();
+	public IVisualPart<VR> getHover();
 
 	/**
-	 * Sets the hovered {@link IContentPart} to the given value. The given part
+	 * Sets the hovered {@link IVisualPart} to the given value. The given part
 	 * may be <code>null</code> in order to unhover.
 	 * <p>
 	 * Fires a {@link PropertyChangeEvent}.
 	 * 
 	 * @param cp
-	 *            hovered {@link IContentPart} or <code>null</code>
+	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
-	public void setHover(IContentPart<VR> cp);
+	public void setHover(IVisualPart<VR> cp);
 
 	/**
 	 * Sets the hovered part to <code>null</code>.

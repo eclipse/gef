@@ -37,13 +37,11 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IHoverPolicy;
-import org.eclipse.gef4.mvc.policies.ISelectionPolicy;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
@@ -113,7 +111,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				throws ExecutionException {
 			removeCurveWayPoints();
 			addCurveWayPoints(newWayPoints);
-//			System.out.println(toString());
+			// System.out.println(toString());
 			return Status.OK_STATUS;
 		}
 
@@ -185,43 +183,35 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		};
 
-		setAdapter(selectionBehavior);
-		setAdapter(ISelectionPolicy.class, new ISelectionPolicy.Impl<Node>());
-		setAdapter(IHoverPolicy.class, new IHoverPolicy.Impl<Node>() {
+		// behaviors
+		setAdapter(FXSelectionBehavior.class, selectionBehavior);
+		
+		// transaction policies		
+		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
+
 			@Override
-			public boolean isHoverable() {
-				return !getHost().getRoot().getViewer().getSelectionModel()
-						.getSelected().contains(getHost());
+			public IUndoableOperation commit() {
+				final IUndoableOperation op = super.commit();
+
+				FXGeometricCurve curve = getContent();
+				List<Point> oldWayPoints = curve.getWayPoints();
+				List<Point> newWayPoints = visual.getWayPoints();
+				final WayPointModelOperation modelOp = new WayPointModelOperation(
+						FXGeometricCurvePart.this, oldWayPoints, newWayPoints);
+
+				// compose both operations
+				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+						"Change way points.") {
+					{
+						add(op);
+						add(modelOp);
+					}
+				};
+
+				return compositeOperation;
 			}
 		});
-		setAdapter(FXBendPolicy.class,
-				new FXBendPolicy() {
-
-					@Override
-					public IUndoableOperation commit() {
-						final IUndoableOperation op = super.commit();
-
-						FXGeometricCurve curve = getContent();
-						List<Point> oldWayPoints = curve.getWayPoints();
-						List<Point> newWayPoints = visual.getWayPoints();
-						final WayPointModelOperation modelOp = new WayPointModelOperation(
-								FXGeometricCurvePart.this, oldWayPoints,
-								newWayPoints);
-
-						// compose both operations
-						IUndoableOperation compositeOperation = new AbstractCompositeOperation(
-								"Change way points.") {
-							{
-								add(op);
-								add(modelOp);
-							}
-						};
-
-						return compositeOperation;
-					}
-				});
-		setAdapter(FXReconnectPolicy.class,
-				new FXReconnectPolicy());
+		setAdapter(FXReconnectPolicy.class, new FXReconnectPolicy());
 	}
 
 	@Override

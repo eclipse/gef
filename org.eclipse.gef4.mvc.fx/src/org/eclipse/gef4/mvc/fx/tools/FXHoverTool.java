@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
@@ -16,30 +16,31 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractHoverTool;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-public class FXHoverTool extends AbstractHoverTool<Node> {
+public class FXHoverTool extends AbstractTool<Node> {
+
+	public static final Class<AbstractFXHoverPolicy> TOOL_POLICY_KEY = AbstractFXHoverPolicy.class;
 
 	private final EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
 					getDomain().getViewer(), event);
-			if (targetPart == null) {
-				hover(null);
-			} else if (targetPart instanceof IRootPart) {
-				hover(null);
-			} else if (targetPart instanceof IContentPart) {
-				hover((IContentPart<Node>) targetPart);
-			} else {
-				// throw new IllegalArgumentException("Unsupported part type.");
-				// IGNORE
+			if (targetPart != null) {
+				AbstractFXHoverPolicy policy = getToolPolicy(targetPart);
+				if (policy != null) {
+					policy.hover(event);
+				}
 			}
 		}
 	};
+
+	protected AbstractFXHoverPolicy getToolPolicy(IVisualPart<Node> targetPart) {
+		return targetPart.getAdapter(TOOL_POLICY_KEY);
+	}
 
 	@Override
 	protected void registerListeners() {

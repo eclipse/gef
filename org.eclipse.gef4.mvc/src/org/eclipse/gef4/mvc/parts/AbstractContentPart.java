@@ -26,7 +26,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	private Object content;
 
 	public AbstractContentPart() {
-		setAdapter(new ContentBehavior<VR>());
+		setAdapter(ContentBehavior.class, new ContentBehavior<VR>());
 	}
 
 	/**

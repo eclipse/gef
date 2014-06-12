@@ -51,11 +51,6 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public <T> void setAdapter(T adapter) {
-		as.setAdapter(adapter);
-	}
-
-	@Override
 	public <T> void setAdapter(Class<T> key, T adapter) {
 		as.setAdapter(key, adapter);
 	}

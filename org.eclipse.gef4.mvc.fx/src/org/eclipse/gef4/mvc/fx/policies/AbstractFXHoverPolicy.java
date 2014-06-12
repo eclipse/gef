@@ -6,15 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
-// TODO: generalize API
-public interface IScrollPolicy<V> extends IPolicy<V> {
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-	public void scroll(double deltaY);
-	
+/**
+ * @author anyssen
+ *
+ */
+public abstract class AbstractFXHoverPolicy extends AbstractPolicy<Node> {
+
+	public abstract void hover(MouseEvent e);
 }

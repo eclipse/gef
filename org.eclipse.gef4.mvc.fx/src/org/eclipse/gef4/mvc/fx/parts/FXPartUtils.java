@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -21,7 +21,6 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
@@ -29,13 +28,17 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 public class FXPartUtils {
 
 	public static IVisualPart<Node> getEventTargetPart(
+			IVisualViewer<Node> viewer, Event event) {
+		return getEventTargetPart(viewer, event, null);
+	}
+
+	public static IVisualPart<Node> getEventTargetPart(
 			IVisualViewer<Node> viewer, Event event,
-			Class<IPolicy<Node>> supportedPolicy) {
+			Class<? extends IPolicy<Node>> supportedPolicy) {
 		EventTarget target = event.getTarget();
 
 		if (target instanceof Node) {
-			Node rootVisual = ((IRootPart<Node>) viewer.getRootPart())
-					.getVisual();
+			Node rootVisual = viewer.getRootPart().getVisual();
 
 			// look for the Node in the visual-part-map, traverse the hierarchy
 			// if needed
@@ -44,8 +47,7 @@ public class FXPartUtils {
 					targetNode);
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
-							&& targetPart
-									.getAdapter((Class<IPolicy<Node>>) supportedPolicy) == null)
+							&& targetPart.getAdapter(supportedPolicy) == null)
 					&& targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);
@@ -59,22 +61,18 @@ public class FXPartUtils {
 		return null;
 	}
 
-	public static IVisualPart<Node> getEventTargetPart(
-			IVisualViewer<Node> viewer, Event event) {
-		return getEventTargetPart(viewer, event, null);
-	}
-
 	/**
 	 * Returns a list (currently containing zero or one element) containing the
 	 * viable target parts for the given viewer, event, and policy class.
-	 * 
+	 *
 	 * @param viewer
 	 * @param event
 	 * @param policy
 	 * @return
 	 */
 	public static List<IVisualPart<Node>> getTargetParts(
-			IVisualViewer<Node> viewer, Event event, Class<IPolicy<Node>> policy) {
+			IVisualViewer<Node> viewer, Event event,
+			Class<? extends IPolicy<Node>> policy) {
 		IVisualPart<Node> eventTargetPart = getEventTargetPart(viewer, event,
 				policy);
 		if (eventTargetPart == null) {
@@ -82,8 +80,9 @@ public class FXPartUtils {
 		}
 		return Collections.singletonList(eventTargetPart);
 	}
-	
-	public static Bounds getUnionedVisualBoundsInScene(List<IVisualPart<Node>> parts) {
+
+	public static Bounds getUnionedVisualBoundsInScene(
+			List<IVisualPart<Node>> parts) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
 		for (IVisualPart<Node> cp : parts) {
 			Bounds boundsInScene = cp.getVisual().localToScene(

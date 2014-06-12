@@ -58,6 +58,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	public void propertyChange(PropertyChangeEvent event) {
 		if (IContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())) {
 			synchronizeContentChildren((List<Object>) event.getNewValue());
+			// TODO: flushing of models should be done somewhere more appropriate
+			getHost().getRoot().getViewer().getSelectionModel().deselectAll();
+			getHost().getRoot().getViewer().getHoverModel().clearHover();
 		} else if (IContentPart.CONTENT_PROPERTY
 				.equals(event.getPropertyName())) {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())

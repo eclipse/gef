@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
@@ -16,36 +16,32 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.tools.AbstractSelectionTool;
+import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-// TODO: use drag tool?
-public class FXSelectionTool extends AbstractSelectionTool<Node> {
+public class FXClickTool extends AbstractTool<Node> {
+
+	public static final Class<AbstractFXClickPolicy> TOOL_POLICY_KEY = AbstractFXClickPolicy.class;
 
 	private final EventHandler<MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
-					getDomain().getViewer(), event);
-			if (targetPart == null) {
-				return;
-			}
-
-			boolean append = event.isControlDown();
-			if (targetPart instanceof IRootPart) {
-				select(null, append);
-			} else if (targetPart instanceof IContentPart) {
-				select((IContentPart<Node>) targetPart, append);
-			} else {
-				// IGNORE
-				// throw new IllegalArgumentException(
-				// "This tool only supports IRootVisualPart and IContentPart targets");
+					FXClickTool.this.getDomain().getViewer(), event);
+			if (targetPart != null) {
+				AbstractFXClickPolicy policy = getToolPolicy(targetPart);
+				if (policy != null) {
+					policy.click(event);
+				}
 			}
 		}
 	};
+
+	protected AbstractFXClickPolicy getToolPolicy(IVisualPart<Node> targetPart) {
+		return targetPart.getAdapter(TOOL_POLICY_KEY);
+	}
 
 	@Override
 	protected void registerListeners() {

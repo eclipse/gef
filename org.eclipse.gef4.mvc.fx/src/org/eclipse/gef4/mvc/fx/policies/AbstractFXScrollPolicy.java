@@ -6,23 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
-public interface IHoverPolicy<VR> extends IPolicy<VR> {
+import javafx.scene.Node;
+import javafx.scene.input.ScrollEvent;
 
-	public class Impl<VR> extends AbstractPolicy<VR> implements IHoverPolicy<VR>{
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-		@Override
-		public boolean isHoverable() {
-			return true;
-		}
-	}
-	
-	public boolean isHoverable();
-	
-	// TODO: we need to add the manipulation of the hover model here and in Impl.
-	
+public abstract class AbstractFXScrollPolicy extends AbstractPolicy<Node> {
+
+	public abstract void scroll(ScrollEvent event, double deltaY);
 }

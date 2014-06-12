@@ -208,12 +208,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> void setAdapter(T adapter) {
-		setAdapter((Class<T>) adapter.getClass(), adapter);
-	}
-
 	/**
 	 * @return <code>true</code> if this {@link IVisualPart} is active.
 	 */

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
@@ -25,38 +25,33 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 
-// TODO: refactor implementation
 public class FXDragTool extends AbstractTool<Node> {
 
-	@SuppressWarnings("rawtypes")
-	public static final Class<? extends IPolicy> TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
+	public static final Class<AbstractFXDragPolicy> TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
 
-	@SuppressWarnings("unchecked")
 	private final FXMouseDragGesture gesture = new FXMouseDragGesture() {
 		@Override
 		protected void drag(Node target, MouseEvent e, double dx, double dy,
 				List<Node> nodesUnderMouse) {
 			FXDragTool.this.drag(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					e, new Dimension(dx, dy), nodesUnderMouse);
+					.getViewer(), e, TOOL_POLICY_KEY), e,
+					new Dimension(dx, dy), nodesUnderMouse);
 		}
 
 		@Override
 		protected void press(Node target, MouseEvent e) {
-			FXDragTool.this
-					.press(FXPartUtils.getTargetParts(getDomain().getViewer(),
-							e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY), e);
+			FXDragTool.this.press(FXPartUtils.getTargetParts(getDomain()
+					.getViewer(), e, TOOL_POLICY_KEY), e);
 		}
 
 		@Override
 		protected void release(Node target, MouseEvent e, double dx, double dy,
 				List<Node> nodesUnderMouse) {
 			FXDragTool.this.release(FXPartUtils.getTargetParts(getDomain()
-					.getViewer(), e, (Class<IPolicy<Node>>) TOOL_POLICY_KEY),
-					e, new Dimension(dx, dy), nodesUnderMouse);
+					.getViewer(), e, TOOL_POLICY_KEY), e,
+					new Dimension(dx, dy), nodesUnderMouse);
 		}
 	};
 
@@ -88,7 +83,7 @@ public class FXDragTool extends AbstractTool<Node> {
 	}
 
 	protected AbstractFXDragPolicy getToolPolicy(IVisualPart<Node> targetPart) {
-		return (AbstractFXDragPolicy) targetPart.getAdapter(TOOL_POLICY_KEY);
+		return targetPart.getAdapter(TOOL_POLICY_KEY);
 	}
 
 	protected void press(List<IVisualPart<Node>> targetParts, MouseEvent e) {

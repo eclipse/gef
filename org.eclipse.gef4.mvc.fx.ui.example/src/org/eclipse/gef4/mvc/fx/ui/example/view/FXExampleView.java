@@ -25,24 +25,31 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXZoomOnZoomPolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
+import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.IScrollPolicy;
-import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 public class FXExampleView extends FXView {
 
 	@Override
 	protected void configureViewer(IFXViewer viewer) {
 		super.configureViewer(viewer);
-		viewer.getRootPart().setAdapter(new FXSelectionBehavior());
-		viewer.getRootPart().setAdapter(new FXZoomBehavior());
-		viewer.getRootPart().setAdapter(IZoomPolicy.class,
-				new IZoomPolicy.Impl<Node>());
-		viewer.getRootPart().setAdapter(IScrollPolicy.class,
+
+		// behaviors
+		viewer.getRootPart().setAdapter(FXSelectionBehavior.class,
+				new FXSelectionBehavior());
+		viewer.getRootPart().setAdapter(FXZoomBehavior.class,
+				new FXZoomBehavior());
+
+		// interaction policies
+		viewer.getRootPart().setAdapter(FXZoomTool.TOOL_POLICY_KEY,
+				new FXZoomOnZoomPolicy());
+		viewer.getRootPart().setAdapter(FXScrollTool.TOOL_POLICY_KEY,
 				new FXZoomOnScrollPolicy());
 	}
 

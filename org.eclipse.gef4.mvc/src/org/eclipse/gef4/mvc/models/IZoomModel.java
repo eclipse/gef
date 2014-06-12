@@ -15,7 +15,6 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.IZoomPolicy;
 
 /**
  * The {@link IZoomModel} is used to store the current viewer's zoom factor,
