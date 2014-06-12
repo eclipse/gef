@@ -21,6 +21,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.IHoverPolicy;
 
+// TODO: replace with proper hover policy -> hover tool should only be concretized in FX component
 public class AbstractHoverTool<VR> extends AbstractTool<VR> implements
 		PropertyChangeListener {
 

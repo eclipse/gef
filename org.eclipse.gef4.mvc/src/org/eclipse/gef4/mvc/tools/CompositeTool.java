@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  * 
  * @param <VR>
  */
-public class CompositeAndTool<VR> extends AbstractTool<VR> {
+public class CompositeTool<VR> extends AbstractTool<VR> {
 
 	private List<ITool<VR>> subTools = null;
 
