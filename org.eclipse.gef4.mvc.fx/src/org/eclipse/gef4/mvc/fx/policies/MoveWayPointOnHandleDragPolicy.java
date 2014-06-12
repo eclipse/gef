@@ -23,7 +23,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
@@ -39,7 +39,7 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	private int getSegmentIndex() {
-		return ((FXSelectionHandlePart) getHost()).getSegmentIndex() - 1;
+		return ((FXSegmentHandlePart) getHost()).getSegmentIndex() - 1;
 	}
 
 	@Override
@@ -64,14 +64,14 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 			// re-assign segment index and segment parameter
 			// System.out.println("Before: " + oldWaypoints.size() + " waypoints");
 			// System.out.println("After: " + newWaypoints.size() + " waypoints");
-			List<FXSelectionHandlePart> parts = PartUtils.filterParts(
+			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
-					FXSelectionHandlePart.class);
-			Collections.<FXSelectionHandlePart>sort(parts);
+					FXSegmentHandlePart.class);
+			Collections.<FXSegmentHandlePart>sort(parts);
 			// System.out.println("Found " + parts.size()
 			// + " FXSelectionHandleParts");
-			Iterator<FXSelectionHandlePart> it = parts.iterator();
-			FXSelectionHandlePart part = null;
+			Iterator<FXSegmentHandlePart> it = parts.iterator();
+			FXSegmentHandlePart part = null;
 			for (int i = 0; i <= newWaypoints.size(); i++) {
 				// param 0
 				part = it.next();
@@ -111,13 +111,13 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		}
 	}
 
-	private void setSegmentParameter(FXSelectionHandlePart part, double value) {
+	private void setSegmentParameter(FXSegmentHandlePart part, double value) {
 		if (part.getSegmentParameter() != value) {
 			part.setSegmentParameter(value);
 		}
 	}
 
-	private void setSegmentIndex(FXSelectionHandlePart part, int value) {
+	private void setSegmentIndex(FXSegmentHandlePart part, int value) {
 		if (part.getSegmentIndex() != value) {
 			part.setSegmentIndex(value);
 		}

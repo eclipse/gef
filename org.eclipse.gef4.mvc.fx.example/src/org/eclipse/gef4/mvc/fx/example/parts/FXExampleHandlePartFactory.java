@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.InsertWayPointOnHandleDragPolicy;
@@ -75,7 +75,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			int segmentIndex = i;
-			final FXSelectionHandlePart hp = new FXSelectionHandlePart(
+			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
 					targetPart, handleGeometryProvider, segmentIndex, 0.5);
 			hp.setAdapter(AbstractFXDragPolicy.class,
 					new InsertWayPointOnHandleDragPolicy());
@@ -90,7 +90,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final IContentPart<Node> targetPart,
 			final IProvider<IGeometry> handleGeometryProvider,
 			int segmentIndex, final boolean isEndPoint) {
-		final FXSelectionHandlePart part = (FXSelectionHandlePart) super
+		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart,
 						handleGeometryProvider, segmentIndex, isEndPoint);
 

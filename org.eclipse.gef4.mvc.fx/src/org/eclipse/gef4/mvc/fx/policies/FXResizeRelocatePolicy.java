@@ -19,7 +19,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
-import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -41,11 +41,11 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	}
 
 	protected double getMinimumHeight() {
-		return FXSelectionHandlePart.SIZE;
+		return FXSegmentHandlePart.SIZE;
 	}
 
 	protected double getMinimumWidth() {
-		return FXSelectionHandlePart.SIZE;
+		return FXSegmentHandlePart.SIZE;
 	}
 
 	/*

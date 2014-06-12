@@ -19,7 +19,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -42,8 +42,8 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public FXSelectionHandlePart getHost() {
-		return (FXSelectionHandlePart) super.getHost();
+	public FXSegmentHandlePart getHost() {
+		return (FXSegmentHandlePart) super.getHost();
 	}
 
 	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {

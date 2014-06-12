@@ -20,7 +20,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
@@ -33,22 +33,22 @@ public class InsertWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public FXSelectionHandlePart getHost() {
-		return (FXSelectionHandlePart) super.getHost();
+	public FXSegmentHandlePart getHost() {
+		return (FXSegmentHandlePart) super.getHost();
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		FXSelectionHandlePart hp = getHost();
+		FXSegmentHandlePart hp = getHost();
 		if (hp.getSegmentParameter() == 0.5) {
 			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
 					.createWayPoint(hp.getSegmentIndex(),
 							new Point(e.getSceneX(), e.getSceneY()));
-			List<FXSelectionHandlePart> parts = PartUtils.filterParts(
+			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
-					FXSelectionHandlePart.class);
-			Collections.<FXSelectionHandlePart> sort(parts);
-			for (FXSelectionHandlePart p : parts) {
+					FXSegmentHandlePart.class);
+			Collections.<FXSegmentHandlePart> sort(parts);
+			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
 								.getSegmentParameter() == 1)) {

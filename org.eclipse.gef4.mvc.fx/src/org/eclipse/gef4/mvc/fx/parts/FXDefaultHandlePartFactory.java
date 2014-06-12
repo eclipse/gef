@@ -54,7 +54,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
-		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
+		return new FXSegmentHandlePart(targetPart, handleGeometryProvider,
 				segmentIndex, isEndPoint ? 1 : 0);
 	}
 
@@ -196,7 +196,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
-		return new FXSelectionHandlePart(targetPart, handleGeometryProvider,
+		return new FXSegmentHandlePart(targetPart, handleGeometryProvider,
 				vertexIndex);
 	}
 
