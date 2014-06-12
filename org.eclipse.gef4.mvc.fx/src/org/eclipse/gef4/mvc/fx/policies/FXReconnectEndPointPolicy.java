@@ -22,15 +22,15 @@ import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXReconnectOperation.AnchorKind;
+import org.eclipse.gef4.mvc.fx.operations.FXReconnectEndPointOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXReconnectEndPointOperation.AnchorKind;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 //TODO: find a better name
-public class FXReconnectPolicy extends AbstractPolicy<Node> implements
+public class FXReconnectEndPointPolicy extends AbstractPolicy<Node> implements
 ITransactional {
 
 	private boolean isStartAnchor;
@@ -39,7 +39,7 @@ ITransactional {
 	private IFXConnection connection;
 	private IFXAnchor initialAnchor;
 	private IFXAnchor currentAnchor;
-	private FXReconnectOperation op;
+	private FXReconnectEndPointOperation op;
 
 	@Override
 	public IUndoableOperation commit() {
@@ -57,7 +57,7 @@ ITransactional {
 		} else {
 			currentAnchor = new FXStaticAnchor(getHost().getVisual(), position);
 		}
-		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
+		op = new FXReconnectEndPointOperation("Reconnect", connection, initialAnchor,
 				currentAnchor, isStartAnchor ? AnchorKind.START
 						: AnchorKind.END);
 
@@ -101,7 +101,7 @@ ITransactional {
 			initialAnchor = connection.getEndAnchor();
 		}
 		currentAnchor = initialAnchor;
-		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
+		op = new FXReconnectEndPointOperation("Reconnect", connection, initialAnchor,
 				currentAnchor, isStartAnchor ? AnchorKind.START
 						: AnchorKind.END);
 	}

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 
-public class FXReconnectOperation extends AbstractOperation {
+public class FXReconnectEndPointOperation extends AbstractOperation {
 
 	public static enum AnchorKind {
 		START, END
@@ -31,7 +31,7 @@ public class FXReconnectOperation extends AbstractOperation {
 	private final IFXAnchor newAnchor;
 	private final AnchorKind anchorKind;
 
-	public FXReconnectOperation(String label, IFXConnection connection,
+	public FXReconnectEndPointOperation(String label, IFXConnection connection,
 			IFXAnchor oldAnchor, IFXAnchor newAnchor, AnchorKind anchorKind) {
 		super(label);
 		this.connection = connection;

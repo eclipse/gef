@@ -23,11 +23,10 @@ import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.InsertWayPointOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.MoveWayPointOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.ReconnectWayPointOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateSelectedOnHandleDragPolicy.ReferencePoint;
+import org.eclipse.gef4.mvc.fx.policies.FXBendOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXReconnectEndPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
@@ -41,7 +40,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
 				targets, position);
 		part.setAdapter(AbstractFXDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
+				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(position)));
 		return part;
 	}
@@ -78,7 +77,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
 					targetPart, handleGeometryProvider, segmentIndex, 0.5);
 			hp.setAdapter(AbstractFXDragPolicy.class,
-					new InsertWayPointOnHandleDragPolicy());
+					new FXBendOnHandleDragPolicy());
 			parts.add(hp);
 		}
 
@@ -97,11 +96,11 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new MoveWayPointOnHandleDragPolicy());
+					new FXBendOnHandleDragPolicy());
 		} else {
 			// make end points reconnectable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new ReconnectWayPointOnHandleDragPolicy(isEndPoint));
+					new FXReconnectEndPointOnHandleDragPolicy(isEndPoint));
 		}
 
 		return part;
@@ -114,7 +113,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex);
 		part.setAdapter(AbstractFXDragPolicy.class,
-				new FXResizeRelocateSelectedOnHandleDragPolicy(
+				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(vertexIndex)));
 		return part;
 	}

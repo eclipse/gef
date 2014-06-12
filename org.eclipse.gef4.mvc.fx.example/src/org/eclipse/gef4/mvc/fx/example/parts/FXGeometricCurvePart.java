@@ -37,8 +37,8 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXWayPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXReconnectEndPointPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -194,8 +194,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						.getSelected().contains(getHost());
 			}
 		});
-		setAdapter(FXWayPointPolicy.class,
-				new FXWayPointPolicy() {
+		setAdapter(FXBendPolicy.class,
+				new FXBendPolicy() {
 
 					@Override
 					public IUndoableOperation commit() {
@@ -220,8 +220,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						return compositeOperation;
 					}
 				});
-		setAdapter(FXReconnectPolicy.class,
-				new FXReconnectPolicy());
+		setAdapter(FXReconnectEndPointPolicy.class,
+				new FXReconnectEndPointPolicy());
 	}
 
 	@Override

@@ -24,19 +24,18 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 // TODO: this is applicable only to parts with IFXConnection visual
-// The class does not handle waypoints (but endpoints), so the name is not good
-public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXReconnectEndPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private final boolean isEndPoint;
 
-	public ReconnectWayPointOnHandleDragPolicy(boolean isEndPoint) {
+	public FXReconnectEndPointOnHandleDragPolicy(boolean isEndPoint) {
 		this.isEndPoint = isEndPoint;
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
+		FXReconnectEndPointPolicy policy = getReconnectionPolicy(getHost()
 				.getAnchorages().get(0));
 		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
 	}
@@ -46,13 +45,13 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		return (FXSegmentHandlePart) super.getHost();
 	}
 
-	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {
-		return part.getAdapter(FXReconnectPolicy.class);
+	private FXReconnectEndPointPolicy getReconnectionPolicy(IVisualPart<Node> part) {
+		return part.getAdapter(FXReconnectEndPointPolicy.class);
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		FXReconnectPolicy p = getReconnectionPolicy(getHost().getAnchorages()
+		FXReconnectEndPointPolicy p = getReconnectionPolicy(getHost().getAnchorages()
 				.get(0));
 		if (p != null) {
 			p.init();

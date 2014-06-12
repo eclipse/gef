@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXRelocateSelectedOnDragPolicy extends AbstractFXDragPolicy {
+public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialMouseLocation = null;
 
