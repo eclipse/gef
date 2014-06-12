@@ -13,7 +13,6 @@
 package org.eclipse.gef4.mvc.fx.example.policies;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,61 +55,55 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 				new Point(e.getSceneX(), e.getSceneY()));
 
 		List<Point> after = connection.getWayPoints();
+		adjustHandles(before, after);
+	}
 
-		if (before.size() != after.size()) {
+	private void adjustHandles(List<Point> oldWaypoints,
+			List<Point> newWaypoints) {
+		if (oldWaypoints.size() != newWaypoints.size()) {
 			// re-assign segment index and segment parameter
-			// System.out.println("Before: " + before.size() + " waypoints");
-			// System.out.println("After: " + after.size() + " waypoints");
+			// System.out.println("Before: " + oldWaypoints.size() + " waypoints");
+			// System.out.println("After: " + newWaypoints.size() + " waypoints");
 			List<FXSelectionHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
 					FXSelectionHandlePart.class);
-			Collections.sort(parts, new Comparator<FXSelectionHandlePart>() {
-				@Override
-				public int compare(FXSelectionHandlePart o1,
-						FXSelectionHandlePart o2) {
-					if (o1.getSegmentIndex() < o2.getSegmentIndex()) {
-						return -1;
-					} else if (o1.getSegmentIndex() == o2.getSegmentIndex()) {
-						return (int) (o1.getSegmentParameter() * 2 - o2
-								.getSegmentParameter() * 2);
-					} else {
-						return 1;
-					}
-				}
-			});
+			Collections.<FXSelectionHandlePart>sort(parts);
 			// System.out.println("Found " + parts.size()
 			// + " FXSelectionHandleParts");
 			Iterator<FXSelectionHandlePart> it = parts.iterator();
 			FXSelectionHandlePart part = null;
-			for (int i = 0; i <= after.size(); i++) {
+			for (int i = 0; i <= newWaypoints.size(); i++) {
 				// param 0
 				part = it.next();
-				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + i
-				// + " - " + 0.0);
+//				 System.out.println("Reassigned index " +
+//				 part.getSegmentIndex()
+//				 + " - " + part.getSegmentParameter() + " to " + i
+//				 + " - " + 0.0);
 				setSegmentIndex(part, i);
 				setSegmentParameter(part, 0.0);
 				// param 0.5
 				part = it.next();
-				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + i
-				// + " - " + 0.5);
+//				 System.out.println("Reassigned index " +
+//				 part.getSegmentIndex()
+//				 + " - " + part.getSegmentParameter() + " to " + i
+//				 + " - " + 0.5);
 				setSegmentIndex(part, i);
 				setSegmentParameter(part, 0.5);
 			}
 			// param 1
 			part = it.next();
-			// System.out.println("Reassigned index " + part.getSegmentIndex()
-			// + " - " + part.getSegmentParameter() + " to " + (after.size())
-			// + " - " + 1.0);
-			setSegmentIndex(part, after.size());
+//			 System.out.println("Reassigned index " + part.getSegmentIndex()
+//			 + " - " + part.getSegmentParameter() + " to " + (newWaypoints.size())
+//			 + " - " + 1.0);
+			setSegmentIndex(part, newWaypoints.size());
 			setSegmentParameter(part, 1.0);
 
 			// not used -> could be removed (and re-added)
 			while (it.hasNext()) {
 				part = it.next();
+//				System.out.println("Reassigned index " + part.getSegmentIndex()
+//						 + " - " + part.getSegmentParameter() + " to " + -1
+//						 + " - " + 1.0);
 				// hide (but do not remove from root part and anchorage yet
 				// (this will be initiated upon commit)
 				setSegmentIndex(part, -1);

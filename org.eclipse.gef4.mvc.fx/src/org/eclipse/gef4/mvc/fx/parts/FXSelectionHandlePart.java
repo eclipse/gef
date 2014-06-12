@@ -42,7 +42,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *
  */
 // TODO: rename to something more reasonable
-public class FXSelectionHandlePart extends AbstractFXHandlePart {
+public class FXSelectionHandlePart extends AbstractFXHandlePart implements
+Comparable<FXSelectionHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 	public static final Color FILL_BLUE = Color.web("#d5faff");
@@ -77,6 +78,12 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart {
 		this.segmentParameter = segmentParameter;
 
 		visual = createHandleVisual(handleGeometryProvider.get());
+	}
+
+	@Override
+	public int compareTo(FXSelectionHandlePart o) {
+		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter()) - (100 * o
+				.getSegmentIndex() + 10 * o.getSegmentParameter()));
 	}
 
 	/**

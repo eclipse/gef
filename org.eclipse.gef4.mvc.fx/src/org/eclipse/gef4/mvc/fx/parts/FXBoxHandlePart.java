@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -22,10 +22,11 @@ import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+// TODO: implement Comparable<FXBoxHandlePart> similar to FXSelectionHandlePart
 public class FXBoxHandlePart extends AbstractFXHandlePart {
 
 	private Rectangle visual = null;
-	private Pos pos;
+	private final Pos pos;
 
 	public FXBoxHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
 		this.pos = pos;
@@ -38,14 +39,29 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 		visual.setStrokeType(StrokeType.OUTSIDE);
 	}
 
+	public Pos getPos() {
+		return pos;
+	}
+
 	@Override
 	public Node getVisual() {
 		return visual;
 	}
 
+	protected double getXInset() {
+		double xInset = visual.getWidth() / 2.0;
+		return xInset;
+	}
+
+	protected double getYInset() {
+		double yInset = visual.getHeight() / 2.0;
+		return yInset;
+	}
+
 	@Override
 	public void refreshVisual() {
-		Bounds unionedBoundsInScene = FXPartUtils.getUnionedVisualBoundsInScene(getAnchorages());
+		Bounds unionedBoundsInScene = FXPartUtils
+				.getUnionedVisualBoundsInScene(getAnchorages());
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
@@ -68,20 +84,6 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 						"Unsupported position constant.");
 			}
 		}
-	}
-
-	protected double getXInset() {
-		double xInset = visual.getWidth() / 2.0;
-		return xInset;
-	}
-
-	protected double getYInset() {
-		double yInset = visual.getHeight() / 2.0;
-		return yInset;
-	}
-
-	public Pos getPos() {
-		return pos;
 	}
 
 }
