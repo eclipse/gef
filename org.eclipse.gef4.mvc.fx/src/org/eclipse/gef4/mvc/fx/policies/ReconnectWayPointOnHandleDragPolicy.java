@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -23,7 +23,8 @@ import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-// TODO: this is applicable only to 
+// TODO: this is applicable only to parts with IFXConnection visual
+// The class does not handle waypoints (but endpoints), so the name is not good
 public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private final boolean isEndPoint;
@@ -33,8 +34,20 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
+	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
+			List<IContentPart<Node>> partsUnderMouse) {
+		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
+				.getAnchorages().get(0));
+		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
+	}
+
+	@Override
 	public FXSelectionHandlePart getHost() {
 		return (FXSelectionHandlePart) super.getHost();
+	}
+
+	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {
+		return part.getAdapter(FXReconnectPolicy.class);
 	}
 
 	@Override
@@ -48,23 +61,11 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
-		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
-				.getAnchorages().get(0));
-		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
-	}
-
-	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		IUndoableOperation operation = getReconnectionPolicy(
 				getHost().getAnchorages().get(0)).commit();
 		executeOperation(operation);
-	}
-
-	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {
-		return part.getAdapter(FXReconnectPolicy.class);
 	}
 
 }
