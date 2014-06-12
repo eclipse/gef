@@ -38,6 +38,8 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
 // enforce it (best by template parameter)
 public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 
+	private int createdSegmentIndex;
+
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
 		if (oldWaypoints.size() != newWaypoints.size()) {
@@ -63,21 +65,26 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 				// + " - " + 0.0);
 				setSegmentIndex(part, i);
 				setSegmentParameter(part, 0.0);
-				// param 0.5
-				part = it.next();
-				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + i
-				// + " - " + 0.5);
-				setSegmentIndex(part, i);
-				setSegmentParameter(part, 0.5);
+
+				// skip mid point handles around newly created waypoints
+				if (createdSegmentIndex < 0
+						|| part.getSegmentIndex() != createdSegmentIndex - 1
+						&& part.getSegmentIndex() != createdSegmentIndex) {
+					// param 0.5
+					part = it.next();
+					// System.out.println("Reassigned index "
+					// + part.getSegmentIndex() + " - "
+					// + part.getSegmentParameter() + " to " + i + " - "
+					// + 0.5);
+					setSegmentIndex(part, i);
+					setSegmentParameter(part, 0.5);
+				}
 			}
 			// param 1
 			part = it.next();
 			// System.out.println("Reassigned index " + part.getSegmentIndex()
-			// + " - " + part.getSegmentParameter() + " to " +
-			// (newWaypoints.size())
-			// + " - " + 1.0);
+			// + " - " + part.getSegmentParameter() + " to "
+			// + (newWaypoints.size()) + " - " + 1.0);
 			setSegmentIndex(part, newWaypoints.size());
 			setSegmentParameter(part, 1.0);
 
@@ -125,6 +132,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
+		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
 		if (hp.getSegmentParameter() == 0.5) {
 			// select create new way point
@@ -144,6 +152,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			}
 			hp.setSegmentIndex(hp.getSegmentIndex() + 1);
 			hp.setSegmentParameter(0);
+			createdSegmentIndex = hp.getSegmentIndex();
 		} else {
 			// select existing way point
 			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
