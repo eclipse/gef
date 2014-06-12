@@ -15,8 +15,6 @@ import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -27,10 +25,9 @@ import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+// TODO: this is applicable only to 
 public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
-	// TODO: Move this responsibility to FXSelectionHandlePart 
-	private final static Color FILL_CONNECTED = Color.web("#ff0000");
 	private final boolean isEndPoint;
 
 	public ReconnectWayPointOnHandleDragPolicy(boolean isEndPoint) {
@@ -38,9 +35,14 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
+	public FXSelectionHandlePart getHost() {
+		return (FXSelectionHandlePart) super.getHost();
+	}
+
+	@Override
 	public void press(MouseEvent e) {
-		FXReconnectPolicy p = getReconnectionPolicy(getHost()
-				.getAnchorages().get(0));
+		FXReconnectPolicy p = getReconnectionPolicy(getHost().getAnchorages()
+				.get(0));
 		if (p != null) {
 			p.init();
 			p.press(!isEndPoint, new Point(e.getSceneX(), e.getSceneY()));
@@ -53,12 +55,6 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
 				.getAnchorages().get(0));
 		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
-		if (policy.isConnected()) {
-			((Shape) getHost().getVisual()).setFill(FILL_CONNECTED);
-		} else {
-			((Shape) getHost().getVisual())
-					.setFill(FXSelectionHandlePart.FILL_BLUE);
-		}
 	}
 
 	@Override
@@ -69,8 +65,7 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		executeOperation(operation);
 	}
 
-	private FXReconnectPolicy getReconnectionPolicy(
-			IVisualPart<Node> part) {
+	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {
 		return part.getAdapter(FXReconnectPolicy.class);
 	}
 

@@ -37,7 +37,6 @@ ITransactional {
 	private Point2D startPointScene;
 	private Point2D startPointLocal;
 	private IFXConnection connection;
-	private boolean connected;
 	private IFXAnchor initialAnchor;
 	private IFXAnchor currentAnchor;
 	private FXReconnectOperation op;
@@ -52,23 +51,11 @@ ITransactional {
 			List<IContentPart<Node>> partsUnderMouse) {
 		Point position = transformToLocal(pointInScene);
 		AbstractFXContentPart anchorPart = getAnchorPart(partsUnderMouse);
-		if (connected) {
-			if (anchorPart != null) {
-				// nothing to do/position still fixed by anchor
-				return;
-			} else {
-				currentAnchor = new FXStaticAnchor(getHost().getVisual(),
-						position);
-				connected = false;
-			}
+
+		if (anchorPart != null) {
+			currentAnchor = anchorPart.getAnchor(getHost());
 		} else {
-			if (anchorPart != null) {
-				currentAnchor = anchorPart.getAnchor(getHost());
-				connected = true;
-			} else {
-				currentAnchor = new FXStaticAnchor(getHost().getVisual(),
-						position);
-			}
+			currentAnchor = new FXStaticAnchor(getHost().getVisual(), position);
 		}
 		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
 				currentAnchor, isStartAnchor ? AnchorKind.START
@@ -103,14 +90,6 @@ ITransactional {
 		getHost().setRefreshVisual(false);
 	}
 
-	public boolean isConnected() {
-		return connected;
-	}
-
-	protected boolean isLoose(IFXAnchor anchor) {
-		return anchor instanceof FXStaticAnchor;
-	}
-
 	public void press(boolean isStart, Point startPointInScene) {
 		isStartAnchor = isStart;
 		startPointScene = new Point2D(startPointInScene.x, startPointInScene.y);
@@ -122,7 +101,6 @@ ITransactional {
 			initialAnchor = connection.getEndAnchor();
 		}
 		currentAnchor = initialAnchor;
-		connected = !isLoose(initialAnchor);
 		op = new FXReconnectOperation("Reconnect", connection, initialAnchor,
 				currentAnchor, isStartAnchor ? AnchorKind.START
 						: AnchorKind.END);

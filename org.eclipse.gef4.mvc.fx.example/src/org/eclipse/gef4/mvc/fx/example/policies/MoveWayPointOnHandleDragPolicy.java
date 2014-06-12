@@ -30,6 +30,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
+// TODO: this is only applicable to FXSelectionHandlePart hosts and should enforce it (best by template parameter)
 public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
@@ -58,6 +59,7 @@ public class MoveWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		adjustHandles(before, after);
 	}
 
+	// TODO: also ajust connected state
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
 		if (oldWaypoints.size() != newWaypoints.size()) {

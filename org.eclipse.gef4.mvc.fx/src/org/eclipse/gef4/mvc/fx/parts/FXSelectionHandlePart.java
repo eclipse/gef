@@ -20,6 +20,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -43,25 +46,20 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 // TODO: rename to something more reasonable
 public class FXSelectionHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXSelectionHandlePart> {
+Comparable<FXSelectionHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
-	public static final Color FILL_BLUE = Color.web("#d5faff");
+
+	private final static Color FILL_CONNECTED = Color.web("#ff0000");
+	public static final Color FILL_UNCONNECTED = Color.web("#d5faff");
 	public static final double SIZE = 5d;
 
 	protected Shape visual;
 	protected IContentPart<Node> targetPart;
 	protected IProvider<IGeometry> handleGeometryProvider;
 
-	/**
-	 * See {@link #getSegmentIndex()}.
-	 */
-	protected int segmentIndex;
-
-	/**
-	 * See #getsegmentparameter().
-	 */
-	protected double segmentParameter;
+	private int segmentIndex = -1;
+	private double segmentParameter = 0.0;
 
 	public FXSelectionHandlePart(IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, int segmentIndex) {
@@ -205,23 +203,27 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart implements
 			visual.setLayoutY(point2d.getY());
 
 			// update color
-			if (getSegmentParameter() == 0.5) {
-				// if (getSegmentIndex() == 0) {
-				// visual.setFill(Color.RED);
-				// } else if (getSegmentIndex() == 1) {
-				// visual.setFill(Color.YELLOW);
-				// } else if (getSegmentIndex() == 2) {
-				// visual.setFill(Color.GREEN);
-				// } else if (getSegmentIndex() == 3) {
-				// visual.setFill(Color.PURPLE);
-				// } else {
+			if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
 				visual.setFill(Color.WHITE);
-				// }
 			} else {
-				visual.setFill(FILL_BLUE);
+				// determine connected state for end point handles
+				boolean connected = false;
+				if ((segmentIndex == 0 || segmentParameter == 1.0)
+						&& targetPart.getVisual() instanceof IFXConnection) {
+					IFXConnection connection = (IFXConnection) targetPart
+							.getVisual();
+					IFXAnchor anchor = segmentParameter == 1.0 ? connection
+							.getEndAnchor() : connection.getStartAnchor();
+							connected = !(anchor instanceof FXStaticAnchor);
+				}
+				if (connected) {
+					visual.setFill(FILL_CONNECTED);
+				} else {
+					visual.setFill(FILL_UNCONNECTED);
+				}
 			}
-			// TODO: endpoints are filled RED, which should be done here
 		}
+
 	}
 
 	/**
@@ -231,8 +233,11 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart implements
 	 * @see #getSegmentIndex()
 	 */
 	public void setSegmentIndex(int segmentIndex) {
+		int oldSegmentIndex = this.segmentIndex;
 		this.segmentIndex = segmentIndex;
-		refreshVisual();
+		if (oldSegmentIndex != segmentIndex) {
+			refreshVisual();
+		}
 	}
 
 	/**
@@ -242,8 +247,11 @@ public class FXSelectionHandlePart extends AbstractFXHandlePart implements
 	 * @see #getSegmentParameter()
 	 */
 	public void setSegmentParameter(double segmentParameter) {
+		double oldSegmentParameter = this.segmentParameter;
 		this.segmentParameter = segmentParameter;
-		refreshVisual();
+		if (oldSegmentParameter != segmentParameter) {
+			refreshVisual();
+		}
 	}
 
 }

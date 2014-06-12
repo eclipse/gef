@@ -15,12 +15,7 @@ import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -38,7 +33,6 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
-	private final static Color FILL_CONNECTED = Color.web("#ff0000");
 	private List<IHandlePart<Node>> parts;
 
 	@Override
@@ -74,9 +68,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
 			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
-		parts = super
-				.createCurveSelectionHandleParts(targetPart,
-						handleGeometryProvider, geom);
+		parts = super.createCurveSelectionHandleParts(targetPart,
+				handleGeometryProvider, geom);
 
 		// create mid point (insertion) handles
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
@@ -85,7 +78,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final FXSelectionHandlePart hp = new FXSelectionHandlePart(
 					targetPart, handleGeometryProvider, segmentIndex, 0.5);
 			hp.setAdapter(AbstractFXDragPolicy.class,
-					new InsertWayPointOnHandleDragPolicy(parts));
+					new InsertWayPointOnHandleDragPolicy());
 			parts.add(hp);
 		}
 
@@ -109,16 +102,6 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			// make end points reconnectable
 			part.setAdapter(AbstractFXDragPolicy.class,
 					new ReconnectWayPointOnHandleDragPolicy(isEndPoint));
-			// change color to red if they are connected
-			if (targetPart instanceof FXGeometricCurvePart) {
-				FXGeometricCurvePart cp = (FXGeometricCurvePart) targetPart;
-				IFXConnection connection = (IFXConnection) cp.getVisual();
-				IFXAnchor anchor = isEndPoint ? connection.getEndAnchor()
-						: connection.getStartAnchor();
-				if (!(anchor instanceof FXStaticAnchor)) {
-					((Shape) part.getVisual()).setFill(FILL_CONNECTED);
-				}
-			}
 		}
 
 		return part;
