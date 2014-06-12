@@ -31,7 +31,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
-	private boolean isCreate;
 	private Point2D startPointInScene;
 	private Point startPoint;
 	private List<Point> initialWayPoints;
@@ -63,7 +62,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	 */
 	public void createWayPoint(int wayPointIndex, Point p) {
 		init(p);
-		isCreate = true;
 		this.wayPointIndex = wayPointIndex;
 		newWayPoint.setLocation(p);
 		currentWayPoints.add(wayPointIndex, startPoint);
@@ -92,7 +90,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			removed = null;
 		}
 
-		// determine overlaid neihbor
+		// determine overlaid neighbor
 		removedIndex = -1;
 		List<Point> points = currentWayPoints;
 		if (wayPointIndex > 0) {
@@ -144,9 +142,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		newWayPoint.setLocation(transformToLocal(p));
 		currentWayPoints.set(wayPointIndex, newWayPoint);
 
-		if (!isCreate) {
-			hideShowOverlaid();
-		}
+		hideShowOverlaid();
 
 		op = new FXChangeWayPointsOperation("Change way points",
 				getConnection(), initialWayPoints, currentWayPoints);
@@ -168,7 +164,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	 */
 	public void selectWayPoint(int wayPointIndex, Point p) {
 		init(p);
-		isCreate = false;
 		this.wayPointIndex = wayPointIndex;
 		newWayPoint.setLocation(p);
 	}
