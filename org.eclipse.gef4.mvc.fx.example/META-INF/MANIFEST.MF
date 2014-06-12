@@ -8,8 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.gef4.mvc.fx.example,
  org.eclipse.gef4.mvc.fx.example.domain,
  org.eclipse.gef4.mvc.fx.example.model,
- org.eclipse.gef4.mvc.fx.example.parts,
- org.eclipse.gef4.mvc.fx.example.policies
+ org.eclipse.gef4.mvc.fx.example.parts
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
