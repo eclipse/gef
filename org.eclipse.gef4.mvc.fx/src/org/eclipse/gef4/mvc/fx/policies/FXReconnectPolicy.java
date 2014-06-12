@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -29,8 +29,9 @@ import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node>
-		implements ITransactional {
+//TODO: find a better name
+public class FXReconnectPolicy extends AbstractPolicy<Node> implements
+ITransactional {
 
 	private boolean isStartAnchor;
 	private Point2D startPointScene;
@@ -93,7 +94,9 @@ public abstract class AbstractFXReconnectPolicy extends AbstractPolicy<Node>
 		return null;
 	}
 
-	public abstract IFXConnection getConnection();
+	private IFXConnection getConnection() {
+		return (IFXConnection) getHost().getVisual();
+	}
 
 	@Override
 	public void init() {

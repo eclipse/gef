@@ -23,12 +23,13 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSelectionHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXReconnectPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
+	// TODO: Move this responsibility to FXSelectionHandlePart 
 	private final static Color FILL_CONNECTED = Color.web("#ff0000");
 	private final boolean isEndPoint;
 
@@ -38,7 +39,7 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		AbstractFXReconnectPolicy p = getReconnectionPolicy(getHost()
+		FXReconnectPolicy p = getReconnectionPolicy(getHost()
 				.getAnchorages().get(0));
 		if (p != null) {
 			p.init();
@@ -49,7 +50,7 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		AbstractFXReconnectPolicy policy = getReconnectionPolicy(getHost()
+		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
 				.getAnchorages().get(0));
 		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
 		if (policy.isConnected()) {
@@ -68,9 +69,9 @@ public class ReconnectWayPointOnHandleDragPolicy extends AbstractFXDragPolicy {
 		executeOperation(operation);
 	}
 
-	private AbstractFXReconnectPolicy getReconnectionPolicy(
+	private FXReconnectPolicy getReconnectionPolicy(
 			IVisualPart<Node> part) {
-		return part.getAdapter(AbstractFXReconnectPolicy.class);
+		return part.getAdapter(FXReconnectPolicy.class);
 	}
 
 }

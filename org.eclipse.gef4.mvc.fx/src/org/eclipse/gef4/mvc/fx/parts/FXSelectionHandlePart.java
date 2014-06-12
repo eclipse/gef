@@ -43,7 +43,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 // TODO: rename to something more reasonable
 public class FXSelectionHandlePart extends AbstractFXHandlePart implements
-Comparable<FXSelectionHandlePart> {
+		Comparable<FXSelectionHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 	public static final Color FILL_BLUE = Color.web("#d5faff");
@@ -220,6 +220,7 @@ Comparable<FXSelectionHandlePart> {
 			} else {
 				visual.setFill(FILL_BLUE);
 			}
+			// TODO: endpoints are filled RED, which should be done here
 		}
 	}
 

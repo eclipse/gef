@@ -25,8 +25,9 @@ import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+// TODO: find a better name
 public class FXWayPointPolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+ITransactional {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
