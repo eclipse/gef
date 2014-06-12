@@ -83,7 +83,9 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	private void hideShowOverlaid() {
 		// put removed back in
 		if (removed != null) {
-			if (removedIndex <= wayPointIndex || wayPointIndex == -1) {
+			if (wayPointIndex == -1) {
+				wayPointIndex = removedIndex;
+			} else if (removedIndex <= wayPointIndex) {
 				wayPointIndex++;
 			}
 			currentWayPoints.add(removedIndex, removed);
@@ -96,19 +98,19 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		if (wayPointIndex == 0) {
 			if (getConnection().getStartPoint().getDistance(newWayPoint) < REMOVE_THRESHOLD) {
 				// dragged first waypoint onto start point
-				// removedIndex = wayPointIndex;
-				// wayPointIndex = -1;
+				removedIndex = wayPointIndex;
+				wayPointIndex = -1;
 			}
 		} else if (wayPointIndex > 0) {
 			if (newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD) {
 				removedIndex = wayPointIndex - 1;
 			}
 		}
-		if (wayPointIndex == points.size() - 1) {
+		if (removedIndex == -1 && wayPointIndex == points.size() - 1) {
 			if (getConnection().getEndPoint().getDistance(newWayPoint) < REMOVE_THRESHOLD) {
 				// dragged last waypoint onto end point
-				// removedIndex = wayPointIndex;
-				// wayPointIndex = -1;
+				removedIndex = wayPointIndex;
+				wayPointIndex = -1;
 			}
 		} else if (removedIndex == -1 && wayPointIndex + 1 < points.size()) {
 			if (newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD) {
