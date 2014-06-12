@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 //TODO: find a better name
-public class FXReconnectEndPointPolicy extends AbstractPolicy<Node> implements
+public class FXReconnectPolicy extends AbstractPolicy<Node> implements
 ITransactional {
 
 	private boolean isStartAnchor;

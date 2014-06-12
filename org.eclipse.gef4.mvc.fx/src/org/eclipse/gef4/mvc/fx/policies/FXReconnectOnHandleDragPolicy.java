@@ -24,18 +24,18 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 // TODO: this is applicable only to parts with IFXConnection visual
-public class FXReconnectEndPointOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXReconnectOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private final boolean isEndPoint;
 
-	public FXReconnectEndPointOnHandleDragPolicy(boolean isEndPoint) {
+	public FXReconnectOnHandleDragPolicy(boolean isEndPoint) {
 		this.isEndPoint = isEndPoint;
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		FXReconnectEndPointPolicy policy = getReconnectionPolicy(getHost()
+		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
 				.getAnchorages().get(0));
 		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
 	}
@@ -45,13 +45,13 @@ public class FXReconnectEndPointOnHandleDragPolicy extends AbstractFXDragPolicy 
 		return (FXSegmentHandlePart) super.getHost();
 	}
 
-	private FXReconnectEndPointPolicy getReconnectionPolicy(IVisualPart<Node> part) {
-		return part.getAdapter(FXReconnectEndPointPolicy.class);
+	private FXReconnectPolicy getReconnectionPolicy(IVisualPart<Node> part) {
+		return part.getAdapter(FXReconnectPolicy.class);
 	}
 
 	@Override
 	public void press(MouseEvent e) {
-		FXReconnectEndPointPolicy p = getReconnectionPolicy(getHost().getAnchorages()
+		FXReconnectPolicy p = getReconnectionPolicy(getHost().getAnchorages()
 				.get(0));
 		if (p != null) {
 			p.init();

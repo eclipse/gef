@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXReconnectEndPointOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXReconnectOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -100,7 +100,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		} else {
 			// make end points reconnectable
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new FXReconnectEndPointOnHandleDragPolicy(isEndPoint));
+					new FXReconnectOnHandleDragPolicy(isEndPoint));
 		}
 
 		return part;
