@@ -14,19 +14,20 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
 public class FXHoverOnHoverPolicy extends AbstractFXHoverPolicy {
 
+	@SuppressWarnings("unchecked")
+	private HoverPolicy<Node> getHoverPolicy() {
+		return getHost().getAdapter(HoverPolicy.class);
+	}
+
 	@Override
 	public void hover(MouseEvent e) {
-		IVisualPart<Node> host = getHost();
-		if (host instanceof IRootPart) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(null);
-		} else if (host instanceof IContentPart) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(host);
+		HoverPolicy<Node> policy = getHoverPolicy();
+		if (policy != null) {
+			policy.hover();
 		}
 	}
 

@@ -9,26 +9,19 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.policies;
+package org.eclipse.gef4.mvc.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
+import org.eclipse.gef4.mvc.models.IZoomModel;
 
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
+public class ZoomPolicy<VR> extends AbstractPolicy<VR> {
 
-public class FXSelectOnClickPolicy extends AbstractFXClickPolicy {
-
-	@Override
-	public void click(MouseEvent e) {
-		SelectionPolicy<Node> policy = getSelectionPolicy();
-		if (policy != null) {
-			policy.select(e.isControlDown());
-		}
+	public void zoomAbsolute(double absoluteZoom){
+		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		zoomModel.setZoomFactor(absoluteZoom);
 	}
-
-	@SuppressWarnings("unchecked")
-	private SelectionPolicy<Node> getSelectionPolicy() {
-		return getHost().getAdapter(SelectionPolicy.class);
+	
+	public void zoomRelative(double relativeZoom){
+		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
 	}
-
 }

@@ -16,6 +16,9 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
+import org.eclipse.gef4.mvc.policies.SelectionPolicy;
+import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 /**
@@ -30,7 +33,13 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	private IVisualViewer<VR> viewer;
 
 	public AbstractRootPart() {
+		// register (default) behaviors
 		setAdapter(ContentBehavior.class, new ContentBehavior<VR>());
+
+		// register (default) policies
+		setAdapter(HoverPolicy.class, new HoverPolicy<VR>());
+		setAdapter(SelectionPolicy.class, new SelectionPolicy<VR>());
+		setAdapter(ZoomPolicy.class, new ZoomPolicy<VR>());
 	}
 
 	public IRootPart<VR> getRoot() {

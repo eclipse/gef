@@ -42,6 +42,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
@@ -186,7 +187,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// behaviors
 		setAdapter(FXSelectionBehavior.class, selectionBehavior);
 		
-		// transaction policies		
+		// transaction policies	
+		setAdapter(HoverPolicy.class, new HoverPolicy<Node>(){
+			@Override
+			protected boolean isHoverable() {
+				// TODO: disable hovering of edges until it looks nice 
+				return false;
+			}
+		});
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
 
 			@Override

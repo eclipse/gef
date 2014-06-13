@@ -11,30 +11,44 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 
 public class FXZoomOnZoomPolicy extends AbstractFXZoomPolicy {
 
 	private double initialZoomFactor;
-	private IZoomModel zoomModel;
+
+	@SuppressWarnings("unchecked")
+	private ZoomPolicy<Node> getZoomPolicy() {
+		return getHost().getAdapter(ZoomPolicy.class);
+	}
 
 	@Override
 	public void zoomDetected(ZoomEvent e, double partialFactor) {
-		zoomModel = getHost().getRoot().getViewer().getZoomModel();
-		initialZoomFactor = zoomModel.getZoomFactor();
-		zoomModel.setZoomFactor(initialZoomFactor * partialFactor);
+		initialZoomFactor = getHost().getRoot().getViewer().getZoomModel()
+				.getZoomFactor();
+		ZoomPolicy<Node> policy = getZoomPolicy();
+		if (policy != null) {
+			policy.zoomRelative(partialFactor);
+		}
 	}
 
 	@Override
 	public void zoomed(ZoomEvent e, double partialFactor, double totalFactor) {
-		zoomModel.setZoomFactor(initialZoomFactor * totalFactor);
+		ZoomPolicy<Node> policy = getZoomPolicy();
+		if (policy != null) {
+			policy.zoomAbsolute(initialZoomFactor * totalFactor);
+		}
 	}
 
 	@Override
 	public void zoomFinished(ZoomEvent e, double totalFactor) {
-		zoomModel.setZoomFactor(initialZoomFactor * totalFactor);
+		ZoomPolicy<Node> policy = getZoomPolicy();
+		if (policy != null) {
+			policy.zoomAbsolute(initialZoomFactor * totalFactor);
+		}
 	}
 
 }

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
+import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
@@ -26,7 +28,12 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	private Object content;
 
 	public AbstractContentPart() {
+		// register (default) behaviors
 		setAdapter(ContentBehavior.class, new ContentBehavior<VR>());
+		
+		// register (default) policies
+		setAdapter(HoverPolicy.class, new HoverPolicy<VR>());
+		setAdapter(SelectionPolicy.class, new SelectionPolicy<VR>());
 	}
 
 	/**

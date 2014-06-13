@@ -11,18 +11,23 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 
-// TODO: adjust API, move to MVC
 public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
+
+	@SuppressWarnings("unchecked")
+	private ZoomPolicy<Node> getZoomPolicy() {
+		return getHost().getAdapter(ZoomPolicy.class);
+	}
 
 	@Override
 	public void scroll(ScrollEvent event, double deltaY) {
-		double factor = deltaY > 0 ? 1.25 : 0.8;
-		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
-		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * factor);
+		ZoomPolicy<Node> policy = getZoomPolicy();
+		if (policy != null) {
+			policy.zoomRelative(deltaY > 0 ? 1.25 : 0.8);
+		}
 	}
-
 }
