@@ -16,6 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -34,8 +36,8 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 		setAdapter(FXHoverTool.TOOL_POLICY_KEY, new FXHoverOnHoverPolicy());
 
 		// register behaviors ( (which are based on viewer models)
-		setAdapter(FXHoverBehavior.class, new FXHoverBehavior());
-		setAdapter(FXSelectionBehavior.class, new FXSelectionBehavior());
+		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior());
+		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior());
 	}
 
 	@Override
