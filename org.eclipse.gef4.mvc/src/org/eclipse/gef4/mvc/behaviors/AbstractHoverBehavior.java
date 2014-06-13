@@ -43,10 +43,16 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		super.activate();
 		getHost().getRoot().getViewer().getHoverModel()
 				.addPropertyChangeListener(this);
+		
+		// create feedback and handles if we are already hovered
+		addFeedbackAndHandles((IContentPart<VR>) getHost().getRoot().getViewer().getHoverModel().getHover());
 	}
 
 	@Override
 	public void deactivate() {
+		// remove any pending feedback and handles
+		removeFeedbackAndHandles((IContentPart<VR>) getHost().getRoot().getViewer().getHoverModel().getHover());
+		
 		getHost().getRoot().getViewer().getHoverModel()
 				.removePropertyChangeListener(this);
 		super.deactivate();
@@ -67,17 +73,26 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 			IContentPart<VR> oldHovered = (IContentPart<VR>) event.getOldValue();
 			IContentPart<VR> newHovered = (IContentPart<VR>) event.getNewValue();
 
-			if (oldHovered == getHost()) {
-				removeHandles(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-				removeFeedback(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-			} else if (newHovered == getHost()) {
-				addFeedback(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-				addHandles(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-			}
+			removeFeedbackAndHandles(oldHovered);
+			addFeedbackAndHandles(newHovered);
+		}
+	}
+
+	protected void addFeedbackAndHandles(IContentPart<VR> newHovered) {
+		if (newHovered == getHost()) {
+			addFeedback(Collections
+					.singletonList((IContentPart<VR>) getHost()));
+			addHandles(Collections
+					.singletonList((IContentPart<VR>) getHost()));
+		}
+	}
+
+	protected void removeFeedbackAndHandles(IContentPart<VR> oldHovered) {
+		if (oldHovered == getHost()) {
+			removeHandles(Collections
+					.singletonList((IContentPart<VR>) getHost()));
+			removeFeedback(Collections
+					.singletonList((IContentPart<VR>) getHost()));
 		}
 	}
 

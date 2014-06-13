@@ -31,8 +31,8 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
  * 
  * @param <VR>
  */
-public abstract class AbstractSelectionBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+public abstract class AbstractSelectionBehavior<VR> extends
+		AbstractBehavior<VR> implements PropertyChangeListener {
 
 	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
 		@Override
@@ -80,27 +80,48 @@ public abstract class AbstractSelectionBehavior<VR> extends AbstractBehavior<VR>
 		super.activate();
 		getHost().getRoot().getViewer().getSelectionModel()
 				.addPropertyChangeListener(this);
+
+		// create feedback and handles if we are already selected
+		addFeedbackAndHandles(getHost().getRoot().getViewer()
+				.getSelectionModel().getSelected());
 	}
 
 	@Override
 	public void deactivate() {
+		// remove any pending feedback
+		removeFeedbackAndHandles(getHost().getRoot().getViewer()
+				.getSelectionModel().getSelected());
+
 		getHost().getRoot().getViewer().getSelectionModel()
 				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
-	public void refreshFeedback() {
-		List<IContentPart<VR>> selected = getHost().getRoot().getViewer()
-				.getSelectionModel().getSelected();
-		removeFeedback(selected);
-		addFeedback(selected);
+	protected void removeFeedbackAndHandles(List<IContentPart<VR>> selected) {
+		// root is responsible for multi selection
+		if (getHost() instanceof IRootPart && selected.size() > 1) {
+			removeHandles(selected);
+			removeFeedback(selected);
+		} else if (selected.contains(getHost())) {
+			removeHandles(Collections
+					.singletonList((IContentPart<VR>) getHost()));
+			removeFeedback(Collections
+					.singletonList((IContentPart<VR>) getHost()));
+		}
 	}
 
-	public void refreshHandles() {
-		List<IContentPart<VR>> selected = getHost().getRoot().getViewer()
-				.getSelectionModel().getSelected();
-		removeHandles(selected);
-		addHandles(selected);
+	protected void addFeedbackAndHandles(List<IContentPart<VR>> selected) {
+		// root is responsible for multi selection
+		if (getHost() instanceof IRootPart && selected.size() > 1) {
+			addFeedback(selected);
+			addHandles(selected);
+		} else if (selected.contains(getHost())) {
+			addFeedback(Collections.singletonList((IContentPart<VR>) getHost()));
+			if (selected.get(0) == getHost() && selected.size() <= 1) {
+				addHandles(Collections
+						.singletonList((IContentPart<VR>) getHost()));
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -112,39 +133,8 @@ public abstract class AbstractSelectionBehavior<VR> extends AbstractBehavior<VR>
 			List<IContentPart<VR>> newSelection = (List<IContentPart<VR>>) event
 					.getNewValue();
 
-			// multi-selection handles for the root part
-			if (getHost() instanceof IRootPart) {
-				if (oldSelection.size() > 1) {
-					removeHandles(oldSelection);
-					removeFeedback(oldSelection);
-				}
-				if (newSelection.size() > 1) {
-					addFeedback(newSelection);
-					addHandles(newSelection);
-				}
-				return;
-			}
-
-			boolean inOld = oldSelection.contains(getHost());
-			boolean inNew = newSelection.contains(getHost());
-
-			if (inOld) {
-				removeHandles(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-				removeFeedback(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-			}
-
-			if (inNew) {
-				addFeedback(Collections
-						.singletonList((IContentPart<VR>) getHost()));
-				if (newSelection.get(0) == getHost()) {
-					if (newSelection.size() <= 1) {
-						addHandles(Collections
-								.singletonList((IContentPart<VR>) getHost()));
-					}
-				}
-			}
+			removeFeedbackAndHandles(oldSelection);
+			addFeedbackAndHandles(newSelection);
 		}
 	}
 }
