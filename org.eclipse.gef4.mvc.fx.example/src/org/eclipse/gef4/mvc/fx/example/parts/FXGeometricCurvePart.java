@@ -167,13 +167,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	}
 
-	private final FXSelectionBehavior selectionBehavior = new FXSelectionBehavior() {
-		@Override
-		public IGeometry getFeedbackGeometry() {
-			return visual.getCurveNode().getGeometry();
-		}
-	};
-
 	private FXCurveConnection visual;
 
 	public FXGeometricCurvePart() {
@@ -183,18 +176,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return FXGeometricCurve.constructCurveFromWayPoints(points);
 			}
 		};
-
-		// behaviors
-		setAdapter(FXSelectionBehavior.class, selectionBehavior);
 		
-		// transaction policies	
-		setAdapter(HoverPolicy.class, new HoverPolicy<Node>(){
-			@Override
-			protected boolean isHoverable() {
-				// TODO: disable hovering of edges until it looks nice 
-				return false;
-			}
-		});
+		// transaction policies
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
 
 			@Override

@@ -13,7 +13,10 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 
@@ -26,11 +29,27 @@ public class FXSelectionBehavior extends AbstractSelectionBehavior<Node> {
 
 	@Override
 	protected IGeometry getHandleGeometry() {
-		return getFeedbackGeometry();
+		return getHostGeometry();
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected IGeometry getHostGeometry() {
-		return JavaFX2Geometry.toRectangle(getHost().getVisual()
-				.getLayoutBounds());
+		Node visual = getHost().getVisual();
+
+		// in case a FXGeometryNode is used, we can return its IGeometry
+		if (visual instanceof IFXConnection) {
+			Node curveNode = ((IFXConnection) visual).getCurveNode();
+			if (curveNode instanceof FXGeometryNode) {
+				return ((FXGeometryNode) curveNode).getGeometry();
+			}
+		} else if (visual instanceof FXGeometryNode) {
+			IGeometry geometry = ((FXGeometryNode) visual).getGeometry();
+			if (geometry instanceof ICurve) {
+				return geometry;
+			}
+		}
+
+		return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
 	}
+
 }

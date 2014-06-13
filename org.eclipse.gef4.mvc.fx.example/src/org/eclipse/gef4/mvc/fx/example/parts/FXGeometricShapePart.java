@@ -20,7 +20,9 @@ import javafx.scene.Node;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
@@ -59,10 +61,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				}
 			}
 		};
-		// behaviors
-		setAdapter(FXSelectionBehavior.class, new FXSelectionBehavior());
-		setAdapter(FXHoverBehavior.class, new FXHoverBehavior());
-
+		
 		// interaction policies
 		setAdapter(FXDragTool.TOOL_POLICY_KEY, new FXRelocateOnDragPolicy());
 
