@@ -7,25 +7,23 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class FXStageViewer extends AbstractFXViewer {
+public class FXStageViewer extends FXViewer {
 
-	private final Stage stage;
+	public FXStageViewer(final Stage stage) {
+		super(new IFXSceneHook() {
 
-	public FXStageViewer(Stage stage) {
-		this.stage = stage;
-	}
-
-	@Override
-	protected void setScene(Scene scene) {
-		super.setScene(scene);
-		stage.setScene(scene);
+			@Override
+			public void hookScene(Scene scene) {
+				stage.setScene(scene);
+			}
+		});
 	}
 
 }

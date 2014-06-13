@@ -14,20 +14,18 @@ package org.eclipse.gef4.mvc.fx.ui.viewer;
 import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 
-import org.eclipse.gef4.mvc.fx.viewer.AbstractFXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.IFXSceneHook;
 
-public class FXCanvasViewer extends AbstractFXViewer {
+public class FXCanvasViewer extends FXViewer {
 
-	FXCanvas canvas;
-
-	public FXCanvasViewer(FXCanvas canvas) {
-		this.canvas = canvas;
+	public FXCanvasViewer(final FXCanvas canvas) {
+		super(new IFXSceneHook() {
+			
+			@Override
+			public void hookScene(Scene scene) {
+				canvas.setScene(scene);
+			}
+		});
 	}
-
-	@Override
-	protected void setScene(Scene scene) {
-		super.setScene(scene);
-		canvas.setScene(scene);
-	}
-
 }

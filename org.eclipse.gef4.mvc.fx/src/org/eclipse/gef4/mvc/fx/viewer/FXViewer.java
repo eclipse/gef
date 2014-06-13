@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
@@ -18,13 +18,15 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.AbstractVisualViewer;
 
-public abstract class AbstractFXViewer extends AbstractVisualViewer<Node>
+public class FXViewer extends AbstractVisualViewer<Node>
 		implements IFXViewer {
 
+	private final IFXSceneHook sceneContainer;
 	private Scene scene = null;
 
-	public AbstractFXViewer() {
+	public FXViewer(IFXSceneHook sceneContainer) {
 		super();
+		this.sceneContainer = sceneContainer;
 	}
 
 	protected Scene createScene(Parent rootVisual) {
@@ -56,7 +58,10 @@ public abstract class AbstractFXViewer extends AbstractVisualViewer<Node>
 	}
 
 	protected void setScene(Scene scene) {
-		this.scene = scene;
+		if (this.scene != scene) {
+			this.scene = scene;
+			sceneContainer.hookScene(scene);
+		}
 	}
 
 }
