@@ -410,11 +410,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-
+		
 		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<VR>>();
 		}
+		
+		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
+		
 		anchorages.add(anchorage);
+
+		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
 
 		// if we obtain a link to the viewer (via anchorage) then register
 		// visuals
@@ -423,6 +428,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 				register();
 			}
 		}
+		
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages, newAnchorages);
 	}
 
 	/**
@@ -442,15 +449,24 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			throw new IllegalArgumentException("Anchorage has to be contained.");
 		}
 
+		
 		if (parent == null) {
 			if (anchorages.size() == 1) {
 				unregister();
 			}
 		}
+		
+		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
+		
 		anchorages.remove(anchorage);
+		
+		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
+		
 		if (anchorages.size() == 0) {
 			anchorages = null;
 		}
+		
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages, newAnchorages);
 	}
 
 	/**

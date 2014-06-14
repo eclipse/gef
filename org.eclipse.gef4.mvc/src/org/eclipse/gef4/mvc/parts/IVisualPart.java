@@ -32,6 +32,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
+	public static final String ANCHORAGES_PROPERTY = "anchorage";
 
 	/**
 	 * Returns the {@link IRootPart}. This method should only be called
