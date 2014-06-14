@@ -31,9 +31,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private AdaptableSupport<IDomain<VR>> as = new AdaptableSupport<IDomain<VR>>(
 			this);
 
-			private Stack<ITool<VR>> toolsStack = new Stack<ITool<VR>>();
+	private Stack<ITool<VR>> toolsStack = new Stack<ITool<VR>>();
 	private IVisualViewer<VR> viewer;
-
 
 	private IOperationHistory operationHistory = new DefaultOperationHistory();
 	private IUndoContext undoContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;

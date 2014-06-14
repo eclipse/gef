@@ -16,6 +16,7 @@ package org.eclipse.gef4.mvc.viewer;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomainBound;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;
@@ -36,7 +37,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <VR>
  */
-public interface IVisualViewer<VR> extends IDomainBound<VR> {
+public interface IVisualViewer<VR> extends IDomainBound<VR>, IAdaptable {
 
 	/**
 	 * Returns the {@link Map} for registering <code>EditParts</code> by

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
@@ -46,6 +47,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractVisualViewer<VR> implements
 		IVisualViewer<VR> {
 
+	private AdaptableSupport<IVisualViewer<VR>> as = new AdaptableSupport<IVisualViewer<VR>>(
+			this);
+	
 	private Map<Object, IContentPart<VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR>>();
 	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
 
@@ -74,11 +78,11 @@ public abstract class AbstractVisualViewer<VR> implements
 	 * @see IVisualViewer#getContentModel()
 	 */
 	public IContentModel getContentModel() {
-		IContentModel contentModel = getDomain().getAdapter(
+		IContentModel contentModel = getAdapter(
 				IContentModel.class);
 		if (contentModel == null) {
 			contentModel = new DefaultContentModel();
-			getDomain().setAdapter(IContentModel.class, contentModel);
+			setAdapter(IContentModel.class, contentModel);
 		}
 		return contentModel;
 	}
@@ -88,6 +92,21 @@ public abstract class AbstractVisualViewer<VR> implements
 	 */
 	public IDomain<VR> getDomain() {
 		return domain;
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> key) {
+		return as.getAdapter(key);
+	}
+
+	@Override
+	public <T> void setAdapter(Class<T> key, T adapter) {
+		as.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> T unsetAdapter(Class<T> key) {
+		return as.unsetAdapter(key);
 	}
 
 	/**
@@ -155,11 +174,11 @@ public abstract class AbstractVisualViewer<VR> implements
 	@Override
 	public ISelectionModel<VR> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<VR> selectionModel = getDomain().getAdapter(
+		ISelectionModel<VR> selectionModel = getAdapter(
 				ISelectionModel.class);
 		if (selectionModel == null) {
 			selectionModel = new DefaultSelectionModel<VR>();
-			getDomain().setAdapter(ISelectionModel.class, selectionModel);
+			setAdapter(ISelectionModel.class, selectionModel);
 		}
 		return selectionModel;
 	}
@@ -167,20 +186,20 @@ public abstract class AbstractVisualViewer<VR> implements
 	@Override
 	public IHoverModel<VR> getHoverModel() {
 		@SuppressWarnings("unchecked")
-		IHoverModel<VR> hoverModel = getDomain().getAdapter(IHoverModel.class);
+		IHoverModel<VR> hoverModel = getAdapter(IHoverModel.class);
 		if (hoverModel == null) {
 			hoverModel = new DefaultHoverModel<VR>();
-			getDomain().setAdapter(IHoverModel.class, hoverModel);
+			setAdapter(IHoverModel.class, hoverModel);
 		}
 		return hoverModel;
 	}
 
 	@Override
 	public IZoomModel getZoomModel() {
-		IZoomModel zoomModel = getDomain().getAdapter(IZoomModel.class);
+		IZoomModel zoomModel = getAdapter(IZoomModel.class);
 		if (zoomModel == null) {
 			zoomModel = new DefaultZoomModel();
-			getDomain().setAdapter(IZoomModel.class, zoomModel);
+			setAdapter(IZoomModel.class, zoomModel);
 		}
 		return zoomModel;
 	}
@@ -207,20 +226,19 @@ public abstract class AbstractVisualViewer<VR> implements
 	@Override
 	public IFocusModel<VR> getFocusModel() {
 		@SuppressWarnings("unchecked")
-		IFocusModel<VR> focusModel = getDomain().getAdapter(IFocusModel.class);
+		IFocusModel<VR> focusModel = getAdapter(IFocusModel.class);
 		if (focusModel == null) {
 			focusModel = new DefaultFocusModel<VR>();
-			getDomain().setAdapter(IFocusModel.class, focusModel);
+			setAdapter(IFocusModel.class, focusModel);
 		}
 		return focusModel;
 	}
 	
 	@Override
 	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getDomain().getAdapter(IViewportModel.class);
+		IViewportModel viewportModel = getAdapter(IViewportModel.class);
 		if (viewportModel == null) {
 			viewportModel = new DefaultViewportModel();
-			getDomain().setAdapter(IViewportModel.class, viewportModel);
 		}
 		return viewportModel;
 	}
