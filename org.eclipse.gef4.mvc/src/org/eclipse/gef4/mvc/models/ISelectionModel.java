@@ -36,6 +36,6 @@ public interface ISelectionModel<VR> extends IPropertyChangeSupport {
 
 	public abstract List<IContentPart<VR>> getSelected();
 
-	public abstract void select(IContentPart<VR>... editparts);
+	public abstract void select(List<IContentPart<VR>> editparts);
 
 }

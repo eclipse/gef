@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.policies;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -22,10 +23,10 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 
 	public void select(boolean append) {
 		IVisualPart<VR> host = getHost();
-		
+
 		ISelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
 				.getSelectionModel();
-		
+
 		// retrieve old selection
 		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
 				selectionModel.getSelected());
@@ -46,12 +47,14 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 			} else {
 				if (append) {
 					// append to current selection (as new primary)
-					selectionModel.select((IContentPart<VR>) host);
+					selectionModel.select(Collections
+							.singletonList((IContentPart<VR>) host));
 				} else {
 					// clear old selection, target should become the only
 					// selected
 					selectionModel.deselectAll();
-					selectionModel.select((IContentPart<VR>) host);
+					selectionModel.select(Collections
+							.singletonList((IContentPart<VR>) host));
 				}
 			}
 		}
