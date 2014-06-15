@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -31,9 +32,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -41,8 +40,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
@@ -126,7 +125,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			ISelectionModel<Node> selm = part.getViewer().getSelectionModel();
 			if (selm.getSelected().contains(part)) {
 				selm.deselect(part);
-				selm.select(part);
+				selm.select(Collections.singletonList((IContentPart<Node>) part));
 			}
 		}
 
