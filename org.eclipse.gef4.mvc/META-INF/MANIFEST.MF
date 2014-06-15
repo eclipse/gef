@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 MVC
 Bundle-SymbolicName: org.eclipse.gef4.mvc
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.eclipse.gef4.mvc.Activator
+Bundle-Activator: org.eclipse.gef4.mvc.MvcBundle
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.gef4.geometry;bundle-version="0.1.0"

@@ -115,7 +115,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return Status.OK_STATUS;
 		}
 
-		@SuppressWarnings("unchecked")
 		private void addCurveWayPoints(List<Point> wayPoints) {
 			FXGeometricCurve curve = part.getContent();
 			int i = 0;

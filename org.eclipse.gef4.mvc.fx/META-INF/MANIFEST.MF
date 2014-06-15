@@ -44,5 +44,5 @@ Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.stage;version="[2.0.0,3.0.0)",
  javafx.util;version="[2.0.0,3.0.0)"
 Bundle-Vendor: Eclipse.org
-Bundle-Activator: org.eclipse.gef4.mvc.fx.Activator
+Bundle-Activator: org.eclipse.gef4.mvc.fx.MvcFxBundle
 Bundle-ActivationPolicy: lazy

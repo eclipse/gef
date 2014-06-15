@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.mvc.Activator;
+import org.eclipse.gef4.mvc.MvcBundle;
 
 public abstract class AbstractCompositeOperation extends AbstractOperation implements ICompositeOperation {
 
@@ -124,7 +124,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation imple
 	}
 	
 	protected IStatus combine(IStatus s1, IStatus s2){
-		MultiStatus status = new MultiStatus(Activator.PLUGIN_ID, IStatus.OK, null, null);
+		MultiStatus status = new MultiStatus(MvcBundle.PLUGIN_ID, IStatus.OK, null, null);
 		status.merge(s1);
 		status.merge(s2);
 		return status;

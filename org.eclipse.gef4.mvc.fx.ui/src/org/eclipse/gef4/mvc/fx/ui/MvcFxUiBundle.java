@@ -3,18 +3,18 @@ package org.eclipse.gef4.mvc.fx.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends AbstractUIPlugin {
+public class MvcFxUiBundle extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.gef4.mvc.fx.ui"; //$NON-NLS-1$
 
 	// The shared instance
-	private static Activator plugin;
+	private static MvcFxUiBundle plugin;
 
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public MvcFxUiBundle() {
 	}
 
 	/*
@@ -46,7 +46,7 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static MvcFxUiBundle getDefault() {
 		return plugin;
 	}
 
