@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -23,29 +23,31 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import com.google.inject.Provider;
 
 /**
  * A handle part used for showing feedback based on layout bounds of an
  * underlying target part
- * 
+ *
  * @author nyssen
- * 
+ *
  */
 public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 
 	private static final Color INVISIBLE = new Color(0, 0, 0, 0);
 
-	private IContentPart<Node> targetPart;
-	private IProvider<IGeometry> feedbackGeometryProvider;
-	private FXGeometryNode<IGeometry> feedbackVisual;
+	private final IContentPart<Node> targetPart;
+	private final Provider<IGeometry> feedbackGeometryProvider;
+	private final FXGeometryNode<IGeometry> feedbackVisual;
 
 	public FXBoundsFeedbackPart(IContentPart<Node> targetPart,
-			IProvider<IGeometry> feedbackGeometryProvider, Paint stroke, Effect effect) {
+			Provider<IGeometry> feedbackGeometryProvider, Paint stroke,
+			Effect effect) {
 		this.targetPart = targetPart;
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
-		
+
 		feedbackVisual = new FXGeometryNode<IGeometry>(
 				feedbackGeometryProvider.get());
 		feedbackVisual.setFill(INVISIBLE);

@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.tools;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 
 /**
@@ -22,16 +26,18 @@ import org.eclipse.gef4.mvc.domain.IDomain;
  */
 public abstract class AbstractTool<VR> implements ITool<VR> {
 
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private boolean active = false;
 	private IDomain<VR> domain;
-	private boolean isActive;
 
+	
 	@Override
-	public void setDomain(IDomain<VR> domain) {
-		if (isActive) {
+	public void setAdaptable(IDomain<VR> adaptable) {
+		if (active) {
 			throw new IllegalStateException(
-					"The reference to the IEditDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
+					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
 		}
-		this.domain = domain;
+		this.domain = adaptable;
 	}
 
 	/**
@@ -52,6 +58,11 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 
 	@Override
 	public IDomain<VR> getDomain() {
+		return getAdaptable();
+	}
+	
+	@Override
+	public IDomain<VR> getAdaptable() {
 		return domain;
 	}
 
@@ -59,21 +70,38 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	public void activate() {
 		if (domain == null) {
 			throw new IllegalStateException(
-					"The IEditDomain has to be set via setDomain(IEditDomain) before activation.");
+					"The IEditDomain has to be set via setDomain(IDomain) before activation.");
 		}
-		this.isActive = true;
+		
+		boolean oldActive = active;
+		active = true;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
+		
 		registerListeners();
 	}
 
 	@Override
 	public void deactivate() {
 		unregisterListeners();
-		this.isActive = false;
+		
+		boolean oldActive = active;
+		active = false;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
 	}
 
 	@Override
 	public boolean isActive() {
-		return isActive;
+		return active;
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 }

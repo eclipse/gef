@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.gestures;
 
@@ -30,9 +30,9 @@ public abstract class FXMouseDragGesture {
 	 */
 	private static enum State {
 		/**
-		 * In INIT state we expect a press event.
+		 * In IDLE state we expect a press event.
 		 */
-		INIT,
+		IDLE,
 
 		/**
 		 * In PERFORM state we expect drag or release events.
@@ -40,7 +40,7 @@ public abstract class FXMouseDragGesture {
 		PERFORM
 	}
 
-	private State state = State.INIT;
+	private State state = State.IDLE;
 
 	private double ox, oy;
 	private Scene scene;
@@ -49,12 +49,12 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
-			if (state != State.INIT) {
+			if (state != State.IDLE) {
 				/*
 				 * XXX: We got trapped in PERFORM state, which should not be
 				 * possible, but happens at times... As a workaround, we call
 				 * releasedHandler#handle(MouseEvent).
-				 * 
+				 *
 				 * We give it the pressed event, although it might be a good
 				 * idea to pass-in dx = 0 and dy = 0.
 				 */
@@ -158,7 +158,7 @@ public abstract class FXMouseDragGesture {
 			release(targetNode, e, dx, dy, nodesUnderMouse);
 			removeTargetHandlers();
 			targetNode = null;
-			state = State.INIT;
+			state = State.IDLE;
 		}
 	};
 
@@ -225,7 +225,7 @@ public abstract class FXMouseDragGesture {
 
 		if (scene != null) {
 			scene.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-			state = State.INIT;
+			state = State.IDLE;
 		}
 	}
 

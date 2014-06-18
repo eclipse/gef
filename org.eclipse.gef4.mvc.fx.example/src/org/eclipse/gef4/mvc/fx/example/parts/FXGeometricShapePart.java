@@ -20,17 +20,13 @@ import javafx.scene.Node;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXDragTool;
+import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
@@ -62,8 +58,10 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			}
 		};
 		
+		// TODO: inject these adapters
+		
 		// interaction policies
-		setAdapter(FXDragTool.TOOL_POLICY_KEY, new FXRelocateOnDragPolicy());
+		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY, new FXRelocateOnDragPolicy());
 
 		// transaction policies
 		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());

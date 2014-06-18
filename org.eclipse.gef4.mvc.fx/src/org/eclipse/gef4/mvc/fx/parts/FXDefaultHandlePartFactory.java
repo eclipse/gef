@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -24,18 +24,20 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
+import com.google.inject.Provider;
+
+//TODO use injection to create handles
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider
@@ -52,7 +54,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
+			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
 		return new FXSegmentHandlePart(targetPart, handleGeometryProvider,
 				segmentIndex, isEndPoint ? 1 : 0);
@@ -60,7 +62,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	/**
 	 * Generate handles for the end/join points of the individual beziers.
-	 * 
+	 *
 	 * @param targetPart
 	 * @param handleGeometryProvider
 	 * @param geom
@@ -68,7 +70,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
+			Provider<IGeometry> handleGeometryProvider, IGeometry geom) {
 		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
 		BezierCurve[] beziers = ((ICurve) geom).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
@@ -107,7 +109,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
 	 * selection. The corner is specified via the <i>position</i> parameter.
-	 * 
+	 *
 	 * @param targets
 	 *            All selected {@link IContentPart}s.
 	 * @param position
@@ -118,6 +120,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
 			List<IContentPart<Node>> targets, Pos position) {
+		// TODO: use injection
 		return new FXBoxHandlePart(targets, position);
 	}
 
@@ -146,7 +149,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// single selection
 		final IContentPart<Node> targetPart = targets.get(0);
-		IProvider<IGeometry> handleGeometryProvider = selectionBehavior
+		Provider<IGeometry> handleGeometryProvider = selectionBehavior
 				.getHandleGeometryProvider();
 
 		// generate handles from handle geometry
@@ -181,7 +184,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider
@@ -195,7 +198,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
+			Provider<IGeometry> handleGeometryProvider, int vertexIndex) {
 		return new FXSegmentHandlePart(targetPart, handleGeometryProvider,
 				vertexIndex);
 	}

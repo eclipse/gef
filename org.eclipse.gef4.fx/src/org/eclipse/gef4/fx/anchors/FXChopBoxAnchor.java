@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Ny??en (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -77,8 +77,16 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 				.toAffineTransform(getAnchorageNode()
 						.getLocalToSceneTransform());
 
+		if (!isValidTransform(anchorageToSceneTransform)) {
+			anchorageToSceneTransform = new AffineTransform();
+		}
+
 		AffineTransform anchoredToSceneTransform = JavaFX2Geometry
 				.toAffineTransform(anchored.getLocalToSceneTransform());
+
+		if (!isValidTransform(anchoredToSceneTransform)) {
+			anchoredToSceneTransform = new AffineTransform();
+		}
 
 		Point anchorageReferencePointInScene = anchorageToSceneTransform
 				.getTransformed(getAnchorageReferencePoint());
@@ -93,14 +101,20 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		Point[] intersectionPoints = anchorageReferenceShapeInScene
 				.getOutline().getIntersections(referenceLineInScene);
 		if (intersectionPoints.length > 0) {
-			return JavaFX2Geometry.toPoint(anchored
+			Point point = JavaFX2Geometry.toPoint(anchored
 					.sceneToLocal(Geometry2JavaFX
 							.toFXPoint(intersectionPoints[0])));
+			return point;
 		}
 
 		// do not fail hard... use center
-		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
-				.toFXPoint(anchorageReferencePointInScene)));
+		Point point = JavaFX2Geometry.toPoint(anchored
+				.sceneToLocal(Geometry2JavaFX
+						.toFXPoint(anchorageReferencePointInScene)));
+		if (point != null && point.x == Double.NaN) {
+			System.out.println("NaN");
+		}
+		return point;
 
 		// TODO: investigate where the wrong reference point is set
 		// throw new IllegalArgumentException("Invalid reference point "
@@ -121,7 +135,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * a {@link Rectangle} matching the layout-bounds of the anchorage
 	 * {@link Node} is returned. Clients may override this method to use other
 	 * geometric shapes instead.
-	 * 
+	 *
 	 * @return The anchorage reference {@link IShape} within the local
 	 *         coordinate system of the anchorage {@link Node}
 	 */
@@ -138,12 +152,21 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		return referencePointProperty.get(anchored);
 	}
 
+	private boolean isValidTransform(AffineTransform t) {
+		for (double d : t.getMatrix()) {
+			if (Double.isNaN(d)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Recomputes the position of this anchor w.r.t. the given anchored
 	 * {@link Node} and reference {@link Point}. The
 	 * {@link #computePosition(Node, Point)} method is used to determine the new
 	 * position, which in turn is put into the {@link #positionProperty()}.
-	 * 
+	 *
 	 * @param anchored
 	 * @param referencePoint
 	 */
@@ -177,7 +200,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	/**
 	 * Assigns the given reference point to the given anchored in the reference
 	 * point map.
-	 * 
+	 *
 	 * @param anchored
 	 * @param referencePoint
 	 */

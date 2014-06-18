@@ -21,16 +21,22 @@ import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
+	@Inject
+	private Injector injector;
+	
 	public org.eclipse.gef4.mvc.parts.IContentPart<Node> createContentPart(
 			Object content, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		if (content instanceof FXGeometricModel) {
-			return new FXGeometricModelPart();
+			return injector.getInstance(FXGeometricModelPart.class);
 		} else if (content instanceof FXGeometricShape) {
-			return new FXGeometricShapePart();
+			return injector.getInstance(FXGeometricShapePart.class);
 		} else if (content instanceof FXGeometricCurve) {
-			return new FXGeometricCurvePart();
+			return injector.getInstance(FXGeometricCurvePart.class);
 		} else {
 			throw new IllegalArgumentException(content.getClass().toString());
 		}

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,38 +24,41 @@ import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXPartUtils {
 
 	public static IVisualPart<Node> getEventTargetPart(
-			IVisualViewer<Node> viewer, Event event) {
-		return getEventTargetPart(viewer, event, null);
+			Collection<IViewer<Node>> viewers, Event event) {
+		return getEventTargetPart(viewers, event, null);
 	}
 
 	public static IVisualPart<Node> getEventTargetPart(
-			IVisualViewer<Node> viewer, Event event,
+			Collection<IViewer<Node>> viewers, Event event,
 			Class<? extends IPolicy<Node>> supportedPolicy) {
 		EventTarget target = event.getTarget();
 
-		if (target instanceof Node) {
-			Node rootVisual = viewer.getRootPart().getVisual();
+		for (IViewer<Node> viewer : viewers) {
+			if (target instanceof Node) {
+				Node rootVisual = viewer.getRootPart().getVisual();
 
-			// look for the Node in the visual-part-map, traverse the hierarchy
-			// if needed
-			Node targetNode = (Node) target;
-			IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
-					targetNode);
-			while (targetNode != null
-					&& (targetPart == null || supportedPolicy != null
-							&& targetPart.getAdapter(supportedPolicy) == null)
-					&& targetNode != rootVisual) {
-				targetNode = targetNode.getParent();
-				targetPart = viewer.getVisualPartMap().get(targetNode);
-			}
+				// look for the Node in the visual-part-map, traverse the
+				// hierarchy
+				// if needed
+				Node targetNode = (Node) target;
+				IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
+						targetNode);
+				while (targetNode != null
+						&& (targetPart == null || supportedPolicy != null
+						&& targetPart.getAdapter(supportedPolicy) == null)
+						&& targetNode != rootVisual) {
+					targetNode = targetNode.getParent();
+					targetPart = viewer.getVisualPartMap().get(targetNode);
+				}
 
-			if (targetPart != null) {
-				return targetPart;
+				if (targetPart != null) {
+					return targetPart;
+				}
 			}
 		}
 
@@ -71,9 +75,9 @@ public class FXPartUtils {
 	 * @return
 	 */
 	public static List<IVisualPart<Node>> getTargetParts(
-			IVisualViewer<Node> viewer, Event event,
+			Collection<IViewer<Node>> viewers, Event event,
 			Class<? extends IPolicy<Node>> policy) {
-		IVisualPart<Node> eventTargetPart = getEventTargetPart(viewer, event,
+		IVisualPart<Node> eventTargetPart = getEventTargetPart(viewers, event,
 				policy);
 		if (eventTargetPart == null) {
 			return Collections.emptyList();

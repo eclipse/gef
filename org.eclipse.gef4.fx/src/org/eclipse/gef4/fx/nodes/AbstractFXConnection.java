@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-		implements IFXConnection {
+implements IFXConnection {
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
@@ -84,7 +84,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	/**
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
-	 * 
+	 *
 	 * @param deco
 	 * @param start
 	 * @param direction
@@ -120,7 +120,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	/**
 	 * Returns a {@link Point} array containing reference points for the start
 	 * and end anchors.
-	 * 
+	 *
 	 * @return
 	 */
 	public Point[] computeReferencePoints() {
@@ -204,7 +204,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	/**
 	 * Returns the end point for computing this connection's curve visual.
-	 * 
+	 *
 	 * @return the end point for computing this connection's curve visual
 	 */
 	private Point getCurveEndPoint() {
@@ -259,7 +259,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
 	 * compute the position) this method returns an empty array.
 	 * </p>
-	 * 
+	 *
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
@@ -318,7 +318,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	/**
 	 * Returns the start point for computing this connection's curve visual.
-	 * 
+	 *
 	 * @return the start point for computing this connection's curve visual
 	 */
 	private Point getCurveStartPoint() {
@@ -592,7 +592,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		if (getEndAnchor() instanceof FXChopBoxAnchor) {
 			if (ref != null) {
 				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getEndAnchor();
-				if (!ref.equals(anchor.getReferencePoint(this))) {
+				Point referencePoint = anchor.getReferencePoint(this);
+				if (!ref.equals(referencePoint)) {
 					anchor.setReferencePoint(this, ref);
 				}
 			}
@@ -603,7 +604,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		if (getStartAnchor() instanceof FXChopBoxAnchor) {
 			if (ref != null) {
 				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getStartAnchor();
-				if (!ref.equals(anchor.getReferencePoint(this))) {
+				Point referencePoint = anchor.getReferencePoint(this);
+				if (!ref.equals(referencePoint)) {
 					anchor.setReferencePoint(this, ref);
 				}
 			}

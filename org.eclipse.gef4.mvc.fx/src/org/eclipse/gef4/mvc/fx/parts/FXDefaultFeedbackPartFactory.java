@@ -17,6 +17,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 
+// TODO: use injection to create parts
 public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
 
 	@Override
@@ -24,8 +25,9 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior,
 			Map<Object, Object> contextMap) {
 		// no targets
-		if (targets == null || targets.isEmpty())
+		if (targets == null || targets.isEmpty()) {
 			return Collections.emptyList();
+		}
 
 		// differentiate creation context
 		if (contextBehavior instanceof FXSelectionBehavior) {
@@ -70,10 +72,16 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				.getViewer().getSelectionModel().getSelected().get(0) == targetPart;
 		feedbackParts.add(new FXBoundsFeedbackPart(targetPart,
 				selectionBehavior.getFeedbackGeometryProvider(), Color
-						.web("#5a61af"),
+				.web("#5a61af"),
 				isPrimaryFeedback ? getPrimarySelectionFeedbackEffect()
 						: getSecondarySelectionFeedbackEffect()));
 		return feedbackParts;
+	}
+
+	protected Effect getHoverFeedbackEffect() {
+		DropShadow effect = new DropShadow();
+		effect.setRadius(5);
+		return effect;
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect() {
@@ -86,11 +94,5 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 	protected Effect getSecondarySelectionFeedbackEffect() {
 		return null;
-	}
-
-	protected Effect getHoverFeedbackEffect() {
-		DropShadow effect = new DropShadow();
-		effect.setRadius(5);
-		return effect;
 	}
 }

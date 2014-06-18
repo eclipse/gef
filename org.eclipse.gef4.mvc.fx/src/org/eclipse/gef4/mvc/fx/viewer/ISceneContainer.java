@@ -2,7 +2,7 @@ package org.eclipse.gef4.mvc.fx.viewer;
 
 import javafx.scene.Scene;
 
-public interface IFXSceneHook {
+public interface ISceneContainer {
 	
-	public void hookScene(Scene scene);
+	public void setScene(Scene scene);
 }

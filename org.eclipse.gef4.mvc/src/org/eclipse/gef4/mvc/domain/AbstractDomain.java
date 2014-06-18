@@ -11,14 +11,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
-import java.util.Stack;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
+import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * 
@@ -26,22 +33,17 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * 
  * @param <VR>
  */
+// add getTools() method that uses the adapters
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	private AdaptableSupport<IDomain<VR>> as = new AdaptableSupport<IDomain<VR>>(
 			this);
 
-	private Stack<ITool<VR>> toolsStack = new Stack<ITool<VR>>();
-	private IVisualViewer<VR> viewer;
+	private Set<IViewer<VR>> viewers;
+	private IOperationHistory operationHistory;
+	private IUndoContext undoContext;
 
-	private IOperationHistory operationHistory = new DefaultOperationHistory();
-	private IUndoContext undoContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;
-
-	/**
-	 * Constructs an EditDomain and loads the default tool.
-	 */
 	public AbstractDomain() {
-		pushTool(getDefaultTool());
 	}
 
 	@Override
@@ -54,123 +56,31 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		as.setAdapter(key, adapter);
 	}
 
+	@Inject
+	public void setAdapters(
+			@AdapterMap(AbstractDomain.class) Map<Class<?>, Object> adaptersWithKeys) {
+		as.setAdapters(adaptersWithKeys);
+	}
+
 	@Override
 	public <T> T unsetAdapter(Class<T> key) {
 		return as.unsetAdapter(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.ui.parts.IEditDomain#addViewer(org.eclipse.gef.ui.parts
-	 * .IEditPartViewer)
-	 */
-	@Override
-	public void setViewer(IVisualViewer<VR> viewer) {
-		if (this.viewer == viewer) {
-			return;
-		}
-		if (this.viewer != null) {
-			if (peekTool() != null) {
-				peekTool().deactivate();
-				peekTool().setDomain(null);
-			}
-			this.viewer.setDomain(null);
-		}
-		this.viewer = viewer;
-		if (viewer != null) {
-			viewer.setDomain(this);
-			if (peekTool() != null) {
-				peekTool().setDomain(this);
-				peekTool().activate();
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef.ui.parts.IEditDomain#getActiveTool()
-	 */
-	@Override
-	public ITool<VR> peekTool() {
-		if (toolsStack.isEmpty()) {
-			return null;
-		}
-		return toolsStack.peek();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef.ui.parts.IEditDomain#getCommandStack()
-	 */
 	@Override
 	public IOperationHistory getOperationHistory() {
 		return operationHistory;
 	}
 
-	protected abstract ITool<VR> getDefaultTool();
-
+	@Inject
 	@Override
-	public IVisualViewer<VR> getViewer() {
-		return viewer;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.ui.parts.IEditDomain#setCommandStack(org.eclipse.gef.
-	 * commands.CommandStack)
-	 */
-	@Override
-	public void setOperationHistory(IOperationHistory stack) {
+	public void setOperationHistory(
+			@Named("AbstractDomain") IOperationHistory stack) {
 		operationHistory = stack;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef.ui.parts.IEditDomain#setActiveTool(org.eclipse.gef.tools
-	 * .ITool)
-	 */
-	@Override
-	public void pushTool(ITool<VR> tool) {
-		if (tool != null) {
-			ITool<VR> currentTool = peekTool();
-			toolsStack.push(tool);
-			if (viewer != null) {
-				if (currentTool != null) {
-					currentTool.deactivate();
-					currentTool.setDomain(null);
-				}
-				tool.setDomain(this);
-				tool.activate();
-			}
-		}
-	}
-
-	@Override
-	public ITool<VR> popTool() {
-		if (!toolsStack.isEmpty()) {
-			ITool<VR> currentTool = toolsStack.pop();
-			if (viewer != null) {
-				if (currentTool != null) {
-					currentTool.deactivate();
-					currentTool.setDomain(null);
-				}
-				// activate former tool, in case we are attached to a viewer
-				if (peekTool() != null) {
-					peekTool().setDomain(this);
-					peekTool().activate();
-				}
-			}
-			return currentTool;
-		}
-		return null;
+	public Map<Class<? extends ITool<VR>>, ITool<VR>> getTools() {
+		return as.getAdapters(ITool.class);
 	}
 
 	@Override
@@ -178,9 +88,76 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return undoContext;
 	}
 
+	@Inject
 	@Override
-	public void setUndoContext(IUndoContext undoContext) {
+	public void setUndoContext(@Named("AbstractDomain") IUndoContext undoContext) {
 		this.undoContext = undoContext;
 	}
 
+	@Override
+	public void addViewer(IViewer<VR> viewer) {
+		if (viewers != null && viewers.contains(viewer)) {
+			return;
+		}
+
+		// add viewer
+		if (viewers == null) {
+			viewers = new HashSet<IViewer<VR>>();
+		} else {
+			// deactivate adapters if they had been activated before (will
+			// re-activate them after the viewer has been hooked)
+			deactivateAdapters();
+		}
+		viewers.add(viewer);
+		viewer.setDomain(this);
+
+		// activate adapters (tools)
+		activateAdapters();
+	}
+
+	private void activateAdapters() {
+		for (Object a : as.getAdapters().values()) {
+			if (a instanceof IActivatable) {
+				((IActivatable) a).activate();
+			}
+		}
+	}
+
+	@Override
+	public void removeViewer(IViewer<VR> viewer) {
+		if (viewers != null && !(viewers.contains(viewer))) {
+			return;
+		}
+
+		// deactive all adapters (they have to be active), will re-activate them
+		// if we are not completely unhooked.
+		deactivateAdapters();
+
+		// unhook viewer
+		viewer.setDomain(null);
+		viewers.remove(viewer);
+		if (viewers.isEmpty()) {
+			viewers = null;
+		} else {
+			// if we are not completely unhooked, re-activate adapters
+			activateAdapters();
+		}
+	}
+
+	private void deactivateAdapters() {
+		for (Object a : as.getAdapters().values()) {
+			if (a instanceof IActivatable) {
+				((IActivatable) a).deactivate();
+			}
+		}
+	}
+
+	@Override
+	public Set<IViewer<VR>> getViewers() {
+		if (viewers == null) {
+			return Collections.emptySet();
+		} else {
+			return Collections.unmodifiableSet(viewers);
+		}
+	}
 }

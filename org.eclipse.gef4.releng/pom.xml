@@ -223,7 +223,7 @@
 									<groupId>org.eclipse.gef4</groupId>
 									<artifactId>org.eclipse.gef4.target</artifactId>
 									<version>0.1.0-SNAPSHOT</version>
-									<classifier>KEPLER_4_3</classifier>
+									<classifier>LUNA_4_4</classifier>
 								</artifact>
 							</target>
 							<dependency-resolution>

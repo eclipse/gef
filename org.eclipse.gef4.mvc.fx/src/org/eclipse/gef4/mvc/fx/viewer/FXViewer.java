@@ -15,40 +15,38 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.viewer.AbstractVisualViewer;
+import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
-public class FXViewer extends AbstractVisualViewer<Node>
-		implements IFXViewer {
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
-	private final IFXSceneHook sceneContainer;
+public class FXViewer extends AbstractViewer<Node> {
+
+	private ISceneFactory sceneFactory;
+	private ISceneContainer sceneContainer;
 	private Scene scene = null;
 
-	public FXViewer(IFXSceneHook sceneContainer) {
-		super();
-		this.sceneContainer = sceneContainer;
-	}
-
-	protected Scene createScene(Parent rootVisual) {
-		return new Scene(rootVisual);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.fx.viewer.IFXVisualViewer#getScene()
-	 */
 	@Override
+	public FXDomain getDomain() {
+		return (FXDomain) super.getDomain();
+	}
+
 	public Scene getScene() {
 		return scene;
 	}
 
+	@Inject
 	@Override
-	public void setRootPart(IRootPart<Node> rootPart) {
+	public void setRootPart(@Named("AbstractViewer") IRootPart<Node> rootPart) {
 		super.setRootPart(rootPart);
 		if (rootPart != null) {
-			if (getScene() == null) {
-				setScene(createScene((Parent) rootPart.getVisual()));
+			if (scene == null) {
+				if (sceneFactory != null) {
+					setScene(sceneFactory.createScene((Parent) rootPart
+							.getVisual()));
+				}
 			} else {
 				getScene().setRoot((Parent) rootPart.getVisual());
 			}
@@ -57,11 +55,28 @@ public class FXViewer extends AbstractVisualViewer<Node>
 		}
 	}
 
-	protected void setScene(Scene scene) {
+	private void setScene(Scene scene) {
 		if (this.scene != scene) {
 			this.scene = scene;
-			sceneContainer.hookScene(scene);
+			if (sceneContainer != null) {
+				sceneContainer.setScene(scene);
+			}
 		}
 	}
 
+	public void setSceneContainer(ISceneContainer container) {
+		sceneContainer = container;
+		if (scene != null) {
+			sceneContainer.setScene(scene);
+		}
+	}
+
+	@Inject
+	public void setSceneFactory(ISceneFactory sceneFactory) {
+		this.sceneFactory = sceneFactory;
+		if (getRootPart() != null && scene == null) {
+			setScene(sceneFactory.createScene((Parent) getRootPart()
+					.getVisual()));
+		}
+	}
 }

@@ -29,6 +29,8 @@ public interface IAdaptable {
 
 	public <T> void setAdapter(Class<T> key, T adapter);
 
+	// public void setAdapters(Map<Class<?>, Object> adaptersWithKeys);
+
 	public <T> T unsetAdapter(Class<T> key);
 
 	/**

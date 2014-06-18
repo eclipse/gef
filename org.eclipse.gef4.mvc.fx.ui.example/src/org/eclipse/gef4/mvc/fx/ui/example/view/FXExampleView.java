@@ -14,63 +14,21 @@ package org.eclipse.gef4.mvc.fx.ui.example.view;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.scene.Node;
-
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
-import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.example.domain.FXExampleDomain;
+import org.eclipse.gef4.mvc.fx.example.FXExampleModule;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
-import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnZoomPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
-import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
+import org.eclipse.gef4.mvc.fx.ui.example.FXExampleUiModule;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
-import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.util.Modules;
 
 public class FXExampleView extends FXView {
 
-	@Override
-	protected void configureViewer(IFXViewer viewer) {
-		super.configureViewer(viewer);
-
-		// behaviors
-		viewer.getRootPart().setAdapter(FXSelectionBehavior.class,
-				new FXSelectionBehavior());
-		viewer.getRootPart().setAdapter(FXZoomBehavior.class,
-				new FXZoomBehavior());
-
-		// interaction policies
-		viewer.getRootPart().setAdapter(FXZoomTool.TOOL_POLICY_KEY,
-				new FXZoomOnZoomPolicy());
-		viewer.getRootPart().setAdapter(FXScrollTool.TOOL_POLICY_KEY,
-				new FXZoomOnScrollPolicy());
-	}
-
-	@Override
-	protected FXDomain createDomain() {
-		return new FXExampleDomain();
-	}
-
-	@Override
-	protected IContentPartFactory<Node> getContentPartFactory() {
-		return new FXExampleContentPartFactory();
-	}
-
-	@Override
-	protected IHandlePartFactory<Node> getHandlePartFactory() {
-		return new FXExampleHandlePartFactory();
-	}
-
-	@Override
-	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
-		return new FXDefaultFeedbackPartFactory();
+	// TODO: create FXView via an executable extension factory (obtaining the
+	// injector via the bundle)
+	public FXExampleView() {
+		super(Guice.createInjector(Modules.override(new FXExampleModule())
+				.with(new FXExampleUiModule())));
 	}
 
 	@Override

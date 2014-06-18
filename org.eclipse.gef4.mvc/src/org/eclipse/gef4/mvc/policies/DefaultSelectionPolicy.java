@@ -19,7 +19,7 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
+public class DefaultSelectionPolicy<VR> extends AbstractPolicy<VR> {
 
 	public void select(boolean append) {
 		IVisualPart<VR> host = getHost();

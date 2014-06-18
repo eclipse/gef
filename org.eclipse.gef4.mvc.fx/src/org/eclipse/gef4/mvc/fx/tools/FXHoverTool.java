@@ -19,6 +19,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXHoverTool extends AbstractTool<Node> {
 
@@ -28,7 +29,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 		@Override
 		public void handle(MouseEvent event) {
 			IVisualPart<Node> targetPart = FXPartUtils.getEventTargetPart(
-					getDomain().getViewer(), event);
+					getDomain().getViewers(), event);
 			if (targetPart != null) {
 				AbstractFXHoverPolicy policy = getToolPolicy(targetPart);
 				if (policy != null) {
@@ -44,14 +45,18 @@ public class FXHoverTool extends AbstractTool<Node> {
 
 	@Override
 	protected void registerListeners() {
-		getDomain().getViewer().getRootPart().getVisual().getScene()
-				.addEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
-	};
+		for (IViewer<Node> viewer : getDomain().getViewers()) {
+			viewer.getRootPart().getVisual().getScene()
+			.addEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
+		}
+	}
 
 	@Override
 	protected void unregisterListeners() {
-		getDomain().getViewer().getRootPart().getVisual().getScene()
-				.removeEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
+		for (IViewer<Node> viewer : getDomain().getViewers()) {
+			viewer.getRootPart().getVisual().getScene()
+			.removeEventFilter(MouseEvent.MOUSE_MOVED, hoverFilter);
+		}
 	}
 
 }

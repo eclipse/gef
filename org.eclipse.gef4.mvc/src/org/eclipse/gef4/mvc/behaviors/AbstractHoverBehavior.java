@@ -16,9 +16,10 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import com.google.inject.Provider;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -31,7 +32,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
 
-	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
+	private Provider<IGeometry> feedbackGeometryProvider = new Provider<IGeometry>() {
 		@Override
 		public IGeometry get() {
 			return getFeedbackGeometry();
@@ -96,7 +97,7 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
-	public IProvider<IGeometry> getFeedbackGeometryProvider() {
+	public Provider<IGeometry> getFeedbackGeometryProvider() {
 		return feedbackGeometryProvider;
 	}
 

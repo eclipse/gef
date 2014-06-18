@@ -22,6 +22,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @param <VR>
  */
+//TODO: change generic parameter to specify IVisualPart<VR> rather than VR
 public interface IPolicy<VR> extends IAdaptable.Bound<IVisualPart<VR>> {
 
+	public IVisualPart<VR> getHost();
 }

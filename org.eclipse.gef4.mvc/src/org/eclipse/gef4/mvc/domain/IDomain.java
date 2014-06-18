@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.tools.ITool;
-import org.eclipse.gef4.mvc.viewer.IViewerBound;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * 
@@ -26,39 +29,22 @@ import org.eclipse.gef4.mvc.viewer.IViewerBound;
  * @param <VR>
  */
 // TODO: it seems to be not nice that the domain is bound directly to the
-// viewer.
-public interface IDomain<VR> extends IAdaptable, IViewerBound<VR> {
+// viewer.-> we should support multiple viewers (and provide the active one)
+public interface IDomain<VR> extends IAdaptable {
 
-	/**
-	 * Returns the active Tool
-	 * 
-	 * @return the active Tool
-	 */
-	public abstract ITool<VR> peekTool();
+	public Map<Class<? extends ITool<VR>>, ITool<VR>> getTools();
 
-	public abstract ITool<VR> popTool();
-
-	/**
-	 * Sets the active Tool for this EditDomain. If a current Tool is active, it
-	 * is deactivated. The new Tool is told its EditDomain, and is activated.
-	 * 
-	 * @param tool
-	 *            the Tool
-	 */
-	public abstract void pushTool(ITool<VR> tool);
-
-	
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
 	 * 
 	 * @return The {@link IOperationHistory}.
 	 */
 	// replace by binding
-	public abstract IOperationHistory getOperationHistory();
+	public IOperationHistory getOperationHistory();
 
 	// replace by binding
-	public abstract IUndoContext getUndoContext();
-	
+	public IUndoContext getUndoContext();
+
 	/**
 	 * Sets the {@link IOperationHistory}, which can later be requested via
 	 * {@link #getOperationHistory()}.
@@ -66,10 +52,16 @@ public interface IDomain<VR> extends IAdaptable, IViewerBound<VR> {
 	 * @param operationHistory
 	 *            The new {@link IOperationHistory} to be used.
 	 */
-	// replace by binding
-	public abstract void setOperationHistory(IOperationHistory operationHistory);
+	// replace by binding (using adapters)?
+	public void setOperationHistory(IOperationHistory operationHistory);
 
 	// replace by binding
-	public abstract void setUndoContext(IUndoContext undoContext);
+	public void setUndoContext(IUndoContext undoContext);
+	
+	public void addViewer(IViewer<VR> viewer);
+	
+	public void removeViewer(IViewer<VR> viewer);
+	
+	public Set<IViewer<VR>> getViewers();
 
 }

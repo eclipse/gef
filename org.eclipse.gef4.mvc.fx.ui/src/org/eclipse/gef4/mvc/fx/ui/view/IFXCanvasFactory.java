@@ -6,14 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.mvc.fx.ui.view;
 
-// TODO: replace with corresponding guice interface when migrating to guice
-public interface IProvider<T> {
+import javafx.embed.swt.FXCanvas;
 
-	public T get();
-	
+import org.eclipse.swt.widgets.Composite;
+
+public interface IFXCanvasFactory {
+
+	public FXCanvas createCanvas(Composite parent);
 }

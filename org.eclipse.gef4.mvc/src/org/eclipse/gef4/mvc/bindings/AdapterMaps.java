@@ -7,21 +7,21 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *
+ *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.policies;
+package org.eclipse.gef4.mvc.bindings;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
 
-public class ZoomPolicy<VR> extends AbstractPolicy<VR> {
+public class AdapterMaps {
 
-	public void zoomAbsolute(double absoluteZoom){
-		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
-		zoomModel.setZoomFactor(absoluteZoom);
+	private AdapterMaps() {
 	}
-	
-	public void zoomRelative(double relativeZoom){
-		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
-		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
+
+	/**
+	 * Creates a {@link AdapterMap} annotation with the given {@code type}
+	 * .
+	 */
+	public static AdapterMap typed(Class<?> type) {
+		return new AdapterMapImpl(type);
 	}
 }

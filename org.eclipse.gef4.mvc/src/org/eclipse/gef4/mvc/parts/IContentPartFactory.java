@@ -13,10 +13,10 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
- * A factory for creating new {@link IContentPart}s. The {@link IVisualViewer}
+ * A factory for creating new {@link IContentPart}s. The {@link IViewer}
  * can be configured with an {@link IContentPartFactory}. Whenever a behavior of
  * an {@link IContentPart} in that viewer needs to create another child
  * {@link IContentPart}, it can use the viewer's {@link IContentPartFactory},

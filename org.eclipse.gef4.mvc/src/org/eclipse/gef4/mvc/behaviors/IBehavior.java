@@ -23,6 +23,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *
  * @param <VR>
  */
+//TODO: change generic parameter to specify IVisualPart<VR> rather than VR
 public interface IBehavior<VR> extends IActivatable,
 		IAdaptable.Bound<IVisualPart<VR>> {
 }

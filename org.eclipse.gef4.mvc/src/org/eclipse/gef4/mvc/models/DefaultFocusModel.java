@@ -26,6 +26,9 @@ public class DefaultFocusModel<V> implements IFocusModel<V> {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IContentPart<V> focused = null;
 	
+	public DefaultFocusModel() {
+	}
+	
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);

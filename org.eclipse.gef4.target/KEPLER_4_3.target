@@ -26,5 +26,14 @@
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
+</location>
 </locations>
 </target>

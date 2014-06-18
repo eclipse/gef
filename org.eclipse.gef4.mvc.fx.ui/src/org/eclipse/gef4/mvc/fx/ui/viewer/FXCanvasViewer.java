@@ -15,15 +15,15 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.fx.viewer.IFXSceneHook;
+import org.eclipse.gef4.mvc.fx.viewer.ISceneContainer;
 
 public class FXCanvasViewer extends FXViewer {
 
 	public FXCanvasViewer(final FXCanvas canvas) {
-		super(new IFXSceneHook() {
+		setSceneContainer(new ISceneContainer() {
 			
 			@Override
-			public void hookScene(Scene scene) {
+			public void setScene(Scene scene) {
 				canvas.setScene(scene);
 			}
 		});

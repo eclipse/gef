@@ -11,21 +11,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.models.IZoomModel;
 
-public class HoverPolicy<VR> extends AbstractPolicy<VR> {
+public class DefaultZoomPolicy<VR> extends AbstractPolicy<VR> {
 
-	public void hover() {
-		IVisualPart<VR> host = getHost();
-		if (!(host instanceof IContentPart) || !isHoverable()) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(null);
-		} else if (host instanceof IContentPart) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(host);
-		}
+	public void zoomAbsolute(double absoluteZoom){
+		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		zoomModel.setZoomFactor(absoluteZoom);
 	}
-
-	protected boolean isHoverable() {
-		return true;
+	
+	public void zoomRelative(double relativeZoom){
+		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
 	}
 }

@@ -9,15 +9,18 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.viewer;
+package org.eclipse.gef4.mvc.bindings;
 
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public interface IFXViewer extends IVisualViewer<Node> {
+import com.google.inject.BindingAnnotation;
 
-	public Scene getScene();
-
+@Target({ PARAMETER }) @Retention(RUNTIME) @BindingAnnotation
+public @interface AdapterMap {
+	
+	Class<?> value();
 }

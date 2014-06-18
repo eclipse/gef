@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -25,10 +25,10 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-		IPolicy<Node>, ITransactional {
+IPolicy<Node>, ITransactional {
 
 	protected double initialLayoutX, initialLayoutY, initialWidth,
-			initialHeight;
+	initialHeight;
 	private FXResizeRelocateNodeOperation operation;
 
 	// can be overridden by subclasses to add an operation for model changes
@@ -50,7 +50,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override

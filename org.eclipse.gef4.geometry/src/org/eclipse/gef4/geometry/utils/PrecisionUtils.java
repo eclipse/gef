@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2011 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.utils;
 
@@ -17,24 +17,17 @@ package org.eclipse.gef4.geometry.utils;
  * A utility class for floating point calculations and comparisons that should
  * guarantee a precision of a given scale, and ignore differences beyond this
  * scale.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class PrecisionUtils {
-
-	/*
-	 * Precise calculations on doubles are performed based on BigDecimals,
-	 * converting to 8 digits scale, so there are no undesired rounding effects
-	 * beyond this precision.
-	 */
-	private static final int DEFAULT_SCALE = 6;
 
 	/**
 	 * Computes the smallest double that is yet recognizable (by comparison)
 	 * when shifting the default scale up by the given amount.
-	 * 
+	 *
 	 * @param shift
 	 *            the number of digits to shift precision up (may be negative
 	 *            number)
@@ -59,7 +52,7 @@ public class PrecisionUtils {
 	/**
 	 * Tests whether the two values are regarded to be equal w.r.t. the given
 	 * shift.
-	 * 
+	 *
 	 * @param d1
 	 *            the first value to test
 	 * @param d2
@@ -71,6 +64,11 @@ public class PrecisionUtils {
 	 *         recognizable by the shifted delta, <code>false</code> otherwise
 	 */
 	public static final boolean equal(double d1, double d2, int shift) {
+		// Check for undefined values
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			throw new IllegalArgumentException(
+					"Cannot compare undefined values.");
+		}
 		return Math.abs(d1 - d2) <= calculateFraction(shift);
 	}
 
@@ -87,7 +85,7 @@ public class PrecisionUtils {
 	/**
 	 * Tests whether the first given value is regarded to be greater than the
 	 * second value w.r.t. the given shift.
-	 * 
+	 *
 	 * @param d1
 	 *            the first value to test
 	 * @param d2
@@ -99,6 +97,11 @@ public class PrecisionUtils {
 	 *         <code>false</code> otherwise
 	 */
 	public static final boolean greater(double d1, double d2, int shift) {
+		// Check for undefined values
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			throw new IllegalArgumentException(
+					"Cannot compare undefined values.");
+		}
 		return d1 + calculateFraction(shift) > d2;
 	}
 
@@ -115,7 +118,7 @@ public class PrecisionUtils {
 	/**
 	 * Tests whether the first given value is regarded to be greater or equal
 	 * than the second value w.r.t. the given shift.
-	 * 
+	 *
 	 * @param d1
 	 *            the first value to test
 	 * @param d2
@@ -128,6 +131,11 @@ public class PrecisionUtils {
 	 *         delta, <code>false</code> otherwise
 	 */
 	public static final boolean greaterEqual(double d1, double d2, int shift) {
+		// Check for undefined values
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			throw new IllegalArgumentException(
+					"Cannot compare undefined values.");
+		}
 		return d1 + calculateFraction(shift) >= d2;
 	}
 
@@ -144,7 +152,7 @@ public class PrecisionUtils {
 	/**
 	 * Tests whether the first given value is regarded to be smaller than the
 	 * second value w.r.t. the given shift.
-	 * 
+	 *
 	 * @param d1
 	 *            the first value to test
 	 * @param d2
@@ -156,6 +164,11 @@ public class PrecisionUtils {
 	 *         <code>false</code> otherwise
 	 */
 	public static final boolean smaller(double d1, double d2, int shift) {
+		// Check for undefined values
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			throw new IllegalArgumentException(
+					"Cannot compare undefined values.");
+		}
 		return d1 < d2 + calculateFraction(shift);
 	}
 
@@ -172,7 +185,7 @@ public class PrecisionUtils {
 	/**
 	 * Tests whether the first given value is regarded to be smaller or equal
 	 * than the second value w.r.t. the given shift.
-	 * 
+	 *
 	 * @param d1
 	 *            the first value to test
 	 * @param d2
@@ -185,8 +198,20 @@ public class PrecisionUtils {
 	 *         delta, <code>false</code> otherwise
 	 */
 	public static final boolean smallerEqual(double d1, double d2, int shift) {
+		// Check for undefined values
+		if (Double.isNaN(d1) || Double.isNaN(d2)) {
+			throw new IllegalArgumentException(
+					"Cannot compare undefined values.");
+		}
 		return d1 <= d2 + calculateFraction(shift);
 	}
+
+	/*
+	 * Precise calculations on doubles are performed based on BigDecimals,
+	 * converting to 8 digits scale, so there are no undesired rounding effects
+	 * beyond this precision.
+	 */
+	private static final int DEFAULT_SCALE = 6;
 
 	private PrecisionUtils() {
 		// this class should not be instantiated by clients

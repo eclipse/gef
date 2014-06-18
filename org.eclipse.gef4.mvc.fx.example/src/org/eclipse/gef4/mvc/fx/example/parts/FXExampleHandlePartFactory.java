@@ -19,7 +19,6 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
@@ -29,6 +28,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+
+import com.google.inject.Provider;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
@@ -66,7 +67,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, IGeometry geom) {
+			Provider<IGeometry> handleGeometryProvider, IGeometry geom) {
 		parts = super.createCurveSelectionHandleParts(targetPart,
 				handleGeometryProvider, geom);
 
@@ -87,7 +88,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			final IProvider<IGeometry> handleGeometryProvider,
+			final Provider<IGeometry> handleGeometryProvider,
 			int segmentIndex, final boolean isEndPoint) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart,
@@ -109,7 +110,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int vertexIndex) {
+			Provider<IGeometry> handleGeometryProvider, int vertexIndex) {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex);
 		part.setAdapter(AbstractFXDragPolicy.class,

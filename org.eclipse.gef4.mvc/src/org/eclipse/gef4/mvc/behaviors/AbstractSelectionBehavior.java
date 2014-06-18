@@ -18,10 +18,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+
+import com.google.inject.Provider;
 
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
@@ -34,25 +35,25 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 public abstract class AbstractSelectionBehavior<VR> extends
 		AbstractBehavior<VR> implements PropertyChangeListener {
 
-	private IProvider<IGeometry> feedbackGeometryProvider = new IProvider<IGeometry>() {
+	private Provider<IGeometry> feedbackGeometryProvider = new Provider<IGeometry>() {
 		@Override
 		public IGeometry get() {
 			return getFeedbackGeometry();
 		}
 	};
 
-	private IProvider<IGeometry> handleGeometryProvider = new IProvider<IGeometry>() {
+	private Provider<IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
 		@Override
 		public IGeometry get() {
 			return getHandleGeometry();
 		}
 	};
 
-	public IProvider<IGeometry> getFeedbackGeometryProvider() {
+	public Provider<IGeometry> getFeedbackGeometryProvider() {
 		return feedbackGeometryProvider;
 	}
 
-	public IProvider<IGeometry> getHandleGeometryProvider() {
+	public Provider<IGeometry> getHandleGeometryProvider() {
 		return handleGeometryProvider;
 	}
 

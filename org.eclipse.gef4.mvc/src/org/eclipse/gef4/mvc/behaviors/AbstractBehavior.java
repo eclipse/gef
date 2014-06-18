@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -28,6 +31,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IVisualPart<VR> host;
 	private boolean active;
 
@@ -35,11 +39,15 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	private List<IFeedbackPart<VR>> feedbackParts;
 
 	public void activate() {
+		boolean oldActive = active;
 		active = true;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
 	}
 
 	public void deactivate() {
+		boolean oldActive = active;
 		active = false;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
 	}
 
 	@Override
@@ -49,11 +57,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	
 	@Override
 	public void setAdaptable(IVisualPart<VR> adaptable){
-		setHost(adaptable);
-	}
-	
-	public void setHost(IVisualPart<VR> host) {
-		this.host = host;
+		this.host = adaptable;
 	}
 
 	@Override
@@ -91,6 +95,16 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 					feedbackParts);
 			feedbackParts.clear();
 		}
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 }

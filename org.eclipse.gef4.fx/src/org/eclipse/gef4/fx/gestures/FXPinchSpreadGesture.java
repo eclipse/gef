@@ -15,7 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.ZoomEvent;
 
-public abstract class FXPinchGesture {
+public abstract class FXPinchSpreadGesture {
 
 	private Scene scene;
 

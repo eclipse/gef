@@ -20,15 +20,14 @@ import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXScrollPolicy;
-import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXScrollTool extends AbstractTool<Node> {
 
 	public static final Class<AbstractFXScrollPolicy> TOOL_POLICY_KEY = AbstractFXScrollPolicy.class;
-
-	private Scene scene;
 
 	private final EventHandler<ScrollEvent> scrollListener = new EventHandler<ScrollEvent>() {
 		@Override
@@ -37,7 +36,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 				event.consume();
 
 				List<IVisualPart<Node>> targetParts = FXPartUtils
-						.getTargetParts(getDomain().getViewer(), event,
+						.getTargetParts(getDomain().getViewers(), event,
 								TOOL_POLICY_KEY);
 				double deltaY = event.getDeltaY();
 
@@ -51,30 +50,6 @@ public class FXScrollTool extends AbstractTool<Node> {
 		}
 	};
 
-	@Override
-	public void activate() {
-		super.activate();
-		if (scene != null) {
-			doRegisterListeners();
-		}
-	}
-
-	@Override
-	public void deactivate() {
-		if (scene != null) {
-			doUnregisterListeners();
-		}
-		super.deactivate();
-	}
-
-	private void doRegisterListeners() {
-		scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
-	}
-
-	private void doUnregisterListeners() {
-		scene.removeEventFilter(ScrollEvent.SCROLL, scrollListener);
-	}
-
 	protected AbstractFXScrollPolicy getToolPolicy(IVisualPart<Node> targetPart) {
 		return targetPart.getAdapter(TOOL_POLICY_KEY);
 	}
@@ -82,14 +57,20 @@ public class FXScrollTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		scene = ((IFXViewer) getDomain().getViewer()).getScene();
+
+		for (IViewer<Node> viewer : getDomain().getViewers()) {
+			Scene scene = ((FXViewer) viewer).getScene();
+			scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
+		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		if (scene != null) {
-			doUnregisterListeners();
+		for (IViewer<Node> viewer : getDomain().getViewers()) {
+			Scene scene = ((FXViewer) viewer).getScene();
+			scene.removeEventFilter(ScrollEvent.SCROLL, scrollListener);
 		}
+
 		super.unregisterListeners();
 	}
 

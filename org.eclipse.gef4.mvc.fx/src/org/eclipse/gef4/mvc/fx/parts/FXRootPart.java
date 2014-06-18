@@ -21,24 +21,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
-import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
-import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnZoomPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickTool;
-import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
-import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
-import org.eclipse.gef4.mvc.fx.tools.FXZoomTool;
-import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXRootPart extends AbstractRootPart<Node> {
 
@@ -58,18 +47,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	private Parent scrollPaneInput;
 
 	public FXRootPart() {
-		// register (default) interaction policies (which are based on viewer
-		// models and do not depend on transaction policies)
-		setAdapter(FXClickTool.TOOL_POLICY_KEY, new FXSelectOnClickPolicy());
-		setAdapter(FXHoverTool.TOOL_POLICY_KEY, new FXHoverOnHoverPolicy());
-		setAdapter(FXScrollTool.TOOL_POLICY_KEY, new FXZoomOnScrollPolicy());
-		setAdapter(FXZoomTool.TOOL_POLICY_KEY, new FXZoomOnZoomPolicy());
-
-		// register (default) behaviors (which are based on viewer models)
-		setAdapter(FXSelectionBehavior.class, new FXSelectionBehavior());
-		setAdapter(FXHoverBehavior.class, new FXHoverBehavior());
-		setAdapter(FXZoomBehavior.class, new FXZoomBehavior());
-
 		createRootVisual();
 	}
 
@@ -84,7 +61,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				}
 			}
 			contentLayer.getChildren()
-			.add(contentLayerIndex, child.getVisual());
+					.add(contentLayerIndex, child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
 			int feedbackLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
@@ -179,8 +156,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	public IFXViewer getViewer() {
-		return (IFXViewer) super.getViewer();
+	public FXViewer getViewer() {
+		return (FXViewer) super.getViewer();
 	}
 
 	@Override
@@ -217,11 +194,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	public void setViewer(IVisualViewer<Node> newViewer) {
+	public void setViewer(IViewer<Node> newViewer) {
 		if (getViewer() != null) {
 			unregisterFromVisualPartMap();
 		}
-		if (newViewer != null && !(newViewer instanceof IFXViewer)) {
+		if (newViewer != null && !(newViewer instanceof FXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setViewer(newViewer);

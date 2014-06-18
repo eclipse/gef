@@ -1,19 +1,9 @@
-- Add snap-to behavior when re-connecting an edge, ensure handles are updated instantly
-- Add undo for all operations (pull up commit() operation from RelocateResizePolicy)
-
-- Fix moving bendpoints does not reflect zoom level.
-
-- Add support for cursor changes to tools/handles
-- Marquee Selection
-
-- Ensure factories and policies can be obtained on a default/type/instance based binding registry
-- Ensure default model implementations can be binded (using DI or custom binding mechanism) per viewer (no type/instance binding)
+- Add snap-to behavior when re-connecting an edge
+- Add support for cursor changes during interaction
+- Implement marquee selection
 - Ensure visual part and content part registries are based on scopes (hierarchy)
-
 - Show how shapes can be attached to each other via anchors (G shape of logo)
-- PropertySheet integration to change visual properties of FXGeometricVisuals (incl. UNDO)
-
-- Implement resize for arbitrary geometric shapes (by using scaling)
-
-- Add viewport (scrolling) model and tools for scrolling and related birdeye view to UI feature)
+- Add viewport (scrolling) model and tools for scrolling and related birdeye viewer to UI feature)
 - Add focus model (keyboard focus)
+- Add support for creation of new elements (clone, context-menu, palette)
+- Implement rotation support (tool, policies)

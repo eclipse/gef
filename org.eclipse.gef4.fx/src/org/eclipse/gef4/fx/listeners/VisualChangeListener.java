@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.listeners;
 
@@ -30,9 +30,9 @@ import javafx.scene.transform.Transform;
  * local transformations, or geometric bounds change. A local-to-scene-transform
  * change occurs when any node in the hierarchy of the target node undergoes a
  * transformation change.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public abstract class VisualChangeListener {
 
@@ -41,7 +41,7 @@ public abstract class VisualChangeListener {
 	 * scrolling does change the bounds-in-scene of anchored visuals, which in
 	 * turn causes an anchor refresh, which in turn causes a scrollbar change in
 	 * special cases.
-	 * 
+	 *
 	 * Therefore, we need to register the transform listener relative to some
 	 * layer, so that scrolling does not affect the "local-to-layer" transform.
 	 */
@@ -63,7 +63,9 @@ public abstract class VisualChangeListener {
 				return;
 			}
 			lastChangedRelative = rel;
-			transformChanged(oldValue, newValue);
+			if (isValidTransform(newValue)) {
+				transformChanged(oldValue, newValue);
+			}
 		}
 	}
 
@@ -88,14 +90,55 @@ public abstract class VisualChangeListener {
 	private List<ChangeListener<? super Transform>> transformListeners = new ArrayList<ChangeListener<? super Transform>>();
 
 	private Node node;
+
 	private Node parent;
 
 	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
 
+	private boolean isValidTransform(Transform t) {
+		if (Double.isNaN(t.getMxx())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMxy())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMxz())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMyx())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMyy())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMyz())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMzx())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMzy())) {
+			return false;
+		}
+		if (Double.isNaN(t.getMzz())) {
+			return false;
+		}
+		if (Double.isNaN(t.getTx())) {
+			return false;
+		}
+		if (Double.isNaN(t.getTy())) {
+			return false;
+		}
+		if (Double.isNaN(t.getTz())) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Registers change listeners on the given node. Transformation changes are
 	 * only reported relative to the given parent node.
-	 * 
+	 *
 	 * @param node
 	 * @param anyParent
 	 */

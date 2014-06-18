@@ -16,29 +16,10 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickTool;
-import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
-
-	public AbstractFXContentPart() {
-		// register (default) interaction policies (which are based on viewer
-		// models and do not depend on transaction policies)
-		setAdapter(FXClickTool.TOOL_POLICY_KEY, new FXSelectOnClickPolicy());
-		setAdapter(FXHoverTool.TOOL_POLICY_KEY, new FXHoverOnHoverPolicy());
-
-		// register behaviors ( (which are based on viewer models)
-		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior());
-		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior());
-	}
 
 	@Override
 	protected void addChildVisual(IVisualPart<Node> child, int index) {

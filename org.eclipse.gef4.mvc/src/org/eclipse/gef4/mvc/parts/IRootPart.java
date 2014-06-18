@@ -15,12 +15,11 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.viewer.IViewerBound;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * A {@link IRootPart} is the <i>root</i> controller of an
- * {@link IVisualViewer}. It controls the root view and holds
+ * {@link IViewer}. It controls the root view and holds
  * {@link IHandlePart} and {@link IContentPart} children.
  * 
  * The {@link IRootPart} does not correspond to anything in the model, and
@@ -30,10 +29,28 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * @author anyssen
  * 
  */
-public interface IRootPart<VR> extends IVisualPart<VR>, IViewerBound<VR> {
+public interface IRootPart<VR> extends IVisualPart<VR> {
 
 	public List<IContentPart<VR>> getContentPartChildren();
 
 	public List<IHandlePart<VR>> getHandlePartChildren();
+	
+	// TODO: add feedback part children
+	
+	/**
+	 * Returns the {@link IViewer} this {@link IViewerBound} is bound to.
+	 * 
+	 * @return The {@link IViewer} this {@link IRootPart} is
+	 *         attached to.
+	 */
+	public abstract IViewer<VR> getViewer();
 
+	/**
+	 * Sets the {@link IViewer} this {@link IViewerBound} is to be bound to.
+	 * 
+	 * @param viewer
+	 *            the {@link IViewer} this {@link IViewerBound} should be
+	 *            attached to.
+	 */
+	public abstract void setViewer(IViewer<VR> viewer);
 }

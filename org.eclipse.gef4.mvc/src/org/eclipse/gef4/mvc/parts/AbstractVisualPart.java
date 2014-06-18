@@ -18,11 +18,17 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef4.mvc.IActivatable;
+import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.bindings.AdapterMap;
+import org.eclipse.gef4.mvc.policies.IPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.inject.Inject;
 
 /**
  * 
@@ -31,21 +37,6 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
  * @param <VR>
  */
 public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
-
-	/**
-	 * This flag is set during {@link #activate()}, and reset on
-	 * {@link #deactivate()}
-	 */
-	protected static final int FLAG_ACTIVE = 1;
-
-	/**
-	 * The left-most bit that is reserved by this class for setting flags.
-	 * Subclasses may define additional flags starting at
-	 * <code>(MAX_FLAG << 1)</code>.
-	 */
-	protected static final int MAX_FLAG = FLAG_ACTIVE;
-
-	private int flags;
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -58,30 +49,38 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	private List<IVisualPart<VR>> anchoreds;
 	private List<IVisualPart<VR>> anchorages;
 
-	private boolean refreshFromModel = true;
+	private boolean refreshVisual = true;
+	private boolean active = false;
 
 	/**
 	 * Activates this {@link IVisualPart}, which in turn activates its policies
 	 * and children. Subclasses should <em>extend</em> this method if they need
 	 * to register listeners to the content. Activation indicates that the
-	 * {@link IVisualPart} is realized in an {@link IVisualViewer}.
+	 * {@link IVisualPart} is realized in an {@link IViewer}.
 	 * <code>deactivate()</code> is the inverse, and is eventually called on all
 	 * {@link IVisualPart}s.
 	 * 
 	 * @see #deactivate()
 	 */
 	public void activate() {
-		setFlag(FLAG_ACTIVE, true);
+		boolean oldActive = active;
+		active = true;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
 
-		for (Object b : as.getAdapters().values()) {
-			if (b instanceof IActivatable) {
-				((IActivatable) b).activate();
-			}
-		}
+		// done by as
+		// for (Object b : as.getAdapters().values()) {
+		// if (b instanceof IActivatable) {
+		// ((IActivatable) b).activate();
+		// }
+		// }
 
+		// TODO: rather do this via property changes (so a child becomes active
+		// when
+		// its parent and anchorages are active??
 		List<IVisualPart<VR>> c = getChildren();
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).activate();
+
 	}
 
 	@Override
@@ -158,13 +157,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		for (Object b : as.getAdapters().values()) {
-			if (b instanceof IActivatable) {
-				((IActivatable) b).deactivate();
-			}
-		}
+		// done by as
+		// for (Object b : as.getAdapters().values()) {
+		// if (b instanceof IActivatable) {
+		// ((IActivatable) b).deactivate();
+		// }
+		// }
 
-		setFlag(FLAG_ACTIVE, false);
+		boolean oldActive = active;
+		active = false;
+		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
 	}
 
 	public List<IVisualPart<VR>> getChildren() {
@@ -173,26 +175,12 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		return Collections.unmodifiableList(children);
 	}
 
-	/**
-	 * Returns the boolean value of the given flag. Specifically, returns
-	 * <code>true</code> if the bitwise AND of the specified flag and the
-	 * internal flags field is non-zero.
-	 * 
-	 * @param flag
-	 *            Bitmask indicating which flag to return
-	 * @return the requested flag's value
-	 * @see #setFlag(int,boolean)
-	 */
-	protected final boolean getFlag(int flag) {
-		return (flags & flag) != 0;
-	}
-
 	@Override
 	public <T> T getAdapter(Class<T> key) {
 		return as.getAdapter(key);
 	}
 
-	protected IVisualViewer<VR> getViewer() {
+	protected IViewer<VR> getViewer() {
 		IRootPart<VR> root = getRoot();
 		if (root == null) {
 			return null;
@@ -203,9 +191,24 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	@Override
 	public <T> void setAdapter(Class<T> key, T adapter) {
 		as.setAdapter(key, adapter);
-		if (isActive() && adapter instanceof IActivatable) {
-			((IActivatable) adapter).activate();
-		}
+	}
+
+	@Inject
+	// IMPORTANT: this method is final so subclasses may not remove the
+	// annotation
+	public final void setAdapters(
+			@AdapterMap(AbstractVisualPart.class) Map<Class<?>, Object> adaptersWithKeys) {
+		as.setAdapters(adaptersWithKeys);
+	}
+
+	@Override
+	public Map<Class<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors() {
+		return as.getAdapters(IBehavior.class);
+	}
+
+	@Override
+	public Map<Class<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies() {
+		return as.getAdapters(IPolicy.class);
 	}
 
 	/**
@@ -213,17 +216,17 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 */
 	@Override
 	public boolean isActive() {
-		return getFlag(FLAG_ACTIVE);
+		return active;
 	}
 
 	@Override
 	public boolean isRefreshVisual() {
-		return refreshFromModel;
+		return refreshVisual;
 	}
 
 	@Override
-	public void setRefreshVisual(boolean refreshFromModel) {
-		this.refreshFromModel = refreshFromModel;
+	public void setRefreshVisual(boolean isRefreshVisual) {
+		this.refreshVisual = isRefreshVisual;
 	}
 
 	/**
@@ -262,11 +265,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public <T> T unsetAdapter(Class<T> key) {
-		T adapter = as.unsetAdapter(key);
-		if (adapter != null && adapter instanceof IActivatable) {
-			((IActivatable) adapter).deactivate();
-		}
-		return adapter;
+		return as.unsetAdapter(key);
 	}
 
 	/**
@@ -283,24 +282,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);
 		addChildVisual(child, index);
-	}
-
-	/**
-	 * Sets the value of the specified flag. Flag values are declared as static
-	 * constants. Subclasses may define additional constants above
-	 * {@link #MAX_FLAG}.
-	 * 
-	 * @param flag
-	 *            Flag being set
-	 * @param value
-	 *            Value of the flag to be set
-	 * @see #getFlag(int)
-	 */
-	protected final void setFlag(int flag, boolean value) {
-		if (value)
-			flags |= flag;
-		else
-			flags &= ~flag;
 	}
 
 	protected void registerAtVisualPartMap() {
@@ -410,16 +391,18 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-		
+
 		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<VR>>();
 		}
-		
-		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
-		
+
+		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
+				anchorages);
+
 		anchorages.add(anchorage);
 
-		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
+		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(
+				anchorages);
 
 		// if we obtain a link to the viewer (via anchorage) then register
 		// visuals
@@ -428,8 +411,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 				register();
 			}
 		}
-		
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages, newAnchorages);
+
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				newAnchorages);
 	}
 
 	/**
@@ -449,24 +433,26 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			throw new IllegalArgumentException("Anchorage has to be contained.");
 		}
 
-		
 		if (parent == null) {
 			if (anchorages.size() == 1) {
 				unregister();
 			}
 		}
-		
-		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
-		
+
+		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
+				anchorages);
+
 		anchorages.remove(anchorage);
-		
-		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(anchorages);
-		
+
+		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(
+				anchorages);
+
 		if (anchorages.size() == 0) {
 			anchorages = null;
 		}
-		
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages, newAnchorages);
+
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				newAnchorages);
 	}
 
 	/**

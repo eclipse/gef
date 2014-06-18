@@ -15,11 +15,7 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
-import org.eclipse.gef4.mvc.policies.ZoomPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * 
@@ -30,23 +26,13 @@ import org.eclipse.gef4.mvc.viewer.IVisualViewer;
 public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 		implements IRootPart<VR> {
 
-	private IVisualViewer<VR> viewer;
-
-	public AbstractRootPart() {
-		// register (default) behaviors
-		setAdapter(ContentBehavior.class, new ContentBehavior<VR>());
-
-		// register (default) policies
-		setAdapter(HoverPolicy.class, new HoverPolicy<VR>());
-		setAdapter(SelectionPolicy.class, new SelectionPolicy<VR>());
-		setAdapter(ZoomPolicy.class, new ZoomPolicy<VR>());
-	}
+	private IViewer<VR> viewer;
 
 	public IRootPart<VR> getRoot() {
 		return this;
 	}
 
-	public IVisualViewer<VR> getViewer() {
+	public IViewer<VR> getViewer() {
 		return viewer;
 	}
 
@@ -63,9 +49,9 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	/**
-	 * @see IRootPart#setViewer(IVisualViewer)
+	 * @see IRootPart#setViewer(IViewer)
 	 */
-	public void setViewer(IVisualViewer<VR> newViewer) {
+	public void setViewer(IViewer<VR> newViewer) {
 		if (viewer == newViewer)
 			return;
 		viewer = newViewer;

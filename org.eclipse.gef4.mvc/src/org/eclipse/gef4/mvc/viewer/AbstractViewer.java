@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
+import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
@@ -38,18 +40,20 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 /**
  * 
  * @author anyssen
  * 
  * @param <VR>
  */
-public abstract class AbstractVisualViewer<VR> implements
-		IVisualViewer<VR> {
+public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
-	private AdaptableSupport<IVisualViewer<VR>> as = new AdaptableSupport<IVisualViewer<VR>>(
+	private AdaptableSupport<IViewer<VR>> as = new AdaptableSupport<IViewer<VR>>(
 			this);
-	
+
 	private Map<Object, IContentPart<VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR>>();
 	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
 
@@ -61,25 +65,28 @@ public abstract class AbstractVisualViewer<VR> implements
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	/**
-	 * @see IVisualViewer#setContentPartFactory(IContentPartFactory)
+	 * @see IViewer#setContentPartFactory(IContentPartFactory)
 	 */
-	public void setContentPartFactory(IContentPartFactory<VR> factory) {
+	@Inject
+	@Override
+	public void setContentPartFactory(@Named("AbstractViewer") IContentPartFactory<VR> factory) {
 		this.contentPartFactory = factory;
 	}
 
 	/**
-	 * @see IVisualViewer#getContentPartFactory()
+	 * @see IViewer#getContentPartFactory()
 	 */
+	@Override
 	public IContentPartFactory<VR> getContentPartFactory() {
 		return contentPartFactory;
 	}
 
 	/**
-	 * @see IVisualViewer#getContentModel()
+	 * @see IViewer#getContentModel()
 	 */
+	@Override
 	public IContentModel getContentModel() {
-		IContentModel contentModel = getAdapter(
-				IContentModel.class);
+		IContentModel contentModel = getAdapter(IContentModel.class);
 		if (contentModel == null) {
 			contentModel = new DefaultContentModel();
 			setAdapter(IContentModel.class, contentModel);
@@ -88,8 +95,9 @@ public abstract class AbstractVisualViewer<VR> implements
 	}
 
 	/**
-	 * @see IVisualViewer#getDomain()
+	 * @see IViewer#getDomain()
 	 */
+	@Override
 	public IDomain<VR> getDomain() {
 		return domain;
 	}
@@ -104,28 +112,39 @@ public abstract class AbstractVisualViewer<VR> implements
 		as.setAdapter(key, adapter);
 	}
 
+	@Inject
+	// IMPORTANT: this method is final to ensure the binding annotation does not
+	// get lost on overwriting
+	public final void setAdapters(
+			@AdapterMap(AbstractViewer.class) Map<Class<?>, Object> adaptersWithKeys) {
+		as.setAdapters(adaptersWithKeys);
+	}
+
 	@Override
 	public <T> T unsetAdapter(Class<T> key) {
 		return as.unsetAdapter(key);
 	}
 
 	/**
-	 * @see IVisualViewer#getContentPartMap()
+	 * @see IViewer#getContentPartMap()
 	 */
+	@Override
 	public Map<Object, IContentPart<VR>> getContentPartMap() {
 		return contentsToContentPartMap;
 	}
 
 	/**
-	 * @see IVisualViewer#getRootPart()
+	 * @see IViewer#getRootPart()
 	 */
+	@Override
 	public IRootPart<VR> getRootPart() {
 		return rootPart;
 	}
 
 	/**
-	 * @see IVisualViewer#getVisualPartMap()
+	 * @see IViewer#getVisualPartMap()
 	 */
+	@Override
 	public Map<VR, IVisualPart<VR>> getVisualPartMap() {
 		return visualsToVisualPartMap;
 	}
@@ -136,8 +155,9 @@ public abstract class AbstractVisualViewer<VR> implements
 	}
 
 	/**
-	 * @see IVisualViewer#setContents(List)
+	 * @see IViewer#setContents(List)
 	 */
+	@Override
 	public void setContents(List<Object> contents) {
 		if (contentPartFactory == null) {
 			throw new IllegalStateException(
@@ -151,22 +171,35 @@ public abstract class AbstractVisualViewer<VR> implements
 	}
 
 	/**
-	 * @see IVisualViewer#setDomain(IDomain)
+	 * @see IViewer#setDomain(IDomain)
 	 */
+	@Override
 	public void setDomain(IDomain<VR> domain) {
 		if (this.domain == domain)
 			return;
 		if (this.domain != null) {
-			this.domain.setViewer(null);
+			this.domain.removeViewer(this);
+			// deactive all adapters if we are unhooked
+			for (Object a : as.getAdapters().values()) {
+				if (a instanceof IActivatable) {
+					((IActivatable) a).deactivate();
+				}
+			}
 			if (rootPart != null && rootPart.isActive()) {
 				rootPart.deactivate();
 			}
 		}
 		this.domain = domain;
 		if (this.domain != null) {
-			this.domain.setViewer(this);
+			this.domain.addViewer(this);
 			if (rootPart != null && !rootPart.isActive()) {
 				rootPart.activate();
+			}
+			// active all adapters if we are (re-)hooked
+			for (Object a : as.getAdapters().values()) {
+				if (a instanceof IActivatable) {
+					((IActivatable) a).activate();
+				}
 			}
 		}
 	}
@@ -174,8 +207,7 @@ public abstract class AbstractVisualViewer<VR> implements
 	@Override
 	public ISelectionModel<VR> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<VR> selectionModel = getAdapter(
-				ISelectionModel.class);
+		ISelectionModel<VR> selectionModel = getAdapter(ISelectionModel.class);
 		if (selectionModel == null) {
 			selectionModel = new DefaultSelectionModel<VR>();
 			setAdapter(ISelectionModel.class, selectionModel);
@@ -205,9 +237,11 @@ public abstract class AbstractVisualViewer<VR> implements
 	}
 
 	/**
-	 * @see IVisualViewer#setRootPart(IRootPart)
+	 * @see IViewer#setRootPart(IRootPart)
 	 */
-	public void setRootPart(IRootPart<VR> rootEditPart) {
+	@Inject
+	@Override
+	public void setRootPart(@Named("AbstractViewer") IRootPart<VR> rootEditPart) {
 		if (this.rootPart != null) {
 			if (domain != null) {
 				this.rootPart.deactivate();
@@ -233,7 +267,7 @@ public abstract class AbstractVisualViewer<VR> implements
 		}
 		return focusModel;
 	}
-	
+
 	@Override
 	public IViewportModel getViewportModel() {
 		IViewportModel viewportModel = getAdapter(IViewportModel.class);
@@ -248,18 +282,20 @@ public abstract class AbstractVisualViewer<VR> implements
 		return handlePartFactory;
 	}
 
+	@Inject
 	@Override
-	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
+	public void setHandlePartFactory(@Named("AbstractViewer") IHandlePartFactory<VR> factory) {
 		this.handlePartFactory = factory;
 	}
-	
+
 	@Override
 	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
 		return feedbackPartFactory;
 	}
 
+	@Inject
 	@Override
-	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
+	public void setFeedbackPartFactory(@Named("AbstractViewer") IFeedbackPartFactory<VR> factory) {
 		this.feedbackPartFactory = factory;
 	}
 

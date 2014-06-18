@@ -28,22 +28,23 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.bindings.IProvider;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+
+import com.google.inject.Provider;
 
 /**
  * A {@link FXSegmentHandlePart} is bound to one segment of a handle geometry.
  * The segmentIndex identifies that segment (0, 1, 2, ...). The segmentParameter
  * specifies the position of this handle part on the segment (0 = start, 0.5 =
  * mid, 1 = end).
- * 
+ *
  * These parts are used for selection feedback per default.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXSegmentHandlePart> {
+Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -53,18 +54,18 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	protected Shape visual;
 	protected IContentPart<Node> targetPart;
-	protected IProvider<IGeometry> handleGeometryProvider;
+	protected Provider<IGeometry> handleGeometryProvider;
 
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
 	public FXSegmentHandlePart(IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int segmentIndex) {
+			Provider<IGeometry> handleGeometryProvider, int segmentIndex) {
 		this(targetPart, handleGeometryProvider, segmentIndex, 0);
 	}
 
 	public FXSegmentHandlePart(IContentPart<Node> targetPart,
-			IProvider<IGeometry> handleGeometryProvider, int segmentIndex,
+			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
 			double segmentParameter) {
 		super();
 		this.targetPart = targetPart;
@@ -86,7 +87,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * the given handle geometry. Per default, rectangular handles are created
 	 * if the handle geometry is a {@link Rectangle}. Otherwise, round handles
 	 * are created.
-	 * 
+	 *
 	 * @param handleGeometry
 	 * @return {@link Shape} representing the handle visually
 	 */
@@ -141,16 +142,16 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * The segmentIndex specifies the segment of the IGeometry provided by the
 	 * handle geometry provider on which this selection handle part is
 	 * positioned.
-	 * 
+	 *
 	 * For a shape geometry, segments are determined by the
 	 * {@link IShape#getOutlineSegments()} method.
-	 * 
+	 *
 	 * For a curve geometry, segments are determined by the
 	 * {@link ICurve#toBezier()} method.
-	 * 
+	 *
 	 * The exact position on the segment is specified by the
 	 * {@link #getSegmentParameter() segmentParameter}.
-	 * 
+	 *
 	 * @return segmentIndex
 	 */
 	public int getSegmentIndex() {
@@ -160,7 +161,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	/**
 	 * The segmentParameter is a value between 0 and 1. It determines the final
 	 * point on the segment which this selection handle part belongs to.
-	 * 
+	 *
 	 * @return segmentParameter
 	 */
 	public double getSegmentParameter() {
@@ -214,7 +215,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 					// TODO: IFXConnection#isEndConnected()
 					IFXAnchor anchor = segmentParameter == 1.0 ? connection
 							.getEndAnchor() : connection.getStartAnchor();
-					connected = !(anchor instanceof FXStaticAnchor);
+							connected = !(anchor instanceof FXStaticAnchor);
 				}
 				if (connected) {
 					visual.setFill(FILL_CONNECTED);
@@ -228,7 +229,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment index. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentIndex
 	 * @see #getSegmentIndex()
 	 */
@@ -242,7 +243,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment parameter. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentParameter
 	 * @see #getSegmentParameter()
 	 */

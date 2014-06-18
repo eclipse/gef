@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc;
 
-public interface IActivatable {
+public interface IActivatable extends IPropertyChangeSupport {
+	
+	public static String ACTIVE_PROPERTY = "active";
 
 	public void activate();
 

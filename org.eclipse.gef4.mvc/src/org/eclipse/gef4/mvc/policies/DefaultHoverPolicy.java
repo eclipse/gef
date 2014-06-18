@@ -9,26 +9,23 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.policies;
+package org.eclipse.gef4.mvc.policies;
 
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
+public class DefaultHoverPolicy<VR> extends AbstractPolicy<VR> {
 
-public class FXHoverOnHoverPolicy extends AbstractFXHoverPolicy {
-
-	@SuppressWarnings("unchecked")
-	private DefaultHoverPolicy<Node> getHoverPolicy() {
-		return getHost().getAdapter(DefaultHoverPolicy.class);
-	}
-
-	@Override
-	public void hover(MouseEvent e) {
-		DefaultHoverPolicy<Node> policy = getHoverPolicy();
-		if (policy != null) {
-			policy.hover();
+	public void hover() {
+		IVisualPart<VR> host = getHost();
+		if (!(host instanceof IContentPart) || !isHoverable()) {
+			getHost().getRoot().getViewer().getHoverModel().setHover(null);
+		} else if (host instanceof IContentPart) {
+			getHost().getRoot().getViewer().getHoverModel().setHover(host);
 		}
 	}
 
+	protected boolean isHoverable() {
+		return true;
+	}
 }

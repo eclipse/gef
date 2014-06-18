@@ -31,13 +31,9 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
 	@Override
 	public void setAdaptable(IVisualPart<VR> adaptable){
-		setHost(adaptable);
+		this.host = adaptable;
 	}
 	
-	public void setHost(IVisualPart<VR> host) {
-		this.host = host;
-	}
-
 	@Override
 	public IVisualPart<VR> getAdaptable() {
 		return getHost();

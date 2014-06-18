@@ -18,23 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
-import org.eclipse.gef4.mvc.viewer.IVisualViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 		implements IContentPart<VR> {
 
 	private Object content;
-
-	public AbstractContentPart() {
-		// register (default) behaviors
-		setAdapter(ContentBehavior.class, new ContentBehavior<VR>());
-		
-		// register (default) policies
-		setAdapter(HoverPolicy.class, new HoverPolicy<VR>());
-		setAdapter(SelectionPolicy.class, new SelectionPolicy<VR>());
-	}
 
 	/**
 	 * @see IContentPart#getContent()
@@ -84,7 +73,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 
 	/**
 	 * Registers the <i>model</i> in the
-	 * {@link IVisualViewer#getContentPartMap()}. Subclasses should only
+	 * {@link IViewer#getContentPartMap()}. Subclasses should only
 	 * extend this method if they need to register this EditPart in additional
 	 * ways.
 	 */
@@ -94,7 +83,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 
 	/**
 	 * Unregisters the <i>model</i> in the
-	 * {@link IVisualViewer#getContentPartMap()}. Subclasses should only
+	 * {@link IViewer#getContentPartMap()}. Subclasses should only
 	 * extend this method if they need to unregister this EditPart in additional
 	 * ways.
 	 */

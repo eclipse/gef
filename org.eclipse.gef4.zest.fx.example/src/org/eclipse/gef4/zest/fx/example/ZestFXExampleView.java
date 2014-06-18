@@ -17,17 +17,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr.Key;
-import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
-import org.eclipse.gef4.mvc.fx.viewer.IFXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.DefaultLayoutModel;
 import org.eclipse.gef4.zest.fx.GraphRootPart;
@@ -35,9 +35,46 @@ import org.eclipse.gef4.zest.fx.ILayoutModel;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+
+import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
+import com.google.inject.util.Modules;
 
 public class ZestFXExampleView extends FXView {
-	
+
+	public ZestFXExampleView() {
+		super(Guice.createInjector(Modules.override(new MvcFxModule(){
+			@Override
+			protected void configure() {
+				super.configure();
+				bindIContentPartFactory();
+			}
+			
+			protected void bindIContentPartFactory() {
+				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+				}).annotatedWith(Names.named("AbstractViewer"))
+						.to(ContentPartFactory.class);
+			}
+
+			@Override
+			protected void bindAbstractDomainAdapters(
+					MapBinder<Class<?>, Object> adapterMapBinder) {
+				super.bindAbstractDomainAdapters(adapterMapBinder);
+				adapterMapBinder.addBinding(ILayoutModel.class).to(
+						DefaultLayoutModel.class);
+			}
+
+			@Override
+			protected void bindFXRootPart() {
+				binder().bind(new TypeLiteral<IRootPart<Node>>() {
+				}).annotatedWith(Names.named("AbstractViewer"))
+						.to(GraphRootPart.class);
+			}
+		}).with(new MvcFxUiModule())));
+	}
 
 	public static Graph DEFAULT_GRAPH = build09();
 
@@ -78,16 +115,9 @@ public class ZestFXExampleView extends FXView {
 	private Graph graph = DEFAULT_GRAPH;
 
 	@Override
-	protected void configureDomain(FXDomain domain) {
-		super.configureDomain(domain);
-		domain.setAdapter(ILayoutModel.class, new DefaultLayoutModel());
-	}
-
-	@Override
-	protected void configureViewer(IFXViewer viewer) {
-		super.configureViewer(viewer);
-		viewer.setRootPart(new GraphRootPart());
-		getCanvas().addControlListener(new ControlListener() {
+	protected FXCanvas createCanvas(Composite parent) {
+		FXCanvas canvas = super.createCanvas(parent);
+		canvas.addControlListener(new ControlListener() {
 			@Override
 			public void controlMoved(ControlEvent e) {
 			}
@@ -99,11 +129,7 @@ public class ZestFXExampleView extends FXView {
 				getViewer().getViewportModel().setHeight(bounds.height);
 			}
 		});
-	}
-
-	@Override
-	protected IContentPartFactory<Node> getContentPartFactory() {
-		return new ContentPartFactory();
+		return canvas;
 	}
 
 	@Override
@@ -113,20 +139,9 @@ public class ZestFXExampleView extends FXView {
 		return contents;
 	}
 
-	@Override
-	protected IFeedbackPartFactory<Node> getFeedbackPartFactory() {
-		return null;
-	}
-
-	@Override
-	protected IHandlePartFactory<Node> getHandlePartFactory() {
-		return null;
-	}
-
 	public void setGraph(Graph graph) {
 		this.graph = graph;
 		getViewer().setContents(getContents());
 	}
 
-	
 }
