@@ -30,7 +30,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	private boolean active = false;
 	private IDomain<VR> domain;
 
-	
 	@Override
 	public void setAdaptable(IDomain<VR> adaptable) {
 		if (active) {
@@ -60,7 +59,7 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	public IDomain<VR> getDomain() {
 		return getAdaptable();
 	}
-	
+
 	@Override
 	public IDomain<VR> getAdaptable() {
 		return domain;
@@ -72,33 +71,39 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 			throw new IllegalStateException(
 					"The IEditDomain has to be set via setDomain(IDomain) before activation.");
 		}
-		
+
 		boolean oldActive = active;
 		active = true;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
-		
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
+
 		registerListeners();
 	}
 
 	@Override
 	public void deactivate() {
 		unregisterListeners();
-		
+
 		boolean oldActive = active;
 		active = false;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
 	}
 
 	@Override
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);

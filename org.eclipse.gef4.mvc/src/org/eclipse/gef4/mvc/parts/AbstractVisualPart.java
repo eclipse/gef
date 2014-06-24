@@ -65,14 +65,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	public void activate() {
 		boolean oldActive = active;
 		active = true;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
-
-		// done by as
-		// for (Object b : as.getAdapters().values()) {
-		// if (b instanceof IActivatable) {
-		// ((IActivatable) b).activate();
-		// }
-		// }
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
 
 		// TODO: rather do this via property changes (so a child becomes active
 		// when
@@ -157,16 +153,12 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		for (int i = 0; i < c.size(); i++)
 			c.get(i).deactivate();
 
-		// done by as
-		// for (Object b : as.getAdapters().values()) {
-		// if (b instanceof IActivatable) {
-		// ((IActivatable) b).deactivate();
-		// }
-		// }
-
 		boolean oldActive = active;
 		active = false;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
 	}
 
 	public List<IVisualPart<VR>> getChildren() {

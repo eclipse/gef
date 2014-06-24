@@ -41,22 +41,28 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	public void activate() {
 		boolean oldActive = active;
 		active = true;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
 	}
 
 	public void deactivate() {
 		boolean oldActive = active;
 		active = false;
-		pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive, active);
+		if (oldActive != active) {
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
+					active);
+		}
 	}
 
 	@Override
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	@Override
-	public void setAdaptable(IVisualPart<VR> adaptable){
+	public void setAdaptable(IVisualPart<VR> adaptable) {
 		this.host = adaptable;
 	}
 
@@ -64,7 +70,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	public IVisualPart<VR> getAdaptable() {
 		return getHost();
 	}
-	
+
 	public IVisualPart<VR> getHost() {
 		return host;
 	}
@@ -96,12 +102,12 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			feedbackParts.clear();
 		}
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
