@@ -30,11 +30,18 @@
 					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
 					<frameworkExtensions>
 						<frameworkExtension>
-							<groupId>org.eclipse.fx.runtime</groupId>
+							<groupId>org.eclipse.fx.shared</groupId>
 							<artifactId>org.eclipse.fx.osgi</artifactId>
 							<scope>system</scope>
-							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_0.9.0.201311040702.jar</systemPath>
-							<version>0.9.0</version>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_1.0.0.201406020501.jar</systemPath>
+							<version>1.0.0</version>
+						</frameworkExtension>
+						<frameworkExtension>
+							<groupId>org.eclipse.fx.runtime</groupId>
+							<artifactId>org.eclipse.fx.osgi.util</artifactId>
+							<scope>system</scope>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_1.0.0.201406020601.jar</systemPath>
+							<version>1.0.0</version>
 						</frameworkExtension>
 					</frameworkExtensions>
 				</configuration>
