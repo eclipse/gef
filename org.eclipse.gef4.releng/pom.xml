@@ -204,7 +204,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>KEPLER_4_3.target</id>
+			<id>LUNA_4_4.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
