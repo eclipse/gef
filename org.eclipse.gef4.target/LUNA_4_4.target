@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="45">
+<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="47">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
@@ -8,14 +8,6 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201405200714"/>
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140528-2000"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.0.v201405210727"/>
-<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
-<unit id="org.eclipse.gef.sdk.feature.group" version="3.9.100.201405261516"/>
-<repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
@@ -33,6 +25,17 @@
 <unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
 <unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201405200714"/>
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.0.v201405210727"/>
+<unit id="org.eclipse.gef.sdk.feature.group" version="3.9.100.201405261516"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
+<repository location="http://download.eclipse.org/releases/luna"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140606-1215"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
 </location>
 </locations>
 </target>
