@@ -16,17 +16,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import javafx.scene.Node;
-
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IViewportModel;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.zest.layout.GraphLayoutContext;
 
 public class GraphRootPart extends FXRootPart {
@@ -45,13 +41,6 @@ public class GraphRootPart extends FXRootPart {
 			if (IContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
 				Object content = evt.getNewValue();
 				final GraphLayoutContext context = createLayoutContext(content);
-				// register flush changes listener
-				context.addOnFlushChanges(new Runnable() {
-					@Override
-					public void run() {
-						adaptLayout(context);
-					}
-				});
 
 				// set layout algorithm
 				context.setStaticLayoutAlgorithm(layoutAlgorithm);
@@ -86,15 +75,6 @@ public class GraphRootPart extends FXRootPart {
 		getViewer().getContentModel().addPropertyChangeListener(contentChanged);
 		getViewer().getViewportModel().addPropertyChangeListener(
 				viewportChanged);
-	}
-
-	protected void adaptLayout(final GraphLayoutContext context) {
-		for (NodeLayout nodeLayout : context.getNodes()) {
-			Object graphNode = nodeLayout.getItems()[0];
-			IContentPart<Node> nodePart = getViewer().getContentPartMap().get(
-					graphNode);
-			((NodeContentPart) nodePart).adaptLayout();
-		}
 	}
 
 	protected void applyLayout(final GraphLayoutContext context) {

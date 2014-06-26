@@ -56,16 +56,33 @@ public class NodeContentPart extends AbstractFXContentPart {
 		visual.layoutBoundsProperty().addListener(boundsChangeListener);
 	}
 
+	private Runnable adaptLayout = new Runnable() {
+		@Override
+		public void run() {
+			adaptLayout();
+		}
+	};
+
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (ILayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
 					.getPropertyName())) {
+				// remove old flush changes listener
+				Object old = evt.getOldValue();
+				if (old instanceof GraphLayoutContext) {
+					((GraphLayoutContext) old)
+							.removeOnFlushChanges(adaptLayout);
+				}
+
 				GraphLayoutContext layoutContext = (GraphLayoutContext) getViewer()
 						.getDomain().getAdapter(ILayoutModel.class)
 						.getLayoutContext();
 				if (layoutContext != null) {
+					// provide layout information
 					initNodeLayout(layoutContext);
+					// register flush changes listener
+					layoutContext.addOnFlushChanges(adaptLayout);
 				}
 			}
 		}
