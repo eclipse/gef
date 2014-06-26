@@ -4,8 +4,10 @@ Bundle-Name: GEF4 MVC
 Bundle-SymbolicName: org.eclipse.gef4.mvc
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.mvc.MvcBundle
-Require-Bundle: com.google.inject;bundle-version="3.0.0",
- org.eclipse.core.runtime,
+Require-Bundle: javax.inject;bundle-version="1.0.0",
+ com.google.inject;bundle-version="3.0.0",
+ org.eclipse.osgi,
+ org.eclipse.equinox.common,
  org.eclipse.core.commands,
  org.eclipse.gef4.geometry;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
