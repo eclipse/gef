@@ -38,7 +38,6 @@
 		</profile>
 	</profiles>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -46,12 +45,29 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<includes>
-						<include>**/AllTests.class</include>
+						<include>**/All*Tests.class</include>
 					</includes>
-					<testFailureIgnore>true</testFailureIgnore>
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
-					<argLine>${test.vmargs}</argLine>
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<testFailureIgnore>true</testFailureIgnore>
+					<argLine>-Xmx512m -XX:MaxPermSize=256m -Dosgi.framework.extensions=org.eclipse.fx.osgi</argLine>
+					<frameworkExtensions>
+						<frameworkExtension>
+							<groupId>org.eclipse.fx.shared</groupId>
+							<artifactId>org.eclipse.fx.osgi</artifactId>
+							<scope>system</scope>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_1.0.0.201406020501.jar</systemPath>
+							<version>1.0.0</version>
+						</frameworkExtension>
+						<frameworkExtension>
+							<groupId>org.eclipse.fx.runtime</groupId>
+							<artifactId>org.eclipse.fx.osgi.util</artifactId>
+							<scope>system</scope>
+							<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_1.0.0.201406020601.jar</systemPath>
+							<version>1.0.0</version>
+						</frameworkExtension>
+					</frameworkExtensions>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -174,20 +174,18 @@ public class AdaptableTypeListener implements TypeListener {
 				if (key.getAnnotationType() != null
 						&& AdapterMap.class.equals(key.getAnnotationType())) {
 					AdapterMap keyAnnotation = (AdapterMap) key.getAnnotation();
-					// Guide will already have injected all
-					// bindings
-					// for those annotations using the exact
-					// class,
-					// so we will only deal with subclasses here
+					// Guice will already have injected all
+					// bindings for those annotations using the exact
+					// class, so we will only deal with subclasses here
 					if (methodAnnotation.value().isAssignableFrom(
 							keyAnnotation.value())
 							&& !methodAnnotation.value().equals(
 									keyAnnotation.value())
 							/*
 							 * key annotation refers to a true subtype of method
-							 * annotation (check, because if the type is the same,
-							 * the default injector will already inject the
-							 * values)
+							 * annotation (check, because if the type is the
+							 * same, the default injector will already inject
+							 * the values)
 							 */
 							&& keyAnnotation.value().isAssignableFrom(type)) {
 						// System.out.println("Applying binding for " +
@@ -211,18 +209,18 @@ public class AdaptableTypeListener implements TypeListener {
 				AdapterMap methodAnnotation) {
 			SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterBindingKeys(
 					instance.getClass(), method, methodAnnotation);
-//			System.out.println("--");
+			// System.out.println("--");
 			for (Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 					.entrySet()) {
-//				System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
+				// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 				try {
 					Map<Class<?>, Object> target = entry.getValue()
 							.acceptTargetVisitor(
 									new AdapterBindingsTargetVisitor());
 					if (target != null && !target.isEmpty()) {
-//						System.out.println("Injecting " + method.getName()
-//								+ " of " + instance + " with " + target
-//								+ " based on " + entry.getValue());
+						// System.out.println("Injecting " + method.getName()
+						// + " of " + instance + " with " + target
+						// + " based on " + entry.getValue());
 						method.invoke(instance, target);
 					}
 				} catch (IllegalArgumentException e) {
