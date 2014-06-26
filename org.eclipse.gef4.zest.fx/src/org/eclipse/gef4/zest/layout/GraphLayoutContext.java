@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.layout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.graph.Edge;
@@ -28,10 +30,19 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	private final Map<Node, GraphNodeLayout> nodeMap = new HashMap<Node, GraphNodeLayout>();
 	private final Map<Edge, GraphEdgeLayout> edgeMap = new HashMap<Edge, GraphEdgeLayout>();
 	// TODO: subgraphs
-	private Runnable flushChanges;
+	// TODO: We have to expose a hook for flushChanges() to be able to do
+	// something when layouting finishes
+	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
+	}
+
+	public void addOnFlushChanges(Runnable runnable) {
+		if (runnable == null) {
+			throw new IllegalArgumentException("Runnable may not be null.");
+		}
+		onFlushChanges.add(runnable);
 	}
 
 	@Override
@@ -42,8 +53,9 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 
 	@Override
 	protected void doFlushChanges(boolean animationHint) {
-		if (getFlushChanges() != null) {
-			getFlushChanges().run();
+		// TODO: use specific flush-changes-listener to pass animationHint along
+		for (Runnable r : onFlushChanges) {
+			r.run();
 		}
 	}
 
@@ -57,10 +69,6 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return getNodes();
 	}
 
-	public Runnable getFlushChanges() {
-		return flushChanges;
-	}
-
 	public Graph getGraph() {
 		return g;
 	}
@@ -69,8 +77,12 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return nodeMap.get(node);
 	}
 
-	public void setFlushChanges(Runnable flushChanges) {
-		this.flushChanges = flushChanges;
+	public void removeOnFlushChanges(Runnable runnable) {
+		if (!onFlushChanges.contains(runnable)) {
+			throw new IllegalArgumentException(
+					"Given Runnable is not contained in the list.");
+		}
+		onFlushChanges.remove(runnable);
 	}
 
 	public void setGraph(Graph graph) {

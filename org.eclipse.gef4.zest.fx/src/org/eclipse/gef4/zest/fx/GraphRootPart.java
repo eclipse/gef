@@ -46,7 +46,7 @@ public class GraphRootPart extends FXRootPart {
 				Object content = evt.getNewValue();
 				final GraphLayoutContext context = createLayoutContext(content);
 				// register flush changes listener
-				context.setFlushChanges(new Runnable() {
+				context.addOnFlushChanges(new Runnable() {
 					@Override
 					public void run() {
 						adaptLayout(context);
