@@ -12,10 +12,8 @@ Require-Bundle: com.google.inject;bundle-version="3.0.0",
  org.eclipse.gef4.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
- org.eclipse.gef4.zest;bundle-version="0.1.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
- org.eclipse.gef4.layout,
- org.junit
+ org.eclipse.gef4.layout
 Import-Package: javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",
  javafx.beans;version="2.2.0",
@@ -51,4 +49,5 @@ Import-Package: javafx.animation;version="2.2.0",
  javafx.stage;version="2.2.0",
  javafx.util;version="2.2.0",
  javafx.util.converter;version="2.2.0"
-Export-Package: org.eclipse.gef4.zest.fx
+Export-Package: org.eclipse.gef4.zest.fx,
+ org.eclipse.gef4.zest.layout

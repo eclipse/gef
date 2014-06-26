@@ -15,7 +15,6 @@ Require-Bundle: com.google.inject;bundle-version="3.0.0",
  org.eclipse.gef4.mvc.ui;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx.ui;bundle-version="0.1.0",
- org.eclipse.gef4.zest;bundle-version="0.1.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
  org.eclipse.gef4.layout,
  org.eclipse.gef4.zest.fx;bundle-version="0.1.0"

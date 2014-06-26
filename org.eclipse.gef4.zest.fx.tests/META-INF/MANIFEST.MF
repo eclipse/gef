@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 Zest.FX Tests
+Bundle-SymbolicName: org.eclipse.gef4.zest.fx.tests
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.junit,
+ org.eclipse.gef4.graph,
+ org.eclipse.gef4.layout,
+ org.eclipse.gef4.zest.fx,
+ org.eclipse.gef4.fx,
+ org.eclipse.gef4.mvc.fx,
+ org.eclipse.gef4.mvc

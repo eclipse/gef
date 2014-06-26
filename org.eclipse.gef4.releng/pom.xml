@@ -439,6 +439,9 @@
 		<module>../org.eclipse.gef4.zest.tests</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 
+		<module>../org.eclipse.gef4.zest.fx</module>
+		<module>../org.eclipse.gef4.zest.fx.tests</module>
+
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
 
