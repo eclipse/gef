@@ -28,12 +28,12 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
-import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
+import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -81,6 +81,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				new FXClickDragTool());
 		adapterMapBinder.addBinding(FXPinchSpreadTool.class).toInstance(
 				new FXPinchSpreadTool());
+		adapterMapBinder.addBinding(FXScrollTool.class).toInstance(
+				new FXScrollTool());
 	}
 
 	protected void bindFXRootPart() {

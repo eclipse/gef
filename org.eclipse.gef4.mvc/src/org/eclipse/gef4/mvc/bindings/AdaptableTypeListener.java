@@ -185,7 +185,7 @@ public class AdaptableTypeListener implements TypeListener {
 									keyAnnotation.value())
 							/*
 							 * key annotation refers to a true subtype of method
-							 * annotation (TODO: check: if the type is the same,
+							 * annotation (check, because if the type is the same,
 							 * the default injector will already inject the
 							 * values)
 							 */
