@@ -42,12 +42,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public interface IViewer<VR> extends IAdaptable {
 
 	/**
-	 * Returns the {@link Map} for registering {@link IContentPart}s by
-	 * their <i>content</i>.
+	 * Returns the {@link Map} for registering {@link IContentPart}s by their
+	 * <i>content</i>.
 	 * 
 	 * @return The content part map
 	 */
-	Map<Object, IContentPart<VR>> getContentPartMap();
+	public Map<Object, IContentPart<VR>> getContentPartMap();
 
 	/**
 	 * Returns the {@link IRootPart} of this viewer. The {@link IRootPart} is a
@@ -55,43 +55,44 @@ public interface IViewer<VR> extends IAdaptable {
 	 * {@link IContentPart}s, {@link IHandlePart}s, and {@link IFeedbackPart}s.
 	 * 
 	 * @see #setRootPart(IRootPart)
-	 * @return The root part
+	 * @return The {@link IRootPart} of this viewer.
 	 */
-	IRootPart<VR> getRootPart();
+	public IRootPart<VR> getRootPart();
 
 	/**
-	 * Returns the {@link Map} for associating {@link IVisualPart}s with their
-	 * <code>visuals</code>. This map is used for hit-testing. Hit testing is
-	 * performed by first determining which visual is hit, and then mapping that
-	 * part to an {@link IVisualPart}.
+	 * Returns the {@link Map} for registering {@link IVisualPart}s by their
+	 * <i>visual</i>. This map is used for hit-testing. Hit testing is performed
+	 * by first determining which visual is hit, and then mapping that to an
+	 * {@link IVisualPart}.
 	 * 
 	 * @return The visual part map
 	 */
-	Map<VR, IVisualPart<VR>> getVisualPartMap();
+	public Map<VR, IVisualPart<VR>> getVisualPartMap();
 
 	/**
-	 * Sets the <i>root</i> of this viewer. The root should not be confused with
-	 * the <i>contents</i>.
+	 * Sets the {@link IRootPart} of this viewer. The root should not be
+	 * confused with the <i>contents</i>.
 	 * 
 	 * @param root
-	 *            the RootEditPart
+	 *            the {@link IRootPart} of this viewer
 	 * @see #getRootPart()
 	 * @see #getContents()
 	 */
-	// TODO: inject
-	void setRootPart(IRootPart<VR> root);
+	public void setRootPart(IRootPart<VR> root);
 
-	List<Object> getContents();
+	public List<Object> getContents();
 
-	void setContents(List<Object> contents);
+	public void setContents(List<Object> contents);
 
 	/**
 	 * Returns the {@link IContentPartFactory} for this viewer, used to create
 	 * {@link IContentPart}s.
 	 * 
+	 * @see #setContentPartFactory(IContentPartFactory)
+	 * 
 	 * @return The {@link IContentPartFactory} being used
 	 */
-	IContentPartFactory<VR> getContentPartFactory();
+	public IContentPartFactory<VR> getContentPartFactory();
 
 	/**
 	 * Sets the {@link IContentPartFactory} used to create {@link IContentPart}
@@ -101,47 +102,47 @@ public interface IViewer<VR> extends IAdaptable {
 	 *            the {@link IContentPartFactory} to be used
 	 * @see #getContentPartFactory()
 	 */
-	void setContentPartFactory(IContentPartFactory<VR> factory);
+	public void setContentPartFactory(IContentPartFactory<VR> factory);
 
-	IHandlePartFactory<VR> getHandlePartFactory();
+	public IHandlePartFactory<VR> getHandlePartFactory();
 
-	void setHandlePartFactory(IHandlePartFactory<VR> factory);
+	public void setHandlePartFactory(IHandlePartFactory<VR> factory);
 
-	IFeedbackPartFactory<VR> getFeedbackPartFactory();
+	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
 
-	void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory);
+	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory);
 
 	/**
-	 * Returns the {@link IDomain} this {@link IDomainBound} is bound to.
+	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
 	 * 
-	 * @return The {@link IDomain} this {@link IDomainBound} is bound to, or
-	 *         <code>null</code> if this {@link IDomainBound} is not (yet) bound
-	 *         to an {@link IDomain}.
+	 * @return The {@link IDomain} this {@link IViewer} is bound to, or
+	 *         <code>null</code> if this {@link IViewer} is not (yet) bound to
+	 *         an {@link IDomain}.
 	 */
-	public abstract IDomain<VR> getDomain();
+	public IDomain<VR> getDomain();
 
 	/**
-	 * Called to set/change/unset the {@link IDomain} this {@link IDomainBound}
+	 * Called to set/change/unset the {@link IDomain} this {@link IViewer}
 	 * is bound to. To set or change the {@link IDomain}, pass in a valid
 	 * {@link IDomain}, to unset it, pass in <code>null</code>.
 	 * 
 	 * @param domain
-	 *            The {@link IDomain} to which this {@link IDomainBound} is
+	 *            The {@link IDomain} to which this {@link IViewer} is
 	 *            bound to
 	 */
-	public abstract void setDomain(IDomain<VR> domain);
-	
+	public void setDomain(IDomain<VR> domain);
+
 	// TODO: remove these by getAdapter(ISelectionModel.class)
-	ISelectionModel<VR> getSelectionModel();
+	public ISelectionModel<VR> getSelectionModel();
 
-	IHoverModel<VR> getHoverModel();
+	public IHoverModel<VR> getHoverModel();
 
-	IFocusModel<VR> getFocusModel();
+	public IFocusModel<VR> getFocusModel();
 
-	IZoomModel getZoomModel();
+	public IZoomModel getZoomModel();
 
-	IContentModel getContentModel();
+	public IContentModel getContentModel();
 
-	IViewportModel getViewportModel();
+	public IViewportModel getViewportModel();
 
 }
