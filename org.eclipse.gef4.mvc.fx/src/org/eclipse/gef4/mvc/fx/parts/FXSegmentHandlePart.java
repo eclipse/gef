@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import java.util.List;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -28,7 +30,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
@@ -45,7 +47,7 @@ import com.google.inject.Provider;
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXSegmentHandlePart> {
+Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -54,24 +56,19 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	public static final double SIZE = 5d;
 
 	protected Shape visual;
-	protected IContentPart<Node> targetPart;
 	protected Provider<IGeometry> handleGeometryProvider;
 
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
-	// TODO: check why target parts cannot be determined from anchorages (that's
-	// how it should be)
-	public FXSegmentHandlePart(IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int segmentIndex) {
-		this(targetPart, handleGeometryProvider, segmentIndex, 0);
+	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
+			int segmentIndex) {
+		this(handleGeometryProvider, segmentIndex, 0);
 	}
 
-	public FXSegmentHandlePart(IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
-			double segmentParameter) {
+	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
+			int segmentIndex, double segmentParameter) {
 		super();
-		this.targetPart = targetPart;
 		this.handleGeometryProvider = handleGeometryProvider;
 		this.segmentIndex = segmentIndex;
 		this.segmentParameter = segmentParameter;
@@ -186,7 +183,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void refreshVisual() {
 		FXRootPart rootPart = (FXRootPart) getRoot();
-		if (rootPart == null) {
+		List<IVisualPart<Node>> anchorages = getAnchorages();
+		if (rootPart == null || anchorages.size() != 1) {
 			return;
 		}
 
@@ -201,6 +199,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			Point position = getPosition(handleGeometryProvider.get());
 
 			// transform to handle space
+			IVisualPart<Node> targetPart = anchorages.get(0);
 			Node targetVisual = targetPart.getVisual();
 			Pane handleLayer = rootPart.getHandleLayer();
 			Point2D point2d = handleLayer.sceneToLocal(targetVisual
@@ -225,7 +224,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 					// TODO: IFXConnection#isEndConnected()
 					IFXAnchor anchor = segmentParameter == 1.0 ? connection
 							.getEndAnchor() : connection.getStartAnchor();
-					connected = !(anchor instanceof FXStaticAnchor);
+							connected = !(anchor instanceof FXStaticAnchor);
 				}
 				if (connected) {
 					visual.setFill(FILL_CONNECTED);

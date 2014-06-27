@@ -76,7 +76,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		for (int i = 0; i < beziers.length; i++) {
 			int segmentIndex = i;
 			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
-					targetPart, handleGeometryProvider, segmentIndex, 0.5);
+					handleGeometryProvider, segmentIndex, 0.5);
 			hp.setAdapter(AbstractFXDragPolicy.class,
 					new FXBendOnHandleDragPolicy());
 			parts.add(hp);
