@@ -58,6 +58,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
  * {@link IBehavior}s).
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractVisualPart} should be subclassed.
+ * 
  * @author anyssen
  *
  * @param <VR>

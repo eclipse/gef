@@ -18,13 +18,16 @@ import java.util.List;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
- * A {@link IRootPart} is the <i>root</i> controller of an
- * {@link IViewer}. It controls the root view and holds
- * {@link IHandlePart} and {@link IContentPart} children.
+ * A {@link IRootPart} is the <i>root</i> controller of an {@link IViewer}. It
+ * controls the root view and holds {@link IHandlePart} and {@link IContentPart}
+ * children.
  * 
  * The {@link IRootPart} does not correspond to anything in the model, and
  * typically can not be interacted with by the User. The Root provides a
  * homogeneous context for the applications "real" {@link IVisualPart}.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractRootPart} should be subclassed.
  * 
  * @author anyssen
  * 
@@ -34,14 +37,13 @@ public interface IRootPart<VR> extends IVisualPart<VR> {
 	public List<IContentPart<VR>> getContentPartChildren();
 
 	public List<IHandlePart<VR>> getHandlePartChildren();
-	
-	// TODO: add feedback part children
-	
+
+	public List<IFeedbackPart<VR>> getFeedbackPartChildren();
+
 	/**
 	 * Returns the {@link IViewer} this {@link IViewerBound} is bound to.
 	 * 
-	 * @return The {@link IViewer} this {@link IRootPart} is
-	 *         attached to.
+	 * @return The {@link IViewer} this {@link IRootPart} is attached to.
 	 */
 	public abstract IViewer<VR> getViewer();
 

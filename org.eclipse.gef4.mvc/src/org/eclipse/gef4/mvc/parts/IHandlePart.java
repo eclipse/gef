@@ -16,6 +16,9 @@ package org.eclipse.gef4.mvc.parts;
  * simply for tool interaction and does not correspond to anything in the
  * visualized model.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractHandlePart} should be subclassed.
+ * 
  * @author anyssen
  * 
  * @param <VR>

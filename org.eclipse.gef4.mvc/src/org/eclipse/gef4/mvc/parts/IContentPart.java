@@ -18,6 +18,9 @@ import java.util.List;
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractContentPart} should be subclassed.
+ * 
  * @author anyssen
  */
 // TODO: parameterize with content type

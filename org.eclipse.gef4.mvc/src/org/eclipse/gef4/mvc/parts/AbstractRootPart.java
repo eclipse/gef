@@ -47,6 +47,12 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	public List<IHandlePart<VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IFeedbackPart<VR>> getFeedbackPartChildren() {
+		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
+	}
 
 	/**
 	 * @see IRootPart#setViewer(IViewer)

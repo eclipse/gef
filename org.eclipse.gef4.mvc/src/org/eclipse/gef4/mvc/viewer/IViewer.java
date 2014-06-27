@@ -35,6 +35,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractViewer} should be subclassed.
+ * 
  * @author anyssen
  * 
  * @param <VR>
@@ -122,13 +125,12 @@ public interface IViewer<VR> extends IAdaptable {
 	public IDomain<VR> getDomain();
 
 	/**
-	 * Called to set/change/unset the {@link IDomain} this {@link IViewer}
-	 * is bound to. To set or change the {@link IDomain}, pass in a valid
+	 * Called to set/change/unset the {@link IDomain} this {@link IViewer} is
+	 * bound to. To set or change the {@link IDomain}, pass in a valid
 	 * {@link IDomain}, to unset it, pass in <code>null</code>.
 	 * 
 	 * @param domain
-	 *            The {@link IDomain} to which this {@link IViewer} is
-	 *            bound to
+	 *            The {@link IDomain} to which this {@link IViewer} is bound to
 	 */
 	public void setDomain(IDomain<VR> domain);
 

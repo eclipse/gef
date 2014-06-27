@@ -24,6 +24,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, {@link AbstractDomain} should be subclassed.
+ * 
  * @author anyssen
  * 
  * @param <VR>
