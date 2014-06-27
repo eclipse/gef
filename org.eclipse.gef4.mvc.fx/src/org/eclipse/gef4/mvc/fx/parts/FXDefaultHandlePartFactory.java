@@ -121,7 +121,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
 			List<IContentPart<Node>> targets, Pos position) {
 		// TODO: use injection
-		return new FXBoxHandlePart(targets, position);
+		return new FXBoxHandlePart(position);
 	}
 
 	public List<IHandlePart<Node>> createMultiSelectionHandleParts(

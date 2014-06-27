@@ -41,10 +41,11 @@ import com.google.inject.Provider;
  * These parts are used for selection feedback per default.
  *
  * @author mwienand
+ * @author anyssen
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-Comparable<FXSegmentHandlePart> {
+		Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -59,6 +60,8 @@ Comparable<FXSegmentHandlePart> {
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
+	// TODO: check why target parts cannot be determined from anchorages (that's
+	// how it should be)
 	public FXSegmentHandlePart(IContentPart<Node> targetPart,
 			Provider<IGeometry> handleGeometryProvider, int segmentIndex) {
 		this(targetPart, handleGeometryProvider, segmentIndex, 0);
@@ -78,6 +81,13 @@ Comparable<FXSegmentHandlePart> {
 
 	@Override
 	public int compareTo(FXSegmentHandlePart o) {
+		// if we are bound to the same anchorages, we may compare segment
+		// positions, otherwise we are not comparable
+		if (!getAnchorages().containsAll(o.getAnchorages())
+				|| !o.getAnchorages().containsAll(o.getAnchorages())) {
+			throw new IllegalArgumentException(
+					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
+		}
 		return (int) ((100 * getSegmentIndex() + 10 * getSegmentParameter()) - (100 * o
 				.getSegmentIndex() + 10 * o.getSegmentParameter()));
 	}
@@ -215,7 +225,7 @@ Comparable<FXSegmentHandlePart> {
 					// TODO: IFXConnection#isEndConnected()
 					IFXAnchor anchor = segmentParameter == 1.0 ? connection
 							.getEndAnchor() : connection.getStartAnchor();
-							connected = !(anchor instanceof FXStaticAnchor);
+					connected = !(anchor instanceof FXStaticAnchor);
 				}
 				if (connected) {
 					visual.setFill(FILL_CONNECTED);

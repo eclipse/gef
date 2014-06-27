@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.List;
-
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -20,15 +18,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
-
-// TODO: implement Comparable<FXBoxHandlePart> similar to FXSelectionHandlePart
-public class FXBoxHandlePart extends AbstractFXHandlePart {
+/**
+ * @author mwienand
+ * @author anyssen
+ *
+ */
+public class FXBoxHandlePart extends AbstractFXHandlePart implements
+Comparable<FXBoxHandlePart> {
 
 	private Rectangle visual = null;
 	private final Pos pos;
 
-	public FXBoxHandlePart(List<IContentPart<Node>> targetParts, Pos pos) {
+	public FXBoxHandlePart(Pos pos) {
 		this.pos = pos;
 		visual = new Rectangle();
 		visual.setFill(Color.web("#d5faff"));
@@ -37,6 +38,18 @@ public class FXBoxHandlePart extends AbstractFXHandlePart {
 		visual.setHeight(5);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
+	}
+
+	@Override
+	public int compareTo(FXBoxHandlePart o) {
+		// if we are bound to the same anchorages, we may compare positions,
+		// otherwise we are not comparable
+		if (!getAnchorages().containsAll(o.getAnchorages())
+				|| !o.getAnchorages().containsAll(o.getAnchorages())) {
+			throw new IllegalArgumentException(
+					"Can only compare FXBoxHandles that are bound to the same anchorages.");
+		}
+		return pos.compareTo(o.pos);
 	}
 
 	public Pos getPos() {
