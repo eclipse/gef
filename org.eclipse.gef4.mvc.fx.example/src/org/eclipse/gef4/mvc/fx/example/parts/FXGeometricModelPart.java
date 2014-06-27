@@ -36,7 +36,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public void refreshVisual() {
+	public void doRefreshVisual() {
 	}
 
 	@Override

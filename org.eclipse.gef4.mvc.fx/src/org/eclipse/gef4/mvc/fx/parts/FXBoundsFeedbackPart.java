@@ -60,12 +60,7 @@ public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 	}
 
 	@Override
-	public Node getVisual() {
-		return feedbackVisual;
-	}
-
-	@Override
-	public void refreshVisual() {
+	public void doRefreshVisual() {
 		// we need to combine several transformations to get the
 		// target-to-(feedback-handle-)parent-transform
 		Node targetVisual = targetPart.getVisual();
@@ -90,6 +85,11 @@ public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 		IGeometry feedbackGeometry = feedbackGeometryProvider.get();
 		feedbackVisual.setGeometry(feedbackGeometry
 				.getTransformed(targetToParentTx));
+	}
+
+	@Override
+	public Node getVisual() {
+		return feedbackVisual;
 	}
 
 }

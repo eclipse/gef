@@ -87,7 +87,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public void refreshVisual() {
+	public void doRefreshVisual() {
 		FXGeometricShape shapeVisual = getContent();
 		if (visual.getGeometry() != shapeVisual.getGeometry()) {
 			// TODO: respect offset, scaling, etc.
@@ -114,7 +114,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		}
 
 		// apply effect
-		super.refreshVisual();
+		super.doRefreshVisual();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

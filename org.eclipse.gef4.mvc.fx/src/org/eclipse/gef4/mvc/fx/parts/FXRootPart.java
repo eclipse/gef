@@ -61,7 +61,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				}
 			}
 			contentLayer.getChildren()
-					.add(contentLayerIndex, child.getVisual());
+			.add(contentLayerIndex, child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
 			int feedbackLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
@@ -135,6 +135,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		return new Group(layersStackPane);
 	}
 
+	@Override
+	public void doRefreshVisual() {
+		// nothing to do
+	}
+
 	public Pane getContentLayer() {
 		return contentLayer;
 	}
@@ -163,11 +168,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	@Override
 	public Node getVisual() {
 		return scrollPane;
-	}
-
-	@Override
-	public void refreshVisual() {
-		// nothing to do
 	}
 
 	@Override

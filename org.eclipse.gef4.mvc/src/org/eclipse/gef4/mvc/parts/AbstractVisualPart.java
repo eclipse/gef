@@ -216,16 +216,24 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		return refreshVisual;
 	}
 
+	protected abstract void doRefreshVisual();
+
 	@Override
 	public void setRefreshVisual(boolean isRefreshVisual) {
 		this.refreshVisual = isRefreshVisual;
 	}
 
 	/**
-	 * Refreshes this {@link IVisualPart}'s <i>visuals</i>. This method does
-	 * nothing by default. Subclasses may override.
+	 * Refreshes this {@link IVisualPart}'s <i>visuals</i>. Delegates to
+	 * {@link #doRefreshVisual()} in case {@link #isRefreshVisual()} is not set
+	 * to <code>false</code>.
 	 */
-	public abstract void refreshVisual();
+	public final void refreshVisual() {
+		if (isRefreshVisual()) {
+			// TODO: delegate to visual behavior
+			doRefreshVisual();
+		}
+	}
 
 	public void removeChild(IVisualPart<VR> child) {
 		Assert.isNotNull(child);

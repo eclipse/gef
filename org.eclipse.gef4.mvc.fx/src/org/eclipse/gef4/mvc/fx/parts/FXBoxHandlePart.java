@@ -24,7 +24,7 @@ import javafx.scene.shape.StrokeType;
  *
  */
 public class FXBoxHandlePart extends AbstractFXHandlePart implements
-Comparable<FXBoxHandlePart> {
+		Comparable<FXBoxHandlePart> {
 
 	private Rectangle visual = null;
 	private final Pos pos;
@@ -52,27 +52,8 @@ Comparable<FXBoxHandlePart> {
 		return pos.compareTo(o.pos);
 	}
 
-	public Pos getPos() {
-		return pos;
-	}
-
 	@Override
-	public Node getVisual() {
-		return visual;
-	}
-
-	protected double getXInset() {
-		double xInset = visual.getWidth() / 2.0;
-		return xInset;
-	}
-
-	protected double getYInset() {
-		double yInset = visual.getHeight() / 2.0;
-		return yInset;
-	}
-
-	@Override
-	public void refreshVisual() {
+	public void doRefreshVisual() {
 		Bounds unionedBoundsInScene = FXPartUtils
 				.getUnionedVisualBoundsInScene(getAnchorages());
 		if (unionedBoundsInScene != null) {
@@ -97,6 +78,25 @@ Comparable<FXBoxHandlePart> {
 						"Unsupported position constant.");
 			}
 		}
+	}
+
+	public Pos getPos() {
+		return pos;
+	}
+
+	@Override
+	public Node getVisual() {
+		return visual;
+	}
+
+	protected double getXInset() {
+		double xInset = visual.getWidth() / 2.0;
+		return xInset;
+	}
+
+	protected double getYInset() {
+		double yInset = visual.getHeight() / 2.0;
+		return yInset;
 	}
 
 }

@@ -223,11 +223,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public void refreshVisual() {
-		if (!isRefreshVisual()) {
-			return;
-		}
-
+	public void doRefreshVisual() {
 		FXGeometricCurve content = getContent();
 
 		// TODO: compare way points to identify if we need to refresh
@@ -322,7 +318,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 
 		// apply effect
-		super.refreshVisual();
+		super.doRefreshVisual();
 	}
 
 	@Override

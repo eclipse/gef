@@ -46,7 +46,7 @@ public abstract class AbstractFXGeometricElementPart extends AbstractFXContentPa
 	}
 
 	@Override
-	public void refreshVisual() {
+	public void doRefreshVisual() {
 		Node visual = getVisual();
 		AbstractFXGeometricElement<?> content = getContent();
 		if (visual.getEffect() != content.getEffect()) {

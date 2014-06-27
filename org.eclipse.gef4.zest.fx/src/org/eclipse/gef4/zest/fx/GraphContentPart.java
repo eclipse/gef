@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
@@ -33,6 +33,11 @@ public class GraphContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
+	public void doRefreshVisual() {
+		// nothing to do
+	}
+
+	@Override
 	public List<Object> getContentChildren() {
 		List<Object> children = new ArrayList<Object>();
 		children.addAll(((Graph) getContent()).getNodes());
@@ -43,11 +48,6 @@ public class GraphContentPart extends AbstractFXContentPart {
 	@Override
 	public Node getVisual() {
 		return group;
-	}
-
-	@Override
-	public void refreshVisual() {
-		// nothing to do
 	}
 
 }

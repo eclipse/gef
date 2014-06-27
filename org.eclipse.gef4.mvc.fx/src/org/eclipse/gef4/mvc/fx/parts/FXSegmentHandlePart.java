@@ -47,7 +47,7 @@ import com.google.inject.Provider;
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-Comparable<FXSegmentHandlePart> {
+		Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -118,6 +118,62 @@ Comparable<FXSegmentHandlePart> {
 		return shape;
 	}
 
+	@Override
+	public void doRefreshVisual() {
+		FXRootPart rootPart = (FXRootPart) getRoot();
+		List<IVisualPart<Node>> anchorages = getAnchorages();
+		if (rootPart == null || anchorages.size() != 1) {
+			return;
+		}
+
+		if (getSegmentIndex() == -1) {
+			// hide those that have "invalid" index (this may happen during
+			// life-feedback, when a waypoint is removed)
+			visual.setVisible(false);
+		} else {
+			visual.setVisible(true);
+
+			// get new position (in local coordinate space)
+			Point position = getPosition(handleGeometryProvider.get());
+
+			// transform to handle space
+			IVisualPart<Node> targetPart = anchorages.get(0);
+			Node targetVisual = targetPart.getVisual();
+			Pane handleLayer = rootPart.getHandleLayer();
+			Point2D point2d = handleLayer.sceneToLocal(targetVisual
+					.localToScene(position.x, position.y));
+
+			// update visual layout position
+			visual.setLayoutX(point2d.getX());
+			visual.setLayoutY(point2d.getY());
+
+			// update color
+			if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
+				visual.setFill(Color.WHITE);
+			} else {
+				// determine connected state for end point handles
+				boolean connected = false;
+				if ((segmentIndex == 0 || segmentParameter == 1.0)
+						&& targetPart.getVisual() instanceof IFXConnection) {
+					IFXConnection connection = (IFXConnection) targetPart
+							.getVisual();
+
+					// TODO: move to IFXConnection#isStartConnected()
+					// TODO: IFXConnection#isEndConnected()
+					IFXAnchor anchor = segmentParameter == 1.0 ? connection
+							.getEndAnchor() : connection.getStartAnchor();
+					connected = !(anchor instanceof FXStaticAnchor);
+				}
+				if (connected) {
+					visual.setFill(FILL_CONNECTED);
+				} else {
+					visual.setFill(FILL_UNCONNECTED);
+				}
+			}
+		}
+
+	}
+
 	protected Point getPosition(IGeometry handleGeometry) {
 		Point position = null;
 
@@ -178,62 +234,6 @@ Comparable<FXSegmentHandlePart> {
 	@Override
 	public Node getVisual() {
 		return visual;
-	}
-
-	@Override
-	public void refreshVisual() {
-		FXRootPart rootPart = (FXRootPart) getRoot();
-		List<IVisualPart<Node>> anchorages = getAnchorages();
-		if (rootPart == null || anchorages.size() != 1) {
-			return;
-		}
-
-		if (getSegmentIndex() == -1) {
-			// hide those that have "invalid" index (this may happen during
-			// life-feedback, when a waypoint is removed)
-			visual.setVisible(false);
-		} else {
-			visual.setVisible(true);
-
-			// get new position (in local coordinate space)
-			Point position = getPosition(handleGeometryProvider.get());
-
-			// transform to handle space
-			IVisualPart<Node> targetPart = anchorages.get(0);
-			Node targetVisual = targetPart.getVisual();
-			Pane handleLayer = rootPart.getHandleLayer();
-			Point2D point2d = handleLayer.sceneToLocal(targetVisual
-					.localToScene(position.x, position.y));
-
-			// update visual layout position
-			visual.setLayoutX(point2d.getX());
-			visual.setLayoutY(point2d.getY());
-
-			// update color
-			if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
-				visual.setFill(Color.WHITE);
-			} else {
-				// determine connected state for end point handles
-				boolean connected = false;
-				if ((segmentIndex == 0 || segmentParameter == 1.0)
-						&& targetPart.getVisual() instanceof IFXConnection) {
-					IFXConnection connection = (IFXConnection) targetPart
-							.getVisual();
-
-					// TODO: move to IFXConnection#isStartConnected()
-					// TODO: IFXConnection#isEndConnected()
-					IFXAnchor anchor = segmentParameter == 1.0 ? connection
-							.getEndAnchor() : connection.getStartAnchor();
-							connected = !(anchor instanceof FXStaticAnchor);
-				}
-				if (connected) {
-					visual.setFill(FILL_CONNECTED);
-				} else {
-					visual.setFill(FILL_UNCONNECTED);
-				}
-			}
-		}
-
 	}
 
 	/**

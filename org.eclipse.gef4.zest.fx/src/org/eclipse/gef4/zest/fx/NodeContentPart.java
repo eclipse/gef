@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
@@ -109,6 +109,14 @@ public class NodeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
+	public void doRefreshVisual() {
+		Object label = node.getAttrs().get(Attr.Key.LABEL.toString());
+		String str = label instanceof String ? (String) label
+				: label == null ? "-" : label.toString();
+		visual.setLabel(str);
+	}
+
+	@Override
 	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
 			// TODO: when to dispose the anchor properly??
@@ -148,14 +156,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 		nodeLayout = layoutContext.getNodeLayout(node);
 		nodeLayout.setLocation(visual.getLayoutX(), visual.getLayoutY());
 		nodeLayout.setSize(visual.getBoxWidth(), visual.getBoxHeight());
-	}
-
-	@Override
-	public void refreshVisual() {
-		Object label = node.getAttrs().get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label
-				: label == null ? "-" : label.toString();
-		visual.setLabel(str);
 	}
 
 }
