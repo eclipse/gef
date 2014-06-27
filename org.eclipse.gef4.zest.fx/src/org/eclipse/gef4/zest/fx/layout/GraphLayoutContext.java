@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.layout;
+package org.eclipse.gef4.zest.fx.layout;
 
 import java.util.ArrayList;
 import java.util.HashMap;

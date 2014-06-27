@@ -23,7 +23,7 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IViewportModel;
-import org.eclipse.gef4.zest.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class GraphRootPart extends FXRootPart {
 

@@ -28,7 +28,7 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
-import org.eclipse.gef4.zest.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.junit.Test;
 
 public class DataToLayoutTests {

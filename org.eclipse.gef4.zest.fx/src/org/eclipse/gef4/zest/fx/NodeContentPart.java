@@ -30,8 +30,8 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.layout.GraphNodeLayout;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 
 public class NodeContentPart extends AbstractFXContentPart {
 

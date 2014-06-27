@@ -25,8 +25,8 @@ import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.zest.fx.NodeContentPart;
-import org.eclipse.gef4.zest.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.layout.GraphNodeLayout;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.junit.Test;
 
 public class LayoutToViewTests {

@@ -50,4 +50,4 @@ Import-Package: javafx.animation;version="2.2.0",
  javafx.util;version="2.2.0",
  javafx.util.converter;version="2.2.0"
 Export-Package: org.eclipse.gef4.zest.fx,
- org.eclipse.gef4.zest.layout
+ org.eclipse.gef4.zest.fx.layout

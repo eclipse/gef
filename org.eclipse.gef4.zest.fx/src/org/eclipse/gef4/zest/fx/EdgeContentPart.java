@@ -32,8 +32,8 @@ import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.layout.GraphEdgeLayout;
-import org.eclipse.gef4.zest.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
+import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class EdgeContentPart extends AbstractFXContentPart {
 
