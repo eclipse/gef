@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+// TODO: Transfer this into a utility class that can be injected (and thus replaced) in the parts/policies where its needed, providing non-static functions.
 public class BehaviorUtils {
 
 	/**
@@ -81,8 +82,8 @@ public class BehaviorUtils {
 		return feedbackParts;
 	}
 
-	public static <VR> List<IHandlePart<VR>> createHandles(IBehavior<VR> behavior,
-			List<IContentPart<VR>> targets) {
+	public static <VR> List<IHandlePart<VR>> createHandles(
+			IBehavior<VR> behavior, List<IContentPart<VR>> targets) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
