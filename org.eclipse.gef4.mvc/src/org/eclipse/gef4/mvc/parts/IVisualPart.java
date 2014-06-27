@@ -20,11 +20,45 @@ import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.policies.IPolicy;
+import org.eclipse.gef4.mvc.tools.ITool;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
+ * An {@link IVisualPart} plays the controller role in the model-view-controller
+ * architecture. While it does not have to bound to a model (actually only
+ * {@link IContentPart}s are bound to model elements, {@link IFeedbackPart}s and
+ * {@link IHandlePart}s do not refer to model elements), an {@link IVisualPart}
+ * controls a visual and is responsible of handling user interaction.
  * 
- * @author nyssen
+ * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
+ * via a <code>1:n</code> parent-children relationship ({@link #getParent()},
+ * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
+ * <code>n:m</code> anchorage-anchored relationship ({@link #getAnchorages(),
+ * #getAnchoreds()}) may be established via {@link IVisualPart} at arbitrary
+ * places in the hierarchy.
+ * 
+ * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
+ * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
+ * adapters may indeed be registered as needed). {@link IPolicy}s are usually
+ * required in case the {@link IVisualPart} is directly involved in user
+ * interaction (e.g. the user clicks on its controlled visual). They may be
+ * accessed type-safe by {@link ITool}s or other {@link IPolicy}s (
+ * {@link IPolicy}s may delegate to other {@link IPolicy}s) via their class key
+ * (see {@link IAdaptable}). {@link IBehavior}s are used to react to changes of
+ * the attached model (in case of an {@link IContentPart}s), the viewer models,
+ * or others sources (e.g. adapters of the {@link IViewer} or {@link IDomain}),
+ * thereby reacting to changes of the interactive state (e.g. the
+ * {@link ISelectionModel} reporting a selection change).
+ * 
+ * {@link IVisualPart}s are activatable ({@link IActivatable}), and an
+ * activation/deactivation of an {@link IVisualPart} will result in the
+ * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
+ * {@link IBehavior}s).
+ * 
+ * @author anyssen
  *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
@@ -106,12 +140,15 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	public void setParent(IVisualPart<VR> parent);
 
 	/**
-	 * While interacting with IVisualParts the visual representation should not
-	 * be updated to correspond with its model. To suppress
-	 * {@link #refreshVisual()} from doing so, you can set this flag to
-	 * <code>false</code>.
+	 * Allows to temporarily turn {@link #refreshVisual()} into a no-op
+	 * operation. This may for instance be used to disable visual updates that
+	 * are initiated by the model (in case of {@link IContentPart}s) while
+	 * interacting with the {@link IVisualPart}.
 	 * 
 	 * @param refreshVisual
+	 *            Whether {@link #refreshVisual()} should perform updates of the
+	 *            visual (<code>true</code>) or behave like a no-op operation (
+	 *            <code>false</code>).
 	 */
 	public void setRefreshVisual(boolean refreshVisual);
 }
