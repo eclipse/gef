@@ -32,14 +32,14 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * {@link IContentPart}s are bound to model elements, {@link IFeedbackPart}s and
  * {@link IHandlePart}s do not refer to model elements), an {@link IVisualPart}
  * controls a visual and is responsible of handling user interaction.
- * 
+ * <p>
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
- * via a <code>1:n</code> parent-children relationship ({@link #getParent()},
+ * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
- * <code>n:m</code> anchorage-anchored relationship ({@link #getAnchorages(),
+ * <code>[n:m]</code> anchorage-anchored relationship ({@link #getAnchorages(),
  * #getAnchoreds()}) may be established via {@link IVisualPart} at arbitrary
  * places in the hierarchy.
- * 
+ * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
  * adapters may indeed be registered as needed). {@link IPolicy}s are usually
@@ -52,7 +52,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * or others sources (e.g. adapters of the {@link IViewer} or {@link IDomain}),
  * thereby reacting to changes of the interactive state (e.g. the
  * {@link ISelectionModel} reporting a selection change).
- * 
+ * <p>
  * {@link IVisualPart}s are activatable ({@link IActivatable}), and an
  * activation/deactivation of an {@link IVisualPart} will result in the
  * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
