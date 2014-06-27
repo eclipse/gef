@@ -48,6 +48,19 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		removed = null;
 		removedIndex = -1;
 		getHost().setRefreshVisual(true);
+
+		/*
+		 * Due to a mouse event bug, this method may be called as the first
+		 * method on the policy. That's why we have to check if the operation is
+		 * null.
+		 */
+		if (op == null) {
+			// mouse release bug
+			IFXConnection connection = getConnection();
+			op = new FXChangeWayPointsOperation("No-op", connection,
+					connection.getWayPoints(), connection.getWayPoints());
+		}
+
 		return op;
 	}
 

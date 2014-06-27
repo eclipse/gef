@@ -30,70 +30,54 @@ import javafx.scene.transform.Transform;
  * local transformations, or geometric bounds change. A local-to-scene-transform
  * change occurs when any node in the hierarchy of the target node undergoes a
  * transformation change.
- *
+ * 
  * @author mwienand
- *
+ * 
  */
 public abstract class VisualChangeListener {
 
-	/*
-	 * TODO: Currently, scrolling does cause a StackOverflowError, because
-	 * scrolling does change the bounds-in-scene of anchored visuals, which in
-	 * turn causes an anchor refresh, which in turn causes a scrollbar change in
-	 * special cases.
-	 *
-	 * Therefore, we need to register the transform listener relative to some
-	 * layer, so that scrolling does not affect the "local-to-layer" transform.
-	 */
-
-	private class TransformListener implements ChangeListener<Transform> {
-		private Node rel;
-
-		public TransformListener(Node relative) {
-			super();
-			rel = relative;
-		}
-
+	private final ChangeListener<? super Transform> transformListener = new ChangeListener<Transform>() {
 		@Override
 		public void changed(ObservableValue<? extends Transform> observable,
 				Transform oldValue, Transform newValue) {
-			if (lastChangedRelative != null
-					&& rel == lastChangedRelative.getParent()) {
-				lastChangedRelative = rel;
-				return;
-			}
-			lastChangedRelative = rel;
 			if (isValidTransform(newValue)) {
 				transformChanged(oldValue, newValue);
 			}
 		}
-	}
+	};
 
 	private final ChangeListener<? super Bounds> boundsInLocalListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
-			boundsChanged(oldValue, newValue);
+			if (isValidBounds(newValue)) {
+				boundsChanged(oldValue, newValue);
+			}
 		}
 	};
-
-	private Node lastChangedRelative;
-
-	private ChangeListener<? super Transform> sceneTransformListener = new ChangeListener<Transform>() {
-		@Override
-		public void changed(ObservableValue<? extends Transform> observable,
-				Transform oldValue, Transform newValue) {
-			transformChanged(oldValue, newValue);
-		}
-	};
-
-	private List<ChangeListener<? super Transform>> transformListeners = new ArrayList<ChangeListener<? super Transform>>();
-
 	private Node node;
 
 	private Node parent;
 
+	private List<Node> relatives = new ArrayList<Node>();
+
 	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
+
+	private boolean isValidBounds(Bounds b) {
+		if (Double.isNaN(b.getMinX())) {
+			return false;
+		}
+		if (Double.isNaN(b.getMinY())) {
+			return false;
+		}
+		if (Double.isNaN(b.getMaxX())) {
+			return false;
+		}
+		if (Double.isNaN(b.getMaxY())) {
+			return false;
+		}
+		return true;
+	}
 
 	private boolean isValidTransform(Transform t) {
 		if (Double.isNaN(t.getMxx())) {
@@ -138,11 +122,18 @@ public abstract class VisualChangeListener {
 	/**
 	 * Registers change listeners on the given node. Transformation changes are
 	 * only reported relative to the given parent node.
-	 *
+	 * 
 	 * @param node
 	 * @param anyParent
 	 */
 	public void register(Node node, Node anyParent) {
+		if (node == null) {
+			throw new IllegalArgumentException("Node may not be null.");
+		}
+		if (anyParent == null) {
+			throw new IllegalArgumentException("Parent may not be null.");
+		}
+
 		// unregister listeners from old node
 		if (this.node != null) {
 			unregister();
@@ -155,20 +146,12 @@ public abstract class VisualChangeListener {
 		// add bounds listener
 		node.boundsInLocalProperty().addListener(boundsInLocalListener);
 
-		// add transform listener
-		if (parent == null) {
-			// localToScene per default
-			node.localToSceneTransformProperty().addListener(
-					sceneTransformListener);
-		} else {
-			// otherwise localToX (X = parent)
-			Node tmp = node;
-			while (tmp != null && tmp != parent) {
-				TransformListener listener = new TransformListener(tmp);
-				transformListeners.add(listener);
-				tmp.localToParentTransformProperty().addListener(listener);
-				tmp = tmp.getParent();
-			}
+		// add transform listeners
+		Node tmp = node;
+		while (tmp != null && tmp != parent) {
+			relatives.add(tmp);
+			tmp.localToParentTransformProperty().addListener(transformListener);
+			tmp = tmp.getParent();
 		}
 	}
 
@@ -179,21 +162,10 @@ public abstract class VisualChangeListener {
 		// remove bounds listener
 		node.boundsInLocalProperty().removeListener(boundsInLocalListener);
 
-		// remove transform listener
-		if (parent == null) {
-			// localToScene per default
-			node.localToSceneTransformProperty().removeListener(
-					sceneTransformListener);
-		} else {
-			// otherwise localToX (X = parent)
-			Node tmp = node;
-			while (tmp != null && tmp != parent
-					&& transformListeners.size() > 0) {
-				ChangeListener<? super Transform> listener = transformListeners
-						.remove(0);
-				tmp.localToParentTransformProperty().removeListener(listener);
-				tmp = tmp.getParent();
-			}
+		// remove transform listeners
+		for (Node n : relatives) {
+			n.localToParentTransformProperty()
+					.removeListener(transformListener);
 		}
 	}
 

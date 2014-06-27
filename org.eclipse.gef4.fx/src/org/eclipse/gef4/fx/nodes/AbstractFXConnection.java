@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-implements IFXConnection {
+		implements IFXConnection {
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
@@ -84,7 +84,7 @@ implements IFXConnection {
 	/**
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
-	 *
+	 * 
 	 * @param deco
 	 * @param start
 	 * @param direction
@@ -120,7 +120,7 @@ implements IFXConnection {
 	/**
 	 * Returns a {@link Point} array containing reference points for the start
 	 * and end anchors.
-	 *
+	 * 
 	 * @return
 	 */
 	public Point[] computeReferencePoints() {
@@ -204,7 +204,7 @@ implements IFXConnection {
 
 	/**
 	 * Returns the end point for computing this connection's curve visual.
-	 *
+	 * 
 	 * @return the end point for computing this connection's curve visual
 	 */
 	private Point getCurveEndPoint() {
@@ -259,7 +259,7 @@ implements IFXConnection {
 	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
 	 * compute the position) this method returns an empty array.
 	 * </p>
-	 *
+	 * 
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
@@ -318,7 +318,7 @@ implements IFXConnection {
 
 	/**
 	 * Returns the start point for computing this connection's curve visual.
-	 *
+	 * 
 	 * @return the start point for computing this connection's curve visual
 	 */
 	private Point getCurveStartPoint() {
@@ -594,6 +594,9 @@ implements IFXConnection {
 				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getEndAnchor();
 				Point referencePoint = anchor.getReferencePoint(this);
 				if (!ref.equals(referencePoint)) {
+					// System.out.println("update end ref from <" +
+					// referencePoint
+					// + "> to <" + ref + ">.");
 					anchor.setReferencePoint(this, ref);
 				}
 			}
@@ -606,6 +609,8 @@ implements IFXConnection {
 				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getStartAnchor();
 				Point referencePoint = anchor.getReferencePoint(this);
 				if (!ref.equals(referencePoint)) {
+					// System.out.println("update start ref from <"
+					// + referencePoint + "> to <" + ref + ">.");
 					anchor.setReferencePoint(this, ref);
 				}
 			}
