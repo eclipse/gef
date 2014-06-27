@@ -30,13 +30,14 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * {@link IZoomModel}, or {@link IHoverModel}.
  * 
  * As an reaction to input events, an {@link ITool} may manipulate the
- * {@link IViewer}'s logical models, or interact with the
- * {@link IViewer}'s {@link IVisualPart} via a respective
- * {@link IPolicy}.
+ * {@link IViewer}'s logical models, or interact with the {@link IViewer}'s
+ * {@link IVisualPart}s via their respective {@link IPolicy}s.
  * 
  * @author anyssen
  * 
  * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 // TODO: change generic parameter to specify IDomain<VR> rather than VR
 public interface ITool<VR> extends IActivatable, IAdaptable.Bound<IDomain<VR>> {
