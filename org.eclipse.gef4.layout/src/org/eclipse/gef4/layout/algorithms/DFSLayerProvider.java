@@ -11,9 +11,11 @@
 package org.eclipse.gef4.layout.algorithms;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.LayerProvider;
@@ -29,11 +31,6 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 public class DFSLayerProvider implements LayerProvider {
 
 	private Map<NodeLayout, Integer> assignedNodes = new IdentityHashMap<NodeLayout, Integer>();
-	private ArrayList<NodeLayout> openedList = new ArrayList<NodeLayout>();
-	private ArrayList<NodeLayout> closedList = new ArrayList<NodeLayout>();
-	private ArrayList<NodeLayout> initClosedList = new ArrayList<NodeLayout>();
-	private final List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
-	private final Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
 
 	/**
 	 * Returns the mutual connections of the two array given as parameters.
@@ -54,7 +51,8 @@ public class DFSLayerProvider implements LayerProvider {
 		return res;
 	}
 
-	private void addToInitClosedList(NodeLayout node, int layout) {
+	private void addToInitClosedList(NodeLayout node, int layout,
+			List<NodeLayout> initClosedList, Map<NodeLayout, NodeWrapper> map) {
 		NodeWrapper nw = new NodeWrapper(node, layout);
 		map.put(node, nw);
 		initClosedList.add(node);
@@ -67,7 +65,6 @@ public class DFSLayerProvider implements LayerProvider {
 	 * @return
 	 */
 	public ArrayList<NodeLayout> getRoots(List<NodeLayout> nodes) {
-		// TODO Auto-generated method stub
 		ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
 
 		for (NodeLayout node : nodes) {
@@ -96,12 +93,10 @@ public class DFSLayerProvider implements LayerProvider {
 	}
 
 	public Map<NodeLayout, Integer> getAssignedNodes() {
-		// TODO Auto-generated method stub
 		return assignedNodes;
 	}
 
 	public void addAssignedNode(NodeLayout node, int layer) {
-		// TODO Auto-generated method stub
 		assignedNodes.put(node, layer);
 	}
 
@@ -119,7 +114,8 @@ public class DFSLayerProvider implements LayerProvider {
 	 * 
 	 * @param list
 	 */
-	private void addLayer(List<NodeLayout> list) {
+	private void addLayer(List<NodeLayout> list,
+			List<List<NodeWrapper>> layers, Map<NodeLayout, NodeWrapper> map) {
 		ArrayList<NodeWrapper> layer = new ArrayList<NodeWrapper>(list.size());
 		for (NodeLayout node : list) {
 			// wrap each NodeLayout with the internal data object and provide a
@@ -138,7 +134,8 @@ public class DFSLayerProvider implements LayerProvider {
 	 * @param toUnfold
 	 * @return
 	 */
-	private ArrayList<NodeLayout> Unfold(NodeLayout toUnfold) {
+	private ArrayList<NodeLayout> Unfold(NodeLayout toUnfold,
+			Set<NodeLayout> openedList, Set<NodeLayout> closedList) {
 		ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();
 
 		for (int i = 0; i < toUnfold.getOutgoingConnections().length; i++) {
@@ -165,20 +162,20 @@ public class DFSLayerProvider implements LayerProvider {
 		return res;
 	}
 
-	public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes,
-			Map<NodeLayout, Integer> assignedNodes) {
-		// TODO Auto-generated method stub
-		openedList.clear();
-		initClosedList.clear();
-		closedList.clear();
-		layers.clear();
-		map.clear();
+	public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodeLayouts) {
+		List<NodeLayout> nodes = new ArrayList<NodeLayout>(nodeLayouts);
+		Set<NodeLayout> openedList = new HashSet<NodeLayout>();
+		List<NodeLayout> initClosedList = new ArrayList<NodeLayout>();
+		Set<NodeLayout> closedList = new HashSet<NodeLayout>();
+		List<List<NodeWrapper>> layers = new ArrayList<List<NodeWrapper>>();
+		Map<NodeLayout, NodeWrapper> map = new IdentityHashMap<NodeLayout, NodeWrapper>();
 
 		// Assigns the given nodes to there layers
-		if (assignedNodes != null) {
+		if (assignedNodes.size() > 0) {
 			for (NodeLayout node : nodes) {
 				if (assignedNodes.containsKey(node))
-					addToInitClosedList(node, assignedNodes.get(node));
+					addToInitClosedList(node, assignedNodes.get(node),
+							initClosedList, map);
 			}
 		}
 
@@ -196,43 +193,43 @@ public class DFSLayerProvider implements LayerProvider {
 				} else {
 					while (map.get(node).layer != layers.size()) {
 						ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
-						addLayer(layer);
+						addLayer(layer, layers, map);
 					}
 					ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
 					layer.add(node);
-					addLayer(layer);
+					addLayer(layer, layers, map);
 				}
 			}
 		}
 
 		ArrayList<NodeLayout> startPoints = new ArrayList<NodeLayout>();
-		if (nodes.size() > 0) {
-
-			// Starts by finding a root or selecting the first from the assigned
-			// ones
-			if (layers.size() > 0 && layers.get(0).size() > 0)
-				startPoints.add(layers.get(0).get(0).node);
-			else if (layers.size() == 0) {
-				startPoints.add(getRoots(nodes).get(0));
-				addLayer(startPoints);
-			} else {
-				startPoints.add(getRoots(nodes).get(0));
-				for (NodeLayout startPoint : startPoints) {
-					if (!map.containsKey(startPoint)) {
-						NodeWrapper nw = new NodeWrapper(startPoint, 0);
-						map.put(startPoint, nw);
-						layers.get(0).add(nw);
-					}
+		// Starts by finding a root or selecting the first from the assigned
+		// ones
+		if (layers.size() > 0 && layers.get(0).size() > 0)
+			startPoints.add(layers.get(0).get(0).node);
+		else if (layers.size() == 0) {
+			startPoints.add(getRoots(nodes).get(0));
+			addLayer(startPoints, layers, map);
+		} else {
+			startPoints.add(getRoots(nodes).get(0));
+			for (NodeLayout startPoint : startPoints) {
+				if (!map.containsKey(startPoint)) {
+					NodeWrapper nw = new NodeWrapper(startPoint, 0);
+					map.put(startPoint, nw);
+					layers.get(0).add(nw);
 				}
-				updateIndex(layers.get(0));
 			}
-			openedList.addAll(startPoints);
+			updateIndex(layers.get(0));
+		}
+		openedList.addAll(startPoints);
+		NodeLayout toUnfold = startPoints.get(0);
 
+		while (nodes.size() > 0) {
 			// while openedList isn't empty it searches for further nodes and
 			// adding them to the next layer
-			NodeLayout toUnfold = startPoints.get(0);
 			while (openedList.size() != 0) {
-				ArrayList<NodeLayout> unfolded = Unfold(toUnfold);
+				ArrayList<NodeLayout> unfolded = Unfold(toUnfold, openedList,
+						closedList);
 				if (unfolded.size() > 0) {
 					int level = map.get(toUnfold).layer + 1;
 					if (level < layers.size()) {
@@ -247,22 +244,23 @@ public class DFSLayerProvider implements LayerProvider {
 					} else {
 						ArrayList<NodeLayout> layer = new ArrayList<NodeLayout>();
 						layer.addAll(unfolded);
-						addLayer(layer);
+						addLayer(layer, layers, map);
 					}
-					openedList.addAll(0, unfolded);
+					openedList.addAll(unfolded);
 				}
 				closedList.add(toUnfold);
 				openedList.remove(toUnfold);
 				nodes.remove(toUnfold);
 
 				if (openedList.size() != 0)
-					toUnfold = openedList.get(0);
+					toUnfold = openedList.iterator().next();
 			}
-
-			// If there is more nodes, but openedList is empty means that a new
-			// root element is required
 			if (nodes.size() > 0) {
-				calculateLayers(nodes, null);
+				final NodeLayout node = nodes.get(0);
+				openedList.add(node);
+				NodeWrapper nw = new NodeWrapper(node, 0);
+				map.put(node, nw);
+				layers.get(0).add(nw);
 			}
 		}
 		return layers;

@@ -179,10 +179,7 @@ public class SplitCrossingReducer implements CrossingReducer {
 		return res;
 	}
 
-	public Map<NodeLayout, NodeWrapper> crossReduction(
-			List<List<NodeWrapper>> nodes) {
-		// TODO Auto-generated method stub
-
+	public void crossReduction(List<List<NodeWrapper>> nodes) {
 		// Building the map
 		for (List<NodeWrapper> layer : nodes)
 			for (NodeWrapper nw : layer)
@@ -192,7 +189,5 @@ public class SplitCrossingReducer implements CrossingReducer {
 				splitHeuristic(nodes.get(i));
 			}
 		}
-
-		return map;
 	}
 }

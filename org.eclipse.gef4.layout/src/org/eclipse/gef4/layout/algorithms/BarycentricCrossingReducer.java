@@ -156,10 +156,8 @@ public class BarycentricCrossingReducer implements CrossingReducer {
 		}
 	}
 
-	public Map<NodeLayout, NodeWrapper> crossReduction(
-			List<List<NodeWrapper>> nodes) {
+	public void crossReduction(List<List<NodeWrapper>> nodes) {
 		this.layers = nodes;
-		// TODO Auto-generated method stub
 		padLayers();
 		for (int i = 0; i < layers.size(); i++) { // reduce and
 			// refine
@@ -169,7 +167,5 @@ public class BarycentricCrossingReducer implements CrossingReducer {
 			refineLayers();
 		}
 		reduceCrossings();
-
-		return map;
 	}
 }

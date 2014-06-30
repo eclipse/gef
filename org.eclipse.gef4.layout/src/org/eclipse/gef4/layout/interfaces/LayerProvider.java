@@ -11,7 +11,6 @@
 package org.eclipse.gef4.layout.interfaces;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.layout.algorithms.NodeWrapper;
 
@@ -24,36 +23,12 @@ import org.eclipse.gef4.layout.algorithms.NodeWrapper;
 public interface LayerProvider {
 
 	/**
-	 * Returns the map of assignedNodes.
-	 * 
-	 * @return
-	 */
-	Map<NodeLayout, Integer> getAssignedNodes();
-
-	/**
-	 * Collects the assignedNodes.
-	 * 
-	 * @param node
-	 * @param layer
-	 *            number of the layer the node is assigned to
-	 */
-	void addAssignedNode(NodeLayout node, int layer);
-
-	/**
-	 * Clears the map of assignedNodes.
-	 */
-	void clearAssignedNodes();
-
-	/**
 	 * Creating layers of the nodes and makes it possible to assign layers to
 	 * those nodes.
 	 * 
 	 * @param nodes
 	 *            List of all the nodes that needs to be organized
-	 * @param assignedNodes
-	 *            Collection of the nodes which have preassigned layers
 	 * @return
 	 */
-	List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes,
-			Map<NodeLayout, Integer> assignedNodes);
+	List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes);
 }

@@ -47,8 +47,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  * @author Rene Kuhlemann
  * @author Adam Kovacs
  */
-public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
-		CrossingReducer {
+public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 
 	public enum Direction {
 		HORIZONTAL, VERTICAL
@@ -88,8 +87,10 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 		direction = dir;
 		dimension = dim;
 
-		layerProvider = layering;
-		crossingReducer = crossing;
+		layerProvider = (layering == null) ? new SimpleLayerProvider()
+				: layering;
+		crossingReducer = (crossing == null) ? new BarycentricCrossingReducer()
+				: crossing;
 	}
 
 	public SugiyamaLayoutAlgorithm(Direction dir, LayerProvider layerProvider,
@@ -102,30 +103,21 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 	}
 
 	public SugiyamaLayoutAlgorithm(Direction dir, CrossingReducer crossing) {
-		this(dir, null, new SimpleLayerProvider(), crossing);
+		this(dir, null, null, crossing);
 	}
 
 	public SugiyamaLayoutAlgorithm(Direction dir, Dimension dim) {
-		this(dir, dim, new SimpleLayerProvider(),
-				new BarycentricCrossingReducer());
+		this(dir, dim, null, null);
 	}
 
 	public SugiyamaLayoutAlgorithm(Direction dir) {
-		this(dir, null, new SimpleLayerProvider(),
-				new BarycentricCrossingReducer());
+		this(dir, null, null, null);
 	}
 
 	public SugiyamaLayoutAlgorithm() {
-		this(Direction.VERTICAL, null, new DFSLayerProvider(),
-				new BarycentricCrossingReducer());
+		this(Direction.VERTICAL, null, null, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.layout.LayoutAlgorithm#setLayoutContext(org.eclipse
-	 * .zest.layouts.interfaces.LayoutContext)
-	 */
 	public void setLayoutContext(LayoutContext context) {
 		this.context = context;
 	}
@@ -134,11 +126,6 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 		return context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.layout.LayoutAlgorithm#applyLayout(boolean)
-	 */
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
@@ -151,23 +138,8 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 			nodes.add(node);
 			nodes2.add(node);
 		}
-		if (layerProvider != null) {
-			clearAssignedNodes();
-			addAssignedNode(nodes.get(0), 0);
-			addAssignedNode(nodes.get(nodes.size() - 1), 0);
-			layers = calculateLayers(nodes, getAssignedNodes());
-		} else {
-			List<NodeWrapper> layer = new ArrayList<NodeWrapper>();
-			for (int i = 0; i < nodes.size(); i++) {
-				NodeWrapper nw = new NodeWrapper(nodes.get(i), 0);
-				nw.index = i;
-				layer.add(nw);
-			}
-			layers.add(layer);
-		}
-		if (crossingReducer != null) {
-			map = crossReduction(layers);
-		}
+		layers = layerProvider.calculateLayers(nodes);
+		crossingReducer.crossReduction(layers);
 
 		for (List<NodeWrapper> layer : layers) {
 			if (layer.size() > last)
@@ -198,43 +170,4 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm, LayerProvider,
 			}
 	}
 
-	public Map<NodeLayout, NodeWrapper> crossReduction(
-			List<List<NodeWrapper>> nodes) {
-		// TODO Auto-generated method stub
-		if (crossingReducer != null) {
-			return crossingReducer.crossReduction(nodes);
-		} else
-			return null;
-	}
-
-	public Map<NodeLayout, Integer> getAssignedNodes() {
-		// TODO Auto-generated method stub
-		if (layerProvider != null) {
-			return layerProvider.getAssignedNodes();
-		} else
-			return null;
-	}
-
-	public void addAssignedNode(NodeLayout node, int layer) {
-		// TODO Auto-generated method stub
-		if (layerProvider != null) {
-			layerProvider.addAssignedNode(node, layer);
-		}
-	}
-
-	public void clearAssignedNodes() {
-		// TODO Auto-generated method stub
-		if (layerProvider != null) {
-			layerProvider.clearAssignedNodes();
-		}
-	}
-
-	public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes,
-			Map<NodeLayout, Integer> assignedNodes) {
-		// TODO Auto-generated method stub
-		if (layerProvider != null) {
-			return layerProvider.calculateLayers(nodes, assignedNodes);
-		} else
-			return null;
-	}
 }

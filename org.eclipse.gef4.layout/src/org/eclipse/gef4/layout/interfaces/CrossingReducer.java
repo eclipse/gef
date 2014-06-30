@@ -11,7 +11,6 @@
 package org.eclipse.gef4.layout.interfaces;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.layout.algorithms.NodeWrapper;
 
@@ -27,7 +26,6 @@ public interface CrossingReducer {
 	 * 
 	 * @param nodes
 	 *            List of nodes needed to be organized
-	 * @return
 	 */
-	Map<NodeLayout, NodeWrapper> crossReduction(List<List<NodeWrapper>> nodes);
+	void crossReduction(List<List<NodeWrapper>> nodes);
 }

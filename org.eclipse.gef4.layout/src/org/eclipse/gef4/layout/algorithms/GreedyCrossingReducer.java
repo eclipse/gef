@@ -171,9 +171,7 @@ public class GreedyCrossingReducer implements CrossingReducer {
 		return res;
 	}
 
-	public Map<NodeLayout, NodeWrapper> crossReduction(
-			List<List<NodeWrapper>> nodes) {
-		// TODO Auto-generated method stub
+	public void crossReduction(List<List<NodeWrapper>> nodes) {
 		crossesForLayers.clear();
 		layers = nodes;
 
@@ -195,6 +193,5 @@ public class GreedyCrossingReducer implements CrossingReducer {
 			if (!change)
 				iteration++;
 		}
-		return map;
 	}
 }

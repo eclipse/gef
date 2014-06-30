@@ -90,19 +90,7 @@ public class SimpleLayerProvider implements LayerProvider {
 			list.get(index).index = index;
 	}
 
-	public Map<NodeLayout, Integer> getAssignedNodes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void addAssignedNode(NodeLayout node, int layer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes,
-			Map<NodeLayout, Integer> assignedNodes) {
-		// TODO Auto-generated method stub
+	public List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes) {
 		map.clear();
 
 		List<NodeLayout> predecessors = findRoots(nodes);
@@ -128,11 +116,6 @@ public class SimpleLayerProvider implements LayerProvider {
 		}
 
 		return layers;
-	}
-
-	public void clearAssignedNodes() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
