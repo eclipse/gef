@@ -14,8 +14,13 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.List;
 
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.Point;
 
@@ -30,23 +35,20 @@ public interface IFXConnection {
 	public void addWayPoint(int index, Point wayPoint);
 
 	/**
-	 * Inserts a new way point (anchor) at the specified index.
-	 * 
-	 * @param index
-	 * @param wayPointAnchor
-	 */
-	public void addWayPointAnchor(int index, IFXAnchor wayPointAnchor);
-
-	public Node getCurveNode();
-
-	/**
 	 * Returns the {@link IFXAnchor} which specifies the end position of this
 	 * connection.
 	 * 
 	 * @return the {@link IFXAnchor} which specifies the end position of this
 	 *         connection
 	 */
-	public IFXAnchor getEndAnchor();
+	public ReadOnlyObjectProperty<AnchorLink> endAnchorLinkProperty();
+
+	/**
+	 * Returns the curve visual used to render this connection.
+	 * 
+	 * @return
+	 */
+	public Node getCurveNode();
 
 	/**
 	 * Returns the current end decoration of this connection. Per default, a
@@ -73,15 +75,6 @@ public interface IFXConnection {
 	public Point[] getPoints();
 
 	/**
-	 * Returns the {@link IFXAnchor} which specifies the start position of this
-	 * connection.
-	 * 
-	 * @return the {@link IFXAnchor} which specifies the start position of this
-	 *         connection
-	 */
-	public IFXAnchor getStartAnchor();
-
-	/**
 	 * Returns the current start decoration of this connection. Per default, a
 	 * connection does not have a start decoration, i.e. it is set to
 	 * <code>null</code>.
@@ -106,20 +99,33 @@ public interface IFXConnection {
 	public Point getWayPoint(int index);
 
 	/**
-	 * Returns an unmodifiable list of {@link IFXAnchor}s which specify the
-	 * positions of this connection's way points.
-	 * 
-	 * @return an unmodifiable list of {@link IFXAnchor}s which specify the
-	 *         positions of this connection's way points
-	 */
-	public List<IFXAnchor> getWayPointAnchors();
-
-	/**
 	 * Returns an unmodifiable list of way points (not their anchors).
 	 * 
 	 * @return an unmodifiable list of way points
 	 */
 	public List<Point> getWayPoints();
+
+	/**
+	 * Returns <code>true</code> if the end anchor link of this connection is
+	 * bound to a FXStaticAnchor.
+	 * 
+	 * @return
+	 */
+	public boolean isEndConnected();
+
+	/**
+	 * Returns <code>true</code> if the start anchor link of this connection is
+	 * bound to a FXStaticAnchor.
+	 * 
+	 * @return
+	 */
+	public boolean isStartConnected();
+
+	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty();
+
+	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onStartAnchorLinkChangeProperty();
+
+	public ReadOnlyObjectProperty<ListChangeListener<? super Point>> onWayPointChangeProperty();
 
 	/**
 	 * Removes all way points from this connection.
@@ -135,9 +141,9 @@ public interface IFXConnection {
 
 	/**
 	 * Changes the end anchor of this connection to the passed-in
-	 * {@link IFXAnchor}.
+	 * {@link AnchorLink}.
 	 */
-	public void setEndAnchor(IFXAnchor endAnchor);
+	public void setEndAnchorLink(AnchorLink endAnchorLink);
 
 	/**
 	 * Sets the end decoration for this connection. Setting the end decoration
@@ -149,18 +155,27 @@ public interface IFXConnection {
 	public void setEndDecoration(IFXDecoration endDeco);
 
 	/**
-	 * Sets the end point anchor of this connection to a static anchor pointing
-	 * to the given endPoint.
+	 * Generates a FXStaticAnchor with the given position and assigns the start
+	 * anchor link of this connection correspondingly.
 	 * 
-	 * @param endPoint
+	 * @param start
 	 */
-	public void setEndPoint(Point endPoint);
+	public void setEndPoint(Point start);
+
+	public void setOnEndAnchorLinkChange(
+			ChangeListener<? super AnchorLink> onEndAnchorLinkChange);
+
+	public void setOnStartAnchorLinkChange(
+			ChangeListener<? super AnchorLink> onStartAnchorLinkChange);
+
+	public void setOnWayPointChange(
+			ListChangeListener<? super Point> onWayPointChange);
 
 	/**
 	 * Changes the start anchor of this connection to the passed-in
-	 * {@link IFXAnchor}.
+	 * {@link AnchorLink}.
 	 */
-	public void setStartAnchor(IFXAnchor startAnchor);
+	public void setStartAnchorLink(AnchorLink startAnchorLink);
 
 	/**
 	 * Sets the start decoration for this connection. Setting the start
@@ -172,12 +187,12 @@ public interface IFXConnection {
 	public void setStartDecoration(IFXDecoration startDeco);
 
 	/**
-	 * Sets the start point anchor of this connection to a static anchor
-	 * pointing to the given startPoint.
+	 * Generates a FXStaticAnchor with the given position and assigns the start
+	 * anchor link of this connection correspondingly.
 	 * 
-	 * @param startPoint
+	 * @param start
 	 */
-	public void setStartPoint(Point startPoint);
+	public void setStartPoint(Point start);
 
 	/**
 	 * Sets the specified way point anchor to a static anchor pointing to the
@@ -189,20 +204,28 @@ public interface IFXConnection {
 	public void setWayPoint(int index, Point wayPoint);
 
 	/**
-	 * Sets the way point anchor at the given index to the given
-	 * {@link IFXAnchor}.
-	 * 
-	 * @param index
-	 * @param wayPointAnchor
-	 */
-	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor);
-
-	/**
 	 * Sets all way point anchors of this connection to static anchors pointing
 	 * to the given list of points.
 	 * 
 	 * @param wayPoints
 	 */
 	public void setWayPoints(List<Point> wayPoints);
+
+	/**
+	 * Returns the {@link AnchorLink} which specifies the start position of this
+	 * connection.
+	 * 
+	 * @return the {@link AnchorLink} which specifies the start position of this
+	 *         connection
+	 */
+	public ReadOnlyObjectProperty<AnchorLink> startAnchorLinkProperty();
+
+	/**
+	 * List of {@link Point} which are used as anchor points for this
+	 * connection.
+	 * 
+	 * @return
+	 */
+	public ReadOnlyListProperty<Point> wayPointsProperty();
 
 }

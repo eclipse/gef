@@ -30,8 +30,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
 
-	private ReadOnlyMapWrapper<Node, Point> positionProperty = new ReadOnlyMapWrapper<Node, Point>(
-			FXCollections.<Node, Point> observableHashMap());
+	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	private VisualChangeListener anchorageVisualChangeListener = new VisualChangeListener() {
 		@Override
@@ -114,12 +114,15 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public Point getPosition(Node anchored) {
-		return positionProperty.get(anchored);
+	public Point getPosition(AnchorKey key) {
+		if (!positionProperty.containsKey(key)) {
+
+		}
+		return positionProperty.get(key);
 	}
 
 	@Override
-	public ReadOnlyMapProperty<Node, Point> positionProperty() {
+	public ReadOnlyMapProperty<AnchorKey, Point> positionProperty() {
 		return positionProperty.getReadOnlyProperty();
 	}
 

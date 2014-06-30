@@ -39,11 +39,11 @@ public interface IFXAnchor {
 	 * @param anchored
 	 * @return position for the given anchored
 	 */
-	Point getPosition(Node anchored);
+	Point getPosition(AnchorKey key);
 
 	/**
 	 * @return property storing positions for anchoreds (map)
 	 */
-	ReadOnlyMapProperty<Node, Point> positionProperty();
+	ReadOnlyMapProperty<AnchorKey, Point> positionProperty();
 
 }

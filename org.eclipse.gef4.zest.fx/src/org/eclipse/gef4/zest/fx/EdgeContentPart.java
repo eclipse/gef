@@ -19,6 +19,8 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
@@ -106,10 +108,13 @@ public class EdgeContentPart extends AbstractFXContentPart {
 				.getContentPartMap().get(edge.getTarget());
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
+		AnchorKey anchorKey = new AnchorKey(visual,
+				anchorage == sourcePart ? "START" : "END");
+		AnchorLink anchorLink = new AnchorLink(anchor, anchorKey);
 		if (anchorage == sourcePart) {
-			visual.getConnection().setStartAnchor(anchor);
+			visual.getConnection().setStartAnchorLink(anchorLink);
 		} else if (anchorage == targetPart) {
-			visual.getConnection().setEndAnchor(anchor);
+			visual.getConnection().setEndAnchorLink(anchorLink);
 		}
 
 		super.attachVisualToAnchorageVisual(anchorage, anchorageVisual);

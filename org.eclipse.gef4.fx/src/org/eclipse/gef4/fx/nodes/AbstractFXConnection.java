@@ -13,72 +13,89 @@
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
+// TODO: extends IGeometry
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		implements IFXConnection {
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
+
+	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
 
-	private IFXAnchor startAnchor = null;
-	private IFXAnchor endAnchor = null;
-	private List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>();
+	// way points
+	protected ReadOnlyListWrapper<Point> wayPointsProperty = new ReadOnlyListWrapper<Point>(
+			FXCollections.<Point> observableArrayList());
 
-	private MapChangeListener<Node, Point> startPosCL = createStartPositionListener();
-	private MapChangeListener<Node, Point> endPosCL = createEndPositionListener();
-	private MapChangeListener<Node, Point> wayPosCL = createWayPositionListener();
+	// anchors
+	protected ReadOnlyObjectWrapper<AnchorLink> startAnchorLinkProperty = new ReadOnlyObjectWrapper<AnchorLink>(
+			null);
+	protected ReadOnlyObjectWrapper<AnchorLink> endAnchorLinkProperty = new ReadOnlyObjectWrapper<AnchorLink>(
+			null);
+
+	protected boolean isEndConnected = false;
+	protected boolean isStartConnected = false;
+
+	// anchor management
+	private ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>> onStartAnchorLinkChangeProperty = new ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>>(
+			null);
+	private ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty = new ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>>(
+			null);
+	private ReadOnlyObjectWrapper<ListChangeListener<? super Point>> onWayPointChangeProperty = new ReadOnlyObjectWrapper<ListChangeListener<? super Point>>(
+			null);
+
+	// refresh geometry on position changes
+	protected MapChangeListener<? super AnchorKey, ? super Point> positionChangeListener = new MapChangeListener<AnchorKey, Point>() {
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+			refreshGeometry();
+		}
+	};
 
 	{
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
+		setStartPoint(new Point());
+		setEndPoint(new Point());
+		wayPointsProperty.addListener(new ListChangeListener<Point>() {
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends Point> c) {
+				refreshGeometry();
+			}
+		});
 	}
 
 	@Override
 	public void addWayPoint(int index, Point wayPoint) {
-		addWayPointAnchor(index, new FXStaticAnchor(this, wayPoint));
-	}
-
-	@Override
-	public void addWayPointAnchor(int index, IFXAnchor wayPointAnchor) {
-		// check index out of range
-		if (index < 0 || index > wayPointAnchors.size()) {
-			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + wayPointAnchors.size() + ").");
-		}
-
-		// to keep it simple, we do not allow null anchors
-		if (wayPointAnchor == null) {
-			throw new IllegalArgumentException(
-					"Way point anchor may not be null.");
-		}
-
-		// add new way point and register position listener
-		wayPointAnchors.add(index, wayPointAnchor);
-		wayPointAnchor.positionProperty().addListener(wayPosCL);
-
-		// refresh connection
-		refreshReferencePoints();
-		refreshGeometry();
+		wayPointsProperty.get().add(index, wayPoint);
 	}
 
 	/**
@@ -92,7 +109,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * @param decoDirection
 	 * @return the transformed end point of the arranged decoration
 	 */
-	private Point arrangeDecoration(IFXDecoration deco, Point start,
+	protected Point arrangeDecoration(IFXDecoration deco, Point start,
 			Vector direction, Point decoStart, Vector decoDirection) {
 		Node visual = deco.getVisual();
 
@@ -115,6 +132,82 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				.getRotatedCW(angleCW).toPoint());
 	}
 
+	protected void arrangeEndDecoration() {
+		if (endDecoration == null) {
+			return;
+		}
+
+		// determine curve end point and curve end direction
+		Point endPoint = getEndPoint();
+		ICurve curve = getCurveNode().getGeometry();
+		if (curve == null) {
+			return;
+		}
+
+		BezierCurve[] beziers = curve.toBezier();
+		if (beziers.length == 0) {
+			return;
+		}
+
+		BezierCurve endDerivative = beziers[beziers.length - 1].getDerivative();
+		Point slope = endDerivative.get(1);
+		if (slope.equals(0, 0)) {
+			/*
+			 * This is the case when beziers[-1] is a degenerated curve where
+			 * the last control point equals the end point. As a work around, we
+			 * evaluate the derivative at t = 0.99.
+			 */
+			slope = endDerivative.get(0.99);
+		}
+		Vector endDirection = new Vector(slope.getNegated());
+
+		// determine decoration start point and decoration direction
+		Point decoStartPoint = endDecoration.getLocalStartPoint();
+		Point decoEndPoint = endDecoration.getLocalEndPoint();
+		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
+
+		arrangeDecoration(endDecoration, endPoint, endDirection,
+				decoStartPoint, decoDirection);
+	}
+
+	protected void arrangeStartDecoration() {
+		if (startDecoration == null) {
+			return;
+		}
+
+		// determine curve start point and curve start direction
+		Point startPoint = getStartPoint();
+		ICurve curve = getCurveNode().getGeometry();
+		if (curve == null) {
+			return;
+		}
+
+		BezierCurve[] beziers = curve.toBezier();
+		if (beziers.length == 0) {
+			return;
+		}
+
+		BezierCurve startDerivative = beziers[0].getDerivative();
+		Point slope = startDerivative.get(0);
+		if (slope.equals(0, 0)) {
+			/*
+			 * This is the case when beziers[0] is a degenerated curve where the
+			 * start point equals the first control point. As a work around, we
+			 * evaluate the derivative at t = 0.01.
+			 */
+			slope = startDerivative.get(0.01);
+		}
+		Vector curveStartDirection = new Vector(slope);
+
+		// determine decoration start point and decoration start direction
+		Point decoStartPoint = startDecoration.getLocalStartPoint();
+		Point decoEndPoint = startDecoration.getLocalEndPoint();
+		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
+
+		arrangeDecoration(startDecoration, startPoint, curveStartDirection,
+				decoStartPoint, decoDirection);
+	}
+
 	public abstract T computeGeometry(Point[] points);
 
 	/**
@@ -133,7 +226,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		Point endReference = start;
 
 		// first uncontained way point is start reference
-		Node startNode = getStartAnchor().getAnchorageNode();
+		Node startNode = startAnchorLinkProperty.get().getAnchor()
+				.getAnchorageNode();
 		if (startNode != null) {
 			for (Point p : getWayPoints()) {
 				Point2D local = startNode.sceneToLocal(localToScene(p.x, p.y));
@@ -145,7 +239,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 
 		// last uncontained way point is end reference
-		Node endNode = getEndAnchor().getAnchorageNode();
+		Node endNode = endAnchorLinkProperty.get().getAnchor()
+				.getAnchorageNode();
 		if (endNode != null) {
 			for (Point p : getWayPoints()) {
 				Point2D local = endNode.sceneToLocal(localToScene(p.x, p.y));
@@ -158,83 +253,9 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return new Point[] { startReference, endReference };
 	}
 
-	private MapChangeListener<Node, Point> createEndPositionListener() {
-		return new MapChangeListener<Node, Point>() {
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
-				Node anchored = change.getKey();
-				if (anchored == AbstractFXConnection.this) {
-					Point[] referencePoints = computeReferencePoints();
-					updateStartReferencePoint(referencePoints[0]);
-					refreshGeometry();
-				}
-			}
-		};
-	}
-
-	private MapChangeListener<Node, Point> createStartPositionListener() {
-		return new MapChangeListener<Node, Point>() {
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
-				Node anchored = change.getKey();
-				if (anchored == AbstractFXConnection.this) {
-					Point[] referencePoints = computeReferencePoints();
-					updateEndReferencePoint(referencePoints[1]);
-					refreshGeometry();
-				}
-			}
-		};
-	}
-
-	private MapChangeListener<Node, Point> createWayPositionListener() {
-		return new MapChangeListener<Node, Point>() {
-			@Override
-			public void onChanged(
-					javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
-				Node anchored = change.getKey();
-				if (anchored == AbstractFXConnection.this) {
-					refreshReferencePoints();
-					refreshGeometry();
-				}
-			}
-		};
-	}
-
-	/**
-	 * Returns the end point for computing this connection's curve visual.
-	 * 
-	 * @return the end point for computing this connection's curve visual
-	 */
-	private Point getCurveEndPoint() {
-		if (endDecoration == null) {
-			return getEndPoint();
-		}
-
-		// determine curve end point and curve end direction
-		Point endPoint = getEndPoint();
-		ICurve curve = getCurveNode().getGeometry();
-		BezierCurve[] beziers = curve.toBezier();
-		BezierCurve endDerivative = beziers[beziers.length - 1].getDerivative();
-		Point slope = endDerivative.get(1);
-		if (slope.equals(0, 0)) {
-			/*
-			 * This is the case when beziers[-1] is a degenerated curve where
-			 * the last control point equals the end point. As a work around, we
-			 * evaluate the derivative at t = 0.99.
-			 */
-			slope = endDerivative.get(0.99);
-		}
-		Vector endDirection = new Vector(slope.getNegated());
-
-		// determine decoration start point and decoration direction
-		Point decoStartPoint = endDecoration.getLocalStartPoint();
-		Point decoEndPoint = endDecoration.getLocalEndPoint();
-		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
-
-		return arrangeDecoration(endDecoration, endPoint, endDirection,
-				decoStartPoint, decoDirection);
+	@Override
+	public ReadOnlyObjectProperty<AnchorLink> endAnchorLinkProperty() {
+		return endAnchorLinkProperty.getReadOnlyProperty();
 	}
 
 	@Override
@@ -263,46 +284,16 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
-		/*
-		 * FIXME: Actually, the functionality of getCurvePoints() should really
-		 * be that of getCurvePointsSimple() and the position and orientation of
-		 * the decorations should be computed afterwards (currently inside of
-		 * getCurveStartPoint() and getCurveEndPoint()).
-		 */
-		curveNode.setGeometry(computeGeometry(getCurvePointsSimple()));
-
-		Point[] points = new Point[wayPointAnchors.size() + 2];
-
-		points[0] = getCurveStartPoint();
-		if (points[0] == null) {
-			return new Point[] {};
-		}
-
-		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			points[1 + i] = wayPointAnchors.get(i).getPosition(this);
-			if (points[i + 1] == null) {
-				return new Point[] {};
-			}
-		}
-
-		points[points.length - 1] = getCurveEndPoint();
-		if (points[points.length - 1] == null) {
-			return new Point[] {};
-		}
-
-		return points;
-	}
-
-	private Point[] getCurvePointsSimple() {
-		Point[] points = new Point[wayPointAnchors.size() + 2];
+		int wayPointCount = wayPointsProperty.get().size();
+		Point[] points = new Point[wayPointCount + 2];
 
 		points[0] = getStartPoint();
 		if (points[0] == null) {
 			return new Point[] {};
 		}
 
-		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			points[1 + i] = wayPointAnchors.get(i).getPosition(this);
+		for (int i = 0; i < wayPointCount; i++) {
+			points[i + 1] = wayPointsProperty.get().get(i);
 			if (points[i + 1] == null) {
 				return new Point[] {};
 			}
@@ -316,58 +307,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return points;
 	}
 
-	/**
-	 * Returns the start point for computing this connection's curve visual.
-	 * 
-	 * @return the start point for computing this connection's curve visual
-	 */
-	private Point getCurveStartPoint() {
-		if (startDecoration == null) {
-			return getStartPoint();
-		}
-
-		// determine curve start point and curve start direction
-		Point startPoint = getStartPoint();
-		ICurve curve = getCurveNode().getGeometry();
-
-		/*
-		 * TODO: In order to compute the curve node, we have to determine the
-		 * curve's points. But in order to determine the curve's points, we need
-		 * the computed curve here (because of the decoration).
-		 */
-		if (curve == null) {
-			return getStartPoint();
-		}
-
-		BezierCurve startDerivative = curve.toBezier()[0].getDerivative();
-		Point slope = startDerivative.get(0);
-		if (slope.equals(0, 0)) {
-			/*
-			 * This is the case when beziers[0] is a degenerated curve where the
-			 * start point equals the first control point. As a work around, we
-			 * evaluate the derivative at t = 0.01.
-			 */
-			slope = startDerivative.get(0.01);
-		}
-		Vector curveStartDirection = new Vector(slope);
-
-		// determine decoration start point and decoration start direction
-		Point decoStartPoint = startDecoration.getLocalStartPoint();
-		Point decoEndPoint = startDecoration.getLocalEndPoint();
-		Vector decoDirection = new Vector(decoStartPoint, decoEndPoint);
-
-		return arrangeDecoration(startDecoration, startPoint,
-				curveStartDirection, decoStartPoint, decoDirection);
-	}
-
-	@Override
-	public IFXAnchor getEndAnchor() {
-		if (endAnchor == null) {
-			endAnchor = new FXStaticAnchor(this, new Point());
-		}
-		return endAnchor;
-	}
-
 	@Override
 	public IFXDecoration getEndDecoration() {
 		return endDecoration;
@@ -375,7 +314,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public Point getEndPoint() {
-		return getEndAnchor().getPosition(this);
+		AnchorLink link = endAnchorLinkProperty.get();
+		return link == null ? null : link.getPosition();
 	}
 
 	@Override
@@ -394,40 +334,54 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public IFXAnchor getStartAnchor() {
-		if (startAnchor == null) {
-			startAnchor = new FXStaticAnchor(this, new Point());
-		}
-		return startAnchor;
-	}
-
-	@Override
 	public IFXDecoration getStartDecoration() {
 		return startDecoration;
 	}
 
 	@Override
 	public Point getStartPoint() {
-		return getStartAnchor().getPosition(this);
+		AnchorLink link = startAnchorLinkProperty.get();
+		return link == null ? null : link.getPosition();
 	}
 
 	@Override
 	public Point getWayPoint(int index) {
-		return wayPointAnchors.get(index).getPosition(this);
-	}
-
-	@Override
-	public List<IFXAnchor> getWayPointAnchors() {
-		return Collections.unmodifiableList(wayPointAnchors);
+		return wayPointsProperty.get().get(index);
 	}
 
 	@Override
 	public List<Point> getWayPoints() {
-		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
-		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			wayPoints.add(wayPointAnchors.get(i).getPosition(this));
+		int wayPointsCount = wayPointsProperty.get().size();
+		List<Point> wayPoints = new ArrayList<Point>(wayPointsCount);
+		for (int i = 0; i < wayPointsCount; i++) {
+			wayPoints.add(wayPointsProperty.get().get(i));
 		}
 		return wayPoints;
+	}
+
+	@Override
+	public boolean isEndConnected() {
+		return isEndConnected;
+	}
+
+	@Override
+	public boolean isStartConnected() {
+		return isStartConnected;
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty() {
+		return onEndAnchorLinkChangeProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onStartAnchorLinkChangeProperty() {
+		return onStartAnchorLinkChangeProperty.getReadOnlyProperty();
+	}
+
+	@Override
+	public ReadOnlyObjectProperty<ListChangeListener<? super Point>> onWayPointChangeProperty() {
+		return onWayPointChangeProperty.getReadOnlyProperty();
 	}
 
 	protected void refreshGeometry() {
@@ -441,67 +395,57 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		getChildren().add(curveNode);
 		if (startDecoration != null) {
 			getChildren().add(startDecoration.getVisual());
+			arrangeStartDecoration();
 		}
 		if (endDecoration != null) {
 			getChildren().add(endDecoration.getVisual());
+			arrangeEndDecoration();
 		}
-
-		// FIXME: #432035 rotation of decorations is slightly off right now
-	}
-
-	/**
-	 * Updates the start and end anchor reference points after computing them
-	 * using {@link #computeReferencePoints()}.
-	 */
-	protected void refreshReferencePoints() {
-		Point[] referencePoints = computeReferencePoints();
-		updateStartReferencePoint(referencePoints[0]);
-		updateEndReferencePoint(referencePoints[1]);
 	}
 
 	@Override
 	public void removeAllWayPoints() {
-		for (int i = wayPointAnchors.size() - 1; i >= 0; i--) {
-			removeWayPoint(i);
-		}
+		wayPointsProperty.get().clear();
 	}
 
 	@Override
 	public void removeWayPoint(int index) {
 		// check index out of range
-		if (index < 0 || index >= wayPointAnchors.size()) {
+		if (index < 0 || index >= wayPointsProperty.get().size()) {
 			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + wayPointAnchors.size() + ").");
+					+ index + ", size: " + wayPointsProperty.get().size()
+					+ ").");
 		}
-
-		// remove anchor and listener
-		IFXAnchor anchor = wayPointAnchors.get(index);
-		anchor.positionProperty().removeListener(wayPosCL);
-		wayPointAnchors.remove(index);
-
-		// refresh connection
-		refreshReferencePoints();
-		refreshGeometry();
+		wayPointsProperty.get().remove(index);
 	}
 
 	@Override
-	public void setEndAnchor(IFXAnchor endAnchor) {
-		// to keep it simple, we do not allow null anchors
-		if (endAnchor == null) {
-			throw new IllegalArgumentException("End anchor may not be null.");
+	public void setEndAnchorLink(AnchorLink endAnchorLink) {
+		if (endAnchorLink == null) {
+			throw new IllegalArgumentException(
+					"The given AnchorLink may not be <null>.");
 		}
 
-		// unregister old listener if we had an end anchor assigned previously
-		if (this.endAnchor != null) {
-			this.endAnchor.positionProperty().removeListener(endPosCL);
+		// unregister change listener on old link
+		AnchorLink oldLink = endAnchorLinkProperty.get();
+		ChangeListener<? super AnchorLink> listener = onEndAnchorLinkChangeProperty
+				.get();
+		if (oldLink != null) {
+			endAnchorLinkProperty.get().getAnchor().positionProperty()
+					.removeListener(positionChangeListener);
+			if (listener != null) {
+				endAnchorLinkProperty.removeListener(listener);
+			}
 		}
 
-		// assign new end anchor and register listener
-		this.endAnchor = endAnchor;
-		endAnchor.positionProperty().addListener(endPosCL);
-
-		// refresh connection
-		refreshReferencePoints();
+		// set new link and register change listener
+		if (listener != null) {
+			endAnchorLinkProperty.addListener(listener);
+		}
+		endAnchorLinkProperty.set(endAnchorLink);
+		isEndConnected = !(endAnchorLink.getAnchor() instanceof FXStaticAnchor);
+		endAnchorLinkProperty.get().getAnchor().positionProperty()
+				.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
@@ -512,28 +456,87 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public void setEndPoint(Point endPoint) {
-		setEndAnchor(new FXStaticAnchor(this, endPoint));
+	public void setEndPoint(Point p) {
+		AnchorKey key = new AnchorKey(this, "END");
+		FXStaticAnchor anchor = new FXStaticAnchor(null, key, p);
+		setEndAnchorLink(new AnchorLink(anchor, key));
 	}
 
 	@Override
-	public void setStartAnchor(IFXAnchor startAnchor) {
-		// to keep it simple, we do not allow null anchors
-		if (startAnchor == null) {
-			throw new IllegalArgumentException("Start anchor may not be null.");
+	public void setOnEndAnchorLinkChange(
+			ChangeListener<? super AnchorLink> onEndAnchorLinkChange) {
+		// unregister old listener
+		ChangeListener<? super AnchorLink> oldListener = onEndAnchorLinkChangeProperty
+				.get();
+		if (oldListener != null) {
+			endAnchorLinkProperty.removeListener(oldListener);
+		}
+		// set property
+		onEndAnchorLinkChangeProperty.set(onEndAnchorLinkChange);
+		// register new listener
+		if (onEndAnchorLinkChange != null) {
+			endAnchorLinkProperty.addListener(onEndAnchorLinkChange);
+		}
+	}
+
+	@Override
+	public void setOnStartAnchorLinkChange(
+			ChangeListener<? super AnchorLink> onStartAnchorLinkChange) {
+		// unregister old listener
+		ChangeListener<? super AnchorLink> oldListener = onStartAnchorLinkChangeProperty
+				.get();
+		if (oldListener != null) {
+			startAnchorLinkProperty.removeListener(oldListener);
+		}
+		// set property
+		onStartAnchorLinkChangeProperty.set(onStartAnchorLinkChange);
+		// register new listener
+		if (onStartAnchorLinkChange != null) {
+			startAnchorLinkProperty.addListener(onStartAnchorLinkChange);
+		}
+	}
+
+	@Override
+	public void setOnWayPointChange(
+			ListChangeListener<? super Point> onWayPointChange) {
+		ListChangeListener<? super Point> oldListener = onWayPointChangeProperty
+				.get();
+		if (oldListener != null) {
+			wayPointsProperty.removeListener(oldListener);
+		}
+		onWayPointChangeProperty.set(onWayPointChange);
+		if (onWayPointChange != null) {
+			wayPointsProperty.addListener(onWayPointChange);
+		}
+	}
+
+	@Override
+	public void setStartAnchorLink(AnchorLink startAnchorLink) {
+		if (startAnchorLink == null) {
+			throw new IllegalArgumentException(
+					"The given AnchorLink may not be <null>.");
 		}
 
-		// unregister listener if we already had a start anchor assigned
-		if (this.startAnchor != null) {
-			this.startAnchor.positionProperty().removeListener(startPosCL);
+		// unregister change listener on old link
+		AnchorLink oldLink = startAnchorLinkProperty.get();
+		ChangeListener<? super AnchorLink> listener = onStartAnchorLinkChangeProperty
+				.get();
+		if (oldLink != null) {
+			startAnchorLinkProperty.get().getAnchor().positionProperty()
+					.removeListener(positionChangeListener);
+			if (listener != null) {
+				startAnchorLinkProperty.removeListener(listener);
+			}
 		}
 
-		// assign new start anchor and register listener
-		this.startAnchor = startAnchor;
-		startAnchor.positionProperty().addListener(startPosCL);
-
-		// refresh connection
-		refreshReferencePoints();
+		// set new link and register change listener
+		if (listener != null) {
+			startAnchorLinkProperty.addListener(listener);
+		}
+		startAnchorLinkProperty.set(startAnchorLink);
+		isStartConnected = !(startAnchorLink.getAnchor() instanceof FXStaticAnchor);
+		startAnchorLinkProperty.get().getAnchor().positionProperty()
+				.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
@@ -544,77 +547,33 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public void setStartPoint(Point startPoint) {
-		setStartAnchor(new FXStaticAnchor(this, startPoint));
+	public void setStartPoint(Point p) {
+		AnchorKey key = new AnchorKey(this, "START");
+		FXStaticAnchor anchor = new FXStaticAnchor(null, key, p);
+		setStartAnchorLink(new AnchorLink(anchor, key));
 	}
 
 	@Override
 	public void setWayPoint(int index, Point wayPoint) {
-		setWayPointAnchor(index, new FXStaticAnchor(this, wayPoint));
-	}
-
-	@Override
-	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor) {
-		// check index out of range
-		if (index < 0 || index >= wayPointAnchors.size()) {
-			throw new IllegalArgumentException(
-					"The specified way point anchor does not exist. (index: "
-							+ index + ", size: " + wayPointAnchors.size() + ")");
-		}
-
-		// to keep it simple, we do not allow null anchors
-		if (wayPointAnchor == null) {
-			throw new IllegalArgumentException(
-					"Way point anchor may not be null.");
-		}
-
-		// unregister listener from previous anchor
-		wayPointAnchors.get(index).positionProperty().removeListener(wayPosCL);
-
-		// assign new anchor and register listener
-		wayPointAnchors.set(index, wayPointAnchor);
-		wayPointAnchor.positionProperty().addListener(wayPosCL);
-
-		// refresh connection
-		refreshReferencePoints();
-		refreshGeometry();
+		wayPointsProperty.get().set(index, wayPoint);
 	}
 
 	@Override
 	public void setWayPoints(List<Point> wayPoints) {
 		removeAllWayPoints();
 		for (Point wp : wayPoints) {
-			addWayPoint(wayPointAnchors.size(), wp);
+			addWayPoint(this.wayPointsProperty.get().size(), wp);
 		}
 	}
 
-	private void updateEndReferencePoint(Point ref) {
-		if (getEndAnchor() instanceof FXChopBoxAnchor) {
-			if (ref != null) {
-				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getEndAnchor();
-				Point referencePoint = anchor.getReferencePoint(this);
-				if (!ref.equals(referencePoint)) {
-					// System.out.println("update end ref from <" +
-					// referencePoint
-					// + "> to <" + ref + ">.");
-					anchor.setReferencePoint(this, ref);
-				}
-			}
-		}
+	@Override
+	public ReadOnlyObjectProperty<AnchorLink> startAnchorLinkProperty() {
+		return startAnchorLinkProperty.getReadOnlyProperty();
 	}
 
-	private void updateStartReferencePoint(Point ref) {
-		if (getStartAnchor() instanceof FXChopBoxAnchor) {
-			if (ref != null) {
-				FXChopBoxAnchor anchor = (FXChopBoxAnchor) getStartAnchor();
-				Point referencePoint = anchor.getReferencePoint(this);
-				if (!ref.equals(referencePoint)) {
-					// System.out.println("update start ref from <"
-					// + referencePoint + "> to <" + ref + ">.");
-					anchor.setReferencePoint(this, ref);
-				}
-			}
-		}
+	@Override
+	public ReadOnlyListProperty<Point> wayPointsProperty() {
+		return wayPointsProperty.getReadOnlyProperty();
 	}
 
 }

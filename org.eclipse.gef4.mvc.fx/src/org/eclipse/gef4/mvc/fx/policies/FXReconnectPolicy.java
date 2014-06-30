@@ -18,6 +18,8 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
@@ -31,15 +33,21 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 //TODO: find a better name
 public class FXReconnectPolicy extends AbstractPolicy<Node> implements
-ITransactional {
+		ITransactional {
 
 	private boolean isStartAnchor;
+	private AnchorKey key;
+
 	private Point2D startPointScene;
 	private Point2D startPointLocal;
+
 	private IFXConnection connection;
-	private IFXAnchor initialAnchor;
-	private IFXAnchor currentAnchor;
+	private AnchorLink initialAnchorLink;
+	private AnchorLink currentAnchorLink;
 	private FXReconnectEndPointOperation op;
+
+	public FXReconnectPolicy() {
+	}
 
 	@Override
 	public IUndoableOperation commit() {
@@ -52,14 +60,17 @@ ITransactional {
 		Point position = transformToLocal(pointInScene);
 		AbstractFXContentPart anchorPart = getAnchorPart(partsUnderMouse);
 
+		IFXAnchor anchor;
 		if (anchorPart != null) {
-			currentAnchor = anchorPart.getAnchor(getHost());
+			anchor = anchorPart.getAnchor(getHost());
 		} else {
-			currentAnchor = new FXStaticAnchor(getHost().getVisual(), position);
+			anchor = new FXStaticAnchor(key, position);
 		}
-		op = new FXReconnectEndPointOperation("Reconnect", connection, initialAnchor,
-				currentAnchor, isStartAnchor ? AnchorKind.START
-						: AnchorKind.END);
+		currentAnchorLink = new AnchorLink(anchor, key);
+
+		op = new FXReconnectEndPointOperation("Reconnect", connection,
+				initialAnchorLink, currentAnchorLink,
+				isStartAnchor ? AnchorKind.START : AnchorKind.END);
 
 		// execute locally
 		try {
@@ -95,15 +106,19 @@ ITransactional {
 		startPointScene = new Point2D(startPointInScene.x, startPointInScene.y);
 		startPointLocal = getHost().getVisual().sceneToLocal(startPointScene);
 		connection = getConnection();
+
 		if (isStartAnchor) {
-			initialAnchor = connection.getStartAnchor();
+			initialAnchorLink = connection.startAnchorLinkProperty().get();
 		} else {
-			initialAnchor = connection.getEndAnchor();
+			initialAnchorLink = connection.endAnchorLinkProperty().get();
 		}
-		currentAnchor = initialAnchor;
-		op = new FXReconnectEndPointOperation("Reconnect", connection, initialAnchor,
-				currentAnchor, isStartAnchor ? AnchorKind.START
-						: AnchorKind.END);
+		key = initialAnchorLink.getKey();
+		currentAnchorLink = initialAnchorLink;
+
+		// initialize with "identity" operation
+		op = new FXReconnectEndPointOperation("Reconnect", connection,
+				initialAnchorLink, currentAnchorLink,
+				isStartAnchor ? AnchorKind.START : AnchorKind.END);
 	}
 
 	protected Point transformToLocal(Point p) {

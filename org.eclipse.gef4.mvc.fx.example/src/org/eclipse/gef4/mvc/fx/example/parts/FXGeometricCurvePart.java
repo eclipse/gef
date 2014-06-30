@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
@@ -332,9 +334,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				getContent());
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (isStart) {
-			visual.setStartAnchor(anchor);
+			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(visual, "START")));
 		} else {
-			visual.setEndAnchor(anchor);
+			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(visual, "END")));
 		}
 	}
 
@@ -342,17 +344,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
 			Node anchorageVisual) {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (anchor == visual.getStartAnchor()) {
+		if (anchor == visual.startAnchorLinkProperty().get().getAnchor()) {
 			visual.setStartPoint(visual.getStartPoint());
-		} else if (anchor == visual.getEndAnchor()) {
+		} else if (anchor == visual.endAnchorLinkProperty().get().getAnchor()) {
 			visual.setEndPoint(visual.getEndPoint());
 		} else {
-			for (int i = 0; i < visual.getWayPointAnchors().size(); i++) {
-				if (anchor == visual.getWayPointAnchors().get(i)) {
-					visual.setWayPoint(i, visual.getWayPoint(i));
-					return;
-				}
-			}
 			throw new IllegalStateException(
 					"Cannot detach from unknown anchor: " + anchor);
 		}

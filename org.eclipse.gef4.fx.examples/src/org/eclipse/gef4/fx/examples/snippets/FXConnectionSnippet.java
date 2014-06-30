@@ -16,8 +16,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
@@ -63,11 +68,14 @@ public class FXConnectionSnippet extends FXApplication {
 			}
 		});
 		connection.setLabel("FXLabeledConnection");
+		
 		FXCurveConnection c = connection.getConnection();
 		c.setStartDecoration(new ArrowHead());
 		c.setEndDecoration(new ArrowHead());
+		
 		c.setStartPoint(new Point(100, 100));
 		c.setEndPoint(new Point(300, 300));
+		
 		c.addWayPoint(0, new Point(300, 100));
 		
 		Pane root = new Pane();

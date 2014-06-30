@@ -28,27 +28,23 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
-	private SimpleMapProperty<Node, Point> referencePointProperty = new SimpleMapProperty<Node, Point>(
-			FXCollections.<Node, Point> observableHashMap());
+	private SimpleMapProperty<AnchorKey, Point> referencePointProperty = new SimpleMapProperty<AnchorKey, Point>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 
-	private MapChangeListener<Node, Point> referencePointChangeListener = new MapChangeListener<Node, Point>() {
+	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends Node, ? extends Point> change) {
+				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 			if (change.wasAdded()) {
+				if (change.getKey() == null) {
+					throw new IllegalStateException(
+							"Attempt to put <null> key into reference point map!");
+				}
+				if (change.getValueAdded() == null) {
+					throw new IllegalStateException(
+							"Attempt to put <null> value into reference point map!");
+				}
 				recomputePosition(change.getKey(), change.getValueAdded());
-			}
-
-			// TODO: remove invariants check later
-			// check invariants
-			for (Node anchored : referencePointProperty().get().keySet()) {
-				if (anchored == null) {
-					throw new IllegalStateException();
-				}
-				Point referencePoint = referencePointProperty().get(anchored);
-				if (referencePoint == null) {
-					throw new IllegalStateException();
-				}
 			}
 		}
 	};
@@ -111,14 +107,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		Point point = JavaFX2Geometry.toPoint(anchored
 				.sceneToLocal(Geometry2JavaFX
 						.toFXPoint(anchorageReferencePointInScene)));
-		if (point != null && point.x == Double.NaN) {
-			System.out.println("NaN");
-		}
 		return point;
-
-		// TODO: investigate where the wrong reference point is set
-		// throw new IllegalArgumentException("Invalid reference point "
-		// + referencePoint);
 	}
 
 	/**
@@ -135,7 +124,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * a {@link Rectangle} matching the layout-bounds of the anchorage
 	 * {@link Node} is returned. Clients may override this method to use other
 	 * geometric shapes instead.
-	 *
+	 * 
 	 * @return The anchorage reference {@link IShape} within the local
 	 *         coordinate system of the anchorage {@link Node}
 	 */
@@ -148,8 +137,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @param anchored
 	 * @return reference point for the given anchored
 	 */
-	public Point getReferencePoint(Node anchored) {
-		return referencePointProperty.get(anchored);
+	public Point getReferencePoint(AnchorKey key) {
+		return referencePointProperty.get(key);
 	}
 
 	private boolean isValidTransform(AffineTransform t) {
@@ -166,26 +155,26 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * {@link Node} and reference {@link Point}. The
 	 * {@link #computePosition(Node, Point)} method is used to determine the new
 	 * position, which in turn is put into the {@link #positionProperty()}.
-	 *
+	 * 
 	 * @param anchored
 	 * @param referencePoint
 	 */
-	protected void recomputePosition(Node anchored, Point referencePoint) {
-		positionProperty().put(anchored,
-				computePosition(anchored, referencePoint));
+	protected void recomputePosition(AnchorKey key, Point referencePoint) {
+		positionProperty().put(key,
+				computePosition(key.getAnchored(), referencePoint));
 	}
 
 	@Override
 	public void recomputePositions() {
-		ObservableMap<Node, Point> ref = referencePointProperty == null ? null
+		ObservableMap<AnchorKey, Point> ref = referencePointProperty == null ? null
 				: referencePointProperty.get();
 		if (ref == null) {
 			return;
 		}
-		for (Node anchored : ref.keySet()) {
-			Point referencePoint = referencePointProperty().get(anchored);
+		for (AnchorKey link : ref.keySet()) {
+			Point referencePoint = referencePointProperty().get(link);
 			if (referencePoint != null) {
-				recomputePosition(anchored, referencePoint);
+				recomputePosition(link, referencePoint);
 			}
 		}
 	}
@@ -193,19 +182,19 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	/**
 	 * @return property storing reference points for anchoreds (map)
 	 */
-	public MapProperty<Node, Point> referencePointProperty() {
+	public MapProperty<AnchorKey, Point> referencePointProperty() {
 		return referencePointProperty;
 	}
 
 	/**
 	 * Assigns the given reference point to the given anchored in the reference
 	 * point map.
-	 *
+	 * 
 	 * @param anchored
 	 * @param referencePoint
 	 */
-	public void setReferencePoint(Node anchored, Point referencePoint) {
-		referencePointProperty.put(anchored, referencePoint);
+	public void setReferencePoint(AnchorKey key, Point referencePoint) {
+		referencePointProperty.put(key, referencePoint);
 	}
 
 }

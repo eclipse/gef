@@ -15,20 +15,26 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.geometry.planar.Point;
 
+/**
+ * A {@link FXStaticAnchor} provides a static position per anchor link.
+ * 
+ * @author mwienand
+ * 
+ */
 public class FXStaticAnchor extends AbstractFXAnchor {
 
-	public FXStaticAnchor(Node anchorage) {
-		super(anchorage);
+	public FXStaticAnchor(AnchorKey key, Point position) {
+		this(null, key, position);
 	}
 
-	public FXStaticAnchor(Node anchored, Point position) {
-		this(null);
-		positionProperty().put(anchored, position);
+	public FXStaticAnchor(Node anchorage, AnchorKey key, Point position) {
+		super(anchorage);
+		positionProperty().put(key, position);
 	}
 
 	@Override
 	protected void recomputePositions() {
-		// static position => nothing to compute
+		// nothing to compute (*static* anchor)
 	}
 
 }

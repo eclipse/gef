@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 
 public class FXReconnectEndPointOperation extends AbstractOperation {
@@ -27,16 +27,16 @@ public class FXReconnectEndPointOperation extends AbstractOperation {
 	}
 
 	private final IFXConnection connection;
-	private final IFXAnchor oldAnchor;
-	private final IFXAnchor newAnchor;
+	private final AnchorLink oldAnchorLink;
+	private final AnchorLink newAnchorLink;
 	private final AnchorKind anchorKind;
 
 	public FXReconnectEndPointOperation(String label, IFXConnection connection,
-			IFXAnchor oldAnchor, IFXAnchor newAnchor, AnchorKind anchorKind) {
+			AnchorLink oldAnchor, AnchorLink newAnchor, AnchorKind anchorKind) {
 		super(label);
 		this.connection = connection;
-		this.oldAnchor = oldAnchor;
-		this.newAnchor = newAnchor;
+		this.oldAnchorLink = oldAnchor;
+		this.newAnchorLink = newAnchor;
 		this.anchorKind = anchorKind;
 	}
 
@@ -45,10 +45,10 @@ public class FXReconnectEndPointOperation extends AbstractOperation {
 			throws ExecutionException {
 		switch (anchorKind) {
 		case START:
-			connection.setStartAnchor(newAnchor);
+			connection.setStartAnchorLink(newAnchorLink);
 			break;
 		case END:
-			connection.setEndAnchor(newAnchor);
+			connection.setEndAnchorLink(newAnchorLink);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported AnchorKind");
@@ -67,10 +67,10 @@ public class FXReconnectEndPointOperation extends AbstractOperation {
 			throws ExecutionException {
 		switch (anchorKind) {
 		case START:
-			connection.setStartAnchor(oldAnchor);
+			connection.setStartAnchorLink(oldAnchorLink);
 			break;
 		case END:
-			connection.setEndAnchor(oldAnchor);
+			connection.setEndAnchorLink(oldAnchorLink);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported AnchorKind");

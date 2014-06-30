@@ -22,8 +22,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -39,12 +37,12 @@ import com.google.inject.Provider;
  * The segmentIndex identifies that segment (0, 1, 2, ...). The segmentParameter
  * specifies the position of this handle part on the segment (0 = start, 0.5 =
  * mid, 1 = end).
- *
+ * 
  * These parts are used for selection feedback per default.
- *
+ * 
  * @author mwienand
  * @author anyssen
- *
+ * 
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		Comparable<FXSegmentHandlePart> {
@@ -94,7 +92,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * the given handle geometry. Per default, rectangular handles are created
 	 * if the handle geometry is a {@link Rectangle}. Otherwise, round handles
 	 * are created.
-	 *
+	 * 
 	 * @param handleGeometry
 	 * @return {@link Shape} representing the handle visually
 	 */
@@ -148,21 +146,25 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			visual.setLayoutY(point2d.getY());
 
 			// update color
-			if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
+			if (segmentParameter != 0.0 && segmentParameter != 1.0) {
 				visual.setFill(Color.WHITE);
 			} else {
 				// determine connected state for end point handles
 				boolean connected = false;
-				if ((segmentIndex == 0 || segmentParameter == 1.0)
-						&& targetPart.getVisual() instanceof IFXConnection) {
+				if (targetPart.getVisual() instanceof IFXConnection) {
 					IFXConnection connection = (IFXConnection) targetPart
 							.getVisual();
-
-					// TODO: move to IFXConnection#isStartConnected()
-					// TODO: IFXConnection#isEndConnected()
-					IFXAnchor anchor = segmentParameter == 1.0 ? connection
-							.getEndAnchor() : connection.getStartAnchor();
-					connected = !(anchor instanceof FXStaticAnchor);
+					if (segmentIndex == 0 && segmentParameter == 0.0) {
+						connected = connection.isStartConnected();
+					} else if (segmentParameter == 1.0) {
+						IGeometry geom = handleGeometryProvider.get();
+						if (geom instanceof ICurve) {
+							BezierCurve[] beziers = ((ICurve) geom).toBezier();
+							if (beziers.length - 1 == segmentIndex) {
+								connected = connection.isEndConnected();
+							}
+						}
+					}
 				}
 				if (connected) {
 					visual.setFill(FILL_CONNECTED);
@@ -205,16 +207,16 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * The segmentIndex specifies the segment of the IGeometry provided by the
 	 * handle geometry provider on which this selection handle part is
 	 * positioned.
-	 *
+	 * 
 	 * For a shape geometry, segments are determined by the
 	 * {@link IShape#getOutlineSegments()} method.
-	 *
+	 * 
 	 * For a curve geometry, segments are determined by the
 	 * {@link ICurve#toBezier()} method.
-	 *
+	 * 
 	 * The exact position on the segment is specified by the
 	 * {@link #getSegmentParameter() segmentParameter}.
-	 *
+	 * 
 	 * @return segmentIndex
 	 */
 	public int getSegmentIndex() {
@@ -224,7 +226,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	/**
 	 * The segmentParameter is a value between 0 and 1. It determines the final
 	 * point on the segment which this selection handle part belongs to.
-	 *
+	 * 
 	 * @return segmentParameter
 	 */
 	public double getSegmentParameter() {
@@ -238,7 +240,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment index. Refreshs the handle visual.
-	 *
+	 * 
 	 * @param segmentIndex
 	 * @see #getSegmentIndex()
 	 */
@@ -252,7 +254,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment parameter. Refreshs the handle visual.
-	 *
+	 * 
 	 * @param segmentParameter
 	 * @see #getSegmentParameter()
 	 */
