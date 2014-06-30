@@ -58,7 +58,7 @@ public class TreeLayoutObserver {
 		protected int numOfLeaves = 0;
 		protected int numOfDescendants = 0;
 		protected int order = 0;
-		protected final List children = new ArrayList();
+		protected final List<TreeNode> children = new ArrayList<TreeNode>();
 		protected TreeNode parent;
 		protected boolean firstChild = false, lastChild = false;
 
@@ -135,7 +135,7 @@ public class TreeLayoutObserver {
 		 * 
 		 * @return an unmodifiable list of this node's children
 		 */
-		public List getChildren() {
+		public List<TreeNode> getChildren() {
 			return Collections.unmodifiableList(children);
 		}
 
@@ -206,9 +206,9 @@ public class TreeLayoutObserver {
 				height = 0;
 				numOfLeaves = 0;
 				numOfDescendants = 0;
-				for (ListIterator iterator = children.listIterator(); iterator
+				for (ListIterator<TreeNode> iterator = children.listIterator(); iterator
 						.hasNext();) {
-					TreeNode child = (TreeNode) iterator.next();
+					TreeNode child = iterator.next();
 					child.depth = this.depth + 1;
 					child.order = this.order + this.numOfLeaves;
 					child.precomputeTree();
@@ -232,7 +232,7 @@ public class TreeLayoutObserver {
 			NodeLayout[] predecessingNodes = node.getPredecessingNodes();
 			parent = null;
 			for (int i = 0; i < predecessingNodes.length; i++) {
-				TreeNode potentialParent = (TreeNode) owner.layoutToTree
+				TreeNode potentialParent = owner.layoutToTree
 						.get(predecessingNodes[i]);
 				if (!children.contains(potentialParent)
 						&& isBetterParent(potentialParent))
@@ -339,12 +339,12 @@ public class TreeLayoutObserver {
 	private GraphStructureListener structureListener = new GraphStructureListener() {
 
 		public boolean nodeRemoved(LayoutContext context, NodeLayout node) {
-			TreeNode treeNode = (TreeNode) layoutToTree.get(node);
+			TreeNode treeNode = layoutToTree.get(node);
 			treeNode.parent.children.remove(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator iterator = treeListeners.iterator(); iterator
+			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
 					.hasNext();) {
-				TreeListener listener = (TreeListener) iterator.next();
+				TreeListener listener = iterator.next();
 				listener.nodeRemoved(treeNode);
 			}
 			return false;
@@ -354,9 +354,9 @@ public class TreeLayoutObserver {
 			TreeNode treeNode = getTreeNode(node);
 			superRoot.addChild(treeNode);
 			superRoot.precomputeTree();
-			for (Iterator iterator = treeListeners.iterator(); iterator
+			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
 					.hasNext();) {
-				TreeListener listener = (TreeListener) iterator.next();
+				TreeListener listener = iterator.next();
 				listener.nodeAdded(treeNode);
 			}
 			return false;
@@ -364,9 +364,9 @@ public class TreeLayoutObserver {
 
 		public boolean connectionRemoved(LayoutContext context,
 				ConnectionLayout connection) {
-			TreeNode node1 = (TreeNode) layoutToTree
+			TreeNode node1 = layoutToTree
 					.get(connection.getSource());
-			TreeNode node2 = (TreeNode) layoutToTree
+			TreeNode node2 = layoutToTree
 					.get(connection.getTarget());
 			if (node1.parent == node2) {
 				node1.findNewParent();
@@ -387,9 +387,9 @@ public class TreeLayoutObserver {
 
 		public boolean connectionAdded(LayoutContext context,
 				ConnectionLayout connection) {
-			TreeNode source = (TreeNode) layoutToTree.get(connection
+			TreeNode source = layoutToTree.get(connection
 					.getSource());
-			TreeNode target = (TreeNode) layoutToTree.get(connection
+			TreeNode target = layoutToTree.get(connection
 					.getTarget());
 			if (source == target)
 				return false;
@@ -411,19 +411,19 @@ public class TreeLayoutObserver {
 		}
 
 		private void fireParentChanged(TreeNode node, TreeNode previousParent) {
-			for (Iterator iterator = treeListeners.iterator(); iterator
+			for (Iterator<TreeListener> iterator = treeListeners.iterator(); iterator
 					.hasNext();) {
-				TreeListener listener = (TreeListener) iterator.next();
+				TreeListener listener = iterator.next();
 				listener.parentChanged(node, previousParent);
 			}
 		}
 	};
 
-	private final HashMap layoutToTree = new HashMap();
+	private final HashMap<Object, TreeNode> layoutToTree = new HashMap<Object, TreeNode>();
 	private final TreeNodeFactory factory;
 	private final LayoutContext context;
 	private TreeNode superRoot;
-	private ArrayList treeListeners = new ArrayList();
+	private ArrayList<TreeListener> treeListeners = new ArrayList<TreeListener>();
 
 	/**
 	 * Creates a
@@ -478,7 +478,7 @@ public class TreeLayoutObserver {
 	 * @return
 	 */
 	public TreeNode getTreeNode(NodeLayout node) {
-		TreeNode treeNode = (TreeNode) layoutToTree.get(node);
+		TreeNode treeNode = layoutToTree.get(node);
 		if (treeNode == null) {
 			treeNode = factory.createTreeNode(node, this);
 			layoutToTree.put(node, treeNode);
@@ -514,8 +514,8 @@ public class TreeLayoutObserver {
 	 * @param nodes
 	 */
 	private void createTrees(NodeLayout[] nodes) {
-		HashSet alreadyVisited = new HashSet();
-		LinkedList nodesToAdd = new LinkedList();
+		HashSet<NodeLayout> alreadyVisited = new HashSet<NodeLayout>();
+		LinkedList<Object[]> nodesToAdd = new LinkedList<Object[]>();
 		for (int i = 0; i < nodes.length; i++) {
 			NodeLayout root = findRoot(nodes[i], alreadyVisited);
 			if (root != null) {
@@ -524,7 +524,7 @@ public class TreeLayoutObserver {
 			}
 		}
 		while (!nodesToAdd.isEmpty()) {
-			Object[] dequeued = (Object[]) nodesToAdd.removeFirst();
+			Object[] dequeued = nodesToAdd.removeFirst();
 			TreeNode currentNode = factory.createTreeNode(
 					(NodeLayout) dequeued[0], this);
 			layoutToTree.put(dequeued[0], currentNode);
@@ -557,8 +557,8 @@ public class TreeLayoutObserver {
 	 *            method stops and returns null).
 	 * @return
 	 */
-	private NodeLayout findRoot(NodeLayout nodeLayout, Set alreadyVisited) {
-		HashSet alreadyVisitedRoot = new HashSet();
+	private NodeLayout findRoot(NodeLayout nodeLayout, Set<NodeLayout> alreadyVisited) {
+		HashSet<NodeLayout> alreadyVisitedRoot = new HashSet<NodeLayout>();
 		while (true) {
 			if (alreadyVisited.contains(nodeLayout))
 				return null;

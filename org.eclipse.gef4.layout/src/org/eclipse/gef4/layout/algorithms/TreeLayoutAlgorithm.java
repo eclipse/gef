@@ -190,9 +190,9 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 		bounds = context.getBounds();
 		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
-		for (Iterator iterator = superRoot.getChildren().iterator(); iterator
+		for (Iterator<TreeNode> iterator = superRoot.getChildren().iterator(); iterator
 				.hasNext();) {
-			TreeNode rootInfo = (TreeNode) iterator.next();
+			TreeNode rootInfo = iterator.next();
 			computePositionRecursively(rootInfo, leafCountSoFar);
 			leafCountSoFar = leafCountSoFar + rootInfo.numOfLeaves;
 		}
@@ -248,9 +248,9 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 			break;
 		}
 
-		for (Iterator iterator = entityInfo.children.iterator(); iterator
+		for (Iterator<TreeNode> iterator = entityInfo.children.iterator(); iterator
 				.hasNext();) {
-			TreeNode childInfo = (TreeNode) iterator.next();
+			TreeNode childInfo = iterator.next();
 			computePositionRecursively(childInfo, relativePosition);
 			relativePosition += childInfo.numOfLeaves;
 		}

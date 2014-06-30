@@ -38,42 +38,39 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		ArrayList rowsList = new ArrayList();
+		ArrayList<List<EntityLayout>> rowsList = new ArrayList<List<EntityLayout>>();
 		EntityLayout[] entities = context.getEntities();
 
 		for (int i = 0; i < entities.length; i++) {
 			addToRowList(entities[i], rowsList);
 		}
 
-		Collections.sort(rowsList, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				List a0 = (List) o1;
-				List a1 = (List) o2;
-				EntityLayout entity0 = (EntityLayout) a0.get(0);
-				EntityLayout entity1 = (EntityLayout) a1.get(0);
+		Collections.sort(rowsList, new Comparator<List<EntityLayout>>() {
+			public int compare(List<EntityLayout> o1, List<EntityLayout> o2) {
+				EntityLayout entity0 = o1.get(0);
+				EntityLayout entity1 = o2.get(0);
 				return (int) (entity0.getLocation().y - entity1.getLocation().y);
 			}
 		});
 
-		Comparator entityComparator = new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return (int) (((EntityLayout) o1).getLocation().y - ((EntityLayout) o2)
-						.getLocation().y);
+		Comparator<EntityLayout> entityComparator = new Comparator<EntityLayout>() {
+			public int compare(EntityLayout o1, EntityLayout o2) {
+				return (int) (o1.getLocation().y - o2.getLocation().y);
 			}
 		};
 		Rectangle bounds = context.getBounds();
 		int heightSoFar = 0;
 
-		for (Iterator iterator = rowsList.iterator(); iterator.hasNext();) {
-			List currentRow = (List) iterator.next();
+		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
+				.hasNext();) {
+			List<EntityLayout> currentRow = iterator.next();
 			Collections.sort(currentRow, entityComparator);
 
 			int i = 0;
 			int width = (int) (bounds.getWidth() / 2 - currentRow.size() * 75);
 
-			heightSoFar += ((EntityLayout) currentRow.get(0)).getSize().height
-					+ VSPACING;
-			for (Iterator iterator2 = currentRow.iterator(); iterator2
+			heightSoFar += currentRow.get(0).getSize().height + VSPACING;
+			for (Iterator<EntityLayout> iterator2 = currentRow.iterator(); iterator2
 					.hasNext();) {
 				EntityLayout entity = (EntityLayout) iterator2.next();
 				Dimension size = entity.getSize();
@@ -92,12 +89,14 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 		return context;
 	}
 
-	private void addToRowList(EntityLayout entity, ArrayList rowsList) {
+	private void addToRowList(EntityLayout entity,
+			ArrayList<List<EntityLayout>> rowsList) {
 		double layoutY = entity.getLocation().y;
 
-		for (Iterator iterator = rowsList.iterator(); iterator.hasNext();) {
-			List currentRow = (List) iterator.next();
-			EntityLayout currentRowEntity = (EntityLayout) currentRow.get(0);
+		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
+				.hasNext();) {
+			List<EntityLayout> currentRow = iterator.next();
+			EntityLayout currentRowEntity = currentRow.get(0);
 			double currentRowY = currentRowEntity.getLocation().y;
 			if (layoutY >= currentRowY - DELTA
 					&& layoutY <= currentRowY + DELTA) {
@@ -105,7 +104,7 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 				return;
 			}
 		}
-		List newRow = new ArrayList();
+		List<EntityLayout> newRow = new ArrayList<EntityLayout>();
 		newRow.add(entity);
 		rowsList.add(newRow);
 	}

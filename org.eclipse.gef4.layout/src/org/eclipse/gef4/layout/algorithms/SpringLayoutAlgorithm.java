@@ -402,19 +402,13 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	private long startTime = 0;
 
-	private int[] counter;
-
-	private int[] counterX;
-
-	private int[] counterY;
-
 	private void initLayout() {
 		entities = context.getEntities();
 		bounds = context.getBounds();
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
-		HashMap entityToPosition = new HashMap();
+		HashMap<EntityLayout, Integer> entityToPosition = new HashMap<EntityLayout, Integer>();
 		for (int i = 0; i < entities.length; i++) {
 			entityToPosition.put(entities[i], new Integer(i));
 		}
@@ -422,10 +416,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		ConnectionLayout[] connections = context.getConnections();
 		for (int i = 0; i < connections.length; i++) {
 			ConnectionLayout connection = connections[i];
-			Integer source = (Integer) entityToPosition
-					.get(getEntity(connection.getSource()));
-			Integer target = (Integer) entityToPosition
-					.get(getEntity(connection.getTarget()));
+			Integer source = entityToPosition.get(getEntity(connection
+					.getSource()));
+			Integer target = entityToPosition.get(getEntity(connection
+					.getTarget()));
 			if (source == null || target == null)
 				continue;
 			double weight = connection.getWeight();
@@ -460,8 +454,6 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			sizeH = new double[length];
 			forcesX = new double[length];
 			forcesY = new double[length];
-			counterX = new int[length];
-			counterY = new int[length];
 		}
 		for (int i = 0; i < entities.length; i++) {
 			Point location = entities[i].getLocation();
