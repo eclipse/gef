@@ -21,13 +21,16 @@ import javafx.scene.shape.Polyline;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.fx.widgets.FXLabeledConnection;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
@@ -111,10 +114,21 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		AnchorKey anchorKey = new AnchorKey(visual,
 				anchorage == sourcePart ? "START" : "END");
 		AnchorLink anchorLink = new AnchorLink(anchor, anchorKey);
+
+		FXCurveConnection connection = visual.getConnection();
 		if (anchorage == sourcePart) {
-			visual.getConnection().setStartAnchorLink(anchorLink);
+			connection.setStartAnchorLink(anchorLink);
 		} else if (anchorage == targetPart) {
-			visual.getConnection().setEndAnchorLink(anchorLink);
+			connection.setEndAnchorLink(anchorLink);
+		}
+
+		if (connection.isStartConnected() && connection.isEndConnected()) {
+			AnchorLink startAl = connection.startAnchorLinkProperty().get();
+			AnchorLink endAl = connection.endAnchorLinkProperty().get();
+			((FXChopBoxAnchor) startAl.getAnchor()).setReferencePoint(
+					startAl.getKey(), getAnchorageCenter(endAl));
+			((FXChopBoxAnchor) endAl.getAnchor()).setReferencePoint(
+					endAl.getKey(), startAl.getPosition());
 		}
 
 		super.attachVisualToAnchorageVisual(anchorage, anchorageVisual);
@@ -125,6 +139,13 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (edgeLayout == null) {
 			return;
 		}
+	}
+
+	private Point getAnchorageCenter(AnchorLink al) {
+		Node anchorage = al.getAnchor().getAnchorageNode();
+		Rectangle bounds = JavaFX2Geometry.toRectangle(anchorage
+				.localToScene(anchorage.getLayoutBounds()));
+		return bounds.getCenter();
 	}
 
 	@Override
