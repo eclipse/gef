@@ -63,6 +63,10 @@ public class FXReconnectOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+		if (reconnectPolicy == null) {
+			// XXX: release() without press()
+			return;
+		}
 		IUndoableOperation operation = reconnectPolicy.commit();
 		executeOperation(operation);
 	}
