@@ -14,6 +14,9 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -121,6 +124,37 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		scrollPaneInput = createScrollPaneInput(layersStackPane);
 
 		scrollPane = createScrollPane(scrollPaneInput);
+
+		/*
+		 * XXX: The following is a workaround to ensure that visuals do not
+		 * disappear when the content layer is scaled (zooming). This is,
+		 * because computeBounds() on the (lazy) bounds-in-local property of the
+		 * content layer is not performed when the property is invalidated.
+		 * 
+		 * We could register an invalidation listener that explicitly triggers
+		 * computeBounds() (by calling get() on the bounds-in-local property),
+		 * to fix the problems. However, this would be invoked too often.
+		 * 
+		 * Instead, we register a dummy change listener (that actually does not
+		 * do anything) to fix the problem by means of a side effect. This is
+		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
+		 * (which is responsible of firing the change events) calls getValue()
+		 * on the observable when a change event is to be fired (which is
+		 * triggered when at least one change listener is registered). The
+		 * getValue() call will in turn recompute the bounds (by calling get()
+		 * on the bounds-in-local property, which triggers a call to
+		 * computeBounds()). If no listener is registered, the bounds-in-local
+		 * value will not be recomputed (computeBounds() will not be called)
+		 * even if invalidated.
+		 */
+		contentLayer.boundsInLocalProperty().addListener(
+				new ChangeListener<Bounds>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+					}
+				});
 	}
 
 	protected ScrollPane createScrollPane(Parent scrollPaneInput) {
