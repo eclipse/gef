@@ -61,7 +61,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				}
 			}
 			contentLayer.getChildren()
-			.add(contentLayerIndex, child.getVisual());
+					.add(contentLayerIndex, child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
 			int feedbackLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
@@ -132,7 +132,9 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	protected Parent createScrollPaneInput(StackPane layersStackPane) {
-		return new Group(layersStackPane);
+		Group group = new Group(layersStackPane);
+		group.setAutoSizeChildren(false);
+		return group;
 	}
 
 	@Override
