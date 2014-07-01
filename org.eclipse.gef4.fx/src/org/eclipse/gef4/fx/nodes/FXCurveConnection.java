@@ -51,16 +51,6 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 				IFXAnchor anchor = newLink.getAnchor();
 				if (anchor != null) {
 					anchor.positionProperty().addListener(startPCL);
-					if (anchor instanceof FXChopBoxAnchor) {
-						Point endPoint = getEndPoint();
-						if (endPoint == null) {
-							// assure we assign *some* reference point in order
-							// to trigger the position computation
-							endPoint = new Point();
-						}
-						((FXChopBoxAnchor) anchor).setReferencePoint(
-								newLink.getKey(), endPoint);
-					}
 				}
 			}
 		}
@@ -74,16 +64,6 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 				IFXAnchor anchor = newLink.getAnchor();
 				if (anchor != null) {
 					anchor.positionProperty().addListener(endPCL);
-					if (anchor instanceof FXChopBoxAnchor) {
-						Point startPoint = getStartPoint();
-						if (startPoint == null) {
-							// assure we assign *some* reference point in order
-							// to trigger the position computation
-							startPoint = new Point();
-						}
-						((FXChopBoxAnchor) anchor).setReferencePoint(
-								newLink.getKey(), startPoint);
-					}
 				}
 			}
 		}
@@ -121,6 +101,7 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 			AnchorKey key = endAnchorLinkProperty.get().getKey();
 			Point oldRef = a.getReferencePoint(key);
 			if (oldRef == null || !oldRef.equals(refPoints[1])) {
+				// System.out.println("E-Ref: " + refPoints[1]);
 				a.setReferencePoint(key, refPoints[1]);
 			}
 		}
@@ -138,6 +119,7 @@ public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 			AnchorKey key = startAnchorLinkProperty.get().getKey();
 			Point oldRef = a.getReferencePoint(key);
 			if (oldRef == null || !oldRef.equals(refPoints[0])) {
+				// System.out.println("S-Ref: " + refPoints[0]);
 				a.setReferencePoint(key, refPoints[0]);
 			}
 		}
