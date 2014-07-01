@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXReconnectOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private final boolean isEndPoint;
+	private FXReconnectPolicy reconnectPolicy;
 
 	public FXReconnectOnHandleDragPolicy(boolean isEndPoint) {
 		this.isEndPoint = isEndPoint;
@@ -35,9 +36,8 @@ public class FXReconnectOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		FXReconnectPolicy policy = getReconnectionPolicy(getHost()
-				.getAnchorages().get(0));
-		policy.dragTo(new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
+		reconnectPolicy.dragTo(new Point(e.getSceneX(), e.getSceneY()),
+				partsUnderMouse);
 	}
 
 	@Override
@@ -51,19 +51,19 @@ public class FXReconnectOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		FXReconnectPolicy p = getReconnectionPolicy(getHost().getAnchorages()
+		reconnectPolicy = getReconnectionPolicy(getHost().getAnchorages()
 				.get(0));
-		if (p != null) {
-			p.init();
-			p.press(!isEndPoint, new Point(e.getSceneX(), e.getSceneY()));
+		if (reconnectPolicy != null) {
+			reconnectPolicy.init();
+			reconnectPolicy.press(!isEndPoint,
+					new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		IUndoableOperation operation = getReconnectionPolicy(
-				getHost().getAnchorages().get(0)).commit();
+		IUndoableOperation operation = reconnectPolicy.commit();
 		executeOperation(operation);
 	}
 
