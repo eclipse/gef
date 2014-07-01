@@ -78,6 +78,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	};
 
+	private boolean inRefresh = false;
+
 	{
 		// disable resizing children which would change their layout positions
 		// in some cases
@@ -385,10 +387,17 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	protected void refreshGeometry() {
+		// guard against recomputing the curve while recomputing the curve
+		if (inRefresh) {
+			return;
+		}
+		inRefresh = true;
+
 		// clear current visuals
 		getChildren().clear();
 
-		// compute new curve
+		// compute new curve (this can lead to another refreshGeometry() call
+		// which is not executed)
 		curveNode.setGeometry(computeGeometry(getCurvePoints()));
 
 		// z-order decorations above curve
@@ -401,6 +410,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			getChildren().add(endDecoration.getVisual());
 			arrangeEndDecoration();
 		}
+
+		inRefresh = false;
 	}
 
 	@Override
