@@ -54,7 +54,7 @@ public abstract class FXMouseDragGesture {
 				 * XXX: We got trapped in PERFORM state, which should not be
 				 * possible, but happens at times... As a workaround, we call
 				 * releasedHandler#handle(MouseEvent).
-				 *
+				 * 
 				 * We give it the pressed event, although it might be a good
 				 * idea to pass-in dx = 0 and dy = 0.
 				 */
@@ -65,6 +65,8 @@ public abstract class FXMouseDragGesture {
 				}
 				// TODO: IPolicy#cancel() - cancel policy to notify the gesture
 				// ended unexpectedly
+				// TODO: assure policy was initialized (otherwise results in a
+				// NPE because a <null> Operation is executed).
 				releasedHandler.handle(e);
 			}
 

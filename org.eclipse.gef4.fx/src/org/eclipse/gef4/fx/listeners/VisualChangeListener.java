@@ -27,9 +27,10 @@ import javafx.scene.transform.Transform;
  * {@link #boundsChanged(Bounds, Bounds)} or the
  * {@link #transformChanged(Transform, Transform)} method is called. A
  * bounds-in-local change occurs when the target node's effect, clip, stroke,
- * local transformations, or geometric bounds change. A local-to-scene-transform
- * change occurs when any node in the hierarchy of the target node undergoes a
- * transformation change.
+ * local transformations, or geometric bounds change. A
+ * local-to-parent-transform change occurs when the node undergoes a
+ * transformation change. Transformation listeners are registered for all nodes
+ * in the hierarchy up to a specific parent.
  * 
  * @author mwienand
  * 
@@ -40,6 +41,7 @@ public abstract class VisualChangeListener {
 		@Override
 		public void changed(ObservableValue<? extends Transform> observable,
 				Transform oldValue, Transform newValue) {
+			// only fire a visual change event if the new transform is valid
 			if (isValidTransform(newValue)) {
 				transformChanged(oldValue, newValue);
 			}
@@ -50,6 +52,7 @@ public abstract class VisualChangeListener {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
+			// only fire a visual change event if the new bounds are valid
 			if (isValidBounds(newValue)) {
 				boundsChanged(oldValue, newValue);
 			}
@@ -63,6 +66,13 @@ public abstract class VisualChangeListener {
 
 	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
 
+	/**
+	 * Checks if the given Bounds contain NaN values. Returns <code>true</code>
+	 * if no NaN values are found, otherwise <code>false</code>.
+	 * 
+	 * @param b
+	 * @return
+	 */
 	private boolean isValidBounds(Bounds b) {
 		if (Double.isNaN(b.getMinX())) {
 			return false;
@@ -79,6 +89,14 @@ public abstract class VisualChangeListener {
 		return true;
 	}
 
+	/**
+	 * Checks if the given Transform contains NaN values. Returns
+	 * <code>true</code> if no NaN values are found, otherwise
+	 * <code>false/<code>.
+	 * 
+	 * @param t
+	 * @return
+	 */
 	private boolean isValidTransform(Transform t) {
 		if (Double.isNaN(t.getMxx())) {
 			return false;

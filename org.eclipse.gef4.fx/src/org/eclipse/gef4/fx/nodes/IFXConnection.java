@@ -121,10 +121,28 @@ public interface IFXConnection {
 	 */
 	public boolean isStartConnected();
 
+	/**
+	 * {@link ChangeListener} which is notified when a new {@link AnchorLink} is
+	 * provided for the end point of this connection.
+	 * 
+	 * @return
+	 */
 	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty();
 
+	/**
+	 * {@link ChangeListener} which is notified when a new {@link AnchorLink} is
+	 * provided for the start point of this connection.
+	 * 
+	 * @return
+	 */
 	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onStartAnchorLinkChangeProperty();
 
+	/**
+	 * {@link ChangeListener} which is notified when the way points of this
+	 * connections change in any way.
+	 * 
+	 * @return
+	 */
 	public ReadOnlyObjectProperty<ListChangeListener<? super Point>> onWayPointChangeProperty();
 
 	/**
@@ -162,12 +180,27 @@ public interface IFXConnection {
 	 */
 	public void setEndPoint(Point start);
 
+	/**
+	 * Sets the corresponding {@link #onEndAnchorLinkChangeProperty()}.
+	 * 
+	 * @param onEndAnchorLinkChange
+	 */
 	public void setOnEndAnchorLinkChange(
 			ChangeListener<? super AnchorLink> onEndAnchorLinkChange);
 
+	/**
+	 * Sets the corresponding {@link #onStartAnchorLinkChangeProperty()}.
+	 * 
+	 * @param onEndAnchorLinkChange
+	 */
 	public void setOnStartAnchorLinkChange(
 			ChangeListener<? super AnchorLink> onStartAnchorLinkChange);
 
+	/**
+	 * Sets the corresponding {@link #onWayPointChangeProperty()}.
+	 * 
+	 * @param onEndAnchorLinkChange
+	 */
 	public void setOnWayPointChange(
 			ListChangeListener<? super Point> onWayPointChange);
 
