@@ -212,49 +212,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	public abstract T computeGeometry(Point[] points);
 
-	/**
-	 * Returns a {@link Point} array containing reference points for the start
-	 * and end anchors.
-	 * 
-	 * @return
-	 */
-	public Point[] computeReferencePoints() {
-		// compute start/end point in local coordinate space
-		Point start = getStartPoint();
-		Point end = getEndPoint();
-
-		// find reference points
-		Point startReference = end;
-		Point endReference = start;
-
-		// first uncontained way point is start reference
-		Node startNode = startAnchorLinkProperty.get().getAnchor()
-				.getAnchorageNode();
-		if (startNode != null) {
-			for (Point p : getWayPoints()) {
-				Point2D local = startNode.sceneToLocal(localToScene(p.x, p.y));
-				if (!startNode.contains(local)) {
-					startReference = p;
-					break;
-				}
-			}
-		}
-
-		// last uncontained way point is end reference
-		Node endNode = endAnchorLinkProperty.get().getAnchor()
-				.getAnchorageNode();
-		if (endNode != null) {
-			for (Point p : getWayPoints()) {
-				Point2D local = endNode.sceneToLocal(localToScene(p.x, p.y));
-				if (!endNode.contains(local)) {
-					endReference = p;
-				}
-			}
-		}
-
-		return new Point[] { startReference, endReference };
-	}
-
 	@Override
 	public ReadOnlyObjectProperty<AnchorLink> endAnchorLinkProperty() {
 		return endAnchorLinkProperty.getReadOnlyProperty();
