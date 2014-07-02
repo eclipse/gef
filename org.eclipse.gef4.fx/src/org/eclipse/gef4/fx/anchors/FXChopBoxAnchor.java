@@ -171,10 +171,11 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		if (ref == null) {
 			return;
 		}
-		for (AnchorKey link : ref.keySet()) {
-			Point referencePoint = referencePointProperty().get(link);
+		AnchorKey[] keys = ref.keySet().toArray(new AnchorKey[] {});
+		for (AnchorKey key : keys) {
+			Point referencePoint = referencePointProperty().get(key);
 			if (referencePoint != null) {
-				recomputePosition(link, referencePoint);
+				recomputePosition(key, referencePoint);
 			}
 		}
 	}
