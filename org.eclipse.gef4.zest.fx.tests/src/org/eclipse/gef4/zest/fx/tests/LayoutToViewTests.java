@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 
-import org.eclipse.gef4.fx.widgets.FXLabeledNode;
+import org.eclipse.gef4.fx.nodes.FXLabeledNode;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;

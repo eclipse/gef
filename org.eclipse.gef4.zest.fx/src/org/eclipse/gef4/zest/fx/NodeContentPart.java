@@ -24,7 +24,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.widgets.FXLabeledNode;
+import org.eclipse.gef4.fx.nodes.FXLabeledNode;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;

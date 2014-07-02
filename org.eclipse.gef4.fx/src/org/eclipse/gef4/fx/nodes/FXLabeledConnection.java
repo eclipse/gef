@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.fx.widgets;
+package org.eclipse.gef4.fx.nodes;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,7 +19,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.text.Text;
 
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public class FXLabeledConnection extends Group {
