@@ -310,6 +310,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
+	public AnchorLink getEndAnchorLink() {
+		return endAnchorLinkProperty.get();
+	}
+
+	@Override
 	public IFXDecoration getEndDecoration() {
 		return endDecoration;
 	}
@@ -333,6 +338,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		points[points.length - 1] = getEndPoint();
 
 		return points;
+	}
+
+	@Override
+	public AnchorLink getStartAnchorLink() {
+		return startAnchorLinkProperty.get();
 	}
 
 	@Override

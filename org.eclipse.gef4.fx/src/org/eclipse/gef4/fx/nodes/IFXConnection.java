@@ -51,6 +51,13 @@ public interface IFXConnection {
 	public Node getCurveNode();
 
 	/**
+	 * Returns the value of the {@link #endAnchorLinkProperty()}.
+	 * 
+	 * @return
+	 */
+	public AnchorLink getEndAnchorLink();
+
+	/**
 	 * Returns the current end decoration of this connection. Per default, a
 	 * connection does not have an end decoration, i.e. it is set to
 	 * <code>null</code>.
@@ -73,6 +80,13 @@ public interface IFXConnection {
 	 * @return an array containing all points constituting this connection
 	 */
 	public Point[] getPoints();
+
+	/**
+	 * Returns the value of the {@link #startAnchorLinkProperty()}.
+	 * 
+	 * @return
+	 */
+	public AnchorLink getStartAnchorLink();
 
 	/**
 	 * Returns the current start decoration of this connection. Per default, a
