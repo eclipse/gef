@@ -107,6 +107,9 @@ public class GraphRootPart extends FXRootPart {
 		}
 		final GraphLayoutContext context = new GraphLayoutContext(
 				(Graph) content);
+		IViewportModel viewport = getViewer().getViewportModel();
+		context.setBounds(new Rectangle(0, 0, viewport.getWidth(), viewport
+				.getHeight()));
 		return context;
 	}
 
