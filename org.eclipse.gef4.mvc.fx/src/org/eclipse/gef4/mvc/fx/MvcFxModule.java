@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
@@ -96,6 +97,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(FXClickDragTool.CLICK_TOOL_POLICY_KEY).to(
 				FXSelectOnClickPolicy.class);
+		adapterMapBinder.addBinding(FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
+				FXMarqueeOnDragPolicy.class);
 		adapterMapBinder.addBinding(FXHoverTool.TOOL_POLICY_KEY).to(
 				FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(FXScrollTool.TOOL_POLICY_KEY).to(
