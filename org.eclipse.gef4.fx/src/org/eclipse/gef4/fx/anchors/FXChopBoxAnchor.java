@@ -160,8 +160,10 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @param referencePoint
 	 */
 	protected void recomputePosition(AnchorKey key, Point referencePoint) {
-		positionProperty().put(key,
-				computePosition(key.getAnchored(), referencePoint));
+		Point position = computePosition(key.getAnchored(), referencePoint);
+		if (!Double.isNaN(position.x) && !Double.isNaN(position.y)) {
+			positionProperty().put(key, position);
+		}
 	}
 
 	@Override
