@@ -23,6 +23,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,6 +41,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 // TODO: extends IGeometry
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		implements IFXConnection {
+
+	public static final String CSS_CLASS_DECORATION = "decoration";
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
@@ -430,6 +433,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public void setEndDecoration(IFXDecoration endDeco) {
 		endDecoration = endDeco;
+		ObservableList<String> styleClasses = endDecoration.getVisual()
+				.getStyleClass();
+		if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+			styleClasses.add(CSS_CLASS_DECORATION);
+		}
 		refreshGeometry();
 	}
 
@@ -521,6 +529,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public void setStartDecoration(IFXDecoration startDeco) {
 		startDecoration = startDeco;
+		ObservableList<String> styleClasses = startDecoration.getVisual()
+				.getStyleClass();
+		if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+			styleClasses.add(CSS_CLASS_DECORATION);
+		}
 		refreshGeometry();
 	}
 

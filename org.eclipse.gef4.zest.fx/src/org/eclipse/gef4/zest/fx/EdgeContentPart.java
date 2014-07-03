@@ -14,6 +14,7 @@ package org.eclipse.gef4.zest.fx;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Map;
 
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -64,6 +65,10 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		}
 	}
 
+	public static final String CSS_CLASS = "edge";
+	public static final Object ATTR_CLASS = "class";
+	public static final Object ATTR_ID = "id";
+
 	private static final double GAP_LENGTH = 7d;
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
@@ -71,6 +76,11 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private Edge edge;
 	private GraphEdgeLayout edgeLayout;
 	private FXLabeledConnection visual = new FXLabeledConnection();
+
+	{
+		visual.getStyleClass().add(CSS_CLASS);
+		visual.getConnection().getCurveNode().getStyleClass().add("curve");
+	}
 
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@Override
@@ -89,9 +99,16 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	public EdgeContentPart(Edge content) {
 		edge = content;
-		Object label = edge.getAttrs().get(Attr.Key.LABEL.toString());
+		Map<String, Object> attrs = edge.getAttrs();
+		Object label = attrs.get(Attr.Key.LABEL.toString());
 		if (label instanceof String) {
 			visual.setLabel((String) label);
+		}
+		if (attrs.containsKey(ATTR_CLASS)) {
+			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+		}
+		if (attrs.containsKey(ATTR_ID)) {
+			visual.setId((String) attrs.get(ATTR_ID));
 		}
 	}
 

@@ -1,0 +1,45 @@
+/*
+ * classes:
+ * .node: node visual
+ * .edge: connection visual
+ * .decoration: start/end decoration of a connection
+ * 
+ * A node consists of a Rectangle and a Text, which can be styled separately.
+ * An edge consists of a .curve and a Text, which can be styled separately.
+ */
+
+.node Rectangle {
+	-fx-fill: lightblue;
+	-fx-stroke: brown;
+}
+
+.node Text {
+	-fx-fill: darkgreen;
+}
+
+/* .custom as an example of a custom CSS class */
+.custom Rectangle {
+	-fx-fill: brown;
+	-fx-stroke: blue;
+	-fx-stroke-width: 2px;
+}
+
+/* .custom as an example of a custom CSS class */
+.custom Text {
+	-fx-fill: white;
+	-fx-font-size: 24pt;
+}
+
+.edge .curve {
+	-fx-stroke-width: 1.5px;
+}
+
+.edge Text {
+	-fx-fill: darkred;
+}
+
+/* TODO: the following should read .edge .decoration */
+.decoration {
+	-fx-stroke-width: 1.5px;
+	-fx-fill: red;
+}

@@ -32,6 +32,7 @@ import org.eclipse.gef4.zest.fx.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.DefaultLayoutModel;
 import org.eclipse.gef4.zest.fx.GraphRootPart;
 import org.eclipse.gef4.zest.fx.ILayoutModel;
+import org.eclipse.gef4.zest.fx.NodeContentPart;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -46,13 +47,13 @@ import com.google.inject.util.Modules;
 public class ZestFXExampleView extends FXView {
 
 	public ZestFXExampleView() {
-		super(Guice.createInjector(Modules.override(new MvcFxModule(){
+		super(Guice.createInjector(Modules.override(new MvcFxModule() {
 			@Override
 			protected void configure() {
 				super.configure();
 				bindIContentPartFactory();
 			}
-			
+
 			protected void bindIContentPartFactory() {
 				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 				}).annotatedWith(Names.named("AbstractViewer"))
@@ -82,7 +83,8 @@ public class ZestFXExampleView extends FXView {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
 		nodes.addAll(Arrays.asList(n("0"), n("1"), n("2"), n("3"), n("4"),
-				n("5"), n("6"), n("7"), n("8"), n("9")));
+				n("5"), n("6"), n("7", "custom"), n("8", "custom"),
+				n("9", "custom")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<Edge>();
@@ -110,6 +112,11 @@ public class ZestFXExampleView extends FXView {
 	private static org.eclipse.gef4.graph.Node n(String label) {
 		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
 				.build();
+	}
+
+	private static org.eclipse.gef4.graph.Node n(String label, String cssClass) {
+		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
+				.attr(NodeContentPart.ATTR_CLASS, cssClass).build();
 	}
 
 	private Graph graph = DEFAULT_GRAPH;

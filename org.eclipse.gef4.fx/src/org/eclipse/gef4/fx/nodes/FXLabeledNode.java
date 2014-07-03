@@ -14,6 +14,8 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.Arrays;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
@@ -40,6 +42,17 @@ public class FXLabeledNode extends Group {
 		box.setStroke(new Color(0, 0, 0, 1));
 		text.setTextOrigin(VPos.TOP);
 		setLabel(DEFAULT_LABEL);
+		text.boundsInLocalProperty().addListener(new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldBounds, Bounds newBounds) {
+				refreshLayout(newBounds);
+			}
+		});
+	}
+
+	public Rectangle getBox() {
+		return box;
 	}
 
 	public double getBoxHeight() {
@@ -54,12 +67,11 @@ public class FXLabeledNode extends Group {
 		return text.getText();
 	}
 
-	protected void refreshLayout() {
-		Bounds bounds = text.getLayoutBounds();
+	protected void refreshLayout(Bounds textBounds) {
 		text.setTranslateX(padding);
 		text.setTranslateY(padding);
-		box.setWidth(bounds.getWidth() + 2 * padding);
-		box.setHeight(bounds.getHeight() + 2 * padding);
+		box.setWidth(textBounds.getWidth() + 2 * padding);
+		box.setHeight(textBounds.getHeight() + 2 * padding);
 	}
 
 	public void setBoxHeight(double height) {
@@ -72,7 +84,6 @@ public class FXLabeledNode extends Group {
 
 	public void setLabel(String label) {
 		text.setText(label);
-		refreshLayout();
 	}
 
 }

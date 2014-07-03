@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +35,10 @@ import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 
 public class NodeContentPart extends AbstractFXContentPart {
+
+	public static final String CSS_CLASS = "node";
+	public static final String ATTR_CLASS = "class";
+	public static final String ATTR_ID = "id";
 
 	protected GraphNodeLayout nodeLayout;
 	protected IFXAnchor anchor;
@@ -54,6 +59,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 
 	{
 		visual.layoutBoundsProperty().addListener(boundsChangeListener);
+		visual.getStyleClass().add(CSS_CLASS);
 	}
 
 	private Runnable adaptLayout = new Runnable() {
@@ -90,6 +96,13 @@ public class NodeContentPart extends AbstractFXContentPart {
 
 	public NodeContentPart(org.eclipse.gef4.graph.Node content) {
 		node = content;
+		Map<String, Object> attrs = node.getAttrs();
+		if (attrs.containsKey(ATTR_CLASS)) {
+			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+		}
+		if (attrs.containsKey(ATTR_ID)) {
+			visual.setId((String) attrs.get(ATTR_ID));
+		}
 	}
 
 	@Override

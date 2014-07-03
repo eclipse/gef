@@ -16,6 +16,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import javafx.collections.ObservableList;
+
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
@@ -69,12 +71,20 @@ public class GraphRootPart extends FXRootPart {
 		}
 	};
 
+	private int stylesheetIndex;
+
 	@Override
 	public void activate() {
 		super.activate();
 		getViewer().getContentModel().addPropertyChangeListener(contentChanged);
 		getViewer().getViewportModel().addPropertyChangeListener(
 				viewportChanged);
+
+		// load stylesheet
+		ObservableList<String> stylesheets = getVisual().getScene()
+				.getStylesheets();
+		stylesheets.add(getClass().getResource("styles.css").toExternalForm());
+		stylesheetIndex = stylesheets.size() - 1;
 	}
 
 	protected void applyLayout(final GraphLayoutContext context) {
@@ -111,6 +121,19 @@ public class GraphRootPart extends FXRootPart {
 		context.setBounds(new Rectangle(0, 0, viewport.getWidth(), viewport
 				.getHeight()));
 		return context;
+	}
+
+	@Override
+	public void deactivate() {
+		super.deactivate();
+		getViewer().getContentModel().removePropertyChangeListener(
+				contentChanged);
+		getViewer().getViewportModel().removePropertyChangeListener(
+				viewportChanged);
+
+		ObservableList<String> stylesheets = getVisual().getScene()
+				.getStylesheets();
+		stylesheets.remove(stylesheetIndex);
 	}
 
 	protected GraphLayoutContext getLayoutContext() {
