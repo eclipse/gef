@@ -558,7 +558,12 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		Collections.sort(ips, new Comparator<IntervalPair>() {
 			@Override
 			public int compare(IntervalPair i, IntervalPair j) {
-				return i.pi.a <= j.pi.a ? -1 : 1;
+				if (i.pi.a < j.pi.a) {
+					return -1;
+				} else if (i.pi.a > j.pi.a) {
+					return 1;
+				}
+				return 0;
 			}
 		});
 
