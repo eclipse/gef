@@ -21,6 +21,17 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * An FXMouseDragGesture can be used to listen to mouse press, drag, and release
+ * events. The gesture internally starts a full drag and records the nodes
+ * currently at the mouse pointer.
+ * 
+ * In order to use the FXMouseDragGesture, you have to subclass it and implement
+ * the press, drag, and release methods.
+ * 
+ * @author mwienand
+ * 
+ */
 public abstract class FXMouseDragGesture {
 
 	/**
@@ -50,24 +61,11 @@ public abstract class FXMouseDragGesture {
 		@Override
 		public void handle(MouseEvent e) {
 			if (state != State.IDLE) {
-				/*
-				 * XXX: We got trapped in PERFORM state, which should not be
-				 * possible, but happens at times... As a workaround, we call
-				 * releasedHandler#handle(MouseEvent).
-				 * 
-				 * We give it the pressed event, although it might be a good
-				 * idea to pass-in dx = 0 and dy = 0.
-				 */
-				if (targetNode != e.getTarget()) {
-					// TODO: JavaFX mouse event target selection bug => platform
-					// specific fix
-					System.err.println("wrong target node!");
-				}
-				// TODO: IPolicy#cancel() - cancel policy to notify the gesture
-				// ended unexpectedly
-				// TODO: assure policy was initialized (otherwise results in a
-				// NPE because a <null> Operation is executed).
-				releasedHandler.handle(e);
+				removeTargetHandlers();
+				targetNode = null;
+				state = State.IDLE;
+				// TODO: invoke callback to notify that the gesture was reset,
+				// because its state was invalid
 			}
 
 			ox = e.getSceneX();
@@ -126,10 +124,6 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> draggedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
-			if (targetNode != e.getTarget()) {
-				System.err.println("wrong target node!");
-			}
-
 			if (state != State.PERFORM) {
 				return;
 			}
@@ -145,10 +139,6 @@ public abstract class FXMouseDragGesture {
 	private EventHandler<? super MouseEvent> releasedHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent e) {
-			if (targetNode != e.getTarget()) {
-				// FIXME: System.err.println("wrong target node!");
-			}
-
 			if (state != State.PERFORM) {
 				return;
 			}
