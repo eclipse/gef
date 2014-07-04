@@ -123,13 +123,10 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	public static PolyBezier interpolateCubic(double curveWidthCoefficient,
 			Point... points) {
 		if (points == null || points.length < 2) {
-			// System.out.println("  interpolateQuadratic() => ()");
-			// TODO: throw exception instead?
-			return new PolyBezier();
+			throw new IllegalArgumentException(
+					"Not enough points specified (at least 2 required).");
 		} else if (points.length == 2) {
-			Point mid = points[0].getTranslated(points[1]).getScaled(0.5);
-			return new PolyBezier(
-					new CubicCurve(points[0], mid, mid, points[1]));
+			return new PolyBezier(new Line(points[0], points[1]));
 		}
 
 		/*
