@@ -20,6 +20,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
@@ -78,6 +79,9 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
+		if (waypoints == null || waypoints.length < 2) {
+			return new Line(0, 0, 0, 0);
+		}
 		// return new Polyline(waypoints);
 		return PolyBezier.interpolateCubic(waypoints);
 	}
