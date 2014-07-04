@@ -12,15 +12,34 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 
 public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
+
+	private static double[] bbox(Point2D start, Point2D end) {
+		double bbox[] = { start.getX(), start.getY(), end.getX(), end.getY() };
+		double tmp;
+		if (bbox[0] > bbox[2]) {
+			tmp = bbox[0];
+			bbox[0] = bbox[2];
+			bbox[2] = tmp;
+		}
+		if (bbox[1] > bbox[3]) {
+			tmp = bbox[1];
+			bbox[1] = bbox[3];
+			bbox[3] = tmp;
+		}
+		return bbox;
+	}
 
 	public static List<Node> findContainedNodes(Node root, double x0,
 			double y0, double x1, double y1) {
@@ -60,13 +79,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	// mouse coordinates
-	private double startPosSceneX;
-	private double startPosSceneY;
-	private double endPosSceneX;
-	private double endPosSceneY;
-
-	// marquee bounds
-	private double x0, y0, x1, y1;
+	private Point2D startPosInFeedbackLayer;
+	private Point2D endPosInFeedbackLayer;
 
 	// feedback
 	private IFeedbackPart<Node> feedback;
@@ -75,33 +89,32 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		if (feedback != null) {
 			removeFeedback();
 		}
-		feedback = new AbstractFeedbackPart<Node>() {
+		feedback = new AbstractFXFeedbackPart() {
 			private final Rectangle rect = new Rectangle();
 
 			{
 				rect.setFill(Color.TRANSPARENT);
-				rect.setStroke(new Color(0, 0, 1, 1));
-				rect.getStrokeDashArray().setAll(5d, 10d, 15d);
-			}
-
-			@Override
-			public void attachVisualToAnchorageVisual(
-					IVisualPart<Node> anchorage, Node anchorageVisual) {
-			}
-
-			@Override
-			public void detachVisualFromAnchorageVisual(
-					IVisualPart<Node> anchorage, Node anchorageVisual) {
+				rect.setStroke(FXSegmentHandlePart.STROKE_DARK_BLUE);
+				rect.setStrokeWidth(1);
+				rect.setStrokeType(StrokeType.CENTERED);
+				rect.getStrokeDashArray().setAll(5d, 5d);
 			}
 
 			@Override
 			protected void doRefreshVisual() {
-				Point2D start = rect.sceneToLocal(x0, y0);
-				Point2D end = rect.sceneToLocal(x1, y1);
-				rect.setX(start.getX());
-				rect.setY(start.getY());
-				rect.setWidth(end.getX() - start.getX());
-				rect.setHeight(end.getY() - start.getY());
+				FXRootPart root = (FXRootPart) getRoot();
+				Point2D start = rect.sceneToLocal(root.getFeedbackLayer()
+						.localToScene(startPosInFeedbackLayer));
+				Point2D end = rect.sceneToLocal(root.getFeedbackLayer()
+						.localToScene(endPosInFeedbackLayer));
+				double[] bbox = bbox(start, end);
+
+				// offset x and y by half a pixel to ensure the rectangle gets a
+				// hairline stroke
+				rect.setX(bbox[0] - 0.5);
+				rect.setY(bbox[1] - 0.5);
+				rect.setWidth(bbox[2] - bbox[0]);
+				rect.setHeight(bbox[3] - bbox[1]);
 			}
 
 			@Override
@@ -139,8 +152,11 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		x0 = x1 = endPosSceneX = startPosSceneX = e.getSceneX();
-		y0 = y1 = endPosSceneY = startPosSceneY = e.getSceneY();
+		FXRootPart root = (FXRootPart) getHost().getRoot();
+		startPosInFeedbackLayer = root.getFeedbackLayer().sceneToLocal(
+				e.getSceneX(), e.getSceneY());
+		endPosInFeedbackLayer = new Point2D(startPosInFeedbackLayer.getX(),
+				startPosInFeedbackLayer.getY());
 		addFeedback();
 	}
 
@@ -149,8 +165,14 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		updateMarquee(e);
 
+		FXRootPart root = (FXRootPart) getHost().getRoot();
+		Point2D start = root.getFeedbackLayer().localToScene(
+				startPosInFeedbackLayer);
+		Point2D end = root.getFeedbackLayer().localToScene(
+				endPosInFeedbackLayer);
+		double[] bbox = bbox(start, end);
 		List<Node> nodes = findContainedNodes(getHost().getVisual().getScene()
-				.getRoot(), x0, y0, x1, y1);
+				.getRoot(), bbox[0], bbox[1], bbox[2], bbox[3]);
 
 		List<IVisualPart<Node>> parts = getParts(nodes);
 
@@ -176,23 +198,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	private void updateMarquee(MouseEvent e) {
-		endPosSceneX = e.getSceneX();
-		endPosSceneY = e.getSceneY();
-
-		// arrange marquee bounds so that x0 <= x1 && y0 <= y1
-		if (endPosSceneX < startPosSceneX) {
-			x0 = endPosSceneX;
-			x1 = startPosSceneX;
-		} else {
-			x0 = startPosSceneX;
-			x1 = endPosSceneX;
-		}
-		if (endPosSceneY < startPosSceneY) {
-			y0 = endPosSceneY;
-			y1 = startPosSceneY;
-		} else {
-			y0 = startPosSceneY;
-			y1 = endPosSceneY;
-		}
+		FXRootPart root = (FXRootPart) getHost().getRoot();
+		endPosInFeedbackLayer = root.getFeedbackLayer().sceneToLocal(
+				e.getSceneX(), e.getSceneY());
 	}
 }

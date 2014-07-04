@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> {
 
-	private VisualChangeListener visualListener = new VisualChangeListener() {
+	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
 		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
 			refreshVisual();
