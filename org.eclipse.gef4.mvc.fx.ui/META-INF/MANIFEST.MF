@@ -47,7 +47,7 @@ Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.util;version="[2.0.0,3.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.gef4.mvc.fx.ui,
- org.eclipse.gef4.mvc.fx.ui.properties,
- org.eclipse.gef4.mvc.fx.ui.view,
- org.eclipse.gef4.mvc.fx.ui.viewer
+Export-Package: org.eclipse.gef4.mvc.fx.ui;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.ui.properties;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.ui.view;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.ui.viewer;x-internal:=true

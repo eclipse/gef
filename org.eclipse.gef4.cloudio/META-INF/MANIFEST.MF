@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.gef4.cloudio,
- org.eclipse.gef4.cloudio.layout,
- org.eclipse.gef4.cloudio.util
+Export-Package: org.eclipse.gef4.cloudio;x-internal:=true,
+ org.eclipse.gef4.cloudio.layout;x-internal:=true,
+ org.eclipse.gef4.cloudio.util;x-internal:=true
 Bundle-Vendor: Eclipse.org

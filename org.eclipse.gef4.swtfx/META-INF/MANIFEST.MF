@@ -6,8 +6,8 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.swt;bundle-version="[3.2.0,4.0.0)"
-Export-Package: org.eclipse.gef4.swtfx,
- org.eclipse.gef4.swtfx.controls
+Export-Package: org.eclipse.gef4.swtfx;x-internal:=true,
+ org.eclipse.gef4.swtfx.controls;x-internal:=true
 Import-Package: com.sun.javafx.tk;version="[2.0.0,3.0.0)",
  javafx.animation;version="[2.0.0,3.0.0)",
  javafx.application;version="[2.0.0,3.0.0)",

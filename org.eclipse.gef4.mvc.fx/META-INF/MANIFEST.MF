@@ -12,14 +12,14 @@ Require-Bundle: com.google.inject;bundle-version="3.0.0",
  org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.fx,
- org.eclipse.gef4.mvc.fx.behaviors,
- org.eclipse.gef4.mvc.fx.domain,
- org.eclipse.gef4.mvc.fx.operations,
- org.eclipse.gef4.mvc.fx.parts,
- org.eclipse.gef4.mvc.fx.policies,
- org.eclipse.gef4.mvc.fx.tools,
- org.eclipse.gef4.mvc.fx.viewer
+Export-Package: org.eclipse.gef4.mvc.fx;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.behaviors;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.domain;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.operations;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.parts;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.policies;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.tools;x-internal:=true,
+ org.eclipse.gef4.mvc.fx.viewer;x-internal:=true
 Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.application;version="[2.0.0,3.0.0)",
  javafx.beans;version="[2.0.0,3.0.0)",
