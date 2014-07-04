@@ -31,6 +31,8 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IViewportModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
+import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
+import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
@@ -69,6 +71,18 @@ public class MvcModule<VR> extends AbstractModule {
 		bindAbstractVisualPartAdapters(getAdapterMapBinder(AbstractVisualPart.class));
 		bindAbstractRootPartAdapters(getAdapterMapBinder(AbstractRootPart.class));
 		bindAbstractContentPartAdapters(getAdapterMapBinder(AbstractContentPart.class));
+		bindAbstractFeedbackPartAdapters(getAdapterMapBinder(AbstractFeedbackPart.class));
+		bindAbstractHandlePartAdapters(getAdapterMapBinder(AbstractHandlePart.class));
+	}
+
+	private void bindAbstractHandlePartAdapters(
+			MapBinder<Class<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
+	}
+
+	protected void bindAbstractFeedbackPartAdapters(
+			MapBinder<Class<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
 	}
 
 	protected void bindAbstractRootPartAdapters(

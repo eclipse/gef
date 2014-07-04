@@ -30,11 +30,16 @@ import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
+import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -110,6 +115,24 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
+
+		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior() {
+			@Override
+			protected IGeometry getFeedbackGeometry() {
+				return getHandleGeometry();
+			}
+
+			@Override
+			protected IGeometry getHandleGeometry() {
+				return visual.getConnection().getCurveNode().getGeometry();
+			}
+		});
+		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior() {
+			@Override
+			protected IGeometry getFeedbackGeometry() {
+				return visual.getConnection().getCurveNode().getGeometry();
+			}
+		});
 	}
 
 	@Override

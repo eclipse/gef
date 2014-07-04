@@ -23,6 +23,8 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
@@ -60,6 +62,16 @@ public class MvcFxModule extends MvcModule<Node> {
 				FXHoverBehavior.class);
 		adapterMapBinder.addBinding(AbstractSelectionBehavior.class).to(
 				FXSelectionBehavior.class);
+	}
+
+	protected void bindAbstractFXFeedbackPartAdapters(
+			MapBinder<Class<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
+	}
+
+	protected void bindAbstractFXHandlePartAdapters(
+			MapBinder<Class<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
 	}
 
 	protected void bindFXDefaultFeedbackPartFactory() {
@@ -145,8 +157,10 @@ public class MvcFxModule extends MvcModule<Node> {
 		// bind additional adapters for FXRootPart
 		bindFXRootPartAdapters(getAdapterMapBinder(FXRootPart.class));
 
-		// bind additional adapters for AbstractFXContentPart
+		// bind additional adapters for FX specific visual parts
 		bindAbstractFXContentPartAdapters(getAdapterMapBinder(AbstractFXContentPart.class));
+		bindAbstractFXFeedbackPartAdapters(getAdapterMapBinder(AbstractFXFeedbackPart.class));
+		bindAbstractFXHandlePartAdapters(getAdapterMapBinder(AbstractFXHandlePart.class));
 	}
 
 }

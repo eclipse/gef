@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.DefaultLayoutModel;
@@ -59,6 +60,13 @@ public class ZestFXExampleView extends FXView {
 				}).annotatedWith(Names.named("AbstractViewer"))
 						.to(ContentPartFactory.class);
 			}
+			
+			@Override
+			protected void bindFXDefaultHandlePartFactory() {
+				binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+				}).annotatedWith(Names.named("AbstractViewer"))
+						.toInstance(new FXZestExampleHandlePartFactory());
+			}
 
 			@Override
 			protected void bindAbstractDomainAdapters(
@@ -73,6 +81,17 @@ public class ZestFXExampleView extends FXView {
 				binder().bind(new TypeLiteral<IRootPart<Node>>() {
 				}).annotatedWith(Names.named("AbstractViewer"))
 						.to(GraphRootPart.class);
+			}
+
+			@Override
+			protected void bindAbstractFXHandlePartAdapters(
+					MapBinder<Class<?>, Object> adapterMapBinder) {
+				super.bindAbstractFXHandlePartAdapters(adapterMapBinder);
+				// TODO: resize relocate on handle drag policy cannot be bound
+				// here because its constructor expects a reference point parameter
+//				adapterMapBinder.addBinding(
+//						FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
+//						FXResizeRelocateOnHandleDragPolicy.class);
 			}
 		}).with(new MvcFxUiModule())));
 	}
