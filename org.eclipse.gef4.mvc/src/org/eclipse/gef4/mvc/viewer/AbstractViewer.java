@@ -117,7 +117,9 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	// get lost on overwriting
 	public final void setAdapters(
 			@AdapterMap(AbstractViewer.class) Map<Class<?>, Object> adaptersWithKeys) {
-		as.setAdapters(adaptersWithKeys);
+		// do not override locally registered adapters (e.g. within constructor
+		// of respective AbstractViewer) with those injected by Guice
+		as.setAdapters(adaptersWithKeys, false);
 	}
 
 	@Override

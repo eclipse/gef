@@ -59,7 +59,9 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	@Inject
 	public void setAdapters(
 			@AdapterMap(AbstractDomain.class) Map<Class<?>, Object> adaptersWithKeys) {
-		as.setAdapters(adaptersWithKeys);
+		// do not override locally registered adapters (e.g. within constructor
+		// of respective AbstractDomain) with those injected by Guice
+		as.setAdapters(adaptersWithKeys, false);
 	}
 
 	@Override

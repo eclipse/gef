@@ -28,8 +28,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXResizeRelocateOnHandleDragPolicy extends
-		AbstractFXDragPolicy {
+public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	/**
 	 * <p>

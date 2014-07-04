@@ -118,12 +118,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior() {
 			@Override
-			protected IGeometry getFeedbackGeometry() {
-				return getHandleGeometry();
-			}
-
-			@Override
-			protected IGeometry getHandleGeometry() {
+			protected IGeometry getHostGeometry() {
 				return visual.getConnection().getCurveNode().getGeometry();
 			}
 		});

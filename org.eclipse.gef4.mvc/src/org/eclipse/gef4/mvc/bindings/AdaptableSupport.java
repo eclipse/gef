@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.IActivatable;
  * sourceAdaptable, using the property change mechanism.
  * 
  * @author anyssen
- *
+ * 
  * @param <A>
  *            The type of sourceAdaptable supported by this class. If passed-in
  *            adapters implement the {@link IAdaptable.Bound} interface, the
@@ -77,8 +77,21 @@ public class AdaptableSupport<A extends IAdaptable> implements
 		}
 	}
 
+	/**
+	 * Registers the given adapters under the provided keys. Note, that only
+	 * those adapters are registered, for which no key is already existent in
+	 * case <i>overwrite</i> is set to <code>false</code>.
+	 * 
+	 * @param adaptersWithKeys
+	 * @param overwrite
+	 *            Indicates whether adapters whose keys are already registered
+	 *            for another adapter should be ignored. If set to
+	 *            <code>true</code> existing entries will be overwritten,
+	 *            otherwise, existing entries will be preserved.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setAdapters(Map<Class<?>, Object> adaptersWithKeys) {
+	public void setAdapters(Map<Class<?>, Object> adaptersWithKeys,
+			boolean overwrite) {
 		for (Class<?> key : adaptersWithKeys.keySet()) {
 			if (adapters == null) {
 				adapters = new HashMap<Class<?>, Object>();
@@ -90,7 +103,9 @@ public class AdaptableSupport<A extends IAdaptable> implements
 								+ adaptersWithKeys.get(key)
 								+ ", as its neither a super interface nor a super class of its type.");
 			}
-			setAdapter((Class)key, (Object)adaptersWithKeys.get(key));
+			if (overwrite || !adapters.containsKey(key)) {
+				setAdapter((Class) key, (Object) adaptersWithKeys.get(key));
+			}
 		}
 	}
 

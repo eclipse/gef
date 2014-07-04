@@ -190,7 +190,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	// annotation
 	public final void setAdapters(
 			@AdapterMap(AbstractVisualPart.class) Map<Class<?>, Object> adaptersWithKeys) {
-		as.setAdapters(adaptersWithKeys);
+		// do not override locally registered adapters (e.g. within constructor
+		// of respective AbstractVisualPart) with those injected by Guice
+		as.setAdapters(adaptersWithKeys, false);
 	}
 
 	@Override
