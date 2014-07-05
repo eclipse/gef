@@ -15,11 +15,11 @@
 		<property name="jnlp.packEnabled" value="true"/>
         <property name="jnlp.versionEnabled" value="true"/>
         <jar href="javax.xml_1.3.4.v201005080400_resigned.jar"/>
-		<jar href="org.eclipse.fx.javafx_2.2.0.201406240501.jar"/>
+		<jar href="org.eclipse.fx.javafx_2.2.0.201407050501.jar"/>
         <jar href="com.google.inject_3.0.0.v201312141243_resigned.jar"/>
    		<jar href="com.google.inject.assistedinject_3.0.0.v201402270930_resigned.jar"/>
    		<jar href="com.google.inject.multibindings_3.0.0.v201402270930_resigned.jar"/>
-		<jar href="org.eclipse.osgi_3.10.0.v20140528-2014.jar"/>
+		<jar href="org.eclipse.osgi_3.10.0.v20140606-1445.jar"/>
 		<jar href="org.eclipse.equinox.app_1.3.200.v20130910-1609.jar"/>
 		<jar href="org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
 		<jar href="org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar"/>
