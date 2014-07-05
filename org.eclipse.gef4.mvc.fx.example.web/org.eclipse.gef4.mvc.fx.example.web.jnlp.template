@@ -14,6 +14,7 @@
 		<j2se version="1.7+" />
 		<property name="jnlp.packEnabled" value="true"/>
         <property name="jnlp.versionEnabled" value="true"/>
+        <jar href="javax.inject_1.0.0.v20091030_resigned.jar"/>
         <jar href="javax.xml_1.3.4.v201005080400_resigned.jar"/>
 		<jar href="org.eclipse.fx.javafx_2.2.0.201407050501.jar"/>
         <jar href="com.google.inject_3.0.0.v201312141243_resigned.jar"/>
