@@ -25,9 +25,6 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class NodeContentPart extends AbstractFXContentPart {
@@ -35,6 +32,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String CSS_CLASS = "node";
 	public static final String ATTR_CLASS = "class";
 	public static final String ATTR_ID = "id";
+	public static final String ATTR_STYLE = "style";
 
 	protected org.eclipse.gef4.graph.Node node;
 	protected FXLabeledNode visual = new FXLabeledNode();
@@ -53,18 +51,9 @@ public class NodeContentPart extends AbstractFXContentPart {
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
-
-		// TODO: setAdapters() via Guice binding
-
-		setAdapter(NodeLayoutPolicy.class, new NodeLayoutPolicy());
-		setAdapter(NodeLayoutBehavior.class, new NodeLayoutBehavior());
-
-		// interaction policies
-		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
-				new FXRelocateOnDragPolicy());
-
-		// transaction policies
-		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
+		if (attrs.containsKey(ATTR_STYLE)) {
+			visual.setStyle((String) attrs.get(ATTR_STYLE));
+		}
 	}
 
 	@Override
@@ -78,7 +67,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
-			// TODO: when to dispose the anchor properly??
 			anchor = new FXChopBoxAnchor(visual);
 		}
 		return anchor;

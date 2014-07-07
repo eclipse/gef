@@ -136,7 +136,6 @@ public class MvcFxModule extends MvcModule<Node> {
 				return new Scene(rootVisual);
 			}
 		});
-
 	}
 
 	@Override
