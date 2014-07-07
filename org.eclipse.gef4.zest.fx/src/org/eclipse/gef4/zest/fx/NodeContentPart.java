@@ -12,15 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
@@ -34,8 +29,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 
 public class NodeContentPart extends AbstractFXContentPart {
 
@@ -43,59 +36,13 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String ATTR_CLASS = "class";
 	public static final String ATTR_ID = "id";
 
-	protected GraphNodeLayout nodeLayout;
+	protected org.eclipse.gef4.graph.Node node;
+	protected FXLabeledNode visual = new FXLabeledNode();
 	protected IFXAnchor anchor;
 
-	protected ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable,
-				Bounds oldValue, Bounds bounds) {
-			if (!isAdaptLayout && nodeLayout != null) {
-				nodeLayout.setSize(visual.getBoxWidth(), visual.getBoxHeight());
-			}
-		}
-	};
-
-	private org.eclipse.gef4.graph.Node node; // FIXME: same as 'content'
-	private FXLabeledNode visual = new FXLabeledNode();
-	private boolean isAdaptLayout;
-
 	{
-		visual.layoutBoundsProperty().addListener(boundsChangeListener);
 		visual.getStyleClass().add(CSS_CLASS);
 	}
-
-	private Runnable adaptLayout = new Runnable() {
-		@Override
-		public void run() {
-			adaptLayout();
-		}
-	};
-
-	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (ILayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
-					.getPropertyName())) {
-				// remove old flush changes listener
-				Object old = evt.getOldValue();
-				if (old instanceof GraphLayoutContext) {
-					((GraphLayoutContext) old)
-							.removeOnFlushChanges(adaptLayout);
-				}
-
-				GraphLayoutContext layoutContext = (GraphLayoutContext) getViewer()
-						.getDomain().getAdapter(ILayoutModel.class)
-						.getLayoutContext();
-				if (layoutContext != null) {
-					// provide layout information
-					initNodeLayout(layoutContext);
-					// register flush changes listener
-					layoutContext.addOnFlushChanges(adaptLayout);
-				}
-			}
-		}
-	};
 
 	public NodeContentPart(org.eclipse.gef4.graph.Node content) {
 		node = content;
@@ -107,28 +54,17 @@ public class NodeContentPart extends AbstractFXContentPart {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
 
+		// TODO: setAdapters() via Guice binding
+
+		setAdapter(NodeLayoutPolicy.class, new NodeLayoutPolicy());
+		setAdapter(NodeLayoutBehavior.class, new NodeLayoutBehavior());
+
 		// interaction policies
 		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
 				new FXRelocateOnDragPolicy());
 
 		// transaction policies
 		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy());
-	}
-
-	@Override
-	public void activate() {
-		super.activate();
-		getViewer().getDomain().getAdapter(ILayoutModel.class)
-				.addPropertyChangeListener(layoutContextListener);
-	}
-
-	public void adaptLayout() {
-		isAdaptLayout = true;
-		visual.setLayoutX(nodeLayout.getLocation().x);
-		visual.setLayoutY(nodeLayout.getLocation().y);
-		visual.setBoxWidth(nodeLayout.getSize().width);
-		visual.setBoxHeight(nodeLayout.getSize().height);
-		isAdaptLayout = false;
 	}
 
 	@Override
@@ -143,7 +79,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
 			// TODO: when to dispose the anchor properly??
-			anchor = new FXChopBoxAnchor(getVisual());
+			anchor = new FXChopBoxAnchor(visual);
 		}
 		return anchor;
 	}
@@ -173,12 +109,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public Node getVisual() {
 		return visual;
-	}
-
-	protected void initNodeLayout(GraphLayoutContext layoutContext) {
-		nodeLayout = layoutContext.getNodeLayout(node);
-		nodeLayout.setLocation(visual.getLayoutX(), visual.getLayoutY());
-		nodeLayout.setSize(visual.getBoxWidth(), visual.getBoxHeight());
 	}
 
 }

@@ -23,17 +23,11 @@ import javafx.scene.Node;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr.Key;
-import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.zest.fx.ContentPartFactory;
-import org.eclipse.gef4.zest.fx.DefaultLayoutModel;
-import org.eclipse.gef4.zest.fx.GraphRootPart;
-import org.eclipse.gef4.zest.fx.ILayoutModel;
 import org.eclipse.gef4.zest.fx.NodeContentPart;
+import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -41,57 +35,18 @@ import org.eclipse.swt.widgets.Composite;
 
 import com.google.inject.Guice;
 import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 
 public class ZestFXExampleView extends FXView {
 
 	public ZestFXExampleView() {
-		super(Guice.createInjector(Modules.override(new MvcFxModule() {
-			@Override
-			protected void configure() {
-				super.configure();
-				bindIContentPartFactory();
-			}
-
-			protected void bindIContentPartFactory() {
-				binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-				}).annotatedWith(Names.named("AbstractViewer"))
-						.to(ContentPartFactory.class);
-			}
-			
+		super(Guice.createInjector(Modules.override(new ZestFxModule() {
 			@Override
 			protected void bindFXDefaultHandlePartFactory() {
 				binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 				}).annotatedWith(Names.named("AbstractViewer"))
 						.toInstance(new FXZestExampleHandlePartFactory());
-			}
-
-			@Override
-			protected void bindAbstractDomainAdapters(
-					MapBinder<Class<?>, Object> adapterMapBinder) {
-				super.bindAbstractDomainAdapters(adapterMapBinder);
-				adapterMapBinder.addBinding(ILayoutModel.class).to(
-						DefaultLayoutModel.class);
-			}
-
-			@Override
-			protected void bindFXRootPart() {
-				binder().bind(new TypeLiteral<IRootPart<Node>>() {
-				}).annotatedWith(Names.named("AbstractViewer"))
-						.to(GraphRootPart.class);
-			}
-
-			@Override
-			protected void bindAbstractFXHandlePartAdapters(
-					MapBinder<Class<?>, Object> adapterMapBinder) {
-				super.bindAbstractFXHandlePartAdapters(adapterMapBinder);
-				// TODO: resize relocate on handle drag policy cannot be bound
-				// here because its constructor expects a reference point parameter
-//				adapterMapBinder.addBinding(
-//						FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
-//						FXResizeRelocateOnHandleDragPolicy.class);
 			}
 		}).with(new MvcFxUiModule())));
 	}
@@ -138,7 +93,7 @@ public class ZestFXExampleView extends FXView {
 				.attr(NodeContentPart.ATTR_CLASS, cssClass).build();
 	}
 
-	private Graph graph = DEFAULT_GRAPH;
+	protected Graph graph = DEFAULT_GRAPH;
 
 	@Override
 	protected FXCanvas createCanvas(Composite parent) {

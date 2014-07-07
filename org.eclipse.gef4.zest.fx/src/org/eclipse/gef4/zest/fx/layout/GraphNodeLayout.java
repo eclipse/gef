@@ -246,6 +246,13 @@ public class GraphNodeLayout implements NodeLayout {
 
 	@Override
 	public void setLocation(double x, double y) {
+		if (Double.isNaN(x)) {
+			x = 0;
+		}
+		if (Double.isNaN(y)) {
+			y = 0;
+		}
+
 		// TODO: use Point#setLocation() when we already store a location
 		setProperty(LOCATION_PROPERTY, new Point(x, y));
 		context.fireNodeMovedEvent(this);
