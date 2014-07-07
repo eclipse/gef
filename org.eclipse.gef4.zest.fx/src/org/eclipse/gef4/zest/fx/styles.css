@@ -17,19 +17,6 @@
 	-fx-fill: darkgreen;
 }
 
-/* .custom as an example of a custom CSS class */
-.node.custom Rectangle {
-	-fx-fill: brown;
-	-fx-stroke: blue;
-	-fx-stroke-width: 2px;
-}
-
-/* .custom as an example of a custom CSS class */
-.node.custom Text {
-	-fx-fill: white;
-	-fx-font-size: 24pt;
-}
-
 .edge .curve {
 	-fx-stroke-width: 1.5px;
 }
