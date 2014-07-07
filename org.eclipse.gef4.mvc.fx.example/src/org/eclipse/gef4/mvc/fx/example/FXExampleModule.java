@@ -12,10 +12,13 @@
 package org.eclipse.gef4.mvc.fx.example;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
@@ -42,4 +45,15 @@ public class FXExampleModule extends MvcFxModule {
 		}).annotatedWith(Names.named("AbstractViewer"))
 				.toInstance(new FXExampleHandlePartFactory());
 	}
+	
+	@Override
+	protected void bindSceneFactory() {
+		binder().bind(ISceneFactory.class).toInstance(new ISceneFactory() {
+			@Override
+			public Scene createScene(Parent rootVisual) {
+				return new Scene(rootVisual, 640, 480);
+			}
+		});
+	}
+	
 }
