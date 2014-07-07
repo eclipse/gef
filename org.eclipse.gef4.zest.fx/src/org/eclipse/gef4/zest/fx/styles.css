@@ -9,24 +9,26 @@
  */
 
 .node Rectangle {
-	-fx-fill: lightblue;
-	-fx-stroke: brown;
+	-fx-fill: rgb(135, 150, 220);
+	-fx-stroke: rgb(99, 123, 71);
 }
 
 .node Text {
-	-fx-fill: darkgreen;
+	-fx-fill: white;
 }
 
 .edge .curve {
+	-fx-stroke: rgb(99, 123, 71);
 	-fx-stroke-width: 1.5px;
 }
 
 .edge Text {
-	-fx-fill: darkred;
+	-fx-fill: black;
 }
 
 /* TODO: the following should read .edge .decoration */
 .decoration {
+	-fx-stroke: rgb(99, 123, 71);
 	-fx-stroke-width: 1.5px;
-	-fx-fill: red;
+	-fx-fill: white;
 }
