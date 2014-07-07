@@ -26,6 +26,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
+	public static final Class<FXResizeRelocatePolicy> TRANSACTION_POLICY_KEY = FXResizeRelocatePolicy.class;
 	private Point initialMouseLocation = null;
 
 	@Override
@@ -49,7 +50,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
 			IContentPart<Node> part) {
-		return part.getAdapter(FXResizeRelocatePolicy.class);
+		return part.getAdapter(TRANSACTION_POLICY_KEY);
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {
