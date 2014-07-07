@@ -6,4 +6,5 @@ import javafx.scene.Scene;
 public interface ISceneFactory {
 
 	public Scene createScene(Parent rootVisual);
+
 }

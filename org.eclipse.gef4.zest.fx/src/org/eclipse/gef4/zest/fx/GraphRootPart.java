@@ -29,6 +29,8 @@ import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class GraphRootPart extends FXRootPart {
 
+	private static final String STYLES_CSS_FILE = "styles.css";
+
 	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SpringLayoutAlgorithm();
 
 	private LayoutAlgorithm layoutAlgorithm = DEFAULT_LAYOUT_ALGORITHM;
@@ -83,7 +85,8 @@ public class GraphRootPart extends FXRootPart {
 		// load stylesheet
 		ObservableList<String> stylesheets = getVisual().getScene()
 				.getStylesheets();
-		stylesheets.add(getClass().getResource("styles.css").toExternalForm());
+		stylesheets.add(getClass().getResource(STYLES_CSS_FILE)
+				.toExternalForm());
 		stylesheetIndex = stylesheets.size() - 1;
 	}
 

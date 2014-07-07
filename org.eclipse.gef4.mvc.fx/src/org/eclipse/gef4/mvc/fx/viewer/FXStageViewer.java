@@ -21,11 +21,11 @@ public class FXStageViewer extends FXViewer {
 	@Inject
 	public FXStageViewer(final Stage stage) {
 		setSceneContainer(new ISceneContainer() {
-
 			@Override
 			public void setScene(Scene scene) {
 				stage.setScene(scene);
 			}
 		});
 	}
+
 }
