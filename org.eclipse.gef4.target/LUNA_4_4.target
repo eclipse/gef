@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="47">
+<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="50">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
-<repository location="http://download.eclipse.org/cbi/updates/license"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.ide.basic.feature.feature.group" version="0.0.0"/>
-<repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
-<repository location="http://download.itemis.de/updates/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.swt.tools" version="3.101.0.201302211459"/>
-<repository location="http://www.eclipse.org/swt/updates/4.3"/>
+<unit id="org.eclipse.fx.ide.all.kepler.feature.feature.group" version="0.9.0.201401250805"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-released/0.9.0/site"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
@@ -27,6 +15,10 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140606-1215"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201405200714"/>
 <unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.0.v201405210727"/>
 <unit id="org.eclipse.gef.sdk.feature.group" version="3.9.100.201405261516"/>
@@ -34,8 +26,16 @@
 <repository location="http://download.eclipse.org/releases/luna"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140606-1215"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
+<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
+<repository location="http://download.itemis.de/updates/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.swt.tools" version="3.101.0.201302211459"/>
+<repository location="http://www.eclipse.org/swt/updates/4.3"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+<repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 </locations>
 </target>
