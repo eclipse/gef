@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API & implementation
+ *
+ *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
 import javafx.scene.Node;
@@ -34,6 +46,12 @@ public class ZestFxModule extends MvcFxModule {
 		// FXResizeRelocateOnHandleDragPolicy.class);
 	}
 
+	protected void bindEdgeContentPartAdapters(
+			MapBinder<Class<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(EdgeLayoutBehavior.class).to(
+				EdgeLayoutBehavior.class);
+	}
+
 	@Override
 	protected void bindFXRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node>>() {
@@ -46,7 +64,7 @@ public class ZestFxModule extends MvcFxModule {
 				.to(ContentPartFactory.class);
 	}
 
-	private void bindNodeContentPartAdapters(
+	protected void bindNodeContentPartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(NodeLayoutPolicy.class).to(
 				NodeLayoutPolicy.class);
@@ -65,6 +83,7 @@ public class ZestFxModule extends MvcFxModule {
 		super.configure();
 		bindIContentPartFactory();
 		bindNodeContentPartAdapters(getAdapterMapBinder(NodeContentPart.class));
+		bindEdgeContentPartAdapters(getAdapterMapBinder(EdgeContentPart.class));
 	}
 
 }
