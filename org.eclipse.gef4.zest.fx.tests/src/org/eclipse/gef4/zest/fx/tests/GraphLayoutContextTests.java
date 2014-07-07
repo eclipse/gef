@@ -31,7 +31,7 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.junit.Test;
 
-public class DataToLayoutTests {
+public class GraphLayoutContextTests {
 
 	private static int ID;
 

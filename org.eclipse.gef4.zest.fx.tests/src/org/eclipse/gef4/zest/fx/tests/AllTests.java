@@ -17,6 +17,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DataToLayoutTests.class, LayoutToViewTests.class })
+@SuiteClasses({ GraphLayoutContextTests.class, NodeLayoutPolicyTests.class })
 public class AllTests {
 }
