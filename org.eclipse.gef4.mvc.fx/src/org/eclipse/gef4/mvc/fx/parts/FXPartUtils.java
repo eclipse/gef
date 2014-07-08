@@ -12,11 +12,8 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import javafx.event.Event;
-import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
@@ -28,61 +25,45 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXPartUtils {
 
-	public static IVisualPart<Node> getEventTargetPart(
-			Collection<IViewer<Node>> viewers, Event event) {
-		return getEventTargetPart(viewers, event, null);
-	}
-
-	public static IVisualPart<Node> getEventTargetPart(
-			Collection<IViewer<Node>> viewers, Event event,
+	/**
+	 * Returns the first {@link IVisualPart} in the given list of viewers which:
+	 * <ol>
+	 * <li>Supports the specified policy (which may be <code>null</code>).</li>
+	 * <li>And is part of the parent hierarchy of the given visual.</li>
+	 * </ol>
+	 * 
+	 * When no policy is specified (i.e. it is <code>null</code>), the first
+	 * visual part in the hierarchy is returned.
+	 * 
+	 * @param viewers
+	 * @param visual
+	 * @param supportedPolicy
+	 * @return
+	 */
+	public static IVisualPart<Node> getTargetPart(
+			Collection<IViewer<Node>> viewers, Node visual,
 			Class<? extends IPolicy<Node>> supportedPolicy) {
-		EventTarget target = event.getTarget();
-
 		for (IViewer<Node> viewer : viewers) {
-			if (target instanceof Node) {
-				Node rootVisual = viewer.getRootPart().getVisual();
+			Node rootVisual = viewer.getRootPart().getVisual();
 
-				// look for the Node in the visual-part-map, traverse the
-				// hierarchy
-				// if needed
-				Node targetNode = (Node) target;
-				IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
-						targetNode);
-				while (targetNode != null
-						&& (targetPart == null || supportedPolicy != null
-						&& targetPart.getAdapter(supportedPolicy) == null)
-						&& targetNode != rootVisual) {
-					targetNode = targetNode.getParent();
-					targetPart = viewer.getVisualPartMap().get(targetNode);
-				}
+			// traverse the node hierarchy to find a suitable part
+			Node targetNode = visual;
+			IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
+					targetNode);
+			while (targetNode != null
+					&& (targetPart == null || supportedPolicy != null
+							&& targetPart.getAdapter(supportedPolicy) == null)
+					&& targetNode != rootVisual) {
+				targetNode = targetNode.getParent();
+				targetPart = viewer.getVisualPartMap().get(targetNode);
+			}
 
-				if (targetPart != null) {
-					return targetPart;
-				}
+			if (targetPart != null) {
+				return targetPart;
 			}
 		}
 
 		return null;
-	}
-
-	/**
-	 * Returns a list (currently containing zero or one element) containing the
-	 * viable target parts for the given viewer, event, and policy class.
-	 *
-	 * @param viewer
-	 * @param event
-	 * @param policy
-	 * @return
-	 */
-	public static List<IVisualPart<Node>> getTargetParts(
-			Collection<IViewer<Node>> viewers, Event event,
-			Class<? extends IPolicy<Node>> policy) {
-		IVisualPart<Node> eventTargetPart = getEventTargetPart(viewers, event,
-				policy);
-		if (eventTargetPart == null) {
-			return Collections.emptyList();
-		}
-		return Collections.singletonList(eventTargetPart);
 	}
 
 	public static Bounds getUnionedVisualBoundsInScene(

@@ -41,6 +41,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		return bbox;
 	}
 
+	// TODO: move to utility
 	public static List<Node> findContainedNodes(Node root, double x0,
 			double y0, double x1, double y1) {
 		Bounds bounds;
@@ -132,6 +133,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		updateFeedback();
 	}
 
+	// TODO: move to utility
 	protected List<IVisualPart<Node>> getParts(List<Node> nodes) {
 		List<IVisualPart<Node>> parts = new ArrayList<IVisualPart<Node>>();
 		for (Node node : nodes) {
@@ -189,8 +191,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	protected void removeFeedback() {
-		getHost().getRoot().removeChild(feedback);
-		feedback = null;
+		if (feedback != null) {
+			getHost().getRoot().removeChild(feedback);
+			feedback = null;
+		}
 	}
 
 	protected void updateFeedback() {

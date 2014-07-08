@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
@@ -44,43 +45,47 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 		for (IViewer<Node> viewer : getDomain().getViewers()) {
 			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
+				protected AbstractFXZoomPolicy getPolicy(ZoomEvent e) {
+					EventTarget target = e.getTarget();
+					if (!(target instanceof Node)) {
+						return null;
+					}
+
+					Node targetNode = (Node) target;
+					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
+							getDomain().getViewers(), targetNode,
+							TOOL_POLICY_KEY);
+					if (targetPart == null) {
+						return null;
+					}
+
+					AbstractFXZoomPolicy policy = getToolPolicy(targetPart);
+					if (policy == null) {
+						throw new IllegalStateException(
+								"Target part does not support required policy!");
+					}
+
+					return policy;
+				}
+
 				@Override
 				protected void zoomDetected(ZoomEvent e) {
-					for (IVisualPart<Node> targetPart : FXPartUtils
-							.getTargetParts(getDomain().getViewers(), e,
-									TOOL_POLICY_KEY)) {
-						AbstractFXZoomPolicy policy = getToolPolicy(targetPart);
-						if (policy != null) {
-							policy.zoomDetected(e, e.getZoomFactor(),
-									e.getTotalZoomFactor());
-						}
-					}
+					AbstractFXZoomPolicy policy = getPolicy(e);
+					policy.zoomDetected(e, e.getZoomFactor(),
+							e.getTotalZoomFactor());
 				}
 
 				@Override
 				protected void zoomed(ZoomEvent e) {
-					for (IVisualPart<Node> targetPart : FXPartUtils
-							.getTargetParts(getDomain().getViewers(), e,
-									TOOL_POLICY_KEY)) {
-						AbstractFXZoomPolicy policy = getToolPolicy(targetPart);
-						if (policy != null) {
-							policy.zoomed(e, e.getZoomFactor(),
-									e.getTotalZoomFactor());
-						}
-					}
+					AbstractFXZoomPolicy policy = getPolicy(e);
+					policy.zoomed(e, e.getZoomFactor(), e.getTotalZoomFactor());
 				}
 
 				@Override
 				protected void zoomFinished(ZoomEvent e) {
-					for (IVisualPart<Node> targetPart : FXPartUtils
-							.getTargetParts(getDomain().getViewers(), e,
-									TOOL_POLICY_KEY)) {
-						AbstractFXZoomPolicy policy = getToolPolicy(targetPart);
-						if (policy != null) {
-							policy.zoomFinished(e, e.getZoomFactor(),
-									e.getTotalZoomFactor());
-						}
-					}
+					AbstractFXZoomPolicy policy = getPolicy(e);
+					policy.zoomFinished(e, e.getZoomFactor(),
+							e.getTotalZoomFactor());
 				}
 			};
 			gesture.setScene(((FXViewer) viewer).getScene());

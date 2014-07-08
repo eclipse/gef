@@ -11,14 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.gestures;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
+import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -34,191 +33,129 @@ import javafx.scene.input.MouseEvent;
  */
 public abstract class FXMouseDragGesture {
 
-	/**
-	 * Represents the state of expectation regarding mouse events. Keeping track
-	 * of the gesture state is important if the mouse is already pressed when we
-	 * register the event handlers.
-	 */
-	private static enum State {
-		/**
-		 * In IDLE state we expect a press event.
-		 */
-		IDLE,
-
-		/**
-		 * In PERFORM state we expect drag or release events.
-		 */
-		PERFORM
-	}
-
-	private State state = State.IDLE;
-
-	private double ox, oy;
 	private Scene scene;
-	private Node targetNode;
+	private Node pressed;
+	private Point2D startMousePosition;
 
+	/**
+	 * This {@link EventHandler} is registered as a event handler on the target
+	 * node to initiate a press-drag-release gesture.
+	 */
 	private EventHandler<? super MouseEvent> pressedHandler = new EventHandler<MouseEvent>() {
 		@Override
-		public void handle(MouseEvent e) {
-			if (state != State.IDLE) {
-				removeTargetHandlers();
-				targetNode = null;
-				state = State.IDLE;
-				// TODO: invoke callback to notify that the gesture was reset,
-				// because its state was invalid
-			}
-
-			ox = e.getSceneX();
-			oy = e.getSceneY();
-
-			if (e.getTarget() instanceof Node) {
-				targetNode = (Node) e.getTarget();
-				addTargetHandlers();
-				press(targetNode, e);
-				state = State.PERFORM;
-			}
+		public void handle(MouseEvent event) {
+			onMousePress(event);
 		}
 	};
 
-	private EventHandler<? super MouseEvent> dragDetectedHandler = new EventHandler<MouseEvent>() {
+	/**
+	 * This {@link EventHandler} is registered as an event filter on the
+	 * {@link Scene} to handle drag and release events.
+	 */
+	private EventHandler<? super MouseEvent> mouseFilter = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			if (targetNode.getScene() != null) {
-				targetNode.startFullDrag();
-			}
+			onMouseEvent(event);
 		}
 	};
-
-	private List<Node> nodesUnderMouse = new ArrayList<Node>();
-
-	private EventHandler<? super MouseDragEvent> dragEnteredHandler = new EventHandler<MouseDragEvent>() {
-		@Override
-		public void handle(MouseDragEvent event) {
-			EventTarget target = event.getTarget();
-			if (target instanceof Node) {
-				Node node = (Node) target;
-				if (targetNode != node) {
-					if (!nodesUnderMouse.contains(node)) {
-						nodesUnderMouse.add(node);
-					}
-				}
-			}
-		}
-	};
-
-	private EventHandler<? super MouseDragEvent> dragExitedHandler = new EventHandler<MouseDragEvent>() {
-		@Override
-		public void handle(MouseDragEvent event) {
-			EventTarget target = event.getTarget();
-			if (target instanceof Node) {
-				Node node = (Node) target;
-				if (targetNode != node) {
-					if (nodesUnderMouse.contains(node)) {
-						nodesUnderMouse.remove(node);
-					}
-				}
-			}
-		}
-	};
-
-	private EventHandler<? super MouseEvent> draggedHandler = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent e) {
-			if (state != State.PERFORM) {
-				return;
-			}
-
-			double x = e.getSceneX();
-			double y = e.getSceneY();
-			double dx = x - ox;
-			double dy = y - oy;
-			drag(targetNode, e, dx, dy, nodesUnderMouse);
-		}
-	};
-
-	private EventHandler<? super MouseEvent> releasedHandler = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent e) {
-			if (state != State.PERFORM) {
-				return;
-			}
-
-			double x = e.getSceneX();
-			double y = e.getSceneY();
-			double dx = x - ox;
-			double dy = y - oy;
-			release(targetNode, e, dx, dy, nodesUnderMouse);
-			removeTargetHandlers();
-			targetNode = null;
-			state = State.IDLE;
-		}
-	};
-
-	public FXMouseDragGesture() {
-	}
-
-	protected void addTargetHandlers() {
-		nodesUnderMouse.clear();
-		targetNode.setMouseTransparent(true);
-		targetNode.addEventHandler(MouseEvent.MOUSE_RELEASED, releasedHandler);
-		targetNode.addEventHandler(MouseEvent.DRAG_DETECTED,
-				dragDetectedHandler);
-		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET,
-				dragEnteredHandler);
-		scene.addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET,
-				dragExitedHandler);
-		targetNode.addEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
-	}
 
 	abstract protected void drag(Node target, MouseEvent event, double dx,
-			double dy, List<Node> nodesUnderMouse);
+			double dy);
+
+	public Node getPressed() {
+		return pressed;
+	}
 
 	public Scene getScene() {
 		return scene;
 	}
 
-	public Node getTargetNode() {
-		return targetNode;
+	/**
+	 * This method is called for *any* {@link MouseEvent} that occurs in the
+	 * {@link Scene} where this gesture is currently registered. It processes
+	 * {@link MouseEvent#MOUSE_DRAGGED} and {@link MouseEvent#MOUSE_RELEASED}
+	 * events if the gesture was previously initiated (pressed node is known).
+	 * 
+	 * @param event
+	 * @see #onMousePress(MouseEvent)
+	 */
+	protected void onMouseEvent(MouseEvent event) {
+		if (pressed == null) {
+			// gesture not initiated
+			return;
+		}
+
+		// node is pressed, process mouse events
+		EventType<? extends Event> type = event.getEventType();
+		boolean dragged = type.equals(MouseEvent.MOUSE_DRAGGED);
+		if (dragged || type.equals(MouseEvent.MOUSE_RELEASED)) {
+			double x = event.getSceneX();
+			double dx = x - startMousePosition.getX();
+			double y = event.getSceneY();
+			double dy = y - startMousePosition.getY();
+			if (dragged) {
+				drag(pressed, event, dx, dy);
+			} else {
+				release(pressed, event, dx, dy);
+				pressed = null;
+			}
+		}
+	}
+
+	/**
+	 * This method is called when a {@link MouseEvent#MOUSE_PRESSED} event
+	 * occurs in the {@link Scene} where this gesture is currently registered.
+	 * This initiates the gesture and activates processing of drag and release
+	 * events.
+	 * 
+	 * @param event
+	 * @see #onMouseEvent(MouseEvent)
+	 */
+	protected void onMousePress(MouseEvent event) {
+		EventTarget target = event.getTarget();
+		if (target instanceof Node) {
+			pressed = (Node) target;
+			startMousePosition = new Point2D(event.getSceneX(),
+					event.getSceneY());
+			press(pressed, event);
+		}
 	}
 
 	abstract protected void press(Node target, MouseEvent event);
 
-	abstract protected void release(Node target, MouseEvent event, double dx,
-			double dy, List<Node> nodesUnderMouse);
-
-	protected void removeTargetHandlers() {
-		targetNode.setMouseTransparent(false);
-		targetNode.removeEventHandler(MouseEvent.MOUSE_DRAGGED, draggedHandler);
-		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED_TARGET,
-				dragExitedHandler);
-		scene.removeEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED_TARGET,
-				dragEnteredHandler);
-		targetNode.removeEventHandler(MouseEvent.DRAG_DETECTED,
-				dragDetectedHandler);
-		targetNode.removeEventHandler(MouseEvent.MOUSE_RELEASED,
-				releasedHandler);
+	/**
+	 * Called when a {@link Scene} is provided. The new {@link Scene} can be
+	 * obtained via {@link #getScene()}. Event handlers are registered here.
+	 */
+	protected void register() {
+		getScene().addEventFilter(MouseEvent.ANY, mouseFilter);
+		getScene().addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
 	}
+
+	abstract protected void release(Node target, MouseEvent event, double dx,
+			double dy);
 
 	public void setScene(Scene scene) {
 		if (this.scene == scene) {
 			return;
 		}
-
 		if (this.scene != null) {
-			if (targetNode != null) {
-				removeTargetHandlers();
-				targetNode = null;
-			}
-			this.scene.removeEventHandler(MouseEvent.MOUSE_PRESSED,
-					pressedHandler);
+			unregister();
 		}
-
 		this.scene = scene;
-
 		if (scene != null) {
-			scene.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-			state = State.IDLE;
+			register();
 		}
+	}
+
+	/**
+	 * Called when the {@link Scene} is removed. You can obtain the old
+	 * {@link Scene} via {@link #getScene()} so that event handlers can be
+	 * unregistered.
+	 */
+	protected void unregister() {
+		getScene().removeEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		getScene().removeEventFilter(MouseEvent.ANY, mouseFilter);
 	}
 
 }

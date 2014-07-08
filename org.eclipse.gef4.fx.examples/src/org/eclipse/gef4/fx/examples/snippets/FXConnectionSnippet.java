@@ -28,6 +28,7 @@ import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
@@ -64,6 +65,9 @@ public class FXConnectionSnippet extends FXApplication {
 		FXLabeledConnection connection = new FXLabeledConnection(new Text(), new FXCurveConnection() {
 			@Override
 			public ICurve computeGeometry(Point[] points) {
+				if (points == null || points.length < 2) {
+					return new Line(0, 0, 0, 0);
+				}
 				return PolyBezier.interpolateCubic(points);
 			}
 		});

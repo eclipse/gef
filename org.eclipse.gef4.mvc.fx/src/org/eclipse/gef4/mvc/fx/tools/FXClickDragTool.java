@@ -46,8 +46,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 		return targetPart.getAdapter(DRAG_TOOL_POLICY_KEY);
 	}
 
-	private List<IContentPart<Node>> getPartsUnderMouse(
-			List<Node> nodesUnderMouse) {
+	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
 		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
 		for (IViewer<Node> viewer : getDomain().getViewers()) {
 			Map<Node, IVisualPart<Node>> partMap = viewer.getVisualPartMap();
@@ -71,24 +70,32 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			FXMouseDragGesture gesture = new FXMouseDragGesture() {
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
-						double dy, List<Node> nodesUnderMouse) {
-					for (IVisualPart<Node> targetPart : FXPartUtils
-							.getTargetParts(Collections.singleton(viewer), e,
-									DRAG_TOOL_POLICY_KEY)) {
-						AbstractFXDragPolicy policy = getDragPolicy(targetPart);
-						if (policy != null) {
-							policy.drag(e, new Dimension(dx, dy),
-									nodesUnderMouse,
-									getPartsUnderMouse(nodesUnderMouse));
-						}
+						double dy) {
+					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
+							Collections.singleton(viewer), target,
+							DRAG_TOOL_POLICY_KEY);
+					if (targetPart == null) {
+						return;
 					}
+
+					AbstractFXDragPolicy policy = getDragPolicy(targetPart);
+					if (policy == null) {
+						throw new IllegalStateException(
+								"Target part does not support required policy!");
+					}
+
+					List<Node> pickedNodes = ((FXViewer) viewer).pickNodes(
+							e.getSceneX(), e.getSceneY(), null);
+					policy.drag(e, new Dimension(dx, dy), pickedNodes,
+							getParts(pickedNodes));
 				}
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
 					// click first
 					IVisualPart<Node> clickTargetPart = FXPartUtils
-							.getEventTargetPart(getDomain().getViewers(), e);
+							.getTargetPart(getDomain().getViewers(), target,
+									null);
 					if (clickTargetPart != null) {
 						AbstractFXClickPolicy policy = getClickPolicy(clickTargetPart);
 						if (policy != null) {
@@ -97,30 +104,42 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 
 					// drag second
-					for (IVisualPart<Node> dragTargetPart : FXPartUtils
-							.getTargetParts(Collections.singleton(viewer), e,
-									DRAG_TOOL_POLICY_KEY)) {
-						AbstractFXDragPolicy policy = getDragPolicy(dragTargetPart);
-						if (policy != null) {
-							policy.press(e);
-						}
+					IVisualPart<Node> dragTargetPart = FXPartUtils
+							.getTargetPart(Collections.singleton(viewer),
+									target, DRAG_TOOL_POLICY_KEY);
+					if (dragTargetPart == null) {
+						return;
 					}
+
+					AbstractFXDragPolicy policy = getDragPolicy(dragTargetPart);
+					if (policy == null) {
+						throw new IllegalStateException(
+								"Target part does not support required policy!");
+					}
+
+					policy.press(e);
 				}
 
 				@Override
 				protected void release(Node target, MouseEvent e, double dx,
-						double dy, List<Node> nodesUnderMouse) {
-					List<IVisualPart<Node>> targetParts = FXPartUtils
-							.getTargetParts(Collections.singleton(viewer), e,
-									DRAG_TOOL_POLICY_KEY);
-					for (IVisualPart<Node> targetPart : targetParts) {
-						AbstractFXDragPolicy policy = getDragPolicy(targetPart);
-						if (policy != null) {
-							policy.release(e, new Dimension(dx, dy),
-									nodesUnderMouse,
-									getPartsUnderMouse(nodesUnderMouse));
-						}
+						double dy) {
+					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
+							Collections.singleton(viewer), target,
+							DRAG_TOOL_POLICY_KEY);
+					if (targetPart == null) {
+						return;
 					}
+
+					AbstractFXDragPolicy policy = getDragPolicy(targetPart);
+					if (policy == null) {
+						throw new IllegalStateException(
+								"Target part does not support required policy!");
+					}
+
+					List<Node> pickedNodes = ((FXViewer) viewer).pickNodes(
+							e.getSceneX(), e.getSceneY(), null);
+					policy.release(e, new Dimension(dx, dy), pickedNodes,
+							getParts(pickedNodes));
 				}
 			};
 
