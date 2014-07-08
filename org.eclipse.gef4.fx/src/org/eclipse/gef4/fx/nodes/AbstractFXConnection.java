@@ -24,7 +24,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
@@ -119,10 +118,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		Node visual = deco.getVisual();
 
 		// position
-		Point2D posInParent = visual.localToParent(visual.sceneToLocal(start.x,
-				start.y));
-		visual.setLayoutX(posInParent.getX());
-		visual.setLayoutY(posInParent.getY());
+		visual.setLayoutX(start.x);
+		visual.setLayoutY(start.y);
 
 		// rotation
 		Angle angleCW = null;
