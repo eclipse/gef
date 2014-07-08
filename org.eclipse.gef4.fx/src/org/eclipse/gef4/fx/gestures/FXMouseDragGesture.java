@@ -85,10 +85,26 @@ public abstract class FXMouseDragGesture {
 			return;
 		}
 
-		// node is pressed, process mouse events
+		// determine dragged/released state
 		EventType<? extends Event> type = event.getEventType();
 		boolean dragged = type.equals(MouseEvent.MOUSE_DRAGGED);
-		if (dragged || type.equals(MouseEvent.MOUSE_RELEASED)) {
+		boolean released = false;
+
+		if (!dragged) {
+			released = type.equals(MouseEvent.MOUSE_RELEASED);
+
+			// FIXME: account for losing events
+			if (!released) {
+				if (!event.isPrimaryButtonDown()
+						&& !event.isSecondaryButtonDown()
+						&& !event.isMiddleButtonDown()) {
+					// no button down?
+					released = true;
+				}
+			}
+		}
+
+		if (dragged || released) {
 			double x = event.getSceneX();
 			double dx = x - startMousePosition.getX();
 			double y = event.getSceneY();
