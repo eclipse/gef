@@ -128,7 +128,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		updateMarquee(e);
+		updateMarquee(delta);
 		updateFeedback();
 	}
 
@@ -163,7 +163,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		updateMarquee(e);
+		updateMarquee(delta);
 
 		FXRootPart root = (FXRootPart) getHost().getRoot();
 		Point2D start = root.getFeedbackLayer().localToScene(
@@ -197,9 +197,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		feedback.refreshVisual();
 	}
 
-	private void updateMarquee(MouseEvent e) {
+	private void updateMarquee(Dimension delta) {
 		FXRootPart root = (FXRootPart) getHost().getRoot();
-		endPosInFeedbackLayer = root.getFeedbackLayer().sceneToLocal(
-				e.getSceneX(), e.getSceneY());
+		endPosInFeedbackLayer = new Point2D(startPosInFeedbackLayer.getX()
+				+ delta.width, startPosInFeedbackLayer.getY() + delta.height);
 	}
 }
