@@ -314,6 +314,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
+	public Node getVisual() {
+		return this;
+	}
+
+	@Override
 	public Point getWayPoint(int index) {
 		return wayPointsProperty.get().get(index);
 	}

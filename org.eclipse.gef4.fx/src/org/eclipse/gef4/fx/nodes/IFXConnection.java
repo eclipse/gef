@@ -18,6 +18,7 @@ import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
+import javafx.scene.Group;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.AnchorLink;
@@ -103,6 +104,16 @@ public interface IFXConnection {
 	 * @return the start point of this connection
 	 */
 	public Point getStartPoint();
+
+	/**
+	 * Returns the {@link Node} which represents this connection. This might be
+	 * the same node as returned by {@link #getCurveNode()}. But in the case of
+	 * decorations, this might be a {@link Group} which contains the curve
+	 * visual and the decoration visuals.
+	 * 
+	 * @return the {@link Node} which visually represents this connection
+	 */
+	public Node getVisual();
 
 	/**
 	 * Returns the specified way point (not anchor).

@@ -36,7 +36,9 @@ public class ChopBoxHelper {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			updateEndReferencePoint();
+			if (change.wasAdded()) {
+				updateEndReferencePoint();
+			}
 		}
 	};
 
@@ -44,7 +46,9 @@ public class ChopBoxHelper {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			updateStartReferencePoint();
+			if (change.wasAdded()) {
+				updateStartReferencePoint();
+			}
 		}
 	};
 
@@ -111,8 +115,7 @@ public class ChopBoxHelper {
 				.getAnchorageNode();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
-				// XXX: cast from IFXConnection to Node
-				Point2D local = startNode.sceneToLocal(((Node) connection)
+				Point2D local = startNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!startNode.contains(local)) {
 					startReference = p;
@@ -127,8 +130,7 @@ public class ChopBoxHelper {
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
-				// XXX: cast from IFXConnection to Node
-				Point2D local = endNode.sceneToLocal(((Node) connection)
+				Point2D local = endNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!endNode.contains(local)) {
 					endReference = p;
@@ -178,8 +180,9 @@ public class ChopBoxHelper {
 
 	private Point getCenter(Node anchorageNode) {
 		Point center = JavaFX2Geometry.toRectangle(
-				anchorageNode.localToScene(anchorageNode.getLayoutBounds()))
-				.getCenter();
+				connection.getVisual().sceneToLocal(
+						anchorageNode.localToScene(anchorageNode
+								.getLayoutBounds()))).getCenter();
 		if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
 			return null;
 		}
