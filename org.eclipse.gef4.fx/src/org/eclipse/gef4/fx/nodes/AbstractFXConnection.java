@@ -446,7 +446,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public void setEndPoint(Point p) {
 		AnchorKey key = new AnchorKey(this, "END");
-		FXStaticAnchor anchor = new FXStaticAnchor(null, key, p);
+		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
 		setEndAnchorLink(new AnchorLink(anchor, key));
 	}
 
@@ -544,7 +544,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public void setStartPoint(Point p) {
 		AnchorKey key = new AnchorKey(this, "START");
-		FXStaticAnchor anchor = new FXStaticAnchor(null, key, p);
+		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
 		setStartAnchorLink(new AnchorLink(anchor, key));
 	}
 

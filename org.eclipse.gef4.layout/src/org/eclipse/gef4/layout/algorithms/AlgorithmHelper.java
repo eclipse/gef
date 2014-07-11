@@ -13,6 +13,7 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 
 public class AlgorithmHelper {
@@ -41,18 +42,18 @@ public class AlgorithmHelper {
 		}
 		for (int i = 0; i < entities.length; i++) {
 			EntityLayout entity = entities[i];
-			Dimension size = entity.getSize();
-			if (entity.isMovable()) {
-				Point location = entity.getLocation();
+			Dimension size = PropertiesHelper.getSize(entity);
+			if (PropertiesHelper.isMovable(entity)) {
+				Point location = PropertiesHelper.getLocation(entity);
 				double percentX = (location.x - startingBounds.getX())
 						/ (startingBounds.getWidth());
 				double percentY = (location.y - startingBounds.getY())
 						/ (startingBounds.getHeight());
 
-				if (resize && entity.isResizable()) {
+				if (resize && PropertiesHelper.isResizable(entity)) {
 					size.width *= sizeScale;
 					size.height *= sizeScale;
-					entity.setSize(size.width, size.height);
+					PropertiesHelper.setSize(entity, size.width, size.height);
 				}
 
 				location.x = destinationBounds.getX() + size.width / 2
@@ -61,32 +62,34 @@ public class AlgorithmHelper {
 				location.y = destinationBounds.getY() + size.height / 2
 						+ percentY
 						* (destinationBounds.getHeight() - size.height);
-				entity.setLocation(location.x, location.y);
-
-			} else if (resize && entity.isResizable()) {
-				entity.setSize(size.width * sizeScale, size.height * sizeScale);
+				PropertiesHelper.setLocation(entity, location.x, location.y);
+			} else if (resize && PropertiesHelper.isResizable(entity)) {
+				PropertiesHelper.setSize(entity, size.width * sizeScale,
+						size.height * sizeScale);
 			}
 		}
 	}
 
 	private static void fitSingleEntity(EntityLayout entity,
 			Rectangle destinationBounds, boolean resize) {
-		if (entity.isMovable()) {
-			entity.setLocation(
-					destinationBounds.getX() + destinationBounds.getWidth() / 2,
+		if (PropertiesHelper.isMovable(entity)) {
+			PropertiesHelper.setLocation(entity, destinationBounds.getX()
+					+ destinationBounds.getWidth() / 2,
 					destinationBounds.getY() + destinationBounds.getHeight()
 							/ 2);
 		}
-		if (resize && entity.isResizable()) {
+		if (resize && PropertiesHelper.isResizable(entity)) {
 			double width = destinationBounds.getWidth();
 			double height = destinationBounds.getHeight();
-			double preferredAspectRatio = entity.getPreferredAspectRatio();
+			double preferredAspectRatio = PropertiesHelper
+					.getPreferredAspectRatio(entity);
 			if (preferredAspectRatio > 0) {
 				Dimension fixedSize = fixAspectRatio(width, height,
 						preferredAspectRatio);
-				entity.setSize(fixedSize.width, fixedSize.height);
+				PropertiesHelper.setSize(entity, fixedSize.width,
+						fixedSize.height);
 			} else {
-				entity.setSize(width, height);
+				PropertiesHelper.setSize(entity, width, height);
 			}
 		}
 	}
@@ -107,14 +110,16 @@ public class AlgorithmHelper {
 			double height = nodeSize;
 			for (int i = 0; i < entities.length; i++) {
 				EntityLayout entity = entities[i];
-				if (entity.isResizable()) {
-					double preferredRatio = entity.getPreferredAspectRatio();
+				if (PropertiesHelper.isResizable(entity)) {
+					double preferredRatio = PropertiesHelper
+							.getPreferredAspectRatio(entity);
 					if (preferredRatio > 0) {
 						Dimension fixedSize = fixAspectRatio(width, height,
 								preferredRatio);
-						entity.setSize(fixedSize.width, fixedSize.height);
+						PropertiesHelper.setSize(entity, fixedSize.width,
+								fixedSize.height);
 					} else {
-						entity.setSize(width, height);
+						PropertiesHelper.setSize(entity, width, height);
 					}
 				}
 			}
@@ -156,8 +161,8 @@ public class AlgorithmHelper {
 		double topSide = Double.POSITIVE_INFINITY;
 		for (int i = 0; i < entities.length; i++) {
 			EntityLayout entity = entities[i];
-			Point location = entity.getLocation();
-			Dimension size = entity.getSize();
+			Point location = PropertiesHelper.getLocation(entity);
+			Dimension size = PropertiesHelper.getSize(entity);
 			if (includeNodeSize) {
 				leftSide = Math.min(location.x - size.width / 2, leftSide);
 				topSide = Math.min(location.y - size.height / 2, topSide);
@@ -205,9 +210,9 @@ public class AlgorithmHelper {
 
 		// TODO: Very Slow!
 		for (int i = 0; i < entities.length; i++) {
-			Point location1 = entities[i].getLocation();
+			Point location1 = PropertiesHelper.getLocation(entities[i]);
 			for (int j = i + 1; j < entities.length; j++) {
-				Point location2 = entities[j].getLocation();
+				Point location2 = PropertiesHelper.getLocation(entities[j]);
 				double distanceX = location1.x - location2.x;
 				double distanceY = location1.y - location2.y;
 				double distance = distanceX * distanceX + distanceY * distanceY;

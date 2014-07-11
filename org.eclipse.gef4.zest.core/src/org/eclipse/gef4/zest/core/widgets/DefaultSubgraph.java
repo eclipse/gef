@@ -18,6 +18,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -294,7 +295,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.remove(nodes[i])) {
 				nodes[i].prune(null);
-				nodes[i].setMinimized(false);
+				PropertiesHelper.setMinimized(nodes[i], false);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -354,7 +355,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.add(nodes[i])) {
 				nodes[i].prune(this);
-				nodes[i].setMinimized(true);
+				PropertiesHelper.setMinimized(nodes[i], true);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -363,8 +364,9 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
-			connections[i].setVisible(!connections[i].getSource().isPruned()
-					&& !connections[i].getTarget().isPruned());
+			connections[i].setVisible(!PropertiesHelper.isPruned(connections[i]
+					.getSource())
+					&& !PropertiesHelper.isPruned(connections[i].getTarget()));
 		}
 	}
 
@@ -396,10 +398,38 @@ public class DefaultSubgraph implements SubgraphLayout {
 	}
 
 	public Object getProperty(String name) {
+		if (PropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+			return getPreferredAspectRatio();
+		} else if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+			return getLocation();
+		} else if (PropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+			return isMovable();
+		} else if (PropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+			return isResizable();
+		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+			return getSize();
+		} else {
+			return getp(name);
+		}
+	}
+
+	private Object getp(String name) {
 		return ps.getProperty(name);
 	}
 
 	public void setProperty(String name, Object value) {
+		if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+			Point p = (Point) value;
+			setLocation(p.x, p.y);
+		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+			Dimension size = (Dimension) value;
+			setSize(size.width, size.height);
+		} else {
+			setp(name, value);
+		}
+	}
+
+	private void setp(String name, Object value) {
 		ps.setProperty(name, value);
 	}
 

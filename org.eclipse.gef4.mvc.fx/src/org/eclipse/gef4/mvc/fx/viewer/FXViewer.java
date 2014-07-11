@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,13 +42,11 @@ public class FXViewer extends AbstractViewer<Node> {
 		return scene;
 	}
 
-	public List<Node> pickNodes(double x, double y, Node root) {
+	public List<Node> pickNodes(double sceneX, double sceneY, Node root) {
 		if (root == null) {
 			root = getRootPart().getVisual();
 		}
 
-		Bounds bounds;
-		double bx1, bx0, by1, by0;
 		List<Node> picked = new ArrayList<Node>();
 
 		// start with given root node
@@ -58,19 +55,8 @@ public class FXViewer extends AbstractViewer<Node> {
 
 		while (!nodes.isEmpty()) {
 			Node current = nodes.remove();
-
-			// get bounds in scene
-			bounds = current.getBoundsInLocal();
-			bounds = current.localToScene(bounds);
-			bx1 = bounds.getMaxX();
-			bx0 = bounds.getMinX();
-			by1 = bounds.getMaxY();
-			by0 = bounds.getMinY();
-
-			if (bx0 <= x && x <= bx1 && by0 <= y && y <= by1) {
-				// point is contained
-				picked.add(current);
-
+			if (current.contains(current.sceneToLocal(sceneX, sceneY))) {
+				picked.add(0, current); // TODO: is this fast?
 				// test all children, too
 				if (current instanceof Parent) {
 					nodes.addAll(((Parent) current).getChildrenUnmodifiable());

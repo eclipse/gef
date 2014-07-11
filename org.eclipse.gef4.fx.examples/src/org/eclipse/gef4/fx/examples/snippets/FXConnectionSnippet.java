@@ -16,13 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXLabeledConnection;

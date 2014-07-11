@@ -21,6 +21,7 @@ import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
@@ -40,7 +41,6 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
 public class EdgeContentPart extends AbstractFXContentPart {
@@ -76,10 +76,11 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private static final Double DOT_LENGTH = 1d;
 
 	private Edge edge;
-	private GraphEdgeLayout edgeLayout;
-	private FXLabeledConnection visual = new FXLabeledConnection();
+	private FXLabeledConnection visual;
 
 	{
+		visual = new FXLabeledConnection();
+		new FXChopBoxHelper(visual.getConnection());
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getConnection().getCurveNode().getStyleClass().add("curve");
 	}

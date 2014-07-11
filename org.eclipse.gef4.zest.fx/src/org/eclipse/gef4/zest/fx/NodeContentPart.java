@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.AbstractFXAnchor.RootNodeProvider;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXLabeledNode;
@@ -25,6 +26,7 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class NodeContentPart extends AbstractFXContentPart {
@@ -67,7 +69,12 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
 		if (anchor == null) {
-			anchor = new FXChopBoxAnchor(visual);
+			anchor = new FXChopBoxAnchor(visual, new RootNodeProvider() {
+				@Override
+				public Node get() {
+					return ((FXRootPart) getRoot()).getLayerStackPane();
+				}
+			});
 		}
 		return anchor;
 	}
