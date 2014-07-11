@@ -28,10 +28,17 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXAnchor implements IFXAnchor {
 
+	public abstract static class RootNodeProvider {
+		public abstract Node get();
+	}
+
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
 
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
+
+	// provides parent visual for visual change listener
+	private RootNodeProvider rootNodeProvider;
 
 	private VisualChangeListener anchorageVisualChangeListener = new VisualChangeListener() {
 		@Override
@@ -59,7 +66,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	};
 
 	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
-
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
@@ -67,8 +73,9 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				anchorageVisualChangeListener.unregister();
 			}
 			if (newValue != null) {
+				Node anyParent = rootNodeProvider.get();
 				anchorageVisualChangeListener.register(getAnchorageNode(),
-						newValue.getRoot());
+						anyParent);
 			}
 		}
 	};
@@ -91,14 +98,16 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				// directly (else do this within scene change listener)
 				Scene scene = newAnchorage.getScene();
 				if (scene != null) {
+					Node anyParent = rootNodeProvider.get();
 					anchorageVisualChangeListener.register(newAnchorage,
-							scene.getRoot());
+							anyParent);
 				}
 			}
 		}
 	};
 
-	public AbstractFXAnchor(Node anchorage) {
+	public AbstractFXAnchor(Node anchorage, RootNodeProvider rootNodeProvider) {
+		this.rootNodeProvider = rootNodeProvider;
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorageNode(anchorage);
 	}

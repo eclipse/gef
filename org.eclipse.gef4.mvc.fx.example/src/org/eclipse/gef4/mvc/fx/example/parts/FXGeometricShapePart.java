@@ -17,13 +17,16 @@ import java.util.List;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.AbstractFXAnchor.RootNodeProvider;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.anchors.IProvider;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -132,9 +135,14 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
+		final RootNodeProvider rootNodeProvider = new RootNodeProvider() {
+			@Override
+			public Node get() {
+				return ((FXRootPart) getRoot()).getLayerStackPane(); 
+			}
+		};
 		if (anchor == null) {
-			// TODO: when to dispose the anchor properly??
-			anchor = new FXChopBoxAnchor(getVisual()) {
+			anchor = new FXChopBoxAnchor(getVisual(), rootNodeProvider) {
 				@Override
 				protected IShape getAnchorageReferenceShape() {
 					// return the visual's geometry within the coordinate system
