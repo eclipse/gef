@@ -9,8 +9,6 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.IPropertyStore;
 
 /**
@@ -19,73 +17,31 @@ import org.eclipse.gef4.layout.IPropertyStore;
  */
 public interface EntityLayout extends IPropertyStore {
 
+	/**
+	 * Stores the location of this EntityLayout.
+	 */
 	public static final String LOCATION_PROPERTY = "location";
+
+	/**
+	 * Stores the size of this EntityLayout.
+	 */
 	public static final String SIZE_PROPERTY = "size";
+
+	/**
+	 * Stores the movable state of this EntityLayout.
+	 */
 	public static final String MOVABLE_PROPERTY = "movable";
 
 	/**
-	 * Returns a point laying in the center of this entity. Any subsequent
-	 * changes to the returned point won't affect this node.
-	 * 
-	 * @return position of the center of this node
+	 * Stores the preferred aspect ratio (width / height) for this EntityLayout.
 	 */
-	public Point getLocation();
+	public static final String ASPECT_RATIO_PROPERTY = "aspect-ratio";
 
 	/**
-	 * Sets the position of this entity. The node will be moved so that it's
-	 * center is located in the given point.
-	 * 
-	 * @param x
-	 *            the x-position
-	 * @param y
-	 *            the y-position
+	 * Stores the resizable state of this EntityLayout. A resizable EntityLayout
+	 * may be resized by a layout algorithm.
 	 */
-	public void setLocation(double x, double y);
-
-	/**
-	 * Returns the size (dimension) of this entity, i.e. its width and height.
-	 * 
-	 * @return the width and height of this entity
-	 */
-	public Dimension getSize();
-
-	/**
-	 * Sets the size (dimension) of this entity to the given width and height.
-	 * 
-	 * @param width
-	 *            new entity width
-	 * @param height
-	 *            new entity height
-	 */
-	public void setSize(double width, double height);
-
-	/**
-	 * Returns aspect ratio that is preferred for this entity. Can be 0 if this
-	 * node can't be resized anyway or it doesn't care about about its ratio.
-	 * 
-	 * @return aspect ratio (width / height)
-	 */
-	public double getPreferredAspectRatio();
-
-	/**
-	 * Returns <code>true</code> if layout algorithms are allowed to call
-	 * {@link #setSize(double, double)} on this entity. Otherwise returns
-	 * <code>false</code>.
-	 * 
-	 * @return <code>true</code> if {@link #setSize(double, double)} is allowed,
-	 *         otherwise <code>false</code>
-	 */
-	public boolean isResizable();
-
-	/**
-	 * Returns <code>true</code> if layout algorithms are allowed to call
-	 * {@link #setLocation(double, double)} on this entity. Otherwise returns
-	 * <code>false</code>.
-	 * 
-	 * @return <code>true</code> if {@link #setLocation(double, double)} is
-	 *         allowed, otherwise <code>false</code>
-	 */
-	public boolean isMovable();
+	public static final String RESIZABLE_PROPERTY = "resizable";
 
 	/**
 	 * Returns all entities that are direct successors of this entity. Successor

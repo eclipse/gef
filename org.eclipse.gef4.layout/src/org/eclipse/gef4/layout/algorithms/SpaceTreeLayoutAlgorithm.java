@@ -186,9 +186,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void refreshSubgraphLocation() {
 			if (subgraph != null && subgraph.isGraphEntity()) {
-				Point nodeLocation = node.getLocation();
-				Dimension nodeSize = node.getSize();
-				Dimension subgraphSize = subgraph.getSize();
+				Point nodeLocation = PropertiesHelper.getLocation(node);
+				Dimension nodeSize = PropertiesHelper.getSize(node);
+				Dimension subgraphSize = PropertiesHelper.getSize(subgraph);
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -212,7 +212,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					y = nodeLocation.y;
 					break;
 				}
-				subgraph.setLocation(x, y);
+				PropertiesHelper.setLocation(subgraph, x, y);
 			}
 			spaceTreeLayers.get(depth).refreshThickness();
 		}
@@ -223,10 +223,10 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			switch (direction) {
 			case TOP_DOWN:
 			case BOTTOM_UP:
-				return node.getSize().width;
+				return PropertiesHelper.getSize(node).width;
 			case LEFT_RIGHT:
 			case RIGHT_LEFT:
-				return node.getSize().height;
+				return PropertiesHelper.getSize(node).height;
 			}
 			throw new RuntimeException("invalid direction");
 		}
@@ -391,7 +391,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		public boolean flushLocationChanges(double thicknessSoFar) {
 			boolean madeChanges = false;
 			if (node != null) {
-				Dimension nodeSize = node.getSize();
+				Dimension nodeSize = PropertiesHelper.getSize(node);
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -413,9 +413,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					y = bounds.getY() + positionInLayer;
 					break;
 				}
-				Point currentLocation = node.getLocation();
+				Point currentLocation = PropertiesHelper.getLocation(node);
 				if (currentLocation.x != x || currentLocation.y != y) {
-					node.setLocation(x, y);
+					PropertiesHelper.setLocation(node, x, y);
 					refreshSubgraphLocation();
 					madeChanges = true;
 				}
@@ -535,11 +535,11 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void checkThickness(SpaceTreeNode node) {
 			double nodeThickness = 0;
-			Dimension size = node.node.getSize();
+			Dimension size = PropertiesHelper.getSize(node.node);
 			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 					: size.width;
 			if (node.subgraph != null && node.subgraph.isGraphEntity()) {
-				size = node.subgraph.getSize();
+				size = PropertiesHelper.getSize(node.subgraph);
 				nodeThickness += (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 						: size.width;
 			}
@@ -1089,7 +1089,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				node = (SpaceTreeNode) node.parent;
 			}
 			if (node != null && node.subgraph == subgraph) {
-				node.adjustPosition(subgraph.getLocation());
+				node.adjustPosition(PropertiesHelper.getLocation(subgraph));
 				if (context.isDynamicLayoutEnabled()) {
 					((SpaceTreeNode) treeObserver.getSuperRoot())
 							.flushLocationChanges(0);
@@ -1105,7 +1105,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
-			spaceTreeNode.adjustPosition(node.getLocation());
+			spaceTreeNode.adjustPosition(PropertiesHelper.getLocation(node));
 			if (context.isDynamicLayoutEnabled()) {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);

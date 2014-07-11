@@ -161,12 +161,14 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		if (direction == Direction.HORIZONTAL)
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				node.setLocation((nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
+				PropertiesHelper.setLocation(node, (nw.layer + 0.5d) * dx,
+						(nw.index + 0.5d) * dy);
 			}
 		else
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				node.setLocation((nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
+				PropertiesHelper.setLocation(node, (nw.index + 0.5d) * dx,
+						(nw.layer + 0.5d) * dy);
 			}
 	}
 

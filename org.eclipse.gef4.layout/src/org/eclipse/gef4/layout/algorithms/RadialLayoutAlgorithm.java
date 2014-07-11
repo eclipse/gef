@@ -61,7 +61,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		layoutBounds.setX(bounds.getX());
 		layoutBounds.setWidth(bounds.getWidth());
 		for (int i = 0; i < entities.length; i++) {
-			Point location = entities[i].getLocation();
+			Point location = PropertiesHelper.getLocation(entities[i]);
 			double percenttheta = (location.x - layoutBounds.getX())
 					/ layoutBounds.getWidth();
 			double distance = (location.y - layoutBounds.getY())
@@ -70,7 +70,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 					* percenttheta;
 			location.x = distance * Math.cos(theta);
 			location.y = distance * Math.sin(theta);
-			entities[i].setLocation(location.x, location.y);
+			PropertiesHelper.setLocation(entities[i], location.x, location.y);
 		}
 	}
 

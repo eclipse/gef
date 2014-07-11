@@ -95,16 +95,17 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
 					EntityLayout node = entitiesToLayout[index++];
-					if (resize && node.isResizable())
-						node.setSize(Math.max(childrenWidth, MIN_ENTITY_SIZE),
+					if (resize && PropertiesHelper.isResizable(node))
+						PropertiesHelper.setSize(node,
+								Math.max(childrenWidth, MIN_ENTITY_SIZE),
 								Math.max(childrenHeight, MIN_ENTITY_SIZE));
-					Dimension size = node.getSize();
+					Dimension size = PropertiesHelper.getSize(node);
 					double xmove = bounds.getX() + j * colWidth + offsetX
 							+ size.width / 2;
 					double ymove = bounds.getY() + i * rowHeight + offsetY
 							+ size.height / 2;
-					if (node.isMovable())
-						node.setLocation(xmove, ymove);
+					if (PropertiesHelper.isMovable(node))
+						PropertiesHelper.setLocation(node, xmove, ymove);
 				}
 			}
 		}

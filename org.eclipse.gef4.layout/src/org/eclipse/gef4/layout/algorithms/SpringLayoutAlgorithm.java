@@ -159,8 +159,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			// TODO Auto-generated method stub
 			for (int i = 0; i < entities.length; i++) {
 				if (entities[i] == node) {
-					locationsX[i] = entities[i].getLocation().x;
-					locationsY[i] = entities[i].getLocation().y;
+					locationsX[i] = PropertiesHelper.getLocation(entities[i]).x;
+					locationsY[i] = PropertiesHelper.getLocation(entities[i]).y;
 
 				}
 
@@ -437,7 +437,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private EntityLayout getEntity(NodeLayout node) {
-		if (!node.isPruned())
+		if (!PropertiesHelper.isPruned(node))
 			return node;
 		SubgraphLayout subgraph = node.getSubgraph();
 		if (subgraph.isGraphEntity())
@@ -456,10 +456,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			forcesY = new double[length];
 		}
 		for (int i = 0; i < entities.length; i++) {
-			Point location = entities[i].getLocation();
+			Point location = PropertiesHelper.getLocation(entities[i]);
 			locationsX[i] = location.x;
 			locationsY[i] = location.y;
-			Dimension size = entities[i].getSize();
+			Dimension size = PropertiesHelper.getSize(entities[i]);
 			sizeW[i] = size.width;
 			sizeH[i] = size.height;
 		}
@@ -469,7 +469,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		if (entities == null)
 			return;
 		for (int i = 0; i < entities.length; i++) {
-			entities[i].setLocation(locationsX[i], locationsY[i]);
+			PropertiesHelper.setLocation(entities[i], locationsX[i],
+					locationsY[i]);
 		}
 	}
 
@@ -607,7 +608,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			}
 
 			for (int i = 0; i < entities.length; i++) {
-				if (entities[i].isMovable()) {
+				if (PropertiesHelper.isMovable(entities[i])) {
 					double deltaX = sprMove * forcesX[k][i];
 					double deltaY = sprMove * forcesY[k][i];
 
@@ -662,7 +663,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	 */
 	protected void computePositions() {
 		for (int i = 0; i < entities.length; i++) {
-			if (entities[i].isMovable()) {
+			if (PropertiesHelper.isMovable(entities[i])) {
 				double deltaX = sprMove * forcesX[i];
 				double deltaY = sprMove * forcesY[i];
 

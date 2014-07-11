@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.layout.algorithms.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -40,8 +41,9 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			double w = layoutBounds.getWidth();
 			double h = layoutBounds.getHeight();
 
-			Point location = nodeLayout.getLocation();
-			Dimension size = nodeLayout.getSize();
+			Point location = PropertiesHelper.getLocation(nodeLayout);
+			Dimension size = PropertiesHelper.getSize(nodeLayout);
+
 			double dx = location.x - x;
 			double dy = location.y - y;
 			double dw = size.width - w;
@@ -59,8 +61,10 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 	public void provideLayoutInformation(NodeLayout nodeLayout) {
 		Node visual = getHost().getVisual();
 		Bounds layoutBounds = visual.getLayoutBounds();
-		nodeLayout.setLocation(visual.getLayoutX(), visual.getLayoutY());
-		nodeLayout.setSize(layoutBounds.getWidth(), layoutBounds.getHeight());
+		PropertiesHelper.setLocation(nodeLayout, visual.getLayoutX(),
+				visual.getLayoutY());
+		PropertiesHelper.setSize(nodeLayout, layoutBounds.getWidth(),
+				layoutBounds.getHeight());
 	}
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.algorithms.PropertiesHelper;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -42,8 +43,8 @@ public class NodeLayoutPolicyTests {
 		GraphNodeLayout nodeLayout = createNodeLayout();
 		policy.provideLayoutInformation(nodeLayout);
 
-		assertEquals(location, nodeLayout.getLocation());
-		assertEquals(size, nodeLayout.getSize());
+		assertEquals(location, PropertiesHelper.getLocation(nodeLayout));
+		assertEquals(size, PropertiesHelper.getSize(nodeLayout));
 	}
 
 	private GraphNodeLayout createNodeLayout() {
@@ -102,8 +103,8 @@ public class NodeLayoutPolicyTests {
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
 		GraphNodeLayout nodeLayout = createNodeLayout();
-		nodeLayout.setLocation(location.x, location.y);
-		nodeLayout.setSize(size.getWidth(), size.getHeight());
+		PropertiesHelper.setLocation(nodeLayout, location.x, location.y);
+		PropertiesHelper.setSize(nodeLayout, size.getWidth(), size.getHeight());
 
 		policy.adaptLayoutInformation(nodeLayout);
 		

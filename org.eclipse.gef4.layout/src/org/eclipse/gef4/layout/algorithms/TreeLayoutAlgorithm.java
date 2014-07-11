@@ -230,19 +230,19 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		switch (direction) {
 		case TOP_DOWN:
-			entityInfo.getNode().setLocation(breadthPosition * leafSize,
-					depthPosition * layerSize);
+			PropertiesHelper.setLocation(entityInfo.getNode(), breadthPosition
+					* leafSize, depthPosition * layerSize);
 			break;
 		case BOTTOM_UP:
-			entityInfo.getNode().setLocation(breadthPosition * leafSize,
-					bounds.getHeight() - depthPosition * layerSize);
+			PropertiesHelper.setLocation(entityInfo.getNode(), breadthPosition
+					* leafSize, bounds.getHeight() - depthPosition * layerSize);
 			break;
 		case LEFT_RIGHT:
-			entityInfo.getNode().setLocation(depthPosition * layerSize,
-					breadthPosition * leafSize);
+			PropertiesHelper.setLocation(entityInfo.getNode(), depthPosition
+					* layerSize, breadthPosition * leafSize);
 			break;
 		case RIGHT_LEFT:
-			entityInfo.getNode().setLocation(
+			PropertiesHelper.setLocation(entityInfo.getNode(),
 					bounds.getWidth() - depthPosition * layerSize,
 					breadthPosition * leafSize);
 			break;
