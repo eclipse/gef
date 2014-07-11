@@ -126,7 +126,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	private void collapseAllConnections(NodeLayout node) {
 		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
-			outgoingConnections[i].setVisible(false);
+			PropertiesHelper.setVisible(outgoingConnections[i], false);
 		}
 		flushChanges(true, true);
 	}
@@ -134,7 +134,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	private void expandAllConnections(NodeLayout node) {
 		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
-			outgoingConnections[i].setVisible(true);
+			PropertiesHelper.setVisible(outgoingConnections[i], true);
 		}
 		flushChanges(true, true);
 	}

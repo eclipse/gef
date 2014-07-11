@@ -1,5 +1,6 @@
 package org.eclipse.gef4.zest.core.widgets;
 
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -17,7 +18,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 			InternalLayoutContext layoutContext) {
 		this.graphConnection = graphConnection;
 		this.layoutContext = layoutContext;
-		setProperty(ConnectionLayout.VISIBLE_PROPERTY, graphConnection.isVisible());
+		setp(PropertiesHelper.VISIBLE_PROPERTY, graphConnection.isVisible());
 	}
 
 	public NodeLayout getSource() {
@@ -38,13 +39,24 @@ class InternalConnectionLayout implements ConnectionLayout {
 				ZestStyles.CONNECTIONS_DIRECTED);
 	}
 
+	// TODO: replace with PropertiesHelper.setX calls
+	private void setp(String name, Object value) {
+		ps.setProperty(name, value);
+	}
+
+	// TODO: replace with PropertiesHelper.getX calls
+	private Object getp(String name) {
+		return ps.getProperty(name);
+	}
+
 	public boolean isVisible() {
-		return ((Boolean) getProperty(ConnectionLayout.VISIBLE_PROPERTY)).booleanValue();
+		return ((Boolean) getp(PropertiesHelper.VISIBLE_PROPERTY))
+				.booleanValue();
 	}
 
 	public void setVisible(boolean visible) {
 		layoutContext.checkChangesAllowed();
-		setProperty(ConnectionLayout.VISIBLE_PROPERTY, visible);
+		setp(PropertiesHelper.VISIBLE_PROPERTY, visible);
 	}
 
 	void applyLayout() {
@@ -55,11 +67,23 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public void setProperty(String name, Object value) {
-		ps.setProperty(name, value);
+		if (PropertiesHelper.VISIBLE_PROPERTY.equals(name)) {
+			setVisible((Boolean) value);
+		} else {
+			setp(name, value);
+		}
 	}
 
 	public Object getProperty(String name) {
-		return ps.getProperty(name);
+		if (PropertiesHelper.DIRECTED_PROPERTY.equals(name)) {
+			return isDirected();
+		} else if (PropertiesHelper.VISIBLE_PROPERTY.equals(name)) {
+			return isVisible();
+		} else if (PropertiesHelper.WEIGHT_PROPERTY.equals(name)) {
+			return getWeight();
+		} else {
+			return getp(name);
+		}
 	}
 
 }

@@ -62,12 +62,14 @@ class InternalNodeLayout implements NodeLayout {
 		figureToNode.put(graphNode.nodeFigure, graphNode);
 	}
 
-	private Object getp(String name) {
-		return ps.getProperty(name);
-	}
-
+	// TODO: replace with PropertiesHelper.setX calls
 	private void setp(String name, Object value) {
 		ps.setProperty(name, value);
+	}
+
+	// TODO: replace with PropertiesHelper.getX calls
+	private Object getp(String name) {
+		return ps.getProperty(name);
 	}
 
 	public org.eclipse.gef4.geometry.planar.Point getLocation() {

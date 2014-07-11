@@ -364,9 +364,11 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
-			connections[i].setVisible(!PropertiesHelper.isPruned(connections[i]
-					.getSource())
-					&& !PropertiesHelper.isPruned(connections[i].getTarget()));
+			PropertiesHelper.setVisible(
+					connections[i],
+					!PropertiesHelper.isPruned(connections[i].getSource())
+							&& !PropertiesHelper.isPruned(connections[i]
+									.getTarget()));
 		}
 	}
 
@@ -413,6 +415,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
+	// TODO: replace with PropertiesHelper.getX calls
 	private Object getp(String name) {
 		return ps.getProperty(name);
 	}
@@ -429,6 +432,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		}
 	}
 
+	// TODO: replace with PropertiesHelper.setX calls
 	private void setp(String name, Object value) {
 		ps.setProperty(name, value);
 	}
