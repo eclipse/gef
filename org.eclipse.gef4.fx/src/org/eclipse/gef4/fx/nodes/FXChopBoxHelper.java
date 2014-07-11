@@ -28,7 +28,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class ChopBoxHelper {
+public class FXChopBoxHelper {
 
 	private IFXConnection connection;
 
@@ -89,7 +89,7 @@ public class ChopBoxHelper {
 		}
 	};
 
-	public ChopBoxHelper(IFXConnection connection) {
+	public FXChopBoxHelper(IFXConnection connection) {
 		this.connection = connection;
 		// TODO: add change listeners for the anchor links and way points
 		// TODO: remove IFXConnection#setOnX() and related properties
@@ -194,10 +194,11 @@ public class ChopBoxHelper {
 		if (anchorLink == null) {
 			return;
 		}
+
 		IFXAnchor endAnchor = anchorLink.getAnchor();
 		if (endAnchor instanceof FXChopBoxAnchor) {
-			FXChopBoxAnchor a = (FXChopBoxAnchor) endAnchor;
 			Point[] refPoints = computeReferencePoints();
+			FXChopBoxAnchor a = (FXChopBoxAnchor) endAnchor;
 			AnchorKey key = anchorLink.getKey();
 			Point oldRef = a.getReferencePoint(key);
 			if (oldRef == null || !oldRef.equals(refPoints[1])) {
@@ -211,10 +212,11 @@ public class ChopBoxHelper {
 		if (anchorLink == null) {
 			return;
 		}
+
 		IFXAnchor startAnchor = anchorLink.getAnchor();
 		if (startAnchor instanceof FXChopBoxAnchor) {
-			FXChopBoxAnchor a = (FXChopBoxAnchor) startAnchor;
 			Point[] refPoints = computeReferencePoints();
+			FXChopBoxAnchor a = (FXChopBoxAnchor) startAnchor;
 			AnchorKey key = anchorLink.getKey();
 			Point oldRef = a.getReferencePoint(key);
 			if (oldRef == null || !oldRef.equals(refPoints[0])) {
