@@ -23,7 +23,6 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
@@ -187,9 +186,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void refreshSubgraphLocation() {
 			if (subgraph != null && subgraph.isGraphEntity()) {
-				Point nodeLocation = PropertiesHelper.getLocation(node);
-				Dimension nodeSize = PropertiesHelper.getSize(node);
-				Dimension subgraphSize = PropertiesHelper.getSize(subgraph);
+				Point nodeLocation = node.getLocation();
+				Dimension nodeSize = node.getSize();
+				Dimension subgraphSize = subgraph.getSize();
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -213,7 +212,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					y = nodeLocation.y;
 					break;
 				}
-				PropertiesHelper.setLocation(subgraph, x, y);
+				subgraph.setLocation(x, y);
 			}
 			spaceTreeLayers.get(depth).refreshThickness();
 		}
@@ -224,10 +223,10 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			switch (direction) {
 			case TOP_DOWN:
 			case BOTTOM_UP:
-				return PropertiesHelper.getSize(node).width;
+				return node.getSize().width;
 			case LEFT_RIGHT:
 			case RIGHT_LEFT:
-				return PropertiesHelper.getSize(node).height;
+				return node.getSize().height;
 			}
 			throw new RuntimeException("invalid direction");
 		}
@@ -392,7 +391,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		public boolean flushLocationChanges(double thicknessSoFar) {
 			boolean madeChanges = false;
 			if (node != null) {
-				Dimension nodeSize = PropertiesHelper.getSize(node);
+				Dimension nodeSize = node.getSize();
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -414,9 +413,9 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					y = bounds.getY() + positionInLayer;
 					break;
 				}
-				Point currentLocation = PropertiesHelper.getLocation(node);
+				Point currentLocation = node.getLocation();
 				if (currentLocation.x != x || currentLocation.y != y) {
-					PropertiesHelper.setLocation(node, x, y);
+					node.setLocation(x, y);
 					refreshSubgraphLocation();
 					madeChanges = true;
 				}
@@ -536,11 +535,11 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		public void checkThickness(SpaceTreeNode node) {
 			double nodeThickness = 0;
-			Dimension size = PropertiesHelper.getSize(node.node);
+			Dimension size = node.node.getSize();
 			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 					: size.width;
 			if (node.subgraph != null && node.subgraph.isGraphEntity()) {
-				size = PropertiesHelper.getSize(node.subgraph);
+				size = node.subgraph.getSize();
 				nodeThickness += (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 						: size.width;
 			}
@@ -1090,7 +1089,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				node = (SpaceTreeNode) node.parent;
 			}
 			if (node != null && node.subgraph == subgraph) {
-				node.adjustPosition(PropertiesHelper.getLocation(subgraph));
+				node.adjustPosition(subgraph.getLocation());
 				if (context.isDynamicLayoutEnabled()) {
 					((SpaceTreeNode) treeObserver.getSuperRoot())
 							.flushLocationChanges(0);
@@ -1106,7 +1105,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
-			spaceTreeNode.adjustPosition(PropertiesHelper.getLocation(node));
+			spaceTreeNode.adjustPosition(node.getLocation());
 			if (context.isDynamicLayoutEnabled()) {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);

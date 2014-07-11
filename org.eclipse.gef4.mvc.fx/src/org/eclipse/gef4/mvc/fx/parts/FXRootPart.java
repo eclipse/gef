@@ -88,9 +88,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	protected Pane createContentLayer() {
-		Pane contentLayer = createLayer(false);
-		contentLayer.setPickOnBounds(true);
-		return contentLayer;
+		return createLayer(false);
 	}
 
 	protected Pane createFeedbackLayer() {

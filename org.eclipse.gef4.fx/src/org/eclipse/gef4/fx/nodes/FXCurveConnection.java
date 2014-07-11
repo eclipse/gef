@@ -19,6 +19,8 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 public class FXCurveConnection extends AbstractFXConnection<ICurve> {
 
 	public FXCurveConnection() {
+		// TODO: remove chop box helper here
+		new ChopBoxHelper(this);
 	}
 
 	@Override

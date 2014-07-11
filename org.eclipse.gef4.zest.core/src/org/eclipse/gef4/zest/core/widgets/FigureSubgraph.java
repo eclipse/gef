@@ -17,7 +17,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -101,8 +100,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 			updateFigure();
 			if (location != null) {
 				for (int i = 0; i < nodes.length; i++) {
-					PropertiesHelper.setLocation(nodes[i], location.x,
-							location.y);
+					nodes[i].setLocation(location.x, location.y);
 				}
 			}
 		}
@@ -147,7 +145,7 @@ public abstract class FigureSubgraph extends DefaultSubgraph {
 		for (Iterator<NodeLayout> iterator = nodes.iterator(); iterator
 				.hasNext();) {
 			NodeLayout node = iterator.next();
-			PropertiesHelper.setLocation(node, x, y);
+			node.setLocation(x, y);
 		}
 
 		if (location != null) {

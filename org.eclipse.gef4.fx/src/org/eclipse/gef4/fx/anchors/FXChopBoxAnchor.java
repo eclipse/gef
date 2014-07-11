@@ -49,8 +49,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 	};
 
-	public FXChopBoxAnchor(Node anchorage, RootNodeProvider rootNodeProvider) {
-		super(anchorage, rootNodeProvider);
+	public FXChopBoxAnchor(Node anchorage) {
+		super(anchorage);
 		referencePointProperty.addListener(referencePointChangeListener);
 	}
 
@@ -86,35 +86,20 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 		Point anchorageReferencePointInScene = anchorageToSceneTransform
 				.getTransformed(getAnchorageReferencePoint());
-		Point anchoredReferencePointInScene = anchoredToSceneTransform
+		Point anchorReferencePointInScene = anchoredToSceneTransform
 				.getTransformed(referencePoint);
 		Line referenceLineInScene = new Line(anchorageReferencePointInScene,
-				anchoredReferencePointInScene);
+				anchorReferencePointInScene);
 
 		IShape anchorageReferenceShapeInScene = getAnchorageReferenceShape()
 				.getTransformed(anchorageToSceneTransform);
 
 		Point[] intersectionPoints = anchorageReferenceShapeInScene
 				.getOutline().getIntersections(referenceLineInScene);
-
 		if (intersectionPoints.length > 0) {
-			// find nearest intersection point
-			Point nearest = intersectionPoints[0];
-			double minDistance = anchoredReferencePointInScene
-					.getDistance(nearest);
-			for (int i = 1; i < intersectionPoints.length; i++) {
-				double d = anchoredReferencePointInScene
-						.getDistance(intersectionPoints[i]);
-				if (d < minDistance) {
-					minDistance = d;
-					nearest = intersectionPoints[i];
-				}
-			}
-
-			// transform to anchored coordinate system
 			Point point = JavaFX2Geometry.toPoint(anchored
-					.sceneToLocal(Geometry2JavaFX.toFXPoint(nearest)));
-
+					.sceneToLocal(Geometry2JavaFX
+							.toFXPoint(intersectionPoints[0])));
 			return point;
 		}
 
@@ -122,7 +107,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		Point point = JavaFX2Geometry.toPoint(anchored
 				.sceneToLocal(Geometry2JavaFX
 						.toFXPoint(anchorageReferencePointInScene)));
-
 		return point;
 	}
 

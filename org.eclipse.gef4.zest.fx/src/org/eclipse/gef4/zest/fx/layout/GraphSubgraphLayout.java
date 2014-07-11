@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -23,6 +25,8 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class GraphSubgraphLayout implements SubgraphLayout {
 
+	private static final Dimension DEFAULT_SIZE = new Dimension();
+	private static final Object DEFAULT_LOCATION = null;
 	private List<NodeLayout> nodes = new ArrayList<NodeLayout>();
 	private PropertyStoreSupport ps = new PropertyStoreSupport();
 
@@ -52,6 +56,16 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
+	public Point getLocation() {
+		Object location = getProperty(EntityLayout.LOCATION_PROPERTY);
+		if (!(location instanceof Point)) {
+			location = DEFAULT_LOCATION;
+			setProperty(LOCATION_PROPERTY, location);
+		}
+		return ((Point) location).getCopy();
+	}
+
+	@Override
 	public NodeLayout[] getNodes() {
 		return nodes.toArray(new NodeLayout[] {});
 	}
@@ -66,8 +80,23 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
+	public double getPreferredAspectRatio() {
+		return 0;
+	}
+
+	@Override
 	public Object getProperty(String name) {
 		return ps.getProperty(name);
+	}
+
+	@Override
+	public Dimension getSize() {
+		Object size = getProperty(SIZE_PROPERTY);
+		if (!(size instanceof Dimension)) {
+			size = DEFAULT_SIZE;
+			setProperty(SIZE_PROPERTY, size);
+		}
+		return ((Dimension) size).getCopy();
 	}
 
 	@Override
@@ -91,6 +120,16 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
+	public boolean isMovable() {
+		return true;
+	}
+
+	@Override
+	public boolean isResizable() {
+		return false;
+	}
+
+	@Override
 	public void removeNodes(NodeLayout[] nodes) {
 		if (nodes == null || nodes.length == 0) {
 			// no nodes to remove
@@ -107,8 +146,22 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
+	public void setLocation(double x, double y) {
+		// TODO: use Point#setLocation() when we already store a location
+		setProperty(LOCATION_PROPERTY, new Point(x, y));
+		// TODO: context.fireSubgraphMovedEvent(this);
+	}
+
+	@Override
 	public void setProperty(String name, Object value) {
 		ps.setProperty(name, value);
+	}
+
+	@Override
+	public void setSize(double width, double height) {
+		// TODO: use Dimension#setSize() when we already store a size
+		setProperty(SIZE_PROPERTY, new Dimension(width, height));
+		// TODO: context.fireSubgraphResizedEvent(this);
 	}
 
 }

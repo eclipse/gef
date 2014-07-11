@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.CrossingReducer;
 import org.eclipse.gef4.layout.interfaces.LayerProvider;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -162,14 +161,12 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		if (direction == Direction.HORIZONTAL)
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				PropertiesHelper.setLocation(node, (nw.layer + 0.5d) * dx,
-						(nw.index + 0.5d) * dy);
+				node.setLocation((nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
 			}
 		else
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				PropertiesHelper.setLocation(node, (nw.index + 0.5d) * dx,
-						(nw.layer + 0.5d) * dy);
+				node.setLocation((nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
 			}
 	}
 

@@ -11,6 +11,27 @@ package org.eclipse.gef4.layout.interfaces;
 
 public interface NodeLayout extends EntityLayout {
 
+	// properties
+	public static final String MINIMIZED_PROPERTY = "minimized";
+
+	/**
+	 * Returns <code>true</code> if this node can be pruned to a subgraph.
+	 * Otherwise returns <code>false</code>.
+	 * 
+	 * @return <code>true</code> if this node can be pruned to a subgraph,
+	 *         otherwise <code>false</code>
+	 */
+	public boolean isPrunable();
+
+	/**
+	 * Returns <code>true</code> if this node is currently pruned to a subgraph.
+	 * Otherwise returns <code>false</code>.
+	 * 
+	 * @return <code>true</code> if this node is currently pruned to a subgraph,
+	 *         otherwise <code>false</code>
+	 */
+	public boolean isPruned();
+
 	/**
 	 * @return a subgraph this node belongs to or null if this node is not
 	 *         pruned
@@ -18,9 +39,6 @@ public interface NodeLayout extends EntityLayout {
 	public SubgraphLayout getSubgraph();
 
 	/**
-	 * Assigns this NodeLayout to the given SubgraphLayout. Sets the pruned
-	 * property of this NodeLayout.
-	 * 
 	 * @param subgraph
 	 *            a subgraph this node should belong to or null if this node
 	 *            should not be pruned
@@ -67,4 +85,21 @@ public interface NodeLayout extends EntityLayout {
 	 */
 	public ConnectionLayout[] getOutgoingConnections();
 
+	/**
+	 * Sets the minimized state of this Node. Node that is minimized resizes its
+	 * figure to (0, 0). When it is unminimized, it resizes back to previous
+	 * dimension. The node's size property is not affected by minimized state,
+	 * so an it can be minimized even if it's not resizable.
+	 * 
+	 * @param minimized
+	 *            new minimized state
+	 */
+	public void setMinimized(boolean minimized);
+
+	/**
+	 * @see #setMinimized(boolean)
+	 * 
+	 * @return true if this entity is minimized
+	 */
+	public boolean isMinimized();
 }

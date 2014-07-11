@@ -13,7 +13,6 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -96,17 +95,16 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
 					EntityLayout node = entitiesToLayout[index++];
-					if (resize && PropertiesHelper.isResizable(node))
-						PropertiesHelper.setSize(node,
-								Math.max(childrenWidth, MIN_ENTITY_SIZE),
+					if (resize && node.isResizable())
+						node.setSize(Math.max(childrenWidth, MIN_ENTITY_SIZE),
 								Math.max(childrenHeight, MIN_ENTITY_SIZE));
-					Dimension size = PropertiesHelper.getSize(node);
+					Dimension size = node.getSize();
 					double xmove = bounds.getX() + j * colWidth + offsetX
 							+ size.width / 2;
 					double ymove = bounds.getY() + i * rowHeight + offsetY
 							+ size.height / 2;
-					if (PropertiesHelper.isMovable(node))
-						PropertiesHelper.setLocation(node, xmove, ymove);
+					if (node.isMovable())
+						node.setLocation(xmove, ymove);
 				}
 			}
 		}

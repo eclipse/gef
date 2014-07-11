@@ -21,7 +21,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.core.widgets.internal.GraphLabel;
@@ -34,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
  * A subgraph that for each unexpanded node in a graph adds a label showing
  * number of pruned successors (as unexpanded node is considered a node for
  * which {@link GraphWidget#canExpand(GraphNode)} returns true AND
- * {@link GraphWidget#canCollapse(GraphNode)} returns false). It doesn't matter
- * which subgraph a node is pruned to, so the factory for this subgraph uses one
+ * {@link GraphWidget#canCollapse(GraphNode)} returns false). It doesn't matter which
+ * subgraph a node is pruned to, so the factory for this subgraph uses one
  * instance for whole layout context.
  */
 class PrunedSuccessorsSubgraph extends DefaultSubgraph {
@@ -52,7 +51,8 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 		public void ancestorRemoved(IFigure ancestor) {
 			if (fisheyeFigure != null) {
-				final GraphLabel label = nodeFigureToLabel.get(fisheyeFigure);
+				final GraphLabel label = nodeFigureToLabel
+						.get(fisheyeFigure);
 				if (label == null) {
 					return;
 				}
@@ -83,11 +83,12 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 
 	private final FisheyeListener fisheyeListener = new FisheyeListener() {
 
-		public void fisheyeReplaced(GraphWidget graph,
-				IFigure oldFisheyeFigure, IFigure newFisheyeFigure) {
+		public void fisheyeReplaced(GraphWidget graph, IFigure oldFisheyeFigure,
+				IFigure newFisheyeFigure) {
 			oldFisheyeFigure.removeFigureListener(nodeFigureListener);
 			newFisheyeFigure.addFigureListener(nodeFigureListener);
-			GraphLabel label = nodeFigureToLabel.remove(oldFisheyeFigure);
+			GraphLabel label = nodeFigureToLabel
+					.remove(oldFisheyeFigure);
 			nodeFigureToLabel.put(newFisheyeFigure, label);
 
 			LabelAncestorListener ancestorListener = labelToAncestorListener
@@ -108,7 +109,8 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				IFigure fisheyeFigure) {
 			originalFigure.removeFigureListener(nodeFigureListener);
 			fisheyeFigure.addFigureListener(nodeFigureListener);
-			GraphLabel label = nodeFigureToLabel.get(originalFigure);
+			GraphLabel label = nodeFigureToLabel
+					.get(originalFigure);
 			if (label == null) {
 				return;
 			}
@@ -142,8 +144,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 			nodesToUpdate
 					.addAll(Arrays.asList(nodes[i].getPredecessingNodes()));
 		}
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
 			InternalNodeLayout nodeToUpdate = (InternalNodeLayout) iterator
 					.next();
 			updateNodeLabel(nodeToUpdate);
@@ -163,8 +164,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 				nodesToUpdate.add(nodes[i]);
 			}
 		}
-		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator
-				.hasNext();) {
+		for (Iterator<NodeLayout> iterator = nodesToUpdate.iterator(); iterator.hasNext();) {
 			InternalNodeLayout predecessor = (InternalNodeLayout) iterator
 					.next();
 			updateNodeLabel(predecessor);
@@ -235,7 +235,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 			NodeLayout[] successors = internalNode.getSuccessingNodes();
 			int numberOfHiddenSuccessors = 0;
 			for (int i = 0; i < successors.length; i++) {
-				if (PropertiesHelper.isPruned(successors[i])) {
+				if (successors[i].isPruned()) {
 					numberOfHiddenSuccessors++;
 				}
 			}

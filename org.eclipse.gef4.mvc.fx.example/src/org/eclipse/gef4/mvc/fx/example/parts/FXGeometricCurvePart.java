@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -177,7 +176,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return FXGeometricCurve.constructCurveFromWayPoints(points);
 			}
 		};
-		new FXChopBoxHelper(visual);
 		
 		// transaction policies
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
@@ -354,6 +352,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			throw new IllegalStateException(
 					"Cannot detach from unknown anchor: " + anchor);
 		}
+		// TODO: what if multiple points are bound to the same anchor?
 	}
 
 }

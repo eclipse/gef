@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
+
 public class FXGeometricModelPart extends AbstractFXContentPart {
 
 	private Group g;

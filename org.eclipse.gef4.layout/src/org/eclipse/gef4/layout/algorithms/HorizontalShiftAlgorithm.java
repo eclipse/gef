@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -50,15 +49,13 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			public int compare(List<EntityLayout> o1, List<EntityLayout> o2) {
 				EntityLayout entity0 = o1.get(0);
 				EntityLayout entity1 = o2.get(0);
-				return (int) (PropertiesHelper.getLocation(entity0).y - PropertiesHelper
-						.getLocation(entity1).y);
+				return (int) (entity0.getLocation().y - entity1.getLocation().y);
 			}
 		});
 
 		Comparator<EntityLayout> entityComparator = new Comparator<EntityLayout>() {
 			public int compare(EntityLayout o1, EntityLayout o2) {
-				return (int) (PropertiesHelper.getLocation(o1).y - PropertiesHelper
-						.getLocation(o2).y);
+				return (int) (o1.getLocation().y - o2.getLocation().y);
 			}
 		};
 		Rectangle bounds = context.getBounds();
@@ -72,14 +69,13 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			int i = 0;
 			int width = (int) (bounds.getWidth() / 2 - currentRow.size() * 75);
 
-			heightSoFar += PropertiesHelper.getSize(currentRow.get(0)).height
-					+ VSPACING;
+			heightSoFar += currentRow.get(0).getSize().height + VSPACING;
 			for (Iterator<EntityLayout> iterator2 = currentRow.iterator(); iterator2
 					.hasNext();) {
 				EntityLayout entity = (EntityLayout) iterator2.next();
-				Dimension size = PropertiesHelper.getSize(entity);
-				PropertiesHelper.setLocation(entity, width + 10 * ++i
-						+ size.width / 2, heightSoFar + size.height / 2);
+				Dimension size = entity.getSize();
+				entity.setLocation(width + 10 * ++i + size.width / 2,
+						heightSoFar + size.height / 2);
 				width += size.width;
 			}
 		}
@@ -95,13 +91,13 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 
 	private void addToRowList(EntityLayout entity,
 			ArrayList<List<EntityLayout>> rowsList) {
-		double layoutY = PropertiesHelper.getLocation(entity).y;
+		double layoutY = entity.getLocation().y;
 
 		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
 				.hasNext();) {
 			List<EntityLayout> currentRow = iterator.next();
 			EntityLayout currentRowEntity = currentRow.get(0);
-			double currentRowY = PropertiesHelper.getLocation(currentRowEntity).y;
+			double currentRowY = currentRowEntity.getLocation().y;
 			if (layoutY >= currentRowY - DELTA
 					&& layoutY <= currentRowY + DELTA) {
 				currentRow.add(entity);
