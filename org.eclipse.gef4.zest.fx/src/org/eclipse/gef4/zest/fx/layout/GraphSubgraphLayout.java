@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -24,8 +23,6 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class GraphSubgraphLayout implements SubgraphLayout {
 
-	private static final Dimension DEFAULT_SIZE = new Dimension();
-	private static final Object DEFAULT_LOCATION = null;
 	private List<NodeLayout> nodes = new ArrayList<NodeLayout>();
 	private PropertyStoreSupport ps = new PropertyStoreSupport();
 

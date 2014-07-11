@@ -20,7 +20,6 @@ import javafx.scene.Node;
 import org.eclipse.gef4.fx.anchors.AbstractFXAnchor.RootNodeProvider;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.anchors.IProvider;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;

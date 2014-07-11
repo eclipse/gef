@@ -12,6 +12,7 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
@@ -115,12 +116,12 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	}
 
 	public boolean canCollapse(LayoutContext context, NodeLayout node) {
-		return isExpanded(node) && !node.isPruned()
+		return isExpanded(node) && !PropertiesHelper.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
 	public boolean canExpand(LayoutContext context, NodeLayout node) {
-		return !isExpanded(node) && !node.isPruned()
+		return !isExpanded(node) && !PropertiesHelper.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
@@ -260,7 +261,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		if (nodesToPrune.contains(node)) {
 			return true;
 		}
-		return node.isPruned();
+		return PropertiesHelper.isPruned(node);
 	}
 
 	private void flushChanges(boolean force, boolean clean) {

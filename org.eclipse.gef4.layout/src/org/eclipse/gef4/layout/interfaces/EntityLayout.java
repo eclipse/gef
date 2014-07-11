@@ -18,32 +18,6 @@ import org.eclipse.gef4.layout.IPropertyStore;
 public interface EntityLayout extends IPropertyStore {
 
 	/**
-	 * Stores the location of this EntityLayout.
-	 */
-	public static final String LOCATION_PROPERTY = "location";
-
-	/**
-	 * Stores the size of this EntityLayout.
-	 */
-	public static final String SIZE_PROPERTY = "size";
-
-	/**
-	 * Stores the movable state of this EntityLayout.
-	 */
-	public static final String MOVABLE_PROPERTY = "movable";
-
-	/**
-	 * Stores the preferred aspect ratio (width / height) for this EntityLayout.
-	 */
-	public static final String ASPECT_RATIO_PROPERTY = "aspect-ratio";
-
-	/**
-	 * Stores the resizable state of this EntityLayout. A resizable EntityLayout
-	 * may be resized by a layout algorithm.
-	 */
-	public static final String RESIZABLE_PROPERTY = "resizable";
-
-	/**
 	 * Returns all entities that are direct successors of this entity. Successor
 	 * entities of an unpruned node N are:
 	 * <ul>

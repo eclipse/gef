@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
@@ -26,23 +25,6 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class GraphNodeLayout implements NodeLayout {
-
-	// TODO: move these to interface
-	public static final String PRUNABLE_PROPERTY = "prunable";
-	public static final String RESIZABLE_PROPERTY = "resizable";
-	public static final String ASPECT_RATIO_PROPERTY = "aspectRatio";
-	// public static final String PRUNED_PROPERTY = "pruned";
-
-	// defaults for properties
-	// TODO: move these to interface, too?
-	private static final Boolean DEFAULT_MINIMIZED = false;
-	private static final Boolean DEFAULT_MOVABLE = true;
-	private static final Dimension DEFAULT_SIZE = new Dimension(0, 0);
-	private static final Point DEFAULT_LOCATION = new Point(0, 0);
-	private static final Boolean DEFAULT_PRUNABLE = true;
-	private static final Boolean DEFAULT_RESIZABLE = true;
-	private static final Double DEFAULT_ASPECT_RATIO = 0d;
-	// private static final Boolean DEFAULT_PRUNED = false;
 
 	// initialization context
 	private GraphLayoutContext context;

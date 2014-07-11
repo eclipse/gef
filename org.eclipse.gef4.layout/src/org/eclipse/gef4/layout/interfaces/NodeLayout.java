@@ -12,26 +12,6 @@ package org.eclipse.gef4.layout.interfaces;
 public interface NodeLayout extends EntityLayout {
 
 	/**
-	 * Stores the minimized state of this NodeLayout. A minimized NodeLayout
-	 * resizes its visual to (0, 0). When it is unminimized, it resizes it back
-	 * to its previous dimension. Note that a NodeLayout can be minimized even
-	 * if it is not resizable.
-	 */
-	public static final String MINIMIZED_PROPERTY = "minimized";
-
-	/**
-	 * Stores the prunable state of this NodeLayout. A prunable NodeLayout may
-	 * be pruned to a subgraph.
-	 */
-	public static final String PRUNABLE_PROPERTY = "prunable";
-
-	/**
-	 * Stores the pruned state of this NodeLayout. A NodeLayout is pruned if it
-	 * is contained by a subgraph.
-	 */
-	public static final String PRUNED_PROPERTY = "pruned";
-
-	/**
 	 * @return a subgraph this node belongs to or null if this node is not
 	 *         pruned
 	 */

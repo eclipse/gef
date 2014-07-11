@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.CrossingReducer;
 import org.eclipse.gef4.layout.interfaces.LayerProvider;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
