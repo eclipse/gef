@@ -13,37 +13,43 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
-import javafx.collections.SetChangeListener.Change;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import org.eclipse.gef4.fx.anchors.AbstractFXAnchor.RootNodeProvider;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 
 public class FXMouseDragSnippet extends FXApplication {
 
@@ -78,16 +84,24 @@ public class FXMouseDragSnippet extends FXApplication {
 	private Point2D startMousePosition;
 	private ObservableSet<Node> nodesUnderMouse = FXCollections
 			.observableSet(new HashSet<Node>());
+	private Map<Node, IFXAnchor> anchors = new HashMap<Node, IFXAnchor>();
+	private Pane feedbackLayer;
+	private StackPane stackPane;
 
 	@Override
 	public Scene createScene() {
 		// layers
-		StackPane stackPane = new StackPane();
 		contentLayer = new Pane();
 		contentLayer.setPickOnBounds(true);
 		handleLayer = new Pane();
 		handleLayer.setPickOnBounds(false);
-		stackPane.getChildren().addAll(contentLayer, handleLayer);
+		feedbackLayer = new Pane();
+		feedbackLayer.setPickOnBounds(false);
+		feedbackLayer.setMouseTransparent(true);
+
+		stackPane = new StackPane();
+		stackPane.getChildren()
+				.addAll(contentLayer, handleLayer, feedbackLayer);
 
 		// scrolling
 		ScrollPane scrollPane = new ScrollPane();
@@ -97,12 +111,9 @@ public class FXMouseDragSnippet extends FXApplication {
 
 		// scene
 		scene = new Scene(scrollPane, 800, 600);
-
-		// listeners
 		scene.widthProperty().addListener(sceneSizeChanged);
 		scene.heightProperty().addListener(sceneSizeChanged);
 		scene.addEventFilter(MouseEvent.ANY, mouseFilter);
-
 		return scene;
 	}
 
@@ -116,27 +127,31 @@ public class FXMouseDragSnippet extends FXApplication {
 		EventType<? extends Event> type = event.getEventType();
 		if (type.equals(MouseEvent.MOUSE_RELEASED)) {
 			System.out.println("release " + pressed);
-			
+			pressed.setEffect(null);
+			IFXAnchor ifxAnchor = anchors.get(pressed);
+			if (ifxAnchor != null) {
+				Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
+				for (AnchorKey key : keys) {
+					key.getAnchored().setEffect(new BoxBlur());
+				}
+			}
 			pressed = null;
 			nodesUnderMouse.clear();
 		} else if (type.equals(MouseEvent.MOUSE_DRAGGED)) {
 			double dx = event.getSceneX() - startMousePosition.getX();
 			double dy = event.getSceneY() - startMousePosition.getY();
-			
 			pressed.setLayoutX(startLayoutPosition.getX() + dx);
 			pressed.setLayoutY(startLayoutPosition.getY() + dy);
-			
-			boolean changed = updateNodesUnderMouse(event.getSceneX(), event.getSceneY());
-			
+			boolean changed = updateNodesUnderMouse(event.getSceneX(),
+					event.getSceneY());
 			if (changed) {
-				System.out.println("targets: " + Arrays.asList(nodesUnderMouse.toArray()));
+				System.out.println("targets: "
+						+ Arrays.asList(nodesUnderMouse.toArray()));
 			}
 		}
 	}
 
-	public static Set<Node> pickNodes(Node root, double x, double y) {
-		Bounds bounds;
-		double bx1, bx0, by1, by0;
+	public Set<Node> pickNodes(double sceneX, double sceneY, Node root) {
 		Set<Node> picked = new HashSet<Node>();
 
 		// start with given root node
@@ -145,19 +160,8 @@ public class FXMouseDragSnippet extends FXApplication {
 
 		while (!nodes.isEmpty()) {
 			Node current = nodes.remove();
-
-			// get bounds in scene
-			bounds = current.getBoundsInLocal();
-			bounds = current.localToScene(bounds);
-			bx1 = bounds.getMaxX();
-			bx0 = bounds.getMinX();
-			by1 = bounds.getMaxY();
-			by0 = bounds.getMinY();
-
-			if (bx0 <= x && x <= bx1 && by0 <= y && y <= by1) {
-				// point is contained
+			if (current.contains(current.sceneToLocal(sceneX, sceneY))) {
 				picked.add(current);
-
 				// test all children, too
 				if (current instanceof Parent) {
 					nodes.addAll(((Parent) current).getChildrenUnmodifiable());
@@ -170,8 +174,8 @@ public class FXMouseDragSnippet extends FXApplication {
 
 	private boolean updateNodesUnderMouse(double sceneX, double sceneY) {
 		boolean changed = false;
-		Set<Node> picked = pickNodes(scene.getRoot(), sceneX, sceneY);
-		
+		Set<Node> picked = pickNodes(sceneX, sceneY, stackPane);
+
 		// update entered nodes
 		for (Node n : picked) {
 			if (!nodesUnderMouse.contains(n)) {
@@ -179,7 +183,7 @@ public class FXMouseDragSnippet extends FXApplication {
 				changed = true;
 			}
 		}
-		
+
 		// update exited nodes
 		List<Node> toRemove = new LinkedList<Node>();
 		for (Node n : nodesUnderMouse) {
@@ -193,7 +197,7 @@ public class FXMouseDragSnippet extends FXApplication {
 		for (Node n : toRemove) {
 			nodesUnderMouse.remove(n);
 		}
-		
+
 		return changed;
 	}
 
@@ -203,14 +207,77 @@ public class FXMouseDragSnippet extends FXApplication {
 		startMousePosition = new Point2D(event.getSceneX(), event.getSceneY());
 		startLayoutPosition = new Point2D(pressed.getLayoutX(),
 				pressed.getLayoutY());
+
+		// add effect
+		pressed.setEffect(new Bloom(0));
+		IFXAnchor ifxAnchor = anchors.get(pressed);
+		if (ifxAnchor != null) {
+			Set<AnchorKey> keys = ifxAnchor.positionProperty().keySet();
+			for (AnchorKey key : keys) {
+				key.getAnchored().setEffect(null);
+			}
+		}
 	}
 
 	protected void onSceneSizeChange(double width, double height) {
+		// clear visuals
+		anchors.clear();
 		contentLayer.getChildren().clear();
 		handleLayer.getChildren().clear();
-		for (int i = 0; i < 128; i++) {
-			contentLayer.getChildren().add(draggable(generate(width, height)));
+
+		// generate contents
+		int count = 128;
+		for (int i = 0; i < count; i++) {
 			handleLayer.getChildren().add(draggable(generate(width, height)));
+		}
+
+		// generate random curves between
+		for (int i = 0; i < count; i++) {
+			Node n = handleLayer.getChildren().get(
+					(int) (Math.random() * count / 2));
+			Node m = null;
+			while (m == null || m == n) {
+				m = handleLayer.getChildren()
+						.get((int) (Math.random() * count / 2));
+			}
+
+			FXCurveConnection connection = new FXCurveConnection();
+			new FXChopBoxHelper(connection);
+
+			AnchorKey kn = new AnchorKey(connection, "start");
+			AnchorKey km = new AnchorKey(connection, "end");
+
+			IFXAnchor an, am;
+			if (anchors.containsKey(n)) {
+				an = anchors.get(n);
+			} else {
+				an = new FXChopBoxAnchor(n, new RootNodeProvider() {
+					@Override
+					public Node get() {
+						return handleLayer;
+					}
+				});
+				anchors.put(n, an);
+			}
+
+			if (anchors.containsKey(m)) {
+				am = anchors.get(m);
+			} else {
+				am = new FXChopBoxAnchor(n, new RootNodeProvider() {
+					@Override
+					public Node get() {
+						return handleLayer;
+					}
+				});
+				anchors.put(m, am);
+			}
+
+			connection.setStartAnchorLink(new AnchorLink(an, kn));
+			connection.setEndAnchorLink(new AnchorLink(am, km));
+
+			connection.setEffect(new BoxBlur());
+
+			contentLayer.getChildren().add(connection);
 		}
 	}
 
@@ -224,7 +291,9 @@ public class FXMouseDragSnippet extends FXApplication {
 		double ry = Math.random() * (h - 100);
 		double rw = Math.random() * 100;
 		double rh = Math.random() * 100;
-		Rectangle rectangle = new Rectangle(rx, ry, rw, rh);
+		Rectangle rectangle = new Rectangle(0, 0, rw, rh);
+		rectangle.setLayoutX(rx);
+		rectangle.setLayoutY(ry);
 		rectangle.setFill(new Color(Math.random(), Math.random(),
 				Math.random(), 0.5));
 		rectangle.setStroke(Color.TRANSPARENT);
