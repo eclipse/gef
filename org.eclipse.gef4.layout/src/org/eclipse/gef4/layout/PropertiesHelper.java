@@ -14,6 +14,7 @@ package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
@@ -70,6 +71,26 @@ public class PropertiesHelper {
 	public static final String PRUNABLE_PROPERTY = "prunable";
 	public static final Boolean DEFAULT_PRUNABLE = true;
 
+	// connections
+
+	/**
+	 * Stores the visibility state of this connection.
+	 */
+	public static final String VISIBLE_PROPERTY = "visible";
+	public static final Boolean DEFAULT_VISIBLE = true;
+
+	/**
+	 * Stores a weight for this connection.
+	 */
+	public static final String WEIGHT_PROPERTY = "weight";
+	public static final Double DEFAULT_WEIGHT = 0d;
+
+	/**
+	 * Stores a weight for this connection.
+	 */
+	public static final String DIRECTED_PROPERTY = "direction";
+	public static final Boolean DEFAULT_DIRECTED = true;
+
 	// /**
 	// * Stores the pruned state of this NodeLayout. A NodeLayout is pruned if
 	// it
@@ -77,6 +98,8 @@ public class PropertiesHelper {
 	// */
 	// public static final String PRUNED_PROPERTY = "pruned";
 	// public static final Boolean DEFAULT_PRUNED = false;
+
+	// entities
 
 	public static Point getLocation(EntityLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
@@ -126,6 +149,8 @@ public class PropertiesHelper {
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
+	// nodes
+
 	public static Boolean isMinimized(NodeLayout node) {
 		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
@@ -146,19 +171,50 @@ public class PropertiesHelper {
 		return DEFAULT_PRUNABLE;
 	}
 
-	// public static Boolean isPruned(NodeLayout node) {
-	// Object pruned = node.getProperty(PRUNED_PROPERTY);
-	// if (pruned instanceof Boolean) {
-	// return (Boolean) pruned;
-	// }
-	// return DEFAULT_PRUNED;
-	// }
 	public static Boolean isPruned(NodeLayout node) {
 		return node.getSubgraph() != null;
 	}
 
 	public static void setPrunable(NodeLayout node, boolean prunable) {
 		node.setProperty(PRUNABLE_PROPERTY, prunable);
+	}
+
+	// connections
+
+	public static Boolean isDirected(ConnectionLayout edge) {
+		Object directed = edge.getProperty(DIRECTED_PROPERTY);
+		if (directed instanceof Boolean) {
+			return (Boolean) directed;
+		}
+		return DEFAULT_DIRECTED;
+	}
+
+	public static Boolean isVisible(ConnectionLayout edge) {
+		Object visible = edge.getProperty(VISIBLE_PROPERTY);
+		if (visible instanceof Boolean) {
+			return (Boolean) visible;
+		}
+		return DEFAULT_VISIBLE;
+	}
+
+	public static Double getWeight(ConnectionLayout edge) {
+		Object weight = edge.getProperty(WEIGHT_PROPERTY);
+		if (weight instanceof Double) {
+			return (Double) weight;
+		}
+		return DEFAULT_WEIGHT;
+	}
+
+	public static void setDirected(ConnectionLayout edge, boolean directed) {
+		edge.setProperty(DIRECTED_PROPERTY, directed);
+	}
+
+	public static void setVisible(ConnectionLayout edge, boolean visible) {
+		edge.setProperty(VISIBLE_PROPERTY, visible);
+	}
+
+	public static void setWeight(ConnectionLayout edge, double weight) {
+		edge.setProperty(WEIGHT_PROPERTY, weight);
 	}
 
 }

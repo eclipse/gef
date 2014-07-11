@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -364,10 +365,8 @@ public class TreeLayoutObserver {
 
 		public boolean connectionRemoved(LayoutContext context,
 				ConnectionLayout connection) {
-			TreeNode node1 = layoutToTree
-					.get(connection.getSource());
-			TreeNode node2 = layoutToTree
-					.get(connection.getTarget());
+			TreeNode node1 = layoutToTree.get(connection.getSource());
+			TreeNode node2 = layoutToTree.get(connection.getTarget());
 			if (node1.parent == node2) {
 				node1.findNewParent();
 				if (node1.parent != node2) {
@@ -387,10 +386,8 @@ public class TreeLayoutObserver {
 
 		public boolean connectionAdded(LayoutContext context,
 				ConnectionLayout connection) {
-			TreeNode source = layoutToTree.get(connection
-					.getSource());
-			TreeNode target = layoutToTree.get(connection
-					.getTarget());
+			TreeNode source = layoutToTree.get(connection.getSource());
+			TreeNode target = layoutToTree.get(connection.getTarget());
 			if (source == target)
 				return false;
 			if (target.isBetterParent(source)) {
@@ -400,7 +397,8 @@ public class TreeLayoutObserver {
 				superRoot.precomputeTree();
 				fireParentChanged(target, previousParent);
 			}
-			if (!connection.isDirected() && source.isBetterParent(target)) {
+			if (!PropertiesHelper.isDirected(connection)
+					&& source.isBetterParent(target)) {
 				TreeNode previousParent = source.parent;
 				previousParent.children.remove(source);
 				target.addChild(source);
@@ -557,7 +555,8 @@ public class TreeLayoutObserver {
 	 *            method stops and returns null).
 	 * @return
 	 */
-	private NodeLayout findRoot(NodeLayout nodeLayout, Set<NodeLayout> alreadyVisited) {
+	private NodeLayout findRoot(NodeLayout nodeLayout,
+			Set<NodeLayout> alreadyVisited) {
 		HashSet<NodeLayout> alreadyVisitedRoot = new HashSet<NodeLayout>();
 		while (true) {
 			if (alreadyVisited.contains(nodeLayout))

@@ -414,7 +414,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 					.getTarget()));
 			if (source == null || target == null)
 				continue;
-			double weight = connection.getWeight();
+			double weight = PropertiesHelper.getWeight(connection);
 			weight = (weight <= 0 ? 0.1 : weight);
 			srcDestToSumOfWeights[source.intValue()][target.intValue()] += weight;
 			srcDestToSumOfWeights[target.intValue()][source.intValue()] += weight;
