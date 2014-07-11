@@ -99,7 +99,8 @@ public interface IFXConnection {
 	public IFXDecoration getStartDecoration();
 
 	/**
-	 * Returns the start point (not anchor) of this connection.
+	 * Returns the start point (not anchor) of this connection, relative to the
+	 * local coordinate system of the connection {@link #getVisual() visual}.
 	 * 
 	 * @return the start point of this connection
 	 */
