@@ -138,8 +138,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					List<Node> pickedNodes = ((FXViewer) viewer).pickNodes(
 							e.getSceneX(), e.getSceneY(), null);
-					policy.release(e, new Dimension(dx, dy), pickedNodes,
-							getParts(pickedNodes));
+					List<IContentPart<Node>> parts = getParts(pickedNodes);
+					policy.release(e, new Dimension(dx, dy), pickedNodes, parts);
 				}
 			};
 
