@@ -39,7 +39,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 // TODO: extends IGeometry
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-		implements IFXConnection {
+implements IFXConnection {
 
 	public static final String CSS_CLASS_DECORATION = "decoration";
 
@@ -105,7 +105,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	/**
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
-	 * 
+	 *
 	 * @param deco
 	 * @param start
 	 * @param direction
@@ -239,7 +239,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
 	 * compute the position) this method returns an empty array.
 	 * </p>
-	 * 
+	 *
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
@@ -415,7 +415,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				.get();
 		if (oldLink != null) {
 			endAnchorLinkProperty.get().getAnchor().positionProperty()
-					.removeListener(positionChangeListener);
+			.removeListener(positionChangeListener);
 			if (listener != null) {
 				endAnchorLinkProperty.removeListener(listener);
 			}
@@ -428,17 +428,19 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		endAnchorLinkProperty.set(endAnchorLink);
 		isEndConnected = !(endAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		endAnchorLinkProperty.get().getAnchor().positionProperty()
-				.addListener(positionChangeListener);
+		.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
 	@Override
 	public void setEndDecoration(IFXDecoration endDeco) {
 		endDecoration = endDeco;
-		ObservableList<String> styleClasses = endDecoration.getVisual()
-				.getStyleClass();
-		if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-			styleClasses.add(CSS_CLASS_DECORATION);
+		if (endDecoration != null) {
+			ObservableList<String> styleClasses = endDecoration.getVisual()
+					.getStyleClass();
+			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+				styleClasses.add(CSS_CLASS_DECORATION);
+			}
 		}
 		refreshGeometry();
 	}
@@ -511,7 +513,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				.get();
 		if (oldLink != null) {
 			startAnchorLinkProperty.get().getAnchor().positionProperty()
-					.removeListener(positionChangeListener);
+			.removeListener(positionChangeListener);
 			if (listener != null) {
 				startAnchorLinkProperty.removeListener(listener);
 			}
@@ -524,17 +526,19 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		startAnchorLinkProperty.set(startAnchorLink);
 		isStartConnected = !(startAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		startAnchorLinkProperty.get().getAnchor().positionProperty()
-				.addListener(positionChangeListener);
+		.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
 	@Override
 	public void setStartDecoration(IFXDecoration startDeco) {
 		startDecoration = startDeco;
-		ObservableList<String> styleClasses = startDecoration.getVisual()
-				.getStyleClass();
-		if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
-			styleClasses.add(CSS_CLASS_DECORATION);
+		if (startDecoration != null) {
+			ObservableList<String> styleClasses = startDecoration.getVisual()
+					.getStyleClass();
+			if (!styleClasses.contains(CSS_CLASS_DECORATION)) {
+				styleClasses.add(CSS_CLASS_DECORATION);
+			}
 		}
 		refreshGeometry();
 	}
