@@ -92,8 +92,6 @@ public final class DotAst {
 	}
 
 	/**
-	 * @param dotFile
-	 *            The DOT file to parse
 	 * @return The name of the DOT graph described in the given file
 	 */
 	public String graphName() {

@@ -39,9 +39,8 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  * 
  * For further information see http://dx.doi.org/10.1109/TSMC.1981.4308636
  * 
- * This layout algorithm works only with - directed graphs (
- * {@link ZestStyles.CONNECTIONS_DIRECTED}) - graphs without cycles (otherwise
- * an appropriate RuntimeException is thrown)
+ * This layout algorithm works only with - directed graphs (otherwise an
+ * appropriate RuntimeException is thrown)
  * 
  * @version 1.3
  * @author Rene Kuhlemann
@@ -69,8 +68,8 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 * Constructs a tree-like, layered layout of a directed graph.
 	 * 
 	 * @param dir
-	 *            - {@link SugiyamaLayoutAlgorithm#HORIZONTAL}: left to right -
-	 *            {@link SugiyamaLayoutAlgorithm#VERTCAL}: top to bottom
+	 *            {@link Direction#HORIZONTAL}: left to right -
+	 *            {@link Direction#VERTICAL} : top to bottom
 	 * 
 	 * @param dim
 	 *            - desired size of the layout area. Uses

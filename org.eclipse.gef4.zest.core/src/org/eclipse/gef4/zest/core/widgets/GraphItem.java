@@ -37,7 +37,7 @@ public abstract class GraphItem extends Item {
 	}
 
 	/**
-	 * @deprecated Since Zest 2.0, use {@link #GraphItem(GraphWidget, int)} and
+	 * @deprecated Since Zest 2.0, use {@link #GraphItem(Widget, int)} and
 	 *             {@link #setData(Object)}
 	 */
 	public GraphItem(Widget parent, int style, Object data) {

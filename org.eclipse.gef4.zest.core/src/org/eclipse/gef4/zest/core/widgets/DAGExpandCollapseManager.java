@@ -32,7 +32,6 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  * expanded, all its successors are unpruned and connections pointing to them
  * are shown.
  * </p>
- * </p>
  * <p>
  * <b>NOTE:</b> A <code>Graph</code> using this manager should use
  * {@link DefaultSubgraph}, which doesn't show any information about subgraphs
@@ -42,7 +41,6 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
  * </p>
  * One instance of this class can serve only one instance of <code>Graph</code>.
  * 
- * @since 2.0
  */
 public class DAGExpandCollapseManager implements ExpandCollapseManager {
 

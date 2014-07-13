@@ -41,17 +41,17 @@ public interface IRootPart<VR> extends IVisualPart<VR> {
 	public List<IFeedbackPart<VR>> getFeedbackPartChildren();
 
 	/**
-	 * Returns the {@link IViewer} this {@link IViewerBound} is bound to.
+	 * Returns the {@link IViewer} this {@link IRootPart} is bound to.
 	 * 
 	 * @return The {@link IViewer} this {@link IRootPart} is attached to.
 	 */
 	public abstract IViewer<VR> getViewer();
 
 	/**
-	 * Sets the {@link IViewer} this {@link IViewerBound} is to be bound to.
+	 * Sets the {@link IViewer} this {@link IRootPart} is to be bound to.
 	 * 
 	 * @param viewer
-	 *            the {@link IViewer} this {@link IViewerBound} should be
+	 *            the {@link IViewer} this {@link IRootPart} should be
 	 *            attached to.
 	 */
 	public abstract void setViewer(IViewer<VR> viewer);

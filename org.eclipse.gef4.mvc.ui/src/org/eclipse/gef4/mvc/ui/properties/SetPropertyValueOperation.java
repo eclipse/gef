@@ -94,9 +94,6 @@ public class SetPropertyValueOperation extends AbstractOperation {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.gef.commands.Command#canExecute()
-	 */
 	public boolean canExecute() {
 		if (propertySource == null || propertyId == null) {
 			return false;

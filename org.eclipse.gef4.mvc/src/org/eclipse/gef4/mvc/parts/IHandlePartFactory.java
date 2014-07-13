@@ -42,8 +42,6 @@ public interface IHandlePartFactory<VR> {
 	 * }
 	 * </pre>
 	 * 
-	 * </quote>
-	 * 
 	 * @param targets
 	 * @param contextBehavior
 	 * @param contextMap

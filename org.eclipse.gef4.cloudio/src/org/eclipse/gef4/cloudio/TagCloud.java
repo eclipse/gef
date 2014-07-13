@@ -696,7 +696,7 @@ public class TagCloud extends Canvas {
 	 * in-order, starting with the element at position 0.
 	 * 
 	 * @param values
-	 * @param maxWords
+	 * @param monitor
 	 */
 	public int setWords(List<Word> values, IProgressMonitor monitor) {
 		checkWidget();
@@ -761,7 +761,7 @@ public class TagCloud extends Canvas {
 	 * <code>bgData</code> is <code>null</code>, the old mask will be removed.
 	 * 
 	 * @param bgData
-	 *            a square containing b&w pixels only
+	 *            a square containing black and white pixels only
 	 */
 	public void setBackgroundMask(ImageData bgData) {
 		if (mask != null) {
@@ -1276,7 +1276,7 @@ public class TagCloud extends Canvas {
 	}
 
 	/**
-	 * Sets the minimum font size. Should be a reasonable value > 0 (twice of
+	 * Sets the minimum font size. Should be a reasonable value &gt; 0 (twice of
 	 * {@link TagCloud#accuracy} is recommended). By default, this value is 12.
 	 * 
 	 * @param size

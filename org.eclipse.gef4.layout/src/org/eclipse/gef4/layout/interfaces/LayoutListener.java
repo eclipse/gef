@@ -28,7 +28,7 @@ public interface LayoutListener {
 	 * true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.LayoutListener
 	 * 
 	 * @param context
@@ -48,7 +48,7 @@ public interface LayoutListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context
@@ -64,8 +64,8 @@ public interface LayoutListener {
 	 * changed within observed context. If true is returned, it means that the
 	 * receiving listener has intercepted this event. Intercepted events will
 	 * not be passed to the rest of the listeners. If the event is not
-	 * intercepted by any listener, {@link LayoutAlgorithm#applyLayout()
-	 * applyLayout()} will be called on the context's main algorithm.
+	 * intercepted by any listener, {@link LayoutAlgorithm#applyLayout(boolean)}
+	 * will be called on the context's main algorithm.
 	 * 
 	 * @param context
 	 *            the layout context that fired the event
@@ -84,7 +84,7 @@ public interface LayoutListener {
 	 * If true is returned, it means that the receiving listener has intercepted
 	 * this event. Intercepted events will not be passed to the rest of the
 	 * listeners. If the event is not intercepted by any listener,
-	 * {@link LayoutAlgorithm#applyLayout() applyLayout()} will be called on the
+	 * {@link LayoutAlgorithm#applyLayout(boolean)} will be called on the
 	 * context's main algorithm.
 	 * 
 	 * @param context

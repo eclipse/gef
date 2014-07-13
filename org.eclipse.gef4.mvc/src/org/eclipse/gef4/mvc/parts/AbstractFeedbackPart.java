@@ -15,7 +15,7 @@ package org.eclipse.gef4.mvc.parts;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
 public abstract class AbstractFeedbackPart<VR> extends AbstractVisualPart<VR>
 		implements IFeedbackPart<VR> {

@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 // TODO: find a better name
 public class FXBendPolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+ITransactional {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
@@ -67,7 +67,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	/**
 	 * Creates a new way point on the curve at the specified index. Selects the
 	 * new way point for manipulation
-	 * 
+	 *
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 * @param p
@@ -159,9 +159,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	/**
 	 * Moves the previously selected/created way point to the given position.
-	 * 
-	 * @param wayPointIndex
-	 *            index of the selected way point
+	 *
 	 * @param p
 	 *            {@link Point} providing new way point coordinates
 	 */
@@ -186,7 +184,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	/**
 	 * Selects a way point on the curve to be manipulated. The way point is
 	 * identified by its index.
-	 * 
+	 *
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 */

@@ -58,7 +58,7 @@ public class BehaviorUtils {
 	 * 
 	 * @param root
 	 * @param anchorages
-	 * @param handles
+	 * @param anchords
 	 * @see #addAnchoreds(IRootPart, List, List)
 	 */
 	public static <VR> void removeAnchoreds(IRootPart<VR> root,

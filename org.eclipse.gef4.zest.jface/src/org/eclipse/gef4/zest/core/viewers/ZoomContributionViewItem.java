@@ -70,7 +70,7 @@ public class ZoomContributionViewItem extends ContributionItem implements
 	 * Valid values for initialZooms are percentage numbers (e.g., "100%"), or
 	 * FIT_WIDTH, FIT_HEIGHT, FIT_ALL.
 	 * 
-	 * @param partService
+	 * @param part
 	 *            service used to see whether the view is zoomable.
 	 */
 	public ZoomContributionViewItem(IZoomableWorkbenchPart part) {

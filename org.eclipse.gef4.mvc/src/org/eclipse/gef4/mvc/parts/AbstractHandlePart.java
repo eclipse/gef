@@ -15,7 +15,7 @@ package org.eclipse.gef4.mvc.parts;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
 public abstract class AbstractHandlePart<VR> extends AbstractVisualPart<VR>
 		implements IHandlePart<VR> {

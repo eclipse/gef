@@ -20,7 +20,7 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * 
  * @author anyssen
  * 
- * @param <V>
+ * @param <VR>
  */
 public interface IFeedbackPartFactory<VR> {
 

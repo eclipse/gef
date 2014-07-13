@@ -131,8 +131,8 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * 
 	 * @param parent
 	 * @param style
-	 * @see ZestStyles#GESTURES_DISABLED
-	 * @see ZestStyles#ANIMATION_DISABLED
+	 *            the combination of {@link SWT} and {@link ZestStyles} styles
+	 *            to be applied
 	 */
 	public GraphWidget(Composite parent, int style) {
 		super(parent, (style | SWT.DOUBLE_BUFFERED) & ~ZestStyles.GRAPH_STYLES);
@@ -254,8 +254,8 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * @param graph
 	 * @param parent
 	 * @param style
-	 * @see ZestStyles#GESTURES_DISABLED
-	 * @see ZestStyles#ANIMATION_DISABLED
+	 *            the combination of {@link SWT} and {@link ZestStyles} styles
+	 *            to apply.
 	 */
 	public GraphWidget(Graph graph, Composite parent, int style) {
 		this(parent, style);
@@ -371,9 +371,8 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	/**
 	 * Sets the default connection style.
 	 * 
-	 * @param connection
+	 * @param connectionStyle
 	 *            style the connection style to set
-	 * @see org.eclipse.mylar.zest.core.widgets.ZestStyles
 	 */
 	public void setConnectionStyle(int connectionStyle) {
 		this.connectionStyle = connectionStyle;
@@ -383,7 +382,6 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * Gets the default connection style.
 	 * 
 	 * @return the connection style
-	 * @see org.eclipse.mylar.zest.core.widgets.ZestStyles
 	 */
 	public int getConnectionStyle() {
 		return connectionStyle;
@@ -394,7 +392,6 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * 
 	 * @param nodeStyle
 	 *            the node style to set
-	 * @see org.eclipse.mylar.zest.core.widgets.ZestStyles
 	 */
 	public void setNodeStyle(int nodeStyle) {
 		this.nodeStyle = nodeStyle;
@@ -404,7 +401,6 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * Gets the default node style.
 	 * 
 	 * @return the node style
-	 * @see org.eclipse.mylar.zest.core.widgets.ZestStyles
 	 */
 	public int getNodeStyle() {
 		return nodeStyle;
@@ -422,7 +418,7 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	/**
 	 * Changes the selection to the list of items
 	 * 
-	 * @param l
+	 * @param items
 	 */
 	public void setSelection(GraphItem[] items) {
 		clearSelection();
@@ -495,7 +491,6 @@ public class GraphWidget extends FigureCanvas implements IContainer {
 	 * 
 	 * @param enabled
 	 * 
-	 * @since 2.0
 	 */
 	public void setDynamicLayout(boolean enabled) {
 		if (getLayoutContext().isDynamicLayoutEnabled() != enabled) {

@@ -21,8 +21,8 @@ import org.eclipse.ui.services.IDisposable;
  * relationships, rather than on connected nodes.
  * 
  * @author Del Myers
- * @see #IGraphContentProvider
- * @see #IEntityStyleProvider
+ * @see IGraphContentProvider
+ * @see IEntityStyleProvider
  * 
  */
 // @tag bug(151327-Styles) : created to solve this bug

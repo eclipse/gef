@@ -24,11 +24,11 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
 import org.eclipse.gef4.zest.core.widgets.GraphContainer;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
 import org.eclipse.gef4.zest.core.widgets.GraphNode;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.custom.CGraphNode;
 import org.eclipse.swt.SWT;
@@ -120,7 +120,6 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @param nodeStyle
 	 *            the style for the nodes.
-	 * @see #ZestStyles
 	 */
 	public void setNodeStyle(int nodeStyle) {
 		if (getInput() != null) {
@@ -135,7 +134,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * 
 	 * @param connectionStyle
 	 *            the style for the connections.
-	 * @see #ZestStyles
+	 * @see ZestStyles
 	 */
 	public void setConnectionStyle(int connectionStyle) {
 		if (getInput() != null) {
@@ -265,7 +264,8 @@ public abstract class AbstractStructuredGraphViewer extends
 		GraphNode node = this.getGraphModelNode(element);
 		if (node == null) {
 			if (figure != null) {
-				node = new CGraphNode((GraphWidget) getControl(), SWT.NONE, figure);
+				node = new CGraphNode((GraphWidget) getControl(), SWT.NONE,
+						figure);
 				this.nodesMap.put(element, node);
 				node.setData(element);
 			} else {
@@ -289,8 +289,8 @@ public abstract class AbstractStructuredGraphViewer extends
 			GraphNode source, GraphNode target) {
 		GraphConnection connection = this.getGraphModelConnection(element);
 		if (connection == null) {
-			connection = new GraphConnection((GraphWidget) getControl(), SWT.NONE,
-					source, target);
+			connection = new GraphConnection((GraphWidget) getControl(),
+					SWT.NONE, source, target);
 			this.connectionsMap.put(element, connection);
 			connection.setData(element);
 		}
@@ -725,7 +725,7 @@ public abstract class AbstractStructuredGraphViewer extends
 	 * Creates a new node and adds it to the graph. If it already exists nothing
 	 * happens.
 	 * 
-	 * @param newNode
+	 * @param element
 	 */
 	public void addNode(Object element) {
 		if (nodesMap.get(element) == null) {

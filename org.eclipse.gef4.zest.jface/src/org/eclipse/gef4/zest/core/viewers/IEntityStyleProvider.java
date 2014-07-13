@@ -31,7 +31,8 @@ import org.eclipse.ui.services.IDisposable;
  * 
  * @author Del Myers
  * @see org.eclipse.jface.viewers.IColorProvider
- * @tag bug(151327-Styles) : created to solve this bug
+ * 
+ *      bug(151327-Styles) : created to solve this bug
  */
 public interface IEntityStyleProvider extends IDisposable {
 

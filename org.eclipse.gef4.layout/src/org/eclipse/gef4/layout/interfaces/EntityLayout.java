@@ -103,10 +103,13 @@ public interface EntityLayout extends IPropertyStore {
 	 * <li>all subgraphs that are <code>GraphEntities</code> and contain at
 	 * least one node that is a successor of at least one node from subgraph S</li>
 	 * </ul>
+	 * 
 	 * For subgraphs that are not <code>GraphEntities</code> an empty array will
-	 * be returned.</br>Entities connected with this node by a bidirectional
-	 * connection are considered both successors and predecessors. Any
-	 * subsequent changes to the returned array do not affect this node.
+	 * be returned.
+	 *
+	 * Entities connected with this node by a bidirectional connection are
+	 * considered both successors and predecessors. Any subsequent changes to
+	 * the returned array do not affect this node.
 	 * 
 	 * @return array of successors of this node
 	 */
@@ -129,10 +132,13 @@ public interface EntityLayout extends IPropertyStore {
 	 * least one node that is a predecessor of at least one node from subgraph S
 	 * </li>
 	 * </ul>
+	 * 
 	 * For subgraphs that are not <code>GraphEntities</code> an empty array will
-	 * be returned.</br>Entities connected with this node by a bidirectional
-	 * connection are considered both successors and predecessors. Any
-	 * subsequent changes to the returned array do not affect this node.
+	 * be returned.
+	 * 
+	 * Entities connected with this node by a bidirectional connection are
+	 * considered both successors and predecessors. Any subsequent changes to
+	 * the returned array do not affect this node.
 	 * 
 	 * @return array of predecessors of this node
 	 */

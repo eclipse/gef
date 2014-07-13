@@ -25,19 +25,12 @@ import org.eclipse.gef4.zest.core.widgets.internal.SharedMessages;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Manage the primary zoom function in a graphical viewer. This class is used by
- * the zoom contribution items, including:
- * <UL>
- * <LI>{@link org.eclipse.gef.ui.actions.ZoomInAction}
- * <LI>{@link org.eclipse.gef.ui.actions.ZoomOutAction}
- * <LI>and {@link org.eclipse.gef.ui.actions.ZoomComboContributionItem}
- * </UL>
- * <P>
- * A ZoomManager controls how zoom in and zoom out are performed. It also
- * determines the list of choices the user sees in the drop-down Combo on the
- * toolbar. The zoom manager controls a <code>ScalableFigure</code>, which
- * performs the actual zoom, and also a <code>Viewport</code>. The viewport is
- * needed so that the scrolled location is preserved as the zoom level changes.
+ * Manage the primary zoom function in a graphical viewer. A ZoomManager
+ * controls how zoom in and zoom out are performed. It also determines the list
+ * of choices the user sees in the drop-down Combo on the toolbar. The zoom
+ * manager controls a <code>ScalableFigure</code>, which performs the actual
+ * zoom, and also a <code>Viewport</code>. The viewport is needed so that the
+ * scrolled location is preserved as the zoom level changes.
  * <p>
  * <b>NOTE:</b> For the settings of {@link #FIT_ALL Page}, {@link #FIT_WIDTH
  * Width} and {@link #FIT_HEIGHT Height} to work properly, the given

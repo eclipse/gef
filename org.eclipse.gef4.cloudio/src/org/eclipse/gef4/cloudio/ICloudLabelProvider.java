@@ -64,7 +64,7 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 
 	/**
 	 * Return the tool tip of the element, or <code>null</code>, if none.
-	 * @param data
+	 * @param element
 	 * @return
 	 */
 	public String getToolTip(Object element);

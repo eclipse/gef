@@ -19,8 +19,8 @@ import org.eclipse.gef4.zest.core.viewers.internal.GraphModelEntityRelationshipF
 import org.eclipse.gef4.zest.core.viewers.internal.GraphModelFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.IStylingGraphModelFactory;
 import org.eclipse.gef4.zest.core.viewers.internal.TreeModelEntityFactory;
-import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.GraphItem;
+import org.eclipse.gef4.zest.core.widgets.GraphWidget;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.gef4.zest.core.widgets.zooming.ZoomManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -61,15 +61,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * 
 	 * @param composite
 	 * @param style
-	 *            the style for the viewer and for the layout algorithm
-	 * @see ZestStyles#LAYOUT_GRID
-	 * @see ZestStyles#LAYOUT_TREE
-	 * @see ZestStyles#LAYOUT_RADIAL
-	 * @see ZestStyles#LAYOUT_SPRING
-	 * @see ZestStyles#NO_OVERLAPPING_NODES
-	 * @see ZestStyles#NODES_HIGHLIGHT_ADJACENT
-	 * @see ZestStyles#GESTURES_DISABLED
-	 * @see ZestStyles#ANIMATION_DISABLED
+	 *            the style for the viewer and for the layout algorithm, a
+	 *            combination of {@link SWT} and {@link ZestStyles} to apply.
 	 * @see SWT#V_SCROLL
 	 * @see SWT#H_SCROLL
 	 */
@@ -153,8 +146,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#
-	 * getGraphControl()
+	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
+	 * # getGraphControl()
 	 */
 	public GraphWidget getGraphControl() {
 		return super.getGraphControl();
@@ -175,8 +168,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#
-	 * setLayoutAlgorithm(org.eclipse.gef4.layout.LayoutAlgorithm)
+	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
+	 * # setLayoutAlgorithm(org.eclipse.gef4.layout.LayoutAlgorithm)
 	 */
 	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		super.setLayoutAlgorithm(algorithm);
@@ -218,8 +211,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * stable. If use this method (to access internal nodes and edges), your
 	 * code may not compile between versions.
 	 * 
-	 * @param The
-	 *            user model node.
+	 * @param element
+	 *            The user model node.
 	 * @return An IGraphItem. This should be either a IGraphModelNode or
 	 *         IGraphModelConnection
 	 */
@@ -257,8 +250,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#reveal
-	 * (java.lang.Object)
+	 * org.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
+	 * #reveal (java.lang.Object)
 	 */
 	public void reveal(Object element) {
 		super.reveal(element);
@@ -267,8 +260,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#
-	 * setConnectionStyle(int)
+	 * @seeorg.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
+	 * # setConnectionStyle(int)
 	 */
 	public void setConnectionStyle(int connectionStyle) {
 		super.setConnectionStyle(connectionStyle);
@@ -278,8 +271,8 @@ public class GraphViewer extends AbstractStructuredGraphViewer implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer#unReveal
-	 * (java.lang.Object)
+	 * org.eclipse.gef4.zest.core.viewer.internal.AbstractStructuredGraphViewer
+	 * #unReveal (java.lang.Object)
 	 */
 	public void unReveal(Object element) {
 		super.unReveal(element);

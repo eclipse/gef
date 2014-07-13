@@ -43,9 +43,6 @@ public interface IContentPartFactory<VR> {
 	 * }
 	 * </pre>
 	 * 
-	 * </quote>
-	 * 
-	 * 
 	 * @param content The model {@link Object} for which an {@link IContentPart} is to be created.
 	 * @param contextBehavior The {@link IBehavior} which uses this factory.
 	 * @param contextMap Additional context information to keep the IBehavior stateless.

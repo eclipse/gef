@@ -202,7 +202,7 @@ public class GraphConnection extends GraphItem {
 	}
 
 	/**
-	 * Returns a string like 'source -> destination'
+	 * Returns a string like 'source -&gt; destination'
 	 * 
 	 * @return String
 	 */
@@ -217,22 +217,17 @@ public class GraphConnection extends GraphItem {
 	}
 
 	/**
-	 * Returns the style of this connection. Valid styles are those that begin
-	 * with CONNECTION in ZestStyles.
+	 * Returns the style of this connection.
 	 * 
 	 * @return the style of this connection.
-	 * @see #ZestStyles
 	 */
 	public int getConnectionStyle() {
 		return connectionStyle;
 	}
 
 	/**
-	 * Returns the style of this connection. Valid styles are those that begin
-	 * with CONNECTION in ZestStyles.
+	 * Sets the style of this connection.
 	 * 
-	 * @return the style of this connection.
-	 * @see #ZestStyles
 	 */
 	public void setConnectionStyle(int style) {
 		this.connectionStyle = style;
@@ -246,7 +241,6 @@ public class GraphConnection extends GraphItem {
 	 * apart). A weight of 1 results in the minimum spring length being used
 	 * (closest together).
 	 * 
-	 * @see org.eclipse.mylar.zest.layouts.LayoutRelationship#getWeightInLayout()
 	 * @return the weight: {-1, [0 - 1]}.
 	 */
 	public double getWeightInLayout() {
