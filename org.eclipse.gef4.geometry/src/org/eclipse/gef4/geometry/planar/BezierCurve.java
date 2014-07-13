@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -35,14 +35,14 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * arbitrary Bezier curve. This is the base class of the special quadratic and
  * cubic Bezier curve classes ({@link QuadraticCurve} and {@link CubicCurve}).
  * </p>
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class BezierCurve extends AbstractGeometry implements ICurve,
-		ITranslatable<BezierCurve>, IScalable<BezierCurve>,
-		IRotatable<BezierCurve> {
+ITranslatable<BezierCurve>, IScalable<BezierCurve>,
+IRotatable<BezierCurve> {
 
 	/**
 	 * <p>
@@ -109,7 +109,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Constructs a new {@link Interval} object holding an invalid parameter
 		 * interval.
-		 * 
+		 *
 		 * @return a new {@link Interval} object holding an invalid parameter
 		 *         interval
 		 */
@@ -121,7 +121,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Constructs a new {@link Interval} object holding the interval [0;1]
 		 * which is the parameter {@link Interval} representing a full
 		 * {@link BezierCurve}.
-		 * 
+		 *
 		 * @return a new {@link Interval} object holding the interval [0;1]
 		 */
 		public static Interval getFull() {
@@ -131,7 +131,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Returns the smaller {@link Interval} object, i.e. the one with the
 		 * smallest parameter range.
-		 * 
+		 *
 		 * @param i
 		 * @param j
 		 * @return the {@link Interval} with the smallest parameter range
@@ -142,13 +142,13 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 		/**
 		 * An {@link Interval} records the parameter range [a;b]. Valid
-		 * parameter ranges require 0 <= a <= b <= 1.
+		 * parameter ranges require 0 &lt;= a &lt;= b &lt;= 1.
 		 */
 		public double a;
 
 		/**
 		 * An {@link Interval} records the parameter range [a;b]. Valid
-		 * parameter ranges require 0 <= a <= b <= 1.
+		 * parameter ranges require 0 &lt;= a &lt;= b &lt;= 1.
 		 */
 		public double b;
 
@@ -162,7 +162,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * The new {@link Interval} holds the parameter range [a;b] if a is the
 		 * first double value and b is the second double value.
 		 * </p>
-		 * 
+		 *
 		 * @param ds
 		 *            the lower and upper limit for the {@link Interval} object
 		 *            to be created
@@ -180,7 +180,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Checks if this {@link Interval}'s parameter range does converge with
 		 * default imprecision.
-		 * 
+		 *
 		 * @return <code>true</code> if a ~= b (within default imprecision),
 		 *         otherwise <code>false</code>
 		 * @see Interval#converges(int)
@@ -200,7 +200,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * for a smaller epsilon (higher precision) whereas a negative shift
 		 * demands for a greater epsilon (lower precision).
 		 * </p>
-		 * 
+		 *
 		 * @param shift
 		 *            precision shift
 		 * @return <code>true</code> if a ~= b (within specified imprecision),
@@ -213,7 +213,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Expands this {@link Interval} to include the given other
 		 * {@link Interval}.
-		 * 
+		 *
 		 * @param i
 		 */
 		public void expand(Interval i) {
@@ -227,7 +227,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 		/**
 		 * Returns a copy of this {@link Interval}.
-		 * 
+		 *
 		 * @return a copy of this {@link Interval}
 		 */
 		public Interval getCopy() {
@@ -237,7 +237,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Returns the middle parameter value <code>m = (a+b)/2</code> of this
 		 * {@link Interval}.
-		 * 
+		 *
 		 * @return the middle parameter value of this {@link Interval}
 		 */
 		public double getMid() {
@@ -254,7 +254,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Returns the ratio of this {@link Interval}'s new parameter range to
 		 * its old parameter range.
 		 * </p>
-		 * 
+		 *
 		 * @param interval
 		 *            the new upper and lower bounds in percent
 		 * @return the ratio of this {@link Interval}'s new parameter range to
@@ -300,7 +300,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Constructs a new {@link IntervalPair} with the given
 		 * {@link BezierCurve}s and their corresponding parameter ranges.
-		 * 
+		 *
 		 * @param pp
 		 *            the first {@link BezierCurve}
 		 * @param pt
@@ -324,7 +324,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Checks if both parameter {@link Interval}s do converge (@see
 		 * Interval#converges()) or both {@link BezierCurve}s are degenerated,
 		 * i.e. they are collapsed to a single {@link Point}.
-		 * 
+		 *
 		 * @return <code>true</code> if both parameter {@link Interval}s do
 		 *         converge, otherwise <code>false</code>
 		 */
@@ -336,7 +336,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Checks if both parameter {@link Interval}s do converge (@see
 		 * Interval#converges(int)) or both {@link BezierCurve}s are
 		 * degenerated, i.e. they are collapsed to a single {@link Point}.
-		 * 
+		 *
 		 * @param shift
 		 *            the precision shift
 		 * @return <code>true</code> if both parameter {@link Interval}s do
@@ -352,7 +352,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Expands this {@link IntervalPair} to include the given other
 		 * {@link IntervalPair}.
-		 * 
+		 *
 		 * @param ip
 		 */
 		public void expand(IntervalPair ip) {
@@ -369,7 +369,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Returns a copy of this {@link IntervalPair}. The underlying
 		 * {@link BezierCurve}s are only shallow copied. The corresponding
 		 * parameter {@link Interval}s, contrairwise, are truly copied.
-		 * 
+		 *
 		 * @return a copy of this {@link IntervalPair}
 		 */
 		public IntervalPair getCopy() {
@@ -380,7 +380,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Returns the first sub-curve of this {@link IntervalPair}. This curve
 		 * is the first {@link BezierCurve} <i>p</i> over its corresponding
 		 * parameter {@link Interval} <i>pi</i>.
-		 * 
+		 *
 		 * @return the first sub-curve of this {@link IntervalPair}
 		 */
 		public BezierCurve getPClipped() {
@@ -390,7 +390,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Splits the first parameter {@link Interval} <i>pi</i> at half and
 		 * returns the resulting {@link IntervalPair}s.
-		 * 
+		 *
 		 * @return two {@link IntervalPair}s representing a split of the first
 		 *         parameter {@link Interval} at half
 		 */
@@ -407,7 +407,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		 * Returns the second sub-curve of this {@link IntervalPair}. This curve
 		 * is the second {@link BezierCurve} <i>q</i> over its corresponding
 		 * parameter {@link Interval} <i>qi</i>.
-		 * 
+		 *
 		 * @return the second sub-curve of this {@link IntervalPair}
 		 */
 		public BezierCurve getQClipped() {
@@ -417,7 +417,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Splits the second parameter {@link Interval} <i>qi</i> at half and
 		 * returns the resulting {@link IntervalPair}s.
-		 * 
+		 *
 		 * @return two {@link IntervalPair}s representing a split of the second
 		 *         parameter {@link Interval} at half
 		 */
@@ -433,7 +433,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Creates a new {@link IntervalPair} with swapped {@link BezierCurve}s
 		 * and their parameter {@link Interval}s.
-		 * 
+		 *
 		 * @return a new {@link IntervalPair} with swapped {@link BezierCurve}s
 		 *         and their parameter {@link Interval}s
 		 */
@@ -444,7 +444,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		/**
 		 * Calculates which {@link BezierCurve}'s parameter {@link Interval} is
 		 * longer.
-		 * 
+		 *
 		 * @return <code>true</code> if the distance from start to end parameter
 		 *         value of the first parameter {@link Interval} <i>pi</i> is
 		 *         greater than the distance from start to end parameter value
@@ -473,65 +473,6 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		public boolean pIsBetterThanQ(Point p, Point q);
 	}
 
-	private static final long serialVersionUID = 1L;
-
-	private static final int CHUNK_SHIFT = -3;
-
-	// TODO: use constants that limit the number of iterations for the
-	// different iterative/recursive algorithms:
-	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
-
-	private static final boolean ORTHOGONAL = true;
-
-	private static final boolean PARALLEL = false;
-
-	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
-			.calculateFraction(0) / 10;
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal x coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp xmaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.x, q.x);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * minimal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp yminCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.smallerEqual(p.y, q.y);
-		}
-	};
-
-	/**
-	 * An {@link IPointCmp} implementation to find the {@link Point} with the
-	 * maximal y coordinate in a list of {@link Point}s.
-	 */
-	private static final IPointCmp ymaxCmp = new IPointCmp() {
-		@Override
-		public boolean pIsBetterThanQ(Point p, Point q) {
-			return PrecisionUtils.greaterEqual(p.y, q.y);
-		}
-	};
-
 	/**
 	 * <p>
 	 * Clusters consecutive {@link IntervalPair}s into a new array of
@@ -540,7 +481,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link #isNextTo(IntervalPair, IntervalPair, int) next to} each other
 	 * within the imprecision specified by the given <i>shift</i>.
 	 * </p>
-	 * 
+	 *
 	 * @param intervalPairs
 	 *            the array of {@link IntervalPair}s to cluster
 	 * @param shift
@@ -606,7 +547,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link Interval} is set to a convergin (see {@link Interval#converges()})
 	 * parameter range that contains the {@link Point} on the
 	 * {@link BezierCurve}.
-	 * 
+	 *
 	 * @param c
 	 *            The {@link BezierCurve} on which the {@link Point} is searched
 	 *            for.
@@ -655,10 +596,14 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return PrecisionUtils.equal(interval[0], interval[1], 1);
 	}
 
+	// TODO: use constants that limit the number of iterations for the
+	// different iterative/recursive algorithms:
+	// INTERSECTIONS_MAX_ITERATIONS, APPROXIMATION_MAX_ITERATIONS
+
 	/**
 	 * Overwrites the attribute values of {@link IntervalPair} <i>dst</i> with
 	 * the respective attribute values of {@link IntervalPair} <i>src</i>.
-	 * 
+	 *
 	 * @param dst
 	 *            the destination {@link IntervalPair}
 	 * @param src
@@ -681,7 +626,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * A similarity of <code>0</code> means that the given {@link BezierCurve}'s
 	 * control {@link Point}s are on a straight {@link Line}.
 	 * </p>
-	 * 
+	 *
 	 * @param c
 	 *            the {@link BezierCurve} of which the distance to its base
 	 *            {@link Line} is computed
@@ -708,7 +653,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Searches for an overlapping segment within the given {@link IntervalPair}
 	 * s.
-	 * 
+	 *
 	 * @param intersectionCandidates
 	 *            the {@link IntervalPair}s representing non-end-{@link Point}
 	 *            intersection candidates
@@ -723,7 +668,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
 		// merge intersection candidates and end points
 		IntervalPair[] fineChunks = new IntervalPair[intersectionCandidates.length
-				+ endPoints.length];
+		                                             + endPoints.length];
 		for (int i = 0; i < intersectionCandidates.length; i++) {
 			fineChunks[i] = intersectionCandidates[i];
 		}
@@ -750,25 +695,25 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 					&& PrecisionUtils.greaterEqual(overlap.qi.b, 1)
 					|| (PrecisionUtils.smallerEqual(overlap.pi.a, 0) || PrecisionUtils
 							.greaterEqual(overlap.pi.b, 1))
-					&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
-							.greaterEqual(overlap.qi.b, 1))) {
+							&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
+									.greaterEqual(overlap.qi.b, 1))) {
 				// it overlaps
 				if (PrecisionUtils.smallerEqual(overlap.pi.a, 0,
 						CHUNK_SHIFT - 1)
 						&& PrecisionUtils.smallerEqual(overlap.pi.b, 0,
 								CHUNK_SHIFT - 1)
-						|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
-								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
-								CHUNK_SHIFT - 1)
-						|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
-								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
-								CHUNK_SHIFT - 1)
-						|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
-								CHUNK_SHIFT - 1)
-						&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
-								CHUNK_SHIFT - 1)) {
+								|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
+										CHUNK_SHIFT - 1)
+										&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
+												CHUNK_SHIFT - 1)
+												|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
+														CHUNK_SHIFT - 1)
+														&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
+																CHUNK_SHIFT - 1)
+																|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
+																		CHUNK_SHIFT - 1)
+																		&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
+																				CHUNK_SHIFT - 1)) {
 					// only end-point-intersection
 					return null;
 				}
@@ -782,19 +727,19 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Computes the intersection of the line from {@link Point} p to
 	 * {@link Point} q with the x-axis-parallel line f(x) = y.
-	 * 
+	 *
 	 * There is always an intersection, because this routine is only called when
 	 * either the lower or the higher fat line bound is crossed.
-	 * 
+	 *
 	 * The following conditions are fulfilled: (p.x!=q.x) and (p.y!=q.y) and
 	 * (p.y<y<q.y) or (p.y>y>q.y).
-	 * 
+	 *
 	 * From these values, one can build a function g(x) = m*x + b where
 	 * m=(q.y-p.y)/(q.x-p.x) and b=p.y-m*p.x.
-	 * 
+	 *
 	 * The point of intersection is given by f(x) = g(x). The x-coordinate of
 	 * this point is x = (y - b) / m.
-	 * 
+	 *
 	 * @param p
 	 *            The start point of the {@link Line}
 	 * @param q
@@ -813,7 +758,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * other within the specified imprecision. Two {@link Interval}s are
 	 * considered next to each other, if their limits are overlapping within the
 	 * specified imprecision.
-	 * 
+	 *
 	 * @param i
 	 * @param j
 	 * @param shift
@@ -835,7 +780,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link IntervalPair}s are considered next to each other, if the
 	 * {@link Interval}s of their assigned {@link BezierCurve}s are considered
 	 * next to each other (see {@link #isNextTo(Interval, Interval, int)}).
-	 * 
+	 *
 	 * @param a
 	 * @param b
 	 * @param shift
@@ -854,7 +799,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link IntervalPair}s have the same {@link BezierCurve} assigned to their
 	 * <code>p</code> attribute and that all {@link IntervalPair}s have the same
 	 * {@link BezierCurve} assigned to their <code>q</code> attribute.
-	 * 
+	 *
 	 * @param intervalPairs
 	 *            the {@link IntervalPair}s to normalize
 	 */
@@ -888,7 +833,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Binary search from the {@link IntervalPair}'s {@link Interval}s' limits
 	 * to the {@link Interval} s' inner values to refine the overlap represented
 	 * by the given {@link IntervalPair}.
-	 * 
+	 *
 	 * @param overlap
 	 *            the {@link IntervalPair} representing the overlap of two
 	 *            {@link BezierCurve}s
@@ -915,7 +860,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * 's inner values of the firstly given {@link BezierCurve} <i>p</i> for the
 	 * outer-most intersection {@link Point} with the secondly given
 	 * {@link BezierCurve} <i>q</i>.
-	 * 
+	 *
 	 * @param p
 	 * @param mid
 	 *            the {@link Interval}'s start value (
@@ -951,7 +896,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * 's inner values of the firstly given {@link BezierCurve} <i>p</i> for the
 	 * outer-most intersection {@link Point} with the secondly given
 	 * {@link BezierCurve} <i>q</i>.
-	 * 
+	 *
 	 * @param p
 	 * @param a
 	 *            the {@link Interval}'s start value (<code>a > 0 ? a : 0</code>
@@ -983,6 +928,61 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return i;
 	}
 
+	private static final long serialVersionUID = 1L;
+
+	private static final int CHUNK_SHIFT = -3;
+
+	private static final boolean ORTHOGONAL = true;
+
+	private static final boolean PARALLEL = false;
+
+	private static final double UNRECOGNIZABLE_PRECISION_FRACTION = PrecisionUtils
+			.calculateFraction(0) / 10;
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal x coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp xmaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.x, q.x);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * minimal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp yminCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.smallerEqual(p.y, q.y);
+		}
+	};
+
+	/**
+	 * An {@link IPointCmp} implementation to find the {@link Point} with the
+	 * maximal y coordinate in a list of {@link Point}s.
+	 */
+	private static final IPointCmp ymaxCmp = new IPointCmp() {
+		@Override
+		public boolean pIsBetterThanQ(Point p, Point q) {
+			return PrecisionUtils.greaterEqual(p.y, q.y);
+		}
+	};
+
 	/**
 	 * An array of {@link Vector3D}s which represent the control points of this
 	 * {@link BezierCurve}.
@@ -991,7 +991,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	/**
 	 * Constructs a new {@link BezierCurve} from the given {@link CubicCurve}.
-	 * 
+	 *
 	 * @param c
 	 *            the {@link CubicCurve} of which the new {@link BezierCurve} is
 	 *            constructed from
@@ -1004,7 +1004,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Constructs a new {@link BezierCurve} from the given control {@link Point}
 	 * coordinates. The coordinates are expected to be in x, y order, i.e. x1,
 	 * y1, x2, y2, x3, y3, ...
-	 * 
+	 *
 	 * @param controlPoints
 	 *            the control {@link Point} coordinates of the new
 	 *            {@link BezierCurve} in x, y order
@@ -1016,7 +1016,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Constructs a new {@link BezierCurve} from the given control {@link Point}
 	 * s.
-	 * 
+	 *
 	 * @param controlPoints
 	 *            the control {@link Point}s of the new {@link BezierCurve}
 	 */
@@ -1030,7 +1030,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Constructs a new {@link BezierCurve} from the given
 	 * {@link QuadraticCurve}.
-	 * 
+	 *
 	 * @param c
 	 *            the {@link QuadraticCurve} of which the new
 	 *            {@link BezierCurve} is constructed from
@@ -1047,7 +1047,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * <p>
 	 * Note that a Point(x, y) is represented by a Vector3D(x, y, 1).
 	 * </p>
-	 * 
+	 *
 	 * @param controlPoints
 	 *            the {@link Vector3D}s representing the control points of the
 	 *            new {@link BezierCurve}
@@ -1091,7 +1091,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * <code>a <= b</code>), then the portions <code>[0;a]</code> and
 	 * <code>[b;1]</code> of this {@link BezierCurve} can be clipped away.
 	 * </p>
-	 * 
+	 *
 	 * @param L
 	 *            the {@link FatLine} to clip this {@link BezierCurve} to
 	 * @return the new parameter {@link Interval} for this {@link BezierCurve}
@@ -1158,7 +1158,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link BezierCurve} and an overlapping segment of the two curves can be
 	 * detected.
 	 * </p>
-	 * 
+	 *
 	 * @param o
 	 *            the {@link BezierCurve} that is checked to be contained by
 	 *            this {@link BezierCurve}
@@ -1201,7 +1201,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Checks all end {@link Point}s of the two passed-in {@link BezierCurve}s
 	 * if they are {@link Point}s of intersection.
-	 * 
+	 *
 	 * @param ip
 	 *            the {@link IntervalPair} describing both curves
 	 * @param endPointIntervalPairs
@@ -1269,7 +1269,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	/**
 	 * Searches for the specified extreme on this {@link BezierCurve}.
-	 * 
+	 *
 	 * @param cmp
 	 *            the {@link IPointCmp} that specifies the extreme to search for
 	 * @return the extreme {@link Point} that can be identified
@@ -1282,7 +1282,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * <p>
 	 * Searches for an extreme {@link Point} on this {@link BezierCurve}.
 	 * </p>
-	 * 
+	 *
 	 * @param cmp
 	 *            the {@link IPointCmp} that is used to find the extreme
 	 *            {@link Point}
@@ -1338,7 +1338,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * parameter {@link Interval} for a possible intersection on both
 	 * {@link BezierCurve}s.
 	 * </p>
-	 * 
+	 *
 	 * @param ip
 	 *            the {@link IntervalPair} that is currently processed
 	 * @param intervalPairs
@@ -1413,7 +1413,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * This routine is only called for an interval that has been detected to
 	 * contain a single {@link Point} of intersection. We do now try to find it.
-	 * 
+	 *
 	 * @param ipIO
 	 *            the {@link IntervalPair} that specifies a single {@link Point}
 	 *            of intersection on two {@link BezierCurve}s
@@ -1499,7 +1499,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link BezierCurve} that yields the signed distance of each {@link Point}
 	 * on this {@link BezierCurve} to the given {@link Straight3D}.
 	 * </p>
-	 * 
+	 *
 	 * @param line
 	 *            the {@link Straight3D} to which the difference
 	 *            {@link BezierCurve}'s control {@link Point}s are to be
@@ -1520,7 +1520,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Computes the {@link Point} on this {@link BezierCurve} at parameter value
 	 * <i>t</i>, which is expected to lie in the parameter {@link Interval}
 	 * <code>[0;1]</code>.
-	 * 
+	 *
 	 * @param t
 	 *            the parameter value for which this {@link BezierCurve} is
 	 *            evaluated
@@ -1543,7 +1543,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns a new {@link BezierCurve} object representing this
 	 * {@link BezierCurve} on the {@link Interval} <code>[s;e]</code>.
-	 * 
+	 *
 	 * @param s
 	 *            the lower limit of the parameter {@link Interval} which is
 	 *            clipped out of this {@link BezierCurve}
@@ -1565,7 +1565,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns a bounding {@link Rectangle} of the control {@link Polygon} of
 	 * this {@link BezierCurve}.
-	 * 
+	 *
 	 * @return a {@link Rectangle} representing the bounds of the control
 	 *         {@link Polygon} of this {@link BezierCurve}
 	 */
@@ -1599,7 +1599,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Computes the hodograph, the first parametric derivative, of this
 	 * {@link BezierCurve}.
-	 * 
+	 *
 	 * @return the hodograph of this {@link BezierCurve}
 	 */
 	public BezierCurve getDerivative() {
@@ -1618,7 +1618,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Computes a {@link BezierCurve} with a degree of one higher than this
 	 * {@link BezierCurve}'s degree but of the same shape.
-	 * 
+	 *
 	 * @return a {@link BezierCurve} of the same shape as this
 	 *         {@link BezierCurve} but with one more control {@link Point}
 	 */
@@ -1637,7 +1637,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns a {@link Vector3D} representing the {@link Point} at the given
 	 * parameter value.
-	 * 
+	 *
 	 * @param t
 	 *            the parameter value for which this {@link BezierCurve} is
 	 *            evaluated
@@ -1680,7 +1680,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * overlap, an empty set is returned. (see
 	 * {@link BezierCurve#overlaps(BezierCurve)})
 	 * </p>
-	 * 
+	 *
 	 * @param other
 	 *            The {@link BezierCurve} which is searched for {@link Point}s
 	 *            of intersection with this {@link BezierCurve}.
@@ -1758,7 +1758,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns the {@link Point}s of intersection of this and the given other
 	 * {@link BezierCurve}.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link BezierCurve} which is searched for {@link Point}s
 	 *            of intersection with this {@link BezierCurve}
@@ -1791,7 +1791,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * overlap exists, <code>null</code> is returned. An overlap is identified
 	 * by an infinite number of intersection points.
 	 * </p>
-	 * 
+	 *
 	 * @param other
 	 * @return a {@link BezierCurve} representing the overlap of this and the
 	 *         given other {@link BezierCurve} if an overlap exists, otherwise
@@ -1831,7 +1831,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Returns the parameter value of this {@link BezierCurve} for the given
 	 * {@link Point}. If the given {@link Point} is not on this
 	 * {@link BezierCurve} an {@link IllegalArgumentException} is thrown.
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Point} for which the parameter value on this
 	 *            {@link BezierCurve} is to be found
@@ -1842,7 +1842,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		if (p == null) {
 			throw new IllegalArgumentException(
 					"The passed-in Point may not be null: getParameterAt(" + p
-							+ "), this = " + this);
+					+ "), this = " + this);
 		}
 
 		double[] interval = new double[] { 0, 1 };
@@ -1859,7 +1859,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Returns the <i>i</i>th control {@link Point} of this {@link BezierCurve}.
 	 * The start {@link Point} is at index <code>0</code>, the first handle-
 	 * {@link Point} is at index <code>1</code>, etc.
-	 * 
+	 *
 	 * @param i
 	 *            the index of the control {@link Point} of this
 	 *            {@link BezierCurve} to return
@@ -1877,7 +1877,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 
 	/**
 	 * Returns the control {@link Point}s of this {@link BezierCurve}.
-	 * 
+	 *
 	 * @return the control {@link Point}s of this {@link BezierCurve}
 	 */
 	public Point[] getPoints() {
@@ -1891,7 +1891,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns a copy of the {@link Vector3D} representations of the control
 	 * points of this {@link BezierCurve}.
-	 * 
+	 *
 	 * @return a copy of the {@link Vector3D} representations of the control
 	 *         points of this {@link BezierCurve}
 	 */
@@ -2010,7 +2010,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Moves the {@link Interval}'s start and end values. The start value is set
 	 * to <i>x</i> if <i>x</i> is smaller than the start value. The end value is
 	 * set to <i>x</i> if <i>x</i> is greater than the end value.
-	 * 
+	 *
 	 * @param interval
 	 *            the {@link Interval} to modify
 	 * @param x
@@ -2036,7 +2036,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Checks if this {@link BezierCurve} and the given other
 	 * {@link BezierCurve} overlap, i.e. an infinite set of intersection
 	 * {@link Point}s exists.
-	 * 
+	 *
 	 * @param other
 	 *            the {@link BezierCurve} to check for an overlapping segment
 	 *            with this {@link BezierCurve}
@@ -2061,7 +2061,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link BezierCurve} counter-clockwise (CCW) around
 	 * its center {@link Point} by the given {@link Angle}. Direct adaptation
 	 * means, that <code>this</code> {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -2076,7 +2076,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * the {@link Point} specified by the given x and y coordinate values by the
 	 * given {@link Angle}. Direct adaptation means, that <code>this</code>
 	 * {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param cx
@@ -2098,7 +2098,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link BezierCurve} counter-clockwise (CCW) around
 	 * the given {@link Point} by the given {@link Angle}. Direct adaptation
 	 * means, that <code>this</code> {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param center
@@ -2118,7 +2118,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link BezierCurve} clockwise (CW) around its
 	 * center {@link Point} by the given {@link Angle}. Direct adaptation means,
 	 * that <code>this</code> {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -2133,7 +2133,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link Point} specified by the given x and y coordinate values by the
 	 * given {@link Angle}. Direct adaptation means, that <code>this</code>
 	 * {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param cx
@@ -2155,7 +2155,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link BezierCurve} clockwise (CW) around the given
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link BezierCurve} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            the rotation {@link Angle}
 	 * @param center
@@ -2205,7 +2205,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Sets the start {@link Point} of this {@link BezierCurve} to the given
 	 * {@link Point}.
-	 * 
+	 *
 	 * @param p1
 	 *            the new start {@link Point} of this {@link BezierCurve}
 	 * @return <code>this</code> for convenience
@@ -2218,7 +2218,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Sets the end {@link Point} of this {@link BezierCurve} to the given
 	 * {@link Point}.
-	 * 
+	 *
 	 * @param p2
 	 *            the new end {@link Point} of this {@link BezierCurve}
 	 * @return <code>this</code> for convenience
@@ -2232,7 +2232,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Sets the <i>i</i>th control {@link Point} of this {@link BezierCurve}.
 	 * The start {@link Point} is at index <code>0</code>, the first handle-
 	 * {@link Point} is at index <code>1</code>, etc.
-	 * 
+	 *
 	 * @param i
 	 *            the index of the control {@link Point} of this
 	 *            {@link BezierCurve} to set
@@ -2260,7 +2260,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * {@link BezierCurve} over the parameter {@link Interval}
 	 * <code>[0;t]</code> and the second one is the {@link BezierCurve} over the
 	 * parameter {@link Interval} <code>[t;1]</code>.
-	 * 
+	 *
 	 * @param t
 	 *            the parameter value at which this {@link BezierCurve} is
 	 *            subdivided
@@ -2276,7 +2276,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		for (int i = 0; i < points.length; i++) {
 			leftPoints[i] = ratioPoints[0];
 			rightPoints[points.length - 1 - i] = ratioPoints[points.length - 1
-					- i];
+			                                                 - i];
 
 			for (int j = 0; j < points.length - i - 1; j++) {
 				ratioPoints[j] = ratioPoints[j].getRatio(ratioPoints[j + 1], t);
@@ -2300,7 +2300,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * not of degree four or higher, i.e. it does not have four or more control
 	 * {@link Point}s (including start and end {@link Point}), <code>null</code>
 	 * is returned.
-	 * 
+	 *
 	 * @return a new {@link CubicCurve} that is constructed from the start
 	 *         {@link Point}, the first two handle {@link Point}s and the end
 	 *         {@link Point} of this {@link BezierCurve} or <code>null</code> if
@@ -2319,7 +2319,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Returns a hard approximation of this {@link BezierCurve} as a
 	 * {@link Line}. The {@link Line} is constructed from the start and end
 	 * {@link Point} of this {@link BezierCurve}.
-	 * 
+	 *
 	 * @return a {@link Line} from the start {@link Point} to the end
 	 *         {@link Point} of this {@link BezierCurve} or <code>null</code> if
 	 *         this {@link BezierCurve} does only have one control {@link Point}
@@ -2336,7 +2336,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Computes an approximation of this {@link BezierCurve} by a strip of
 	 * {@link Line}s. For detailed information on how the approximation is
 	 * computed, see {@link BezierCurve#toLineStrip(double, Interval)}.
-	 * 
+	 *
 	 * @param lineSimilarity
 	 *            the threshold for the sum of the distances of the control
 	 *            {@link Point}s to the baseline ({@link #toLine()}) of this
@@ -2362,7 +2362,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * than the given <i>lineSimilarity</i>, the {@link BezierCurve} is assumed
 	 * to be "similar" to a straight line.
 	 * </p>
-	 * 
+	 *
 	 * @param lineSimilarity
 	 *            the threshold for the sum of the distances of the control
 	 *            points to the baseline of this {@link BezierCurve}
@@ -2400,7 +2400,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	/**
 	 * Returns a {@link Path} approximating this {@link BezierCurve} using
 	 * {@link Line} segments.
-	 * 
+	 *
 	 * @return a {@link Path} approximating this {@link BezierCurve} using
 	 *         {@link Line} segments
 	 */
@@ -2422,7 +2422,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * Computes {@link Point}s on this {@link BezierCurve} over the given
 	 * {@link Interval}. Consecutive returned {@link Point}s are required to be
 	 * {@link Point#equals(Object) equal} to each other.
-	 * 
+	 *
 	 * @param startInterval
 	 *            the {@link Interval} of this {@link BezierCurve} to calculate
 	 *            {@link Point}s for
@@ -2471,7 +2471,7 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 	 * not of degree three or higher, i.e. it does not have three or more
 	 * control {@link Point}s (including start and end {@link Point}),
 	 * <code>null</code> is returned.
-	 * 
+	 *
 	 * @return a new {@link QuadraticCurve} that is constructed from the start
 	 *         {@link Point}, the first handle {@link Point} and the end
 	 *         {@link Point} of this {@link BezierCurve} or <code>null</code> if
