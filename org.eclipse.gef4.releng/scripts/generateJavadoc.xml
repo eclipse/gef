@@ -38,7 +38,8 @@
 
 		<echo message="Replacing tokens in javadocOptions.txt" />
 		<replace file="${basedir}/javadocOptions.txt" token="@context@" value="${api.context.libs.classpath}" />
-		<replace file="${basedir}/javadocOptions.txt" token="@rt@" value="${bootclasspath}${args.list.delimiter}${java.home}/lib/jfxrt.jar" />
+		<!-- Add jfxrt.jar for Java 7, jfxswt.jar for Java 8 -->
+		<replace file="${basedir}/javadocOptions.txt" token="@rt@" value="${bootclasspath}${args.list.delimiter}${java.home}/lib/jfxrt.jar${args.list.delimiter}${java.home}/lib/jfxswt.jar" />
 		<replace file="${basedir}/javadocOptions.txt" token="@args.list.delimiter@" value="${args.list.delimiter}" />
 		<replace file="${basedir}/javadocOptions.txt" token="@linkoffline-target@" value="linkoffline-target" />
 		<echo message="Done." />

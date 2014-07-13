@@ -25,13 +25,20 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<!-- add JavaFX to classpath -->
+					<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 8) -->
 					<extraClasspathElements>
 						<extraClasspathElement>
 							<groupId>com.oracle</groupId>
 							<artifactId>javafx</artifactId>
 							<version>2.2.0-SNAPSHOT</version>
 							<systemPath>${java.home}/lib/jfxrt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafxswt</artifactId>
+							<version>2.2.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
 							<scope>system</scope>
 						</extraClasspathElement>
 						<extraClasspathElement>
