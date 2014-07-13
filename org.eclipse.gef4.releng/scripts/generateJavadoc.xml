@@ -46,7 +46,8 @@
 
 		<echo message="Generating javadoc..." />
 		<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
-			<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M" />
+			<!-- Ensure API tools tags (noimplement, noextend, noreference, nooverride) and EMF tags (generated) are not reported as errors (unknown tags) -->
+			<arg line="@${basedir}/javadocOptions.txt -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
 		</exec>
 		<echo message="Done." />
 	</target>
