@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -34,16 +34,14 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * </p>
  * <p>
  * Moreover, an algorithm to create closed outline objects for an
- * {@link IMultiShape} is provided. (see {@link #getOutline()})
+ * {@link IMultiShape} is provided. (see {@link #getOutlines()})
  * </p>
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 abstract class AbstractMultiShape extends AbstractGeometry implements
-		IMultiShape {
-
-	private static final long serialVersionUID = 1L;
+IMultiShape {
 
 	/**
 	 * <p>
@@ -57,7 +55,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 * Returns 0 if the {@link Point}s are equal to each other (see
 	 * {@link Point#equals(Object)}).
 	 * </p>
-	 * 
+	 *
 	 * @param o1
 	 * @param o2
 	 * @return <code>0</code> if the {@link Point}s are equal (Point
@@ -79,6 +77,8 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 		}
 		return 1;
 	}
+
+	private static final long serialVersionUID = 1L;
 
 	private void assignRemainingSegment(HashMap<Line, Integer> seen,
 			Stack<Line> addends, Line toAdd, Point start, Point end) {
@@ -105,7 +105,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 
 	/**
 	 * Inner segments are identified by a segment count of exactly 2.
-	 * 
+	 *
 	 * @param seen
 	 */
 	private void filterOutInnerSegments(HashMap<Line, Integer> seen) {
@@ -139,7 +139,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	/**
 	 * Searches for the longest cycle-free way from the given start
 	 * {@link Point} to the given end {@link Point} on the given segments.
-	 * 
+	 *
 	 * @param segmentsByEndPoints
 	 * @param visited
 	 * @param start
@@ -207,7 +207,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 		for (Line nextSeg : nextSegs) {
 			@SuppressWarnings("unchecked")
 			Set<Point> visitedCopy = (Set<Point>) ((HashSet<Point>) visited)
-					.clone();
+			.clone();
 			Point nextPoint = start.equals(nextSeg.getP1()) ? nextSeg.getP2()
 					: nextSeg.getP1();
 			List<Point> way = findWay(segmentsByEndPoints, visitedCopy,
@@ -229,13 +229,13 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 * Collects all edges of the internal {@link IShape}s. For a {@link Region}
 	 * the internal {@link IShape}s are {@link Rectangle}s. For a {@link Ring}
 	 * the internal {@link IShape}s are {@link Polygon}s (triangles).
-	 * 
+	 *
 	 * The internal edges are needed to determine inner and outer segments of
 	 * the {@link IMultiShape}. Based on the outline of the {@link IMultiShape},
 	 * the outline intersections can be computed. These outline intersections
 	 * are required to test if an {@link ICurve} is fully-contained by the
 	 * {@link IMultiShape}.
-	 * 
+	 *
 	 * @return the edges of all internal {@link IShape}s
 	 */
 	abstract protected Line[] getAllEdges();
@@ -318,7 +318,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 * The outline segments of this {@link AbstractMultiShape} are those outline
 	 * segments of the internal {@link IShape}s that only exist once.
 	 * </p>
-	 * 
+	 *
 	 * @return the outline segments of this {@link AbstractMultiShape}
 	 */
 	@Override
@@ -354,7 +354,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	/**
 	 * Sorts the end {@link Point}s of two {@link Line}s that do overlap by
 	 * their coordinate values.
-	 * 
+	 *
 	 * @param toAdd
 	 * @param seg
 	 * @return the sorted {@link Point}s
@@ -378,7 +378,7 @@ abstract class AbstractMultiShape extends AbstractGeometry implements
 	 * Marks a given segment from start to end {@link Point} as an overlap in
 	 * the seen {@link HashMap} if the segment is not degenerated, i.e. it is
 	 * not just a single {@link Point}.
-	 * 
+	 *
 	 * @param seen
 	 * @param start
 	 * @param end
