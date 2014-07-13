@@ -124,7 +124,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * a {@link Rectangle} matching the layout-bounds of the anchorage
 	 * {@link Node} is returned. Clients may override this method to use other
 	 * geometric shapes instead.
-	 * 
+	 *
 	 * @return The anchorage reference {@link IShape} within the local
 	 *         coordinate system of the anchorage {@link Node}
 	 */
@@ -134,7 +134,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	/**
-	 * @param anchored
+	 * @param key
 	 * @return reference point for the given anchored
 	 */
 	public Point getReferencePoint(AnchorKey key) {
@@ -155,8 +155,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * {@link Node} and reference {@link Point}. The
 	 * {@link #computePosition(Node, Point)} method is used to determine the new
 	 * position, which in turn is put into the {@link #positionProperty()}.
-	 * 
-	 * @param anchored
+	 *
+	 * @param key
 	 * @param referencePoint
 	 */
 	protected void recomputePosition(AnchorKey key, Point referencePoint) {
@@ -192,8 +192,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	/**
 	 * Assigns the given reference point to the given anchored in the reference
 	 * point map.
-	 * 
-	 * @param anchored
+	 *
+	 * @param key
 	 * @param referencePoint
 	 */
 	public void setReferencePoint(AnchorKey key, Point referencePoint) {

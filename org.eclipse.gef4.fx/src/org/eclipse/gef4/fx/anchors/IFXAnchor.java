@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Ny??en (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -18,10 +18,9 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
- * 
+ *
  * @author anyssen
- * 
- * @param <V>
+ *
  */
 public interface IFXAnchor {
 
@@ -36,13 +35,14 @@ public interface IFXAnchor {
 	Node getAnchorageNode();
 
 	/**
-	 * @param anchored
+	 * @param key
+	 *            the {@link AnchorKey} to retrieve a position for
 	 * @return position for the given anchored
 	 */
 	Point getPosition(AnchorKey key);
 
 	/**
-	 * @return property storing positions for anchoreds (map)
+	 * @return property storing positions for keys (map)
 	 */
 	ReadOnlyMapProperty<AnchorKey, Point> positionProperty();
 

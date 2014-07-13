@@ -39,7 +39,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 // TODO: extends IGeometry
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-implements IFXConnection {
+		implements IFXConnection {
 
 	public static final String CSS_CLASS_DECORATION = "decoration";
 
@@ -223,7 +223,6 @@ implements IFXConnection {
 	}
 
 	/**
-	 * <p>
 	 * Returns all points of this connection which are relevant for computing
 	 * the curveNode, which are:
 	 * <ol>
@@ -233,7 +232,6 @@ implements IFXConnection {
 	 * <li>curve end point: computed using end anchor, end decoration, and last
 	 * way point (or start anchor)</li>
 	 * </ol>
-	 * </p>
 	 * <p>
 	 * In case an assigned anchor returns <code>null</code> as the position for
 	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
@@ -415,7 +413,7 @@ implements IFXConnection {
 				.get();
 		if (oldLink != null) {
 			endAnchorLinkProperty.get().getAnchor().positionProperty()
-			.removeListener(positionChangeListener);
+					.removeListener(positionChangeListener);
 			if (listener != null) {
 				endAnchorLinkProperty.removeListener(listener);
 			}
@@ -428,7 +426,7 @@ implements IFXConnection {
 		endAnchorLinkProperty.set(endAnchorLink);
 		isEndConnected = !(endAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		endAnchorLinkProperty.get().getAnchor().positionProperty()
-		.addListener(positionChangeListener);
+				.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
@@ -513,7 +511,7 @@ implements IFXConnection {
 				.get();
 		if (oldLink != null) {
 			startAnchorLinkProperty.get().getAnchor().positionProperty()
-			.removeListener(positionChangeListener);
+					.removeListener(positionChangeListener);
 			if (listener != null) {
 				startAnchorLinkProperty.removeListener(listener);
 			}
@@ -526,7 +524,7 @@ implements IFXConnection {
 		startAnchorLinkProperty.set(startAnchorLink);
 		isStartConnected = !(startAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		startAnchorLinkProperty.get().getAnchor().positionProperty()
-		.addListener(positionChangeListener);
+				.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
