@@ -20,7 +20,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.transform.Transform;
@@ -71,32 +70,29 @@ public abstract class VisualChangeListener {
 
 	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
 
-	private Parent getCommonParent(Node source, Node target) {
-		Set<Parent> parents = new HashSet<Parent>();
-
-		// check first parents
-		Parent m = source.getParent();
-		parents.add(m);
-
-		Parent n = target.getParent();
-		if (parents.contains(n)) {
-			return n;
+	private Node getNearestCommonAncestor(Node source, Node target) {
+		if (source == target) {
+			return source;
 		}
-		parents.add(n);
 
-		// check rest of hierarchy
+		Set<Node> parents = new HashSet<Node>();
+		Node m = source;
+		Node n = target;
 		while (m != null || n != null) {
-			m = m.getParent();
-			if (parents.contains(m)) {
-				return m;
+			if (m != null) {
+				parents.add(m);
+				if (n != null && parents.contains(n)) {
+					return n;
+				}
+				m = m.getParent();
 			}
-			parents.add(m);
-
-			n = n.getParent();
-			if (parents.contains(n)) {
-				return n;
+			if (n != null) {
+				parents.add(n);
+				if (m != null && parents.contains(m)) {
+					return m;
+				}
+				n = n.getParent();
 			}
-			parents.add(n);
 		}
 
 		// could not find a common parent
@@ -215,21 +211,15 @@ public abstract class VisualChangeListener {
 		if (observer == null) {
 			throw new IllegalArgumentException("Observer not be null.");
 		}
-		// if (observed.getScene() != observer.getScene()) {
-		// throw new IllegalArgumentException(
-		// "Observed and observer may not be in different scenes.");
-		// }
 
-		Node transformReference = getCommonParent(observed, observer);
-		if (transformReference == null) {
-			// this should not be reachable because observer and observed are
-			// nodes in the same scene
+		Node commonAncestor = getNearestCommonAncestor(observed, observer);
+		if (commonAncestor == null) {
 			throw new IllegalArgumentException(
-					"Source and target do not share a common parent.");
+					"Source and target do not share a common ancestor.");
 		}
 
 		Node tmp = observed;
-		while (tmp != null && tmp != transformReference) {
+		while (tmp != null && tmp != commonAncestor) {
 			tmp = tmp.getParent();
 		}
 		if (tmp == null) {
@@ -244,7 +234,7 @@ public abstract class VisualChangeListener {
 
 		// assign new nodes
 		this.node = observed;
-		parent = transformReference;
+		parent = commonAncestor;
 
 		// add bounds listener
 		observed.boundsInLocalProperty().addListener(boundsInLocalListener);
