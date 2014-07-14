@@ -95,9 +95,9 @@ public interface LayoutContext extends IPropertyStore {
 	 * be used to relayout graph items using
 	 * {@link LayoutAlgorithm#applyLayout(boolean)} after every event that is
 	 * not intercepted by any listener when currently changes are not being
-	 * flushed and background layout is {@link #isDynamicLayoutEnabled()
-	 * enabled}. The clean flag for the background layout algorithm can be set
-	 * to <code>false</code> by the context when reacting to events.
+	 * flushed and background layout is enabled. The clean flag for the
+	 * background layout algorithm can be set to <code>false</code> by the
+	 * context when reacting to events.
 	 * 
 	 * @param algorithm
 	 */

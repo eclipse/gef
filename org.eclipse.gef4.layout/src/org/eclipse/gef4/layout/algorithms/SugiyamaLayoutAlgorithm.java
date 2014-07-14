@@ -73,8 +73,8 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	 *            {@link Direction#VERTICAL} : top to bottom
 	 * 
 	 * @param dim
-	 *            - desired size of the layout area. Uses
-	 *            {@link LayoutContext#getBounds()} if not set
+	 *            - desired size of the layout area. Uses the BOUNDS_PROPERTY of
+	 *            the LayoutContext if not set
 	 * 
 	 * @param layering
 	 *            - implementation of LayerProvider interface
