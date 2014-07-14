@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -19,15 +19,15 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 /**
  * Represents the geometric shape of a rounded rectangle, i.e. a rectangle with
  * rounded corners.
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public final class RoundedRectangle extends
 		AbstractRectangleBasedGeometry<RoundedRectangle, PolyBezier> implements
@@ -35,13 +35,13 @@ public final class RoundedRectangle extends
 
 	private static final long serialVersionUID = 1L;
 
-	double arcWidth;
-	double arcHeight;
+	private double arcWidth;
+	private double arcHeight;
 
 	/**
 	 * Constructs a new {@link RoundedRectangle} from the given bounds and arc
 	 * values.
-	 * 
+	 *
 	 * @param x
 	 *            the x-coordinate of the new {@link RoundedRectangle}'s bounds
 	 * @param y
@@ -59,10 +59,7 @@ public final class RoundedRectangle extends
 	 */
 	public RoundedRectangle(double x, double y, double width, double height,
 			double arcWidth, double arcHeight) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		super(x, y, width, height);
 		this.arcWidth = arcWidth;
 		this.arcHeight = arcHeight;
 	}
@@ -70,7 +67,7 @@ public final class RoundedRectangle extends
 	/**
 	 * Constructs a new {@link RoundedRectangle} from the bounds of the given
 	 * {@link Rectangle} and the given arc values.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle}, whose bounds are used to initialize the
 	 *            x, y, width, and height values of the new
@@ -150,7 +147,7 @@ public final class RoundedRectangle extends
 	/**
 	 * Returns the arc height of this {@link RoundedRectangle}, which is the
 	 * height of the arc used to define its rounded corners.
-	 * 
+	 *
 	 * @return the arc height
 	 */
 	public double getArcHeight() {
@@ -160,7 +157,7 @@ public final class RoundedRectangle extends
 	/**
 	 * Returns the arc width of this {@link RoundedRectangle}, which is the
 	 * width of the arc used to define its rounded corners.
-	 * 
+	 *
 	 * @return the arc height
 	 */
 	public double getArcWidth() {
@@ -169,7 +166,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the bottom edge of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the bottom edge of this {@link RoundedRectangle}.
 	 */
 	public Line getBottom() {
@@ -179,7 +176,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the bottom left {@link Arc} of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the bottom left {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getBottomLeftArc() {
@@ -189,7 +186,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the bottom right {@link Arc} of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the bottom right {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getBottomRightArc() {
@@ -208,7 +205,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the left edge of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the left edge of this {@link RoundedRectangle}.
 	 */
 	public Line getLeft() {
@@ -248,7 +245,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the right edge of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the right edge of this {@link RoundedRectangle}.
 	 */
 	public Line getRight() {
@@ -288,7 +285,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the top edge of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the top edge of this {@link RoundedRectangle}.
 	 */
 	public Line getTop() {
@@ -297,7 +294,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the top left {@link Arc} of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the top left {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getTopLeftArc() {
@@ -307,7 +304,7 @@ public final class RoundedRectangle extends
 
 	/**
 	 * Returns the top right {@link Arc} of this {@link RoundedRectangle}.
-	 * 
+	 *
 	 * @return the top right {@link Arc} of this {@link RoundedRectangle}.
 	 */
 	public Arc getTopRightArc() {
@@ -326,7 +323,7 @@ public final class RoundedRectangle extends
 	/**
 	 * Sets the arc height of this {@link RoundedRectangle}, which is the height
 	 * of the arc used to define its rounded corners.
-	 * 
+	 *
 	 * @param arcHeight
 	 *            the new arc height
 	 * @return <code>this</code> for convenience
@@ -339,7 +336,7 @@ public final class RoundedRectangle extends
 	/**
 	 * Sets the arc width of this {@link RoundedRectangle}, which is the width
 	 * of the arc used to define its rounded corners.
-	 * 
+	 *
 	 * @param arcWidth
 	 *            the new arc width
 	 * @return <code>this</code> for convenience

@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -24,25 +24,25 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of an ellipse.
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Ellipse extends
-		AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
+AbstractRectangleBasedGeometry<Ellipse, PolyBezier> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs a new {@link Ellipse} so that it is fully contained within the
 	 * framing rectangle defined by (x, y, width, height).
-	 * 
+	 *
 	 * @param x
 	 *            The x-coordinate of the framing rectangle
 	 * @param y
@@ -53,16 +53,13 @@ public class Ellipse extends
 	 *            The height of the framing rectangle
 	 */
 	public Ellipse(double x, double y, double width, double height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		super(x, y, width, height);
 	}
 
 	/**
 	 * Constructs a new {@link Ellipse} so that it is fully contained within the
 	 * given framing {@link Rectangle}.
-	 * 
+	 *
 	 * @param r
 	 *            The framing {@link Rectangle} used to construct this
 	 *            {@link Ellipse}.
@@ -82,7 +79,7 @@ public class Ellipse extends
 	/**
 	 * Tests whether the given {@link Line} is fully contained within this
 	 * {@link Ellipse}.
-	 * 
+	 *
 	 * @param l
 	 *            the {@link Line} to test for containment
 	 * @return <code>true</code> in case the given {@link Line} is fully
@@ -127,7 +124,7 @@ public class Ellipse extends
 	/**
 	 * Tests whether this {@link Ellipse} and the ellipse defined by the given
 	 * bounds are equal.
-	 * 
+	 *
 	 * @param x
 	 *            the x-coordinate of the bounds defining define the ellipse to
 	 *            test
@@ -150,7 +147,7 @@ public class Ellipse extends
 
 	/**
 	 * Tests whether this {@link Ellipse} is equal to the given {@link Object}.
-	 * 
+	 *
 	 * @return <code>true</code> if the given {@link Object} is an
 	 *         {@link Ellipse}, which is (imprecisely) equal to this
 	 *         {@link Ellipse}, i.e. whose bounds are (imprecisely) equal to
@@ -171,7 +168,7 @@ public class Ellipse extends
 	/**
 	 * Returns a new {@link Ellipse} with the same location and size than this
 	 * one.
-	 * 
+	 *
 	 * @return A copy of this {@link Ellipse}, having the same x, y, width, and
 	 *         height values
 	 */
@@ -183,7 +180,7 @@ public class Ellipse extends
 	/**
 	 * Calculates the intersections of this {@link Ellipse} with the given other
 	 * {@link Ellipse}.
-	 * 
+	 *
 	 * @param e2
 	 * @return {@link Point}s of intersection
 	 */
@@ -204,7 +201,7 @@ public class Ellipse extends
 	/**
 	 * Calculates the intersections of this {@link Ellipse} with the given
 	 * {@link ICurve}.
-	 * 
+	 *
 	 * @param c
 	 * @return {@link Point}s of intersection
 	 */
@@ -218,7 +215,7 @@ public class Ellipse extends
 	/**
 	 * Returns the intersection points of this {@link Ellipse}'s outline with
 	 * the given {@link Line}.
-	 * 
+	 *
 	 * @param line
 	 *            the {@link Line} to test for intersection
 	 * @return an array containing the intersection points of this
@@ -343,7 +340,7 @@ public class Ellipse extends
 	 * </ol>
 	 * An {@link Angle} of <code>0deg</code> is oriented to the right.
 	 * Increasing an {@link Angle} rotates counter-clockwise (CCW).
-	 * 
+	 *
 	 * @return an array of {@link CubicCurve}s representing the outline of this
 	 *         {@link Ellipse}
 	 */
@@ -352,12 +349,12 @@ public class Ellipse extends
 		return new CubicCurve[] {
 				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
 						height, Angle.fromDeg(0), Angle.fromDeg(90)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(90), Angle.fromDeg(180)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(180), Angle.fromDeg(270)),
-				ShapeUtils.computeEllipticalArcApproximation(x, y, width,
-						height, Angle.fromDeg(270), Angle.fromDeg(360)), };
+						ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+								height, Angle.fromDeg(90), Angle.fromDeg(180)),
+								ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+										height, Angle.fromDeg(180), Angle.fromDeg(270)),
+										ShapeUtils.computeEllipticalArcApproximation(x, y, width,
+												height, Angle.fromDeg(270), Angle.fromDeg(360)), };
 	}
 
 	@Override
@@ -413,7 +410,7 @@ public class Ellipse extends
 	 * Returns a {@link Path} representation of this {@link Ellipse}, which is
 	 * an approximation of the four {@link #getOutlineSegments() outline
 	 * segments} by means of {@link CubicCurve}s.
-	 * 
+	 *
 	 * @see IGeometry#toPath()
 	 */
 	@Override

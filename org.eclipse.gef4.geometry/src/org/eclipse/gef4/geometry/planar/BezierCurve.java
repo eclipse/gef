@@ -41,8 +41,8 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  *
  */
 public class BezierCurve extends AbstractGeometry implements ICurve,
-ITranslatable<BezierCurve>, IScalable<BezierCurve>,
-IRotatable<BezierCurve> {
+		ITranslatable<BezierCurve>, IScalable<BezierCurve>,
+		IRotatable<BezierCurve> {
 
 	/**
 	 * <p>
@@ -668,7 +668,7 @@ IRotatable<BezierCurve> {
 			IntervalPair[] intersectionCandidates, IntervalPair[] endPoints) {
 		// merge intersection candidates and end points
 		IntervalPair[] fineChunks = new IntervalPair[intersectionCandidates.length
-		                                             + endPoints.length];
+				+ endPoints.length];
 		for (int i = 0; i < intersectionCandidates.length; i++) {
 			fineChunks[i] = intersectionCandidates[i];
 		}
@@ -695,25 +695,25 @@ IRotatable<BezierCurve> {
 					&& PrecisionUtils.greaterEqual(overlap.qi.b, 1)
 					|| (PrecisionUtils.smallerEqual(overlap.pi.a, 0) || PrecisionUtils
 							.greaterEqual(overlap.pi.b, 1))
-							&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
-									.greaterEqual(overlap.qi.b, 1))) {
+					&& (PrecisionUtils.smallerEqual(overlap.qi.a, 0) || PrecisionUtils
+							.greaterEqual(overlap.qi.b, 1))) {
 				// it overlaps
 				if (PrecisionUtils.smallerEqual(overlap.pi.a, 0,
 						CHUNK_SHIFT - 1)
 						&& PrecisionUtils.smallerEqual(overlap.pi.b, 0,
 								CHUNK_SHIFT - 1)
-								|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
-										CHUNK_SHIFT - 1)
-										&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
-												CHUNK_SHIFT - 1)
-												|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
-														CHUNK_SHIFT - 1)
-														&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
-																CHUNK_SHIFT - 1)
-																|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
-																		CHUNK_SHIFT - 1)
-																		&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
-																				CHUNK_SHIFT - 1)) {
+						|| PrecisionUtils.greaterEqual(overlap.pi.a, 1,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.greaterEqual(overlap.pi.b, 1,
+								CHUNK_SHIFT - 1)
+						|| PrecisionUtils.smallerEqual(overlap.qi.a, 0,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.smallerEqual(overlap.qi.b, 0,
+								CHUNK_SHIFT - 1)
+						|| PrecisionUtils.greaterEqual(overlap.qi.a, 1,
+								CHUNK_SHIFT - 1)
+						&& PrecisionUtils.greaterEqual(overlap.qi.b, 1,
+								CHUNK_SHIFT - 1)) {
 					// only end-point-intersection
 					return null;
 				}
@@ -1764,8 +1764,6 @@ IRotatable<BezierCurve> {
 	 *            of intersection with this {@link BezierCurve}
 	 * @return the {@link Point}s of intersection of this {@link BezierCurve}
 	 *         and the given other {@link BezierCurve}
-	 * @see BezierCurve#findEndPointIntersections(IntervalPair, Set, Set)
-	 * @see BezierCurve#findIntersectionChunks(IntervalPair, Set, Set)
 	 */
 	public Point[] getIntersections(BezierCurve other) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -1842,7 +1840,7 @@ IRotatable<BezierCurve> {
 		if (p == null) {
 			throw new IllegalArgumentException(
 					"The passed-in Point may not be null: getParameterAt(" + p
-					+ "), this = " + this);
+							+ "), this = " + this);
 		}
 
 		double[] interval = new double[] { 0, 1 };
@@ -2276,7 +2274,7 @@ IRotatable<BezierCurve> {
 		for (int i = 0; i < points.length; i++) {
 			leftPoints[i] = ratioPoints[0];
 			rightPoints[points.length - 1 - i] = ratioPoints[points.length - 1
-			                                                 - i];
+					- i];
 
 			for (int j = 0; j < points.length - i - 1; j++) {
 				ratioPoints[j] = ratioPoints[j].getRatio(ratioPoints[j + 1], t);

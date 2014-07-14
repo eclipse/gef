@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2012 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API and implementation 
+ *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration to double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -21,12 +21,12 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * Represents the geometric shape of a rectangle, where a rectangle is
  * characterized by means of its upper left corner (x,y) and its size (width,
  * height).
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author ebordeau
  * @author rhudson
  * @author msorens
@@ -35,10 +35,10 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * @author ahunter
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public final class Rectangle extends
-		AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
+AbstractRectangleBasedGeometry<Rectangle, Polygon> implements IShape {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,12 +46,14 @@ public final class Rectangle extends
 	 * Constructs a {@link Rectangle} with location (0,0) and a size of (0,0).
 	 */
 	public Rectangle() {
+		super(0, 0, 0, 0);
 	}
 
 	/**
 	 * Constructs a Rectangle from the given values for its location (upper-left
-	 * corner point) and its size.
-	 * 
+	 * corner point) and its size. If a negative, width or height is passed in,
+	 * 0 will be used instead.
+	 *
 	 * @param x
 	 *            the x location of the new {@link Rectangle}
 	 * @param y
@@ -62,26 +64,17 @@ public final class Rectangle extends
 	 *            the height of the new {@link Rectangle}
 	 */
 	public Rectangle(double x, double y, double width, double height) {
-		if (width < 0) {
-			width = 0;
-		}
-		if (height < 0) {
-			height = 0;
-		}
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		super(x, y, width < 0 ? 0 : width, height < 0 ? 0 : height);
 	}
 
 	/**
 	 * Constructs a new {@link Rectangle} with the given location and size.
-	 * 
+	 *
 	 * @param location
 	 *            the location of the new {@link Rectangle}
 	 * @param size
 	 *            the size of the new {@link Rectangle}
-	 * 
+	 *
 	 */
 	public Rectangle(Point location, Dimension size) {
 		this(location.x, location.y, size.width, size.height);
@@ -90,12 +83,12 @@ public final class Rectangle extends
 	/**
 	 * Constructs a new {@link Rectangle}, which is the smallest one containing
 	 * both given {@link Point}s.
-	 * 
+	 *
 	 * @param p1
 	 *            the first point used to construct the new {@link Rectangle}
 	 * @param p2
 	 *            the second point used to construct the new {@link Rectangle}
-	 * 
+	 *
 	 */
 	public Rectangle(Point p1, Point p2) {
 		this(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y), Math.abs(p2.x - p1.x),
@@ -105,11 +98,11 @@ public final class Rectangle extends
 	/**
 	 * Constructs a new {@link Rectangle} with x, y, width, and height values of
 	 * the given {@link Rectangle}.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle}, whose x, y, width, and height values
 	 *            should be used to initialize the new {@link Rectangle}
-	 * 
+	 *
 	 */
 	public Rectangle(Rectangle r) {
 		this(r.x, r.y, r.width, r.height);
@@ -118,7 +111,7 @@ public final class Rectangle extends
 	/**
 	 * Returns whether the point given by x and y is within the boundaries of
 	 * this Rectangle.
-	 * 
+	 *
 	 * @param x
 	 *            the x-coordinate of the point to test
 	 * @param y
@@ -136,7 +129,7 @@ public final class Rectangle extends
 	/**
 	 * Returns true in case the rectangle specified by (x, y, width, height) is
 	 * contained within this {@link Rectangle}.
-	 * 
+	 *
 	 * @param x
 	 *            The x coordinate of the rectangle to be tested for containment
 	 * @param y
@@ -154,7 +147,7 @@ public final class Rectangle extends
 				&& PrecisionUtils.smallerEqual(this.y, y)
 				&& PrecisionUtils.greaterEqual(this.x + this.width, x + width)
 				&& PrecisionUtils
-						.greaterEqual(this.y + this.height, y + height);
+				.greaterEqual(this.y + this.height, y + height);
 	}
 
 	@Override
@@ -169,11 +162,11 @@ public final class Rectangle extends
 	 * Returns whether the given point is within the boundaries of this
 	 * Rectangle. The boundaries are inclusive of the top and left edges, but
 	 * exclusive of the bottom and right edges.
-	 * 
+	 *
 	 * @param p
 	 *            Point being tested for containment
 	 * @return true if the Point is within this Rectangle
-	 * 
+	 *
 	 */
 	@Override
 	public boolean contains(Point p) {
@@ -183,7 +176,7 @@ public final class Rectangle extends
 	/**
 	 * Tests whether this {@link Rectangle} fully contains the given other
 	 * {@link Rectangle}.
-	 * 
+	 *
 	 * @param r
 	 *            the other {@link Rectangle} to test for being contained by
 	 *            this {@link Rectangle}
@@ -198,7 +191,7 @@ public final class Rectangle extends
 	/**
 	 * Returns <code>true</code> if this Rectangle's x, y, width, and height
 	 * values are identical to the provided ones.
-	 * 
+	 *
 	 * @param x
 	 *            The x value to test
 	 * @param y
@@ -222,11 +215,11 @@ public final class Rectangle extends
 	 * Returns whether the input object is equal to this Rectangle or not.
 	 * Rectangles are equivalent if their x, y, height, and width values are the
 	 * same.
-	 * 
+	 *
 	 * @param o
 	 *            Object being tested for equality
 	 * @return Returns the result of the equality test
-	 * 
+	 *
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -243,7 +236,7 @@ public final class Rectangle extends
 	/**
 	 * Returns the area of this {@link Rectangle}, i.e. the product of its width
 	 * and height.
-	 * 
+	 *
 	 * @return the area of this {@link Rectangle}
 	 */
 	public double getArea() {
@@ -253,7 +246,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point representing the middle point of the bottom side of
 	 * this Rectangle.
-	 * 
+	 *
 	 * @return Point at the bottom of the Rectangle
 	 */
 	public Point getBottom() {
@@ -262,7 +255,7 @@ public final class Rectangle extends
 
 	/**
 	 * Returns a new Point representing the bottom left point of this Rectangle.
-	 * 
+	 *
 	 * @return Point at the bottom left of the rectangle
 	 */
 	public Point getBottomLeft() {
@@ -272,7 +265,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point representing the bottom right point of this
 	 * Rectangle.
-	 * 
+	 *
 	 * @return Point at the bottom right of the rectangle
 	 */
 	public Point getBottomRight() {
@@ -282,7 +275,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Rectangle which has the exact same parameters as this
 	 * Rectangle.
-	 * 
+	 *
 	 * @return Copy of this Rectangle
 	 */
 	@Override
@@ -294,7 +287,7 @@ public final class Rectangle extends
 	 * Returns a new Rectangle which has the intersection of this Rectangle and
 	 * the rectangle provided as input. Returns an empty Rectangle if there is
 	 * no intersection.
-	 * 
+	 *
 	 * @param rect
 	 *            Rectangle provided to test for intersection
 	 * @return A new Rectangle representing the intersection
@@ -306,7 +299,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point representing the middle point of the left hand side
 	 * of this Rectangle.
-	 * 
+	 *
 	 * @return Point at the left of the Rectangle
 	 */
 	public Point getLeft() {
@@ -322,7 +315,7 @@ public final class Rectangle extends
 	/**
 	 * Returns an array of {@link Line}s representing the top, right, bottom,
 	 * and left borders of this {@link Rectangle}.
-	 * 
+	 *
 	 * @return An array containing {@link Line} representations of this
 	 *         {@link Rectangle}'s borders.
 	 */
@@ -339,7 +332,7 @@ public final class Rectangle extends
 	/**
 	 * Returns an array of {@link Point}s representing the top-left, top-right,
 	 * bottom-right, and bottom-left border points of this {@link Rectangle}.
-	 * 
+	 *
 	 * @return An array containing the border points of this {@link Rectangle}
 	 */
 	public Point[] getPoints() {
@@ -350,7 +343,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point which represents the middle point of the right hand
 	 * side of this Rectangle.
-	 * 
+	 *
 	 * @return Point at the right of the Rectangle
 	 */
 	public Point getRight() {
@@ -361,7 +354,7 @@ public final class Rectangle extends
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
 	 * {@link Angle} around the center {@link Point} of this {@link Rectangle}
 	 * (see {@link AbstractRectangleBasedGeometry#getCenter()}).
-	 * 
+	 *
 	 * @param alpha
 	 * @return the resulting {@link Polygon}
 	 * @see IRotatable#getRotatedCCW(Angle, Point)
@@ -375,11 +368,11 @@ public final class Rectangle extends
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
 	 * {@link Angle} around the given {@link Point}.
-	 * 
+	 *
 	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
 	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
-	 * 
+	 *
 	 * @param alpha
 	 *            the rotation angle
 	 * @param cx
@@ -396,11 +389,11 @@ public final class Rectangle extends
 	/**
 	 * Rotates this {@link Rectangle} counter-clock-wise by the given
 	 * {@link Angle} around the given {@link Point}.
-	 * 
+	 *
 	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
 	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
-	 * 
+	 *
 	 * @param alpha
 	 *            the rotation angle
 	 * @param center
@@ -416,7 +409,7 @@ public final class Rectangle extends
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
 	 * around the center ({@link AbstractRectangleBasedGeometry#getCenter()}) of
 	 * this {@link Rectangle}.
-	 * 
+	 *
 	 * @param alpha
 	 *            the rotation {@link Angle}
 	 * @return the resulting {@link Polygon}
@@ -431,11 +424,11 @@ public final class Rectangle extends
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
 	 * alpha around the given {@link Point} (cx, cy).
-	 * 
+	 *
 	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
 	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
-	 * 
+	 *
 	 * @param alpha
 	 *            the rotation angle
 	 * @param cx
@@ -452,11 +445,11 @@ public final class Rectangle extends
 	/**
 	 * Rotates this {@link Rectangle} clock-wise by the given {@link Angle}
 	 * alpha around the given {@link Point}.
-	 * 
+	 *
 	 * If the rotation {@link Angle} is not an integer multiple of 90 degrees,
 	 * the resulting figure cannot be expressed as a {@link Rectangle} object.
 	 * That's why this method returns a {@link Polygon} instead.
-	 * 
+	 *
 	 * @param alpha
 	 *            the rotation angle
 	 * @param center
@@ -471,7 +464,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point which represents the middle point of the top side of
 	 * this Rectangle.
-	 * 
+	 *
 	 * @return Point at the top of the Rectangle
 	 */
 	public Point getTop() {
@@ -481,7 +474,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point which represents the top left hand corner of this
 	 * Rectangle.
-	 * 
+	 *
 	 * @return Point at the top left of the rectangle
 	 */
 	public Point getTopLeft() {
@@ -491,7 +484,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Point which represents the top right hand corner of this
 	 * Rectangle.
-	 * 
+	 *
 	 * @return Point at the top right of the rectangle
 	 */
 	public Point getTopRight() {
@@ -501,7 +494,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a {@link Polygon}, which represents the transformed
 	 * {@link Rectangle}.
-	 * 
+	 *
 	 * @see IGeometry#getTransformed(AffineTransform)
 	 */
 	@Override
@@ -512,9 +505,9 @@ public final class Rectangle extends
 	/**
 	 * Returns a new rectangle whose width and height have been interchanged, as
 	 * well as its x and y values. This can be useful in orientation changes.
-	 * 
+	 *
 	 * @return The transposed rectangle
-	 * 
+	 *
 	 */
 	public Rectangle getTransposed() {
 		return getCopy().transpose();
@@ -523,7 +516,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Rectangle which contains both this Rectangle and the Point
 	 * supplied as input.
-	 * 
+	 *
 	 * @param p
 	 *            Point for calculating union
 	 * @return A new unioned Rectangle
@@ -535,7 +528,7 @@ public final class Rectangle extends
 	/**
 	 * Returns a new Rectangle which contains both this Rectangle and the
 	 * Rectangle supplied as input.
-	 * 
+	 *
 	 * @param rect
 	 *            Rectangle for calculating union
 	 * @return A new unioned Rectangle
@@ -547,7 +540,7 @@ public final class Rectangle extends
 	/**
 	 * Sets the bounds of this {@link Rectangle} to the intersection of this
 	 * {@link Rectangle} with the given one.
-	 * 
+	 *
 	 * @param r
 	 *            The {@link Rectangle} to intersect this {@link Rectangle}
 	 *            with.
@@ -571,10 +564,10 @@ public final class Rectangle extends
 	/**
 	 * Returns <code>true</code> if this Rectangle's width or height is less
 	 * than or equal to 0.
-	 * 
+	 *
 	 * @return <code>true</code> if this Rectangle is (imprecisely) considered
 	 *         to be empty
-	 * 
+	 *
 	 */
 	public boolean isEmpty() {
 		return PrecisionUtils.smallerEqual(width, 0)
@@ -599,7 +592,7 @@ public final class Rectangle extends
 	 * Converts this {@link Rectangle} into a {@link Polygon} representation.
 	 * The control points used to construct the polygon are the border points
 	 * returned by {@link #getPoints()}.
-	 * 
+	 *
 	 * @return A {@link Polygon} representation for this {@link Rectangle}
 	 */
 	public Polygon toPolygon() {
@@ -625,7 +618,7 @@ public final class Rectangle extends
 	/**
 	 * Tests whether this {@link Rectangle} and the given {@link Line} touch,
 	 * i.e. whether they have at least one point in common.
-	 * 
+	 *
 	 * @param l
 	 *            The {@link Line} to test.
 	 * @return <code>true</code> if this {@link Rectangle} and the given
@@ -649,7 +642,7 @@ public final class Rectangle extends
 	 * Tests whether this {@link Rectangle} and the given other
 	 * {@link Rectangle} touch, i.e. whether they have at least one point in
 	 * common.
-	 * 
+	 *
 	 * @param r
 	 *            The {@link Rectangle} to test
 	 * @return <code>true</code> if this {@link Rectangle} and the given
@@ -667,7 +660,7 @@ public final class Rectangle extends
 	/**
 	 * Switches the x and y values, as well as the width and height of this
 	 * Rectangle. Useful for orientation changes.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public Rectangle transpose() {
@@ -683,13 +676,13 @@ public final class Rectangle extends
 	/**
 	 * Updates this {@link Rectangle}'s bounds so that the {@link Point} given
 	 * by (x,y) is contained.
-	 * 
+	 *
 	 * @param x
 	 *            The x-coordinate of the {@link Point} to union with
 	 * @param y
 	 *            The y-coordinate of the {@link Point} to union with
 	 * @return <code>this</code> for convenience
-	 * 
+	 *
 	 */
 	public Rectangle union(double x, double y) {
 		if (x < this.x) {
@@ -710,7 +703,7 @@ public final class Rectangle extends
 	/**
 	 * Updates this Rectangle's bounds to the union of this {@link Rectangle}
 	 * and the {@link Rectangle} with location (x, y) and size(w, h).
-	 * 
+	 *
 	 * @param x
 	 *            The x-coordinate of the {@link Rectangle} to union with.
 	 * @param y
@@ -720,7 +713,7 @@ public final class Rectangle extends
 	 * @param h
 	 *            The height of the {@link Rectangle} to union with
 	 * @return <code>this</code> for convenience
-	 * 
+	 *
 	 */
 	public Rectangle union(double x, double y, double w, double h) {
 		double right = Math.max(this.x + width, x + w);
@@ -735,7 +728,7 @@ public final class Rectangle extends
 	/**
 	 * Updates this {@link Rectangle}'s bounds so that the given {@link Point}
 	 * is included within.
-	 * 
+	 *
 	 * @param p
 	 *            The {@link Point} to union with
 	 * @return <code>this</code> for convenience
@@ -747,7 +740,7 @@ public final class Rectangle extends
 	/**
 	 * Updates this Rectangle's bounds to the union of this {@link Rectangle}
 	 * and the {@link Rectangle}.
-	 * 
+	 *
 	 * @param r
 	 *            The {@link Rectangle} to union with
 	 * @return <code>this</code> for convenience

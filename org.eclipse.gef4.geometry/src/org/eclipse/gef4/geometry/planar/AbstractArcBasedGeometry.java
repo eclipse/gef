@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -22,17 +22,17 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
  * {@link Ellipse}. It provides functionality to modify and query attributes of
  * the {@link Arc} and to compute a {@link BezierCurve} approximation of the
  * {@link Arc}.
- * 
+ *
  * @param <T>
  *            the type of the inheriting class
  * @param <S>
  *            the type of rotated objects (see {@link IRotatable})
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>, S extends IGeometry>
-		extends AbstractRectangleBasedGeometry<T, S> {
+extends AbstractRectangleBasedGeometry<T, S> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,7 +53,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * contained within the framing {@link Rectangle} defined by x, y, width,
 	 * and height, spanning the given extend (in CCW direction) from the given
 	 * start angle (relative to the x-axis).
-	 * 
+	 *
 	 * @param x
 	 *            the x coordinate of the framing {@link Rectangle}
 	 * @param y
@@ -71,10 +71,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 */
 	public AbstractArcBasedGeometry(double x, double y, double width,
 			double height, Angle startAngle, Angle angularExtent) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		super(x, y, width, height);
 		this.startAngle = startAngle;
 		this.angularExtent = angularExtent;
 	}
@@ -83,7 +80,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * Computes a {@link CubicCurve} approximation for this
 	 * {@link AbstractArcBasedGeometry}. It is approximated by a maximum of four
 	 * {@link CubicCurve}s, each of which covers a maximum of 90 degrees.
-	 * 
+	 *
 	 * @return a {@link CubicCurve} approximation for this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -141,7 +138,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * Returns the extension {@link Angle} of this
 	 * {@link AbstractArcBasedGeometry}, i.e. the {@link Angle} defining the
 	 * span of this {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the extension {@link Angle} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -151,7 +148,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 
 	/**
 	 * Returns the start {@link Point} of this {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the start {@link Point} of this {@link AbstractArcBasedGeometry}
 	 */
 	public Point getP1() {
@@ -160,7 +157,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 
 	/**
 	 * Returns the end {@link Point} of this {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the end {@link Point} of this {@link AbstractArcBasedGeometry}
 	 */
 	public Point getP2() {
@@ -172,7 +169,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	 * {@link Point}'s coordinates are calculated by moving the given
 	 * {@link Angle} on this {@link AbstractArcBasedGeometry} starting at this
 	 * {@link AbstractArcBasedGeometry}'s start {@link Point}.
-	 * 
+	 *
 	 * @param angularExtent
 	 *            the {@link Angle} to move from the start {@link Point} of this
 	 *            {@link AbstractArcBasedGeometry}
@@ -188,7 +185,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 
 	/**
 	 * Returns this {@link AbstractArcBasedGeometry}'s start {@link Angle}.
-	 * 
+	 *
 	 * @return this {@link AbstractArcBasedGeometry}'s start {@link Angle}
 	 */
 	public Angle getStartAngle() {
@@ -198,7 +195,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Returns the x coordinate of the start {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the x coordinate of the start {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -209,7 +206,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Returns the x coordinate of the end {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the x coordinate of the end {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -220,7 +217,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Returns the y coordinate of the start {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the y coordinate of the start {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -231,7 +228,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Returns the y coordinate of the end {@link Point} of this
 	 * {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @return the y coordinate of the end {@link Point} of this
 	 *         {@link AbstractArcBasedGeometry}
 	 */
@@ -242,7 +239,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 	/**
 	 * Sets the extension {@link Angle} of this {@link AbstractArcBasedGeometry}
 	 * .
-	 * 
+	 *
 	 * @param angularExtent
 	 *            the new extension {@link Angle} for this
 	 *            {@link AbstractArcBasedGeometry}
@@ -256,7 +253,7 @@ abstract class AbstractArcBasedGeometry<T extends AbstractArcBasedGeometry<?, ?>
 
 	/**
 	 * Sets the start {@link Angle} of this {@link AbstractArcBasedGeometry}.
-	 * 
+	 *
 	 * @param startAngle
 	 *            the new start {@link Angle} for this
 	 *            {@link AbstractArcBasedGeometry}

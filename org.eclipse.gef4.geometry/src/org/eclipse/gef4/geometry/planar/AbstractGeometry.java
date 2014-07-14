@@ -1,18 +1,31 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - IMultiShape semantics for touches()
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
+/**
+ * The abstract base class for all {@link IGeometry}s. It provides generic
+ * support for cloning ({@link Cloneable}) by delegating to {@link #getCopy()},
+ * which needs to be implemented by subclasses. Further, provides generic
+ * support for affine transformations by applying the respective
+ * {@link AffineTransform} to the path representation of this
+ * {@link AbstractGeometry} (see {@link #toPath()}). Implements overlap
+ * detection ({@link #touches(IGeometry)}) for all known {@link IGeometry}s.
+ *
+ * @author anyssen
+ * @author mwienand
+ *
+ */
 abstract class AbstractGeometry implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
@@ -30,7 +43,7 @@ abstract class AbstractGeometry implements IGeometry {
 	 * Default implementation returning a transformed {@link Path}
 	 * representation of this {@link IGeometry}. Subclasses may override this
 	 * method to return a more specific representation.
-	 * 
+	 *
 	 * @return a transformed {@link Path} representation of this
 	 *         {@link IGeometry}
 	 */

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.examples.demos;
 
@@ -17,7 +17,6 @@ import org.eclipse.gef4.geometry.examples.AbstractExample;
 import org.eclipse.gef4.geometry.examples.ControllableShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
-import org.eclipse.gef4.geometry.planar.Polygon.NonSimplePolygonException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
@@ -64,7 +63,7 @@ public class TriangulationExample extends AbstractExample {
 				Polygon[] triangulation;
 				try {
 					triangulation = p.getTriangulation();
-				} catch (NonSimplePolygonException x) {
+				} catch (IllegalStateException x) {
 					triangulation = new Polygon[] { p };
 				}
 				for (Polygon triangle : triangulation) {

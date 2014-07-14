@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -27,17 +27,17 @@ package org.eclipse.gef4.geometry.planar;
  * The type parameter <code>S</code> specifies the result type of all rotation
  * short-cut methods. See {@link IRotatable} for more information.
  * </p>
- * 
+ *
  * @param <T>
  *            specifies the type of the inheriting class in order to avoid
  *            otherwise necessary type casts
  * @param <S>
  *            specifies the result type of all rotation short-cut methods (see
  *            {@link IRotatable})
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGeometry<?, ?>, S extends IGeometry>
 		extends AbstractGeometry implements ITranslatable<T>, IScalable<T>,
@@ -45,13 +45,50 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The x-coordinate of this {@link AbstractRectangleBasedGeometry}.
+	 */
 	double x;
+	/**
+	 * The y-coordinate of this {@link AbstractRectangleBasedGeometry}.
+	 */
 	double y;
+	/**
+	 * The width of this {@link AbstractRectangleBasedGeometry}.
+	 */
 	double width;
+	/**
+	 * The height of this {@link AbstractRectangleBasedGeometry}.
+	 */
 	double height;
 
-	public AbstractRectangleBasedGeometry() {
-		super();
+	/**
+	 * Constructs a new {@link AbstractRectangleBasedGeometry} with the given
+	 * position and size. If the width or height is negative, will use
+	 * <code>0</code> instead.
+	 *
+	 * @param x
+	 *            The x-coordinate of this
+	 *            {@link AbstractRectangleBasedGeometry}
+	 * @param y
+	 *            The y-coordinate of this
+	 *            {@link AbstractRectangleBasedGeometry}
+	 * @param width
+	 *            the width of this {@link AbstractRectangleBasedGeometry}
+	 * @param height
+	 *            the height of this {@link AbstractRectangleBasedGeometry}
+	 *
+	 * @see #setX(double)
+	 * @see #setY(double)
+	 * @see #setWidth(double)
+	 * @see #setHeight(double)
+	 */
+	public AbstractRectangleBasedGeometry(double x, double y, double width,
+			double height) {
+		setX(x);
+		setY(y);
+		setWidth(width);
+		setHeight(height);
 	}
 
 	/**
@@ -59,11 +96,11 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * {@link AbstractRectangleBasedGeometry} with the values provided as input,
 	 * and returns <code>this</code> for convenience. The location of its center
 	 * is kept constant.
-	 * 
+	 *
 	 * @param h
-	 *            horizontal increment
+	 *            the horizontal increment
 	 * @param v
-	 *            vertical increment
+	 *            the vertical increment
 	 * @return <code>this</code> for convenience
 	 */
 	@SuppressWarnings("unchecked")
@@ -78,7 +115,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Expands this {@link AbstractRectangleBasedGeometry} by the given amounts,
 	 * and returns this for convenience.
-	 * 
+	 *
 	 * @param left
 	 *            the amount to expand the left side
 	 * @param top
@@ -106,7 +143,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Returns the center {@link Point} of this
 	 * {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return the center {@link Point} of this
 	 *         {@link AbstractRectangleBasedGeometry}
 	 */
@@ -119,11 +156,11 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * sides are incremented by the horizontal and vertical values provided. The
 	 * center of the {@link AbstractRectangleBasedGeometry} is maintained
 	 * constant.
-	 * 
+	 *
 	 * @param h
-	 *            horizontal increment
+	 *            The horizontal increment
 	 * @param v
-	 *            vertical increment
+	 *            The vertical increment
 	 * @return a new expanded {@link AbstractRectangleBasedGeometry}
 	 */
 	@SuppressWarnings("unchecked")
@@ -135,7 +172,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * Creates and returns a new {@link AbstractRectangleBasedGeometry} with the
 	 * bounds of this {@link AbstractRectangleBasedGeometry} expanded by the
 	 * given insets.
-	 * 
+	 *
 	 * @param left
 	 *            the amount to expand the left side
 	 * @param top
@@ -144,7 +181,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 *            the amount to expand the right side
 	 * @param bottom
 	 *            the amount to expand the bottom side
-	 * 
+	 *
 	 * @return a new expanded {@link AbstractRectangleBasedGeometry}
 	 */
 	@SuppressWarnings("unchecked")
@@ -154,7 +191,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 
 	/**
 	 * Returns the height of this {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return the height of this {@link AbstractRectangleBasedGeometry}
 	 */
 	public final double getHeight() {
@@ -164,7 +201,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Returns a {@link Point} specifying the x and y coordinates of this
 	 * {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return a {@link Point} representing the x and y coordinates of this
 	 *         {@link AbstractRectangleBasedGeometry}
 	 */
@@ -213,7 +250,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * Returns a new {@link AbstractRectangleBasedGeometry}, where the sides are
 	 * shrinked by the horizontal and vertical values supplied. The center of
 	 * this {@link AbstractRectangleBasedGeometry} is kept constant.
-	 * 
+	 *
 	 * @param h
 	 *            horizontal reduction amount
 	 * @param v
@@ -228,7 +265,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Returns a new {@link AbstractRectangleBasedGeometry} shrinked by the
 	 * specified insets.
-	 * 
+	 *
 	 * @param left
 	 *            the amount to shrink the left side
 	 * @param top
@@ -237,7 +274,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 *            the amount to shrink the right side
 	 * @param bottom
 	 *            the amount to shrink the bottom side
-	 * 
+	 *
 	 * @return a new, shrinked {@link AbstractRectangleBasedGeometry}
 	 */
 	@SuppressWarnings("unchecked")
@@ -248,7 +285,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Returns a {@link Dimension} that records the width and height of this
 	 * {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return a {@link Dimension} that records the width and height of this
 	 *         {@link AbstractRectangleBasedGeometry}
 	 */
@@ -270,7 +307,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 
 	/**
 	 * Returns the width of this {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return the width of this {@link AbstractRectangleBasedGeometry}
 	 */
 	public final double getWidth() {
@@ -279,7 +316,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 
 	/**
 	 * Returns the x coordinate this {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return the x coordinate this {@link AbstractRectangleBasedGeometry}
 	 */
 	public final double getX() {
@@ -288,7 +325,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 
 	/**
 	 * Returns the y coordinate of this {@link AbstractRectangleBasedGeometry}.
-	 * 
+	 *
 	 * @return the y coordinate of this {@link AbstractRectangleBasedGeometry}
 	 */
 	public final double getY() {
@@ -333,7 +370,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the x, y, width, and height values of this
 	 * {@link AbstractRectangleBasedGeometry} to the given values.
-	 * 
+	 *
 	 * @param x
 	 *            the new x-coordinate
 	 * @param y
@@ -357,7 +394,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * Sets the x, y, width, and height values of this
 	 * {@link AbstractRectangleBasedGeometry} to the respective values specified
 	 * by the passed-in {@link Point} and the passed-in {@link Dimension}.
-	 * 
+	 *
 	 * @param loc
 	 *            the {@link Point} specifying the new x and y coordinates of
 	 *            this {@link AbstractRectangleBasedGeometry}
@@ -376,7 +413,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * Sets the x and y coordinates and the width and height of this
 	 * {@link AbstractRectangleBasedGeometry} to the respective values of the
 	 * given {@link Rectangle}.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle} specifying the new x, y, width, and
 	 *            height values of this {@link AbstractRectangleBasedGeometry}
@@ -391,7 +428,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the height of this {@link AbstractRectangleBasedGeometry} to the
 	 * given value.
-	 * 
+	 *
 	 * @param height
 	 *            the new height
 	 * @return <code>this</code> for convenience
@@ -408,7 +445,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the x and y coordinates of this
 	 * {@link AbstractRectangleBasedGeometry} to the specified values.
-	 * 
+	 *
 	 * @param x
 	 *            the new x coordinate of this
 	 *            {@link AbstractRectangleBasedGeometry}
@@ -428,7 +465,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * Sets the x and y coordinates of this
 	 * {@link AbstractRectangleBasedGeometry} to the respective values of the
 	 * given {@link Point}.
-	 * 
+	 *
 	 * @param p
 	 *            the {@link Point} specifying the new x and y coordinates of
 	 *            this {@link AbstractRectangleBasedGeometry}
@@ -443,7 +480,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the width and height of this {@link AbstractRectangleBasedGeometry}
 	 * to the width and height of the given {@link Dimension}.
-	 * 
+	 *
 	 * @param d
 	 *            the {@link Dimension} specifying the new width and height of
 	 *            this {@link AbstractRectangleBasedGeometry}
@@ -458,7 +495,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the width and height of this {@link AbstractRectangleBasedGeometry}
 	 * to the given values.
-	 * 
+	 *
 	 * @param w
 	 *            the new width of this {@link AbstractRectangleBasedGeometry}
 	 * @param h
@@ -481,7 +518,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Sets the width of this {@link AbstractRectangleBasedGeometry} to the
 	 * passed-in value.
-	 * 
+	 *
 	 * @param width
 	 *            the new width of this {@link AbstractRectangleBasedGeometry}
 	 * @return <code>this</code> for convenience
@@ -495,12 +532,28 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 		return (T) this;
 	}
 
+	/**
+	 * Sets the x-coordinate of this {@link AbstractRectangleBasedGeometry} to
+	 * the given value.
+	 *
+	 * @param x
+	 *            The new x-coordinate.
+	 * @return <code>this</code> for convenience.
+	 */
 	@SuppressWarnings("unchecked")
 	public final T setX(double x) {
 		this.x = x;
 		return (T) this;
 	}
 
+	/**
+	 * Sets the y-coordinate of this {@link AbstractRectangleBasedGeometry} to
+	 * the given value.
+	 *
+	 * @param y
+	 *            The new y-coordinate.
+	 * @return <code>this</code> for convenience.
+	 */
 	@SuppressWarnings("unchecked")
 	public final T setY(double y) {
 		this.y = y;
@@ -512,7 +565,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	 * horizontal and vertical values provided as input, and returns this
 	 * {@link AbstractRectangleBasedGeometry} for convenience. The center of
 	 * this {@link AbstractRectangleBasedGeometry} is kept constant.
-	 * 
+	 *
 	 * @param h
 	 *            horizontal reduction amount
 	 * @param v
@@ -531,7 +584,7 @@ abstract class AbstractRectangleBasedGeometry<T extends AbstractRectangleBasedGe
 	/**
 	 * Shrinks this {@link AbstractRectangleBasedGeometry} by the specified
 	 * amounts.
-	 * 
+	 *
 	 * @param left
 	 *            the amount to shrink the left side
 	 * @param top

@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -24,36 +24,18 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a convex polygon.
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
-		IShape {
-
-	/**
-	 * The {@link NonSimplePolygonException} is thrown if a non-simple
-	 * {@link Polygon}, i.e. a {@link Polygon} with self-intersections, is asked
-	 * for its triangulation ({@link Polygon#getTriangulation()}).
-	 */
-	@SuppressWarnings("serial")
-	public class NonSimplePolygonException extends RuntimeException {
-		@SuppressWarnings("javadoc")
-		public NonSimplePolygonException() {
-			super();
-		}
-
-		@SuppressWarnings("javadoc")
-		public NonSimplePolygonException(String s) {
-			super(s);
-		}
-	}
+IShape {
 
 	/**
 	 * Pair of {@link Line} segment and integer counter to count segments of
@@ -92,8 +74,6 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		}
 	}
 
-	private static final long serialVersionUID = 1L;
-
 	private static Polygon clipEar(Polygon p, int[] ear, ArrayList<Polygon> ears) {
 		Point[] points = p.getPoints();
 		ears.add(new Polygon(points[ear[0]], points[ear[1]], points[ear[2]]));
@@ -106,7 +86,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * inside the {@link Polygon} respective to the list of {@link Point}s and
 	 * can be clipped out of it so that the remaining {@link Polygon} remains
 	 * simple.
-	 * 
+	 *
 	 * @param points
 	 * @return
 	 */
@@ -147,7 +127,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * Clips exactly one ear off of the given {@link Polygon} and adds it to the
 	 * list of ears. If the resulting {@link Polygon} is a triangle, this is
 	 * added to the list of ears, too. Otherwise, the method recurses.
-	 * 
+	 *
 	 * @param p
 	 * @param ears
 	 */
@@ -177,15 +157,17 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 		triangulate(rest, ears);
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Constructs a new {@link Polygon} from a even-numbered sequence of
 	 * coordinates.
-	 * 
+	 *
 	 * @param coordinates
 	 *            an alternating, even-numbered sequence of x and y coordinates,
 	 *            representing the {@link Point}s from which the {@link Polygon}
 	 *            is to be created
-	 * @see #Polygon(Point[])
+	 * @see #Polygon(Point...)
 	 */
 	public Polygon(double... coordinates) {
 		super(coordinates);
@@ -196,7 +178,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * s. The {@link Polygon} that is created will be automatically closed, i.e.
 	 * it will not only contain a segment between succeeding points of the
 	 * sequence but as well back from the last to the first point.
-	 * 
+	 *
 	 * @param points
 	 *            a sequence of points, from which the {@link Polygon} is to be
 	 *            created.
@@ -209,17 +191,16 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * Assures that this {@link Polygon} is simple, i.e. it does not have any
 	 * self-intersections. We do not need to test for voids as they are not
 	 * considered in the interpretation of the {@link Polygon}'s {@link Point}s.
-	 * 
+	 *
 	 * If the {@link Polygon} does not have at least three vertices, a
-	 * {@link NonSimplePolygonException} is thrown.
-	 * 
+	 * {@link IllegalStateException} is thrown.
+	 *
 	 * The edges are added to the {@link Polygon} one after the other. If a
-	 * self-intersection is found an {@link NonSimplePolygonException} is
-	 * thrown.
+	 * self-intersection is found an {@link IllegalStateException} is thrown.
 	 */
-	private void assureSimplicity() throws NonSimplePolygonException {
+	private void assureSimplicity() {
 		if (points.length < 3) {
-			throw new NonSimplePolygonException(
+			throw new IllegalStateException(
 					"A polygon can only be constructed of at least 3 vertices.");
 		}
 
@@ -230,7 +211,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 						&& !e1.getP1().equals(e2.getP2())
 						&& !e1.getP2().equals(e2.getP2())) {
 					if (e1.touches(e2)) {
-						throw new NonSimplePolygonException(
+						throw new IllegalStateException(
 								"Only simple polygons allowed. A polygon without any self-intersections is considered to be simple. This polygon is not simple.");
 					}
 				}
@@ -241,7 +222,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Checks whether the point that is represented by its x- and y-coordinates
 	 * is contained within this {@link Polygon}.
-	 * 
+	 *
 	 * @param x
 	 *            the x-coordinate of the point to test
 	 * @param y
@@ -271,7 +252,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Checks whether the given {@link Line} is fully contained within this
 	 * {@link Polygon}.
-	 * 
+	 *
 	 * @param line
 	 *            The {@link Line} to test for containment
 	 * @return <code>true</code> if the given {@link Line} is fully contained,
@@ -375,10 +356,10 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 				 * contained by the test line. the containment test is done to
 				 * handle special cases where the intersection has to be counted
 				 * appropriately.
-				 * 
+				 *
 				 * 1) if the vertex is above (greater y-component) the other
 				 * point of the line, it is counted once.
-				 * 
+				 *
 				 * 2) if the vertex is below (lower y-component) or on the same
 				 * height as the other point of the line, it is omitted.
 				 */
@@ -403,7 +384,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 				/*
 				 * check the current link for an intersection with the test
 				 * line. if there is an intersection, change state.
-				 * 
+				 *
 				 * Special case error prevention: If the point in question (p)
 				 * is very near to an edge of and inside the polygon, it can
 				 * happen, that the edge.contains(p) is false, but an
@@ -423,7 +404,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Checks whether the given {@link Polygon} is fully contained within this
 	 * {@link Polygon}.
-	 * 
+	 *
 	 * @param p
 	 *            The {@link Polygon} to test for containment
 	 * @return <code>true</code> if the given {@link Polygon} is fully
@@ -443,7 +424,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Tests if the given {@link Polyline} p is contained in this
 	 * {@link Polygon}.
-	 * 
+	 *
 	 * @param p
 	 * @return true if it is contained, false otherwise
 	 */
@@ -461,7 +442,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Checks whether the given {@link Rectangle} is fully contained within this
 	 * {@link Polygon}.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle} to test for containment
 	 * @return <code>true</code> if the given {@link Rectangle} is fully
@@ -491,7 +472,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * list of points may not have to correspond in each index value, they may
 	 * also be shifted by a certain offset. Moreover, the vertices of two
 	 * equally {@link Polygon}s may be reverted in order.
-	 * 
+	 *
 	 * @param points
 	 *            an array of {@link Point} characterizing a {@link Polygon} to
 	 *            be checked for equality
@@ -529,7 +510,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 
 	/**
 	 * Computes the area of this {@link Polygon}.
-	 * 
+	 *
 	 * @return the area of this {@link Polygon}
 	 */
 	public double getArea() {
@@ -539,7 +520,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Returns a copy of this {@link Polygon}, which is made up by the same
 	 * points.
-	 * 
+	 *
 	 * @return a new {@link Polygon} with an identical set of points.
 	 */
 	@Override
@@ -556,7 +537,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * Returns a sequence of {@link Line}s, representing the segments that are
 	 * obtained by linking each two successive point of this {@link Polygon}
 	 * (including the last and the first one).
-	 * 
+	 *
 	 * @return an array of {@link Line}s, representing the segments that make up
 	 *         this {@link Polygon}
 	 */
@@ -569,7 +550,7 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	 * Computes the signed area of this {@link Polygon}. The sign of the area is
 	 * negative for counter clockwise ordered vertices. It is positive for
 	 * clockwise ordered vertices.
-	 * 
+	 *
 	 * @return the signed area of this {@link Polygon}
 	 */
 	public double getSignedArea() {
@@ -602,12 +583,10 @@ public class Polygon extends AbstractPointListBasedGeometry<Polygon> implements
 	/**
 	 * Naive, recursive ear-clipping algorithm to triangulate this simple,
 	 * planar {@link Polygon}.
-	 * 
+	 *
 	 * @return triangulation {@link Polygon}s (triangles)
-	 * @throws NonSimplePolygonException
-	 *             if <code>this</code> is a non-simple {@link Polygon}
 	 */
-	public Polygon[] getTriangulation() throws NonSimplePolygonException {
+	public Polygon[] getTriangulation() {
 		assureSimplicity();
 		ArrayList<Polygon> ears = new ArrayList<Polygon>(points.length - 2);
 		triangulate(this, ears);
