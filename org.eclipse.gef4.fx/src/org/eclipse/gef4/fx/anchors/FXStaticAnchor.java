@@ -29,7 +29,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 
 	public FXStaticAnchor(Node anchorage, AnchorKey key, Point position) {
 		super(anchorage);
-		attach(key.getAnchored());
+		attach(key);
 		positionProperty().put(key, position);
 	}
 

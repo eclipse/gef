@@ -105,7 +105,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	/**
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
-	 *
+	 * 
 	 * @param deco
 	 * @param start
 	 * @param direction
@@ -237,7 +237,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
 	 * compute the position) this method returns an empty array.
 	 * </p>
-	 *
+	 * 
 	 * @return all curve relevant points
 	 */
 	public Point[] getCurvePoints() {
@@ -417,12 +417,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			if (listener != null) {
 				endAnchorLinkProperty.removeListener(listener);
 			}
+			oldLink.getAnchor().detach(oldLink.getKey());
 		}
 
 		// set new link and register change listener
 		if (listener != null) {
 			endAnchorLinkProperty.addListener(listener);
 		}
+		endAnchorLink.getAnchor().attach(endAnchorLink.getKey());
 		endAnchorLinkProperty.set(endAnchorLink);
 		isEndConnected = !(endAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		endAnchorLinkProperty.get().getAnchor().positionProperty()
@@ -515,12 +517,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			if (listener != null) {
 				startAnchorLinkProperty.removeListener(listener);
 			}
+			oldLink.getAnchor().detach(oldLink.getKey());
 		}
 
 		// set new link and register change listener
 		if (listener != null) {
 			startAnchorLinkProperty.addListener(listener);
 		}
+		startAnchorLink.getAnchor().attach(startAnchorLink.getKey());
 		startAnchorLinkProperty.set(startAnchorLink);
 		isStartConnected = !(startAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		startAnchorLinkProperty.get().getAnchor().positionProperty()

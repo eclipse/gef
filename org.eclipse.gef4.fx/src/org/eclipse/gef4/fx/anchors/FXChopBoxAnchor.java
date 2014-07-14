@@ -192,13 +192,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		if (ref == null) {
 			return;
 		}
-		// TODO: if we store the anchorkeys for an anchored, we do not have to
-		// walk over all keys here
-		AnchorKey[] keys = ref.keySet().toArray(new AnchorKey[] {});
-		for (AnchorKey key : keys) {
-			if (key.getAnchored() != anchored) {
-				continue;
-			}
+		for (AnchorKey key : getKeys().get(anchored)) {
 			Point referencePoint = referencePointProperty().get(key);
 			if (referencePoint != null) {
 				recomputePosition(key, referencePoint);

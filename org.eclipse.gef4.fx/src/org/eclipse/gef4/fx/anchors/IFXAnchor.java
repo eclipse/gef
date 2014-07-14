@@ -30,15 +30,14 @@ public interface IFXAnchor {
 	ReadOnlyObjectProperty<Node> anchorageNodeProperty();
 
 	/**
-	 * Attaches the given anchored node to this IFXAnchor. Anchor computations
-	 * and updates are only performed for attached nodes.
+	 * Attaches the given {@link AnchorKey} to this {@link IFXAnchor}.
 	 */
-	void attach(Node anchored);
+	void attach(AnchorKey key);
 
 	/**
-	 * Detaches the given anchored node from this IFXAnchor.
+	 * Detaches the given {@link AnchorKey} from this {@link IFXAnchor}.
 	 */
-	void detach(Node anchored);
+	void detach(AnchorKey key);
 
 	/**
 	 * @return value of {@link #anchorageNodeProperty()}

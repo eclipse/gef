@@ -12,7 +12,9 @@
 package org.eclipse.gef4.fx.anchors;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
@@ -34,8 +36,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
-	// private Map<Node, Set<AnchorKey>> keys = new HashMap<Node,
-	// Set<AnchorKey>>();
+	private Map<Node, Set<AnchorKey>> keys = new HashMap<Node, Set<AnchorKey>>();
 	private Map<Node, VisualChangeListener> vcls = new HashMap<Node, VisualChangeListener>();
 	private boolean vclsRegistered = false;
 
@@ -91,7 +92,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public void attach(Node anchored) {
+	public void attach(AnchorKey key) {
+		Node anchored = key.getAnchored();
+
+		if (!keys.containsKey(anchored)) {
+			keys.put(anchored, new HashSet<AnchorKey>());
+		}
+		keys.get(anchored).add(key);
+
 		if (!vcls.containsKey(anchored)) {
 			VisualChangeListener vcl = createVCL(anchored);
 			vcls.put(anchored, vcl);
@@ -130,16 +138,23 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public void detach(Node anchored) {
-		if (!vcls.containsKey(anchored)) {
+	public void detach(AnchorKey key) {
+		Node anchored = key.getAnchored();
+		if (!keys.containsKey(anchored) || !keys.get(anchored).contains(key)) {
 			throw new IllegalArgumentException(
-					"The given node is not attached to this IFXAnchor.");
+					"The given AnchorKey was not previously attached to this IFXAnchor.");
 		}
-		VisualChangeListener vcl = vcls.remove(anchored);
-		if (vclsRegistered) {
-			vcl.unregister();
+
+		keys.get(anchored).remove(key);
+
+		if (keys.get(anchored).isEmpty()) {
+			keys.remove(anchored);
+			VisualChangeListener vcl = vcls.remove(anchored);
+			// unregister if currently registered
+			if (vclsRegistered) {
+				vcl.unregister();
+			}
 		}
-		// TODO: remove all other entries for corresponding AnchorKeys
 	}
 
 	@Override
@@ -147,18 +162,17 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return anchorageProperty.get();
 	}
 
+	protected Map<Node, Set<AnchorKey>> getKeys() {
+		return keys;
+	}
+
 	@Override
 	public Point getPosition(AnchorKey key) {
 		Node anchored = key.getAnchored();
-		if (!vcls.containsKey(anchored)) {
+		if (!keys.containsKey(anchored) || !keys.get(anchored).contains(key)) {
 			throw new IllegalArgumentException(
-					"The anchored of the given key is not attached to this anchor.");
+					"The AnchorKey is not attached to this anchor.");
 		}
-
-		// if (!keys.containsKey(anchored)) {
-		// keys.put(anchored, new HashSet<AnchorKey>());
-		// }
-		// keys.get(anchored).add(key);
 
 		if (!positionProperty.containsKey(key)) {
 			return null;
@@ -171,7 +185,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return positionProperty.getReadOnlyProperty();
 	}
 
-	// TODO: change to recomputePositions(Node anchored)
 	protected abstract void recomputePositions(Node anchored);
 
 	protected void registerVCLs() {

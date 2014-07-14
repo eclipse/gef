@@ -335,7 +335,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		boolean isStart = anchorageContent.getSourceAnchoreds().contains(
 				getContent());
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		anchor.attach(visual);
 		if (isStart) {
 			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(visual, "START")));
 		} else {
@@ -355,7 +354,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			throw new IllegalStateException(
 					"Cannot detach from unknown anchor: " + anchor);
 		}
-		anchor.detach(visual);
 	}
 
 }

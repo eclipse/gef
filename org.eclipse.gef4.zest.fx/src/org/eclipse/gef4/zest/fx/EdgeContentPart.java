@@ -128,10 +128,8 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 		FXCurveConnection connection = visual.getConnection();
 		if (anchorage == sourcePart) {
-			anchor.attach(visual);
 			connection.setStartAnchorLink(anchorLink);
 		} else if (anchorage == targetPart) {
-			anchor.attach(visual);
 			connection.setEndAnchorLink(anchorLink);
 		}
 
@@ -152,12 +150,11 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			Node anchorageVisual) {
 		FXCurveConnection connection = visual.getConnection();
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (anchor == visual.getConnection().getStartAnchorLink().getAnchor()) {
+		if (anchor == connection.getStartAnchorLink().getAnchor()) {
 			connection.setStartPoint(connection.getStartPoint());
 		} else {
 			connection.setEndPoint(connection.getEndPoint());
 		}
-		anchor.detach(visual);
 		super.detachVisualFromAnchorageVisual(anchorage, anchorageVisual);
 	}
 
