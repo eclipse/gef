@@ -152,7 +152,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private void calculatePositions() {
-		Rectangle boundary = context.getBounds();
+		Rectangle boundary = PropertiesHelper.getBounds(context);
 		if (dimension != null)
 			boundary = new Rectangle(0, 0, dimension.getWidth(),
 					dimension.getHeight());

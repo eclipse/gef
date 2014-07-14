@@ -218,7 +218,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 		for (int i = 0; i < n; i++) {
 			computeOneIteration();
 			saveLocations();
@@ -232,7 +232,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 		computeOneIteration();
 		saveLocations();
 		context.flushChanges(false);
@@ -396,7 +396,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	private void initLayout() {
 		entities = context.getEntities();
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];

@@ -14,8 +14,37 @@ package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 public interface IProperties {
+
+	// graphs
+
+	/**
+	 * Stores the bounds in which the graph elements can be placed.
+	 */
+	public static final String BOUNDS_PROPERTY = "bounds";
+	public static final Rectangle DEFAULT_BOUNDS = new Rectangle();
+
+	/**
+	 * Indicates whether an algorithm is allowed to place graph elements outside
+	 * of the bounds.
+	 */
+	public static final String BOUNDS_EXPANDABLE_PROPERTY = "bounds-expandable";
+	public static final Boolean DEFAULT_BOUNDS_EXPANDABLE = false;
+
+	/**
+	 * Indicates whether an algorithm is allowed to prune nodes to subgraphs.
+	 */
+	public static final String PRUNING_ENABLED_PROPERTY = "pruning-enabled";
+	public static final Boolean DEFAULT_PRUNING_ENABLED = true;
+
+	/**
+	 * Indicates if layout algorithms can work in the background, reacting to
+	 * events/animation.
+	 */
+	public static final String DYNAMIC_LAYOUT_ENABLED_PROPERTY = "dynamic-layout-enabled";
+	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = true;
 
 	// entities
 

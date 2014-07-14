@@ -14,11 +14,54 @@ package org.eclipse.gef4.layout;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
 public class PropertiesHelper implements IProperties {
+
+	// graphs
+
+	public static Rectangle getBounds(LayoutContext graph) {
+		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
+		if (bounds instanceof Rectangle) {
+			return (Rectangle) bounds;
+		}
+		return DEFAULT_BOUNDS;
+	}
+
+	public static void setBounds(LayoutContext graph, Rectangle bounds) {
+		graph.setProperty(BOUNDS_PROPERTY, bounds);
+	}
+
+	public static Boolean isBoundsExpandable(LayoutContext graph) {
+		Object boundsExpandable = graph.getProperty(BOUNDS_EXPANDABLE_PROPERTY);
+		if (boundsExpandable instanceof Boolean) {
+			return (Boolean) boundsExpandable;
+		}
+		return DEFAULT_BOUNDS_EXPANDABLE;
+	}
+
+	public static void setBoundsExpandable(LayoutContext graph,
+			boolean boundsExpandable) {
+		graph.setProperty(BOUNDS_EXPANDABLE_PROPERTY, boundsExpandable);
+	}
+
+	public static Boolean isDynamicLayoutEnables(LayoutContext graph) {
+		Object dynamicLayoutEnabled = graph
+				.getProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY);
+		if (dynamicLayoutEnabled instanceof Boolean) {
+			return (Boolean) dynamicLayoutEnabled;
+		}
+		return DEFAULT_DYNAMIC_LAYOUT_ENABLED;
+	}
+
+	public static void setDynamicLayoutEnabled(LayoutContext graph,
+			boolean dynamicLayoutEnabled) {
+		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY, dynamicLayoutEnabled);
+	}
 
 	// entities
 

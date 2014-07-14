@@ -61,7 +61,7 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 						.getLocation(o2).y);
 			}
 		};
-		Rectangle bounds = context.getBounds();
+		Rectangle bounds = PropertiesHelper.getBounds(context);
 		int heightSoFar = 0;
 
 		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator

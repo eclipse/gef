@@ -1036,7 +1036,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		public boolean boundsChanged(LayoutContext context) {
 			boolean previousBoundsWrong = (bounds == null || bounds.getWidth()
 					* bounds.getHeight() <= 0);
-			bounds = context.getBounds();
+			bounds = PropertiesHelper.getBounds(context);
 			if (bounds.getWidth() * bounds.getHeight() > 0
 					&& previousBoundsWrong) {
 				expandCollapseManager
@@ -1091,7 +1091,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			}
 			if (node != null && node.subgraph == subgraph) {
 				node.adjustPosition(PropertiesHelper.getLocation(subgraph));
-				if (context.isDynamicLayoutEnabled()) {
+				if (PropertiesHelper.isDynamicLayoutEnables(context)) {
 					((SpaceTreeNode) treeObserver.getSuperRoot())
 							.flushLocationChanges(0);
 					node.refreshSubgraphLocation();
@@ -1107,7 +1107,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
 			spaceTreeNode.adjustPosition(PropertiesHelper.getLocation(node));
-			if (context.isDynamicLayoutEnabled()) {
+			if (PropertiesHelper.isDynamicLayoutEnables(context)) {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);
 				spaceTreeNode.refreshSubgraphLocation();
@@ -1227,7 +1227,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			this.direction = direction;
 			if (context != null) {
 				directionChanged = true;
-				if (context.isDynamicLayoutEnabled())
+				if (PropertiesHelper.isDynamicLayoutEnables(context))
 					checkPendingChangeDirection();
 			}
 		} else
@@ -1236,7 +1236,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	public void applyLayout(boolean clean) {
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 
 		if (bounds.getWidth() * bounds.getHeight() == 0)
 			return;
@@ -1264,7 +1264,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		context.addLayoutListener(layoutListener);
 		treeObserver = new TreeLayoutObserver(context, spaceTreeNodeFactory);
 
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 	}
 
 	public LayoutContext getLayoutContext() {
@@ -1306,7 +1306,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	protected void refreshLayout(boolean animation) {
-		if (!context.isDynamicLayoutEnabled())
+		if (!PropertiesHelper.isDynamicLayoutEnables(context))
 			return;
 		SpaceTreeNode superRoot = (SpaceTreeNode) treeObserver.getSuperRoot();
 		if (animation && superRoot.flushCollapseChanges())

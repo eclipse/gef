@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IPropertyStore;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 
 /**
@@ -17,7 +17,7 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
  * information between layout algorithms and graphical objects displaying
  * graphs.
  */
-public interface LayoutContext {
+public interface LayoutContext extends IPropertyStore {
 
 	/**
 	 * Applies the background layout algorithm of this LayoutContext. The clean
@@ -72,21 +72,6 @@ public interface LayoutContext {
 	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
 			EntityLayout layoutEntity2);
 
-	// TODO: attributes
-	/**
-	 * 
-	 * @return bounds in which the graph elements can be placed
-	 */
-	public Rectangle getBounds();
-
-	// TODO: attributes, ContextListener?
-	/**
-	 * 
-	 * @return true if a layout algorithm is allowed to place graph elements
-	 *         outside of suggested bounds
-	 */
-	public boolean isBoundsExpandable();
-
 	/**
 	 * Returns all the subgraphs this context's nodes were pruned to. Replacing
 	 * elements in the returned array does not affect this context.
@@ -105,25 +90,6 @@ public interface LayoutContext {
 	 */
 	public SubgraphLayout createSubgraph(NodeLayout[] nodes);
 
-	// TODO: attributes
-	/**
-	 * 
-	 * @return true if this layout context allows pruning nodes into subgraphs
-	 */
-	public boolean isPruningEnabled();
-
-	/**
-	 * Checks if this layout context allows layout algorithms to work
-	 * continuously in background and change the layout with time or in reaction
-	 * to some events. If dynamic changes are not allowed, a layout algorithm
-	 * can make changes in layout context only when
-	 * {@link LayoutAlgorithm#applyLayout(boolean)} is called on the respective
-	 * algorithm.
-	 * 
-	 * @return true if incremental layout changes are enabled
-	 */
-	public boolean isDynamicLayoutEnabled();
-
 	/**
 	 * Sets the dynamic layout algorithm for this context. This algorithm will
 	 * be used to relayout graph items using
@@ -136,14 +102,6 @@ public interface LayoutContext {
 	 * @param algorithm
 	 */
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm);
-
-	// TODO: attributes
-	/**
-	 * Enables or disables incremental layout depending on the given boolean.
-	 * 
-	 * @param enabled
-	 */
-	public void setDynamicLayoutEnabled(boolean enabled);
 
 	/**
 	 * Sets the static layout algorithm for this context. The static algorithm

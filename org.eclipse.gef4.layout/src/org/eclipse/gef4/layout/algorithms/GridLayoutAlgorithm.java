@@ -46,7 +46,7 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		Rectangle bounds = context.getBounds();
+		Rectangle bounds = PropertiesHelper.getBounds(context);
 		calculateGrid(bounds);
 		applyLayoutInternal(context.getEntities(), bounds);
 	}

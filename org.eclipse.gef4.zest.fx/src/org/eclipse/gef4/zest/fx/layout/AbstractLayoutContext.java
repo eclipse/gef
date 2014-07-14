@@ -15,7 +15,6 @@ package org.eclipse.gef4.zest.fx.layout;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
@@ -31,9 +30,6 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 public abstract class AbstractLayoutContext implements LayoutContext {
 
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
-	private Rectangle bounds = new Rectangle(0, 0, 0, 0);
-	private boolean boundsExpandable = false;
-	private boolean dynamicLayoutEnabled = true;
 	private LayoutAlgorithm dynamicAlgorithm = null;
 	private LayoutAlgorithm staticAlgorithm = null;
 	private ExpandCollapseManager expandCollapseManager = null;
@@ -210,11 +206,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
-	public Rectangle getBounds() {
-		return bounds;
-	}
-
-	@Override
 	public ConnectionLayout[] getConnections() {
 		return layoutEdges.toArray(new ConnectionLayout[0]);
 	}
@@ -267,21 +258,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
-	public boolean isBoundsExpandable() {
-		return boundsExpandable;
-	}
-
-	@Override
-	public boolean isDynamicLayoutEnabled() {
-		return dynamicLayoutEnabled;
-	}
-
-	@Override
-	public boolean isPruningEnabled() {
-		return false;
-	}
-
-	@Override
 	public void removeContextListener(ContextListener listener) {
 		lls.removeContextListener(listener);
 	}
@@ -325,19 +301,10 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 		lls.removePruningListener(listener);
 	}
 
-	public void setBounds(Rectangle rect) {
-		bounds.setBounds(rect);
-	}
-
 	@Override
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		dynamicAlgorithm = algorithm;
 		dynamicAlgorithm.setLayoutContext(this);
-	}
-
-	@Override
-	public void setDynamicLayoutEnabled(boolean enabled) {
-		dynamicLayoutEnabled = enabled;
 	}
 
 	@Override

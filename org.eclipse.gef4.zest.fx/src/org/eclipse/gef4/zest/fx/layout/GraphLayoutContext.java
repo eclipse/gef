@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
@@ -33,6 +34,8 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	// TODO: We have to expose a hook for flushChanges() to be able to do
 	// something when layouting finishes
 	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
+
+	private PropertyStoreSupport pss = new PropertyStoreSupport();
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
@@ -77,6 +80,11 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		return nodeMap.get(node);
 	}
 
+	@Override
+	public Object getProperty(String name) {
+		return pss.getProperty(name);
+	}
+
 	public void removeOnFlushChanges(Runnable runnable) {
 		if (!onFlushChanges.contains(runnable)) {
 			throw new IllegalArgumentException(
@@ -89,6 +97,11 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		this.g = graph;
 		transferNodes();
 		transferEdges();
+	}
+
+	@Override
+	public void setProperty(String name, Object value) {
+		pss.setProperty(name, value);
 	}
 
 	private void transferEdges() {

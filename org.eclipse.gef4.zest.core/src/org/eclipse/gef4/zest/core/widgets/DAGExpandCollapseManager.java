@@ -264,7 +264,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 
 	private void flushChanges(boolean force, boolean clean) {
 		cleanLayoutScheduled = cleanLayoutScheduled || clean;
-		if (!force && !context.isDynamicLayoutEnabled()) {
+		if (!force && !PropertiesHelper.isDynamicLayoutEnables(context)) {
 			return;
 		}
 

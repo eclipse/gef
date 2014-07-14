@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
@@ -197,10 +198,6 @@ class InternalLayoutContext implements LayoutContext {
 			System.arraycopy(result, 0, result2, 0, subgraphCount);
 			return result2;
 		}
-	}
-
-	public boolean isBoundsExpandable() {
-		return false;
 	}
 
 	public boolean isDynamicLayoutEnabled() {
@@ -572,6 +569,34 @@ class InternalLayoutContext implements LayoutContext {
 				.toArray(new ContextListener[contextListeners.size()]);
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].pruningEnablementChanged(this);
+		}
+	}
+
+	public void setProperty(String name, Object value) {
+		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+			// TODO: there is no setBounds() what to do here?
+		} else if (IProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+			// TODO: there is no setBoundsExpandable()
+		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+			if (value instanceof Boolean) {
+				setDynamicLayoutEnabled((Boolean) value);
+			}
+		} else {
+			// TODO: delegate to setp()
+		}
+	}
+
+	public Object getProperty(String name) {
+		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+			return getBounds();
+		} else if (IProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+			// TODO:
+			return false;
+		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+			return isDynamicLayoutEnabled();
+		} else {
+			// TODO: delegate to getp()
+			return null;
 		}
 	}
 

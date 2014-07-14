@@ -188,7 +188,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	void internalApplyLayout() {
 		TreeNode superRoot = treeObserver.getSuperRoot();
-		bounds = context.getBounds();
+		bounds = PropertiesHelper.getBounds(context);
 		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
 		for (Iterator<TreeNode> iterator = superRoot.getChildren().iterator(); iterator

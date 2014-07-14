@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.IContentModel;
@@ -96,7 +97,8 @@ public class GraphRootPart extends FXRootPart {
 		double width = viewportModel.getWidth();
 		double height = viewportModel.getHeight();
 		// FIXME: insets of 20px should not be hard coded
-		context.setBounds(new Rectangle(0, 0, width - 20, height - 20));
+		PropertiesHelper.setBounds(context, new Rectangle(0, 0, width - 20,
+				height - 20));
 
 		// apply layout algorithm
 		context.applyStaticLayout(true);
@@ -121,8 +123,8 @@ public class GraphRootPart extends FXRootPart {
 		final GraphLayoutContext context = new GraphLayoutContext(
 				(Graph) content);
 		IViewportModel viewport = getViewer().getViewportModel();
-		context.setBounds(new Rectangle(0, 0, viewport.getWidth(), viewport
-				.getHeight()));
+		PropertiesHelper.setBounds(context,
+				new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()));
 		return context;
 	}
 
