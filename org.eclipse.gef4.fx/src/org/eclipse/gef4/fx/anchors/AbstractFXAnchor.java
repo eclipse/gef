@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -28,54 +31,25 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXAnchor implements IFXAnchor {
 
-	public abstract static class RootNodeProvider {
-		public abstract Node get();
-	}
-
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
-
 	private ReadOnlyMapWrapper<AnchorKey, Point> positionProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
-
-	// provides parent visual for visual change listener
-	private RootNodeProvider rootNodeProvider;
-
-	private VisualChangeListener anchorageVisualChangeListener = new VisualChangeListener() {
-		@Override
-		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
-			recomputePositions();
-		}
-
-		@Override
-		public void register(Node node, Node anyParent) {
-			super.register(node, anyParent);
-			/*
-			 * The visual change listener is registered when the anchorage is
-			 * attached to a Scene. Therefore, the anchorages
-			 * bounds/transformation could have "changed" until registration, so
-			 * we have to recompute anchored's positions now.
-			 */
-			recomputePositions();
-		}
-
-		@Override
-		protected void transformChanged(Transform oldTransform,
-				Transform newTransform) {
-			recomputePositions();
-		}
-	};
+	// private Map<Node, Set<AnchorKey>> keys = new HashMap<Node,
+	// Set<AnchorKey>>();
+	private Map<Node, VisualChangeListener> vcls = new HashMap<Node, VisualChangeListener>();
+	private boolean vclsRegistered = false;
 
 	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
 			if (oldValue != null) {
-				anchorageVisualChangeListener.unregister();
+				vclsRegistered = false;
+				unregisterVCLs();
 			}
 			if (newValue != null) {
-				Node anyParent = rootNodeProvider.get();
-				anchorageVisualChangeListener.register(getAnchorageNode(),
-						anyParent);
+				registerVCLs();
+				vclsRegistered = true;
 			}
 		}
 	};
@@ -85,7 +59,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
-				anchorageVisualChangeListener.unregister();
+				vclsRegistered = false;
+				unregisterVCLs();
 				oldAnchorage.sceneProperty().removeListener(
 						anchorageVisualSceneChangeListener);
 			}
@@ -98,16 +73,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				// directly (else do this within scene change listener)
 				Scene scene = newAnchorage.getScene();
 				if (scene != null) {
-					Node anyParent = rootNodeProvider.get();
-					anchorageVisualChangeListener.register(newAnchorage,
-							anyParent);
+					registerVCLs();
+					vclsRegistered = true;
 				}
 			}
 		}
 	};
 
-	public AbstractFXAnchor(Node anchorage, RootNodeProvider rootNodeProvider) {
-		this.rootNodeProvider = rootNodeProvider;
+	public AbstractFXAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
 		setAnchorageNode(anchorage);
 	}
@@ -118,14 +91,77 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
+	public void attach(Node anchored) {
+		if (!vcls.containsKey(anchored)) {
+			VisualChangeListener vcl = createVCL(anchored);
+			vcls.put(anchored, vcl);
+			if (vclsRegistered) {
+				vcl.register(anchorageProperty.get(), anchored);
+			}
+		}
+	}
+
+	private VisualChangeListener createVCL(final Node anchored) {
+		return new VisualChangeListener() {
+			@Override
+			protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
+				recomputePositions(anchored);
+			}
+
+			@Override
+			public void register(Node observed, Node observer) {
+				super.register(observed, observer);
+				/*
+				 * The visual change listener is registered when the anchorage
+				 * is attached to a Scene. Therefore, the anchorages
+				 * bounds/transformation could have "changed" until
+				 * registration, so we have to recompute anchored's positions
+				 * now.
+				 */
+				recomputePositions(anchored);
+			}
+
+			@Override
+			protected void transformChanged(Transform oldTransform,
+					Transform newTransform) {
+				recomputePositions(anchored);
+			}
+		};
+	}
+
+	@Override
+	public void detach(Node anchored) {
+		if (!vcls.containsKey(anchored)) {
+			throw new IllegalArgumentException(
+					"The given node is not attached to this IFXAnchor.");
+		}
+		VisualChangeListener vcl = vcls.remove(anchored);
+		if (vclsRegistered) {
+			vcl.unregister();
+		}
+		// TODO: remove all other entries for corresponding AnchorKeys
+	}
+
+	@Override
 	public Node getAnchorageNode() {
 		return anchorageProperty.get();
 	}
 
 	@Override
 	public Point getPosition(AnchorKey key) {
-		if (!positionProperty.containsKey(key)) {
+		Node anchored = key.getAnchored();
+		if (!vcls.containsKey(anchored)) {
+			throw new IllegalArgumentException(
+					"The anchored of the given key is not attached to this anchor.");
+		}
 
+		// if (!keys.containsKey(anchored)) {
+		// keys.put(anchored, new HashSet<AnchorKey>());
+		// }
+		// keys.get(anchored).add(key);
+
+		if (!positionProperty.containsKey(key)) {
+			return null;
 		}
 		return positionProperty.get(key);
 	}
@@ -135,10 +171,23 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return positionProperty.getReadOnlyProperty();
 	}
 
-	protected abstract void recomputePositions();
+	// TODO: change to recomputePositions(Node anchored)
+	protected abstract void recomputePositions(Node anchored);
+
+	protected void registerVCLs() {
+		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
+			vcls.get(anchored).register(getAnchorageNode(), anchored);
+		}
+	}
 
 	protected void setAnchorageNode(Node anchorage) {
 		anchorageProperty.set(anchorage);
+	}
+
+	protected void unregisterVCLs() {
+		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
+			vcls.get(anchored).unregister();
+		}
 	}
 
 }

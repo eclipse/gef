@@ -12,12 +12,17 @@
 package org.eclipse.gef4.fx.listeners;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.transform.Transform;
 
 /**
@@ -65,6 +70,38 @@ public abstract class VisualChangeListener {
 	private List<Node> relatives = new ArrayList<Node>();
 
 	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
+
+	private Parent getCommonParent(Node source, Node target) {
+		Set<Parent> parents = new HashSet<Parent>();
+
+		// check first parents
+		Parent m = source.getParent();
+		parents.add(m);
+
+		Parent n = target.getParent();
+		if (parents.contains(n)) {
+			return n;
+		}
+		parents.add(n);
+
+		// check rest of hierarchy
+		while (m != null || n != null) {
+			m = m.getParent();
+			if (parents.contains(m)) {
+				return m;
+			}
+			parents.add(m);
+
+			n = n.getParent();
+			if (parents.contains(n)) {
+				return n;
+			}
+			parents.add(n);
+		}
+
+		// could not find a common parent
+		return null;
+	}
 
 	/**
 	 * Checks if the given Bounds contain NaN values. Returns <code>true</code>
@@ -138,34 +175,82 @@ public abstract class VisualChangeListener {
 	}
 
 	/**
-	 * Registers change listeners on the given node. Transformation changes are
-	 * only reported relative to the given parent node.
+	 * Registers this listener on the given pair of observed and observer nodes
+	 * to recognize visual changes of the observed node relative to the common
+	 * parent of observer and observed node.
+	 * <p>
+	 * In detail, two kind of changes will be reported as visual changes:
+	 * <ul>
+	 * <li>changes to the bounds-in-local property of the observed node (
+	 * {@link #boundsChanged(Bounds, Bounds)}) itself</li>
+	 * <li>changes to the local-to-parent-transform property of any node in the
+	 * observed node hierarchy up to (but excluding) the common parent of the
+	 * observed and observer nodes (
+	 * {@link #transformChanged(Transform, Transform)}).</li>
+	 * </ul>
+	 * <p>
+	 * The use of a visual change lister allows to react to relative transform
+	 * changes only. If the common parent of both nodes is for instance nested
+	 * below a {@link ScrollPane}, this allows to ignore transform changes that
+	 * result from scrolling, as these will (in most cases) not indicate a
+	 * visual change.
 	 * 
-	 * @param node
-	 * @param anyParent
+	 * @param observed
+	 *            The observed {@link Node} to be observed for visual changes,
+	 *            which includes bounds-in-local changes for the source node
+	 *            itself, as well as local-to-parent-transform changes for all
+	 *            ancestor nodes (including the source node) up to (but
+	 *            excluding) the common parent node of source and target.
+	 * @param observer
+	 *            A {@link Node} in the same {@link Scene} as the given observed
+	 *            node, relative to which transform changes will be reported.
+	 *            That is, local-to-parent-transform changes will only be
+	 *            reported for all nodes in the hierarchy up to (but excluding)
+	 *            the common parent of observed and observer.
 	 */
-	public void register(Node node, Node anyParent) {
-		if (node == null) {
-			throw new IllegalArgumentException("Node may not be null.");
+	public void register(Node observed, Node observer) {
+		if (observed == null) {
+			throw new IllegalArgumentException("Observed may not be null.");
 		}
-		if (anyParent == null) {
-			throw new IllegalArgumentException("Parent may not be null.");
+		if (observer == null) {
+			throw new IllegalArgumentException("Observer not be null.");
+		}
+		// if (observed.getScene() != observer.getScene()) {
+		// throw new IllegalArgumentException(
+		// "Observed and observer may not be in different scenes.");
+		// }
+
+		Node transformReference = getCommonParent(observed, observer);
+		if (transformReference == null) {
+			// this should not be reachable because observer and observed are
+			// nodes in the same scene
+			throw new IllegalArgumentException(
+					"Source and target do not share a common parent.");
 		}
 
-		// unregister listeners from old node
+		Node tmp = observed;
+		while (tmp != null && tmp != transformReference) {
+			tmp = tmp.getParent();
+		}
+		if (tmp == null) {
+			throw new IllegalArgumentException(
+					"TransformReference needs to be ancestor of the given observed node.");
+		}
+
+		// unregister old listeners
 		if (this.node != null) {
 			unregister();
 		}
 
 		// assign new nodes
-		this.node = node;
-		parent = anyParent;
+		this.node = observed;
+		parent = transformReference;
 
 		// add bounds listener
-		node.boundsInLocalProperty().addListener(boundsInLocalListener);
+		observed.boundsInLocalProperty().addListener(boundsInLocalListener);
 
 		// add transform listeners
-		Node tmp = node;
+		tmp = observed;
 		while (tmp != null && tmp != parent) {
 			relatives.add(tmp);
 			tmp.localToParentTransformProperty().addListener(transformListener);

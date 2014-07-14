@@ -42,7 +42,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.fx.anchors.AbstractFXAnchor.RootNodeProvider;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
@@ -251,24 +250,14 @@ public class FXMouseDragSnippet extends FXApplication {
 			if (anchors.containsKey(n)) {
 				an = anchors.get(n);
 			} else {
-				an = new FXChopBoxAnchor(n, new RootNodeProvider() {
-					@Override
-					public Node get() {
-						return handleLayer;
-					}
-				});
+				an = new FXChopBoxAnchor(n);
 				anchors.put(n, an);
 			}
 
 			if (anchors.containsKey(m)) {
 				am = anchors.get(m);
 			} else {
-				am = new FXChopBoxAnchor(n, new RootNodeProvider() {
-					@Override
-					public Node get() {
-						return handleLayer;
-					}
-				});
+				am = new FXChopBoxAnchor(n);
 				anchors.put(m, am);
 			}
 

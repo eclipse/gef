@@ -49,8 +49,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 	};
 
-	public FXChopBoxAnchor(Node anchorage, RootNodeProvider rootNodeProvider) {
-		super(anchorage, rootNodeProvider);
+	public FXChopBoxAnchor(Node anchorage) {
+		super(anchorage);
 		referencePointProperty.addListener(referencePointChangeListener);
 	}
 
@@ -140,7 +140,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * a {@link Rectangle} matching the layout-bounds of the anchorage
 	 * {@link Node} is returned. Clients may override this method to use other
 	 * geometric shapes instead.
-	 *
+	 * 
 	 * @return The anchorage reference {@link IShape} within the local
 	 *         coordinate system of the anchorage {@link Node}
 	 */
@@ -171,26 +171,34 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * {@link Node} and reference {@link Point}. The
 	 * {@link #computePosition(Node, Point)} method is used to determine the new
 	 * position, which in turn is put into the {@link #positionProperty()}.
-	 *
+	 * 
 	 * @param key
 	 * @param referencePoint
 	 */
 	protected void recomputePosition(AnchorKey key, Point referencePoint) {
+		Point old = getPosition(key);
 		Point position = computePosition(key.getAnchored(), referencePoint);
-		if (!Double.isNaN(position.x) && !Double.isNaN(position.y)) {
-			positionProperty().put(key, position);
+		if (!position.equals(old)) {
+			if (!Double.isNaN(position.x) && !Double.isNaN(position.y)) {
+				positionProperty().put(key, position);
+			}
 		}
 	}
 
 	@Override
-	public void recomputePositions() {
+	public void recomputePositions(Node anchored) {
 		ObservableMap<AnchorKey, Point> ref = referencePointProperty == null ? null
 				: referencePointProperty.get();
 		if (ref == null) {
 			return;
 		}
+		// TODO: if we store the anchorkeys for an anchored, we do not have to
+		// walk over all keys here
 		AnchorKey[] keys = ref.keySet().toArray(new AnchorKey[] {});
 		for (AnchorKey key : keys) {
+			if (key.getAnchored() != anchored) {
+				continue;
+			}
 			Point referencePoint = referencePointProperty().get(key);
 			if (referencePoint != null) {
 				recomputePosition(key, referencePoint);
@@ -208,7 +216,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	/**
 	 * Assigns the given reference point to the given anchored in the reference
 	 * point map.
-	 *
+	 * 
 	 * @param key
 	 * @param referencePoint
 	 */

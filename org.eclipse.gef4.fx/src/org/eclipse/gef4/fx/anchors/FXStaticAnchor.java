@@ -24,17 +24,17 @@ import org.eclipse.gef4.geometry.planar.Point;
 public class FXStaticAnchor extends AbstractFXAnchor {
 
 	public FXStaticAnchor(AnchorKey key, Point position) {
-		this(null, null, key, position);
+		this(null, key, position);
 	}
 
-	public FXStaticAnchor(Node anchorage, RootNodeProvider rootNodeProvider,
-			AnchorKey key, Point position) {
-		super(anchorage, rootNodeProvider);
+	public FXStaticAnchor(Node anchorage, AnchorKey key, Point position) {
+		super(anchorage);
+		attach(key.getAnchored());
 		positionProperty().put(key, position);
 	}
 
 	@Override
-	protected void recomputePositions() {
+	protected void recomputePositions(Node anchored) {
 		// nothing to compute (*static* anchor)
 	}
 
