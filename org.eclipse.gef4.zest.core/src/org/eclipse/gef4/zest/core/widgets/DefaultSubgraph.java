@@ -18,6 +18,7 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
@@ -133,10 +134,11 @@ public class DefaultSubgraph implements SubgraphLayout {
 		 * Changes the default direction for newly cretaed subgraphs.
 		 * 
 		 * @param direction
-		 *            direction to use, can be {@link SubgraphLayout#TOP_DOWN},
-		 *            {@link SubgraphLayout#BOTTOM_UP},
-		 *            {@link SubgraphLayout#LEFT_RIGHT}, or
-		 *            {@link SubgraphLayout#RIGHT_LEFT}
+		 *            direction to use, can be
+		 *            {@link IProperties#DIRECTION_TOP_DOWN},
+		 *            {@link IProperties#DIRECTION_BOTTOM_UP},
+		 *            {@link IProperties#DIRECTION_LEFT_RIGHT}, or
+		 *            {@link IProperties#DIRECTION_RIGHT_LEFT}
 		 */
 		public void setDirection(int direction) {
 			parameters.direction = direction;

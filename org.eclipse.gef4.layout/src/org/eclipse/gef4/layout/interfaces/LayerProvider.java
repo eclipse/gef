@@ -28,7 +28,8 @@ public interface LayerProvider {
 	 * 
 	 * @param nodes
 	 *            List of all the nodes that needs to be organized
-	 * @return
+	 * @return a list of layers for the given nodes, represented each as a list
+	 *         of {@link NodeWrapper}s
 	 */
 	List<List<NodeWrapper>> calculateLayers(List<NodeLayout> nodes);
 }

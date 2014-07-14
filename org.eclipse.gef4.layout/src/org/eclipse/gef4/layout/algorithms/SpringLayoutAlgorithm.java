@@ -309,7 +309,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	/**
 	 * Gets the max time this algorithm will run for
 	 * 
-	 * @return
+	 * @return the timeout up to which this algorithm may run
 	 */
 	public long getSpringTimeout() {
 		return maxTimeMS;

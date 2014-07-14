@@ -66,7 +66,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param targetPart
 	 * @param handleGeometryProvider
 	 * @param geom
-	 * @return
+	 * @return {@link IHandlePart}s for the given target part.
 	 */
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,

@@ -17,7 +17,7 @@ package org.eclipse.gef4.mvc.bindings;
  * implements the {@link Bound} interface, it is expected that the
  * {@link IAdaptable} on which the adapter is registered binds the adapter to
  * itself via {@link Bound#setAdaptable(IAdaptable)} within
- * {@link #setAdapter(Object)}, and accordingly unbinds it (setAdaptable(null))
+ * {@link #setAdapter(Class, Object)}, and accordingly unbinds it (setAdaptable(null))
  * within {@link #unsetAdapter(Class)}.
  * 
  * @author anyssen

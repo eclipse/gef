@@ -59,10 +59,10 @@ public class DFSLayerProvider implements LayerProvider {
 	}
 
 	/**
-	 * Finds a root element in the list of nodes based on there connections.
+	 * Finds the root elements in the list of nodes based on their connections.
 	 * 
 	 * @param nodes
-	 * @return
+	 * @return the list of root elements
 	 */
 	public ArrayList<NodeLayout> getRoots(List<NodeLayout> nodes) {
 		ArrayList<NodeLayout> res = new ArrayList<NodeLayout>();

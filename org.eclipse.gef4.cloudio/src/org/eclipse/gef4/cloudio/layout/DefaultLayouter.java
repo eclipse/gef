@@ -84,7 +84,7 @@ public class DefaultLayouter implements ILayouter {
 	 * is moved slightly in a spiral manner, similar to the approach of Wordle.  
 	 * @param word
 	 * @param cloudArea
-	 * @return
+	 * @return whether the given word could be placed in the respective cloud area
 	 */
 	public boolean layout(Point offset, final Word word, final Rectangle cloudArea, CloudMatrix mainTree) {
 		Assert.isLegal(word != null, "Word cannot be null!");

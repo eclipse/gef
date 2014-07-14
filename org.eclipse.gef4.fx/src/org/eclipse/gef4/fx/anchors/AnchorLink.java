@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -15,9 +15,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * AnchorLink combines IFXAnchor and AnchorKey to represent one anchor target.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class AnchorLink {
 
@@ -49,8 +49,8 @@ public class AnchorLink {
 	/**
 	 * Convenience method to retrieve the anchor position for the particular key
 	 * associated with this AnchorLink.
-	 * 
-	 * @return
+	 *
+	 * @return the position related to this {@link AnchorLink}
 	 */
 	public Point getPosition() {
 		return anchor.getPosition(key);

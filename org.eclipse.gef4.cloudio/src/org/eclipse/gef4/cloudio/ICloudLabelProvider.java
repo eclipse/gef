@@ -26,7 +26,7 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 	 * The label of the given element, which must not
 	 * be <code>null</code>.
 	 * @param element
-	 * @return
+	 * @return the label of the given element
 	 */
 	public String getLabel(Object element);
 	
@@ -34,7 +34,7 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 	 * The weight of the given element, which must be between
 	 * 0 and 1 (inclusive).
 	 * @param element
-	 * @return
+	 * @return the weight of the given element
 	 */
 	public double getWeight(Object element);
 	
@@ -42,7 +42,7 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 	 * The {@link Color} of the given element, which must not
 	 * be <code>null</code>.
 	 * @param element
-	 * @return
+	 * @return the color of the given element
 	 */
 	public Color getColor(Object element);
 	
@@ -51,21 +51,21 @@ public interface ICloudLabelProvider extends IBaseLabelProvider {
 	 * of the given element. Each element must be provided
 	 * with a unique array. Must not return <code>null</code>.
 	 * @param element
-	 * @return
+	 * @return the font data for the given element
 	 */
 	public FontData[] getFontData(Object element);
 
 	/**
 	 * The angle of the element, which must be between -90 and 90, inclusive.
 	 * @param element
-	 * @return
+	 * @return the angle of the given element
 	 */
 	public float getAngle(Object element);
 
 	/**
 	 * Return the tool tip of the element, or <code>null</code>, if none.
 	 * @param element
-	 * @return
+	 * @return the tooltip of the given element
 	 */
 	public String getToolTip(Object element);
 	

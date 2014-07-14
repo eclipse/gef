@@ -45,7 +45,7 @@ public interface IHandlePartFactory<VR> {
 	 * @param targets
 	 * @param contextBehavior
 	 * @param contextMap
-	 * @return
+	 * @return The newly created {@link IHandlePart}s.
 	 */
 	public List<IHandlePart<VR>> createHandleParts(
 			List<IContentPart<VR>> targets, IBehavior<VR> contextBehavior,

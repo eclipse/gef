@@ -159,7 +159,8 @@ public class TreeLayoutObserver {
 
 		/**
 		 * 
-		 * @return
+		 * @return true if this node is the last child of its parent (has the
+		 *         highest order)
 		 */
 		public boolean isLastChild() {
 			return lastChild;
@@ -473,7 +474,9 @@ public class TreeLayoutObserver {
 	 * <code>TreeNode</code> doesn't exist, it's created.
 	 * 
 	 * @param node
-	 * @return
+	 * @return The already existing {@link TreeNode} related to the given
+	 *         {@link NodeLayout} or a newly created one in case there was no
+	 *         related {@link TreeNode} before.
 	 */
 	public TreeNode getTreeNode(NodeLayout node) {
 		TreeNode treeNode = layoutToTree.get(node);

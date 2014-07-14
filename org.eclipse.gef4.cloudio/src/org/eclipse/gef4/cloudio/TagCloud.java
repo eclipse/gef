@@ -390,7 +390,7 @@ public class TagCloud extends Canvas {
 	/**
 	 * Returns the maximum cloud area.
 	 * 
-	 * @return
+	 * @return the maximum cloud area
 	 */
 	protected Rectangle getCloudArea() {
 		return cloudArea;
@@ -1154,7 +1154,7 @@ public class TagCloud extends Canvas {
 	/**
 	 * Returns the set of selected elements. Never returns <code>null</code>.
 	 * 
-	 * @return
+	 * @return the set of selected words
 	 */
 	public Set<Word> getSelection() {
 		checkWidget();
@@ -1184,7 +1184,7 @@ public class TagCloud extends Canvas {
 	 * Does a full relayout of all displayed elements.
 	 * 
 	 * @param monitor
-	 * @return
+	 * @return the number of words that could be placed
 	 */
 	public int layoutCloud(IProgressMonitor monitor, boolean recalc) {
 		checkWidget();
@@ -1292,7 +1292,7 @@ public class TagCloud extends Canvas {
 	 * elements, unscaled, without highlighted selection). Can be used to print
 	 * or export the cloud.
 	 * 
-	 * @return
+	 * @return the image data of the text layer image
 	 */
 	public ImageData getImageData() {
 		checkWidget();

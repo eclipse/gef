@@ -26,19 +26,21 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public class FXPartUtils {
 
 	/**
-	 * Returns the first {@link IVisualPart} in the given list of viewers which:
+	 * Returns the first {@link IVisualPart} in the given list of viewers, for
+	 * which both of the following properties hold:
 	 * <ol>
 	 * <li>Supports the specified policy (which may be <code>null</code>).</li>
-	 * <li>And is part of the parent hierarchy of the given visual.</li>
+	 * <li>Provides a visual that belong to the parent hierarchy of the given
+	 * visual.</li>
 	 * </ol>
-	 * 
+	 *
 	 * When no policy is specified (i.e. it is <code>null</code>), the first
-	 * visual part in the hierarchy is returned.
-	 * 
+	 * visual part that controls a visual in the hierarchy is returned.
+	 *
 	 * @param viewers
 	 * @param visual
 	 * @param supportedPolicy
-	 * @return
+	 * @return the target part
 	 */
 	public static IVisualPart<Node> getTargetPart(
 			Collection<IViewer<Node>> viewers, Node visual,
@@ -52,7 +54,7 @@ public class FXPartUtils {
 					targetNode);
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
-							&& targetPart.getAdapter(supportedPolicy) == null)
+					&& targetPart.getAdapter(supportedPolicy) == null)
 					&& targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);

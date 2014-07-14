@@ -27,7 +27,7 @@ public interface ILayouter {
 	 * @param word
 	 * @param cloudArea
 	 * @param cloudMatrix
-	 * @return
+	 * @return whether the given word could be placed or not
 	 */
 	public boolean layout(Point initial, final Word word, final Rectangle cloudArea, CloudMatrix cloudMatrix);
 	
@@ -37,7 +37,7 @@ public interface ILayouter {
 	 * a matching position around the initial offset.
 	 * @param word
 	 * @param cloudArea
-	 * @return
+	 * @return the initial offset for the given word
 	 */
 	public Point getInitialOffset(Word word, Rectangle cloudArea);
 	

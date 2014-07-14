@@ -67,7 +67,7 @@ public interface LayoutContext extends IPropertyStore {
 	 * 
 	 * @param layoutEntity1
 	 * @param layoutEntity2
-	 * @return
+	 * @return the connections between layoutEntitity1 and layoutEntity2
 	 */
 	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
 			EntityLayout layoutEntity2);
