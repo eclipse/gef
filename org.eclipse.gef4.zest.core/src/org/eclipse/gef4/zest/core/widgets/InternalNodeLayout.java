@@ -219,7 +219,7 @@ class InternalNodeLayout implements NodeLayout {
 			} else {
 				SubgraphLayout successingSubgraph = successingNodes[i]
 						.getSubgraph();
-				if (successingSubgraph.isGraphEntity()
+				if (PropertiesHelper.isGraphEntity(successingSubgraph)
 						&& !addedSubgraphs.contains(successingSubgraph)) {
 					result.add(successingSubgraph);
 					addedSubgraphs.add(successingSubgraph);
@@ -242,7 +242,7 @@ class InternalNodeLayout implements NodeLayout {
 			} else {
 				SubgraphLayout predecessingSubgraph = predecessingNodes[i]
 						.getSubgraph();
-				if (predecessingSubgraph.isGraphEntity()
+				if (PropertiesHelper.isGraphEntity(predecessingSubgraph)
 						&& !addedSubgraphs.contains(predecessingSubgraph)) {
 					result.add(predecessingSubgraph);
 					addedSubgraphs.add(predecessingSubgraph);

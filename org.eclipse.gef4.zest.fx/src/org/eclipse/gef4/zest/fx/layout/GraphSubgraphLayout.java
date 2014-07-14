@@ -80,17 +80,6 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 	}
 
 	@Override
-	public boolean isDirectionDependant() {
-		return false;
-	}
-
-	@Override
-	public boolean isGraphEntity() {
-		// TODO: What *exactly* qualifies as a graph entity?
-		return false;
-	}
-
-	@Override
 	public void removeNodes(NodeLayout[] nodes) {
 		if (nodes == null || nodes.length == 0) {
 			// no nodes to remove
@@ -99,11 +88,6 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 
 		this.nodes.removeAll(Arrays.asList(nodes));
 		// TODO: anything else to do?
-	}
-
-	@Override
-	public void setDirection(int direction) {
-		throw new UnsupportedOperationException("NYI");
 	}
 
 	@Override

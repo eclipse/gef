@@ -410,6 +410,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 			return isResizable();
 		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			return getSize();
+		} else if (PropertiesHelper.DIRECTION_DEPENDANT_PROPERTY.equals(name)) {
+			return isDirectionDependant();
+		} else if (PropertiesHelper.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
+			return isGraphEntity();
 		} else {
 			return getp(name);
 		}
@@ -427,6 +431,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			Dimension size = (Dimension) value;
 			setSize(size.width, size.height);
+		} else if (PropertiesHelper.DIRECTION_PROPERTY.equals(name)) {
+			if (value instanceof Integer) {
+				setDirection((Integer) value);
+			}
 		} else {
 			setp(name, value);
 		}

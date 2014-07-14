@@ -19,6 +19,7 @@ import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
+import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class PropertiesHelper implements IProperties {
 
@@ -179,6 +180,48 @@ public class PropertiesHelper implements IProperties {
 
 	public static void setWeight(ConnectionLayout edge, double weight) {
 		edge.setProperty(WEIGHT_PROPERTY, weight);
+	}
+
+	// subgraphs
+
+	public static void setDirectionDependant(SubgraphLayout subgraph,
+			boolean isDirectionDependant) {
+		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY, isDirectionDependant);
+	}
+
+	// TODO: ensure valid direction by using an enum
+	public static void setDirection(SubgraphLayout subgraph, int direction) {
+		subgraph.setProperty(DIRECTION_PROPERTY, direction);
+	}
+
+	public static void setIsGraphEntity(SubgraphLayout subgraph,
+			boolean isGraphEntity) {
+		subgraph.setProperty(IS_GRAPH_ENTITY_PROPERTY, isGraphEntity);
+	}
+
+	public static Boolean isDirectionDependant(SubgraphLayout subgraph) {
+		Object directionDependant = subgraph
+				.getProperty(DIRECTION_DEPENDANT_PROPERTY);
+		if (directionDependant instanceof Boolean) {
+			return (Boolean) directionDependant;
+		}
+		return DEFAULT_DIRECTION_DEPENDANT;
+	}
+
+	public static Boolean isGraphEntity(SubgraphLayout subgraph) {
+		Object isGraphEntity = subgraph.getProperty(IS_GRAPH_ENTITY_PROPERTY);
+		if (isGraphEntity instanceof Boolean) {
+			return (Boolean) isGraphEntity;
+		}
+		return DEFAULT_IS_GRAPH_ENTITY;
+	}
+
+	public static Integer getDirection(SubgraphLayout subgraph) {
+		Object direction = subgraph.getProperty(DIRECTION_PROPERTY);
+		if (direction instanceof Integer) {
+			return (Integer) direction;
+		}
+		return DEFAULT_DIRECTION;
 	}
 
 }

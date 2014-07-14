@@ -22,6 +22,7 @@ import java.util.ListIterator;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
@@ -152,7 +153,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					.toArray(new NodeLayout[allChildren.size()]);
 			if (subgraph == null) {
 				subgraph = context.createSubgraph(childrenArray);
-				subgraph.setDirection(getSubgraphDirection());
+				PropertiesHelper.setDirection(subgraph, getSubgraphDirection());
 			} else {
 				subgraph.addNodes(childrenArray);
 			}
@@ -186,7 +187,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		public void refreshSubgraphLocation() {
-			if (subgraph != null && subgraph.isGraphEntity()) {
+			if (subgraph != null && PropertiesHelper.isGraphEntity(subgraph)) {
 				Point nodeLocation = PropertiesHelper.getLocation(node);
 				Dimension nodeSize = PropertiesHelper.getSize(node);
 				Dimension subgraphSize = PropertiesHelper.getSize(subgraph);
@@ -539,7 +540,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			Dimension size = PropertiesHelper.getSize(node.node);
 			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 					: size.width;
-			if (node.subgraph != null && node.subgraph.isGraphEntity()) {
+			if (node.subgraph != null
+					&& PropertiesHelper.isGraphEntity(node.subgraph)) {
 				size = PropertiesHelper.getSize(node.subgraph);
 				nodeThickness += (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 						: size.width;
@@ -1285,7 +1287,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			SubgraphLayout[] subgraphs = context.getSubgraphs();
 			int subgraphDirection = getSubgraphDirection();
 			for (int i = 0; i < subgraphs.length; i++) {
-				subgraphs[i].setDirection(subgraphDirection);
+				PropertiesHelper.setDirection(subgraphs[i], subgraphDirection);
 			}
 			directionChanged = false;
 		}
@@ -1294,13 +1296,13 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 	private int getSubgraphDirection() {
 		switch (direction) {
 		case TOP_DOWN:
-			return SubgraphLayout.TOP_DOWN;
+			return IProperties.DIRECTION_TOP_DOWN;
 		case BOTTOM_UP:
-			return SubgraphLayout.BOTTOM_UP;
+			return IProperties.DIRECTION_BOTTOM_UP;
 		case LEFT_RIGHT:
-			return SubgraphLayout.LEFT_RIGHT;
+			return IProperties.DIRECTION_LEFT_RIGHT;
 		case RIGHT_LEFT:
-			return SubgraphLayout.RIGHT_LEFT;
+			return IProperties.DIRECTION_RIGHT_LEFT;
 		}
 		throw new RuntimeException();
 	}

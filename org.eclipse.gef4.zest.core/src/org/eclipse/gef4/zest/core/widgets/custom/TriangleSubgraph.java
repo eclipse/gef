@@ -8,6 +8,11 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets.custom;
 
+import static org.eclipse.gef4.layout.IProperties.DIRECTION_BOTTOM_UP;
+import static org.eclipse.gef4.layout.IProperties.DIRECTION_LEFT_RIGHT;
+import static org.eclipse.gef4.layout.IProperties.DIRECTION_RIGHT_LEFT;
+import static org.eclipse.gef4.layout.IProperties.DIRECTION_TOP_DOWN;
+
 import java.util.HashMap;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -64,7 +69,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 	public static class TriangleParameters implements Cloneable {
 		public Color color = ColorConstants.black;
 
-		public int direction = TOP_DOWN;
+		public int direction = DIRECTION_TOP_DOWN;
 
 		public double referenceHeight = 50;
 
@@ -104,22 +109,22 @@ public class TriangleSubgraph extends FigureSubgraph {
 			r.shrink(getInsets());
 			points.removeAllPoints();
 			switch (parameters.direction) {
-			case TOP_DOWN:
+			case DIRECTION_TOP_DOWN:
 				points.addPoint(r.x + r.width / 2, r.y);
 				points.addPoint(r.x, r.y + r.height);
 				points.addPoint(r.x + r.width, r.y + r.height);
 				break;
-			case BOTTOM_UP:
+			case DIRECTION_BOTTOM_UP:
 				points.addPoint(r.x + r.width / 2, r.y + r.height);
 				points.addPoint(r.x, r.y);
 				points.addPoint(r.x + r.width, r.y);
 				break;
-			case LEFT_RIGHT:
+			case DIRECTION_LEFT_RIGHT:
 				points.addPoint(r.x, r.y + r.height / 2);
 				points.addPoint(r.x + r.width, r.y);
 				points.addPoint(r.x + r.width, r.y + r.height);
 				break;
-			case RIGHT_LEFT:
+			case DIRECTION_RIGHT_LEFT:
 				points.addPoint(r.x + r.width, r.y + r.height / 2);
 				points.addPoint(r.x, r.y);
 				points.addPoint(r.x, r.y + r.height);
@@ -193,8 +198,8 @@ public class TriangleSubgraph extends FigureSubgraph {
 		if (parameters.direction == 0) {
 			parameters.direction = parameters.direction;
 		}
-		if (parameters.direction == TOP_DOWN
-				|| parameters.direction == BOTTOM_UP) {
+		if (parameters.direction == DIRECTION_TOP_DOWN
+				|| parameters.direction == DIRECTION_BOTTOM_UP) {
 			figure.setSize((int) (triangleBase + 0.5),
 					(int) (triangleHeight + 0.5));
 		} else {
@@ -227,8 +232,9 @@ public class TriangleSubgraph extends FigureSubgraph {
 		if (figure == null || parameters.direction == direction) {
 			return;
 		}
-		if (direction == TOP_DOWN || direction == BOTTOM_UP
-				|| direction == LEFT_RIGHT || direction == RIGHT_LEFT) {
+		if (direction == DIRECTION_TOP_DOWN || direction == DIRECTION_BOTTOM_UP
+				|| direction == DIRECTION_LEFT_RIGHT
+				|| direction == DIRECTION_RIGHT_LEFT) {
 			parameters.direction = direction;
 			updateFigure();
 		} else {

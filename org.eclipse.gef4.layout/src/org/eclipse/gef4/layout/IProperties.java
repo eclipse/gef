@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 itemis AG and others.
+ * Copyright (c) 2014 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -114,7 +114,51 @@ public interface IProperties {
 	/**
 	 * Stores a weight for this connection.
 	 */
-	public static final String DIRECTED_PROPERTY = "direction";
+	public static final String DIRECTED_PROPERTY = "directed";
 	public static final Boolean DEFAULT_DIRECTED = true;
+
+	// subgraphs
+
+	/**
+	 * Constant for top-down direction (default).
+	 */
+	public final int DIRECTION_TOP_DOWN = 1;
+
+	/**
+	 * Constant for bottom-up direction.
+	 */
+	public final int DIRECTION_BOTTOM_UP = 2;
+
+	/**
+	 * Constant for direction from left to right.
+	 */
+	public final int DIRECTION_LEFT_RIGHT = 3;
+
+	/**
+	 * Constant for direction from right to left.
+	 */
+	public final int DIRECTION_RIGHT_LEFT = 4;
+
+	/**
+	 * Stores the direction of this subgraph.
+	 */
+	public static final String DIRECTION_PROPERTY = "direction";
+	public static final Integer DEFAULT_DIRECTION = DIRECTION_TOP_DOWN;
+
+	/**
+	 * Indicates whether this subgraph is visualized differently depending on
+	 * its .
+	 */
+	public static final String DIRECTION_DEPENDANT_PROPERTY = "direction-dependant";
+	public static final Boolean DEFAULT_DIRECTION_DEPENDANT = true;
+
+	/**
+	 * Specifies if the subgraph is visualized as a particular object on the
+	 * graph. If a subgraph is not a graph entity, it means that it will not be
+	 * visible, so all methods related to location, size and direction should be
+	 * ignored.
+	 */
+	public static final String IS_GRAPH_ENTITY_PROPERTY = "is-graph-entity";
+	public static final Boolean DEFAULT_IS_GRAPH_ENTITY = true;
 
 }

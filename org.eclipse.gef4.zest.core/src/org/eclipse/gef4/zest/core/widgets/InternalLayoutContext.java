@@ -19,6 +19,7 @@ import org.eclipse.draw2d.Animation;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -165,7 +166,7 @@ class InternalLayoutContext implements LayoutContext {
 					result.add(nodeLayout);
 				} else {
 					SubgraphLayout subgraph = nodeLayout.getSubgraph();
-					if (subgraph.isGraphEntity()
+					if (PropertiesHelper.isGraphEntity(subgraph)
 							&& !addedSubgraphs.contains(subgraph)) {
 						result.add(subgraph);
 						addedSubgraphs.add(subgraph);
