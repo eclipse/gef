@@ -29,15 +29,19 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-//TODO use injection to create handles
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
+
+	@Inject
+	private Injector injector;
 
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 *
+	 * 
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider
@@ -56,23 +60,28 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IContentPart<Node> targetPart,
 			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
-		return new FXSegmentHandlePart(handleGeometryProvider, segmentIndex,
-				isEndPoint ? 1 : 0);
+		FXSegmentHandlePart part = new FXSegmentHandlePart(
+				handleGeometryProvider, segmentIndex, isEndPoint ? 1 : 0);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	/**
 	 * Generate handles for the end/join points of the individual beziers.
-	 *
+	 * 
 	 * @param targetPart
 	 * @param handleGeometryProvider
-	 * @param geom
+	 * @param contextMap
+	 *            TODO
 	 * @return {@link IHandlePart}s for the given target part.
 	 */
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, IGeometry geom) {
+			Provider<IGeometry> handleGeometryProvider,
+			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
-		BezierCurve[] beziers = ((ICurve) geom).toBezier();
+		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get())
+				.toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			IHandlePart<Node> hp = createCurveSelectionHandlePart(targetPart,
 					handleGeometryProvider, i, false);
@@ -99,7 +108,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		// differentiate creation context
 		if (contextBehavior instanceof FXSelectionBehavior) {
 			return createSelectionHandleParts(targets,
-					(FXSelectionBehavior) contextBehavior);
+					(FXSelectionBehavior) contextBehavior, contextMap);
 		}
 
 		// unknown creation context, do not create handles
@@ -109,31 +118,37 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
 	 * selection. The corner is specified via the <i>position</i> parameter.
-	 *
+	 * 
 	 * @param targets
 	 *            All selected {@link IContentPart}s.
 	 * @param position
 	 *            Relative position of the {@link IHandlePart} on the collective
 	 *            bounds of the multi selection.
+	 * @param contextMap
+	 *            TODO
 	 * @return an {@link IHandlePart} for the specified corner of the bounds of
 	 *         the multi selection
 	 */
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
-			List<IContentPart<Node>> targets, Pos position) {
-		// TODO: use injection
-		return new FXBoxHandlePart(position);
+			List<IContentPart<Node>> targets, Pos position,
+			Map<Object, Object> contextMap) {
+		FXBoxHandlePart part = new FXBoxHandlePart(position);
+		injector.injectMembers(part);
+		return part;
 	}
 
 	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
 			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior) {
+			FXSelectionBehavior selectionBehavior,
+			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 
 		// per default, handle parts are created for the 4 corners of the multi
 		// selection bounds
 		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
 				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
-			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos));
+			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos,
+					contextMap));
 		}
 
 		return handleParts;
@@ -141,16 +156,18 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	public List<IHandlePart<Node>> createSelectionHandleParts(
 			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior) {
+			FXSelectionBehavior selectionBehavior,
+			Map<Object, Object> contextMap) {
 		// multiple selection
 		if (targets.size() > 1) {
-			return createMultiSelectionHandleParts(targets, selectionBehavior);
+			return createMultiSelectionHandleParts(targets, selectionBehavior,
+					contextMap);
 		}
 
 		// single selection
 		final IContentPart<Node> targetPart = targets.get(0);
 		Provider<IGeometry> handleGeometryProvider = selectionBehavior
-				.getHandleGeometryProvider();
+				.getHandleGeometryProvider(contextMap);
 
 		// generate handles from handle geometry
 		IGeometry geom = handleGeometryProvider.get();
@@ -158,7 +175,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		if (geom instanceof ICurve) {
 			handleParts.addAll(createCurveSelectionHandleParts(targetPart,
-					handleGeometryProvider, geom));
+					handleGeometryProvider, contextMap));
 		} else {
 			// everything else is expected to be an IShape, even though the user
 			// could supply a Path
@@ -168,7 +185,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				// create a handle for each vertex
 				for (int i = 0; i < edges.length; i++) {
 					IHandlePart<Node> hp = createShapeSelectionHandlePart(
-							targetPart, handleGeometryProvider, i);
+							targetPart, handleGeometryProvider, i, contextMap);
 					handleParts.add(hp);
 				}
 			} else {
@@ -184,7 +201,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 *
+	 * 
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider
@@ -193,13 +210,19 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param vertexIndex
 	 *            Index of the vertex of the provided {@link IGeometry} for
 	 *            which an {@link IHandlePart} is to be created.
+	 * @param contextMap
+	 *            TODO
 	 * @return {@link IHandlePart} for the specified vertex of the
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int vertexIndex) {
-		return new FXSegmentHandlePart(handleGeometryProvider, vertexIndex);
+			Provider<IGeometry> handleGeometryProvider, int vertexIndex,
+			Map<Object, Object> contextMap) {
+		FXSegmentHandlePart part = new FXSegmentHandlePart(
+				handleGeometryProvider, vertexIndex);
+		injector.injectMembers(part);
+		return part;
 	}
 
 }

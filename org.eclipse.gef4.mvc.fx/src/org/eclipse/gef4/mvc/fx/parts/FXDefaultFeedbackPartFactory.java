@@ -17,8 +17,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 
-// TODO: use injection to create parts
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
+
+	@Inject
+	private Injector injector;
 
 	@Override
 	public List<IFeedbackPart<Node>> createFeedbackParts(
@@ -32,10 +37,10 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		// differentiate creation context
 		if (contextBehavior instanceof FXSelectionBehavior) {
 			return createSelectionFeedbackParts(targets,
-					(FXSelectionBehavior) contextBehavior);
+					(FXSelectionBehavior) contextBehavior, contextMap);
 		} else if (contextBehavior instanceof FXHoverBehavior) {
 			return createHoverFeedbackParts(targets,
-					(FXHoverBehavior) contextBehavior);
+					(FXHoverBehavior) contextBehavior, contextMap);
 		}
 
 		// unknown creation context, do not create handles
@@ -43,7 +48,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	}
 
 	protected List<IFeedbackPart<Node>> createHoverFeedbackParts(
-			List<IContentPart<Node>> targets, FXHoverBehavior hoverBehavior) {
+			List<IContentPart<Node>> targets, FXHoverBehavior hoverBehavior,
+			Map<Object, Object> contextMap) {
 		// no feedback for multiple selection
 		if (targets.size() > 1) {
 			return Collections.emptyList();
@@ -51,15 +57,19 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 		final IContentPart<Node> targetPart = targets.get(0);
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
-		feedbackParts.add(new FXBoundsFeedbackPart(targetPart, hoverBehavior
-				.getFeedbackGeometryProvider(), Color.web("#5a61af"),
-				getHoverFeedbackEffect()));
+		FXBoundsFeedbackPart part = new FXBoundsFeedbackPart(targetPart,
+				hoverBehavior.getFeedbackGeometryProvider(contextMap),
+				Color.web("#5a61af"),
+				hoverBehavior.getHoverFeedbackEffect(contextMap));
+		injector.injectMembers(part);
+		feedbackParts.add(part);
 		return feedbackParts;
 	}
 
 	protected List<IFeedbackPart<Node>> createSelectionFeedbackParts(
 			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior) {
+			FXSelectionBehavior selectionBehavior,
+			Map<Object, Object> contextMap) {
 		// no feedback for multiple selection
 		if (targets.size() > 1) {
 			return Collections.emptyList();
@@ -70,18 +80,14 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
 		boolean isPrimaryFeedback = selectionBehavior.getHost().getRoot()
 				.getViewer().getSelectionModel().getSelected().get(0) == targetPart;
-		feedbackParts.add(new FXBoundsFeedbackPart(targetPart,
-				selectionBehavior.getFeedbackGeometryProvider(), Color
-				.web("#5a61af"),
+		FXBoundsFeedbackPart part = new FXBoundsFeedbackPart(targetPart,
+				selectionBehavior.getFeedbackGeometryProvider(contextMap),
+				Color.web("#5a61af"),
 				isPrimaryFeedback ? getPrimarySelectionFeedbackEffect()
-						: getSecondarySelectionFeedbackEffect()));
+						: getSecondarySelectionFeedbackEffect());
+		injector.injectMembers(part);
+		feedbackParts.add(part);
 		return feedbackParts;
-	}
-
-	protected Effect getHoverFeedbackEffect() {
-		DropShadow effect = new DropShadow();
-		effect.setRadius(5);
-		return effect;
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect() {
@@ -95,4 +101,5 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	protected Effect getSecondarySelectionFeedbackEffect() {
 		return null;
 	}
+
 }
