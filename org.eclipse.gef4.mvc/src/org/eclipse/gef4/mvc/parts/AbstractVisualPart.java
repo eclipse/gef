@@ -50,33 +50,33 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	private List<IVisualPart<VR>> anchorages;
 
 	private boolean refreshVisual = true;
-	private boolean active = false;
+	private boolean isActive = false;
 
 	/**
-	 * Activates this {@link IVisualPart}, which in turn activates its policies
-	 * and children. Subclasses should <em>extend</em> this method if they need
-	 * to register listeners to the content. Activation indicates that the
-	 * {@link IVisualPart} is realized in an {@link IViewer}.
-	 * <code>deactivate()</code> is the inverse, and is eventually called on all
-	 * {@link IVisualPart}s.
+	 * Activates this {@link IVisualPart} (if it is not already active) by
+	 * setting (and propagating) the new active state first and delegating to
+	 * {@link #doActivate()} afterwards. During the call to
+	 * {@link #doActivate()}, {@link #isActive()} will thus already return
+	 * <code>true</code>. If the {@link IVisualPart} is already active, this
+	 * operation will be a no-op.
 	 * 
 	 * @see #deactivate()
+	 * @see #isActive()
 	 */
-	public void activate() {
-		boolean oldActive = active;
-		active = true;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
+	public final void activate() {
+		if (!isActive) {
+			isActive = true;
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, false, true);
+			doActivate();
 		}
+	}
 
+	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
-		// when
-		// its parent and anchorages are active??
-		List<IVisualPart<VR>> c = getChildren();
-		for (int i = 0; i < c.size(); i++)
-			c.get(i).activate();
-
+		// when its parent and anchorages are active??
+		for (IVisualPart<VR> child : getChildren()) {
+			child.activate();
+		}
 	}
 
 	@Override
@@ -142,22 +142,26 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	/**
-	 * Deactivates this {@link IVisualPart}, and in turn deactivates its
-	 * policies and children. Subclasses should <em>extend</em> this method to
-	 * remove any listeners established in {@link #activate()}
+	 * Deactivates this {@link IVisualPart} (if it is active) by delegating to
+	 * {@link #doDeactivate()} first and setting (and propagating) the new
+	 * active state afterwards. During the call to {@link #doDeactivate()},
+	 * {@link #isActive()} will thus still return <code>true</code>. If the
+	 * {@link IVisualPart} is not active, this operation will be a no-op.
 	 * 
 	 * @see #activate()
+	 * @see #isActive()
 	 */
-	public void deactivate() {
-		List<IVisualPart<VR>> c = getChildren();
-		for (int i = 0; i < c.size(); i++)
-			c.get(i).deactivate();
+	public final void deactivate() {
+		if (isActive) {
+			doDeactivate();
+			isActive = false;
+			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, true, false);
+		}
+	}
 
-		boolean oldActive = active;
-		active = false;
-		if (oldActive != active) {
-			pcs.firePropertyChange(IActivatable.ACTIVE_PROPERTY, oldActive,
-					active);
+	protected void doDeactivate() {
+		for (IVisualPart<VR> child : getChildren()) {
+			child.deactivate();
 		}
 	}
 
@@ -210,7 +214,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 */
 	@Override
 	public boolean isActive() {
-		return active;
+		return isActive;
 	}
 
 	@Override

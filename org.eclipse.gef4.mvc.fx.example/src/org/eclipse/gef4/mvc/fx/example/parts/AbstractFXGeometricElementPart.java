@@ -27,15 +27,15 @@ public abstract class AbstractFXGeometricElementPart extends AbstractFXContentPa
 	}
 
 	@Override
-	public void activate() {
-		super.activate();
+	protected void doActivate() {
+		super.doActivate();
 		getContent().addPropertyChangeListener(this);
 	}
 
 	@Override
-	public void deactivate() {
+	protected void doDeactivate() {
 		getContent().removePropertyChangeListener(this);
-		super.deactivate();
+		super.doDeactivate();
 	}
 
 	@Override

@@ -76,21 +76,6 @@ public class GraphRootPart extends FXRootPart {
 
 	private int stylesheetIndex;
 
-	@Override
-	public void activate() {
-		super.activate();
-		getViewer().getContentModel().addPropertyChangeListener(contentChanged);
-		getViewer().getViewportModel().addPropertyChangeListener(
-				viewportChanged);
-
-		// load stylesheet
-		ObservableList<String> stylesheets = getVisual().getScene()
-				.getStylesheets();
-		stylesheets.add(getClass().getResource(STYLES_CSS_FILE)
-				.toExternalForm());
-		stylesheetIndex = stylesheets.size() - 1;
-	}
-
 	protected void applyLayout(final GraphLayoutContext context) {
 		// get current viewport size
 		IViewportModel viewportModel = getViewer().getViewportModel();
@@ -129,8 +114,23 @@ public class GraphRootPart extends FXRootPart {
 	}
 
 	@Override
-	public void deactivate() {
-		super.deactivate();
+	protected void doActivate() {
+		super.doActivate();
+		getViewer().getContentModel().addPropertyChangeListener(contentChanged);
+		getViewer().getViewportModel().addPropertyChangeListener(
+				viewportChanged);
+
+		// load stylesheet
+		ObservableList<String> stylesheets = getVisual().getScene()
+				.getStylesheets();
+		stylesheets.add(getClass().getResource(STYLES_CSS_FILE)
+				.toExternalForm());
+		stylesheetIndex = stylesheets.size() - 1;
+	}
+
+	@Override
+	protected void doDeactivate() {
+		super.doDeactivate();
 		getViewer().getContentModel().removePropertyChangeListener(
 				contentChanged);
 		getViewer().getViewportModel().removePropertyChangeListener(
