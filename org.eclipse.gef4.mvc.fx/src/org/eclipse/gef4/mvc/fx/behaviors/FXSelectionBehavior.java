@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
+import java.util.Map;
+
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
@@ -23,12 +25,12 @@ import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 public class FXSelectionBehavior extends AbstractSelectionBehavior<Node> {
 
 	@Override
-	protected IGeometry getFeedbackGeometry() {
+	protected IGeometry getFeedbackGeometry(Map<Object, Object> contextMap) {
 		return getHostGeometry();
 	}
 
 	@Override
-	protected IGeometry getHandleGeometry() {
+	protected IGeometry getHandleGeometry(Map<Object, Object> contextMap) {
 		return getHostGeometry();
 	}
 
