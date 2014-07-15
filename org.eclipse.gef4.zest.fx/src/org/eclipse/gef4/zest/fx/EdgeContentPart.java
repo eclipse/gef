@@ -75,7 +75,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
 
-	private Edge edge;
 	private FXLabeledConnection visual;
 
 	{
@@ -85,41 +84,13 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		visual.getConnection().getCurveNode().getStyleClass().add("curve");
 	}
 
-	public EdgeContentPart(Edge content) {
-		edge = content;
-		Map<String, Object> attrs = edge.getAttrs();
-		Object label = attrs.get(Attr.Key.LABEL.toString());
-		if (label instanceof String) {
-			visual.setLabel((String) label);
-		}
-		if (attrs.containsKey(ATTR_CLASS)) {
-			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
-		}
-		if (attrs.containsKey(ATTR_ID)) {
-			visual.setId((String) attrs.get(ATTR_ID));
-		}
-
-		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior() {
-			@Override
-			protected IGeometry getHostGeometry() {
-				return visual.getConnection().getCurveNode().getGeometry();
-			}
-		});
-		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior() {
-			@Override
-			protected IGeometry getFeedbackGeometry() {
-				return visual.getConnection().getCurveNode().getGeometry();
-			}
-		});
-	}
-
 	@Override
 	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
 			Node anchorageVisual) {
 		IContentPart<Node> sourcePart = anchorage.getRoot().getViewer()
-				.getContentPartMap().get(edge.getSource());
+				.getContentPartMap().get(getContent().getSource());
 		IContentPart<Node> targetPart = anchorage.getRoot().getViewer()
-				.getContentPartMap().get(edge.getTarget());
+				.getContentPartMap().get(getContent().getTarget());
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		AnchorKey anchorKey = new AnchorKey(visual,
@@ -179,8 +150,8 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		FXGeometryNode<ICurve> curveNode = connection.getCurveNode();
 
 		// dashes
-		Object style = edge.getAttrs()
-				.get(Graph.Attr.Key.EDGE_STYLE.toString());
+		Object style = getContent().getAttrs().get(
+				Graph.Attr.Key.EDGE_STYLE.toString());
 		if (style == Graph.Attr.Value.LINE_DASH) {
 			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOT) {
@@ -204,8 +175,47 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
+	public Edge getContent() {
+		return (Edge) super.getContent();
+	}
+
+	@Override
 	public Node getVisual() {
 		return visual;
+	}
+
+	@Override
+	public void setContent(Object content) {
+		super.setContent(content);
+		if (!(content instanceof Edge)) {
+			throw new IllegalArgumentException("Content of wrong type!");
+		}
+		Edge edge = (Edge) content;
+
+		Map<String, Object> attrs = edge.getAttrs();
+		Object label = attrs.get(Attr.Key.LABEL.toString());
+		if (label instanceof String) {
+			visual.setLabel((String) label);
+		}
+		if (attrs.containsKey(ATTR_CLASS)) {
+			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+		}
+		if (attrs.containsKey(ATTR_ID)) {
+			visual.setId((String) attrs.get(ATTR_ID));
+		}
+
+		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior() {
+			@Override
+			protected IGeometry getHostGeometry() {
+				return visual.getConnection().getCurveNode().getGeometry();
+			}
+		});
+		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior() {
+			@Override
+			protected IGeometry getFeedbackGeometry(Map<Object, Object> contextMap) {
+				return visual.getConnection().getCurveNode().getGeometry();
+			}
+		});
 	}
 
 }

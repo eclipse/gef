@@ -34,7 +34,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String ATTR_ID = "id";
 	public static final String ATTR_STYLE = "style";
 
-	protected org.eclipse.gef4.graph.Node node;
 	protected FXLabeledNode visual = new FXLabeledNode();
 	protected IFXAnchor anchor;
 
@@ -42,23 +41,9 @@ public class NodeContentPart extends AbstractFXContentPart {
 		visual.getStyleClass().add(CSS_CLASS);
 	}
 
-	public NodeContentPart(org.eclipse.gef4.graph.Node content) {
-		node = content;
-		Map<String, Object> attrs = node.getAttrs();
-		if (attrs.containsKey(ATTR_CLASS)) {
-			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
-		}
-		if (attrs.containsKey(ATTR_ID)) {
-			visual.setId((String) attrs.get(ATTR_ID));
-		}
-		if (attrs.containsKey(ATTR_STYLE)) {
-			visual.setStyle((String) attrs.get(ATTR_STYLE));
-		}
-	}
-
 	@Override
 	public void doRefreshVisual() {
-		Object label = node.getAttrs().get(Attr.Key.LABEL.toString());
+		Object label = getContent().getAttrs().get(Attr.Key.LABEL.toString());
 		String str = label instanceof String ? (String) label
 				: label == null ? "-" : label.toString();
 		visual.setLabel(str);
@@ -70,6 +55,11 @@ public class NodeContentPart extends AbstractFXContentPart {
 			anchor = new FXChopBoxAnchor(visual);
 		}
 		return anchor;
+	}
+
+	@Override
+	public org.eclipse.gef4.graph.Node getContent() {
+		return (org.eclipse.gef4.graph.Node) super.getContent();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -85,7 +75,8 @@ public class NodeContentPart extends AbstractFXContentPart {
 			List<Edge> edges = ((Graph) content).getEdges();
 			List<Edge> anchored = new ArrayList<Edge>();
 			for (Edge e : edges) {
-				if (e.getTarget() == node || e.getSource() == node) {
+				if (e.getTarget() == getContent()
+						|| e.getSource() == getContent()) {
 					anchored.add(e);
 				}
 			}
@@ -97,6 +88,25 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public Node getVisual() {
 		return visual;
+	}
+
+	@Override
+	public void setContent(Object content) {
+		super.setContent(content);
+		if (!(content instanceof org.eclipse.gef4.graph.Node)) {
+			throw new IllegalArgumentException("Content of wrong type!");
+		}
+		org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) content;
+		Map<String, Object> attrs = node.getAttrs();
+		if (attrs.containsKey(ATTR_CLASS)) {
+			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+		}
+		if (attrs.containsKey(ATTR_ID)) {
+			visual.setId((String) attrs.get(ATTR_ID));
+		}
+		if (attrs.containsKey(ATTR_STYLE)) {
+			visual.setStyle((String) attrs.get(ATTR_STYLE));
+		}
 	}
 
 }

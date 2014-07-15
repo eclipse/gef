@@ -35,11 +35,11 @@ public class ContentPartFactory implements IContentPartFactory<Node> {
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		IContentPart<Node> part = null;
 		if (content instanceof Graph) {
-			part = new GraphContentPart((Graph) content);
+			part = new GraphContentPart();
 		} else if (content instanceof org.eclipse.gef4.graph.Node) {
-			part = new NodeContentPart((org.eclipse.gef4.graph.Node) content);
+			part = new NodeContentPart();
 		} else if (content instanceof Edge) {
-			part = new EdgeContentPart((Edge) content);
+			part = new EdgeContentPart();
 		}
 		if (part != null) {
 			injector.injectMembers(part);

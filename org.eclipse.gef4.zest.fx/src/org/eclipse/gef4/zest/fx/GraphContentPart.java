@@ -29,9 +29,6 @@ public class GraphContentPart extends AbstractFXContentPart {
 		group.setAutoSizeChildren(false);
 	}
 
-	public GraphContentPart(Graph content) {
-	}
-
 	@Override
 	public void doRefreshVisual() {
 		// nothing to do
