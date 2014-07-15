@@ -37,7 +37,7 @@ public interface IShape extends IGeometry {
 	 * @param g
 	 *            The {@link IGeometry} to test for containment
 	 * @return <code>true</code> if the given {@link IGeometry} is fully
-	 *         contained by this {@link IShape}, <code>false</code> otherwise
+	 *         contained by this {@link IShape}, <code>false</code> otherwise.
 	 */
 	public boolean contains(final IGeometry g);
 
@@ -45,7 +45,7 @@ public interface IShape extends IGeometry {
 	 * Returns an {@link ICurve} representing the outline of this {@link IShape}
 	 * .
 	 *
-	 * @return an {@link ICurve} representing this {@link IShape}'s outline
+	 * @return An {@link ICurve} representing this {@link IShape}'s outline.
 	 */
 	public ICurve getOutline();
 
@@ -53,7 +53,7 @@ public interface IShape extends IGeometry {
 	 * Returns the individual {@link ICurve} segments, which constitute the
 	 * outline of this {@link IShape}.
 	 *
-	 * @return the {@link ICurve} segments of this {@link IShape}'s outline
+	 * @return The {@link ICurve} segments of this {@link IShape}'s outline.
 	 */
 	public ICurve[] getOutlineSegments();
 
