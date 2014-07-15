@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXHandleHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
@@ -28,6 +29,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
@@ -41,10 +43,13 @@ import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
 
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
+import com.google.inject.util.Types;
 
 public class MvcFxModule extends MvcModule<Node> {
 
@@ -71,7 +76,14 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
-		// nothing to bind by default
+		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
+				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
+						new TypeLiteral<Node>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(AbstractFXHoverPolicy.class).to(
+				FXHoverOnHoverPolicy.class);
+		adapterMapBinder.addBinding(AbstractHoverBehavior.class).to(
+				FXHandleHoverBehavior.class);
 	}
 
 	protected void bindFXDefaultFeedbackPartFactory() {
