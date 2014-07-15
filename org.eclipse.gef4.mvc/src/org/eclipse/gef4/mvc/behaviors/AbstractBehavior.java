@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
  * 
@@ -75,29 +76,38 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return host;
 	}
 
-	protected void addHandles(List<IContentPart<VR>> anchorages) {
-		handleParts = BehaviorUtils.createHandles(this, anchorages);
-		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), anchorages,
+	protected void addHandles(List<? extends IVisualPart<VR>> targets) {
+		// create handles for content parts only
+		@SuppressWarnings("unchecked")
+		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
+		handleParts = BehaviorUtils.createHandles(this, contentParts);
+		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
 				handleParts);
 	}
 
-	protected void removeHandles(List<IContentPart<VR>> anchorages) {
+	protected void removeHandles(List<? extends IVisualPart<VR>> targets) {
 		if (handleParts != null && !handleParts.isEmpty()) {
-			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), anchorages,
+			@SuppressWarnings("unchecked")
+			List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), contentParts,
 					handleParts);
 			handleParts.clear();
 		}
 	}
 
-	protected void addFeedback(List<IContentPart<VR>> targets) {
-		feedbackParts = BehaviorUtils.createFeedback(this, targets);
-		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), targets,
+	protected void addFeedback(List<? extends IVisualPart<VR>> targets) {
+		@SuppressWarnings("unchecked")
+		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
+		feedbackParts = BehaviorUtils.createFeedback(this, contentParts);
+		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
 				feedbackParts);
 	}
 
-	protected void removeFeedback(List<IContentPart<VR>> targets) {
+	protected void removeFeedback(List<? extends IVisualPart<VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
-			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), targets,
+			@SuppressWarnings("unchecked")
+			List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
+			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), contentParts,
 					feedbackParts);
 			feedbackParts.clear();
 		}

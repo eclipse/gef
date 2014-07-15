@@ -17,12 +17,12 @@ import java.util.Collections;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
 /**
- * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
+ * The {@link AbstractHoverBehavior} is responsible for creating and removing
  * selection feedback.
  * 
  * @author anyssen
@@ -46,13 +46,13 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 				.addPropertyChangeListener(this);
 		
 		// create feedback and handles if we are already hovered
-		addFeedbackAndHandles((IContentPart<VR>) getHost().getRoot().getViewer().getHoverModel().getHover());
+		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel().getHover());
 	}
 
 	@Override
 	public void deactivate() {
 		// remove any pending feedback and handles
-		removeFeedbackAndHandles((IContentPart<VR>) getHost().getRoot().getViewer().getHoverModel().getHover());
+		removeFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel().getHover());
 		
 		getHost().getRoot().getViewer().getHoverModel()
 				.removePropertyChangeListener(this);
@@ -71,29 +71,29 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
-			IContentPart<VR> oldHovered = (IContentPart<VR>) event.getOldValue();
-			IContentPart<VR> newHovered = (IContentPart<VR>) event.getNewValue();
+			IVisualPart<VR> oldHovered = (IVisualPart<VR>) event.getOldValue();
+			IVisualPart<VR> newHovered = (IVisualPart<VR>) event.getNewValue();
 
 			removeFeedbackAndHandles(oldHovered);
 			addFeedbackAndHandles(newHovered);
 		}
 	}
 
-	protected void addFeedbackAndHandles(IContentPart<VR> newHovered) {
+	protected void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
 		if (newHovered == getHost()) {
 			addFeedback(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 			addHandles(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 		}
 	}
 
-	protected void removeFeedbackAndHandles(IContentPart<VR> oldHovered) {
+	protected void removeFeedbackAndHandles(IVisualPart<VR> oldHovered) {
 		if (oldHovered == getHost()) {
 			removeHandles(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 			removeFeedback(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 		}
 	}
 

@@ -105,9 +105,9 @@ public abstract class AbstractSelectionBehavior<VR> extends
 			removeFeedback(selected);
 		} else if (selected.contains(getHost())) {
 			removeHandles(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 			removeFeedback(Collections
-					.singletonList((IContentPart<VR>) getHost()));
+					.singletonList(getHost()));
 		}
 	}
 
@@ -117,10 +117,10 @@ public abstract class AbstractSelectionBehavior<VR> extends
 			addFeedback(selected);
 			addHandles(selected);
 		} else if (selected.contains(getHost())) {
-			addFeedback(Collections.singletonList((IContentPart<VR>) getHost()));
+			addFeedback(Collections.singletonList(getHost()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {
 				addHandles(Collections
-						.singletonList((IContentPart<VR>) getHost()));
+						.singletonList(getHost()));
 			}
 		}
 	}

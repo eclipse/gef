@@ -11,21 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
-
 public class DefaultHoverPolicy<VR> extends AbstractPolicy<VR> {
 
 	public void hover() {
-		IVisualPart<VR> host = getHost();
-		if (!(host instanceof IContentPart) || !isHoverable()) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(null);
-		} else if (host instanceof IContentPart) {
-			getHost().getRoot().getViewer().getHoverModel().setHover(host);
-		}
+		getHost().getRoot().getViewer().getHoverModel()
+				.setHover(isHoverable() ? getHost() : null);
 	}
 
 	protected boolean isHoverable() {
 		return true;
 	}
+	
 }
