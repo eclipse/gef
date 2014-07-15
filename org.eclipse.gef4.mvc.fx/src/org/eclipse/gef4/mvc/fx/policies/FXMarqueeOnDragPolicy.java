@@ -202,8 +202,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	private void updateMarquee(Dimension delta) {
-		FXRootPart root = (FXRootPart) getHost().getRoot();
 		endPosInFeedbackLayer = new Point2D(startPosInFeedbackLayer.getX()
 				+ delta.width, startPosInFeedbackLayer.getY() + delta.height);
 	}
+
 }
