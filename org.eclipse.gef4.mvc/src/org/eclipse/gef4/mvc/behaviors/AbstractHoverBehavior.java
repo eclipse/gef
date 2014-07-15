@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IHoverModel;
@@ -31,13 +32,6 @@ import com.google.inject.Provider;
  */
 public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
-
-	private Provider<IGeometry> feedbackGeometryProvider = new Provider<IGeometry>() {
-		@Override
-		public IGeometry get() {
-			return getFeedbackGeometry();
-		}
-	};
 
 	@Override
 	public void activate() {
@@ -62,10 +56,11 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
+	 * @param contextMap TODO
 	 * 
 	 * @return an {@link IGeometry} determining feedback positions
 	 */
-	protected abstract IGeometry getFeedbackGeometry();
+	protected abstract IGeometry getFeedbackGeometry(Map<Object, Object> contextMap);
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -79,7 +74,7 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
-	protected void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
+	protected final void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
 		if (newHovered == getHost()) {
 			addFeedback(Collections
 					.singletonList(getHost()));
@@ -88,7 +83,7 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
-	protected void removeFeedbackAndHandles(IVisualPart<VR> oldHovered) {
+	protected final void removeFeedbackAndHandles(IVisualPart<VR> oldHovered) {
 		if (oldHovered == getHost()) {
 			removeHandles(Collections
 					.singletonList(getHost()));
@@ -97,8 +92,13 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
-	public Provider<IGeometry> getFeedbackGeometryProvider() {
-		return feedbackGeometryProvider;
+	public Provider<IGeometry> getFeedbackGeometryProvider(final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getFeedbackGeometry(contextMap);
+			}
+		};
 	}
 
 }

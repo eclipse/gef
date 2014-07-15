@@ -15,7 +15,9 @@ package org.eclipse.gef4.mvc.behaviors;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -78,9 +80,14 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	protected void addHandles(List<? extends IVisualPart<VR>> targets) {
 		// create handles for content parts only
+		addHandles(targets, Collections.<Object, Object>emptyMap());
+	}
+
+	protected void addHandles(List<? extends IVisualPart<VR>> targets,
+			Map<Object, Object> contextMap) {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
-		handleParts = BehaviorUtils.createHandles(this, contentParts);
+		handleParts = BehaviorUtils.createHandles(contentParts, this, contextMap);
 		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
 				handleParts);
 	}
@@ -96,9 +103,14 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	protected void addFeedback(List<? extends IVisualPart<VR>> targets) {
+		addFeedback(targets, Collections.<Object, Object>emptyMap());
+	}
+
+	protected void addFeedback(List<? extends IVisualPart<VR>> targets,
+			Map<Object, Object> contextMap) {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
-		feedbackParts = BehaviorUtils.createFeedback(this, contentParts);
+		feedbackParts = BehaviorUtils.createFeedback(contentParts, this, contextMap);
 		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
 				feedbackParts);
 	}

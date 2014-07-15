@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -35,46 +36,49 @@ import com.google.inject.Provider;
 public abstract class AbstractSelectionBehavior<VR> extends
 		AbstractBehavior<VR> implements PropertyChangeListener {
 
-	private Provider<IGeometry> feedbackGeometryProvider = new Provider<IGeometry>() {
-		@Override
-		public IGeometry get() {
-			return getFeedbackGeometry();
-		}
-	};
-
-	private Provider<IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
-		@Override
-		public IGeometry get() {
-			return getHandleGeometry();
-		}
-	};
-
-	public Provider<IGeometry> getFeedbackGeometryProvider() {
-		return feedbackGeometryProvider;
+	public Provider<IGeometry> getFeedbackGeometryProvider(
+			final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getFeedbackGeometry(contextMap);
+			}
+		};
 	}
 
-	public Provider<IGeometry> getHandleGeometryProvider() {
-		return handleGeometryProvider;
+	public Provider<IGeometry> getHandleGeometryProvider(
+			final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getHandleGeometry(contextMap);
+			}
+		};
 	}
 
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
 	 * 
+	 * @param contextMap
+	 *            TODO
+	 * 
 	 * @return an {@link IGeometry} determining feedback positions
 	 */
-	protected abstract IGeometry getFeedbackGeometry();
+	protected abstract IGeometry getFeedbackGeometry(
+			Map<Object, Object> contextMap);
 
 	/**
 	 * Returns an {@link IGeometry} for which selection handles will be
 	 * provided.
 	 * <p>
-	 * Per default, the {@link #getFeedbackGeometry() feedback geometry} is
+	 * Per default, the {@link #getFeedbackGeometry(Map) feedback geometry} is
 	 * returned.
+	 * @param contextMap TODO
 	 * 
 	 * @return an {@link IGeometry} determining handle positions
 	 */
-	protected abstract IGeometry getHandleGeometry();
+	protected abstract IGeometry getHandleGeometry(Map<Object, Object> contextMap);
 
 	@Override
 	public void activate() {
@@ -104,10 +108,8 @@ public abstract class AbstractSelectionBehavior<VR> extends
 			removeHandles(selected);
 			removeFeedback(selected);
 		} else if (selected.contains(getHost())) {
-			removeHandles(Collections
-					.singletonList(getHost()));
-			removeFeedback(Collections
-					.singletonList(getHost()));
+			removeHandles(Collections.singletonList(getHost()));
+			removeFeedback(Collections.singletonList(getHost()));
 		}
 	}
 
@@ -119,8 +121,7 @@ public abstract class AbstractSelectionBehavior<VR> extends
 		} else if (selected.contains(getHost())) {
 			addFeedback(Collections.singletonList(getHost()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {
-				addHandles(Collections
-						.singletonList(getHost()));
+				addHandles(Collections.singletonList(getHost()));
 			}
 		}
 	}

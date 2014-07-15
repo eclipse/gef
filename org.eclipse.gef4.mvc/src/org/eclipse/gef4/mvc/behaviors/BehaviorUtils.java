@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -73,22 +73,22 @@ public class BehaviorUtils {
 	}
 
 	public static <VR> List<IFeedbackPart<VR>> createFeedback(
-			IBehavior<VR> behavior, List<IContentPart<VR>> targets) {
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior, Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
 		List<IFeedbackPart<VR>> feedbackParts = factory.createFeedbackParts(
-				targets, behavior, Collections.emptyMap());
+				targets, behavior, contextMap);
 		return feedbackParts;
 	}
 
 	public static <VR> List<IHandlePart<VR>> createHandles(
-			IBehavior<VR> behavior, List<IContentPart<VR>> targets) {
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior, Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
 		List<IHandlePart<VR>> handleParts = factory.createHandleParts(targets,
-				behavior, Collections.emptyMap());
+				behavior, contextMap);
 		return handleParts;
 	}
 

@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.List;
+import java.util.Map;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -29,17 +30,22 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.Refer
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
+	@Inject
+	private Injector injector;
+	
 	private List<IHandlePart<Node>> parts;
 
 	@Override
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
-			List<IContentPart<Node>> targets, Pos position) {
+			List<IContentPart<Node>> targets, Pos position, Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
-				targets, position);
+				targets, position, contextMap);
 		part.setAdapter(AbstractFXDragPolicy.class,
 				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(position)));
@@ -67,16 +73,18 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, IGeometry geom) {
+			Provider<IGeometry> handleGeometryProvider, Map<Object, Object> contextMap) {
 		parts = super.createCurveSelectionHandleParts(targetPart,
-				handleGeometryProvider, geom);
+				handleGeometryProvider, contextMap);
 
 		// create mid point (insertion) handles
-		BezierCurve[] beziers = ((ICurve) geom).toBezier();
+		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get()).toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			int segmentIndex = i;
 			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
 					handleGeometryProvider, segmentIndex, 0.5);
+			injector.injectMembers(hp);
+			// TODO: binding the following policy requires dynamic binding
 			hp.setAdapter(AbstractFXDragPolicy.class,
 					new FXBendOnHandleDragPolicy());
 			parts.add(hp);
@@ -96,10 +104,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
+			// TODO: binding the following policy requires dynamic binding
 			part.setAdapter(AbstractFXDragPolicy.class,
 					new FXBendOnHandleDragPolicy());
 		} else {
 			// make end points reconnectable
+			// TODO: binding the following policy requires dynamic binding
 			part.setAdapter(AbstractFXDragPolicy.class,
 					new FXReconnectOnHandleDragPolicy(isEndPoint));
 		}
@@ -110,9 +120,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int vertexIndex) {
+			Provider<IGeometry> handleGeometryProvider, int vertexIndex, Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
-				targetPart, handleGeometryProvider, vertexIndex);
+				targetPart, handleGeometryProvider, vertexIndex, contextMap);
+		// TODO: binding the following policy requires dynamic binding
 		part.setAdapter(AbstractFXDragPolicy.class,
 				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(vertexIndex)));
