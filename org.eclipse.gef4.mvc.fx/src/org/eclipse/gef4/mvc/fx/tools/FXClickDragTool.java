@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
@@ -84,8 +85,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 								"Target part does not support required policy!");
 					}
 
-					List<Node> pickedNodes = ((FXViewer) viewer).pickNodes(
-							e.getSceneX(), e.getSceneY(), null);
+					List<Node> pickedNodes = FXUtils.getNodesAt(viewer
+							.getRootPart().getVisual(), e.getSceneX(), e
+							.getSceneY());
 					policy.drag(e, new Dimension(dx, dy), pickedNodes,
 							getParts(pickedNodes));
 				}
@@ -136,8 +138,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 								"Target part does not support required policy!");
 					}
 
-					List<Node> pickedNodes = ((FXViewer) viewer).pickNodes(
-							e.getSceneX(), e.getSceneY(), null);
+					List<Node> pickedNodes = FXUtils.getNodesAt(viewer
+							.getRootPart().getVisual(), e.getSceneX(), e
+							.getSceneY());
 					List<IContentPart<Node>> parts = getParts(pickedNodes);
 					policy.release(e, new Dimension(dx, dy), pickedNodes, parts);
 				}

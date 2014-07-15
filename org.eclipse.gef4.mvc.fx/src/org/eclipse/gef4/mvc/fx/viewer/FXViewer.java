@@ -11,11 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -40,31 +35,6 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	public Scene getScene() {
 		return scene;
-	}
-
-	public List<Node> pickNodes(double sceneX, double sceneY, Node root) {
-		if (root == null) {
-			root = getRootPart().getVisual();
-		}
-
-		List<Node> picked = new ArrayList<Node>();
-
-		// start with given root node
-		Queue<Node> nodes = new LinkedList<Node>();
-		nodes.add(root);
-
-		while (!nodes.isEmpty()) {
-			Node current = nodes.remove();
-			if (current.contains(current.sceneToLocal(sceneX, sceneY))) {
-				picked.add(0, current); // TODO: is this fast?
-				// test all children, too
-				if (current instanceof Parent) {
-					nodes.addAll(((Parent) current).getChildrenUnmodifiable());
-				}
-			}
-		}
-
-		return picked;
 	}
 
 	@Inject
