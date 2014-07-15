@@ -77,7 +77,10 @@ public class MvcModule<VR> extends AbstractModule {
 
 	private void bindAbstractHandlePartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
-		// nothing to bind by default
+		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
+				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 	}
 
 	protected void bindAbstractFeedbackPartAdapters(
