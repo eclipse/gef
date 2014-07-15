@@ -18,16 +18,10 @@ import java.util.Map;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-
-import com.google.inject.Provider;
 
 public class FXZestExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	

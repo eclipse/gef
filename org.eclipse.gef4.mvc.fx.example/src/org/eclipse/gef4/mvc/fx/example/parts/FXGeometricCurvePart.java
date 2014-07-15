@@ -114,7 +114,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				throws ExecutionException {
 			removeCurveWayPoints();
 			addCurveWayPoints(newWayPoints);
-			// System.out.println(toString());
 			return Status.OK_STATUS;
 		}
 
@@ -191,7 +190,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				List<Point> newWayPoints = visual.getWayPoints();
 				final WayPointModelOperation modelOp = new WayPointModelOperation(
 						FXGeometricCurvePart.this, oldWayPoints, newWayPoints);
-
+				
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
 						"Change way points.") {
@@ -232,6 +231,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		// TODO: compare way points to identify if we need to refresh
 		List<Point> wayPoints = content.getWayPoints();
+		
 		if (content.getTransform() != null) {
 			Point[] transformedWayPoints = content.getTransform()
 					.getTransformed(wayPoints.toArray(new Point[] {}));

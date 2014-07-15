@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 // TODO: find a better name
 public class FXBendPolicy extends AbstractPolicy<Node> implements
-ITransactional {
+		ITransactional {
 
 	protected static final double REMOVE_THRESHOLD = 10;
 
@@ -48,26 +48,13 @@ ITransactional {
 		removed = null;
 		removedIndex = -1;
 		getHost().setRefreshVisual(true);
-
-		/*
-		 * Due to a mouse event bug, this method may be called as the first
-		 * method on the policy. That's why we have to check if the operation is
-		 * null.
-		 */
-		if (op == null) {
-			// mouse release bug
-			IFXConnection connection = getConnection();
-			op = new FXChangeWayPointsOperation("No-op", connection,
-					connection.getWayPoints(), connection.getWayPoints());
-		}
-
 		return op;
 	}
 
 	/**
 	 * Creates a new way point on the curve at the specified index. Selects the
 	 * new way point for manipulation
-	 *
+	 * 
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 * @param p
@@ -116,6 +103,7 @@ ITransactional {
 			}
 		} else if (wayPointIndex > 0) {
 			if (newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD) {
+				// dragged waypoint onto previous
 				removedIndex = wayPointIndex - 1;
 			}
 		}
@@ -127,6 +115,7 @@ ITransactional {
 			}
 		} else if (removedIndex == -1 && wayPointIndex + 1 < points.size()) {
 			if (newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD) {
+				// dragged waypoint onto next
 				removedIndex = wayPointIndex + 1;
 			}
 		}
@@ -159,7 +148,7 @@ ITransactional {
 
 	/**
 	 * Moves the previously selected/created way point to the given position.
-	 *
+	 * 
 	 * @param p
 	 *            {@link Point} providing new way point coordinates
 	 */
@@ -184,7 +173,7 @@ ITransactional {
 	/**
 	 * Selects a way point on the curve to be manipulated. The way point is
 	 * identified by its index.
-	 *
+	 * 
 	 * @param wayPointIndex
 	 *            index of the way point to select
 	 */

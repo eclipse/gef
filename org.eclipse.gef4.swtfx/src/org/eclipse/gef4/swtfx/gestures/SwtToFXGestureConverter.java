@@ -40,11 +40,10 @@ import com.sun.javafx.tk.TKSceneListener;
 /**
  * A gesture listener that converts and transfers SWT {@link GestureEvent}s to
  * an {@link FXCanvas}.
- *
+ * 
  * @author Jan Koehnlein
  * @author anyssen
  */
-@SuppressWarnings("restriction")
 public class SwtToFXGestureConverter implements GestureListener {
 
 	protected class State {

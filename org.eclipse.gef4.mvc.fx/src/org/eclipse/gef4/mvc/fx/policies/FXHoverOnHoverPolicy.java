@@ -25,7 +25,6 @@ public class FXHoverOnHoverPolicy extends AbstractFXHoverPolicy {
 
 	@Override
 	public void hover(MouseEvent e) {
-
 		DefaultHoverPolicy<Node> policy = getHoverPolicy();
 		if (policy != null) {
 			policy.hover();
