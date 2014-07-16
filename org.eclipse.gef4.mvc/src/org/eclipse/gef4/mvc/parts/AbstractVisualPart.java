@@ -63,6 +63,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * @see #deactivate()
 	 * @see #isActive()
 	 */
+	@Override
 	public final void activate() {
 		if (!isActive) {
 			isActive = true;
@@ -84,6 +85,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		addChild(child, getChildren().size());
 	}
 
+	@Override
 	public void addChild(IVisualPart<VR> child, int index) {
 		Assert.isNotNull(child);
 		addChildWithoutNotify(child, index);
@@ -131,6 +133,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		children.add(index, child);
 	}
 
+	@Override
 	public IRootPart<VR> getRoot() {
 		if (getParent() != null) {
 			return getParent().getRoot();
@@ -151,6 +154,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * @see #activate()
 	 * @see #isActive()
 	 */
+	@Override
 	public final void deactivate() {
 		if (isActive) {
 			doDeactivate();
@@ -165,6 +169,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
+	@Override
 	public List<IVisualPart<VR>> getChildren() {
 		if (children == null)
 			return Collections.emptyList();
@@ -234,6 +239,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * {@link #doRefreshVisual()} in case {@link #isRefreshVisual()} is not set
 	 * to <code>false</code>.
 	 */
+	@Override
 	public final void refreshVisual() {
 		if (isRefreshVisual()) {
 			// TODO: delegate to visual behavior
@@ -241,6 +247,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
+	@Override
 	public void removeChild(IVisualPart<VR> child) {
 		Assert.isNotNull(child);
 		int index = getChildren().indexOf(child);
@@ -283,6 +290,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * @param index
 	 *            new index for the child
 	 */
+	@Override
 	public void reorderChild(IVisualPart<VR> child, int index) {
 		removeChildVisual(child);
 		removeChildWithoutNotify(child);
@@ -301,6 +309,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	/**
 	 * Sets the parent {@link IVisualPart}.
 	 */
+	@Override
 	public void setParent(IVisualPart<VR> parent) {
 		if (this.parent == parent)
 			return;
@@ -334,6 +343,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	@Override
 	public IVisualPart<VR> getParent() {
 		return parent;
 	}
