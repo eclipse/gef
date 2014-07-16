@@ -52,6 +52,16 @@ public interface IFXAnchor {
 	Point getPosition(AnchorKey key);
 
 	/**
+	 * Determines if the given {@link AnchorKey} is currently attached to this
+	 * {@link IFXAnchor}.
+	 * 
+	 * @param key
+	 * @return <code>true</code> if the given key is attached, otherwise
+	 *         <code>false</code>.
+	 */
+	boolean isAttached(AnchorKey key);
+
+	/**
 	 * @return property storing positions for keys (map)
 	 */
 	ReadOnlyMapProperty<AnchorKey, Point> positionProperty();

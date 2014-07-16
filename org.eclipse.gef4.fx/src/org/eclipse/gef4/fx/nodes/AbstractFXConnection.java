@@ -37,7 +37,6 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
-// TODO: extends IGeometry
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		implements IFXConnection {
 
@@ -50,15 +49,13 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
 
-	// way points
-	protected ReadOnlyListWrapper<Point> wayPointsProperty = new ReadOnlyListWrapper<Point>(
-			FXCollections.<Point> observableArrayList());
-
 	// anchors
 	protected ReadOnlyObjectWrapper<AnchorLink> startAnchorLinkProperty = new ReadOnlyObjectWrapper<AnchorLink>(
 			null);
 	protected ReadOnlyObjectWrapper<AnchorLink> endAnchorLinkProperty = new ReadOnlyObjectWrapper<AnchorLink>(
 			null);
+	protected ReadOnlyListWrapper<AnchorLink> wayPointAnchorLinksProperty = new ReadOnlyListWrapper<AnchorLink>(
+			FXCollections.<AnchorLink> observableArrayList());
 
 	protected boolean isEndConnected = false;
 	protected boolean isStartConnected = false;
@@ -68,7 +65,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			null);
 	private ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty = new ReadOnlyObjectWrapper<ChangeListener<? super AnchorLink>>(
 			null);
-	private ReadOnlyObjectWrapper<ListChangeListener<? super Point>> onWayPointChangeProperty = new ReadOnlyObjectWrapper<ListChangeListener<? super Point>>(
+	private ReadOnlyObjectWrapper<ListChangeListener<? super AnchorLink>> onWayPointAnchorLinkChangeProperty = new ReadOnlyObjectWrapper<ListChangeListener<? super AnchorLink>>(
 			null);
 
 	// refresh geometry on position changes
@@ -88,18 +85,28 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setAutoSizeChildren(false);
 		setStartPoint(new Point());
 		setEndPoint(new Point());
-		wayPointsProperty.addListener(new ListChangeListener<Point>() {
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends Point> c) {
-				refreshGeometry();
-			}
-		});
+		wayPointAnchorLinksProperty
+				.addListener(new ListChangeListener<AnchorLink>() {
+					@Override
+					public void onChanged(
+							javafx.collections.ListChangeListener.Change<? extends AnchorLink> c) {
+						refreshGeometry();
+					}
+				});
 	}
 
 	@Override
 	public void addWayPoint(int index, Point wayPoint) {
-		wayPointsProperty.get().add(index, wayPoint);
+		addWayPointAnchorLink(index,
+				FXUtils.createStaticAnchorLink(this, this, wayPoint));
+	}
+
+	@Override
+	public void addWayPointAnchorLink(int index, AnchorLink wayPointAnchorLink) {
+		wayPointAnchorLink.getAnchor().attach(wayPointAnchorLink.getKey());
+		wayPointAnchorLinksProperty.add(index, wayPointAnchorLink);
+		wayPointAnchorLink.getAnchor().positionProperty()
+				.addListener(positionChangeListener);
 	}
 
 	/**
@@ -222,48 +229,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return curveNode;
 	}
 
-	/**
-	 * Returns all points of this connection which are relevant for computing
-	 * the curveNode, which are:
-	 * <ol>
-	 * <li>curve start point: computed using start anchor, start decoration, and
-	 * first way point (or end anchor)</li>
-	 * <li>way points</li>
-	 * <li>curve end point: computed using end anchor, end decoration, and last
-	 * way point (or start anchor)</li>
-	 * </ol>
-	 * <p>
-	 * In case an assigned anchor returns <code>null</code> as the position for
-	 * this curve (i.e. the anchor is not fully set-up and therefore did not yet
-	 * compute the position) this method returns an empty array.
-	 * </p>
-	 * 
-	 * @return all curve relevant points
-	 */
-	public Point[] getCurvePoints() {
-		int wayPointCount = wayPointsProperty.get().size();
-		Point[] points = new Point[wayPointCount + 2];
-
-		points[0] = getStartPoint();
-		if (points[0] == null) {
-			return new Point[] {};
-		}
-
-		for (int i = 0; i < wayPointCount; i++) {
-			points[i + 1] = wayPointsProperty.get().get(i);
-			if (points[i + 1] == null) {
-				return new Point[] {};
-			}
-		}
-
-		points[points.length - 1] = getEndPoint();
-		if (points[points.length - 1] == null) {
-			return new Point[] {};
-		}
-
-		return points;
-	}
-
 	@Override
 	public AnchorLink getEndAnchorLink() {
 		return endAnchorLinkProperty.get();
@@ -281,16 +246,51 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
+	public AnchorLink[] getPointAnchorLinks() {
+		int wayPointCount = wayPointAnchorLinksProperty.size();
+		AnchorLink[] links = new AnchorLink[wayPointCount + 2];
+
+		links[0] = getStartAnchorLink();
+		if (links[0] == null) {
+			return new AnchorLink[] {};
+		}
+
+		for (int i = 0; i < wayPointCount; i++) {
+			links[i + 1] = wayPointAnchorLinksProperty.get(i);
+			if (links[i + 1] == null) {
+				return new AnchorLink[] {};
+			}
+		}
+
+		links[links.length - 1] = getEndAnchorLink();
+		if (links[links.length - 1] == null) {
+			return new AnchorLink[] {};
+		}
+
+		return links;
+	}
+
+	@Override
 	public Point[] getPoints() {
-		List<Point> wayPoints = getWayPoints();
-		Point[] points = new Point[wayPoints.size() + 2];
+		int wayPointCount = wayPointAnchorLinksProperty.size();
+		Point[] points = new Point[wayPointCount + 2];
 
 		points[0] = getStartPoint();
-		int i = 1;
-		for (Point wp : wayPoints) {
-			points[i++] = wp;
+		if (points[0] == null) {
+			return new Point[] {};
 		}
+
+		for (int i = 0; i < wayPointCount; i++) {
+			points[i + 1] = wayPointAnchorLinksProperty.get(i).getPosition();
+			if (points[i + 1] == null) {
+				return new Point[] {};
+			}
+		}
+
 		points[points.length - 1] = getEndPoint();
+		if (points[points.length - 1] == null) {
+			return new Point[] {};
+		}
 
 		return points;
 	}
@@ -318,15 +318,26 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public Point getWayPoint(int index) {
-		return wayPointsProperty.get().get(index);
+		AnchorLink link = getWayPointAnchorLink(index);
+		return link.getPosition();
+	}
+
+	@Override
+	public AnchorLink getWayPointAnchorLink(int index) {
+		return wayPointAnchorLinksProperty.get(index);
+	}
+
+	@Override
+	public List<AnchorLink> getWayPointAnchorLinks() {
+		return wayPointsProperty().get(); // read-only
 	}
 
 	@Override
 	public List<Point> getWayPoints() {
-		int wayPointsCount = wayPointsProperty.get().size();
+		int wayPointsCount = wayPointAnchorLinksProperty.size();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
-			wayPoints.add(wayPointsProperty.get().get(i));
+			wayPoints.add(getWayPoint(i));
 		}
 		return wayPoints;
 	}
@@ -342,6 +353,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
+	public boolean isWayPointConnected(int index) {
+		return !(getWayPointAnchorLink(index).getAnchor() instanceof FXStaticAnchor);
+	}
+
+	@Override
 	public ReadOnlyObjectProperty<ChangeListener<? super AnchorLink>> onEndAnchorLinkChangeProperty() {
 		return onEndAnchorLinkChangeProperty.getReadOnlyProperty();
 	}
@@ -352,8 +368,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public ReadOnlyObjectProperty<ListChangeListener<? super Point>> onWayPointChangeProperty() {
-		return onWayPointChangeProperty.getReadOnlyProperty();
+	public ReadOnlyObjectProperty<ListChangeListener<? super AnchorLink>> onWayPointAnchorLinkChangeProperty() {
+		return onWayPointAnchorLinkChangeProperty.getReadOnlyProperty();
 	}
 
 	protected void refreshGeometry() {
@@ -368,7 +384,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
-		curveNode.setGeometry(computeGeometry(getCurvePoints()));
+		curveNode.setGeometry(computeGeometry(getPoints()));
 
 		// z-order decorations above curve
 		getChildren().add(curveNode);
@@ -386,18 +402,22 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void removeAllWayPoints() {
-		wayPointsProperty.get().clear();
+		for (int i = wayPointAnchorLinksProperty.size() - 1; i >= 0; i--) {
+			removeWayPoint(i);
+		}
 	}
 
 	@Override
 	public void removeWayPoint(int index) {
 		// check index out of range
-		if (index < 0 || index >= wayPointsProperty.get().size()) {
+		if (index < 0 || index >= wayPointAnchorLinksProperty.get().size()) {
 			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + wayPointsProperty.get().size()
+					+ index + ", size: " + wayPointAnchorLinksProperty.size()
 					+ ").");
 		}
-		wayPointsProperty.get().remove(index);
+		AnchorLink oldLink = wayPointAnchorLinksProperty.get(index);
+		oldLink.getAnchor().detach(oldLink.getKey());
+		wayPointAnchorLinksProperty.remove(index);
 	}
 
 	@Override
@@ -487,16 +507,16 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public void setOnWayPointChange(
-			ListChangeListener<? super Point> onWayPointChange) {
-		ListChangeListener<? super Point> oldListener = onWayPointChangeProperty
+	public void setOnWayPointAnchorLinkChange(
+			ListChangeListener<? super AnchorLink> onWayPointChange) {
+		ListChangeListener<? super AnchorLink> oldListener = onWayPointAnchorLinkChangeProperty
 				.get();
 		if (oldListener != null) {
-			wayPointsProperty.removeListener(oldListener);
+			wayPointAnchorLinksProperty.removeListener(oldListener);
 		}
-		onWayPointChangeProperty.set(onWayPointChange);
+		onWayPointAnchorLinkChangeProperty.set(onWayPointChange);
 		if (onWayPointChange != null) {
-			wayPointsProperty.addListener(onWayPointChange);
+			wayPointAnchorLinksProperty.addListener(onWayPointChange);
 		}
 	}
 
@@ -554,14 +574,31 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void setWayPoint(int index, Point wayPoint) {
-		wayPointsProperty.get().set(index, wayPoint);
+		setWayPointAnchorLink(index,
+				FXUtils.createStaticAnchorLink(this, this, wayPoint));
+	}
+
+	@Override
+	public void setWayPointAnchorLink(int index, AnchorLink wayPointAnchorLink) {
+		AnchorLink oldLink = wayPointAnchorLinksProperty.get(index);
+		oldLink.getAnchor().detach(oldLink.getKey());
+		wayPointAnchorLink.getAnchor().attach(wayPointAnchorLink.getKey());
+		wayPointAnchorLinksProperty.set(index, wayPointAnchorLink);
+	}
+
+	@Override
+	public void setWayPointAnchorLinks(List<AnchorLink> wayPointAnchorLinks) {
+		removeAllWayPoints();
+		for (AnchorLink link : wayPointAnchorLinks) {
+			addWayPointAnchorLink(this.wayPointAnchorLinksProperty.size(), link);
+		}
 	}
 
 	@Override
 	public void setWayPoints(List<Point> wayPoints) {
 		removeAllWayPoints();
 		for (Point wp : wayPoints) {
-			addWayPoint(this.wayPointsProperty.get().size(), wp);
+			addWayPoint(this.wayPointAnchorLinksProperty.size(), wp);
 		}
 	}
 
@@ -571,8 +608,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
-	public ReadOnlyListProperty<Point> wayPointsProperty() {
-		return wayPointsProperty.getReadOnlyProperty();
+	public ReadOnlyListProperty<AnchorLink> wayPointsProperty() {
+		return wayPointAnchorLinksProperty.getReadOnlyProperty();
 	}
 
 }

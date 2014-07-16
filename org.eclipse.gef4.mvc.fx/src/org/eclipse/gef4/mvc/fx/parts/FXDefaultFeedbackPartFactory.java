@@ -90,6 +90,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		return feedbackParts;
 	}
 
+	// TODO: move to selection behavior
 	protected Effect getPrimarySelectionFeedbackEffect() {
 		DropShadow effect = new DropShadow();
 		effect.setColor(Color.BLACK);
@@ -98,6 +99,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		return effect;
 	}
 
+	// TODO: move to selection behavior
 	protected Effect getSecondarySelectionFeedbackEffect() {
 		DropShadow effect = new DropShadow();
 		effect.setColor(Color.GREY);

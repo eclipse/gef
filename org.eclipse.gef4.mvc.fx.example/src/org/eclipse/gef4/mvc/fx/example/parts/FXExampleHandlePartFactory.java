@@ -24,7 +24,6 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnHandleDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXReconnectOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy.ReferencePoint;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -38,12 +37,13 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Inject
 	private Injector injector;
-	
+
 	private List<IHandlePart<Node>> parts;
 
 	@Override
 	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
-			List<IContentPart<Node>> targets, Pos position, Map<Object, Object> contextMap) {
+			List<IContentPart<Node>> targets, Pos position,
+			Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
 				targets, position, contextMap);
 		part.setAdapter(AbstractFXDragPolicy.class,
@@ -73,12 +73,14 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
 			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, Map<Object, Object> contextMap) {
+			Provider<IGeometry> handleGeometryProvider,
+			Map<Object, Object> contextMap) {
 		parts = super.createCurveSelectionHandleParts(targetPart,
 				handleGeometryProvider, contextMap);
 
 		// create mid point (insertion) handles
-		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get()).toBezier();
+		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get())
+				.toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			int segmentIndex = i;
 			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
@@ -96,8 +98,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			final Provider<IGeometry> handleGeometryProvider,
-			int segmentIndex, final boolean isEndPoint) {
+			final Provider<IGeometry> handleGeometryProvider, int segmentIndex,
+			final boolean isEndPoint) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart,
 						handleGeometryProvider, segmentIndex, isEndPoint);
@@ -111,7 +113,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			// make end points reconnectable
 			// TODO: binding the following policy requires dynamic binding
 			part.setAdapter(AbstractFXDragPolicy.class,
-					new FXReconnectOnHandleDragPolicy(isEndPoint));
+					new FXBendOnHandleDragPolicy());
 		}
 
 		return part;
@@ -120,7 +122,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createShapeSelectionHandlePart(
 			IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int vertexIndex, Map<Object, Object> contextMap) {
+			Provider<IGeometry> handleGeometryProvider, int vertexIndex,
+			Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex, contextMap);
 		// TODO: binding the following policy requires dynamic binding

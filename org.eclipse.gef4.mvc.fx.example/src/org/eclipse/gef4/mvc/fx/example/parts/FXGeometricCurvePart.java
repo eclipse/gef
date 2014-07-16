@@ -38,7 +38,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -100,7 +100,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		// transaction policies
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
-
 			@Override
 			public IUndoableOperation commit() {
 				final IUndoableOperation updateVisualOperation = super.commit();
@@ -165,12 +164,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return compositeOperation;
 			}
 		});
-		setAdapter(FXReconnectPolicy.class, new FXReconnectPolicy());
 	}
 
 	@Override
 	public FXGeometricCurve getContent() {
 		return (FXGeometricCurve) super.getContent();
+	}
+
+	@Override
+	public String toString() {
+		return "FXGeometricCurvePart@" + System.identityHashCode(this);
 	}
 
 	@Override

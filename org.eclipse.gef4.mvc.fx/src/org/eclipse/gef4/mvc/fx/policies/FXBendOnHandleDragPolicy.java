@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -30,13 +31,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- *
+ * 
  * @author mwienand
  * @author anyssen
- *
+ * 
  */
-// TODO: this is only applicable to FXSelectionHandlePart hosts and should
-// enforce it (best by template parameter)
+// TODO: this is only applicable to FXSegmentHandlePart hosts
 public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private int createdSegmentIndex;
@@ -53,17 +53,16 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
 					FXSegmentHandlePart.class);
 			Collections.<FXSegmentHandlePart> sort(parts);
-			// System.out.println("Found " + parts.size()
-			// + " FXSelectionHandleParts");
+			// System.out.println("Found " + parts.size() +
+			// " FXSelectionHandleParts");
 			Iterator<FXSegmentHandlePart> it = parts.iterator();
 			FXSegmentHandlePart part = null;
 			for (int i = 0; i <= newWaypoints.size(); i++) {
 				// param 0
 				part = it.next();
 				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + i
-				// + " - " + 0.0);
+				// part.getSegmentIndex() + " - " + part.getSegmentParameter() +
+				// " to " + i + " - " + 0.0);
 				setSegmentIndex(part, i);
 				setSegmentParameter(part, 0.0);
 
@@ -73,19 +72,18 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 						&& part.getSegmentIndex() != createdSegmentIndex) {
 					// param 0.5
 					part = it.next();
-					// System.out.println("Reassigned index "
-					// + part.getSegmentIndex() + " - "
-					// + part.getSegmentParameter() + " to " + i + " - "
-					// + 0.5);
+					// System.out.println("Reassigned index " +
+					// part.getSegmentIndex() + " - " +
+					// part.getSegmentParameter() + " to " + i + " - " + 0.5);
 					setSegmentIndex(part, i);
 					setSegmentParameter(part, 0.5);
 				}
 			}
 			// param 1
 			part = it.next();
-			// System.out.println("Reassigned index " + part.getSegmentIndex()
-			// + " - " + part.getSegmentParameter() + " to "
-			// + (newWaypoints.size()) + " - " + 1.0);
+			// System.out.println("Reassigned index " + part.getSegmentIndex() +
+			// " - " + part.getSegmentParameter() + " to " +
+			// (newWaypoints.size()) + " - " + 1.0);
 			setSegmentIndex(part, newWaypoints.size());
 			setSegmentParameter(part, 1.0);
 
@@ -93,9 +91,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			while (it.hasNext()) {
 				part = it.next();
 				// System.out.println("Reassigned index " +
-				// part.getSegmentIndex()
-				// + " - " + part.getSegmentParameter() + " to " + -1
-				// + " - " + 1.0);
+				// part.getSegmentIndex() + " - " + part.getSegmentParameter() +
+				// " to " + -1 + " - " + 1.0);
 				// hide (but do not remove from root part and anchorage yet
 				// (this will be initiated upon commit)
 				setSegmentIndex(part, -1);
@@ -109,13 +106,17 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		IFXConnection connection = (IFXConnection) getHost().getAnchorages()
 				.get(0).getVisual();
 
-		List<Point> before = connection.getWayPoints();
+		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
 
-		getWayPointHandlePolicy(getHost().getAnchorages().get(0)).moveWayPoint(
-				new Point(e.getSceneX(), e.getSceneY()));
+		getBendPolicy(getHost().getAnchorages().get(0)).movePoint(
+				new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
 
-		List<Point> after = connection.getWayPoints();
+		List<Point> after = new ArrayList<Point>(connection.getWayPoints());
 		adjustHandles(before, after);
+	}
+
+	private FXBendPolicy getBendPolicy(IVisualPart<Node> targetPart) {
+		return targetPart.getAdapter(FXBendPolicy.class);
 	}
 
 	@Override
@@ -123,41 +124,44 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		return (FXSegmentHandlePart) super.getHost();
 	}
 
-	private int getSegmentIndex() {
-		return getHost().getSegmentIndex() - 1;
-	}
-
-	private FXBendPolicy getWayPointHandlePolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(FXBendPolicy.class);
-	}
-
 	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
+
+		getBendPolicy(getHost().getAnchorages().get(0)).init();
+
 		if (hp.getSegmentParameter() == 0.5) {
-			// select create new way point
-			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
-			.createWayPoint(hp.getSegmentIndex(),
+			// create new way point
+			getBendPolicy(getHost().getAnchorages().get(0)).createWayPoint(
+					hp.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
+
+			// find other segment handle parts
 			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
 					FXSegmentHandlePart.class);
+
+			// sort parts by segment index and parameter
 			Collections.<FXSegmentHandlePart> sort(parts);
+
+			// increment segment index of succeeding parts
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-						.getSegmentParameter() == 1)) {
+								.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
+
+			// adjust index and parameter of this segment handle part
 			hp.setSegmentIndex(hp.getSegmentIndex() + 1);
 			hp.setSegmentParameter(0);
 			createdSegmentIndex = hp.getSegmentIndex();
 		} else {
 			// select existing way point
-			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
-			.selectWayPoint(getSegmentIndex(),
+			getBendPolicy(getHost().getAnchorages().get(0)).selectPoint(
+					hp.getSegmentIndex(), hp.getSegmentParameter(),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
@@ -165,11 +169,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-
 		IVisualPart<Node> anchorage = getHost().getAnchorages().get(0);
-
-		IUndoableOperation operation = getWayPointHandlePolicy(anchorage)
-				.commit();
+		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
 
 		ISelectionModel<Node> selm = getHost().getRoot().getViewer()

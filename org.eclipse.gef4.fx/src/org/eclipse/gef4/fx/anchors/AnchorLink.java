@@ -15,9 +15,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * AnchorLink combines IFXAnchor and AnchorKey to represent one anchor target.
- *
+ * 
  * @author mwienand
- *
+ * 
  */
 public class AnchorLink {
 
@@ -49,7 +49,7 @@ public class AnchorLink {
 	/**
 	 * Convenience method to retrieve the anchor position for the particular key
 	 * associated with this AnchorLink.
-	 *
+	 * 
 	 * @return the position related to this {@link AnchorLink}
 	 */
 	public Point getPosition() {
@@ -79,6 +79,11 @@ public class AnchorLink {
 					"The given Key may not be <null>.");
 		}
 		this.key = key;
+	}
+
+	@Override
+	public String toString() {
+		return "AnchorLink@" + System.identityHashCode(this);
 	}
 
 }

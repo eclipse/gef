@@ -140,7 +140,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	@Override
 	public void detach(AnchorKey key) {
 		Node anchored = key.getAnchored();
-		if (!keys.containsKey(anchored) || !keys.get(anchored).contains(key)) {
+		if (!isAttached(key)) {
 			throw new IllegalArgumentException(
 					"The given AnchorKey was not previously attached to this IFXAnchor.");
 		}
@@ -178,6 +178,12 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			return null;
 		}
 		return positionProperty.get(key);
+	}
+
+	@Override
+	public boolean isAttached(AnchorKey key) {
+		return keys.containsKey(key.getAnchored())
+				&& keys.get(key.getAnchored()).contains(key);
 	}
 
 	@Override

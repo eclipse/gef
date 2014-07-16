@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -19,179 +20,211 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXChangeWayPointsOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
-// TODO: find a better name
+/**
+ * The {@link FXMoveBendPointPolicy} can be used to manipulate the points
+ * constituting an {@link IFXConnection}, i.e. its start point, way points, and
+ * end point. When moving a point the policy takes care of:
+ * <ul>
+ * <li>Removing overlaid neighbor points.</li>
+ * <li>Re-adding temporarily removed neighbor points.</li>
+ * <li>Reconnecting points to the {@link IVisualPart} under mouse when
+ * applicable.</li>
+ * </ul>
+ * 
+ * @author mwienand
+ */
 public class FXBendPolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
+	// constants (TODO: make configurable)
 	protected static final double REMOVE_THRESHOLD = 10;
 
+	// interaction
 	private Point2D startPointInScene;
 	private Point startPoint;
-	private List<Point> initialWayPoints;
-	private List<Point> currentWayPoints;
+	private Point currentPoint;
+	private AnchorLink removedLink;
+	private int removedLinkIndex;
 
-	private Point removed;
-	private int removedIndex;
+	// operation
+	private FXBendOperation op;
+	private IFXConnection connection;
+	private List<AnchorLink> oldLinks;
+	private List<AnchorLink> newLinks;
 
-	private FXChangeWayPointsOperation op;
-	private int wayPointIndex;
-	private final Point newWayPoint = new Point();
+	private int linkIndex;
+
+	private int oldLinkIndex;
 
 	@Override
 	public IUndoableOperation commit() {
-		removed = null;
-		removedIndex = -1;
-		getHost().setRefreshVisual(true);
 		return op;
 	}
 
-	/**
-	 * Creates a new way point on the curve at the specified index. Selects the
-	 * new way point for manipulation
-	 * 
-	 * @param wayPointIndex
-	 *            index of the way point to select
-	 * @param p
-	 *            {@link Point} providing start coordinates of the new way point
-	 */
-	public void createWayPoint(int wayPointIndex, Point p) {
-		init(p);
-		this.wayPointIndex = wayPointIndex;
-		newWayPoint.setLocation(p);
-		currentWayPoints.add(wayPointIndex, startPoint);
-		op = new FXChangeWayPointsOperation("Change way points",
-				getConnection(), initialWayPoints, currentWayPoints);
-
-		// execute locally
-		try {
-			op.execute(null, null);
-		} catch (ExecutionException e) {
-			throw new IllegalStateException(e);
-		}
+	public void createWayPoint(int segmentIndex, Point mouseInScene) {
+		newLinks.add(segmentIndex + 1, FXUtils.createStaticAnchorLink(getHost()
+				.getVisual(), getHost().getVisual(), mouseInScene));
+		updateOperation();
+		selectPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
-	private IFXConnection getConnection() {
-		return (IFXConnection) getHost().getVisual();
-	}
-
-	private void hideShowOverlaid() {
-		// put removed back in
-		if (removed != null) {
-			if (wayPointIndex == -1) {
-				wayPointIndex = removedIndex;
-			} else if (removedIndex <= wayPointIndex) {
-				wayPointIndex++;
+	protected AbstractFXContentPart getAnchorPart(
+			List<IContentPart<Node>> partsUnderMouse) {
+		for (IContentPart<Node> cp : partsUnderMouse) {
+			AbstractFXContentPart part = (AbstractFXContentPart) cp;
+			IFXAnchor anchor = part.getAnchor(getHost());
+			if (anchor != null) {
+				return part;
 			}
-			currentWayPoints.add(removedIndex, removed);
-			removed = null;
 		}
+		return null;
+	}
+
+	private Point getPosition(AnchorLink link) {
+		// TODO: Maybe this can be done nicer?
+		boolean attached = link.getAnchor().isAttached(link.getKey());
+		if (!attached) {
+			link.getAnchor().attach(link.getKey());
+		}
+		Point p = link.getPosition();
+		if (!attached) {
+			link.getAnchor().detach(link.getKey());
+		}
+		return p;
+	}
+
+	protected void hideShowOverlaid() {
+		// put removed back in
+		if (removedLink != null) {
+			linkIndex = oldLinkIndex;
+			newLinks.add(removedLinkIndex, removedLink);
+			removedLink = null;
+		}
+
+		// do not remove overlaid if there are no way points
+		if (newLinks.size() <= 2) {
+			return;
+		}
+
+		removedLinkIndex = -1;
+		oldLinkIndex = linkIndex;
 
 		// determine overlaid neighbor
-		removedIndex = -1;
-		List<Point> points = currentWayPoints;
-		if (wayPointIndex == 0) {
-			if (getConnection().getStartPoint().getDistance(newWayPoint) < REMOVE_THRESHOLD) {
-				// dragged first waypoint onto start point
-				removedIndex = wayPointIndex;
-				wayPointIndex = -1;
-			}
-		} else if (wayPointIndex > 0) {
-			if (newWayPoint.getDistance(points.get(wayPointIndex - 1)) < REMOVE_THRESHOLD) {
-				// dragged waypoint onto previous
-				removedIndex = wayPointIndex - 1;
+		if (linkIndex > 0) {
+			int prevIndex = linkIndex - 1;
+			if (getPosition(newLinks.get(prevIndex)).getDistance(currentPoint) < REMOVE_THRESHOLD) {
+				// remove previous
+				removedLinkIndex = prevIndex;
+				linkIndex--;
 			}
 		}
-		if (removedIndex == -1 && wayPointIndex == points.size() - 1) {
-			if (getConnection().getEndPoint().getDistance(newWayPoint) < REMOVE_THRESHOLD) {
-				// dragged last waypoint onto end point
-				removedIndex = wayPointIndex;
-				wayPointIndex = -1;
-			}
-		} else if (removedIndex == -1 && wayPointIndex + 1 < points.size()) {
-			if (newWayPoint.getDistance(points.get(wayPointIndex + 1)) < REMOVE_THRESHOLD) {
-				// dragged waypoint onto next
-				removedIndex = wayPointIndex + 1;
+		if (removedLinkIndex == -1 && linkIndex < newLinks.size() - 1) {
+			int nextIndex = linkIndex + 1;
+			if (getPosition(newLinks.get(nextIndex)).getDistance(currentPoint) < REMOVE_THRESHOLD) {
+				// remove next
+				removedLinkIndex = nextIndex;
 			}
 		}
 
 		// remove neighbor if overlaid
-		if (removedIndex != -1) {
-			if (wayPointIndex > removedIndex) {
-				wayPointIndex--;
-			}
-			removed = currentWayPoints.get(removedIndex);
-			currentWayPoints.remove(removedIndex);
+		if (removedLinkIndex != -1) {
+			removedLink = newLinks.remove(removedLinkIndex);
 		}
 	}
 
 	@Override
 	public void init() {
-		getHost().setRefreshVisual(false);
+		op = new FXBendOperation();
+		connection = (IFXConnection) getHost().getVisual();
+		oldLinks = Arrays.asList(connection.getPointAnchorLinks());
+		newLinks = new ArrayList<AnchorLink>(oldLinks);
+		removedLink = null;
 	}
 
-	private void init(Point p) {
-		startPointInScene = new Point2D(p.x, p.y);
-		Point2D pLocal = getHost().getVisual().sceneToLocal(startPointInScene);
-		startPoint = new Point(pLocal.getX(), pLocal.getY());
-		initialWayPoints = getConnection().getWayPoints();
-		currentWayPoints = new ArrayList<Point>(initialWayPoints.size());
-		for (int i = 0; i < initialWayPoints.size(); i++) {
-			currentWayPoints.add(initialWayPoints.get(i).getCopy());
-		}
-	}
+	public void movePoint(Point mouseInScene,
+			List<IContentPart<Node>> partsUnderMouse) {
+		// update position
+		Point2D mouseInLocal = getHost().getVisual().sceneToLocal(
+				mouseInScene.x, mouseInScene.y);
+		Point2D startPointInLocal = getHost().getVisual().sceneToLocal(
+				startPointInScene);
+		Point delta = new Point(mouseInLocal.getX() - startPointInLocal.getX(),
+				mouseInLocal.getY() - startPointInLocal.getY());
 
-	/**
-	 * Moves the previously selected/created way point to the given position.
-	 * 
-	 * @param p
-	 *            {@link Point} providing new way point coordinates
-	 */
-	public void moveWayPoint(Point p) {
-		newWayPoint.setLocation(transformToLocal(p));
-		if (wayPointIndex >= 0) {
-			currentWayPoints.set(wayPointIndex, newWayPoint);
-		}
+		currentPoint.x = startPoint.x + delta.x;
+		currentPoint.y = startPoint.y + delta.y;
+
+		// update
 		hideShowOverlaid();
+		updateCurrentAnchorLink(mouseInScene, partsUnderMouse);
+		updateOperation();
+	}
 
-		op = new FXChangeWayPointsOperation("Change way points",
-				getConnection(), initialWayPoints, currentWayPoints);
+	public void selectPoint(int segmentIndex, double segmentParameter,
+			Point mouseInScene) {
+		// store handle part information
+		if (segmentParameter == 1) {
+			linkIndex = segmentIndex + 1;
+		} else {
+			linkIndex = segmentIndex;
+		}
 
-		// execute locally
+		// initialize position
+		startPointInScene = new Point2D(mouseInScene.x, mouseInScene.y);
+		startPoint = newLinks.get(linkIndex).getPosition();
+		currentPoint = startPoint.getCopy();
+	}
+
+	@Override
+	public String toString() {
+		return "FXMoveBendPointPolicy[host=" + getHost() + "]";
+	}
+
+	protected void updateCurrentAnchorLink(Point mouseInScene,
+			List<IContentPart<Node>> partsUnderMouse) {
+		// snaps for start and end (TODO: configurable)
+		boolean snaps = linkIndex == 0 || linkIndex == newLinks.size() - 1;
+
+		AnchorLink link = null;
+		if (snaps) {
+			AbstractFXContentPart anchorPart = getAnchorPart(partsUnderMouse);
+			if (anchorPart != null) {
+				// use anchor returned by part
+				IFXAnchor anchor = anchorPart.getAnchor(getHost());
+				link = new AnchorLink(anchor, oldLinks.get(linkIndex).getKey());
+			}
+		}
+
+		if (link == null) {
+			// use static anchor
+			link = FXUtils.createStaticAnchorLink(getHost().getVisual(),
+					getHost().getVisual(), currentPoint);
+		}
+
+		newLinks.set(linkIndex, link);
+	}
+
+	protected void updateOperation() {
+		// TODO: do not re-create operation, but modify it instead
+		op = new FXBendOperation("bend connection", connection,
+				oldLinks, newLinks);
 		try {
 			op.execute(null, null);
 		} catch (ExecutionException e) {
 			throw new IllegalStateException(e);
 		}
-	}
-
-	/**
-	 * Selects a way point on the curve to be manipulated. The way point is
-	 * identified by its index.
-	 * 
-	 * @param wayPointIndex
-	 *            index of the way point to select
-	 */
-	public void selectWayPoint(int wayPointIndex, Point p) {
-		init(p);
-		this.wayPointIndex = wayPointIndex;
-		newWayPoint.setLocation(p);
-	}
-
-	private Point transformToLocal(Point p) {
-		Point2D pLocal = getHost().getVisual().sceneToLocal(p.x, p.y);
-		Point2D initialPos = getHost().getVisual().sceneToLocal(
-				startPointInScene);
-
-		Point delta = new Point(pLocal.getX() - initialPos.getX(),
-				pLocal.getY() - initialPos.getY());
-
-		return new Point(startPoint.x + delta.x, startPoint.y + delta.y);
 	}
 
 }

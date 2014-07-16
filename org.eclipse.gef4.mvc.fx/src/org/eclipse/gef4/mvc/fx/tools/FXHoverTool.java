@@ -44,6 +44,9 @@ public class FXHoverTool extends AbstractTool<Node> {
 			}
 
 			Scene scene = ((Node) target).getScene();
+			if (scene == null) {
+				return;
+			}
 
 			// pick target nodes
 			List<Node> targetNodes = FXUtils.getNodesAt(scene.getRoot(),

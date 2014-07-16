@@ -30,6 +30,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChopBoxHelper {
 
+	/*
+	 * TODO: Support FXChopBoxAnchor at way points. Currently no reference
+	 * points are computed for FXChopBoxAnchors at way points. The reference
+	 * point for a way point could be the middle point of both neighbors.
+	 */
+
 	private IFXConnection connection;
 
 	private MapChangeListener<? super AnchorKey, ? super Point> startPCL = new MapChangeListener<AnchorKey, Point>() {
@@ -80,10 +86,31 @@ public class FXChopBoxHelper {
 		}
 	};
 
-	private ListChangeListener<? super Point> onWayPointChange = new ListChangeListener<Point>() {
+	private MapChangeListener<AnchorKey, Point> waypointPCL = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
-				javafx.collections.ListChangeListener.Change<? extends Point> c) {
+				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+			if (change.wasAdded()) {
+				updateStartReferencePoint();
+				updateEndReferencePoint();
+			}
+		}
+	};
+
+	private ListChangeListener<? super AnchorLink> onWayPointChange = new ListChangeListener<AnchorLink>() {
+		@Override
+		public void onChanged(
+				javafx.collections.ListChangeListener.Change<? extends AnchorLink> c) {
+			while (c.next()) {
+				if (c.wasAdded()) {
+					for (AnchorLink newLink : c.getAddedSubList()) {
+						IFXAnchor anchor = newLink.getAnchor();
+						if (anchor != null) {
+							anchor.positionProperty().addListener(waypointPCL);
+						}
+					}
+				}
+			}
 			updateStartReferencePoint();
 			updateEndReferencePoint();
 		}
@@ -95,13 +122,13 @@ public class FXChopBoxHelper {
 		// TODO: remove IFXConnection#setOnX() and related properties
 		connection.setOnEndAnchorLinkChange(onEndAnchorLinkChange);
 		connection.setOnStartAnchorLinkChange(onStartAnchorLinkChange);
-		connection.setOnWayPointChange(onWayPointChange);
+		connection.setOnWayPointAnchorLinkChange(onWayPointChange);
 	}
 
 	/**
 	 * Returns a {@link Point} array containing reference points for the start
 	 * and end anchors.
-	 *
+	 * 
 	 * @return an array of size 2 containing the reference points for the start
 	 *         and end anchors
 	 */
@@ -116,6 +143,9 @@ public class FXChopBoxHelper {
 				.getAnchorageNode();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
+				if (p == null) {
+					continue;
+				}
 				Point2D local = startNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!startNode.contains(local)) {
@@ -131,6 +161,9 @@ public class FXChopBoxHelper {
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
+				if (p == null) {
+					continue;
+				}
 				Point2D local = endNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!endNode.contains(local)) {
