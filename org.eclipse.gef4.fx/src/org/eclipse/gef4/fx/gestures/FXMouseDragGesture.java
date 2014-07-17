@@ -24,12 +24,12 @@ import javafx.scene.input.MouseEvent;
  * An FXMouseDragGesture can be used to listen to mouse press, drag, and release
  * events. The gesture internally starts a full drag and records the nodes
  * currently at the mouse pointer.
- * 
+ *
  * In order to use the FXMouseDragGesture, you have to subclass it and implement
  * the press, drag, and release methods.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public abstract class FXMouseDragGesture {
 
@@ -75,7 +75,7 @@ public abstract class FXMouseDragGesture {
 	 * {@link Scene} where this gesture is currently registered. It processes
 	 * {@link MouseEvent#MOUSE_DRAGGED} and {@link MouseEvent#MOUSE_RELEASED}
 	 * events if the gesture was previously initiated (pressed node is known).
-	 * 
+	 *
 	 * @param event
 	 * @see #onMousePress(MouseEvent)
 	 */
@@ -87,6 +87,12 @@ public abstract class FXMouseDragGesture {
 
 		// determine dragged/released state
 		EventType<? extends Event> type = event.getEventType();
+		if (type.equals(MouseEvent.MOUSE_EXITED_TARGET)) {
+			// ignore mouse exited target events here (they may result from
+			// visual changes that are caused by a preceding press)
+			return;
+		}
+
 		boolean dragged = type.equals(MouseEvent.MOUSE_DRAGGED);
 		boolean released = false;
 
@@ -123,7 +129,7 @@ public abstract class FXMouseDragGesture {
 	 * occurs in the {@link Scene} where this gesture is currently registered.
 	 * This initiates the gesture and activates processing of drag and release
 	 * events.
-	 * 
+	 *
 	 * @param event
 	 * @see #onMouseEvent(MouseEvent)
 	 */
