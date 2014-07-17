@@ -21,6 +21,8 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * @author anyssen
  * 
  * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public interface IHandlePartFactory<VR> {
 
@@ -34,7 +36,6 @@ public interface IHandlePartFactory<VR> {
 	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
 	 * 
 	 * <pre>
-	 * {@code}
 	 * create(List targets, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
 	 * 	if (ctxb instanceof ConcreteBehavior) {
 	 * 		SomeParam p = ((ConcreteBehavior) ctxb).getSomeParam(ctxm);
@@ -43,9 +44,17 @@ public interface IHandlePartFactory<VR> {
 	 * </pre>
 	 * 
 	 * @param targets
+	 *            The target {@link IContentPart}s for which handles are to be
+	 *            created
 	 * @param contextBehavior
+	 *            The context {@link IBehavior} which initiated the creation of
+	 *            feedback
 	 * @param contextMap
-	 * @return The newly created {@link IHandlePart}s.
+	 *            A map to fill in additional state-based context information
+	 *            that cannot be queried from the state-less context
+	 *            {@link IBehavior}
+	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
+	 *         given targets.
 	 */
 	public List<IHandlePart<VR>> createHandleParts(
 			List<IContentPart<VR>> targets, IBehavior<VR> contextBehavior,

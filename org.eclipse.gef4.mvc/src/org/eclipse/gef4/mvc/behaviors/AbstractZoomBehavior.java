@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The AbstractZoomPolicy registers a listener on the {@link IZoomModel} and
@@ -23,6 +24,8 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
  * 
  * @author wienand
  * 
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 		implements PropertyChangeListener {
@@ -30,15 +33,17 @@ public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getZoomModel().addPropertyChangeListener(this);
+		getHost().getRoot().getViewer().getZoomModel()
+				.addPropertyChangeListener(this);
 	}
-	
+
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getZoomModel().removePropertyChangeListener(this);
+		getHost().getRoot().getViewer().getZoomModel()
+				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (IZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {
@@ -52,6 +57,7 @@ public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 	 * layers.
 	 * 
 	 * @param zoomFactor
+	 *            The factor by which to apply the zoom.
 	 */
 	abstract protected void applyZoomFactor(Double zoomFactor);
 

@@ -15,16 +15,18 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * Default implementation of the focus model.
  * 
- * @param <V>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class DefaultFocusModel<V> implements IFocusModel<V> {
+public class DefaultFocusModel<VR> implements IFocusModel<VR> {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IContentPart<V> focused = null;
+	private IContentPart<VR> focused = null;
 	
 	public DefaultFocusModel() {
 	}
@@ -39,13 +41,13 @@ public class DefaultFocusModel<V> implements IFocusModel<V> {
 	}
 
 	@Override
-	public IContentPart<V> getFocused() {
+	public IContentPart<VR> getFocused() {
 		return focused;
 	}	
 	
 	@Override
-	public void setFocused(IContentPart<V> focusPart) {
-		IContentPart<V> old = focused;
+	public void setFocused(IContentPart<VR> focusPart) {
+		IContentPart<VR> old = focused;
 		focused = focusPart;
 		pcs.firePropertyChange(IFocusModel.FOCUS_PROPERTY, old, focused);
 	}

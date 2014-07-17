@@ -30,7 +30,8 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
@@ -88,7 +89,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
 		handleParts = BehaviorUtils.createHandles(contentParts, this, contextMap);
-		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
+		BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
 				handleParts);
 	}
 
@@ -96,7 +97,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		if (handleParts != null && !handleParts.isEmpty()) {
 			@SuppressWarnings("unchecked")
 			List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
-			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), contentParts,
+			BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(), contentParts,
 					handleParts);
 			handleParts.clear();
 		}
@@ -111,7 +112,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
 		feedbackParts = BehaviorUtils.createFeedback(contentParts, this, contextMap);
-		BehaviorUtils.<VR> addAnchoreds(getHost().getRoot(), contentParts,
+		BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
 				feedbackParts);
 	}
 
@@ -119,7 +120,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
 			@SuppressWarnings("unchecked")
 			List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets, IContentPart.class);
-			BehaviorUtils.<VR> removeAnchoreds(getHost().getRoot(), contentParts,
+			BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(), contentParts,
 					feedbackParts);
 			feedbackParts.clear();
 		}

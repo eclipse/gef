@@ -22,6 +22,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * {@link IContentPart}, it can use the viewer's {@link IContentPartFactory},
  * passing in itself as context behavior.
  * 
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ * 
  */
 public interface IContentPartFactory<VR> {
 
@@ -35,7 +38,6 @@ public interface IContentPartFactory<VR> {
 	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
 	 * 
 	 * <pre>
-	 * {@code}
 	 * create(Object target, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
 	 * 	if (ctxb instanceof ConcreteBehavior) {
 	 * 		SomeParam p = ((ConcreteBehavior) ctxb).getSomeParam(ctxm);

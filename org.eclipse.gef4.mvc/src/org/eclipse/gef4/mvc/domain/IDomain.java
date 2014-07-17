@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -29,10 +30,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-// TODO: it seems to be not nice that the domain is bound directly to the
-// viewer.-> we should support multiple viewers (and provide the active one)
 public interface IDomain<VR> extends IAdaptable {
 
 	public Map<Class<? extends ITool<VR>>, ITool<VR>> getTools();

@@ -83,6 +83,8 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	 * case <i>overwrite</i> is set to <code>false</code>.
 	 * 
 	 * @param adaptersWithKeys
+	 *            A map of class keys and related adapters to be added via
+	 *            {@link #setAdapter(Class, Object)}.
 	 * @param overwrite
 	 *            Indicates whether adapters whose keys are already registered
 	 *            for another adapter should be ignored. If set to

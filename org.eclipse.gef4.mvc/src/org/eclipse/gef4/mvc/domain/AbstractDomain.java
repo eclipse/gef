@@ -21,6 +21,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
 import org.eclipse.gef4.mvc.bindings.AdapterMap;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -31,9 +32,9 @@ import com.google.inject.name.Named;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-// add getTools() method that uses the adapters
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	private AdaptableSupport<IDomain<VR>> as = new AdaptableSupport<IDomain<VR>>(

@@ -22,6 +22,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
@@ -31,7 +32,8 @@ import com.google.inject.Provider;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractSelectionBehavior<VR> extends
 		AbstractBehavior<VR> implements PropertyChangeListener {

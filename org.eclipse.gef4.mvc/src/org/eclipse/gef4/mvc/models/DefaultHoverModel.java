@@ -20,12 +20,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author mwienand
  * 
- * @param <V>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class DefaultHoverModel<V> implements IHoverModel<V> {
+public class DefaultHoverModel<VR> implements IHoverModel<VR> {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IVisualPart<V> hovered = null;
+	private IVisualPart<VR> hovered = null;
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -38,13 +39,13 @@ public class DefaultHoverModel<V> implements IHoverModel<V> {
 	}
 
 	@Override
-	public IVisualPart<V> getHover() {
+	public IVisualPart<VR> getHover() {
 		return hovered;
 	}
 
 	@Override
-	public void setHover(IVisualPart<V> cp) {
-		IVisualPart<V> oldHover = hovered;
+	public void setHover(IVisualPart<VR> cp) {
+		IVisualPart<VR> oldHover = hovered;
 		hovered = cp;
 		pcs.firePropertyChange(HOVER_PROPERTY, oldHover, hovered);
 	}

@@ -21,7 +21,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 		implements IRootPart<VR> {

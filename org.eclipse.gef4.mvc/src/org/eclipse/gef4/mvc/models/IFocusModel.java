@@ -15,25 +15,34 @@ import java.beans.PropertyChangeEvent;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * The IFocusModel stores the IContentPart which has keyboard focus. Note that
- * you are responsible for synchronizing keyboard focus with the model.
+ * The {@link IFocusModel} stores the {@link IContentPart} which has keyboard
+ * focus. Note that you are responsible for synchronizing keyboard focus with
+ * the model.
  * 
- * @param <VR> type of visual
+ * @author mwienand
+ * @author anyssen
+ * 
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ * 
  */
 public interface IFocusModel<VR> extends IPropertyChangeSupport {
-	
+
 	/**
 	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the
 	 * focused part changes. This is the name of the property that is delivered
 	 * with the event.
 	 */
 	final public static String FOCUS_PROPERTY = "Focus";
-	
+
 	/**
-	 * Returns the IContentPart which has keyboard focus, or <code>null</code>
-	 * if no IContentPart currently has keyboard focus.
+	 * Returns the {@link IContentPart} which has keyboard focus, or
+	 * <code>null</code> if no {@link IContentPart} currently has keyboard
+	 * focus.
 	 * 
 	 * @return the IContentPart which has keyboard focus, or <code>null</code>
 	 */
@@ -44,6 +53,8 @@ public interface IFocusModel<VR> extends IPropertyChangeSupport {
 	 * focus part does not assign keyboard focus to the part.
 	 * 
 	 * @param focusPart
+	 *            The {@link IContentPart} which should become the new focus
+	 *            part.
 	 */
 	public void setFocused(IContentPart<VR> focusPart);
 

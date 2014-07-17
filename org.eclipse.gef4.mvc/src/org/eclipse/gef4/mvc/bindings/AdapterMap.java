@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.bindings;
 
-import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;

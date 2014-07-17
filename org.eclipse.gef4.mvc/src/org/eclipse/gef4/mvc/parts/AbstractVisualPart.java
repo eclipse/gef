@@ -33,7 +33,8 @@ import com.google.inject.Inject;
  * 
  * @author anyssen
  * 
- * @param <VR>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 

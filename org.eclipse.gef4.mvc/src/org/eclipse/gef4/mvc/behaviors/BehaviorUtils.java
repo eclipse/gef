@@ -26,21 +26,22 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class BehaviorUtils {
 
 	/**
-	 * Adds the given list of {@link IHandlePart}s as children to the given
-	 * {@link IRootPart}. Additionally, all handles are added as anchoreds to
-	 * the given list of {@link IContentPart}s.
+	 * Adds the given list of anchoreds as children to the given
+	 * {@link IRootPart}. Additionally, all given anchorages will be added to
+	 * the given anchoreds.
 	 * 
 	 * @param root
 	 *            The {@link IRootPart}, the anchored {@link IVisualPart}s are
 	 *            to be added to as children
 	 * @param anchorages
-	 *            the {@link IVisualPart}s, the anchored {@link IVisualPart}s
-	 *            are to be added to as anchoreds
+	 *            the {@link IVisualPart}s which are to be added to the given
+	 *            anchoreds as anchorages.
 	 * @param anchoreds
-	 *            the {@link IVisualPart}s to be anchored
-	 * @see #removeAnchoreds(IRootPart, List, List)
+	 *            the {@link IVisualPart}s to which the given anchorages are to
+	 *            be added.
+	 * @see #removeAnchorages(IRootPart, List, List)
 	 */
-	public static <VR> void addAnchoreds(IRootPart<VR> root,
+	public static <VR> void addAnchorages(IRootPart<VR> root,
 			List<? extends IVisualPart<VR>> anchorages,
 			List<? extends IVisualPart<VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
@@ -52,16 +53,20 @@ public class BehaviorUtils {
 	}
 
 	/**
-	 * Removes the given list of {@link IHandlePart}s from the given
-	 * {@link IRootPart}. Additionally, all handles are removed from the
-	 * anchoreds of the given {@link IContentPart}s.
+	 * Removes the given list of anchoreds as children from the given
+	 * {@link IRootPart}. Additionally removes the given anchorages from the
+	 * anchoreds.
 	 * 
 	 * @param root
+	 *            The {@link IRootPart} from which the anchoreds are to be
+	 *            removed as children.
 	 * @param anchorages
+	 *            The anchorages to be removed from the given anchoreds.
 	 * @param anchoreds
-	 * @see #addAnchoreds(IRootPart, List, List)
+	 *            The anchoreds from which to remove the given anchorages.
+	 * @see #addAnchorages(IRootPart, List, List)
 	 */
-	public static <VR> void removeAnchoreds(IRootPart<VR> root,
+	public static <VR> void removeAnchorages(IRootPart<VR> root,
 			List<? extends IVisualPart<VR>> anchorages,
 			List<? extends IVisualPart<VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
@@ -73,7 +78,8 @@ public class BehaviorUtils {
 	}
 
 	public static <VR> List<IFeedbackPart<VR>> createFeedback(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior, Map<Object, Object> contextMap) {
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
@@ -83,7 +89,8 @@ public class BehaviorUtils {
 	}
 
 	public static <VR> List<IHandlePart<VR>> createHandles(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior, Map<Object, Object> contextMap) {
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();

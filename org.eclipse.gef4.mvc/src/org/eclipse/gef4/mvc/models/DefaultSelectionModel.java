@@ -20,112 +20,71 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * 
  * @author anyssen
  *
- * @param <V>
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class DefaultSelectionModel<V> implements ISelectionModel<V> {
+public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
-	private List<IContentPart<V>> selection = new ArrayList<IContentPart<V>>();
+	private List<IContentPart<VR>> selection = new ArrayList<IContentPart<VR>>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.partviewer.IContentPartSelection#
-	 * addPropertyChangeListener(java.beans.PropertyChangeListener)
-	 */
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef4.mvc.partviewer.IContentPartSelection#appendSelection
-	 * (org.eclipse.gef4.mvc.parts.IContentPart)
-	 */
 	@Override
-	public void appendSelection(IContentPart<V> editpart) {
-		List<IContentPart<V>> oldSelection = getSelectionCopy();
+	public void appendSelection(IContentPart<VR> editpart) {
+		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.add(editpart);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef4.mvc.partviewer.IContentPartSelection#deselect(org.eclipse
-	 * .gef4.mvc.parts.IContentPart)
-	 */
 	@Override
-	public void deselect(IContentPart<V> editpart) {
-		List<IContentPart<V>> oldSelection = getSelectionCopy();
+	public void deselect(IContentPart<VR> editpart) {
+		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.remove(editpart);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.partviewer.IContentPartSelection#deselectAll()
-	 */
 	@Override
 	public void deselectAll() {
-		List<IContentPart<V>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.partviewer.IContentPartSelection#getSelection()
-	 */
 	@Override
-	public List<IContentPart<V>> getSelected() {
+	public List<IContentPart<VR>> getSelected() {
 		return Collections.unmodifiableList(selection);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.gef4.mvc.partviewer.IContentPartSelection#
-	 * removePropertyChangeListener(java.beans.PropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.gef4.mvc.partviewer.IContentPartSelection#select(org.eclipse
-	 * .gef4.mvc.parts.IContentPart)
-	 */
 	@Override
-	public void select(List<IContentPart<V>> newlySelected) {
-		List<IContentPart<V>> oldSelection = getSelectionCopy();
+	public void select(List<IContentPart<VR>> newlySelected) {
+		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.removeAll(newlySelected);
 		selection.addAll(0, newlySelected);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
-	private List<IContentPart<V>> getSelectionCopy() {
-		List<IContentPart<V>> oldSelection = new ArrayList<IContentPart<V>>(
+	private List<IContentPart<VR>> getSelectionCopy() {
+		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
 				selection);
 		return oldSelection;
 	}

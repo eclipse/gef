@@ -14,8 +14,6 @@ package org.eclipse.gef4.mvc.bindings;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
-import com.google.inject.name.Named;
-
 @SuppressWarnings("all")
 public class AdapterMapImpl implements AdapterMap, Serializable {
 

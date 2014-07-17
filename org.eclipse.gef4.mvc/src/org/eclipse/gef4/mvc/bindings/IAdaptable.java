@@ -17,8 +17,8 @@ package org.eclipse.gef4.mvc.bindings;
  * implements the {@link Bound} interface, it is expected that the
  * {@link IAdaptable} on which the adapter is registered binds the adapter to
  * itself via {@link Bound#setAdaptable(IAdaptable)} within
- * {@link #setAdapter(Class, Object)}, and accordingly unbinds it (setAdaptable(null))
- * within {@link #unsetAdapter(Class)}.
+ * {@link #setAdapter(Class, Object)}, and accordingly unbinds it
+ * (setAdaptable(null)) within {@link #unsetAdapter(Class)}.
  * 
  * @author anyssen
  *
@@ -29,8 +29,6 @@ public interface IAdaptable {
 
 	public <T> void setAdapter(Class<T> key, T adapter);
 
-	// public void setAdapters(Map<Class<?>, Object> adaptersWithKeys);
-
 	public <T> T unsetAdapter(Class<T> key);
 
 	/**
@@ -38,6 +36,8 @@ public interface IAdaptable {
 	 * to the respective {@link IAdaptable} it is registered at.
 	 *
 	 * @param <A>
+	 *            The type of {@link IAdaptable} this {@link Bound} may be bound
+	 *            to.
 	 */
 	public static interface Bound<A extends IAdaptable> {
 		public A getAdaptable();
