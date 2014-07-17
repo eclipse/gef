@@ -33,9 +33,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 /**
- * The {@link FXMoveBendPointPolicy} can be used to manipulate the points
- * constituting an {@link IFXConnection}, i.e. its start point, way points, and
- * end point. When moving a point the policy takes care of:
+ * The {@link FXBendPolicy} can be used to manipulate the points constituting an
+ * {@link IFXConnection}, i.e. its start point, way points, and end point. When
+ * moving a point the policy takes care of:
  * <ul>
  * <li>Removing overlaid neighbor points.</li>
  * <li>Re-adding temporarily removed neighbor points.</li>
@@ -218,8 +218,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	protected void updateOperation() {
 		// TODO: do not re-create operation, but modify it instead
-		op = new FXBendOperation("bend connection", connection,
-				oldLinks, newLinks);
+		op = new FXBendOperation("bend connection", connection, oldLinks,
+				newLinks);
 		try {
 			op.execute(null, null);
 		} catch (ExecutionException e) {
