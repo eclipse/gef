@@ -36,8 +36,6 @@ import com.google.inject.Provider;
  */
 public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 
-	private static final Color INVISIBLE = new Color(0, 0, 0, 0);
-
 	private final IContentPart<Node> targetPart;
 	private final Provider<IGeometry> feedbackGeometryProvider;
 	private final FXGeometryNode<IGeometry> feedbackVisual;
@@ -50,7 +48,7 @@ public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
 
 		feedbackVisual = new FXGeometryNode<IGeometry>(
 				feedbackGeometryProvider.get());
-		feedbackVisual.setFill(INVISIBLE);
+		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setEffect(effect);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);

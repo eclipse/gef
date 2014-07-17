@@ -82,7 +82,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				.getViewer().getSelectionModel().getSelected().get(0) == targetPart;
 		FXBoundsFeedbackPart part = new FXBoundsFeedbackPart(targetPart,
 				selectionBehavior.getFeedbackGeometryProvider(contextMap),
-				Color.web("#5a61af"),
+				isPrimaryFeedback ? Color.BLACK : Color.GREY,
 				isPrimaryFeedback ? getPrimarySelectionFeedbackEffect()
 						: getSecondarySelectionFeedbackEffect());
 		injector.injectMembers(part);
@@ -92,14 +92,18 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 	protected Effect getPrimarySelectionFeedbackEffect() {
 		DropShadow effect = new DropShadow();
-		effect.setColor(Color.web("#d5faff"));
+		effect.setColor(Color.BLACK);
 		effect.setRadius(5);
 		effect.setSpread(0.6);
 		return effect;
 	}
 
 	protected Effect getSecondarySelectionFeedbackEffect() {
-		return null;
+		DropShadow effect = new DropShadow();
+		effect.setColor(Color.GREY);
+		effect.setRadius(5);
+		effect.setSpread(0.6);
+		return effect;
 	}
 
 }
