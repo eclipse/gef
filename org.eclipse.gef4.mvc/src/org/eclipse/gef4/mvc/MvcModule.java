@@ -11,12 +11,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc;
 
+import java.util.Map;
+
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.bindings.AdaptableTypeListener;
+import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.bindings.AdapterMaps;
+import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
@@ -35,19 +39,65 @@ import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
+import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
 
+/**
+ * The Guice module which contains default bindings for the MVC bundle. It is
+ * extended by the Guice module of the MVC.FX bundle, which adds FX-specific
+ * default binding and gets overwritten by the MVC.UI Guice module. In detail,
+ * the relationship between the Guice modules of GEF4
+ * MVC/MVC.FX/MVC.UI/MVC.FX.UI are:
+ * <pre>
+ * 
+ *      MVC   &lt;--extends--    MVC.FX   &lt;--extends--  Client-Non-UI-Module
+ *       ^                       ^                           ^
+ *       |                       |                           |
+ *   overrides               overrides                   overrides
+ *       |                       |                           |
+ *       |                       |                           |
+ *    MVC.UI  &lt;--extends--  MVC.FX.UI  &lt;--extends--   Client-UI-Module
+ * </pre>
+ * In addition to 'normal' Guice bindings, we support a special
+ * <em>AdapterMap</em> binding, which can be used to inject class-key/adapter
+ * pairs into {@link IAdaptable}s. If an {@link IAdaptable} provides a method,
+ * which:
+ * <ul>
+ * <li>is annotated with an {@link Inject} annotation, and</li>
+ * <li>provides a single parameter that takes a {@link Map} of class-key/adapter
+ * pairs, which is annotated with an {@link AdapterMap} annotation,</li>
+ * </ul>
+ * any bindings using a matching {@link AdapterMap} annotation are injected.
+ * Here, matching means that the binding refers to an {@link AdapterMap}
+ * annotation, which provides a type ({@link AdapterMap#value()}) that is the
+ * same or a super-type of the one being used in the {@link AdapterMap}
+ * annotation used on the parameter of the to be injected method.
+ * <p>
+ * To enable the {@link AdapterMap} binding support, an
+ * {@link AdaptableTypeListener} is bound as listener
+ * {@link #bindListener(Matcher, TypeListener)}) within the {@link #configure()}
+ * method of this module.
+ * 
+ * @author anyssen
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ */
 public class MvcModule<VR> extends AbstractModule {
 
 	@Override

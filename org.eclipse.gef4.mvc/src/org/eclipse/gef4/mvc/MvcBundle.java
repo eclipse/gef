@@ -15,11 +15,13 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * The activator class controls the plug-in life cycle
+ * The {@link BundleActivator} for the GEF4 MVC bundle.
  */
 public class MvcBundle implements BundleActivator {
 
-	// The plug-in ID
+	/**
+	 * The plug-in id of the GEF4 MVC bundle.
+	 */
 	public static final String PLUGIN_ID = "org.eclipse.gef4.mvc"; //$NON-NLS-1$
 
 	private static BundleContext context;
@@ -35,6 +37,7 @@ public class MvcBundle implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		MvcBundle.context = bundleContext;
 	}
@@ -45,6 +48,7 @@ public class MvcBundle implements BundleActivator {
 	 * @see
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		MvcBundle.context = null;
 	}
