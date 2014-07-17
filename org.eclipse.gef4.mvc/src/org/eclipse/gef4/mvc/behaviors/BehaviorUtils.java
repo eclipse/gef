@@ -36,7 +36,7 @@ public class BehaviorUtils {
 	 * @param anchorages
 	 *            the {@link IVisualPart}s, the anchored {@link IVisualPart}s
 	 *            are to be added to as anchoreds
-	 * @param anchords
+	 * @param anchoreds
 	 *            the {@link IVisualPart}s to be anchored
 	 * @see #removeAnchoreds(IRootPart, List, List)
 	 */
@@ -58,7 +58,7 @@ public class BehaviorUtils {
 	 * 
 	 * @param root
 	 * @param anchorages
-	 * @param anchords
+	 * @param anchoreds
 	 * @see #addAnchoreds(IRootPart, List, List)
 	 */
 	public static <VR> void removeAnchoreds(IRootPart<VR> root,
