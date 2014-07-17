@@ -38,7 +38,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
