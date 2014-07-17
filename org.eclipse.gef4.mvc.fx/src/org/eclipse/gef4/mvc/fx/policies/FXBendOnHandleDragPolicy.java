@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     Alexander Nyßen (itemis AG) - Fixes related to bug #437076
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -24,15 +24,16 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- * 
+ *
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 // TODO: this is only applicable to FXSelectionHandlePart hosts and should
 // enforce it (best by template parameter)
@@ -137,8 +138,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		if (hp.getSegmentParameter() == 0.5) {
 			// select create new way point
 			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
-					.createWayPoint(hp.getSegmentIndex(),
-							new Point(e.getSceneX(), e.getSceneY()));
+			.createWayPoint(hp.getSegmentIndex(),
+					new Point(e.getSceneX(), e.getSceneY()));
 			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages()),
 					FXSegmentHandlePart.class);
@@ -146,7 +147,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-								.getSegmentParameter() == 1)) {
+						.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
@@ -156,17 +157,29 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		} else {
 			// select existing way point
 			getWayPointHandlePolicy(getHost().getAnchorages().get(0))
-					.selectWayPoint(getSegmentIndex(),
-							new Point(e.getSceneX(), e.getSceneY()));
+			.selectWayPoint(getSegmentIndex(),
+					new Point(e.getSceneX(), e.getSceneY()));
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		IUndoableOperation operation = getWayPointHandlePolicy(
-				getHost().getAnchorages().get(0)).commit();
+
+		IVisualPart<Node> anchorage = getHost().getAnchorages().get(0);
+
+		IUndoableOperation operation = getWayPointHandlePolicy(anchorage)
+				.commit();
 		executeOperation(operation);
+
+		ISelectionModel<Node> selm = getHost().getRoot().getViewer()
+				.getSelectionModel();
+		// TODO: reselect all anchorages that were selected
+		if (selm.getSelected().contains(anchorage)) {
+			selm.deselect((IContentPart<Node>) anchorage);
+			selm.select(Collections
+					.singletonList((IContentPart<Node>) anchorage));
+		}
 	}
 
 	private void setSegmentIndex(FXSegmentHandlePart part, int value) {

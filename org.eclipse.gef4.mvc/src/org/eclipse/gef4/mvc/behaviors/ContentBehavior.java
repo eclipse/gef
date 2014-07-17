@@ -66,8 +66,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 				.equals(event.getPropertyName())) {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
-			synchronizeContentAnchored(((IContentPart<VR>) getHost())
-					.getContentAnchored());
+			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
+					.getContentAnchorages());
 		}
 	}
 
@@ -163,30 +163,34 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * set of content anchored that is passed in.
 	 */
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentAnchored(List<Object> contentAnchoreds) {
+	public void synchronizeContentAnchorages(List<Object> contentAnchorages) {
 		int i;
 
-		List<IContentPart<VR>> anchoredContentParts = PartUtils.filterParts(getHost()
-				.getAnchoreds(), IContentPart.class);
-		int anchoredContentPartsSize = anchoredContentParts.size();
-		int contentAnchoredsSize = contentAnchoreds.size();
+		List<IContentPart<VR>> anchorageContentParts = PartUtils.filterParts(
+				getHost().getAnchorages(), IContentPart.class);
+		int anchorageContentPartsSize = anchorageContentParts.size();
+		int contentAnchoragesSize = contentAnchorages.size();
 
 		IContentPart<VR> contentPart;
-		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections.emptyMap();
-		if (anchoredContentPartsSize > 0) {
-			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(anchoredContentPartsSize);
-			for (i = 0; i < anchoredContentPartsSize; i++) {
-				contentPart = anchoredContentParts.get(i);
-				contentToContentPartMap.put(contentPart.getContent(), contentPart);
+		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections
+				.emptyMap();
+		if (anchorageContentPartsSize > 0) {
+			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(
+					anchorageContentPartsSize);
+			for (i = 0; i < anchorageContentPartsSize; i++) {
+				contentPart = anchorageContentParts.get(i);
+				contentToContentPartMap.put(contentPart.getContent(),
+						contentPart);
 			}
 		}
 
 		Object content;
-		for (i = 0; i < contentAnchoredsSize; i++) {
-			content = contentAnchoreds.get(i);
+		for (i = 0; i < contentAnchoragesSize; i++) {
+			content = contentAnchorages.get(i);
 
 			// Do a quick check to see if editPart[i] == model[i]
-			if (i < anchoredContentParts.size() && anchoredContentParts.get(i).getContent() == content)
+			if (i < anchorageContentParts.size()
+					&& anchorageContentParts.get(i).getContent() == content)
 				continue;
 
 			// Look to see if the EditPart is already around but in the
@@ -196,28 +200,28 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			if (contentPart != null) {
 				// TODO: this is wrong, it has to take into consideration the
 				// visual parts in between
-				// reorderChild(editPart, i);
+				getHost().reorderAnchorage(contentPart, i);
 			} else {
 				// An EditPart for this model doesn't exist yet. Create and
 				// insert one.
 				contentPart = findOrCreatePartFor(content);
 				// what if it does not exist??
-				getHost().addAnchored(contentPart);
+				getHost().addAnchorage(contentPart);
 			}
 		}
 
 		// remove the remaining EditParts
-		anchoredContentParts = PartUtils.filterParts(getHost().getAnchoreds(),
+		anchorageContentParts = PartUtils.filterParts(getHost().getAnchorages(),
 				IContentPart.class);
-		anchoredContentPartsSize = anchoredContentParts.size();
-		if (i < anchoredContentPartsSize) {
-			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(anchoredContentPartsSize
-					- i);
-			for (; i < anchoredContentPartsSize; i++)
-				trash.add(anchoredContentParts.get(i));
+		anchorageContentPartsSize = anchorageContentParts.size();
+		if (i < anchorageContentPartsSize) {
+			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
+					anchorageContentPartsSize - i);
+			for (; i < anchorageContentPartsSize; i++)
+				trash.add(anchorageContentParts.get(i));
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<VR> ep = trash.get(i);
-				getHost().removeAnchored(ep);
+				getHost().removeAnchorage(ep);
 				disposeIfObsolete(ep);
 			}
 		}

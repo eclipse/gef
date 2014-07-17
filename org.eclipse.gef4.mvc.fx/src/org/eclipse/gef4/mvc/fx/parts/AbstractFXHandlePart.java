@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 
-	private VisualChangeListener visualListener = new VisualChangeListener() {
+	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
 		protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
 			refreshVisual();
@@ -35,15 +35,14 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 	};
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
-		visualListener.register(anchorageVisual,
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
+		visualListener.register(anchorage.getVisual(),
 				((FXRootPart) getRoot()).getLayerStackPane());
 	};
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
 		visualListener.unregister();
 	}
 

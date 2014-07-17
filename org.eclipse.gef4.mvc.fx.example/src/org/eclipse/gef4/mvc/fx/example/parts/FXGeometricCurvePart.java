@@ -13,7 +13,6 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -36,14 +35,11 @@ import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXReconnectPolicy;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
@@ -91,82 +87,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
-	private static class WayPointModelOperation extends AbstractOperation {
-
-		private FXGeometricCurvePart part;
-		private List<Point> oldWayPoints = new ArrayList<Point>();
-		private List<Point> newWayPoints = new ArrayList<Point>();
-
-		public WayPointModelOperation(FXGeometricCurvePart part,
-				List<Point> oldWayPoints, List<Point> newWayPoints) {
-			super("Change way points in model.");
-			this.part = part;
-			for (Point p : oldWayPoints) {
-				this.oldWayPoints.add(p.getCopy());
-			}
-			for (Point p : newWayPoints) {
-				this.newWayPoints.add(p.getCopy());
-			}
-		}
-
-		@Override
-		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			removeCurveWayPoints();
-			addCurveWayPoints(newWayPoints);
-			return Status.OK_STATUS;
-		}
-
-		private void addCurveWayPoints(List<Point> wayPoints) {
-			FXGeometricCurve curve = part.getContent();
-			int i = 0;
-			for (Point p : wayPoints) {
-				curve.addWayPoint(i++, new Point(p));
-			}
-			ISelectionModel<Node> selm = part.getViewer().getSelectionModel();
-			if (selm.getSelected().contains(part)) {
-				selm.deselect(part);
-				selm.select(Collections.singletonList((IContentPart<Node>) part));
-			}
-		}
-
-		private void removeCurveWayPoints() {
-			FXGeometricCurve curve = part.getContent();
-			List<Point> wayPoints = curve.getWayPoints();
-			for (int i = wayPoints.size() - 1; i >= 0; --i) {
-				curve.removeWayPoint(i);
-			}
-		}
-
-		@Override
-		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			return execute(monitor, info);
-		}
-
-		@Override
-		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			removeCurveWayPoints();
-			addCurveWayPoints(oldWayPoints);
-			return Status.OK_STATUS;
-		}
-
-		@Override
-		public String toString() {
-			String str = "ChangeWayPoints (model):\n  from:\n";
-			for (int i = 0; i < oldWayPoints.size(); i++) {
-				str = str + "   - " + oldWayPoints.get(i) + "\n";
-			}
-			str = str + "  to:\n";
-			for (int i = 0; i < newWayPoints.size(); i++) {
-				str = str + "   - " + newWayPoints.get(i) + "\n";
-			}
-			return str;
-		}
-
-	}
-
 	private FXCurveConnection visual;
 
 	public FXGeometricCurvePart() {
@@ -177,26 +97,68 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		};
 		new FXChopBoxHelper(visual);
-		
+
 		// transaction policies
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
 
 			@Override
 			public IUndoableOperation commit() {
-				final IUndoableOperation op = super.commit();
+				final IUndoableOperation updateVisualOperation = super.commit();
+				if (updateVisualOperation == null) {
+					return null;
+				}
 
-				FXGeometricCurve curve = getContent();
-				List<Point> oldWayPoints = curve.getWayPoints();
-				List<Point> newWayPoints = visual.getWayPoints();
-				final WayPointModelOperation modelOp = new WayPointModelOperation(
-						FXGeometricCurvePart.this, oldWayPoints, newWayPoints);
-				
+				final FXGeometricCurve curve = getContent();
+				final List<Point> oldWayPoints = curve.getWayPointsCopy();
+				final List<Point> newWayPoints = visual.getWayPoints();
+				final IUndoableOperation updateModelOperation = new AbstractOperation(
+						"Update model") {
+
+					@Override
+					public IStatus undo(IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						removeCurveWayPoints();
+						addCurveWayPoints(oldWayPoints);
+						return Status.OK_STATUS;
+					}
+
+					@Override
+					public IStatus redo(IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						return execute(monitor, info);
+					}
+
+					@Override
+					public IStatus execute(IProgressMonitor monitor,
+							IAdaptable info) throws ExecutionException {
+						removeCurveWayPoints();
+						addCurveWayPoints(newWayPoints);
+						return Status.OK_STATUS;
+					}
+
+					private void addCurveWayPoints(List<Point> wayPoints) {
+						int i = 0;
+						for (Point p : wayPoints) {
+							curve.addWayPoint(i++, new Point(p));
+						}
+					}
+
+					private void removeCurveWayPoints() {
+						List<Point> wayPoints = curve.getWayPoints();
+						for (int i = wayPoints.size() - 1; i >= 0; --i) {
+							curve.removeWayPoint(i);
+						}
+					}
+				};
+
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
-						"Change way points.") {
+						updateVisualOperation.getLabel()) {
 					{
-						add(op);
-						add(modelOp);
+						add(updateVisualOperation);
+						// TODO: replace with updateModelOperation, which is
+						// side-effect free
+						add(updateModelOperation);
 					}
 				};
 
@@ -231,7 +193,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		// TODO: compare way points to identify if we need to refresh
 		List<Point> wayPoints = content.getWayPoints();
-		
+
 		if (content.getTransform() != null) {
 			Point[] transformedWayPoints = content.getTransform()
 					.getTransformed(wayPoints.toArray(new Point[] {}));
@@ -326,25 +288,22 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(
-			final IVisualPart<Node> anchorage, Node anchorageVisual) {
-		// TODO: the context should not be stored in the model, but created here
-		// based on the model
-		AbstractFXGeometricElement<?> anchorageContent = ((AbstractFXGeometricElementPart) anchorage)
-				.getContent();
-		boolean isStart = anchorageContent.getSourceAnchoreds().contains(
-				getContent());
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
+		// anchorages are ordered, thus we may use the index here
+		boolean isStart = index == 0;
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (isStart) {
-			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(visual, "START")));
+			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(
+					visual, "START")));
 		} else {
-			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(visual, "END")));
+			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(
+					visual, "END")));
 		}
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (anchor == visual.startAnchorLinkProperty().get().getAnchor()) {
 			visual.setStartPoint(visual.getStartPoint());
@@ -354,6 +313,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			throw new IllegalStateException(
 					"Cannot detach from unknown anchor: " + anchor);
 		}
+	}
+
+	@Override
+	public List<Object> getContentAnchorages() {
+		List<Object> anchorages = new ArrayList<Object>();
+		anchorages.addAll(getContent().getSourceAnchorages());
+		anchorages.addAll(getContent().getTargetAnchorages());
+		return anchorages;
 	}
 
 }

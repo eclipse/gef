@@ -13,9 +13,6 @@ package org.eclipse.gef4.mvc.fx.example.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -35,8 +32,6 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 
 	private G geometry;
 	private AffineTransform transform;
-	private List<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-	private List<AbstractFXGeometricElement<? extends IGeometry>> targetAnchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 	private Paint stroke = new Color(0, 0, 0, 1);
 	private Effect effect;
 	private double strokeWidth = 0.5;
@@ -60,23 +55,6 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 
 	public AbstractFXGeometricElement(G geometry) {
 		setGeometry(geometry);
-	}
-
-	public void addSourceAnchored(
-			AbstractFXGeometricElement<? extends IGeometry> anchored) {
-		sourceAnchoreds.add(anchored);
-	}
-
-	public void addTargetAnchored(
-			AbstractFXGeometricElement<? extends IGeometry> anchored) {
-		targetAnchoreds.add(anchored);
-	}
-
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getAnchoreds() {
-		List<AbstractFXGeometricElement<? extends IGeometry>> anchoreds = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-		anchoreds.addAll(sourceAnchoreds);
-		anchoreds.addAll(targetAnchoreds);
-		return Collections.unmodifiableList(anchoreds);
 	}
 
 	public G getGeometry() {
@@ -131,14 +109,6 @@ abstract public class AbstractFXGeometricElement<G extends IGeometry>
 
 	public void setStrokeWidth(double strokeWidth) {
 		this.strokeWidth = strokeWidth;
-	}
-
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchoreds() {
-		return Collections.unmodifiableList(sourceAnchoreds);
-	}
-
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchoreds() {
-		return Collections.unmodifiableList(targetAnchoreds);
 	}
 
 }

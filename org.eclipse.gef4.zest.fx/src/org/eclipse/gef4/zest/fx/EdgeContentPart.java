@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.Node;
@@ -39,7 +41,6 @@ import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 
@@ -85,22 +86,18 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
-		IContentPart<Node> sourcePart = anchorage.getRoot().getViewer()
-				.getContentPartMap().get(getContent().getSource());
-		IContentPart<Node> targetPart = anchorage.getRoot().getViewer()
-				.getContentPartMap().get(getContent().getTarget());
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		AnchorKey anchorKey = new AnchorKey(visual,
-				anchorage == sourcePart ? "START" : "END");
+		AnchorKey anchorKey = new AnchorKey(visual, index == 0 ? "START"
+				: "END");
 		AnchorLink anchorLink = new AnchorLink(anchor, anchorKey);
 
 		FXCurveConnection connection = visual.getConnection();
-		if (anchorage == sourcePart) {
+		if (index == 0) {
 			connection.setStartAnchorLink(anchorLink);
-		} else if (anchorage == targetPart) {
+		} else {
 			connection.setEndAnchorLink(anchorLink);
 		}
 
@@ -112,13 +109,10 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			((FXChopBoxAnchor) endAl.getAnchor()).setReferencePoint(
 					endAl.getKey(), startAl.getPosition());
 		}
-
-		super.attachVisualToAnchorageVisual(anchorage, anchorageVisual);
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
 		FXCurveConnection connection = visual.getConnection();
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (anchor == connection.getStartAnchorLink().getAnchor()) {
@@ -126,7 +120,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		} else {
 			connection.setEndPoint(connection.getEndPoint());
 		}
-		super.detachVisualFromAnchorageVisual(anchorage, anchorageVisual);
 	}
 
 	@Override
@@ -180,6 +173,14 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
+	public List<Object> getContentAnchorages() {
+		List<Object> anchorages = new ArrayList<Object>(2);
+		anchorages.add(getContent().getSource());
+		anchorages.add(getContent().getTarget());
+		return anchorages;
+	}
+
+	@Override
 	public Node getVisual() {
 		return visual;
 	}
@@ -212,7 +213,8 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		});
 		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior() {
 			@Override
-			protected IGeometry getFeedbackGeometry(Map<Object, Object> contextMap) {
+			protected IGeometry getFeedbackGeometry(
+					Map<Object, Object> contextMap) {
 				return visual.getConnection().getCurveNode().getGeometry();
 			}
 		});

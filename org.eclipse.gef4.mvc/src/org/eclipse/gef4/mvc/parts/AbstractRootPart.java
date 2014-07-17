@@ -47,7 +47,7 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	public List<IHandlePart<VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFeedbackPart<VR>> getFeedbackPartChildren() {
@@ -64,15 +64,13 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<VR> anchorage,
-			VR anchorageVisual) {
+	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage, int index) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<VR> anchorage,
-			VR anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<VR> anchorage) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

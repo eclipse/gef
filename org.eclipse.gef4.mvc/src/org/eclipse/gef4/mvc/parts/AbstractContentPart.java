@@ -99,7 +99,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public List<Object> getContentAnchored() {
+	public List<Object> getContentAnchorages() {
 		return Collections.emptyList();
 	}
 
@@ -115,7 +115,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 					.synchronizeContentChildren(Collections.emptyList());
 			// create content anchored as needed
 			getAdapter(ContentBehavior.class)
-					.synchronizeContentAnchored(Collections.emptyList());
+					.synchronizeContentAnchorages(Collections.emptyList());
 		}
 		super.setParent(parent);
 		if (parent != null) {
@@ -128,7 +128,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 					.synchronizeContentChildren(getContentChildren());
 			// create content anchored as needed
 			getAdapter(ContentBehavior.class)
-					.synchronizeContentAnchored(getContentAnchored());
+					.synchronizeContentAnchorages(getContentAnchorages());
 		}
 	}
 

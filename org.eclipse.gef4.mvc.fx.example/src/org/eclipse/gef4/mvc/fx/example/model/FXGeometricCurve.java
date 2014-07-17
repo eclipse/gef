@@ -20,6 +20,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
@@ -40,8 +41,29 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	private Decoration sourceDecoration = Decoration.NONE;
 	private Decoration targetDecoration = Decoration.NONE;
 
+	private List<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	private List<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+
 	public Decoration getSourceDecoration() {
 		return sourceDecoration;
+	}
+
+	public List<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
+		return Collections.unmodifiableList(sourceAnchorages);
+	}
+
+	public List<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
+		return Collections.unmodifiableList(targetAnchorages);
+	}
+
+	public void addSourceAnchorage(
+			AbstractFXGeometricElement<? extends IGeometry> anchored) {
+		sourceAnchorages.add(anchored);
+	}
+
+	public void addTargetAnchorage(
+			AbstractFXGeometricElement<? extends IGeometry> anchored) {
+		targetAnchorages.add(anchored);
 	}
 
 	public void setSourceDecoration(Decoration sourceDecoration) {
@@ -90,7 +112,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return Collections.unmodifiableList(waypoints);
 	}
 
-	private List<Point> getWayPointsCopy() {
+	public List<Point> getWayPointsCopy() {
 		return new ArrayList<Point>(waypoints);
 	}
 

@@ -37,8 +37,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
  * <code>[n:m]</code> anchorage-anchored relationship ({@link #getAnchorages()},
- * {@link #getAnchoreds()}) may be established via {@link IVisualPart} at arbitrary
- * places in the hierarchy.
+ * {@link #getAnchoreds()}) may be established via {@link IVisualPart} at
+ * arbitrary places in the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
@@ -72,13 +72,32 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
+	public static final String CHILDREN_PROPERTY = "children";
 	public static final String ANCHORAGES_PROPERTY = "anchorage";
+	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
 	public void addAnchorage(IVisualPart<VR> anchorage);
 
-	public void addAnchored(IVisualPart<VR> anchored);
+	public void addAnchorage(IVisualPart<VR> anchorage, int index);
 
-	public void addAnchoreds(List<? extends IVisualPart<VR>> anchoreds);
+	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages);
+
+	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages,
+			int index);
+
+	/**
+	 * 
+	 * @param anchored
+	 * 
+	 * @noreference Clients should call {@link #addAnchorage(IVisualPart)},
+	 *              {@link #addAnchorage(IVisualPart, int)},
+	 *              {@link #addAnchorages(List)},
+	 *              {@link #addAnchorages(List, int)}.
+	 *              {@link #removeAnchorage(IVisualPart)}, or
+	 *              {@link #removeAnchorages(List)} instead to establish an
+	 *              anchored-anchorage relationship.
+	 */
+	public void addAnchored(IVisualPart<VR> anchored);
 
 	public void addChild(IVisualPart<VR> child);
 
@@ -86,12 +105,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void addChildren(List<? extends IVisualPart<VR>> children);
 
-	// anchorage visual may not be the visual of the anchorage itself!
-	public void attachVisualToAnchorageVisual(IVisualPart<VR> anchorage,
-			VR anchorageVisual);
-
-	public void detachVisualFromAnchorageVisual(IVisualPart<VR> anchorage,
-			VR anchorageVisual);
+	public void addChildren(List<? extends IVisualPart<VR>> children, int index);
 
 	public List<IVisualPart<VR>> getAnchorages();
 
@@ -116,30 +130,45 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public abstract VR getVisual();
 
-	// public void addVisualToParentVisual(IVisualPart<VR> parent, V
-	// parentVisual);
-	//
-	// public void removeVisualFromParentVisual(IVisualPart<VR> parent, V
-	// parentVisual);
-
 	public boolean isRefreshVisual();
-
-	// TODO: add by index and reordering of anchored
 
 	public void refreshVisual();
 
 	public void removeAnchorage(IVisualPart<VR> anchorage);
 
-	public void removeAnchored(IVisualPart<VR> anchored);
+	public void removeAnchorages(List<? extends IVisualPart<VR>> anchorages);
 
-	public void removeAnchoreds(List<? extends IVisualPart<VR>> anchoreds);
+	public void removeAnchored(IVisualPart<VR> anchored);
 
 	public void removeChild(IVisualPart<VR> child);
 
 	public void removeChildren(List<? extends IVisualPart<VR>> children);
 
+	public void reorderAnchorage(IVisualPart<VR> anchorage, int index);
+
 	public void reorderChild(IVisualPart<VR> child, int index);
 
+	/**
+	 * Used by a parent {@link IVisualPart} to establish/unestablish a
+	 * parent-child relationship with this child {@link IVisualPart}.
+	 * <P>
+	 * Clients should never call this operation directly but instead add the
+	 * children to its parent via the {@link #addChild(IVisualPart)},
+	 * {@link #addChild(IVisualPart, int)}, {@link #addChildren(List)}, or
+	 * {@link #addChildren(List, int)} or remove it via the
+	 * {@link #removeChild(IVisualPart)} or {@link #removeChildren(List)}
+	 * operations, which will indirectly lead to a call here.
+	 * 
+	 * @param parent
+	 *            The new parent {@link IVisualPart} or <code>null</code>.
+	 * 
+	 * @noreference Clients should use {@link #addChild(IVisualPart)},
+	 *              {@link #addChild(IVisualPart, int)},
+	 *              {@link #addChildren(List)}, {@link #addChildren(List, int)},
+	 *              {@link #removeChild(IVisualPart)}, or
+	 *              {@link #removeChildren(List)} to establish/unestablish a
+	 *              parent-child relationship instead.
+	 */
 	public void setParent(IVisualPart<VR> parent);
 
 	/**

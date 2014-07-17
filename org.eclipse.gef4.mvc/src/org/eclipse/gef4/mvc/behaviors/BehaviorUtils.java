@@ -42,11 +42,11 @@ public class BehaviorUtils {
 	 */
 	public static <VR> void addAnchoreds(IRootPart<VR> root,
 			List<? extends IVisualPart<VR>> anchorages,
-			List<? extends IVisualPart<VR>> anchords) {
-		if (anchords != null && !anchords.isEmpty()) {
-			root.addChildren(anchords);
-			for (IVisualPart<VR> anchorage : anchorages) {
-				anchorage.addAnchoreds(anchords);
+			List<? extends IVisualPart<VR>> anchoreds) {
+		if (anchoreds != null && !anchoreds.isEmpty()) {
+			root.addChildren(anchoreds);
+			for (IVisualPart<VR> anchored : anchoreds) {
+				anchored.addAnchorages(anchorages);
 			}
 		}
 	}
@@ -63,11 +63,11 @@ public class BehaviorUtils {
 	 */
 	public static <VR> void removeAnchoreds(IRootPart<VR> root,
 			List<? extends IVisualPart<VR>> anchorages,
-			List<? extends IVisualPart<VR>> anchords) {
-		if (anchords != null && !anchords.isEmpty()) {
-			root.removeChildren(anchords);
-			for (IVisualPart<VR> anchorage : anchorages) {
-				anchorage.removeAnchoreds(anchords);
+			List<? extends IVisualPart<VR>> anchoreds) {
+		if (anchoreds != null && !anchoreds.isEmpty()) {
+			root.removeChildren(anchoreds);
+			for (IVisualPart<VR> anchored : anchoreds) {
+				anchored.removeAnchorages(anchorages);
 			}
 		}
 	}

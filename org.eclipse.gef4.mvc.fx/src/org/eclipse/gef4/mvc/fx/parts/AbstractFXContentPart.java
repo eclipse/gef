@@ -33,14 +33,13 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 	}
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
 		// do nothing by default
 	}
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
 		// do nothing by default
 	}
 

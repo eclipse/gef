@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javafx.scene.Node;
@@ -21,8 +19,6 @@ import javafx.scene.Node;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXLabeledNode;
-import org.eclipse.gef4.graph.Edge;
-import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -60,29 +56,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public org.eclipse.gef4.graph.Node getContent() {
 		return (org.eclipse.gef4.graph.Node) super.getContent();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public List<Object> getContentAnchored() {
-		if (getParent() != null) {
-			Object content = getViewer().getContentModel().getContents().get(0);
-			if (!(content instanceof Graph)) {
-				throw new IllegalStateException(
-						"Wrong content! Expected <Graph> but got <"
-								+ content.getClass() + ">.");
-			}
-			List<Edge> edges = ((Graph) content).getEdges();
-			List<Edge> anchored = new ArrayList<Edge>();
-			for (Edge e : edges) {
-				if (e.getTarget() == getContent()
-						|| e.getSource() == getContent()) {
-					anchored.add(e);
-				}
-			}
-			return (List) anchored;
-		}
-		return super.getContentAnchored();
 	}
 
 	@Override

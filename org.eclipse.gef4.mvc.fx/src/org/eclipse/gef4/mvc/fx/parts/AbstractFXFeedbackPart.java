@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -35,15 +35,14 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 	};
 
 	@Override
-	public void attachVisualToAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
-		visualListener.register(anchorageVisual,
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
+		visualListener.register(anchorage.getVisual(),
 				((FXRootPart) getRoot()).getLayerStackPane());
 	};
 
 	@Override
-	public void detachVisualFromAnchorageVisual(IVisualPart<Node> anchorage,
-			Node anchorageVisual) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
 		visualListener.unregister();
 	}
 

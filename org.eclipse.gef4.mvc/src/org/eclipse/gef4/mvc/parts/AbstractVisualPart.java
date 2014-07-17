@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
@@ -87,22 +86,32 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void addChild(IVisualPart<VR> child, int index) {
-		Assert.isNotNull(child);
+		List<IVisualPart<VR>> oldChildren = getChildren();
 		addChildWithoutNotify(child, index);
 
 		child.setParent(this);
+		
+		refreshVisual();
 		addChildVisual(child, index);
-
 		child.refreshVisual();
 
 		if (isActive())
 			child.activate();
+
+		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
 
 	@Override
 	public void addChildren(List<? extends IVisualPart<VR>> children) {
 		for (IVisualPart<VR> child : children) {
 			addChild(child);
+		}
+	}
+
+	@Override
+	public void addChildren(List<? extends IVisualPart<VR>> children, int index) {
+		for (int i = children.size() - 1; i >= 0; i--) {
+			addChild(children.get(i), index);
 		}
 	}
 
@@ -123,8 +132,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
-	// TODO: make concrete, passing over the visual container to the child (as
-	// in case of anchoreds)
 	protected abstract void addChildVisual(IVisualPart<VR> child, int index);
 
 	private void addChildWithoutNotify(IVisualPart<VR> child, int index) {
@@ -138,8 +145,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (getParent() != null) {
 			return getParent().getRoot();
 		}
-		if (getAnchorages().size() > 0) {
-			return getAnchorages().get(0).getRoot();
+		if (getAnchoreds().size() > 0) {
+			return getAnchoreds().get(0).getRoot();
 		}
 		return null;
 	}
@@ -249,7 +256,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void removeChild(IVisualPart<VR> child) {
-		Assert.isNotNull(child);
 		int index = getChildren().indexOf(child);
 		if (index < 0)
 			return;
@@ -258,7 +264,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 		child.setParent(null);
 		removeChildVisual(child);
+		List<IVisualPart<VR>> oldChildren = getChildren();
 		removeChildWithoutNotify(child);
+
+		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
 
 	/**
@@ -279,6 +288,14 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	@Override
 	public <T> T unsetAdapter(Class<T> key) {
 		return as.unsetAdapter(key);
+	}
+
+	@Override
+	public void reorderAnchorage(IVisualPart<VR> anchorage, int index) {
+		detachFromAnchorageVisual(anchorage);
+		removeAnchorageWithoutNotify(anchorage);
+		addAnchorageWithoutNotify(anchorage, index);
+		attachToAnchorageVisual(anchorage, index);
 	}
 
 	/**
@@ -355,34 +372,22 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 		anchoreds.add(anchored);
 
-		anchored.addAnchorage(this);
-		attachAnchoredVisual(anchored);
-
-		anchored.refreshVisual();
-	}
-
-	@Override
-	public void addAnchoreds(List<? extends IVisualPart<VR>> anchoreds) {
-		for (IVisualPart<VR> anchored : anchoreds) {
-			addAnchored(anchored);
+		// if we obtain a link to the viewer (via anchored) then register
+		// visuals
+		if (parent == null && anchoreds.size() == 1) {
+			register();
 		}
 	}
 
-	@Override
-	public void removeAnchoreds(List<? extends IVisualPart<VR>> anchoreds) {
-		for (IVisualPart<VR> anchored : anchoreds) {
-			removeAnchored(anchored);
-		}
-	}
-
-	protected void attachAnchoredVisual(IVisualPart<VR> anchored) {
-		anchored.attachVisualToAnchorageVisual(this, getVisual());
-	}
+	protected abstract void attachToAnchorageVisual(IVisualPart<VR> anchorage,
+			int index);
 
 	@Override
 	public void removeAnchored(IVisualPart<VR> anchored) {
-		anchored.removeAnchorage(this);
-		detachAnchoredVisual(anchored);
+		// if we loose the link to the viewer via the anchored, unregister
+		if (parent == null && anchoreds.size() == 1) {
+			unregister();
+		}
 
 		anchoreds.remove(anchored);
 		if (anchoreds.size() == 0) {
@@ -390,9 +395,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
-	protected void detachAnchoredVisual(IVisualPart<VR> anchored) {
-		anchored.detachVisualFromAnchorageVisual(this, getVisual());
-	}
+	protected abstract void detachFromAnchorageVisual(IVisualPart<VR> anchorage);
 
 	@Override
 	public List<IVisualPart<VR>> getAnchoreds() {
@@ -404,32 +407,48 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void addAnchorage(IVisualPart<VR> anchorage) {
+		addAnchorage(anchorage, getAnchorages().size());
+	}
+
+	@Override
+	public void addAnchorage(IVisualPart<VR> anchorage, int index) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
 
+		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
+				getAnchorages());
+		addAnchorageWithoutNotify(anchorage, index);
+		anchorage.addAnchored(this);
+		
+		anchorage.refreshVisual();
+		attachToAnchorageVisual(anchorage, index);
+		refreshVisual();
+
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				getAnchorages());
+	}
+
+	@Override
+	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages) {
+		for (IVisualPart<VR> anchorage : anchorages) {
+			addAnchorage(anchorage);
+		}
+	}
+
+	@Override
+	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages,
+			int index) {
+		for (int i = anchorages.size() - 1; i >= 0; i--) {
+			addAnchorage(anchorages.get(i), index);
+		}
+	}
+
+	private void addAnchorageWithoutNotify(IVisualPart<VR> anchorage, int index) {
 		if (anchorages == null) {
 			anchorages = new ArrayList<IVisualPart<VR>>();
 		}
-
-		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
-				anchorages);
-
-		anchorages.add(anchorage);
-
-		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(
-				anchorages);
-
-		// if we obtain a link to the viewer (via anchorage) then register
-		// visuals
-		if (parent == null) {
-			if (anchorages.size() == 1) {
-				register();
-			}
-		}
-
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				newAnchorages);
+		anchorages.add(index, anchorage);
 	}
 
 	/**
@@ -449,26 +468,29 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			throw new IllegalArgumentException("Anchorage has to be contained.");
 		}
 
-		if (parent == null) {
-			if (anchorages.size() == 1) {
-				unregister();
-			}
-		}
-
 		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
 				anchorages);
+		removeAnchorageWithoutNotify(anchorage);
 
+		anchorage.removeAnchored(this);
+		detachFromAnchorageVisual(anchorage);
+
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
+				getAnchorages());
+	}
+
+	@Override
+	public void removeAnchorages(List<? extends IVisualPart<VR>> anchorages) {
+		for (IVisualPart<VR> anchorage : anchorages) {
+			removeAnchorage(anchorage);
+		}
+	}
+
+	private void removeAnchorageWithoutNotify(IVisualPart<VR> anchorage) {
 		anchorages.remove(anchorage);
-
-		List<IVisualPart<VR>> newAnchorages = new ArrayList<IVisualPart<VR>>(
-				anchorages);
-
 		if (anchorages.size() == 0) {
 			anchorages = null;
 		}
-
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				newAnchorages);
 	}
 
 	/**

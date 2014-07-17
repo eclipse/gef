@@ -34,6 +34,6 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 
 	public List<Object> getContentChildren();
 
-	public List<Object> getContentAnchored();
+	public List<Object> getContentAnchorages();
 
 }
