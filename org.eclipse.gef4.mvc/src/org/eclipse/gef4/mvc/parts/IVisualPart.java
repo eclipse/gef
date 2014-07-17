@@ -37,8 +37,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
  * <code>[n:m]</code> anchorage-anchored relationship ({@link #getAnchorages()},
- * {@link #getAnchoreds()}) may be established via {@link IVisualPart} at
- * arbitrary places in the hierarchy.
+ * {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
+ * located at arbitrary places within the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
