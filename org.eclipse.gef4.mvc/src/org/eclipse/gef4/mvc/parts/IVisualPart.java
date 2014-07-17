@@ -70,10 +70,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 		IPropertyChangeSupport {
 
-	// TODO: add others
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
-	public static final String ANCHORAGES_PROPERTY = "anchorage";
+	public static final String ANCHORAGES_PROPERTY = "anchorages";
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
 	public void addAnchorage(IVisualPart<VR> anchorage);
@@ -86,15 +85,23 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 			int index);
 
 	/**
+	 * Used by an anchored {@link IVisualPart} to establish an
+	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
+	 * <P>
+	 * Clients should never call this operation directly but instead add the
+	 * anchorage to its anchored via the {@link #addAnchorage(IVisualPart)},
+	 * {@link #addAnchorage(IVisualPart, int)}, {@link #addAnchorages(List)}, or
+	 * {@link #addAnchorages(List, int)} operations, which will indirectly lead
+	 * to a call here.
 	 * 
 	 * @param anchored
+	 *            An {@link IVisualPart} to attach to this anchorage
+	 *            {@link IVisualPart} as anchored.
 	 * 
 	 * @noreference Clients should call {@link #addAnchorage(IVisualPart)},
 	 *              {@link #addAnchorage(IVisualPart, int)},
-	 *              {@link #addAnchorages(List)},
-	 *              {@link #addAnchorages(List, int)}.
-	 *              {@link #removeAnchorage(IVisualPart)}, or
-	 *              {@link #removeAnchorages(List)} instead to establish an
+	 *              {@link #addAnchorages(List)}, or
+	 *              {@link #addAnchorages(List, int)} instead to establish an
 	 *              anchored-anchorage relationship.
 	 */
 	public void addAnchored(IVisualPart<VR> anchored);
@@ -138,6 +145,24 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void removeAnchorages(List<? extends IVisualPart<VR>> anchorages);
 
+	/**
+	 * Used by an anchored {@link IVisualPart} to unestablish an
+	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
+	 * <P>
+	 * Clients should never call this operation directly but instead remove the
+	 * anchorage from its anchored via the {@link #removeAnchorage(IVisualPart)}
+	 * , or {@link #removeAnchorages(List)} operations, which will indirectly
+	 * lead to a call here.
+	 * 
+	 * @param anchored
+	 *            An {@link IVisualPart} (currently attached as anchored to this
+	 *            anchorage {@link IVisualPart}) to detach from this anchorage
+	 *            {@link IVisualPart} as anchored.
+	 * 
+	 * @noreference Clients should call {@link #removeAnchorage(IVisualPart)} or
+	 *              {@link #removeAnchorages(List)} instead to unestablish an
+	 *              anchored-anchorage relationship.
+	 */
 	public void removeAnchored(IVisualPart<VR> anchored);
 
 	public void removeChild(IVisualPart<VR> child);
