@@ -22,10 +22,16 @@ import java.util.List;
  *              Instead, {@link AbstractContentPart} should be subclassed.
  * 
  * @author anyssen
+ * 
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ * 
+ * 
  */
 // TODO: parameterize with content type
 public interface IContentPart<VR> extends IVisualPart<VR> {
-	
+
 	public static final String CONTENT_PROPERTY = "content";
 
 	public void setContent(Object content);

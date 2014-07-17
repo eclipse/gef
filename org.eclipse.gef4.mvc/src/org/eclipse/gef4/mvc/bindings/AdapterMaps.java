@@ -11,15 +11,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.bindings;
 
-
+/**
+ * A utiliy class to construct a new {@link AdapterMap} annotation for a given
+ * type.
+ * 
+ * @author anyssen
+ *
+ */
 public class AdapterMaps {
 
 	private AdapterMaps() {
+		// should not be invoked by clients
 	}
 
 	/**
-	 * Creates a {@link AdapterMap} annotation with the given {@code type}
-	 * .
+	 * Creates a {@link AdapterMap} annotation with the given {@code type} .
+	 * 
+	 * @param type
+	 *            The type of the {@link AdapterMap} to be created.
+	 * @return A new {@link AdapterMapImpl} for the given type.
 	 */
 	public static AdapterMap typed(Class<?> type) {
 		return new AdapterMapImpl(type);

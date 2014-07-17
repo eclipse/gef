@@ -24,9 +24,21 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
+/**
+ * A behavior that can be adapted to an {@link IRootPart} or an
+ * {@link IContentPart} to synchronize the list of {@link IContentPart} children
+ * and (only in case of an {@link IContentPart}) anchorages with the list of
+ * content children and anchored.
+ * 
+ * @author anyssen
+ *
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
 
@@ -72,9 +84,17 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	/**
-	 * Updates the host {@link IVisualPart}'s children {@link IContentPart}s
-	 * (see {@link IVisualPart#getChildren()}) so that it is in sync with the
-	 * set of content children that is passed in.
+	 * Updates the host {@link IVisualPart}'s {@link IContentPart} children (see
+	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
+	 * content children that is passed in.
+	 * 
+	 * @param contentChildren
+	 *            The list of content children to be synchronized with the list
+	 *            of {@link IContentPart} children (
+	 *            {@link IContentPart#getChildren()}).
+	 * 
+	 * @see IContentPart#getContentChildren()
+	 * @see IContentPart#getChildren()
 	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentChildren(final List<Object> contentChildren) {
@@ -158,9 +178,17 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	/**
-	 * Updates the host {@link IVisualPart}'s anchored {@link IContentPart}s
-	 * (see {@link IVisualPart#getAnchoreds()}) so that it is in sync with the
-	 * set of content anchored that is passed in.
+	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
+	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
+	 * set of content anchorages that is passed in.
+	 * 
+	 * @param contentAnchorages
+	 *            The list of content anchorages to be synchronized with the
+	 *            list of {@link IContentPart} anchorages (
+	 *            {@link IContentPart#getAnchorages()}).
+	 * 
+	 * @see IContentPart#getContentAnchorages()
+	 * @see IContentPart#getAnchorages()
 	 */
 	@SuppressWarnings("unchecked")
 	public void synchronizeContentAnchorages(List<Object> contentAnchorages) {
@@ -211,8 +239,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		}
 
 		// remove the remaining EditParts
-		anchorageContentParts = PartUtils.filterParts(getHost().getAnchorages(),
-				IContentPart.class);
+		anchorageContentParts = PartUtils.filterParts(
+				getHost().getAnchorages(), IContentPart.class);
 		anchorageContentPartsSize = anchorageContentParts.size();
 		if (i < anchorageContentPartsSize) {
 			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(

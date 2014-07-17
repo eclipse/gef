@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The {@link ISelectionModel} is used to store the current viewer's
@@ -22,6 +23,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * {@link ISelectionModel} as the result of input events.
  * 
  * @author anyssen
+ * 
+ * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  * 
  */
 public interface ISelectionModel<VR> extends IPropertyChangeSupport {
