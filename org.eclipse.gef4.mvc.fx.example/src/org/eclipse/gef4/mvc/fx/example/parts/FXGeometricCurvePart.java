@@ -38,10 +38,64 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
+
+	private static final class ChangeWayPointsOperation extends
+			AbstractOperation {
+		private final List<Point> newWayPoints;
+		private final FXGeometricCurve curve;
+		private final List<Point> oldWayPoints;
+
+		public ChangeWayPointsOperation(String label, List<Point> newWayPoints,
+				FXGeometricCurve curve, List<Point> oldWayPoints) {
+			super(label);
+			this.newWayPoints = newWayPoints;
+			this.curve = curve;
+			this.oldWayPoints = oldWayPoints;
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			removeCurveWayPoints();
+			addCurveWayPoints(oldWayPoints);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			removeCurveWayPoints();
+			addCurveWayPoints(newWayPoints);
+			return Status.OK_STATUS;
+		}
+
+		private void addCurveWayPoints(List<Point> wayPoints) {
+			int i = 0;
+			for (Point p : wayPoints) {
+				curve.addWayPoint(i++, new Point(p));
+			}
+		}
+
+		private void removeCurveWayPoints() {
+			List<Point> wayPoints = curve.getWayPoints();
+			for (int i = wayPoints.size() - 1; i >= 0; --i) {
+				curve.removeWayPoint(i);
+			}
+		}
+	}
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
@@ -97,6 +151,47 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		};
 		new FXChopBoxHelper(visual);
 
+		// TODO: move operations and policies to their own types and use binding
+		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+				new FXRelocateOnDragPolicy());
+		setAdapter(FXRelocateOnDragPolicy.TRANSACTION_POLICY_KEY,
+				new FXResizeRelocatePolicy() {
+					@Override
+					public void init() {
+						super.init();
+					}
+
+					@Override
+					public void performResizeRelocate(double dx, double dy,
+							double dw, double dh) {
+						// do not relocate when there are no way points
+						if (visual.getWayPointAnchorLinks().size() > 0) {
+							super.performResizeRelocate(dx, dy, dw, dh);
+							refreshVisual(); // TODO: should not be necessary
+						}
+					}
+
+					@Override
+					public IUndoableOperation commit() {
+						final IUndoableOperation visualOperation = super
+								.commit();
+						final FXGeometricCurve curve = getContent();
+						final List<Point> oldWayPoints = curve
+								.getWayPointsCopy();
+						final List<Point> newWayPoints = visual.getWayPoints();
+						final IUndoableOperation modelOperation = new ChangeWayPointsOperation(
+								"Update model", newWayPoints, curve,
+								oldWayPoints);
+						return new AbstractCompositeOperation(
+								visualOperation.getLabel()) {
+							{
+								add(visualOperation);
+								add(modelOperation);
+							}
+						};
+					}
+				});
+
 		// transaction policies
 		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
 			@Override
@@ -109,53 +204,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				final FXGeometricCurve curve = getContent();
 				final List<Point> oldWayPoints = curve.getWayPointsCopy();
 				final List<Point> newWayPoints = visual.getWayPoints();
-				final IUndoableOperation updateModelOperation = new AbstractOperation(
-						"Update model") {
-
-					@Override
-					public IStatus undo(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						removeCurveWayPoints();
-						addCurveWayPoints(oldWayPoints);
-						return Status.OK_STATUS;
-					}
-
-					@Override
-					public IStatus redo(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						return execute(monitor, info);
-					}
-
-					@Override
-					public IStatus execute(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						removeCurveWayPoints();
-						addCurveWayPoints(newWayPoints);
-						return Status.OK_STATUS;
-					}
-
-					private void addCurveWayPoints(List<Point> wayPoints) {
-						int i = 0;
-						for (Point p : wayPoints) {
-							curve.addWayPoint(i++, new Point(p));
-						}
-					}
-
-					private void removeCurveWayPoints() {
-						List<Point> wayPoints = curve.getWayPoints();
-						for (int i = wayPoints.size() - 1; i >= 0; --i) {
-							curve.removeWayPoint(i);
-						}
-					}
-				};
+				final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
+						"Update model", newWayPoints, curve, oldWayPoints);
 
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
 						updateVisualOperation.getLabel()) {
 					{
 						add(updateVisualOperation);
-						// TODO: replace with updateModelOperation, which is
-						// side-effect free
 						add(updateModelOperation);
 					}
 				};
