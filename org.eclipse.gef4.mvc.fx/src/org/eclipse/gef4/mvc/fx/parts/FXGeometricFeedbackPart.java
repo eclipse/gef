@@ -34,13 +34,13 @@ import com.google.inject.Provider;
  * @author nyssen
  *
  */
-public class FXBoundsFeedbackPart extends AbstractFXFeedbackPart {
+public class FXGeometricFeedbackPart extends AbstractFXFeedbackPart {
 
 	private final IContentPart<Node> targetPart;
 	private final Provider<IGeometry> feedbackGeometryProvider;
 	private final FXGeometryNode<IGeometry> feedbackVisual;
 
-	public FXBoundsFeedbackPart(IContentPart<Node> targetPart,
+	public FXGeometricFeedbackPart(IContentPart<Node> targetPart,
 			Provider<IGeometry> feedbackGeometryProvider, Paint stroke,
 			Effect effect) {
 		this.targetPart = targetPart;
