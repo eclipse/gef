@@ -111,7 +111,7 @@ public abstract class FXView extends ViewPart {
 
 	protected FXViewer createViewer(final FXCanvas canvas) {
 		FXViewer viewer = injector.getInstance(FXViewer.class);
-		viewer.setSceneContainer(new FXCanvasSceneContainer(viewer, canvas));
+		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
 		return viewer;
 	}
 

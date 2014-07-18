@@ -36,8 +36,19 @@ public interface IFocusModel<VR> extends IPropertyChangeSupport {
 	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the
 	 * focused part changes. This is the name of the property that is delivered
 	 * with the event.
+	 * 
+	 * @see #setFocused(IContentPart)
 	 */
 	final public static String FOCUS_PROPERTY = "Focus";
+	
+	/**
+	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the
+	 * viewer focused state changes. This is the name of the property that is delivered
+	 * with the event.
+	 * 
+	 * @see #setViewerFocused(boolean)
+	 */
+	final public static String VIEWER_FOCUS_PROPERTY = "ViewerFocus";
 
 	/**
 	 * Returns the {@link IContentPart} which has keyboard focus, or
@@ -57,5 +68,25 @@ public interface IFocusModel<VR> extends IPropertyChangeSupport {
 	 *            part.
 	 */
 	public void setFocused(IContentPart<VR> focusPart);
+
+	/**
+	 * Returns <code>true</code> if the viewer where this model is registered
+	 * currently has keyboard focus. Otherwise returns <code>false</code>.
+	 * 
+	 * @return <code>true</code> if the viewer where this model is registered
+	 *         currently has keyboard focus. Otherwise returns
+	 *         <code>false</code>.
+	 */
+	public boolean isViewerFocused();
+
+	/**
+	 * Updates the {@link #isViewerFocused()} property of this model.
+	 * 
+	 * @param viewerFocused
+	 *            <code>true</code> to indicate that the viewer has keyboard
+	 *            focus, or <code>false</code> to indicate that the viewer does not
+	 *            have keyboard focus.
+	 */
+	public void setViewerFocused(boolean viewerFocused);
 
 }

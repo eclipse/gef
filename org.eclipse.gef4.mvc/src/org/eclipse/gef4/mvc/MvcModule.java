@@ -40,6 +40,7 @@ import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
@@ -186,6 +187,10 @@ public class MvcModule<VR> extends AbstractModule {
 						}.getRawType().getClass())));
 		adapterMapBinder.addBinding(DefaultZoomPolicy.class).to(
 				Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(DefaultFocusPolicy.class).to(
+				Key.get(Types.newParameterizedType(DefaultFocusPolicy.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 	}

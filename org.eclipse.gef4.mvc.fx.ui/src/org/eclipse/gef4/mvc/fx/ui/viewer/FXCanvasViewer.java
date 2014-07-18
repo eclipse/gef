@@ -20,6 +20,6 @@ public class FXCanvasViewer extends FXViewer {
 
 		@Inject
 	public FXCanvasViewer(final SwtFXCanvas canvas) {
-		setSceneContainer(new FXCanvasSceneContainer(this, canvas));
+		setSceneContainer(new FXCanvasSceneContainer( canvas));
 	}
 }

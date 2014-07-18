@@ -160,7 +160,12 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	protected ScrollPane createScrollPane(Parent scrollPaneInput) {
-		ScrollPane scrollPane = new ScrollPane();
+		ScrollPane scrollPane = new ScrollPane() {
+			@Override
+			public void requestFocus() {
+				super.requestFocus();
+			}
+		};
 		scrollPane.setContent(scrollPaneInput);
 		scrollPane.setPannable(false);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);

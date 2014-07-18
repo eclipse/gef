@@ -31,7 +31,6 @@ public class FXScrollTool extends AbstractTool<Node> {
 	private final EventHandler<ScrollEvent> scrollListener = new EventHandler<ScrollEvent>() {
 		@Override
 		public void handle(ScrollEvent event) {
-
 			event.consume();
 
 			EventTarget target = event.getTarget();

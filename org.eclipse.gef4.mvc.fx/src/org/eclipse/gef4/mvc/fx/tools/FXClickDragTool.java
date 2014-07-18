@@ -94,6 +94,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 				@Override
 				protected void press(Node target, MouseEvent e) {
+					// do not notify other listeners
+					e.consume();
+
 					// click first
 					IVisualPart<Node> clickTargetPart = FXPartUtils
 							.getTargetPart(getDomain().getViewers(), target,

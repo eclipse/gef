@@ -14,16 +14,27 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
+import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 
-public class FXSelectOnClickPolicy extends AbstractFXClickPolicy {
+public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		DefaultSelectionPolicy<Node> policy = getSelectionPolicy();
-		if (policy != null) {
-			policy.select(e.isControlDown());
+		DefaultFocusPolicy<Node> focusPolicy = getFocusPolicy();
+		if (focusPolicy != null) {
+			focusPolicy.focus();
 		}
+
+		DefaultSelectionPolicy<Node> selectionPolicy = getSelectionPolicy();
+		if (selectionPolicy != null) {
+			selectionPolicy.select(e.isControlDown());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private DefaultFocusPolicy<Node> getFocusPolicy() {
+		return getHost().getAdapter(DefaultFocusPolicy.class);
 	}
 
 	@SuppressWarnings("unchecked")

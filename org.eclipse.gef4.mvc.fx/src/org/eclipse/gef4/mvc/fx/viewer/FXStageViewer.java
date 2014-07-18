@@ -19,6 +19,6 @@ public class FXStageViewer extends FXViewer {
 
 	@Inject
 	public FXStageViewer(final Stage stage) {
-		setSceneContainer(new FXStageSceneContainer(this, stage));
+		setSceneContainer(new FXStageSceneContainer(stage));
 	}
 }

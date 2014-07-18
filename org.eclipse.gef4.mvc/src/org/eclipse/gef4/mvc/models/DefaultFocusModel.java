@@ -27,6 +27,7 @@ public class DefaultFocusModel<VR> implements IFocusModel<VR> {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IContentPart<VR> focused = null;
+	private boolean isViewerFocused = false;
 	
 	public DefaultFocusModel() {
 	}
@@ -50,6 +51,18 @@ public class DefaultFocusModel<VR> implements IFocusModel<VR> {
 		IContentPart<VR> old = focused;
 		focused = focusPart;
 		pcs.firePropertyChange(IFocusModel.FOCUS_PROPERTY, old, focused);
+	}
+
+	@Override
+	public boolean isViewerFocused() {
+		return isViewerFocused;
+	}
+
+	@Override
+	public void setViewerFocused(boolean viewerFocused) {
+		boolean old = isViewerFocused;
+		isViewerFocused = viewerFocused;
+		pcs.firePropertyChange(VIEWER_FOCUS_PROPERTY, old, viewerFocused);
 	}
 	
 }

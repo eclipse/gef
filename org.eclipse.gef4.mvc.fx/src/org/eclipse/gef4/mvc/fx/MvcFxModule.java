@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
@@ -29,12 +30,13 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
+import org.eclipse.gef4.mvc.fx.tools.FXFocusTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
@@ -54,7 +56,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(FXClickDragTool.CLICK_TOOL_POLICY_KEY).to(
-				FXSelectOnClickPolicy.class);
+				FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(FXHoverTool.TOOL_POLICY_KEY).to(
 				FXHoverOnHoverPolicy.class);
 
@@ -63,6 +65,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				FXHoverBehavior.class);
 		adapterMapBinder.addBinding(AbstractSelectionBehavior.class).to(
 				FXSelectionBehavior.class);
+		adapterMapBinder.addBinding(FXFocusBehavior.class).to(
+				FXFocusBehavior.class);
 	}
 
 	protected void bindAbstractFXFeedbackPartAdapters(
@@ -100,6 +104,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				new FXPinchSpreadTool());
 		adapterMapBinder.addBinding(FXScrollTool.class).toInstance(
 				new FXScrollTool());
+		adapterMapBinder.addBinding(FXFocusTool.class).toInstance(
+				new FXFocusTool());
 	}
 
 	protected void bindFXRootPart() {
@@ -112,7 +118,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(FXClickDragTool.CLICK_TOOL_POLICY_KEY).to(
-				FXSelectOnClickPolicy.class);
+				FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
 				FXMarqueeOnDragPolicy.class);
 		adapterMapBinder.addBinding(FXHoverTool.TOOL_POLICY_KEY).to(
