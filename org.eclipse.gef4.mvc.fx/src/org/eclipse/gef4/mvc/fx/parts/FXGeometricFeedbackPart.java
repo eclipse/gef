@@ -14,54 +14,48 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.awt.geom.NoninvertibleTransformException;
 
 import javafx.scene.Node;
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 
 import com.google.inject.Provider;
 
 /**
  * A handle part used for showing feedback based on layout bounds of an
  * underlying target part
- *
+ * 
  * @author nyssen
- *
+ * 
  */
 public class FXGeometricFeedbackPart extends AbstractFXFeedbackPart {
 
-	private final IContentPart<Node> targetPart;
 	private final Provider<IGeometry> feedbackGeometryProvider;
 	private final FXGeometryNode<IGeometry> feedbackVisual;
 
-	public FXGeometricFeedbackPart(IContentPart<Node> targetPart,
-			Provider<IGeometry> feedbackGeometryProvider, Paint stroke,
-			Effect effect) {
-		this.targetPart = targetPart;
+	public FXGeometricFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
-
 		feedbackVisual = new FXGeometryNode<IGeometry>(
 				feedbackGeometryProvider.get());
 		feedbackVisual.setFill(Color.TRANSPARENT);
-		feedbackVisual.setEffect(effect);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
-		feedbackVisual.setStroke(stroke);
 		feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
 		feedbackVisual.setStrokeWidth(1);
 	}
 
 	@Override
 	public void doRefreshVisual() {
+		if (getAnchorages().size() == 0) {
+			return;
+		}
+
 		// we need to combine several transformations to get the
 		// target-to-(feedback-handle-)parent-transform
-		Node targetVisual = targetPart.getVisual();
+		Node targetVisual = getAnchorages().get(0).getVisual();
 		AffineTransform targetToSceneTx = JavaFX2Geometry
 				.toAffineTransform(targetVisual.getLocalToSceneTransform());
 		AffineTransform parentToSceneTx = JavaFX2Geometry
@@ -86,7 +80,7 @@ public class FXGeometricFeedbackPart extends AbstractFXFeedbackPart {
 	}
 
 	@Override
-	public Node getVisual() {
+	public FXGeometryNode<IGeometry> getVisual() {
 		return feedbackVisual;
 	}
 
