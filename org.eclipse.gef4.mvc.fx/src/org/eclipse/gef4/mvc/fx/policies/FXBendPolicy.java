@@ -74,8 +74,12 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void createWayPoint(int segmentIndex, Point mouseInScene) {
-		newLinks.add(segmentIndex + 1, FXUtils.createStaticAnchorLink(getHost()
-				.getVisual(), getHost().getVisual(), mouseInScene));
+		Node hostVisual = getHost().getVisual();
+		Point2D mouseInLocal = hostVisual.sceneToLocal(mouseInScene.x,
+				mouseInScene.y);
+		newLinks.add(segmentIndex + 1, FXUtils.createStaticAnchorLink(
+				hostVisual, hostVisual, new Point(mouseInLocal.getX(),
+						mouseInLocal.getY())));
 		updateOperation();
 		selectPoint(segmentIndex + 1, 0, mouseInScene);
 	}
