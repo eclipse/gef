@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.viewer;
 
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import com.google.inject.Inject;
@@ -20,12 +19,6 @@ public class FXStageViewer extends FXViewer {
 
 	@Inject
 	public FXStageViewer(final Stage stage) {
-		setSceneContainer(new ISceneContainer() {
-			@Override
-			public void setScene(Scene scene) {
-				stage.setScene(scene);
-			}
-		});
+		setSceneContainer(new FXStageSceneContainer(this, stage));
 	}
-
 }

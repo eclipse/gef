@@ -64,10 +64,16 @@ public class FXViewer extends AbstractViewer<Node> {
 		}
 	}
 
-	public void setSceneContainer(ISceneContainer container) {
-		sceneContainer = container;
-		if (scene != null) {
-			sceneContainer.setScene(scene);
+	public void setSceneContainer(ISceneContainer sceneContainer) {
+		if (this.sceneContainer != null) {
+			this.sceneContainer.unregisterFocusForwarding(this);
+		}
+		this.sceneContainer = sceneContainer;
+		if (sceneContainer != null) {
+			sceneContainer.registerFocusForwarding(this);
+			if (scene != null) {
+				sceneContainer.setScene(scene);
+			}
 		}
 	}
 

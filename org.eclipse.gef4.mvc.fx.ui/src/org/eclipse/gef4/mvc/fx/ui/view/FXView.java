@@ -16,13 +16,12 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
-import javafx.scene.Scene;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.fx.viewer.ISceneContainer;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -78,7 +77,7 @@ public abstract class FXView extends ViewPart {
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private IPropertySheetPage propertySheetPage;
-	
+
 	private IFXCanvasFactory canvasFactory;
 	private Injector injector;
 
@@ -112,12 +111,7 @@ public abstract class FXView extends ViewPart {
 
 	protected FXViewer createViewer(final FXCanvas canvas) {
 		FXViewer viewer = injector.getInstance(FXViewer.class);
-		viewer.setSceneContainer(new ISceneContainer() {
-			@Override
-			public void setScene(Scene scene) {
-				canvas.setScene(scene);
-			}
-		});
+		viewer.setSceneContainer(new FXCanvasSceneContainer(viewer, canvas));
 		return viewer;
 	}
 
@@ -146,7 +140,7 @@ public abstract class FXView extends ViewPart {
 				propertySheetPage = new UndoablePropertySheetPage(
 						(IOperationHistory) getAdapter(IOperationHistory.class),
 						(IUndoContext) getAdapter(IUndoContext.class),
-						(UndoRedoActionGroup)getAdapter(UndoRedoActionGroup.class));
+						(UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
 			}
 			return propertySheetPage;
 		} else if (UndoRedoActionGroup.class.equals(key)) {

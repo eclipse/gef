@@ -11,21 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.viewer;
 
-import javafx.embed.swt.FXCanvas;
-import javafx.scene.Scene;
-
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.fx.viewer.ISceneContainer;
+import org.eclipse.gef4.swtfx.SwtFXCanvas;
+
+import com.google.inject.Inject;
 
 public class FXCanvasViewer extends FXViewer {
 
-	public FXCanvasViewer(final FXCanvas canvas) {
-		setSceneContainer(new ISceneContainer() {
-			
-			@Override
-			public void setScene(Scene scene) {
-				canvas.setScene(scene);
-			}
-		});
+		@Inject
+	public FXCanvasViewer(final SwtFXCanvas canvas) {
+		setSceneContainer(new FXCanvasSceneContainer(this, canvas));
 	}
 }
