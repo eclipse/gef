@@ -25,10 +25,10 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-IPolicy<Node>, ITransactional {
+		IPolicy<Node>, ITransactional {
 
 	protected double initialLayoutX, initialLayoutY, initialWidth,
-	initialHeight;
+			initialHeight;
 	private FXResizeRelocateNodeOperation operation;
 
 	// can be overridden by subclasses to add an operation for model changes
@@ -50,7 +50,7 @@ IPolicy<Node>, ITransactional {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -62,6 +62,11 @@ IPolicy<Node>, ITransactional {
 		Bounds lb = visual.getLayoutBounds();
 		initialWidth = lb.getWidth();
 		initialHeight = lb.getHeight();
+
+		// create "empty" operation
+		operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
+				visual, new Point(initialLayoutX, initialLayoutY),
+				new Dimension(initialWidth, initialHeight), 0, 0, 0, 0);
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
