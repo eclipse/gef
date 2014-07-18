@@ -25,9 +25,11 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 
 	@Override
 	public void scroll(ScrollEvent event, double deltaY) {
-		DefaultZoomPolicy<Node> policy = getZoomPolicy();
-		if (policy != null) {
-			policy.zoomRelative(deltaY > 0 ? 1.25 : 0.8);
+		if (event.isControlDown() || event.isAltDown()) {
+			DefaultZoomPolicy<Node> policy = getZoomPolicy();
+			if (policy != null) {
+				policy.zoomRelative(deltaY > 0 ? 1.25 : 0.8);
+			}
 		}
 	}
 }
