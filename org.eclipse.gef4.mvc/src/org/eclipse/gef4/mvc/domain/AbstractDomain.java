@@ -26,13 +26,13 @@ import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
@@ -77,8 +77,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Inject
 	@Override
-	public void setOperationHistory(
-			@Named("AbstractDomain") IOperationHistory stack) {
+	public void setOperationHistory(IOperationHistory stack) {
 		operationHistory = stack;
 	}
 
@@ -93,7 +92,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Inject
 	@Override
-	public void setUndoContext(@Named("AbstractDomain") IUndoContext undoContext) {
+	public void setUndoContext(IUndoContext undoContext) {
 		this.undoContext = undoContext;
 	}
 

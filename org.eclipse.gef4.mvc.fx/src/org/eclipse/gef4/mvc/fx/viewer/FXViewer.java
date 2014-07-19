@@ -20,7 +20,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 public class FXViewer extends AbstractViewer<Node> {
 
@@ -39,7 +38,7 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	@Inject
 	@Override
-	public void setRootPart(@Named("AbstractViewer") IRootPart<Node> rootPart) {
+	public void setRootPart(IRootPart<Node> rootPart) {
 		super.setRootPart(rootPart);
 		if (rootPart != null) {
 			if (scene == null) {

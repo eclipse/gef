@@ -41,7 +41,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * 
@@ -70,7 +69,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Inject
 	@Override
-	public void setContentPartFactory(@Named("AbstractViewer") IContentPartFactory<VR> factory) {
+	public void setContentPartFactory(IContentPartFactory<VR> factory) {
 		this.contentPartFactory = factory;
 	}
 
@@ -244,7 +243,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Inject
 	@Override
-	public void setRootPart(@Named("AbstractViewer") IRootPart<VR> rootEditPart) {
+	public void setRootPart(IRootPart<VR> rootEditPart) {
 		if (this.rootPart != null) {
 			if (domain != null) {
 				this.rootPart.deactivate();
@@ -287,7 +286,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Inject
 	@Override
-	public void setHandlePartFactory(@Named("AbstractViewer") IHandlePartFactory<VR> factory) {
+	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
 		this.handlePartFactory = factory;
 	}
 
@@ -298,7 +297,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Inject
 	@Override
-	public void setFeedbackPartFactory(@Named("AbstractViewer") IFeedbackPartFactory<VR> factory) {
+	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
 		this.feedbackPartFactory = factory;
 	}
 

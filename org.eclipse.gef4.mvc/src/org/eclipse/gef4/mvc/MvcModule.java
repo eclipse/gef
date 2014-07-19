@@ -53,7 +53,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
 
@@ -63,6 +62,7 @@ import com.google.inject.util.Types;
  * default binding and gets overwritten by the MVC.UI Guice module. In detail,
  * the relationship between the Guice modules of GEF4
  * MVC/MVC.FX/MVC.UI/MVC.FX.UI are:
+ * 
  * <pre>
  * 
  *      MVC   &lt;--extends--    MVC.FX   &lt;--extends--  Client-Non-UI-Module
@@ -73,6 +73,7 @@ import com.google.inject.util.Types;
  *       |                       |                           |
  *    MVC.UI  &lt;--extends--  MVC.FX.UI  &lt;--extends--   Client-UI-Module
  * </pre>
+ * 
  * In addition to 'normal' Guice bindings, we support a special
  * <em>AdapterMap</em> binding, which can be used to inject class-key/adapter
  * pairs into {@link IAdaptable}s. If an {@link IAdaptable} provides a method,
@@ -198,11 +199,9 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractDomainAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// bind IUndoContext and IOperationHistory to reasonable defaults
-		binder().bind(IUndoContext.class)
-				.annotatedWith(Names.named("AbstractDomain"))
-				.toInstance(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		binder().bind(IUndoContext.class).toInstance(
+				IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		binder().bind(IOperationHistory.class)
-				.annotatedWith(Names.named("AbstractDomain"))
 				.to(DefaultOperationHistory.class);
 	}
 

@@ -23,7 +23,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 
 public class ZestFxModule extends MvcFxModule {
 
@@ -55,13 +54,12 @@ public class ZestFxModule extends MvcFxModule {
 	@Override
 	protected void bindFXRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer")).to(GraphRootPart.class);
+		}).to(GraphRootPart.class);
 	}
 
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer"))
-				.to(ContentPartFactory.class);
+		}).to(ContentPartFactory.class);
 	}
 
 	protected void bindNodeContentPartAdapters(

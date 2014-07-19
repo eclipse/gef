@@ -23,7 +23,6 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 public class FXExampleModule extends MvcFxModule {
 
@@ -32,20 +31,18 @@ public class FXExampleModule extends MvcFxModule {
 		super.configure();
 		bindIContentPartFactory();
 	}
-	
+
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer"))
-				.toInstance(new FXExampleContentPartFactory());
+		}).toInstance(new FXExampleContentPartFactory());
 	}
 
 	@Override
 	protected void bindFXDefaultHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer"))
-				.toInstance(new FXExampleHandlePartFactory());
+		}).toInstance(new FXExampleHandlePartFactory());
 	}
-	
+
 	@Override
 	protected void bindSceneFactory() {
 		binder().bind(ISceneFactory.class).toInstance(new ISceneFactory() {
@@ -55,5 +52,5 @@ public class FXExampleModule extends MvcFxModule {
 			}
 		});
 	}
-	
+
 }

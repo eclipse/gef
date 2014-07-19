@@ -47,7 +47,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.name.Names;
 
 public class MvcFxModule extends MvcModule<Node> {
 
@@ -84,14 +83,12 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindFXDefaultFeedbackPartFactory() {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer"))
-				.to(FXDefaultFeedbackPartFactory.class);
+		}).to(FXDefaultFeedbackPartFactory.class);
 	}
 
 	protected void bindFXDefaultHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer"))
-				.to(FXDefaultHandlePartFactory.class);
+		}).to(FXDefaultHandlePartFactory.class);
 	}
 
 	protected void bindFXDomainAdapters(
@@ -110,7 +107,7 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindFXRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node>>() {
-		}).annotatedWith(Names.named("AbstractViewer")).to(FXRootPart.class);
+		}).to(FXRootPart.class);
 	}
 
 	protected void bindFXRootPartAdapters(
