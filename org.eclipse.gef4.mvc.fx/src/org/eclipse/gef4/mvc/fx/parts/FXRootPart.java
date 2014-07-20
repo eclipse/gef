@@ -50,7 +50,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	private Parent scrollPaneInput;
 
 	public FXRootPart() {
-		createRootVisual();
 	}
 
 	@Override
@@ -63,8 +62,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 					contentLayerIndex++;
 				}
 			}
-			contentLayer.getChildren()
-					.add(contentLayerIndex, child.getVisual());
+			getContentLayer().getChildren().add(contentLayerIndex,
+					child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
 			int feedbackLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
@@ -73,7 +72,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 					feedbackLayerIndex++;
 				}
 			}
-			feedbackLayer.getChildren().add(feedbackLayerIndex,
+			getFeedbackLayer().getChildren().add(feedbackLayerIndex,
 					child.getVisual());
 		} else {
 			int handleLayerIndex = 0;
@@ -83,7 +82,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 					handleLayerIndex++;
 				}
 			}
-			handleLayer.getChildren().add(handleLayerIndex, child.getVisual());
+			getHandleLayer().getChildren().add(handleLayerIndex,
+					child.getVisual());
 		}
 	}
 
@@ -117,26 +117,16 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	protected void createRootVisual() {
 		contentLayer = createContentLayer();
-		feedbackLayer = createFeedbackLayer();
-		handleLayer = createHandleLayer();
-
-		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[] {
-				contentLayer, feedbackLayer, handleLayer }));
-
-		scrollPaneInput = createScrollPaneInput(layersStackPane);
-
-		scrollPane = createScrollPane(scrollPaneInput);
-
 		/*
-		 * XXX: The following is a workaround to ensure that visuals do not
-		 * disappear when the content layer is scaled (zooming). This is,
+		 * IMPORTANT: The following is a workaround to ensure that visuals do
+		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -157,6 +147,16 @@ public class FXRootPart extends AbstractRootPart<Node> {
 							Bounds oldValue, Bounds newValue) {
 					}
 				});
+
+		feedbackLayer = createFeedbackLayer();
+		handleLayer = createHandleLayer();
+
+		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[] {
+				contentLayer, feedbackLayer, handleLayer }));
+
+		scrollPaneInput = createScrollPaneInput(layersStackPane);
+
+		scrollPane = createScrollPane(scrollPaneInput);
 	}
 
 	protected ScrollPane createScrollPane(Parent scrollPaneInput) {
@@ -184,22 +184,37 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	public Pane getContentLayer() {
+		if (contentLayer == null) {
+			createRootVisual();
+		}
 		return contentLayer;
 	}
 
 	public Pane getFeedbackLayer() {
+		if (feedbackLayer == null) {
+			createRootVisual();
+		}
 		return feedbackLayer;
 	}
 
 	public Pane getHandleLayer() {
+		if (handleLayer == null) {
+			createRootVisual();
+		}
 		return handleLayer;
 	}
 
 	public StackPane getLayerStackPane() {
+		if (layersStackPane == null) {
+			createRootVisual();
+		}
 		return layersStackPane;
 	}
 
 	public ScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			createRootVisual();
+		}
 		return scrollPane;
 	}
 
@@ -210,11 +225,15 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	public Node getVisual() {
+		if (scrollPane == null) {
+			createRootVisual();
+		}
 		return scrollPane;
 	}
 
 	@Override
 	protected void registerAtVisualPartMap() {
+		StackPane layersStackPane = getLayerStackPane();
 		getViewer().getVisualPartMap().put(layersStackPane, this);
 		for (Node child : layersStackPane.getChildren()) {
 			// register root edit part also for the layers
@@ -228,11 +247,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	@Override
 	protected void removeChildVisual(IVisualPart<Node> child) {
 		if (child instanceof IContentPart) {
-			contentLayer.getChildren().remove(child.getVisual());
+			getContentLayer().getChildren().remove(child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
-			feedbackLayer.getChildren().remove(child.getVisual());
+			getFeedbackLayer().getChildren().remove(child.getVisual());
 		} else {
-			handleLayer.getChildren().remove(child.getVisual());
+			getHandleLayer().getChildren().remove(child.getVisual());
 		}
 	}
 
@@ -252,6 +271,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	protected void unregisterFromVisualPartMap() {
+		StackPane layersStackPane = getLayerStackPane();
 		getViewer().getVisualPartMap().remove(layersStackPane);
 		for (Node child : layersStackPane.getChildren()) {
 			// register root edit part also for the layers
