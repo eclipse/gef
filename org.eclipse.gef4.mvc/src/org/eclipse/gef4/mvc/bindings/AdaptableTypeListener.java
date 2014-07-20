@@ -14,8 +14,10 @@ package org.eclipse.gef4.mvc.bindings;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -44,8 +46,12 @@ import com.google.inject.spi.UntargettedBinding;
 
 public class AdaptableTypeListener implements TypeListener {
 
-	@Inject
+	// the injector used to obtain adapter map bindings
 	private Injector injector;
+
+	// used to keep track of members that are to be injected before we have
+	// obtained the injector (bug #439949)
+	private Map<AdaptableMemberInjector<?>, List<?>> deferredInjections = new HashMap<AdaptableMemberInjector<?>, List<?>>();
 
 	public class AdaptableMemberInjector<T> implements MembersInjector<T> {
 
@@ -202,11 +208,25 @@ public class AdaptableTypeListener implements TypeListener {
 		public void injectMembers(T instance) {
 			// inject all adapters bound by polymorphic AdapterBinding
 			// annotations
-			injectAdapters(instance, method, methodAnnotation);
+			if (injector == null) {
+				// IMPORTANT: it may happen that this member injector is
+				// exercised before the type listener is injected. In such a
+				// case we need to defer the injections until the injector is
+				// available (bug #439949).
+				@SuppressWarnings("unchecked")
+				List<T> deferredInstances = (List<T>) deferredInjections
+						.get(this);
+				if (deferredInstances == null) {
+					deferredInstances = new ArrayList<T>();
+					deferredInjections.put(this, deferredInstances);
+				}
+				deferredInstances.add(instance);
+			} else {
+				injectAdapters(instance);
+			}
 		}
 
-		protected void injectAdapters(T instance, Method method,
-				AdapterMap methodAnnotation) {
+		protected void injectAdapters(Object instance) {
 			SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterBindingKeys(
 					instance.getClass(), method, methodAnnotation);
 			// System.out.println("--");
@@ -235,6 +255,19 @@ public class AdaptableTypeListener implements TypeListener {
 
 	}
 
+	@Inject
+	public void setInjector(Injector injector) {
+		this.injector = injector;
+		// perform deferred injections (if there have been any)
+		for (AdaptableMemberInjector<?> memberInjector : deferredInjections
+				.keySet()) {
+			for (Object instance : deferredInjections.get(memberInjector)) {
+				memberInjector.injectAdapters(instance);
+			}
+		}
+		deferredInjections.clear();
+	}
+
 	@Override
 	public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
 		if (IAdaptable.class.isAssignableFrom(type.getRawType())) {
@@ -245,10 +278,13 @@ public class AdaptableTypeListener implements TypeListener {
 							AdapterMap.class);
 					// we have a method annotated with AdapterBinding
 					if (methodAnnotation != null) {
-						if (i != 0) {
-							throw new IllegalArgumentException(
-									"AdapterBinding annotation is only valid on one-parameter operations.");
+						if (method.getParameterTypes().length != 1) {
+							encounter
+									.addError(
+											"AdapterBinding annotation is only valid on one-parameter operations.",
+											method);
 						}
+						// TODO: check parameter type is appropriate
 						// System.out.println("Registering member injector to "
 						// + type);
 						encounter.register(new AdaptableMemberInjector<I>(
