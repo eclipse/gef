@@ -57,11 +57,19 @@ import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
 
 /**
- * The Guice module which contains default bindings for the MVC bundle. It is
- * extended by the Guice module of the MVC.FX bundle, which adds FX-specific
- * default binding and gets overwritten by the MVC.UI Guice module. In detail,
- * the relationship between the Guice modules of GEF4
- * MVC/MVC.FX/MVC.UI/MVC.FX.UI are:
+ * The Guice module which contains all (default) bindings related to the MVC
+ * bundle. It is extended by the MVC.FX Guice module of the MVC.FX bundle, which
+ * adds FX-specific (default) bindings.
+ * <p>
+ * In an Eclipse UI-integration scenario this module is intended to be
+ * overwritten by the MVC.UI Guice module, which is provided by the MVC.UI
+ * bundle (or, in case of the MVC.FX module, by the MVC.FX.UI module, which is
+ * provided by the MVC.FX.UI bundle).
+ * <p>
+ * Generally, we recommended that all clients should create an own non-UI
+ * module, which extends this module (or the MVC.FX module), as well as an own
+ * UI module, which extends the MVC.UI (or the MVC.FX.UI module), being used to
+ * override the non-UI module in an Eclipse-UI integration scenario, as follows:
  * 
  * <pre>
  * 
