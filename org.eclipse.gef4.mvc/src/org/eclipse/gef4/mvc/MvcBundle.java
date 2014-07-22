@@ -15,17 +15,26 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * The {@link BundleActivator} for the GEF4 MVC bundle.
+ * The {@link BundleActivator} for the MVC bundle.
  */
 public class MvcBundle implements BundleActivator {
 
 	/**
-	 * The plug-in id of the GEF4 MVC bundle.
+	 * The plug-in id of the MVC bundle.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.gef4.mvc"; //$NON-NLS-1$
 
 	private static BundleContext context;
 
+	/**
+	 * If the bundle has been started, returns the {@link BundleContext}
+	 * associated to it.
+	 * 
+	 * @return The {@link BundleContext} of the module if this bundle was
+	 *         started ({@link #start(BundleContext)}) and has since
+	 *         not been stopped ( {@link #stop(BundleContext)}),
+	 *         <code>null</code> otherwise.
+	 */
 	static BundleContext getContext() {
 		return context;
 	}

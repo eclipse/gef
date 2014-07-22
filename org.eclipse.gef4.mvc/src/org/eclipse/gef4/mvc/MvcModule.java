@@ -135,7 +135,20 @@ public class MvcModule<VR> extends AbstractModule {
 		bindAbstractHandlePartAdapters(getAdapterMapBinder(AbstractHandlePart.class));
 	}
 
-	private void bindAbstractHandlePartAdapters(
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractHandlePart} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
+	protected void bindAbstractHandlePartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
 				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
@@ -143,11 +156,37 @@ public class MvcModule<VR> extends AbstractModule {
 						}.getRawType().getClass())));
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractFeedbackPart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractFeedbackPart} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractFeedbackPartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractRootPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractRootPart} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// register (default) behaviors
@@ -171,11 +210,37 @@ public class MvcModule<VR> extends AbstractModule {
 						}.getRawType().getClass())));
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractVisualPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractVisualPart} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractVisualPartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractContentPart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractContentPart} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 
@@ -204,6 +269,19 @@ public class MvcModule<VR> extends AbstractModule {
 						}.getRawType().getClass())));
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractDomain} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractDomain} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractDomainAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// bind IUndoContext and IOperationHistory to reasonable defaults
@@ -213,6 +291,19 @@ public class MvcModule<VR> extends AbstractModule {
 				.to(DefaultOperationHistory.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractViewer} and
+	 * all sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AbstractViewer} as a key.
+	 * 
+	 * @see MvcModule#getAdapterMapBinder(Class)
+	 */
 	protected void bindAbstractViewerAdapters(
 			MapBinder<Class<?>, Object> adapterMapBinder) {
 		// bind (default) viewer models
@@ -236,6 +327,15 @@ public class MvcModule<VR> extends AbstractModule {
 						}.getRawType().getClass())));
 	}
 
+	/**
+	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
+	 * annotation of the given type.
+	 * 
+	 * @param type
+	 *            The type to be used as type of the {@link AdapterMap}.
+	 * @return A new {@link MapBinder} used to define adapter map bindings for
+	 *         the given type (and all sub-types).
+	 */
 	protected MapBinder<Class<?>, Object> getAdapterMapBinder(Class<?> type) {
 		return MapBinder.newMapBinder(binder(), new TypeLiteral<Class<?>>() {
 		}, new TypeLiteral<Object>() {
