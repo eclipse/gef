@@ -16,15 +16,14 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.name.Names;
 
 public class MvcUiModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {
 		// bindings related to workbench integration
-		binder().bind(IUndoContext.class).annotatedWith(Names.named("AbstractDomain")).toInstance(PlatformUI.getWorkbench().getOperationSupport().getUndoContext());
-		binder().bind(IOperationHistory.class).annotatedWith(Names.named("AbstractDomain")).toInstance(PlatformUI.getWorkbench().getOperationSupport().getOperationHistory());
+		binder().bind(IUndoContext.class).toInstance(PlatformUI.getWorkbench().getOperationSupport().getUndoContext());
+		binder().bind(IOperationHistory.class).toInstance(PlatformUI.getWorkbench().getOperationSupport().getOperationHistory());
 	}
 
 }
