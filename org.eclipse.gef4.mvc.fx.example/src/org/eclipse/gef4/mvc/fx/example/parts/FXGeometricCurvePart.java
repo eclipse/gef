@@ -35,6 +35,7 @@ import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
@@ -152,9 +153,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		new FXChopBoxHelper(visual);
 
 		// TODO: move operations and policies to their own types and use binding
-		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
-		setAdapter(FXRelocateOnDragPolicy.TRANSACTION_POLICY_KEY,
+		setAdapter(AdapterKey.get(FXRelocateOnDragPolicy.TRANSACTION_POLICY_KEY),
 				new FXResizeRelocatePolicy() {
 					@Override
 					public void init() {
@@ -193,7 +194,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				});
 
 		// transaction policies
-		setAdapter(FXBendPolicy.class, new FXBendPolicy() {
+		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
 			@Override
 			public IUndoableOperation commit() {
 				final IUndoableOperation updateVisualOperation = super.commit();

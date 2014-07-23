@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.Collection;
 import java.util.List;
 
 import javafx.event.EventHandler;
@@ -73,22 +74,24 @@ public class FXHoverTool extends AbstractTool<Node> {
 				return;
 			}
 
-			AbstractFXHoverPolicy policy = getToolPolicy(targetPart);
-			if (policy != null) {
+			Collection<? extends AbstractFXHoverPolicy> policies = getHoverPolicies(targetPart);
+			for (AbstractFXHoverPolicy policy : policies) {
 				policy.hover(event);
 			}
 		}
 	};
 
-	protected AbstractFXHoverPolicy getToolPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(TOOL_POLICY_KEY);
+	protected Collection<? extends AbstractFXHoverPolicy> getHoverPolicies(
+			IVisualPart<Node> targetPart) {
+		return targetPart.<AbstractFXHoverPolicy> getAdapters(TOOL_POLICY_KEY)
+				.values();
 	}
 
 	@Override
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers()) {
 			viewer.getRootPart().getVisual().getScene()
-					.addEventFilter(MouseEvent.ANY, hoverFilter);
+			.addEventFilter(MouseEvent.ANY, hoverFilter);
 		}
 	}
 
@@ -96,7 +99,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 	protected void unregisterListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers()) {
 			viewer.getRootPart().getVisual().getScene()
-					.removeEventFilter(MouseEvent.ANY, hoverFilter);
+			.removeEventFilter(MouseEvent.ANY, hoverFilter);
 		}
 	}
 

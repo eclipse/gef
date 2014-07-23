@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
@@ -118,13 +119,13 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public List<IVisualPart<VR>> getAnchoreds();
 
-	public Map<Class<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
+	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
 
 	public List<IVisualPart<VR>> getChildren();
 
 	public IVisualPart<VR> getParent();
 
-	public Map<Class<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies();
+	public Map<AdapterKey<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies();
 
 	/**
 	 * Returns the {@link IRootPart}. This method should only be called

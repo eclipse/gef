@@ -33,10 +33,10 @@ public class FXPartUtils {
 	 * <li>Provides a visual that belong to the parent hierarchy of the given
 	 * visual.</li>
 	 * </ol>
-	 * 
+	 *
 	 * When no policy is specified (i.e. it is <code>null</code>), the first
 	 * visual part that controls a visual in the hierarchy is returned.
-	 * 
+	 *
 	 * @param viewers
 	 * @param visual
 	 * @param supportedPolicy
@@ -54,15 +54,15 @@ public class FXPartUtils {
 					targetNode);
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
-							&& targetPart.getAdapter(supportedPolicy) == null)
-					&& targetNode != rootVisual) {
+					&& targetPart.getAdapters(supportedPolicy)
+									.isEmpty()) && targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}
 
 			if (targetPart != null) {
 				if (supportedPolicy != null) {
-					if (targetPart.getAdapter(supportedPolicy) != null) {
+					if (!targetPart.getAdapters(supportedPolicy).isEmpty()) {
 						return targetPart;
 					}
 				} else {

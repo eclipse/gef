@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
+import java.util.Collection;
+
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -41,21 +43,22 @@ public class FXScrollTool extends AbstractTool<Node> {
 			Node targetNode = (Node) target;
 			IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
 					getDomain().getViewers(), targetNode, TOOL_POLICY_KEY);
+			
 			if (targetPart == null) {
 				return;
 			}
 
-			AbstractFXScrollPolicy policy = getToolPolicy(targetPart);
-			if (policy == null) {
-				throw new IllegalStateException(
-						"Target part does not support required policy!");
+			Collection<? extends AbstractFXScrollPolicy> policies = getScrollPolicies(targetPart);
+			for (AbstractFXScrollPolicy policy : policies) {
+				policy.scroll(event, event.getDeltaY());
 			}
-			policy.scroll(event, event.getDeltaY());
 		}
 	};
 
-	protected AbstractFXScrollPolicy getToolPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(TOOL_POLICY_KEY);
+	protected Collection<? extends AbstractFXScrollPolicy> getScrollPolicies(
+			IVisualPart<Node> targetPart) {
+		return targetPart.<AbstractFXScrollPolicy> getAdapters(TOOL_POLICY_KEY)
+				.values();
 	}
 
 	@Override

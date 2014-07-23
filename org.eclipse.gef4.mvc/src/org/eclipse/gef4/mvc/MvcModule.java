@@ -18,6 +18,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.bindings.AdaptableTypeListener;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.bindings.AdapterMaps;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
@@ -133,6 +134,13 @@ public class MvcModule<VR> extends AbstractModule {
 		bindAbstractContentPartAdapters(getAdapterMapBinder(AbstractContentPart.class));
 		bindAbstractFeedbackPartAdapters(getAdapterMapBinder(AbstractFeedbackPart.class));
 		bindAbstractHandlePartAdapters(getAdapterMapBinder(AbstractHandlePart.class));
+
+		// TODO: we should bind these as adapters as well
+		// bind IUndoContext and IOperationHistory to reasonable defaults
+		binder().bind(IUndoContext.class).toInstance(
+				IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		binder().bind(IOperationHistory.class)
+				.to(DefaultOperationHistory.class);
 	}
 
 	/**
@@ -149,10 +157,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractHandlePartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
-						new TypeLiteral<VR>() {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 	}
 
@@ -170,7 +178,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractFeedbackPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
 	}
 
@@ -188,24 +196,25 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractRootPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) behaviors
-		adapterMapBinder.addBinding(ContentBehavior.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				Key.get(Types.newParameterizedType(ContentBehavior.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 
 		// register (default) policies
-		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
-						new TypeLiteral<VR>() {
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(DefaultSelectionPolicy.class).to(
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
 				Key.get(Types.newParameterizedType(
 						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(DefaultZoomPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
+				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 	}
@@ -224,7 +233,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractVisualPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
 	}
 
@@ -242,30 +251,31 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractContentPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 
 		// bind default behaviors
-		adapterMapBinder.addBinding(ContentBehavior.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				Key.get(Types.newParameterizedType(ContentBehavior.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 
 		// bind default policies
-		adapterMapBinder.addBinding(DefaultHoverPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultHoverPolicy.class,
-						new TypeLiteral<VR>() {
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(DefaultSelectionPolicy.class).to(
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
 				Key.get(Types.newParameterizedType(
 						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(DefaultZoomPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
+				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(DefaultFocusPolicy.class).to(
-				Key.get(Types.newParameterizedType(DefaultFocusPolicy.class,
-						new TypeLiteral<VR>() {
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultFocusPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultFocusPolicy.class, new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
 	}
 
@@ -283,12 +293,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractDomainAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
-		// bind IUndoContext and IOperationHistory to reasonable defaults
-		binder().bind(IUndoContext.class).toInstance(
-				IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class);
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 	}
 
 	/**
@@ -305,23 +310,23 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @see MvcModule#getAdapterMapBinder(Class)
 	 */
 	protected void bindAbstractViewerAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind (default) viewer models
-		adapterMapBinder.addBinding(IContentModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(IContentModel.class)).to(
 				DefaultContentModel.class);
-		adapterMapBinder.addBinding(IViewportModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(IViewportModel.class)).to(
 				DefaultViewportModel.class);
-		adapterMapBinder.addBinding(IZoomModel.class)
-				.to(DefaultZoomModel.class);
-		adapterMapBinder.addBinding(IFocusModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(IZoomModel.class)).to(
+				DefaultZoomModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(IFocusModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultFocusModel.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(IHoverModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(IHoverModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultHoverModel.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(ISelectionModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(ISelectionModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultSelectionModel.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
@@ -336,9 +341,11 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @return A new {@link MapBinder} used to define adapter map bindings for
 	 *         the given type (and all sub-types).
 	 */
-	protected MapBinder<Class<?>, Object> getAdapterMapBinder(Class<?> type) {
-		return MapBinder.newMapBinder(binder(), new TypeLiteral<Class<?>>() {
-		}, new TypeLiteral<Object>() {
-		}, AdapterMaps.typed(type));
+	protected MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
+			Class<?> type) {
+		return MapBinder.newMapBinder(binder(),
+				new TypeLiteral<AdapterKey<?>>() {
+				}, new TypeLiteral<Object>() {
+				}, AdapterMaps.typed(type));
 	}
 }

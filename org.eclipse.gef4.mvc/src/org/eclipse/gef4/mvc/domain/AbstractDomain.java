@@ -20,6 +20,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
@@ -44,29 +45,36 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
 
-	public AbstractDomain() {
-	}
-
 	@Override
-	public <T> T getAdapter(Class<T> key) {
+	public <T> T getAdapter(Class<T> classKey) {
+		return as.getAdapter(classKey);
+	}
+	
+	@Override
+	public <T> T getAdapter(AdapterKey<T> key) {
 		return as.getAdapter(key);
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 		as.setAdapter(key, adapter);
+	}
+	
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+		return as.getAdapters(classKey);
 	}
 
 	@Inject
 	public void setAdapters(
-			@AdapterMap(AbstractDomain.class) Map<Class<?>, Object> adaptersWithKeys) {
+			@AdapterMap(AbstractDomain.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractDomain) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);
 	}
 
 	@Override
-	public <T> T unsetAdapter(Class<T> key) {
+	public <T> T unsetAdapter(AdapterKey<T> key) {
 		return as.unsetAdapter(key);
 	}
 
@@ -81,7 +89,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		operationHistory = stack;
 	}
 
-	public Map<Class<? extends ITool<VR>>, ITool<VR>> getTools() {
+	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools() {
 		return as.getAdapters(ITool.class);
 	}
 

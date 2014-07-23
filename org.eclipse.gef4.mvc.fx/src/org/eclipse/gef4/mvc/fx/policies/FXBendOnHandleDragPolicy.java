@@ -31,10 +31,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- * 
+ *
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
 public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
@@ -116,6 +116,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	private FXBendPolicy getBendPolicy(IVisualPart<Node> targetPart) {
+		// retrieve the default bend policy
 		return targetPart.getAdapter(FXBendPolicy.class);
 	}
 
@@ -149,7 +150,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-								.getSegmentParameter() == 1)) {
+						.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}

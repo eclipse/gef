@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -183,9 +184,14 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			return Collections.emptyList();
 		return Collections.unmodifiableList(children);
 	}
+	
+	@Override
+	public <T> T getAdapter(Class<T> classKey) {
+		return as.getAdapter(classKey);
+	}
 
 	@Override
-	public <T> T getAdapter(Class<T> key) {
+	public <T> T getAdapter(AdapterKey<T> key) {
 		return as.getAdapter(key);
 	}
 
@@ -198,7 +204,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 		as.setAdapter(key, adapter);
 	}
 
@@ -206,19 +212,24 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	// IMPORTANT: this method is final so subclasses may not remove the
 	// annotation
 	public final void setAdapters(
-			@AdapterMap(AbstractVisualPart.class) Map<Class<?>, Object> adaptersWithKeys) {
+			@AdapterMap(AbstractVisualPart.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractVisualPart) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);
 	}
+	
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+		return as.getAdapters(classKey);
+	}
 
 	@Override
-	public Map<Class<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors() {
+	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors() {
 		return as.getAdapters(IBehavior.class);
 	}
 
 	@Override
-	public Map<Class<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies() {
+	public Map<AdapterKey<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies() {
 		return as.getAdapters(IPolicy.class);
 	}
 
@@ -287,7 +298,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public <T> T unsetAdapter(Class<T> key) {
+	public <T> T unsetAdapter(AdapterKey<T> key) {
 		return as.unsetAdapter(key);
 	}
 

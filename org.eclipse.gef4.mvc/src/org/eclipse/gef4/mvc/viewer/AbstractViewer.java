@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.gef4.mvc.IActivatable;
 import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
@@ -86,10 +87,10 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Override
 	public IContentModel getContentModel() {
-		IContentModel contentModel = getAdapter(IContentModel.class);
+		IContentModel contentModel = getAdapter(AdapterKey.get(IContentModel.class));
 		if (contentModel == null) {
 			contentModel = new DefaultContentModel();
-			setAdapter(IContentModel.class, contentModel);
+			setAdapter(AdapterKey.get(IContentModel.class), contentModel);
 		}
 		return contentModel;
 	}
@@ -103,12 +104,17 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	}
 
 	@Override
-	public <T> T getAdapter(Class<T> key) {
+	public <T> T getAdapter(Class<T> classKey) {
+		return as.getAdapter(classKey);
+	}
+	
+	@Override
+	public <T> T getAdapter(AdapterKey<T> key) {
 		return as.getAdapter(key);
 	}
 
 	@Override
-	public <T> void setAdapter(Class<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 		as.setAdapter(key, adapter);
 	}
 
@@ -116,14 +122,19 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	// IMPORTANT: this method is final to ensure the binding annotation does not
 	// get lost on overwriting
 	public final void setAdapters(
-			@AdapterMap(AbstractViewer.class) Map<Class<?>, Object> adaptersWithKeys) {
+			@AdapterMap(AbstractViewer.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractViewer) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);
 	}
+	
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+		return as.getAdapters(classKey);
+	}
 
 	@Override
-	public <T> T unsetAdapter(Class<T> key) {
+	public <T> T unsetAdapter(AdapterKey<T> key) {
 		return as.unsetAdapter(key);
 	}
 
@@ -209,10 +220,10 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public ISelectionModel<VR> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<VR> selectionModel = getAdapter(ISelectionModel.class);
+		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey.get(ISelectionModel.class));
 		if (selectionModel == null) {
 			selectionModel = new DefaultSelectionModel<VR>();
-			setAdapter(ISelectionModel.class, selectionModel);
+			setAdapter(AdapterKey.get(ISelectionModel.class), selectionModel);
 		}
 		return selectionModel;
 	}
@@ -220,20 +231,20 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public IHoverModel<VR> getHoverModel() {
 		@SuppressWarnings("unchecked")
-		IHoverModel<VR> hoverModel = getAdapter(IHoverModel.class);
+		IHoverModel<VR> hoverModel = getAdapter(AdapterKey.get(IHoverModel.class));
 		if (hoverModel == null) {
 			hoverModel = new DefaultHoverModel<VR>();
-			setAdapter(IHoverModel.class, hoverModel);
+			setAdapter(AdapterKey.get(IHoverModel.class), hoverModel);
 		}
 		return hoverModel;
 	}
 
 	@Override
 	public IZoomModel getZoomModel() {
-		IZoomModel zoomModel = getAdapter(IZoomModel.class);
+		IZoomModel zoomModel = getAdapter(AdapterKey.get(IZoomModel.class));
 		if (zoomModel == null) {
 			zoomModel = new DefaultZoomModel();
-			setAdapter(IZoomModel.class, zoomModel);
+			setAdapter(AdapterKey.get(IZoomModel.class), zoomModel);
 		}
 		return zoomModel;
 	}
@@ -262,19 +273,20 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public IFocusModel<VR> getFocusModel() {
 		@SuppressWarnings("unchecked")
-		IFocusModel<VR> focusModel = getAdapter(IFocusModel.class);
+		IFocusModel<VR> focusModel = getAdapter(AdapterKey.get(IFocusModel.class));
 		if (focusModel == null) {
 			focusModel = new DefaultFocusModel<VR>();
-			setAdapter(IFocusModel.class, focusModel);
+			setAdapter(AdapterKey.get(IFocusModel.class), focusModel);
 		}
 		return focusModel;
 	}
 
 	@Override
 	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getAdapter(IViewportModel.class);
+		IViewportModel viewportModel = getAdapter(AdapterKey.get(IViewportModel.class));
 		if (viewportModel == null) {
 			viewportModel = new DefaultViewportModel();
+			setAdapter(AdapterKey.get(IViewportModel.class), viewportModel);
 		}
 		return viewportModel;
 	}

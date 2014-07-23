@@ -44,6 +44,12 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.google.inject.spi.UntargettedBinding;
 
+/**
+ * A specific {@link TypeListener} to support adaptable member injection.
+ * 
+ * @author anyssen
+ *
+ */
 public class AdaptableTypeListener implements TypeListener {
 
 	// the injector used to obtain adapter map bindings
@@ -56,84 +62,84 @@ public class AdaptableTypeListener implements TypeListener {
 	public class AdaptableMemberInjector<T> implements MembersInjector<T> {
 
 		private class AdapterBindingsTargetVisitor implements
-				MultibindingsTargetVisitor<Object, Map<Class<?>, Object>> {
+				MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Object>> {
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					InstanceBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ProviderInstanceBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ProviderKeyBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					LinkedKeyBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ExposedBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					UntargettedBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ConstructorBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ConvertedConstantBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					ProviderBinding<? extends Object> binding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					MultibinderBinding<? extends Object> multibinding) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public Map<Class<?>, Object> visit(
+			public Map<AdapterKey<?>, Object> visit(
 					MapBinderBinding<? extends Object> mapbinding) {
-				Map<Class<?>, Object> bindings = new HashMap<Class<?>, Object>();
+				Map<AdapterKey<?>, Object> bindings = new HashMap<AdapterKey<?>, Object>();
 				for (Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
-					bindings.put((Class<?>) entry.getKey(), entry.getValue()
-							.getProvider().get());
+					bindings.put((AdapterKey<?>) entry.getKey(), entry
+							.getValue().getProvider().get());
 				}
 				return bindings;
 			}
@@ -234,7 +240,7 @@ public class AdaptableTypeListener implements TypeListener {
 					.entrySet()) {
 				// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 				try {
-					Map<Class<?>, Object> target = entry.getValue()
+					Map<AdapterKey<?>, Object> target = entry.getValue()
 							.acceptTargetVisitor(
 									new AdapterBindingsTargetVisitor());
 					if (target != null && !target.isEmpty()) {

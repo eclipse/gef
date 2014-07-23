@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
@@ -46,7 +47,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createMultiSelectionCornerHandlePart(
 				targets, position, contextMap);
-		part.setAdapter(AbstractFXDragPolicy.class,
+		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(position)));
 		return part;
@@ -87,7 +88,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 					handleGeometryProvider, segmentIndex, 0.5);
 			injector.injectMembers(hp);
 			// TODO: binding the following policy requires dynamic binding
-			hp.setAdapter(AbstractFXDragPolicy.class,
+			hp.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 					new FXBendOnHandleDragPolicy());
 			parts.add(hp);
 		}
@@ -107,12 +108,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (segmentIndex > 0 && !isEndPoint) {
 			// make way points (middle segment vertices) draggable
 			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(AbstractFXDragPolicy.class,
+			part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 					new FXBendOnHandleDragPolicy());
 		} else {
 			// make end points reconnectable
 			// TODO: binding the following policy requires dynamic binding
-			part.setAdapter(AbstractFXDragPolicy.class,
+			part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 					new FXBendOnHandleDragPolicy());
 		}
 
@@ -127,7 +128,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		IHandlePart<Node> part = super.createShapeSelectionHandlePart(
 				targetPart, handleGeometryProvider, vertexIndex, contextMap);
 		// TODO: binding the following policy requires dynamic binding
-		part.setAdapter(AbstractFXDragPolicy.class,
+		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 				new FXResizeRelocateOnHandleDragPolicy(
 						toReferencePoint(vertexIndex)));
 		return part;

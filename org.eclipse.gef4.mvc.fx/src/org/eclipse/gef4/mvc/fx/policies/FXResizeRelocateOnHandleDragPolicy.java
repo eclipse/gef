@@ -166,8 +166,8 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
-			IContentPart<Node> editPart) {
-		return editPart.getAdapter(FXResizeRelocatePolicy.class);
+			IContentPart<Node> part) {
+		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
 	/**

@@ -16,6 +16,7 @@ import javafx.scene.input.ZoomEvent;
 
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
+// TODO: rename to pinch spread policy
 public abstract class AbstractFXZoomPolicy extends AbstractPolicy<Node> {
 
 	/**

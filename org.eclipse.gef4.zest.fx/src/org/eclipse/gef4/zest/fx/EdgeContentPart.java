@@ -38,6 +38,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -205,19 +206,23 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
 
-		setAdapter(AbstractSelectionBehavior.class, new FXSelectionBehavior() {
-			@Override
-			protected IGeometry getHostGeometry() {
-				return visual.getConnection().getCurveNode().getGeometry();
-			}
-		});
-		setAdapter(AbstractHoverBehavior.class, new FXHoverBehavior() {
-			@Override
-			protected IGeometry getFeedbackGeometry(
-					Map<Object, Object> contextMap) {
-				return visual.getConnection().getCurveNode().getGeometry();
-			}
-		});
+		setAdapter(AdapterKey.get(AbstractSelectionBehavior.class),
+				new FXSelectionBehavior() {
+					@Override
+					protected IGeometry getHostGeometry() {
+						return visual.getConnection().getCurveNode()
+								.getGeometry();
+					}
+				});
+		setAdapter(AdapterKey.get(AbstractHoverBehavior.class),
+				new FXHoverBehavior() {
+					@Override
+					protected IGeometry getFeedbackGeometry(
+							Map<Object, Object> contextMap) {
+						return visual.getConnection().getCurveNode()
+								.getGeometry();
+					}
+				});
 	}
 
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
@@ -42,7 +43,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 		if (this.content == content) {
 			return;
 		}
-		
+
 		Object oldContent = this.content;
 		if (oldContent != null && oldContent != content && getRoot() != null) {
 			unregisterFromContentPartMap();
@@ -51,10 +52,10 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 		if (content != null && content != oldContent && getRoot() != null) {
 			registerAtContentPartMap();
 		}
-		
+
 		pcs.firePropertyChange(CONTENT_PROPERTY, oldContent, content);
 	}
-	
+
 	@Override
 	protected void register() {
 		super.register();
@@ -62,7 +63,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 			registerAtContentPartMap();
 		}
 	}
-	
+
 	@Override
 	protected void unregister() {
 		super.unregister();
@@ -72,23 +73,22 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	/**
-	 * Registers the <i>model</i> in the
-	 * {@link IViewer#getContentPartMap()}. Subclasses should only
-	 * extend this method if they need to register this EditPart in additional
-	 * ways.
+	 * Registers the <i>model</i> in the {@link IViewer#getContentPartMap()}.
+	 * Subclasses should only extend this method if they need to register this
+	 * EditPart in additional ways.
 	 */
 	protected void registerAtContentPartMap() {
 		getViewer().getContentPartMap().put(getContent(), this);
 	}
 
 	/**
-	 * Unregisters the <i>model</i> in the
-	 * {@link IViewer#getContentPartMap()}. Subclasses should only
-	 * extend this method if they need to unregister this EditPart in additional
-	 * ways.
+	 * Unregisters the <i>model</i> in the {@link IViewer#getContentPartMap()}.
+	 * Subclasses should only extend this method if they need to unregister this
+	 * EditPart in additional ways.
 	 */
 	protected void unregisterFromContentPartMap() {
-		Map<Object, IContentPart<VR>> registry = getViewer().getContentPartMap();
+		Map<Object, IContentPart<VR>> registry = getViewer()
+				.getContentPartMap();
 		if (registry.get(getContent()) == this)
 			registry.remove(getContent());
 	}
@@ -111,10 +111,10 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 		}
 		if (parent == null) {
 			// remove all content children
-			getAdapter(ContentBehavior.class)
+			getAdapter(AdapterKey.get(ContentBehavior.class))
 					.synchronizeContentChildren(Collections.emptyList());
 			// create content anchored as needed
-			getAdapter(ContentBehavior.class)
+			getAdapter(AdapterKey.get(ContentBehavior.class))
 					.synchronizeContentAnchorages(Collections.emptyList());
 		}
 		super.setParent(parent);
@@ -124,10 +124,10 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 			// listen for the PARENT property of the host to change, rather than
 			// accessing the policy directly here
 			// create content children as needed
-			getAdapter(ContentBehavior.class)
+			getAdapter(AdapterKey.get(ContentBehavior.class))
 					.synchronizeContentChildren(getContentChildren());
 			// create content anchored as needed
-			getAdapter(ContentBehavior.class)
+			getAdapter(AdapterKey.get(ContentBehavior.class))
 					.synchronizeContentAnchorages(getContentAnchorages());
 		}
 	}

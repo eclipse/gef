@@ -20,6 +20,7 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -46,15 +47,15 @@ public interface IDomain<VR> extends IAdaptable {
 
 	/**
 	 * Returns the {@link ITool}s registered at this {@link IDomain} (via
-	 * {@link #setAdapter(Class, Object)}) with the {@link Class} keys used for
+	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link Class} keys used for
 	 * registration.
 	 * 
 	 * @return A {@link Map} containing the registered {@link ITool}s mapped to
 	 *         their respective {@link Class} keys.
 	 * 
-	 * @see IAdaptable#setAdapter(Class, Object)
+	 * @see IAdaptable#setAdapter(AdapterKey, Object)
 	 */
-	public Map<Class<? extends ITool<VR>>, ITool<VR>> getTools();
+	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools();
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.

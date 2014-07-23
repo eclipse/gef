@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +40,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
 
-	protected AbstractFXClickPolicy getClickPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(CLICK_TOOL_POLICY_KEY);
+	protected Collection<? extends AbstractFXClickPolicy> getClickPolicies(
+			IVisualPart<Node> targetPart) {
+		return targetPart.<AbstractFXClickPolicy> getAdapters(
+				CLICK_TOOL_POLICY_KEY).values();
 	}
 
-	protected AbstractFXDragPolicy getDragPolicy(IVisualPart<Node> targetPart) {
-		return targetPart.getAdapter(DRAG_TOOL_POLICY_KEY);
+	protected Collection<? extends AbstractFXDragPolicy> getDragPolicies(
+			IVisualPart<Node> targetPart) {
+		return targetPart.<AbstractFXDragPolicy> getAdapters(
+				DRAG_TOOL_POLICY_KEY).values();
 	}
 
 	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
@@ -75,21 +80,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
 							Collections.singleton(viewer), target,
 							DRAG_TOOL_POLICY_KEY);
-					if (targetPart == null) {
-						return;
+					if (targetPart != null) {
+						List<Node> pickedNodes = FXUtils.getNodesAt(viewer
+								.getRootPart().getVisual(), e.getSceneX(), e
+								.getSceneY());
+						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
+						for (AbstractFXDragPolicy policy : policies) {
+							policy.drag(e, new Dimension(dx, dy), pickedNodes,
+									getParts(pickedNodes));
+						}
 					}
-
-					AbstractFXDragPolicy policy = getDragPolicy(targetPart);
-					if (policy == null) {
-						throw new IllegalStateException(
-								"Target part does not support required policy!");
-					}
-
-					List<Node> pickedNodes = FXUtils.getNodesAt(viewer
-							.getRootPart().getVisual(), e.getSceneX(), e
-							.getSceneY());
-					policy.drag(e, new Dimension(dx, dy), pickedNodes,
-							getParts(pickedNodes));
 				}
 
 				@Override
@@ -98,12 +98,13 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					e.consume();
 
 					// click first
+					// TODO: why do we not pass in the click policy key here??
 					IVisualPart<Node> clickTargetPart = FXPartUtils
 							.getTargetPart(getDomain().getViewers(), target,
 									null);
 					if (clickTargetPart != null) {
-						AbstractFXClickPolicy policy = getClickPolicy(clickTargetPart);
-						if (policy != null) {
+						Collection<? extends AbstractFXClickPolicy> policies = getClickPolicies(clickTargetPart);
+						for (AbstractFXClickPolicy policy : policies) {
 							policy.click(e);
 						}
 					}
@@ -112,17 +113,12 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					IVisualPart<Node> dragTargetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
-					if (dragTargetPart == null) {
-						return;
+					if (dragTargetPart != null) {
+						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
+						for (AbstractFXDragPolicy policy : policies) {
+							policy.press(e);
+						}
 					}
-
-					AbstractFXDragPolicy policy = getDragPolicy(dragTargetPart);
-					if (policy == null) {
-						throw new IllegalStateException(
-								"Target part does not support required policy!");
-					}
-
-					policy.press(e);
 				}
 
 				@Override
@@ -131,21 +127,18 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
 							Collections.singleton(viewer), target,
 							DRAG_TOOL_POLICY_KEY);
-					if (targetPart == null) {
-						return;
-					}
+					if (targetPart != null) {
+						List<Node> pickedNodes = FXUtils.getNodesAt(viewer
+								.getRootPart().getVisual(), e.getSceneX(), e
+								.getSceneY());
+						List<IContentPart<Node>> parts = getParts(pickedNodes);
 
-					AbstractFXDragPolicy policy = getDragPolicy(targetPart);
-					if (policy == null) {
-						throw new IllegalStateException(
-								"Target part does not support required policy!");
+						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
+						for (AbstractFXDragPolicy policy : policies) {
+							policy.release(e, new Dimension(dx, dy),
+									pickedNodes, parts);
+						}
 					}
-
-					List<Node> pickedNodes = FXUtils.getNodesAt(viewer
-							.getRootPart().getVisual(), e.getSceneX(), e
-							.getSceneY());
-					List<IContentPart<Node>> parts = getParts(pickedNodes);
-					policy.release(e, new Dimension(dx, dy), pickedNodes, parts);
 				}
 			};
 

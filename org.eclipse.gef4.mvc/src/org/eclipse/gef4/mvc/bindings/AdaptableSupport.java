@@ -37,7 +37,7 @@ public class AdaptableSupport<A extends IAdaptable> implements
 		PropertyChangeListener {
 
 	private A sourceAdaptable;
-	private Map<Class<?>, Object> adapters;
+	private Map<AdapterKey<?>, Object> adapters;
 
 	public AdaptableSupport(A sourceAdaptable) {
 		this.sourceAdaptable = sourceAdaptable;
@@ -53,7 +53,7 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(Class<T> key) {
+	public <T> T getAdapter(AdapterKey<T> key) {
 		if (adapters == null) {
 			return null;
 		}
@@ -61,9 +61,9 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(Class<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 		if (adapters == null) {
-			adapters = new HashMap<Class<?>, Object>();
+			adapters = new HashMap<AdapterKey<?>, Object>();
 		}
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
@@ -84,7 +84,7 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	 * 
 	 * @param adaptersWithKeys
 	 *            A map of class keys and related adapters to be added via
-	 *            {@link #setAdapter(Class, Object)}.
+	 *            {@link #setAdapter(AdapterKey, Object)}.
 	 * @param overwrite
 	 *            Indicates whether adapters whose keys are already registered
 	 *            for another adapter should be ignored. If set to
@@ -92,13 +92,14 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	 *            otherwise, existing entries will be preserved.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setAdapters(Map<Class<?>, Object> adaptersWithKeys,
+	public void setAdapters(Map<AdapterKey<?>, Object> adaptersWithKeys,
 			boolean overwrite) {
-		for (Class<?> key : adaptersWithKeys.keySet()) {
+		for (AdapterKey<?> key : adaptersWithKeys.keySet()) {
 			if (adapters == null) {
-				adapters = new HashMap<Class<?>, Object>();
+				adapters = new HashMap<AdapterKey<?>, Object>();
 			}
-			if (!key.isAssignableFrom(adaptersWithKeys.get(key).getClass())) {
+			if (!key.getKey().isAssignableFrom(
+					adaptersWithKeys.get(key).getClass())) {
 				throw new IllegalArgumentException(
 						key
 								+ " is not a valid key for "
@@ -106,13 +107,13 @@ public class AdaptableSupport<A extends IAdaptable> implements
 								+ ", as its neither a super interface nor a super class of its type.");
 			}
 			if (overwrite || !adapters.containsKey(key)) {
-				setAdapter((Class) key, (Object) adaptersWithKeys.get(key));
+				setAdapter((AdapterKey) key, (Object) adaptersWithKeys.get(key));
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T unsetAdapter(Class<T> key) {
+	public <T> T unsetAdapter(AdapterKey<T> key) {
 		if (adapters == null)
 			return null;
 		Object adapter = adapters.remove(key);
@@ -130,7 +131,7 @@ public class AdaptableSupport<A extends IAdaptable> implements
 		return (T) adapter;
 	}
 
-	public Map<Class<?>, Object> getAdapters() {
+	public Map<AdapterKey<?>, Object> getAdapters() {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -138,15 +139,26 @@ public class AdaptableSupport<A extends IAdaptable> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Map<Class<? extends T>, T> getAdapters(Class<?> type) {
+	public <T> T getAdapter(Class<T> classKey) {
+		Map<AdapterKey<? extends Object>, Object> adaptersForClassKey = getAdapters(classKey);
+		// if we have only one adapter for the given class key, return this one
+		if (adaptersForClassKey.size() == 1) {
+			return (T) adaptersForClassKey.get(0);
+		}
+		// if we have more than one, retrieve the one with the default role
+		return getAdapter(AdapterKey.get(classKey, AdapterKey.DEFAULT_ROLE));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
-		Map<Class<? extends T>, T> typeSafeAdapters = new HashMap<Class<? extends T>, T>();
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
 		if (adapters != null) {
-			for (Class<?> key : adapters.keySet()) {
-				if (type.isAssignableFrom(key)) {
-					typeSafeAdapters.put((Class<? extends T>) key,
+			for (AdapterKey<?> key : adapters.keySet()) {
+				if (classKey.isAssignableFrom(key.getKey())) {
+					typeSafeAdapters.put((AdapterKey<? extends T>) key,
 							(T) adapters.get(key));
 				}
 			}

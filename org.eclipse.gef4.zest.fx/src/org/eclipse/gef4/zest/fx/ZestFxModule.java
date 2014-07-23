@@ -14,6 +14,7 @@ package org.eclipse.gef4.zest.fx;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -28,27 +29,16 @@ public class ZestFxModule extends MvcFxModule {
 
 	@Override
 	protected void bindAbstractDomainAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractDomainAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(ILayoutModel.class).to(
+		adapterMapBinder.addBinding(AdapterKey.get(ILayoutModel.class)).to(
 				DefaultLayoutModel.class);
 	}
 
-	@Override
-	protected void bindAbstractFXHandlePartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
-		super.bindAbstractFXHandlePartAdapters(adapterMapBinder);
-		// TODO: resize relocate on handle drag policy cannot be bound
-		// here because its constructor expects a reference point parameter
-		// adapterMapBinder.addBinding(
-		// FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
-		// FXResizeRelocateOnHandleDragPolicy.class);
-	}
-
 	protected void bindEdgeContentPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(EdgeLayoutBehavior.class).to(
-				EdgeLayoutBehavior.class);
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
+				.to(EdgeLayoutBehavior.class);
 	}
 
 	@Override
@@ -63,16 +53,18 @@ public class ZestFxModule extends MvcFxModule {
 	}
 
 	protected void bindNodeContentPartAdapters(
-			MapBinder<Class<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(NodeLayoutPolicy.class).to(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(
 				NodeLayoutPolicy.class);
-		adapterMapBinder.addBinding(NodeLayoutBehavior.class).to(
-				NodeLayoutBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
+				.to(NodeLayoutBehavior.class);
 		// interaction
-		adapterMapBinder.addBinding(FXClickDragTool.DRAG_TOOL_POLICY_KEY).to(
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
 				FXRelocateOnDragPolicy.class);
 		// transaction
-		adapterMapBinder.addBinding(FXResizeRelocatePolicy.class).to(
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
 				FXResizeRelocatePolicy.class);
 	}
 

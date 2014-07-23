@@ -30,6 +30,7 @@ import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -68,11 +69,11 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 		// TODO: inject these adapters
 		// interaction policies
-		setAdapter(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
 
 		// transaction policies
-		setAdapter(FXResizeRelocatePolicy.class, new FXResizeRelocatePolicy() {
+		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class), new FXResizeRelocatePolicy() {
 
 			@Override
 			public IUndoableOperation commit() {
