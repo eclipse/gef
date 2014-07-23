@@ -36,7 +36,7 @@ public interface IAdaptable {
 	 * single adapter that is registered for the default role (
 	 * {@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for which
 	 * this applies. Otherwise it will return
-	 * <code>null<code>. In all cases, an adapter 'matching' the class key is an
+	 * <code>null</code>. In all cases, an adapter 'matching' the class key is an
 	 * adapter, which is registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to a sub-class or a sub-interface of
 	 * the given class key
