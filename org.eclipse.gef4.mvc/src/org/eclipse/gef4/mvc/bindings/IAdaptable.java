@@ -17,13 +17,13 @@ import java.util.Map;
  * An {@link IAdaptable} allows to register, unregister, and retrieve
  * (registered) adapters under a given {@link AdapterKey}. If a to be registered
  * adapter implements the {@link Bound} interface, it is expected that the
- * {@link IAdaptable} on which the adapter is registered binds the adapter to
- * itself via {@link Bound#setAdaptable(IAdaptable)} within
- * {@link #setAdapter(AdapterKey, Object)}, and accordingly unbinds it
- * (setAdaptable(null)) within {@link #unsetAdapter(AdapterKey)}.
+ * {@link IAdaptable} on which the adapter is registered binds itself to the
+ * adapter via {@link Bound#setAdaptable(IAdaptable)} within
+ * {@link #setAdapter(AdapterKey, Object)}, and accordingly unbinds itself from
+ * the adapter (setAdaptable(null)) within {@link #unsetAdapter(AdapterKey)}.
  * 
  * @author anyssen
- *
+ * 
  */
 public interface IAdaptable {
 
@@ -35,11 +35,10 @@ public interface IAdaptable {
 	 * than one adapter that matches the given class key, it will return the
 	 * single adapter that is registered for the default role (
 	 * {@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for which
-	 * this applies. Otherwise it will return
-	 * <code>null</code>. In all cases, an adapter 'matching' the class key is an
-	 * adapter, which is registered with an {@link AdapterKey}, whose key (
-	 * {@link AdapterKey#getKey()}) refers to a sub-class or a sub-interface of
-	 * the given class key
+	 * this applies. Otherwise it will return <code>null</code>. In all cases,
+	 * an adapter 'matching' the class key is an adapter, which is registered
+	 * with an {@link AdapterKey}, whose key ( {@link AdapterKey#getKey()})
+	 * refers to a sub-class or a sub-interface of the given class key
 	 * 
 	 * @param classKey
 	 *            The {@link Class} key used to retrieve a registered adapter.
@@ -76,7 +75,7 @@ public interface IAdaptable {
 	/**
 	 * To be implemented by an adapter to indicate that it intends to be bounded
 	 * to the respective {@link IAdaptable} it is registered at.
-	 *
+	 * 
 	 * @param <A>
 	 *            The type of {@link IAdaptable} this {@link Bound} may be bound
 	 *            to.
