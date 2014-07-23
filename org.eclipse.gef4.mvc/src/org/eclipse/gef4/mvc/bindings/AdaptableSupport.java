@@ -143,7 +143,7 @@ public class AdaptableSupport<A extends IAdaptable> implements
 		Map<AdapterKey<? extends Object>, Object> adaptersForClassKey = getAdapters(classKey);
 		// if we have only one adapter for the given class key, return this one
 		if (adaptersForClassKey.size() == 1) {
-			return (T) adaptersForClassKey.get(0);
+			return (T) adaptersForClassKey.values().iterator().next();
 		}
 		// if we have more than one, retrieve the one with the default role
 		return getAdapter(AdapterKey.get(classKey, AdapterKey.DEFAULT_ROLE));
