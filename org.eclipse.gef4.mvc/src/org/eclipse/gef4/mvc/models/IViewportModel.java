@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
-public interface IViewportModel extends IPropertyChangeSupport {
+public interface IViewportModel extends IPropertyChangeNotifier {
 
 	/*
 	 * An IViewportModel fires PropertyChangeEvents when its width or

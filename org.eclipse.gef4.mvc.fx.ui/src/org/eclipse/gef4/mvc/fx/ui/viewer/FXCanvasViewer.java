@@ -18,8 +18,8 @@ import com.google.inject.Inject;
 
 public class FXCanvasViewer extends FXViewer {
 
-		@Inject
+	@Inject
 	public FXCanvasViewer(final SwtFXCanvas canvas) {
-		setSceneContainer(new FXCanvasSceneContainer( canvas));
+		setSceneContainer(new FXCanvasSceneContainer(canvas));
 	}
 }

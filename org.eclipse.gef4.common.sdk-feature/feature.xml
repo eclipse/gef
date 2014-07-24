@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.gef4.common.sdk"
+      label="GEF4 Common SDK"
+      version="0.1.0.qualifier"
+      provider-name="Eclipse.org"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.1">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/tools/gef/gef4/updates/releases/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.gef4.common"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.common.source"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.common.doc"
+         version="0.0.0"/>
+
+</feature>

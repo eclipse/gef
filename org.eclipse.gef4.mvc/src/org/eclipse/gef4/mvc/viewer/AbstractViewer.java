@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.bindings.AdaptableSupport;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
-import org.eclipse.gef4.mvc.bindings.AdapterMap;
+import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.adapt.AdaptableSupport;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;

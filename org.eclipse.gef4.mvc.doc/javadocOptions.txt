@@ -14,6 +14,7 @@
 -link http://docs.oracle.com/javase/7/docs/api/
 -link http://docs.oracle.com/javafx/2/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.common.doc/reference/api/ ../org.eclipse.gef4.common.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.fx.doc/reference/api/ ../org.eclipse.gef4.fx.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.swtfx.doc/reference/api/ ../org.eclipse.gef4.swtfx.doc/reference/api/

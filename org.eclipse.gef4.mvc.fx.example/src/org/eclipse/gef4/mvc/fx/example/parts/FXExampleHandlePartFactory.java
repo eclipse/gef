@@ -17,10 +17,10 @@ import java.util.Map;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;

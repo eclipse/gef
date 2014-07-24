@@ -16,7 +16,7 @@ package org.eclipse.gef4.mvc.viewer;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IFocusModel;

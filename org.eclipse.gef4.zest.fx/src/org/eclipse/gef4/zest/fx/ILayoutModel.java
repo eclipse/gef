@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 
-public interface ILayoutModel extends IPropertyChangeSupport {
+public interface ILayoutModel extends IPropertyChangeNotifier {
 
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 

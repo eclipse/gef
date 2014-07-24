@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
-import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**

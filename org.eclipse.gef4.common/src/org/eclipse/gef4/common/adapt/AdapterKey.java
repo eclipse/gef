@@ -9,7 +9,8 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.common.adapt;
+
 
 /**
  * A pair of {@link Class} key and {@link String} role to register adapters at

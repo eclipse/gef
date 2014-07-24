@@ -18,7 +18,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author anyssen
  *
  */
-public class FXColorPicker implements IPropertyChangeSupport {
+public class FXColorPicker implements IPropertyChangeNotifier {
 
 	PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 

@@ -19,6 +19,7 @@ import java.util.Map;
 import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
@@ -38,7 +39,6 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;

@@ -14,7 +14,8 @@ package org.eclipse.gef4.zest.fx;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -72,8 +73,10 @@ public class ZestFxModule extends MvcFxModule {
 	protected void configure() {
 		super.configure();
 		bindIContentPartFactory();
-		bindNodeContentPartAdapters(getAdapterMapBinder(NodeContentPart.class));
-		bindEdgeContentPartAdapters(getAdapterMapBinder(EdgeContentPart.class));
+		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				NodeContentPart.class));
+		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				EdgeContentPart.class));
 	}
 
 }

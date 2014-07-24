@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**

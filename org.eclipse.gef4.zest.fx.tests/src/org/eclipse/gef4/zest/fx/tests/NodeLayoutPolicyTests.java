@@ -16,12 +16,12 @@ import static org.junit.Assert.assertEquals;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.PropertiesHelper;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;

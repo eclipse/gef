@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  * 
  */
-public interface IFocusModel<VR> extends IPropertyChangeSupport {
+public interface IFocusModel<VR> extends IPropertyChangeNotifier {
 
 	/**
 	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the

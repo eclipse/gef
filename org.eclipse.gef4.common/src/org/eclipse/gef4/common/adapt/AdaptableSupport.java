@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.IActivatable;
+import org.eclipse.gef4.common.activate.IActivatable;
 
 /**
  * Support class to manage adapters for an {@link IAdaptable}. If the given

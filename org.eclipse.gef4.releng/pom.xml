@@ -364,6 +364,13 @@
 
 	<modules>
 		<module>../org.eclipse.gef4.target</module>
+		
+		<module>../org.eclipse.gef4.common</module>
+		<module>../org.eclipse.gef4.common-feature</module>
+		<!-- <module>../org.eclipse.gef4.common.tests</module> -->
+		<module>../org.eclipse.gef4.common.doc</module>
+		<module>../org.eclipse.gef4.common.doc-feature</module>
+		<module>../org.eclipse.gef4.common.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.geometry</module>
 		<module>../org.eclipse.gef4.geometry-feature</module>
@@ -394,12 +401,16 @@
 
 		<module>../org.eclipse.gef4.mvc</module>
 		<module>../org.eclipse.gef4.mvc-feature</module>
+		<!-- <module>../org.eclipse.gef4.mvc.tests</module> -->
 		<module>../org.eclipse.gef4.mvc.ui</module>
 		<module>../org.eclipse.gef4.mvc.ui-feature</module>
+		<!-- <module>../org.eclipse.gef4.mvc.ui.tests</module> -->
 		<module>../org.eclipse.gef4.mvc.fx</module>
 		<module>../org.eclipse.gef4.mvc.fx-feature</module>
+		<!-- <module>../org.eclipse.gef4.mvc.fx.tests</module> -->
 		<module>../org.eclipse.gef4.mvc.fx.ui</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui-feature</module>
+		<!-- <module>../org.eclipse.gef4.mvc.fx.ui.tests</module> -->
 		<module>../org.eclipse.gef4.mvc.doc</module>
 		<module>../org.eclipse.gef4.mvc.doc-feature</module>
 		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
@@ -438,16 +449,22 @@
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
 
+		<!-- TODO: remove old Zest2 bundles as soon as Zest.FX/Zest.FX.UI is ready -->
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
 		<module>../org.eclipse.gef4.zest-feature</module>
 		<module>../org.eclipse.gef4.zest.ui</module>
-		<module>../org.eclipse.gef4.zest.doc</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
-		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.zest.fx</module>
+		<!-- <module>../org.eclipse.gef4.zest.fx-feature</module> -->
 		<module>../org.eclipse.gef4.zest.fx.tests</module>
+		<!-- <module>../org.eclipse.gef4.zest.fx.ui</module> -->
+		<!-- <module>../org.eclipse.gef4.zest.fx.ui-feature</module> -->
+		<!-- <module>../org.eclipse.gef4.zest.fx.ui.tests</module> -->
+		<module>../org.eclipse.gef4.zest.doc</module>
+		<!-- <module>../org.eclipse.gef4.zest.doc-feature</module> -->
+		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>

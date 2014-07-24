@@ -9,11 +9,11 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc;
+package org.eclipse.gef4.common.notify;
 
 import java.beans.PropertyChangeListener;
 
-public interface IPropertyChangeSupport {
+public interface IPropertyChangeNotifier {
 
 	public void addPropertyChangeListener(PropertyChangeListener listener);
 

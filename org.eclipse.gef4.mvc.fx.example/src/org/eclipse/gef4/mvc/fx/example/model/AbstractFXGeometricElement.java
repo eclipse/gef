@@ -18,12 +18,12 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
 
 abstract public class AbstractFXGeometricElement<G extends IGeometry>
-		implements IPropertyChangeSupport {
+		implements IPropertyChangeNotifier {
 
 	public static final String GEOMETRY_PROPERTY = "Geometry";
 	public static final String TRANSFORM_PROPERTY = "Transform";

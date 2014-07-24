@@ -16,9 +16,10 @@
    <bundle id="org.eclipse.core.contenttype" version="0.0.0"/>
    <bundle id="org.eclipse.core.jobs" version="0.0.0"/>
    <bundle id="org.eclipse.core.runtime" version="0.0.0"/>
-   <bundle id="org.eclipse.gef4.fx" version="0.0.0"/>
+   <bundle id="org.eclipse.gef4.common" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.geometry" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.geometry.convert.fx" version="0.0.0"/>
+   <bundle id="org.eclipse.gef4.fx" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc.fx" version="0.0.0"/>
    <bundle id="org.eclipse.gef4.mvc.fx.example" version="0.0.0"/>

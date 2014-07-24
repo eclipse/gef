@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 
@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
  * @author mwienand
  * 
  */
-public interface IZoomModel extends IPropertyChangeSupport {
+public interface IZoomModel extends IPropertyChangeNotifier {
 
 	/**
 	 * The IZoomingModel fires {@link PropertyChangeEvent}s when its zoom factor

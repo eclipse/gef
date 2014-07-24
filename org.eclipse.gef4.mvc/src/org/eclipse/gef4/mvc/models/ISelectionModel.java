@@ -13,7 +13,7 @@ package org.eclipse.gef4.mvc.models;
 
 import java.util.List;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -28,7 +28,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  * 
  */
-public interface ISelectionModel<VR> extends IPropertyChangeSupport {
+public interface ISelectionModel<VR> extends IPropertyChangeNotifier {
 
 	public static final String SELECTION_PROPERTY = "selection";
 

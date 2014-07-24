@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.common.inject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,9 +18,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
+
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.inject.Binding;
 import com.google.inject.Inject;
@@ -40,11 +43,37 @@ import com.google.inject.spi.ProviderInstanceBinding;
 import com.google.inject.spi.ProviderKeyBinding;
 import com.google.inject.spi.UntargettedBinding;
 
-
+/**
+ * A specific {@link MembersInjector} to support adapter map injection. It is
+ * registered via an {@link AdaptableTypeListener} on any {@link IAdaptable}
+ * encounters that provide a method, which:
+ * <ul>
+ * <li>is annotated with {@link Inject}</li>
+ * <li>contains a single parameter of type
+ * <code>Map&lt;AdapterKey&lt;?&gt;, Object&gt;</code>, which is annotated with
+ * an {@link AdapterMap} annotation.</li>
+ * </ul>
+ * Being registered for a specific {@link IAdaptable} sub-type, an
+ * {@link AdapterMapInjector} will inject all instances of that type, evaluating
+ * all {@link AdapterMap} bindings that can be obtained from the
+ * {@link Injector} which was forwarded by the {@link AdaptableTypeListener} via
+ * {@link #setInjector(Injector)}. This means, that it will inject via the
+ * respective method all adapters, for which bindings with a matching
+ * {@link AdapterMap} annotation exist. Here, matching means, that the type
+ * provided in the {@link AdapterMap} annotation of the {@link IAdaptable}#s
+ * method ({@link AdapterMap#value()}) is either the same or a sub-type of the
+ * type used with the {@link AdapterMap} annotation of the related binding.
+ * 
+ * @see AdapterMap
+ * @see AdaptableTypeListener
+ * 
+ * @author anyssen
+ *
+ */
 public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 
 	private List<Object> deferredInstances = new ArrayList<Object>();
-	
+
 	private class AdapterBindingsTargetVisitor implements
 			MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Object>> {
 		@Override
@@ -122,8 +151,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 				MapBinderBinding<? extends Object> mapbinding) {
 			Map<AdapterKey<?>, Object> bindings = new HashMap<AdapterKey<?>, Object>();
 			for (Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
-				bindings.put((AdapterKey<?>) entry.getKey(), entry
-						.getValue().getProvider().get());
+				bindings.put((AdapterKey<?>) entry.getKey(), entry.getValue()
+						.getProvider().get());
 			}
 			return bindings;
 		}
@@ -134,12 +163,11 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	private Method method;
 	private AdapterMap methodAnnotation;
 
-	public AdapterMapInjector(Method method,
-			AdapterMap methodAnnotation) {
+	public AdapterMapInjector(Method method, AdapterMap methodAnnotation) {
 		this.method = method;
 		this.methodAnnotation = methodAnnotation;
 	}
-	
+
 	@Inject
 	public void setInjector(Injector injector) {
 		this.injector = injector;
@@ -191,9 +219,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 								keyAnnotation.value())
 						/*
 						 * key annotation refers to a true subtype of method
-						 * annotation (check, because if the type is the
-						 * same, the default injector will already inject
-						 * the values)
+						 * annotation (check, because if the type is the same,
+						 * the default injector will already inject the values)
 						 */
 						&& keyAnnotation.value().isAssignableFrom(type)) {
 					// System.out.println("Applying binding for " +
@@ -229,13 +256,13 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 				.entrySet()) {
 			// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 			try {
-				Map<AdapterKey<?>, Object> target = entry.getValue()
-						.acceptTargetVisitor(
-								new AdapterBindingsTargetVisitor());
+				Map<AdapterKey<?>, Object> target = entry
+						.getValue()
+						.acceptTargetVisitor(new AdapterBindingsTargetVisitor());
 				if (target != null && !target.isEmpty()) {
-//					 System.out.println("Injecting " + method.getName()
-//					 + " of " + instance + " with " + target
-//					 + " based on " + entry.getValue());
+					// System.out.println("Injecting " + method.getName()
+					// + " of " + instance + " with " + target
+					// + " based on " + entry.getValue());
 					method.invoke(instance, target);
 				}
 			} catch (IllegalArgumentException e) {

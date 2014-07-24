@@ -17,8 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>

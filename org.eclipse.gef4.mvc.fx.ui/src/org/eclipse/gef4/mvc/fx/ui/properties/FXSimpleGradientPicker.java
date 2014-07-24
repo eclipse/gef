@@ -26,7 +26,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
  * @author anyssen
  *
  */
-public class FXSimpleGradientPicker implements IPropertyChangeSupport {
+public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	

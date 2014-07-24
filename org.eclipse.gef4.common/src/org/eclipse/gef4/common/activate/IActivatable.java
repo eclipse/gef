@@ -11,12 +11,13 @@
  * Note: Parts of this interface have been transferred from org.eclipse.gef.EditPart.
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc;
+package org.eclipse.gef4.common.activate;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
 /**
  * An {@link IActivatable} represents an entity that can be activated (
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @author anyssen
  * 
  */
-public interface IActivatable extends IPropertyChangeSupport {
+public interface IActivatable extends IPropertyChangeNotifier {
 
 	/**
 	 * A key used as {@link PropertyChangeEvent#getPropertyName()} when

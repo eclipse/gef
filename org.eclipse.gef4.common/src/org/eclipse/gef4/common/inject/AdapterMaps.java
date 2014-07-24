@@ -9,11 +9,18 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.common.inject;
+
+import org.eclipse.gef4.common.adapt.AdapterKey;
+
+import com.google.inject.Binder;
+import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 
 /**
- * A utiliy class to construct a new {@link AdapterMap} annotation for a given
- * type.
+ * A utility class to support working with {@link AdapterMap} annotations.
+ * 
+ * @see AdapterMap
  * 
  * @author anyssen
  *
@@ -33,5 +40,23 @@ public class AdapterMaps {
 	 */
 	public static AdapterMap typed(Class<?> type) {
 		return new AdapterMapImpl(type);
+	}
+
+	/**
+	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
+	 * annotation of the given type.
+	 * 
+	 * @param binder
+	 *            The {@link Binder} used to create a new {@link MapBinder}.
+	 * @param type
+	 *            The type to be used as type of the {@link AdapterMap}.
+	 * @return A new {@link MapBinder} used to define adapter map bindings for
+	 *         the given type (and all sub-types).
+	 */
+	public static MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
+			Binder binder, Class<?> type) {
+		return MapBinder.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
+		}, new TypeLiteral<Object>() {
+		}, AdapterMaps.typed(type));
 	}
 }

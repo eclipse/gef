@@ -9,22 +9,50 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.bindings;
+package org.eclipse.gef4.common.inject;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.MembersInjector;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 /**
- * A specific {@link TypeListener} to support adaptable member injection.
+ * A specific {@link TypeListener} to support adapter map injection. It will
+ * register an {@link AdapterMapInjector} for each {@link IAdaptable} it
+ * encounters, which provides a method that:
+ * <ul>
+ * <li>is annotated with {@link Inject}</li>
+ * <li>contains a single parameter of type
+ * <code>Map&lt;AdapterKey&lt;?&gt;, Object&gt;</code>, which is annotated with
+ * an {@link AdapterMap} annotation.</li>
+ * </ul>
+ * The registered {@link AdapterMapInjector} is in turn responsible of
+ * performing the actual adapter map injection.
+ * <P>
+ * In order to function properly, an {@link AdaptableTypeListener} has to be
+ * bound in a Guice {@link Module} as follows:
+ * 
+ * <pre>
+ * AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
+ * requestInjection(adaptableTypeListener);
+ * bindListener(Matchers.any(), adaptableTypeListener);
+ * </pre>
+ * 
+ * Here, the call to <code>requestInjection()</code> is important to ensure that
+ * {@link AdaptableTypeListener#setInjector(Injector)} will get injected.
+ * Without it, the {@link AdaptableTypeListener} will not function properly.
+ *
+ * @see AdapterMap
  * 
  * @author anyssen
  * 
@@ -38,6 +66,16 @@ public class AdaptableTypeListener implements TypeListener {
 	// obtained the injector (bug #439949)
 	private Set<AdapterMapInjector> nonInjectedMemberInjectors = new HashSet<AdapterMapInjector>();
 
+	/**
+	 * In order to work, the {@link AdaptableTypeListener} needs to obtain a
+	 * reference to an {@link Injector}, which is forwarded to the
+	 * {@link AdapterMapInjector}, which it registers for any {@link IAdaptable}
+	 * encounters, to obtain the {@link AdapterMap} bindings to be injected.
+	 * 
+	 * @param injector
+	 *            The injector that is forwarded (used to inject) the
+	 *            {@link AdapterMapInjector}.
+	 */
 	@Inject
 	public void setInjector(Injector injector) {
 		this.injector = injector;
@@ -69,13 +107,13 @@ public class AdaptableTypeListener implements TypeListener {
 						// + type);
 						AdapterMapInjector membersInjector = new AdapterMapInjector(
 								method, methodAnnotation);
-						if(injector != null){
+						if (injector != null) {
 							injector.injectMembers(membersInjector);
-						}
-						else {
+						} else {
 							nonInjectedMemberInjectors.add(membersInjector);
 						}
-						encounter.register((MembersInjector<I>)membersInjector);
+						encounter
+								.register((MembersInjector<I>) membersInjector);
 					}
 				}
 			}

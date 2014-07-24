@@ -23,7 +23,7 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Control;
  * @author anyssen
  *
  */
-public class FXAdvancedGradientPicker implements IPropertyChangeSupport {
+public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	

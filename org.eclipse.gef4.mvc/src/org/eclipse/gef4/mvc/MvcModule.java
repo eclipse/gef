@@ -11,17 +11,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc;
 
-import java.util.Map;
-
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.inject.AdaptableTypeListener;
+import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
-import org.eclipse.gef4.mvc.bindings.AdaptableTypeListener;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
-import org.eclipse.gef4.mvc.bindings.AdapterMap;
-import org.eclipse.gef4.mvc.bindings.AdapterMaps;
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultFocusModel;
@@ -48,7 +46,7 @@ import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
+import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
@@ -83,25 +81,15 @@ import com.google.inject.util.Types;
  *    MVC.UI  &lt;--extends--  MVC.FX.UI  &lt;--extends--   Client-UI-Module
  * </pre>
  * 
- * In addition to 'normal' Guice bindings, we support a special
+ * In addition to 'normal' Guice bindings, the MVC modules makes use of
  * <em>AdapterMap</em> binding, which can be used to inject class-key/adapter
- * pairs into {@link IAdaptable}s. If an {@link IAdaptable} provides a method,
- * which:
- * <ul>
- * <li>is annotated with an {@link Inject} annotation, and</li>
- * <li>provides a single parameter that takes a {@link Map} of class-key/adapter
- * pairs, which is annotated with an {@link AdapterMap} annotation,</li>
- * </ul>
- * any bindings using a matching {@link AdapterMap} annotation are injected.
- * Here, matching means that the binding refers to an {@link AdapterMap}
- * annotation, which provides a type ({@link AdapterMap#value()}) that is the
- * same or a super-type of the one being used in the {@link AdapterMap}
- * annotation used on the parameter of the to be injected method.
- * <p>
- * To enable the {@link AdapterMap} binding support, an
- * {@link AdaptableTypeListener} is bound as listener
- * {@link #bindListener(Matcher, TypeListener)}) within the {@link #configure()}
- * method of this module.
+ * pairs into {@link IAdaptable}s. Therefore, it registers an
+ * {@link AdaptableTypeListener} within its {@link #enableAdapterMapInjection()}
+ * , which gets called from within {@link #configure()}. Clients extending the
+ * MVC or MVC.FX module should make use this is not lost.
+ * 
+ * @see AdapterMap
+ * @see AdaptableTypeListener
  * 
  * @author anyssen
  *
@@ -113,27 +101,29 @@ public class MvcModule<VR> extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		// register type listener to be notified about IAdaptable injections;
-		// the listener will register a members injector that injects adapters
-		// into appropriate subclasses
-		AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
-		requestInjection(adaptableTypeListener);
-		bindListener(Matchers.any(), adaptableTypeListener);
+		enableAdapterMapInjection();
 
 		// bind domain adapters
-		bindAbstractDomainAdapters(getAdapterMapBinder(AbstractDomain.class));
+		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractDomain.class));
 
 		// bind viewer adapters
-		bindAbstractViewerAdapters(getAdapterMapBinder(AbstractViewer.class));
+		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractViewer.class));
 
 		// bind visual part (and subtypes) adapters; not that via type listener
 		// and custom members injector, subclass adapters will additionally be
 		// injected into the respective subclass.
-		bindAbstractVisualPartAdapters(getAdapterMapBinder(AbstractVisualPart.class));
-		bindAbstractRootPartAdapters(getAdapterMapBinder(AbstractRootPart.class));
-		bindAbstractContentPartAdapters(getAdapterMapBinder(AbstractContentPart.class));
-		bindAbstractFeedbackPartAdapters(getAdapterMapBinder(AbstractFeedbackPart.class));
-		bindAbstractHandlePartAdapters(getAdapterMapBinder(AbstractHandlePart.class));
+		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractVisualPart.class));
+		bindAbstractRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractRootPart.class));
+		bindAbstractContentPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractContentPart.class));
+		bindAbstractFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFeedbackPart.class));
+		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractHandlePart.class));
 
 		// TODO: we should bind these as adapters as well
 		// bind IUndoContext and IOperationHistory to reasonable defaults
@@ -144,6 +134,20 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
+	 * Binds an {@link AdaptableTypeListener} (via
+	 * {@link #bindListener(Matcher, TypeListener)}) and ensures it gets
+	 * properly injected ({@link #requestInjection(Object)}).
+	 */
+	protected void enableAdapterMapInjection() {
+		// register type listener to be notified about IAdaptable injections;
+		// the listener will register a members injector that injects adapters
+		// into appropriate subclasses
+		AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
+		requestInjection(adaptableTypeListener);
+		bindListener(Matchers.any(), adaptableTypeListener);
+	}
+
+	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
@@ -151,10 +155,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractHandlePart} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -172,10 +176,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractFeedbackPart} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractFeedbackPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -190,10 +194,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractRootPart} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -227,10 +231,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractVisualPart} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractVisualPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -245,10 +249,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractContentPart} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -287,10 +291,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractDomain} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -304,10 +308,10 @@ public class MvcModule<VR> extends AbstractModule {
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
-	 *            {@link #getAdapterMapBinder(Class)} using
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractViewer} as a key.
 	 * 
-	 * @see MvcModule#getAdapterMapBinder(Class)
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -330,22 +334,5 @@ public class MvcModule<VR> extends AbstractModule {
 				Key.get(Types.newParameterizedType(DefaultSelectionModel.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
-	}
-
-	/**
-	 * Returns a {@link MapBinder}, which is bound to an {@link AdapterMap}
-	 * annotation of the given type.
-	 * 
-	 * @param type
-	 *            The type to be used as type of the {@link AdapterMap}.
-	 * @return A new {@link MapBinder} used to define adapter map bindings for
-	 *         the given type (and all sub-types).
-	 */
-	protected MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
-			Class<?> type) {
-		return MapBinder.newMapBinder(binder(),
-				new TypeLiteral<AdapterKey<?>>() {
-				}, new TypeLiteral<Object>() {
-				}, AdapterMaps.typed(type));
 	}
 }

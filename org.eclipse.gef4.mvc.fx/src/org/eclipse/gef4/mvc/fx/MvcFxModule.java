@@ -15,10 +15,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
@@ -170,15 +171,20 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXDefaultFeedbackPartFactory();
 
 		// bind additional adapters for FXDomain
-		bindFXDomainAdapters(getAdapterMapBinder(FXDomain.class));
+		bindFXDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXDomain.class));
 
 		// bind additional adapters for FXRootPart
-		bindFXRootPartAdapters(getAdapterMapBinder(FXRootPart.class));
+		bindFXRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXRootPart.class));
 
 		// bind additional adapters for FX specific visual parts
-		bindAbstractFXContentPartAdapters(getAdapterMapBinder(AbstractFXContentPart.class));
-		bindAbstractFXFeedbackPartAdapters(getAdapterMapBinder(AbstractFXFeedbackPart.class));
-		bindAbstractFXHandlePartAdapters(getAdapterMapBinder(AbstractFXHandlePart.class));
+		bindAbstractFXContentPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXContentPart.class));
+		bindAbstractFXFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXFeedbackPart.class));
+		bindAbstractFXHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFXHandlePart.class));
 	}
 
 }

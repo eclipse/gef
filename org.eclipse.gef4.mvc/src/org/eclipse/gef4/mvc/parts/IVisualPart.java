@@ -16,11 +16,11 @@ package org.eclipse.gef4.mvc.parts;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.IActivatable;
-import org.eclipse.gef4.mvc.IPropertyChangeSupport;
+import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.bindings.AdapterKey;
-import org.eclipse.gef4.mvc.bindings.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -69,7 +69,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public interface IVisualPart<VR> extends IActivatable, IAdaptable,
-		IPropertyChangeSupport {
+		IPropertyChangeNotifier {
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
