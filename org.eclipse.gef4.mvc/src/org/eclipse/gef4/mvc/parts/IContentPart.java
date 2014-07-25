@@ -13,13 +13,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
- *              Instead, {@link AbstractContentPart} should be subclassed.
+ *              Instead, {@link AbstractContentPart} should be sub-classed.
  * 
  * @author anyssen
  * 
@@ -32,6 +33,10 @@ import java.util.List;
 // TODO: parameterize with content type
 public interface IContentPart<VR> extends IVisualPart<VR> {
 
+	/**
+	 * Property name used within {@link PropertyChangeEvent}s, which are fired
+	 * whenever the content changes ({@link #setContent(Object)}).
+	 */
 	public static final String CONTENT_PROPERTY = "content";
 
 	public void setContent(Object content);

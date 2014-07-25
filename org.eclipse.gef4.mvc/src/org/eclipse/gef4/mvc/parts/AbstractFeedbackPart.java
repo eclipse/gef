@@ -12,6 +12,8 @@
 package org.eclipse.gef4.mvc.parts;
 
 /**
+ * The abstract base implementation of {@link IFeedbackPart}, intended to be
+ * sub-classed by clients to create their own custom {@link IFeedbackPart}.
  * 
  * @author anyssen
  * 

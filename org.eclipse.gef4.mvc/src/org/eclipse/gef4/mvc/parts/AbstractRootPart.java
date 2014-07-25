@@ -18,6 +18,8 @@ import java.util.List;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
+ * The abstract base implementation of {@link IRootPart}, intended to be
+ * sub-classed by clients to create their own custom {@link IRootPart}.
  * 
  * @author anyssen
  * 
