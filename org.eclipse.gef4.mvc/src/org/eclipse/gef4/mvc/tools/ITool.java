@@ -39,8 +39,13 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-// TODO: change generic parameter to specify IDomain<VR> rather than VR
 public interface ITool<VR> extends IActivatable, IAdaptable.Bound<IDomain<VR>> {
 
+	/**
+	 * The {@link IDomain}, this {@link ITool} is adapted to.
+	 * 
+	 * @return The {@link IDomain}, this {@link ITool} is adapted to, or
+	 *         <code>null</code> if this {@link ITool} is not adapted to any {@link IDomain}.
+	 */
 	public IDomain<VR> getDomain();
 }
