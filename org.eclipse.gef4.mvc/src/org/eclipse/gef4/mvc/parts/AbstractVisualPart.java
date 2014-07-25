@@ -209,9 +209,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Inject
-	// IMPORTANT: this method is final so subclasses may not remove the
-	// annotation
-	public final void setAdapters(
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject annotation.
+	public void setAdapters(
 			@AdapterMap(AbstractVisualPart.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractVisualPart) with those injected by Guice

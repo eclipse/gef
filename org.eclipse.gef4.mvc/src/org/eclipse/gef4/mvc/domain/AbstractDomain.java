@@ -66,6 +66,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Inject
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject annotation.
 	public void setAdapters(
 			@AdapterMap(AbstractDomain.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
