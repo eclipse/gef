@@ -49,7 +49,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	public <T> T getAdapter(Class<T> classKey) {
 		return as.getAdapter(classKey);
 	}
-	
+
 	@Override
 	public <T> T getAdapter(AdapterKey<T> key) {
 		return as.getAdapter(key);
@@ -59,16 +59,17 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
 		as.setAdapter(key, adapter);
 	}
-	
+
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
 		return as.getAdapters(classKey);
 	}
 
-	@Inject
-	// IMPORTANT: if sub-classes override, they will have to transfer the inject annotation.
+	@Inject(optional = true)
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject
+	// annotation.
 	public void setAdapters(
-			@AdapterMap(AbstractDomain.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
+			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractDomain) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);

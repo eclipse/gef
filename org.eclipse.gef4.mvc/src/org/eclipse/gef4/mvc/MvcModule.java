@@ -101,6 +101,8 @@ public class MvcModule<VR> extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		// TODO: could rather install a module that is provided by
+		// org.eclipse.gef4.common.inject (which contains the enabling code)
 		enableAdapterMapInjection();
 
 		// bind domain adapters

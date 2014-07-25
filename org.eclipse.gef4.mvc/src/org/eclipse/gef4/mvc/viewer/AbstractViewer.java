@@ -47,7 +47,8 @@ import com.google.inject.Inject;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractViewer<VR> implements IViewer<VR> {
@@ -87,7 +88,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Override
 	public IContentModel getContentModel() {
-		IContentModel contentModel = getAdapter(AdapterKey.get(IContentModel.class));
+		IContentModel contentModel = getAdapter(AdapterKey
+				.get(IContentModel.class));
 		if (contentModel == null) {
 			contentModel = new DefaultContentModel();
 			setAdapter(AdapterKey.get(IContentModel.class), contentModel);
@@ -107,7 +109,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	public <T> T getAdapter(Class<T> classKey) {
 		return as.getAdapter(classKey);
 	}
-	
+
 	@Override
 	public <T> T getAdapter(AdapterKey<T> key) {
 		return as.getAdapter(key);
@@ -118,15 +120,16 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 		as.setAdapter(key, adapter);
 	}
 
-	@Inject
-	// IMPORTANT: if sub-classes override, they will have to transfer the inject annotation.
+	@Inject(optional = true)
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject
+	// annotation.
 	public void setAdapters(
-			@AdapterMap(AbstractViewer.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
+			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractViewer) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);
 	}
-	
+
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
 		return as.getAdapters(classKey);
@@ -219,7 +222,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public ISelectionModel<VR> getSelectionModel() {
 		@SuppressWarnings("unchecked")
-		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey.get(ISelectionModel.class));
+		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey
+				.get(ISelectionModel.class));
 		if (selectionModel == null) {
 			selectionModel = new DefaultSelectionModel<VR>();
 			setAdapter(AdapterKey.get(ISelectionModel.class), selectionModel);
@@ -230,7 +234,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public IHoverModel<VR> getHoverModel() {
 		@SuppressWarnings("unchecked")
-		IHoverModel<VR> hoverModel = getAdapter(AdapterKey.get(IHoverModel.class));
+		IHoverModel<VR> hoverModel = getAdapter(AdapterKey
+				.get(IHoverModel.class));
 		if (hoverModel == null) {
 			hoverModel = new DefaultHoverModel<VR>();
 			setAdapter(AdapterKey.get(IHoverModel.class), hoverModel);
@@ -272,7 +277,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	@Override
 	public IFocusModel<VR> getFocusModel() {
 		@SuppressWarnings("unchecked")
-		IFocusModel<VR> focusModel = getAdapter(AdapterKey.get(IFocusModel.class));
+		IFocusModel<VR> focusModel = getAdapter(AdapterKey
+				.get(IFocusModel.class));
 		if (focusModel == null) {
 			focusModel = new DefaultFocusModel<VR>();
 			setAdapter(AdapterKey.get(IFocusModel.class), focusModel);
@@ -282,7 +288,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 
 	@Override
 	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getAdapter(AdapterKey.get(IViewportModel.class));
+		IViewportModel viewportModel = getAdapter(AdapterKey
+				.get(IViewportModel.class));
 		if (viewportModel == null) {
 			viewportModel = new DefaultViewportModel();
 			setAdapter(AdapterKey.get(IViewportModel.class), viewportModel);

@@ -70,5 +70,5 @@ public @interface AdapterMap {
 	 * 
 	 * @return The {@link Class} used as type of this {@link AdapterMap}.
 	 */
-	Class<?> value();
+	Class<?> value() default IAdaptable.class;
 }

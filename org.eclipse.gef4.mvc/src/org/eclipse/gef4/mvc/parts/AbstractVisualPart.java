@@ -34,7 +34,8 @@ import com.google.inject.Inject;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
@@ -92,7 +93,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		addChildWithoutNotify(child, index);
 
 		child.setParent(this);
-		
+
 		refreshVisual();
 		addChildVisual(child, index);
 		child.refreshVisual();
@@ -184,7 +185,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			return Collections.emptyList();
 		return Collections.unmodifiableList(children);
 	}
-	
+
 	@Override
 	public <T> T getAdapter(Class<T> classKey) {
 		return as.getAdapter(classKey);
@@ -208,15 +209,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		as.setAdapter(key, adapter);
 	}
 
-	@Inject
-	// IMPORTANT: if sub-classes override, they will have to transfer the inject annotation.
+	@Inject(optional = true)
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject
+	// annotation.
 	public void setAdapters(
-			@AdapterMap(AbstractVisualPart.class) Map<AdapterKey<?>, Object> adaptersWithKeys) {
+			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractVisualPart) with those injected by Guice
 		as.setAdapters(adaptersWithKeys, false);
 	}
-	
+
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
 		return as.getAdapters(classKey);
@@ -431,7 +433,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 				getAnchorages());
 		addAnchorageWithoutNotify(anchorage, index);
 		anchorage.addAnchored(this);
-		
+
 		anchorage.refreshVisual();
 		attachToAnchorageVisual(anchorage, index);
 		refreshVisual();
