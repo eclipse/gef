@@ -12,6 +12,7 @@
 package org.eclipse.gef4.common.inject;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 
 import com.google.inject.Binder;
 import com.google.inject.TypeLiteral;
@@ -38,7 +39,7 @@ public class AdapterMaps {
 	 *            The type of the {@link AdapterMap} to be created.
 	 * @return A new {@link AdapterMapImpl} for the given type.
 	 */
-	public static AdapterMap typed(Class<?> type) {
+	public static AdapterMap boundToIAdaptableType(Class<? extends IAdaptable> type) {
 		return new AdapterMapImpl(type);
 	}
 
@@ -54,9 +55,9 @@ public class AdapterMaps {
 	 *         the given type (and all sub-types).
 	 */
 	public static MapBinder<AdapterKey<?>, Object> getAdapterMapBinder(
-			Binder binder, Class<?> type) {
+			Binder binder, Class<? extends IAdaptable> type) {
 		return MapBinder.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
 		}, new TypeLiteral<Object>() {
-		}, AdapterMaps.typed(type));
+		}, AdapterMaps.boundToIAdaptableType(type));
 	}
 }
