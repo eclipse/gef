@@ -134,10 +134,6 @@ public final class DotFileUtils {
 			final File destinationRootFolder) {
 		for (String name : sourceRootFolder.list()) {
 			File source = new File(sourceRootFolder, name);
-			/* The resources we copy over are versioned in this bundle. */
-			if (source.getName().equals("CVS")) { //$NON-NLS-1$
-				continue;
-			}
 			if (source.isDirectory()) {
 				// Recursively create sub-directories:
 				File destinationFolder = new File(destinationRootFolder,
