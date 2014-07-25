@@ -39,7 +39,7 @@ public class AdapterMaps {
 	 *            The type of the {@link AdapterMap} to be created.
 	 * @return A new {@link AdapterMapImpl} for the given type.
 	 */
-	public static AdapterMap boundToIAdaptableType(Class<? extends IAdaptable> type) {
+	public static AdapterMap typed(Class<? extends IAdaptable> type) {
 		return new AdapterMapImpl(type);
 	}
 
@@ -58,6 +58,6 @@ public class AdapterMaps {
 			Binder binder, Class<? extends IAdaptable> type) {
 		return MapBinder.newMapBinder(binder, new TypeLiteral<AdapterKey<?>>() {
 		}, new TypeLiteral<Object>() {
-		}, AdapterMaps.boundToIAdaptableType(type));
+		}, AdapterMaps.typed(type));
 	}
 }
