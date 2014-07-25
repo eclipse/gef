@@ -14,6 +14,7 @@ package org.eclipse.gef4.common.inject;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -53,6 +54,7 @@ import com.google.inject.multibindings.MapBinderBinding;
  * @see AdaptableTypeListener
  * @see AdapterMapInjector
  */
+@Documented
 @Target({ PARAMETER })
 @Retention(RUNTIME)
 @BindingAnnotation
