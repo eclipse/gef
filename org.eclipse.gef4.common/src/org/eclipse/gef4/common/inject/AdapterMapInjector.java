@@ -61,7 +61,7 @@ import com.google.inject.spi.UntargettedBinding;
  * respective method all adapters, for which bindings with a matching
  * {@link AdapterMap} annotation exist. Here, matching means, that the type
  * provided in the {@link AdapterMap} annotation of the {@link IAdaptable}#s
- * method ({@link AdapterMap#value()}) is either the same or a sub-type of the
+ * method ({@link AdapterMap#adaptableType()}) is either the same or a sub-type of the
  * type used with the {@link AdapterMap} annotation of the related binding.
  * 
  * @see AdapterMap
@@ -197,9 +197,9 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 						}
 						AdapterMap a1 = (AdapterMap) o1.getAnnotation();
 						AdapterMap a2 = (AdapterMap) o2.getAnnotation();
-						if (a1.value().equals(a2.value())) {
+						if (a1.adaptableType().equals(a2.adaptableType())) {
 							return 0;
-						} else if (a1.value().isAssignableFrom(a2.value())) {
+						} else if (a1.adaptableType().isAssignableFrom(a2.adaptableType())) {
 							return -1;
 						} else {
 							return 1;
@@ -213,16 +213,16 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 				// Guice will already have injected all
 				// bindings for those annotations using the exact
 				// class, so we will only deal with subclasses here
-				if (methodAnnotation.value().isAssignableFrom(
-						keyAnnotation.value())
-						&& !methodAnnotation.value().equals(
-								keyAnnotation.value())
+				if (methodAnnotation.adaptableType().isAssignableFrom(
+						keyAnnotation.adaptableType())
+						&& !methodAnnotation.adaptableType().equals(
+								keyAnnotation.adaptableType())
 						/*
 						 * key annotation refers to a true subtype of method
 						 * annotation (check, because if the type is the same,
 						 * the default injector will already inject the values)
 						 */
-						&& keyAnnotation.value().isAssignableFrom(type)) {
+						&& keyAnnotation.adaptableType().isAssignableFrom(type)) {
 					// System.out.println("Applying binding for " +
 					// keyAnnotation.value() + " to " + type +
 					// " as subtype of " + methodAnnotation.value());

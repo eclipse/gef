@@ -45,8 +45,9 @@ import com.google.inject.multibindings.MapBinderBinding;
  * bindings that can be obtained from the {@link Injector} with which the
  * {@link AdaptableTypeListener} was injected. In detail, it will inject into an
  * {@link IAdaptable} all adapters, which are bound to an {@link AdapterMap}
- * annotation of a type ( {@link AdapterMap#value()}), which is either the same
- * or a super-type or super-interface of the {@link IAdaptable} to be injected.
+ * annotation of a type ( {@link AdapterMap#adaptableType()}), which is either
+ * the same or a super-type or super-interface of the {@link IAdaptable} to be
+ * injected.
  * 
  * @author anyssen
  *
@@ -61,14 +62,31 @@ import com.google.inject.multibindings.MapBinderBinding;
 public @interface AdapterMap {
 
 	/**
-	 * The type used to qualify the {@link AdapterMap} annotation. It will be
-	 * used to infer which {@link AdapterMap} bindings are taken into
-	 * consideration when performing adapter injection. That means that when
-	 * injecting the members of an {@link IAdaptable}, only those bindings
-	 * referring to the same or a super-type or super-interface of the
-	 * {@link IAdaptable}'s type will be considered.
+	 * The type used to qualify the {@link AdapterMap} annotation. It is used to
+	 * infer which bindings are taken into consideration when performing adapter
+	 * map injection on an {@link IAdaptable}'s method.
+	 * <p>
+	 * That is, when injecting a method with an adapter map only those bindings
+	 * that are annotated with an {@link AdapterMap} annotation, whose
+	 * {@link IAdaptable} type ( {@link #adaptableType()} ) is either the same
+	 * or a super-type or super-interface of the to be injected
+	 * {@link IAdaptable} instance's runtime type will be considered.
+	 * <p>
+	 * If a type is specified at an injection point (i.e. when annotating a
+	 * method parameter within an {@link IAdaptable} annotation), it is simply
+	 * ignored by the {@link AdapterMapInjector}. The runtime type of the to be
+	 * injected {@link IAdaptable} instance is instead considered.
+	 * <p>
+	 * Please note that while the {@link AdapterMapInjector} ignores the type
+	 * specified at the injection point (i.e. at the {@link AdapterMap}
+	 * -annotated method parameter), Guice will still evaluate it and will
+	 * require an {@link AdapterMap} binding for the type (i.e.
+	 * {@link IAdaptable} if no type is specified and the default is used),
+	 * unless the injection point is explicitly marked to be optional (
+	 * <code>@Inject(optional = true)</code>), which is thus highly recommended.
 	 * 
 	 * @return The {@link Class} used as type of this {@link AdapterMap}.
+	 *         {@link IAdaptable} by default.
 	 */
-	Class<?> value() default IAdaptable.class;
+	Class<?> adaptableType() default IAdaptable.class;
 }

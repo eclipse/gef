@@ -30,7 +30,7 @@ public class AdapterMapImpl implements AdapterMap, Serializable {
 	}
 
 	@Override
-	public Class<?> value() {
+	public Class<?> adaptableType() {
 		return value;
 	}
 
@@ -41,7 +41,7 @@ public class AdapterMapImpl implements AdapterMap, Serializable {
 		}
 
 		AdapterMap other = (AdapterMap) obj;
-		return value.equals(other.value());
+		return value.equals(other.adaptableType());
 	}
 
 	@Override
