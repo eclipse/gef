@@ -18,6 +18,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdaptableTypeListener;
 import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
@@ -82,11 +83,11 @@ import com.google.inject.util.Types;
  * </pre>
  * 
  * In addition to 'normal' Guice bindings, the MVC modules makes use of
- * <em>AdapterMap</em> binding, which can be used to inject class-key/adapter
- * pairs into {@link IAdaptable}s. Therefore, it registers an
- * {@link AdaptableTypeListener} within its {@link #enableAdapterMapInjection()}
- * , which gets called from within {@link #configure()}. Clients extending the
- * MVC or MVC.FX module should make use this is not lost.
+ * <em>AdapterMap</em> bindings, which is used to inject class-key/adapter pairs
+ * into {@link IAdaptable}s. Therefore, it enables support for adapter map
+ * injections within {@link #enableAdapterMapInjection()}, which gets called
+ * from within {@link #configure()}. Clients extending the MVC or MVC.FX module
+ * should make use this is not lost.
  * 
  * @see AdapterMap
  * @see AdaptableTypeListener
@@ -136,17 +137,11 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
-	 * Binds an {@link AdaptableTypeListener} (via
-	 * {@link #bindListener(Matcher, TypeListener)}) and ensures it gets
-	 * properly injected ({@link #requestInjection(Object)}).
+	 * Installs en {@link AdapterMapInjectionSupport} module, which binds an
+	 * {@link AdaptableTypeListener} and ensures it gets properly injected.
 	 */
 	protected void enableAdapterMapInjection() {
-		// register type listener to be notified about IAdaptable injections;
-		// the listener will register a members injector that injects adapters
-		// into appropriate subclasses
-		AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
-		requestInjection(adaptableTypeListener);
-		bindListener(Matchers.any(), adaptableTypeListener);
+		install(new AdapterMapInjectionSupport());
 	}
 
 	/**
