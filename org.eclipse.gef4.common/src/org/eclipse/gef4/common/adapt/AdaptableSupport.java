@@ -43,12 +43,61 @@ public class AdaptableSupport<A extends IAdaptable> {
 		this.pcs = pcs;
 	}
 
+	private void activateAdapters() {
+		for (IActivatable adapter : this.<IActivatable> getAdapters(
+				IActivatable.class).values()) {
+			adapter.activate();
+		}
+	}
+
+	private void deactivateAdapters() {
+		for (IActivatable adapter : this.<IActivatable> getAdapters(
+				IActivatable.class).values()) {
+			adapter.deactivate();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(AdapterKey<? super T> key) {
 		if (adapters == null) {
 			return null;
 		}
 		return (T) adapters.get(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<? super T> classKey) {
+		Map<AdapterKey<? extends Object>, Object> adaptersForClassKey = getAdapters(classKey);
+		// if we have only one adapter for the given class key, return this one
+		if (adaptersForClassKey.size() == 1) {
+			return (T) adaptersForClassKey.values().iterator().next();
+		}
+		// if we have more than one, retrieve the one with the default role
+		return this.<T>getAdapter(AdapterKey.get(classKey, AdapterKey.DEFAULT_ROLE));
+	}
+
+	public Map<AdapterKey<?>, Object> getAdapters() {
+		if (adapters == null) {
+			return Collections.emptyMap();
+		}
+		return adapters;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+		if (adapters == null) {
+			return Collections.emptyMap();
+		}
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
+		if (adapters != null) {
+			for (AdapterKey<?> key : adapters.keySet()) {
+				if (classKey.isAssignableFrom(key.getKey())) {
+					typeSafeAdapters.put((AdapterKey<? extends T>) key,
+							(T) adapters.get(key));
+				}
+			}
+		}
+		return typeSafeAdapters;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -63,6 +112,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 				&& ((IActivatable) adaptable).isActive()) {
 			deactivateAdapters();
 		}
+		
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(adapters);
 
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
@@ -76,7 +127,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 			activateAdapters();
 		}
 
-		// TODO: fire property change...
+		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters, new HashMap<AdapterKey<?>, Object>(adapters));
 	}
 
 	/**
@@ -124,6 +175,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 			deactivateAdapters();
 		}
 
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(adapters);
+		
 		Object adapter = adapters.remove(key);
 		if (adapter != null) {
 			if (adapter instanceof IAdaptable.Bound) {
@@ -141,56 +194,9 @@ public class AdaptableSupport<A extends IAdaptable> {
 		if (adapters.size() == 0) {
 			adapters = null;
 		}
+		
+		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters, new HashMap<AdapterKey<?>, Object>(adapters));
 		return (T) adapter;
-	}
-
-	public Map<AdapterKey<?>, Object> getAdapters() {
-		if (adapters == null) {
-			return Collections.emptyMap();
-		}
-		return adapters;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(Class<? super T> classKey) {
-		Map<AdapterKey<? extends Object>, Object> adaptersForClassKey = getAdapters(classKey);
-		// if we have only one adapter for the given class key, return this one
-		if (adaptersForClassKey.size() == 1) {
-			return (T) adaptersForClassKey.values().iterator().next();
-		}
-		// if we have more than one, retrieve the one with the default role
-		return this.<T>getAdapter(AdapterKey.get(classKey, AdapterKey.DEFAULT_ROLE));
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
-		if (adapters == null) {
-			return Collections.emptyMap();
-		}
-		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
-		if (adapters != null) {
-			for (AdapterKey<?> key : adapters.keySet()) {
-				if (classKey.isAssignableFrom(key.getKey())) {
-					typeSafeAdapters.put((AdapterKey<? extends T>) key,
-							(T) adapters.get(key));
-				}
-			}
-		}
-		return typeSafeAdapters;
-	}
-
-	private void activateAdapters() {
-		for (IActivatable adapter : this.<IActivatable> getAdapters(
-				IActivatable.class).values()) {
-			adapter.activate();
-		}
-	}
-
-	private void deactivateAdapters() {
-		for (IActivatable adapter : this.<IActivatable> getAdapters(
-				IActivatable.class).values()) {
-			adapter.deactivate();
-		}
 	}
 
 }
