@@ -317,11 +317,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		this.handlePartFactory = factory;
 	}
 
-	/**
-	 * @see IViewer#setRootPart(IRootPart)
-	 */
 	@Inject
-	@Override
 	public void setRootPart(IRootPart<VR> rootPart) {
 		if(this.rootPart == rootPart){
 			return;

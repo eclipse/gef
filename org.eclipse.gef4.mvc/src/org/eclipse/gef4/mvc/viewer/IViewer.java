@@ -60,7 +60,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * special {@link IVisualPart} that serves as the parent to all contained
 	 * {@link IContentPart}s, {@link IHandlePart}s, and {@link IFeedbackPart}s.
 	 * 
-	 * @see #setRootPart(IRootPart)
 	 * @return The {@link IRootPart} of this viewer.
 	 */
 	public IRootPart<VR> getRootPart();
@@ -74,17 +73,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The visual part map
 	 */
 	public Map<VR, IVisualPart<VR>> getVisualPartMap();
-
-	/**
-	 * Sets the {@link IRootPart} of this viewer. The root should not be
-	 * confused with the <i>contents</i>.
-	 * 
-	 * @param root
-	 *            the {@link IRootPart} of this viewer
-	 * @see #getRootPart()
-	 * @see #getContents()
-	 */
-	public void setRootPart(IRootPart<VR> root);
 
 	public List<Object> getContents();
 
