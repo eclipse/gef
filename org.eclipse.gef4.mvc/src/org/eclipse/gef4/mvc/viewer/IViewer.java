@@ -16,6 +16,7 @@ package org.eclipse.gef4.mvc.viewer;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.IContentModel;
@@ -44,7 +45,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public interface IViewer<VR> extends IAdaptable {
+public interface IViewer<VR> extends IAdaptable, IActivatable {
 
 	/**
 	 * Returns the {@link Map} for registering {@link IContentPart}s by their
@@ -93,29 +94,25 @@ public interface IViewer<VR> extends IAdaptable {
 	 * Returns the {@link IContentPartFactory} for this viewer, used to create
 	 * {@link IContentPart}s.
 	 * 
-	 * @see #setContentPartFactory(IContentPartFactory)
-	 * 
 	 * @return The {@link IContentPartFactory} being used
 	 */
 	public IContentPartFactory<VR> getContentPartFactory();
 
 	/**
-	 * Sets the {@link IContentPartFactory} used to create {@link IContentPart}
-	 * s.
+	 * Returns the {@link IHandlePartFactory} for this viewer, used to create
+	 * {@link IHandlePart}s.
 	 * 
-	 * @param factory
-	 *            the {@link IContentPartFactory} to be used
-	 * @see #getContentPartFactory()
+	 * @return The {@link IHandlePartFactory} being used
 	 */
-	public void setContentPartFactory(IContentPartFactory<VR> factory);
-
 	public IHandlePartFactory<VR> getHandlePartFactory();
 
-	public void setHandlePartFactory(IHandlePartFactory<VR> factory);
-
+	/**
+	 * Returns the {@link IFeedbackPartFactory} for this viewer, used to create
+	 * {@link IFeedbackPart}s.
+	 * 
+	 * @return The {@link IFeedbackPartFactory} being used
+	 */
 	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
-
-	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory);
 
 	/**
 	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
@@ -126,17 +123,8 @@ public interface IViewer<VR> extends IAdaptable {
 	 */
 	public IDomain<VR> getDomain();
 
-	/**
-	 * Called to set/change/unset the {@link IDomain} this {@link IViewer} is
-	 * bound to. To set or change the {@link IDomain}, pass in a valid
-	 * {@link IDomain}, to unset it, pass in <code>null</code>.
-	 * 
-	 * @param domain
-	 *            The {@link IDomain} to which this {@link IViewer} is bound to
-	 */
-	public void setDomain(IDomain<VR> domain);
-
-	// TODO: remove these by getAdapter(ISelectionModel.class)
+	// TODO: remove this and the following getters, as these are not mandatory;
+	// replace them by getAdapter(ISelectionModel.class) calls.
 	public ISelectionModel<VR> getSelectionModel();
 
 	public IHoverModel<VR> getHoverModel();

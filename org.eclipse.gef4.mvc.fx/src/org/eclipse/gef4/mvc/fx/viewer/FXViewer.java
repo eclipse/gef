@@ -27,6 +27,12 @@ public class FXViewer extends AbstractViewer<Node> {
 	private ISceneContainer sceneContainer;
 	private Scene scene = null;
 
+	private void createAndHookScene(ISceneContainer container,
+			ISceneFactory sceneFactory, Parent rootVisual) {
+		scene = sceneFactory.createScene(rootVisual);
+		sceneContainer.setScene(scene);
+	}
+
 	@Override
 	public FXDomain getDomain() {
 		return (FXDomain) super.getDomain();
@@ -36,29 +42,18 @@ public class FXViewer extends AbstractViewer<Node> {
 		return scene;
 	}
 
-	@Inject
 	@Override
 	public void setRootPart(IRootPart<Node> rootPart) {
 		super.setRootPart(rootPart);
 		if (rootPart != null) {
 			if (scene == null) {
-				if (sceneFactory != null) {
-					setScene(sceneFactory.createScene((Parent) rootPart
-							.getVisual()));
+				if (sceneContainer != null && sceneFactory != null) {
+					createAndHookScene(sceneContainer, sceneFactory,
+							(Parent) rootPart.getVisual());
+
 				}
 			} else {
-				getScene().setRoot((Parent) rootPart.getVisual());
-			}
-		} else {
-			setScene(null);
-		}
-	}
-
-	private void setScene(Scene scene) {
-		if (this.scene != scene) {
-			this.scene = scene;
-			if (sceneContainer != null) {
-				sceneContainer.setScene(scene);
+				scene.setRoot((Parent) rootPart.getVisual());
 			}
 		}
 	}
@@ -66,7 +61,13 @@ public class FXViewer extends AbstractViewer<Node> {
 	public void setSceneContainer(ISceneContainer sceneContainer) {
 		this.sceneContainer = sceneContainer;
 		if (sceneContainer != null) {
-			if (scene != null) {
+			if (scene == null) {
+				IRootPart<Node> rootPart = getRootPart();
+				if (rootPart != null && sceneFactory != null) {
+					createAndHookScene(sceneContainer, sceneFactory,
+							(Parent) rootPart.getVisual());
+				}
+			} else {
 				sceneContainer.setScene(scene);
 			}
 		}
@@ -75,10 +76,11 @@ public class FXViewer extends AbstractViewer<Node> {
 	@Inject
 	public void setSceneFactory(ISceneFactory sceneFactory) {
 		this.sceneFactory = sceneFactory;
-		if (getRootPart() != null && scene == null) {
-			setScene(sceneFactory.createScene((Parent) getRootPart()
-					.getVisual()));
+		IRootPart<Node> rootPart = getRootPart();
+		if (scene == null && rootPart != null && sceneFactory != null
+				&& sceneContainer != null) {
+			createAndHookScene(sceneContainer, sceneFactory,
+					(Parent) rootPart.getVisual());
 		}
 	}
-
 }

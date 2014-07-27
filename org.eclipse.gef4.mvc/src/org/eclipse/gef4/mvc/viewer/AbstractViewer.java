@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
@@ -51,10 +54,16 @@ import com.google.inject.Inject;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractViewer<VR> implements IViewer<VR> {
+public abstract class AbstractViewer<VR> implements IViewer<VR>,
+		IAdaptable.Bound<IDomain<VR>> {
 
-	private AdaptableSupport<IViewer<VR>> as = new AdaptableSupport<IViewer<VR>>(
-			this);
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	private AdaptableSupport<IViewer<VR>> ads = new AdaptableSupport<IViewer<VR>>(
+			this, pcs);
+
+	private ActivatableSupport<IViewer<VR>> acs = new ActivatableSupport<IViewer<VR>>(
+			this, pcs);
 
 	private Map<Object, IContentPart<VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR>>();
 	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
@@ -66,21 +75,57 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	private IHandlePartFactory<VR> handlePartFactory;
 	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
-	/**
-	 * @see IViewer#setContentPartFactory(IContentPartFactory)
-	 */
-	@Inject
 	@Override
-	public void setContentPartFactory(IContentPartFactory<VR> factory) {
-		this.contentPartFactory = factory;
+	public void activate() {
+		if (!acs.isActive()) {
+			if (domain == null) {
+				throw new IllegalStateException(
+						"Domain has to be set before activation.");
+			}
+			acs.activate();
+			if (rootPart != null) {
+				rootPart.activate();
+			}
+		}
 	}
 
-	/**
-	 * @see IViewer#getContentPartFactory()
-	 */
 	@Override
-	public IContentPartFactory<VR> getContentPartFactory() {
-		return contentPartFactory;
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void deactivate() {
+		if (acs.isActive()) {
+			if (domain == null) {
+				throw new IllegalStateException(
+						"Domain may not be unset before deactivation is completed.");
+			}
+			if (rootPart != null) {
+				rootPart.deactivate();
+			}
+			acs.deactivate();
+		}
+	}
+
+	@Override
+	public IDomain<VR> getAdaptable() {
+		return domain;
+	}
+
+	@Override
+	public <T> T getAdapter(AdapterKey<T> key) {
+		return ads.getAdapter(key);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<? super T> classKey) {
+		return ads.getAdapter(classKey);
+	}
+
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+		return ads.getAdapters(classKey);
 	}
 
 	/**
@@ -98,46 +143,11 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	}
 
 	/**
-	 * @see IViewer#getDomain()
+	 * @see IViewer#getContentPartFactory()
 	 */
 	@Override
-	public IDomain<VR> getDomain() {
-		return domain;
-	}
-
-	@Override
-	public <T> T getAdapter(Class<T> classKey) {
-		return as.getAdapter(classKey);
-	}
-
-	@Override
-	public <T> T getAdapter(AdapterKey<T> key) {
-		return as.getAdapter(key);
-	}
-
-	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		as.setAdapter(key, adapter);
-	}
-
-	@Inject(optional = true)
-	// IMPORTANT: if sub-classes override, they will have to transfer the inject
-	// annotation.
-	public void setAdapters(
-			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
-		// do not override locally registered adapters (e.g. within constructor
-		// of respective AbstractViewer) with those injected by Guice
-		as.setAdapters(adaptersWithKeys, false);
-	}
-
-	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
-		return as.getAdapters(classKey);
-	}
-
-	@Override
-	public <T> T unsetAdapter(AdapterKey<T> key) {
-		return as.unsetAdapter(key);
+	public IContentPartFactory<VR> getContentPartFactory() {
+		return contentPartFactory;
 	}
 
 	/**
@@ -148,12 +158,82 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 		return contentsToContentPartMap;
 	}
 
+	@Override
+	public List<Object> getContents() {
+		return getContentModel().getContents();
+	}
+
+	/**
+	 * @see IViewer#getDomain()
+	 */
+	@Override
+	public IDomain<VR> getDomain() {
+		return domain;
+	}
+
+	@Override
+	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
+		return feedbackPartFactory;
+	}
+
+	@Override
+	public IFocusModel<VR> getFocusModel() {
+		@SuppressWarnings("unchecked")
+		IFocusModel<VR> focusModel = getAdapter(AdapterKey
+				.get(IFocusModel.class));
+		if (focusModel == null) {
+			focusModel = new DefaultFocusModel<VR>();
+			setAdapter(AdapterKey.get(IFocusModel.class), focusModel);
+		}
+		return focusModel;
+	}
+
+	@Override
+	public IHandlePartFactory<VR> getHandlePartFactory() {
+		return handlePartFactory;
+	}
+
+	@Override
+	public IHoverModel<VR> getHoverModel() {
+		@SuppressWarnings("unchecked")
+		IHoverModel<VR> hoverModel = getAdapter(AdapterKey
+				.get(IHoverModel.class));
+		if (hoverModel == null) {
+			hoverModel = new DefaultHoverModel<VR>();
+			setAdapter(AdapterKey.get(IHoverModel.class), hoverModel);
+		}
+		return hoverModel;
+	}
+
 	/**
 	 * @see IViewer#getRootPart()
 	 */
 	@Override
 	public IRootPart<VR> getRootPart() {
 		return rootPart;
+	}
+
+	@Override
+	public ISelectionModel<VR> getSelectionModel() {
+		@SuppressWarnings("unchecked")
+		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey
+				.get(ISelectionModel.class));
+		if (selectionModel == null) {
+			selectionModel = new DefaultSelectionModel<VR>();
+			setAdapter(AdapterKey.get(ISelectionModel.class), selectionModel);
+		}
+		return selectionModel;
+	}
+
+	@Override
+	public IViewportModel getViewportModel() {
+		IViewportModel viewportModel = getAdapter(AdapterKey
+				.get(IViewportModel.class));
+		if (viewportModel == null) {
+			viewportModel = new DefaultViewportModel();
+			setAdapter(AdapterKey.get(IViewportModel.class), viewportModel);
+		}
+		return viewportModel;
 	}
 
 	/**
@@ -165,8 +245,50 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	}
 
 	@Override
-	public List<Object> getContents() {
-		return getContentModel().getContents();
+	public IZoomModel getZoomModel() {
+		IZoomModel zoomModel = getAdapter(AdapterKey.get(IZoomModel.class));
+		if (zoomModel == null) {
+			zoomModel = new DefaultZoomModel();
+			setAdapter(AdapterKey.get(IZoomModel.class), zoomModel);
+		}
+		return zoomModel;
+	}
+
+	@Override
+	public boolean isActive() {
+		return acs.isActive();
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void setAdaptable(IDomain<VR> domain) {
+		if (this.domain == domain)
+			return;
+		this.domain = domain;
+	}
+
+	@Override
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Inject(optional = true)
+	// IMPORTANT: if sub-classes override, they will have to transfer the inject
+	// annotation.
+	public void setAdapters(
+			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
+		// do not override locally registered adapters (e.g. within constructor
+		// of respective AbstractViewer) with those injected by Guice
+		ads.setAdapters(adaptersWithKeys, false);
+	}
+
+	@Inject
+	public void setContentPartFactory(IContentPartFactory<VR> factory) {
+		this.contentPartFactory = factory;
 	}
 
 	/**
@@ -185,72 +307,14 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 		getContentModel().setContents(contents);
 	}
 
-	/**
-	 * @see IViewer#setDomain(IDomain)
-	 */
-	@Override
-	public void setDomain(IDomain<VR> domain) {
-		if (this.domain == domain)
-			return;
-		if (this.domain != null) {
-			this.domain.removeViewer(this);
-			// deactive all adapters if we are unhooked
-			for (Object a : as.getAdapters().values()) {
-				if (a instanceof IActivatable) {
-					((IActivatable) a).deactivate();
-				}
-			}
-			if (rootPart != null && rootPart.isActive()) {
-				rootPart.deactivate();
-			}
-		}
-		this.domain = domain;
-		if (this.domain != null) {
-			this.domain.addViewer(this);
-			if (rootPart != null && !rootPart.isActive()) {
-				rootPart.activate();
-			}
-			// active all adapters if we are (re-)hooked
-			for (Object a : as.getAdapters().values()) {
-				if (a instanceof IActivatable) {
-					((IActivatable) a).activate();
-				}
-			}
-		}
+	@Inject
+	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
+		this.feedbackPartFactory = factory;
 	}
 
-	@Override
-	public ISelectionModel<VR> getSelectionModel() {
-		@SuppressWarnings("unchecked")
-		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey
-				.get(ISelectionModel.class));
-		if (selectionModel == null) {
-			selectionModel = new DefaultSelectionModel<VR>();
-			setAdapter(AdapterKey.get(ISelectionModel.class), selectionModel);
-		}
-		return selectionModel;
-	}
-
-	@Override
-	public IHoverModel<VR> getHoverModel() {
-		@SuppressWarnings("unchecked")
-		IHoverModel<VR> hoverModel = getAdapter(AdapterKey
-				.get(IHoverModel.class));
-		if (hoverModel == null) {
-			hoverModel = new DefaultHoverModel<VR>();
-			setAdapter(AdapterKey.get(IHoverModel.class), hoverModel);
-		}
-		return hoverModel;
-	}
-
-	@Override
-	public IZoomModel getZoomModel() {
-		IZoomModel zoomModel = getAdapter(AdapterKey.get(IZoomModel.class));
-		if (zoomModel == null) {
-			zoomModel = new DefaultZoomModel();
-			setAdapter(AdapterKey.get(IZoomModel.class), zoomModel);
-		}
-		return zoomModel;
+	@Inject
+	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
+		this.handlePartFactory = factory;
 	}
 
 	/**
@@ -258,65 +322,28 @@ public abstract class AbstractViewer<VR> implements IViewer<VR> {
 	 */
 	@Inject
 	@Override
-	public void setRootPart(IRootPart<VR> rootEditPart) {
+	public void setRootPart(IRootPart<VR> rootPart) {
+		if(this.rootPart == rootPart){
+			return;
+		}
 		if (this.rootPart != null) {
-			if (domain != null) {
+			if (isActive()) {
 				this.rootPart.deactivate();
 			}
 			this.rootPart.setViewer(null);
 		}
-		this.rootPart = rootEditPart;
+		this.rootPart = rootPart;
 		if (this.rootPart != null) {
 			this.rootPart.setViewer(this);
-			if (domain != null) {
+			if (isActive()) {
 				this.rootPart.activate();
 			}
 		}
 	}
 
 	@Override
-	public IFocusModel<VR> getFocusModel() {
-		@SuppressWarnings("unchecked")
-		IFocusModel<VR> focusModel = getAdapter(AdapterKey
-				.get(IFocusModel.class));
-		if (focusModel == null) {
-			focusModel = new DefaultFocusModel<VR>();
-			setAdapter(AdapterKey.get(IFocusModel.class), focusModel);
-		}
-		return focusModel;
-	}
-
-	@Override
-	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getAdapter(AdapterKey
-				.get(IViewportModel.class));
-		if (viewportModel == null) {
-			viewportModel = new DefaultViewportModel();
-			setAdapter(AdapterKey.get(IViewportModel.class), viewportModel);
-		}
-		return viewportModel;
-	}
-
-	@Override
-	public IHandlePartFactory<VR> getHandlePartFactory() {
-		return handlePartFactory;
-	}
-
-	@Inject
-	@Override
-	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
-		this.handlePartFactory = factory;
-	}
-
-	@Override
-	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return feedbackPartFactory;
-	}
-
-	@Inject
-	@Override
-	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
-		this.feedbackPartFactory = factory;
+	public <T> T unsetAdapter(AdapterKey<T> key) {
+		return ads.unsetAdapter(key);
 	}
 
 }

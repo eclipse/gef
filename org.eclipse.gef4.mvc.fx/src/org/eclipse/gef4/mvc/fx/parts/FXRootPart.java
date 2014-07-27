@@ -115,7 +115,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		return layersStackPane;
 	}
 
-	protected void createRootVisual() {
+	protected void createRootVisuals() {
 		contentLayer = createContentLayer();
 		/*
 		 * IMPORTANT: The following is a workaround to ensure that visuals do
@@ -185,35 +185,35 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	public Pane getContentLayer() {
 		if (contentLayer == null) {
-			createRootVisual();
+			createRootVisuals();
 		}
 		return contentLayer;
 	}
 
 	public Pane getFeedbackLayer() {
 		if (feedbackLayer == null) {
-			createRootVisual();
+			createRootVisuals();
 		}
 		return feedbackLayer;
 	}
 
 	public Pane getHandleLayer() {
 		if (handleLayer == null) {
-			createRootVisual();
+			createRootVisuals();
 		}
 		return handleLayer;
 	}
 
 	public StackPane getLayerStackPane() {
 		if (layersStackPane == null) {
-			createRootVisual();
+			createRootVisuals();
 		}
 		return layersStackPane;
 	}
 
 	public ScrollPane getScrollPane() {
 		if (scrollPane == null) {
-			createRootVisual();
+			createRootVisuals();
 		}
 		return scrollPane;
 	}
@@ -226,7 +226,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	@Override
 	public Node getVisual() {
 		if (scrollPane == null) {
-			createRootVisual();
+			createRootVisuals();
+			if (getViewer() != null) {
+				registerAtVisualPartMap();
+			}
 		}
 		return scrollPane;
 	}
@@ -257,14 +260,14 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	public void setViewer(IViewer<Node> newViewer) {
-		if (getViewer() != null) {
+		if (getViewer() != null && scrollPane != null) {
 			unregisterFromVisualPartMap();
 		}
 		if (newViewer != null && !(newViewer instanceof FXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setViewer(newViewer);
-		if (getViewer() != null) {
+		if (getViewer() != null && scrollPane != null) {
 			registerAtVisualPartMap();
 		}
 	}

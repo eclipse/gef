@@ -42,10 +42,12 @@ import org.eclipse.gef4.mvc.fx.tools.FXFocusTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
@@ -111,6 +113,9 @@ public class MvcFxModule extends MvcModule<Node> {
 		.toInstance(new FXScrollTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
 		.toInstance(new FXFocusTool());
+
+		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
+				FXViewer.class);
 	}
 
 	protected void bindFXRootPart() {

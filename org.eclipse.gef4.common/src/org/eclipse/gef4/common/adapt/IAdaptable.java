@@ -11,7 +11,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Map;
+
+import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
 /**
  * An {@link IAdaptable} allows to register, unregister, and retrieve
@@ -25,7 +30,13 @@ import java.util.Map;
  * @author anyssen
  * 
  */
-public interface IAdaptable {
+public interface IAdaptable extends IPropertyChangeNotifier {
+
+	/**
+	 * A key used as {@link PropertyChangeEvent#getPropertyName()} when
+	 * notifying about registering/unregistering of adapters.
+	 */
+	public static final String ADAPTERS_PROPERTY = "adapters";
 
 	/**
 	 * Returns an adapter for the given class key if one can unambiguously
@@ -45,7 +56,7 @@ public interface IAdaptable {
 	 * @return The unambiguously retrievable adapter for the given {@link Class}
 	 *         key or <code>null</code> if none could be retrieved.
 	 */
-	public <T> T getAdapter(Class<T> classKey);
+	public <T> T getAdapter(Class<? super T> classKey);
 
 	// public <T> T getAdapter(Class<T> classKey, String qualifier);
 

@@ -45,7 +45,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		super.registerListeners();
-		for (IViewer<Node> viewer : getDomain().getViewers()) {
+		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
 				protected Collection<? extends AbstractFXZoomPolicy> getTargetPolicies(
 						ZoomEvent e) {
@@ -56,7 +56,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 					Node targetNode = (Node) target;
 					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-							getDomain().getViewers(), targetNode,
+							getDomain().getViewers().values(), targetNode,
 							TOOL_POLICY_KEY);
 					if (targetPart == null) {
 						return null;

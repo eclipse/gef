@@ -37,10 +37,7 @@ public interface IActivatable extends IPropertyChangeNotifier {
 
 	/**
 	 * A key used as {@link PropertyChangeEvent#getPropertyName()} when
-	 * notifying about changes of the activation state. If an
-	 * {@link IActivatable} notifies registered {@link PropertyChangeListener}s
-	 * about several property changes, this constant may be used to identify
-	 * that a {@link PropertyChangeEvent} refers to an activation state change.
+	 * notifying about changes of the activation state.
 	 */
 	public static String ACTIVE_PROPERTY = "active";
 

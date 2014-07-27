@@ -54,7 +54,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
 		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
-		for (IViewer<Node> viewer : getDomain().getViewers()) {
+		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Map<Node, IVisualPart<Node>> partMap = viewer.getVisualPartMap();
 			for (Node node : nodesUnderMouse) {
 				if (partMap.containsKey(node)) {
@@ -72,7 +72,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 
-		for (final IViewer<Node> viewer : getDomain().getViewers()) {
+		for (final IViewer<Node> viewer : getDomain().getViewers().values()) {
 			FXMouseDragGesture gesture = new FXMouseDragGesture() {
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
@@ -100,8 +100,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					// click first
 					// TODO: why do we not pass in the click policy key here??
 					IVisualPart<Node> clickTargetPart = FXPartUtils
-							.getTargetPart(getDomain().getViewers(), target,
-									null);
+							.getTargetPart(getDomain().getViewers().values(),
+									target, null);
 					if (clickTargetPart != null) {
 						Collection<? extends AbstractFXClickPolicy> policies = getClickPolicies(clickTargetPart);
 						for (AbstractFXClickPolicy policy : policies) {

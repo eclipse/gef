@@ -46,9 +46,12 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	public void activate() {
 		super.activate();
 		if (getHost() == getHost().getRoot()) {
+			synchronizeContentChildren(getHost().getRoot().getViewer().getContentModel().getContents());
 			getHost().getRoot().getViewer().getContentModel()
 					.addPropertyChangeListener(this);
 		} else {
+			synchronizeContentChildren(((IContentPart<VR>)getHost()).getContentChildren());
+			synchronizeContentAnchorages(((IContentPart<VR>)getHost()).getContentAnchorages());
 			getHost().addPropertyChangeListener(this);
 		}
 	}
@@ -58,9 +61,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		if (getHost() == getHost().getRoot()) {
 			getHost().getRoot().getViewer().getContentModel()
 					.removePropertyChangeListener(this);
-			;
+			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);
+			synchronizeContentAnchorages(Collections.emptyList());
+			synchronizeContentChildren(Collections.emptyList());
 		}
 		super.deactivate();
 	}

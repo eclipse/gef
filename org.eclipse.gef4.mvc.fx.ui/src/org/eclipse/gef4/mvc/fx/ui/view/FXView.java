@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
@@ -65,9 +66,6 @@ public abstract class FXView extends ViewPart {
 	@Inject
 	private FXDomain domain;
 
-	// viewer may not be injected as field, as we need to create it inside
-	// createControl()
-	private FXViewer viewer;
 	private FXCanvas canvas = null;
 
 	@Inject(optional = true)
@@ -78,11 +76,11 @@ public abstract class FXView extends ViewPart {
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private IPropertySheetPage propertySheetPage;
 
+	@Inject
 	private IFXCanvasFactory canvasFactory;
-	private Injector injector;
 
+	// TOOD: use executable extension factory to inject this class
 	public FXView(Injector injector) {
-		this.injector = injector;
 		injector.injectMembers(this);
 	}
 
@@ -94,25 +92,23 @@ public abstract class FXView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		// create viewer and canvas only after toolkit has been initialized
 		canvas = createCanvas(parent);
-		viewer = createViewer(canvas);
 
-		// domain was already injected, bind viewer to it now
-		viewer.setDomain(domain);
+		// domain was already injected, hook viewer to controls (via scene container)
+		FXViewer viewer = domain.getAdapter(IViewer.class);
+		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
+		
+		// activate domain
+		domain.activate();
 
 		// populate viewer
 		viewer.setContents(getContents());
+
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
 			getViewer().getSelectionModel().addPropertyChangeListener(
 					selectionPropertyChangeListener);
 		}
-	}
-
-	protected FXViewer createViewer(final FXCanvas canvas) {
-		FXViewer viewer = injector.getInstance(FXViewer.class);
-		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
-		return viewer;
 	}
 
 	@Override
@@ -168,7 +164,7 @@ public abstract class FXView extends ViewPart {
 	}
 
 	protected FXViewer getViewer() {
-		return viewer;
+		return domain.getAdapter(IViewer.class);
 	}
 
 	@Override
@@ -184,11 +180,6 @@ public abstract class FXView extends ViewPart {
 		if (selectionProvider != null) {
 			site.setSelectionProvider(selectionProvider);
 		}
-	}
-
-	@Inject
-	public void setCanvasFactory(IFXCanvasFactory canvasFactory) {
-		this.canvasFactory = canvasFactory;
 	}
 
 	@Override

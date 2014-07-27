@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.gef4.common.activate.IActivatable;
+import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMap;
@@ -38,31 +38,82 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
-	private AdaptableSupport<IDomain<VR>> as = new AdaptableSupport<IDomain<VR>>(
-			this);
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private Set<IViewer<VR>> viewers;
+	private AdaptableSupport<IDomain<VR>> ads = new AdaptableSupport<IDomain<VR>>(
+			this, pcs);
+
+	private ActivatableSupport<IDomain<VR>> acs = new ActivatableSupport<IDomain<VR>>(
+			this, pcs);
+
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
 
 	@Override
-	public <T> T getAdapter(Class<T> classKey) {
-		return as.getAdapter(classKey);
+	public void activate() {
+		if (!acs.isActive()) {
+			acs.activate();
+		}
+	}
+	
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void deactivate() {
+		if (acs.isActive()) {
+			acs.deactivate();
+		}
 	}
 
 	@Override
 	public <T> T getAdapter(AdapterKey<T> key) {
-		return as.getAdapter(key);
+		return ads.getAdapter(key);
 	}
 
 	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
-		as.setAdapter(key, adapter);
+	public <T> T getAdapter(Class<? super T> classKey) {
+		return ads.<T>getAdapter(classKey);
 	}
 
 	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
-		return as.getAdapters(classKey);
+		return ads.getAdapters(classKey);
+	}
+
+	@Override
+	public IOperationHistory getOperationHistory() {
+		return operationHistory;
+	}
+
+	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools() {
+		return ads.getAdapters(ITool.class);
+	}
+
+	@Override
+	public IUndoContext getUndoContext() {
+		return undoContext;
+	}
+
+	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers() {
+		return ads.getAdapters(IViewer.class);
+	}
+
+	@Override
+	public boolean isActive() {
+		return acs.isActive();
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
+		ads.setAdapter(key, adapter);
 	}
 
 	@Inject(optional = true)
@@ -72,104 +123,21 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			@AdapterMap Map<AdapterKey<?>, Object> adaptersWithKeys) {
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractDomain) with those injected by Guice
-		as.setAdapters(adaptersWithKeys, false);
-	}
-
-	@Override
-	public <T> T unsetAdapter(AdapterKey<T> key) {
-		return as.unsetAdapter(key);
-	}
-
-	@Override
-	public IOperationHistory getOperationHistory() {
-		return operationHistory;
+		ads.setAdapters(adaptersWithKeys, false);
 	}
 
 	@Inject
-	@Override
 	public void setOperationHistory(IOperationHistory stack) {
 		operationHistory = stack;
 	}
 
-	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools() {
-		return as.getAdapters(ITool.class);
-	}
-
-	@Override
-	public IUndoContext getUndoContext() {
-		return undoContext;
-	}
-
 	@Inject
-	@Override
 	public void setUndoContext(IUndoContext undoContext) {
 		this.undoContext = undoContext;
 	}
 
 	@Override
-	public void addViewer(IViewer<VR> viewer) {
-		if (viewers != null && viewers.contains(viewer)) {
-			return;
-		}
-
-		// add viewer
-		if (viewers == null) {
-			viewers = new HashSet<IViewer<VR>>();
-		} else {
-			// deactivate adapters if they had been activated before (will
-			// re-activate them after the viewer has been hooked)
-			deactivateAdapters();
-		}
-		viewers.add(viewer);
-		viewer.setDomain(this);
-
-		// activate adapters (tools)
-		activateAdapters();
-	}
-
-	private void activateAdapters() {
-		for (Object a : as.getAdapters().values()) {
-			if (a instanceof IActivatable) {
-				((IActivatable) a).activate();
-			}
-		}
-	}
-
-	@Override
-	public void removeViewer(IViewer<VR> viewer) {
-		if (viewers != null && !(viewers.contains(viewer))) {
-			return;
-		}
-
-		// deactive all adapters (they have to be active), will re-activate them
-		// if we are not completely unhooked.
-		deactivateAdapters();
-
-		// unhook viewer
-		viewer.setDomain(null);
-		viewers.remove(viewer);
-		if (viewers.isEmpty()) {
-			viewers = null;
-		} else {
-			// if we are not completely unhooked, re-activate adapters
-			activateAdapters();
-		}
-	}
-
-	private void deactivateAdapters() {
-		for (Object a : as.getAdapters().values()) {
-			if (a instanceof IActivatable) {
-				((IActivatable) a).deactivate();
-			}
-		}
-	}
-
-	@Override
-	public Set<IViewer<VR>> getViewers() {
-		if (viewers == null) {
-			return Collections.emptySet();
-		} else {
-			return Collections.unmodifiableSet(viewers);
-		}
+	public <T> T unsetAdapter(AdapterKey<T> key) {
+		return ads.unsetAdapter(key);
 	}
 }

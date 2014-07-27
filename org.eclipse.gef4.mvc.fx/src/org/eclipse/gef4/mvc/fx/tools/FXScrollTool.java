@@ -42,8 +42,9 @@ public class FXScrollTool extends AbstractTool<Node> {
 
 			Node targetNode = (Node) target;
 			IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-					getDomain().getViewers(), targetNode, TOOL_POLICY_KEY);
-			
+					getDomain().getViewers().values(), targetNode,
+					TOOL_POLICY_KEY);
+
 			if (targetPart == null) {
 				return;
 			}
@@ -65,7 +66,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		super.registerListeners();
 
-		for (IViewer<Node> viewer : getDomain().getViewers()) {
+		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
 			scene.addEventFilter(ScrollEvent.SCROLL, scrollListener);
 		}
@@ -73,7 +74,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 
 	@Override
 	protected void unregisterListeners() {
-		for (IViewer<Node> viewer : getDomain().getViewers()) {
+		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = ((FXViewer) viewer).getScene();
 			scene.removeEventFilter(ScrollEvent.SCROLL, scrollListener);
 		}

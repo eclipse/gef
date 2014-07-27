@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
@@ -111,35 +109,6 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	@Override
 	public List<Object> getContentAnchorages() {
 		return Collections.emptyList();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setParent(IVisualPart<VR> parent) {
-		if (getParent() == parent) {
-			return;
-		}
-		if (parent == null) {
-			// remove all content children
-			getAdapter(AdapterKey.get(ContentBehavior.class))
-					.synchronizeContentChildren(Collections.emptyList());
-			// create content anchored as needed
-			getAdapter(AdapterKey.get(ContentBehavior.class))
-					.synchronizeContentAnchorages(Collections.emptyList());
-		}
-		super.setParent(parent);
-		if (parent != null) {
-			refreshVisual();
-			// TODO: check if we can move this to the policy's activation (or
-			// listen for the PARENT property of the host to change, rather than
-			// accessing the policy directly here
-			// create content children as needed
-			getAdapter(AdapterKey.get(ContentBehavior.class))
-					.synchronizeContentChildren(getContentChildren());
-			// create content anchored as needed
-			getAdapter(AdapterKey.get(ContentBehavior.class))
-					.synchronizeContentAnchorages(getContentAnchorages());
-		}
 	}
 
 }
