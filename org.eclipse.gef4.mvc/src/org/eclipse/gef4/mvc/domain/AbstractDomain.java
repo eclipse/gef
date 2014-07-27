@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.domain;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -55,12 +54,12 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 			acs.activate();
 		}
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
-	
+
 	@Override
 	public void deactivate() {
 		if (acs.isActive()) {
@@ -75,7 +74,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public <T> T getAdapter(Class<? super T> classKey) {
-		return ads.<T>getAdapter(classKey);
+		return ads.<T> getAdapter(classKey);
 	}
 
 	@Override
