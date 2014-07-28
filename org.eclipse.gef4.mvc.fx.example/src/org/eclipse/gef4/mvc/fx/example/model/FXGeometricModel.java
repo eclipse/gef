@@ -122,6 +122,7 @@ public class FXGeometricModel {
 	private FXGeometricShape cursorShape = new FXGeometricShape(
 			createCursorShapeGeometry(), new AffineTransform(1, 0, 0, 1, 227,
 					45), Color.WHITE, 2, Color.BLACK, GEF_SHADOW_EFFECT);
+	private List<AbstractFXGeometricElement<? extends IGeometry>> visualShapes;
 
 	public FXGeometricModel() {
 		// anchor curves to shapes
@@ -139,10 +140,16 @@ public class FXGeometricModel {
 		selectionBoundsRightLine.addTargetAnchorage(bottomRightSelectionHandle);
 
 		// TODO: anchor points to letter shapes
+		
+		initVisualShapes();
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getShapeVisuals() {
-		List<AbstractFXGeometricElement<? extends IGeometry>> visualShapes = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+		return visualShapes;
+	}
+
+	private void initVisualShapes() {
+		visualShapes = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
 
 		// add all shapes in z-order
 		visualShapes.add(selectionBoundsTopLine);
@@ -166,8 +173,6 @@ public class FXGeometricModel {
 		visualShapes.add(fDotShape);
 
 		visualShapes.add(cursorShape);
-
-		return visualShapes;
 	}
 
 	private IShape createHandleShapeGeometry() {
