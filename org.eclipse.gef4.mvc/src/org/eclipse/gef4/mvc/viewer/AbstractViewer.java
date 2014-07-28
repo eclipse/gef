@@ -114,7 +114,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public <T> T getAdapter(AdapterKey<T> key) {
+	public <T> T getAdapter(AdapterKey<? super T> key) {
 		return ads.getAdapter(key);
 	}
 
@@ -124,7 +124,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
 	}
 
@@ -272,7 +272,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
 		ads.setAdapter(key, adapter);
 	}
 
@@ -338,7 +338,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public <T> T unsetAdapter(AdapterKey<T> key) {
+	public <T> T unsetAdapter(AdapterKey<? super T> key) {
 		return ads.unsetAdapter(key);
 	}
 

@@ -73,13 +73,13 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *         the given classKey, qualified by their respective
 	 *         {@link AdapterKey}s.
 	 */
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey);
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey);
 
-	public <T> T getAdapter(AdapterKey<T> key);
+	public <T> T getAdapter(AdapterKey<? super T> key);
 
-	public <T> void setAdapter(AdapterKey<T> key, T adapter);
+	public <T> void setAdapter(AdapterKey<? super T> key, T adapter);
 
-	public <T> T unsetAdapter(AdapterKey<T> key);
+	public <T> T unsetAdapter(AdapterKey<? super T> key);
 
 	/**
 	 * To be implemented by an adapter to indicate that it intends to be bounded

@@ -42,9 +42,9 @@ public class FXPartUtils {
 	 * @param supportedPolicy
 	 * @return the target part
 	 */
-	public static IVisualPart<Node> getTargetPart(
+	public static <T extends IPolicy<Node>> IVisualPart<Node> getTargetPart(
 			Collection<IViewer<Node>> viewers, Node visual,
-			Class<? extends IPolicy<Node>> supportedPolicy) {
+			Class<T> supportedPolicy) {
 		for (IViewer<Node> viewer : viewers) {
 			Node rootVisual = viewer.getRootPart().getVisual();
 

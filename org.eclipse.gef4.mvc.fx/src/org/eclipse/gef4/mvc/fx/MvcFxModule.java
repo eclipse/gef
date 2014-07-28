@@ -60,18 +60,18 @@ public class MvcFxModule extends MvcModule<Node> {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-				FXFocusAndSelectOnClickPolicy.class);
+						FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 
 		// register default behaviors ( (which are based on viewer models)
 		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
-						FXHoverBehavior.class);
+		.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
+				FXHoverBehavior.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(AbstractSelectionBehavior.class)).to(
-				FXSelectionBehavior.class);
+						FXSelectionBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
 				FXFocusBehavior.class);
 	}
@@ -84,11 +84,11 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractFXHoverPolicy.class)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(AbstractFXHoverPolicy.class)).to(
+				FXHoverOnHoverPolicy.class);
 		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
-						FXHoverBehavior.class);
+		.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
+				FXHoverBehavior.class);
 	}
 
 	protected void bindFXDefaultFeedbackPartFactory() {
@@ -129,19 +129,19 @@ public class MvcFxModule extends MvcModule<Node> {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-				FXFocusAndSelectOnClickPolicy.class);
+						FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
-				FXMarqueeOnDragPolicy.class);
+						FXMarqueeOnDragPolicy.class);
 		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnScrollPolicy.class);
+						FXZoomOnScrollPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnPinchSpreadPolicy.class);
+						FXZoomOnPinchSpreadPolicy.class);
 
 		// register (default) behaviors (which are based on viewer models)
 		adapterMapBinder.addBinding(AdapterKey.get(FXSelectionBehavior.class))

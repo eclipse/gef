@@ -67,7 +67,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<? super T> classKey) {
-		Map<AdapterKey<? extends Object>, Object> adaptersForClassKey = getAdapters(classKey);
+		Map<AdapterKey<? extends T>, T> adaptersForClassKey = getAdapters(classKey);
 		// if we have only one adapter for the given class key, return this one
 		if (adaptersForClassKey.size() == 1) {
 			return (T) adaptersForClassKey.values().iterator().next();
@@ -84,7 +84,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<?> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -101,7 +101,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> void setAdapter(AdapterKey<T> key, T adapter) {
+	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
 		if (adapters == null) {
 			adapters = new HashMap<AdapterKey<?>, Object>();
 		}
@@ -163,7 +163,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T unsetAdapter(AdapterKey<T> key) {
+	public <T> T unsetAdapter(AdapterKey<? super T> key) {
 		if (adapters == null || !adapters.containsKey(key)) {
 			throw new IllegalArgumentException("Given key is not registered.");
 		}

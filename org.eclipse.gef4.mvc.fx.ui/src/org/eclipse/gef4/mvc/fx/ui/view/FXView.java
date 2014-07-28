@@ -99,10 +99,9 @@ public abstract class FXView extends ViewPart {
 		
 		// activate domain
 		domain.activate();
-
+		
 		// populate viewer
 		viewer.setContents(getContents());
-
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
