@@ -78,11 +78,15 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		Node hostVisual = getHostVisual();
 		Point2D mouseInLocal = hostVisual.sceneToLocal(mouseInScene.x,
 				mouseInScene.y);
+
+		// create new way point
 		segmentIndex++;
 		newLinks.add(segmentIndex, ((IFXConnection) hostVisual)
 				.createWayPointAnchorLink(new Point(mouseInLocal.getX(),
 						mouseInLocal.getY())));
 		updateOperation();
+
+		// select newly created way point
 		selectPoint(segmentIndex, 0, mouseInScene);
 	}
 
@@ -218,7 +222,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 
 		if (link == null) {
-			// use static anchor
+			// use static anchor, re-use key
 			AnchorKey key = newLinks.get(linkIndex).getKey();
 			FXStaticAnchor anchor = new FXStaticAnchor(key, currentPoint);
 			link = new AnchorLink(anchor, key);

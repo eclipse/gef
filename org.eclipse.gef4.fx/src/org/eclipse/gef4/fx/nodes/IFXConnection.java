@@ -21,6 +21,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -259,6 +260,15 @@ public interface IFXConnection {
 	public void removeWayPoint(int index);
 
 	/**
+	 * Changes the end {@link AnchorLink} of this connection to a new
+	 * {@link AnchorLink} which is created for the given {@link IFXAnchor} and
+	 * anchored under the default end {@link AnchorKey}.
+	 * 
+	 * @param endAnchor
+	 */
+	public void setEndAnchor(IFXAnchor endAnchor);
+
+	/**
 	 * Changes the end anchor of this connection to the passed-in
 	 * {@link AnchorLink}.
 	 */
@@ -304,6 +314,16 @@ public interface IFXConnection {
 	 */
 	public void setOnWayPointAnchorLinkChange(
 			ListChangeListener<? super AnchorLink> onWayPointChange);
+
+	/**
+	 * Changes the start {@link AnchorLink} of this connection to a new
+	 * {@link AnchorLink} which is created for the given {@link IFXAnchor} and
+	 * anchored under the default start {@link AnchorKey}.
+	 * 
+	 * @param startAnchor
+	 *            The {@link IFXAnchor}
+	 */
+	public void setStartAnchor(IFXAnchor startAnchor);
 
 	/**
 	 * Changes the start anchor of this connection to the passed-in

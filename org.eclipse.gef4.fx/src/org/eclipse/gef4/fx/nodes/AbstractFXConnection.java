@@ -89,8 +89,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	private boolean inRefresh = false;
 
-	private int wayPointAnchorKeyCounter;
-
 	{
 		// disable resizing children which would change their layout positions
 		// in some cases
@@ -232,9 +230,10 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public AnchorLink createWayPointAnchorLink(IFXAnchor anchor) {
-		wayPointAnchorKeyCounter++;
-		return new AnchorLink(anchor, new AnchorKey(this, WAY_POINT_ROLE_PREFIX
-				+ wayPointAnchorKeyCounter));
+		AnchorKey key = new AnchorKey(this, "");
+		int id = System.identityHashCode(key);
+		key.setId(WAY_POINT_ROLE_PREFIX + id);
+		return new AnchorLink(anchor, key);
 	}
 
 	@Override
@@ -448,6 +447,12 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	@Override
+	public void setEndAnchor(IFXAnchor endAnchor) {
+		setEndAnchorLink(new AnchorLink(endAnchor,
+				new AnchorKey(this, END_ROLE)));
+	}
+
+	@Override
 	public void setEndAnchorLink(AnchorLink endAnchorLink) {
 		if (endAnchorLink == null) {
 			throw new IllegalArgumentException(
@@ -545,6 +550,12 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		if (onWayPointChange != null) {
 			wayPointAnchorLinksProperty.addListener(onWayPointChange);
 		}
+	}
+
+	@Override
+	public void setStartAnchor(IFXAnchor startAnchor) {
+		setStartAnchorLink(new AnchorLink(startAnchor, new AnchorKey(this,
+				START_ROLE)));
 	}
 
 	@Override
