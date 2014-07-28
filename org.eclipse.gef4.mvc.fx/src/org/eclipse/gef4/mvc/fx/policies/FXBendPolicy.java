@@ -20,9 +20,10 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -74,14 +75,15 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void createWayPoint(int segmentIndex, Point mouseInScene) {
-		Node hostVisual = getHost().getVisual();
+		Node hostVisual = getHostVisual();
 		Point2D mouseInLocal = hostVisual.sceneToLocal(mouseInScene.x,
 				mouseInScene.y);
-		newLinks.add(segmentIndex + 1, FXUtils.createStaticAnchorLink(
-				hostVisual, hostVisual, new Point(mouseInLocal.getX(),
+		segmentIndex++;
+		newLinks.add(segmentIndex, ((IFXConnection) hostVisual)
+				.createWayPointAnchorLink(new Point(mouseInLocal.getX(),
 						mouseInLocal.getY())));
 		updateOperation();
-		selectPoint(segmentIndex + 1, 0, mouseInScene);
+		selectPoint(segmentIndex, 0, mouseInScene);
 	}
 
 	protected AbstractFXContentPart getAnchorPart(
@@ -94,6 +96,10 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			}
 		}
 		return null;
+	}
+
+	protected Node getHostVisual() {
+		return getHost().getVisual();
 	}
 
 	private Point getPosition(AnchorLink link) {
@@ -151,7 +157,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	@Override
 	public void init() {
 		op = new FXBendOperation();
-		connection = (IFXConnection) getHost().getVisual();
+		connection = (IFXConnection) getHostVisual();
 		oldLinks = Arrays.asList(connection.getPointAnchorLinks());
 		newLinks = new ArrayList<AnchorLink>(oldLinks);
 		removedLink = null;
@@ -160,9 +166,9 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	public void movePoint(Point mouseInScene,
 			List<IContentPart<Node>> partsUnderMouse) {
 		// update position
-		Point2D mouseInLocal = getHost().getVisual().sceneToLocal(
-				mouseInScene.x, mouseInScene.y);
-		Point2D startPointInLocal = getHost().getVisual().sceneToLocal(
+		Point2D mouseInLocal = getHostVisual().sceneToLocal(mouseInScene.x,
+				mouseInScene.y);
+		Point2D startPointInLocal = getHostVisual().sceneToLocal(
 				startPointInScene);
 		Point delta = new Point(mouseInLocal.getX() - startPointInLocal.getX(),
 				mouseInLocal.getY() - startPointInLocal.getY());
@@ -213,8 +219,9 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 		if (link == null) {
 			// use static anchor
-			link = FXUtils.createStaticAnchorLink(getHost().getVisual(),
-					getHost().getVisual(), currentPoint);
+			AnchorKey key = newLinks.get(linkIndex).getKey();
+			FXStaticAnchor anchor = new FXStaticAnchor(key, currentPoint);
+			link = new AnchorLink(anchor, key);
 		}
 
 		newLinks.set(linkIndex, link);
