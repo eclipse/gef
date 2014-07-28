@@ -25,11 +25,11 @@ import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 
 /**
- * An {@link FXBendOperation} can be used to manipulate an
- * {@link IFXConnection} in an undo-context.
- * 
+ * An {@link FXBendOperation} can be used to manipulate an {@link IFXConnection}
+ * in an undo-context.
+ *
  * @author mwienand
- * 
+ *
  */
 public class FXBendOperation extends AbstractOperation {
 
@@ -46,7 +46,7 @@ public class FXBendOperation extends AbstractOperation {
 
 	/**
 	 * Constructs a new operation from the given values.
-	 * 
+	 *
 	 * @param oldLinks
 	 *            List of old {@link AnchorLink}s.
 	 * @param newLinks
@@ -98,7 +98,7 @@ public class FXBendOperation extends AbstractOperation {
 			connection.setWayPointAnchorLinks(oldLinks.subList(1,
 					oldLinks.size() - 1));
 			connection.setStartAnchorLink(oldLinks.get(0));
-			connection.setEndAnchorLink(oldLinks.get(newLinks.size() - 1));
+			connection.setEndAnchorLink(oldLinks.get(oldLinks.size() - 1));
 		}
 		return Status.OK_STATUS;
 	}
