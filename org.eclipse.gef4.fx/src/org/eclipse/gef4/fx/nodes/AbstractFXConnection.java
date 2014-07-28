@@ -31,6 +31,7 @@ import javafx.scene.transform.Rotate;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -40,7 +41,16 @@ import org.eclipse.gef4.geometry.planar.Point;
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		implements IFXConnection {
 
+	/**
+	 * CSS class assigned to decoration visuals.
+	 */
 	public static final String CSS_CLASS_DECORATION = "decoration";
+
+	/**
+	 * Prefix for the default <i>ids</i> used by this connection to identify
+	 * specific way points at way point anchors.
+	 */
+	public static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
@@ -79,6 +89,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	private boolean inRefresh = false;
 
+	private int wayPointAnchorKeyCounter;
+
 	{
 		// disable resizing children which would change their layout positions
 		// in some cases
@@ -97,8 +109,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void addWayPoint(int index, Point wayPoint) {
-		addWayPointAnchorLink(index,
-				FXUtils.createStaticAnchorLink(this, this, wayPoint));
+		addWayPointAnchorLink(index, createWayPointAnchorLink(wayPoint));
 	}
 
 	@Override
@@ -218,6 +229,22 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	}
 
 	public abstract T computeGeometry(Point[] points);
+
+	@Override
+	public AnchorLink createWayPointAnchorLink(IFXAnchor anchor) {
+		wayPointAnchorKeyCounter++;
+		return new AnchorLink(anchor, new AnchorKey(this, WAY_POINT_ROLE_PREFIX
+				+ wayPointAnchorKeyCounter));
+	}
+
+	@Override
+	public AnchorLink createWayPointAnchorLink(Point wayPoint) {
+		FXStaticAnchor anchor = new FXStaticAnchor();
+		AnchorLink link = createWayPointAnchorLink(anchor);
+		anchor.attach(link.getKey());
+		anchor.setPosition(link.getKey(), wayPoint);
+		return link;
+	}
 
 	@Override
 	public ReadOnlyObjectProperty<AnchorLink> endAnchorLinkProperty() {
@@ -467,7 +494,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void setEndPoint(Point p) {
-		AnchorKey key = new AnchorKey(this, "END");
+		AnchorKey key = new AnchorKey(this, END_ROLE);
 		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
 		setEndAnchorLink(new AnchorLink(anchor, key));
 	}
@@ -567,15 +594,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void setStartPoint(Point p) {
-		AnchorKey key = new AnchorKey(this, "START");
+		AnchorKey key = new AnchorKey(this, START_ROLE);
 		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
 		setStartAnchorLink(new AnchorLink(anchor, key));
 	}
 
 	@Override
 	public void setWayPoint(int index, Point wayPoint) {
-		setWayPointAnchorLink(index,
-				FXUtils.createStaticAnchorLink(this, this, wayPoint));
+		setWayPointAnchorLink(index, createWayPointAnchorLink(wayPoint));
 	}
 
 	@Override

@@ -29,6 +29,18 @@ import org.eclipse.gef4.geometry.planar.Point;
 public interface IFXConnection {
 
 	/**
+	 * The <i>id</i> used to identify the start point of this connection at the
+	 * start anchor.
+	 */
+	public static final String START_ROLE = "start";
+
+	/**
+	 * The <i>id</i> used to identify the end point of this connection at the
+	 * end anchor.
+	 */
+	public static final String END_ROLE = "end";
+
+	/**
 	 * Adds a new static anchored way point at the specified position.
 	 * 
 	 * @param index
@@ -44,6 +56,26 @@ public interface IFXConnection {
 	 * @param wayPointAnchorLink
 	 */
 	public void addWayPointAnchorLink(int index, AnchorLink wayPointAnchorLink);
+
+	/**
+	 * Returns an {@link AnchorLink} for a new way point which is to be anchored
+	 * at the given anchor.
+	 * 
+	 * @param anchor
+	 *            The {@link IFXAnchor} at which the way point will be anchored.
+	 * @return An {@link AnchorLink} for a new way point.
+	 */
+	public AnchorLink createWayPointAnchorLink(IFXAnchor anchor);
+
+	/**
+	 * Returns an {@link AnchorLink} for a new way point which is stored in a
+	 * new {@link FXStaticAnchor}.
+	 * 
+	 * @param wayPoint
+	 *            The new {@link Point way point}.
+	 * @return An {@link AnchorLink} for the new way point.
+	 */
+	public AnchorLink createWayPointAnchorLink(Point wayPoint);
 
 	/**
 	 * Returns the {@link IFXAnchor} which specifies the end position of this

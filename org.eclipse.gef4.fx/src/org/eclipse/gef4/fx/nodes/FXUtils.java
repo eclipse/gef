@@ -46,7 +46,7 @@ public class FXUtils {
 	 */
 	public static AnchorLink createStaticAnchorLink(Node anchored, Object id,
 			Point position) {
-		AnchorKey key = new AnchorKey(anchored, anchored);
+		AnchorKey key = new AnchorKey(anchored, id);
 		FXStaticAnchor anchor = new FXStaticAnchor(key, position);
 		return new AnchorLink(anchor, key);
 	}
