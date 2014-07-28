@@ -61,8 +61,9 @@ import com.google.inject.spi.UntargettedBinding;
  * respective method all adapters, for which bindings with a matching
  * {@link AdapterMap} annotation exist. Here, matching means, that the type
  * provided in the {@link AdapterMap} annotation of the {@link IAdaptable}#s
- * method ({@link AdapterMap#adaptableType()}) is either the same or a sub-type of the
- * type used with the {@link AdapterMap} annotation of the related binding.
+ * method ({@link AdapterMap#adaptableType()}) is either the same or a sub-type
+ * of the type used with the {@link AdapterMap} annotation of the related
+ * binding.
  * 
  * @see AdapterMap
  * @see AdaptableTypeListener
@@ -199,7 +200,8 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 						AdapterMap a2 = (AdapterMap) o2.getAnnotation();
 						if (a1.adaptableType().equals(a2.adaptableType())) {
 							return 0;
-						} else if (a1.adaptableType().isAssignableFrom(a2.adaptableType())) {
+						} else if (a1.adaptableType().isAssignableFrom(
+								a2.adaptableType())) {
 							return -1;
 						} else {
 							return 1;
@@ -210,17 +212,20 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 			if (key.getAnnotationType() != null
 					&& AdapterMap.class.equals(key.getAnnotationType())) {
 				AdapterMap keyAnnotation = (AdapterMap) key.getAnnotation();
-				// Guice will already have injected all
-				// bindings for those annotations using the exact
-				// class, so we will only deal with subclasses here
-				if (methodAnnotation.adaptableType().isAssignableFrom(
+				// Guice will already have injected all bindings where the
+				// adaptableType used in the method annotation is the same as
+				// the one used in the key annotation.
+				if (!methodAnnotation.adaptableType().equals(
 						keyAnnotation.adaptableType())
-						&& !methodAnnotation.adaptableType().equals(
-								keyAnnotation.adaptableType())
 						/*
-						 * key annotation refers to a true subtype of method
-						 * annotation (check, because if the type is the same,
-						 * the default injector will already inject the values)
+						 * The annotation in the binding refers to a true
+						 * super-type of instance runtime type (check, because
+						 * if the type is the same, the default injector will
+						 * already inject the values)
+						 * 
+						 * IMPORTANT: we use type instead of methodAnnotation
+						 * .adaptableType() here, because the runtime type of
+						 * the to be injected IAdaptable is relevant
 						 */
 						&& keyAnnotation.adaptableType().isAssignableFrom(type)) {
 					// System.out.println("Applying binding for " +
