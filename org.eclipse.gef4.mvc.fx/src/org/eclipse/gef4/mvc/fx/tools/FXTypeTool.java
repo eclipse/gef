@@ -70,8 +70,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
 				if (((FXViewer) viewer).getScene() == scene) {
-					IVisualPart<Node> part = ((FXViewer) viewer)
-							.getVisualPartMap().get(target);
+					IVisualPart<Node> part = viewer.getFocusModel()
+							.getFocused();
 					if (part != null) {
 						targetPart = part;
 						break;
