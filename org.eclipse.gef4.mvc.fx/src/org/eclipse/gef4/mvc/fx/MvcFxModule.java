@@ -42,6 +42,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXFocusTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
+import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -104,15 +105,17 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-		.toInstance(new FXHoverTool());
+				.toInstance(new FXHoverTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-		.toInstance(new FXClickDragTool());
+				.toInstance(new FXClickDragTool());
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
+				.toInstance(new FXTypeTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-		.toInstance(new FXPinchSpreadTool());
+				.toInstance(new FXPinchSpreadTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-		.toInstance(new FXScrollTool());
+				.toInstance(new FXScrollTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-		.toInstance(new FXFocusTool());
+				.toInstance(new FXFocusTool());
 
 		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
 				FXViewer.class);
@@ -145,7 +148,7 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// register (default) behaviors (which are based on viewer models)
 		adapterMapBinder.addBinding(AdapterKey.get(FXSelectionBehavior.class))
-		.to(FXSelectionBehavior.class);
+				.to(FXSelectionBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverBehavior.class)).to(
 				FXHoverBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXZoomBehavior.class)).to(
