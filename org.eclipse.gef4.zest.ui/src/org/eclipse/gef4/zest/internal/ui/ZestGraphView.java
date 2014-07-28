@@ -139,7 +139,7 @@ public final class ZestGraphView extends ViewPart {
 					IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
 						public void run(final IProgressMonitor monitor)
 								throws CoreException {
-							setGraph(f);
+							trySetGraph(f);
 						}
 					};
 					IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -166,7 +166,7 @@ public final class ZestGraphView extends ViewPart {
 		composite.setLayout(layout);
 		if (file != null) {
 			try {
-				updateGraph();
+				updateGraph(file);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
@@ -384,8 +384,7 @@ public final class ZestGraphView extends ViewPart {
 				if (dialog.open() == ResourceListSelectionDialog.OK) {
 					Object[] selected = dialog.getResult();
 					if (selected != null) {
-						file = (IFile) selected[0];
-						setGraph(file);
+						trySetGraph((IFile) selected[0]);
 					}
 				}
 			}
@@ -395,31 +394,33 @@ public final class ZestGraphView extends ViewPart {
 		getViewSite().getActionBars().getToolBarManager().add(loadAction);
 	}
 
-	private void setGraph(final IFile file) {
-		this.file = file;
+	private void trySetGraph(final IFile file) {
 		try {
-			updateGraph();
+			if (updateGraph(file)){
+				this.file = file;
+			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void updateGraph() throws MalformedURLException {
+	private boolean updateGraph(IFile file) throws MalformedURLException {
 		if (file == null || file.getLocationURI() == null || !file.exists()) {
-			return;
+			return false;
 		}
 		final File f = file.getRawLocation().makeAbsolute().toFile();
-		final String currentDot = dotExtraction() ? new DotExtractor(f)
+		final String currentDot = dotExtraction(file) ? new DotExtractor(f)
 				.getDotString() : DotFileUtils.read(DotFileUtils.resolve(file
 				.getLocationURI().toURL()));
 		if (currentDot.equals(dotString)
 				|| currentDot.equals(DotExtractor.NO_DOT)) {
-			return;
+			return false;
 		}
 		setGraph(currentDot, true);
+		return true;
 	}
 
-	private boolean dotExtraction() {
+	private boolean dotExtraction(IFile file) {
 		return !file.getName().endsWith(EXTENSION); /*
 													 * no need to extract if we
 													 * listen to a *.dot file
