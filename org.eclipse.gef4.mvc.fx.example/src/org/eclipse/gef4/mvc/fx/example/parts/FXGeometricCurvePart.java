@@ -33,6 +33,7 @@ import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -354,10 +355,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (isStart) {
 			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(
-					visual, "START")));
+					visual, IFXConnection.START_ROLE)));
 		} else {
 			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(
-					visual, "END")));
+					visual, IFXConnection.END_ROLE)));
 		}
 	}
 

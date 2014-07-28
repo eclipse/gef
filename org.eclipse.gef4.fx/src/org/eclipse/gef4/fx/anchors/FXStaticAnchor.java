@@ -23,6 +23,13 @@ import org.eclipse.gef4.geometry.planar.Point;
  */
 public class FXStaticAnchor extends AbstractFXAnchor {
 
+	/**
+	 * Creates an "empty" static anchor, i.e. no positions are stored, yet.
+	 */
+	public FXStaticAnchor() {
+		super(null);
+	}
+
 	public FXStaticAnchor(AnchorKey key, Point position) {
 		this(null, key, position);
 	}
@@ -36,6 +43,10 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	@Override
 	protected void recomputePositions(Node anchored) {
 		// nothing to compute (*static* anchor)
+	}
+
+	public void setPosition(AnchorKey key, Point position) {
+		positionProperty().put(key, position);
 	}
 
 }
