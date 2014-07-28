@@ -12,10 +12,8 @@
 package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
 /**
