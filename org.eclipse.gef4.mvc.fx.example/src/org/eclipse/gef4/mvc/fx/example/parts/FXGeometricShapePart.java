@@ -138,7 +138,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void setContent(Object model) {
-		if (!(model instanceof FXGeometricShape)) {
+		if (model != null && !(model instanceof FXGeometricShape)) {
 			throw new IllegalArgumentException(
 					"Only IShape models are supported.");
 		}

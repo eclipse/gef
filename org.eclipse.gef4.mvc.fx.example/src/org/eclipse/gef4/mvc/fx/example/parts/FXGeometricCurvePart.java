@@ -235,7 +235,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void setContent(Object model) {
-		if (!(model instanceof FXGeometricCurve)) {
+		if (model != null && !(model instanceof FXGeometricCurve)) {
 			throw new IllegalArgumentException(
 					"Only ICurve models are supported.");
 		}
