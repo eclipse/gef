@@ -102,7 +102,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * @see IContentPart#getChildren()
 	 */
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentChildren(final List<Object> contentChildren) {
+	public void synchronizeContentChildren(final List<? extends Object> contentChildren) {
 		int i;
 
 		// only synchronize IContentPart children
@@ -196,7 +196,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * @see IContentPart#getAnchorages()
 	 */
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentAnchorages(List<Object> contentAnchorages) {
+	public void synchronizeContentAnchorages(List<? extends Object> contentAnchorages) {
 		int i;
 
 		List<IContentPart<VR>> anchorageContentParts = PartUtils.filterParts(

@@ -19,8 +19,8 @@ public interface IContentModel extends IPropertyChangeNotifier {
 
 	public static final String CONTENTS_PROPERTY = "contents";
 	
-	public void setContents(List<Object> contents);
+	public void setContents(List<? extends Object> contents);
 	
-	public List<Object> getContents();
+	public List<? extends Object> getContents();
 	
 }

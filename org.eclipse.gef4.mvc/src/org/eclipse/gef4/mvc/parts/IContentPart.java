@@ -43,8 +43,8 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 
 	public Object getContent();
 
-	public List<Object> getContentChildren();
+	public List<? extends Object> getContentChildren();
 
-	public List<Object> getContentAnchorages();
+	public List<? extends Object> getContentAnchorages();
 
 }

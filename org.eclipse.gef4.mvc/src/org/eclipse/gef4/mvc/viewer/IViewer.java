@@ -74,9 +74,9 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 */
 	public Map<VR, IVisualPart<VR>> getVisualPartMap();
 
-	public List<Object> getContents();
+	public List<? extends Object> getContents();
 
-	public void setContents(List<Object> contents);
+	public void setContents(List<? extends Object> contents);
 
 	/**
 	 * Returns the {@link IContentPartFactory} for this viewer, used to create

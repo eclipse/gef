@@ -102,12 +102,12 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public List<Object> getContentChildren() {
+	public List<? extends Object> getContentChildren() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<Object> getContentAnchorages() {
+	public List<? extends Object> getContentAnchorages() {
 		return Collections.emptyList();
 	}
 

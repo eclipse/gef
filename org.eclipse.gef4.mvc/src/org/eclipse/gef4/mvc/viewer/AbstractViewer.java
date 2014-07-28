@@ -159,7 +159,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public List<Object> getContents() {
+	public List<? extends Object> getContents() {
 		return getContentModel().getContents();
 	}
 
@@ -295,7 +295,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	 * @see IViewer#setContents(List)
 	 */
 	@Override
-	public void setContents(List<Object> contents) {
+	public void setContents(List<? extends Object> contents) {
 		if (contentPartFactory == null) {
 			throw new IllegalStateException(
 					"ContentPartFactory has to be set before passing contents in.");

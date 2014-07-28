@@ -32,7 +32,7 @@ public class DefaultContentModel implements IContentModel {
 	}
 
 	@Override
-	public void setContents(List<Object> contents) {
+	public void setContents(List<? extends Object> contents) {
 		List<Object> oldContents = Collections.unmodifiableList(new ArrayList<Object>(this.contents));
 		this.contents.clear();
 		this.contents.addAll(contents);
@@ -40,7 +40,7 @@ public class DefaultContentModel implements IContentModel {
 	}
 	
 	@Override
-	public List<Object> getContents() {
+	public List<? extends Object> getContents() {
 		return Collections.unmodifiableList(this.contents);
 	}
 }
