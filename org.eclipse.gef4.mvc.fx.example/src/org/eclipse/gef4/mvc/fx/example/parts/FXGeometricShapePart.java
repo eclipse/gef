@@ -157,6 +157,19 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 							return;
 						}
 						
+						// prevent deletion when other policies are running
+						FXClickDragTool tool = getViewer().getDomain().getAdapter(FXClickDragTool.class);
+						if (tool != null && tool.isDragging()) {
+							return;
+						}
+						
+						// TODO: encapsulate in ModelsOp (
+						// TODO: advance focus to next selected
+						getViewer().getFocusModel().setFocused(null);
+						// TODO: remove from selection
+						getViewer().getSelectionModel().deselect(FXGeometricShapePart.this);
+						// )
+						
 						executeOperation(new AbstractFXDeleteOperation(
 								"delete", (IContentPart<Node>) getParent(),
 								getContent()) {

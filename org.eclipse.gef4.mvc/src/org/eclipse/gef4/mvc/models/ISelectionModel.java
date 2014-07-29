@@ -38,6 +38,11 @@ public interface ISelectionModel<VR> extends IPropertyChangeNotifier {
 
 	public abstract void deselectAll();
 
+	/**
+	 * Returns an unmodifiable {@link List} of the selected {@link IContentPart}s.
+	 * 
+	 * @return An unmodifiable {@link List} of the selected {@link IContentPart}s.
+	 */
 	public abstract List<IContentPart<VR>> getSelected();
 
 	public abstract void select(List<IContentPart<VR>> editparts);
