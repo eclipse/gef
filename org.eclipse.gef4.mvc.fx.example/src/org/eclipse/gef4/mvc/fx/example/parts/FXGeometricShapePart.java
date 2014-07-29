@@ -163,13 +163,22 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 							return;
 						}
 						
-						// TODO: encapsulate in ModelsOp (
-						// TODO: advance focus to next selected
-						getViewer().getFocusModel().setFocused(null);
-						// TODO: remove from selection
-						getViewer().getSelectionModel().deselect(FXGeometricShapePart.this);
-						// )
+						// TODO: encapsulate in operations
 						
+						List<IContentPart<Node>> currentSelection = getViewer().getSelectionModel().getSelected();
+						int index = currentSelection.indexOf(FXGeometricShapePart.this);
+						
+						// advance focus
+						if (index + 1 < currentSelection.size()) {
+							getViewer().getFocusModel().setFocused(currentSelection.get(index + 1));
+						} else {
+							getViewer().getFocusModel().setFocused(null);
+						}
+						
+						// remove from selection
+						getViewer().getSelectionModel().deselect(FXGeometricShapePart.this);
+						
+						// execute operation
 						executeOperation(new AbstractFXDeleteOperation(
 								"delete", (IContentPart<Node>) getParent(),
 								getContent()) {
