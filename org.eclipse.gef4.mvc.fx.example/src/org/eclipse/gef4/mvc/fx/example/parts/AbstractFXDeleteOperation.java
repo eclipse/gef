@@ -49,6 +49,7 @@ public abstract class AbstractFXDeleteOperation extends AbstractOperation {
 		ContentBehavior contentBehavior = parent
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
+		contentBehavior.synchronizeContentAnchorages(parent.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 
@@ -67,6 +68,7 @@ public abstract class AbstractFXDeleteOperation extends AbstractOperation {
 		ContentBehavior contentBehavior = parent
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
+		contentBehavior.synchronizeContentAnchorages(parent.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 
