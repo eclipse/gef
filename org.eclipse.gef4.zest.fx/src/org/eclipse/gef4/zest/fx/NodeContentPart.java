@@ -66,6 +66,9 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
+		if (content == null) {
+			return;
+		}
 		if (!(content instanceof org.eclipse.gef4.graph.Node)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
