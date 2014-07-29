@@ -43,6 +43,12 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
 
+	// We need to ensure that when undoing model operations, the same content
+	// parts are re-used when re-synchronizing; as such, we put content parts
+	// into this pool within disposeIfObsolete() and relocate them within
+	// findOrCreatePart()
+	private Map<Object, IContentPart<VR>> contentPartPool;
+
 	@Override
 	public void activate() {
 		super.activate();
@@ -77,21 +83,41 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
+			// keep track of the removed content part, so we may relocate it
+			// within findOrCreate() later
+			if (contentPartPool == null) {
+				contentPartPool = new HashMap<Object, IContentPart<VR>>();
+			}
+			contentPartPool.put(contentPart.getContent(), contentPart);
 			contentPart.setContent(null);
 		}
 	}
 
-	protected IContentPart<VR> findOrCreatePartFor(Object model) {
+	protected IContentPart<VR> findOrCreatePartFor(Object content) {
 		Map<Object, IContentPart<VR>> contentPartMap = getHost().getRoot()
 				.getViewer().getContentPartMap();
-		if (contentPartMap.containsKey(model)) {
-			return contentPartMap.get(model);
+		if (contentPartMap.containsKey(content)) {
+			return contentPartMap.get(content);
 		} else {
-			IContentPartFactory<VR> contentPartFactory = getHost().getRoot()
-					.getViewer().getContentPartFactory();
-			IContentPart<VR> contentPart = contentPartFactory
-					.createContentPart(model, this, Collections.emptyMap());
-			contentPart.setContent(model);
+			// 'Revive' a content part, if it was removed before
+			IContentPart<VR> contentPart = null;
+			if (contentPartPool != null) {
+				contentPart = contentPartPool.remove(content);
+				if (contentPartPool.isEmpty()) {
+					contentPartPool = null;
+				}
+			}
+
+			// If the part could not be revived, a new one is created
+			if (contentPart == null) {
+				IContentPartFactory<VR> contentPartFactory = getHost()
+						.getRoot().getViewer().getContentPartFactory();
+				contentPart = contentPartFactory.createContentPart(content,
+						this, Collections.emptyMap());
+			}
+
+			// initialize part
+			contentPart.setContent(content);
 			return contentPart;
 		}
 	}
