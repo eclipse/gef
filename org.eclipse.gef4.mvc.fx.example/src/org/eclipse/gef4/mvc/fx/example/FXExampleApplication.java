@@ -1,13 +1,10 @@
 package org.eclipse.gef4.mvc.fx.example;
 
 import java.util.Collections;
-import java.util.Map;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;

@@ -16,6 +16,7 @@ import java.util.List;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -82,7 +83,6 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		// transaction policies
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
 				new FXResizeRelocatePolicy() {
-
 					@Override
 					public IUndoableOperation commit() {
 						final IUndoableOperation updateVisualOperation = super
