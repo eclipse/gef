@@ -39,6 +39,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	public static final Class<AbstractFXDragPolicy> DRAG_TOOL_POLICY_KEY = AbstractFXDragPolicy.class;
 
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
+	private boolean dragInProgress;
 
 	protected Collection<? extends AbstractFXClickPolicy> getClickPolicies(
 			IVisualPart<Node> targetPart) {
@@ -66,6 +67,10 @@ public class FXClickDragTool extends AbstractTool<Node> {
 			}
 		}
 		return parts;
+	}
+
+	public boolean isDragging() {
+		return dragInProgress;
 	}
 
 	@Override
@@ -116,6 +121,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					if (dragTargetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
 						for (AbstractFXDragPolicy policy : policies) {
+							dragInProgress = true;
 							policy.press(e);
 						}
 					}
@@ -139,6 +145,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 									pickedNodes, parts);
 						}
 					}
+
+					dragInProgress = false;
 				}
 			};
 
