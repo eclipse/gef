@@ -153,6 +153,10 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 					@Override
 					public void pressed(KeyEvent event) {
+						if (event.getCode() != KeyCode.DELETE) {
+							return;
+						}
+						
 						executeOperation(new AbstractFXDeleteOperation(
 								"delete", (IContentPart<Node>) getParent(),
 								getContent()) {
@@ -165,12 +169,14 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 							@Override
 							public void removeContentChild() {
+								// TODO: remove anchor relations
 								shapeVisuals.remove(getContentChild());
 							}
 
 							@SuppressWarnings("unchecked")
 							@Override
 							public void addContentChild() {
+								// TODO: add anchor relations
 								shapeVisuals
 										.add((AbstractFXGeometricElement<? extends IGeometry>) getContentChild());
 							}
