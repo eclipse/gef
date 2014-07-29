@@ -23,7 +23,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
@@ -73,7 +74,8 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<VR> anchorage) {
+	protected void detachFromAnchorageVisual(IVisualPart<VR> anchorage,
+			int index) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

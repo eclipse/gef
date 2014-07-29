@@ -30,7 +30,7 @@ public abstract class AbstractFeedbackPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR> child) {
+	protected void removeChildVisual(IVisualPart<VR> child, int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support this");
 	}

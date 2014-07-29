@@ -42,7 +42,8 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 	};
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
 		visualListener.unregister();
 	}
 

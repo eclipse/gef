@@ -215,7 +215,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
-	protected abstract void detachFromAnchorageVisual(IVisualPart<VR> anchorage);
+	protected abstract void detachFromAnchorageVisual(IVisualPart<VR> anchorage, int index);
 
 	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
@@ -355,9 +355,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
 				anchorages);
 		removeAnchorageWithoutNotify(anchorage);
-
+		
 		anchorage.removeAnchored(this);
-		detachFromAnchorageVisual(anchorage);
+		detachFromAnchorageVisual(anchorage, oldAnchorages.indexOf(anchorage));
 
 		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
 				getAnchorages());
@@ -399,7 +399,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 			child.deactivate();
 
 		child.setParent(null);
-		removeChildVisual(child);
+		removeChildVisual(child, index);
 		List<IVisualPart<VR>> oldChildren = getChildren();
 		removeChildWithoutNotify(child);
 
@@ -417,9 +417,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * Removes the child's visual from this {@link IVisualPart}'s visual.
 	 * 
 	 * @param child
-	 *            the child {@link IVisualPart}
+	 *            The child {@link IVisualPart}.
+	 * @param index The index of the child whose visual is to be removed.
 	 */
-	protected abstract void removeChildVisual(IVisualPart<VR> child);
+	protected abstract void removeChildVisual(IVisualPart<VR> child, int index);
 
 	private void removeChildWithoutNotify(IVisualPart<VR> child) {
 		children.remove(child);
@@ -435,7 +436,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void reorderAnchorage(IVisualPart<VR> anchorage, int index) {
-		detachFromAnchorageVisual(anchorage);
+		detachFromAnchorageVisual(anchorage, anchorages.indexOf(anchorage));
 		removeAnchorageWithoutNotify(anchorage);
 		addAnchorageWithoutNotify(anchorage, index);
 		attachToAnchorageVisual(anchorage, index);
@@ -452,7 +453,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 */
 	@Override
 	public void reorderChild(IVisualPart<VR> child, int index) {
-		removeChildVisual(child);
+		removeChildVisual(child, children.indexOf(child));
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);
 		addChildVisual(child, index);

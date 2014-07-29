@@ -39,7 +39,8 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
 		// do nothing by default
 	}
 
@@ -49,7 +50,7 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node> child) {
+	protected void removeChildVisual(IVisualPart<Node> child, int index) {
 		if (getVisual() instanceof Group) {
 			((Group) getVisual()).getChildren().remove(child.getVisual());
 		} else if (getVisual() instanceof Pane) {

@@ -363,15 +363,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
-		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (anchor == visual.startAnchorLinkProperty().get().getAnchor()) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage, int index) {
+		if (index == 0) {
 			visual.setStartPoint(visual.getStartPoint());
-		} else if (anchor == visual.endAnchorLinkProperty().get().getAnchor()) {
+		} else if (index == 1) {
 			visual.setEndPoint(visual.getEndPoint());
 		} else {
 			throw new IllegalStateException(
-					"Cannot detach from unknown anchor: " + anchor);
+					"Cannot detach from anchor at index <" + index + ">.");
 		}
 	}
 

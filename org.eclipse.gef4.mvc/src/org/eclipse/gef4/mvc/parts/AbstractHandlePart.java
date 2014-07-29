@@ -30,7 +30,7 @@ public abstract class AbstractHandlePart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR> child) {
+	protected void removeChildVisual(IVisualPart<VR> child, int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support this");
 	}

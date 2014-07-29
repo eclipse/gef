@@ -113,10 +113,10 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage) {
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			int index) {
 		FXCurveConnection connection = visual.getConnection();
-		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (anchor == connection.getStartAnchorLink().getAnchor()) {
+		if (index == 0) {
 			connection.setStartPoint(connection.getStartPoint());
 		} else {
 			connection.setEndPoint(connection.getEndPoint());
