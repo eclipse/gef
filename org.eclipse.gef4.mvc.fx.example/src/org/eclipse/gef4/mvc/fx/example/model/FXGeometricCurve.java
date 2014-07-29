@@ -49,11 +49,11 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
-		return Collections.unmodifiableList(sourceAnchorages);
+		return sourceAnchorages;
 	}
 
 	public List<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
-		return Collections.unmodifiableList(targetAnchorages);
+		return targetAnchorages;
 	}
 
 	public void addSourceAnchorage(
