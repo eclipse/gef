@@ -244,22 +244,24 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						revOp.add(changeHoverOperation);
 						revOp.add(changeFocusOperation);
 						revOp.add(changeSelectionOperation);
-						revOp.add(updateParentContentOperation);
-						for (IUndoableOperation op : updateAnchoredsOperations) {
-							revOp.add(op);
-						}
 
 						// synchronization has to happen after the rest
 						ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
 								"compo-fwd");
-						fwdOp.add(revOp);
-						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
-								"children", (IContentPart<Node>) getParent()));
+						for (IUndoableOperation op : updateAnchoredsOperations) {
+							// TODO: add an addAll method
+							fwdOp.add(op);
+						}
 						fwdOp.add(new SynchronizeContentAnchoragesOperation<Node>(
 								"anchorages", (IContentPart<Node>) getParent()));
+						fwdOp.add(updateParentContentOperation);
+						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
+								"children", (IContentPart<Node>) getParent()));
 
+						revOp.add(fwdOp);
+						
 						// execute operation
-						executeOperation(fwdOp);
+						executeOperation(revOp);
 					}
 				});
 	}
