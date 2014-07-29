@@ -36,6 +36,7 @@ import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
@@ -77,9 +78,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
 			curve.getSourceAnchorages().clear();
-			curve.getSourceAnchorages().add(newSource);
+			if (newSource != null)
+				curve.getSourceAnchorages().add(newSource);
 			curve.getTargetAnchorages().clear();
-			curve.getTargetAnchorages().add(newTarget);
+			if (newTarget != null)
+				curve.getTargetAnchorages().add(newTarget);
 			return Status.OK_STATUS;
 		}
 
@@ -93,9 +96,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
 			curve.getSourceAnchorages().clear();
-			curve.getSourceAnchorages().add(oldSource);
+			if (oldSource != null)
+				curve.getSourceAnchorages().add(oldSource);
 			curve.getTargetAnchorages().clear();
-			curve.getTargetAnchorages().add(oldTarget);
+			if (oldTarget != null)
+				curve.getTargetAnchorages().add(oldTarget);
 			return Status.OK_STATUS;
 		}
 
@@ -284,14 +289,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						"Update model", curve, oldWayPoints, newWayPoints);
 
 				AbstractFXGeometricElement<?> oldSource = curve
+						.getSourceAnchorages().isEmpty() ? null : curve
 						.getSourceAnchorages().get(0);
 				AbstractFXGeometricElement<?> oldTarget = curve
+						.getTargetAnchorages().isEmpty() ? null : curve
 						.getTargetAnchorages().get(0);
+
 				AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
 						.getStartAnchorLink());
 				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
 						.getEndAnchorLink());
-
 				final IUndoableOperation updateAnchoragesOperation = new ChangeContentAnchoragesOperation(
 						"Update anchorages.", curve, oldSource, oldTarget,
 						newSource, newTarget);
@@ -309,6 +316,22 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return compositeOperation;
 			}
 		});
+	}
+
+	ChangeContentAnchoragesOperation getContentAnchoragesOperation(
+			AbstractFXGeometricElement<?> newSource,
+			AbstractFXGeometricElement<?> newTarget) {
+		List<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+				.getSourceAnchorages();
+		List<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+				.getTargetAnchorages();
+		return new ChangeContentAnchoragesOperation("anchorages", getContent(),
+				sourceAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) sourceAnchorages
+								.get(0),
+				targetAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) targetAnchorages
+								.get(0), newSource, newTarget);
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
