@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.awt.geom.NoninvertibleTransformException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Bounds;
@@ -43,6 +44,13 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
+import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
+import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -156,53 +164,102 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						if (event.getCode() != KeyCode.DELETE) {
 							return;
 						}
-						
+
 						// prevent deletion when other policies are running
-						FXClickDragTool tool = getViewer().getDomain().getAdapter(FXClickDragTool.class);
+						FXClickDragTool tool = getViewer().getDomain()
+								.getAdapter(FXClickDragTool.class);
 						if (tool != null && tool.isDragging()) {
 							return;
 						}
-						
-						// TODO: encapsulate in operations
-						
-						List<IContentPart<Node>> currentSelection = getViewer().getSelectionModel().getSelected();
-						int index = currentSelection.indexOf(FXGeometricShapePart.this);
-						
+
+						// get current selection
+						List<IContentPart<Node>> currentSelection = new ArrayList<IContentPart<Node>>(
+								getViewer().getSelectionModel().getSelected());
+						int index = currentSelection
+								.indexOf(FXGeometricShapePart.this);
+
 						// advance focus
+						IContentPart<Node> newFocus = null;
 						if (index + 1 < currentSelection.size()) {
-							getViewer().getFocusModel().setFocused(currentSelection.get(index + 1));
-						} else {
-							getViewer().getFocusModel().setFocused(null);
+							// focus next selected part
+							newFocus = currentSelection.get(index + 1);
 						}
-						
+						ChangeFocusOperation<Node> changeFocusOperation = new ChangeFocusOperation<Node>(
+								getViewer(), newFocus);
+
 						// remove from selection
-						getViewer().getSelectionModel().deselect(FXGeometricShapePart.this);
-						
+						currentSelection.remove(index);
+						ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
+								getViewer(), currentSelection);
+
+						// remove from hover (if hovered)
+						IVisualPart<Node> hover = getViewer().getHoverModel()
+								.getHover();
+						ChangeHoverOperation<Node> changeHoverOperation = new ChangeHoverOperation<Node>(
+								getViewer(),
+								hover == FXGeometricShapePart.this ? null
+										: hover);
+
+						// update anchoreds
+						List<IUndoableOperation> updateAnchoredsOperations = new ArrayList<IUndoableOperation>();
+						for (IVisualPart<Node> anchored : getAnchoreds()) {
+							if (anchored instanceof FXGeometricCurvePart) {
+								FXGeometricCurvePart p = (FXGeometricCurvePart) anchored;
+								updateAnchoredsOperations.add(p
+										.getContentAnchoragesOperation(null,
+												null));
+							}
+						}
+
+						// update parent content children
+						final FXGeometricShape content = getContent();
+						final List<AbstractFXGeometricElement<? extends IGeometry>> shapeVisuals = ((FXGeometricModelPart) getParent())
+								.getContent().getShapeVisuals();
+						IUndoableOperation updateParentContentOperation = new AbstractOperation(
+								"content") {
+							@Override
+							public IStatus undo(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								shapeVisuals.add(content);
+								return Status.OK_STATUS;
+							}
+
+							@Override
+							public IStatus redo(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								return execute(monitor, info);
+							}
+
+							@Override
+							public IStatus execute(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								shapeVisuals.remove(content);
+								return Status.OK_STATUS;
+							}
+						};
+
+						// arrange operations
+						ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
+								"compo-rev");
+						revOp.add(changeHoverOperation);
+						revOp.add(changeFocusOperation);
+						revOp.add(changeSelectionOperation);
+						revOp.add(updateParentContentOperation);
+						for (IUndoableOperation op : updateAnchoredsOperations) {
+							revOp.add(op);
+						}
+
+						// synchronization has to happen after the rest
+						ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
+								"compo-fwd");
+						fwdOp.add(revOp);
+						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
+								"children", (IContentPart<Node>) getParent()));
+						fwdOp.add(new SynchronizeContentAnchoragesOperation<Node>(
+								"anchorages", (IContentPart<Node>) getParent()));
+
 						// execute operation
-						executeOperation(new AbstractFXDeleteOperation(
-								"delete", (IContentPart<Node>) getParent(),
-								getContent()) {
-							private List<AbstractFXGeometricElement<? extends IGeometry>> shapeVisuals;
-
-							{
-								shapeVisuals = ((FXGeometricModelPart) getParent())
-										.getContent().getShapeVisuals();
-							}
-
-							@Override
-							public void removeContentChild() {
-								// TODO: remove anchor relations
-								shapeVisuals.remove(getContentChild());
-							}
-
-							@SuppressWarnings("unchecked")
-							@Override
-							public void addContentChild() {
-								// TODO: add anchor relations
-								shapeVisuals
-										.add((AbstractFXGeometricElement<? extends IGeometry>) getContentChild());
-							}
-						});
+						executeOperation(fwdOp);
 					}
 				});
 	}
