@@ -52,6 +52,28 @@ public class BehaviorUtils {
 		}
 	}
 
+	public static <VR> List<IFeedbackPart<VR>> createFeedback(
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			Map<Object, Object> contextMap) {
+		IVisualPart<VR> host = behavior.getAdaptable();
+		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
+				.getFeedbackPartFactory();
+		List<IFeedbackPart<VR>> feedbackParts = factory.createFeedbackParts(
+				targets, behavior, contextMap);
+		return feedbackParts;
+	}
+
+	public static <VR> List<IHandlePart<VR>> createHandles(
+			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			Map<Object, Object> contextMap) {
+		IVisualPart<VR> host = behavior.getAdaptable();
+		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
+				.getHandlePartFactory();
+		List<IHandlePart<VR>> handleParts = factory.createHandleParts(targets,
+				behavior, contextMap);
+		return handleParts;
+	}
+
 	/**
 	 * Removes the given list of anchoreds as children from the given
 	 * {@link IRootPart}. Additionally removes the given anchorages from the
@@ -75,28 +97,6 @@ public class BehaviorUtils {
 				anchored.removeAnchorages(anchorages);
 			}
 		}
-	}
-
-	public static <VR> List<IFeedbackPart<VR>> createFeedback(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
-			Map<Object, Object> contextMap) {
-		IVisualPart<VR> host = behavior.getAdaptable();
-		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
-				.getFeedbackPartFactory();
-		List<IFeedbackPart<VR>> feedbackParts = factory.createFeedbackParts(
-				targets, behavior, contextMap);
-		return feedbackParts;
-	}
-
-	public static <VR> List<IHandlePart<VR>> createHandles(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
-			Map<Object, Object> contextMap) {
-		IVisualPart<VR> host = behavior.getAdaptable();
-		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
-				.getHandlePartFactory();
-		List<IHandlePart<VR>> handleParts = factory.createHandleParts(targets,
-				behavior, contextMap);
-		return handleParts;
 	}
 
 }

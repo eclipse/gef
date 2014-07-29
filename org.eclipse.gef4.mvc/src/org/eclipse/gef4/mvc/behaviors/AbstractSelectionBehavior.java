@@ -32,55 +32,12 @@ import com.google.inject.Provider;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractSelectionBehavior<VR> extends
 		AbstractBehavior<VR> implements PropertyChangeListener {
-
-	public Provider<IGeometry> getFeedbackGeometryProvider(
-			final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getFeedbackGeometry(contextMap);
-			}
-		};
-	}
-
-	public Provider<IGeometry> getHandleGeometryProvider(
-			final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getHandleGeometry(contextMap);
-			}
-		};
-	}
-
-	/**
-	 * Returns an {@link IGeometry} for which visual selection feedback will be
-	 * provided.
-	 * 
-	 * @param contextMap
-	 *            TODO
-	 * 
-	 * @return an {@link IGeometry} determining feedback positions
-	 */
-	protected abstract IGeometry getFeedbackGeometry(
-			Map<Object, Object> contextMap);
-
-	/**
-	 * Returns an {@link IGeometry} for which selection handles will be
-	 * provided.
-	 * <p>
-	 * Per default, the {@link #getFeedbackGeometry(Map) feedback geometry} is
-	 * returned.
-	 * @param contextMap TODO
-	 * 
-	 * @return an {@link IGeometry} determining handle positions
-	 */
-	protected abstract IGeometry getHandleGeometry(Map<Object, Object> contextMap);
 
 	@Override
 	public void activate() {
@@ -91,28 +48,6 @@ public abstract class AbstractSelectionBehavior<VR> extends
 		// create feedback and handles if we are already selected
 		addFeedbackAndHandles(getHost().getRoot().getViewer()
 				.getSelectionModel().getSelected());
-	}
-
-	@Override
-	public void deactivate() {
-		// remove any pending feedback
-		removeFeedbackAndHandles(getHost().getRoot().getViewer()
-				.getSelectionModel().getSelected());
-
-		getHost().getRoot().getViewer().getSelectionModel()
-				.removePropertyChangeListener(this);
-		super.deactivate();
-	}
-
-	protected void removeFeedbackAndHandles(List<IContentPart<VR>> selected) {
-		// root is responsible for multi selection
-		if (getHost() instanceof IRootPart && selected.size() > 1) {
-			removeHandles(selected);
-			removeFeedback(selected);
-		} else if (selected.contains(getHost())) {
-			removeHandles(Collections.singletonList(getHost()));
-			removeFeedback(Collections.singletonList(getHost()));
-		}
 	}
 
 	protected void addFeedbackAndHandles(List<IContentPart<VR>> selected) {
@@ -128,6 +63,64 @@ public abstract class AbstractSelectionBehavior<VR> extends
 		}
 	}
 
+	@Override
+	public void deactivate() {
+		// remove any pending feedback
+		removeFeedbackAndHandles(getHost().getRoot().getViewer()
+				.getSelectionModel().getSelected());
+
+		getHost().getRoot().getViewer().getSelectionModel()
+				.removePropertyChangeListener(this);
+		super.deactivate();
+	}
+
+	/**
+	 * Returns an {@link IGeometry} for which visual selection feedback will be
+	 * provided.
+	 * 
+	 * @param contextMap
+	 *            TODO
+	 * 
+	 * @return an {@link IGeometry} determining feedback positions
+	 */
+	protected abstract IGeometry getFeedbackGeometry(
+			Map<Object, Object> contextMap);
+
+	public Provider<IGeometry> getFeedbackGeometryProvider(
+			final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getFeedbackGeometry(contextMap);
+			}
+		};
+	}
+
+	/**
+	 * Returns an {@link IGeometry} for which selection handles will be
+	 * provided.
+	 * <p>
+	 * Per default, the {@link #getFeedbackGeometry(Map) feedback geometry} is
+	 * returned.
+	 * 
+	 * @param contextMap
+	 *            TODO
+	 * 
+	 * @return an {@link IGeometry} determining handle positions
+	 */
+	protected abstract IGeometry getHandleGeometry(
+			Map<Object, Object> contextMap);
+
+	public Provider<IGeometry> getHandleGeometryProvider(
+			final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getHandleGeometry(contextMap);
+			}
+		};
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
@@ -139,6 +132,17 @@ public abstract class AbstractSelectionBehavior<VR> extends
 
 			removeFeedbackAndHandles(oldSelection);
 			addFeedbackAndHandles(newSelection);
+		}
+	}
+
+	protected void removeFeedbackAndHandles(List<IContentPart<VR>> selected) {
+		// root is responsible for multi selection
+		if (getHost() instanceof IRootPart && selected.size() > 1) {
+			removeHandles(selected);
+			removeFeedback(selected);
+		} else if (selected.contains(getHost())) {
+			removeHandles(Collections.singletonList(getHost()));
+			removeFeedback(Collections.singletonList(getHost()));
 		}
 	}
 }

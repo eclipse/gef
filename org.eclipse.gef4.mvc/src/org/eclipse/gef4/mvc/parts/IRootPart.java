@@ -48,20 +48,20 @@ public interface IRootPart<VR> extends IVisualPart<VR> {
 	public List<IContentPart<VR>> getContentPartChildren();
 
 	/**
-	 * Returns all children of type {@link IHandlePart} contained by this
-	 * {@link IRootPart}.
-	 * 
-	 * @return A list containing all {@link IHandlePart} children.
-	 */
-	public List<IHandlePart<VR>> getHandlePartChildren();
-
-	/**
 	 * Returns all children of type {@link IFeedbackPart} contained by this
 	 * {@link IRootPart}.
 	 * 
 	 * @return A list containing all {@link IFeedbackPart} children.
 	 */
 	public List<IFeedbackPart<VR>> getFeedbackPartChildren();
+
+	/**
+	 * Returns all children of type {@link IHandlePart} contained by this
+	 * {@link IRootPart}.
+	 * 
+	 * @return A list containing all {@link IHandlePart} children.
+	 */
+	public List<IHandlePart<VR>> getHandlePartChildren();
 
 	/**
 	 * Returns the {@link IViewer} this {@link IRootPart} is bound to.

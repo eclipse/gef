@@ -37,8 +37,36 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	/**
 	 * @see IContentPart#getContent()
 	 */
+	@Override
 	public Object getContent() {
 		return content;
+	}
+
+	@Override
+	public List<? extends Object> getContentAnchorages() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<? extends Object> getContentChildren() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	protected void register() {
+		super.register();
+		if (content != null) {
+			registerAtContentPartMap();
+		}
+	}
+
+	/**
+	 * Registers the <i>model</i> in the {@link IViewer#getContentPartMap()}.
+	 * Subclasses should only extend this method if they need to register this
+	 * EditPart in additional ways.
+	 */
+	protected void registerAtContentPartMap() {
+		getViewer().getContentPartMap().put(getContent(), this);
 	}
 
 	/**
@@ -47,6 +75,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	 * 
 	 * @see IContentPart#setContent(Object)
 	 */
+	@Override
 	public void setContent(Object content) {
 		if (this.content == content) {
 			return;
@@ -65,28 +94,11 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	protected void register() {
-		super.register();
-		if (content != null) {
-			registerAtContentPartMap();
-		}
-	}
-
-	@Override
 	protected void unregister() {
 		super.unregister();
 		if (content != null) {
 			unregisterFromContentPartMap();
 		}
-	}
-
-	/**
-	 * Registers the <i>model</i> in the {@link IViewer#getContentPartMap()}.
-	 * Subclasses should only extend this method if they need to register this
-	 * EditPart in additional ways.
-	 */
-	protected void registerAtContentPartMap() {
-		getViewer().getContentPartMap().put(getContent(), this);
 	}
 
 	/**
@@ -97,18 +109,9 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	protected void unregisterFromContentPartMap() {
 		Map<Object, IContentPart<VR>> registry = getViewer()
 				.getContentPartMap();
-		if (registry.get(getContent()) == this)
+		if (registry.get(getContent()) == this) {
 			registry.remove(getContent());
-	}
-
-	@Override
-	public List<? extends Object> getContentChildren() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<? extends Object> getContentAnchorages() {
-		return Collections.emptyList();
+		}
 	}
 
 }

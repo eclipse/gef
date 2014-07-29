@@ -124,7 +124,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
 	}
 
@@ -266,8 +267,9 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public void setAdaptable(IDomain<VR> domain) {
-		if (this.domain == domain)
+		if (this.domain == domain) {
 			return;
+		}
 		this.domain = domain;
 	}
 
@@ -319,7 +321,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Inject
 	public void setRootPart(IRootPart<VR> rootPart) {
-		if(this.rootPart == rootPart){
+		if (this.rootPart == rootPart) {
 			return;
 		}
 		if (this.rootPart != null) {

@@ -151,8 +151,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		addChildVisual(child, index);
 		child.refreshVisual();
 
-		if (isActive())
+		if (isActive()) {
 			child.activate();
+		}
 
 		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
@@ -184,8 +185,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	protected abstract void addChildVisual(IVisualPart<VR> child, int index);
 
 	private void addChildWithoutNotify(IVisualPart<VR> child, int index) {
-		if (children == null)
+		if (children == null) {
 			children = new ArrayList<IVisualPart<VR>>(2);
+		}
 		children.add(index, child);
 	}
 
@@ -215,7 +217,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 	}
 
-	protected abstract void detachFromAnchorageVisual(IVisualPart<VR> anchorage, int index);
+	protected abstract void detachFromAnchorageVisual(
+			IVisualPart<VR> anchorage, int index);
 
 	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
@@ -244,7 +247,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
 	}
 
@@ -271,8 +275,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public List<IVisualPart<VR>> getChildren() {
-		if (children == null)
+		if (children == null) {
 			return Collections.emptyList();
+		}
 		return Collections.unmodifiableList(children);
 	}
 
@@ -355,7 +360,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
 				anchorages);
 		removeAnchorageWithoutNotify(anchorage);
-		
+
 		anchorage.removeAnchored(this);
 		detachFromAnchorageVisual(anchorage, oldAnchorages.indexOf(anchorage));
 
@@ -393,10 +398,12 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	@Override
 	public void removeChild(IVisualPart<VR> child) {
 		int index = getChildren().indexOf(child);
-		if (index < 0)
+		if (index < 0) {
 			return;
-		if (isActive())
+		}
+		if (isActive()) {
 			child.deactivate();
+		}
 
 		child.setParent(null);
 		removeChildVisual(child, index);
@@ -418,7 +425,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * 
 	 * @param child
 	 *            The child {@link IVisualPart}.
-	 * @param index The index of the child whose visual is to be removed.
+	 * @param index
+	 *            The index of the child whose visual is to be removed.
 	 */
 	protected abstract void removeChildVisual(IVisualPart<VR> child, int index);
 
@@ -479,8 +487,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 */
 	@Override
 	public void setParent(IVisualPart<VR> parent) {
-		if (this.parent == parent)
+		if (this.parent == parent) {
 			return;
+		}
 
 		IVisualPart<VR> oldParent = this.parent;
 

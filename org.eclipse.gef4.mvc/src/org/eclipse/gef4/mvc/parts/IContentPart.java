@@ -39,12 +39,12 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 	 */
 	public static final String CONTENT_PROPERTY = "content";
 
-	public void setContent(Object content);
-
 	public Object getContent();
+
+	public List<? extends Object> getContentAnchorages();
 
 	public List<? extends Object> getContentChildren();
 
-	public List<? extends Object> getContentAnchorages();
+	public void setContent(Object content);
 
 }

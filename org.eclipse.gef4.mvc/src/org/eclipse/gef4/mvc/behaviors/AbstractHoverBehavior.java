@@ -28,7 +28,8 @@ import com.google.inject.Provider;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
@@ -39,16 +40,25 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		super.activate();
 		getHost().getRoot().getViewer().getHoverModel()
 				.addPropertyChangeListener(this);
-		
+
 		// create feedback and handles if we are already hovered
-		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel().getHover());
+		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel()
+				.getHover());
+	}
+
+	protected final void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
+		if (newHovered == getHost()) {
+			addFeedback(Collections.singletonList(getHost()));
+			addHandles(Collections.singletonList(getHost()));
+		}
 	}
 
 	@Override
 	public void deactivate() {
 		// remove any pending feedback and handles
-		removeFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel().getHover());
-		
+		removeFeedbackAndHandles(getHost().getRoot().getViewer()
+				.getHoverModel().getHover());
+
 		getHost().getRoot().getViewer().getHoverModel()
 				.removePropertyChangeListener(this);
 		super.deactivate();
@@ -57,11 +67,24 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
-	 * @param contextMap TODO
+	 * 
+	 * @param contextMap
+	 *            TODO
 	 * 
 	 * @return an {@link IGeometry} determining feedback positions
 	 */
-	protected abstract IGeometry getFeedbackGeometry(Map<Object, Object> contextMap);
+	protected abstract IGeometry getFeedbackGeometry(
+			Map<Object, Object> contextMap);
+
+	public Provider<IGeometry> getFeedbackGeometryProvider(
+			final Map<Object, Object> contextMap) {
+		return new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				return getFeedbackGeometry(contextMap);
+			}
+		};
+	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -75,31 +98,11 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 		}
 	}
 
-	protected final void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
-		if (newHovered == getHost()) {
-			addFeedback(Collections
-					.singletonList(getHost()));
-			addHandles(Collections
-					.singletonList(getHost()));
-		}
-	}
-
 	protected final void removeFeedbackAndHandles(IVisualPart<VR> oldHovered) {
 		if (oldHovered == getHost()) {
-			removeHandles(Collections
-					.singletonList(getHost()));
-			removeFeedback(Collections
-					.singletonList(getHost()));
+			removeHandles(Collections.singletonList(getHost()));
+			removeFeedback(Collections.singletonList(getHost()));
 		}
-	}
-
-	public Provider<IGeometry> getFeedbackGeometryProvider(final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getFeedbackGeometry(contextMap);
-			}
-		};
 	}
 
 }

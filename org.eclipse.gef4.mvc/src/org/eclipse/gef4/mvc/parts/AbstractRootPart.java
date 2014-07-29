@@ -32,41 +32,6 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 
 	private IViewer<VR> viewer;
 
-	public IRootPart<VR> getRoot() {
-		return this;
-	}
-
-	public IViewer<VR> getViewer() {
-		return viewer;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<IContentPart<VR>> getContentPartChildren() {
-		return PartUtils.filterParts(getChildren(), IContentPart.class);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<IHandlePart<VR>> getHandlePartChildren() {
-		return PartUtils.filterParts(getChildren(), IHandlePart.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<IFeedbackPart<VR>> getFeedbackPartChildren() {
-		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
-	}
-
-	/**
-	 * @see IRootPart#setViewer(IViewer)
-	 */
-	public void setViewer(IViewer<VR> newViewer) {
-		if (viewer == newViewer)
-			return;
-		viewer = newViewer;
-	}
-
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage, int index) {
 		throw new UnsupportedOperationException(
@@ -78,6 +43,45 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 			int index) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IContentPart<VR>> getContentPartChildren() {
+		return PartUtils.filterParts(getChildren(), IContentPart.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IFeedbackPart<VR>> getFeedbackPartChildren() {
+		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<IHandlePart<VR>> getHandlePartChildren() {
+		return PartUtils.filterParts(getChildren(), IHandlePart.class);
+	}
+
+	@Override
+	public IRootPart<VR> getRoot() {
+		return this;
+	}
+
+	@Override
+	public IViewer<VR> getViewer() {
+		return viewer;
+	}
+
+	/**
+	 * @see IRootPart#setViewer(IViewer)
+	 */
+	@Override
+	public void setViewer(IViewer<VR> newViewer) {
+		if (viewer == newViewer) {
+			return;
+		}
+		viewer = newViewer;
 	}
 
 }

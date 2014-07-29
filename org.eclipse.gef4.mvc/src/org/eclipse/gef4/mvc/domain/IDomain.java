@@ -46,6 +46,13 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 public interface IDomain<VR> extends IAdaptable, IActivatable {
 
 	/**
+	 * Returns the {@link IOperationHistory} that is used by this domain.
+	 * 
+	 * @return The {@link IOperationHistory}.
+	 */
+	public IOperationHistory getOperationHistory();
+
+	/**
 	 * Returns the {@link ITool}s registered at this {@link IDomain} (via
 	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
 	 * used for registration.
@@ -58,6 +65,13 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools();
 
 	/**
+	 * Returns the {@link UndoContext} that is used by this domain.
+	 * 
+	 * @return The {@link UndoContext}.
+	 */
+	public IUndoContext getUndoContext();
+
+	/**
 	 * Returns the {@link IViewer}s registered at this {@link IDomain} (via
 	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
 	 * used for registration.
@@ -68,19 +82,5 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	 * @see IAdaptable#setAdapter(AdapterKey, Object)
 	 */
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
-
-	/**
-	 * Returns the {@link IOperationHistory} that is used by this domain.
-	 * 
-	 * @return The {@link IOperationHistory}.
-	 */
-	public IOperationHistory getOperationHistory();
-
-	/**
-	 * Returns the {@link UndoContext} that is used by this domain.
-	 * 
-	 * @return The {@link UndoContext}.
-	 */
-	public IUndoContext getUndoContext();
 
 }

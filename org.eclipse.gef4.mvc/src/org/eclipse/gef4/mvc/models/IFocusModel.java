@@ -40,11 +40,11 @@ public interface IFocusModel<VR> extends IPropertyChangeNotifier {
 	 * @see #setFocused(IContentPart)
 	 */
 	final public static String FOCUS_PROPERTY = "Focus";
-	
+
 	/**
 	 * The {@link IFocusModel} fires {@link PropertyChangeEvent}s when the
-	 * viewer focused state changes. This is the name of the property that is delivered
-	 * with the event.
+	 * viewer focused state changes. This is the name of the property that is
+	 * delivered with the event.
 	 * 
 	 * @see #setViewerFocused(boolean)
 	 */
@@ -60,16 +60,6 @@ public interface IFocusModel<VR> extends IPropertyChangeNotifier {
 	public IContentPart<VR> getFocused();
 
 	/**
-	 * Selects the given IContentPart as the focus part. Note that setting the
-	 * focus part does not assign keyboard focus to the part.
-	 * 
-	 * @param focusPart
-	 *            The {@link IContentPart} which should become the new focus
-	 *            part.
-	 */
-	public void setFocused(IContentPart<VR> focusPart);
-
-	/**
 	 * Returns <code>true</code> if the viewer where this model is registered
 	 * currently has keyboard focus. Otherwise returns <code>false</code>.
 	 * 
@@ -80,12 +70,22 @@ public interface IFocusModel<VR> extends IPropertyChangeNotifier {
 	public boolean isViewerFocused();
 
 	/**
+	 * Selects the given IContentPart as the focus part. Note that setting the
+	 * focus part does not assign keyboard focus to the part.
+	 * 
+	 * @param focusPart
+	 *            The {@link IContentPart} which should become the new focus
+	 *            part.
+	 */
+	public void setFocused(IContentPart<VR> focusPart);
+
+	/**
 	 * Updates the {@link #isViewerFocused()} property of this model.
 	 * 
 	 * @param viewerFocused
 	 *            <code>true</code> to indicate that the viewer has keyboard
-	 *            focus, or <code>false</code> to indicate that the viewer does not
-	 *            have keyboard focus.
+	 *            focus, or <code>false</code> to indicate that the viewer does
+	 *            not have keyboard focus.
 	 */
 	public void setViewerFocused(boolean viewerFocused);
 

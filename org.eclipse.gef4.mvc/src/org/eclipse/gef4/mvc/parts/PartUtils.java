@@ -34,22 +34,24 @@ public class PartUtils {
 		return handleParts;
 	}
 
-	public static <VR> List<IVisualPart<VR>> getAnchoreds(List<? extends IVisualPart<VR>> anchorages){
-		List<IVisualPart<VR>> anchoreds = new ArrayList<IVisualPart<VR>>();
-		for (IVisualPart<VR> a : anchorages) {
-			anchoreds.addAll(a.getAnchoreds());
-		}
-		return anchoreds;
-	}
-	
-	public static <VR> List<IVisualPart<VR>> getAnchorages(List<? extends IVisualPart<VR>> anchoreds){
+	public static <VR> List<IVisualPart<VR>> getAnchorages(
+			List<? extends IVisualPart<VR>> anchoreds) {
 		List<IVisualPart<VR>> anchorages = new ArrayList<IVisualPart<VR>>();
 		for (IVisualPart<VR> a : anchoreds) {
 			anchorages.addAll(a.getAnchorages());
 		}
 		return anchorages;
 	}
-	
+
+	public static <VR> List<IVisualPart<VR>> getAnchoreds(
+			List<? extends IVisualPart<VR>> anchorages) {
+		List<IVisualPart<VR>> anchoreds = new ArrayList<IVisualPart<VR>>();
+		for (IVisualPart<VR> a : anchorages) {
+			anchoreds.addAll(a.getAnchoreds());
+		}
+		return anchoreds;
+	}
+
 	/*
 	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
 	 * 

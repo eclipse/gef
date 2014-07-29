@@ -16,13 +16,14 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
- * A factory for creating new {@link IContentPart}s. The {@link IViewer}
- * can be configured with an {@link IContentPartFactory}. Whenever a behavior of
- * an {@link IContentPart} in that viewer needs to create another child
+ * A factory for creating new {@link IContentPart}s. The {@link IViewer} can be
+ * configured with an {@link IContentPartFactory}. Whenever a behavior of an
+ * {@link IContentPart} in that viewer needs to create another child
  * {@link IContentPart}, it can use the viewer's {@link IContentPartFactory},
  * passing in itself as context behavior.
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  * 
  */
@@ -45,9 +46,14 @@ public interface IContentPartFactory<VR> {
 	 * }
 	 * </pre>
 	 * 
-	 * @param content The model {@link Object} for which an {@link IContentPart} is to be created.
-	 * @param contextBehavior The {@link IBehavior} which uses this factory.
-	 * @param contextMap Additional context information to keep the IBehavior stateless.
+	 * @param content
+	 *            The model {@link Object} for which an {@link IContentPart} is
+	 *            to be created.
+	 * @param contextBehavior
+	 *            The {@link IBehavior} which uses this factory.
+	 * @param contextMap
+	 *            Additional context information to keep the IBehavior
+	 *            stateless.
 	 * @return an {@link IContentPart} for the given content and context
 	 */
 	IContentPart<VR> createContentPart(Object content,

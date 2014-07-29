@@ -24,7 +24,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author anyssen
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  * 
  */
@@ -39,9 +40,11 @@ public interface ISelectionModel<VR> extends IPropertyChangeNotifier {
 	public abstract void deselectAll();
 
 	/**
-	 * Returns an unmodifiable {@link List} of the selected {@link IContentPart}s.
+	 * Returns an unmodifiable {@link List} of the selected {@link IContentPart}
+	 * s.
 	 * 
-	 * @return An unmodifiable {@link List} of the selected {@link IContentPart}s.
+	 * @return An unmodifiable {@link List} of the selected {@link IContentPart}
+	 *         s.
 	 */
 	public abstract List<IContentPart<VR>> getSelected();
 

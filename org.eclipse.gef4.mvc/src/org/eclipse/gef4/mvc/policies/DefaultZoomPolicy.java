@@ -15,12 +15,12 @@ import org.eclipse.gef4.mvc.models.IZoomModel;
 
 public class DefaultZoomPolicy<VR> extends AbstractPolicy<VR> {
 
-	public void zoomAbsolute(double absoluteZoom){
+	public void zoomAbsolute(double absoluteZoom) {
 		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
 		zoomModel.setZoomFactor(absoluteZoom);
 	}
-	
-	public void zoomRelative(double relativeZoom){
+
+	public void zoomRelative(double relativeZoom) {
 		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
 		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
 	}

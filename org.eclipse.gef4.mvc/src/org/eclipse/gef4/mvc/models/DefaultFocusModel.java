@@ -20,7 +20,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * Default implementation of the focus model.
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class DefaultFocusModel<VR> implements IFocusModel<VR> {
@@ -28,29 +29,18 @@ public class DefaultFocusModel<VR> implements IFocusModel<VR> {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IContentPart<VR> focused = null;
 	private boolean isViewerFocused = false;
-	
+
 	public DefaultFocusModel() {
 	}
-	
+
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
-	}
-	
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
 	public IContentPart<VR> getFocused() {
 		return focused;
-	}	
-	
-	@Override
-	public void setFocused(IContentPart<VR> focusPart) {
-		IContentPart<VR> old = focused;
-		focused = focusPart;
-		pcs.firePropertyChange(IFocusModel.FOCUS_PROPERTY, old, focused);
 	}
 
 	@Override
@@ -59,10 +49,22 @@ public class DefaultFocusModel<VR> implements IFocusModel<VR> {
 	}
 
 	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void setFocused(IContentPart<VR> focusPart) {
+		IContentPart<VR> old = focused;
+		focused = focusPart;
+		pcs.firePropertyChange(IFocusModel.FOCUS_PROPERTY, old, focused);
+	}
+
+	@Override
 	public void setViewerFocused(boolean viewerFocused) {
 		boolean old = isViewerFocused;
 		isViewerFocused = viewerFocused;
 		pcs.firePropertyChange(VIEWER_FOCUS_PROPERTY, old, viewerFocused);
 	}
-	
+
 }

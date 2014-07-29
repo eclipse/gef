@@ -26,32 +26,32 @@ public class DefaultViewportModel implements IViewportModel {
 	}
 
 	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+	public double getHeight() {
+		return height;
 	}
 
 	@Override
 	public double getWidth() {
 		return width;
 	}
-	
+
 	@Override
-	public double getHeight() {
-		return height;
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
-	
-	@Override
-	public void setWidth(double width) {
-		double oldWidth = this.width;
-		this.width = width;
-		pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
-	}
-	
+
 	@Override
 	public void setHeight(double height) {
 		double oldHeight = this.height;
 		this.height = height;
 		pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
 	}
-	
+
+	@Override
+	public void setWidth(double width) {
+		double oldWidth = this.width;
+		this.width = width;
+		pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
+	}
+
 }

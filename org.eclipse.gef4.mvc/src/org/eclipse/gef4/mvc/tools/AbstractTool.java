@@ -23,7 +23,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  * @author mwienand
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractTool<VR> implements ITool<VR> {
@@ -31,41 +32,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private boolean active = false;
 	private IDomain<VR> domain;
-
-	@Override
-	public void setAdaptable(IDomain<VR> adaptable) {
-		if (active) {
-			throw new IllegalStateException(
-					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
-		}
-		this.domain = adaptable;
-	}
-
-	/**
-	 * This method is called when a valid {@link IDomain} is attached to this
-	 * tool so that you can register event listeners for various inputs
-	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
-	 */
-	protected void registerListeners() {
-	}
-
-	/**
-	 * This method is called when the attached {@link IDomain} is reset to
-	 * <code>null</code> so that you can unregister previously registered event
-	 * listeners.
-	 */
-	protected void unregisterListeners() {
-	}
-
-	@Override
-	public IDomain<VR> getDomain() {
-		return getAdaptable();
-	}
-
-	@Override
-	public IDomain<VR> getAdaptable() {
-		return domain;
-	}
 
 	@Override
 	public void activate() {
@@ -85,6 +51,11 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	}
 
 	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
 	public void deactivate() {
 		unregisterListeners();
 
@@ -97,18 +68,48 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	}
 
 	@Override
+	public IDomain<VR> getAdaptable() {
+		return domain;
+	}
+
+	@Override
+	public IDomain<VR> getDomain() {
+		return getAdaptable();
+	}
+
+	@Override
 	public boolean isActive() {
 		return active;
 	}
 
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
+	/**
+	 * This method is called when a valid {@link IDomain} is attached to this
+	 * tool so that you can register event listeners for various inputs
+	 * (keyboard, mouse) or model changes (selection, scroll offset / viewport).
+	 */
+	protected void registerListeners() {
 	}
 
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void setAdaptable(IDomain<VR> adaptable) {
+		if (active) {
+			throw new IllegalStateException(
+					"The reference to the IDomain may not be changed while the tool is active. Please deactivate the tool before setting the IEditDomain and re-activate it afterwards.");
+		}
+		this.domain = adaptable;
+	}
+
+	/**
+	 * This method is called when the attached {@link IDomain} is reset to
+	 * <code>null</code> so that you can unregister previously registered event
+	 * listeners.
+	 */
+	protected void unregisterListeners() {
 	}
 
 }

@@ -17,7 +17,7 @@ import java.beans.PropertyChangeSupport;
 /**
  * 
  * @author mwienand
- *
+ * 
  */
 public class DefaultZoomModel implements IZoomModel {
 
@@ -30,13 +30,13 @@ public class DefaultZoomModel implements IZoomModel {
 	}
 
 	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+	public double getZoomFactor() {
+		return zoom;
 	}
 
 	@Override
-	public double getZoomFactor() {
-		return zoom;
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override

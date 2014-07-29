@@ -22,28 +22,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * 
  * @author anyssen
- *
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * 
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
 	private IVisualPart<VR> host;
 
-	@Override
-	public void setAdaptable(IVisualPart<VR> adaptable){
-		this.host = adaptable;
-	}
-	
-	@Override
-	public IVisualPart<VR> getAdaptable() {
-		return getHost();
-	}
-	
-	public IVisualPart<VR> getHost() {
-		return host;
-	}
-	
 	protected void executeOperation(IUndoableOperation operation) {
 		IDomain<VR> domain = getHost().getRoot().getViewer().getDomain();
 		IOperationHistory operationHistory = domain.getOperationHistory();
@@ -53,6 +40,21 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public IVisualPart<VR> getAdaptable() {
+		return getHost();
+	}
+
+	@Override
+	public IVisualPart<VR> getHost() {
+		return host;
+	}
+
+	@Override
+	public void setAdaptable(IVisualPart<VR> adaptable) {
+		this.host = adaptable;
 	}
 
 }

@@ -16,8 +16,8 @@ import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 public interface IViewportModel extends IPropertyChangeNotifier {
 
 	/*
-	 * An IViewportModel fires PropertyChangeEvents when its width or
-	 * height changes. These are the keys used to identify those properties when
+	 * An IViewportModel fires PropertyChangeEvents when its width or height
+	 * changes. These are the keys used to identify those properties when
 	 * listening to property change events.
 	 */
 
@@ -34,14 +34,6 @@ public interface IViewportModel extends IPropertyChangeNotifier {
 	public static final String VIEWPORT_HEIGHT_PROPERTY = "ViewportHeight";
 
 	/**
-	 * Returns the width of the current viewport, i.e. rectangular area in which
-	 * the viewer/editor is rendered.
-	 * 
-	 * @return width of current viewport
-	 */
-	public double getWidth();
-
-	/**
 	 * Returns the height of the current viewport, i.e. rectangular area in
 	 * which the viewer/editor is rendered.
 	 * 
@@ -50,19 +42,12 @@ public interface IViewportModel extends IPropertyChangeNotifier {
 	public double getHeight();
 
 	/**
-	 * <p>
-	 * Sets the width of the viewport in this model. This should be called when
-	 * the size of the rectangular area in which the viewer/editor is rendered
-	 * changes.
-	 * </p>
-	 * <p>
-	 * Fires a property change event for the {@link #VIEWPORT_WIDTH_PROPERTY}.
-	 * </p>
+	 * Returns the width of the current viewport, i.e. rectangular area in which
+	 * the viewer/editor is rendered.
 	 * 
-	 * @param width
-	 *            new viewport width
+	 * @return width of current viewport
 	 */
-	public void setWidth(double width);
+	public double getWidth();
 
 	/**
 	 * <p>
@@ -78,5 +63,20 @@ public interface IViewportModel extends IPropertyChangeNotifier {
 	 *            new viewport height
 	 */
 	public void setHeight(double height);
+
+	/**
+	 * <p>
+	 * Sets the width of the viewport in this model. This should be called when
+	 * the size of the rectangular area in which the viewer/editor is rendered
+	 * changes.
+	 * </p>
+	 * <p>
+	 * Fires a property change event for the {@link #VIEWPORT_WIDTH_PROPERTY}.
+	 * </p>
+	 * 
+	 * @param width
+	 *            new viewport width
+	 */
+	public void setWidth(double width);
 
 }

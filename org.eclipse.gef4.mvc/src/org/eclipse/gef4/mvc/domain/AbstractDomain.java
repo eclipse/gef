@@ -78,7 +78,8 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
 	}
 
@@ -87,6 +88,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return operationHistory;
 	}
 
+	@Override
 	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools() {
 		return ads.getAdapters(ITool.class);
 	}
@@ -96,8 +98,9 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 		return undoContext;
 	}
 
+	@Override
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers() {
-		return ads.<IViewer<VR>>getAdapters(IViewer.class);
+		return ads.<IViewer<VR>> getAdapters(IViewer.class);
 	}
 
 	@Override

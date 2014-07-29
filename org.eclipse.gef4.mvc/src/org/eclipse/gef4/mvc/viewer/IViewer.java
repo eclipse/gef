@@ -47,6 +47,16 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public interface IViewer<VR> extends IAdaptable, IActivatable {
 
+	public IContentModel getContentModel();
+
+	/**
+	 * Returns the {@link IContentPartFactory} for this viewer, used to create
+	 * {@link IContentPart}s.
+	 * 
+	 * @return The {@link IContentPartFactory} being used
+	 */
+	public IContentPartFactory<VR> getContentPartFactory();
+
 	/**
 	 * Returns the {@link Map} for registering {@link IContentPart}s by their
 	 * <i>content</i>.
@@ -54,6 +64,37 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The content part map
 	 */
 	public Map<Object, IContentPart<VR>> getContentPartMap();
+
+	public List<? extends Object> getContents();
+
+	/**
+	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
+	 * 
+	 * @return The {@link IDomain} this {@link IViewer} is bound to, or
+	 *         <code>null</code> if this {@link IViewer} is not (yet) bound to
+	 *         an {@link IDomain}.
+	 */
+	public IDomain<VR> getDomain();
+
+	/**
+	 * Returns the {@link IFeedbackPartFactory} for this viewer, used to create
+	 * {@link IFeedbackPart}s.
+	 * 
+	 * @return The {@link IFeedbackPartFactory} being used
+	 */
+	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
+
+	public IFocusModel<VR> getFocusModel();
+
+	/**
+	 * Returns the {@link IHandlePartFactory} for this viewer, used to create
+	 * {@link IHandlePart}s.
+	 * 
+	 * @return The {@link IHandlePartFactory} being used
+	 */
+	public IHandlePartFactory<VR> getHandlePartFactory();
+
+	public IHoverModel<VR> getHoverModel();
 
 	/**
 	 * Returns the {@link IRootPart} of this viewer. The {@link IRootPart} is a
@@ -63,6 +104,12 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The {@link IRootPart} of this viewer.
 	 */
 	public IRootPart<VR> getRootPart();
+
+	// TODO: remove this and the following getters, as these are not mandatory;
+	// replace them by getAdapter(ISelectionModel.class) calls.
+	public ISelectionModel<VR> getSelectionModel();
+
+	public IViewportModel getViewportModel();
 
 	/**
 	 * Returns the {@link Map} for registering {@link IVisualPart}s by their
@@ -74,55 +121,8 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 */
 	public Map<VR, IVisualPart<VR>> getVisualPartMap();
 
-	public List<? extends Object> getContents();
-
-	public void setContents(List<? extends Object> contents);
-
-	/**
-	 * Returns the {@link IContentPartFactory} for this viewer, used to create
-	 * {@link IContentPart}s.
-	 * 
-	 * @return The {@link IContentPartFactory} being used
-	 */
-	public IContentPartFactory<VR> getContentPartFactory();
-
-	/**
-	 * Returns the {@link IHandlePartFactory} for this viewer, used to create
-	 * {@link IHandlePart}s.
-	 * 
-	 * @return The {@link IHandlePartFactory} being used
-	 */
-	public IHandlePartFactory<VR> getHandlePartFactory();
-
-	/**
-	 * Returns the {@link IFeedbackPartFactory} for this viewer, used to create
-	 * {@link IFeedbackPart}s.
-	 * 
-	 * @return The {@link IFeedbackPartFactory} being used
-	 */
-	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
-
-	/**
-	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
-	 * 
-	 * @return The {@link IDomain} this {@link IViewer} is bound to, or
-	 *         <code>null</code> if this {@link IViewer} is not (yet) bound to
-	 *         an {@link IDomain}.
-	 */
-	public IDomain<VR> getDomain();
-
-	// TODO: remove this and the following getters, as these are not mandatory;
-	// replace them by getAdapter(ISelectionModel.class) calls.
-	public ISelectionModel<VR> getSelectionModel();
-
-	public IHoverModel<VR> getHoverModel();
-
-	public IFocusModel<VR> getFocusModel();
-
 	public IZoomModel getZoomModel();
 
-	public IContentModel getContentModel();
-
-	public IViewportModel getViewportModel();
+	public void setContents(List<? extends Object> contents);
 
 }

@@ -90,150 +90,12 @@ import com.google.inject.util.Types;
  * @see AdaptableTypeListener
  * 
  * @author anyssen
- *
+ * 
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class MvcModule<VR> extends AbstractModule {
-
-	@Override
-	protected void configure() {
-		// TODO: could rather install a module that is provided by
-		// org.eclipse.gef4.common.inject (which contains the enabling code)
-		enableAdapterMapInjection();
-
-		// bind domain adapters
-		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				AbstractDomain.class));
-
-		// bind viewer adapters
-		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				AbstractViewer.class));
-
-		// bind visual part (and subtypes) adapters; not that via type listener
-		// and custom members injector, subclass adapters will additionally be
-		// injected into the respective subclass.
-		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractVisualPart.class));
-		bindAbstractRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				AbstractRootPart.class));
-		bindAbstractContentPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractContentPart.class));
-		bindAbstractFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractFeedbackPart.class));
-		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), AbstractHandlePart.class));
-
-		// TODO: we should bind these as adapters as well
-		// bind IUndoContext and IOperationHistory to reasonable defaults
-		binder().bind(IUndoContext.class).toInstance(
-				IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class);
-	}
-
-	/**
-	 * Installs en {@link AdapterMapInjectionSupport} module, which binds an
-	 * {@link AdaptableTypeListener} and ensures it gets properly injected.
-	 */
-	protected void enableAdapterMapInjection() {
-		install(new AdapterMapInjectionSupport());
-	}
-
-	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
-	 * and all sub-classes. May be overwritten by sub-classes to change the
-	 * default bindings.
-	 * 
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractHandlePart} as a key.
-	 * 
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindAbstractHandlePartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-				.to(Key.get(Types.newParameterizedType(
-						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-	}
-
-	/**
-	 * Adds (default) {@link AdapterMap} bindings for
-	 * {@link AbstractFeedbackPart} and all sub-classes. May be overwritten by
-	 * sub-classes to change the default bindings.
-	 * 
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractFeedbackPart} as a key.
-	 * 
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindAbstractFeedbackPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// nothing to bind by default
-	}
-
-	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractRootPart}
-	 * and all sub-classes. May be overwritten by sub-classes to change the
-	 * default bindings.
-	 * 
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractRootPart} as a key.
-	 * 
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindAbstractRootPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// register (default) behaviors
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
-				Key.get(Types.newParameterizedType(ContentBehavior.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-
-		// register (default) policies
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-				.to(Key.get(Types.newParameterizedType(
-						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(
-				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-				Key.get(Types.newParameterizedType(
-						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
-				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-	}
-
-	/**
-	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractVisualPart}
-	 * and all sub-classes. May be overwritten by sub-classes to change the
-	 * default bindings.
-	 * 
-	 * @param adapterMapBinder
-	 *            The {@link MapBinder} to be used for the binding registration.
-	 *            In this case, will be obtained from
-	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
-	 *            {@link AbstractVisualPart} as a key.
-	 * 
-	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
-	 */
-	protected void bindAbstractVisualPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// nothing to bind by default
-	}
 
 	/**
 	 * Adds (default) {@link AdapterMap} bindings for
@@ -295,6 +157,82 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractFeedbackPart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractFeedbackPart} as a key.
+	 * 
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindAbstractFeedbackPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
+	}
+
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractHandlePart} as a key.
+	 * 
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindAbstractHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+	}
+
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractRootPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractRootPart} as a key.
+	 * 
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindAbstractRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// register (default) behaviors
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				Key.get(Types.newParameterizedType(ContentBehavior.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+
+		// register (default) policies
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
+				Key.get(Types.newParameterizedType(
+						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
+				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+	}
+
+	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractViewer} and
 	 * all sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
@@ -328,5 +266,67 @@ public class MvcModule<VR> extends AbstractModule {
 				Key.get(Types.newParameterizedType(DefaultSelectionModel.class,
 						new TypeLiteral<VR>() {
 						}.getRawType().getClass())));
+	}
+
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractVisualPart}
+	 * and all sub-classes. May be overwritten by sub-classes to change the
+	 * default bindings.
+	 * 
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractVisualPart} as a key.
+	 * 
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
+	protected void bindAbstractVisualPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// nothing to bind by default
+	}
+
+	@Override
+	protected void configure() {
+		// TODO: could rather install a module that is provided by
+		// org.eclipse.gef4.common.inject (which contains the enabling code)
+		enableAdapterMapInjection();
+
+		// bind domain adapters
+		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractDomain.class));
+
+		// bind viewer adapters
+		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractViewer.class));
+
+		// bind visual part (and subtypes) adapters; not that via type listener
+		// and custom members injector, subclass adapters will additionally be
+		// injected into the respective subclass.
+		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractVisualPart.class));
+		bindAbstractRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				AbstractRootPart.class));
+		bindAbstractContentPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractContentPart.class));
+		bindAbstractFeedbackPartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractFeedbackPart.class));
+		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), AbstractHandlePart.class));
+
+		// TODO: we should bind these as adapters as well
+		// bind IUndoContext and IOperationHistory to reasonable defaults
+		binder().bind(IUndoContext.class).toInstance(
+				IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		binder().bind(IOperationHistory.class)
+				.to(DefaultOperationHistory.class);
+	}
+
+	/**
+	 * Installs en {@link AdapterMapInjectionSupport} module, which binds an
+	 * {@link AdaptableTypeListener} and ensures it gets properly injected.
+	 */
+	protected void enableAdapterMapInjection() {
+		install(new AdapterMapInjectionSupport());
 	}
 }

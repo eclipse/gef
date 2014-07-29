@@ -22,17 +22,17 @@ public class UnexecutableOperation extends AbstractOperation {
 	public UnexecutableOperation(String label) {
 		super(label);
 	}
-	
+
 	@Override
 	public boolean canExecute() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean canRedo() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean canUndo() {
 		return false;

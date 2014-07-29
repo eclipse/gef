@@ -73,35 +73,10 @@ public class ChangeModelsOperation<VR> extends AbstractOperation {
 	 *            A {@link List} of {@link IContentPart}s which should be
 	 *            considered selected after executing this operation.
 	 */
-	public ChangeModelsOperation(IViewer<VR> viewer, IVisualPart<VR> newHovered,
-			IContentPart<VR> newFocused, List<IContentPart<VR>> newSelected) {
-		this(DEFAULT_LABEL, viewer, viewer.getHoverModel().getHover(), viewer
-				.getFocusModel().getFocused(), viewer.getSelectionModel()
-				.getSelected(), newHovered, newFocused, newSelected);
-	}
-
-	/**
-	 * Constructs a new operation where the "old" values (old hovered, old
-	 * focused, old selected) are retrieved from the given viewer.
-	 * 
-	 * @param label
-	 *            Description of this operation.
-	 * @param viewer
-	 *            {@link IViewer} whose models are altered.
-	 * @param newHovered
-	 *            The {@link IVisualPart} which should be considered hovered
-	 *            after executing this operation.
-	 * @param newFocused
-	 *            The {@link IContentPart} which should be considered focused
-	 *            after executing this operation.
-	 * @param newSelected
-	 *            A {@link List} of {@link IContentPart}s which should be
-	 *            considered selected after executing this operation.
-	 */
-	public ChangeModelsOperation(String label, IViewer<VR> viewer,
+	public ChangeModelsOperation(IViewer<VR> viewer,
 			IVisualPart<VR> newHovered, IContentPart<VR> newFocused,
 			List<IContentPart<VR>> newSelected) {
-		this(label, viewer, viewer.getHoverModel().getHover(), viewer
+		this(DEFAULT_LABEL, viewer, viewer.getHoverModel().getHover(), viewer
 				.getFocusModel().getFocused(), viewer.getSelectionModel()
 				.getSelected(), newHovered, newFocused, newSelected);
 	}
@@ -131,12 +106,38 @@ public class ChangeModelsOperation<VR> extends AbstractOperation {
 	 *            A {@link List} of {@link IContentPart}s which should be
 	 *            considered selected after executing this operation.
 	 */
-	public ChangeModelsOperation(IViewer<VR> viewer, IVisualPart<VR> oldHovered,
-			IContentPart<VR> oldFocused, List<IContentPart<VR>> oldSelected,
-			IVisualPart<VR> newHovered, IContentPart<VR> newFocused,
-			List<IContentPart<VR>> newSelected) {
+	public ChangeModelsOperation(IViewer<VR> viewer,
+			IVisualPart<VR> oldHovered, IContentPart<VR> oldFocused,
+			List<IContentPart<VR>> oldSelected, IVisualPart<VR> newHovered,
+			IContentPart<VR> newFocused, List<IContentPart<VR>> newSelected) {
 		this(DEFAULT_LABEL, viewer, oldHovered, oldFocused, oldSelected,
 				newHovered, newFocused, newSelected);
+	}
+
+	/**
+	 * Constructs a new operation where the "old" values (old hovered, old
+	 * focused, old selected) are retrieved from the given viewer.
+	 * 
+	 * @param label
+	 *            Description of this operation.
+	 * @param viewer
+	 *            {@link IViewer} whose models are altered.
+	 * @param newHovered
+	 *            The {@link IVisualPart} which should be considered hovered
+	 *            after executing this operation.
+	 * @param newFocused
+	 *            The {@link IContentPart} which should be considered focused
+	 *            after executing this operation.
+	 * @param newSelected
+	 *            A {@link List} of {@link IContentPart}s which should be
+	 *            considered selected after executing this operation.
+	 */
+	public ChangeModelsOperation(String label, IViewer<VR> viewer,
+			IVisualPart<VR> newHovered, IContentPart<VR> newFocused,
+			List<IContentPart<VR>> newSelected) {
+		this(label, viewer, viewer.getHoverModel().getHover(), viewer
+				.getFocusModel().getFocused(), viewer.getSelectionModel()
+				.getSelected(), newHovered, newFocused, newSelected);
 	}
 
 	/**

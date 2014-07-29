@@ -21,5 +21,5 @@ public class DefaultHoverPolicy<VR> extends AbstractPolicy<VR> {
 	protected boolean isHoverable() {
 		return true;
 	}
-	
+
 }

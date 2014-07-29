@@ -20,27 +20,29 @@ import java.util.List;
 public class DefaultContentModel implements IContentModel {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private List<Object> contents = new ArrayList<Object>();	
+	private List<Object> contents = new ArrayList<Object>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	@Override
+	public List<? extends Object> getContents() {
+		return Collections.unmodifiableList(this.contents);
+	}
+
+	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
 	public void setContents(List<? extends Object> contents) {
-		List<Object> oldContents = Collections.unmodifiableList(new ArrayList<Object>(this.contents));
+		List<Object> oldContents = Collections
+				.unmodifiableList(new ArrayList<Object>(this.contents));
 		this.contents.clear();
 		this.contents.addAll(contents);
 		pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents, getContents());
-	}
-	
-	@Override
-	public List<? extends Object> getContents() {
-		return Collections.unmodifiableList(this.contents);
 	}
 }

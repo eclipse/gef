@@ -35,8 +35,9 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
  * content children and anchored.
  * 
  * @author anyssen
- *
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * 
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
@@ -46,12 +47,15 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	public void activate() {
 		super.activate();
 		if (getHost() == getHost().getRoot()) {
-			synchronizeContentChildren(getHost().getRoot().getViewer().getContentModel().getContents());
+			synchronizeContentChildren(getHost().getRoot().getViewer()
+					.getContentModel().getContents());
 			getHost().getRoot().getViewer().getContentModel()
 					.addPropertyChangeListener(this);
 		} else {
-			synchronizeContentChildren(((IContentPart<VR>)getHost()).getContentChildren());
-			synchronizeContentAnchorages(((IContentPart<VR>)getHost()).getContentAnchorages());
+			synchronizeContentChildren(((IContentPart<VR>) getHost())
+					.getContentChildren());
+			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
+					.getContentAnchorages());
 			getHost().addPropertyChangeListener(this);
 		}
 	}
@@ -68,6 +72,28 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(Collections.emptyList());
 		}
 		super.deactivate();
+	}
+
+	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
+		if (contentPart.getParent() == null
+				&& contentPart.getAnchorages().isEmpty()) {
+			contentPart.setContent(null);
+		}
+	}
+
+	protected IContentPart<VR> findOrCreatePartFor(Object model) {
+		Map<Object, IContentPart<VR>> contentPartMap = getHost().getRoot()
+				.getViewer().getContentPartMap();
+		if (contentPartMap.containsKey(model)) {
+			return contentPartMap.get(model);
+		} else {
+			IContentPartFactory<VR> contentPartFactory = getHost().getRoot()
+					.getViewer().getContentPartFactory();
+			IContentPart<VR> contentPart = contentPartFactory
+					.createContentPart(model, this, Collections.emptyMap());
+			contentPart.setContent(model);
+			return contentPart;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -89,6 +115,87 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	/**
+	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
+	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
+	 * set of content anchorages that is passed in.
+	 * 
+	 * @param contentAnchorages
+	 *            The list of content anchorages to be synchronized with the
+	 *            list of {@link IContentPart} anchorages (
+	 *            {@link IContentPart#getAnchorages()}).
+	 * 
+	 * @see IContentPart#getContentAnchorages()
+	 * @see IContentPart#getAnchorages()
+	 */
+	@SuppressWarnings("unchecked")
+	public void synchronizeContentAnchorages(
+			List<? extends Object> contentAnchorages) {
+		int i;
+
+		List<IContentPart<VR>> anchorageContentParts = PartUtils.filterParts(
+				getHost().getAnchorages(), IContentPart.class);
+		int anchorageContentPartsSize = anchorageContentParts.size();
+		int contentAnchoragesSize = contentAnchorages.size();
+
+		IContentPart<VR> contentPart;
+		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections
+				.emptyMap();
+		if (anchorageContentPartsSize > 0) {
+			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(
+					anchorageContentPartsSize);
+			for (i = 0; i < anchorageContentPartsSize; i++) {
+				contentPart = anchorageContentParts.get(i);
+				contentToContentPartMap.put(contentPart.getContent(),
+						contentPart);
+			}
+		}
+
+		Object content;
+		for (i = 0; i < contentAnchoragesSize; i++) {
+			content = contentAnchorages.get(i);
+
+			// Do a quick check to see if editPart[i] == model[i]
+			if (i < anchorageContentParts.size()
+					&& anchorageContentParts.get(i).getContent() == content) {
+				continue;
+			}
+
+			// Look to see if the EditPart is already around but in the
+			// wrong location
+			contentPart = contentToContentPartMap.get(content);
+
+			if (contentPart != null) {
+				// TODO: this is wrong, it has to take into consideration the
+				// visual parts in between
+				getHost().reorderAnchorage(contentPart, i);
+			} else {
+				// An EditPart for this model doesn't exist yet. Create and
+				// insert one.
+				contentPart = findOrCreatePartFor(content);
+				// what if it does not exist??
+				getHost().addAnchorage(contentPart);
+			}
+		}
+
+		// remove the remaining EditParts
+		anchorageContentParts = PartUtils.filterParts(
+				getHost().getAnchorages(), IContentPart.class);
+		anchorageContentPartsSize = anchorageContentParts.size();
+		if (i < anchorageContentPartsSize) {
+			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
+					anchorageContentPartsSize - i);
+			for (; i < anchorageContentPartsSize; i++) {
+				trash.add(anchorageContentParts.get(i));
+			}
+			for (i = 0; i < trash.size(); i++) {
+				IContentPart<VR> ep = trash.get(i);
+				getHost().removeAnchorage(ep);
+				disposeIfObsolete(ep);
+			}
+		}
+	}
+
+	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} children (see
 	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
 	 * content children that is passed in.
@@ -102,7 +209,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * @see IContentPart#getChildren()
 	 */
 	@SuppressWarnings("unchecked")
-	public void synchronizeContentChildren(final List<? extends Object> contentChildren) {
+	public void synchronizeContentChildren(
+			final List<? extends Object> contentChildren) {
 		int i;
 
 		// only synchronize IContentPart children
@@ -130,8 +238,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 			// Do a quick check to see if editPart[i] == model[i]
 			if (i < childContentPartsSize
-					&& childContentParts.get(i).getContent() == content)
+					&& childContentParts.get(i).getContent() == content) {
 				continue;
+			}
 
 			// Look to see if the EditPart is already around but in the
 			// wrong location
@@ -157,113 +266,14 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		if (i < childContentPartsSize) {
 			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
 					childContentPartsSize - i);
-			for (; i < childContentPartsSize; i++)
+			for (; i < childContentPartsSize; i++) {
 				trash.add(childContentParts.get(i));
+			}
 			for (i = 0; i < trash.size(); i++) {
 				IContentPart<VR> ep = trash.get(i);
 				getHost().removeChild(ep);
 				disposeIfObsolete(ep);
 			}
-		}
-	}
-
-	protected IContentPart<VR> findOrCreatePartFor(Object model) {
-		Map<Object, IContentPart<VR>> contentPartMap = getHost().getRoot()
-				.getViewer().getContentPartMap();
-		if (contentPartMap.containsKey(model)) {
-			return contentPartMap.get(model);
-		} else {
-			IContentPartFactory<VR> contentPartFactory = getHost().getRoot()
-					.getViewer().getContentPartFactory();
-			IContentPart<VR> contentPart = contentPartFactory
-					.createContentPart(model, this, Collections.emptyMap());
-			contentPart.setContent(model);
-			return contentPart;
-		}
-	}
-
-	/**
-	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
-	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
-	 * set of content anchorages that is passed in.
-	 * 
-	 * @param contentAnchorages
-	 *            The list of content anchorages to be synchronized with the
-	 *            list of {@link IContentPart} anchorages (
-	 *            {@link IContentPart#getAnchorages()}).
-	 * 
-	 * @see IContentPart#getContentAnchorages()
-	 * @see IContentPart#getAnchorages()
-	 */
-	@SuppressWarnings("unchecked")
-	public void synchronizeContentAnchorages(List<? extends Object> contentAnchorages) {
-		int i;
-
-		List<IContentPart<VR>> anchorageContentParts = PartUtils.filterParts(
-				getHost().getAnchorages(), IContentPart.class);
-		int anchorageContentPartsSize = anchorageContentParts.size();
-		int contentAnchoragesSize = contentAnchorages.size();
-
-		IContentPart<VR> contentPart;
-		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections
-				.emptyMap();
-		if (anchorageContentPartsSize > 0) {
-			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(
-					anchorageContentPartsSize);
-			for (i = 0; i < anchorageContentPartsSize; i++) {
-				contentPart = anchorageContentParts.get(i);
-				contentToContentPartMap.put(contentPart.getContent(),
-						contentPart);
-			}
-		}
-
-		Object content;
-		for (i = 0; i < contentAnchoragesSize; i++) {
-			content = contentAnchorages.get(i);
-
-			// Do a quick check to see if editPart[i] == model[i]
-			if (i < anchorageContentParts.size()
-					&& anchorageContentParts.get(i).getContent() == content)
-				continue;
-
-			// Look to see if the EditPart is already around but in the
-			// wrong location
-			contentPart = contentToContentPartMap.get(content);
-
-			if (contentPart != null) {
-				// TODO: this is wrong, it has to take into consideration the
-				// visual parts in between
-				getHost().reorderAnchorage(contentPart, i);
-			} else {
-				// An EditPart for this model doesn't exist yet. Create and
-				// insert one.
-				contentPart = findOrCreatePartFor(content);
-				// what if it does not exist??
-				getHost().addAnchorage(contentPart);
-			}
-		}
-
-		// remove the remaining EditParts
-		anchorageContentParts = PartUtils.filterParts(
-				getHost().getAnchorages(), IContentPart.class);
-		anchorageContentPartsSize = anchorageContentParts.size();
-		if (i < anchorageContentPartsSize) {
-			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
-					anchorageContentPartsSize - i);
-			for (; i < anchorageContentPartsSize; i++)
-				trash.add(anchorageContentParts.get(i));
-			for (i = 0; i < trash.size(); i++) {
-				IContentPart<VR> ep = trash.get(i);
-				getHost().removeAnchorage(ep);
-				disposeIfObsolete(ep);
-			}
-		}
-	}
-
-	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
-		if (contentPart.getParent() == null
-				&& contentPart.getAnchorages().isEmpty()) {
-			contentPart.setContent(null);
 		}
 	}
 

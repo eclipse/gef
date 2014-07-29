@@ -25,8 +25,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * 
  * @author anyssen
- *
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * 
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
@@ -69,6 +70,12 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 		return Collections.unmodifiableList(selection);
 	}
 
+	private List<IContentPart<VR>> getSelectionCopy() {
+		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
+				selection);
+		return oldSelection;
+	}
+
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
@@ -81,11 +88,5 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 		selection.addAll(0, newlySelected);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
-	}
-
-	private List<IContentPart<VR>> getSelectionCopy() {
-		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
-				selection);
-		return oldSelection;
 	}
 }

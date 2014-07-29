@@ -24,7 +24,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * 
  * @author wienand
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
@@ -36,6 +37,16 @@ public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 		getHost().getRoot().getViewer().getZoomModel()
 				.addPropertyChangeListener(this);
 	}
+
+	/**
+	 * Applies the given zoom factor in the context of this policy. For example,
+	 * you can register the policy on the root visual part and apply it to all
+	 * layers.
+	 * 
+	 * @param zoomFactor
+	 *            The factor by which to apply the zoom.
+	 */
+	abstract protected void applyZoomFactor(Double zoomFactor);
 
 	@Override
 	public void deactivate() {
@@ -50,15 +61,5 @@ public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
 			applyZoomFactor((Double) evt.getNewValue());
 		}
 	}
-
-	/**
-	 * Applies the given zoom factor in the context of this policy. For example,
-	 * you can register the policy on the root visual part and apply it to all
-	 * layers.
-	 * 
-	 * @param zoomFactor
-	 *            The factor by which to apply the zoom.
-	 */
-	abstract protected void applyZoomFactor(Double zoomFactor);
 
 }

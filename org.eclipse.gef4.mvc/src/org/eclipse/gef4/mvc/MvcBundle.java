@@ -31,9 +31,9 @@ public class MvcBundle implements BundleActivator {
 	 * associated to it.
 	 * 
 	 * @return The {@link BundleContext} of the module if this bundle was
-	 *         started ({@link #start(BundleContext)}) and has since
-	 *         not been stopped ( {@link #stop(BundleContext)}),
-	 *         <code>null</code> otherwise.
+	 *         started ({@link #start(BundleContext)}) and has since not been
+	 *         stopped ( {@link #stop(BundleContext)}), <code>null</code>
+	 *         otherwise.
 	 */
 	static BundleContext getContext() {
 		return context;

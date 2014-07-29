@@ -20,7 +20,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 /**
  * @author mwienand
  * 
- * @param <VR> The visual root node of the UI toolkit this {@link IVisualPart} is
+ * @param <VR>
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public interface IHoverModel<VR> extends IPropertyChangeNotifier {
@@ -31,6 +32,13 @@ public interface IHoverModel<VR> extends IPropertyChangeNotifier {
 	 * with the event.
 	 */
 	final public static String HOVER_PROPERTY = "Hover";
+
+	/**
+	 * Sets the hovered part to <code>null</code>.
+	 * <p>
+	 * Fires a {@link PropertyChangeEvent}.
+	 */
+	public void clearHover();
 
 	/**
 	 * Returns the currently hovered {@link IContentPart} or <code>null</code>
@@ -50,12 +58,5 @@ public interface IHoverModel<VR> extends IPropertyChangeNotifier {
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public void setHover(IVisualPart<VR> cp);
-
-	/**
-	 * Sets the hovered part to <code>null</code>.
-	 * <p>
-	 * Fires a {@link PropertyChangeEvent}.
-	 */
-	public void clearHover();
 
 }

@@ -21,6 +21,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class DefaultSelectionPolicy<VR> extends AbstractPolicy<VR> {
 
+	protected boolean isSelectable() {
+		return true;
+	}
+
 	public void select(boolean append) {
 		IVisualPart<VR> host = getHost();
 
@@ -58,10 +62,6 @@ public class DefaultSelectionPolicy<VR> extends AbstractPolicy<VR> {
 				}
 			}
 		}
-	}
-
-	protected boolean isSelectable() {
-		return true;
 	}
 
 }

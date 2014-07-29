@@ -18,9 +18,9 @@ import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 public interface IContentModel extends IPropertyChangeNotifier {
 
 	public static final String CONTENTS_PROPERTY = "contents";
-	
-	public void setContents(List<? extends Object> contents);
-	
+
 	public List<? extends Object> getContents();
-	
+
+	public void setContents(List<? extends Object> contents);
+
 }

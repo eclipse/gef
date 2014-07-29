@@ -63,7 +63,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *              Instead, {@link AbstractVisualPart} should be subclassed.
  * 
  * @author anyssen
- *
+ * 
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.

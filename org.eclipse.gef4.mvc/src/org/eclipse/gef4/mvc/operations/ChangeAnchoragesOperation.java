@@ -26,7 +26,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * Operation to change the anchorages of a specific anchored.
  * 
  * @author mwienand
- * @param <VR> Specifies the visual root type.
+ * @param <VR>
+ *            Specifies the visual root type.
  * 
  */
 public class ChangeAnchoragesOperation<VR> extends AbstractOperation {
@@ -38,10 +39,14 @@ public class ChangeAnchoragesOperation<VR> extends AbstractOperation {
 	/**
 	 * Constructs a new operation from the given values.
 	 * 
-	 * @param label Description of the operation.
-	 * @param anchored {@link IVisualPart} whose anchorages are altered.
-	 * @param anchoragesToRemove Anchorages which will be removed during execution.
-	 * @param anchoragesToAdd Anchorages which will be added during execution.
+	 * @param label
+	 *            Description of the operation.
+	 * @param anchored
+	 *            {@link IVisualPart} whose anchorages are altered.
+	 * @param anchoragesToRemove
+	 *            Anchorages which will be removed during execution.
+	 * @param anchoragesToAdd
+	 *            Anchorages which will be added during execution.
 	 */
 	public ChangeAnchoragesOperation(String label, IVisualPart<VR> anchored,
 			List<IVisualPart<VR>> anchoragesToRemove,
@@ -51,7 +56,7 @@ public class ChangeAnchoragesOperation<VR> extends AbstractOperation {
 		this.toRemove = new ArrayList<IVisualPart<VR>>(anchoragesToRemove);
 		this.toAdd = new ArrayList<IVisualPart<VR>>(anchoragesToAdd);
 	}
-	
+
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
@@ -61,13 +66,13 @@ public class ChangeAnchoragesOperation<VR> extends AbstractOperation {
 		anchored.addAnchorages(toAdd);
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
 	}
-	
+
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {

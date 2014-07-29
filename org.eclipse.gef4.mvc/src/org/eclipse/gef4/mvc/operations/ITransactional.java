@@ -4,8 +4,8 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 
 public interface ITransactional {
 
-	public abstract void init();
-
 	public abstract IUndoableOperation commit();
+
+	public abstract void init();
 
 }

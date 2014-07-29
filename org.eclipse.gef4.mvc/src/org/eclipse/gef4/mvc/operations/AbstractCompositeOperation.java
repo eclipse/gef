@@ -26,108 +26,109 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.MvcBundle;
 
-public abstract class AbstractCompositeOperation extends AbstractOperation implements ICompositeOperation {
+public abstract class AbstractCompositeOperation extends AbstractOperation
+		implements ICompositeOperation {
+
+	List<IUndoableOperation> operations = new ArrayList<IUndoableOperation>();
 
 	public AbstractCompositeOperation(String label) {
 		super(label);
 	}
 
-	List<IUndoableOperation> operations = new ArrayList<IUndoableOperation>();
-	
-	protected List<IUndoableOperation> getOperations() {
-		return operations;
-	}
-	
 	@Override
 	public void add(IUndoableOperation operation) {
 		operations.add(operation);
-		
+
+	}
+
+	@Override
+	public void addContext(IUndoContext context) {
+		super.addContext(context);
+	}
+
+	@Override
+	public boolean canExecute() {
+		for (IUndoableOperation operation : operations) {
+			if (!operation.canExecute()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean canRedo() {
+		for (IUndoableOperation operation : operations) {
+			if (!operation.canRedo()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean canUndo() {
+		for (IUndoableOperation operation : operations) {
+			if (!operation.canUndo()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	protected IStatus combine(IStatus s1, IStatus s2) {
+		MultiStatus status = new MultiStatus(MvcBundle.PLUGIN_ID, IStatus.OK,
+				null, null);
+		status.merge(s1);
+		status.merge(s2);
+		return status;
+	}
+
+	@Override
+	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		IStatus status = Status.OK_STATUS;
+		for (IUndoableOperation operation : operations) {
+			combine(status, operation.execute(monitor, info));
+		}
+		return status;
+	}
+
+	protected List<IUndoableOperation> getOperations() {
+		return operations;
+	}
+
+	@Override
+	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException {
+		IStatus status = Status.OK_STATUS;
+		for (IUndoableOperation operation : operations) {
+			combine(status, operation.redo(monitor, info));
+		}
+		return status;
 	}
 
 	@Override
 	public void remove(IUndoableOperation operation) {
 		operations.remove(operation);
 	}
-	
-	public IUndoableOperation unwrap(){
-		if(operations.size() == 1){
-			return operations.get(0);
-		}
-		else {
-			return this;
-		}
-	}
-	
-	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		IStatus status = Status.OK_STATUS;
-		for(IUndoableOperation operation : operations){
-			combine(status, operation.execute(monitor, info));
-		}
-		return status;
-	}
-	
-	@Override
-	public void addContext(IUndoContext context) {
-		super.addContext(context);
-	}
-	
+
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		IStatus status = Status.OK_STATUS;
-		for(IUndoableOperation operation : operations){
+		for (IUndoableOperation operation : operations) {
 			combine(status, operation.undo(monitor, info));
 		}
 		return status;
 	}
-	
-	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		IStatus status = Status.OK_STATUS;
-		for(IUndoableOperation operation : operations){
-			combine(status, operation.redo(monitor, info));
+
+	public IUndoableOperation unwrap() {
+		if (operations.size() == 1) {
+			return operations.get(0);
+		} else {
+			return this;
 		}
-		return status;
-	}
-	
-	@Override
-	public boolean canExecute() {
-		for(IUndoableOperation operation : operations){
-			if(!operation.canExecute()){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	@Override
-	public boolean canUndo() {
-		for(IUndoableOperation operation : operations){
-			if(!operation.canUndo()){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	@Override
-	public boolean canRedo() {
-		for(IUndoableOperation operation : operations){
-			if(!operation.canRedo()){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	protected IStatus combine(IStatus s1, IStatus s2){
-		MultiStatus status = new MultiStatus(MvcBundle.PLUGIN_ID, IStatus.OK, null, null);
-		status.merge(s1);
-		status.merge(s2);
-		return status;
 	}
 
 }
