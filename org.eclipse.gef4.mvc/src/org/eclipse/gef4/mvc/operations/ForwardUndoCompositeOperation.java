@@ -16,6 +16,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class ForwardUndoCompositeOperation extends AbstractCompositeOperation {
 
@@ -26,7 +27,7 @@ public class ForwardUndoCompositeOperation extends AbstractCompositeOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		IStatus status = null;
+		IStatus status = Status.OK_STATUS;
 		for (IUndoableOperation operation : getOperations()) {
 			status = combine(status, operation.undo(monitor, info));
 		}
