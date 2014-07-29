@@ -50,31 +50,43 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
-	private static final class ChangeWayPointsOperation extends
+	private static final class ChangeContentAnchoragesOperation extends
 			AbstractOperation {
+
+		private final FXGeometricCurve curve;
 		private final AbstractFXGeometricElement<?> oldSource;
 		private final AbstractFXGeometricElement<?> oldTarget;
 		private final AbstractFXGeometricElement<?> newSource;
 		private final AbstractFXGeometricElement<?> newTarget;
-		private final List<Point> newWayPoints;
-		private final FXGeometricCurve curve;
-		private final List<Point> oldWayPoints;
 
-		public ChangeWayPointsOperation(String label, FXGeometricCurve curve,
+		public ChangeContentAnchoragesOperation(String label,
+				FXGeometricCurve curve,
 				AbstractFXGeometricElement<?> oldSource,
 				AbstractFXGeometricElement<?> oldTarget,
-				List<Point> oldWayPoints,
 				AbstractFXGeometricElement<?> newSource,
-				AbstractFXGeometricElement<?> newTarget,
-				List<Point> newWayPoints) {
+				AbstractFXGeometricElement<?> newTarget) {
 			super(label);
 			this.curve = curve;
 			this.oldSource = oldSource;
 			this.oldTarget = oldTarget;
-			this.oldWayPoints = oldWayPoints;
 			this.newSource = newSource;
 			this.newTarget = newTarget;
-			this.newWayPoints = newWayPoints;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			curve.getSourceAnchorages().clear();
+			curve.getSourceAnchorages().add(newSource);
+			curve.getTargetAnchorages().clear();
+			curve.getTargetAnchorages().add(newTarget);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
 		}
 
 		@Override
@@ -84,6 +96,29 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			curve.getSourceAnchorages().add(oldSource);
 			curve.getTargetAnchorages().clear();
 			curve.getTargetAnchorages().add(oldTarget);
+			return Status.OK_STATUS;
+		}
+
+	}
+
+	private static final class ChangeWayPointsOperation extends
+			AbstractOperation {
+
+		private final FXGeometricCurve curve;
+		private final List<Point> newWayPoints;
+		private final List<Point> oldWayPoints;
+
+		public ChangeWayPointsOperation(String label, FXGeometricCurve curve,
+				List<Point> oldWayPoints, List<Point> newWayPoints) {
+			super(label);
+			this.curve = curve;
+			this.oldWayPoints = oldWayPoints;
+			this.newWayPoints = newWayPoints;
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
 			removeCurveWayPoints();
 			addCurveWayPoints(oldWayPoints);
 			return Status.OK_STATUS;
@@ -98,10 +133,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
-			curve.getSourceAnchorages().clear();
-			curve.getSourceAnchorages().add(newSource);
-			curve.getTargetAnchorages().clear();
-			curve.getTargetAnchorages().add(newTarget);
 			removeCurveWayPoints();
 			addCurveWayPoints(newWayPoints);
 			return Status.OK_STATUS;
@@ -202,27 +233,33 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						// retrieve visual operation
 						final IUndoableOperation visualOperation = super
 								.commit();
-						
+
 						// determine model values
 						FXGeometricCurve curve = getContent();
-						List<Point> oldWayPoints = curve
-								.getWayPointsCopy();
+						List<Point> oldWayPoints = curve.getWayPointsCopy();
 						List<Point> newWayPoints = visual.getWayPoints();
-						AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual.getStartAnchorLink());
-						AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual.getEndAnchorLink());
-						AbstractFXGeometricElement<?> newSource = oldSource;//getAnchorageContent(visual.getStartAnchorLink());
-						AbstractFXGeometricElement<?> newTarget = oldTarget;//getAnchorageContent(visual.getEndAnchorLink());
-						
-						// create model operation
-						final IUndoableOperation modelOperation = new ChangeWayPointsOperation(
-								"Update model", curve, oldSource, oldTarget, oldWayPoints, newSource, newTarget, newWayPoints);
-						
+						AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual
+								.getStartAnchorLink());
+						AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
+								.getEndAnchorLink());
+						AbstractFXGeometricElement<?> newSource = oldSource;// getAnchorageContent(visual.getStartAnchorLink());
+						AbstractFXGeometricElement<?> newTarget = oldTarget;// getAnchorageContent(visual.getEndAnchorLink());
+
+						// create model operations
+						final IUndoableOperation modelWayPointOperation = new ChangeWayPointsOperation(
+								"Update model", curve, oldWayPoints,
+								newWayPoints);
+						final IUndoableOperation modelAnchoragesOperation = new ChangeContentAnchoragesOperation(
+								"Update model", curve, oldSource, oldTarget,
+								newSource, newTarget);
+
 						// combine operations
 						return new AbstractCompositeOperation(visualOperation
 								.getLabel()) {
 							{
 								add(visualOperation);
-								add(modelOperation);
+								add(modelWayPointOperation);
+								add(modelAnchoragesOperation);
 							}
 						};
 					}
@@ -242,14 +279,22 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				final FXGeometricCurve curve = getContent();
 				final List<Point> oldWayPoints = curve.getWayPointsCopy();
 				final List<Point> newWayPoints = visual.getWayPoints();
-				
-				AbstractFXGeometricElement<?> oldSource = curve.getSourceAnchorages().get(0);
-				AbstractFXGeometricElement<?> oldTarget = curve.getTargetAnchorages().get(0);
-				AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual.getStartAnchorLink());
-				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual.getEndAnchorLink());
-				
+
 				final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
-						"Update model", curve, oldSource, oldTarget, oldWayPoints, newSource, newTarget, newWayPoints);
+						"Update model", curve, oldWayPoints, newWayPoints);
+
+				AbstractFXGeometricElement<?> oldSource = curve
+						.getSourceAnchorages().get(0);
+				AbstractFXGeometricElement<?> oldTarget = curve
+						.getTargetAnchorages().get(0);
+				AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
+						.getStartAnchorLink());
+				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
+						.getEndAnchorLink());
+
+				final IUndoableOperation updateAnchoragesOperation = new ChangeContentAnchoragesOperation(
+						"Update anchorages.", curve, oldSource, oldTarget,
+						newSource, newTarget);
 
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
@@ -257,6 +302,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					{
 						add(updateVisualOperation);
 						add(updateModelOperation);
+						add(updateAnchoragesOperation);
 					}
 				};
 
@@ -265,10 +311,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		});
 	}
 
-	protected AbstractFXGeometricElement<?> getAnchorageContent(
-			AnchorLink link) {
+	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
 		Node anchorageNode = link.getAnchor().getAnchorageNode();
-		IVisualPart<Node> part = getViewer().getVisualPartMap().get(anchorageNode);
+		IVisualPart<Node> part = getViewer().getVisualPartMap().get(
+				anchorageNode);
 		if (part instanceof IContentPart) {
 			Object content = ((IContentPart<Node>) part).getContent();
 			if (content instanceof AbstractFXGeometricElement) {
