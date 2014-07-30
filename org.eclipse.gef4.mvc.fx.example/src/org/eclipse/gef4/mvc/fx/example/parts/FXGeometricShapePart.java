@@ -200,23 +200,12 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 								hover == FXGeometricShapePart.this ? null
 										: hover);
 
-						// update anchoreds
-						List<IUndoableOperation> updateAnchoredsOperations = new ArrayList<IUndoableOperation>();
-						for (IVisualPart<Node> anchored : getAnchoreds()) {
-							if (anchored instanceof FXGeometricCurvePart) {
-								FXGeometricCurvePart p = (FXGeometricCurvePart) anchored;
-								updateAnchoredsOperations.add(p
-										.getContentAnchoragesOperation(null,
-												null));
-							}
-						}
-
 						// update parent content children
 						final FXGeometricShape content = getContent();
 						final List<AbstractFXGeometricElement<? extends IGeometry>> shapeVisuals = ((FXGeometricModelPart) getParent())
 								.getContent().getShapeVisuals();
 						IUndoableOperation updateParentContentOperation = new AbstractOperation(
-								"content") {
+								"Change Content Children") {
 							@Override
 							public IStatus undo(IProgressMonitor monitor,
 									IAdaptable info) throws ExecutionException {
@@ -238,29 +227,53 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 							}
 						};
 
-						// arrange operations
-						ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
-								"compo-rev");
+						// synchronization has to happen directly after content
+						// changes
+						ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
+								"Change Content & Synchronize");
+
+						// synchronize content children first, so that
+						// subsequent operations can work with this part
+						fwdOp.add(updateParentContentOperation);
+						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
+								"Sync Children", (IContentPart<Node>) getParent()));
+
+						// synchronize content anchorages of all registered anchoreds
+						for (IVisualPart<Node> anchored : getAnchoreds()) {
+							if (anchored instanceof FXGeometricCurvePart) {
+								// determine source and target content
+								AbstractFXGeometricElement<?> sourceContent = null;
+								AbstractFXGeometricElement<?> targetContent = null;
+								List<IVisualPart<Node>> anchorages = anchored
+										.getAnchorages();
+								if (anchorages.size() > 1) {
+									// retain source if we are not the anchorage there
+									if (anchorages.get(0) != FXGeometricShapePart.this) {
+										sourceContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) anchorages
+												.get(0)).getContent();
+									}
+									// retain target if we are not the anchorage there
+									if (anchorages.get(1) != FXGeometricShapePart.this) {
+										targetContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) anchorages
+												.get(1)).getContent();
+									}
+								}
+								fwdOp.add(((FXGeometricCurvePart) anchored)
+										.getContentAnchoragesOperation(sourceContent, targetContent));
+								fwdOp.add(new SynchronizeContentAnchoragesOperation<Node>(
+										"Sync Anchored's Anchorages",
+										(IContentPart<Node>) anchored));
+							}
+						}
+
+						// assemble operations
+						ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Delete Shape");
 						revOp.add(changeHoverOperation);
 						revOp.add(changeFocusOperation);
 						revOp.add(changeSelectionOperation);
-
-						// synchronization has to happen after the rest
-						ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
-								"compo-fwd");
-						for (IUndoableOperation op : updateAnchoredsOperations) {
-							// TODO: add an addAll method
-							fwdOp.add(op);
-						}
-						fwdOp.add(new SynchronizeContentAnchoragesOperation<Node>(
-								"anchorages", (IContentPart<Node>) getParent()));
-						fwdOp.add(updateParentContentOperation);
-						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
-								"children", (IContentPart<Node>) getParent()));
-
 						revOp.add(fwdOp);
-						
-						// execute operation
+
+						// execute on the stack
 						executeOperation(revOp);
 					}
 				});

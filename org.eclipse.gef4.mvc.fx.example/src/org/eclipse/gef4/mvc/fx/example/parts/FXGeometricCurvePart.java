@@ -489,8 +489,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
 			int index) {
+		// FIXME: after 0 is removed, end anchorage is at index 0, too
 		if (index == 0) {
-			visual.setStartPoint(visual.getStartPoint());
+			if (visual.isStartConnected()) {
+				visual.setStartPoint(visual.getStartPoint());
+			} else {
+				visual.setEndPoint(visual.getEndPoint());
+			}
 		} else if (index == 1) {
 			visual.setEndPoint(visual.getEndPoint());
 		} else {

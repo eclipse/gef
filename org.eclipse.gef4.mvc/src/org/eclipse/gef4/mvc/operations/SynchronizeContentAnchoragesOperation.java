@@ -23,20 +23,20 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class SynchronizeContentAnchoragesOperation<VR> extends
 		AbstractOperation {
 
-	private IContentPart<VR> parent;
+	private IContentPart<VR> anchored;
 
 	public SynchronizeContentAnchoragesOperation(String label,
-			IContentPart<VR> parent) {
+			IContentPart<VR> anchored) {
 		super(label);
-		this.parent = parent;
+		this.anchored = anchored;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentBehavior contentBehavior = parent
+		ContentBehavior contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior.synchronizeContentAnchorages(parent
+		contentBehavior.synchronizeContentAnchorages(anchored
 				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
@@ -50,9 +50,9 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentBehavior contentBehavior = parent
+		ContentBehavior contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
-		contentBehavior.synchronizeContentAnchorages(parent
+		contentBehavior.synchronizeContentAnchorages(anchored
 				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
