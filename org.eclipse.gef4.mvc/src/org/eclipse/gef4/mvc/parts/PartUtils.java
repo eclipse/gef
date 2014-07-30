@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,27 +25,27 @@ public class PartUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends IVisualPart<VR>, VR> List<T> filterParts(
-			List<? extends IVisualPart<VR>> parts, Class<T> type) {
-		List<T> handleParts = new ArrayList<T>();
+			Collection<? extends IVisualPart<VR>> parts, Class<T> type) {
+		List<T> filtered = new ArrayList<T>();
 		for (IVisualPart<VR> c : parts) {
 			if (type.isInstance(c)) {
-				handleParts.add((T) c);
+				filtered.add((T) c);
 			}
 		}
-		return handleParts;
+		return filtered;
 	}
 
-	public static <VR> List<IVisualPart<VR>> getAnchorages(
-			List<? extends IVisualPart<VR>> anchoreds) {
-		List<IVisualPart<VR>> anchorages = new ArrayList<IVisualPart<VR>>();
-		for (IVisualPart<VR> a : anchoreds) {
-			anchorages.addAll(a.getAnchorages());
-		}
-		return anchorages;
-	}
+	// public static <VR> List<IVisualPart<VR>> getAnchorages(
+	// List<? extends IVisualPart<VR>> anchoreds) {
+	// List<IVisualPart<VR>> anchorages = new ArrayList<IVisualPart<VR>>();
+	// for (IVisualPart<VR> a : anchoreds) {
+	// anchorages.addAll(a.getAnchoragesWithRoles().keySet());
+	// }
+	// return anchorages;
+	// }
 
 	public static <VR> List<IVisualPart<VR>> getAnchoreds(
-			List<? extends IVisualPart<VR>> anchorages) {
+			Collection<? extends IVisualPart<VR>> anchorages) {
 		List<IVisualPart<VR>> anchoreds = new ArrayList<IVisualPart<VR>>();
 		for (IVisualPart<VR> a : anchorages) {
 			anchoreds.addAll(a.getAnchoreds());

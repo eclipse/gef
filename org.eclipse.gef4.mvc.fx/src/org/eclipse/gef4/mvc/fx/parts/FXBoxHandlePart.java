@@ -21,7 +21,7 @@ import javafx.scene.shape.StrokeType;
 /**
  * @author mwienand
  * @author anyssen
- *
+ * 
  */
 public class FXBoxHandlePart extends AbstractFXHandlePart implements
 		Comparable<FXBoxHandlePart> {
@@ -44,8 +44,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 	public int compareTo(FXBoxHandlePart o) {
 		// if we are bound to the same anchorages, we may compare positions,
 		// otherwise we are not comparable
-		if (!getAnchorages().containsAll(o.getAnchorages())
-				|| !o.getAnchorages().containsAll(o.getAnchorages())) {
+		if (!getAnchoragesWithRoles().equals(o.getAnchoragesWithRoles())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXBoxHandles that are bound to the same anchorages.");
 		}
@@ -55,7 +54,8 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void doRefreshVisual() {
 		Bounds unionedBoundsInScene = FXPartUtils
-				.getUnionedVisualBoundsInScene(getAnchorages());
+				.getUnionedVisualBoundsInScene(getAnchoragesWithRoles()
+						.keySet());
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);

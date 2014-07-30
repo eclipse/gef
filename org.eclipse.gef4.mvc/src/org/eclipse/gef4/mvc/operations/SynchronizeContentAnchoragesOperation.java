@@ -34,10 +34,10 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentBehavior contentBehavior = anchored
+		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchorages());
+				.getContentAnchoragesWithRoles());
 		return Status.OK_STATUS;
 	}
 
@@ -50,10 +50,10 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		ContentBehavior contentBehavior = anchored
+		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchorages());
+				.getContentAnchoragesWithRoles());
 		return Status.OK_STATUS;
 	}
 

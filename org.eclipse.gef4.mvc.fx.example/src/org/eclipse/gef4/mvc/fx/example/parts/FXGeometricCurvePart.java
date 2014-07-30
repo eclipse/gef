@@ -13,7 +13,10 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
@@ -46,6 +49,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -247,8 +252,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 								.getStartAnchorLink());
 						AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
 								.getEndAnchorLink());
-						AbstractFXGeometricElement<?> newSource = oldSource;// getAnchorageContent(visual.getStartAnchorLink());
-						AbstractFXGeometricElement<?> newTarget = oldTarget;// getAnchorageContent(visual.getEndAnchorLink());
+						AbstractFXGeometricElement<?> newSource = oldSource;
+						AbstractFXGeometricElement<?> newTarget = oldTarget;
 
 						// create model operations
 						final IUndoableOperation modelWayPointOperation = new ChangeWayPointsOperation(
@@ -287,21 +292,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 				final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
 						"Update model", curve, oldWayPoints, newWayPoints);
-
-				AbstractFXGeometricElement<?> oldSource = curve
-						.getSourceAnchorages().isEmpty() ? null : curve
-						.getSourceAnchorages().get(0);
-				AbstractFXGeometricElement<?> oldTarget = curve
-						.getTargetAnchorages().isEmpty() ? null : curve
-						.getTargetAnchorages().get(0);
-
 				AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
 						.getStartAnchorLink());
 				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
 						.getEndAnchorLink());
-				final IUndoableOperation updateAnchoragesOperation = new ChangeContentAnchoragesOperation(
-						"Update anchorages.", curve, oldSource, oldTarget,
-						newSource, newTarget);
+				final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(newSource, newTarget);
 
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
@@ -318,20 +313,23 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		});
 	}
 
-	ChangeContentAnchoragesOperation getContentAnchoragesOperation(
+	IUndoableOperation getContentAnchoragesOperation(
 			AbstractFXGeometricElement<?> newSource,
 			AbstractFXGeometricElement<?> newTarget) {
-		List<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
 				.getSourceAnchorages();
-		List<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
 				.getTargetAnchorages();
-		return new ChangeContentAnchoragesOperation("anchorages", getContent(),
+		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
+				"Synchronize Anchorages", this);
+		ChangeContentAnchoragesOperation modelOp = new ChangeContentAnchoragesOperation("anchorages", getContent(),
 				sourceAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) sourceAnchorages
-								.get(0),
-				targetAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) targetAnchorages
-								.get(0), newSource, newTarget);
+						: (AbstractFXGeometricElement<?>) sourceAnchorages.toArray()[0], targetAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) targetAnchorages.toArray()[0], newSource, newTarget);
+		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation("Change Content Anchorages");
+		op.add(modelOp);
+		op.add(syncOp);
+		return op;
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
@@ -473,43 +471,40 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 		// anchorages are ordered, thus we may use the index here
-		boolean isStart = index == 0;
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (isStart) {
+		if (role.equals("START")) {
 			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(
 					visual, IFXConnection.START_ROLE)));
-		} else {
+		} else if (role.equals("END")) {
 			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(
 					visual, IFXConnection.END_ROLE)));
+		} else {
+			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 		// FIXME: after 0 is removed, end anchorage is at index 0, too
-		if (index == 0) {
-			if (visual.isStartConnected()) {
-				visual.setStartPoint(visual.getStartPoint());
-			} else {
-				visual.setEndPoint(visual.getEndPoint());
-			}
-		} else if (index == 1) {
+		if (role.equals("START")) {
+			visual.setStartPoint(visual.getStartPoint());
+		} else if (role.equals("END")) {
 			visual.setEndPoint(visual.getEndPoint());
 		} else {
 			throw new IllegalStateException(
-					"Cannot detach from anchor at index <" + index + ">.");
+					"Cannot detach from anchor with role <" + role + ">.");
 		}
 	}
 
 	@Override
-	public List<Object> getContentAnchorages() {
-		List<Object> anchorages = new ArrayList<Object>();
-		anchorages.addAll(getContent().getSourceAnchorages());
-		anchorages.addAll(getContent().getTargetAnchorages());
-		return anchorages;
+	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
+		Map<String, Set<? extends Object>> anchoragesByRole = new HashMap<String, Set<? extends Object>>();
+		anchoragesByRole.put("START", getContent().getSourceAnchorages());
+		anchoragesByRole.put("END", getContent().getTargetAnchorages());
+		return anchoragesByRole;
 	}
 
 }

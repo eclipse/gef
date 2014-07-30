@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -49,7 +50,6 @@ import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -241,28 +241,29 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						// synchronize content anchorages of all registered anchoreds
 						for (IVisualPart<Node> anchored : getAnchoreds()) {
 							if (anchored instanceof FXGeometricCurvePart) {
-								// determine source and target content
+								// clear source and target content
 								AbstractFXGeometricElement<?> sourceContent = null;
 								AbstractFXGeometricElement<?> targetContent = null;
-								List<IVisualPart<Node>> anchorages = anchored
-										.getAnchorages();
-								if (anchorages.size() > 1) {
-									// retain source if we are not the anchorage there
-									if (anchorages.get(0) != FXGeometricShapePart.this) {
-										sourceContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) anchorages
-												.get(0)).getContent();
-									}
-									// retain target if we are not the anchorage there
-									if (anchorages.get(1) != FXGeometricShapePart.this) {
-										targetContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) anchorages
-												.get(1)).getContent();
-									}
+								
+								// retain source if we are not the anchorage there
+								Set<IVisualPart<Node>> startAnchorages = anchored.getAnchoragesByRole().get("START");
+								if (startAnchorages.size() > 0
+										&& !startAnchorages.contains(FXGeometricShapePart.this)) {
+									sourceContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) startAnchorages
+											.iterator().next()).getContent();
 								}
+								
+								// retain target if we are not the anchorage there
+								Set<IVisualPart<Node>> endAnchorages = anchored.getAnchoragesByRole().get("END");
+								if (endAnchorages.size() > 0
+										&& !endAnchorages.contains(FXGeometricShapePart.this)) {
+									targetContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) endAnchorages
+											.iterator().next()).getContent();
+								}
+								
+								// add corresponding operation
 								fwdOp.add(((FXGeometricCurvePart) anchored)
 										.getContentAnchoragesOperation(sourceContent, targetContent));
-								fwdOp.add(new SynchronizeContentAnchoragesOperation<Node>(
-										"Sync Anchored's Anchorages",
-										(IContentPart<Node>) anchored));
 							}
 						}
 

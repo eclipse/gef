@@ -18,8 +18,10 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -61,7 +63,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
 			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
-					.getContentAnchorages());
+					.getContentAnchoragesWithRoles());
 			getHost().addPropertyChangeListener(this);
 		}
 	}
@@ -74,7 +76,8 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);
-			synchronizeContentAnchorages(Collections.emptyList());
+			synchronizeContentAnchorages(Collections
+					.<Object, Set<String>> emptyMap());
 			synchronizeContentChildren(Collections.emptyList());
 		}
 		super.deactivate();
@@ -82,7 +85,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
 		if (contentPart.getParent() == null
-				&& contentPart.getAnchorages().isEmpty()) {
+				&& contentPart.getAnchoragesWithRoles().isEmpty()) {
 			// keep track of the removed content part, so we may relocate it
 			// within findOrCreate() later
 			if (contentPartPool == null) {
@@ -136,87 +139,77 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
 			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
-					.getContentAnchorages());
+					.getContentAnchoragesWithRoles());
 		}
 	}
 
 	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
-	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
-	 * set of content anchorages that is passed in.
+	 * (see {@link IVisualPart#getAnchoragesByRole()}) so that it is in sync
+	 * with the set of content anchorages that is passed in.
 	 * 
-	 * @param contentAnchorages
-	 *            The list of content anchorages to be synchronized with the
-	 *            list of {@link IContentPart} anchorages (
-	 *            {@link IContentPart#getAnchorages()}).
+	 * @param contentAnchoragesWithRoles
+	 *            * The map of content anchorages with roles to be synchronized
+	 *            with the list of {@link IContentPart} anchorages (
+	 *            {@link IContentPart#getAnchoragesByRole()}).
 	 * 
-	 * @see IContentPart#getContentAnchorages()
-	 * @see IContentPart#getAnchorages()
+	 * @see IContentPart#getContentAnchoragesByRole()
+	 * @see IContentPart#getAnchoragesByRole()
 	 */
-	@SuppressWarnings("unchecked")
 	public void synchronizeContentAnchorages(
-			List<? extends Object> contentAnchorages) {
-		int i;
+			Map<Object, Set<String>> contentAnchoragesWithRoles) {
+		Map<IVisualPart<VR>, Set<String>> anchoragesWithRoles = getHost()
+				.getAnchoragesWithRoles();
 
-		List<IContentPart<VR>> anchorageContentParts = PartUtils.filterParts(
-				getHost().getAnchorages(), IContentPart.class);
-		int anchorageContentPartsSize = anchorageContentParts.size();
-		int contentAnchoragesSize = contentAnchorages.size();
-
-		IContentPart<VR> contentPart;
-		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections
-				.emptyMap();
-		if (anchorageContentPartsSize > 0) {
-			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(
-					anchorageContentPartsSize);
-			for (i = 0; i < anchorageContentPartsSize; i++) {
-				contentPart = anchorageContentParts.get(i);
-				contentToContentPartMap.put(contentPart.getContent(),
-						contentPart);
-			}
-		}
-
-		Object content;
-		for (i = 0; i < contentAnchoragesSize; i++) {
-			content = contentAnchorages.get(i);
-
-			// Do a quick check to see if editPart[i] == model[i]
-			if (i < anchorageContentParts.size()
-					&& anchorageContentParts.get(i).getContent() == content) {
+		Set<IVisualPart<VR>> anchorages = new HashSet<IVisualPart<VR>>(
+				anchoragesWithRoles.keySet());
+		for (IVisualPart<VR> anchorage : anchorages) {
+			if (!(anchorage instanceof IContentPart)) {
 				continue;
 			}
 
-			// Look to see if the EditPart is already around but in the
-			// wrong location
-			contentPart = contentToContentPartMap.get(content);
+			Object content = ((IContentPart<VR>) anchorage).getContent();
 
-			if (contentPart != null) {
-				// TODO: this is wrong, it has to take into consideration the
-				// visual parts in between
-				getHost().reorderAnchorage(contentPart, i);
+			if (contentAnchoragesWithRoles.containsKey(content)) {
+				Set<String> contentRoles = contentAnchoragesWithRoles
+						.get(content);
+				for (String role : anchoragesWithRoles.get(anchorage)) {
+					if (contentRoles == null || !contentRoles.contains(role)) {
+						// unestablish anchorage for this role
+						getHost().removeAnchorage(anchorage, role);
+					}
+				}
 			} else {
-				// An EditPart for this model doesn't exist yet. Create and
-				// insert one.
-				contentPart = findOrCreatePartFor(content);
-				// what if it does not exist??
-				getHost().addAnchorage(contentPart);
+				// unestablish anchorage for all roles
+				for (String role : anchoragesWithRoles.get(anchorage)) {
+					getHost().removeAnchorage(anchorage, role);
+				}
 			}
+
+			disposeIfObsolete((IContentPart<VR>) anchorage);
 		}
 
-		// remove the remaining EditParts
-		anchorageContentParts = PartUtils.filterParts(
-				getHost().getAnchorages(), IContentPart.class);
-		anchorageContentPartsSize = anchorageContentParts.size();
-		if (i < anchorageContentPartsSize) {
-			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
-					anchorageContentPartsSize - i);
-			for (; i < anchorageContentPartsSize; i++) {
-				trash.add(anchorageContentParts.get(i));
-			}
-			for (i = 0; i < trash.size(); i++) {
-				IContentPart<VR> ep = trash.get(i);
-				getHost().removeAnchorage(ep);
-				disposeIfObsolete(ep);
+		Set<Object> contentAnchorages = new HashSet<Object>(
+				contentAnchoragesWithRoles.keySet());
+		for (Object contentAnchorage : contentAnchorages) {
+			IContentPart<VR> anchorage = findOrCreatePartFor(contentAnchorage);
+
+			if (anchorage == null) {
+				// establish anchorages for all roles
+				for (String role : contentAnchoragesWithRoles
+						.get(contentAnchorage)) {
+					getHost().addAnchorage(anchorage, role);
+				}
+			} else {
+				assert (anchoragesWithRoles.containsKey(anchorage));
+				Set<String> roles = anchoragesWithRoles.get(anchorage);
+				for (String role : contentAnchoragesWithRoles
+						.get(contentAnchorage)) {
+					if (roles == null || !roles.contains(role)) {
+						// establish anchorage for this role
+						getHost().addAnchorage(anchorage, role);
+					}
+				}
 			}
 		}
 	}

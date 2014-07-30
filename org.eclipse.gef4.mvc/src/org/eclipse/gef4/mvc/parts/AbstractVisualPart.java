@@ -17,8 +17,11 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
@@ -52,7 +55,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	private List<IVisualPart<VR>> children;
 
 	private List<IVisualPart<VR>> anchoreds;
-	private List<IVisualPart<VR>> anchorages;
+	private Map<IVisualPart<VR>, Set<String>> anchoragesWithRoles;
+	private Map<String, Set<IVisualPart<VR>>> anchoragesByRole;
 
 	private boolean refreshVisual = true;
 
@@ -77,48 +81,69 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void addAnchorage(IVisualPart<VR> anchorage) {
-		addAnchorage(anchorage, getAnchorages().size());
+		addAnchorage(anchorage, "default");
 	}
 
 	@Override
-	public void addAnchorage(IVisualPart<VR> anchorage, int index) {
+	public void addAnchorage(IVisualPart<VR> anchorage, String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
 
-		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
-				getAnchorages());
-		addAnchorageWithoutNotify(anchorage, index);
+		// copy anchorages by role (required for the change notification)
+		Map<String, Set<IVisualPart<VR>>> oldAnchoragesByRole = new HashMap<String, Set<IVisualPart<VR>>>(
+				anchoragesByRole == null ? 0 : anchoragesByRole.size());
+
+		if (anchoragesByRole != null) {
+			for (String r : anchoragesByRole.keySet()) {
+				oldAnchoragesByRole.put(r, new HashSet<IVisualPart<VR>>(
+						anchoragesByRole.get(r)));
+			}
+		}
+
+		addAnchorageWithoutNotify(anchorage, role);
 		anchorage.addAnchored(this);
 
 		anchorage.refreshVisual();
-		attachToAnchorageVisual(anchorage, index);
+		attachToAnchorageVisual(anchorage, role);
 		refreshVisual();
 
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
+		pcs.firePropertyChange(ANCHORAGES_BY_ROLE_PROPERTY,
+				oldAnchoragesByRole, getAnchoragesByRole());
 	}
 
-	@Override
-	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages) {
-		for (IVisualPart<VR> anchorage : anchorages) {
-			addAnchorage(anchorage);
+	private void addAnchorageWithoutNotify(IVisualPart<VR> anchorage,
+			String role) {
+		if (anchorage == null) {
+			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-	}
-
-	@Override
-	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages,
-			int index) {
-		for (int i = anchorages.size() - 1; i >= 0; i--) {
-			addAnchorage(anchorages.get(i), index);
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
 		}
-	}
 
-	private void addAnchorageWithoutNotify(IVisualPart<VR> anchorage, int index) {
+		if (anchoragesByRole == null) {
+			anchoragesByRole = new HashMap<String, Set<IVisualPart<VR>>>();
+			anchoragesWithRoles = new HashMap<IVisualPart<VR>, Set<String>>();
+		}
+		Set<IVisualPart<VR>> anchorages = anchoragesByRole.get(role);
 		if (anchorages == null) {
-			anchorages = new ArrayList<IVisualPart<VR>>();
+			anchorages = new HashSet<IVisualPart<VR>>();
+			anchoragesByRole.put(role, anchorages);
 		}
-		anchorages.add(index, anchorage);
+
+		Set<String> roles = anchoragesWithRoles.get(anchorage);
+		if (roles == null) {
+			roles = new HashSet<String>();
+			anchoragesWithRoles.put(anchorage, roles);
+		}
+
+		if (anchorages.contains(anchorage)) {
+			throw new IllegalArgumentException(
+					"The given anchorage part is already registered under the given role ("
+							+ role + ").");
+		}
+		anchorages.add(anchorage);
+		roles.add(role);
 	}
 
 	@Override
@@ -197,7 +222,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	protected abstract void attachToAnchorageVisual(IVisualPart<VR> anchorage,
-			int index);
+			String role);
 
 	/**
 	 * Deactivates this {@link IVisualPart} (if it is active) by delegating to
@@ -218,7 +243,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	protected abstract void detachFromAnchorageVisual(
-			IVisualPart<VR> anchorage, int index);
+			IVisualPart<VR> anchorage, String role);
 
 	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
@@ -253,11 +278,19 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public List<IVisualPart<VR>> getAnchorages() {
-		if (anchorages == null) {
-			return Collections.emptyList();
+	public Map<String, Set<IVisualPart<VR>>> getAnchoragesByRole() {
+		if (anchoragesByRole == null) {
+			return Collections.emptyMap();
 		}
-		return Collections.unmodifiableList(anchorages);
+		return Collections.unmodifiableMap(anchoragesByRole);
+	}
+
+	@Override
+	public Map<IVisualPart<VR>, Set<String>> getAnchoragesWithRoles() {
+		if (anchoragesWithRoles == null) {
+			return Collections.emptyMap();
+		}
+		return Collections.unmodifiableMap(anchoragesWithRoles);
 	}
 
 	@Override
@@ -347,38 +380,65 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		getViewer().getVisualPartMap().put(getVisual(), this);
 	}
 
-	// counterpart to setParent(null) in case of hierarchy
 	@Override
 	public void removeAnchorage(IVisualPart<VR> anchorage) {
+		removeAnchorage(anchorage, "default");
+	}
+
+	// counterpart to setParent(null) in case of hierarchy
+	@Override
+	public void removeAnchorage(IVisualPart<VR> anchorage, String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-		if (anchorages == null || !anchorages.contains(anchorage)) {
-			throw new IllegalArgumentException("Anchorage has to be contained.");
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
 		}
 
-		List<IVisualPart<VR>> oldAnchorages = new ArrayList<IVisualPart<VR>>(
-				anchorages);
-		removeAnchorageWithoutNotify(anchorage);
+		if (anchoragesByRole == null || !anchoragesByRole.containsKey(role)
+				|| !anchoragesByRole.get(role).contains(anchorage)) {
+			throw new IllegalArgumentException(
+					"Anchorage has to be contained under the specified role ("
+							+ role + ").");
+		}
+
+		// copy anchorages by role (required for the change notification)
+		Map<String, Set<IVisualPart<VR>>> oldAnchoragesByRole = new HashMap<String, Set<IVisualPart<VR>>>(
+				anchoragesByRole == null ? 0 : anchoragesByRole.size());
+		for (String r : anchoragesByRole.keySet()) {
+			oldAnchoragesByRole.put(r, new HashSet<IVisualPart<VR>>(
+					anchoragesByRole.get(r)));
+		}
+
+		removeAnchorageWithoutNotify(anchorage, role);
 
 		anchorage.removeAnchored(this);
-		detachFromAnchorageVisual(anchorage, oldAnchorages.indexOf(anchorage));
+		detachFromAnchorageVisual(anchorage, role);
 
-		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
-				getAnchorages());
+		// TODO: send MapChangeNotification or otherwise identify changed
+		// anchorage and role
+		pcs.firePropertyChange(ANCHORAGES_BY_ROLE_PROPERTY,
+				oldAnchoragesByRole, getAnchoragesByRole());
 	}
 
-	@Override
-	public void removeAnchorages(List<? extends IVisualPart<VR>> anchorages) {
-		for (IVisualPart<VR> anchorage : anchorages) {
-			removeAnchorage(anchorage);
-		}
-	}
-
-	private void removeAnchorageWithoutNotify(IVisualPart<VR> anchorage) {
+	private void removeAnchorageWithoutNotify(IVisualPart<VR> anchorage,
+			String role) {
+		Set<IVisualPart<VR>> anchorages = anchoragesByRole.get(role);
 		anchorages.remove(anchorage);
-		if (anchorages.size() == 0) {
-			anchorages = null;
+		if (anchorages.isEmpty()) {
+			anchoragesByRole.remove(role);
+		}
+
+		Set<String> roles = anchoragesWithRoles.get(anchorage);
+		roles.remove(role);
+		if (roles.isEmpty()) {
+			anchoragesWithRoles.remove(anchorage);
+		}
+
+		if (anchoragesByRole.isEmpty()) {
+			// if one is empty, the other one is empty as well
+			anchoragesByRole = null;
+			anchoragesWithRoles = null;
 		}
 	}
 
@@ -442,14 +502,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	@Override
-	public void reorderAnchorage(IVisualPart<VR> anchorage, int index) {
-		detachFromAnchorageVisual(anchorage, anchorages.indexOf(anchorage));
-		removeAnchorageWithoutNotify(anchorage);
-		addAnchorageWithoutNotify(anchorage, index);
-		attachToAnchorageVisual(anchorage, index);
-	}
-
 	/**
 	 * Moves a child {@link IVisualPart} into a lower index than it currently
 	 * occupies.
@@ -495,7 +547,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 		// unregister if we have no (remaining) link to the viewer
 		if (this.parent != null) {
-			if (parent == null && anchorages == null) {
+			if (parent == null && anchoragesByRole == null) {
 				unregister();
 			}
 		}
@@ -503,7 +555,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		this.parent = parent;
 
 		// if we obtain a link to the viewer (via parent) then register visuals
-		if (this.parent != null && anchorages == null) {
+		if (this.parent != null && anchoragesByRole == null) {
 			register();
 		}
 

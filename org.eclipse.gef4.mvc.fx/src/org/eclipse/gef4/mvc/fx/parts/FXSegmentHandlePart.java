@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -78,8 +79,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	public int compareTo(FXSegmentHandlePart o) {
 		// if we are bound to the same anchorages, we may compare segment
 		// positions, otherwise we are not comparable
-		if (!getAnchorages().containsAll(o.getAnchorages())
-				|| !o.getAnchorages().containsAll(o.getAnchorages())) {
+		if (!getAnchoragesWithRoles().equals(o.getAnchoragesWithRoles())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
@@ -119,8 +119,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void doRefreshVisual() {
 		FXRootPart rootPart = (FXRootPart) getRoot();
-		List<IVisualPart<Node>> anchorages = getAnchorages();
-		if (rootPart == null || anchorages.size() != 1) {
+		Map<IVisualPart<Node>, Set<String>> anchoragesWithRoles = getAnchoragesWithRoles();
+		if (rootPart == null || anchoragesWithRoles.keySet().size() != 1) {
 			return;
 		}
 
@@ -135,7 +135,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			Point position = getPosition(handleGeometryProvider.get());
 
 			// transform to handle space
-			IVisualPart<Node> targetPart = anchorages.get(0);
+			IVisualPart<Node> targetPart = anchoragesWithRoles.keySet()
+					.iterator().next();
 			Node targetVisual = targetPart.getVisual();
 			Pane handleLayer = rootPart.getHandleLayer();
 			Point2D point2d = handleLayer.sceneToLocal(targetVisual

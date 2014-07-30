@@ -47,7 +47,9 @@ public class BehaviorUtils {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			root.addChildren(anchoreds);
 			for (IVisualPart<VR> anchored : anchoreds) {
-				anchored.addAnchorages(anchorages);
+				for (IVisualPart<VR> anchorage : anchorages) {
+					anchored.addAnchorage(anchorage);
+				}
 			}
 		}
 	}
@@ -94,7 +96,9 @@ public class BehaviorUtils {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			root.removeChildren(anchoreds);
 			for (IVisualPart<VR> anchored : anchoreds) {
-				anchored.removeAnchorages(anchorages);
+				for (IVisualPart<VR> anchorage : anchorages) {
+					anchored.removeAnchorage(anchorage);
+				}
 			}
 		}
 	}

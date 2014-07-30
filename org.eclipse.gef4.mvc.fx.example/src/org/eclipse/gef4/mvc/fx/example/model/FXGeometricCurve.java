@@ -14,7 +14,9 @@ package org.eclipse.gef4.mvc.fx.example.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
@@ -41,18 +43,18 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	private Decoration sourceDecoration = Decoration.NONE;
 	private Decoration targetDecoration = Decoration.NONE;
 
-	private List<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
-	private List<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new ArrayList<AbstractFXGeometricElement<? extends IGeometry>>();
+	private Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
+	private Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 
 	public Decoration getSourceDecoration() {
 		return sourceDecoration;
 	}
 
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
+	public Set<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
 		return sourceAnchorages;
 	}
 
-	public List<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
+	public Set<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
 		return targetAnchorages;
 	}
 

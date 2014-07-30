@@ -15,6 +15,7 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -37,9 +38,10 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
- * <code>[n:m]</code> anchorage-anchored relationship ({@link #getAnchorages()},
- * {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
- * located at arbitrary places within the hierarchy.
+ * <code>[n:m]</code> anchorage-anchored relationship (
+ * {@link #getAnchoragesWithRoles()}, {@link #getAnchoreds()}) may be
+ * established between {@link IVisualPart}s located at arbitrary places within
+ * the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
@@ -73,37 +75,34 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
-	public static final String ANCHORAGES_PROPERTY = "anchorages";
+	public static final String ANCHORAGES_BY_ROLE_PROPERTY = "anchoragesByRole";
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
 	public void addAnchorage(IVisualPart<VR> anchorage);
 
-	public void addAnchorage(IVisualPart<VR> anchorage, int index);
+	// public void addAnchorages(Set<? extends IVisualPart<VR>> anchorages);
 
-	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages);
+	public void addAnchorage(IVisualPart<VR> anchorage, String role);
 
-	public void addAnchorages(List<? extends IVisualPart<VR>> anchorages,
-			int index);
+	// public void addAnchorages(
+	// Map<String, ? extends IVisualPart<VR>> anchoragesByRole);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to establish an
 	 * anchorage-anchored relationship with this anchorage {@link IVisualPart}.
 	 * <P>
 	 * Clients should never call this operation directly but instead add the
-	 * anchorage to its anchored via the {@link #addAnchorage(IVisualPart)},
-	 * {@link #addAnchorage(IVisualPart, int)}, {@link #addAnchorages(List)}, or
-	 * {@link #addAnchorages(List, int)} operations, which will indirectly lead
-	 * to a call here.
+	 * anchorage to its anchored via the {@link #addAnchorage(IVisualPart)} and
+	 * {@link #addAnchorage(IVisualPart, String)} operations, which will
+	 * indirectly lead to a call here.
 	 * 
 	 * @param anchored
 	 *            An {@link IVisualPart} to attach to this anchorage
 	 *            {@link IVisualPart} as anchored.
 	 * 
 	 * @noreference Clients should call {@link #addAnchorage(IVisualPart)},
-	 *              {@link #addAnchorage(IVisualPart, int)},
-	 *              {@link #addAnchorages(List)}, or
-	 *              {@link #addAnchorages(List, int)} instead to establish an
-	 *              anchored-anchorage relationship.
+	 *              {@link #addAnchorage(IVisualPart, String)} instead to
+	 *              establish an anchored-anchorage relationship.
 	 */
 	public void addAnchored(IVisualPart<VR> anchored);
 
@@ -115,7 +114,9 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void addChildren(List<? extends IVisualPart<VR>> children, int index);
 
-	public List<IVisualPart<VR>> getAnchorages();
+	public Map<String, Set<IVisualPart<VR>>> getAnchoragesByRole();
+
+	public Map<IVisualPart<VR>, Set<String>> getAnchoragesWithRoles();
 
 	public List<IVisualPart<VR>> getAnchoreds();
 
@@ -144,7 +145,11 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void removeAnchorage(IVisualPart<VR> anchorage);
 
-	public void removeAnchorages(List<? extends IVisualPart<VR>> anchorages);
+	// public void removeAnchorages(Set<? extends IVisualPart<VR>> anchorages);
+
+	public void removeAnchorage(IVisualPart<VR> anchorage, String role);
+
+	// public void removeAnchorages(Map<String, visual part> anchoragesByRole);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to unestablish an
@@ -152,8 +157,8 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * <P>
 	 * Clients should never call this operation directly but instead remove the
 	 * anchorage from its anchored via the {@link #removeAnchorage(IVisualPart)}
-	 * , or {@link #removeAnchorages(List)} operations, which will indirectly
-	 * lead to a call here.
+	 * or {@link #removeAnchorage(IVisualPart, String)} operations, which will
+	 * indirectly lead to a call here.
 	 * 
 	 * @param anchored
 	 *            An {@link IVisualPart} (currently attached as anchored to this
@@ -161,16 +166,14 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 *            {@link IVisualPart} as anchored.
 	 * 
 	 * @noreference Clients should call {@link #removeAnchorage(IVisualPart)} or
-	 *              {@link #removeAnchorages(List)} instead to unestablish an
-	 *              anchored-anchorage relationship.
+	 *              {@link #removeAnchorage(IVisualPart, String)} instead to
+	 *              unestablish an anchored-anchorage relationship.
 	 */
 	public void removeAnchored(IVisualPart<VR> anchored);
 
 	public void removeChild(IVisualPart<VR> child);
 
 	public void removeChildren(List<? extends IVisualPart<VR>> children);
-
-	public void reorderAnchorage(IVisualPart<VR> anchorage, int index);
 
 	public void reorderChild(IVisualPart<VR> child, int index);
 

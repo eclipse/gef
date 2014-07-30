@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
@@ -88,15 +89,14 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		AnchorKey anchorKey = new AnchorKey(visual, index == 0 ? "START"
-				: "END");
+		AnchorKey anchorKey = new AnchorKey(visual, role);
 		AnchorLink anchorLink = new AnchorLink(anchor, anchorKey);
 
 		FXCurveConnection connection = visual.getConnection();
-		if (index == 0) {
+		if (role.equals("START")) {
 			connection.setStartAnchorLink(anchorLink);
 		} else {
 			connection.setEndAnchorLink(anchorLink);
@@ -114,9 +114,9 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 		FXCurveConnection connection = visual.getConnection();
-		if (index == 0) {
+		if (role.equals("START")) {
 			connection.setStartPoint(connection.getStartPoint());
 		} else {
 			connection.setEndPoint(connection.getEndPoint());
@@ -174,11 +174,13 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public List<Object> getContentAnchorages() {
-		List<Object> anchorages = new ArrayList<Object>(2);
-		anchorages.add(getContent().getSource());
-		anchorages.add(getContent().getTarget());
-		return anchorages;
+	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
+		Map<String, Set<? extends Object>> anchoragesByRole = new HashMap<String, Set<? extends Object>>();
+		anchoragesByRole.put("START",
+				Collections.singleton(getContent().getSource()));
+		anchoragesByRole.put("END",
+				Collections.singleton(getContent().getTarget()));
+		return anchoragesByRole;
 	}
 
 	@Override

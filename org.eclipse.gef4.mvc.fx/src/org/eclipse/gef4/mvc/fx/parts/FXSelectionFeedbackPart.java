@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
@@ -60,12 +61,13 @@ public class FXSelectionFeedbackPart extends FXGeometricFeedbackPart {
 
 	@Override
 	public void doRefreshVisual() {
-		if (getAnchorages().size() == 0) {
+		Set<IVisualPart<Node>> anchorages = getAnchoragesWithRoles().keySet();
+		if (anchorages.isEmpty()) {
 			return;
 		}
 		super.doRefreshVisual();
 
-		IVisualPart<Node> anchorage = getAnchorages().get(0);
+		IVisualPart<Node> anchorage = anchorages.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
 
 		boolean focused = viewer.getFocusModel().isViewerFocused()

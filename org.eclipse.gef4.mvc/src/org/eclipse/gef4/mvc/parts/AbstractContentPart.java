@@ -14,8 +14,11 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -43,9 +46,37 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public List<? extends Object> getContentAnchorages() {
-		return Collections.emptyList();
+	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
+		return Collections.emptyMap();
 	}
+
+	@Override
+	public Map<Object, Set<String>> getContentAnchoragesWithRoles() {
+		Map<String, Set<? extends Object>> contentAnchoragesByRole = getContentAnchoragesByRole();
+		Map<Object, Set<String>> contentAnchoragesWithRoles = new HashMap<Object, Set<String>>();
+
+		for (String role : contentAnchoragesByRole.keySet()) {
+			for (Object content : contentAnchoragesByRole.get(role)) {
+				Set<String> roles = contentAnchoragesWithRoles.get(content);
+				if (roles == null) {
+					roles = new HashSet<String>();
+					contentAnchoragesWithRoles.put(content, roles);
+				}
+				roles.add(role);
+			}
+		}
+
+		return contentAnchoragesWithRoles;
+	}
+
+	// TODO: either provide methods to transform between anchoragesWithRoles and
+	// anchoragesByRoles
+	// TODO: implement the following method based on
+	// #getContentAnchoragesByRole()
+	// @Override
+	// public Map<? extends Object, Set<String>> getContentAnchoragesWithRoles()
+	// {
+	// }
 
 	@Override
 	public List<? extends Object> getContentChildren() {

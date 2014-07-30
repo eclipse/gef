@@ -33,14 +33,14 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 	private IViewer<VR> viewer;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage, int index) {
+	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<VR> anchorage,
-			int index) {
+			String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}

@@ -15,6 +15,8 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
@@ -41,7 +43,9 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 
 	public Object getContent();
 
-	public List<? extends Object> getContentAnchorages();
+	public Map<String, Set<? extends Object>> getContentAnchoragesByRole();
+
+	public Map<Object, Set<String>> getContentAnchoragesWithRoles();
 
 	public List<? extends Object> getContentChildren();
 

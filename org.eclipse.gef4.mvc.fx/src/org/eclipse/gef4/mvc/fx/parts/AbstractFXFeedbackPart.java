@@ -36,14 +36,14 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 		visualListener.register(anchorage.getVisual(),
 				((FXRootPart) getRoot()).getLayerStackPane());
 	};
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			int index) {
+			String role) {
 		visualListener.unregister();
 	}
 
