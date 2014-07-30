@@ -38,12 +38,15 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	@Override
 	public void add(IUndoableOperation operation) {
 		operations.add(operation);
-
 	}
 
 	@Override
 	public void addContext(IUndoContext context) {
 		super.addContext(context);
+	}
+
+	public void allAll(List<IUndoableOperation> operations) {
+		this.operations.addAll(operations);
 	}
 
 	@Override
