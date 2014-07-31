@@ -27,7 +27,7 @@ public class FXHoverFeedbackPart extends FXGeometricFeedbackPart {
 
 	@Override
 	public void doRefreshVisual() {
-		if (getAnchoragesWithRoles().isEmpty()) {
+		if (getAnchorages().isEmpty()) {
 			return;
 		}
 		super.doRefreshVisual();

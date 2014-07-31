@@ -68,6 +68,10 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	public boolean isNoOp() {
+		return dx == 0 && dy == 0 && dw == 0 && dh == 0;
+	}
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {

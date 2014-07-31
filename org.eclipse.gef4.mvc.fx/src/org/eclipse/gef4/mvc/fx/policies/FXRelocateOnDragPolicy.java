@@ -77,7 +77,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
 				"Resize/Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
-			ITransactional policy = getResizeRelocatePolicy(part);
+			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				IUndoableOperation commit = policy.commit();
 				if (commit != null) {

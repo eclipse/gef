@@ -35,9 +35,12 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	// TODO: pull up to IPolicy interface
 	@Override
 	public IUndoableOperation commit() {
-		IUndoableOperation commit = operation;
+		if (operation == null) {
+			return null;
+		}
+		FXResizeRelocateNodeOperation commit = operation;
 		operation = null;
-		return commit;
+		return commit.isNoOp() ? null : commit;
 	}
 
 	protected double getMinimumHeight() {

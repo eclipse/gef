@@ -49,13 +49,13 @@ public class FXGeometricFeedbackPart extends AbstractFXFeedbackPart {
 
 	@Override
 	public void doRefreshVisual() {
-		if (getAnchoragesWithRoles().isEmpty()) {
+		if (getAnchorages().isEmpty()) {
 			return;
 		}
 
 		// we need to combine several transformations to get the
 		// target-to-(feedback-handle-)parent-transform
-		Node targetVisual = getAnchoragesWithRoles().keySet().iterator().next()
+		Node targetVisual = getAnchorages().keySet().iterator().next()
 				.getVisual();
 
 		AffineTransform targetToSceneTx = JavaFX2Geometry

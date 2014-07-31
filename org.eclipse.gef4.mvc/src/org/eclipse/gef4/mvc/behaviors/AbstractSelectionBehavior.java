@@ -55,6 +55,8 @@ public abstract class AbstractSelectionBehavior<VR> extends
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			addFeedback(selected);
 			addHandles(selected);
+			// TODO: optimize performance (generating feedback and handles) as
+			// this seems to slow down marquee selection
 		} else if (selected.contains(getHost())) {
 			addFeedback(Collections.singletonList(getHost()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {

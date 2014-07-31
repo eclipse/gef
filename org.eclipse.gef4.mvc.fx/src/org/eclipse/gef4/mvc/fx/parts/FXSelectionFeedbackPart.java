@@ -61,7 +61,7 @@ public class FXSelectionFeedbackPart extends FXGeometricFeedbackPart {
 
 	@Override
 	public void doRefreshVisual() {
-		Set<IVisualPart<Node>> anchorages = getAnchoragesWithRoles().keySet();
+		Set<IVisualPart<Node>> anchorages = getAnchorages().keySet();
 		if (anchorages.isEmpty()) {
 			return;
 		}

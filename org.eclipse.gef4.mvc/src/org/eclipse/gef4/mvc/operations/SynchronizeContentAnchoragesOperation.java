@@ -37,7 +37,7 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchoragesWithRoles());
+				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 
@@ -53,7 +53,7 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored
-				.getContentAnchoragesWithRoles());
+				.getContentAnchorages());
 		return Status.OK_STATUS;
 	}
 

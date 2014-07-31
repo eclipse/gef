@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Map;
-import java.util.Set;
-
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -31,6 +28,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
 /**
@@ -79,7 +77,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	public int compareTo(FXSegmentHandlePart o) {
 		// if we are bound to the same anchorages, we may compare segment
 		// positions, otherwise we are not comparable
-		if (!getAnchoragesWithRoles().equals(o.getAnchoragesWithRoles())) {
+		if (!getAnchorages().equals(o.getAnchorages())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXSegmentHandleParts that are bound to the same anchorages.");
 		}
@@ -119,8 +117,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void doRefreshVisual() {
 		FXRootPart rootPart = (FXRootPart) getRoot();
-		Map<IVisualPart<Node>, Set<String>> anchoragesWithRoles = getAnchoragesWithRoles();
-		if (rootPart == null || anchoragesWithRoles.keySet().size() != 1) {
+		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		if (rootPart == null || anchorages.keySet().size() != 1) {
 			return;
 		}
 
@@ -135,8 +133,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			Point position = getPosition(handleGeometryProvider.get());
 
 			// transform to handle space
-			IVisualPart<Node> targetPart = anchoragesWithRoles.keySet()
-					.iterator().next();
+			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
+					.next();
 			Node targetVisual = targetPart.getVisual();
 			Pane handleLayer = rootPart.getHandleLayer();
 			Point2D point2d = handleLayer.sceneToLocal(targetVisual

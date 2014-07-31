@@ -44,7 +44,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 	public int compareTo(FXBoxHandlePart o) {
 		// if we are bound to the same anchorages, we may compare positions,
 		// otherwise we are not comparable
-		if (!getAnchoragesWithRoles().equals(o.getAnchoragesWithRoles())) {
+		if (!getAnchorages().equals(o.getAnchorages())) {
 			throw new IllegalArgumentException(
 					"Can only compare FXBoxHandles that are bound to the same anchorages.");
 		}
@@ -54,7 +54,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void doRefreshVisual() {
 		Bounds unionedBoundsInScene = FXPartUtils
-				.getUnionedVisualBoundsInScene(getAnchoragesWithRoles()
+				.getUnionedVisualBoundsInScene(getAnchorages()
 						.keySet());
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(

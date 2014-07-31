@@ -18,9 +18,9 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.mvc.models.IContentModel;
@@ -29,6 +29,10 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 
 /**
  * A behavior that can be adapted to an {@link IRootPart} or an
@@ -63,7 +67,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
 			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
-					.getContentAnchoragesWithRoles());
+					.getContentAnchorages());
 			getHost().addPropertyChangeListener(this);
 		}
 	}
@@ -76,8 +80,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);
-			synchronizeContentAnchorages(Collections
-					.<Object, Set<String>> emptyMap());
+			synchronizeContentAnchorages(HashMultimap.<Object, String> create());
 			synchronizeContentChildren(Collections.emptyList());
 		}
 		super.deactivate();
@@ -85,7 +88,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
 		if (contentPart.getParent() == null
-				&& contentPart.getAnchoragesWithRoles().isEmpty()) {
+				&& contentPart.getAnchorages().isEmpty()) {
 			// keep track of the removed content part, so we may relocate it
 			// within findOrCreate() later
 			if (contentPartPool == null) {
@@ -139,78 +142,62 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
 			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
-					.getContentAnchoragesWithRoles());
+					.getContentAnchorages());
 		}
 	}
 
 	/**
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
-	 * (see {@link IVisualPart#getAnchoragesByRole()}) so that it is in sync
-	 * with the set of content anchorages that is passed in.
+	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
+	 * set of content anchorages that is passed in.
 	 * 
-	 * @param contentAnchoragesWithRoles
+	 * @param contentAnchorages
 	 *            * The map of content anchorages with roles to be synchronized
 	 *            with the list of {@link IContentPart} anchorages (
-	 *            {@link IContentPart#getAnchoragesByRole()}).
+	 *            {@link IContentPart#getAnchorages()}).
 	 * 
-	 * @see IContentPart#getContentAnchoragesByRole()
-	 * @see IContentPart#getAnchoragesByRole()
+	 * @see IContentPart#getContentAnchorages()
+	 * @see IContentPart#getAnchorages()
 	 */
 	public void synchronizeContentAnchorages(
-			Map<Object, Set<String>> contentAnchoragesWithRoles) {
-		Map<IVisualPart<VR>, Set<String>> anchoragesWithRoles = getHost()
-				.getAnchoragesWithRoles();
+			SetMultimap<Object, String> contentAnchorages) {
+		SetMultimap<IVisualPart<VR>, String> anchorages = getHost()
+				.getAnchorages();
 
-		Set<IVisualPart<VR>> anchorages = new HashSet<IVisualPart<VR>>(
-				anchoragesWithRoles.keySet());
-		for (IVisualPart<VR> anchorage : anchorages) {
-			if (!(anchorage instanceof IContentPart)) {
+		// find anchorages whose content vanished
+		List<Entry<IVisualPart<VR>, String>> toRemove = new ArrayList<Map.Entry<IVisualPart<VR>, String>>();
+		Set<Entry<IVisualPart<VR>, String>> entries = anchorages.entries();
+		for (Entry<IVisualPart<VR>, String> e : entries) {
+			if (!(e.getKey() instanceof IContentPart)) {
 				continue;
 			}
-
-			Object content = ((IContentPart<VR>) anchorage).getContent();
-
-			if (contentAnchoragesWithRoles.containsKey(content)) {
-				Set<String> contentRoles = contentAnchoragesWithRoles
-						.get(content);
-				for (String role : anchoragesWithRoles.get(anchorage)) {
-					if (contentRoles == null || !contentRoles.contains(role)) {
-						// unestablish anchorage for this role
-						getHost().removeAnchorage(anchorage, role);
-					}
-				}
-			} else {
-				// unestablish anchorage for all roles
-				for (String role : anchoragesWithRoles.get(anchorage)) {
-					getHost().removeAnchorage(anchorage, role);
-				}
+			Object content = ((IContentPart<VR>) e.getKey()).getContent();
+			if (!contentAnchorages.containsEntry(content, e.getValue())) {
+				toRemove.add(e);
 			}
-
-			disposeIfObsolete((IContentPart<VR>) anchorage);
+			disposeIfObsolete((IContentPart<VR>) e.getKey());
 		}
 
-		Set<Object> contentAnchorages = new HashSet<Object>(
-				contentAnchoragesWithRoles.keySet());
-		for (Object contentAnchorage : contentAnchorages) {
-			IContentPart<VR> anchorage = findOrCreatePartFor(contentAnchorage);
+		// Correspondingly remove the anchorages. This is done in a separate
+		// step to prevent ConcurrentModificationException.
+		for (Entry<IVisualPart<VR>, String> e : toRemove) {
+			getHost().removeAnchorage(e.getKey(), e.getValue());
+		}
 
-			if (anchorage == null) {
-				// establish anchorages for all roles
-				for (String role : contentAnchoragesWithRoles
-						.get(contentAnchorage)) {
-					getHost().addAnchorage(anchorage, role);
-				}
-			} else {
-				assert (anchoragesWithRoles.containsKey(anchorage));
-				Set<String> roles = anchoragesWithRoles.get(anchorage);
-				for (String role : contentAnchoragesWithRoles
-						.get(contentAnchorage)) {
-					if (roles == null || !roles.contains(role)) {
-						// establish anchorage for this role
-						getHost().addAnchorage(anchorage, role);
-					}
-				}
+		// find content for which no anchorages exist
+		List<Entry<IVisualPart<VR>, String>> toAdd = new ArrayList<Map.Entry<IVisualPart<VR>, String>>();
+		for (Entry<Object, String> e : contentAnchorages.entries()) {
+			IContentPart<VR> anchorage = findOrCreatePartFor(e.getKey());
+			if (!anchorages.containsEntry(anchorage, e.getValue())) {
+				toAdd.add(Maps.<IVisualPart<VR>, String> immutableEntry(
+						anchorage, e.getValue()));
 			}
+		}
+
+		// Correspondingly add the anchorages. This is done in a separate step
+		// to prevent ConcurrentModificationException.
+		for (Entry<IVisualPart<VR>, String> e : toAdd) {
+			getHost().addAnchorage(e.getKey(), e.getValue());
 		}
 	}
 

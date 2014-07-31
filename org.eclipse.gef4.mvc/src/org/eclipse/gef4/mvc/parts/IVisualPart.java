@@ -15,7 +15,6 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -28,6 +27,8 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.collect.SetMultimap;
+
 /**
  * An {@link IVisualPart} plays the controller role in the model-view-controller
  * architecture. While it does not have to bound to a model (actually only
@@ -38,10 +39,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * Within an {@link IViewer}, {@link IVisualPart} are organized in a hierarchy
  * via a <code>[1:n]</code> parent-children relationship ({@link #getParent()},
  * {@link #getChildren()}), which roots in an {@link IRootPart}. Furthermore a
- * <code>[n:m]</code> anchorage-anchored relationship (
- * {@link #getAnchoragesWithRoles()}, {@link #getAnchoreds()}) may be
- * established between {@link IVisualPart}s located at arbitrary places within
- * the hierarchy.
+ * <code>[n:m]</code> anchorage-anchored relationship ( {@link #getAnchorages()}, {@link #getAnchoreds()}) may be established between {@link IVisualPart}s
+ * located at arbitrary places within the hierarchy.
  * <p>
  * An {@link IVisualPart} is adaptable ({@link IAdaptable}). Usually,
  * {@link IPolicy}s and {@link IBehavior}s are adapted to it (but arbitrary
@@ -114,9 +113,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void addChildren(List<? extends IVisualPart<VR>> children, int index);
 
-	public Map<String, Set<IVisualPart<VR>>> getAnchoragesByRole();
-
-	public Map<IVisualPart<VR>, Set<String>> getAnchoragesWithRoles();
+	public SetMultimap<IVisualPart<VR>, String> getAnchorages();
 
 	public List<IVisualPart<VR>> getAnchoreds();
 

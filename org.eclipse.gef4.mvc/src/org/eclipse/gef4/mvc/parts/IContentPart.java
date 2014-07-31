@@ -15,8 +15,8 @@ package org.eclipse.gef4.mvc.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import com.google.common.collect.SetMultimap;
 
 /**
  * An {@link IVisualPart} that visualizes an underlying content element.
@@ -43,9 +43,7 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 
 	public Object getContent();
 
-	public Map<String, Set<? extends Object>> getContentAnchoragesByRole();
-
-	public Map<Object, Set<String>> getContentAnchoragesWithRoles();
+	public SetMultimap<Object, String> getContentAnchorages();
 
 	public List<? extends Object> getContentChildren();
 

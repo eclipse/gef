@@ -13,9 +13,7 @@ package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javafx.scene.Node;
@@ -53,6 +51,9 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
@@ -243,6 +244,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						// retrieve visual operation
 						final IUndoableOperation visualOperation = super
 								.commit();
+						
+						if (visualOperation == null) {
+							return null;
+						}
 
 						// determine model values
 						FXGeometricCurve curve = getContent();
@@ -500,11 +505,17 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
-		Map<String, Set<? extends Object>> anchoragesByRole = new HashMap<String, Set<? extends Object>>();
-		anchoragesByRole.put("START", getContent().getSourceAnchorages());
-		anchoragesByRole.put("END", getContent().getTargetAnchorages());
-		return anchoragesByRole;
+	public SetMultimap<Object, String> getContentAnchorages() {
+		SetMultimap<Object, String> anchorages = HashMultimap.create();
+		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent().getSourceAnchorages();
+		for (Object src : sourceAnchorages) {
+			anchorages.put(src, "START");
+		}
+		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent().getTargetAnchorages();
+		for (Object dst : targetAnchorages) {
+			anchorages.put(dst, "END");
+		}
+		return anchorages;
 	}
 
 }

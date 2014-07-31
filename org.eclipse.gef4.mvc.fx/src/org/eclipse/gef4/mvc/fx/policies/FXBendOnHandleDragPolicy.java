@@ -50,7 +50,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			// System.out.println("After: " + newWaypoints.size() +
 			// " waypoints");
 			List<FXSegmentHandlePart> parts = PartUtils.filterParts(PartUtils
-					.getAnchoreds(getHost().getAnchoragesWithRoles().keySet()),
+					.getAnchoreds(getHost().getAnchorages().keySet()),
 					FXSegmentHandlePart.class);
 			Collections.<FXSegmentHandlePart> sort(parts);
 			// System.out.println("Found " + parts.size() +
@@ -103,7 +103,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		IVisualPart<Node> anchorage = getHost().getAnchoragesWithRoles()
+		IVisualPart<Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
 		IFXConnection connection = (IFXConnection) anchorage.getVisual();
 
@@ -132,7 +132,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
 
-		IVisualPart<Node> anchorage = getHost().getAnchoragesWithRoles()
+		IVisualPart<Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
 		getBendPolicy(anchorage).init();
 
@@ -143,7 +143,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 			// find other segment handle parts
 			List<FXSegmentHandlePart> parts = PartUtils.filterParts(PartUtils
-					.getAnchoreds(getHost().getAnchoragesWithRoles().keySet()),
+					.getAnchoreds(getHost().getAnchorages().keySet()),
 					FXSegmentHandlePart.class);
 
 			// sort parts by segment index and parameter
@@ -173,7 +173,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		IVisualPart<Node> anchorage = getHost().getAnchoragesWithRoles()
+		IVisualPart<Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);

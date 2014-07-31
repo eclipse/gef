@@ -12,10 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
@@ -45,6 +42,9 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 public class EdgeContentPart extends AbstractFXContentPart {
 
@@ -174,13 +174,11 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
-		Map<String, Set<? extends Object>> anchoragesByRole = new HashMap<String, Set<? extends Object>>();
-		anchoragesByRole.put("START",
-				Collections.singleton(getContent().getSource()));
-		anchoragesByRole.put("END",
-				Collections.singleton(getContent().getTarget()));
-		return anchoragesByRole;
+	public SetMultimap<Object, String> getContentAnchorages() {
+		SetMultimap<Object, String> anchorages = HashMultimap.create();
+		anchorages.put(getContent().getSource(), "START");
+		anchorages.put(getContent().getTarget(), "END");
+		return anchorages;
 	}
 
 	@Override

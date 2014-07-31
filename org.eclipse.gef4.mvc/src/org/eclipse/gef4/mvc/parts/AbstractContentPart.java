@@ -14,13 +14,13 @@
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 /**
  * The abstract base implementation of {@link IContentPart}, intended to be
@@ -46,27 +46,8 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public Map<String, Set<? extends Object>> getContentAnchoragesByRole() {
-		return Collections.emptyMap();
-	}
-
-	@Override
-	public Map<Object, Set<String>> getContentAnchoragesWithRoles() {
-		Map<String, Set<? extends Object>> contentAnchoragesByRole = getContentAnchoragesByRole();
-		Map<Object, Set<String>> contentAnchoragesWithRoles = new HashMap<Object, Set<String>>();
-
-		for (String role : contentAnchoragesByRole.keySet()) {
-			for (Object content : contentAnchoragesByRole.get(role)) {
-				Set<String> roles = contentAnchoragesWithRoles.get(content);
-				if (roles == null) {
-					roles = new HashSet<String>();
-					contentAnchoragesWithRoles.put(content, roles);
-				}
-				roles.add(role);
-			}
-		}
-
-		return contentAnchoragesWithRoles;
+	public SetMultimap<Object, String> getContentAnchorages() {
+		return HashMultimap.create();
 	}
 
 	// TODO: either provide methods to transform between anchoragesWithRoles and

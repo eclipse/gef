@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.awt.geom.NoninvertibleTransformException;
-import java.util.Set;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -39,7 +38,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
@@ -152,29 +150,31 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 						for (IVisualPart<Node> anchored : getAnchoreds()) {
 							if (anchored instanceof FXGeometricCurvePart) {
 								// clear source and target content
-								AbstractFXGeometricElement<?> sourceContent = null;
-								AbstractFXGeometricElement<?> targetContent = null;
+								AbstractFXGeometricElement<?>[] sourceContentAnchorages = ((FXGeometricCurvePart) anchored)
+										.getContent()
+										.getSourceAnchorages()
+										.toArray(
+												new AbstractFXGeometricElement[] {});
+								AbstractFXGeometricElement<?>[] targetContentAnchorages = ((FXGeometricCurvePart) anchored)
+										.getContent()
+										.getTargetAnchorages()
+										.toArray(
+												new AbstractFXGeometricElement[] {});
+								AbstractFXGeometricElement<?> sourceContent = sourceContentAnchorages.length == 0 ? null
+										: sourceContentAnchorages[0];
+								AbstractFXGeometricElement<?> targetContent = targetContentAnchorages.length == 0 ? null
+										: targetContentAnchorages[0];
 
-								// retain source if we are not the anchorage
-								// there
-								Set<IVisualPart<Node>> startAnchorages = anchored
-										.getAnchoragesByRole().get("START");
-								if (startAnchorages.size() > 0
-										&& !startAnchorages
-												.contains(FXGeometricShapePart.this)) {
-									sourceContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) startAnchorages
-											.iterator().next()).getContent();
+								// remove source content if we are the source
+								// anchorage
+								if (sourceContent == getContent()) {
+									sourceContent = null;
 								}
 
-								// retain target if we are not the anchorage
-								// there
-								Set<IVisualPart<Node>> endAnchorages = anchored
-										.getAnchoragesByRole().get("END");
-								if (endAnchorages.size() > 0
-										&& !endAnchorages
-												.contains(FXGeometricShapePart.this)) {
-									targetContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) endAnchorages
-											.iterator().next()).getContent();
+								// remove target content if we are the target
+								// anchorage
+								if (targetContent == getContent()) {
+									targetContent = null;
 								}
 
 								// add corresponding operation
@@ -183,7 +183,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 												sourceContent, targetContent));
 							}
 						}
-						
+
 						return op;
 					}
 				});
