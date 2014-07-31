@@ -50,9 +50,9 @@ public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy 
 
 		// advance focus
 		IContentPart<Node> newFocus = null;
-		if (index + 1 < currentSelection.size()) {
+		if (index < currentSelection.size()) {
 			// focus next selected part
-			newFocus = currentSelection.get(index + 1);
+			newFocus = currentSelection.get(index);
 		}
 		ChangeFocusOperation<Node> changeFocusOperation = new ChangeFocusOperation<Node>(
 				viewer, newFocus);

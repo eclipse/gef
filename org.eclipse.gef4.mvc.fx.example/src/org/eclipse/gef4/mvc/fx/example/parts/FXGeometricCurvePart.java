@@ -46,6 +46,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
+import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
@@ -316,6 +317,16 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return compositeOperation;
 			}
 		});
+		
+		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
+				new AbstractFXDeleteOnTypePolicy() {
+					@Override
+					protected IUndoableOperation getChangeContentOperation() {
+						FXExampleDeleteContentOperation op = new FXExampleDeleteContentOperation(
+								"DeleteContent", FXGeometricCurvePart.this);
+						return op;
+					}
+				});
 	}
 
 	IUndoableOperation getContentAnchoragesOperation(
