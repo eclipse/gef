@@ -43,6 +43,23 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 
 	public Object getContent();
 
+	/**
+	 * Returns the content objects that are to be regarded as anchorages of this
+	 * {@link IContentPart}'s content ({@link #getContent()}) with an (optional)
+	 * role qualifier for each anchorage-anchored link that has to be
+	 * established.
+	 * <p>
+	 * In case of a connection, one anchorage could have the "START" role, and
+	 * another the "END" role. Using the role mechanism, the same anchorage may
+	 * also have both roles, which can, for instance, be used for self
+	 * connections.
+	 * 
+	 * @return A {@link SetMultimap} of the content anchorages with a role to
+	 *         qualify each anchorage-anchored link. If there is only a single
+	 *         anchorage-anchored link to a respective anchorage, its role may
+	 *         be left undefined (i.e. the map will contain an entry of the form
+	 *         (anchorage, <code>null</code>)).
+	 */
 	public SetMultimap<Object, String> getContentAnchorages();
 
 	public List<? extends Object> getContentChildren();

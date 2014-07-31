@@ -80,7 +80,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void addAnchorage(IVisualPart<VR> anchorage) {
-		addAnchorage(anchorage, "default");
+		addAnchorage(anchorage, null);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		attachToAnchorageVisual(anchorage, role);
 		refreshVisual();
 
-		pcs.firePropertyChange(ANCHORAGES_BY_ROLE_PROPERTY, oldAnchorages,
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
 				getAnchorages());
 	}
 
@@ -110,14 +110,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-		if (role == null) {
-			throw new IllegalArgumentException("Role may not be null.");
-		}
-
 		if (anchorages == null) {
 			anchorages = HashMultimap.create();
 		}
-
 		anchorages.put(anchorage, role);
 	}
 
@@ -350,7 +345,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void removeAnchorage(IVisualPart<VR> anchorage) {
-		removeAnchorage(anchorage, "default");
+		removeAnchorage(anchorage, null);
 	}
 
 	// counterpart to setParent(null) in case of hierarchy
@@ -358,9 +353,6 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	public void removeAnchorage(IVisualPart<VR> anchorage, String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
-		}
-		if (role == null) {
-			throw new IllegalArgumentException("Role may not be null.");
 		}
 
 		if (anchorages == null || !anchorages.containsEntry(anchorage, role)) {
@@ -381,17 +373,19 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 		// TODO: send MapChangeNotification or otherwise identify changed
 		// anchorage and role
-		pcs.firePropertyChange(ANCHORAGES_BY_ROLE_PROPERTY, oldAnchorages,
+		pcs.firePropertyChange(ANCHORAGES_PROPERTY, oldAnchorages,
 				getAnchorages());
 	}
 
 	private void removeAnchorageWithoutNotify(IVisualPart<VR> anchorage,
 			String role) {
 		if (anchorages == null) {
-			throw new IllegalStateException("Cannot remove anchorage: nil");
+			throw new IllegalStateException(
+					"Cannot remove anchorage: not contained.");
 		}
 		if (!anchorages.remove(anchorage, role)) {
-			throw new IllegalStateException("Cannot remove anchorage: nil");
+			throw new IllegalStateException(
+					"Cannot remove anchorage: not contained.");
 		}
 		if (anchorages.isEmpty()) {
 			anchorages = null;

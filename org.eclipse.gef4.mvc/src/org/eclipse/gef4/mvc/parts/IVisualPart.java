@@ -74,17 +74,13 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
-	public static final String ANCHORAGES_BY_ROLE_PROPERTY = "anchoragesByRole";
+	public static final String ANCHORAGES_PROPERTY = "anchorages";
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
 	public void addAnchorage(IVisualPart<VR> anchorage);
 
-	// public void addAnchorages(Set<? extends IVisualPart<VR>> anchorages);
-
+	// role may be null
 	public void addAnchorage(IVisualPart<VR> anchorage, String role);
-
-	// public void addAnchorages(
-	// Map<String, ? extends IVisualPart<VR>> anchoragesByRole);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to establish an
@@ -142,11 +138,8 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public void removeAnchorage(IVisualPart<VR> anchorage);
 
-	// public void removeAnchorages(Set<? extends IVisualPart<VR>> anchorages);
-
+	// role may be null
 	public void removeAnchorage(IVisualPart<VR> anchorage, String role);
-
-	// public void removeAnchorages(Map<String, visual part> anchoragesByRole);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to unestablish an

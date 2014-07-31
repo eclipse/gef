@@ -50,15 +50,6 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 		return HashMultimap.create();
 	}
 
-	// TODO: either provide methods to transform between anchoragesWithRoles and
-	// anchoragesByRoles
-	// TODO: implement the following method based on
-	// #getContentAnchoragesByRole()
-	// @Override
-	// public Map<? extends Object, Set<String>> getContentAnchoragesWithRoles()
-	// {
-	// }
-
 	@Override
 	public List<? extends Object> getContentChildren() {
 		return Collections.emptyList();
