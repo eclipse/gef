@@ -39,6 +39,14 @@ public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy 
 		List<IContentPart<Node>> currentSelection = new ArrayList<IContentPart<Node>>(
 				viewer.getSelectionModel().getSelected());
 		int index = currentSelection.indexOf(getHost());
+		
+		// remove from selection
+		ChangeSelectionOperation<Node> changeSelectionOperation = null;
+		if (index >= 0) {
+			currentSelection.remove(index);
+			changeSelectionOperation = new ChangeSelectionOperation<Node>(
+					viewer, currentSelection);
+		}
 
 		// advance focus
 		IContentPart<Node> newFocus = null;
@@ -49,25 +57,26 @@ public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy 
 		ChangeFocusOperation<Node> changeFocusOperation = new ChangeFocusOperation<Node>(
 				viewer, newFocus);
 
-		// remove from selection
-		currentSelection.remove(index);
-		ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
-				viewer, currentSelection);
-
 		// remove from hover (if hovered)
 		IVisualPart<Node> hover = viewer.getHoverModel().getHover();
-		ChangeHoverOperation<Node> changeHoverOperation = new ChangeHoverOperation<Node>(
-				viewer, hover == getHost() ? null : hover);
+		ChangeHoverOperation<Node> changeHoverOperation = null;
+		if (hover == getHost()) {
+			changeHoverOperation = new ChangeHoverOperation<Node>(viewer, null);
+		}
 
 		// retrieve content operation
 		IUndoableOperation changeContentOperation = getChangeContentOperation();
 		
 		// assemble operations
 		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Delete Shape");
-		revOp.add(changeHoverOperation);
-		revOp.add(changeFocusOperation);
-		revOp.add(changeSelectionOperation);
-		revOp.add(changeContentOperation);
+		if (changeHoverOperation != null)
+			revOp.add(changeHoverOperation);
+		if (changeFocusOperation != null)
+			revOp.add(changeFocusOperation);
+		if (changeSelectionOperation != null)
+			revOp.add(changeSelectionOperation);
+		if (changeContentOperation != null)
+			revOp.add(changeContentOperation);
 
 		// execute on the stack
 		executeOperation(revOp);

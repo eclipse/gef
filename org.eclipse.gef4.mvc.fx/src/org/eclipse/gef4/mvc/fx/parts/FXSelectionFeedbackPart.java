@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.Set;
 
 import javafx.scene.Node;
@@ -22,6 +23,7 @@ import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IFocusModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -72,7 +74,9 @@ public class FXSelectionFeedbackPart extends FXGeometricFeedbackPart {
 
 		boolean focused = viewer.getFocusModel().isViewerFocused()
 				&& viewer.getFocusModel().getFocused() == anchorage;
-		boolean primary = viewer.getSelectionModel().getSelected().get(0) == anchorage;
+		List<IContentPart<Node>> selected = viewer.getSelectionModel()
+				.getSelected();
+		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			getVisual().setEffect(getPrimarySelectionFeedbackEffect(focused));
 			getVisual().setStroke(Color.BLACK);
