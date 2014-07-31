@@ -54,8 +54,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 	@Override
 	public void doRefreshVisual() {
 		Bounds unionedBoundsInScene = FXPartUtils
-				.getUnionedVisualBoundsInScene(getAnchorages()
-						.keySet());
+				.getUnionedVisualBoundsInScene(getAnchorages().keySet());
 		if (unionedBoundsInScene != null) {
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
