@@ -12,14 +12,10 @@
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.awt.geom.NoninvertibleTransformException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -34,23 +30,15 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -154,128 +142,49 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				});
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new AbstractFXTypePolicy() {
+				new AbstractFXDeleteOnTypePolicy() {
 					@Override
-					public void released(KeyEvent event) {
-					}
+					protected IUndoableOperation getChangeContentOperation() {
+						FXExampleDeleteContentOperation op = new FXExampleDeleteContentOperation(
+								"DeleteContent", FXGeometricShapePart.this);
 
-					@Override
-					public void pressed(KeyEvent event) {
-						if (event.getCode() != KeyCode.DELETE) {
-							return;
-						}
-
-						// prevent deletion when other policies are running
-						FXClickDragTool tool = getViewer().getDomain()
-								.getAdapter(FXClickDragTool.class);
-						if (tool != null && tool.isDragging()) {
-							return;
-						}
-
-						// get current selection
-						List<IContentPart<Node>> currentSelection = new ArrayList<IContentPart<Node>>(
-								getViewer().getSelectionModel().getSelected());
-						int index = currentSelection
-								.indexOf(FXGeometricShapePart.this);
-
-						// advance focus
-						IContentPart<Node> newFocus = null;
-						if (index + 1 < currentSelection.size()) {
-							// focus next selected part
-							newFocus = currentSelection.get(index + 1);
-						}
-						ChangeFocusOperation<Node> changeFocusOperation = new ChangeFocusOperation<Node>(
-								getViewer(), newFocus);
-
-						// remove from selection
-						currentSelection.remove(index);
-						ChangeSelectionOperation<Node> changeSelectionOperation = new ChangeSelectionOperation<Node>(
-								getViewer(), currentSelection);
-
-						// remove from hover (if hovered)
-						IVisualPart<Node> hover = getViewer().getHoverModel()
-								.getHover();
-						ChangeHoverOperation<Node> changeHoverOperation = new ChangeHoverOperation<Node>(
-								getViewer(),
-								hover == FXGeometricShapePart.this ? null
-										: hover);
-
-						// update parent content children
-						final FXGeometricShape content = getContent();
-						final List<AbstractFXGeometricElement<? extends IGeometry>> shapeVisuals = ((FXGeometricModelPart) getParent())
-								.getContent().getShapeVisuals();
-						IUndoableOperation updateParentContentOperation = new AbstractOperation(
-								"Change Content Children") {
-							@Override
-							public IStatus undo(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								shapeVisuals.add(content);
-								return Status.OK_STATUS;
-							}
-
-							@Override
-							public IStatus redo(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								return execute(monitor, info);
-							}
-
-							@Override
-							public IStatus execute(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								shapeVisuals.remove(content);
-								return Status.OK_STATUS;
-							}
-						};
-
-						// synchronization has to happen directly after content
-						// changes
-						ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
-								"Change Content & Synchronize");
-
-						// synchronize content children first, so that
-						// subsequent operations can work with this part
-						fwdOp.add(updateParentContentOperation);
-						fwdOp.add(new SynchronizeContentChildrenOperation<Node>(
-								"Sync Children", (IContentPart<Node>) getParent()));
-
-						// synchronize content anchorages of all registered anchoreds
+						// synchronize content anchorages of all anchoreds
 						for (IVisualPart<Node> anchored : getAnchoreds()) {
 							if (anchored instanceof FXGeometricCurvePart) {
 								// clear source and target content
 								AbstractFXGeometricElement<?> sourceContent = null;
 								AbstractFXGeometricElement<?> targetContent = null;
-								
-								// retain source if we are not the anchorage there
-								Set<IVisualPart<Node>> startAnchorages = anchored.getAnchoragesByRole().get("START");
+
+								// retain source if we are not the anchorage
+								// there
+								Set<IVisualPart<Node>> startAnchorages = anchored
+										.getAnchoragesByRole().get("START");
 								if (startAnchorages.size() > 0
-										&& !startAnchorages.contains(FXGeometricShapePart.this)) {
+										&& !startAnchorages
+												.contains(FXGeometricShapePart.this)) {
 									sourceContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) startAnchorages
 											.iterator().next()).getContent();
 								}
-								
-								// retain target if we are not the anchorage there
-								Set<IVisualPart<Node>> endAnchorages = anchored.getAnchoragesByRole().get("END");
+
+								// retain target if we are not the anchorage
+								// there
+								Set<IVisualPart<Node>> endAnchorages = anchored
+										.getAnchoragesByRole().get("END");
 								if (endAnchorages.size() > 0
-										&& !endAnchorages.contains(FXGeometricShapePart.this)) {
+										&& !endAnchorages
+												.contains(FXGeometricShapePart.this)) {
 									targetContent = (AbstractFXGeometricElement<?>) ((IContentPart<Node>) endAnchorages
 											.iterator().next()).getContent();
 								}
-								
+
 								// add corresponding operation
-								fwdOp.add(((FXGeometricCurvePart) anchored)
-										.getContentAnchoragesOperation(sourceContent, targetContent));
+								op.add(((FXGeometricCurvePart) anchored)
+										.getContentAnchoragesOperation(
+												sourceContent, targetContent));
 							}
 						}
-
-						// assemble operations
-						ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Delete Shape");
-						revOp.add(changeHoverOperation);
-						revOp.add(changeFocusOperation);
-						revOp.add(changeSelectionOperation);
-						revOp.add(fwdOp);
-
-						// execute on the stack
-						executeOperation(revOp);
+						
+						return op;
 					}
 				});
 	}
