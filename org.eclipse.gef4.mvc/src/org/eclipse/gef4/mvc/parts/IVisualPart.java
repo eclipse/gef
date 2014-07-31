@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.collect.Multiset;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -111,7 +112,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 
 	public SetMultimap<IVisualPart<VR>, String> getAnchorages();
 
-	public List<IVisualPart<VR>> getAnchoreds();
+	public Multiset<IVisualPart<VR>> getAnchoreds();
 
 	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
 

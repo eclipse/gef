@@ -29,7 +29,10 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 
@@ -54,7 +57,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	private IVisualPart<VR> parent;
 	private List<IVisualPart<VR>> children;
 
-	private List<IVisualPart<VR>> anchoreds;
+	private Multiset<IVisualPart<VR>> anchoreds;
 	private SetMultimap<IVisualPart<VR>, String> anchorages;
 
 	private boolean refreshVisual = true;
@@ -119,7 +122,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	@Override
 	public void addAnchored(IVisualPart<VR> anchored) {
 		if (anchoreds == null) {
-			anchoreds = new ArrayList<IVisualPart<VR>>();
+			anchoreds = HashMultiset.create();
 		}
 		anchoreds.add(anchored);
 
@@ -257,11 +260,13 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public List<IVisualPart<VR>> getAnchoreds() {
+	public Multiset<IVisualPart<VR>> getAnchoreds() {
 		if (anchoreds == null) {
-			return Collections.emptyList();
+			return Multisets
+					.<IVisualPart<VR>> unmodifiableMultiset(HashMultiset
+							.<IVisualPart<VR>> create());
 		}
-		return Collections.unmodifiableList(anchoreds);
+		return Multisets.unmodifiableMultiset(anchoreds);
 	}
 
 	@Override
@@ -290,10 +295,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	@Override
 	public IRootPart<VR> getRoot() {
 		if (getParent() != null) {
-			return getParent().getRoot();
+			IRootPart<VR> root = getParent().getRoot();
+			if (root != null) {
+				return root;
+			}
 		}
-		if (getAnchoreds().size() > 0) {
-			return getAnchoreds().get(0).getRoot();
+		for (IVisualPart<VR> anchored : getAnchoreds().elementSet()) {
+			IRootPart<VR> root = anchored.getRoot();
+			if (root != null) {
+				return root;
+			}
 		}
 		return null;
 	}
