@@ -4,7 +4,8 @@ Bundle-Name: GEF4 MVC Documentation
 Bundle-SymbolicName: org.eclipse.gef4.mvc.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
-Require-Bundle: com.google.inject;bundle-version="3.0.0";resolution:=optional,
+Require-Bundle: com.google.guava;bundle-version="10.0.0";resolution:=optional,
+ com.google.inject;bundle-version="3.0.0";resolution:=optional,
  org.eclipse.core.commands;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.ui.views;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.gef4.common;bundle-version="0.1.0";resolution:=optional,
