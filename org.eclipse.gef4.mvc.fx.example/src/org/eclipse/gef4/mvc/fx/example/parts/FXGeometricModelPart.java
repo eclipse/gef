@@ -17,8 +17,10 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
 
@@ -27,6 +29,13 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	public FXGeometricModelPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
+		
+		setAdapter(AdapterKey.get(DefaultSelectionPolicy.class), new DefaultSelectionPolicy<Node>() {
+			@Override
+			protected boolean isSelectable() {
+				return false;
+			}
+		});
 	}
 
 	@Override
