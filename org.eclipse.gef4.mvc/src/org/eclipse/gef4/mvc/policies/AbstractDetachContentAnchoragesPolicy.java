@@ -19,6 +19,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * specific content anchorage from the adaptee's content anchorages.
  * 
  * @author mwienand
+ * @param <VR>
+ *            Visual root type.
  * 
  */
 public abstract class AbstractDetachContentAnchoragesPolicy<VR> extends
@@ -29,6 +31,10 @@ public abstract class AbstractDetachContentAnchoragesPolicy<VR> extends
 	 * anchorage (with role) from the adaptee's content anchorages, or
 	 * <code>null</code> if no actions have to be performed.
 	 * 
+	 * @param anchorage
+	 *            The anchorage {@link IContentPart} to remove.
+	 * @param role
+	 *            The corresponding role for the anchorage to remove.
 	 * @return An {@link IUndoableOperation} for the deletion of the specified
 	 *         anchorage (with role) from the adaptee's content anchorages, or
 	 *         <code>null</code> if no actions have to be performed.

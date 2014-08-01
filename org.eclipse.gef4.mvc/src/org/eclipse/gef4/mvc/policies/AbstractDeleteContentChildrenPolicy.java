@@ -20,6 +20,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * adaptee's children.
  * 
  * @author mwienand
+ * @param <VR>
+ *            Visual root type.
  * 
  */
 public abstract class AbstractDeleteContentChildrenPolicy<VR> extends
