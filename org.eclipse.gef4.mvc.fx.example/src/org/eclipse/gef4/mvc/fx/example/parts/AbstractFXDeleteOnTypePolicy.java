@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2014 itemis AG and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     
+ *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
 import java.util.ArrayList;
@@ -20,6 +31,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy {
 
+	protected abstract IUndoableOperation getChangeContentOperation();
+
 	@Override
 	public void pressed(KeyEvent event) {
 		if (event.getCode() != KeyCode.DELETE) {
@@ -39,7 +52,7 @@ public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy 
 		List<IContentPart<Node>> currentSelection = new ArrayList<IContentPart<Node>>(
 				viewer.getSelectionModel().getSelected());
 		int index = currentSelection.indexOf(getHost());
-		
+
 		// remove from selection
 		ChangeSelectionOperation<Node> changeSelectionOperation = null;
 		if (index >= 0) {
@@ -66,23 +79,26 @@ public abstract class AbstractFXDeleteOnTypePolicy extends AbstractFXTypePolicy 
 
 		// retrieve content operation
 		IUndoableOperation changeContentOperation = getChangeContentOperation();
-		
+
 		// assemble operations
-		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation("Delete Shape");
-		if (changeHoverOperation != null)
+		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
+				"Delete Shape");
+		if (changeHoverOperation != null) {
 			revOp.add(changeHoverOperation);
-		if (changeFocusOperation != null)
+		}
+		if (changeFocusOperation != null) {
 			revOp.add(changeFocusOperation);
-		if (changeSelectionOperation != null)
+		}
+		if (changeSelectionOperation != null) {
 			revOp.add(changeSelectionOperation);
-		if (changeContentOperation != null)
+		}
+		if (changeContentOperation != null) {
 			revOp.add(changeContentOperation);
+		}
 
 		// execute on the stack
 		executeOperation(revOp);
 	}
-
-	protected abstract IUndoableOperation getChangeContentOperation();
 
 	@Override
 	public void released(KeyEvent event) {

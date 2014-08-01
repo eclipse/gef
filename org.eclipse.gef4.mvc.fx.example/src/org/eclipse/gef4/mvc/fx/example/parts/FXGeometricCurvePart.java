@@ -58,7 +58,29 @@ import com.google.common.collect.SetMultimap;
 
 public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
-	private static final class ChangeContentAnchoragesOperation extends
+	public static class ArrowHead extends Polyline implements IFXDecoration {
+		public ArrowHead() {
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
+					0.0);
+		}
+
+		@Override
+		public Point getLocalEndPoint() {
+			return new Point(15, 0);
+		}
+
+		@Override
+		public Point getLocalStartPoint() {
+			return new Point(0, 0);
+		}
+
+		@Override
+		public Node getVisual() {
+			return this;
+		}
+	}
+
+	public static final class ChangeContentAnchoragesOperation extends
 			AbstractOperation {
 
 		private final FXGeometricCurve curve;
@@ -85,11 +107,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
 			curve.getSourceAnchorages().clear();
-			if (newSource != null)
+			if (newSource != null) {
 				curve.getSourceAnchorages().add(newSource);
+			}
 			curve.getTargetAnchorages().clear();
-			if (newTarget != null)
+			if (newTarget != null) {
 				curve.getTargetAnchorages().add(newTarget);
+			}
 			return Status.OK_STATUS;
 		}
 
@@ -103,11 +127,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
 			curve.getSourceAnchorages().clear();
-			if (oldSource != null)
+			if (oldSource != null) {
 				curve.getSourceAnchorages().add(oldSource);
+			}
 			curve.getTargetAnchorages().clear();
-			if (oldTarget != null)
+			if (oldTarget != null) {
 				curve.getTargetAnchorages().add(oldTarget);
+			}
 			return Status.OK_STATUS;
 		}
 
@@ -128,18 +154,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			this.newWayPoints = newWayPoints;
 		}
 
-		@Override
-		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			removeCurveWayPoints();
-			addCurveWayPoints(oldWayPoints);
-			return Status.OK_STATUS;
-		}
-
-		@Override
-		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			return execute(monitor, info);
+		private void addCurveWayPoints(List<Point> wayPoints) {
+			int i = 0;
+			for (Point p : wayPoints) {
+				curve.addWayPoint(i++, new Point(p));
+			}
 		}
 
 		@Override
@@ -150,11 +169,10 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return Status.OK_STATUS;
 		}
 
-		private void addCurveWayPoints(List<Point> wayPoints) {
-			int i = 0;
-			for (Point p : wayPoints) {
-				curve.addWayPoint(i++, new Point(p));
-			}
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
 		}
 
 		private void removeCurveWayPoints() {
@@ -163,27 +181,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				curve.removeWayPoint(i);
 			}
 		}
-	}
-
-	public static class ArrowHead extends Polyline implements IFXDecoration {
-		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
-					0.0);
-		}
 
 		@Override
-		public Point getLocalStartPoint() {
-			return new Point(0, 0);
-		}
-
-		@Override
-		public Point getLocalEndPoint() {
-			return new Point(15, 0);
-		}
-
-		@Override
-		public Node getVisual() {
-			return this;
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			removeCurveWayPoints();
+			addCurveWayPoints(oldWayPoints);
+			return Status.OK_STATUS;
 		}
 	}
 
@@ -193,12 +197,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 
 		@Override
-		public Point getLocalStartPoint() {
+		public Point getLocalEndPoint() {
 			return new Point(0, 0);
 		}
 
 		@Override
-		public Point getLocalEndPoint() {
+		public Point getLocalStartPoint() {
 			return new Point(0, 0);
 		}
 
@@ -226,26 +230,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				AdapterKey.get(FXRelocateOnDragPolicy.TRANSACTION_POLICY_KEY),
 				new FXResizeRelocatePolicy() {
 					@Override
-					public void init() {
-						super.init();
-					}
-
-					@Override
-					public void performResizeRelocate(double dx, double dy,
-							double dw, double dh) {
-						// do not relocate when there are no way points
-						if (visual.getWayPointAnchorLinks().size() > 0) {
-							super.performResizeRelocate(dx, dy, dw, dh);
-							refreshVisual(); // TODO: should not be necessary
-						}
-					}
-
-					@Override
 					public IUndoableOperation commit() {
 						// retrieve visual operation
 						final IUndoableOperation visualOperation = super
 								.commit();
-						
+
 						if (visualOperation == null) {
 							return null;
 						}
@@ -279,6 +268,21 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 							}
 						};
 					}
+
+					@Override
+					public void init() {
+						super.init();
+					}
+
+					@Override
+					public void performResizeRelocate(double dx, double dy,
+							double dw, double dh) {
+						// do not relocate when there are no way points
+						if (visual.getWayPointAnchorLinks().size() > 0) {
+							super.performResizeRelocate(dx, dy, dw, dh);
+							refreshVisual(); // TODO: should not be necessary
+						}
+					}
 				});
 
 		// transaction policies
@@ -302,7 +306,8 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 						.getStartAnchorLink());
 				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
 						.getEndAnchorLink());
-				final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(newSource, newTarget);
+				final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(
+						newSource, newTarget);
 
 				// compose both operations
 				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
@@ -317,7 +322,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return compositeOperation;
 			}
 		});
-		
+
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
 				new AbstractFXDeleteOnTypePolicy() {
 					@Override
@@ -329,60 +334,35 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				});
 	}
 
-	IUndoableOperation getContentAnchoragesOperation(
-			AbstractFXGeometricElement<?> newSource,
-			AbstractFXGeometricElement<?> newTarget) {
-		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
-				.getSourceAnchorages();
-		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
-				.getTargetAnchorages();
-		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
-				"Synchronize Anchorages", this);
-		ChangeContentAnchoragesOperation modelOp = new ChangeContentAnchoragesOperation("anchorages", getContent(),
-				sourceAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) sourceAnchorages.toArray()[0], targetAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) targetAnchorages.toArray()[0], newSource, newTarget);
-		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation("Change Content Anchorages");
-		op.add(modelOp);
-		op.add(syncOp);
-		return op;
-	}
-
-	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
-		Node anchorageNode = link.getAnchor().getAnchorageNode();
-		IVisualPart<Node> part = getViewer().getVisualPartMap().get(
-				anchorageNode);
-		if (part instanceof IContentPart) {
-			Object content = ((IContentPart<Node>) part).getContent();
-			if (content instanceof AbstractFXGeometricElement) {
-				return (AbstractFXGeometricElement<?>) content;
-			}
+	@Override
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		// anchorages are ordered, thus we may use the index here
+		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
+		if (role.equals("START")) {
+			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(
+					visual, IFXConnection.START_ROLE)));
+		} else if (role.equals("END")) {
+			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(
+					visual, IFXConnection.END_ROLE)));
+		} else {
+			throw new IllegalStateException(
+					"Cannot attach to anchor with role <" + role + ">.");
 		}
-		return null;
 	}
 
 	@Override
-	public FXGeometricCurve getContent() {
-		return (FXGeometricCurve) super.getContent();
-	}
-
-	@Override
-	public String toString() {
-		return "FXGeometricCurvePart@" + System.identityHashCode(this);
-	}
-
-	@Override
-	public void setContent(Object model) {
-		if (model != null && !(model instanceof FXGeometricCurve)) {
-			throw new IllegalArgumentException(
-					"Only ICurve models are supported.");
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		// FIXME: after 0 is removed, end anchorage is at index 0, too
+		if (role.equals("START")) {
+			visual.setStartPoint(visual.getStartPoint());
+		} else if (role.equals("END")) {
+			visual.setEndPoint(visual.getEndPoint());
+		} else {
+			throw new IllegalStateException(
+					"Cannot detach from anchor with role <" + role + ">.");
 		}
-		super.setContent(model);
-	}
-
-	@Override
-	public Node getVisual() {
-		return visual;
 	}
 
 	@Override
@@ -485,48 +465,81 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		super.doRefreshVisual();
 	}
 
-	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		// anchorages are ordered, thus we may use the index here
-		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		if (role.equals("START")) {
-			visual.setStartAnchorLink(new AnchorLink(anchor, new AnchorKey(
-					visual, IFXConnection.START_ROLE)));
-		} else if (role.equals("END")) {
-			visual.setEndAnchorLink(new AnchorLink(anchor, new AnchorKey(
-					visual, IFXConnection.END_ROLE)));
-		} else {
-			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
+	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
+		Node anchorageNode = link.getAnchor().getAnchorageNode();
+		IVisualPart<Node> part = getViewer().getVisualPartMap().get(
+				anchorageNode);
+		if (part instanceof IContentPart) {
+			Object content = ((IContentPart<Node>) part).getContent();
+			if (content instanceof AbstractFXGeometricElement) {
+				return (AbstractFXGeometricElement<?>) content;
+			}
 		}
+		return null;
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		// FIXME: after 0 is removed, end anchorage is at index 0, too
-		if (role.equals("START")) {
-			visual.setStartPoint(visual.getStartPoint());
-		} else if (role.equals("END")) {
-			visual.setEndPoint(visual.getEndPoint());
-		} else {
-			throw new IllegalStateException(
-					"Cannot detach from anchor with role <" + role + ">.");
-		}
+	public FXGeometricCurve getContent() {
+		return (FXGeometricCurve) super.getContent();
 	}
 
 	@Override
 	public SetMultimap<Object, String> getContentAnchorages() {
 		SetMultimap<Object, String> anchorages = HashMultimap.create();
-		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent().getSourceAnchorages();
+		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+				.getSourceAnchorages();
 		for (Object src : sourceAnchorages) {
 			anchorages.put(src, "START");
 		}
-		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent().getTargetAnchorages();
+		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+				.getTargetAnchorages();
 		for (Object dst : targetAnchorages) {
 			anchorages.put(dst, "END");
 		}
 		return anchorages;
+	}
+
+	public IUndoableOperation getContentAnchoragesOperation(
+			AbstractFXGeometricElement<?> newSource,
+			AbstractFXGeometricElement<?> newTarget) {
+		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
+				.getSourceAnchorages();
+		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
+				.getTargetAnchorages();
+		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
+				"Synchronize Anchorages", this);
+		ChangeContentAnchoragesOperation modelOp = new ChangeContentAnchoragesOperation(
+				"anchorages", getContent(),
+				sourceAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) sourceAnchorages
+								.toArray()[0],
+				targetAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) targetAnchorages
+								.toArray()[0], newSource, newTarget);
+		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation(
+				"Change Content Anchorages");
+		op.add(modelOp);
+		op.add(syncOp);
+		return op;
+	}
+
+	@Override
+	public Node getVisual() {
+		return visual;
+	}
+
+	@Override
+	public void setContent(Object model) {
+		if (model != null && !(model instanceof FXGeometricCurve)) {
+			throw new IllegalArgumentException(
+					"Only ICurve models are supported.");
+		}
+		super.setContent(model);
+	}
+
+	@Override
+	public String toString() {
+		return "FXGeometricCurvePart@" + System.identityHashCode(this);
 	}
 
 }
