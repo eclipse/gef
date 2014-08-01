@@ -1,21 +1,26 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 Zest.FX Example
-Bundle-SymbolicName: org.eclipse.gef4.zest.fx.example;singleton:=true
+Bundle-Name: GEF4 Zest.FX.UI
+Bundle-SymbolicName: org.eclipse.gef4.zest.fx.ui
 Bundle-Version: 0.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Eclipse.org
-Require-Bundle: com.google.inject;bundle-version="3.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: com.google.inject,
+ com.google.guava;bundle-version="10.0.0",
  org.eclipse.gef4.common;bundle-version="0.1.0",
- org.eclipse.gef4.geometry;bundle-version="0.1.0",
  org.eclipse.gef4.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.graph;bundle-version="0.1.0",
+ org.eclipse.gef4.layout;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.ui;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx.ui;bundle-version="0.1.0",
- org.eclipse.gef4.graph;bundle-version="0.1.0",
- org.eclipse.gef4.layout,
- org.eclipse.gef4.zest.fx;bundle-version="0.1.0"
+ org.eclipse.gef4.swtfx;bundle-version="0.1.0",
+ org.eclipse.gef4.zest.fx;bundle-version="0.1.0",
+ org.eclipse.swt;bundle-version="3.102.0",
+ org.eclipse.ui;bundle-version="3.105.0",
+ org.eclipse.core.runtime;bundle-version="3.9.0"
 Import-Package: javafx.animation;version="2.2.0",
  javafx.application;version="2.2.0",
  javafx.beans;version="2.2.0",
@@ -27,6 +32,8 @@ Import-Package: javafx.animation;version="2.2.0",
  javafx.collections.transformation;version="8.0.0",
  javafx.concurrent;version="2.2.0",
  javafx.css;version="8.0.0",
+ javafx.embed.swing;version="2.2.0",
+ javafx.embed.swt;version="2.2.0",
  javafx.event;version="2.2.0",
  javafx.fxml;version="2.2.0",
  javafx.geometry;version="2.2.0",
@@ -49,5 +56,5 @@ Import-Package: javafx.animation;version="2.2.0",
  javafx.stage;version="2.2.0",
  javafx.util;version="2.2.0",
  javafx.util.converter;version="2.2.0"
-Export-Package: org.eclipse.gef4.zest.fx.example,
- org.eclipse.gef4.zest.fx.example.parts
+Export-Package: org.eclipse.gef4.zest.fx.ui,
+ org.eclipse.gef4.zest.fx.ui.view

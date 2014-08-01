@@ -16,8 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import javafx.collections.ObservableList;
-
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
@@ -31,7 +29,8 @@ import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 public class GraphRootPart extends FXRootPart {
 
-	private static final String STYLES_CSS_FILE = "styles.css";
+	public static final String STYLES_CSS_FILE = GraphRootPart.class
+			.getResource("styles.css").toExternalForm();
 
 	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SpringLayoutAlgorithm();
 
@@ -46,7 +45,6 @@ public class GraphRootPart extends FXRootPart {
 
 				// set layout algorithm
 				context.setStaticLayoutAlgorithm(layoutAlgorithm);
-				// context.setIncrementalLayoutAlgorithm(layoutAlgorithm);
 
 				// set layout context. other parts listen for the layout model
 				// to send in their layout data
@@ -70,8 +68,6 @@ public class GraphRootPart extends FXRootPart {
 			}
 		}
 	};
-
-	private int stylesheetIndex;
 
 	protected void applyLayout(final GraphLayoutContext context) {
 		// get current viewport size
@@ -118,11 +114,7 @@ public class GraphRootPart extends FXRootPart {
 				viewportChanged);
 
 		// load stylesheet
-		ObservableList<String> stylesheets = getVisual().getScene()
-				.getStylesheets();
-		stylesheets.add(getClass().getResource(STYLES_CSS_FILE)
-				.toExternalForm());
-		stylesheetIndex = stylesheets.size() - 1;
+		getVisual().getScene().getStylesheets().add(STYLES_CSS_FILE);
 	}
 
 	@Override
@@ -133,9 +125,8 @@ public class GraphRootPart extends FXRootPart {
 		getViewer().getViewportModel().removePropertyChangeListener(
 				viewportChanged);
 
-		ObservableList<String> stylesheets = getVisual().getScene()
-				.getStylesheets();
-		stylesheets.remove(stylesheetIndex);
+		// un-load stylesheet
+		getVisual().getScene().getStylesheets().remove(STYLES_CSS_FILE);
 	}
 
 	protected GraphLayoutContext getLayoutContext() {

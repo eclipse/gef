@@ -10,22 +10,10 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.example;
+package org.eclipse.gef4.zest.fx.ui;
 
-import javafx.scene.Node;
+import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
 
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.zest.fx.ZestFxModule;
-import org.eclipse.gef4.zest.fx.example.parts.ZestFxExampleHandlePartFactory;
-
-import com.google.inject.TypeLiteral;
-
-public class ZestFxExampleModule extends ZestFxModule {
-
-	@Override
-	protected void bindFXDefaultHandlePartFactory() {
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).toInstance(new ZestFxExampleHandlePartFactory());
-	}
+public class ZestFxUiModule extends MvcFxUiModule {
 
 }

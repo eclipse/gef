@@ -10,35 +10,25 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.example;
+package org.eclipse.gef4.zest.fx.ui.example.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javafx.embed.swt.FXCanvas;
-
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr.Key;
-import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
-import org.eclipse.gef4.mvc.fx.ui.view.FXView;
+import org.eclipse.gef4.zest.fx.example.ZestFxExampleModule;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.gef4.zest.fx.ui.example.ZestFxUiExampleModule;
+import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
-public class ZestFXExampleView extends FXView {
-
-	public ZestFXExampleView() {
-		super(Guice.createInjector(Modules.override(new ZestFxExampleModule())
-				.with(new MvcFxUiModule())));
-	}
+public class ZestFxUiExampleView extends ZestFxUiView {
 
 	public static Graph DEFAULT_GRAPH = build09();
 
@@ -82,36 +72,10 @@ public class ZestFXExampleView extends FXView {
 				.attr(NodeContentPart.ATTR_CLASS, cssClass).build();
 	}
 
-	protected Graph graph = DEFAULT_GRAPH;
-
-	@Override
-	protected FXCanvas createCanvas(Composite parent) {
-		FXCanvas canvas = super.createCanvas(parent);
-		canvas.addControlListener(new ControlListener() {
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle bounds = getCanvas().getBounds();
-				getViewer().getViewportModel().setWidth(bounds.width);
-				getViewer().getViewportModel().setHeight(bounds.height);
-			}
-		});
-		return canvas;
-	}
-
-	@Override
-	protected List<Object> getContents() {
-		List<Object> contents = new ArrayList<Object>(1);
-		contents.add(graph);
-		return contents;
-	}
-
-	public void setGraph(Graph graph) {
-		this.graph = graph;
-		getViewer().setContents(getContents());
+	public ZestFxUiExampleView() {
+		super(Guice.createInjector(Modules.override(new ZestFxExampleModule())
+				.with(new ZestFxUiExampleModule())));
+		setGraph(DEFAULT_GRAPH);
 	}
 
 }

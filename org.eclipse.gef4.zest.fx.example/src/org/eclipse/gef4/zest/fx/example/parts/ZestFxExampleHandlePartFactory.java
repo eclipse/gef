@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.example;
+package org.eclipse.gef4.zest.fx.example.parts;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
-public class FXZestExampleHandlePartFactory extends FXDefaultHandlePartFactory {
+public class ZestFxExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	
 	@Override
 	public List<IHandlePart<Node>> createHandleParts(

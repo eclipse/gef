@@ -190,6 +190,9 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
+		if (content == null) {
+			return;
+		}
 		if (!(content instanceof Edge)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
