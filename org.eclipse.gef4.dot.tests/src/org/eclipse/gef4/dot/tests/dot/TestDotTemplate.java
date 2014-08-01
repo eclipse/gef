@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.dot.tests.dot;
 
-import org.eclipse.gef4.dot.internal.dot.export.DotTemplate;
 import org.eclipse.gef4.dot.tests.dot.test_data.LabeledGraph;
 import org.eclipse.gef4.dot.tests.dot.test_data.SampleGraph;
 import org.eclipse.gef4.dot.tests.dot.test_data.SimpleDigraph;
@@ -18,6 +17,7 @@ import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.internal.dot.export.DotTemplate;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 import org.junit.Assert;
 import org.junit.Test;

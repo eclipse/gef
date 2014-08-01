@@ -33,7 +33,7 @@
 									classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher"
 									fork="true" failonerror="true">
 									<arg
-										value="src/org/eclipse/gef4/dot/internal/dot/parser/GenerateDot.mwe2" />
+										value="src/org/eclipse/gef4/internal/dot/parser/GenerateDot.mwe2" />
 									<sysproperty key="file.encoding" value="UTF-8" />
 								</java>
 							</tasks>

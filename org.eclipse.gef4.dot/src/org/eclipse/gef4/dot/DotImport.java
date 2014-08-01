@@ -12,12 +12,12 @@ package org.eclipse.gef4.dot;
 import java.io.File;
 import java.util.List;
 
-import org.eclipse.gef4.dot.internal.dot.DotAst;
-import org.eclipse.gef4.dot.internal.dot.DotMessages;
-import org.eclipse.gef4.dot.internal.dot.GraphCreatorInterpreter;
-import org.eclipse.gef4.dot.internal.dot.ZestGraphImport;
-import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.internal.dot.DotAst;
+import org.eclipse.gef4.internal.dot.DotMessages;
+import org.eclipse.gef4.internal.dot.GraphCreatorInterpreter;
+import org.eclipse.gef4.internal.dot.ZestGraphImport;
+import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
 

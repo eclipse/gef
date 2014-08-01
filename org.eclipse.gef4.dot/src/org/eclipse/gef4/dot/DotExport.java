@@ -12,10 +12,10 @@ package org.eclipse.gef4.dot;
 import java.io.File;
 import java.util.Scanner;
 
-import org.eclipse.gef4.dot.internal.dot.export.DotDrawer;
-import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
-import org.eclipse.gef4.dot.internal.dot.export.DotTemplate;
 import org.eclipse.gef4.graph.Graph;
+import org.eclipse.gef4.internal.dot.export.DotDrawer;
+import org.eclipse.gef4.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.internal.dot.export.DotTemplate;
 
 /**
  * Transformation of Zest Graph instances to DOT strings or files, or via DOT to

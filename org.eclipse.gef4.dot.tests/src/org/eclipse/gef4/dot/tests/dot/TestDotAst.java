@@ -10,8 +10,8 @@ package org.eclipse.gef4.dot.tests.dot;
 
 import java.io.File;
 
-import org.eclipse.gef4.dot.internal.dot.DotAst;
-import org.eclipse.gef4.dot.internal.dot.export.DotFileUtils;
+import org.eclipse.gef4.internal.dot.DotAst;
+import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
