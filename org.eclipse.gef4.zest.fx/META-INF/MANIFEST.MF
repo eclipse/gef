@@ -51,5 +51,9 @@ Import-Package: javafx.animation;version="2.2.0",
  javafx.stage;version="2.2.0",
  javafx.util;version="2.2.0",
  javafx.util.converter;version="2.2.0"
-Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true,
- org.eclipse.gef4.zest.fx.layout;x-internal:=true
+Export-Package: org.eclipse.gef4.zest.fx,
+ org.eclipse.gef4.zest.fx.behaviors,
+ org.eclipse.gef4.zest.fx.layout,
+ org.eclipse.gef4.zest.fx.models,
+ org.eclipse.gef4.zest.fx.parts,
+ org.eclipse.gef4.zest.fx.policies

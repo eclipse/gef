@@ -24,7 +24,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.mvc.fx.ui.MvcFxUiModule;
 import org.eclipse.gef4.mvc.fx.ui.view.FXView;
-import org.eclipse.gef4.zest.fx.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;

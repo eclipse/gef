@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.IContentModel;
 import org.eclipse.gef4.mvc.models.IViewportModel;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 public class GraphRootPart extends FXRootPart {
 
@@ -35,10 +36,6 @@ public class GraphRootPart extends FXRootPart {
 	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SpringLayoutAlgorithm();
 
 	private LayoutAlgorithm layoutAlgorithm = DEFAULT_LAYOUT_ALGORITHM;
-
-	// FIXME: sugiyama layout exceeds bounds..
-	// new SugiyamaLayoutAlgorithm(
-	// Direction.VERTICAL, new DFSLayerProvider());
 
 	private PropertyChangeListener contentChanged = new PropertyChangeListener() {
 		@Override

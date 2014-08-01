@@ -10,52 +10,33 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.behaviors;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.zest.fx.layout.GraphEdgeLayout;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 
-public class NodeLayoutBehavior extends AbstractLayoutBehavior {
+public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
-	public static Class<NodeLayoutPolicy> LAYOUT_POLICY_KEY = NodeLayoutPolicy.class;
-
-	protected GraphNodeLayout nodeLayout;
-
-	public NodeLayoutBehavior() {
-	}
+	protected GraphEdgeLayout edgeLayout;
 
 	@Override
 	protected void initializeLayout(GraphLayoutContext glc) {
-		// find node layout
-		nodeLayout = glc
-				.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node>) getHost())
-						.getContent());
-		getHost().refreshVisual();
-		// initialize layout information
-		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-				nodeLayout);
+		edgeLayout = glc.getEdgeLayout((Edge) ((IContentPart<Node>) getHost())
+				.getContent());
 	}
 
 	@Override
 	protected void onBoundsChange(Bounds oldBounds, Bounds newBounds) {
-		if (nodeLayout != null) {
-			// refresh layout information
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-					nodeLayout);
-		}
 	}
 
 	@Override
 	protected void onFlushChanges() {
-		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(
-					nodeLayout);
-			getHost().refreshVisual();
-		}
+		getHost().refreshVisual();
 	}
 
 }

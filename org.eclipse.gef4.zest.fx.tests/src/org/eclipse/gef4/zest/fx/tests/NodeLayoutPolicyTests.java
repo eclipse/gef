@@ -26,9 +26,9 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.NodeLayoutPolicy;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
+import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.junit.Test;
 
 public class NodeLayoutPolicyTests {

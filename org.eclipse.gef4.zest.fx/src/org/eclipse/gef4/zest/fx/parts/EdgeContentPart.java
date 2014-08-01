@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
@@ -42,6 +42,7 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;

@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.models;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;

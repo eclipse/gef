@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.behaviors;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,6 +22,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
+import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 

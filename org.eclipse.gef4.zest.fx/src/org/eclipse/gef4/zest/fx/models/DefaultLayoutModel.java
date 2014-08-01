@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx;
+package org.eclipse.gef4.zest.fx.models;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
