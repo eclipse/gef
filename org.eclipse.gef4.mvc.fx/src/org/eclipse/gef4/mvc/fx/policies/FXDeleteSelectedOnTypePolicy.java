@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.example.policies;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,7 +22,6 @@ import javafx.scene.input.KeyEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
@@ -34,6 +33,8 @@ import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
+import org.eclipse.gef4.mvc.policies.AbstractDeleteContentChildrenPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractDetachContentAnchoragesPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {

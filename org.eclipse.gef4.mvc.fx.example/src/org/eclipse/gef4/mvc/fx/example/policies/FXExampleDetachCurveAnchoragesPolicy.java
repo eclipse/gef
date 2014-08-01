@@ -24,6 +24,7 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractDetachContentAnchoragesPolicy;
 
 // TODO: only valid for FXGeometricCurvePart (see #getHost())
 public class FXExampleDetachCurveAnchoragesPolicy extends

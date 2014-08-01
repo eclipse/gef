@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.parts.AbstractFXGeometricElementPart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.policies.AbstractDeleteContentChildrenPolicy;
 
 // TODO: only valid for FXGeometricModelPart (see #getHost())
 public class FXExampleDeleteContentChildrenPolicy extends

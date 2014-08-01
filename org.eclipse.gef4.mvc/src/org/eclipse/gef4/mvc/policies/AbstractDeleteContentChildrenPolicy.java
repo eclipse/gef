@@ -9,11 +9,10 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.example.policies;
+package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 /**
  * An {@link AbstractDeleteContentChildrenPolicy} provides an
