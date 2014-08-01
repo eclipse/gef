@@ -30,7 +30,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // TODO: only valid for FXGeometricModelPart (see #getHost())
 public class FXExampleDeleteContentChildrenPolicy extends
-		AbstractDeleteContentChildrenPolicy {
+		AbstractDeleteContentChildrenPolicy<Node> {
 
 	public static class Operation extends AbstractOperation {
 		private final AbstractFXGeometricElement<?> content;

@@ -41,6 +41,8 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
+import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDetachCurveAnchoragesPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
@@ -323,15 +325,24 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			}
 		});
 
+		setAdapter(
+				AdapterKey
+						.get(FXDeleteOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
+				new FXExampleDetachCurveAnchoragesPolicy());
+
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new AbstractFXDeleteOnTypePolicy() {
-					@Override
-					protected IUndoableOperation getChangeContentOperation() {
-						FXExampleDeleteContentOperation op = new FXExampleDeleteContentOperation(
-								"DeleteContent", FXGeometricCurvePart.this);
-						return op;
-					}
-				});
+				new FXDeleteOnTypePolicy());
+
+		// setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
+		// new AbstractFXDeleteOnTypePolicy() {
+		// @Override
+		// protected IUndoableOperation getChangeContentOperation() {
+		// FXExampleDeleteContentOperation op = new
+		// FXExampleDeleteContentOperation(
+		// "DeleteContent", FXGeometricCurvePart.this);
+		// return op;
+		// }
+		// });
 	}
 
 	@Override

@@ -19,6 +19,8 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
+import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteContentChildrenPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 
@@ -29,18 +31,19 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	public FXGeometricModelPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
-		
-		setAdapter(AdapterKey.get(DefaultSelectionPolicy.class), new DefaultSelectionPolicy<Node>() {
-			@Override
-			protected boolean isSelectable() {
-				return false;
-			}
-		});
-	}
 
-	@Override
-	public Node getVisual() {
-		return g;
+		setAdapter(AdapterKey.get(DefaultSelectionPolicy.class),
+				new DefaultSelectionPolicy<Node>() {
+					@Override
+					protected boolean isSelectable() {
+						return false;
+					}
+				});
+
+		setAdapter(
+				AdapterKey
+						.get(FXDeleteOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
+				new FXExampleDeleteContentChildrenPolicy());
 	}
 
 	@Override
@@ -57,6 +60,11 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 		List<Object> objs = new ArrayList<Object>();
 		objs.addAll(getContent().getShapeVisuals());
 		return objs;
+	}
+
+	@Override
+	public Node getVisual() {
+		return g;
 	}
 
 }

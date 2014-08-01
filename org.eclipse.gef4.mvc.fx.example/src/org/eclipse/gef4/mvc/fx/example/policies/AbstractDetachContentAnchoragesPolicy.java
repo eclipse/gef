@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -24,8 +22,8 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
  * @author mwienand
  * 
  */
-public abstract class AbstractDetachContentAnchoragesPolicy extends
-		AbstractPolicy<Node> {
+public abstract class AbstractDetachContentAnchoragesPolicy<VR> extends
+		AbstractPolicy<VR> {
 
 	/**
 	 * Returns an {@link IUndoableOperation} for the deletion of the specified
@@ -37,7 +35,7 @@ public abstract class AbstractDetachContentAnchoragesPolicy extends
 	 *         <code>null</code> if no actions have to be performed.
 	 */
 	public abstract IUndoableOperation getDeleteOperation(
-			IContentPart<Node> anchorage, String role);
+			IContentPart<VR> anchorage, String role);
 
 	// TODO: deleting an anchorage for all roles could be an extra operation
 	// public abstract IUndoableOperation

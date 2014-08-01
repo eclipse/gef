@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -25,8 +23,8 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
  * @author mwienand
  * 
  */
-public abstract class AbstractDeleteContentChildrenPolicy extends
-		AbstractPolicy<Node> {
+public abstract class AbstractDeleteContentChildrenPolicy<VR> extends
+		AbstractPolicy<VR> {
 
 	/**
 	 * Constructs an {@link IUndoableOperation} for the deletion of the child's
@@ -41,8 +39,7 @@ public abstract class AbstractDeleteContentChildrenPolicy extends
 	 * 
 	 * @see IContentPart#getContentChildren()
 	 */
-	public abstract IUndoableOperation getDeleteOperation(
-			IContentPart<Node> child);
+	public abstract IUndoableOperation getDeleteOperation(IContentPart<VR> child);
 
 	// TODO: deleting multiple parts at one go could be an extra operation
 	// public abstract IUndoableOperation getDeleteOperation(

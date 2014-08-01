@@ -31,8 +31,8 @@ import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -107,9 +107,9 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 								"Update Model") {
 
 							@Override
-							public IStatus undo(IProgressMonitor monitor,
+							public IStatus execute(IProgressMonitor monitor,
 									IAdaptable info) throws ExecutionException {
-								shape.setGeometry(oldGeometry);
+								shape.setGeometry(newGeometry);
 								return Status.OK_STATUS;
 							}
 
@@ -120,9 +120,9 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 							}
 
 							@Override
-							public IStatus execute(IProgressMonitor monitor,
+							public IStatus undo(IProgressMonitor monitor,
 									IAdaptable info) throws ExecutionException {
-								shape.setGeometry(newGeometry);
+								shape.setGeometry(oldGeometry);
 								return Status.OK_STATUS;
 							}
 						};
@@ -140,72 +140,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				});
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new AbstractFXDeleteOnTypePolicy() {
-					@Override
-					protected IUndoableOperation getChangeContentOperation() {
-						FXExampleDeleteContentOperation op = new FXExampleDeleteContentOperation(
-								"DeleteContent", FXGeometricShapePart.this);
-
-						// synchronize content anchorages of all anchoreds
-						for (IVisualPart<Node> anchored : getAnchoreds()) {
-							if (anchored instanceof FXGeometricCurvePart) {
-								// clear source and target content
-								AbstractFXGeometricElement<?>[] sourceContentAnchorages = ((FXGeometricCurvePart) anchored)
-										.getContent()
-										.getSourceAnchorages()
-										.toArray(
-												new AbstractFXGeometricElement[] {});
-								AbstractFXGeometricElement<?>[] targetContentAnchorages = ((FXGeometricCurvePart) anchored)
-										.getContent()
-										.getTargetAnchorages()
-										.toArray(
-												new AbstractFXGeometricElement[] {});
-								AbstractFXGeometricElement<?> sourceContent = sourceContentAnchorages.length == 0 ? null
-										: sourceContentAnchorages[0];
-								AbstractFXGeometricElement<?> targetContent = targetContentAnchorages.length == 0 ? null
-										: targetContentAnchorages[0];
-
-								// remove source content if we are the source
-								// anchorage
-								if (sourceContent == getContent()) {
-									sourceContent = null;
-								}
-
-								// remove target content if we are the target
-								// anchorage
-								if (targetContent == getContent()) {
-									targetContent = null;
-								}
-
-								// add corresponding operation
-								op.add(((FXGeometricCurvePart) anchored)
-										.getContentAnchoragesOperation(
-												sourceContent, targetContent));
-							}
-						}
-
-						return op;
-					}
-				});
-	}
-
-	@Override
-	public FXGeometricShape getContent() {
-		return (FXGeometricShape) super.getContent();
-	}
-
-	@Override
-	public void setContent(Object model) {
-		if (model != null && !(model instanceof FXGeometricShape)) {
-			throw new IllegalArgumentException(
-					"Only IShape models are supported.");
-		}
-		super.setContent(model);
-	}
-
-	@Override
-	public FXGeometryNode<IShape> getVisual() {
-		return (FXGeometryNode<IShape>) visual;
+				new FXDeleteOnTypePolicy());
 	}
 
 	@Override
@@ -252,6 +187,25 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			};
 		}
 		return anchor;
+	}
+
+	@Override
+	public FXGeometricShape getContent() {
+		return (FXGeometricShape) super.getContent();
+	}
+
+	@Override
+	public FXGeometryNode<IShape> getVisual() {
+		return visual;
+	}
+
+	@Override
+	public void setContent(Object model) {
+		if (model != null && !(model instanceof FXGeometricShape)) {
+			throw new IllegalArgumentException(
+					"Only IShape models are supported.");
+		}
+		super.setContent(model);
 	}
 
 }

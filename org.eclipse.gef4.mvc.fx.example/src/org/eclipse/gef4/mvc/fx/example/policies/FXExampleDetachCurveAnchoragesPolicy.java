@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // TODO: only valid for FXGeometricCurvePart (see #getHost())
 public class FXExampleDetachCurveAnchoragesPolicy extends
-		AbstractDetachContentAnchoragesPolicy {
+		AbstractDetachContentAnchoragesPolicy<Node> {
 
 	public static class Operation extends AbstractOperation {
 		private final FXGeometricCurve curve;
@@ -75,7 +75,7 @@ public class FXExampleDetachCurveAnchoragesPolicy extends
 	public IUndoableOperation getDeleteOperation(IContentPart<Node> anchorage,
 			String role) {
 		return new Operation(getHost().getContent(),
-				(AbstractFXGeometricElement<?>) anchorage, role);
+				(AbstractFXGeometricElement<?>) anchorage.getContent(), role);
 	}
 
 	@Override

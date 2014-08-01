@@ -33,12 +33,17 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class DeleteOnTypePolicy extends AbstractFXTypePolicy {
+public class FXDeleteOnTypePolicy extends AbstractFXTypePolicy {
 
-	protected ReverseUndoCompositeOperation composeDeleteOperation(
-			IViewer<Node> viewer, List<IContentPart<Node>> toDelete) {
+	@SuppressWarnings("rawtypes")
+	public static final Class<AbstractDeleteContentChildrenPolicy> DELETE_CONTENT_CHILDREN_POLICY_KEY = AbstractDeleteContentChildrenPolicy.class;
+	@SuppressWarnings("rawtypes")
+	public static final Class<AbstractDetachContentAnchoragesPolicy> DETACH_CONTENT_ANCHORAGES_POLICY_KEY = AbstractDetachContentAnchoragesPolicy.class;
+
+	protected IUndoableOperation composeDeleteOperation(IViewer<Node> viewer,
+			List<IContentPart<Node>> toDelete) {
 		// delete content
-		ForwardUndoCompositeOperation contentOperations = getContentOperations(toDelete);
+		IUndoableOperation contentOperations = getContentOperations(toDelete);
 		// clear selection
 		ChangeSelectionOperation<Node> changeSelectionOperation = getChangeSelectionOperation(viewer);
 		// clear hover
@@ -58,8 +63,7 @@ public class DeleteOnTypePolicy extends AbstractFXTypePolicy {
 		if (changeSelectionOperation != null) {
 			revOp.add(changeSelectionOperation);
 		}
-		// TODO: Should contentOperations == null be allowed?
-		if (contentOperations != null && !contentOperations.isEmpty()) {
+		if (contentOperations != null) {
 			revOp.add(contentOperations);
 		}
 
@@ -87,50 +91,54 @@ public class DeleteOnTypePolicy extends AbstractFXTypePolicy {
 				Collections.<IContentPart<Node>> emptyList());
 	}
 
-	protected ForwardUndoCompositeOperation getContentOperations(
+	protected IUndoableOperation getContentOperations(
 			List<IContentPart<Node>> toDelete) {
-		// assemble content operations in a forward-undo-operation, so that
+		// assemble content operations in forward-undo-operations, so that
 		// synchronization is always performed after changing the content
 		// model (in execute() and undo())
-		ForwardUndoCompositeOperation contentOps = new ForwardUndoCompositeOperation(
-				"DeleteContent");
+		ForwardUndoCompositeOperation contentChildrenOperations = new ForwardUndoCompositeOperation(
+				"DeleteChildren");
+		ForwardUndoCompositeOperation contentAnchoragesOperations = new ForwardUndoCompositeOperation(
+				"DetachAnchorages");
 
-		for (IContentPart<Node> selected : toDelete) {
-			// get operation to delete from content children
-			IVisualPart<Node> parent = selected.getParent();
-			AbstractDeleteContentChildrenPolicy deleteContentChildrenPolicy = parent
-					.getAdapter(AdapterKey
-							.get(AbstractDeleteContentChildrenPolicy.class));
+		for (IContentPart<Node> part : toDelete) {
+			// delete from content children
+			IVisualPart<Node> parent = part.getParent();
+			AbstractDeleteContentChildrenPolicy<Node> deleteContentChildrenPolicy = parent
+					.<AbstractDeleteContentChildrenPolicy<Node>> getAdapter(AdapterKey
+							.get(DELETE_CONTENT_CHILDREN_POLICY_KEY));
 			if (deleteContentChildrenPolicy != null) {
 				IUndoableOperation deleteOperation = deleteContentChildrenPolicy
-						.getDeleteOperation(selected);
+						.getDeleteOperation(part);
 				if (deleteOperation != null) {
-					contentOps.add(deleteOperation);
-					contentOps
+					contentChildrenOperations.add(deleteOperation);
+					// TODO: create synchronize operation in protected method?
+					contentChildrenOperations
 							.add(new SynchronizeContentChildrenOperation<Node>(
 									"SynchronizeChildren",
 									(IContentPart<Node>) parent));
 				}
 			}
 
-			// get operations to delete from content anchorages per anchored
-			for (IVisualPart<Node> anchored : selected.getAnchoreds()) {
-				AbstractDetachContentAnchoragesPolicy deleteContentAnchoragesPolicy = anchored
-						.getAdapter(AdapterKey
-								.get(AbstractDetachContentAnchoragesPolicy.class));
+			// detach from content anchorages
+			for (IVisualPart<Node> anchored : part.getAnchoreds()) {
+				AbstractDetachContentAnchoragesPolicy<Node> deleteContentAnchoragesPolicy = anchored
+						.<AbstractDetachContentAnchoragesPolicy<Node>> getAdapter(AdapterKey
+								.get(DETACH_CONTENT_ANCHORAGES_POLICY_KEY));
 				if (deleteContentAnchoragesPolicy != null) {
 					boolean addedOperations = false;
-					for (String r : anchored.getAnchorages().get(selected)) {
+					for (String r : anchored.getAnchorages().get(part)) {
 						IUndoableOperation deleteOperation = deleteContentAnchoragesPolicy
-								.getDeleteOperation(selected, r);
+								.getDeleteOperation(part, r);
 						if (deleteOperation != null) {
-							contentOps.add(deleteOperation);
+							contentAnchoragesOperations.add(deleteOperation);
 							addedOperations = true;
 						}
 					}
 					// synchronize content anchorages once per anchored
+					// TODO: create sync op in protected method?
 					if (addedOperations) {
-						contentOps
+						contentAnchoragesOperations
 								.add(new SynchronizeContentAnchoragesOperation<Node>(
 										"SynchronizeAnchorages",
 										(IContentPart<Node>) anchored));
@@ -139,7 +147,21 @@ public class DeleteOnTypePolicy extends AbstractFXTypePolicy {
 			}
 		}
 
-		return contentOps;
+		if (contentChildrenOperations.isEmpty()
+				&& contentAnchoragesOperations.isEmpty()) {
+			return null;
+		}
+
+		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
+				"DeleteContent");
+		if (!contentAnchoragesOperations.isEmpty()) {
+			revOp.add(contentAnchoragesOperations);
+		}
+		if (!contentChildrenOperations.isEmpty()) {
+			revOp.add(contentChildrenOperations);
+		}
+
+		return revOp;
 	}
 
 	protected boolean isDelete(KeyEvent event) {
@@ -175,11 +197,11 @@ public class DeleteOnTypePolicy extends AbstractFXTypePolicy {
 		}
 
 		// compose complex delete operation
-		ReverseUndoCompositeOperation revOp = composeDeleteOperation(viewer,
+		IUndoableOperation fullDeleteOperation = composeDeleteOperation(viewer,
 				selected);
 
 		// execute on the stack
-		executeOperation(revOp);
+		executeOperation(fullDeleteOperation);
 	}
 
 	@Override
