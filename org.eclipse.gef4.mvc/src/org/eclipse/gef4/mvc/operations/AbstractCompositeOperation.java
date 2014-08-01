@@ -40,13 +40,13 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		operations.add(operation);
 	}
 
+	public void addAll(List<IUndoableOperation> operations) {
+		this.operations.addAll(operations);
+	}
+
 	@Override
 	public void addContext(IUndoContext context) {
 		super.addContext(context);
-	}
-
-	public void allAll(List<IUndoableOperation> operations) {
-		this.operations.addAll(operations);
 	}
 
 	@Override
@@ -99,6 +99,10 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	protected List<IUndoableOperation> getOperations() {
 		return operations;
+	}
+
+	public boolean isEmpty() {
+		return operations.isEmpty();
 	}
 
 	@Override
