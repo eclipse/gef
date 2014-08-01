@@ -32,7 +32,7 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -140,7 +140,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 				});
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new FXDeleteOnTypePolicy());
+				new FXDeleteSelectedOnTypePolicy());
 	}
 
 	@Override

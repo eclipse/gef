@@ -19,7 +19,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteContentChildrenPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
@@ -42,7 +42,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 
 		setAdapter(
 				AdapterKey
-						.get(FXDeleteOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
+						.get(FXDeleteSelectedOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
 				new FXExampleDeleteContentChildrenPolicy());
 	}
 

@@ -12,7 +12,9 @@
 package org.eclipse.gef4.mvc.fx.example.policies;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -31,9 +33,10 @@ import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXDeleteOnTypePolicy extends AbstractFXTypePolicy {
+public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 	@SuppressWarnings("rawtypes")
 	public static final Class<AbstractDeleteContentChildrenPolicy> DELETE_CONTENT_CHILDREN_POLICY_KEY = AbstractDeleteContentChildrenPolicy.class;
@@ -70,8 +73,42 @@ public class FXDeleteOnTypePolicy extends AbstractFXTypePolicy {
 		return revOp;
 	}
 
+	@SuppressWarnings("unchecked")
+	private IContentPart<Node> findNewFocus(Set<Object> isSelected,
+			IContentPart<Node> part) {
+		if (isSelected.contains(part)) {
+			return null;
+		}
+
+		List<IContentPart<Node>> contentPartChildren = PartUtils.filterParts(
+				part.getChildren(), IContentPart.class);
+		if (contentPartChildren.isEmpty()) {
+			return part;
+		}
+
+		for (IContentPart<Node> child : contentPartChildren) {
+			IContentPart<Node> newFocus = findNewFocus(isSelected, child);
+			if (newFocus != null) {
+				return newFocus;
+			}
+		}
+
+		return null;
+	}
+
 	protected ChangeFocusOperation<Node> getChangeFocusOperation(
 			IViewer<Node> viewer) {
+		// focus first un-selected content leaf
+		Set<Object> isSelected = new HashSet<Object>(viewer.getSelectionModel()
+				.getSelected());
+		for (Object content : viewer.getContents()) {
+			IContentPart<Node> part = viewer.getContentPartMap().get(content);
+			IContentPart<Node> newFocus = findNewFocus(isSelected, part);
+			if (newFocus != null) {
+				return new ChangeFocusOperation<Node>(viewer, newFocus);
+			}
+		}
+		// otherwise focus nothing
 		return new ChangeFocusOperation<Node>(viewer, null);
 	}
 
@@ -112,7 +149,6 @@ public class FXDeleteOnTypePolicy extends AbstractFXTypePolicy {
 						.getDeleteOperation(part);
 				if (deleteOperation != null) {
 					contentChildrenOperations.add(deleteOperation);
-					// TODO: create synchronize operation in protected method?
 					contentChildrenOperations
 							.add(new SynchronizeContentChildrenOperation<Node>(
 									"SynchronizeChildren",
@@ -136,7 +172,6 @@ public class FXDeleteOnTypePolicy extends AbstractFXTypePolicy {
 						}
 					}
 					// synchronize content anchorages once per anchored
-					// TODO: create sync op in protected method?
 					if (addedOperations) {
 						contentAnchoragesOperations
 								.add(new SynchronizeContentAnchoragesOperation<Node>(
