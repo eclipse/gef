@@ -449,12 +449,12 @@
 		<module>../org.eclipse.gef4.layout.doc-feature</module>
 		<module>../org.eclipse.gef4.layout.sdk-feature</module>
 
-		<!-- TODO: remove old Zest2 bundles as soon as Zest.FX/Zest.FX.UI is ready -->
+		<!-- TODO: remove old Zest2 bundles -->
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
-		<module>../org.eclipse.gef4.zest-feature</module>
 		<module>../org.eclipse.gef4.zest.ui</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
+		<!-- END TODO -->
 
 		<module>../org.eclipse.gef4.zest.fx</module>
 		<module>../org.eclipse.gef4.zest.fx-feature</module>
