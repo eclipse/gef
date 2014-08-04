@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.zest.core/src@args.list.delimiter@../org.eclipse.gef4.zest.jface/src"
+-sourcepath "../org.eclipse.gef4.zest.fx/src@args.list.delimiter@../org.eclipse.gef4.zest.fx.ui/src"
 -d reference/api
 -classpath "@rt@@args.list.delimiter@@context@"
 -use
@@ -13,10 +13,20 @@
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/1.5.0/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.common.doc/reference/api/ ../org.eclipse.gef4.common.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.graph.doc/reference/api/ ../org.eclipse.gef4.graph.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.dot.doc/reference/api/ ../org.eclipse.gef4.dot.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.layout.doc/reference/api/ ../org.eclipse.gef4.layout.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.fx.doc/reference/api/ ../org.eclipse.gef4.fx.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.swtfx.doc/reference/api/ ../org.eclipse.gef4.swtfx.doc/reference/api/
+-linkoffline PLUGINS_ROOT/org.eclipse.gef4.mvc.doc/reference/api/ ../org.eclipse.gef4.mvc.doc/reference/api/
 
-org.eclipse.gef4.zest.core.widgets
-org.eclipse.gef4.zest.core.widgets.custom
-org.eclipse.gef4.zest.core.widgets.decoration
-org.eclipse.gef4.zest.core.widgets.gestures
-org.eclipse.gef4.zest.core.widgets.zooming
-org.eclipse.gef4.zest.core.viewers
+org.eclipse.gef4.zest.fx
+org.eclipse.gef4.zest.fx.behaviors
+org.eclipse.gef4.zest.fx.layout
+org.eclipse.gef4.zest.fx.models
+org.eclipse.gef4.zest.fx.parts
+org.eclipse.gef4.zest.fx.policies
+org.eclipse.gef4.zest.fx.ui
+org.eclipse.gef4.zest.fx.ui.view
