@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="53">
+<?pde version="3.8"?><target name="LUNA_4_4" sequenceNumber="56">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140606-1215"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
 <unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
@@ -9,10 +13,6 @@
 <unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
 <unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.4.0.I20140606-1215"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.4"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.6.0.v201405200714"/>
@@ -34,8 +34,8 @@
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.fx.ide.feature.feature.group" version="1.0.0.201408030702"/>
-<repository location="http://download.eclipse.org/efxclipse/updates-nightly/site"/>
+<unit id="org.eclipse.fx.ide.all.kepler.feature.feature.group" version="0.9.0.201401250805"/>
+<repository location="http://download.eclipse.org/efxclipse/updates-released/0.9.0/site/"/>
 </location>
 </locations>
 </target>
