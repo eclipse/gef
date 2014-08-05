@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.inject;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
-import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeListener;
 
 /**
@@ -36,7 +39,12 @@ public class AdapterMapInjectionSupport extends AbstractModule {
 	protected void configure() {
 		AdaptableTypeListener adaptableTypeListener = new AdaptableTypeListener();
 		requestInjection(adaptableTypeListener);
-		bindListener(Matchers.any(), adaptableTypeListener);
+		bindListener(new AbstractMatcher<TypeLiteral<?>>() {
+			@Override
+			public boolean matches(TypeLiteral<?> t) {
+				return IAdaptable.class.isAssignableFrom(t.getRawType());
+			}
+		}, adaptableTypeListener);
 	}
 
 }
