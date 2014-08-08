@@ -1,0 +1,23 @@
+.node Rectangle {
+	-fx-fill: lightgray;
+	-fx-stroke: black;
+}
+
+.node Text {
+	-fx-fill: black;
+}
+
+.edge .curve {
+	-fx-stroke: black;
+	-fx-stroke-width: 1.5px;
+}
+
+.edge Text {
+	-fx-fill: black;
+}
+
+.decoration {
+	-fx-stroke: black;
+	-fx-stroke-width: 1.5px;
+	-fx-fill: white;
+}
