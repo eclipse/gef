@@ -65,6 +65,8 @@ public final class DotAst {
 		/***/
 		OSAGE(new GridLayoutAlgorithm()),
 		/***/
+		GRID(new GridLayoutAlgorithm()),
+		/***/
 		TWOPI(new RadialLayoutAlgorithm()),
 		/***/
 		CIRCO(new RadialLayoutAlgorithm()),
