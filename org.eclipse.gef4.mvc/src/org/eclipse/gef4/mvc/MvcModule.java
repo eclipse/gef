@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc;
 
@@ -67,9 +67,9 @@ import com.google.inject.util.Types;
  * module, which extends this module (or the MVC.FX module), as well as an own
  * UI module, which extends the MVC.UI (or the MVC.FX.UI module), being used to
  * override the non-UI module in an Eclipse-UI integration scenario, as follows:
- * 
+ *
  * <pre>
- * 
+ *
  *      MVC   &lt;--extends--    MVC.FX   &lt;--extends--  Client-Non-UI-Module
  *       ^                       ^                           ^
  *       |                       |                           |
@@ -78,19 +78,19 @@ import com.google.inject.util.Types;
  *       |                       |                           |
  *    MVC.UI  &lt;--extends--  MVC.FX.UI  &lt;--extends--   Client-UI-Module
  * </pre>
- * 
+ *
  * In addition to 'normal' Guice bindings, the MVC modules makes use of
  * <em>AdapterMap</em> bindings, which is used to inject class-key/adapter pairs
  * into {@link IAdaptable}s. Therefore, it enables support for adapter map
  * injections within {@link #enableAdapterMapInjection()}, which gets called
  * from within {@link #configure()}. Clients extending the MVC or MVC.FX module
  * should make use this is not lost.
- * 
+ *
  * @see AdapterMap
  * @see AdaptableTypeListener
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -101,13 +101,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for
 	 * {@link AbstractContentPart} and all sub-classes. May be overwritten by
 	 * sub-classes to change the default bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractContentPart} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractContentPartAdapters(
@@ -143,13 +143,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractDomain} and
 	 * all sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractDomain} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractDomainAdapters(
@@ -160,13 +160,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for
 	 * {@link AbstractFeedbackPart} and all sub-classes. May be overwritten by
 	 * sub-classes to change the default bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractFeedbackPart} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractFeedbackPartAdapters(
@@ -178,13 +178,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractHandlePart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractHandlePart} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractHandlePartAdapters(
@@ -199,13 +199,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractRootPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractRootPart} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractRootPartAdapters(
@@ -236,13 +236,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractViewer} and
 	 * all sub-classes. May be overwritten by sub-classes to change the default
 	 * bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractViewer} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractViewerAdapters(
@@ -272,13 +272,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 * Adds (default) {@link AdapterMap} bindings for {@link AbstractVisualPart}
 	 * and all sub-classes. May be overwritten by sub-classes to change the
 	 * default bindings.
-	 * 
+	 *
 	 * @param adapterMapBinder
 	 *            The {@link MapBinder} to be used for the binding registration.
 	 *            In this case, will be obtained from
 	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
 	 *            {@link AbstractVisualPart} as a key.
-	 * 
+	 *
 	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
 	 */
 	protected void bindAbstractVisualPartAdapters(

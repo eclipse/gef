@@ -20,6 +20,7 @@ import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
@@ -45,6 +46,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
+import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -100,6 +102,11 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXDefaultHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).to(FXDefaultHandlePartFactory.class);
+	}
+
+	protected void bindFXDomain() {
+		binder().bind(new TypeLiteral<IDomain<Node>>() {
+		}).to(FXDomain.class);
 	}
 
 	protected void bindFXDomainAdapters(
@@ -167,6 +174,16 @@ public class MvcFxModule extends MvcModule<Node> {
 				new TypeLiteral<IRootPart<Node>>() {
 				});
 
+		adapterMapBinder.addBinding(AdapterKey.get(IContentPartFactory.class))
+		.to(new TypeLiteral<IContentPartFactory<Node>>() {
+		});
+		adapterMapBinder.addBinding(AdapterKey.get(IHandlePartFactory.class))
+		.to(new TypeLiteral<IHandlePartFactory<Node>>() {
+		});
+		adapterMapBinder.addBinding(AdapterKey.get(IFeedbackPartFactory.class))
+		.to(new TypeLiteral<IFeedbackPartFactory<Node>>() {
+		});
+
 	}
 
 	protected void bindSceneFactory() {
@@ -187,9 +204,11 @@ public class MvcFxModule extends MvcModule<Node> {
 		// install scene factory, used by FXViewer to create scene
 		bindSceneFactory();
 
-		// bind root part, viewer, and domain
-		bindFXRootPart();
+		// bind root IRootPart<Node>, IViewer<Node> and IDomain<Node> to
+		// FXRootPart, FXViewer, and FXDomain
+		bindFXDomain();
 		bindFXViewer();
+		bindFXRootPart();
 
 		// bind default factories for handles and feedback
 		bindFXDefaultHandlePartFactory();

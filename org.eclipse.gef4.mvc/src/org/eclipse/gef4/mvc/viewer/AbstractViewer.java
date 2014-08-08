@@ -54,8 +54,9 @@ import com.google.inject.Inject;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractViewer<VR> implements IViewer<VR>,
-IAdaptable.Bound<IDomain<VR>> {
+		IAdaptable.Bound<IDomain<VR>> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -69,10 +70,6 @@ IAdaptable.Bound<IDomain<VR>> {
 	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
 
 	private IDomain<VR> domain;
-
-	private IContentPartFactory<VR> contentPartFactory;
-	private IHandlePartFactory<VR> handlePartFactory;
-	private IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	@Override
 	public void activate() {
@@ -136,12 +133,10 @@ IAdaptable.Bound<IDomain<VR>> {
 		return contentModel;
 	}
 
-	/**
-	 * @see IViewer#getContentPartFactory()
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public IContentPartFactory<VR> getContentPartFactory() {
-		return contentPartFactory;
+		return ads.getAdapter(IContentPartFactory.class);
 	}
 
 	/**
@@ -167,7 +162,7 @@ IAdaptable.Bound<IDomain<VR>> {
 
 	@Override
 	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return feedbackPartFactory;
+		return ads.getAdapter(IFeedbackPartFactory.class);
 	}
 
 	@Override
@@ -184,7 +179,7 @@ IAdaptable.Bound<IDomain<VR>> {
 
 	@Override
 	public IHandlePartFactory<VR> getHandlePartFactory() {
-		return handlePartFactory;
+		return ads.getAdapter(IHandlePartFactory.class);
 	}
 
 	@Override
@@ -279,17 +274,12 @@ IAdaptable.Bound<IDomain<VR>> {
 		ads.setAdapters(adaptersWithKeys, false);
 	}
 
-	@Inject
-	public void setContentPartFactory(IContentPartFactory<VR> factory) {
-		this.contentPartFactory = factory;
-	}
-
 	/**
 	 * @see IViewer#setContents(List)
 	 */
 	@Override
 	public void setContents(List<? extends Object> contents) {
-		if (contentPartFactory == null) {
+		if (getContentPartFactory() == null) {
 			throw new IllegalStateException(
 					"ContentPartFactory has to be set before passing contents in.");
 		}
@@ -298,16 +288,6 @@ IAdaptable.Bound<IDomain<VR>> {
 					"Root part has to be set before passing contents in.");
 		}
 		getContentModel().setContents(contents);
-	}
-
-	@Inject
-	public void setFeedbackPartFactory(IFeedbackPartFactory<VR> factory) {
-		this.feedbackPartFactory = factory;
-	}
-
-	@Inject
-	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
-		this.handlePartFactory = factory;
 	}
 
 	@Override
