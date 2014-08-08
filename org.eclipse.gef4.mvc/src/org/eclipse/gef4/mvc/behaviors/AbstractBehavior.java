@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editpolicies.AbstractEditPolicy.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
@@ -27,9 +27,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -104,6 +104,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return getHost();
 	}
 
+	@Override
 	public IVisualPart<VR> getHost() {
 		return host;
 	}

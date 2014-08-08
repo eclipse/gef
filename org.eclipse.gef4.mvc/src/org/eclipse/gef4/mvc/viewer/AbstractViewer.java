@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.ui.parts.AbstractEditPartViewer.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
@@ -47,15 +47,15 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Inject;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractViewer<VR> implements IViewer<VR>,
-		IAdaptable.Bound<IDomain<VR>> {
+IAdaptable.Bound<IDomain<VR>> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -69,7 +69,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
 
 	private IDomain<VR> domain;
-	private IRootPart<VR> rootPart;
 
 	private IContentPartFactory<VR> contentPartFactory;
 	private IHandlePartFactory<VR> handlePartFactory;
@@ -83,9 +82,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 						"Domain has to be set before activation.");
 			}
 			acs.activate();
-			if (rootPart != null) {
-				rootPart.activate();
-			}
 		}
 	}
 
@@ -100,9 +96,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 			if (domain == null) {
 				throw new IllegalStateException(
 						"Domain may not be unset before deactivation is completed.");
-			}
-			if (rootPart != null) {
-				rootPart.deactivate();
 			}
 			acs.deactivate();
 		}
@@ -206,12 +199,10 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		return hoverModel;
 	}
 
-	/**
-	 * @see IViewer#getRootPart()
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public IRootPart<VR> getRootPart() {
-		return rootPart;
+		return ads.getAdapter(IRootPart.class);
 	}
 
 	@Override
@@ -302,7 +293,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 			throw new IllegalStateException(
 					"ContentPartFactory has to be set before passing contents in.");
 		}
-		if (rootPart == null) {
+		if (getRootPart() == null) {
 			throw new IllegalStateException(
 					"Root part has to be set before passing contents in.");
 		}
@@ -317,26 +308,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	@Inject
 	public void setHandlePartFactory(IHandlePartFactory<VR> factory) {
 		this.handlePartFactory = factory;
-	}
-
-	@Inject
-	public void setRootPart(IRootPart<VR> rootPart) {
-		if (this.rootPart == rootPart) {
-			return;
-		}
-		if (this.rootPart != null) {
-			if (isActive()) {
-				this.rootPart.deactivate();
-			}
-			this.rootPart.setViewer(null);
-		}
-		this.rootPart = rootPart;
-		if (this.rootPart != null) {
-			this.rootPart.setViewer(this);
-			if (isActive()) {
-				this.rootPart.activate();
-			}
-		}
 	}
 
 	@Override

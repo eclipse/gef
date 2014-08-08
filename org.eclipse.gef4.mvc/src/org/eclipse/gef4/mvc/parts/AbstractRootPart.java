@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.SimpleRootEditPart.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -20,20 +20,21 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 /**
  * The abstract base implementation of {@link IRootPart}, intended to be
  * sub-classed by clients to create their own custom {@link IRootPart}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
-		implements IRootPart<VR> {
+implements IRootPart<VR> {
 
 	private IViewer<VR> viewer;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage,
+			String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
@@ -43,6 +44,11 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 			String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
+	}
+
+	@Override
+	public IViewer<VR> getAdaptable() {
+		return getViewer();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,15 +79,9 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 		return viewer;
 	}
 
-	/**
-	 * @see IRootPart#setViewer(IViewer)
-	 */
 	@Override
-	public void setViewer(IViewer<VR> newViewer) {
-		if (viewer == newViewer) {
-			return;
-		}
-		viewer = newViewer;
+	public void setAdaptable(IViewer<VR> viewer) {
+		this.viewer = viewer;
 	}
 
 }

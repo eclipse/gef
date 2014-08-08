@@ -105,20 +105,21 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-				.toInstance(new FXHoverTool());
+		.toInstance(new FXHoverTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-				.toInstance(new FXClickDragTool());
+		.toInstance(new FXClickDragTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
-				.toInstance(new FXTypeTool());
+		.toInstance(new FXTypeTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-				.toInstance(new FXPinchSpreadTool());
+		.toInstance(new FXPinchSpreadTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-				.toInstance(new FXScrollTool());
+		.toInstance(new FXScrollTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-				.toInstance(new FXFocusTool());
+		.toInstance(new FXFocusTool());
 
 		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
-				FXViewer.class);
+				new TypeLiteral<IViewer<Node>>() {
+				});
 	}
 
 	protected void bindFXRootPart() {
@@ -148,11 +149,24 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// register (default) behaviors (which are based on viewer models)
 		adapterMapBinder.addBinding(AdapterKey.get(FXSelectionBehavior.class))
-				.to(FXSelectionBehavior.class);
+		.to(FXSelectionBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverBehavior.class)).to(
 				FXHoverBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXZoomBehavior.class)).to(
 				FXZoomBehavior.class);
+	}
+
+	protected void bindFXViewer() {
+		binder().bind(new TypeLiteral<IViewer<Node>>() {
+		}).to(FXViewer.class);
+	}
+
+	protected void bindFXViewerAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
+				new TypeLiteral<IRootPart<Node>>() {
+				});
+
 	}
 
 	protected void bindSceneFactory() {
@@ -173,14 +187,20 @@ public class MvcFxModule extends MvcModule<Node> {
 		// install scene factory, used by FXViewer to create scene
 		bindSceneFactory();
 
-		// bind root part and default factories for handles and feedback
+		// bind root part, viewer, and domain
 		bindFXRootPart();
+		bindFXViewer();
+
+		// bind default factories for handles and feedback
 		bindFXDefaultHandlePartFactory();
 		bindFXDefaultFeedbackPartFactory();
 
 		// bind additional adapters for FXDomain
 		bindFXDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				FXDomain.class));
+
+		bindFXViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				FXViewer.class));
 
 		// bind additional adapters for FXRootPart
 		bindFXRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),

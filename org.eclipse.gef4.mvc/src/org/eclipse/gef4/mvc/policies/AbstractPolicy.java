@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editpolicies.AbstractEditPolicy.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
@@ -20,9 +20,9 @@ import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
