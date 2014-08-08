@@ -268,7 +268,13 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public Point getEndPoint() {
 		AnchorLink link = endAnchorLinkProperty.get();
-		return link == null ? null : link.getPosition();
+		if (link == null) {
+			return null;
+		}
+		if (!link.getAnchor().isAttached(link.getKey())) {
+			return null;
+		}
+		return link.getPosition();
 	}
 
 	@Override
@@ -334,7 +340,13 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public Point getStartPoint() {
 		AnchorLink link = startAnchorLinkProperty.get();
-		return link == null ? null : link.getPosition();
+		if (link == null) {
+			return null;
+		}
+		if (!link.getAnchor().isAttached(link.getKey())) {
+			return null;
+		}
+		return link.getPosition();
 	}
 
 	@Override
@@ -345,6 +357,9 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public Point getWayPoint(int index) {
 		AnchorLink link = getWayPointAnchorLink(index);
+		if (!link.getAnchor().isAttached(link.getKey())) {
+			return null;
+		}
 		return link.getPosition();
 	}
 
