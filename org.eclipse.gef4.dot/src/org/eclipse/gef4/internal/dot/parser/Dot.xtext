@@ -5,16 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- *    Michael Clay - initial implementation, see bug 277380
- *    Fabian Steeg - updates for current Xtext and minor tweaks
+ *    Michael Clay    - initial API and implementation (#277380)
+ *    Fabian Steeg    - updates for current Xtext and minor tweaks
+ *    Alexander Nyßen - fixed grammar generation problems w.r.t. terminals (#429512)
  *******************************************************************************/
-grammar org.eclipse.gef4.internal.dot.parser.Dot with org.eclipse.xtext.common.Terminals
+grammar org.eclipse.gef4.internal.dot.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
 
 generate dot "http://www.eclipse.org/gef4/internal/dot/parser/Dot"
 
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
 GraphvizModel: (graphs+=MainGraph)* ;
 
-MainGraph: (strict?="strict")? type=GraphType (name=DOT_ID)? "{" 
+MainGraph: (strict?="strict")? type=GraphType (name=ID)? "{" 
 	(stmts+=Stmt)* 
 "}";
 
@@ -24,21 +27,19 @@ EdgeStmtNode : node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
 EdgeStmtSubgraph : subgraph=Subgraph  (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
-NodeStmt   :  name=DOT_ID (attributes+=AttrList)*;
-//NodeStmt     :  name=DOT_ID (port=Port)? (attributes+=AttrList)*; // see FIXME for port
+NodeStmt     :  name=ID (port=Port)? (attributes+=AttrList)*;
 
-Attribute: name=DOT_ID "=" value=DOT_ID;
+Attribute: name=ID "=" value=ID;
 
 AttrStmt  	:  	type=AttributeType (attributes+=AttrList)+;
 
 AttrList : "[" {AttrList} (a_list+=AList)* "]";
 
-AList: name=DOT_ID ("=" value=DOT_ID)? (",")?;
+AList: name=ID ("=" value=ID)? (",")?;
 
-Subgraph : ( "subgraph" {Subgraph} name=DOT_ID? ) "{" (stmts+=Stmt)* "}";
+Subgraph : ( "subgraph" {Subgraph} name=ID? ) "{" (stmts+=Stmt)* "}";
 
-//FIXME: Generated portImpl class has compilation errors with Helios Xtext
-//Port : ":" name=DOT_ID ( ":" compass_pt=CompassPt )? | ":" compass_pt=CompassPt;
+Port : ":" name=ID ( ":" compass_pt=CompassPt )? | ":" compass_pt=CompassPt;
 
 EdgeRhs: (EdgeRhsNode | EdgeRhsSubgraph);
 
@@ -46,8 +47,7 @@ EdgeRhsNode: op=EdgeOp node=NodeId;
 
 EdgeRhsSubgraph: op=EdgeOp subgraph=Subgraph;
 
-//NodeId  : name=DOT_ID (port=Port)?; // see FIXME for port
-NodeId  : name=DOT_ID;
+NodeId  : name=ID (port=Port)?;
 
 enum EdgeOp :
  directed="->"|undirected="--";
@@ -60,16 +60,19 @@ enum AttributeType :
 
 enum CompassPt: north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw";
 
-terminal DOT_ID :
-    (('^')?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*) |
-    ('\"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\') | !('\"') )* '\"') |
-    (('-')?('.'('0'..'9')+ | ('0'..'9')+('.' ('0'..'9')*)? ));
+terminal ID :
+    ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* |
+    ('-')?('.'('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)? |
+    ('"' ( '\\'('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|'"') )* '"');
     
-    
-    
-    
-    
-    
-    
-    
-    
+terminal ML_COMMENT  : 
+  '/*' -> '*/';
+
+terminal SL_COMMENT : 
+  ('//' | '#') !('\n'|'\r')* ('\r'? '\n')?;
+ 
+terminal WS  : 
+  (' '|'\t'|'\r'|'\n')+;
+ 
+terminal ANY_OTHER: 
+  .;
