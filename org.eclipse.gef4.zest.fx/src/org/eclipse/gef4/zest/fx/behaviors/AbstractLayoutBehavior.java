@@ -26,6 +26,8 @@ import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
+	private GraphLayoutContext glc;
+
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -82,10 +84,12 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
 	protected void onLayoutContextChange(GraphLayoutContext oldGlc,
 			GraphLayoutContext newGlc) {
-		if (oldGlc != null) {
+		if (oldGlc != null && oldGlc == glc) {
 			oldGlc.removeOnFlushChanges(onFlushChanges);
+			glc = null;
 		}
 		if (newGlc != null) {
+			glc = newGlc;
 			newGlc.addOnFlushChanges(onFlushChanges);
 			initializeLayout(newGlc);
 		}
