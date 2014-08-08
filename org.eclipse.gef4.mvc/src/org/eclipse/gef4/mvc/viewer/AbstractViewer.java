@@ -133,7 +133,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		return contentModel;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public IContentPartFactory<VR> getContentPartFactory() {
 		return ads.getAdapter(IContentPartFactory.class);
@@ -167,7 +166,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public IFocusModel<VR> getFocusModel() {
-		@SuppressWarnings("unchecked")
 		IFocusModel<VR> focusModel = getAdapter(AdapterKey
 				.get(IFocusModel.class));
 		if (focusModel == null) {
@@ -184,7 +182,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public IHoverModel<VR> getHoverModel() {
-		@SuppressWarnings("unchecked")
 		IHoverModel<VR> hoverModel = getAdapter(AdapterKey
 				.get(IHoverModel.class));
 		if (hoverModel == null) {
@@ -194,7 +191,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		return hoverModel;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public IRootPart<VR> getRootPart() {
 		return ads.getAdapter(IRootPart.class);
@@ -202,7 +198,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public ISelectionModel<VR> getSelectionModel() {
-		@SuppressWarnings("unchecked")
 		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey
 				.get(ISelectionModel.class));
 		if (selectionModel == null) {
