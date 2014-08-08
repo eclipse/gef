@@ -39,7 +39,15 @@ public class NodeContentPart extends AbstractFXContentPart {
 
 	@Override
 	public void doRefreshVisual() {
-		Object label = getContent().getAttrs().get(Attr.Key.LABEL.toString());
+		org.eclipse.gef4.graph.Node content = getContent();
+		if (content == null) {
+			return;
+		}
+		Map<String, Object> attrs = content.getAttrs();
+		if (attrs == null) {
+			return;
+		}
+		Object label = attrs.get(Attr.Key.LABEL.toString());
 		String str = label instanceof String ? (String) label
 				: label == null ? "-" : label.toString();
 		visual.setLabel(str);
