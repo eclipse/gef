@@ -24,13 +24,25 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
-	private final Node visual;
-	private final Point oldLocation;
-	private final Dimension oldSize;
-	private final double dx;
-	private final double dy;
-	private final double dw;
-	private final double dh;
+	private Node visual;
+	private Point oldLocation;
+	private Dimension oldSize;
+	private double dx;
+	private double dy;
+	private double dw;
+	private double dh;
+
+	public FXResizeRelocateNodeOperation(Node visual) {
+		this(visual, 0, 0, 0, 0);
+	}
+
+	public FXResizeRelocateNodeOperation(Node visual, double dx, double dy,
+			double dw, double dh) {
+		this("resizeRelocate", visual, new Point(visual.getLayoutX(),
+				visual.getLayoutY()), new Dimension(visual.getLayoutBounds()
+				.getWidth(), visual.getLayoutBounds().getHeight()), dx, dy, dw,
+				dh);
+	}
 
 	public FXResizeRelocateNodeOperation(String label, Node visual,
 			Point oldLocation, Dimension oldSize, double dx, double dy,
@@ -68,6 +80,34 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	public double getDh() {
+		return dh;
+	}
+
+	public double getDw() {
+		return dw;
+	}
+
+	public double getDx() {
+		return dx;
+	}
+
+	public double getDy() {
+		return dy;
+	}
+
+	public Point getOldLocation() {
+		return oldLocation;
+	}
+
+	public Dimension getOldSize() {
+		return oldSize;
+	}
+
+	public Node getVisual() {
+		return visual;
+	}
+
 	public boolean isNoOp() {
 		return dx == 0 && dy == 0 && dw == 0 && dh == 0;
 	}
@@ -76,6 +116,34 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	public void setDh(double dh) {
+		this.dh = dh;
+	}
+
+	public void setDw(double dw) {
+		this.dw = dw;
+	}
+
+	public void setDx(double dx) {
+		this.dx = dx;
+	}
+
+	public void setDy(double dy) {
+		this.dy = dy;
+	}
+
+	public void setOldLocation(Point oldLocation) {
+		this.oldLocation = oldLocation;
+	}
+
+	public void setOldSize(Dimension oldSize) {
+		this.oldSize = oldSize;
+	}
+
+	public void setVisual(Node visual) {
+		this.visual = visual;
 	}
 
 	@Override

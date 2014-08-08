@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.fx.operations;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -27,15 +27,15 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 /**
  * An {@link FXBendOperation} can be used to manipulate an {@link IFXConnection}
  * in an undo-context.
- *
+ * 
  * @author mwienand
- *
+ * 
  */
 public class FXBendOperation extends AbstractOperation {
 
-	private final IFXConnection connection;
-	private final List<AnchorLink> oldLinks;
-	private final List<AnchorLink> newLinks;
+	private IFXConnection connection;
+	private List<AnchorLink> oldLinks;
+	private List<AnchorLink> newLinks;
 
 	/**
 	 * Constructs an "empty" operation which will not change anything.
@@ -45,8 +45,22 @@ public class FXBendOperation extends AbstractOperation {
 	}
 
 	/**
+	 * Constructs a new operation from the given connection. The lists of old
+	 * and new {@link AnchorLink}s are initialized based on the connection.
+	 * 
+	 * @param connection
+	 */
+	public FXBendOperation(IFXConnection connection) {
+		super("bend");
+		this.connection = connection;
+		this.oldLinks = new ArrayList<AnchorLink>(Arrays.asList(connection
+				.getPointAnchorLinks()));
+		this.newLinks = new ArrayList<AnchorLink>(oldLinks);
+	}
+
+	/**
 	 * Constructs a new operation from the given values.
-	 *
+	 * 
 	 * @param oldLinks
 	 *            List of old {@link AnchorLink}s.
 	 * @param newLinks
@@ -57,12 +71,12 @@ public class FXBendOperation extends AbstractOperation {
 		super(label);
 		this.connection = connection;
 		if (oldLinks == null) {
-			this.oldLinks = Collections.emptyList();
+			this.oldLinks = new ArrayList<AnchorLink>();
 		} else {
 			this.oldLinks = new ArrayList<AnchorLink>(oldLinks);
 		}
 		if (newLinks == null) {
-			this.newLinks = Collections.emptyList();
+			this.newLinks = new ArrayList<AnchorLink>();
 		} else {
 			this.newLinks = new ArrayList<AnchorLink>(newLinks);
 		}
@@ -80,10 +94,34 @@ public class FXBendOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
+	public IFXConnection getConnection() {
+		return connection;
+	}
+
+	public List<AnchorLink> getNewLinks() {
+		return newLinks;
+	}
+
+	public List<AnchorLink> getOldLinks() {
+		return oldLinks;
+	}
+
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return execute(monitor, info);
+	}
+
+	public void setConnection(IFXConnection connection) {
+		this.connection = connection;
+	}
+
+	public void setNewLinks(List<AnchorLink> newLinks) {
+		this.newLinks = newLinks;
+	}
+
+	public void setOldLinks(List<AnchorLink> oldLinks) {
+		this.oldLinks = oldLinks;
 	}
 
 	@Override

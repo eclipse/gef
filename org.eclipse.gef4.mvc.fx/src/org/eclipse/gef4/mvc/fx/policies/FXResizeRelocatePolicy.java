@@ -11,13 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.operations.ITransactional;
@@ -27,17 +24,12 @@ import org.eclipse.gef4.mvc.policies.IPolicy;
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		IPolicy<Node>, ITransactional {
 
-	protected double initialLayoutX, initialLayoutY, initialWidth,
-			initialHeight;
 	private FXResizeRelocateNodeOperation operation;
 
 	// can be overridden by subclasses to add an operation for model changes
 	// TODO: pull up to IPolicy interface
 	@Override
 	public IUndoableOperation commit() {
-		if (operation == null) {
-			return null;
-		}
 		FXResizeRelocateNodeOperation commit = operation;
 		operation = null;
 		return commit.isNoOp() ? null : commit;
@@ -58,18 +50,8 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	 */
 	@Override
 	public void init() {
-		Node visual = getHost().getVisual();
-		initialLayoutX = visual.getLayoutX();
-		initialLayoutY = visual.getLayoutY();
-
-		Bounds lb = visual.getLayoutBounds();
-		initialWidth = lb.getWidth();
-		initialHeight = lb.getHeight();
-
 		// create "empty" operation
-		operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
-				visual, new Point(initialLayoutX, initialLayoutY),
-				new Dimension(initialWidth, initialHeight), 0, 0, 0, 0);
+		operation = new FXResizeRelocateNodeOperation(getHost().getVisual());
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
@@ -82,29 +64,25 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		double layoutDw = resizable ? dw : 0;
 		double layoutDh = resizable ? dh : 0;
 
-		// create undoable operation
-		if (layoutDx == 0 && layoutDy == 0 && layoutDw == 0 && layoutDh == 0) {
-			operation = null;
-		} else {
-			// ensure visual is not resized below threshold
-			if (initialWidth + layoutDw < getMinimumWidth()) {
-				layoutDw = getMinimumWidth() - initialWidth;
-			}
-			if (initialHeight + layoutDh < getMinimumHeight()) {
-				layoutDh = getMinimumHeight() - initialHeight;
-			}
+		// ensure visual is not resized below threshold
+		if (operation.getOldSize().width + layoutDw < getMinimumWidth()) {
+			layoutDw = getMinimumWidth() - operation.getOldSize().width;
+		}
+		if (operation.getOldSize().height + layoutDh < getMinimumHeight()) {
+			layoutDh = getMinimumHeight() - operation.getOldSize().height;
+		}
 
-			operation = new FXResizeRelocateNodeOperation("Resize/Relocate",
-					visual, new Point(initialLayoutX, initialLayoutY),
-					new Dimension(initialWidth, initialHeight), layoutDx,
-					layoutDy, layoutDw, layoutDh);
-			try {
-				// execute locally only
-				operation.execute(null, null);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
+		// update operation
+		operation.setDx(layoutDx);
+		operation.setDy(layoutDy);
+		operation.setDw(layoutDw);
+		operation.setDh(layoutDh);
+
+		try {
+			// execute locally
+			operation.execute(null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
-
 }
