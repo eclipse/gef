@@ -22,15 +22,18 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.models.DefaultLayoutModel;
 import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
+import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
+import org.eclipse.gef4.zest.fx.policies.NotSelectablePolicy;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
@@ -55,6 +58,13 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindFXRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node>>() {
 		}).to(GraphRootPart.class);
+	}
+
+	protected void bindGraphContentPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
+				NotSelectablePolicy.class);
 	}
 
 	protected void bindIContentPartFactory() {
@@ -82,6 +92,8 @@ public class ZestFxModule extends MvcFxModule {
 	protected void configure() {
 		super.configure();
 		bindIContentPartFactory();
+		bindGraphContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				GraphContentPart.class));
 		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				NodeContentPart.class));
 		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
