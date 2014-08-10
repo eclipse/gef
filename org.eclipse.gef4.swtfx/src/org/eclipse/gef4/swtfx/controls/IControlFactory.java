@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
  * @param <T>
  *            The kind of {@link Control} to be created by this factory
  */
+// TODO: move to Common.UI
 public interface IControlFactory<T extends Control> {
 
 	public T createControl(Composite parent);

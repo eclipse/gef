@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
-import javafx.scene.Scene;
 import javafx.stage.Window;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
@@ -87,16 +86,5 @@ public class SwtFXCanvas extends FXCanvas {
 		} else {
 			focusListeners.remove(listener);
 		}
-	}
-
-	@Override
-	public void setScene(Scene scene) {
-		if (scene instanceof SwtFXScene) {
-			((SwtFXScene) scene).setFXCanvas(this);
-		} else {
-			throw new IllegalArgumentException(
-					"The given Scene is not a SwtFXScene!");
-		}
-		super.setScene(scene);
 	}
 }

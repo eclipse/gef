@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -22,7 +23,6 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.IControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
@@ -58,7 +58,7 @@ public class SwtFXButtonSnippet extends SwtFXApplication {
 	}
 
 	@Override
-	public SwtFXScene createScene() {
+	public Scene createScene() {
 		HBox hbox = new HBox();
 		VBox col1 = new VBox();
 		VBox col2 = new VBox();
@@ -83,7 +83,7 @@ public class SwtFXButtonSnippet extends SwtFXApplication {
 					}
 				}, 0.87, 0.83, 0.49), new Button("JavaFX 2"));
 
-		return new SwtFXScene(hbox, 400, 400);
+		return new Scene(hbox, 400, 400);
 	}
 
 }

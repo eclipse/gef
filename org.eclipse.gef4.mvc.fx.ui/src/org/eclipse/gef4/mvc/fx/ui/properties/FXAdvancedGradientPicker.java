@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import javafx.embed.swt.FXCanvas;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -25,7 +26,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -40,17 +40,18 @@ import org.eclipse.swt.widgets.Control;
 public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	
+
 	private Paint advancedGradient;
 
 	private Control control;
-	
-	public FXAdvancedGradientPicker(Composite parent){
+
+	public FXAdvancedGradientPicker(Composite parent) {
 		control = createControl(parent);
 		// TODO: start with three stops
-		setAdvancedGradient(createAdvancedLinearGradient(Color.WHITE, Color.GREY, Color.BLACK));
+		setAdvancedGradient(createAdvancedLinearGradient(Color.WHITE,
+				Color.GREY, Color.BLACK));
 	}
-	
+
 	public Control getControl() {
 		return control;
 	}
@@ -64,28 +65,33 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 		Rectangle r = new Rectangle(20, 30);
 		r.setFill(Color.RED);
 		root.getChildren().add(r);
-		SwtFXScene scene = new SwtFXScene(root);
+		Scene scene = new Scene(root);
 		canvas.setScene(scene);
 		return composite;
 	}
-	
+
 	public void setAdvancedGradient(Paint advancedGradient) {
-		if(!isAdvancedGradient(advancedGradient)){
-			throw new IllegalArgumentException("Given value '" + advancedGradient + "' is no advanced gradient");
-		};
-		
+		if (!isAdvancedGradient(advancedGradient)) {
+			throw new IllegalArgumentException("Given value '"
+					+ advancedGradient + "' is no advanced gradient");
+		}
+		;
+
 		Paint oldAdvancedGradient = this.advancedGradient;
-        this.advancedGradient = advancedGradient;
-        // update controls to reflect changes
-        pcs.firePropertyChange("simpleGradient", oldAdvancedGradient, advancedGradient);
+		this.advancedGradient = advancedGradient;
+		// update controls to reflect changes
+		pcs.firePropertyChange("simpleGradient", oldAdvancedGradient,
+				advancedGradient);
 	}
-	
+
 	public Paint getAdvancedGradient() {
 		return advancedGradient;
 	}
-	
-	protected static LinearGradient createAdvancedLinearGradient(Color c1, Color c2, Color c3) {
-		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(0.5, c2), new Stop(1, c3)};
+
+	protected static LinearGradient createAdvancedLinearGradient(Color c1,
+			Color c2, Color c3) {
+		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(0.5, c2),
+				new Stop(1, c3) };
 		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
 	}
 
@@ -98,12 +104,11 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
-	
+
 	public static boolean isAdvancedGradient(Paint paint) {
-		if (paint instanceof LinearGradient){
-			return ((LinearGradient)paint).getStops().size() > 2;
-		}
-		else if(paint instanceof RadialGradient){
+		if (paint instanceof LinearGradient) {
+			return ((LinearGradient) paint).getStops().size() > 2;
+		} else if (paint instanceof RadialGradient) {
 			return true;
 		}
 		return false;

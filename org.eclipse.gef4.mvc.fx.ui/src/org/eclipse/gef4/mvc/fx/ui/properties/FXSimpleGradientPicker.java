@@ -19,6 +19,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swt.FXCanvas;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,7 +29,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -101,7 +101,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 			}
 		});
 
-		SwtFXScene scene = new SwtFXScene(root);
+		Scene scene = new Scene(root);
 		canvas.setScene(scene);
 		return canvas;
 	}

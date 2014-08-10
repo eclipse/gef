@@ -12,8 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples;
 
+import javafx.scene.Scene;
+
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +31,7 @@ public abstract class SwtFXApplication {
 		shell.setLayout(new FillLayout());
 		canvas = new SwtFXCanvas(shell, SWT.NONE);
 
-		SwtFXScene scene = createScene();
+		Scene scene = createScene();
 		canvas.setScene(scene);
 
 		shell.setSize((int) scene.getWidth(), (int) scene.getHeight());
@@ -44,6 +45,6 @@ public abstract class SwtFXApplication {
 		display.dispose();
 	}
 
-	public abstract SwtFXScene createScene();
+	public abstract Scene createScene();
 
 }

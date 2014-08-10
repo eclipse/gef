@@ -20,7 +20,6 @@ import org.eclipse.gef4.mvc.fx.ui.view.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.fx.viewer.ISceneFactory;
 import org.eclipse.gef4.mvc.ui.MvcUiModule;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -30,29 +29,31 @@ public class MvcFxUiModule extends MvcUiModule {
 	@Override
 	protected void configure() {
 		super.configure();
-		
+
 		// bind selection provider
 		bindSelectionProvider();
 
 		// install a scene factory that creates an SwtFXScene
 		bindSceneFactory();
-		
+
 		// install FXCanvas factory
 		bindFXCanvasFactory();
 	}
 
-	protected void bindFXCanvasFactory(){
-		binder().bind(IFXCanvasFactory.class).toInstance(new IFXCanvasFactory() {
-			
-			@Override
-			public FXCanvas createCanvas(Composite parent) {
-				return new SwtFXCanvas(parent, SWT.NONE);
-			}
-		});
+	protected void bindFXCanvasFactory() {
+		binder().bind(IFXCanvasFactory.class).toInstance(
+				new IFXCanvasFactory() {
+
+					@Override
+					public FXCanvas createCanvas(Composite parent) {
+						return new SwtFXCanvas(parent, SWT.NONE);
+					}
+				});
 	}
-	
+
 	protected void bindSelectionProvider() {
-		binder().bind(ISelectionProvider.class).to(DefaultSelectionProvider.class);
+		binder().bind(ISelectionProvider.class).to(
+				DefaultSelectionProvider.class);
 	}
 
 	protected void bindSceneFactory() {
@@ -60,7 +61,7 @@ public class MvcFxUiModule extends MvcUiModule {
 		binder().bind(ISceneFactory.class).toInstance(new ISceneFactory() {
 			@Override
 			public Scene createScene(Parent rootVisual) {
-				return new SwtFXScene(rootVisual);
+				return new Scene(rootVisual);
 			}
 		});
 

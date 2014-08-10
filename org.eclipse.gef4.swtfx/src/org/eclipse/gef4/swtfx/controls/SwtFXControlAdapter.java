@@ -8,8 +8,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import javafx.stage.Window;
 
-import org.eclipse.gef4.swtfx.SwtFXScene;
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
@@ -30,7 +31,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 	private Listener swtToFXEventForwardingListener;
 
 	private ChangeListener<Scene> sceneChangeListener;
-	private ChangeListener<FXCanvas> sceneCanvasChangeListener;
+	private ChangeListener<Window> sceneWindowChangeListener;
 	private ChangeListener<Boolean> focusChangeListener;
 
 	private IControlFactory<T> controlFactory;
@@ -43,7 +44,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 
 	public SwtFXControlAdapter(T control) {
 		// detect SwtFXCanvas via given control
-		canvas = getSwtFXCanvas(control);
+		canvas = getFXCanvas(control);
 		if (canvas == null) {
 			throw new IllegalArgumentException(
 					"Control has to be parented by SwtFXCanvas.");
@@ -106,7 +107,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		return control;
 	}
 
-	protected FXCanvas getSwtFXCanvas(Control control) {
+	protected FXCanvas getFXCanvas(Control control) {
 		Control candidate = control;
 		while (candidate != null) {
 			candidate = candidate.getParent();
@@ -117,20 +118,29 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		return null;
 	}
 
-	protected FXCanvas getSwtFXCanvas(Node node) {
+	protected FXCanvas getFXCanvas(Node node) {
 		if (node == null) {
 			return null;
 		}
-		return getSwtFXCanvas(node.getScene());
+		return getFXCanvas(node.getScene());
 	}
 
-	protected FXCanvas getSwtFXCanvas(Scene scene) {
+	protected FXCanvas getFXCanvas(Scene scene) {
 		if (scene != null) {
-			if (!(scene instanceof SwtFXScene)) {
-				throw new IllegalArgumentException();
-			}
-			FXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
-			return fxCanvas;
+			return getFXCanvas(scene.getWindow());
+		}
+		return null;
+	}
+
+	protected FXCanvas getFXCanvas(Window window) {
+		if (window != null) {
+			// Obtain FXCanvas by accessing outer class
+			// of
+			// FXCanvas$HostContainer
+			FXCanvas canvas = ReflectionUtils.getPrivateField(
+					ReflectionUtils.<Object> getPrivateField(window, "host"),
+					"this$0");
+			return canvas;
 		}
 		return null;
 	}
@@ -139,7 +149,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 	 * Used to register special listeners on the specific {@link Control}.
 	 */
 	protected void hookControl(T control) {
-		FXCanvas swtFXCanvas = getSwtFXCanvas(control);
+		FXCanvas swtFXCanvas = getFXCanvas(control);
 		if (swtFXCanvas == null || swtFXCanvas != canvas) {
 			throw new IllegalArgumentException(
 					"Control needs to be hooked to the same canvas as this adapter.");
@@ -173,31 +183,33 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		focusedProperty().addListener(focusChangeListener);
 
 		sceneChangeListener = new ChangeListener<Scene>() {
+
 			@Override
 			public void changed(ObservableValue<? extends Scene> observable,
 					Scene oldValue, Scene newValue) {
 
 				// if the scene changed, see if we can obtain an SwtFXCanvas
-				setCanvas(getSwtFXCanvas(newValue));
+				setCanvas(getFXCanvas(newValue));
 
 				// register/unregister listener to detect SwtFXCanvas changes of
 				// new scene
 				if (oldValue != null) {
-					((SwtFXScene) oldValue).canvasProperty().removeListener(
-							sceneCanvasChangeListener);
-					sceneCanvasChangeListener = null;
+					oldValue.windowProperty().removeListener(
+							sceneWindowChangeListener);
+					sceneWindowChangeListener = null;
 				}
 				if (newValue != null) {
-					sceneCanvasChangeListener = new ChangeListener<FXCanvas>() {
+					sceneWindowChangeListener = new ChangeListener<Window>() {
+
 						@Override
 						public void changed(
-								ObservableValue<? extends FXCanvas> observable,
-								FXCanvas oldValue, FXCanvas newValue) {
-							setCanvas(newValue);
+								ObservableValue<? extends Window> observable,
+								Window oldValue, Window newValue) {
+							setCanvas(getFXCanvas(newValue));
 						}
 					};
-					((SwtFXScene) newValue).canvasProperty().addListener(
-							sceneCanvasChangeListener);
+					newValue.windowProperty().addListener(
+							sceneWindowChangeListener);
 				}
 			}
 		};

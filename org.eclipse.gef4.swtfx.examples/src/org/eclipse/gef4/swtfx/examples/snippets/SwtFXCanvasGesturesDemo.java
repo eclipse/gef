@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
@@ -23,7 +23,6 @@ import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.VBox;
 
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SwtFXCanvasGesturesDemo {
 
-	private static SwtFXScene createScene() {
+	private static Scene createScene() {
 		VBox root = new VBox();
 		root.setAlignment(Pos.CENTER);
 		root.getChildren().add(new Label("Try some multitouch gestures"));
@@ -61,7 +60,7 @@ public class SwtFXCanvasGesturesDemo {
 				display.setText(event.getEventType().toString());
 			}
 		});
-		return new SwtFXScene(root, 300, 300);
+		return new Scene(root, 300, 300);
 	}
 
 	public static void main(String[] args) {

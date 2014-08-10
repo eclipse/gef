@@ -15,6 +15,7 @@ package org.eclipse.gef4.swtfx.examples.snippets;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
@@ -22,7 +23,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.IControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
@@ -69,7 +69,7 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 	}
 
 	@Override
-	public SwtFXScene createScene() {
+	public Scene createScene() {
 		// create layout panes
 		VBox vbox = new VBox();
 
@@ -168,7 +168,7 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		styleAction(underlineButton, stNode, SWT.NORMAL, true);
 		styleAction(clearStyleButton, stNode, SWT.NORMAL, false);
 
-		return new SwtFXScene(vbox, 800, 600);
+		return new Scene(vbox, 800, 600);
 	}
 
 	private void styleAction(Node actionNode,
