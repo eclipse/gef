@@ -16,10 +16,10 @@ import java.beans.PropertyChangeSupport;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.paint.Color;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -53,7 +53,7 @@ public class FXColorPicker implements IPropertyChangeNotifier {
 	}
 
 	protected Control createControl(final Composite parent) {
-		SwtFXCanvas canvas = new SwtFXCanvas(parent, SWT.NONE);
+		FXCanvas canvas = new FXCanvas(parent, SWT.NONE);
 		colorPicker = new AbstractFXColorPicker() {
 
 			@Override

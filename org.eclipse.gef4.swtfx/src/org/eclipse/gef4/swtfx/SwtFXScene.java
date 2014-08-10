@@ -14,12 +14,13 @@ package org.eclipse.gef4.swtfx;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.Parent;
 import javafx.scene.paint.Paint;
 
 public class SwtFXScene extends javafx.scene.Scene {
 
-	private SimpleObjectProperty<SwtFXCanvas> canvasProperty;
+	private SimpleObjectProperty<FXCanvas> canvasProperty;
 
 	public SwtFXScene(Parent root) {
 		super(root);
@@ -42,18 +43,18 @@ public class SwtFXScene extends javafx.scene.Scene {
 		super(root, fill);
 	}
 
-	public ObjectProperty<SwtFXCanvas> canvasProperty() {
+	public ObjectProperty<FXCanvas> canvasProperty() {
 		if (canvasProperty == null) {
-			canvasProperty = new SimpleObjectProperty<SwtFXCanvas>();
+			canvasProperty = new SimpleObjectProperty<FXCanvas>();
 		}
 		return canvasProperty;
 	}
 
-	public SwtFXCanvas getFXCanvas() {
+	public FXCanvas getFXCanvas() {
 		return canvasProperty().getValue();
 	}
 
-	public void setFXCanvas(SwtFXCanvas canvas) {
+	public void setFXCanvas(FXCanvas canvas) {
 		canvasProperty().setValue(canvas);
 	}
 

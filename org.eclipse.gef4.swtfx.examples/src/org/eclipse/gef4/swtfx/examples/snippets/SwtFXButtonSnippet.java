@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -22,7 +23,6 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
@@ -38,7 +38,7 @@ public class SwtFXButtonSnippet extends SwtFXApplication {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							SwtFXCanvas canvas) {
+							FXCanvas canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText(text);

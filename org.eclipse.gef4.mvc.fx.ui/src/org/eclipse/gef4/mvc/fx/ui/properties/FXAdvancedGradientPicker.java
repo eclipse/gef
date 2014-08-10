@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.ui.properties;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -24,7 +25,6 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -58,7 +58,8 @@ public class FXAdvancedGradientPicker implements IPropertyChangeNotifier {
 	protected Control createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		SwtFXCanvas canvas = new SwtFXCanvas(composite, SWT.NONE);
+		// TODO: use canvas factory
+		FXCanvas canvas = new FXCanvas(composite, SWT.NONE);
 		HBox root = new HBox();
 		Rectangle r = new Rectangle(20, 30);
 		r.setFill(Color.RED);

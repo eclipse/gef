@@ -18,6 +18,7 @@ import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swt.FXCanvas;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -27,7 +28,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.swt.SWT;
@@ -39,38 +39,39 @@ import org.eclipse.swt.widgets.Control;
  *
  */
 public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
-	
+
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	
+
 	private LinearGradient simpleGradient;
 	private AbstractFXColorPicker color1Picker;
 	private FXColorPicker color2Picker;
 
 	private Control control;
-	
-	public FXSimpleGradientPicker(Composite parent){
+
+	public FXSimpleGradientPicker(Composite parent) {
 		control = createControl(parent);
 		setSimpleGradient(createSimpleGradient(Color.WHITE, Color.BLACK));
 	}
-	
+
 	public Control getControl() {
 		return control;
 	}
 
 	protected Control createControl(final Composite parent) {
-		// create an SwtFXCanvas that contains the two color pickers as well as JavaFX controls
-		final SwtFXCanvas canvas = new SwtFXCanvas(parent, SWT.NONE);
+		// create an SwtFXCanvas that contains the two color pickers as well as
+		// JavaFX controls
+		final FXCanvas canvas = new FXCanvas(parent, SWT.NONE);
 		HBox root = new HBox();
 		VBox colorEditorsBox = new VBox();
 		root.getChildren().add(colorEditorsBox);
-		
-		color1Picker = new AbstractFXColorPicker(){
+
+		color1Picker = new AbstractFXColorPicker() {
 
 			@Override
 			public Color pickColor() {
 				return FXColorPicker.pickColor(parent.getShell(), getColor());
 			}
-		
+
 		};
 		colorEditorsBox.getChildren().add(color1Picker);
 
@@ -83,7 +84,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 				setSimpleGradient(createSimpleGradient(color1Picker.getColor(),
 						color2Picker.getColor()));
 			}
-			
+
 		});
 
 		color2Picker = new FXColorPicker(canvas);
@@ -99,39 +100,43 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 						color2Picker.getColor()));
 			}
 		});
-		
+
 		SwtFXScene scene = new SwtFXScene(root);
 		canvas.setScene(scene);
 		return canvas;
 	}
-	
+
 	public void setSimpleGradient(LinearGradient simpleGradient) {
-		if(!isSimpleGradient(simpleGradient)){
-			throw new IllegalArgumentException("Given value '" + simpleGradient + "' is no simple gradient");
-		};
-		
+		if (!isSimpleGradient(simpleGradient)) {
+			throw new IllegalArgumentException("Given value '" + simpleGradient
+					+ "' is no simple gradient");
+		}
+		;
+
 		LinearGradient oldSimpleGradient = this.simpleGradient;
-        this.simpleGradient = simpleGradient;
-        List<Stop> stops = simpleGradient.getStops();
-        if(stops.size() != 2){
-        	throw new IllegalArgumentException("A simple gradient may only contain two stops.");
-        }
-        if(!color1Picker.getColor().equals(stops.get(0).getColor())){
-        	color1Picker.setColor(stops.get(0).getColor());
-        }
-        if(!color2Picker.getColor().equals(stops.get(1).getColor())){
-        	color2Picker.setColor(stops.get(1).getColor());
-        }
-        pcs.firePropertyChange("simpleGradient", oldSimpleGradient, simpleGradient);
+		this.simpleGradient = simpleGradient;
+		List<Stop> stops = simpleGradient.getStops();
+		if (stops.size() != 2) {
+			throw new IllegalArgumentException(
+					"A simple gradient may only contain two stops.");
+		}
+		if (!color1Picker.getColor().equals(stops.get(0).getColor())) {
+			color1Picker.setColor(stops.get(0).getColor());
+		}
+		if (!color2Picker.getColor().equals(stops.get(1).getColor())) {
+			color2Picker.setColor(stops.get(1).getColor());
+		}
+		pcs.firePropertyChange("simpleGradient", oldSimpleGradient,
+				simpleGradient);
 	}
-	
+
 	public LinearGradient getSimpleGradient() {
 		return simpleGradient;
 	}
-	
+
 	protected static LinearGradient createSimpleGradient(Color c1, Color c2) {
 		// TODO: add angle
-		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2)};
+		Stop[] stops = new Stop[] { new Stop(0, c1), new Stop(1, c2) };
 		return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
 	}
 
@@ -144,10 +149,10 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
 	}
-	
+
 	public static boolean isSimpleGradient(Paint paint) {
 		if (paint instanceof LinearGradient) {
-			return ((LinearGradient)paint).getStops().size() == 2;
+			return ((LinearGradient) paint).getStops().size() == 2;
 		}
 		return false;
 	}

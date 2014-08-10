@@ -3,12 +3,12 @@ package org.eclipse.gef4.swtfx.controls;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.embed.swt.FXCanvas;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -25,12 +25,12 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 			SWT.MouseUp, SWT.MouseVerticalWheel, SWT.Move, SWT.Traverse,
 			SWT.Verify, SWT.FocusIn };
 
-	private SwtFXCanvas canvas;
+	private FXCanvas canvas;
 	private T control;
 	private Listener swtToFXEventForwardingListener;
 
 	private ChangeListener<Scene> sceneChangeListener;
-	private ChangeListener<SwtFXCanvas> sceneCanvasChangeListener;
+	private ChangeListener<FXCanvas> sceneCanvasChangeListener;
 	private ChangeListener<Boolean> focusChangeListener;
 
 	private ISwtFXControlFactory<T> controlFactory;
@@ -106,30 +106,30 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		return control;
 	}
 
-	protected SwtFXCanvas getSwtFXCanvas(Control control) {
+	protected FXCanvas getSwtFXCanvas(Control control) {
 		Control candidate = control;
 		while (candidate != null) {
 			candidate = candidate.getParent();
-			if (candidate instanceof SwtFXCanvas) {
-				return (SwtFXCanvas) candidate;
+			if (candidate instanceof FXCanvas) {
+				return (FXCanvas) candidate;
 			}
 		}
 		return null;
 	}
 
-	protected SwtFXCanvas getSwtFXCanvas(Node node) {
+	protected FXCanvas getSwtFXCanvas(Node node) {
 		if (node == null) {
 			return null;
 		}
 		return getSwtFXCanvas(node.getScene());
 	}
 
-	protected SwtFXCanvas getSwtFXCanvas(Scene scene) {
+	protected FXCanvas getSwtFXCanvas(Scene scene) {
 		if (scene != null) {
 			if (!(scene instanceof SwtFXScene)) {
 				throw new IllegalArgumentException();
 			}
-			SwtFXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
+			FXCanvas fxCanvas = ((SwtFXScene) scene).getFXCanvas();
 			return fxCanvas;
 		}
 		return null;
@@ -139,7 +139,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 	 * Used to register special listeners on the specific {@link Control}.
 	 */
 	protected void hookControl(T control) {
-		SwtFXCanvas swtFXCanvas = getSwtFXCanvas(control);
+		FXCanvas swtFXCanvas = getSwtFXCanvas(control);
 		if (swtFXCanvas == null || swtFXCanvas != canvas) {
 			throw new IllegalArgumentException(
 					"Control needs to be hooked to the same canvas as this adapter.");
@@ -188,11 +188,11 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 					sceneCanvasChangeListener = null;
 				}
 				if (newValue != null) {
-					sceneCanvasChangeListener = new ChangeListener<SwtFXCanvas>() {
+					sceneCanvasChangeListener = new ChangeListener<FXCanvas>() {
 						@Override
 						public void changed(
-								ObservableValue<? extends SwtFXCanvas> observable,
-								SwtFXCanvas oldValue, SwtFXCanvas newValue) {
+								ObservableValue<? extends FXCanvas> observable,
+								FXCanvas oldValue, FXCanvas newValue) {
 							setCanvas(newValue);
 						}
 					};
@@ -204,7 +204,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		sceneProperty().addListener(sceneChangeListener);
 	}
 
-	protected void registerSwtToFXEventForwarders(final SwtFXCanvas newCanvas) {
+	protected void registerSwtToFXEventForwarders(final FXCanvas newCanvas) {
 		swtToFXEventForwardingListener = new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -237,7 +237,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 		updateSwtBounds();
 	}
 
-	protected void setCanvas(SwtFXCanvas newCanvas) {
+	protected void setCanvas(FXCanvas newCanvas) {
 		// if we do not have a control factory, we are bound to an existing
 		// control and will not be able to handle canvas changes
 		if (controlFactory == null) {
@@ -249,7 +249,7 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 			// use control factory to dispose/create controls as needed upon
 			// canvas
 			// changes
-			SwtFXCanvas oldCanvas = this.canvas;
+			FXCanvas oldCanvas = this.canvas;
 			if (oldCanvas != null && oldCanvas != newCanvas) {
 				T oldControl = getControl();
 				setControl(null);

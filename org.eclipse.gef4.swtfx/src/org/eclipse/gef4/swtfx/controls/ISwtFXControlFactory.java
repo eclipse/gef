@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.controls;
 
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
+import javafx.embed.swt.FXCanvas;
+
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -24,6 +25,6 @@ import org.eclipse.swt.widgets.Control;
  */
 public interface ISwtFXControlFactory<T extends Control> {
 
-	public T createControl(SwtFXCanvas canvas);
+	public T createControl(FXCanvas canvas);
 
 }

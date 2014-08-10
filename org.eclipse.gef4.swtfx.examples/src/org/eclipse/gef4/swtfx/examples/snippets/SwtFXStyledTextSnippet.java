@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
+import javafx.embed.swt.FXCanvas;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,7 +23,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.gef4.swtfx.SwtFXScene;
 import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.Display;
 
 public class SwtFXStyledTextSnippet extends SwtFXApplication {
 
-	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur\nadipisicing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.\nDuis aute irure dolor in reprehenderit\nin voluptate velit esse cillum dolore\neu fugiat nulla pariatur. Excepteur sint\noccaecat cupidatat non proident, sunt\nin culpa qui officia deserunt mollit\nanim id est laborum.";
-
 	public static void main(String[] args) {
 		new SwtFXStyledTextSnippet();
 	}
+
+	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur\nadipisicing elit, sed do eiusmod tempor\nincididunt ut labore et dolore magna\naliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi\nut aliquip ex ea commodo consequat.\nDuis aute irure dolor in reprehenderit\nin voluptate velit esse cillum dolore\neu fugiat nulla pariatur. Excepteur sint\noccaecat cupidatat non proident, sunt\nin culpa qui officia deserunt mollit\nanim id est laborum.";
 
 	private void colorAction(Node actionNode,
 			final SwtFXControlAdapter<StyledText> stNode,
@@ -92,7 +92,7 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 		final SwtFXControlAdapter<StyledText> stNode = new SwtFXControlAdapter<StyledText>(
 				new ISwtFXControlFactory<StyledText>() {
 					@Override
-					public StyledText createControl(SwtFXCanvas canvas) {
+					public StyledText createControl(FXCanvas canvas) {
 						return new StyledText(canvas, SWT.BORDER);
 					}
 				});
@@ -103,7 +103,7 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							SwtFXCanvas canvas) {
+							FXCanvas canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText("Lorem Ipsum");
@@ -125,7 +125,7 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							SwtFXCanvas canvas) {
+							FXCanvas canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText("New");

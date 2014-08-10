@@ -37,7 +37,6 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-// TODO: inject viewer and domain
 public abstract class FXView extends ViewPart {
 
 	private class SelectionPropertyChangeListener implements
