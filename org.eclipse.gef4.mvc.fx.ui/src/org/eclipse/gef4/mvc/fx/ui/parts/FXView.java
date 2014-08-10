@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.ui.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
@@ -22,11 +20,9 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -39,45 +35,21 @@ import com.google.inject.Injector;
 
 public abstract class FXView extends ViewPart {
 
-	// TODO: extract class
-	private class SelectionPropertyChangeListener implements
-			PropertyChangeListener {
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (ISelectionModel.SELECTION_PROPERTY.equals(event
-					.getPropertyName())) {
-				// forward selection changes to selection provider (in case
-				// there is any)
-				ISelectionProvider selectionProvider = (ISelectionProvider) getAdapter(ISelectionProvider.class);
-				if (selectionProvider != null) {
-					if (event.getNewValue() == null) {
-						selectionProvider
-								.setSelection(StructuredSelection.EMPTY);
-					} else {
-						selectionProvider.setSelection(new StructuredSelection(
-								(List) event.getNewValue()));
-					}
-				}
-			}
-		}
-	}
-
 	@Inject
 	private FXDomain domain;
 
-	private FXCanvas canvas = null;
+	@Inject
+	private IFXCanvasFactory canvasFactory;
 
 	@Inject(optional = true)
 	private ISelectionProvider selectionProvider;
 
-	private PropertyChangeListener selectionPropertyChangeListener = new SelectionPropertyChangeListener();
+	private SelectionForwarder selectionForwarder;
+
+	private FXCanvas canvas = null;
 
 	private UndoRedoActionGroup undoRedoActionGroup;
 	private IPropertySheetPage propertySheetPage;
-
-	@Inject
-	private IFXCanvasFactory canvasFactory;
 
 	// TOOD: use executable extension factory to inject this class
 	public FXView(Injector injector) {
@@ -93,31 +65,33 @@ public abstract class FXView extends ViewPart {
 		// create viewer and canvas only after toolkit has been initialized
 		canvas = createCanvas(parent);
 
-		// domain was already injected, hook viewer to controls (via scene container)
+		// domain was already injected, hook viewer to controls (via scene
+		// container)
 		FXViewer viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
-		
+
 		// activate domain
 		domain.activate();
-		
+
 		// populate viewer
 		viewer.setContents(getContents());
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
+			selectionForwarder = new SelectionForwarder(selectionProvider);
 			getViewer().getSelectionModel().addPropertyChangeListener(
-					selectionPropertyChangeListener);
+					selectionForwarder);
 		}
 	}
 
 	@Override
 	public void dispose() {
 		domain.deactivate();
-		
+
 		// unregister listener to provide selections
 		if (selectionProvider != null) {
 			getViewer().getSelectionModel().removePropertyChangeListener(
-					selectionPropertyChangeListener);
+					selectionForwarder);
 		}
 		super.dispose();
 	}
