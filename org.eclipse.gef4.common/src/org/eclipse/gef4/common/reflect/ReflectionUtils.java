@@ -1,25 +1,26 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
- * 
+ *
  *******************************************************************************/
-package org.eclipse.gef4.swtfx.gestures;
+package org.eclipse.gef4.common.reflect;
 
 import java.lang.reflect.Field;
 
 /**
  * Allows to access the value of private fields.
- * 
+ *
  * @author Jan Koehnlein
  */
-public class PrivateFieldAccessor {
+public class ReflectionUtils {
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T getPrivateField(Object owner, String fieldName) {
 		Class<? extends Object> currentClass = owner.getClass();

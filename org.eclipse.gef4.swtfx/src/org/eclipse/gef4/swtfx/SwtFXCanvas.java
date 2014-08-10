@@ -17,9 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.embed.swt.FXCanvas;
+import javafx.scene.Scene;
 import javafx.stage.Window;
 
-import org.eclipse.gef4.swtfx.gestures.PrivateFieldAccessor;
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.swtfx.gestures.SwtToFXGestureConverter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -76,7 +77,7 @@ public class SwtFXCanvas extends FXCanvas {
 	}
 
 	public Window getStage() {
-		return PrivateFieldAccessor.getPrivateField(this, "stage");
+		return ReflectionUtils.getPrivateField(this, "stage");
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class SwtFXCanvas extends FXCanvas {
 	}
 
 	@Override
-	public void setScene(javafx.scene.Scene scene) {
+	public void setScene(Scene scene) {
 		if (scene instanceof SwtFXScene) {
 			((SwtFXScene) scene).setFXCanvas(this);
 		} else {

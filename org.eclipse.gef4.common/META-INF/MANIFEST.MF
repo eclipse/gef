@@ -8,5 +8,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.common.activate;x-internal:=true,
  org.eclipse.gef4.common.adapt;x-internal:=true,
  org.eclipse.gef4.common.inject;x-internal:=true,
- org.eclipse.gef4.common.notify;x-internal:=true
+ org.eclipse.gef4.common.notify;x-internal:=true,
+ org.eclipse.gef4.common.reflect
 Require-Bundle: com.google.inject;bundle-version="3.0.0"

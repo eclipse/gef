@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.gestures;
 
-import static org.eclipse.gef4.swtfx.gestures.PrivateFieldAccessor.getPrivateField;
-
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -27,6 +25,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 
+import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.GestureEvent;
 import org.eclipse.swt.events.GestureListener;
@@ -40,7 +39,7 @@ import com.sun.javafx.tk.TKSceneListener;
 /**
  * A gesture listener that converts and transfers SWT {@link GestureEvent}s to
  * an {@link FXCanvas}.
- * 
+ *
  * @author Jan Koehnlein
  * @author anyssen
  */
@@ -192,45 +191,41 @@ public class SwtToFXGestureConverter implements GestureListener {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				final Object scenePeer = getPrivateField(canvas, "scenePeer");
-				AccessController.doPrivileged(
-						new PrivilegedAction<Void>() {
-							@Override
-							public Void run() {
-								TKSceneListener sceneListener = getPrivateField(
-										scenePeer, "sceneListener");
-								if (sceneListener == null) {
-									return null;
-								}
-								switch (event.detail) {
-								case SWT.GESTURE_BEGIN:
-									break;
-								case SWT.GESTURE_END:
-									changeState(StateType.IDLE, event,
-											sceneListener);
-									break;
-								case SWT.GESTURE_MAGNIFY:
-									changeState(StateType.ZOOMING, event,
-											sceneListener);
-									break;
-								case SWT.GESTURE_PAN:
-									changeState(StateType.SCROLLING, event,
-											sceneListener);
-									break;
-								case SWT.GESTURE_ROTATE:
-									changeState(StateType.ROTATING, event,
-											sceneListener);
-									break;
-								case SWT.GESTURE_SWIPE:
-									changeState(StateType.IDLE, event,
-											sceneListener);
-								}
-								return null;
-							}
+				final Object scenePeer = ReflectionUtils.getPrivateField(
+						canvas, "scenePeer");
+				AccessController.doPrivileged(new PrivilegedAction<Void>() {
+					@Override
+					public Void run() {
+						TKSceneListener sceneListener = ReflectionUtils
+								.getPrivateField(scenePeer, "sceneListener");
+						if (sceneListener == null) {
+							return null;
+						}
+						switch (event.detail) {
+						case SWT.GESTURE_BEGIN:
+							break;
+						case SWT.GESTURE_END:
+							changeState(StateType.IDLE, event, sceneListener);
+							break;
+						case SWT.GESTURE_MAGNIFY:
+							changeState(StateType.ZOOMING, event, sceneListener);
+							break;
+						case SWT.GESTURE_PAN:
+							changeState(StateType.SCROLLING, event,
+									sceneListener);
+							break;
+						case SWT.GESTURE_ROTATE:
+							changeState(StateType.ROTATING, event,
+									sceneListener);
+							break;
+						case SWT.GESTURE_SWIPE:
+							changeState(StateType.IDLE, event, sceneListener);
+						}
+						return null;
+					}
 
-						},
-						(AccessControlContext) getPrivateField(scenePeer,
-								"accessCtrlCtx"));
+				}, (AccessControlContext) ReflectionUtils.getPrivateField(
+						scenePeer, "accessCtrlCtx"));
 			}
 		});
 	}
