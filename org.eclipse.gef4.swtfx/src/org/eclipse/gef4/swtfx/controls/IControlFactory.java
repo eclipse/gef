@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.controls;
 
-import javafx.embed.swt.FXCanvas;
-
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -23,8 +22,8 @@ import org.eclipse.swt.widgets.Control;
  * @param <T>
  *            The kind of {@link Control} to be created by this factory
  */
-public interface ISwtFXControlFactory<T extends Control> {
+public interface IControlFactory<T extends Control> {
 
-	public T createControl(FXCanvas canvas);
+	public T createControl(Composite parent);
 
 }

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
-import javafx.embed.swt.FXCanvas;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -24,21 +23,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.swtfx.SwtFXScene;
-import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
+import org.eclipse.gef4.swtfx.controls.IControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 
 public class SwtFXButtonSnippet extends SwtFXApplication {
 
 	protected static SwtFXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {
 		return new SwtFXControlAdapter<org.eclipse.swt.widgets.Button>(
-				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+				new IControlFactory<org.eclipse.swt.widgets.Button>() {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							FXCanvas canvas) {
+							Composite canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText(text);

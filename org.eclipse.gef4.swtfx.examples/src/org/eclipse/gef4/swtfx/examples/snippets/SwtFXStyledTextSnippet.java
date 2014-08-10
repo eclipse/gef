@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.swtfx.examples.snippets;
 
-import javafx.embed.swt.FXCanvas;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -24,7 +23,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import org.eclipse.gef4.swtfx.SwtFXScene;
-import org.eclipse.gef4.swtfx.controls.ISwtFXControlFactory;
+import org.eclipse.gef4.swtfx.controls.IControlFactory;
 import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
 import org.eclipse.gef4.swtfx.examples.SwtFXApplication;
 import org.eclipse.swt.SWT;
@@ -33,6 +32,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class SwtFXStyledTextSnippet extends SwtFXApplication {
@@ -90,20 +90,20 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 
 		// create styled text
 		final SwtFXControlAdapter<StyledText> stNode = new SwtFXControlAdapter<StyledText>(
-				new ISwtFXControlFactory<StyledText>() {
+				new IControlFactory<StyledText>() {
 					@Override
-					public StyledText createControl(FXCanvas canvas) {
+					public StyledText createControl(Composite canvas) {
 						return new StyledText(canvas, SWT.BORDER);
 					}
 				});
 		stNode.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 		SwtFXControlAdapter<org.eclipse.swt.widgets.Button> loremIpsumButton = new SwtFXControlAdapter<>(
-				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+				new IControlFactory<org.eclipse.swt.widgets.Button>() {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							FXCanvas canvas) {
+							Composite canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText("Lorem Ipsum");
@@ -121,11 +121,11 @@ public class SwtFXStyledTextSnippet extends SwtFXApplication {
 					}
 				});
 		SwtFXControlAdapter<org.eclipse.swt.widgets.Button> newButton = new SwtFXControlAdapter<>(
-				new ISwtFXControlFactory<org.eclipse.swt.widgets.Button>() {
+				new IControlFactory<org.eclipse.swt.widgets.Button>() {
 
 					@Override
 					public org.eclipse.swt.widgets.Button createControl(
-							FXCanvas canvas) {
+							Composite canvas) {
 						org.eclipse.swt.widgets.Button b = new org.eclipse.swt.widgets.Button(
 								canvas, SWT.PUSH);
 						b.setText("New");

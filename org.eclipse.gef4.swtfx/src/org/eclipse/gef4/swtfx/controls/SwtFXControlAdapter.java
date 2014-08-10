@@ -33,9 +33,9 @@ public class SwtFXControlAdapter<T extends Control> extends Region {
 	private ChangeListener<FXCanvas> sceneCanvasChangeListener;
 	private ChangeListener<Boolean> focusChangeListener;
 
-	private ISwtFXControlFactory<T> controlFactory;
+	private IControlFactory<T> controlFactory;
 
-	public SwtFXControlAdapter(ISwtFXControlFactory<T> controlFactory) {
+	public SwtFXControlAdapter(IControlFactory<T> controlFactory) {
 		// lazy creation of control in case canvas is obtained
 		this.controlFactory = controlFactory;
 		init();
