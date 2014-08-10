@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.view;
+package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.util.ArrayList;
 import java.util.List;

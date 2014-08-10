@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.gef4.mvc.fx.example.FXExampleModule;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.ui.example.FXExampleUiModule;
-import org.eclipse.gef4.mvc.fx.ui.view.FXView;
+import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;

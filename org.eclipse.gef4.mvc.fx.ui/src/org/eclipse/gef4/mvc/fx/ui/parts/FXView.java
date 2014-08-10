@@ -9,7 +9,7 @@
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.ui.view;
+package org.eclipse.gef4.mvc.fx.ui.parts;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,6 +39,7 @@ import com.google.inject.Injector;
 
 public abstract class FXView extends ViewPart {
 
+	// TODO: extract class
 	private class SelectionPropertyChangeListener implements
 			PropertyChangeListener {
 		@SuppressWarnings("rawtypes")

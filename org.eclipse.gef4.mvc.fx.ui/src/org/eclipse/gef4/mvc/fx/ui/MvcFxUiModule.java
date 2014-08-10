@@ -13,8 +13,8 @@ package org.eclipse.gef4.mvc.fx.ui;
 
 import javafx.embed.swt.FXCanvas;
 
-import org.eclipse.gef4.mvc.fx.ui.view.DefaultSelectionProvider;
-import org.eclipse.gef4.mvc.fx.ui.view.IFXCanvasFactory;
+import org.eclipse.gef4.mvc.fx.ui.parts.DefaultSelectionProvider;
+import org.eclipse.gef4.mvc.fx.ui.parts.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.ui.MvcUiModule;
 import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.jface.viewers.ISelectionProvider;

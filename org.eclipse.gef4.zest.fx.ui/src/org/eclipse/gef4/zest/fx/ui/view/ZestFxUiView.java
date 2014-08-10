@@ -18,7 +18,7 @@ import java.util.List;
 import javafx.embed.swt.FXCanvas;
 
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.mvc.fx.ui.view.FXView;
+import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
