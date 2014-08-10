@@ -19,17 +19,13 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
-import com.google.inject.Inject;
-
 public class FXViewer extends AbstractViewer<Node> {
 
-	private ISceneFactory sceneFactory;
 	private ISceneContainer sceneContainer;
 	private Scene scene = null;
 
-	private void createAndHookScene(ISceneContainer container,
-			ISceneFactory sceneFactory, Parent rootVisual) {
-		scene = sceneFactory.createScene(rootVisual);
+	private void createAndHookScene(ISceneContainer container, Parent rootVisual) {
+		scene = new Scene(rootVisual);
 		sceneContainer.setScene(scene);
 	}
 
@@ -47,24 +43,13 @@ public class FXViewer extends AbstractViewer<Node> {
 		if (sceneContainer != null) {
 			if (scene == null) {
 				IRootPart<Node> rootPart = getRootPart();
-				if (rootPart != null && sceneFactory != null) {
-					createAndHookScene(sceneContainer, sceneFactory,
+				if (rootPart != null) {
+					createAndHookScene(sceneContainer,
 							(Parent) rootPart.getVisual());
 				}
 			} else {
 				sceneContainer.setScene(scene);
 			}
-		}
-	}
-
-	@Inject
-	public void setSceneFactory(ISceneFactory sceneFactory) {
-		this.sceneFactory = sceneFactory;
-		IRootPart<Node> rootPart = getRootPart();
-		if (scene == null && rootPart != null && sceneFactory != null
-				&& sceneContainer != null) {
-			createAndHookScene(sceneContainer, sceneFactory,
-					(Parent) rootPart.getVisual());
 		}
 	}
 }

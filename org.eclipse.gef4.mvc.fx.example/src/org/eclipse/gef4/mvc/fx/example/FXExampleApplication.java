@@ -15,9 +15,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class FXExampleApplication extends Application {
-	
+
 	public static void main(String[] args) {
-		FXExampleApplication.launch(args);
+		Application.launch(args);
 	}
 
 	@Override
@@ -28,13 +28,16 @@ public class FXExampleApplication extends Application {
 		injector.injectMembers(domain);
 		FXViewer viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));
+		primaryStage.setResizable(true);
+		primaryStage.setWidth(640);
+		primaryStage.setHeight(480);
 
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
 		viewer.setContents(Collections
 				.<Object> singletonList(new FXGeometricModel()));
-		
+
 		primaryStage.setTitle("GEF4 MVC.FX Example");
 		primaryStage.sizeToScene();
 		primaryStage.show();
