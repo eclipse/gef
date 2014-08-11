@@ -17,7 +17,6 @@
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.common.doc/reference/api/ ../org.eclipse.gef4.common.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.geometry.doc/reference/api/ ../org.eclipse.gef4.geometry.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.fx.doc/reference/api/ ../org.eclipse.gef4.fx.doc/reference/api/
--linkoffline PLUGINS_ROOT/org.eclipse.gef4.swtfx.doc/reference/api/ ../org.eclipse.gef4.swtfx.doc/reference/api/
 
 org.eclipse.gef4.mvc
 org.eclipse.gef4.mvc.behaviors
@@ -39,4 +38,6 @@ org.eclipse.gef4.mvc.fx.policies
 org.eclipse.gef4.mvc.fx.tools
 org.eclipse.gef4.mvc.fx.viewer
 org.eclipse.gef4.mvc.fx.ui
-org.eclipse.gef4.mvc.fx.ui.view
+org.eclipse.gef4.mvc.fx.ui.parts
+org.eclipse.gef4.mvc.fx.ui.properties
+org.eclipse.gef4.mvc.fx.ui.viewer

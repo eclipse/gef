@@ -14,9 +14,9 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <url>
@@ -34,6 +34,14 @@
 
    <includes
          id="org.eclipse.gef4.fx.doc"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.gef4.fx.ui"
+         version="0.0.0"/>
+         
+   <includes
+         id="org.eclipse.gef4.fx.ui.source"
          version="0.0.0"/>
 
    <requires>

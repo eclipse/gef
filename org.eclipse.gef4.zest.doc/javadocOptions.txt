@@ -19,7 +19,6 @@
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.dot.doc/reference/api/ ../org.eclipse.gef4.dot.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.layout.doc/reference/api/ ../org.eclipse.gef4.layout.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.fx.doc/reference/api/ ../org.eclipse.gef4.fx.doc/reference/api/
--linkoffline PLUGINS_ROOT/org.eclipse.gef4.swtfx.doc/reference/api/ ../org.eclipse.gef4.swtfx.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef4.mvc.doc/reference/api/ ../org.eclipse.gef4.mvc.doc/reference/api/
 
 org.eclipse.gef4.zest.fx

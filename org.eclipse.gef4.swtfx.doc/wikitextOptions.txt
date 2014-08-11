@@ -1,2 +1,0 @@
-wiki.title=GEF4 SwtFX Documentation
-wiki.path=GEF/GEF4/SwtFX

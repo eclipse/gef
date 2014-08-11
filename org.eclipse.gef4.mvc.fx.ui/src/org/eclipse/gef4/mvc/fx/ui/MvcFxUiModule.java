@@ -13,10 +13,10 @@ package org.eclipse.gef4.mvc.fx.ui;
 
 import javafx.embed.swt.FXCanvas;
 
+import org.eclipse.gef4.fx.ui.canvas.FXCanvasEx;
 import org.eclipse.gef4.mvc.fx.ui.parts.DefaultSelectionProvider;
 import org.eclipse.gef4.mvc.fx.ui.parts.IFXCanvasFactory;
 import org.eclipse.gef4.mvc.ui.MvcUiModule;
-import org.eclipse.gef4.swtfx.SwtFXCanvas;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -40,7 +40,7 @@ public class MvcFxUiModule extends MvcUiModule {
 
 					@Override
 					public FXCanvas createCanvas(Composite parent) {
-						return new SwtFXCanvas(parent, SWT.NONE);
+						return new FXCanvasEx(parent, SWT.NONE);
 					}
 				});
 	}

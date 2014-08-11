@@ -63,7 +63,6 @@
    <requires>
       <import feature="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.fx.sdk" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.swtfx.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
    </requires>
 

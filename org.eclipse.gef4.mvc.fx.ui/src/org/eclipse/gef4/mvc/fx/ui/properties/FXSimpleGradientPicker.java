@@ -29,7 +29,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.swtfx.controls.SwtFXControlAdapter;
+import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -88,7 +88,7 @@ public class FXSimpleGradientPicker implements IPropertyChangeNotifier {
 		});
 
 		color2Picker = new FXColorPicker(canvas);
-		SwtFXControlAdapter<Control> color2EditorNode = new SwtFXControlAdapter<Control>(
+		FXControlAdapter<Control> color2EditorNode = new FXControlAdapter<Control>(
 				color2Picker.getControl());
 		colorEditorsBox.getChildren().add(color2EditorNode);
 		// color2Editor.getControl().setLayoutData(new GridData());
