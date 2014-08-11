@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -25,15 +25,15 @@ import com.google.common.collect.SetMultimap;
 /**
  * The abstract base implementation of {@link IContentPart}, intended to be
  * sub-classed by clients to create their own custom {@link IContentPart}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
-		implements IContentPart<VR> {
+implements IContentPart<VR> {
 
 	private Object content;
 
@@ -46,7 +46,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public SetMultimap<Object, String> getContentAnchorages() {
+	public SetMultimap<? extends Object, String> getContentAnchorages() {
 		return HashMultimap.create();
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	/**
 	 * Set the primary model object that this EditPart represents. This method
 	 * is used by an <code>EditPartFactory</code> when creating an EditPart.
-	 * 
+	 *
 	 * @see IContentPart#setContent(Object)
 	 */
 	@Override
