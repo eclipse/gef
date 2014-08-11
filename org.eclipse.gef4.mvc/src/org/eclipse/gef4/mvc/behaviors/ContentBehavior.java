@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.editparts.AbstractEditPart.
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
@@ -39,15 +39,15 @@ import com.google.common.collect.SetMultimap;
  * {@link IContentPart} to synchronize the list of {@link IContentPart} children
  * and (only in case of an {@link IContentPart}) anchorages with the list of
  * content children and anchored.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
-		PropertyChangeListener {
+PropertyChangeListener {
 
 	// We need to ensure that when undoing model operations, the same content
 	// parts are re-used when re-synchronizing; as such, we put content parts
@@ -62,7 +62,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(getHost().getRoot().getViewer()
 					.getContentModel().getContents());
 			getHost().getRoot().getViewer().getContentModel()
-					.addPropertyChangeListener(this);
+			.addPropertyChangeListener(this);
 		} else {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
@@ -76,7 +76,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	public void deactivate() {
 		if (getHost() == getHost().getRoot()) {
 			getHost().getRoot().getViewer().getContentModel()
-					.removePropertyChangeListener(this);
+			.removePropertyChangeListener(this);
 			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);
@@ -120,6 +120,11 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 						.getRoot().getViewer().getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
+				if (contentPart == null) {
+					throw new IllegalStateException("IContentPartFactory '"
+							+ contentPartFactory.getClass().getSimpleName()
+							+ "' did not create part for " + content + ".");
+				}
 			}
 
 			// initialize part
@@ -150,17 +155,17 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} anchorages
 	 * (see {@link IVisualPart#getAnchorages()}) so that it is in sync with the
 	 * set of content anchorages that is passed in.
-	 * 
+	 *
 	 * @param contentAnchorages
 	 *            * The map of content anchorages with roles to be synchronized
 	 *            with the list of {@link IContentPart} anchorages (
 	 *            {@link IContentPart#getAnchorages()}).
-	 * 
+	 *
 	 * @see IContentPart#getContentAnchorages()
 	 * @see IContentPart#getAnchorages()
 	 */
 	public void synchronizeContentAnchorages(
-			SetMultimap<Object, String> contentAnchorages) {
+			SetMultimap<? extends Object, String> contentAnchorages) {
 		SetMultimap<IVisualPart<VR>, String> anchorages = getHost()
 				.getAnchorages();
 
@@ -186,7 +191,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 		// find content for which no anchorages exist
 		List<Entry<IVisualPart<VR>, String>> toAdd = new ArrayList<Map.Entry<IVisualPart<VR>, String>>();
-		for (Entry<Object, String> e : contentAnchorages.entries()) {
+		for (Entry<? extends Object, String> e : contentAnchorages.entries()) {
 			IContentPart<VR> anchorage = findOrCreatePartFor(e.getKey());
 			if (!anchorages.containsEntry(anchorage, e.getValue())) {
 				toAdd.add(Maps.<IVisualPart<VR>, String> immutableEntry(
@@ -205,12 +210,12 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 * Updates the host {@link IVisualPart}'s {@link IContentPart} children (see
 	 * {@link IVisualPart#getChildren()}) so that it is in sync with the set of
 	 * content children that is passed in.
-	 * 
+	 *
 	 * @param contentChildren
 	 *            The list of content children to be synchronized with the list
 	 *            of {@link IContentPart} children (
 	 *            {@link IContentPart#getChildren()}).
-	 * 
+	 *
 	 * @see IContentPart#getContentChildren()
 	 * @see IContentPart#getChildren()
 	 */
