@@ -16,7 +16,9 @@ import java.util.List;
 import javafx.embed.swt.FXCanvas;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -25,6 +27,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
@@ -53,6 +56,8 @@ public abstract class FXEditor extends EditorPart {
     private FXCanvas canvas = null;
 
     private IPropertySheetPage propertySheetPage;
+
+    private IOperationHistoryListener operationHistoryListener;
 
     // TOOD: use executable extension factory to inject this class
     public FXEditor(final Injector injector) {
@@ -89,6 +94,8 @@ public abstract class FXEditor extends EditorPart {
     @Override
     public void dispose() {
         domain.deactivate();
+
+        domain.getOperationHistory().removeOperationHistoryListener(operationHistoryListener);
 
         // unregister listener to provide selections
         if (selectionProvider != null) {
@@ -143,6 +150,15 @@ public abstract class FXEditor extends EditorPart {
         if (selectionProvider != null) {
             site.setSelectionProvider(selectionProvider);
         }
+
+        operationHistoryListener = new IOperationHistoryListener() {
+            @Override
+            public void historyNotification(final OperationHistoryEvent event) {
+                firePropertyChange(IEditorPart.PROP_DIRTY);
+            }
+        };
+
+        getDomain().getOperationHistory().addOperationHistoryListener(operationHistoryListener);
     }
 
     @Override
