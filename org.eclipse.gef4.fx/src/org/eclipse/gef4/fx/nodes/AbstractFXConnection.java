@@ -39,12 +39,24 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-		implements IFXConnection {
+implements IFXConnection {
 
 	/**
 	 * CSS class assigned to decoration visuals.
 	 */
 	public static final String CSS_CLASS_DECORATION = "decoration";
+
+	/**
+	 * The <i>id</i> used to identify the start point of this connection at the
+	 * start anchor.
+	 */
+	public static final String START_ROLE = "start";
+
+	/**
+	 * The <i>id</i> used to identify the end point of this connection at the
+	 * end anchor.
+	 */
+	public static final String END_ROLE = "end";
 
 	/**
 	 * Prefix for the default <i>ids</i> used by this connection to identify
@@ -96,13 +108,13 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setStartPoint(new Point());
 		setEndPoint(new Point());
 		wayPointAnchorLinksProperty
-				.addListener(new ListChangeListener<AnchorLink>() {
-					@Override
-					public void onChanged(
-							javafx.collections.ListChangeListener.Change<? extends AnchorLink> c) {
-						refreshGeometry();
-					}
-				});
+		.addListener(new ListChangeListener<AnchorLink>() {
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends AnchorLink> c) {
+				refreshGeometry();
+			}
+		});
 	}
 
 	@Override
@@ -115,13 +127,13 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		wayPointAnchorLink.getAnchor().attach(wayPointAnchorLink.getKey());
 		wayPointAnchorLinksProperty.add(index, wayPointAnchorLink);
 		wayPointAnchorLink.getAnchor().positionProperty()
-				.addListener(positionChangeListener);
+		.addListener(positionChangeListener);
 	}
 
 	/**
 	 * Arranges the given decoration according to the passed-in values. Returns
 	 * the transformed end point of the arranged decoration.
-	 * 
+	 *
 	 * @param deco
 	 * @param start
 	 * @param direction
@@ -480,7 +492,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				.get();
 		if (oldLink != null) {
 			endAnchorLinkProperty.get().getAnchor().positionProperty()
-					.removeListener(positionChangeListener);
+			.removeListener(positionChangeListener);
 			if (listener != null) {
 				endAnchorLinkProperty.removeListener(listener);
 			}
@@ -495,7 +507,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		endAnchorLinkProperty.set(endAnchorLink);
 		isEndConnected = !(endAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		endAnchorLinkProperty.get().getAnchor().positionProperty()
-				.addListener(positionChangeListener);
+		.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 
@@ -586,7 +598,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				.get();
 		if (oldLink != null) {
 			startAnchorLinkProperty.get().getAnchor().positionProperty()
-					.removeListener(positionChangeListener);
+			.removeListener(positionChangeListener);
 			if (listener != null) {
 				startAnchorLinkProperty.removeListener(listener);
 			}
@@ -601,7 +613,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		startAnchorLinkProperty.set(startAnchorLink);
 		isStartConnected = !(startAnchorLink.getAnchor() instanceof FXStaticAnchor);
 		startAnchorLinkProperty.get().getAnchor().positionProperty()
-				.addListener(positionChangeListener);
+		.addListener(positionChangeListener);
 		refreshGeometry();
 	}
 

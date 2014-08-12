@@ -18,7 +18,6 @@ import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -93,14 +92,11 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			String role) {
 
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		AnchorKey anchorKey = new AnchorKey(visual, role);
-		AnchorLink anchorLink = new AnchorLink(anchor, anchorKey);
-
 		FXCurveConnection connection = visual.getConnection();
 		if (role.equals("START")) {
-			connection.setStartAnchorLink(anchorLink);
+			connection.setStartAnchor(anchor);
 		} else {
-			connection.setEndAnchorLink(anchorLink);
+			connection.setEndAnchor(anchor);
 		}
 
 		if (connection.isStartConnected() && connection.isEndConnected()) {
@@ -212,21 +208,21 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 		setAdapter(AdapterKey.get(AbstractSelectionBehavior.class),
 				new FXSelectionBehavior() {
-					@Override
-					protected IGeometry getHostGeometry() {
-						return visual.getConnection().getCurveNode()
-								.getGeometry();
-					}
-				});
+			@Override
+			protected IGeometry getHostGeometry() {
+				return visual.getConnection().getCurveNode()
+						.getGeometry();
+			}
+		});
 		setAdapter(AdapterKey.get(AbstractHoverBehavior.class),
 				new FXHoverBehavior() {
-					@Override
-					protected IGeometry getFeedbackGeometry(
-							Map<Object, Object> contextMap) {
-						return visual.getConnection().getCurveNode()
-								.getGeometry();
-					}
-				});
+			@Override
+			protected IGeometry getFeedbackGeometry(
+					Map<Object, Object> contextMap) {
+				return visual.getConnection().getCurveNode()
+						.getGeometry();
+			}
+		});
 	}
 
 }
