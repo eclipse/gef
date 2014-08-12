@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -17,36 +17,32 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 /**
  * A {@link FXStaticAnchor} provides a static position per anchor link.
- * 
+ *
  * @author mwienand
- * 
+ * @author anyssen
+ *
  */
 public class FXStaticAnchor extends AbstractFXAnchor {
 
-	/**
-	 * Creates an "empty" static anchor, i.e. no positions are stored, yet.
-	 */
-	public FXStaticAnchor() {
-		super(null);
-	}
+	private Point position;
 
-	public FXStaticAnchor(AnchorKey key, Point position) {
-		this(null, key, position);
-	}
-
-	public FXStaticAnchor(Node anchorage, AnchorKey key, Point position) {
+	public FXStaticAnchor(Node anchorage, Point position) {
 		super(anchorage);
-		attach(key);
-		positionProperty().put(key, position);
+		this.position = position;
+	}
+
+	public FXStaticAnchor(Point position) {
+		this(null, position);
+	}
+
+	@Override
+	public Point getPosition(AnchorKey key) {
+		return position;
 	}
 
 	@Override
 	protected void recomputePositions(Node anchored) {
 		// nothing to compute (*static* anchor)
-	}
-
-	public void setPosition(AnchorKey key, Point position) {
-		positionProperty().put(key, position);
 	}
 
 }

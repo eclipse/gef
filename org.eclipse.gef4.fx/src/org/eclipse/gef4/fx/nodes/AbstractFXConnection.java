@@ -50,19 +50,19 @@ implements IFXConnection {
 	 * The <i>id</i> used to identify the start point of this connection at the
 	 * start anchor.
 	 */
-	public static final String START_ROLE = "start";
+	private static final String START_ROLE = "start";
 
 	/**
 	 * The <i>id</i> used to identify the end point of this connection at the
 	 * end anchor.
 	 */
-	public static final String END_ROLE = "end";
+	private static final String END_ROLE = "end";
 
 	/**
 	 * Prefix for the default <i>ids</i> used by this connection to identify
 	 * specific way points at way point anchors.
 	 */
-	public static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
+	private static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
@@ -250,10 +250,9 @@ implements IFXConnection {
 
 	@Override
 	public AnchorLink createWayPointAnchorLink(Point wayPoint) {
-		FXStaticAnchor anchor = new FXStaticAnchor();
+		FXStaticAnchor anchor = new FXStaticAnchor(wayPoint);
 		AnchorLink link = createWayPointAnchorLink(anchor);
 		anchor.attach(link.getKey());
-		anchor.setPosition(link.getKey(), wayPoint);
 		return link;
 	}
 
@@ -527,7 +526,7 @@ implements IFXConnection {
 	@Override
 	public void setEndPoint(Point p) {
 		AnchorKey key = new AnchorKey(this, END_ROLE);
-		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
+		FXStaticAnchor anchor = new FXStaticAnchor(p);
 		setEndAnchorLink(new AnchorLink(anchor, key));
 	}
 
@@ -633,7 +632,7 @@ implements IFXConnection {
 	@Override
 	public void setStartPoint(Point p) {
 		AnchorKey key = new AnchorKey(this, START_ROLE);
-		FXStaticAnchor anchor = new FXStaticAnchor(key, p);
+		FXStaticAnchor anchor = new FXStaticAnchor(p);
 		setStartAnchorLink(new AnchorLink(anchor, key));
 	}
 

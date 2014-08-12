@@ -41,11 +41,11 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
  * <li>Reconnecting points to the {@link IVisualPart} under mouse when
  * applicable.</li>
  * </ul>
- * 
+ *
  * @author mwienand
  */
 public class FXBendPolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+ITransactional {
 
 	// constants (TODO: make configurable)
 	protected static final double REMOVE_THRESHOLD = 10;
@@ -77,8 +77,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		op.getNewLinks().add(
 				segmentIndex,
 				((IFXConnection) hostVisual)
-						.createWayPointAnchorLink(new Point(
-								mouseInLocal.getX(), mouseInLocal.getY())));
+				.createWayPointAnchorLink(new Point(
+						mouseInLocal.getX(), mouseInLocal.getY())));
 		locallyExecuteOperation();
 
 		// select newly created way point
@@ -228,7 +228,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		if (link == null) {
 			// use static anchor, re-use key
 			AnchorKey key = op.getNewLinks().get(linkIndex).getKey();
-			FXStaticAnchor anchor = new FXStaticAnchor(key, currentPoint);
+			FXStaticAnchor anchor = new FXStaticAnchor(currentPoint);
 			link = new AnchorLink(anchor, key);
 		}
 
