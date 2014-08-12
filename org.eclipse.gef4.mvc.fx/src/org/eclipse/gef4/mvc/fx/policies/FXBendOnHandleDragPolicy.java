@@ -31,10 +31,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- * 
+ *
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
 public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
@@ -49,8 +49,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			// " waypoints");
 			// System.out.println("After: " + newWaypoints.size() +
 			// " waypoints");
-			List<FXSegmentHandlePart> parts = PartUtils.filterParts(PartUtils
-					.getAnchoreds(getHost().getAnchorages().keySet()),
+			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
+					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
 					FXSegmentHandlePart.class);
 			Collections.<FXSegmentHandlePart> sort(parts);
 			// System.out.println("Found " + parts.size() +
@@ -103,8 +103,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
 			List<IContentPart<Node>> partsUnderMouse) {
-		IVisualPart<Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
+		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
+				.iterator().next();
 		IFXConnection connection = (IFXConnection) anchorage.getVisual();
 
 		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
@@ -132,8 +132,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
 
-		IVisualPart<Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
+		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
+				.iterator().next();
 		getBendPolicy(anchorage).init();
 
 		if (hp.getSegmentParameter() == 0.5) {
@@ -142,8 +142,8 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
-			List<FXSegmentHandlePart> parts = PartUtils.filterParts(PartUtils
-					.getAnchoreds(getHost().getAnchorages().keySet()),
+			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
+					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
 					FXSegmentHandlePart.class);
 
 			// sort parts by segment index and parameter
@@ -153,7 +153,7 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-								.getSegmentParameter() == 1)) {
+						.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
@@ -173,11 +173,12 @@ public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void release(MouseEvent e, Dimension delta,
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
-		IVisualPart<Node> anchorage = getHost().getAnchorages()
-				.keySet().iterator().next();
+		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
+				.iterator().next();
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
 
+		// TODO: move into operation and ensure its also done on undo!!
 		ISelectionModel<Node> selm = getHost().getRoot().getViewer()
 				.getSelectionModel();
 		// TODO: reselect all anchorages that were selected
