@@ -241,10 +241,6 @@ public class FXMouseDragSnippet extends FXApplication {
 			}
 
 			FXCurveConnection connection = new FXCurveConnection();
-			new FXChopBoxHelper(connection);
-
-			AnchorKey kn = new AnchorKey(connection, "start");
-			AnchorKey km = new AnchorKey(connection, "end");
 
 			IFXAnchor an, am;
 			if (anchors.containsKey(n)) {
@@ -261,8 +257,8 @@ public class FXMouseDragSnippet extends FXApplication {
 				anchors.put(m, am);
 			}
 
-			connection.setStartAnchorLink(new AnchorLink(an, kn));
-			connection.setEndAnchorLink(new AnchorLink(am, km));
+			connection.setStartAnchor(an);
+			connection.setEndAnchor(am);
 
 			connection.setEffect(new BoxBlur());
 
