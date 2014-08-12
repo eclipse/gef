@@ -70,7 +70,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		// shape and line through anchorage and anchor reference points.
 
 		AffineTransform anchorageToSceneTransform = JavaFX2Geometry
-				.toAffineTransform(getAnchorageNode()
+				.toAffineTransform(getAnchorage()
 						.getLocalToSceneTransform());
 
 		if (!isValidTransform(anchorageToSceneTransform)) {
@@ -146,7 +146,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected IShape getAnchorageReferenceShape() {
 		return JavaFX2Geometry
-				.toRectangle(getAnchorageNode().getLayoutBounds());
+				.toRectangle(getAnchorage().getLayoutBounds());
 	}
 
 	/**

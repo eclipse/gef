@@ -83,11 +83,11 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	public AbstractFXAnchor(Node anchorage) {
 		anchorageProperty.addListener(anchorageChangeListener);
-		setAnchorageNode(anchorage);
+		setAnchorage(anchorage);
 	}
 
 	@Override
-	public ReadOnlyObjectProperty<Node> anchorageNodeProperty() {
+	public ReadOnlyObjectProperty<Node> anchorageProperty() {
 		return anchorageProperty.getReadOnlyProperty();
 	}
 
@@ -166,7 +166,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public Node getAnchorageNode() {
+	public Node getAnchorage() {
 		return anchorageProperty.get();
 	}
 
@@ -203,11 +203,11 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	protected void registerVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
-			vcls.get(anchored).register(getAnchorageNode(), anchored);
+			vcls.get(anchored).register(getAnchorage(), anchored);
 		}
 	}
 
-	protected void setAnchorageNode(Node anchorage) {
+	protected void setAnchorage(Node anchorage) {
 		anchorageProperty.set(anchorage);
 	}
 

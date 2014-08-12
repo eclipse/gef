@@ -461,7 +461,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(AnchorLink link) {
-		Node anchorageNode = link.getAnchor().getAnchorageNode();
+		Node anchorageNode = link.getAnchor().getAnchorage();
 		IVisualPart<Node> part = getViewer().getVisualPartMap().get(
 				anchorageNode);
 		if (part instanceof IContentPart) {

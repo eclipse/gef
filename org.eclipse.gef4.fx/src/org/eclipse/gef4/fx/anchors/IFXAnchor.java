@@ -27,7 +27,7 @@ public interface IFXAnchor {
 	/**
 	 * @return property storing the anchorage {@link Node}
 	 */
-	ReadOnlyObjectProperty<Node> anchorageNodeProperty();
+	ReadOnlyObjectProperty<Node> anchorageProperty();
 
 	/**
 	 * Attaches the given {@link AnchorKey} to this {@link IFXAnchor}.
@@ -40,9 +40,9 @@ public interface IFXAnchor {
 	void detach(AnchorKey key);
 
 	/**
-	 * @return value of {@link #anchorageNodeProperty()}
+	 * @return value of {@link #anchorageProperty()}
 	 */
-	Node getAnchorageNode();
+	Node getAnchorage();
 
 	/**
 	 * @param key

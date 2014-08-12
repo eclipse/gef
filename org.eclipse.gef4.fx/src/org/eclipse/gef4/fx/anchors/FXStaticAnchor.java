@@ -45,7 +45,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	@Override
 	protected void recomputePositions(Node anchored) {
 		// nothing to compute (*static* anchor)
-		Node anchorage = getAnchorageNode();
+		Node anchorage = getAnchorage();
 		Point positionInScene = anchorage == null ? position : JavaFX2Geometry
 				.toPoint(anchorage.localToScene(position.x, position.y));
 		for (AnchorKey key : getKeys().get(anchored)) {

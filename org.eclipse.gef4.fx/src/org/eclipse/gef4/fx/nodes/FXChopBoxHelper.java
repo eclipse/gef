@@ -140,7 +140,7 @@ public class FXChopBoxHelper {
 
 		// first uncontained way point is start reference
 		Node startNode = connection.getStartAnchorLink().getAnchor()
-				.getAnchorageNode();
+				.getAnchorage();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
 				if (p == null) {
@@ -157,7 +157,7 @@ public class FXChopBoxHelper {
 
 		// last uncontained way point is end reference
 		Node endNode = connection.getEndAnchorLink().getAnchor()
-				.getAnchorageNode();
+				.getAnchorage();
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
@@ -178,7 +178,7 @@ public class FXChopBoxHelper {
 		if (startReference == null) {
 			if (connection.isEndConnected()) {
 				Node anchorageNode = connection.getEndAnchorLink().getAnchor()
-						.getAnchorageNode();
+						.getAnchorage();
 				if (anchorageNode != null) {
 					startReference = getCenter(anchorageNode);
 				}
@@ -196,7 +196,7 @@ public class FXChopBoxHelper {
 		if (endReference == null) {
 			if (connection.isStartConnected()) {
 				Node anchorageNode = connection.getStartAnchorLink()
-						.getAnchor().getAnchorageNode();
+						.getAnchor().getAnchorage();
 				if (anchorageNode != null) {
 					endReference = getCenter(anchorageNode);
 				}

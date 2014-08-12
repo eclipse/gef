@@ -159,7 +159,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	private Point getAnchorageCenter(AnchorLink al) {
-		Node anchorage = al.getAnchor().getAnchorageNode();
+		Node anchorage = al.getAnchor().getAnchorage();
 		Rectangle bounds = JavaFX2Geometry.toRectangle(anchorage
 				.localToScene(anchorage.getLayoutBounds()));
 		return bounds.getCenter();
