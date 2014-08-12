@@ -13,6 +13,7 @@ package org.eclipse.gef4.fx.anchors;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
@@ -26,23 +27,29 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 
 	private Point position;
 
-	public FXStaticAnchor(Node anchorage, Point position) {
+	public FXStaticAnchor(Node anchorage, Point positionInAnchorageLocal) {
 		super(anchorage);
-		this.position = position;
+		this.position = positionInAnchorageLocal;
 	}
 
-	public FXStaticAnchor(Point position) {
-		this(null, position);
+	public FXStaticAnchor(Point positionInScene) {
+		super(null);
+		this.position = positionInScene;
 	}
 
 	@Override
 	public Point getPosition(AnchorKey key) {
-		return position;
+		return positionProperty().get(key);
 	}
 
 	@Override
 	protected void recomputePositions(Node anchored) {
 		// nothing to compute (*static* anchor)
+		Node anchorage = getAnchorageNode();
+		Point positionInScene = anchorage == null ? position : JavaFX2Geometry
+				.toPoint(anchorage.localToScene(position.x, position.y));
+		for (AnchorKey key : getKeys().get(anchored)) {
+			positionProperty().put(key, positionInScene);
+		}
 	}
-
 }

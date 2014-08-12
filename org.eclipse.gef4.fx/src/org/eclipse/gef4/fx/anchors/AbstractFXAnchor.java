@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Ny??en (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -110,6 +110,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				vcl.register(anchorageProperty.get(), anchored);
 			}
 		}
+
+		recomputePositions(key.getAnchored());
 	}
 
 	private VisualChangeListener createVCL(final Node anchored) {
