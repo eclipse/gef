@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Ny??en (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
@@ -18,9 +18,9 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 public interface IFXAnchor {
 
@@ -54,7 +54,7 @@ public interface IFXAnchor {
 	/**
 	 * Determines if the given {@link AnchorKey} is currently attached to this
 	 * {@link IFXAnchor}.
-	 * 
+	 *
 	 * @param key
 	 * @return <code>true</code> if the given key is attached, otherwise
 	 *         <code>false</code>.

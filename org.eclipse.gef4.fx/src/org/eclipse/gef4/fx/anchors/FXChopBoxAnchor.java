@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Ny??en (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
@@ -70,8 +70,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		// shape and line through anchorage and anchor reference points.
 
 		AffineTransform anchorageToSceneTransform = JavaFX2Geometry
-				.toAffineTransform(getAnchorage()
-						.getLocalToSceneTransform());
+				.toAffineTransform(getAnchorage().getLocalToSceneTransform());
 
 		if (!isValidTransform(anchorageToSceneTransform)) {
 			anchorageToSceneTransform = new AffineTransform();
@@ -140,13 +139,12 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * a {@link Rectangle} matching the layout-bounds of the anchorage
 	 * {@link Node} is returned. Clients may override this method to use other
 	 * geometric shapes instead.
-	 * 
+	 *
 	 * @return The anchorage reference {@link IShape} within the local
 	 *         coordinate system of the anchorage {@link Node}
 	 */
 	protected IShape getAnchorageReferenceShape() {
-		return JavaFX2Geometry
-				.toRectangle(getAnchorage().getLayoutBounds());
+		return JavaFX2Geometry.toRectangle(getAnchorage().getLayoutBounds());
 	}
 
 	/**
@@ -171,7 +169,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * {@link Node} and reference {@link Point}. The
 	 * {@link #computePosition(Node, Point)} method is used to determine the new
 	 * position, which in turn is put into the {@link #positionProperty()}.
-	 * 
+	 *
 	 * @param key
 	 * @param referencePoint
 	 */
@@ -210,7 +208,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	/**
 	 * Assigns the given reference point to the given anchored in the reference
 	 * point map.
-	 * 
+	 *
 	 * @param key
 	 * @param referencePoint
 	 */
