@@ -13,31 +13,47 @@ package org.eclipse.gef4.mvc.fx.example;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
+import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
 import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.MapBinder;
 
 public class FXExampleModule extends MvcFxModule {
 
-	@Override
-	protected void bindFXDefaultHandlePartFactory() {
-		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).toInstance(new FXExampleHandlePartFactory());
-	}
+    @Override
+    protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+        super.bindAbstractContentPartAdapters(adapterMapBinder);
+        // register (default) interaction policies (which are based on viewer
+        // models and do not depend on transaction policies)
+        adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
+                FXFocusAndSelectOnClickPolicy.class);
+        adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
+    }
 
-	protected void bindIContentPartFactory() {
-		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).toInstance(new FXExampleContentPartFactory());
-	}
+    @Override
+    protected void bindFXDefaultHandlePartFactory() {
+        binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+        }).toInstance(new FXExampleHandlePartFactory());
+    }
 
-	@Override
-	protected void configure() {
-		super.configure();
-		bindIContentPartFactory();
-	}
+    protected void bindIContentPartFactory() {
+        binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+        }).toInstance(new FXExampleContentPartFactory());
+    }
+
+    @Override
+    protected void configure() {
+        super.configure();
+        bindIContentPartFactory();
+    }
 
 }
