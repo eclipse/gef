@@ -87,6 +87,8 @@ public abstract class FXView extends ViewPart {
     public void dispose() {
         domain.deactivate();
 
+        domain.getOperationHistory().dispose(domain.getUndoContext(), true, true, true);
+
         // unregister listener to provide selections
         if (selectionProvider != null) {
             getViewer().getSelectionModel().removePropertyChangeListener(selectionForwarder);

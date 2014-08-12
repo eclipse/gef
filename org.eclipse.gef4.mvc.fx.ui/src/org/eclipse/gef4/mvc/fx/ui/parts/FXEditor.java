@@ -96,6 +96,7 @@ public abstract class FXEditor extends EditorPart {
         domain.deactivate();
 
         domain.getOperationHistory().removeOperationHistoryListener(operationHistoryListener);
+        domain.getOperationHistory().dispose(domain.getUndoContext(), true, true, true);
 
         // unregister listener to provide selections
         if (selectionProvider != null) {
