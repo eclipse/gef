@@ -7,23 +7,22 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.ui;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.inject.AbstractModule;
 
 public class MvcUiModule extends AbstractModule {
-	
-	@Override
-	protected void configure() {
-		// bindings related to workbench integration
-		binder().bind(IUndoContext.class).toInstance(PlatformUI.getWorkbench().getOperationSupport().getUndoContext());
-		binder().bind(IOperationHistory.class).toInstance(PlatformUI.getWorkbench().getOperationSupport().getOperationHistory());
-	}
+
+    @Override
+    protected void configure() {
+        // bindings related to workbench integration
+        binder().bind(IOperationHistory.class).toInstance(
+                PlatformUI.getWorkbench().getOperationSupport().getOperationHistory());
+    }
 
 }
