@@ -8,7 +8,7 @@
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - multi selection handles in root part
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
@@ -29,9 +29,9 @@ import com.google.inject.Provider;
 /**
  * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
  * selection feedback.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -50,7 +50,8 @@ public abstract class AbstractSelectionBehavior<VR> extends
 				.getSelectionModel().getSelected());
 	}
 
-	protected void addFeedbackAndHandles(List<IContentPart<VR>> selected) {
+	protected void addFeedbackAndHandles(
+			List<? extends IContentPart<VR>> selected) {
 		// root is responsible for multi selection
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			addFeedback(selected);
@@ -79,10 +80,10 @@ public abstract class AbstractSelectionBehavior<VR> extends
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
-	 * 
+	 *
 	 * @param contextMap
 	 *            TODO
-	 * 
+	 *
 	 * @return an {@link IGeometry} determining feedback positions
 	 */
 	protected abstract IGeometry getFeedbackGeometry(
@@ -104,10 +105,10 @@ public abstract class AbstractSelectionBehavior<VR> extends
 	 * <p>
 	 * Per default, the {@link #getFeedbackGeometry(Map) feedback geometry} is
 	 * returned.
-	 * 
+	 *
 	 * @param contextMap
 	 *            TODO
-	 * 
+	 *
 	 * @return an {@link IGeometry} determining handle positions
 	 */
 	protected abstract IGeometry getHandleGeometry(
@@ -137,7 +138,8 @@ public abstract class AbstractSelectionBehavior<VR> extends
 		}
 	}
 
-	protected void removeFeedbackAndHandles(List<IContentPart<VR>> selected) {
+	protected void removeFeedbackAndHandles(
+			List<? extends IContentPart<VR>> selected) {
 		// root is responsible for multi selection
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			removeHandles(selected);
