@@ -23,37 +23,59 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 public class FXExampleModule extends MvcFxModule {
 
-    @Override
-    protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-        super.bindAbstractContentPartAdapters(adapterMapBinder);
-        // register (default) interaction policies (which are based on viewer
-        // models and do not depend on transaction policies)
-        adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-                FXFocusAndSelectOnClickPolicy.class);
-        adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
-    }
+	@Override
+	protected void bindAbstractContentPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindAbstractContentPartAdapters(adapterMapBinder);
+		// register (default) interaction policies (which are based on viewer
+		// models and do not depend on transaction policies)
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
+						FXFocusAndSelectOnClickPolicy.class);
+		adapterMapBinder
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 
-    @Override
-    protected void bindFXDefaultHandlePartFactory() {
-        binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-        }).toInstance(new FXExampleHandlePartFactory());
-    }
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+		.to(new TypeLiteral<DefaultHoverPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
+						new TypeLiteral<DefaultSelectionPolicy<Node>>() {
+						});
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
+		.to(new TypeLiteral<DefaultZoomPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultFocusPolicy.class))
+		.to(new TypeLiteral<DefaultFocusPolicy<Node>>() {
+		});
+	}
 
-    protected void bindIContentPartFactory() {
-        binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-        }).toInstance(new FXExampleContentPartFactory());
-    }
+	@Override
+	protected void bindFXDefaultHandlePartFactory() {
+		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+		}).toInstance(new FXExampleHandlePartFactory());
+	}
 
-    @Override
-    protected void configure() {
-        super.configure();
-        bindIContentPartFactory();
-    }
+	protected void bindIContentPartFactory() {
+		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
+		}).toInstance(new FXExampleContentPartFactory());
+	}
+
+	@Override
+	protected void configure() {
+		super.configure();
+		bindIContentPartFactory();
+	}
 
 }

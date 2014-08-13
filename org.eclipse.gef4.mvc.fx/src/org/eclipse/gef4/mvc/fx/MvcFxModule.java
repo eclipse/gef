@@ -59,6 +59,7 @@ public class MvcFxModule extends MvcModule<Node> {
         // register default behaviors ( (which are based on viewer models)
         adapterMapBinder.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(FXHoverBehavior.class);
         adapterMapBinder.addBinding(AdapterKey.get(AbstractSelectionBehavior.class)).to(FXSelectionBehavior.class);
+        // TODO: add AbstractFocusBehavior and use as key here
         adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(FXFocusBehavior.class);
     }
 

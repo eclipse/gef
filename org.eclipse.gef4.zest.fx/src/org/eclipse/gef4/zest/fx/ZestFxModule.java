@@ -25,7 +25,10 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.models.DefaultLayoutModel;
@@ -55,6 +58,20 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 				FXHoverOnHoverPolicy.class);
+
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
+		.to(new TypeLiteral<DefaultHoverPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(
+				AdapterKey.get(DefaultSelectionPolicy.class)).to(
+						new TypeLiteral<DefaultSelectionPolicy<Node>>() {
+						});
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
+		.to(new TypeLiteral<DefaultZoomPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(AdapterKey.get(DefaultFocusPolicy.class))
+		.to(new TypeLiteral<DefaultFocusPolicy<Node>>() {
+		});
 	}
 
 	@Override
