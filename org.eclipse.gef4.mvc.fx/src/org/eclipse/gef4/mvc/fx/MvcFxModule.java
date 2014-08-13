@@ -18,6 +18,7 @@ import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
@@ -115,9 +116,9 @@ public class MvcFxModule extends MvcModule<Node> {
                 FXZoomOnPinchSpreadPolicy.class);
 
         // register (default) behaviors (which are based on viewer models)
-        adapterMapBinder.addBinding(AdapterKey.get(FXSelectionBehavior.class)).to(FXSelectionBehavior.class);
-        adapterMapBinder.addBinding(AdapterKey.get(FXHoverBehavior.class)).to(FXHoverBehavior.class);
-        adapterMapBinder.addBinding(AdapterKey.get(FXZoomBehavior.class)).to(FXZoomBehavior.class);
+        adapterMapBinder.addBinding(AdapterKey.get(AbstractSelectionBehavior.class)).to(FXSelectionBehavior.class);
+        adapterMapBinder.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(FXHoverBehavior.class);
+        adapterMapBinder.addBinding(AdapterKey.get(AbstractZoomBehavior.class)).to(FXZoomBehavior.class);
     }
 
     protected void bindFXViewer() {
