@@ -50,33 +50,34 @@ public class FXConnectionSnippet extends FXApplication {
 			return this;
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		launch();
 	}
-	
+
 	@Override
 	public Scene createScene() {
-		FXLabeledConnection connection = new FXLabeledConnection(new Text(), new FXCurveConnection() {
-			@Override
-			public ICurve computeGeometry(Point[] points) {
-				if (points == null || points.length < 2) {
-					return new Line(0, 0, 0, 0);
-				}
-				return PolyBezier.interpolateCubic(points);
-			}
-		});
+		FXLabeledConnection connection = new FXLabeledConnection(new Text(),
+				new FXCurveConnection() {
+					@Override
+					public ICurve computeGeometry(Point[] points) {
+						if (points == null || points.length < 2) {
+							return new Line(0, 0, 0, 0);
+						}
+						return PolyBezier.interpolateCubic(points);
+					}
+				});
 		connection.setLabel("FXLabeledConnection");
-		
+
 		FXCurveConnection c = connection.getConnection();
 		c.setStartDecoration(new ArrowHead());
 		c.setEndDecoration(new ArrowHead());
-		
+
 		c.setStartPoint(new Point(100, 100));
 		c.setEndPoint(new Point(300, 300));
-		
+
 		c.addWayPoint(0, new Point(300, 100));
-		
+
 		Pane root = new Pane();
 		root.getChildren().addAll(connection);
 		return new Scene(root);

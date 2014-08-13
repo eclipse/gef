@@ -9,26 +9,26 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class FXCurvePropertySource implements IPropertySource {
 
 	private static final IPropertyDescriptor SOURCE_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
-			FXGeometricCurve.SOURCE_DECORATION_PROPERTY, "Source Decoration", new String[] {
-					Decoration.NONE.name(), Decoration.ARROW.name(),
+			FXGeometricCurve.SOURCE_DECORATION_PROPERTY, "Source Decoration",
+			new String[] { Decoration.NONE.name(), Decoration.ARROW.name(),
 					Decoration.CIRCLE.name() });
 	private static final IPropertyDescriptor TARGET_DECORATION_PROPERTY = new ComboBoxPropertyDescriptor(
-			FXGeometricCurve.TARGET_DECORATION_PROPERTY, "Target Decoration", new String[] {
-					Decoration.NONE.name(), Decoration.ARROW.name(),
+			FXGeometricCurve.TARGET_DECORATION_PROPERTY, "Target Decoration",
+			new String[] { Decoration.NONE.name(), Decoration.ARROW.name(),
 					Decoration.CIRCLE.name() });
-	
+
 	private FXGeometricCurve curve;
 
-	public FXCurvePropertySource(FXGeometricCurve curve){
+	public FXCurvePropertySource(FXGeometricCurve curve) {
 		this.curve = curve;
 	}
-	
+
 	@Override
 	public Object getEditableValue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return new IPropertyDescriptor[] { SOURCE_DECORATION_PROPERTY,

@@ -39,7 +39,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  *
  */
 public interface IRootPart<VR> extends IVisualPart<VR>,
-IAdaptable.Bound<IViewer<VR>> {
+		IAdaptable.Bound<IViewer<VR>> {
 
 	/**
 	 * Returns all children of type {@link IContentPart} contained by this

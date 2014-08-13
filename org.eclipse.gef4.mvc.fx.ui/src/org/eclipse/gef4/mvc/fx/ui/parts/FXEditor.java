@@ -42,129 +42,135 @@ import com.google.inject.Injector;
  */
 public abstract class FXEditor extends EditorPart {
 
-    @Inject
-    private FXDomain domain;
+	@Inject
+	private FXDomain domain;
 
-    @Inject
-    private IFXCanvasFactory canvasFactory;
+	@Inject
+	private IFXCanvasFactory canvasFactory;
 
-    @Inject(optional = true)
-    private ISelectionProvider selectionProvider;
+	@Inject(optional = true)
+	private ISelectionProvider selectionProvider;
 
-    private SelectionForwarder selectionForwarder;
+	private SelectionForwarder selectionForwarder;
 
-    private FXCanvas canvas = null;
+	private FXCanvas canvas = null;
 
-    private IPropertySheetPage propertySheetPage;
+	private IPropertySheetPage propertySheetPage;
 
-    private IOperationHistoryListener operationHistoryListener;
+	private IOperationHistoryListener operationHistoryListener;
 
-    // TOOD: use executable extension factory to inject this class
-    public FXEditor(final Injector injector) {
-        injector.injectMembers(this);
-    }
+	// TOOD: use executable extension factory to inject this class
+	public FXEditor(final Injector injector) {
+		injector.injectMembers(this);
+	}
 
-    protected FXCanvas createCanvas(final Composite parent) {
-        return canvasFactory.createCanvas(parent);
-    }
+	protected FXCanvas createCanvas(final Composite parent) {
+		return canvasFactory.createCanvas(parent);
+	}
 
-    @Override
-    public void createPartControl(final Composite parent) {
-        // create viewer and canvas only after toolkit has been initialized
-        canvas = createCanvas(parent);
+	@Override
+	public void createPartControl(final Composite parent) {
+		// create viewer and canvas only after toolkit has been initialized
+		canvas = createCanvas(parent);
 
-        // domain was already injected, hook viewer to controls (via scene
-        // container)
-        final FXViewer viewer = domain.getAdapter(IViewer.class);
-        viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
+		// domain was already injected, hook viewer to controls (via scene
+		// container)
+		final FXViewer viewer = domain.getAdapter(IViewer.class);
+		viewer.setSceneContainer(new FXCanvasSceneContainer(canvas));
 
-        // activate domain
-        domain.activate();
+		// activate domain
+		domain.activate();
 
-        // populate viewer
-        viewer.setContents(getContents());
+		// populate viewer
+		viewer.setContents(getContents());
 
-        // register listener to provide selection to workbench
-        if (selectionProvider != null) {
-            selectionForwarder = new SelectionForwarder(selectionProvider);
-            getViewer().getSelectionModel().addPropertyChangeListener(selectionForwarder);
-        }
-    }
+		// register listener to provide selection to workbench
+		if (selectionProvider != null) {
+			selectionForwarder = new SelectionForwarder(selectionProvider);
+			getViewer().getSelectionModel().addPropertyChangeListener(
+					selectionForwarder);
+		}
+	}
 
-    @Override
-    public void dispose() {
-        domain.deactivate();
+	@Override
+	public void dispose() {
+		domain.deactivate();
 
-        domain.getOperationHistory().removeOperationHistoryListener(operationHistoryListener);
-        domain.getOperationHistory().dispose(domain.getUndoContext(), true, true, true);
+		domain.getOperationHistory().removeOperationHistoryListener(
+				operationHistoryListener);
+		domain.getOperationHistory().dispose(domain.getUndoContext(), true,
+				true, true);
 
-        // unregister listener to provide selections
-        if (selectionProvider != null) {
-            getViewer().getSelectionModel().removePropertyChangeListener(selectionForwarder);
-        }
-        super.dispose();
-    }
+		// unregister listener to provide selections
+		if (selectionProvider != null) {
+			getViewer().getSelectionModel().removePropertyChangeListener(
+					selectionForwarder);
+		}
+		super.dispose();
+	}
 
-    @Override
-    public Object getAdapter(final Class key) {
-        // Provide a default selection provider (subclasses may overwrite by
-        // handling the key and returning a different implementation
-        // replace with binding
-        if (ISelectionProvider.class.equals(key)) {
-            return selectionProvider;
-        }
-        // contribute to Properties view
-        else if (IPropertySheetPage.class.equals(key)) {
-            if (propertySheetPage == null) {
-                propertySheetPage =
-                        new UndoablePropertySheetPage((IOperationHistory) getAdapter(IOperationHistory.class),
-                                (IUndoContext) getAdapter(IUndoContext.class),
-                                (UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
-            }
-            return propertySheetPage;
-        } else if (IOperationHistory.class.equals(key)) {
-            return domain.getOperationHistory();
-        }
-        return super.getAdapter(key);
-    }
+	@Override
+	public Object getAdapter(final Class key) {
+		// Provide a default selection provider (subclasses may overwrite by
+		// handling the key and returning a different implementation
+		// replace with binding
+		if (ISelectionProvider.class.equals(key)) {
+			return selectionProvider;
+		}
+		// contribute to Properties view
+		else if (IPropertySheetPage.class.equals(key)) {
+			if (propertySheetPage == null) {
+				propertySheetPage = new UndoablePropertySheetPage(
+						(IOperationHistory) getAdapter(IOperationHistory.class),
+						(IUndoContext) getAdapter(IUndoContext.class),
+						(UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
+			}
+			return propertySheetPage;
+		} else if (IOperationHistory.class.equals(key)) {
+			return domain.getOperationHistory();
+		}
+		return super.getAdapter(key);
+	}
 
-    protected FXCanvas getCanvas() {
-        return canvas;
-    }
+	protected FXCanvas getCanvas() {
+		return canvas;
+	}
 
-    protected abstract List<? extends Object> getContents();
+	protected abstract List<? extends Object> getContents();
 
-    protected FXDomain getDomain() {
-        return domain;
-    }
+	protected FXDomain getDomain() {
+		return domain;
+	}
 
-    protected FXViewer getViewer() {
-        return domain.getAdapter(IViewer.class);
-    }
+	protected FXViewer getViewer() {
+		return domain.getAdapter(IViewer.class);
+	}
 
-    @Override
-    public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
-        setInput(input);
-        setSite(site);
+	@Override
+	public void init(final IEditorSite site, final IEditorInput input)
+			throws PartInitException {
+		setInput(input);
+		setSite(site);
 
-        // register selection provider (if we want to a provide selection)
-        if (selectionProvider != null) {
-            site.setSelectionProvider(selectionProvider);
-        }
+		// register selection provider (if we want to a provide selection)
+		if (selectionProvider != null) {
+			site.setSelectionProvider(selectionProvider);
+		}
 
-        operationHistoryListener = new IOperationHistoryListener() {
-            @Override
-            public void historyNotification(final OperationHistoryEvent event) {
-                firePropertyChange(IEditorPart.PROP_DIRTY);
-            }
-        };
+		operationHistoryListener = new IOperationHistoryListener() {
+			@Override
+			public void historyNotification(final OperationHistoryEvent event) {
+				firePropertyChange(IEditorPart.PROP_DIRTY);
+			}
+		};
 
-        getDomain().getOperationHistory().addOperationHistoryListener(operationHistoryListener);
-    }
+		getDomain().getOperationHistory().addOperationHistoryListener(
+				operationHistoryListener);
+	}
 
-    @Override
-    public void setFocus() {
-        canvas.setFocus();
-    }
+	@Override
+	public void setFocus() {
+		canvas.setFocus();
+	}
 
 }

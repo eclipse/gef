@@ -236,8 +236,8 @@ public class FXMouseDragSnippet extends FXApplication {
 					(int) (Math.random() * count / 2));
 			Node m = null;
 			while (m == null || m == n) {
-				m = handleLayer.getChildren()
-						.get((int) (Math.random() * count / 2));
+				m = handleLayer.getChildren().get(
+						(int) (Math.random() * count / 2));
 			}
 
 			FXCurveConnection connection = new FXCurveConnection();

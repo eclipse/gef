@@ -11,13 +11,13 @@ public class FXShapePropertySource implements IPropertySource {
 
 	private static final IPropertyDescriptor FILL_PROPERTY_DESCRIPTOR = new FXFillPropertyDescriptor(
 			FXGeometricShape.FILL_PROPERTY, "Fill");
-	
+
 	private FXGeometricShape shape;
-	
-	public FXShapePropertySource(FXGeometricShape shape){
+
+	public FXShapePropertySource(FXGeometricShape shape) {
 		this.shape = shape;
 	}
-	
+
 	@Override
 	public Object getEditableValue() {
 		// TODO Auto-generated method stub

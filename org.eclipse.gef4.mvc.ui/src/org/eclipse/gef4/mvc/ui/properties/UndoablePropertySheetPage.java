@@ -41,8 +41,9 @@ public class UndoablePropertySheetPage extends PropertySheetPage {
 	 *            The {@link IUndoContext} shared with the editor/view.
 	 * @param actionGroup
 	 *            The {@link UndoRedoActionGroup} shared with the editor/view,
-	 *            used to contribute UNDO/REDO actions. May be <code>null</code>.
-	 *            
+	 *            used to contribute UNDO/REDO actions. May be <code>null</code>
+	 *            .
+	 * 
 	 */
 	public UndoablePropertySheetPage(IOperationHistory operationHistory,
 			IUndoContext undoContext, UndoRedoActionGroup actionGroup) {

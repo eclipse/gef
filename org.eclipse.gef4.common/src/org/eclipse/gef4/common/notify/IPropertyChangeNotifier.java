@@ -14,8 +14,8 @@ package org.eclipse.gef4.common.notify;
 import java.beans.PropertyChangeListener;
 
 public interface IPropertyChangeNotifier {
-	
-	//TODO add other interface methods from PropertyChangeSupport??
+
+	// TODO add other interface methods from PropertyChangeSupport??
 
 	public void addPropertyChangeListener(PropertyChangeListener listener);
 

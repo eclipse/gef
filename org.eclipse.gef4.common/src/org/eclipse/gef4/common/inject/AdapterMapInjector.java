@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.common.inject;
 
@@ -64,96 +64,96 @@ import com.google.inject.spi.UntargettedBinding;
  * method ({@link AdapterMap#adaptableType()}) is either the same or a sub-type
  * of the type used with the {@link AdapterMap} annotation of the related
  * binding.
- * 
+ *
  * @see AdapterMap
  * @see AdaptableTypeListener
- * 
  * @author anyssen
- *
  */
 public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 
-	private List<Object> deferredInstances = new ArrayList<Object>();
+	private final List<Object> deferredInstances = new ArrayList<Object>();
 
 	private class AdapterBindingsTargetVisitor implements
 			MultibindingsTargetVisitor<Object, Map<AdapterKey<?>, Object>> {
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				InstanceBinding<? extends Object> binding) {
+				final InstanceBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ProviderInstanceBinding<? extends Object> binding) {
+				final ProviderInstanceBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ProviderKeyBinding<? extends Object> binding) {
+				final ProviderKeyBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				LinkedKeyBinding<? extends Object> binding) {
+				final LinkedKeyBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ExposedBinding<? extends Object> binding) {
+				final ExposedBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				UntargettedBinding<? extends Object> binding) {
+				final UntargettedBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ConstructorBinding<? extends Object> binding) {
+				final ConstructorBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ConvertedConstantBinding<? extends Object> binding) {
+				final ConvertedConstantBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				ProviderBinding<? extends Object> binding) {
+				final ProviderBinding<? extends Object> binding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				MultibinderBinding<? extends Object> multibinding) {
+				final MultibinderBinding<? extends Object> multibinding) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Map<AdapterKey<?>, Object> visit(
-				MapBinderBinding<? extends Object> mapbinding) {
-			Map<AdapterKey<?>, Object> bindings = new HashMap<AdapterKey<?>, Object>();
-			for (Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
-				bindings.put((AdapterKey<?>) entry.getKey(), entry.getValue()
-						.getProvider().get());
+				final MapBinderBinding<? extends Object> mapbinding) {
+
+			final Map<AdapterKey<?>, Object> bindings = new HashMap<AdapterKey<?>, Object>();
+			for (final Entry<?, Binding<?>> entry : mapbinding.getEntries()) {
+				final AdapterKey<?> key = (AdapterKey<?>) entry.getKey();
+				final Object value = entry.getValue().getProvider().get();
+				bindings.put(key, value);
 			}
 			return bindings;
 		}
@@ -161,43 +161,45 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 
 	private Injector injector;
 
-	private Method method;
-	private AdapterMap methodAnnotation;
+	private final Method method;
+	private final AdapterMap methodAnnotation;
 
-	public AdapterMapInjector(Method method, AdapterMap methodAnnotation) {
+	public AdapterMapInjector(final Method method,
+			final AdapterMap methodAnnotation) {
 		this.method = method;
 		this.methodAnnotation = methodAnnotation;
 	}
 
 	@Inject
-	public void setInjector(Injector injector) {
+	public void setInjector(final Injector injector) {
 		this.injector = injector;
 		// perform deferred injections (if there have been any)
-		for (Object instance : deferredInstances) {
+		for (final Object instance : deferredInstances) {
 			injectAdapters(instance);
 		}
 		deferredInstances.clear();
 	}
 
 	protected SortedMap<Key<?>, Binding<?>> getPolymorphicAdapterBindingKeys(
-			Class<?> type, Method method, AdapterMap methodAnnotation) {
+			final Class<?> type, final Method method,
+			final AdapterMap methodAnnotation) {
 		// find available keys
-		Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
+		final Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
 		// IMPORTANT: use a sorted map, where keys are sorted according to
 		// hierarchy of annotation types (so we have polymorphic injection)
-		SortedMap<Key<?>, Binding<?>> polymorphicBindings = new TreeMap<Key<?>, Binding<?>>(
+		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = new TreeMap<Key<?>, Binding<?>>(
 				new Comparator<Key<?>>() {
 
 					@Override
-					public int compare(Key<?> o1, Key<?> o2) {
+					public int compare(final Key<?> o1, final Key<?> o2) {
 						if (!AdapterMap.class.equals(o1.getAnnotationType())
 								|| !AdapterMap.class.equals(o2
 										.getAnnotationType())) {
 							throw new IllegalArgumentException(
 									"Can only compare keys with AdapterMap annotations");
 						}
-						AdapterMap a1 = (AdapterMap) o1.getAnnotation();
-						AdapterMap a2 = (AdapterMap) o2.getAnnotation();
+						final AdapterMap a1 = (AdapterMap) o1.getAnnotation();
+						final AdapterMap a2 = (AdapterMap) o2.getAnnotation();
 						if (a1.adaptableType().equals(a2.adaptableType())) {
 							return 0;
 						} else if (a1.adaptableType().isAssignableFrom(
@@ -208,10 +210,11 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 						}
 					}
 				});
-		for (Key<?> key : allBindings.keySet()) {
-			if (key.getAnnotationType() != null
+		for (final Key<?> key : allBindings.keySet()) {
+			if ((key.getAnnotationType() != null)
 					&& AdapterMap.class.equals(key.getAnnotationType())) {
-				AdapterMap keyAnnotation = (AdapterMap) key.getAnnotation();
+				final AdapterMap keyAnnotation = (AdapterMap) key
+						.getAnnotation();
 				// Guice will already have injected all bindings where the
 				// adaptableType used in the method annotation is the same as
 				// the one used in the key annotation.
@@ -221,11 +224,10 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 						 * The annotation in the binding refers to a true
 						 * super-type of instance runtime type (check, because
 						 * if the type is the same, the default injector will
-						 * already inject the values)
-						 * 
-						 * IMPORTANT: we use type instead of methodAnnotation
-						 * .adaptableType() here, because the runtime type of
-						 * the to be injected IAdaptable is relevant
+						 * already inject the values) IMPORTANT: we use type
+						 * instead of methodAnnotation .adaptableType() here,
+						 * because the runtime type of the to be injected
+						 * IAdaptable is relevant
 						 */
 						&& keyAnnotation.adaptableType().isAssignableFrom(type)) {
 					// System.out.println("Applying binding for " +
@@ -239,7 +241,7 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 	}
 
 	@Override
-	public void injectMembers(IAdaptable instance) {
+	public void injectMembers(final IAdaptable instance) {
 		// inject all adapters bound by polymorphic AdapterBinding
 		// annotations
 		if (injector == null) {
@@ -253,28 +255,28 @@ public class AdapterMapInjector implements MembersInjector<IAdaptable> {
 		}
 	}
 
-	protected void injectAdapters(Object instance) {
-		SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterBindingKeys(
+	protected void injectAdapters(final Object instance) {
+		final SortedMap<Key<?>, Binding<?>> polymorphicBindings = getPolymorphicAdapterBindingKeys(
 				instance.getClass(), method, methodAnnotation);
 		// System.out.println("--");
-		for (Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
+		for (final Map.Entry<Key<?>, Binding<?>> entry : polymorphicBindings
 				.entrySet()) {
 			// System.out.println(((AdapterMap)entry.getKey().getAnnotation()).value());
 			try {
-				Map<AdapterKey<?>, Object> target = entry
+				final Map<AdapterKey<?>, Object> target = entry
 						.getValue()
 						.acceptTargetVisitor(new AdapterBindingsTargetVisitor());
-				if (target != null && !target.isEmpty()) {
+				if ((target != null) && !target.isEmpty()) {
 					// System.out.println("Injecting " + method.getName()
 					// + " of " + instance + " with " + target
 					// + " based on " + entry.getValue());
 					method.invoke(instance, target);
 				}
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (final InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}

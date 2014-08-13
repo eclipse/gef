@@ -56,7 +56,8 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @param operationHistory
 	 *            the operation history to use
 	 */
-	public UndoablePropertySheetEntry(IOperationHistory operationHistory, IUndoContext undoContext) {
+	public UndoablePropertySheetEntry(IOperationHistory operationHistory,
+			IUndoContext undoContext) {
 		this.operationHistory = operationHistory;
 		this.undoContext = undoContext;
 		this.operationHistoryListener = new IOperationHistoryListener() {
@@ -139,15 +140,19 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	 * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
 	 */
 	protected void valueChanged(PropertySheetEntry child) {
-		// the update of values into a command and pass that to our parent (or execute it on the operation history, if we have no parent)
-		ForwardUndoCompositeOperation compositeOperation = new ForwardUndoCompositeOperation("Update child property values"); // TODO: externalize string
+		// the update of values into a command and pass that to our parent (or
+		// execute it on the operation history, if we have no parent)
+		ForwardUndoCompositeOperation compositeOperation = new ForwardUndoCompositeOperation(
+				"Update child property values"); // TODO: externalize string
 		for (int i = 0; i < getValues().length; i++) {
-			SetPropertyValueOperation setOperation = new SetPropertyValueOperation(child.getDisplayName(),
-					getPropertySource(getValues()[i]), ((UndoablePropertySheetEntry)child).getDescriptor()
+			SetPropertyValueOperation setOperation = new SetPropertyValueOperation(
+					child.getDisplayName(), getPropertySource(getValues()[i]),
+					((UndoablePropertySheetEntry) child).getDescriptor()
 							.getId(), child.getValues()[i]);
 			compositeOperation.add(setOperation);
 		}
-		valueChanged((UndoablePropertySheetEntry) child, compositeOperation.unwrap());
+		valueChanged((UndoablePropertySheetEntry) child,
+				compositeOperation.unwrap());
 	}
 
 	private void valueChanged(UndoablePropertySheetEntry child,

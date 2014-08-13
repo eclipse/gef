@@ -28,8 +28,7 @@ public class DefaultSelectionProvider implements ISelectionProvider {
 	private List<ISelectionChangedListener> selectionChangedListeners = new ArrayList<ISelectionChangedListener>();
 
 	@Override
-	public void addSelectionChangedListener(
-			ISelectionChangedListener listener) {
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.add(listener);
 	}
 

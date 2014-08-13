@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
  * @author Jan Koehnlein
  */
 public class ReflectionUtils {
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getPrivateField(Object owner, String fieldName) {
 		Class<? extends Object> currentClass = owner.getClass();

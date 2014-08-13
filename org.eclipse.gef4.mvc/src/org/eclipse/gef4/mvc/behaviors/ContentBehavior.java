@@ -47,7 +47,7 @@ import com.google.common.collect.SetMultimap;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
-PropertyChangeListener {
+		PropertyChangeListener {
 
 	// We need to ensure that when undoing model operations, the same content
 	// parts are re-used when re-synchronizing; as such, we put content parts
@@ -62,7 +62,7 @@ PropertyChangeListener {
 			synchronizeContentChildren(getHost().getRoot().getViewer()
 					.getContentModel().getContents());
 			getHost().getRoot().getViewer().getContentModel()
-			.addPropertyChangeListener(this);
+					.addPropertyChangeListener(this);
 		} else {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
@@ -76,7 +76,7 @@ PropertyChangeListener {
 	public void deactivate() {
 		if (getHost() == getHost().getRoot()) {
 			getHost().getRoot().getViewer().getContentModel()
-			.removePropertyChangeListener(this);
+					.removePropertyChangeListener(this);
 			synchronizeContentChildren(Collections.emptyList());
 		} else {
 			getHost().removePropertyChangeListener(this);

@@ -33,7 +33,7 @@ import com.google.common.collect.SetMultimap;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
-implements IContentPart<VR> {
+		implements IContentPart<VR> {
 
 	private Object content;
 

@@ -117,7 +117,7 @@ public class MvcModule<VR> extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				Key.get(Types.newParameterizedType(ContentBehavior.class,
 						new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+						}.getRawType().getClass())));
 	}
 
 	/**
@@ -172,9 +172,9 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-		.to(Key.get(Types.newParameterizedType(
-				DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 	}
 
 	/**
@@ -196,22 +196,22 @@ public class MvcModule<VR> extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				Key.get(Types.newParameterizedType(ContentBehavior.class,
 						new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+						}.getRawType().getClass())));
 
 		// register (default) policies
 		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-		.to(Key.get(Types.newParameterizedType(
-				DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+				.to(Key.get(Types.newParameterizedType(
+						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 		adapterMapBinder.addBinding(
 				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-						Key.get(Types.newParameterizedType(
-								DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
-								}.getRawType().getClass())));
+				Key.get(Types.newParameterizedType(
+						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
-		.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
-				new TypeLiteral<VR>() {
-		}.getRawType().getClass())));
+				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 	}
 
 	/**
@@ -239,15 +239,15 @@ public class MvcModule<VR> extends AbstractModule {
 		adapterMapBinder.addBinding(AdapterKey.get(IFocusModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultFocusModel.class,
 						new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+						}.getRawType().getClass())));
 		adapterMapBinder.addBinding(AdapterKey.get(IHoverModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultHoverModel.class,
 						new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+						}.getRawType().getClass())));
 		adapterMapBinder.addBinding(AdapterKey.get(ISelectionModel.class)).to(
 				Key.get(Types.newParameterizedType(DefaultSelectionModel.class,
 						new TypeLiteral<VR>() {
-				}.getRawType().getClass())));
+						}.getRawType().getClass())));
 	}
 
 	/**
@@ -300,7 +300,7 @@ public class MvcModule<VR> extends AbstractModule {
 		// bind IUndoContext and IOperationHistory to reasonable defaults
 		binder().bind(IUndoContext.class).to(UndoContext.class);
 		binder().bind(IOperationHistory.class)
-		.to(DefaultOperationHistory.class);
+				.to(DefaultOperationHistory.class);
 	}
 
 	/**

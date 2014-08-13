@@ -28,9 +28,10 @@ public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 
 	@Inject
 	private Injector injector;
-	
+
 	public org.eclipse.gef4.mvc.parts.IContentPart<Node> createContentPart(
-			Object content, IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+			Object content, IBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
 		if (content instanceof FXGeometricModel) {
 			return injector.getInstance(FXGeometricModelPart.class);
 		} else if (content instanceof FXGeometricShape) {

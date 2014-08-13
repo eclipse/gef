@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
-
 /**
  * A pair of {@link Class} key and {@link String} role to register adapters at
  * and retrieve them from {@link IAdaptable}s. Using an {@link AdapterKey}

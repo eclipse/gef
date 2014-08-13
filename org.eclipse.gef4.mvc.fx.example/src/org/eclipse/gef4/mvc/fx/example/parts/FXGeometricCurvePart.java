@@ -81,7 +81,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	public static final class ChangeContentAnchoragesOperation extends
-	AbstractOperation {
+			AbstractOperation {
 
 		private final FXGeometricCurve curve;
 		private final AbstractFXGeometricElement<?> oldSource;
@@ -140,7 +140,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	private static final class ChangeWayPointsOperation extends
-	AbstractOperation {
+			AbstractOperation {
 
 		private final FXGeometricCurve curve;
 		private final List<Point> newWayPoints;
@@ -325,7 +325,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		setAdapter(
 				AdapterKey
-				.get(FXDeleteSelectedOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
+						.get(FXDeleteSelectedOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
 				new FXExampleDetachCurveAnchoragesPolicy());
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
@@ -384,13 +384,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			break;
 		case CIRCLE:
 			if (visual.getStartDecoration() == null
-			|| !(visual.getStartDecoration() instanceof CircleHead)) {
+					|| !(visual.getStartDecoration() instanceof CircleHead)) {
 				visual.setStartDecoration(new CircleHead());
 			}
 			break;
 		case ARROW:
 			if (visual.getStartDecoration() == null
-			|| !(visual.getStartDecoration() instanceof ArrowHead)) {
+					|| !(visual.getStartDecoration() instanceof ArrowHead)) {
 				visual.setStartDecoration(new ArrowHead());
 			}
 			break;
@@ -403,13 +403,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			break;
 		case CIRCLE:
 			if (visual.getEndDecoration() == null
-			|| !(visual.getEndDecoration() instanceof CircleHead)) {
+					|| !(visual.getEndDecoration() instanceof CircleHead)) {
 				visual.setEndDecoration(new CircleHead());
 			}
 			break;
 		case ARROW:
 			if (visual.getEndDecoration() == null
-			|| !(visual.getEndDecoration() instanceof ArrowHead)) {
+					|| !(visual.getEndDecoration() instanceof ArrowHead)) {
 				visual.setEndDecoration(new ArrowHead());
 			}
 			break;
@@ -438,12 +438,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 		if (startDecorationVisual != null
 				&& startDecorationVisual.getStrokeWidth() != content
-				.getStrokeWidth()) {
+						.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 		if (endDecorationVisual != null
 				&& endDecorationVisual.getStrokeWidth() != content
-				.getStrokeWidth()) {
+						.getStrokeWidth()) {
 			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
@@ -507,9 +507,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				"anchorages", getContent(),
 				sourceAnchorages.isEmpty() ? null
 						: (AbstractFXGeometricElement<?>) sourceAnchorages
-						.toArray()[0],
-						targetAnchorages.isEmpty() ? null
-								: (AbstractFXGeometricElement<?>) targetAnchorages
+								.toArray()[0],
+				targetAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) targetAnchorages
 								.toArray()[0], newSource, newTarget);
 		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation(
 				"Change Content Anchorages");

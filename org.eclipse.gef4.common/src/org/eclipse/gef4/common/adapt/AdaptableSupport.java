@@ -73,7 +73,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 			return (T) adaptersForClassKey.values().iterator().next();
 		}
 		// if we have more than one, retrieve the one with the default role
-		return this.<T>getAdapter(AdapterKey.get(classKey, AdapterKey.DEFAULT_ROLE));
+		return this.<T> getAdapter(AdapterKey.get(classKey,
+				AdapterKey.DEFAULT_ROLE));
 	}
 
 	public Map<AdapterKey<?>, Object> getAdapters() {
@@ -84,7 +85,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> classKey) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -112,8 +114,9 @@ public class AdaptableSupport<A extends IAdaptable> {
 				&& ((IActivatable) adaptable).isActive()) {
 			deactivateAdapters();
 		}
-		
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(adapters);
+
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+				adapters);
 
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
@@ -127,7 +130,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 			activateAdapters();
 		}
 
-		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters, new HashMap<AdapterKey<?>, Object>(adapters));
+		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
+				new HashMap<AdapterKey<?>, Object>(adapters));
 	}
 
 	/**
@@ -175,8 +179,9 @@ public class AdaptableSupport<A extends IAdaptable> {
 			deactivateAdapters();
 		}
 
-		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(adapters);
-		
+		Map<AdapterKey<?>, Object> oldAdapters = new HashMap<AdapterKey<?>, Object>(
+				adapters);
+
 		Object adapter = adapters.remove(key);
 		if (adapter != null) {
 			if (adapter instanceof IAdaptable.Bound) {
@@ -194,8 +199,9 @@ public class AdaptableSupport<A extends IAdaptable> {
 		if (adapters.size() == 0) {
 			adapters = null;
 		}
-		
-		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters, new HashMap<AdapterKey<?>, Object>(adapters));
+
+		pcs.firePropertyChange(IAdaptable.ADAPTERS_PROPERTY, oldAdapters,
+				new HashMap<AdapterKey<?>, Object>(adapters));
 		return (T) adapter;
 	}
 

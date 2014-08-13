@@ -73,7 +73,8 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *         the given classKey, qualified by their respective
 	 *         {@link AdapterKey}s.
 	 */
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> classKey);
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			Class<? super T> classKey);
 
 	public <T> T getAdapter(AdapterKey<? super T> key);
 

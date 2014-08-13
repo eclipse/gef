@@ -45,7 +45,7 @@ public class FXFocusTool extends AbstractTool<Node> {
 			ChangeListener<? super Boolean> listener = createWindowFocusedChangeListener(viewer);
 			viewerFocusListenerMap.put(viewer, listener);
 			scene.windowProperty().get().focusedProperty()
-			.addListener(listener);
+					.addListener(listener);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class FXFocusTool extends AbstractTool<Node> {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			Scene scene = viewer.getRootPart().getVisual().getScene();
 			scene.windowProperty().get().focusedProperty()
-			.removeListener(viewerFocusListenerMap.get(viewer));
+					.removeListener(viewerFocusListenerMap.get(viewer));
 		}
 	}
 

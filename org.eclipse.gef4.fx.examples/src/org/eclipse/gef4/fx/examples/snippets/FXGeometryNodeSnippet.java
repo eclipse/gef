@@ -30,13 +30,13 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.RoundedRectangle;
 
 public class FXGeometryNodeSnippet extends FXApplication {
-	
+
 	public static void main(String[] args) {
 		FXGeometryNodeSnippet.launch(args);
 	}
 
-	private static <T extends IShape> FXGeometryNode<T> shape(T shape, double r,
-			double g, double b) {
+	private static <T extends IShape> FXGeometryNode<T> shape(T shape,
+			double r, double g, double b) {
 		FXGeometryNode<T> fxShape = new FXGeometryNode<T>(shape);
 		fxShape.setFill(new Color(r, g, b, 1));
 		fxShape.setStroke(new Color(0, 0, 0, 1));

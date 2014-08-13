@@ -18,11 +18,12 @@ import com.google.inject.AbstractModule;
 
 public class MvcUiModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        // bindings related to workbench integration
-        binder().bind(IOperationHistory.class).toInstance(
-                PlatformUI.getWorkbench().getOperationSupport().getOperationHistory());
-    }
+	@Override
+	protected void configure() {
+		// bindings related to workbench integration
+		binder().bind(IOperationHistory.class).toInstance(
+				PlatformUI.getWorkbench().getOperationSupport()
+						.getOperationHistory());
+	}
 
 }

@@ -156,8 +156,7 @@ public class FXChopBoxHelper {
 		}
 
 		// last uncontained way point is end reference
-		Node endNode = connection.getEndAnchorLink().getAnchor()
-				.getAnchorage();
+		Node endNode = connection.getEndAnchorLink().getAnchor().getAnchorage();
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);

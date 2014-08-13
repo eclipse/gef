@@ -152,7 +152,7 @@ public class FXGeometricModel {
 
 		selectionBoundsBottomLine.addSourceAnchorage(bottomLeftSelectionHandle);
 		selectionBoundsBottomLine
-		.addTargetAnchorage(bottomRightSelectionHandle);
+				.addTargetAnchorage(bottomRightSelectionHandle);
 
 		selectionBoundsRightLine.addSourceAnchorage(topRightSelectionHandle);
 		selectionBoundsRightLine.addTargetAnchorage(bottomRightSelectionHandle);
