@@ -55,6 +55,7 @@ public abstract class FXEditor extends EditorPart {
 
 	private FXCanvas canvas = null;
 
+	private UndoRedoActionGroup undoRedoActionGroup;
 	private IPropertySheetPage propertySheetPage;
 
 	private IOperationHistoryListener operationHistoryListener;
@@ -110,7 +111,7 @@ public abstract class FXEditor extends EditorPart {
 	}
 
 	@Override
-	public Object getAdapter(final Class key) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") final Class key) {
 		// Provide a default selection provider (subclasses may overwrite by
 		// handling the key and returning a different implementation
 		// replace with binding
@@ -126,6 +127,14 @@ public abstract class FXEditor extends EditorPart {
 						(UndoRedoActionGroup) getAdapter(UndoRedoActionGroup.class));
 			}
 			return propertySheetPage;
+		} else if (UndoRedoActionGroup.class.equals(key)) {
+			if (undoRedoActionGroup == null) {
+				undoRedoActionGroup = new UndoRedoActionGroup(getSite(),
+						(IUndoContext) getAdapter(IUndoContext.class), true);
+			}
+			return undoRedoActionGroup;
+		} else if (IUndoContext.class.equals(key)) {
+			return domain.getUndoContext();
 		} else if (IOperationHistory.class.equals(key)) {
 			return domain.getOperationHistory();
 		}
