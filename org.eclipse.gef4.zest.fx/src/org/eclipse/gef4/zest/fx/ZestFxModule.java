@@ -28,7 +28,6 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
 import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.models.DefaultLayoutModel;
@@ -54,24 +53,21 @@ public class ZestFxModule extends MvcFxModule {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-						FXFocusAndSelectOnClickPolicy.class);
+				FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder
-		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-				FXHoverOnHoverPolicy.class);
+				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+						FXHoverOnHoverPolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-		.to(new TypeLiteral<DefaultHoverPolicy<Node>>() {
-		});
+				.to(new TypeLiteral<DefaultHoverPolicy<Node>>() {
+				});
 		adapterMapBinder.addBinding(
 				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-						new TypeLiteral<DefaultSelectionPolicy<Node>>() {
-						});
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
-		.to(new TypeLiteral<DefaultZoomPolicy<Node>>() {
-		});
+				new TypeLiteral<DefaultSelectionPolicy<Node>>() {
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(DefaultFocusPolicy.class))
-		.to(new TypeLiteral<DefaultFocusPolicy<Node>>() {
-		});
+				.to(new TypeLiteral<DefaultFocusPolicy<Node>>() {
+				});
 	}
 
 	@Override
@@ -85,7 +81,7 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindEdgeContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
-		.to(EdgeLayoutBehavior.class);
+				.to(EdgeLayoutBehavior.class);
 	}
 
 	@Override
@@ -98,7 +94,7 @@ public class ZestFxModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-						NotSelectablePolicy.class);
+				NotSelectablePolicy.class);
 	}
 
 	protected void bindIContentPartFactory() {
@@ -111,15 +107,15 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(
 				NodeLayoutPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
-		.to(NodeLayoutBehavior.class);
+				.to(NodeLayoutBehavior.class);
 		// interaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
-						FXRelocateOnDragPolicy.class);
+				FXRelocateOnDragPolicy.class);
 		// transaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
-						FXResizeRelocatePolicy.class);
+				FXResizeRelocatePolicy.class);
 	}
 
 	@Override
