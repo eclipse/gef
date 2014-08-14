@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
@@ -28,9 +28,9 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 
@@ -66,6 +66,7 @@ public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 		return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
 	}
 
+	// TODO: rename/document to indicate its only used for handles!
 	public Effect getHoverFeedbackEffect(Map<Object, Object> contextMap) {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(5);

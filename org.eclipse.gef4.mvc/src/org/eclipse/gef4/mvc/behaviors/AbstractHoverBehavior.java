@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
@@ -25,21 +25,21 @@ import com.google.inject.Provider;
 /**
  * The {@link AbstractHoverBehavior} is responsible for creating and removing
  * selection feedback.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
-		implements PropertyChangeListener {
+implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
 		getHost().getRoot().getViewer().getHoverModel()
-				.addPropertyChangeListener(this);
+		.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already hovered
 		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel()
@@ -60,19 +60,21 @@ public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
 				.getHoverModel().getHover());
 
 		getHost().getRoot().getViewer().getHoverModel()
-				.removePropertyChangeListener(this);
+		.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	/**
 	 * Returns an {@link IGeometry} for which visual selection feedback will be
 	 * provided.
-	 * 
+	 *
 	 * @param contextMap
 	 *            TODO
-	 * 
+	 *
 	 * @return an {@link IGeometry} determining feedback positions
 	 */
+	// TODO: the geometry provider could be adapted to the host part / this
+	// behavior and retrieved via getAdapter() -> would make it more flexible
 	protected abstract IGeometry getFeedbackGeometry(
 			Map<Object, Object> contextMap);
 

@@ -53,7 +53,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		}
 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
-		FXGeometricFeedbackPart part = new FXGeometricFeedbackPart(
+		FXGeometricFeedbackPart part = new FXHoverFeedbackPart(
 				hoverBehavior.getFeedbackGeometryProvider(contextMap));
 		injector.injectMembers(part);
 		feedbackParts.add(part);

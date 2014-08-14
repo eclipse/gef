@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -37,7 +37,7 @@ public class FXHoverFeedbackPart extends FXGeometricFeedbackPart {
 
 	public Effect getHoverFeedbackEffect() {
 		DropShadow effect = new DropShadow();
-		effect.setRadius(5);
+		effect.setRadius(3);
 		return effect;
 	}
 
