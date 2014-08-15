@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.operations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -21,21 +20,21 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 
 /**
  * An {@link FXBendOperation} can be used to manipulate an {@link IFXConnection}
  * in an undo-context.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class FXBendOperation extends AbstractOperation {
 
 	private IFXConnection connection;
-	private List<AnchorLink> oldLinks;
-	private List<AnchorLink> newLinks;
+	private List<IFXAnchor> oldAnchors;
+	private List<IFXAnchor> newAnchors;
 
 	/**
 	 * Constructs an "empty" operation which will not change anything.
@@ -47,38 +46,37 @@ public class FXBendOperation extends AbstractOperation {
 	/**
 	 * Constructs a new operation from the given connection. The lists of old
 	 * and new {@link AnchorLink}s are initialized based on the connection.
-	 * 
+	 *
 	 * @param connection
 	 */
 	public FXBendOperation(IFXConnection connection) {
 		super("bend");
 		this.connection = connection;
-		this.oldLinks = new ArrayList<AnchorLink>(Arrays.asList(connection
-				.getPointAnchorLinks()));
-		this.newLinks = new ArrayList<AnchorLink>(oldLinks);
+		this.oldAnchors = new ArrayList<IFXAnchor>(connection.getAnchors());
+		this.newAnchors = new ArrayList<IFXAnchor>(oldAnchors);
 	}
 
 	/**
 	 * Constructs a new operation from the given values.
-	 * 
-	 * @param oldLinks
-	 *            List of old {@link AnchorLink}s.
-	 * @param newLinks
-	 *            List of new {@link AnchorLink}s.
+	 *
+	 * @param oldAnchors
+	 *            List of old {@link IFXAnchor}s.
+	 * @param newAnchors
+	 *            List of new {@link IFXAnchor}s.
 	 */
 	public FXBendOperation(String label, IFXConnection connection,
-			List<AnchorLink> oldLinks, List<AnchorLink> newLinks) {
+			List<IFXAnchor> oldAnchors, List<IFXAnchor> newAnchors) {
 		super(label);
 		this.connection = connection;
-		if (oldLinks == null) {
-			this.oldLinks = new ArrayList<AnchorLink>();
+		if (oldAnchors == null) {
+			this.oldAnchors = new ArrayList<IFXAnchor>();
 		} else {
-			this.oldLinks = new ArrayList<AnchorLink>(oldLinks);
+			this.oldAnchors = new ArrayList<IFXAnchor>(oldAnchors);
 		}
-		if (newLinks == null) {
-			this.newLinks = new ArrayList<AnchorLink>();
+		if (newAnchors == null) {
+			this.newAnchors = new ArrayList<IFXAnchor>();
 		} else {
-			this.newLinks = new ArrayList<AnchorLink>(newLinks);
+			this.newAnchors = new ArrayList<IFXAnchor>(newAnchors);
 		}
 	}
 
@@ -86,10 +84,8 @@ public class FXBendOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			connection.setWayPointAnchorLinks(newLinks.subList(1,
-					newLinks.size() - 1));
-			connection.setStartAnchorLink(newLinks.get(0));
-			connection.setEndAnchorLink(newLinks.get(newLinks.size() - 1));
+			connection.setAnchors(newAnchors);
+
 		}
 		return Status.OK_STATUS;
 	}
@@ -98,12 +94,12 @@ public class FXBendOperation extends AbstractOperation {
 		return connection;
 	}
 
-	public List<AnchorLink> getNewLinks() {
-		return newLinks;
+	public List<IFXAnchor> getNewAnchors() {
+		return newAnchors;
 	}
 
-	public List<AnchorLink> getOldLinks() {
-		return oldLinks;
+	public List<IFXAnchor> getOldAnchors() {
+		return oldAnchors;
 	}
 
 	@Override
@@ -116,12 +112,12 @@ public class FXBendOperation extends AbstractOperation {
 		this.connection = connection;
 	}
 
-	public void setNewLinks(List<AnchorLink> newLinks) {
-		this.newLinks = newLinks;
+	public void setNewAnchors(List<IFXAnchor> newAnchors) {
+		this.newAnchors = newAnchors;
 	}
 
-	public void setOldLinks(List<AnchorLink> oldLinks) {
-		this.oldLinks = oldLinks;
+	public void setOldAnchors(List<IFXAnchor> oldAnchors) {
+		this.oldAnchors = oldAnchors;
 	}
 
 	@Override
@@ -133,10 +129,8 @@ public class FXBendOperation extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
-			connection.setWayPointAnchorLinks(oldLinks.subList(1,
-					oldLinks.size() - 1));
-			connection.setStartAnchorLink(oldLinks.get(0));
-			connection.setEndAnchorLink(oldLinks.get(oldLinks.size() - 1));
+			connection.setAnchors(oldAnchors);
+
 		}
 		return Status.OK_STATUS;
 	}

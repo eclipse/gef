@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
@@ -16,9 +16,9 @@ import javafx.scene.Node;
 /**
  * AnchorKey represents a set of anchored node and additional key to identify
  * one anchor target. TODO: make unmodifiable?
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class AnchorKey {
 

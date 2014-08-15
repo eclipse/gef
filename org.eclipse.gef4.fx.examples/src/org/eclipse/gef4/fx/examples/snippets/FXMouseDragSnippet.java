@@ -43,11 +43,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 
 public class FXMouseDragSnippet extends FXApplication {

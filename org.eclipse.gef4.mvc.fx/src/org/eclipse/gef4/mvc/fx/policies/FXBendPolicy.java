@@ -19,7 +19,6 @@ import javafx.scene.Node;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
@@ -46,7 +45,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
  * @author mwienand
  */
 public class FXBendPolicy extends AbstractPolicy<Node> implements
-		ITransactional {
+ITransactional {
 
 	// constants (TODO: make configurable)
 	protected static final double REMOVE_THRESHOLD = 10;
@@ -55,10 +54,10 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	private Point2D startPointInScene;
 	private Point startPoint;
 	private Point currentPoint;
-	private AnchorLink removedLink;
-	private int removedLinkIndex;
-	private int linkIndex;
-	private int oldLinkIndex;
+	private IFXAnchor removedAnchor;
+	private int removedAnchorIndex;
+	private int anchorIndex;
+	private int oldAnchorIndex;
 
 	// operation
 	private FXBendOperation op;
@@ -75,11 +74,11 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 		// create new way point
 		segmentIndex++;
-		op.getNewLinks().add(
+		op.getNewAnchors().add(
 				segmentIndex,
-				((IFXConnection) hostVisual)
-						.createWayPointAnchorLink(new Point(
-								mouseInLocal.getX(), mouseInLocal.getY())));
+				new FXStaticAnchor(
+						JavaFX2Geometry.toPoint(hostVisual.localToScene(
+								mouseInLocal.getX(), mouseInLocal.getY()))));
 		locallyExecuteOperation();
 
 		// select newly created way point
@@ -102,64 +101,75 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return getHost().getVisual();
 	}
 
-	private Point getPosition(AnchorLink link) {
-		// TODO: Maybe this can be done nicer?
-		boolean attached = link.getAnchor().isAttached(link.getKey());
-		if (!attached) {
-			link.getAnchor().attach(link.getKey());
+	public AnchorKey getNewAnchorKey(int index) {
+		if (index == 0) {
+			return op.getConnection().getStartAnchorKey();
+		} else if (index == op.getNewAnchors().size() - 1) {
+			return op.getConnection().getEndAnchorKey();
+		} else {
+			return op.getConnection().getWayAnchorKey(index - 1);
 		}
-		Point p = link.getPosition();
+	}
+
+	private Point getPosition(IFXAnchor anchor, AnchorKey key) {
+		// TODO: Maybe this can be done nicer?
+		boolean attached = anchor.isAttached(key);
 		if (!attached) {
-			link.getAnchor().detach(link.getKey());
+			anchor.attach(key);
+		}
+		Point p = anchor.getPosition(key);
+		if (!attached) {
+			anchor.detach(key);
 		}
 		return p;
 	}
 
 	protected void hideShowOverlaid() {
 		// put removed back in
-		if (removedLink != null) {
-			linkIndex = oldLinkIndex;
-			op.getNewLinks().add(removedLinkIndex, removedLink);
-			removedLink = null;
+		if (removedAnchor != null) {
+			anchorIndex = oldAnchorIndex;
+			op.getNewAnchors().add(removedAnchorIndex, removedAnchor);
+			removedAnchor = null;
 		}
 
 		// do not remove overlaid if there are no way points
-		if (op.getNewLinks().size() <= 2) {
+		if (op.getNewAnchors().size() <= 2) {
 			return;
 		}
 
-		removedLinkIndex = -1;
-		oldLinkIndex = linkIndex;
+		removedAnchorIndex = -1;
+		oldAnchorIndex = anchorIndex;
 
 		// determine overlaid neighbor
-		if (linkIndex > 0) {
-			int prevIndex = linkIndex - 1;
-			if (getPosition(op.getNewLinks().get(prevIndex)).getDistance(
-					currentPoint) < REMOVE_THRESHOLD) {
+		if (anchorIndex > 0) {
+			int prevIndex = anchorIndex - 1;
+			if (getPosition(op.getNewAnchors().get(prevIndex),
+					getNewAnchorKey(prevIndex)).getDistance(currentPoint) < REMOVE_THRESHOLD) {
 				// remove previous
-				removedLinkIndex = prevIndex;
-				linkIndex--;
+				removedAnchorIndex = prevIndex;
+				anchorIndex--;
 			}
 		}
-		if (removedLinkIndex == -1 && linkIndex < op.getNewLinks().size() - 1) {
-			int nextIndex = linkIndex + 1;
-			if (getPosition(op.getNewLinks().get(nextIndex)).getDistance(
-					currentPoint) < REMOVE_THRESHOLD) {
+		if (removedAnchorIndex == -1
+				&& anchorIndex < op.getNewAnchors().size() - 1) {
+			int nextIndex = anchorIndex + 1;
+			if (getPosition(op.getNewAnchors().get(nextIndex),
+					getNewAnchorKey(nextIndex)).getDistance(currentPoint) < REMOVE_THRESHOLD) {
 				// remove next
-				removedLinkIndex = nextIndex;
+				removedAnchorIndex = nextIndex;
 			}
 		}
 
 		// remove neighbor if overlaid
-		if (removedLinkIndex != -1) {
-			removedLink = op.getNewLinks().remove(removedLinkIndex);
+		if (removedAnchorIndex != -1) {
+			removedAnchor = op.getNewAnchors().remove(removedAnchorIndex);
 		}
 	}
 
 	@Override
 	public void init() {
 		op = new FXBendOperation((IFXConnection) getHostVisual());
-		removedLink = null;
+		removedAnchor = null;
 	}
 
 	protected void locallyExecuteOperation() {
@@ -193,14 +203,15 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			Point mouseInScene) {
 		// store handle part information
 		if (segmentParameter == 1) {
-			linkIndex = segmentIndex + 1;
+			anchorIndex = segmentIndex + 1;
 		} else {
-			linkIndex = segmentIndex;
+			anchorIndex = segmentIndex;
 		}
 
 		// initialize position
 		startPointInScene = new Point2D(mouseInScene.x, mouseInScene.y);
-		startPoint = op.getNewLinks().get(linkIndex).getPosition();
+		startPoint = op.getNewAnchors().get(anchorIndex)
+				.getPosition(getNewAnchorKey(anchorIndex));
 		currentPoint = startPoint.getCopy();
 	}
 
@@ -212,31 +223,25 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	protected void updateCurrentAnchorLink(Point mouseInScene,
 			List<IContentPart<Node>> partsUnderMouse) {
 		// snaps for start and end (TODO: configurable)
-		boolean snaps = linkIndex == 0
-				|| linkIndex == op.getNewLinks().size() - 1;
+		boolean snaps = anchorIndex == 0
+				|| anchorIndex == op.getNewAnchors().size() - 1;
 
-		AnchorLink link = null;
+		IFXAnchor anchor = null;
 		if (snaps) {
 			AbstractFXContentPart anchorPart = getAnchorPart(partsUnderMouse);
 			if (anchorPart != null) {
 				// use anchor returned by part
-				IFXAnchor anchor = anchorPart.getAnchor(getHost());
-				link = new AnchorLink(anchor, op.getOldLinks().get(linkIndex)
-						.getKey());
+				anchor = anchorPart.getAnchor(getHost());
 			}
 		}
 
-		if (link == null) {
+		if (anchor == null) {
 			// use static anchor, re-use key
-			AnchorKey key = op.getNewLinks().get(linkIndex).getKey();
-
-			FXStaticAnchor anchor = new FXStaticAnchor(
-					JavaFX2Geometry.toPoint(getHostVisual().localToScene(
-							currentPoint.x, currentPoint.y)));
-			link = new AnchorLink(anchor, key);
+			anchor = new FXStaticAnchor(JavaFX2Geometry.toPoint(getHostVisual()
+					.localToScene(currentPoint.x, currentPoint.y)));
 		}
 
-		op.getNewLinks().set(linkIndex, link);
+		op.getNewAnchors().set(anchorIndex, anchor);
 	}
 
 }

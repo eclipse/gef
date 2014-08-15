@@ -18,7 +18,6 @@ import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
@@ -100,12 +99,13 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		}
 
 		if (connection.isStartConnected() && connection.isEndConnected()) {
-			AnchorLink startAl = connection.startAnchorLinkProperty().get();
-			AnchorLink endAl = connection.endAnchorLinkProperty().get();
-			((FXChopBoxAnchor) startAl.getAnchor()).setReferencePoint(
-					startAl.getKey(), getAnchorageCenter(endAl));
-			((FXChopBoxAnchor) endAl.getAnchor()).setReferencePoint(
-					endAl.getKey(), startAl.getPosition());
+			IFXAnchor startAl = connection.getStartAnchor();
+			IFXAnchor endAl = connection.getEndAnchor();
+			((FXChopBoxAnchor) startAl).setReferencePoint(
+					connection.getStartAnchorKey(), getAnchorageCenter(endAl));
+			((FXChopBoxAnchor) endAl).setReferencePoint(
+					connection.getEndAnchorKey(),
+					startAl.getPosition(connection.getStartAnchorKey()));
 		}
 	}
 
@@ -158,8 +158,8 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		}
 	}
 
-	private Point getAnchorageCenter(AnchorLink al) {
-		Node anchorage = al.getAnchor().getAnchorage();
+	private Point getAnchorageCenter(IFXAnchor al) {
+		Node anchorage = al.getAnchorage();
 		Rectangle bounds = JavaFX2Geometry.toRectangle(anchorage
 				.localToScene(anchorage.getLayoutBounds()));
 		return bounds.getCenter();

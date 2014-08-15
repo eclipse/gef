@@ -16,13 +16,12 @@ import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.AnchorLink;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -35,6 +34,45 @@ public class FXChopBoxHelper {
 	 * points are computed for FXChopBoxAnchors at way points. The reference
 	 * point for a way point could be the middle point of both neighbors.
 	 */
+
+	private MapChangeListener<AnchorKey, IFXAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IFXAnchor>() {
+
+		@Override
+		public void onChanged(
+				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
+			if (change.getKey().equals(connection.getStartAnchorKey())) {
+				// start anchor change
+				if (change.getValueRemoved() != null) {
+					change.getValueRemoved().positionProperty()
+							.removeListener(startPCL);
+				}
+				if (change.getValueAdded() != null) {
+					change.getValueAdded().positionProperty()
+							.addListener(startPCL);
+				}
+			} else if (change.getKey().equals(connection.getEndAnchorKey())) {
+				// end anchor key
+				if (change.getValueRemoved() != null) {
+					change.getValueRemoved().positionProperty()
+							.removeListener(endPCL);
+				}
+				if (change.getValueAdded() != null) {
+					change.getValueAdded().positionProperty()
+							.addListener(endPCL);
+				}
+			} else {
+				// waypoint change
+				if (change.getValueRemoved() != null) {
+					change.getValueRemoved().positionProperty()
+							.removeListener(waypointPCL);
+				}
+				if (change.getValueAdded() != null) {
+					change.getValueAdded().positionProperty()
+							.addListener(waypointPCL);
+				}
+			}
+		}
+	};
 
 	private IFXConnection connection;
 
@@ -58,34 +96,6 @@ public class FXChopBoxHelper {
 		}
 	};
 
-	private ChangeListener<? super AnchorLink> onStartAnchorLinkChange = new ChangeListener<AnchorLink>() {
-		@Override
-		public void changed(ObservableValue<? extends AnchorLink> observable,
-				AnchorLink oldLink, AnchorLink newLink) {
-			if (newLink != null) {
-				IFXAnchor anchor = newLink.getAnchor();
-				if (anchor != null) {
-					anchor.positionProperty().addListener(startPCL);
-				}
-				updateStartReferencePoint();
-			}
-		}
-	};
-
-	private ChangeListener<? super AnchorLink> onEndAnchorLinkChange = new ChangeListener<AnchorLink>() {
-		@Override
-		public void changed(ObservableValue<? extends AnchorLink> observable,
-				AnchorLink oldLink, AnchorLink newLink) {
-			if (newLink != null) {
-				IFXAnchor anchor = newLink.getAnchor();
-				if (anchor != null) {
-					anchor.positionProperty().addListener(endPCL);
-				}
-				updateEndReferencePoint();
-			}
-		}
-	};
-
 	private MapChangeListener<AnchorKey, Point> waypointPCL = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
@@ -97,38 +107,31 @@ public class FXChopBoxHelper {
 		}
 	};
 
-	private ListChangeListener<? super AnchorLink> onWayPointChange = new ListChangeListener<AnchorLink>() {
-		@Override
-		public void onChanged(
-				javafx.collections.ListChangeListener.Change<? extends AnchorLink> c) {
-			while (c.next()) {
-				if (c.wasAdded()) {
-					for (AnchorLink newLink : c.getAddedSubList()) {
-						IFXAnchor anchor = newLink.getAnchor();
-						if (anchor != null) {
-							anchor.positionProperty().addListener(waypointPCL);
-						}
-					}
-				}
-			}
-			updateStartReferencePoint();
-			updateEndReferencePoint();
-		}
-	};
-
 	public FXChopBoxHelper(IFXConnection connection) {
 		this.connection = connection;
-		// TODO: add change listeners for the anchor links and way points
-		// TODO: remove IFXConnection#setOnX() and related properties
-		connection.setOnEndAnchorLinkChange(onEndAnchorLinkChange);
-		connection.setOnStartAnchorLinkChange(onStartAnchorLinkChange);
-		connection.setOnWayPointAnchorLinkChange(onWayPointChange);
+		connection.anchorsProperty().addListener(
+				new ChangeListener<ObservableMap<AnchorKey, IFXAnchor>>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends ObservableMap<AnchorKey, IFXAnchor>> observable,
+							ObservableMap<AnchorKey, IFXAnchor> oldValue,
+							ObservableMap<AnchorKey, IFXAnchor> newValue) {
+						if (oldValue != null) {
+							oldValue.removeListener(anchorsChangeListener);
+						}
+						if (newValue != null) {
+							newValue.addListener(anchorsChangeListener);
+						}
+					}
+
+				});
 	}
 
 	/**
 	 * Returns a {@link Point} array containing reference points for the start
 	 * and end anchors.
-	 * 
+	 *
 	 * @return an array of size 2 containing the reference points for the start
 	 *         and end anchors
 	 */
@@ -139,8 +142,7 @@ public class FXChopBoxHelper {
 		List<Point> wayPoints = connection.getWayPoints();
 
 		// first uncontained way point is start reference
-		Node startNode = connection.getStartAnchorLink().getAnchor()
-				.getAnchorage();
+		Node startNode = connection.getStartAnchor().getAnchorage();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
 				if (p == null) {
@@ -156,7 +158,7 @@ public class FXChopBoxHelper {
 		}
 
 		// last uncontained way point is end reference
-		Node endNode = connection.getEndAnchorLink().getAnchor().getAnchorage();
+		Node endNode = connection.getEndAnchor().getAnchorage();
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
@@ -176,8 +178,7 @@ public class FXChopBoxHelper {
 		// anchorage position or end anchor position
 		if (startReference == null) {
 			if (connection.isEndConnected()) {
-				Node anchorageNode = connection.getEndAnchorLink().getAnchor()
-						.getAnchorage();
+				Node anchorageNode = connection.getEndAnchor().getAnchorage();
 				if (anchorageNode != null) {
 					startReference = getCenter(anchorageNode);
 				}
@@ -194,8 +195,7 @@ public class FXChopBoxHelper {
 		// anchorage position or start anchor position
 		if (endReference == null) {
 			if (connection.isStartConnected()) {
-				Node anchorageNode = connection.getStartAnchorLink()
-						.getAnchor().getAnchorage();
+				Node anchorageNode = connection.getStartAnchor().getAnchorage();
 				if (anchorageNode != null) {
 					endReference = getCenter(anchorageNode);
 				}
@@ -223,37 +223,27 @@ public class FXChopBoxHelper {
 	}
 
 	private void updateEndReferencePoint() {
-		AnchorLink anchorLink = connection.getEndAnchorLink();
-		if (anchorLink == null) {
-			return;
-		}
-
-		IFXAnchor endAnchor = anchorLink.getAnchor();
-		if (endAnchor instanceof FXChopBoxAnchor) {
+		IFXAnchor endAnchor = connection.getEndAnchor();
+		if (endAnchor != null && endAnchor instanceof FXChopBoxAnchor) {
 			Point[] refPoints = computeReferencePoints();
 			FXChopBoxAnchor a = (FXChopBoxAnchor) endAnchor;
-			AnchorKey key = anchorLink.getKey();
-			Point oldRef = a.getReferencePoint(key);
+			AnchorKey endAnchorKey = connection.getEndAnchorKey();
+			Point oldRef = a.getReferencePoint(endAnchorKey);
 			if (oldRef == null || !oldRef.equals(refPoints[1])) {
-				a.setReferencePoint(key, refPoints[1]);
+				a.setReferencePoint(endAnchorKey, refPoints[1]);
 			}
 		}
 	}
 
 	private void updateStartReferencePoint() {
-		AnchorLink anchorLink = connection.getStartAnchorLink();
-		if (anchorLink == null) {
-			return;
-		}
-
-		IFXAnchor startAnchor = anchorLink.getAnchor();
-		if (startAnchor instanceof FXChopBoxAnchor) {
+		IFXAnchor startAnchor = connection.getStartAnchor();
+		if (startAnchor != null && startAnchor instanceof FXChopBoxAnchor) {
 			Point[] refPoints = computeReferencePoints();
 			FXChopBoxAnchor a = (FXChopBoxAnchor) startAnchor;
-			AnchorKey key = anchorLink.getKey();
-			Point oldRef = a.getReferencePoint(key);
+			AnchorKey endAnchorKey = connection.getStartAnchorKey();
+			Point oldRef = a.getReferencePoint(endAnchorKey);
 			if (oldRef == null || !oldRef.equals(refPoints[0])) {
-				a.setReferencePoint(key, refPoints[0]);
+				a.setReferencePoint(endAnchorKey, refPoints[0]);
 			}
 		}
 	}
