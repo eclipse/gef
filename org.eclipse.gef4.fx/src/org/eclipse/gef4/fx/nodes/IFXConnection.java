@@ -45,7 +45,7 @@ public interface IFXConnection {
 	public ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty();
 
 	/**
-	 * Returns an array containing the {@link AnchorLink}s representing all
+	 * Returns an array containing the {@link IFXAnchor}s representing all
 	 * points constituting this connection.
 	 *
 	 * @return
@@ -201,8 +201,8 @@ public interface IFXConnection {
 	public void setAnchors(List<IFXAnchor> anchors);
 
 	/**
-	 * Changes the end {@link AnchorLink} of this connection to a new
-	 * {@link AnchorLink} which is created for the given {@link IFXAnchor} and
+	 * Changes the end {@link IFXAnchor} of this connection to a new
+	 * {@link IFXAnchor} which is created for the given {@link IFXAnchor} and
 	 * anchored under the default end {@link AnchorKey}.
 	 *
 	 * @param endAnchor
@@ -227,8 +227,8 @@ public interface IFXConnection {
 	public void setEndPoint(Point start);
 
 	/**
-	 * Changes the start {@link AnchorLink} of this connection to a new
-	 * {@link AnchorLink} which is created for the given {@link IFXAnchor} and
+	 * Changes the start {@link IFXAnchor} of this connection to a new
+	 * {@link IFXAnchor} which is created for the given {@link IFXAnchor} and
 	 * anchored under the default start {@link AnchorKey}.
 	 *
 	 * @param startAnchor
@@ -267,7 +267,7 @@ public interface IFXConnection {
 	 * value.
 	 *
 	 * @param index
-	 * @param waypointAnchor
+	 * @param wayPointAnchor
 	 */
 	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor);
 
@@ -275,8 +275,8 @@ public interface IFXConnection {
 	 * Sets all way point {@link IFXAnchor}s of this {@link IFXConnection} to
 	 * the given List of {@link IFXAnchor}s.
 	 *
-	 * @param wayPointAnchorLinks
-	 *            List of way point {@link AnchorLink}s.
+	 * @param wayPointAnchors
+	 *            List of way point {@link IFXAnchor}s.
 	 */
 	public void setWayPointAnchors(List<IFXAnchor> wayPointAnchors);
 

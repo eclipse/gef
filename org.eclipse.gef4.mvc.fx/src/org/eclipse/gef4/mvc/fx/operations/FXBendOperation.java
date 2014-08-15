@@ -45,7 +45,7 @@ public class FXBendOperation extends AbstractOperation {
 
 	/**
 	 * Constructs a new operation from the given connection. The lists of old
-	 * and new {@link AnchorLink}s are initialized based on the connection.
+	 * and new {@link IFXAnchor}s are initialized based on the connection.
 	 *
 	 * @param connection
 	 */
