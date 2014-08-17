@@ -387,9 +387,10 @@
 
 		<module>../org.eclipse.gef4.fx</module>
 		<module>../org.eclipse.gef4.fx-feature</module>
-		<!-- <module>../org.eclipse.gef4.fx.tests</module> -->
+		<module>../org.eclipse.gef4.fx.tests</module>
 		<module>../org.eclipse.gef4.fx.ui</module>
 		<module>../org.eclipse.gef4.fx.ui-feature</module>
+		<!-- <module>../org.eclipse.gef4.fx.ui.tests</module> -->
 		<module>../org.eclipse.gef4.fx.doc</module>
 		<module>../org.eclipse.gef4.fx.doc-feature</module>
 		<module>../org.eclipse.gef4.fx.sdk-feature</module>
