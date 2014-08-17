@@ -43,7 +43,6 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
@@ -80,7 +79,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	public static final class ChangeContentAnchoragesOperation extends
-	AbstractOperation {
+			AbstractOperation {
 
 		private final FXGeometricCurve curve;
 		private final AbstractFXGeometricElement<?> oldSource;
@@ -139,7 +138,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	private static final class ChangeWayPointsOperation extends
-	AbstractOperation {
+			AbstractOperation {
 
 		private final FXGeometricCurve curve;
 		private final List<Point> newWayPoints;
@@ -225,67 +224,69 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// TODO: move operations and policies to their own types and use binding
 		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
-		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
-				new FXResizeRelocatePolicy() {
-			@Override
-			public IUndoableOperation commit() {
-				// retrieve visual operation
-				final IUndoableOperation visualOperation = super
-						.commit();
-
-				if (visualOperation == null) {
-					return null;
-				}
-
-				// determine model values
-				FXGeometricCurve curve = getContent();
-				List<Point> oldWayPoints = curve.getWayPointsCopy();
-				List<Point> newWayPoints = visual.getWayPoints();
-				AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual
-						.getStartAnchor());
-				AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
-						.getEndAnchor());
-				AbstractFXGeometricElement<?> newSource = oldSource;
-				AbstractFXGeometricElement<?> newTarget = oldTarget;
-
-				// create model operations
-				final IUndoableOperation modelWayPointOperation = new ChangeWayPointsOperation(
-						"Update model", curve, oldWayPoints,
-						newWayPoints);
-				final IUndoableOperation modelAnchoragesOperation = new ChangeContentAnchoragesOperation(
-						"Update model", curve, oldSource, oldTarget,
-						newSource, newTarget);
-
-				// combine operations
-				return new AbstractCompositeOperation(visualOperation
-						.getLabel()) {
-					{
-						add(visualOperation);
-						add(modelWayPointOperation);
-						add(modelAnchoragesOperation);
-					}
-				};
-			}
-
-			@Override
-			public void init() {
-				super.init();
-			}
-
-			@Override
-			public void performResizeRelocate(double dx, double dy,
-					double dw, double dh) {
-				// do not relocate when there are no way points
-				if (visual.getWayAnchors().size() > 0) {
-					// this will move the connection as a whole
-					super.performResizeRelocate(dx, dy, dw, dh);
-
-					// this will refresh the waypoints, which have been
-					// updated in the view
-					refreshVisual(); // TODO: should not be necessary
-				}
-			}
-		});
+		// setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
+		// new FXResizeRelocatePolicy() {
+		// @Override
+		// public IUndoableOperation commit() {
+		// // retrieve visual operation
+		// final IUndoableOperation visualOperation = super
+		// .commit();
+		//
+		// if (visualOperation == null) {
+		// return null;
+		// }
+		//
+		// // determine model values
+		// FXGeometricCurve curve = getContent();
+		// List<Point> oldWayPoints = curve.getWayPointsCopy();
+		// List<Point> newWayPoints = visual.getWayPoints();
+		// AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual
+		// .getStartAnchor());
+		// AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
+		// .getEndAnchor());
+		// AbstractFXGeometricElement<?> newSource = oldSource;
+		// AbstractFXGeometricElement<?> newTarget = oldTarget;
+		//
+		// // create model operations
+		// final IUndoableOperation modelWayPointOperation = new
+		// ChangeWayPointsOperation(
+		// "Update model", curve, oldWayPoints,
+		// newWayPoints);
+		// final IUndoableOperation modelAnchoragesOperation = new
+		// ChangeContentAnchoragesOperation(
+		// "Update model", curve, oldSource, oldTarget,
+		// newSource, newTarget);
+		//
+		// // combine operations
+		// return new AbstractCompositeOperation(visualOperation
+		// .getLabel()) {
+		// {
+		// add(visualOperation);
+		// add(modelWayPointOperation);
+		// add(modelAnchoragesOperation);
+		// }
+		// };
+		// }
+		//
+		// @Override
+		// public void init() {
+		// super.init();
+		// }
+		//
+		// @Override
+		// public void performResizeRelocate(double dx, double dy,
+		// double dw, double dh) {
+		// // do not relocate when there are no way points
+		// if (visual.getWayAnchors().size() > 0) {
+		// // this will move the connection as a whole
+		// super.performResizeRelocate(dx, dy, dw, dh);
+		//
+		// // this will refresh the waypoints, which have been
+		// // updated in the view
+		// refreshVisual(); // TODO: should not be necessary
+		// }
+		// }
+		// });
 
 		// transaction policies
 		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
@@ -327,7 +328,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		setAdapter(
 				AdapterKey
-				.get(FXDeleteSelectedOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
+						.get(FXDeleteSelectedOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
 				new FXExampleDetachCurveAnchoragesPolicy());
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
@@ -386,13 +387,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			break;
 		case CIRCLE:
 			if (visual.getStartDecoration() == null
-			|| !(visual.getStartDecoration() instanceof CircleHead)) {
+					|| !(visual.getStartDecoration() instanceof CircleHead)) {
 				visual.setStartDecoration(new CircleHead());
 			}
 			break;
 		case ARROW:
 			if (visual.getStartDecoration() == null
-			|| !(visual.getStartDecoration() instanceof ArrowHead)) {
+					|| !(visual.getStartDecoration() instanceof ArrowHead)) {
 				visual.setStartDecoration(new ArrowHead());
 			}
 			break;
@@ -405,13 +406,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			break;
 		case CIRCLE:
 			if (visual.getEndDecoration() == null
-			|| !(visual.getEndDecoration() instanceof CircleHead)) {
+					|| !(visual.getEndDecoration() instanceof CircleHead)) {
 				visual.setEndDecoration(new CircleHead());
 			}
 			break;
 		case ARROW:
 			if (visual.getEndDecoration() == null
-			|| !(visual.getEndDecoration() instanceof ArrowHead)) {
+					|| !(visual.getEndDecoration() instanceof ArrowHead)) {
 				visual.setEndDecoration(new ArrowHead());
 			}
 			break;
@@ -440,12 +441,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 		if (startDecorationVisual != null
 				&& startDecorationVisual.getStrokeWidth() != content
-				.getStrokeWidth()) {
+						.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 		if (endDecorationVisual != null
 				&& endDecorationVisual.getStrokeWidth() != content
-				.getStrokeWidth()) {
+						.getStrokeWidth()) {
 			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
@@ -509,9 +510,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				"anchorages", getContent(),
 				sourceAnchorages.isEmpty() ? null
 						: (AbstractFXGeometricElement<?>) sourceAnchorages
-						.toArray()[0],
-						targetAnchorages.isEmpty() ? null
-								: (AbstractFXGeometricElement<?>) targetAnchorages
+								.toArray()[0],
+				targetAnchorages.isEmpty() ? null
+						: (AbstractFXGeometricElement<?>) targetAnchorages
 								.toArray()[0], newSource, newTarget);
 		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation(
 				"Change Content Anchorages");
