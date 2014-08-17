@@ -407,7 +407,7 @@ implements IFXConnection {
 	}
 
 	@Override
-	public boolean isWayPointConnected(int index) {
+	public boolean isWayConnected(int index) {
 		IFXAnchor anchor = getWayAnchor(index);
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}

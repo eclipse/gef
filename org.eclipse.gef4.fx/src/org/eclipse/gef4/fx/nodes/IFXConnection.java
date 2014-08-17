@@ -19,19 +19,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public interface IFXConnection {
-
-	/**
-	 * Adds a new static anchored way point at the specified position.
-	 *
-	 * @param index
-	 * @param wayPoint
-	 */
-	public void addWayPoint(int index, Point wayPoint);
 
 	/**
 	 * Adds a new way point {@link IFXAnchor} to this connection at the
@@ -41,6 +32,14 @@ public interface IFXConnection {
 	 * @param anchor
 	 */
 	public void addWayAnchor(int index, IFXAnchor anchor);
+
+	/**
+	 * Adds a new static anchored way point at the specified position.
+	 *
+	 * @param index
+	 * @param wayPoint
+	 */
+	public void addWayPoint(int index, Point wayPoint);
 
 	public ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty();
 
@@ -128,7 +127,22 @@ public interface IFXConnection {
 	 */
 	public Node getVisual();
 
+	/**
+	 * Returns the specified way point {@link IFXAnchor}.
+	 *
+	 * @param index
+	 * @return The specified way point {@link IFXAnchor}.
+	 */
+	public IFXAnchor getWayAnchor(int index);
+
 	public AnchorKey getWayAnchorKey(int index);
+
+	/**
+	 * Returns an unmodifiable list of way point {@link IFXAnchor}s.
+	 *
+	 * @return An unmodifiable list of way point {@link IFXAnchor}s.
+	 */
+	public List<IFXAnchor> getWayAnchors();
 
 	/**
 	 * Returns the specified way point (not anchor).
@@ -139,21 +153,6 @@ public interface IFXConnection {
 	public Point getWayPoint(int index);
 
 	/**
-	 * Returns the specified way point {@link IFXAnchor}.
-	 *
-	 * @param index
-	 * @return The specified way point {@link IFXAnchor}.
-	 */
-	public IFXAnchor getWayAnchor(int index);
-
-	/**
-	 * Returns an unmodifiable list of way point {@link IFXAnchor}s.
-	 *
-	 * @return An unmodifiable list of way point {@link IFXAnchor}s.
-	 */
-	public List<IFXAnchor> getWayAnchors();
-
-	/**
 	 * Returns an unmodifiable list of way points (not their anchors).
 	 *
 	 * @return An unmodifiable list of way points
@@ -161,30 +160,30 @@ public interface IFXConnection {
 	public List<Point> getWayPoints();
 
 	/**
-	 * Returns <code>true</code> if the end anchor link of this connection is
-	 * bound to a FXStaticAnchor. Otherwise returns <code>false</code>.
+	 * Returns <code>true</code> if the end anchor should be regarded as being
+	 * connected, <code>false</code> otherwise.
 	 *
 	 * @return
 	 */
 	public boolean isEndConnected();
 
 	/**
-	 * Returns <code>true</code> if the start anchor link of this connection is
-	 * bound to a FXStaticAnchor.
+	 * Returns <code>true</code> if the start anchor should be regarded as being
+	 * connected, <code>false</code> otherwise.
 	 *
 	 * @return
 	 */
 	public boolean isStartConnected();
 
 	/**
-	 * Returns <code>true</code> if the specified way point of this connection
-	 * is bound to a {@link FXStaticAnchor}.
+	 * Returns <code>true</code> if the way anchor at the given index should be
+	 * regarded as being connected, <code>false</code> otherwise.
 	 *
 	 * @param index
-	 * @return <code>true</code> if the specified way point is bound to
-	 *         {@link FXStaticAnchor}, otherwise <code>false</code>.
+	 *            The index of the way anchor of interest
+	 * @return
 	 */
-	public boolean isWayPointConnected(int index);
+	public boolean isWayConnected(int index);
 
 	/**
 	 * Removes all way points from this connection.
@@ -198,6 +197,14 @@ public interface IFXConnection {
 	 */
 	public void removeWayPoint(int index);
 
+	/**
+	 * Sets all anchors for this {@link IFXConnection}. The list of anchors is
+	 * expected to be at least of size 2. Its first and last anchor will be used
+	 * as the start and end anchors. Any anchors in between will be set as way
+	 * anchors.
+	 *
+	 * @param anchors
+	 */
 	public void setAnchors(List<IFXAnchor> anchors);
 
 	/**
@@ -254,15 +261,6 @@ public interface IFXConnection {
 	public void setStartPoint(Point start);
 
 	/**
-	 * Sets the specified way point anchor to a static anchor pointing to the
-	 * given position.
-	 *
-	 * @param index
-	 * @param wayPoint
-	 */
-	public void setWayPoint(int index, Point wayPoint);
-
-	/**
 	 * Sets the {@link IFXAnchor} for the specified way point to the given
 	 * value.
 	 *
@@ -279,6 +277,15 @@ public interface IFXConnection {
 	 *            List of way point {@link IFXAnchor}s.
 	 */
 	public void setWayAnchors(List<IFXAnchor> wayAnchors);
+
+	/**
+	 * Sets the specified way point anchor to a static anchor pointing to the
+	 * given position.
+	 *
+	 * @param index
+	 * @param wayPoint
+	 */
+	public void setWayPoint(int index, Point wayPoint);
 
 	/**
 	 * Sets all way point anchors of this connection to static anchors pointing
