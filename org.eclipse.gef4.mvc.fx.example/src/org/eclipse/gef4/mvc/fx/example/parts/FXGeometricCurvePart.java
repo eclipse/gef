@@ -276,7 +276,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			public void performResizeRelocate(double dx, double dy,
 					double dw, double dh) {
 				// do not relocate when there are no way points
-				if (visual.getWayPointAnchors().size() > 0) {
+				if (visual.getWayAnchors().size() > 0) {
 					// this will move the connection as a whole
 					super.performResizeRelocate(dx, dy, dw, dh);
 

@@ -40,7 +40,7 @@ public interface IFXConnection {
 	 * @param index
 	 * @param anchor
 	 */
-	public void addWayPointAnchor(int index, IFXAnchor anchor);
+	public void addWayAnchor(int index, IFXAnchor anchor);
 
 	public ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty();
 
@@ -144,14 +144,14 @@ public interface IFXConnection {
 	 * @param index
 	 * @return The specified way point {@link IFXAnchor}.
 	 */
-	public IFXAnchor getWayPointAnchor(int index);
+	public IFXAnchor getWayAnchor(int index);
 
 	/**
 	 * Returns an unmodifiable list of way point {@link IFXAnchor}s.
 	 *
 	 * @return An unmodifiable list of way point {@link IFXAnchor}s.
 	 */
-	public List<IFXAnchor> getWayPointAnchors();
+	public List<IFXAnchor> getWayAnchors();
 
 	/**
 	 * Returns an unmodifiable list of way points (not their anchors).
@@ -267,18 +267,18 @@ public interface IFXConnection {
 	 * value.
 	 *
 	 * @param index
-	 * @param wayPointAnchor
+	 * @param wayAnchor
 	 */
-	public void setWayPointAnchor(int index, IFXAnchor wayPointAnchor);
+	public void setWayAnchor(int index, IFXAnchor wayAnchor);
 
 	/**
 	 * Sets all way point {@link IFXAnchor}s of this {@link IFXConnection} to
 	 * the given List of {@link IFXAnchor}s.
 	 *
-	 * @param wayPointAnchors
+	 * @param wayAnchors
 	 *            List of way point {@link IFXAnchor}s.
 	 */
-	public void setWayPointAnchors(List<IFXAnchor> wayPointAnchors);
+	public void setWayAnchors(List<IFXAnchor> wayAnchors);
 
 	/**
 	 * Sets all way point anchors of this connection to static anchors pointing

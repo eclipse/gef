@@ -95,11 +95,11 @@ implements IFXConnection {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
 						wayPointInLocal.y)));
-		addWayPointAnchor(index, anchor);
+		addWayAnchor(index, anchor);
 	}
 
 	@Override
-	public void addWayPointAnchor(int index, IFXAnchor anchor) {
+	public void addWayAnchor(int index, IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -240,7 +240,7 @@ implements IFXConnection {
 		}
 		anchors.add(startAnchor);
 
-		anchors.addAll(getWayPointAnchors());
+		anchors.addAll(getWayAnchors());
 
 		IFXAnchor endAnchor = getEndAnchor();
 		if (endAnchor == null) {
@@ -348,7 +348,7 @@ implements IFXConnection {
 
 	@Override
 	public Point getWayPoint(int index) {
-		IFXAnchor anchor = getWayPointAnchor(index);
+		IFXAnchor anchor = getWayAnchor(index);
 		if (anchor == null) {
 			throw new IllegalArgumentException("No waypoint at index " + index);
 		}
@@ -360,25 +360,25 @@ implements IFXConnection {
 	}
 
 	@Override
-	public IFXAnchor getWayPointAnchor(int index) {
+	public IFXAnchor getWayAnchor(int index) {
 		return anchorsProperty.get(new AnchorKey(this, WAY_POINT_ROLE_PREFIX
 				+ index));
 	}
 
 	@Override
-	public List<IFXAnchor> getWayPointAnchors() {
+	public List<IFXAnchor> getWayAnchors() {
 		int wayPointsCount = getWayPointSize();
 		List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>(
 				wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
-			wayPointAnchors.add(getWayPointAnchor(i));
+			wayPointAnchors.add(getWayAnchor(i));
 		}
 		return wayPointAnchors;
 	}
 
 	@Override
 	public List<Point> getWayPoints() {
-		List<IFXAnchor> wayPointAnchors = getWayPointAnchors();
+		List<IFXAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
 			wayPoints.add(wayPointAnchors.get(i).getPosition(
@@ -408,7 +408,7 @@ implements IFXConnection {
 
 	@Override
 	public boolean isWayPointConnected(int index) {
-		IFXAnchor anchor = getWayPointAnchor(index);
+		IFXAnchor anchor = getWayAnchor(index);
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
@@ -474,7 +474,7 @@ implements IFXConnection {
 		}
 		setStartAnchor(anchors.get(0));
 		if (anchors.size() > 2) {
-			setWayPointAnchors(anchors.subList(1, anchors.size() - 1));
+			setWayAnchors(anchors.subList(1, anchors.size() - 1));
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
 	}
@@ -573,11 +573,11 @@ implements IFXConnection {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
 						wayPointInLocal.y)));
-		setWayPointAnchor(index, anchor);
+		setWayAnchor(index, anchor);
 	}
 
 	@Override
-	public void setWayPointAnchor(int index, IFXAnchor anchor) {
+	public void setWayAnchor(int index, IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -600,10 +600,10 @@ implements IFXConnection {
 	}
 
 	@Override
-	public void setWayPointAnchors(List<IFXAnchor> anchors) {
+	public void setWayAnchors(List<IFXAnchor> anchors) {
 		removeAllWayPoints();
 		for (IFXAnchor anchor : anchors) {
-			addWayPointAnchor(getWayPointSize(), anchor);
+			addWayAnchor(getWayPointSize(), anchor);
 		}
 	}
 
