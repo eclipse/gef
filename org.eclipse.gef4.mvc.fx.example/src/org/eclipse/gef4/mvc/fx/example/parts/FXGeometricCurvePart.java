@@ -225,64 +225,67 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// TODO: move operations and policies to their own types and use binding
 		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
-		setAdapter(
-				AdapterKey.get(FXRelocateOnDragPolicy.TRANSACTION_POLICY_KEY),
+		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
 				new FXResizeRelocatePolicy() {
-					@Override
-					public IUndoableOperation commit() {
-						// retrieve visual operation
-						final IUndoableOperation visualOperation = super
-								.commit();
+			@Override
+			public IUndoableOperation commit() {
+				// retrieve visual operation
+				final IUndoableOperation visualOperation = super
+						.commit();
 
-						if (visualOperation == null) {
-							return null;
-						}
+				if (visualOperation == null) {
+					return null;
+				}
 
-						// determine model values
-						FXGeometricCurve curve = getContent();
-						List<Point> oldWayPoints = curve.getWayPointsCopy();
-						List<Point> newWayPoints = visual.getWayPoints();
-						AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual
-								.getStartAnchor());
-						AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
-								.getEndAnchor());
-						AbstractFXGeometricElement<?> newSource = oldSource;
-						AbstractFXGeometricElement<?> newTarget = oldTarget;
+				// determine model values
+				FXGeometricCurve curve = getContent();
+				List<Point> oldWayPoints = curve.getWayPointsCopy();
+				List<Point> newWayPoints = visual.getWayPoints();
+				AbstractFXGeometricElement<?> oldSource = getAnchorageContent(visual
+						.getStartAnchor());
+				AbstractFXGeometricElement<?> oldTarget = getAnchorageContent(visual
+						.getEndAnchor());
+				AbstractFXGeometricElement<?> newSource = oldSource;
+				AbstractFXGeometricElement<?> newTarget = oldTarget;
 
-						// create model operations
-						final IUndoableOperation modelWayPointOperation = new ChangeWayPointsOperation(
-								"Update model", curve, oldWayPoints,
-								newWayPoints);
-						final IUndoableOperation modelAnchoragesOperation = new ChangeContentAnchoragesOperation(
-								"Update model", curve, oldSource, oldTarget,
-								newSource, newTarget);
+				// create model operations
+				final IUndoableOperation modelWayPointOperation = new ChangeWayPointsOperation(
+						"Update model", curve, oldWayPoints,
+						newWayPoints);
+				final IUndoableOperation modelAnchoragesOperation = new ChangeContentAnchoragesOperation(
+						"Update model", curve, oldSource, oldTarget,
+						newSource, newTarget);
 
-						// combine operations
-						return new AbstractCompositeOperation(visualOperation
-								.getLabel()) {
-							{
-								add(visualOperation);
-								add(modelWayPointOperation);
-								add(modelAnchoragesOperation);
-							}
-						};
+				// combine operations
+				return new AbstractCompositeOperation(visualOperation
+						.getLabel()) {
+					{
+						add(visualOperation);
+						add(modelWayPointOperation);
+						add(modelAnchoragesOperation);
 					}
+				};
+			}
 
-					@Override
-					public void init() {
-						super.init();
-					}
+			@Override
+			public void init() {
+				super.init();
+			}
 
-					@Override
-					public void performResizeRelocate(double dx, double dy,
-							double dw, double dh) {
-						// do not relocate when there are no way points
-						if (visual.getWayPointAnchors().size() > 0) {
-							super.performResizeRelocate(dx, dy, dw, dh);
-							refreshVisual(); // TODO: should not be necessary
-						}
-					}
-				});
+			@Override
+			public void performResizeRelocate(double dx, double dy,
+					double dw, double dh) {
+				// do not relocate when there are no way points
+				if (visual.getWayPointAnchors().size() > 0) {
+					// this will move the connection as a whole
+					super.performResizeRelocate(dx, dy, dw, dh);
+
+					// this will refresh the waypoints, which have been
+					// updated in the view
+					refreshVisual(); // TODO: should not be necessary
+				}
+			}
+		});
 
 		// transaction policies
 		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
