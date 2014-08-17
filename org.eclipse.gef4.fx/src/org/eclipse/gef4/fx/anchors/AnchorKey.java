@@ -23,9 +23,9 @@ import javafx.scene.Node;
 public class AnchorKey {
 
 	private Node anchored;
-	private Object id;
+	private String id;
 
-	public AnchorKey(Node anchored, Object id) {
+	public AnchorKey(Node anchored, String id) {
 		setAnchored(anchored);
 		setId(id);
 	}
@@ -47,7 +47,7 @@ public class AnchorKey {
 		return anchored;
 	}
 
-	public Object getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -68,7 +68,7 @@ public class AnchorKey {
 		this.anchored = anchored;
 	}
 
-	public void setId(Object id) {
+	public void setId(String id) {
 		if (id == null) {
 			throw new IllegalArgumentException(
 					"The given Id may not be <null>.");
