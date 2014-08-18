@@ -32,6 +32,6 @@ public class FXCurveConnectionTests {
 		connection.setEndPoint(endPoint);
 		assertEquals(startPoint, connection.getStartPoint());
 		assertEquals(wayPoint, connection.getWayPoint(0));
-		assertEquals(wayPoint, connection.getEndPoint());
+		assertEquals(endPoint, connection.getEndPoint());
 	}
 }
