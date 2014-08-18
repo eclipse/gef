@@ -1,9 +1,0 @@
-- Add snap-to behavior when re-connecting an edge
-- Add support for cursor changes during interaction
-- Implement marquee selection
-- Ensure visual part and content part registries are based on scopes (hierarchy)
-- Show how shapes can be attached to each other via anchors (G shape of logo)
-- Add viewport (scrolling) model and tools for scrolling and related birdeye viewer to UI feature)
-- Add focus model (keyboard focus)
-- Add support for creation of new elements (clone, context-menu, palette)
-- Implement rotation support (tool, policies)
