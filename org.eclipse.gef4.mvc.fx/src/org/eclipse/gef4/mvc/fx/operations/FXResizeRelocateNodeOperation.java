@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
@@ -24,9 +24,9 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
-	private Node visual;
-	private Point oldLocation;
-	private Dimension oldSize;
+	private final Node visual;
+	private final Point oldLocation;
+	private final Dimension oldSize;
 	private double dx;
 	private double dy;
 	private double dw;
@@ -38,10 +38,10 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
 	public FXResizeRelocateNodeOperation(Node visual, double dx, double dy,
 			double dw, double dh) {
-		this("resizeRelocate", visual, new Point(visual.getLayoutX(),
+		this("Resize/Relocate", visual, new Point(visual.getLayoutX(),
 				visual.getLayoutY()), new Dimension(visual.getLayoutBounds()
-				.getWidth(), visual.getLayoutBounds().getHeight()), dx, dy, dw,
-				dh);
+						.getWidth(), visual.getLayoutBounds().getHeight()), dx, dy, dw,
+						dh);
 	}
 
 	public FXResizeRelocateNodeOperation(String label, Node visual,
@@ -132,18 +132,6 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
 	public void setDy(double dy) {
 		this.dy = dy;
-	}
-
-	public void setOldLocation(Point oldLocation) {
-		this.oldLocation = oldLocation;
-	}
-
-	public void setOldSize(Dimension oldSize) {
-		this.oldSize = oldSize;
-	}
-
-	public void setVisual(Node visual) {
-		this.visual = visual;
 	}
 
 	@Override
