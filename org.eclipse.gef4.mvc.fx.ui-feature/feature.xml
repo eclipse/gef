@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.mvc.fx.ui"
-      label="GEF4 MVC FX UI"
+      label="GEF4 MVC.FX.UI"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
       plugin="org.eclipse.gef4.mvc.fx.ui"

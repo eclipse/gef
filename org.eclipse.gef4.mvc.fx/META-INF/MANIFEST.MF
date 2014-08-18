@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 MVC FX
+Bundle-Name: GEF4 MVC.FX
 Bundle-SymbolicName: org.eclipse.gef4.mvc.fx
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",

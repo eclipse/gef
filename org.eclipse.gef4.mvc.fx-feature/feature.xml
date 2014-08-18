@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.gef4.mvc.fx"
-      label="GEF4 MVC FX"
+      label="GEF4 MVC.FX"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
       plugin="org.eclipse.gef4.mvc.fx"
@@ -15,9 +15,9 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
 
    <plugin

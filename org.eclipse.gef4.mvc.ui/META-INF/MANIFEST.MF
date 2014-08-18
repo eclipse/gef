@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GEF4 MVC UI
+Bundle-Name: GEF4 MVC.UI
 Bundle-SymbolicName: org.eclipse.gef4.mvc.ui;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Require-Bundle: com.google.inject;bundle-version="[3.0.0,4.0.0)",
@@ -13,3 +13,4 @@ Export-Package: org.eclipse.gef4.mvc.ui;x-internal:=true;uses:="com.google.injec
  org.eclipse.gef4.mvc.ui.properties;x-internal:=true
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.gef4.mvc.ui.MvcUiBundle
+Bundle-Vendor: Eclipse.org
