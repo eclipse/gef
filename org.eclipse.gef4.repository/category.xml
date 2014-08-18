@@ -105,6 +105,12 @@
    <feature url="features/org.eclipse.gef4.fx.ui_0.1.0.qualifier.jar" id="org.eclipse.gef4.fx.ui" version="0.1.0.qualifier">
       <category name="GEF4 FX"/>
    </feature>
+   <feature url="features/org.eclipse.gef4.zest.examples_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.examples" version="0.1.0.qualifier">
+      <category name="GEF4 Zest"/>
+   </feature>
+   <feature url="features/org.eclipse.gef4.mvc.examples_0.1.0.qualifier.jar" id="org.eclipse.gef4.mvc.examples" version="0.1.0.qualifier">
+      <category name="GEF4 MVC"/>
+   </feature>
    <category-def name="GEF4 Geometry" label="GEF4 Geometry"/>
    <category-def name="GEF4 FX" label="GEF4 FX"/>
    <category-def name="GEF4 Zest" label="GEF4 Zest"/>

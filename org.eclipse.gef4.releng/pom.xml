@@ -414,6 +414,7 @@
 		<module>../org.eclipse.gef4.mvc.fx.example</module>
 		<module>../org.eclipse.gef4.mvc.fx.ui.example</module>
 		<module>../org.eclipse.gef4.mvc.fx.example.web</module>
+		<module>../org.eclipse.gef4.mvc.examples-feature</module>
 
 		<module>../org.eclipse.gef4.cloudio</module>
 		<module>../org.eclipse.gef4.cloudio-feature</module>
@@ -464,6 +465,7 @@
 		
 		<module>../org.eclipse.gef4.zest.fx.example</module>
 		<module>../org.eclipse.gef4.zest.fx.ui.example</module>
+		<module>../org.eclipse.gef4.zest.examples-feature</module>
 
 		<module>../org.eclipse.gef4.repository</module>
 	</modules>
