@@ -4,7 +4,7 @@
       label="GEF4 Geometry Documentation"
       version="0.1.0.qualifier"
       provider-name="Eclipse.org"
-      plugin="org.eclipse.gef4.geometry.doc" 
+      plugin="org.eclipse.gef4.geometry.doc"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
 
@@ -15,10 +15,16 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
+
+   <requires>
+      <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry.convert.fx" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry.convert.swt" version="0.1.0.qualifier"/>
+   </requires>
 
    <plugin
          id="org.eclipse.gef4.geometry.doc"

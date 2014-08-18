@@ -15,13 +15,25 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
+
+   <requires>
+      <import feature="org.eclipse.gef4.common" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
+   </requires>
 
    <plugin
          id="org.eclipse.gef4.mvc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"

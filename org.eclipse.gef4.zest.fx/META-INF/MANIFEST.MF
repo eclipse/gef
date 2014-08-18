@@ -13,11 +13,11 @@ Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0",
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
  org.eclipse.gef4.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry.convert.fx,
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
  org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
  org.eclipse.gef4.graph;bundle-version="0.1.0",
- org.eclipse.gef4.layout,
- org.eclipse.gef4.geometry.convert.fx
+ org.eclipse.gef4.layout
 Import-Package: javax.annotation, 
  javafx.animation,
  javafx.application,

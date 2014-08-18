@@ -20,6 +20,11 @@
       %license
    </license>
 
+   <requires>
+      <import feature="org.eclipse.gef4.graph" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.layout" version="0.1.0.qualifier"/>
+   </requires>
+
    <plugin
          id="org.eclipse.gef4.dot"
          download-size="0"

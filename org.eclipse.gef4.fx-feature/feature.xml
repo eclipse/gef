@@ -15,10 +15,15 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
+
+   <requires>
+      <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.geometry.convert.fx" version="0.1.0.qualifier"/>
+   </requires>
 
    <plugin
          id="org.eclipse.gef4.fx"

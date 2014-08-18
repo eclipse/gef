@@ -15,10 +15,17 @@
    <copyright>
       %copyright
    </copyright>
-   
+
    <license url="%licenseURL">
-     %license
+      %license
    </license>
+
+   <requires>
+      <import feature="org.eclipse.gef4.mvc" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.mvc.fx" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.mvc.fx.ui" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.gef4.mvc.ui" version="0.1.0.qualifier"/>
+   </requires>
 
    <plugin
          id="org.eclipse.gef4.mvc.doc"
