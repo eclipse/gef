@@ -32,7 +32,7 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
  */
 public class FXBendOperation extends AbstractOperation {
 
-	private IFXConnection connection;
+	private final IFXConnection connection;
 	private List<IFXAnchor> oldAnchors;
 	private List<IFXAnchor> newAnchors;
 
@@ -108,16 +108,8 @@ public class FXBendOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
-	public void setConnection(IFXConnection connection) {
-		this.connection = connection;
-	}
-
 	public void setNewAnchors(List<IFXAnchor> newAnchors) {
 		this.newAnchors = newAnchors;
-	}
-
-	public void setOldAnchors(List<IFXAnchor> oldAnchors) {
-		this.oldAnchors = oldAnchors;
 	}
 
 	@Override
