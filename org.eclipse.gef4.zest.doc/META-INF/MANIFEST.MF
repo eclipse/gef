@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.gef4.zest.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: com.google.guava;bundle-version="10.0.0";resolution:=optional,
+Require-Bundle: com.google.guava;bundle-version="15.0.0";resolution:=optional,
  com.google.inject;bundle-version="3.0.0";resolution:=optional,
  org.eclipse.core.commands;bundle-version="3.6.0";resolution:=optional,
  org.eclipse.ui.views;bundle-version="3.6.0";resolution:=optional,

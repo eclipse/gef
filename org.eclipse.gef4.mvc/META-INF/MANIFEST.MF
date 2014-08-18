@@ -4,8 +4,8 @@ Bundle-Name: GEF4 MVC
 Bundle-SymbolicName: org.eclipse.gef4.mvc
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.mvc.MvcBundle
-Require-Bundle: com.google.guava;bundle-version="10.0.0",
- com.google.inject;bundle-version="3.0.0",
+Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
+ com.google.inject;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.osgi,
  org.eclipse.equinox.common,
  org.eclipse.core.commands,
@@ -14,14 +14,15 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Export-Package: org.eclipse.gef4.mvc;x-internal:=true,
- org.eclipse.gef4.mvc.behaviors;x-internal:=true,
+Import-Package: javax.annotation,
+ javax.inject
+Export-Package: org.eclipse.gef4.mvc;x-internal:=true;uses:="com.google.inject",
+ org.eclipse.gef4.mvc.behaviors;x-internal:=true;uses:="com.google.inject,com.google.common.collect",
  org.eclipse.gef4.mvc.domain;x-internal:=true,
  org.eclipse.gef4.mvc.models;x-internal:=true,
- org.eclipse.gef4.mvc.operations;x-internal:=true,
- org.eclipse.gef4.mvc.parts;x-internal:=true,
+ org.eclipse.gef4.mvc.operations;x-internal:=true;uses:="com.google.common.collect",
+ org.eclipse.gef4.mvc.parts;x-internal:=true;uses:="com.google.common.collect",
  org.eclipse.gef4.mvc.policies;x-internal:=true,
  org.eclipse.gef4.mvc.tools;x-internal:=true,
  org.eclipse.gef4.mvc.viewer;x-internal:=true
-Import-Package: javax.inject;version="1.0.0"
 Bundle-Vendor: Eclipse.org
