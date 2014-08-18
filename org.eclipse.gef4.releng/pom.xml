@@ -136,7 +136,7 @@
 					</execution>
 					<execution>
 						<id>replace-back-build-token</id>
-						<phase>process-resources</phase>
+						<phase>verify</phase>
 						<configuration>
 							<tasks>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
