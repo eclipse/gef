@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.Stage;
@@ -89,10 +90,10 @@ public class ZestFXExampleApplication extends Application {
 		Injector injector = Guice.createInjector(new ZestFxExampleModule());
 		FXDomain domain = new FXDomain();
 		injector.injectMembers(domain);
-		
+
 		final FXViewer viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));
-		
+
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(640);
 		primaryStage.setHeight(480);
@@ -101,14 +102,24 @@ public class ZestFXExampleApplication extends Application {
 		domain.activate();
 
 		viewer.setContents(Collections.singletonList(DEFAULT_GRAPH));
+		
+		viewer.getViewportModel().setWidth(primaryStage.getWidth());
+		viewer.getViewportModel().setHeight(primaryStage.getHeight());
 
 		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, Number newValue) {
+					Number oldValue, final Number newValue) {
 				if (newValue != null) {
-					viewer.getViewportModel().setWidth(newValue.doubleValue());
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run() {
+							viewer.getViewportModel().setWidth(
+									newValue.doubleValue());
+						}
+					});
 				}
 			}
 		});
@@ -116,9 +127,17 @@ public class ZestFXExampleApplication extends Application {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, Number newValue) {
+					Number oldValue, final Number newValue) {
 				if (newValue != null) {
-					viewer.getViewportModel().setHeight(newValue.doubleValue());
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run() {
+							viewer.getViewportModel().setHeight(
+									newValue.doubleValue());
+						}
+
+					});
 				}
 			}
 		});
