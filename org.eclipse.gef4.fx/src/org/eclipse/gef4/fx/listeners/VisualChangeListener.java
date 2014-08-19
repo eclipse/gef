@@ -28,16 +28,16 @@ import javafx.scene.transform.Transform;
  * You can use a VisualChangeListener to register/unregister specific listeners
  * for catching changes in the visual representation of a JavaFX {@link Node}.
  * Depending on the changed property, either the
- * {@link #boundsChanged(Bounds, Bounds)} or the
- * {@link #transformChanged(Transform, Transform)} method is called. A
+ * {@link #boundsInLocalChanged(Bounds, Bounds)} or the
+ * {@link #localToParentTransformChanged(Transform, Transform)} method is called. A
  * bounds-in-local change occurs when the target node's effect, clip, stroke,
  * local transformations, or geometric bounds change. A
  * local-to-parent-transform change occurs when the node undergoes a
  * transformation change. Transformation listeners are registered for all nodes
  * in the hierarchy up to a specific parent.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public abstract class VisualChangeListener {
 
@@ -47,7 +47,7 @@ public abstract class VisualChangeListener {
 				Transform oldValue, Transform newValue) {
 			// only fire a visual change event if the new transform is valid
 			if (isValidTransform(newValue)) {
-				transformChanged(oldValue, newValue);
+				localToParentTransformChanged(oldValue, newValue);
 			}
 		}
 	};
@@ -58,7 +58,7 @@ public abstract class VisualChangeListener {
 				Bounds oldValue, Bounds newValue) {
 			// only fire a visual change event if the new bounds are valid
 			if (isValidBounds(newValue)) {
-				boundsChanged(oldValue, newValue);
+				boundsInLocalChanged(oldValue, newValue);
 			}
 		}
 	};
@@ -68,7 +68,7 @@ public abstract class VisualChangeListener {
 
 	private List<Node> relatives = new ArrayList<Node>();
 
-	protected abstract void boundsChanged(Bounds oldBounds, Bounds newBounds);
+	protected abstract void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds);
 
 	private Node getNearestCommonAncestor(Node source, Node target) {
 		if (source == target) {
@@ -102,7 +102,7 @@ public abstract class VisualChangeListener {
 	/**
 	 * Checks if the given Bounds contain NaN values. Returns <code>true</code>
 	 * if no NaN values are found, otherwise <code>false</code>.
-	 * 
+	 *
 	 * @param b
 	 * @return
 	 */
@@ -126,7 +126,7 @@ public abstract class VisualChangeListener {
 	 * Checks if the given Transform contains NaN values. Returns
 	 * <code>true</code> if no NaN values are found, otherwise
 	 * <code>false/<code>.
-	 * 
+	 *
 	 * @param t
 	 * @return
 	 */
@@ -178,11 +178,11 @@ public abstract class VisualChangeListener {
 	 * In detail, two kind of changes will be reported as visual changes:
 	 * <ul>
 	 * <li>changes to the bounds-in-local property of the observed node (
-	 * {@link #boundsChanged(Bounds, Bounds)}) itself</li>
+	 * {@link #boundsInLocalChanged(Bounds, Bounds)}) itself</li>
 	 * <li>changes to the local-to-parent-transform property of any node in the
 	 * observed node hierarchy up to (but excluding) the common parent of the
 	 * observed and observer nodes (
-	 * {@link #transformChanged(Transform, Transform)}).</li>
+	 * {@link #localToParentTransformChanged(Transform, Transform)}).</li>
 	 * </ul>
 	 * <p>
 	 * The use of a visual change lister allows to react to relative transform
@@ -190,7 +190,7 @@ public abstract class VisualChangeListener {
 	 * below a {@link ScrollPane}, this allows to ignore transform changes that
 	 * result from scrolling, as these will (in most cases) not indicate a
 	 * visual change.
-	 * 
+	 *
 	 * @param observed
 	 *            The observed {@link Node} to be observed for visual changes,
 	 *            which includes bounds-in-local changes for the source node
@@ -248,7 +248,7 @@ public abstract class VisualChangeListener {
 		}
 	}
 
-	protected abstract void transformChanged(Transform oldTransform,
+	protected abstract void localToParentTransformChanged(Transform oldTransform,
 			Transform newTransform);
 
 	public void unregister() {
@@ -258,7 +258,7 @@ public abstract class VisualChangeListener {
 		// remove transform listeners
 		for (Node n : relatives) {
 			n.localToParentTransformProperty()
-					.removeListener(transformListener);
+			.removeListener(transformListener);
 		}
 	}
 

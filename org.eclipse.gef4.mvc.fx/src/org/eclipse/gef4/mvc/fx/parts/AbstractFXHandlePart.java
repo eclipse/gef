@@ -33,12 +33,12 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 		if (!visualChangeListeners.containsKey(anchorage)) {
 			VisualChangeListener listener = new VisualChangeListener() {
 				@Override
-				protected void boundsChanged(Bounds oldBounds, Bounds newBounds) {
+				protected void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds) {
 					refreshVisual();
 				}
 
 				@Override
-				protected void transformChanged(Transform oldTransform,
+				protected void localToParentTransformChanged(Transform oldTransform,
 						Transform newTransform) {
 					refreshVisual();
 				}
