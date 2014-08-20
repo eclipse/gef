@@ -26,6 +26,8 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
+// TODO: Find an appropriate name for this (outline anchor or shape anchor or perimeter anchor)
+//       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	private SimpleMapProperty<AnchorKey, Point> referencePointProperty = new SimpleMapProperty<AnchorKey, Point>(
