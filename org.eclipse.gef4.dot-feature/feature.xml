@@ -20,6 +20,10 @@
       %license
    </license>
 
+   <url>
+      <discovery label="Xtext Releases Site" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+   </url>
+
    <requires>
       <import feature="org.eclipse.gef4.graph" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.layout" version="0.1.0.qualifier"/>
