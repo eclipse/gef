@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.gef4.mvc
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.gef4.mvc.MvcBundle
 Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
- com.google.inject;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.osgi,
  org.eclipse.equinox.common,
  org.eclipse.core.commands,
@@ -14,7 +13,11 @@ Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Import-Package: javax.annotation,
+Import-Package: com.google.inject;version="[1.3.0,1.4.0)",
+ com.google.inject.binder;version="[1.3.0,1.4.0)",
+ com.google.inject.multibindings;version="[1.3.0,1.4.0)",
+ com.google.inject.util;version="[1.3.0,1.4.0)",
+ javax.annotation,
  javax.inject
 Export-Package: org.eclipse.gef4.mvc;x-internal:=true;uses:="com.google.inject",
  org.eclipse.gef4.mvc.behaviors;x-internal:=true;uses:="com.google.inject,com.google.common.collect",
