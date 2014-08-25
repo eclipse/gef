@@ -17,7 +17,7 @@ import javafx.scene.input.ZoomEvent;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 // TODO: rename to pinch spread policy
-public abstract class AbstractFXZoomPolicy extends AbstractPolicy<Node> {
+public abstract class AbstractFXPinchSpreadPolicy extends AbstractPolicy<Node> {
 
 	/**
 	 * Reaction to the detection of pinch (close fingers) gestures.

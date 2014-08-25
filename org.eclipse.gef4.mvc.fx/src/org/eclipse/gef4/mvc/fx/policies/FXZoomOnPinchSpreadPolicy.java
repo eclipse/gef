@@ -16,7 +16,7 @@ import javafx.scene.input.ZoomEvent;
 
 import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 
-public class FXZoomOnPinchSpreadPolicy extends AbstractFXZoomPolicy {
+public class FXZoomOnPinchSpreadPolicy extends AbstractFXPinchSpreadPolicy {
 
 	private double initialZoomFactor;
 
