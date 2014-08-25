@@ -21,18 +21,11 @@ import org.eclipse.gef4.common.inject.AdaptableTypeListener;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
-import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
-import org.eclipse.gef4.mvc.models.DefaultFocusModel;
-import org.eclipse.gef4.mvc.models.DefaultHoverModel;
-import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
 import org.eclipse.gef4.mvc.models.DefaultViewportModel;
 import org.eclipse.gef4.mvc.models.DefaultZoomModel;
 import org.eclipse.gef4.mvc.models.IContentModel;
-import org.eclipse.gef4.mvc.models.IFocusModel;
-import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.models.IViewportModel;
 import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
@@ -41,17 +34,11 @@ import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
-import com.google.inject.util.Types;
 
 /**
  * The Guice module which contains all (default) bindings related to the MVC
@@ -112,12 +99,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-
-		// bind default behaviors
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
-				Key.get(Types.newParameterizedType(ContentBehavior.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
+		// nothing to bind by default
 	}
 
 	/**
@@ -171,10 +153,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-				.to(Key.get(Types.newParameterizedType(
-						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
+		// nothing to bind by default
 	}
 
 	/**
@@ -192,26 +171,7 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// register (default) behaviors
-		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
-				Key.get(Types.newParameterizedType(ContentBehavior.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-
-		// register (default) policies
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-				.to(Key.get(Types.newParameterizedType(
-						DefaultHoverPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(
-				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-				Key.get(Types.newParameterizedType(
-						DefaultSelectionPolicy.class, new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultZoomPolicy.class))
-				.to(Key.get(Types.newParameterizedType(DefaultZoomPolicy.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
+		// nothing to register by default
 	}
 
 	/**
@@ -229,25 +189,13 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// bind (default) viewer models
+		// bind (default) viewer models as adapters
 		adapterMapBinder.addBinding(AdapterKey.get(IContentModel.class)).to(
-				DefaultContentModel.class);
+				IContentModel.class);
 		adapterMapBinder.addBinding(AdapterKey.get(IViewportModel.class)).to(
-				DefaultViewportModel.class);
+				IViewportModel.class);
 		adapterMapBinder.addBinding(AdapterKey.get(IZoomModel.class)).to(
-				DefaultZoomModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(IFocusModel.class)).to(
-				Key.get(Types.newParameterizedType(DefaultFocusModel.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(AdapterKey.get(IHoverModel.class)).to(
-				Key.get(Types.newParameterizedType(DefaultHoverModel.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
-		adapterMapBinder.addBinding(AdapterKey.get(ISelectionModel.class)).to(
-				Key.get(Types.newParameterizedType(DefaultSelectionModel.class,
-						new TypeLiteral<VR>() {
-						}.getRawType().getClass())));
+				IZoomModel.class);
 	}
 
 	/**
@@ -268,11 +216,39 @@ public class MvcModule<VR> extends AbstractModule {
 		// nothing to bind by default
 	}
 
+	protected void bindDefaultContentModel() {
+		binder().bind(IContentModel.class).to(DefaultContentModel.class);
+	}
+
+	protected void bindDefaultOperationHistory() {
+		binder().bind(IOperationHistory.class)
+				.to(DefaultOperationHistory.class);
+	}
+
+	protected void bindDefaultViewportModel() {
+		binder().bind(IViewportModel.class).to(DefaultViewportModel.class);
+	}
+
+	protected void bindDefaultZoomModel() {
+		binder().bind(IZoomModel.class).to(DefaultZoomModel.class);
+	}
+
+	protected void bindUndoContext() {
+		binder().bind(IUndoContext.class).to(UndoContext.class);
+	}
+
 	@Override
 	protected void configure() {
 		// TODO: could rather install a module that is provided by
 		// org.eclipse.gef4.common.inject (which contains the enabling code)
 		enableAdapterMapInjection();
+
+		bindDefaultContentModel();
+		bindDefaultViewportModel();
+		bindDefaultZoomModel();
+
+		bindUndoContext();
+		bindDefaultOperationHistory();
 
 		// bind domain adapters
 		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
@@ -282,9 +258,7 @@ public class MvcModule<VR> extends AbstractModule {
 		bindAbstractViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				AbstractViewer.class));
 
-		// bind visual part (and subtypes) adapters; not that via type listener
-		// and custom members injector, subclass adapters will additionally be
-		// injected into the respective subclass.
+		// bind visual part adapters
 		bindAbstractVisualPartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), AbstractVisualPart.class));
 		bindAbstractRootPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
@@ -295,12 +269,6 @@ public class MvcModule<VR> extends AbstractModule {
 				binder(), AbstractFeedbackPart.class));
 		bindAbstractHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), AbstractHandlePart.class));
-
-		// TODO: we should bind these as adapters as well
-		// bind IUndoContext and IOperationHistory to reasonable defaults
-		binder().bind(IUndoContext.class).to(UndoContext.class);
-		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class);
 	}
 
 	/**

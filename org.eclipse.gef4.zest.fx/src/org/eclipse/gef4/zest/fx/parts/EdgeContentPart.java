@@ -33,10 +33,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
-import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -44,6 +42,7 @@ import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.inject.Provider;
 
 public class EdgeContentPart extends AbstractFXContentPart {
 
@@ -205,24 +204,24 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
+		setAdapter(AdapterKey.get(Provider.class,
+				SelectionBehavior.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
+				new Provider<IGeometry>() {
+					@Override
+					public IGeometry get() {
+						return visual.getConnection().getCurveNode()
+								.getGeometry();
+					}
+				});
+		setAdapter(AdapterKey.get(Provider.class,
+				HoverBehavior.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
+				new Provider<IGeometry>() {
+					@Override
+					public IGeometry get() {
+						return visual.getConnection().getCurveNode()
+								.getGeometry();
+					}
+				});
 
-		setAdapter(AdapterKey.get(AbstractSelectionBehavior.class),
-				new FXSelectionBehavior() {
-			@Override
-			protected IGeometry getHostGeometry() {
-				return visual.getConnection().getCurveNode()
-						.getGeometry();
-			}
-		});
-		setAdapter(AdapterKey.get(AbstractHoverBehavior.class),
-				new FXHoverBehavior() {
-			@Override
-			protected IGeometry getFeedbackGeometry(
-					Map<Object, Object> contextMap) {
-				return visual.getConnection().getCurveNode()
-						.getGeometry();
-			}
-		});
 	}
-
 }

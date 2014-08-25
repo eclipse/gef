@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -23,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Provider;
 
 /**
- * The {@link AbstractHoverBehavior} is responsible for creating and removing
+ * The {@link HoverBehavior} is responsible for creating and removing
  * selection feedback.
  *
  * @author anyssen
@@ -32,8 +33,14 @@ import com.google.inject.Provider;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractHoverBehavior<VR> extends AbstractBehavior<VR>
-implements PropertyChangeListener {
+public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
+		PropertyChangeListener {
+
+	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
+
+	// TODO: add hover handles -> can be useful for connection creation
+	// public static final String HOVER_HANDLES_GEOMETRY_PROVIDER =
+	// "HOVER_HANDLES_GEOMETRY_PROVIDER";
 
 	@Override
 	public void activate() {
@@ -64,28 +71,11 @@ implements PropertyChangeListener {
 		super.deactivate();
 	}
 
-	/**
-	 * Returns an {@link IGeometry} for which visual selection feedback will be
-	 * provided.
-	 *
-	 * @param contextMap
-	 *            TODO
-	 *
-	 * @return an {@link IGeometry} determining feedback positions
-	 */
-	// TODO: the geometry provider could be adapted to the host part / this
-	// behavior and retrieved via getAdapter() -> would make it more flexible
-	protected abstract IGeometry getFeedbackGeometry(
-			Map<Object, Object> contextMap);
-
 	public Provider<IGeometry> getFeedbackGeometryProvider(
 			final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getFeedbackGeometry(contextMap);
-			}
-		};
+		return getHost().getAdapter(
+				AdapterKey
+						.get(Provider.class, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 	}
 
 	@SuppressWarnings({ "unchecked" })

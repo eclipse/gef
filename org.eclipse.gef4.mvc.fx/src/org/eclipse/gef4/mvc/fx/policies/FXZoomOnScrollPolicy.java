@@ -14,13 +14,13 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 
-import org.eclipse.gef4.mvc.policies.DefaultZoomPolicy;
+import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 
 public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 
 	@SuppressWarnings("unchecked")
-	private DefaultZoomPolicy<Node> getZoomPolicy() {
-		return getHost().getAdapter(DefaultZoomPolicy.class);
+	private ZoomPolicy<Node> getZoomPolicy() {
+		return getHost().getAdapter(ZoomPolicy.class);
 	}
 
 	protected boolean isZoom(ScrollEvent event) {
@@ -30,7 +30,7 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 	@Override
 	public void scroll(ScrollEvent event, double deltaY) {
 		if (isZoom(event)) {
-			DefaultZoomPolicy<Node> policy = getZoomPolicy();
+			ZoomPolicy<Node> policy = getZoomPolicy();
 			if (policy != null) {
 				policy.zoomRelative(deltaY > 0 ? 1.25 : 0.8);
 			}

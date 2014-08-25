@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
@@ -18,26 +18,27 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  * An {@link AbstractDeleteContentChildrenPolicy} provides an
  * {@link IUndoableOperation} for the deletion of the content of one of its
  * adaptee's children.
- * 
+ *
  * @author mwienand
  * @param <VR>
  *            Visual root type.
- * 
+ *
  */
+// TODO: turn into interface
 public abstract class AbstractDeleteContentChildrenPolicy<VR> extends
-		AbstractPolicy<VR> {
+AbstractPolicy<VR> {
 
 	/**
 	 * Constructs an {@link IUndoableOperation} for the deletion of the child's
 	 * content from the adaptee's content children, or <code>null</code> if no
 	 * actions have to be performed.
-	 * 
+	 *
 	 * @param child
 	 *            {@link IContentPart} child of the adaptee.
 	 * @return An {@link IUndoableOperation} for the deletion of the child's
 	 *         content from the adaptee's content children, or <code>null</code>
 	 *         if no actions have to be performed.
-	 * 
+	 *
 	 * @see IContentPart#getContentChildren()
 	 */
 	public abstract IUndoableOperation getDeleteOperation(IContentPart<VR> child);

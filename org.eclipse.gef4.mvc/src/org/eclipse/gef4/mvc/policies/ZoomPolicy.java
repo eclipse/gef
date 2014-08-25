@@ -13,7 +13,12 @@ package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.gef4.mvc.models.IZoomModel;
 
-public class DefaultZoomPolicy<VR> extends AbstractPolicy<VR> {
+//TODO: extract interface and use for binding
+//TODO: make ITransactional
+public class ZoomPolicy<VR> extends AbstractPolicy<VR> {
+
+	// TODO: use a ChangeZoomOperation (and provide a hook to decide
+	// whether it should be executed on the operation history)
 
 	public void zoomAbsolute(double absoluteZoom) {
 		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();

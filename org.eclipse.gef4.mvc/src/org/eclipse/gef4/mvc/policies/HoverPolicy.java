@@ -1,26 +1,25 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API & implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.policies;
+package org.eclipse.gef4.mvc.policies;
 
-import javafx.scene.Node;
+//TODO: extract interface and use for binding
+//TODO: make ITransactional
+public class HoverPolicy<VR> extends AbstractPolicy<VR> {
 
-import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
+	// TODO: use a ChangeHoverOperation (and provide a hook to decide
+	// whether it should be executed on the operation history)
 
-public class NotSelectablePolicy extends DefaultSelectionPolicy<Node> {
-
-	@Override
-	protected boolean isSelectable() {
-		return false;
+	public void hover() {
+		getHost().getRoot().getViewer().getHoverModel().setHover(getHost());
 	}
 
 }

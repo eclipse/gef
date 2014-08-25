@@ -14,18 +14,19 @@ package org.eclipse.gef4.mvc.policies;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class DefaultFocusPolicy<VR> extends AbstractPolicy<VR> {
+// TODO: extract interface and use for binding
+// TODO: make ITransactional
+public class FocusPolicy<VR> extends AbstractPolicy<VR> {
+
+	// TODO: use a ChangeFocusOperation (and provide a hook to decide
+	// whether it should be executed on the operation history)
 
 	public void focus() {
 		IVisualPart<VR> host = getHost();
 		if (host instanceof IContentPart) {
 			host.getRoot().getViewer().getFocusModel()
-					.setFocused(isFocusable() ? (IContentPart<VR>) host : null);
+					.setFocused((IContentPart<VR>) host);
 		}
-	}
-
-	protected boolean isFocusable() {
-		return true;
 	}
 
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
@@ -22,27 +22,18 @@ import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteContentChildrenPolicy;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
-import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
 
 public class FXGeometricModelPart extends AbstractFXContentPart {
 
-	private Group g;
+	private final Group g;
 
 	public FXGeometricModelPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
 
-		setAdapter(AdapterKey.get(DefaultSelectionPolicy.class),
-				new DefaultSelectionPolicy<Node>() {
-					@Override
-					protected boolean isSelectable() {
-						return false;
-					}
-				});
-
 		setAdapter(
 				AdapterKey
-						.get(FXDeleteSelectedOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
+				.get(FXDeleteSelectedOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
 				new FXExampleDeleteContentChildrenPolicy());
 	}
 

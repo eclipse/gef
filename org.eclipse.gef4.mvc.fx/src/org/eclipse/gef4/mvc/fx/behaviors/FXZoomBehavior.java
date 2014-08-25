@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 
 	@Override
-	protected void applyZoomFactor(Double zoomFactor) {
+	protected void applyZoom(double zoomFactor) {
 		if (zoomFactor <= 0) {
 			throw new IllegalArgumentException(
 					"Expected: positive double. Given: <" + zoomFactor + ">.");

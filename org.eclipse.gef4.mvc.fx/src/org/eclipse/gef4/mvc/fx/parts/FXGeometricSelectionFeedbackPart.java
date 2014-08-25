@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Provider;
 
-public class FXSelectionFeedbackPart extends FXGeometricFeedbackPart {
+public class FXGeometricSelectionFeedbackPart extends FXGeometricFeedbackPart {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -43,7 +43,7 @@ public class FXSelectionFeedbackPart extends FXGeometricFeedbackPart {
 	};
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
-	public FXSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
+	public FXGeometricSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
 		super(feedbackGeometryProvider);
 	}
 

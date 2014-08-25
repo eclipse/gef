@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -27,8 +28,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Provider;
 
 /**
- * The AbstractSelectionFeedbackPolicy is responsible for creating and removing
- * selection feedback.
+ * The default selection behavior is responsible for creating and removing
+ * selection feedback and handles.
  *
  * @author anyssen
  *
@@ -36,14 +37,17 @@ import com.google.inject.Provider;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractSelectionBehavior<VR> extends
-		AbstractBehavior<VR> implements PropertyChangeListener {
+public class SelectionBehavior<VR> extends AbstractBehavior<VR>
+implements PropertyChangeListener {
+
+	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
+	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
 
 	@Override
 	public void activate() {
 		super.activate();
 		getHost().getRoot().getViewer().getSelectionModel()
-				.addPropertyChangeListener(this);
+		.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already selected
 		addFeedbackAndHandles(getHost().getRoot().getViewer()
@@ -73,55 +77,22 @@ public abstract class AbstractSelectionBehavior<VR> extends
 				.getSelectionModel().getSelected());
 
 		getHost().getRoot().getViewer().getSelectionModel()
-				.removePropertyChangeListener(this);
+		.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
-	/**
-	 * Returns an {@link IGeometry} for which visual selection feedback will be
-	 * provided.
-	 *
-	 * @param contextMap
-	 *            TODO
-	 *
-	 * @return an {@link IGeometry} determining feedback positions
-	 */
-	protected abstract IGeometry getFeedbackGeometry(
-			Map<Object, Object> contextMap);
-
 	public Provider<IGeometry> getFeedbackGeometryProvider(
 			final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getFeedbackGeometry(contextMap);
-			}
-		};
+		return getHost().getAdapter(
+				AdapterKey.get(Provider.class,
+						SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 	}
-
-	/**
-	 * Returns an {@link IGeometry} for which selection handles will be
-	 * provided.
-	 * <p>
-	 * Per default, the {@link #getFeedbackGeometry(Map) feedback geometry} is
-	 * returned.
-	 *
-	 * @param contextMap
-	 *            TODO
-	 *
-	 * @return an {@link IGeometry} determining handle positions
-	 */
-	protected abstract IGeometry getHandleGeometry(
-			Map<Object, Object> contextMap);
 
 	public Provider<IGeometry> getHandleGeometryProvider(
 			final Map<Object, Object> contextMap) {
-		return new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return getHandleGeometry(contextMap);
-			}
-		};
+		return getHost().getAdapter(
+				AdapterKey.get(Provider.class,
+						SELECTION_HANDLES_GEOMETRY_PROVIDER));
 	}
 
 	@SuppressWarnings("unchecked")

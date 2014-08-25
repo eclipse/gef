@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 
 public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
@@ -147,9 +147,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected DefaultSelectionPolicy<Node> getSelectionPolicy(
+	protected SelectionPolicy<Node> getSelectionPolicy(
 			IVisualPart<Node> part) {
-		return part.getAdapter(DefaultSelectionPolicy.class);
+		return part.getAdapter(SelectionPolicy.class);
 	}
 
 	@Override
@@ -180,7 +180,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 		boolean appendSelection = false;
 		for (IVisualPart<Node> part : parts) {
-			DefaultSelectionPolicy<Node> selectionPolicy = getSelectionPolicy(part);
+			SelectionPolicy<Node> selectionPolicy = getSelectionPolicy(part);
 			if (selectionPolicy != null) {
 				selectionPolicy.select(appendSelection);
 				appendSelection = true;

@@ -23,8 +23,8 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -41,7 +41,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider
@@ -68,7 +68,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	/**
 	 * Generate handles for the end/join points of the individual beziers.
-	 * 
+	 *
 	 * @param targetPart
 	 * @param handleGeometryProvider
 	 * @param contextMap
@@ -106,9 +106,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		}
 
 		// differentiate creation context
-		if (contextBehavior instanceof FXSelectionBehavior) {
+		if (contextBehavior instanceof SelectionBehavior) {
 			return createSelectionHandleParts(targets,
-					(FXSelectionBehavior) contextBehavior, contextMap);
+					(SelectionBehavior<Node>) contextBehavior,
+					contextMap);
 		}
 
 		// unknown creation context, do not create handles
@@ -118,7 +119,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
 	 * selection. The corner is specified via the <i>position</i> parameter.
-	 * 
+	 *
 	 * @param targets
 	 *            All selected {@link IContentPart}s.
 	 * @param position
@@ -139,7 +140,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
 			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior,
+			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 
@@ -156,7 +157,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	public List<IHandlePart<Node>> createSelectionHandleParts(
 			List<IContentPart<Node>> targets,
-			FXSelectionBehavior selectionBehavior,
+			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		// multiple selection
 		if (targets.size() > 1) {
@@ -170,13 +171,16 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				.getHandleGeometryProvider(contextMap);
 
 		// generate handles from handle geometry
-		IGeometry handleGeometry = handleGeometryProvider.get();
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+		IGeometry handleGeometry = null;
+		if (handleGeometryProvider != null) {
+			handleGeometry = handleGeometryProvider.get();
+		}
 
 		if (handleGeometry == null) {
 			return Collections.emptyList();
 		}
 
+		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 		if (handleGeometry instanceof ICurve) {
 			handleParts.addAll(createCurveSelectionHandleParts(targetPart,
 					handleGeometryProvider, contextMap));
@@ -205,7 +209,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IContentPart} which is selected.
 	 * @param handleGeometryProvider

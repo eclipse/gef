@@ -14,7 +14,10 @@ package org.eclipse.gef4.mvc.fx.example;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.behaviors.DefaultVisualGeometryProvider;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
@@ -23,10 +26,11 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.DefaultFocusPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultHoverPolicy;
-import org.eclipse.gef4.mvc.policies.DefaultSelectionPolicy;
+import org.eclipse.gef4.mvc.policies.FocusPolicy;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
+import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
@@ -45,16 +49,37 @@ public class FXExampleModule extends MvcFxModule {
 				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 						FXHoverOnHoverPolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultHoverPolicy.class))
-				.to(new TypeLiteral<DefaultHoverPolicy<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class))
+				.to(new TypeLiteral<HoverPolicy<Node>>() {
 				});
 		adapterMapBinder.addBinding(
-				AdapterKey.get(DefaultSelectionPolicy.class)).to(
-				new TypeLiteral<DefaultSelectionPolicy<Node>>() {
+				AdapterKey.get(SelectionPolicy.class)).to(
+				new TypeLiteral<SelectionPolicy<Node>>() {
 				});
-		adapterMapBinder.addBinding(AdapterKey.get(DefaultFocusPolicy.class))
-				.to(new TypeLiteral<DefaultFocusPolicy<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(FocusPolicy.class))
+				.to(new TypeLiteral<FocusPolicy<Node>>() {
 				});
+
+		// geometry provider for selection feedback
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										SelectionBehavior.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(DefaultVisualGeometryProvider.class);
+		// geometry provider for selection handles
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										SelectionBehavior.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(DefaultVisualGeometryProvider.class);
+
+		// geometry provider for hover feedback
+		adapterMapBinder.addBinding(
+				AdapterKey.get(Provider.class,
+						HoverBehavior.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(DefaultVisualGeometryProvider.class);
 	}
 
 	@Override

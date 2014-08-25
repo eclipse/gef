@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
@@ -14,51 +14,44 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * The AbstractZoomPolicy registers a listener on the {@link IZoomModel} and
- * notifies subclasses about zoom factor changes in order for subclasses to
- * apply the new zoom factor.
  *
- * @author wienand
+ * @author anyssen
  *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
+public abstract class AbstractFocusBehavior<VR> extends AbstractBehavior<VR>
 implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getZoomModel()
+		getHost().getRoot().getViewer().getFocusModel()
 		.addPropertyChangeListener(this);
 	}
 
-	/**
-	 * Applies the given zoom factor in the context of this policy. For example,
-	 * you can register the policy on the root visual part and apply it to all
-	 * layers.
-	 *
-	 * @param zoom
-	 *            The factor by which to apply the zoom.
-	 */
-	abstract protected void applyZoom(double zoom);
+	protected abstract void applyFocus();
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getZoomModel()
+		getHost().getRoot().getViewer().getFocusModel()
 		.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (IZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {
-			applyZoom((Double) evt.getNewValue());
+		if (IFocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			// viewer focus changed
+		} else if (IFocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			if (evt.getNewValue() == getHost()) {
+				applyFocus();
+			}
 		}
 	}
 

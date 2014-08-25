@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
@@ -17,20 +17,21 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 /**
  * An {@link AbstractDetachContentAnchoragesPolicy} controls the deletion of a
  * specific content anchorage from the adaptee's content anchorages.
- * 
+ *
  * @author mwienand
  * @param <VR>
  *            Visual root type.
- * 
+ *
  */
+// TODO: turn into interface
 public abstract class AbstractDetachContentAnchoragesPolicy<VR> extends
-		AbstractPolicy<VR> {
+AbstractPolicy<VR> {
 
 	/**
 	 * Returns an {@link IUndoableOperation} for the deletion of the specified
 	 * anchorage (with role) from the adaptee's content anchorages, or
 	 * <code>null</code> if no actions have to be performed.
-	 * 
+	 *
 	 * @param anchorage
 	 *            The anchorage {@link IContentPart} to remove.
 	 * @param role

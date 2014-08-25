@@ -19,20 +19,18 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 
-import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
+ * A hover behavior that in addition to the {@link HoverBehavior} adds
+ * lightweight hover feedback to handles.
  *
  * @author anyssen
  *
  */
-public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
+public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	private final Map<IVisualPart<Node>, Effect> effects = new HashMap<IVisualPart<Node>, Effect>();
 
@@ -42,32 +40,13 @@ public class FXHoverBehavior extends AbstractHoverBehavior<Node> {
 		if (getHost() instanceof IHandlePart) {
 			Node visual = getHost().getVisual();
 			effects.put(getHost(), visual.getEffect());
-			visual.setEffect(getHoverFeedbackEffect(contextMap));
+			visual.setEffect(getHandleHoverFeedbackEffect(contextMap));
 		} else {
 			super.addFeedback(targets, contextMap);
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	protected IGeometry getFeedbackGeometry(Map<Object, Object> contextMap) {
-		Node visual = getHost().getVisual();
-
-		// in case a FXGeometryNode is used, we can return its IGeometry
-		if (visual instanceof IFXConnection) {
-			Node curveNode = ((IFXConnection) visual).getCurveNode();
-			if (curveNode instanceof FXGeometryNode) {
-				return ((FXGeometryNode) curveNode).getGeometry();
-			}
-		} else if (visual instanceof FXGeometryNode) {
-			return ((FXGeometryNode) visual).getGeometry();
-		}
-
-		return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
-	}
-
-	// TODO: rename/document to indicate its only used for handles!
-	public Effect getHoverFeedbackEffect(Map<Object, Object> contextMap) {
+	public Effect getHandleHoverFeedbackEffect(Map<Object, Object> contextMap) {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(5);
 		return effect;

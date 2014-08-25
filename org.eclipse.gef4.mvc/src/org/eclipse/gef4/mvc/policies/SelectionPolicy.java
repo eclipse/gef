@@ -19,12 +19,12 @@ import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class DefaultSelectionPolicy<VR> extends AbstractPolicy<VR> {
+//TODO: extract interface and use for binding
+//TODO: make ITransactional
+public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 
-	protected boolean isSelectable() {
-		return true;
-	}
-
+	// TODO: use a ChangeSelectionOperation (and provide a hook to decide
+	// whether it should be executed on the operation history)
 	public void select(boolean append) {
 		IVisualPart<VR> host = getHost();
 
@@ -35,7 +35,7 @@ public class DefaultSelectionPolicy<VR> extends AbstractPolicy<VR> {
 		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
 				selectionModel.getSelected());
 		// determine new selection
-		if (!(host instanceof IContentPart) || !isSelectable()) {
+		if (!(host instanceof IContentPart)) {
 			// remove all selected
 			selectionModel.deselectAll();
 		} else {

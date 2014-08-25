@@ -16,13 +16,14 @@ import javafx.scene.Node;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
-import org.eclipse.gef4.mvc.behaviors.AbstractHoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractSelectionBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXSelectionBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -44,10 +45,19 @@ import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.DefaultFocusModel;
+import org.eclipse.gef4.mvc.models.DefaultHoverModel;
+import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
+import org.eclipse.gef4.mvc.models.IFocusModel;
+import org.eclipse.gef4.mvc.models.IHoverModel;
+import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
+import org.eclipse.gef4.mvc.policies.SelectionPolicy;
+import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.TypeLiteral;
@@ -57,16 +67,21 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindAbstractFXContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// register default behaviors ( (which are based on viewer models)
+		// bind default behaviors
 		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
-						FXHoverBehavior.class);
-		adapterMapBinder.addBinding(
-				AdapterKey.get(AbstractSelectionBehavior.class)).to(
-				FXSelectionBehavior.class);
-		// TODO: add AbstractFocusBehavior and use as key here
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
+		.addBinding(AdapterKey.get(AbstractFocusBehavior.class)).to(
 				FXFocusBehavior.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(ContentBehavior.class)).to(
+						new TypeLiteral<ContentBehavior<Node>>() {
+						});
+		adapterMapBinder.addBinding(
+				AdapterKey.get(SelectionBehavior.class)).to(
+						new TypeLiteral<SelectionBehavior<Node>>() {
+						});
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
+		.to(new TypeLiteral<HoverBehavior<Node>>() {
+		});
 	}
 
 	protected void bindAbstractFXFeedbackPartAdapters(
@@ -76,13 +91,36 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// TODO: create abstract hover policy and use as key
+
+		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class))
+		.to(new TypeLiteral<HoverPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class))
+		.to(new TypeLiteral<HoverBehavior<Node>>() {
+		});
+
+		// tool interaction policy (only related to viewer models)
 		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractFXHoverPolicy.class)).to(
-						FXHoverOnHoverPolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
-						FXHoverBehavior.class);
+		.addBinding(AdapterKey.get(AbstractFXHoverPolicy.class)).to(
+				FXHoverOnHoverPolicy.class);
+	}
+
+	protected void bindDefaultFocusModel() {
+		binder().bind(new TypeLiteral<IFocusModel<Node>>() {
+		}).to(new TypeLiteral<DefaultFocusModel<Node>>() {
+		});
+	}
+
+	protected void bindDefaultHoverModel() {
+		binder().bind(new TypeLiteral<IHoverModel<Node>>() {
+		}).to(new TypeLiteral<DefaultHoverModel<Node>>() {
+		});
+	}
+
+	protected void bindDefaultSelectionModel() {
+		binder().bind(new TypeLiteral<ISelectionModel<Node>>() {
+		}).to(new TypeLiteral<DefaultSelectionModel<Node>>() {
+		});
 	}
 
 	protected void bindFXDefaultFeedbackPartFactory() {
@@ -103,21 +141,26 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-				.toInstance(new FXHoverTool());
+		.toInstance(new FXHoverTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-				.toInstance(new FXClickDragTool());
+		.toInstance(new FXClickDragTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
-				.toInstance(new FXTypeTool());
+		.toInstance(new FXTypeTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-				.toInstance(new FXPinchSpreadTool());
+		.toInstance(new FXPinchSpreadTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-				.toInstance(new FXScrollTool());
+		.toInstance(new FXScrollTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-				.toInstance(new FXFocusTool());
+		.toInstance(new FXFocusTool());
 
 		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
 				new TypeLiteral<IViewer<Node>>() {
 				});
+	}
+
+	protected void bindFXHoverBehavior() {
+		binder().bind(new TypeLiteral<HoverBehavior<Node>>() {
+		}).to(FXHoverBehavior.class);
 	}
 
 	protected void bindFXRootPart() {
@@ -129,31 +172,47 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
+		// TODO: these should probably not already be binded here (but rather by
+		// clients)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-				FXFocusAndSelectOnClickPolicy.class);
+						FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
-				FXMarqueeOnDragPolicy.class);
+						FXMarqueeOnDragPolicy.class);
 		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnScrollPolicy.class);
+						FXZoomOnScrollPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnPinchSpreadPolicy.class);
+						FXZoomOnPinchSpreadPolicy.class);
+
+		// register further (default) policies
+		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class))
+		.to(new TypeLiteral<HoverPolicy<Node>>() {
+		});
+		adapterMapBinder.addBinding(
+				AdapterKey.get(SelectionPolicy.class)).to(
+						new TypeLiteral<SelectionPolicy<Node>>() {
+						});
+		adapterMapBinder.addBinding(AdapterKey.get(ZoomPolicy.class))
+		.to(new TypeLiteral<ZoomPolicy<Node>>() {
+		});
 
 		// register (default) behaviors (which are based on viewer models)
 		adapterMapBinder.addBinding(
-				AdapterKey.get(AbstractSelectionBehavior.class)).to(
-				FXSelectionBehavior.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractHoverBehavior.class)).to(
-						FXHoverBehavior.class);
+				AdapterKey.get(ContentBehavior.class)).to(
+						new TypeLiteral<ContentBehavior<Node>>() {
+						});
+		adapterMapBinder.addBinding(
+				AdapterKey.get(SelectionBehavior.class)).to(
+						new TypeLiteral<SelectionBehavior<Node>>() {
+						});
 		adapterMapBinder.addBinding(AdapterKey.get(AbstractZoomBehavior.class))
-				.to(FXZoomBehavior.class);
+		.to(FXZoomBehavior.class);
 	}
 
 	protected void bindFXViewer() {
@@ -163,25 +222,46 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindFXViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// bind root part
 		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
 				new TypeLiteral<IRootPart<Node>>() {
 				});
 
+		// bind factories
 		adapterMapBinder.addBinding(AdapterKey.get(IContentPartFactory.class))
-				.to(new TypeLiteral<IContentPartFactory<Node>>() {
-				});
+		.to(new TypeLiteral<IContentPartFactory<Node>>() {
+		});
 		adapterMapBinder.addBinding(AdapterKey.get(IHandlePartFactory.class))
-				.to(new TypeLiteral<IHandlePartFactory<Node>>() {
-				});
+		.to(new TypeLiteral<IHandlePartFactory<Node>>() {
+		});
 		adapterMapBinder.addBinding(AdapterKey.get(IFeedbackPartFactory.class))
-				.to(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-				});
+		.to(new TypeLiteral<IFeedbackPartFactory<Node>>() {
+		});
 
+		// bind parameterized default viewer models (others are already bound in
+		// superclass)
+		adapterMapBinder.addBinding(AdapterKey.get(IFocusModel.class)).to(
+				new TypeLiteral<IFocusModel<Node>>() {
+				});
+		adapterMapBinder.addBinding(AdapterKey.get(IHoverModel.class)).to(
+				new TypeLiteral<IHoverModel<Node>>() {
+				});
+		adapterMapBinder.addBinding(AdapterKey.get(ISelectionModel.class)).to(
+				new TypeLiteral<ISelectionModel<Node>>() {
+				});
 	}
 
 	@Override
 	protected void configure() {
 		super.configure();
+
+		bindDefaultFocusModel();
+		bindDefaultHoverModel();
+		bindDefaultSelectionModel();
+
+		// bind default factories for handles and feedback
+		bindFXDefaultHandlePartFactory();
+		bindFXDefaultFeedbackPartFactory();
 
 		// bind root IRootPart<Node>, IViewer<Node> and IDomain<Node> to
 		// FXRootPart, FXViewer, and FXDomain
@@ -189,14 +269,14 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindFXViewer();
 		bindFXRootPart();
 
-		// bind default factories for handles and feedback
-		bindFXDefaultHandlePartFactory();
-		bindFXDefaultFeedbackPartFactory();
+		// bind special behavior implementations
+		bindFXHoverBehavior();
 
 		// bind additional adapters for FXDomain
 		bindFXDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				FXDomain.class));
 
+		// bind additional adapters for FXViewer
 		bindFXViewerAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				FXViewer.class));
 
