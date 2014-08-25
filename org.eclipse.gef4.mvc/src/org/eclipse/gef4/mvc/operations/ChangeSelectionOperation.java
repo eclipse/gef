@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -29,11 +29,11 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	 * <pre>
 	 * &quot;change-focus&quot;
 	 * </pre>
-	 * 
+	 *
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "change-focus";
+	public static final String DEFAULT_LABEL = "change-selection";
 
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR>> oldSelection;
