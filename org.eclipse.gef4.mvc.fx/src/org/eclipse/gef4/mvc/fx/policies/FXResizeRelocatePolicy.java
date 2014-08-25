@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-		IPolicy<Node>, ITransactional {
+IPolicy<Node>, ITransactional {
 
 	private FXResizeRelocateNodeOperation operation;
 
@@ -32,7 +32,11 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	public IUndoableOperation commit() {
 		FXResizeRelocateNodeOperation commit = operation;
 		operation = null;
-		return commit.isNoOp() ? null : commit;
+
+		if (commit == null || commit.isNoOp()) {
+			return null;
+		}
+		return commit;
 	}
 
 	protected double getMinimumHeight() {
@@ -45,7 +49,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
