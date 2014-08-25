@@ -83,7 +83,7 @@ public class FXExampleModule extends MvcFxModule {
 	}
 
 	@Override
-	protected void bindFXDefaultHandlePartFactory() {
+	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).toInstance(new FXExampleHandlePartFactory());
 	}

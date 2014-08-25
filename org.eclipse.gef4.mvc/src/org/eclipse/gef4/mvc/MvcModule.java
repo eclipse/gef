@@ -216,24 +216,24 @@ public class MvcModule<VR> extends AbstractModule {
 		// nothing to bind by default
 	}
 
-	protected void bindDefaultContentModel() {
+	protected void bindIContentModel() {
 		binder().bind(IContentModel.class).to(DefaultContentModel.class);
 	}
 
-	protected void bindDefaultOperationHistory() {
+	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class)
 				.to(DefaultOperationHistory.class);
 	}
 
-	protected void bindDefaultViewportModel() {
+	protected void bindIViewportModel() {
 		binder().bind(IViewportModel.class).to(DefaultViewportModel.class);
 	}
 
-	protected void bindDefaultZoomModel() {
+	protected void bindIZoomModel() {
 		binder().bind(IZoomModel.class).to(DefaultZoomModel.class);
 	}
 
-	protected void bindUndoContext() {
+	protected void bindIUndoContext() {
 		binder().bind(IUndoContext.class).to(UndoContext.class);
 	}
 
@@ -243,12 +243,12 @@ public class MvcModule<VR> extends AbstractModule {
 		// org.eclipse.gef4.common.inject (which contains the enabling code)
 		enableAdapterMapInjection();
 
-		bindDefaultContentModel();
-		bindDefaultViewportModel();
-		bindDefaultZoomModel();
+		bindIContentModel();
+		bindIViewportModel();
+		bindIZoomModel();
 
-		bindUndoContext();
-		bindDefaultOperationHistory();
+		bindIUndoContext();
+		bindIOperationHistory();
 
 		// bind domain adapters
 		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),

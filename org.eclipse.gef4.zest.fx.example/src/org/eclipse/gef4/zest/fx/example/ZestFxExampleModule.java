@@ -23,7 +23,7 @@ import com.google.inject.TypeLiteral;
 public class ZestFxExampleModule extends ZestFxModule {
 
 	@Override
-	protected void bindFXDefaultHandlePartFactory() {
+	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).toInstance(new ZestFxExampleHandlePartFactory());
 	}
