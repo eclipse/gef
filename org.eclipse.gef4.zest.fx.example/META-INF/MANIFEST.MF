@@ -42,5 +42,5 @@ Import-Package: com.google.inject;version="[1.3.0,2.0.0)",
  javafx.scene.web,
  javafx.stage,
  javafx.util
-Export-Package: org.eclipse.gef4.zest.fx.example;x-internal:=true;uses:="com.google.inject",
+Export-Package: org.eclipse.gef4.zest.fx.example;x-internal:=true,
  org.eclipse.gef4.zest.fx.example.parts;x-internal:=true

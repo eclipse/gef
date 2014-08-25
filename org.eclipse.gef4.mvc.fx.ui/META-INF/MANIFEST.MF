@@ -49,7 +49,7 @@ Import-Package: com.google.inject;version="[1.3.0,2.0.0)",
  javafx.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.gef4.mvc.fx.ui;x-internal:=true;uses:="com.google.inject",
+Export-Package: org.eclipse.gef4.mvc.fx.ui;x-internal:=true,
  org.eclipse.gef4.mvc.fx.ui.parts;x-internal:=true,
  org.eclipse.gef4.mvc.fx.ui.properties;x-internal:=true,
  org.eclipse.gef4.mvc.fx.ui.viewer;x-internal:=true

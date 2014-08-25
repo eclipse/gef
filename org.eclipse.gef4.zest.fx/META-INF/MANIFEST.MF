@@ -47,9 +47,9 @@ Import-Package: com.google.common.collect;version="[15.0.0,16.0.0)",
  javafx.stage,
  javafx.util,
  javax.annotation
-Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true;uses:="com.google.inject",
+Export-Package: org.eclipse.gef4.zest.fx;x-internal:=true,
  org.eclipse.gef4.zest.fx.behaviors;x-internal:=true,
  org.eclipse.gef4.zest.fx.layout;x-internal:=true,
  org.eclipse.gef4.zest.fx.models;x-internal:=true,
- org.eclipse.gef4.zest.fx.parts;x-internal:=true;uses:="com.google.common.collect",
+ org.eclipse.gef4.zest.fx.parts;x-internal:=true,
  org.eclipse.gef4.zest.fx.policies;x-internal:=true

@@ -5,9 +5,9 @@ Bundle-SymbolicName: org.eclipse.gef4.mvc.fx.example
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.eclipse.gef4.mvc.fx.example;x-internal:=true;uses:="com.google.inject",
+Export-Package: org.eclipse.gef4.mvc.fx.example;x-internal:=true,
  org.eclipse.gef4.mvc.fx.example.model;x-internal:=true,
- org.eclipse.gef4.mvc.fx.example.parts;x-internal:=true;uses:="com.google.common.collect"
+ org.eclipse.gef4.mvc.fx.example.parts;x-internal:=true
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.commands,
  org.eclipse.gef4.common;bundle-version="0.1.0",
