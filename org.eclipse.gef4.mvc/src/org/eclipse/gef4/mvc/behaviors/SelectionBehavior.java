@@ -16,16 +16,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-
-import com.google.inject.Provider;
 
 /**
  * The default selection behavior is responsible for creating and removing
@@ -37,17 +32,14 @@ import com.google.inject.Provider;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-public class SelectionBehavior<VR> extends AbstractBehavior<VR>
-implements PropertyChangeListener {
-
-	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
-	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
+public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
+		PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
 		getHost().getRoot().getViewer().getSelectionModel()
-		.addPropertyChangeListener(this);
+				.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already selected
 		addFeedbackAndHandles(getHost().getRoot().getViewer()
@@ -77,22 +69,8 @@ implements PropertyChangeListener {
 				.getSelectionModel().getSelected());
 
 		getHost().getRoot().getViewer().getSelectionModel()
-		.removePropertyChangeListener(this);
+				.removePropertyChangeListener(this);
 		super.deactivate();
-	}
-
-	public Provider<IGeometry> getFeedbackGeometryProvider(
-			final Map<Object, Object> contextMap) {
-		return getHost().getAdapter(
-				AdapterKey.get(Provider.class,
-						SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
-	}
-
-	public Provider<IGeometry> getHandleGeometryProvider(
-			final Map<Object, Object> contextMap) {
-		return getHost().getAdapter(
-				AdapterKey.get(Provider.class,
-						SELECTION_HANDLES_GEOMETRY_PROVIDER));
 	}
 
 	@SuppressWarnings("unchecked")

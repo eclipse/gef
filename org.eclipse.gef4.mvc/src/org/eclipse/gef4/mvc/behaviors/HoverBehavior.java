@@ -14,18 +14,13 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
-import java.util.Map;
 
-import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IHoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-import com.google.inject.Provider;
-
 /**
- * The {@link HoverBehavior} is responsible for creating and removing
- * selection feedback.
+ * The {@link HoverBehavior} is responsible for creating and removing selection
+ * feedback.
  *
  * @author anyssen
  *
@@ -34,19 +29,13 @@ import com.google.inject.Provider;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
-		PropertyChangeListener {
-
-	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
-
-	// TODO: add hover handles -> can be useful for connection creation
-	// public static final String HOVER_HANDLES_GEOMETRY_PROVIDER =
-	// "HOVER_HANDLES_GEOMETRY_PROVIDER";
+PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
 		getHost().getRoot().getViewer().getHoverModel()
-		.addPropertyChangeListener(this);
+				.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already hovered
 		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel()
@@ -67,15 +56,8 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 				.getHoverModel().getHover());
 
 		getHost().getRoot().getViewer().getHoverModel()
-		.removePropertyChangeListener(this);
+				.removePropertyChangeListener(this);
 		super.deactivate();
-	}
-
-	public Provider<IGeometry> getFeedbackGeometryProvider(
-			final Map<Object, Object> contextMap) {
-		return getHost().getAdapter(
-				AdapterKey
-						.get(Provider.class, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 	}
 
 	@SuppressWarnings({ "unchecked" })

@@ -19,12 +19,13 @@ import java.util.Map;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -34,6 +35,12 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
+
+	public static final String SELECTION_HANDLES_GEOMETRY_PROVIDER = "SELECTION_HANDLES_GEOMETRY_PROVIDER";
+
+	// TODO: add hover handles -> can be useful for connection creation
+	// public static final String HOVER_HANDLES_GEOMETRY_PROVIDER =
+	// "HOVER_HANDLES_GEOMETRY_PROVIDER";
 
 	@Inject
 	private Injector injector;
@@ -108,8 +115,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		// differentiate creation context
 		if (contextBehavior instanceof SelectionBehavior) {
 			return createSelectionHandleParts(targets,
-					(SelectionBehavior<Node>) contextBehavior,
-					contextMap);
+					(SelectionBehavior<Node>) contextBehavior, contextMap);
 		}
 
 		// unknown creation context, do not create handles
@@ -166,9 +172,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		}
 
 		// single selection
-		final IContentPart<Node> targetPart = targets.get(0);
-		Provider<IGeometry> handleGeometryProvider = selectionBehavior
-				.getHandleGeometryProvider(contextMap);
+		final IContentPart<Node> target = targets.get(0);
+		Provider<IGeometry> handleGeometryProvider = getSelectionHandleGeometryProvider(
+				target, contextMap);
 
 		// generate handles from handle geometry
 		IGeometry handleGeometry = null;
@@ -182,7 +188,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 		if (handleGeometry instanceof ICurve) {
-			handleParts.addAll(createCurveSelectionHandleParts(targetPart,
+			handleParts.addAll(createCurveSelectionHandleParts(target,
 					handleGeometryProvider, contextMap));
 		} else {
 			// everything else is expected to be an IShape, even though the user
@@ -193,7 +199,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				// create a handle for each vertex
 				for (int i = 0; i < edges.length; i++) {
 					IHandlePart<Node> hp = createShapeSelectionHandlePart(
-							targetPart, handleGeometryProvider, i, contextMap);
+							target, handleGeometryProvider, i, contextMap);
 					handleParts.add(hp);
 				}
 			} else {
@@ -231,6 +237,12 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				handleGeometryProvider, vertexIndex);
 		injector.injectMembers(part);
 		return part;
+	}
+
+	public Provider<IGeometry> getSelectionHandleGeometryProvider(
+			IContentPart<Node> target, final Map<Object, Object> contextMap) {
+		return target.getAdapter(AdapterKey.get(Provider.class,
+				SELECTION_HANDLES_GEOMETRY_PROVIDER));
 	}
 
 }

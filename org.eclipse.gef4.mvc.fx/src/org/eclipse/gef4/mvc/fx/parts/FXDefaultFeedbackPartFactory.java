@@ -8,10 +8,11 @@ import java.util.Map.Entry;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -22,6 +23,9 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
+
+	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
+	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
 
 	@Inject
 	private Injector injector;
@@ -57,8 +61,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		// differentiate creation context
 		if (contextBehavior instanceof SelectionBehavior) {
 			return createSelectionFeedbackParts(targets,
-					(SelectionBehavior<Node>) contextBehavior,
-					contextMap);
+					(SelectionBehavior<Node>) contextBehavior, contextMap);
 		} else if (contextBehavior instanceof HoverBehavior) {
 			return createHoverFeedbackParts(targets,
 					(HoverBehavior<Node>) contextBehavior, contextMap);
@@ -70,18 +73,20 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 	protected List<IFeedbackPart<Node>> createHoverFeedbackParts(
 			List<IContentPart<Node>> targets,
-			HoverBehavior<Node> hoverBehavior,
-			Map<Object, Object> contextMap) {
-		// no feedback for multiple selection
-		if (targets.size() > 1) {
+			HoverBehavior<Node> hoverBehavior, Map<Object, Object> contextMap) {
+		// no feedback for empty or multiple selection
+		if (targets.size() == 0 || targets.size() > 1) {
 			return Collections.emptyList();
 		}
 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
+
+		IContentPart<Node> target = targets.iterator().next();
 		FXGeometricFeedbackPart part = new FXHoverFeedbackPart(
-				hoverBehavior.getFeedbackGeometryProvider(contextMap));
+				getHoverFeedbackGeometryProvider(target, contextMap));
 		injector.injectMembers(part);
 		feedbackParts.add(part);
+
 		return feedbackParts;
 	}
 
@@ -89,16 +94,18 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			List<IContentPart<Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
-		// no feedback for multiple selection
-		if (targets.size() > 1) {
+		// no feedback for empty or multiple selection
+		if (targets.size() == 0 || targets.size() > 1) {
 			return Collections.emptyList();
 		}
 
 		// single selection, create selection feedback based on geometry
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
 
-		Provider<IGeometry> selectionFeedbackGeometryProvider = selectionBehavior
-				.getFeedbackGeometryProvider(contextMap);
+		// selection outline feedback
+		IContentPart<Node> target = targets.iterator().next();
+		Provider<IGeometry> selectionFeedbackGeometryProvider = getSelectionFeedbackGeometryProvider(
+				target, contextMap);
 		if (selectionFeedbackGeometryProvider != null) {
 			FXGeometricFeedbackPart selectionFeedbackPart = new FXGeometricSelectionFeedbackPart(
 					selectionFeedbackGeometryProvider);
@@ -106,14 +113,14 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			feedbackParts.add(selectionFeedbackPart);
 		}
 
-		// create anchor link feedback parts
-		for (IContentPart<Node> target : targets) {
-			if (!target.getAnchorages().isEmpty()) {
-				for (Entry<IVisualPart<Node>, String> entry : target
-						.getAnchorages().entries()) {
+		// selection anchor link feedback parts
+		for (IContentPart<Node> t : targets) {
+			if (!t.getAnchorages().isEmpty()) {
+				for (Entry<IVisualPart<Node>, String> entry : t.getAnchorages()
+						.entries()) {
 					if (entry.getKey() instanceof IContentPart) {
 						IFeedbackPart<Node> anchorLinkFeedbackPart = createAnchorLinkFeedbackPart(
-								target, (IContentPart<Node>) entry.getKey(),
+								t, (IContentPart<Node>) entry.getKey(),
 								entry.getValue());
 						if (anchorLinkFeedbackPart != null) {
 							injector.injectMembers(anchorLinkFeedbackPart);
@@ -125,5 +132,17 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		}
 
 		return feedbackParts;
+	}
+
+	protected Provider<IGeometry> getHoverFeedbackGeometryProvider(
+			IContentPart<Node> target, final Map<Object, Object> contextMap) {
+		return target.getAdapter(AdapterKey.get(Provider.class,
+				HOVER_FEEDBACK_GEOMETRY_PROVIDER));
+	}
+
+	protected Provider<IGeometry> getSelectionFeedbackGeometryProvider(
+			IContentPart<Node> target, final Map<Object, Object> contextMap) {
+		return target.getAdapter(AdapterKey.get(Provider.class,
+				SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 	}
 }

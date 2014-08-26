@@ -33,9 +33,8 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
-import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.ILayoutModel;
@@ -204,24 +203,26 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
-		setAdapter(AdapterKey.get(Provider.class,
-				SelectionBehavior.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(
+				AdapterKey
+						.get(Provider.class,
+								FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
-					@Override
-					public IGeometry get() {
-						return visual.getConnection().getCurveNode()
-								.getGeometry();
-					}
-				});
+			@Override
+			public IGeometry get() {
+				return visual.getConnection().getCurveNode()
+						.getGeometry();
+			}
+		});
 		setAdapter(AdapterKey.get(Provider.class,
-				HoverBehavior.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
+				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
-					@Override
-					public IGeometry get() {
-						return visual.getConnection().getCurveNode()
-								.getGeometry();
-					}
-				});
+			@Override
+			public IGeometry get() {
+				return visual.getConnection().getCurveNode()
+						.getGeometry();
+			}
+		});
 
 	}
 }
