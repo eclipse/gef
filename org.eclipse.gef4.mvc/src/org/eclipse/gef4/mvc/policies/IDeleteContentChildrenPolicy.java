@@ -13,20 +13,22 @@ package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * An {@link AbstractDeleteContentChildrenPolicy} provides an
+ * An {@link IDeleteContentChildrenPolicy} provides an
  * {@link IUndoableOperation} for the deletion of the content of one of its
  * adaptee's children.
  *
  * @author mwienand
+ * @author anyssen
+ *
  * @param <VR>
- *            Visual root type.
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  *
  */
-// TODO: turn into interface
-public abstract class AbstractDeleteContentChildrenPolicy<VR> extends
-AbstractPolicy<VR> {
+public interface IDeleteContentChildrenPolicy<VR> extends IPolicy<VR> {
 
 	/**
 	 * Constructs an {@link IUndoableOperation} for the deletion of the child's

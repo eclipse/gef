@@ -33,16 +33,16 @@ import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
-import org.eclipse.gef4.mvc.policies.AbstractDeleteContentChildrenPolicy;
-import org.eclipse.gef4.mvc.policies.AbstractDetachContentAnchoragesPolicy;
+import org.eclipse.gef4.mvc.policies.IDeleteContentChildrenPolicy;
+import org.eclipse.gef4.mvc.policies.IDetachContentAnchoragesPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 	@SuppressWarnings("rawtypes")
-	public static final Class<AbstractDeleteContentChildrenPolicy> DELETE_CONTENT_CHILDREN_POLICY_KEY = AbstractDeleteContentChildrenPolicy.class;
+	public static final Class<IDeleteContentChildrenPolicy> DELETE_CONTENT_CHILDREN_POLICY_KEY = IDeleteContentChildrenPolicy.class;
 	@SuppressWarnings("rawtypes")
-	public static final Class<AbstractDetachContentAnchoragesPolicy> DETACH_CONTENT_ANCHORAGES_POLICY_KEY = AbstractDetachContentAnchoragesPolicy.class;
+	public static final Class<IDetachContentAnchoragesPolicy> DETACH_CONTENT_ANCHORAGES_POLICY_KEY = IDetachContentAnchoragesPolicy.class;
 
 	protected IUndoableOperation composeDeleteOperation(IViewer<Node> viewer,
 			List<IContentPart<Node>> toDelete) {
@@ -142,8 +142,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 		for (IContentPart<Node> part : toDelete) {
 			// delete from content children
 			IVisualPart<Node> parent = part.getParent();
-			AbstractDeleteContentChildrenPolicy<Node> deleteContentChildrenPolicy = parent
-					.<AbstractDeleteContentChildrenPolicy<Node>> getAdapter(AdapterKey
+			IDeleteContentChildrenPolicy<Node> deleteContentChildrenPolicy = parent
+					.<IDeleteContentChildrenPolicy<Node>> getAdapter(AdapterKey
 							.get(DELETE_CONTENT_CHILDREN_POLICY_KEY));
 			if (deleteContentChildrenPolicy != null) {
 				IUndoableOperation deleteOperation = deleteContentChildrenPolicy
@@ -159,8 +159,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 			// detach from content anchorages
 			for (IVisualPart<Node> anchored : part.getAnchoreds()) {
-				AbstractDetachContentAnchoragesPolicy<Node> deleteContentAnchoragesPolicy = anchored
-						.<AbstractDetachContentAnchoragesPolicy<Node>> getAdapter(AdapterKey
+				IDetachContentAnchoragesPolicy<Node> deleteContentAnchoragesPolicy = anchored
+						.<IDetachContentAnchoragesPolicy<Node>> getAdapter(AdapterKey
 								.get(DETACH_CONTENT_ANCHORAGES_POLICY_KEY));
 				if (deleteContentAnchoragesPolicy != null) {
 					boolean addedOperations = false;

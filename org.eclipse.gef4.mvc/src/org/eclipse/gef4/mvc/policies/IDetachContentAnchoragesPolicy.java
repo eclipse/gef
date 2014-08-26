@@ -13,19 +13,21 @@ package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * An {@link AbstractDetachContentAnchoragesPolicy} controls the deletion of a
- * specific content anchorage from the adaptee's content anchorages.
+ * An {@link IDetachContentAnchoragesPolicy} controls the deletion of a specific
+ * content anchorage from the adaptee's content anchorages.
  *
  * @author mwienand
+ * @author anyssen
+ *
  * @param <VR>
- *            Visual root type.
+ *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            used in, e.g. javafx.scene.Node in case of JavaFX.
  *
  */
-// TODO: turn into interface
-public abstract class AbstractDetachContentAnchoragesPolicy<VR> extends
-AbstractPolicy<VR> {
+public interface IDetachContentAnchoragesPolicy<VR> extends IPolicy<VR> {
 
 	/**
 	 * Returns an {@link IUndoableOperation} for the deletion of the specified

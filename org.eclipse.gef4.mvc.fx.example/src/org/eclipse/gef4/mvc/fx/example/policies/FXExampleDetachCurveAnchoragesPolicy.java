@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
 
@@ -24,11 +24,12 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractDetachContentAnchoragesPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.IDetachContentAnchoragesPolicy;
 
 // TODO: only valid for FXGeometricCurvePart (see #getHost())
-public class FXExampleDetachCurveAnchoragesPolicy extends
-		AbstractDetachContentAnchoragesPolicy<Node> {
+public class FXExampleDetachCurveAnchoragesPolicy extends AbstractPolicy<Node>
+implements IDetachContentAnchoragesPolicy<Node> {
 
 	public static class Operation extends AbstractOperation {
 		private final FXGeometricCurve curve;

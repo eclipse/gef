@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
 
@@ -27,11 +27,12 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.parts.AbstractFXGeometricElementPart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.AbstractDeleteContentChildrenPolicy;
+import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.policies.IDeleteContentChildrenPolicy;
 
 // TODO: only valid for FXGeometricModelPart (see #getHost())
-public class FXExampleDeleteContentChildrenPolicy extends
-		AbstractDeleteContentChildrenPolicy<Node> {
+public class FXExampleDeleteContentChildrenPolicy extends AbstractPolicy<Node>
+implements IDeleteContentChildrenPolicy<Node> {
 
 	public static class Operation extends AbstractOperation {
 		private final AbstractFXGeometricElement<?> content;
