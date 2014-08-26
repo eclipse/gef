@@ -1755,6 +1755,11 @@ public class BezierCurve extends AbstractGeometry implements ICurve,
 		return results;
 	}
 
+	@Override
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
+	}
+
 	/**
 	 * Returns the {@link Point}s of intersection of this and the given other
 	 * {@link BezierCurve}.

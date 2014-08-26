@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -19,15 +19,15 @@ import java.util.Set;
 /**
  * The {@link CurveUtils} class provides functionality that can be used for all
  * {@link ICurve}s, independent on their construction kind.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 class CurveUtils {
 
 	/**
 	 * Creates copies of the given {@link BezierCurve}s.
-	 * 
+	 *
 	 * @param curves
 	 *            the {@link BezierCurve}s to copy
 	 * @return an array containing the copies
@@ -41,13 +41,49 @@ class CurveUtils {
 	}
 
 	/**
-	 * Delegates to the {@link BezierCurve#getIntersections(ICurve)} method.
-	 * 
+	 * Returns the intersection point of the given {@link ICurve} that has the
+	 * smallest distance to the given reference {@link Point}. If there are
+	 * multiple intersection points with the same distance, an arbitrary one
+	 * will be returned.
+	 *
 	 * @param curve1
-	 *            the first {@link ICurve} to intersect
+	 *            The first {@link ICurve} to intersect
 	 * @param curve2
-	 *            the second {@link ICurve} to intersect
-	 * @return an array of intersection {@link Point}s
+	 *            The second {@link ICurve} to intersect
+	 * @param reference
+	 *            The reference {@link Point} to compute the nearest
+	 *            intersection point to.
+	 * @return A {@link Point} representing an intersection point with the
+	 *         minimal distance to the given reference {@link Point}, or
+	 *         <code>null</code> if there is no intersection.
+	 */
+	public static Point getNearestIntersection(ICurve curve1, ICurve curve2,
+			Point reference) {
+		Point[] intersections = getIntersections(curve1, curve2);
+		if (intersections.length > 0) {
+			// find nearest intersection point
+			Point nearest = intersections[0];
+			double minDistance = reference.getDistance(nearest);
+			for (int i = 1; i < intersections.length; i++) {
+				double d = reference.getDistance(intersections[i]);
+				if (d < minDistance) {
+					minDistance = d;
+					nearest = intersections[i];
+				}
+			}
+			return nearest;
+		}
+		return null;
+	}
+
+	/**
+	 * Delegates to the {@link BezierCurve#getIntersections(ICurve)} method.
+	 *
+	 * @param curve1
+	 *            The first {@link ICurve} to intersect
+	 * @param curve2
+	 *            The second {@link ICurve} to intersect
+	 * @return An array of intersection {@link Point}s
 	 */
 	public static Point[] getIntersections(ICurve curve1, ICurve curve2) {
 		Set<Point> intersections = new HashSet<Point>();
@@ -63,7 +99,7 @@ class CurveUtils {
 	/**
 	 * Delegates to the appropriate getIntersections() method for the passed-in
 	 * {@link IGeometry} depending on its type.
-	 * 
+	 *
 	 * @param curve
 	 *            the {@link ICurve} to intersect
 	 * @param geom
@@ -87,7 +123,7 @@ class CurveUtils {
 
 	/**
 	 * Delegates to the {@link #getIntersections(ICurve, IShape)} method.
-	 * 
+	 *
 	 * @param curve
 	 *            the {@link ICurve} to intersect
 	 * @param multiShape
@@ -106,7 +142,7 @@ class CurveUtils {
 
 	/**
 	 * Delegates to the {@link #getIntersections(ICurve, ICurve)} method.
-	 * 
+	 *
 	 * @param curve
 	 *            the {@link ICurve} to intersect
 	 * @param shape
@@ -126,7 +162,7 @@ class CurveUtils {
 
 	/**
 	 * Delegates to the {@link #getIntersections(ICurve, IGeometry)} method.
-	 * 
+	 *
 	 * @param geom1
 	 *            the first {@link IGeometry} to intersect
 	 * @param geom2
@@ -162,7 +198,7 @@ class CurveUtils {
 	/**
 	 * Checks if the given {@link ICurve}s intersect in a finite number of
 	 * {@link Point}s.
-	 * 
+	 *
 	 * @param c1
 	 *            the first {@link ICurve} to check for intersection
 	 *            {@link Point}s
@@ -179,7 +215,7 @@ class CurveUtils {
 	/**
 	 * Checks if the given {@link ICurve}s overlap, i.e. both {@link ICurve}s
 	 * have an infinite number of intersection {@link Point}s.
-	 * 
+	 *
 	 * @param c1
 	 *            the first {@link ICurve} to check for overlap
 	 * @param c2
@@ -203,7 +239,7 @@ class CurveUtils {
 	 * Builds up a {@link Path} from the given {@link ICurve}s. Only
 	 * {@link Line}, {@link QuadraticCurve} and {@link CubicCurve} objects can
 	 * be integrated into the constructed {@link Path}.
-	 * 
+	 *
 	 * @param curves
 	 *            the {@link ICurve}s from which the {@link Path} is constructed
 	 * @return a new {@link Path} representing the given {@link ICurve}s
@@ -257,7 +293,7 @@ class CurveUtils {
 	 * {@link Point}s in the given array. In case it is specified to close the
 	 * segment list, another {@link Line} segment is created that connects the
 	 * last and the first {@link Point} in the array.
-	 * 
+	 *
 	 * @param points
 	 *            the array of {@link Point}s to convert
 	 * @param close

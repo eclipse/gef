@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -19,18 +19,18 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a polyline.
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Polyline extends AbstractPointListBasedGeometry<Polyline>
-		implements ICurve {
+implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * Constructs a new {@link Polyline} from a even-numbered sequence of
 	 * coordinates. Similar to {@link Polyline#Polyline(Point...)}, only that
 	 * coordinates of points rather than {@link Point}s are provided.
-	 * 
+	 *
 	 * @param coordinates
 	 *            an alternating, even-numbered sequence of x- and
 	 *            y-coordinates, representing the points from which the
@@ -51,7 +51,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	/**
 	 * Constructs a new {@link Polyline} from the given array of {@link Line}
 	 * segments.
-	 * 
+	 *
 	 * @param segmentsArray
 	 */
 	public Polyline(Line[] segmentsArray) {
@@ -64,7 +64,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * automatically closed, i.e. it will not only contain a segment between
 	 * succeeding points of the sequence but as well back from the last to the
 	 * first point.
-	 * 
+	 *
 	 * @param points
 	 *            a sequence of points, from which the {@link Polyline} is to be
 	 *            created
@@ -76,7 +76,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	/**
 	 * Checks whether the point that is represented by its x- and y-coordinates
 	 * is contained within this {@link Polyline}.
-	 * 
+	 *
 	 * @param x
 	 *            the x coordinate of the point to test
 	 * @param y
@@ -117,7 +117,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * Checks whether this {@link Polyline} and the one that is indirectly given
 	 * via the sequence of points are regarded to be equal. The {@link Polyline}
 	 * s will be regarded equal, if they are characterized by the same segments.
-	 * 
+	 *
 	 * @param points
 	 *            an array of {@link Point} characterizing a {@link Polyline} to
 	 *            be checked for equality
@@ -142,7 +142,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	 * Returns a sequence of {@link Line}s, representing the segments that are
 	 * obtained by linking each two successive point of this {@link Polyline}
 	 * (including the last and the first one).
-	 * 
+	 *
 	 * @return an array of {@link Line}s, representing the segments that make up
 	 *         this {@link Polyline}
 	 */
@@ -151,8 +151,13 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 	}
 
 	@Override
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
+	}
+
+	@Override
 	public Point[] getIntersections(ICurve c) {
-		return CurveUtils.getIntersections(c, this);
+		return CurveUtils.getIntersections(this, c);
 	}
 
 	@Override
@@ -219,7 +224,7 @@ public class Polyline extends AbstractPointListBasedGeometry<Polyline>
 
 	/**
 	 * Transforms this {@link Polyline} into a {@link PolyBezier}.
-	 * 
+	 *
 	 * @return a {@link PolyBezier} representing this {@link Polyline}
 	 */
 	public PolyBezier toPolyBezier() {

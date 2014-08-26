@@ -95,36 +95,20 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		IShape anchorageReferenceShapeInScene = getAnchorageReferenceShape()
 				.getTransformed(anchorageToSceneTransform);
 
-		Point[] intersectionPoints = anchorageReferenceShapeInScene
-				.getOutline().getIntersections(referenceLineInScene);
-
-		if (intersectionPoints.length > 0) {
-			// find nearest intersection point
-			Point nearest = intersectionPoints[0];
-			double minDistance = anchoredReferencePointInScene
-					.getDistance(nearest);
-			for (int i = 1; i < intersectionPoints.length; i++) {
-				double d = anchoredReferencePointInScene
-						.getDistance(intersectionPoints[i]);
-				if (d < minDistance) {
-					minDistance = d;
-					nearest = intersectionPoints[i];
-				}
-			}
-
+		Point nearestIntersectionInScene = anchorageReferenceShapeInScene
+				.getOutline().getNearestIntersection(referenceLineInScene,
+						anchoredReferencePointInScene);
+		if (nearestIntersectionInScene != null) {
 			// transform to anchored coordinate system
-			Point point = JavaFX2Geometry.toPoint(anchored
-					.sceneToLocal(Geometry2JavaFX.toFXPoint(nearest)));
+			return JavaFX2Geometry.toPoint(anchored
+					.sceneToLocal(Geometry2JavaFX
+							.toFXPoint(nearestIntersectionInScene)));
 
-			return point;
 		}
 
 		// do not fail hard... use center
-		Point point = JavaFX2Geometry.toPoint(anchored
-				.sceneToLocal(Geometry2JavaFX
-						.toFXPoint(anchorageReferencePointInScene)));
-
-		return point;
+		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
+				.toFXPoint(anchorageReferencePointInScene)));
 	}
 
 	/**

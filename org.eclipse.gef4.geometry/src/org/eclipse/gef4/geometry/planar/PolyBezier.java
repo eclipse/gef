@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2012, 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -22,21 +22,13 @@ import org.eclipse.gef4.geometry.utils.PointListUtils;
 /**
  * A {@link PolyBezier} is an {@link ICurve} which consists of one or more
  * connected {@link BezierCurve}s.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
 public class PolyBezier extends AbstractGeometry implements ICurve,
 		ITranslatable<PolyBezier>, IScalable<PolyBezier>,
 		IRotatable<PolyBezier> {
-
-	/**
-	 * The default curve width coefficient used in interpolateCubic(...)
-	 * methods.
-	 */
-	public static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
-
-	private static final long serialVersionUID = 1L;
 
 	private static BezierCurve[] copy(BezierCurve... beziers) {
 		BezierCurve[] copy = new BezierCurve[beziers.length];
@@ -63,7 +55,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * assure the curve ends in a straight line of said length in the direction
 	 * specified by said angle.
 	 * </p>
-	 * 
+	 *
 	 * @param startAngle
 	 *            start direction of the curve
 	 * @param startLength
@@ -93,7 +85,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	/**
 	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 * through the given {@link Point}s.
-	 * 
+	 *
 	 * @see #interpolateCubic(Point...)
 	 * @param coordinates
 	 *            the coordinates of the points that are to be interpolated.
@@ -111,7 +103,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	/**
 	 * Creates a {@link PolyBezier} with continuous {@link CubicCurve} segments
 	 * through the given {@link Point}s.
-	 * 
+	 *
 	 * @param curveWidthCoefficient
 	 *            value in the range <code>]0;+Inf[</code> that adjusts the
 	 *            width of the curve. A value smaller than one sharpens the
@@ -188,12 +180,20 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 		return interp;
 	}
 
+	/**
+	 * The default curve width coefficient used in interpolateCubic(...)
+	 * methods.
+	 */
+	public static final double INTERPOLATION_CURVE_WIDTH_COEFFICIENT = 1d;
+
+	private static final long serialVersionUID = 1L;
+
 	private BezierCurve[] beziers;
 
 	/**
 	 * Constructs a new {@link PolyBezier} of the given {@link BezierCurve}s.
 	 * The {@link BezierCurve}s are expected to be connected with each other.
-	 * 
+	 *
 	 * @param beziers
 	 *            the {@link BezierCurve}s which will constitute this
 	 *            {@link PolyBezier}
@@ -233,8 +233,13 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	}
 
 	@Override
-	public Point[] getIntersections(ICurve g) {
-		return CurveUtils.getIntersections(g, this);
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
+	}
+
+	@Override
+	public Point[] getIntersections(ICurve c) {
+		return CurveUtils.getIntersections(this, c);
 	}
 
 	@Override
@@ -360,7 +365,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link PolyBezier} counter-clock-wise around its
 	 * center {@link Point} by the given {@link Angle}. Direct adaptation means,
 	 * that <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -379,7 +384,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * given point (specified by cx and cy) by the given {@link Angle}. Direct
 	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
 	 * in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param cx
@@ -399,7 +404,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link PolyBezier} counter-clock-wise around the
 	 * given {@link Point} by the given {@link Angle}. Direct adaptation means,
 	 * that <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param center
@@ -414,7 +419,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link PolyBezier} clock-wise around its center
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @return <code>this</code> for convenience
@@ -433,7 +438,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * point (specified by cx and cy) by the given {@link Angle}. Direct
 	 * adaptation means, that <code>this</code> {@link PolyBezier} is modified
 	 * in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param cx
@@ -453,7 +458,7 @@ public class PolyBezier extends AbstractGeometry implements ICurve,
 	 * Directly rotates this {@link PolyBezier} clock-wise around the given
 	 * {@link Point} by the given {@link Angle}. Direct adaptation means, that
 	 * <code>this</code> {@link PolyBezier} is modified in-place.
-	 * 
+	 *
 	 * @param angle
 	 *            rotation {@link Angle}
 	 * @param center

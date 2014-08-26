@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -20,13 +20,13 @@ import org.eclipse.gef4.geometry.utils.PrecisionUtils;
  * Represents the geometric shape of an {@link Arc}, which is defined by its
  * enclosing framing {@link Rectangle}, a start {@link Angle} (relative to the
  * x-axis), and an angular extend in counter-clockwise (CCW) direction.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
-		implements ICurve {
+implements ICurve {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,7 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	 * {@link Arc} begins. The angular extent is the CCW {@link Angle} that
 	 * spans the {@link Arc}, i.e. the resulting end {@link Angle} of the
 	 * {@link Arc} is the sum of the start {@link Angle} and the angular extent.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link AbstractRectangleBasedGeometry} describing the
 	 *            bounds of the {@link Ellipse} of which the {@link Arc} is cut
@@ -59,7 +59,7 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	 * {@link Arc} begins. The angular extent is the CCW {@link Angle} that
 	 * spans the {@link Arc}, i.e. the resulting end {@link Angle} of the
 	 * {@link Arc} is the sum of the start {@link Angle} and the angular extent.
-	 * 
+	 *
 	 * @param x
 	 *            the x coordinate of the bounds of the {@link Ellipse} of which
 	 *            the {@link Arc} is cut out
@@ -118,6 +118,11 @@ public final class Arc extends AbstractArcBasedGeometry<Arc, PolyBezier>
 	@Override
 	public Arc getCopy() {
 		return new Arc(x, y, width, height, startAngle, angularExtent);
+	}
+
+	@Override
+	public Point getNearestIntersection(ICurve c, Point reference) {
+		return CurveUtils.getNearestIntersection(this, c, reference);
 	}
 
 	@Override
