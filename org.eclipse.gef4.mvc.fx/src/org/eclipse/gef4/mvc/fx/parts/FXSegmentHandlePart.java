@@ -11,15 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -36,15 +35,15 @@ import com.google.inject.Provider;
  * The segmentIndex identifies that segment (0, 1, 2, ...). The segmentParameter
  * specifies the position of this handle part on the segment (0 = start, 0.5 =
  * mid, 1 = end).
- * 
+ *
  * These parts are used for selection feedback per default.
- * 
+ *
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXSegmentHandlePart> {
+Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -90,22 +89,24 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * the given handle geometry. Per default, rectangular handles are created
 	 * if the handle geometry is a {@link Rectangle}. Otherwise, round handles
 	 * are created.
-	 * 
+	 *
 	 * @param handleGeometry
 	 * @return {@link Shape} representing the handle visually
 	 */
 	protected Shape createHandleVisual(IGeometry handleGeometry) {
-		Shape shape = null;
-		// create shape dependent on passed in selection geometry
-		if (handleGeometry instanceof org.eclipse.gef4.geometry.planar.Rectangle) {
-			shape = new Rectangle();
-			((Rectangle) shape).setWidth(SIZE);
-			((Rectangle) shape).setHeight(SIZE);
-			shape.setTranslateX(-SIZE / 2);
-			shape.setTranslateY(-SIZE / 2);
-		} else {
-			shape = new Circle(SIZE / 2d);
-		}
+		// Shape shape = null;
+		// // create shape dependent on passed in selection geometry
+		// // TODO: this should not be done here but within the factory
+		// if (handleGeometry instanceof IShape) {
+		// shape = new Rectangle();
+		// ((Rectangle) shape).setWidth(SIZE);
+		// ((Rectangle) shape).setHeight(SIZE);
+		// shape.setTranslateX(-SIZE / 2);
+		// shape.setTranslateY(-SIZE / 2);
+		// } else {
+		// shape = new Circle(SIZE / 2d);
+		// }
+		Shape shape = new Circle(SIZE / 2d);
 
 		// initialize invariant visual properties
 		shape.setStroke(STROKE_DARK_BLUE);
@@ -129,20 +130,19 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		} else {
 			visual.setVisible(true);
 
-			// get new position (in local coordinate space)
-			Point position = getPosition(handleGeometryProvider.get());
+			// get new position (in parent coordinate space)
+			IGeometry handleGeometryInScene = handleGeometryProvider.get();
+			IGeometry handleGeometryInParent = FXUtils.sceneToLocal(
+					visual.getParent(), handleGeometryInScene);
+			Point positionInParent = getPosition(handleGeometryInParent);
 
 			// transform to handle space
 			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
 					.next();
-			Node targetVisual = targetPart.getVisual();
-			Pane handleLayer = rootPart.getHandleLayer();
-			Point2D point2d = handleLayer.sceneToLocal(targetVisual
-					.localToScene(position.x, position.y));
 
 			// update visual layout position
-			visual.setLayoutX(point2d.getX());
-			visual.setLayoutY(point2d.getY());
+			visual.setLayoutX(positionInParent.x);
+			visual.setLayoutY(positionInParent.y);
 
 			// update color
 			if (segmentParameter != 0.0 && segmentParameter != 1.0) {
@@ -156,7 +156,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 					if (segmentIndex == 0 && segmentParameter == 0.0) {
 						connected = connection.isStartConnected();
 					} else if (segmentParameter == 1.0) {
-						IGeometry geom = handleGeometryProvider.get();
+						IGeometry geom = handleGeometryInScene;
 						if (geom instanceof ICurve) {
 							BezierCurve[] beziers = ((ICurve) geom).toBezier();
 							if (beziers.length - 1 == segmentIndex) {
@@ -180,6 +180,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 		if (handleGeometry instanceof IShape) {
 			IShape shape = (IShape) handleGeometry;
+			// use the bounds to place the shape handles
+			// TODO: we should be able to deal with an arbitrary shape here
 			ICurve[] segments = shape.getOutlineSegments();
 			position = segments[segmentIndex].toBezier()[0]
 					.get(segmentParameter);
@@ -206,16 +208,16 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 * The segmentIndex specifies the segment of the IGeometry provided by the
 	 * handle geometry provider on which this selection handle part is
 	 * positioned.
-	 * 
+	 *
 	 * For a shape geometry, segments are determined by the
 	 * {@link IShape#getOutlineSegments()} method.
-	 * 
+	 *
 	 * For a curve geometry, segments are determined by the
 	 * {@link ICurve#toBezier()} method.
-	 * 
+	 *
 	 * The exact position on the segment is specified by the
 	 * {@link #getSegmentParameter() segmentParameter}.
-	 * 
+	 *
 	 * @return segmentIndex
 	 */
 	public int getSegmentIndex() {
@@ -225,7 +227,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	/**
 	 * The segmentParameter is a value between 0 and 1. It determines the final
 	 * point on the segment which this selection handle part belongs to.
-	 * 
+	 *
 	 * @return segmentParameter
 	 */
 	public double getSegmentParameter() {
@@ -239,7 +241,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment index. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentIndex
 	 * @see #getSegmentIndex()
 	 */
@@ -253,7 +255,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	/**
 	 * Sets the segment parameter. Refreshs the handle visual.
-	 * 
+	 *
 	 * @param segmentParameter
 	 * @see #getSegmentParameter()
 	 */

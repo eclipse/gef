@@ -15,9 +15,9 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.behaviors.DefaultVisualGeometryProvider;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
@@ -65,14 +65,14 @@ public class FXExampleModule extends MvcFxModule {
 				AdapterKey
 				.get(Provider.class,
 						FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-						.to(DefaultVisualGeometryProvider.class);
+						.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder
 		.addBinding(
 				AdapterKey
 				.get(Provider.class,
 						FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-						.to(DefaultVisualGeometryProvider.class);
+						.to(VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover feedback
 		adapterMapBinder
@@ -80,7 +80,7 @@ public class FXExampleModule extends MvcFxModule {
 						AdapterKey
 								.get(Provider.class,
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-						.to(DefaultVisualGeometryProvider.class);
+						.to(VisualBoundsGeometryProvider.class);
 	}
 
 	protected void bindIContentPartFactory() {

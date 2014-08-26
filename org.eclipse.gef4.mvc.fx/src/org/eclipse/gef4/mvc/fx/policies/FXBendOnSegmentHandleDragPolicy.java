@@ -37,7 +37,7 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private int createdSegmentIndex;
 

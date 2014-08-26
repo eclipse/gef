@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -28,7 +28,10 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
+// up to now only usable with FXCornerHandleParts
+// we could also implement to work with FXSegmentParts, maybe it is also better so use a different implementation for this.
+public class FXResizeRelocateOnCornerHandleDragPolicy extends
+AbstractFXDragPolicy {
 
 	/**
 	 * <p>
@@ -47,9 +50,9 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	public static enum ReferencePoint {
 		TOP(true, false, false, false), LEFT(false, true, false, false), RIGHT(
 				false, false, true, false), BOTTOM(false, false, false, true), TOP_LEFT(
-				true, true, false, false), TOP_RIGHT(true, false, true, false), BOTTOM_LEFT(
-				false, true, false, true), BOTTOM_RIGHT(false, false, true,
-				true);
+						true, true, false, false), TOP_RIGHT(true, false, true, false), BOTTOM_LEFT(
+								false, true, false, true), BOTTOM_RIGHT(false, false, true,
+										true);
 
 		private boolean t, l, r, b;
 
@@ -92,7 +95,7 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	private Map<IContentPart<Node>, Double> relX2 = null;
 	private Map<IContentPart<Node>, Double> relY2 = null;
 
-	public FXResizeRelocateOnHandleDragPolicy(ReferencePoint refPoint) {
+	public FXResizeRelocateOnCornerHandleDragPolicy(ReferencePoint refPoint) {
 		this.referencePoint = refPoint;
 	}
 
@@ -100,7 +103,7 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	 * Computes the relative x and y coordinates for the given target part and
 	 * stores them in the {@link #relX1}, {@link #relY1}, {@link #relX2}, and
 	 * {@link #relY2} maps.
-	 * 
+	 *
 	 * @param targetPart
 	 */
 	private void computeRelatives(IContentPart<Node> targetPart) {
@@ -173,7 +176,7 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	/**
 	 * Returns the unioned {@link #getVisualBounds(IContentPart) bounds} of all
 	 * target parts.
-	 * 
+	 *
 	 * @param targetParts
 	 * @return the unioned visual bounds of all target parts
 	 */
@@ -258,7 +261,7 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	 * Returns updated selection bounds. The initial selection bounds are copied
 	 * and the copy is shrinked or expanded depending on the mouse location
 	 * change and the {@link #getReferencePoint() handle-edge}.
-	 * 
+	 *
 	 * @param mouseLocation
 	 * @return
 	 */

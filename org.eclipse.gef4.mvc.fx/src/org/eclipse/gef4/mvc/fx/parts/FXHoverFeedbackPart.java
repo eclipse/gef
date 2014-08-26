@@ -15,11 +15,12 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
 
-public class FXHoverFeedbackPart extends AbstractFXGeometricFeedbackPart {
+public class FXHoverFeedbackPart extends AbstractFXBoundsFeedbackPart {
 
 	private final Provider<IGeometry> hoverFeedbackGeometryProvider;
 
@@ -38,8 +39,9 @@ public class FXHoverFeedbackPart extends AbstractFXGeometricFeedbackPart {
 	}
 
 	@Override
-	protected Provider<IGeometry> getFeedbackGeometryProvider() {
-		return hoverFeedbackGeometryProvider;
+	protected IGeometry getFeedbackGeometry() {
+		return FXUtils.sceneToLocal(getVisual().getParent(),
+				hoverFeedbackGeometryProvider.get());
 	}
 
 	public Effect getHoverFeedbackEffect() {

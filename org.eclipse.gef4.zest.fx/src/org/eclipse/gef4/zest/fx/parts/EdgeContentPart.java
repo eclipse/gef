@@ -24,6 +24,7 @@ import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -208,19 +209,19 @@ public class EdgeContentPart extends AbstractFXContentPart {
 						.get(Provider.class,
 								FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return visual.getConnection().getCurveNode()
-						.getGeometry();
-			}
-		});
+					@Override
+					public IGeometry get() {
+						return FXUtils.localToScene(visual, visual
+								.getConnection().getCurveNode().getGeometry());
+					}
+				});
 		setAdapter(AdapterKey.get(Provider.class,
 				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
-				return visual.getConnection().getCurveNode()
-						.getGeometry();
+				return FXUtils.localToScene(visual, visual
+						.getConnection().getCurveNode().getGeometry());
 			}
 		});
 

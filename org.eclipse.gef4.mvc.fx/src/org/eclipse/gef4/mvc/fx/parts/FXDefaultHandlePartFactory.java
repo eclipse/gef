@@ -20,10 +20,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -45,6 +47,41 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	@Inject
 	private Injector injector;
 
+	// TODO: maybe inline this method
+	protected List<IHandlePart<Node>> createBoundsSelectionHandleParts(
+			Map<Object, Object> contextMap) {
+		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+
+		// per default, handle parts are created for the 4 corners of the multi
+		// selection bounds
+		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
+				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
+			handleParts.add(createCornerHandlePart(pos, contextMap));
+		}
+
+		return handleParts;
+	}
+
+	/**
+	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
+	 * selection. The corner is specified via the <i>position</i> parameter.
+	 *
+	 * @param position
+	 *            Relative position of the {@link IHandlePart} on the collective
+	 *            bounds of the multi selection.
+	 * @param contextMap
+	 *            TODO
+	 *
+	 * @return an {@link IHandlePart} for the specified corner of the bounds of
+	 *         the multi selection
+	 */
+	protected IHandlePart<Node> createCornerHandlePart(Pos position,
+			Map<Object, Object> contextMap) {
+		FXCornerHandlePart part = new FXCornerHandlePart(position);
+		injector.injectMembers(part);
+		return part;
+	}
+
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
@@ -63,7 +100,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return {@link IHandlePart} for the specified segment vertex of the
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
-	public IHandlePart<Node> createCurveSelectionHandlePart(
+	protected IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
 			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
 			boolean isEndPoint) {
@@ -122,94 +159,12 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
-	 * selection. The corner is specified via the <i>position</i> parameter.
-	 *
-	 * @param targets
-	 *            All selected {@link IContentPart}s.
-	 * @param position
-	 *            Relative position of the {@link IHandlePart} on the collective
-	 *            bounds of the multi selection.
-	 * @param contextMap
-	 *            TODO
-	 * @return an {@link IHandlePart} for the specified corner of the bounds of
-	 *         the multi selection
-	 */
-	public IHandlePart<Node> createMultiSelectionCornerHandlePart(
-			List<IContentPart<Node>> targets, Pos position,
-			Map<Object, Object> contextMap) {
-		FXBoxHandlePart part = new FXBoxHandlePart(position);
-		injector.injectMembers(part);
-		return part;
-	}
-
-	public List<IHandlePart<Node>> createMultiSelectionHandleParts(
-			List<IContentPart<Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
-			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
-
-		// per default, handle parts are created for the 4 corners of the multi
-		// selection bounds
-		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
-				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
-			handleParts.add(createMultiSelectionCornerHandlePart(targets, pos,
-					contextMap));
-		}
-
-		return handleParts;
-	}
-
-	public List<IHandlePart<Node>> createSelectionHandleParts(
-			List<IContentPart<Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
-			Map<Object, Object> contextMap) {
-		// multiple selection
-		if (targets.size() > 1) {
-			return createMultiSelectionHandleParts(targets, selectionBehavior,
-					contextMap);
-		}
-
-		// single selection
-		final IContentPart<Node> target = targets.get(0);
-		Provider<IGeometry> handleGeometryProvider = getSelectionHandleGeometryProvider(
-				target, contextMap);
-
-		// generate handles from handle geometry
-		IGeometry handleGeometry = null;
-		if (handleGeometryProvider != null) {
-			handleGeometry = handleGeometryProvider.get();
-		}
-
-		if (handleGeometry == null) {
-			return Collections.emptyList();
-		}
-
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
-		if (handleGeometry instanceof ICurve) {
-			handleParts.addAll(createCurveSelectionHandleParts(target,
-					handleGeometryProvider, contextMap));
-		} else {
-			// everything else is expected to be an IShape, even though the user
-			// could supply a Path
-			if (handleGeometry instanceof IShape) {
-				IShape shape = (IShape) handleGeometry;
-				ICurve[] edges = shape.getOutlineSegments();
-				// create a handle for each vertex
-				for (int i = 0; i < edges.length; i++) {
-					IHandlePart<Node> hp = createShapeSelectionHandlePart(
-							target, handleGeometryProvider, i, contextMap);
-					handleParts.add(hp);
-				}
-			} else {
-				throw new IllegalStateException(
-						"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
-								+ handleGeometry);
-			}
-		}
-
-		return handleParts;
+	protected List<IHandlePart<Node>> createMultiSelectionHandleParts(
+			List<IContentPart<Node>> targets, Map<Object, Object> contextMap) {
+		// TODO: we should check whether we have a bounds geometry -> the corner
+		// part should require a geometry provider as well
+		// PASS OVER geometry provider for visual bounds
+		return createBoundsSelectionHandleParts(contextMap);
 	}
 
 	/**
@@ -229,8 +184,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return {@link IHandlePart} for the specified vertex of the
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
-	public IHandlePart<Node> createShapeSelectionHandlePart(
-			IContentPart<Node> targetPart,
+	protected IHandlePart<Node> createSegmentHandlePart(
 			Provider<IGeometry> handleGeometryProvider, int vertexIndex,
 			Map<Object, Object> contextMap) {
 		FXSegmentHandlePart part = new FXSegmentHandlePart(
@@ -239,10 +193,76 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return part;
 	}
 
-	public Provider<IGeometry> getSelectionHandleGeometryProvider(
-			IContentPart<Node> target, final Map<Object, Object> contextMap) {
-		return target.getAdapter(AdapterKey.get(Provider.class,
-				SELECTION_HANDLES_GEOMETRY_PROVIDER));
+	protected List<IHandlePart<Node>> createSelectionHandleParts(
+			List<IContentPart<Node>> targets,
+			SelectionBehavior<Node> selectionBehavior,
+			Map<Object, Object> contextMap) {
+		if (targets.isEmpty()) {
+			return Collections.emptyList();
+		} else if (targets.size() == 1) {
+			return createSingleSelectionHandleParts(targets.get(0), contextMap);
+		} else {
+			// multiple selection uses bounds
+			return createMultiSelectionHandleParts(targets, contextMap);
+		}
+
 	}
 
+	protected List<IHandlePart<Node>> createSingleSelectionHandleParts(
+			final IContentPart<Node> target, Map<Object, Object> contextMap) {
+
+		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+
+		// handle geometry is in target visual local coordinate space.
+		final Provider<IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
+				.getAdapter(AdapterKey.get(Provider.class,
+						SELECTION_HANDLES_GEOMETRY_PROVIDER));
+
+		// generate handles from selection handles geometry
+		IGeometry selectionHandlesGeometry = (selectionHandlesGeometryInTargetLocalProvider != null) ? selectionHandlesGeometryInTargetLocalProvider
+				.get() : null;
+
+		if (selectionHandlesGeometry == null) {
+			return Collections.emptyList();
+		}
+
+		// we will need a provider that returns the geometry in scene
+		// coordinates
+		Provider<IGeometry> selectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
+
+			@Override
+			public IGeometry get() {
+				return FXUtils.localToScene(target.getVisual(),
+						selectionHandlesGeometryInTargetLocalProvider.get());
+			}
+		};
+
+		if (selectionHandlesGeometry instanceof ICurve) {
+			// assure the geometry provider that is handed over returns the
+			// geometry in scene coordinates
+			handleParts.addAll(createCurveSelectionHandleParts(target,
+					selectionHandlesGeometryInSceneProvider, contextMap));
+		} else if (selectionHandlesGeometry instanceof IShape) {
+			IShape selectionHandlesShape = (IShape) selectionHandlesGeometry;
+			if (selectionHandlesGeometry instanceof Rectangle) {
+				// create corner handles
+				handleParts
+						.addAll(createBoundsSelectionHandleParts(contextMap));
+			} else {
+				// create segment handles (based on outline)
+				ICurve[] edges = selectionHandlesShape.getOutlineSegments();
+				for (int i = 0; i < edges.length; i++) {
+					IHandlePart<Node> hp = createSegmentHandlePart(
+							selectionHandlesGeometryInSceneProvider, i,
+							contextMap);
+					handleParts.add(hp);
+				}
+			}
+		} else {
+			throw new IllegalStateException(
+					"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
+							+ selectionHandlesGeometry);
+		}
+		return handleParts;
+	}
 }

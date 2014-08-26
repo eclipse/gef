@@ -11,15 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-
-import com.google.inject.Provider;
 
 /**
  * A handle part used for showing feedback based on layout bounds of an
@@ -28,8 +24,9 @@ import com.google.inject.Provider;
  * @author nyssen
  *
  */
-public abstract class AbstractFXGeometricFeedbackPart extends
-		AbstractFXFeedbackPart {
+// TODO: maybe this class can be removed -> not much communality
+public abstract class AbstractFXBoundsFeedbackPart extends
+AbstractFXFeedbackPart {
 
 	private FXGeometryNode<IGeometry> feedbackVisual;
 
@@ -45,21 +42,19 @@ public abstract class AbstractFXGeometricFeedbackPart extends
 
 	@Override
 	public void doRefreshVisual() {
-		Provider<IGeometry> feedbackGeometryProvider = getFeedbackGeometryProvider();
-		if (feedbackGeometryProvider == null) {
-			return;
-		}
 		if (getAnchorages().size() != 1) {
 			return;
 		}
-		Node targetVisual = getAnchorages().keySet().iterator().next()
-				.getVisual();
-		IGeometry feedbackGeometryInFeedbackVisualParent = transformFromSourceLocalToTargetParent(
-				targetVisual, getVisual(), feedbackGeometryProvider.get());
-		getVisual().setGeometry(feedbackGeometryInFeedbackVisualParent);
+
+		IGeometry feedbackGeometry = getFeedbackGeometry();
+		if (feedbackGeometry == null) {
+			return;
+		}
+
+		getVisual().setGeometry(feedbackGeometry);
 	}
 
-	protected abstract Provider<IGeometry> getFeedbackGeometryProvider();
+	protected abstract IGeometry getFeedbackGeometry();
 
 	@Override
 	public FXGeometryNode<IGeometry> getVisual() {
@@ -68,14 +63,4 @@ public abstract class AbstractFXGeometricFeedbackPart extends
 		}
 		return feedbackVisual;
 	}
-
-	protected IGeometry transformFromSourceLocalToTargetParent(Node source,
-			Node target, IGeometry geometryInSourceLocal) {
-		IGeometry geometryInScene = FXUtils.localToScene(source,
-				geometryInSourceLocal);
-		IGeometry geometryInTargetParent = FXUtils.sceneToLocal(
-				target.getParent(), geometryInScene);
-		return geometryInTargetParent;
-	}
-
 }

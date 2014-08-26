@@ -21,6 +21,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IFocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -29,7 +30,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Provider;
 
-public class FXSelectionFeedbackPart extends AbstractFXGeometricFeedbackPart {
+public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -91,8 +92,12 @@ public class FXSelectionFeedbackPart extends AbstractFXGeometricFeedbackPart {
 	}
 
 	@Override
-	protected Provider<IGeometry> getFeedbackGeometryProvider() {
-		return selectionFeedbackGeometryProvider;
+	protected IGeometry getFeedbackGeometry() {
+		// the passed in provider is expected to return the selection feedback
+		// geometry in scene coordinates, so we have to convert it into local
+		// coordinates here
+		return FXUtils.sceneToLocal(getVisual().getParent(),
+				selectionFeedbackGeometryProvider.get());
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {

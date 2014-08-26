@@ -23,13 +23,13 @@ import javafx.scene.shape.StrokeType;
  * @author anyssen
  *
  */
-public class FXBoxHandlePart extends AbstractFXHandlePart implements
-Comparable<FXBoxHandlePart> {
+public class FXCornerHandlePart extends AbstractFXHandlePart implements
+		Comparable<FXCornerHandlePart> {
 
 	private Rectangle visual = null;
 	private final Pos pos;
 
-	public FXBoxHandlePart(Pos pos) {
+	public FXCornerHandlePart(Pos pos) {
 		this.pos = pos;
 		visual = new Rectangle();
 		visual.setFill(Color.web("#d5faff"));
@@ -41,7 +41,7 @@ Comparable<FXBoxHandlePart> {
 	}
 
 	@Override
-	public int compareTo(FXBoxHandlePart o) {
+	public int compareTo(FXCornerHandlePart o) {
 		// if we are bound to the same anchorages, we may compare positions,
 		// otherwise we are not comparable
 		if (!getAnchorages().equals(o.getAnchorages())) {
@@ -53,6 +53,8 @@ Comparable<FXBoxHandlePart> {
 
 	@Override
 	public void doRefreshVisual() {
+		// TODO: this should rather be provided by a geometry provider
+		// registered on the root part
 		Bounds unionedBoundsInScene = FXPartUtils
 				.getUnionedVisualBoundsInScene(getAnchorages().keySet());
 		if (unionedBoundsInScene != null) {
