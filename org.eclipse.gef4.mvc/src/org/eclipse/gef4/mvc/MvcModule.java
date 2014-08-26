@@ -21,6 +21,9 @@ import org.eclipse.gef4.common.inject.AdaptableTypeListener;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.models.DefaultContentModel;
 import org.eclipse.gef4.mvc.models.DefaultViewportModel;
@@ -38,7 +41,10 @@ import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.util.Types;
 
 /**
  * The Guice module which contains all (default) bindings related to the MVC
@@ -99,7 +105,20 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// nothing to bind by default
+		// bind default behaviors that react to changes in content, selection,
+		// and hover
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				Key.get(Types.newParameterizedType(ContentBehavior.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+				.to(Key.get(Types.newParameterizedType(SelectionBehavior.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
+				Key.get(Types.newParameterizedType(HoverBehavior.class,
+						new TypeLiteral<VR>() {
+						}.getRawType().getClass())));
 	}
 
 	/**
@@ -171,7 +190,15 @@ public class MvcModule<VR> extends AbstractModule {
 	 */
 	protected void bindAbstractRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// nothing to register by default
+		// bind default behaviors reacting to changes in content and selection
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				Key.get(Types.newParameterizedType(ContentBehavior.class,
+						new TypeLiteral<VR>() {
+				}.getRawType().getClass())));
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+		.to(Key.get(Types.newParameterizedType(SelectionBehavior.class,
+				new TypeLiteral<VR>() {
+		}.getRawType().getClass())));
 	}
 
 	/**
@@ -222,7 +249,11 @@ public class MvcModule<VR> extends AbstractModule {
 
 	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class);
+		.to(DefaultOperationHistory.class);
+	}
+
+	protected void bindIUndoContext() {
+		binder().bind(IUndoContext.class).to(UndoContext.class);
 	}
 
 	protected void bindIViewportModel() {
@@ -231,10 +262,6 @@ public class MvcModule<VR> extends AbstractModule {
 
 	protected void bindIZoomModel() {
 		binder().bind(IZoomModel.class).to(DefaultZoomModel.class);
-	}
-
-	protected void bindIUndoContext() {
-		binder().bind(IUndoContext.class).to(UndoContext.class);
 	}
 
 	@Override
