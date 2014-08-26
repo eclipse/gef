@@ -21,10 +21,10 @@ import javafx.scene.shape.StrokeType;
 /**
  * @author mwienand
  * @author anyssen
- * 
+ *
  */
 public class FXBoxHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXBoxHandlePart> {
+Comparable<FXBoxHandlePart> {
 
 	private Rectangle visual = null;
 	private final Pos pos;
@@ -56,6 +56,7 @@ public class FXBoxHandlePart extends AbstractFXHandlePart implements
 		Bounds unionedBoundsInScene = FXPartUtils
 				.getUnionedVisualBoundsInScene(getAnchorages().keySet());
 		if (unionedBoundsInScene != null) {
+			// TODO: this could be done via a geometry provider as well
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
 			double xInset = getXInset();

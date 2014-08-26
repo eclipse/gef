@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
@@ -24,8 +25,8 @@ import com.google.inject.Provider;
 
 public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> {
 
+	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_OUTLINE_FEEDBACK_GEOMETRY_PROVIDER";
 	public static final String HOVER_FEEDBACK_GEOMETRY_PROVIDER = "HOVER_FEEDBACK_GEOMETRY_PROVIDER";
-	public static final String SELECTION_FEEDBACK_GEOMETRY_PROVIDER = "SELECTION_FEEDBACK_GEOMETRY_PROVIDER";
 
 	@Inject
 	private Injector injector;
@@ -41,11 +42,24 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	 *         <code>null</code> if no feedback should be rendered.
 	 */
 	protected IFeedbackPart<Node> createAnchorLinkFeedbackPart(
-			IContentPart<Node> anchored, IContentPart<Node> anchorage,
-			String anchorageRole) {
-		// TODO: adapt anchored and anchorage to feedback geometry provider
-		// create a link between both (and use an GeometricSelectionFeedbackPart
-		// for this geometry??
+			final IContentPart<Node> anchored,
+			final IContentPart<Node> anchorage, String anchorageRole) {
+
+		// only show anchor link feedback if anchorage and anchored provider is
+		// not null (and anchored is no connection)
+		if (!(anchored.getVisual() instanceof IFXConnection)) {
+			Provider<IGeometry> anchorageGeometryProvider = anchorage
+					.getAdapter(AdapterKey.get(Provider.class,
+							SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+			Provider<IGeometry> anchoredGeometryProvider = anchored
+					.getAdapter(AdapterKey.get(Provider.class,
+							SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+			if (anchoredGeometryProvider != null
+					&& anchorageGeometryProvider != null) {
+				return new FXSelectionLinkFeedbackPart(anchorage, anchored,
+						anchoredGeometryProvider, anchorageGeometryProvider);
+			}
+		}
 		return null;
 	}
 
@@ -82,10 +96,16 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
 
 		IContentPart<Node> target = targets.iterator().next();
-		FXGeometricFeedbackPart part = new FXHoverFeedbackPart(
-				getHoverFeedbackGeometryProvider(target, contextMap));
-		injector.injectMembers(part);
-		feedbackParts.add(part);
+
+		Provider<IGeometry> hoverFeedbackGeometryProvider = target
+				.getAdapter(AdapterKey.get(Provider.class,
+						HOVER_FEEDBACK_GEOMETRY_PROVIDER));
+		if (hoverFeedbackGeometryProvider != null) {
+			AbstractFXGeometricFeedbackPart part = new FXHoverFeedbackPart(
+					hoverFeedbackGeometryProvider);
+			injector.injectMembers(part);
+			feedbackParts.add(part);
+		}
 
 		return feedbackParts;
 	}
@@ -104,10 +124,11 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 		// selection outline feedback
 		IContentPart<Node> target = targets.iterator().next();
-		Provider<IGeometry> selectionFeedbackGeometryProvider = getSelectionFeedbackGeometryProvider(
-				target, contextMap);
+		Provider<IGeometry> selectionFeedbackGeometryProvider = target
+				.getAdapter(AdapterKey.get(Provider.class,
+						SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
-			FXGeometricFeedbackPart selectionFeedbackPart = new FXGeometricSelectionFeedbackPart(
+			AbstractFXGeometricFeedbackPart selectionFeedbackPart = new FXSelectionFeedbackPart(
 					selectionFeedbackGeometryProvider);
 			injector.injectMembers(selectionFeedbackPart);
 			feedbackParts.add(selectionFeedbackPart);
@@ -132,17 +153,5 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		}
 
 		return feedbackParts;
-	}
-
-	protected Provider<IGeometry> getHoverFeedbackGeometryProvider(
-			IContentPart<Node> target, final Map<Object, Object> contextMap) {
-		return target.getAdapter(AdapterKey.get(Provider.class,
-				HOVER_FEEDBACK_GEOMETRY_PROVIDER));
-	}
-
-	protected Provider<IGeometry> getSelectionFeedbackGeometryProvider(
-			IContentPart<Node> target, final Map<Object, Object> contextMap) {
-		return target.getAdapter(AdapterKey.get(Provider.class,
-				SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 	}
 }

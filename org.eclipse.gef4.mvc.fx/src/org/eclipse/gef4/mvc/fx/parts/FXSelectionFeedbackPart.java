@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Provider;
 
-public class FXGeometricSelectionFeedbackPart extends FXGeometricFeedbackPart {
+public class FXSelectionFeedbackPart extends AbstractFXGeometricFeedbackPart {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -41,10 +41,14 @@ public class FXGeometricSelectionFeedbackPart extends FXGeometricFeedbackPart {
 			}
 		}
 	};
+
+	private final Provider<IGeometry> selectionFeedbackGeometryProvider;
+
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
-	public FXGeometricSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
-		super(feedbackGeometryProvider);
+	public FXSelectionFeedbackPart(
+			Provider<IGeometry> selectionFeedbackGeometryProvider) {
+		this.selectionFeedbackGeometryProvider = selectionFeedbackGeometryProvider;
 	}
 
 	@Override
@@ -84,6 +88,11 @@ public class FXGeometricSelectionFeedbackPart extends FXGeometricFeedbackPart {
 			getVisual().setEffect(getSecondarySelectionFeedbackEffect(focused));
 			getVisual().setStroke(Color.GREY);
 		}
+	}
+
+	@Override
+	protected Provider<IGeometry> getFeedbackGeometryProvider() {
+		return selectionFeedbackGeometryProvider;
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {

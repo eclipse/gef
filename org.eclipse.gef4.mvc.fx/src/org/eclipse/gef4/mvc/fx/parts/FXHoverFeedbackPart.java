@@ -19,10 +19,12 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
 
-public class FXHoverFeedbackPart extends FXGeometricFeedbackPart {
+public class FXHoverFeedbackPart extends AbstractFXGeometricFeedbackPart {
 
-	public FXHoverFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
-		super(feedbackGeometryProvider);
+	private final Provider<IGeometry> hoverFeedbackGeometryProvider;
+
+	public FXHoverFeedbackPart(Provider<IGeometry> hoverFeedbackGeometryProvider) {
+		this.hoverFeedbackGeometryProvider = hoverFeedbackGeometryProvider;
 	}
 
 	@Override
@@ -33,6 +35,11 @@ public class FXHoverFeedbackPart extends FXGeometricFeedbackPart {
 		super.doRefreshVisual();
 		getVisual().setEffect(getHoverFeedbackEffect());
 		getVisual().setStroke(Color.web("#5a61af"));
+	}
+
+	@Override
+	protected Provider<IGeometry> getFeedbackGeometryProvider() {
+		return hoverFeedbackGeometryProvider;
 	}
 
 	public Effect getHoverFeedbackEffect() {

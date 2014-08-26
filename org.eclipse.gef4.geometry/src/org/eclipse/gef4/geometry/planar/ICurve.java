@@ -34,8 +34,18 @@ package org.eclipse.gef4.geometry.planar;
 public interface ICurve extends IGeometry {
 
 	/**
-	 * Returns the point of interaction between this {@link ICurve} and the
-	 * given {@link ICurve} that is nearest to the given reference point.
+	 * Returns the points of intersection between this {@link ICurve} and the
+	 * given {@link ICurve}.
+	 *
+	 * @param c
+	 *            The {@link ICurve} to compute intersection points with.
+	 * @return the points of intersection.
+	 */
+	public Point[] getIntersections(final ICurve c);
+
+	/**
+	 * Returns an intersection point between this {@link ICurve} and the given
+	 * {@link ICurve} with minimal distance to the given reference point.
 	 *
 	 * @param curve
 	 *            The {@link ICurve} to intersect with.
@@ -45,16 +55,6 @@ public interface ICurve extends IGeometry {
 	 * @return The point of interaction nearest to the given reference point.
 	 */
 	public Point getNearestIntersection(final ICurve curve, Point reference);
-
-	/**
-	 * Returns the points of intersection between this {@link ICurve} and the
-	 * given {@link ICurve}.
-	 *
-	 * @param c
-	 *            The {@link ICurve} to compute intersection points with.
-	 * @return the points of intersection.
-	 */
-	public Point[] getIntersections(final ICurve c);
 
 	/**
 	 * Returns a {@link Point} representing the start point of this
