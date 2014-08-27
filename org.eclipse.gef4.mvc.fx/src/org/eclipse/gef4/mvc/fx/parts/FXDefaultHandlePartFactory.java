@@ -16,11 +16,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -49,16 +51,17 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	// TODO: maybe inline this method
 	protected List<IHandlePart<Node>> createBoundsSelectionHandleParts(
+			Provider<IGeometry> handleGeometryProvider,
 			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
 
-		// per default, handle parts are created for the 4 corners of the multi
-		// selection bounds
+		// per default, handle parts are created for the 4 corners of the
+		// multi selection bounds
 		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
 				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
-			handleParts.add(createCornerHandlePart(pos, contextMap));
+			handleParts.add(createCornerHandlePart(handleGeometryProvider, pos,
+					contextMap));
 		}
-
 		return handleParts;
 	}
 
@@ -75,9 +78,11 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return an {@link IHandlePart} for the specified corner of the bounds of
 	 *         the multi selection
 	 */
-	protected IHandlePart<Node> createCornerHandlePart(Pos position,
+	protected IHandlePart<Node> createCornerHandlePart(
+			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		FXCornerHandlePart part = new FXCornerHandlePart(position);
+		FXCornerHandlePart part = new FXCornerHandlePart(
+				handleGeometryProvider, position);
 		injector.injectMembers(part);
 		return part;
 	}
@@ -160,11 +165,20 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	}
 
 	protected List<IHandlePart<Node>> createMultiSelectionHandleParts(
-			List<IContentPart<Node>> targets, Map<Object, Object> contextMap) {
-		// TODO: we should check whether we have a bounds geometry -> the corner
-		// part should require a geometry provider as well
-		// PASS OVER geometry provider for visual bounds
-		return createBoundsSelectionHandleParts(contextMap);
+			final List<IContentPart<Node>> targets,
+			Map<Object, Object> contextMap) {
+		Provider<IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
+			@Override
+			public IGeometry get() {
+				// TODO: move code out of FXPartUtils into a geometry provider
+				// (move to FX)
+				final Bounds unionedBoundsInScene = FXPartUtils
+						.getUnionedVisualBoundsInScene(targets);
+				return JavaFX2Geometry.toRectangle(unionedBoundsInScene);
+			}
+		};
+		return createBoundsSelectionHandleParts(handleGeometryProvider,
+				contextMap);
 	}
 
 	/**
@@ -244,8 +258,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 					IShape selectionHandlesShape = (IShape) selectionHandlesGeometry;
 					if (selectionHandlesGeometry instanceof Rectangle) {
 						// create corner handles
-						handleParts
-						.addAll(createBoundsSelectionHandleParts(contextMap));
+						handleParts.addAll(createBoundsSelectionHandleParts(
+								selectionHandlesGeometryInSceneProvider, contextMap));
 					} else {
 						// create segment handles (based on outline)
 						ICurve[] edges = selectionHandlesShape.getOutlineSegments();

@@ -26,8 +26,9 @@ import com.google.inject.Provider;
 /**
  * @author anyssen
  */
+// TODO: move to FX??
 public class VisualBoundsGeometryProvider implements
-IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
+		IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
 
 	private IVisualPart<Node> host;
 

@@ -11,15 +11,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+
+import com.google.inject.Provider;
 
 /**
  * @author mwienand
@@ -27,12 +29,15 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
  *
  */
 public class FXCornerHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXCornerHandlePart> {
+Comparable<FXCornerHandlePart> {
 
 	private javafx.scene.shape.Rectangle visual = null;
+	private final Provider<IGeometry> handleGeometryProvider;
 	private final Pos pos;
 
-	public FXCornerHandlePart(Pos pos) {
+	public FXCornerHandlePart(Provider<IGeometry> handleGeometryProvider,
+			Pos pos) {
+		this.handleGeometryProvider = handleGeometryProvider;
 		this.pos = pos;
 		visual = new javafx.scene.shape.Rectangle();
 		visual.setFill(Color.web("#d5faff"));
@@ -87,16 +92,11 @@ public class FXCornerHandlePart extends AbstractFXHandlePart implements
 	}
 
 	protected Rectangle getHandleGeometry() {
-		// TODO: use provider here -> targets
-		Bounds unionedBoundsInScene = FXPartUtils
-				.getUnionedVisualBoundsInScene(getAnchorages().keySet());
-		if (unionedBoundsInScene != null) {
-			// TODO: this could be done via a geometry provider as well
-			Bounds layoutBounds = visual.getParent().sceneToLocal(
-					unionedBoundsInScene);
-			return JavaFX2Geometry.toRectangle(layoutBounds);
-		}
-		return null;
+		// TODO: we have to ensure we can also work with rotated rectangles
+		// (i.e. polygons) properly (i.e. place the handles in the rotated end
+		// point locations)
+		return FXUtils.sceneToLocal(getVisual().getParent(),
+				handleGeometryProvider.get()).getBounds();
 	}
 
 	public Pos getPos() {

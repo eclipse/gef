@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
@@ -43,7 +42,7 @@ import com.google.inject.Provider;
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-Comparable<FXSegmentHandlePart> {
+		Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -52,8 +51,8 @@ Comparable<FXSegmentHandlePart> {
 	public static final double SIZE = 5d;
 
 	protected Shape visual;
-	protected Provider<IGeometry> handleGeometryProvider;
 
+	protected Provider<IGeometry> handleGeometryProvider;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
@@ -68,8 +67,6 @@ Comparable<FXSegmentHandlePart> {
 		this.handleGeometryProvider = handleGeometryProvider;
 		this.segmentIndex = segmentIndex;
 		this.segmentParameter = segmentParameter;
-
-		visual = createHandleVisual(handleGeometryProvider.get());
 	}
 
 	@Override
@@ -85,34 +82,17 @@ Comparable<FXSegmentHandlePart> {
 	}
 
 	/**
-	 * Creates the visual representation of this selection handle depending on
-	 * the given handle geometry. Per default, rectangular handles are created
-	 * if the handle geometry is a {@link Rectangle}. Otherwise, round handles
-	 * are created.
+	 * Creates the visual representation of this selection handle.
 	 *
-	 * @param handleGeometry
 	 * @return {@link Shape} representing the handle visually
 	 */
-	protected Shape createHandleVisual(IGeometry handleGeometry) {
-		// Shape shape = null;
-		// // create shape dependent on passed in selection geometry
-		// // TODO: this should not be done here but within the factory
-		// if (handleGeometry instanceof IShape) {
-		// shape = new Rectangle();
-		// ((Rectangle) shape).setWidth(SIZE);
-		// ((Rectangle) shape).setHeight(SIZE);
-		// shape.setTranslateX(-SIZE / 2);
-		// shape.setTranslateY(-SIZE / 2);
-		// } else {
-		// shape = new Circle(SIZE / 2d);
-		// }
-		Shape shape = new Circle(SIZE / 2d);
-
+	protected Shape createVisual() {
+		Circle circle = new Circle(SIZE / 2d);
 		// initialize invariant visual properties
-		shape.setStroke(STROKE_DARK_BLUE);
-		shape.setStrokeWidth(1);
-		shape.setStrokeType(StrokeType.OUTSIDE);
-		return shape;
+		circle.setStroke(STROKE_DARK_BLUE);
+		circle.setStrokeWidth(1);
+		circle.setStrokeType(StrokeType.OUTSIDE);
+		return circle;
 	}
 
 	@Override
@@ -236,6 +216,9 @@ Comparable<FXSegmentHandlePart> {
 
 	@Override
 	public Node getVisual() {
+		if (visual == null) {
+			visual = createVisual();
+		}
 		return visual;
 	}
 

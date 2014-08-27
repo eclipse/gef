@@ -42,10 +42,11 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	private List<IHandlePart<Node>> parts;
 
 	@Override
-	public IHandlePart<Node> createCornerHandlePart(Pos position,
+	public IHandlePart<Node> createCornerHandlePart(
+			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		IHandlePart<Node> part = super.createCornerHandlePart(position,
-				contextMap);
+		IHandlePart<Node> part = super.createCornerHandlePart(
+				handleGeometryProvider, position, contextMap);
 		// TODO: bind the policy in module
 		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 				new FXResizeRelocateOnCornerHandleDragPolicy(
