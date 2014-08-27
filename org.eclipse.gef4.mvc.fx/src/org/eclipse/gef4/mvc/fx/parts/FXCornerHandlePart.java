@@ -15,8 +15,11 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 
 /**
  * @author mwienand
@@ -26,12 +29,12 @@ import javafx.scene.shape.StrokeType;
 public class FXCornerHandlePart extends AbstractFXHandlePart implements
 		Comparable<FXCornerHandlePart> {
 
-	private Rectangle visual = null;
+	private javafx.scene.shape.Rectangle visual = null;
 	private final Pos pos;
 
 	public FXCornerHandlePart(Pos pos) {
 		this.pos = pos;
-		visual = new Rectangle();
+		visual = new javafx.scene.shape.Rectangle();
 		visual.setFill(Color.web("#d5faff"));
 		visual.setStroke(Color.web("#5a61af"));
 		visual.setWidth(5);
@@ -53,33 +56,47 @@ public class FXCornerHandlePart extends AbstractFXHandlePart implements
 
 	@Override
 	public void doRefreshVisual() {
-		// TODO: this should rather be provided by a geometry provider
-		// registered on the root part
+		Rectangle handleGeometry = getHandleGeometry();
+
+		if (handleGeometry != null) {
+			double xInset = getXInset();
+			double yInset = getYInset();
+
+			Point topLeft = handleGeometry.getTopLeft();
+			Point topRight = handleGeometry.getTopRight();
+			Point bottomRight = handleGeometry.getBottomRight();
+			Point bottomLeft = handleGeometry.getBottomLeft();
+
+			if (Pos.TOP_LEFT == getPos()) {
+				visual.setLayoutX(topLeft.x - xInset);
+				visual.setLayoutY(topLeft.y - yInset);
+			} else if (Pos.TOP_RIGHT == getPos()) {
+				visual.setLayoutX(topRight.x - xInset);
+				visual.setLayoutY(topRight.y - yInset);
+			} else if (Pos.BOTTOM_RIGHT == getPos()) {
+				visual.setLayoutX(bottomRight.x - xInset);
+				visual.setLayoutY(bottomRight.y - yInset);
+			} else if (Pos.BOTTOM_LEFT == getPos()) {
+				visual.setLayoutX(bottomLeft.x - xInset);
+				visual.setLayoutY(bottomLeft.y - yInset);
+			} else {
+				throw new IllegalArgumentException(
+						"Unsupported position constant.");
+			}
+		}
+	}
+
+	protected Rectangle getHandleGeometry() {
+		// TODO: use provider here -> targets
 		Bounds unionedBoundsInScene = FXPartUtils
 				.getUnionedVisualBoundsInScene(getAnchorages().keySet());
 		if (unionedBoundsInScene != null) {
 			// TODO: this could be done via a geometry provider as well
 			Bounds layoutBounds = visual.getParent().sceneToLocal(
 					unionedBoundsInScene);
-			double xInset = getXInset();
-			double yInset = getYInset();
-			if (Pos.TOP_LEFT == getPos()) {
-				visual.setLayoutX(layoutBounds.getMinX() - xInset);
-				visual.setLayoutY(layoutBounds.getMinY() - yInset);
-			} else if (Pos.TOP_RIGHT == getPos()) {
-				visual.setLayoutX(layoutBounds.getMaxX() - xInset);
-				visual.setLayoutY(layoutBounds.getMinY() - yInset);
-			} else if (Pos.BOTTOM_RIGHT == getPos()) {
-				visual.setLayoutX(layoutBounds.getMaxX() - xInset);
-				visual.setLayoutY(layoutBounds.getMaxY() - yInset);
-			} else if (Pos.BOTTOM_LEFT == getPos()) {
-				visual.setLayoutX(layoutBounds.getMinX() - xInset);
-				visual.setLayoutY(layoutBounds.getMaxY() - yInset);
-			} else {
-				throw new IllegalArgumentException(
-						"Unsupported position constant.");
-			}
+			return JavaFX2Geometry.toRectangle(layoutBounds);
 		}
+		return null;
 	}
 
 	public Pos getPos() {

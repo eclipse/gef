@@ -22,13 +22,13 @@ import com.google.inject.Provider;
 
 public class FXSelectionLinkFeedbackPart extends FXSelectionFeedbackPart {
 
-	public FXSelectionLinkFeedbackPart(Provider<IGeometry> linkFeedbackGeometry) {
-		super(linkFeedbackGeometry);
+	public FXSelectionLinkFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
+		super(feedbackGeometryProvider);
 	}
 
 	@Override
-	protected FXGeometryNode<IGeometry> createFeedbackVisual() {
-		FXGeometryNode<IGeometry> visual = super.createFeedbackVisual();
+	protected FXGeometryNode<IGeometry> createVisual() {
+		FXGeometryNode<IGeometry> visual = super.createVisual();
 		visual.setStroke(Color.GREY);
 		visual.getStrokeDashArray().add(5.0);
 		visual.setStrokeLineJoin(StrokeLineJoin.BEVEL);

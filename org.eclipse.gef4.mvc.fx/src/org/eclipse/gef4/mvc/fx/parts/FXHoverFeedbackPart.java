@@ -14,40 +14,68 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
 
-public class FXHoverFeedbackPart extends AbstractFXBoundsFeedbackPart {
+public class FXHoverFeedbackPart extends AbstractFXFeedbackPart {
 
-	private final Provider<IGeometry> hoverFeedbackGeometryProvider;
+	private final Provider<IGeometry> feedbackGeometryProvider;
+	private FXGeometryNode<IGeometry> visual;
 
-	public FXHoverFeedbackPart(Provider<IGeometry> hoverFeedbackGeometryProvider) {
-		this.hoverFeedbackGeometryProvider = hoverFeedbackGeometryProvider;
+	public FXHoverFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
+		this.feedbackGeometryProvider = feedbackGeometryProvider;
+	}
+
+	protected FXGeometryNode<IGeometry> createVisual() {
+		FXGeometryNode<IGeometry> visual = new FXGeometryNode<IGeometry>();
+		visual.setFill(Color.TRANSPARENT);
+		visual.setMouseTransparent(true);
+		visual.setManaged(false);
+		visual.setStrokeType(StrokeType.OUTSIDE);
+		visual.setStrokeWidth(1);
+
+		// hover specific
+		visual.setEffect(getHoverFeedbackEffect());
+		visual.setStroke(Color.web("#5a61af"));
+		return visual;
 	}
 
 	@Override
 	public void doRefreshVisual() {
-		if (getAnchorages().isEmpty()) {
+		if (getAnchorages().size() != 1) {
 			return;
 		}
-		super.doRefreshVisual();
-		getVisual().setEffect(getHoverFeedbackEffect());
-		getVisual().setStroke(Color.web("#5a61af"));
+
+		IGeometry feedbackGeometry = getFeedbackGeometry();
+		if (feedbackGeometry == null) {
+			return;
+		}
+
+		getVisual().setGeometry(feedbackGeometry);
 	}
 
-	@Override
 	protected IGeometry getFeedbackGeometry() {
 		return FXUtils.sceneToLocal(getVisual().getParent(),
-				hoverFeedbackGeometryProvider.get());
+				feedbackGeometryProvider.get());
 	}
 
 	public Effect getHoverFeedbackEffect() {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(3);
 		return effect;
+	}
+
+	@Override
+	public FXGeometryNode<IGeometry> getVisual() {
+		if (visual == null) {
+			visual = createVisual();
+		}
+		return visual;
 	}
 
 }

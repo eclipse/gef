@@ -20,7 +20,9 @@ import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.IFocusModel;
@@ -30,7 +32,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Provider;
 
-public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
+public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -43,26 +45,37 @@ public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
 		}
 	};
 
-	private final Provider<IGeometry> selectionFeedbackGeometryProvider;
+	private final Provider<IGeometry> feedbackGeometryProvider;
+
+	private FXGeometryNode<IGeometry> visual;
 
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
-	public FXSelectionFeedbackPart(
-			Provider<IGeometry> selectionFeedbackGeometryProvider) {
-		this.selectionFeedbackGeometryProvider = selectionFeedbackGeometryProvider;
+	public FXSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
+		this.feedbackGeometryProvider = feedbackGeometryProvider;
+	}
+
+	protected FXGeometryNode<IGeometry> createVisual() {
+		FXGeometryNode<IGeometry> feedbackVisual = new FXGeometryNode<IGeometry>();
+		feedbackVisual.setFill(Color.TRANSPARENT);
+		feedbackVisual.setMouseTransparent(true);
+		feedbackVisual.setManaged(false);
+		feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
+		feedbackVisual.setStrokeWidth(1);
+		return feedbackVisual;
 	}
 
 	@Override
 	protected void doActivate() {
 		super.doActivate();
 		getRoot().getViewer().getFocusModel()
-				.addPropertyChangeListener(focusModelListener);
+		.addPropertyChangeListener(focusModelListener);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		getRoot().getViewer().getFocusModel()
-				.removePropertyChangeListener(focusModelListener);
+		.removePropertyChangeListener(focusModelListener);
 		super.doDeactivate();
 	}
 
@@ -72,7 +85,13 @@ public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
 		if (anchorages.isEmpty()) {
 			return;
 		}
-		super.doRefreshVisual();
+
+		IGeometry feedbackGeometry = getFeedbackGeometry();
+		if (feedbackGeometry == null) {
+			return;
+		}
+
+		getVisual().setGeometry(feedbackGeometry);
 
 		IVisualPart<Node> anchorage = anchorages.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
@@ -91,13 +110,9 @@ public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
 		}
 	}
 
-	@Override
 	protected IGeometry getFeedbackGeometry() {
-		// the passed in provider is expected to return the selection feedback
-		// geometry in scene coordinates, so we have to convert it into local
-		// coordinates here
 		return FXUtils.sceneToLocal(getVisual().getParent(),
-				selectionFeedbackGeometryProvider.get());
+				feedbackGeometryProvider.get());
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {
@@ -114,6 +129,14 @@ public class FXSelectionFeedbackPart extends AbstractFXBoundsFeedbackPart {
 		effect.setRadius(5);
 		effect.setSpread(0.6);
 		return effect;
+	}
+
+	@Override
+	public FXGeometryNode<IGeometry> getVisual() {
+		if (visual == null) {
+			visual = createVisual();
+		}
+		return visual;
 	}
 
 }

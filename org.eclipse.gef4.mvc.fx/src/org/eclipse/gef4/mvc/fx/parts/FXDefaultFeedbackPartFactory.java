@@ -84,7 +84,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				}
 			};
 
-			AbstractFXBoundsFeedbackPart part = new FXHoverFeedbackPart(
+			FXHoverFeedbackPart part = new FXHoverFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(part);
 			feedbackParts.add(part);
@@ -204,7 +204,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				}
 			};
 
-			AbstractFXBoundsFeedbackPart selectionFeedbackPart = new FXSelectionFeedbackPart(
+			FXSelectionFeedbackPart selectionFeedbackPart = new FXSelectionFeedbackPart(
 					geometryInSceneProvider);
 			injector.injectMembers(selectionFeedbackPart);
 			feedbackParts.add(selectionFeedbackPart);
