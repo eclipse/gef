@@ -18,7 +18,9 @@ import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
@@ -64,7 +66,16 @@ public class MvcFxModule extends MvcModule<Node> {
 
 	protected void bindAbstractFXContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// register behavior to react to focus changes
+		// register default behaviors
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				new TypeLiteral<ContentBehavior<Node>>() {
+				});
+		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
+				new TypeLiteral<HoverBehavior<Node>>() {
+				});
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+		.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		});
 		adapterMapBinder
 		.addBinding(AdapterKey.get(AbstractFocusBehavior.class)).to(
 				FXFocusBehavior.class);
@@ -144,7 +155,13 @@ public class MvcFxModule extends MvcModule<Node> {
 				new TypeLiteral<ZoomPolicy<Node>>() {
 				});
 
-		// register behavior to react to zoom changes.
+		// register default behaviors
+		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
+				new TypeLiteral<ContentBehavior<Node>>() {
+				});
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
+		.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		});
 		adapterMapBinder.addBinding(AdapterKey.get(AbstractZoomBehavior.class))
 		.to(FXZoomBehavior.class);
 	}
