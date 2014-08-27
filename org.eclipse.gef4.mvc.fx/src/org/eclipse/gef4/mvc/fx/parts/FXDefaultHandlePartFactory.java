@@ -121,7 +121,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param targetPart
 	 * @param handleGeometryProvider
 	 * @param contextMap
-	 *            TODO
+	 * 
 	 * @return {@link IHandlePart}s for the given target part.
 	 */
 	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
@@ -234,47 +234,47 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		IGeometry selectionHandlesGeometry = (selectionHandlesGeometryInTargetLocalProvider != null) ? selectionHandlesGeometryInTargetLocalProvider
 				.get() : null;
 
-				if (selectionHandlesGeometry == null) {
-					return Collections.emptyList();
+		if (selectionHandlesGeometry == null) {
+			return Collections.emptyList();
+		}
+
+		// we will need a provider that returns the geometry in scene
+		// coordinates
+		Provider<IGeometry> selectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
+
+			@Override
+			public IGeometry get() {
+				return FXUtils.localToScene(target.getVisual(),
+						selectionHandlesGeometryInTargetLocalProvider.get());
+			}
+		};
+
+		if (selectionHandlesGeometry instanceof ICurve) {
+			// assure the geometry provider that is handed over returns the
+			// geometry in scene coordinates
+			handleParts.addAll(createCurveSelectionHandleParts(target,
+					selectionHandlesGeometryInSceneProvider, contextMap));
+		} else if (selectionHandlesGeometry instanceof IShape) {
+			IShape selectionHandlesShape = (IShape) selectionHandlesGeometry;
+			if (selectionHandlesGeometry instanceof Rectangle) {
+				// create corner handles
+				handleParts.addAll(createBoundsSelectionHandleParts(
+						selectionHandlesGeometryInSceneProvider, contextMap));
+			} else {
+				// create segment handles (based on outline)
+				ICurve[] edges = selectionHandlesShape.getOutlineSegments();
+				for (int i = 0; i < edges.length; i++) {
+					IHandlePart<Node> hp = createSegmentHandlePart(
+							selectionHandlesGeometryInSceneProvider, i,
+							contextMap);
+					handleParts.add(hp);
 				}
-
-				// we will need a provider that returns the geometry in scene
-				// coordinates
-				Provider<IGeometry> selectionHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
-
-					@Override
-					public IGeometry get() {
-						return FXUtils.localToScene(target.getVisual(),
-								selectionHandlesGeometryInTargetLocalProvider.get());
-					}
-				};
-
-				if (selectionHandlesGeometry instanceof ICurve) {
-					// assure the geometry provider that is handed over returns the
-					// geometry in scene coordinates
-					handleParts.addAll(createCurveSelectionHandleParts(target,
-							selectionHandlesGeometryInSceneProvider, contextMap));
-				} else if (selectionHandlesGeometry instanceof IShape) {
-					IShape selectionHandlesShape = (IShape) selectionHandlesGeometry;
-					if (selectionHandlesGeometry instanceof Rectangle) {
-						// create corner handles
-						handleParts.addAll(createBoundsSelectionHandleParts(
-								selectionHandlesGeometryInSceneProvider, contextMap));
-					} else {
-						// create segment handles (based on outline)
-						ICurve[] edges = selectionHandlesShape.getOutlineSegments();
-						for (int i = 0; i < edges.length; i++) {
-							IHandlePart<Node> hp = createSegmentHandlePart(
-									selectionHandlesGeometryInSceneProvider, i,
-									contextMap);
-							handleParts.add(hp);
-						}
-					}
-				} else {
-					throw new IllegalStateException(
-							"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
-									+ selectionHandlesGeometry);
-				}
-				return handleParts;
+			}
+		} else {
+			throw new IllegalStateException(
+					"Unable to generate handles for this handle geometry. Expected ICurve or IShape, but got: "
+							+ selectionHandlesGeometry);
+		}
+		return handleParts;
 	}
 }
