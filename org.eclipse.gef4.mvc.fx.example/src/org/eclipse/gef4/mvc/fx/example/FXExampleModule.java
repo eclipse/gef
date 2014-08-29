@@ -17,9 +17,10 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
+import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -44,35 +45,41 @@ public class FXExampleModule extends MvcFxModule {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-						FXFocusAndSelectOnClickPolicy.class);
+				FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder
-		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-				FXHoverOnHoverPolicy.class);
+				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+						FXHoverOnHoverPolicy.class);
 
 		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
 				new TypeLiteral<HoverPolicy<Node>>() {
-		});
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionPolicy.class)).to(
-						new TypeLiteral<SelectionPolicy<Node>>() {
-						});
+				new TypeLiteral<SelectionPolicy<Node>>() {
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(FocusPolicy.class)).to(
 				new TypeLiteral<FocusPolicy<Node>>() {
-		});
+				});
 
 		// geometry provider for selection feedback
 		adapterMapBinder
-		.addBinding(
-				AdapterKey
-				.get(Provider.class,
-						FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-						.to(VisualBoundsGeometryProvider.class);
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder
-		.addBinding(
-				AdapterKey
-				.get(Provider.class,
-						FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
-						.to(VisualBoundsGeometryProvider.class);
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualOutlineGeometryProvider.class);
 
 		// geometry provider for hover feedback
 		adapterMapBinder
@@ -80,7 +87,7 @@ public class FXExampleModule extends MvcFxModule {
 						AdapterKey
 								.get(Provider.class,
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-						.to(VisualBoundsGeometryProvider.class);
+				.to(VisualBoundsGeometryProvider.class);
 	}
 
 	protected void bindIContentPartFactory() {
