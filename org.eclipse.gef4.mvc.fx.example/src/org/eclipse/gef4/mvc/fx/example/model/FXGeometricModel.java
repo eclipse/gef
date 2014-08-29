@@ -152,12 +152,15 @@ public class FXGeometricModel {
 
 		selectionBoundsBottomLine.addSourceAnchorage(bottomLeftSelectionHandle);
 		selectionBoundsBottomLine
-				.addTargetAnchorage(bottomRightSelectionHandle);
+		.addTargetAnchorage(bottomRightSelectionHandle);
 
 		selectionBoundsRightLine.addSourceAnchorage(topRightSelectionHandle);
 		selectionBoundsRightLine.addTargetAnchorage(bottomRightSelectionHandle);
 
-		// TODO: anchor points to letter shapes
+		// anchor points to letter shapes
+		gDotShape.addAnchorage(gBaseShape);
+		eDotShape.addAnchorage(eShape);
+		fDotShape.addAnchorage(fShape);
 
 		initVisualShapes();
 	}
