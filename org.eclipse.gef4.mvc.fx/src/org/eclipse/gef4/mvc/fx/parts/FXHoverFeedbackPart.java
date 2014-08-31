@@ -60,8 +60,8 @@ public class FXHoverFeedbackPart extends AbstractFXFeedbackPart {
 	}
 
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils.sceneToLocal(getVisual().getParent(),
-				feedbackGeometryProvider.get());
+		return FXUtils
+				.sceneToLocal(getVisual(), feedbackGeometryProvider.get());
 	}
 
 	public Effect getHoverFeedbackEffect() {

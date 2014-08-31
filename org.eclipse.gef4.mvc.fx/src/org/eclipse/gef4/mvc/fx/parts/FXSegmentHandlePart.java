@@ -42,7 +42,7 @@ import com.google.inject.Provider;
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-		Comparable<FXSegmentHandlePart> {
+Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -50,7 +50,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	public static final Color FILL_UNCONNECTED = Color.web("#d5faff");
 	public static final double SIZE = 5d;
 
-	protected Shape visual;
+	protected Circle visual;
 
 	protected Provider<IGeometry> handleGeometryProvider;
 	private int segmentIndex = -1;
@@ -86,7 +86,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 *
 	 * @return {@link Shape} representing the handle visually
 	 */
-	protected Shape createVisual() {
+	protected Circle createVisual() {
 		Circle circle = new Circle(SIZE / 2d);
 		// initialize invariant visual properties
 		circle.setStroke(STROKE_DARK_BLUE);
@@ -120,9 +120,9 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
 					.next();
 
-			// update visual layout position
-			visual.setLayoutX(positionInParent.x);
-			visual.setLayoutY(positionInParent.y);
+			visual.relocate(positionInParent.x
+					+ visual.getLayoutBounds().getMinX(), positionInParent.y
+					+ visual.getLayoutBounds().getMinY());
 
 			// update color
 			if (segmentParameter != 0.0 && segmentParameter != 1.0) {

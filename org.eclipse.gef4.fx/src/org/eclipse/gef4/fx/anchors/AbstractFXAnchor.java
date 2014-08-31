@@ -117,7 +117,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
 			@Override
-			protected void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds) {
+			protected void boundsInLocalChanged(Bounds oldBounds,
+					Bounds newBounds) {
+				recomputePositions(anchored);
+			}
+
+			@Override
+			protected void localToParentTransformChanged(Node observed,
+					Transform oldTransform, Transform newTransform) {
 				recomputePositions(anchored);
 			}
 
@@ -131,12 +138,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				 * registration, so we have to recompute anchored's positions
 				 * now.
 				 */
-				recomputePositions(anchored);
-			}
-
-			@Override
-			protected void localToParentTransformChanged(Transform oldTransform,
-					Transform newTransform) {
 				recomputePositions(anchored);
 			}
 		};

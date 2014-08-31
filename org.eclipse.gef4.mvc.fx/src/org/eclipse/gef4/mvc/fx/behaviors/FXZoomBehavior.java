@@ -30,6 +30,7 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 		IRootPart<Node> root = getHost().getRoot();
 		if (root instanceof FXRootPart) {
 			FXRootPart fxRootPart = (FXRootPart) root;
+			// TODO: obtain the list of scaled layers and scale them all
 			Parent zoomTarget = fxRootPart.getContentLayer();
 			if (zoomTarget != null) {
 				zoomTarget.setScaleX(zoomFactor);

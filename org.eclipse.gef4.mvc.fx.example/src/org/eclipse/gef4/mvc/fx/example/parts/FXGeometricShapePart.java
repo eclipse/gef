@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import java.awt.geom.NoninvertibleTransformException;
-
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -27,11 +24,9 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.geometry.convert.awt.AWT2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -51,28 +46,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	private IFXAnchor anchor;
 
 	public FXGeometricShapePart() {
-		visual = new FXGeometryNode<IShape>() {
-			@Override
-			public void resize(double width, double height) {
-				if (isResizable()) {
-					super.resize(width, height);
-				} else {
-					// TODO: this is duplicate code, share the transform with
-					// the visual, and only update the transform here
-					Bounds bounds = getLayoutBounds();
-					double sx = width / bounds.getWidth();
-					double sy = height / bounds.getHeight();
-					Point start = new Point(bounds.getMinX(), bounds.getMinY());
-					Point[] p = new Point[] { start.getCopy() };
-					Point.scale(p, sx, sy, 0, 0);
-					AffineTransform additionalTransform = new AffineTransform()
-					.scale(sx, sy).translate(-p[0].x + start.x,
-							-p[0].y + start.y);
-					setGeometry(getGeometry().getTransformed(
-							additionalTransform));
-				}
-			}
-		};
+		visual = new FXGeometryNode<IShape>();
 
 		// TODO: inject these adapters
 		// interaction policies
@@ -92,22 +66,15 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 				// commit changes to model
 				final FXGeometricShape shape = getContent();
-				IShape visualGeometry = visual.getGeometry();
-				if (shape.getTransform() != null) {
-					try {
-						visualGeometry = visual
-								.getGeometry()
-								.getTransformed(
-										AWT2Geometry
-										.toAffineTransform(shape
-												.getTransform()
-												.createInverse()));
-					} catch (NoninvertibleTransformException e) {
-						e.printStackTrace();
-					}
-				}
-				final IShape newGeometry = visualGeometry;
+				final IShape newGeometry = visual.getGeometry();
 				final IShape oldGeometry = shape.getGeometry();
+
+				final AffineTransform oldTransform = shape
+						.getTransform();
+				final AffineTransform newTransform = new AffineTransform(
+						1, 0, 0, 1, visual.getLayoutX(), visual
+						.getLayoutY());
+
 				final IUndoableOperation updateModelOperation = new AbstractOperation(
 						"Update Model") {
 
@@ -115,6 +82,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					public IStatus execute(IProgressMonitor monitor,
 							IAdaptable info) throws ExecutionException {
 						shape.setGeometry(newGeometry);
+						shape.setTransform(newTransform);
 						return Status.OK_STATUS;
 					}
 
@@ -128,6 +96,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					public IStatus undo(IProgressMonitor monitor,
 							IAdaptable info) throws ExecutionException {
 						shape.setGeometry(oldGeometry);
+						shape.setTransform(oldTransform);
 						return Status.OK_STATUS;
 					}
 				};
@@ -152,13 +121,15 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	public void doRefreshVisual() {
 		FXGeometricShape shapeVisual = getContent();
 		if (visual.getGeometry() != shapeVisual.getGeometry()) {
-			// TODO: respect offset, scaling, etc.
-			if (shapeVisual.getTransform() == null) {
-				visual.setGeometry(shapeVisual.getGeometry());
-			} else {
-				visual.setGeometry(shapeVisual.getGeometry().getTransformed(
-						shapeVisual.getTransform()));
-			}
+			visual.setGeometry(shapeVisual.getGeometry());
+
+		}
+
+		if (shapeVisual.getTransform() != null) {
+			visual.relocate(shapeVisual.getTransform().getTranslateX()
+					+ visual.getLayoutBounds().getMinX(), shapeVisual
+					.getTransform().getTranslateY()
+					+ visual.getLayoutBounds().getMinY());
 		}
 
 		// apply stroke paint

@@ -17,6 +17,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -46,8 +47,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	private Pane contentLayer;
 	private Pane handleLayer;
 	private Pane feedbackLayer;
-
-	private Parent scrollPaneInput;
 
 	public FXRootPart() {
 	}
@@ -90,6 +89,9 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	protected Pane createContentLayer() {
 		Pane contentLayer = createLayer(false);
 		contentLayer.setPickOnBounds(true);
+		// prevent scrollbar in cases where node are moved beyond the origin
+		// (and the viewport can hold the complete layer contents)
+		contentLayer.setManaged(false);
 		return contentLayer;
 	}
 
@@ -106,11 +108,13 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		Pane layer = new Pane();
 		layer.setPickOnBounds(false);
 		layer.setMouseTransparent(mouseTransparent);
+		layer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		return layer;
 	}
 
-	protected StackPane createLayersStackPane(List<Pane> layers) {
+	protected StackPane createLayersStackPane(List<? extends Node> layers) {
 		StackPane layersStackPane = new StackPane();
+		layersStackPane.setAlignment(Pos.TOP_LEFT);
 		layersStackPane.getChildren().addAll(layers);
 		return layersStackPane;
 	}
@@ -122,11 +126,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -149,28 +153,37 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				});
 
 		feedbackLayer = createFeedbackLayer();
+
 		handleLayer = createHandleLayer();
 
-		layersStackPane = createLayersStackPane(Arrays.asList(new Pane[] {
+		layersStackPane = createLayersStackPane(Arrays.asList(new Node[] {
 				contentLayer, feedbackLayer, handleLayer }));
 
-		scrollPaneInput = createScrollPaneInput(layersStackPane);
+		scrollPane = createScrollPane(new Group(layersStackPane));
 
-		scrollPane = createScrollPane(scrollPaneInput);
+		// ensure the layers stack pane is as large as the viewport
+		scrollPane.viewportBoundsProperty().addListener(
+				new ChangeListener<Bounds>() {
+
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldValue, Bounds newValue) {
+						// set the min size of the layered pane to match the
+						// viewport size
+						layersStackPane.setMinWidth(newValue.getWidth());
+						layersStackPane.setMinHeight(newValue.getHeight());
+					}
+
+				});
 	}
 
-	protected ScrollPane createScrollPane(Parent scrollPaneInput) {
+	protected ScrollPane createScrollPane(final Parent scrollPaneInput) {
 		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setContent(scrollPaneInput);
 		scrollPane.setPannable(false);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
 		return scrollPane;
-	}
-
-	protected Parent createScrollPaneInput(StackPane layersStackPane) {
-		Group group = new Group(layersStackPane);
-		group.setAutoSizeChildren(false);
-		return group;
 	}
 
 	@Override

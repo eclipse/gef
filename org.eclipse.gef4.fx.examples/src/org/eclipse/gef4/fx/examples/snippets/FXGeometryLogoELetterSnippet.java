@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -38,28 +39,28 @@ public class FXGeometryLogoELetterSnippet extends FXApplication {
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
 
-	public static void main(String[] args) {
-		FXGeometryLogoELetterSnippet.launch(args);
+	public static void main(final String[] args) {
+		Application.launch(args);
 	}
 
 	@Override
 	public Scene createScene() {
-		FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
+		final FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
 				createEShapeGeometry());
-		eLetterShape.setTranslateX(25);
-		eLetterShape.setTranslateY(25);
+		eLetterShape.relocate(25, 25);
 		eLetterShape.resize(200, 250);
 		eLetterShape.setEffect(GEF_SHADOW_EFFECT);
 		eLetterShape.setFill(GEF_COLOR_BLUE);
+		eLetterShape.setManaged(false);
 
-		HBox hbox = new HBox();
+		final HBox hbox = new HBox();
 		hbox.getChildren().add(eLetterShape);
 
 		return new Scene(hbox, 250, 300);
 	}
 
 	private CurvedPolygon createEShapeGeometry() {
-		List<BezierCurve> segments = new ArrayList<BezierCurve>();
+		final List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(1, 10, 6, 10));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(6, 10, 5, 25,
 				7, 52, 6, 70, 6, 81).toBezier()));
@@ -90,21 +91,21 @@ public class FXGeometryLogoELetterSnippet extends FXApplication {
 	}
 
 	private static Effect createShadowEffect() {
-		DropShadow outerShadow = new DropShadow();
+		final DropShadow outerShadow = new DropShadow();
 		outerShadow.setRadius(3);
 		outerShadow.setSpread(0.2);
 		outerShadow.setOffsetX(3);
 		outerShadow.setOffsetY(3);
 		outerShadow.setColor(new Color(0.3, 0.3, 0.3, 1));
 
-		Distant light = new Distant();
+		final Distant light = new Distant();
 		light.setAzimuth(-135.0f);
 
-		Lighting l = new Lighting();
+		final Lighting l = new Lighting();
 		l.setLight(light);
 		l.setSurfaceScale(3.0f);
 
-		Blend effects = new Blend(BlendMode.MULTIPLY);
+		final Blend effects = new Blend(BlendMode.MULTIPLY);
 		effects.setTopInput(l);
 		effects.setBottomInput(outerShadow);
 

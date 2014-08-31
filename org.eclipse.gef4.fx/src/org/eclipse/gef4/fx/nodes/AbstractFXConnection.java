@@ -91,20 +91,12 @@ implements IFXConnection {
 	}
 
 	@Override
-	public void addWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
-		addWayAnchor(index, anchor);
-	}
-
-	@Override
 	public void addWayAnchor(int index, IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = new AnchorKey(this, WAY_POINT_ROLE_PREFIX + index);
+		AnchorKey anchorKey = getWayAnchorKey(index);
 		anchorsProperty.put(anchorKey, anchor);
 		anchor.attach(anchorKey);
 
@@ -112,6 +104,14 @@ implements IFXConnection {
 		anchor.positionProperty().addListener(positionChangeListener);
 
 		refreshGeometry();
+	}
+
+	@Override
+	public void addWayPoint(int index, Point wayPointInLocal) {
+		FXStaticAnchor anchor = new FXStaticAnchor(
+				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
+						wayPointInLocal.y)));
+		addWayAnchor(index, anchor);
 	}
 
 	@Override
@@ -258,12 +258,12 @@ implements IFXConnection {
 
 	@Override
 	public IFXAnchor getEndAnchor() {
-		return anchorsProperty.get(new AnchorKey(this, END_ROLE));
+		return anchorsProperty.get(getEndAnchorKey());
 	}
 
 	@Override
 	public AnchorKey getEndAnchorKey() {
-		return new AnchorKey(this, END_ROLE);
+		return new AnchorKey(getCurveNode(), END_ROLE);
 	}
 
 	@Override
@@ -310,13 +310,13 @@ implements IFXConnection {
 
 	@Override
 	public IFXAnchor getStartAnchor() {
-		IFXAnchor anchor = anchorsProperty.get(new AnchorKey(this, START_ROLE));
+		IFXAnchor anchor = anchorsProperty.get(getStartAnchorKey());
 		return anchor;
 	}
 
 	@Override
 	public AnchorKey getStartAnchorKey() {
-		return new AnchorKey(this, START_ROLE);
+		return new AnchorKey(getCurveNode(), START_ROLE);
 	}
 
 	@Override
@@ -342,27 +342,13 @@ implements IFXConnection {
 	}
 
 	@Override
-	public AnchorKey getWayAnchorKey(int index) {
-		return new AnchorKey(this, WAY_POINT_ROLE_PREFIX + index);
-	}
-
-	@Override
-	public Point getWayPoint(int index) {
-		IFXAnchor anchor = getWayAnchor(index);
-		if (anchor == null) {
-			throw new IllegalArgumentException("No waypoint at index " + index);
-		}
-		if (!anchor.isAttached(getWayAnchorKey(index))) {
-			return null;
-		}
-		return anchor.getPosition(new AnchorKey(this, WAY_POINT_ROLE_PREFIX
-				+ index));
-	}
-
-	@Override
 	public IFXAnchor getWayAnchor(int index) {
-		return anchorsProperty.get(new AnchorKey(this, WAY_POINT_ROLE_PREFIX
-				+ index));
+		return anchorsProperty.get(getWayAnchorKey(index));
+	}
+
+	@Override
+	public AnchorKey getWayAnchorKey(int index) {
+		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
 	}
 
 	@Override
@@ -377,12 +363,24 @@ implements IFXConnection {
 	}
 
 	@Override
+	public Point getWayPoint(int index) {
+		IFXAnchor anchor = getWayAnchor(index);
+		if (anchor == null) {
+			throw new IllegalArgumentException("No waypoint at index " + index);
+		}
+		if (!anchor.isAttached(getWayAnchorKey(index))) {
+			return null;
+		}
+		return anchor.getPosition(getWayAnchorKey(index));
+	}
+
+	@Override
 	public List<Point> getWayPoints() {
 		List<IFXAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
 		for (int i = 0; i < wayPointAnchors.size(); i++) {
-			wayPoints.add(wayPointAnchors.get(i).getPosition(
-					new AnchorKey(this, WAY_POINT_ROLE_PREFIX + i)));
+			wayPoints.add(wayPointAnchors.get(i)
+					.getPosition(getWayAnchorKey(i)));
 		}
 		return wayPoints;
 	}
@@ -413,8 +411,15 @@ implements IFXConnection {
 	}
 
 	protected void refreshGeometry() {
+		// TODO: this should not be here
 		// guard against recomputing the curve while recomputing the curve
 		if (inRefresh) {
+			return;
+		}
+
+		T newGeometry = computeGeometry(getPoints());
+		if (curveNode != null && curveNode.getGeometry() != null
+				&& curveNode.getGeometry().equals(newGeometry)) {
 			return;
 		}
 		inRefresh = true;
@@ -424,7 +429,7 @@ implements IFXConnection {
 
 		// compute new curve (this can lead to another refreshGeometry() call
 		// which is not executed)
-		curveNode.setGeometry(computeGeometry(getPoints()));
+		curveNode.setGeometry(newGeometry);
 
 		// z-order decorations above curve
 		getChildren().add(curveNode);
@@ -455,7 +460,7 @@ implements IFXConnection {
 					+ index + ", size: " + getWayPointSize() + ").");
 		}
 
-		AnchorKey anchorKey = new AnchorKey(this, WAY_POINT_ROLE_PREFIX + index);
+		AnchorKey anchorKey = getWayAnchorKey(index);
 		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
 		if (oldAnchor != null) {
 			oldAnchor.detach(anchorKey);
@@ -485,21 +490,20 @@ implements IFXConnection {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = new AnchorKey(this, END_ROLE);
-		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
-		if (oldAnchor != null) {
-			oldAnchor.detach(anchorKey);
-			// TODO: listen on map property to add position change listener
-			oldAnchor.positionProperty().removeListener(positionChangeListener);
-
+		AnchorKey anchorKey = getEndAnchorKey();
+		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		if (oldAnchor != anchor) {
+			if (oldAnchor != null) {
+				anchorsProperty.remove(anchorKey);
+				oldAnchor.detach(anchorKey);
+				oldAnchor.positionProperty().removeListener(
+						positionChangeListener);
+			}
+			anchorsProperty.put(anchorKey, anchor);
+			anchor.attach(anchorKey);
+			anchor.positionProperty().addListener(positionChangeListener);
+			refreshGeometry();
 		}
-		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey);
-
-		// TODO: listen on map property to add position change listener
-		anchor.positionProperty().addListener(positionChangeListener);
-
-		refreshGeometry();
 	}
 
 	@Override
@@ -529,22 +533,20 @@ implements IFXConnection {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = new AnchorKey(this, START_ROLE);
-
-		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
-		if (oldAnchor != null) {
-			oldAnchor.detach(anchorKey);
-			// TODO: listen on map property to add position change listener
-			oldAnchor.positionProperty().removeListener(positionChangeListener);
-
+		AnchorKey anchorKey = getStartAnchorKey();
+		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		if (oldAnchor != anchor) {
+			if (oldAnchor != null) {
+				anchorsProperty.remove(anchorKey);
+				oldAnchor.detach(anchorKey);
+				oldAnchor.positionProperty().removeListener(
+						positionChangeListener);
+			}
+			anchorsProperty.put(anchorKey, anchor);
+			anchor.attach(anchorKey);
+			anchor.positionProperty().addListener(positionChangeListener);
+			refreshGeometry();
 		}
-		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey);
-
-		// TODO: listen on map property to add position change listener
-		anchor.positionProperty().addListener(positionChangeListener);
-
-		refreshGeometry();
 	}
 
 	@Override
@@ -569,42 +571,51 @@ implements IFXConnection {
 	}
 
 	@Override
-	public void setWayPoint(int index, Point wayPointInLocal) {
-		FXStaticAnchor anchor = new FXStaticAnchor(
-				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
-						wayPointInLocal.y)));
-		setWayAnchor(index, anchor);
-	}
-
-	@Override
 	public void setWayAnchor(int index, IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = new AnchorKey(this, WAY_POINT_ROLE_PREFIX + index);
-		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
-		if (oldAnchor != null) {
-			oldAnchor.detach(anchorKey);
-			// TODO: listen on map property to add position change listener
-			oldAnchor.positionProperty().removeListener(positionChangeListener);
-
+		AnchorKey anchorKey = getWayAnchorKey(index);
+		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		if (oldAnchor != anchor) {
+			if (oldAnchor != null) {
+				anchorsProperty.remove(anchorKey);
+				oldAnchor.detach(anchorKey);
+				oldAnchor.positionProperty().removeListener(
+						positionChangeListener);
+			}
+			anchorsProperty.put(anchorKey, anchor);
+			anchor.attach(anchorKey);
+			anchor.positionProperty().addListener(positionChangeListener);
+			refreshGeometry();
 		}
-		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey);
-
-		// TODO: listen on map property to add position change listener
-		anchor.positionProperty().addListener(positionChangeListener);
-
-		refreshGeometry();
 	}
 
 	@Override
 	public void setWayAnchors(List<IFXAnchor> anchors) {
-		removeAllWayPoints();
-		for (IFXAnchor anchor : anchors) {
-			addWayAnchor(getWayPointSize(), anchor);
+		int wayPointsSize = getWayPointSize();
+		for (int i = 0; i < wayPointsSize; i++) {
+			if (i < anchors.size()) {
+				setWayAnchor(i, anchors.get(i));
+			} else {
+				for (int j = wayPointsSize - 1; j >= i; j--) {
+					removeWayPoint(j);
+				}
+				break;
+			}
 		}
+		for (int i = wayPointsSize; i < anchors.size(); i++) {
+			addWayAnchor(i, anchors.get(i));
+		}
+	}
+
+	@Override
+	public void setWayPoint(int index, Point wayPointInLocal) {
+		FXStaticAnchor anchor = new FXStaticAnchor(
+				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
+						wayPointInLocal.y)));
+		setWayAnchor(index, anchor);
 	}
 
 	@Override

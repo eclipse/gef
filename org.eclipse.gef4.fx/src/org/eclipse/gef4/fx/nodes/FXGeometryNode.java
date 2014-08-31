@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2013 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
@@ -31,9 +31,9 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
  * In contrast to a normal {@link Path}, a {@link FXGeometryNode} is resizable,
  * performing a scale in case the underlying {@link IGeometry} is not directly
  * resizable.
- * 
+ *
  * @author nyssen
- * 
+ *
  * @param <T>
  *            An {@link IGeometry} used to define this {@link FXGeometryNode}
  */
@@ -56,6 +56,36 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	@Override
 	public boolean isResizable() {
 		return true;
+	}
+
+	@Override
+	public double maxHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double maxWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double minHeight(double width) {
+		return prefHeight(width);
+	}
+
+	@Override
+	public double minWidth(double height) {
+		return prefWidth(height);
+	}
+
+	@Override
+	public double prefHeight(double width) {
+		return geometry.getBounds().getHeight();
+	}
+
+	@Override
+	public double prefWidth(double height) {
+		return geometry.getBounds().getWidth();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -103,10 +133,10 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 						.getTransformed(
 								new AffineTransform(1, 0, 0, 1,
 										-boundsOrigin.x, -boundsOrigin.y))
-						.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
-						.getTransformed(
-								new AffineTransform(1, 0, 0, 1, boundsOrigin.x,
-										boundsOrigin.y));
+										.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
+										.getTransformed(
+												new AffineTransform(1, 0, 0, 1, boundsOrigin.x,
+														boundsOrigin.y));
 			}
 
 		}

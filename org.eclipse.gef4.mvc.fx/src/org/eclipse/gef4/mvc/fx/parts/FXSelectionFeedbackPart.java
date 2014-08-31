@@ -69,13 +69,13 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 	protected void doActivate() {
 		super.doActivate();
 		getRoot().getViewer().getFocusModel()
-		.addPropertyChangeListener(focusModelListener);
+				.addPropertyChangeListener(focusModelListener);
 	}
 
 	@Override
 	protected void doDeactivate() {
 		getRoot().getViewer().getFocusModel()
-		.removePropertyChangeListener(focusModelListener);
+				.removePropertyChangeListener(focusModelListener);
 		super.doDeactivate();
 	}
 
@@ -111,8 +111,8 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 	}
 
 	protected IGeometry getFeedbackGeometry() {
-		return FXUtils.sceneToLocal(getVisual().getParent(),
-				feedbackGeometryProvider.get());
+		return FXUtils
+				.sceneToLocal(getVisual(), feedbackGeometryProvider.get());
 	}
 
 	protected Effect getPrimarySelectionFeedbackEffect(boolean focused) {

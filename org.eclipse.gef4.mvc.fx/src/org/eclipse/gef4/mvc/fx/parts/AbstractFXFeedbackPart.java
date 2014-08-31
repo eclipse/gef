@@ -28,8 +28,8 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 		}
 
 		@Override
-		protected void localToParentTransformChanged(Transform oldTransform,
-				Transform newTransform) {
+		protected void localToParentTransformChanged(Node observed,
+				Transform oldTransform, Transform newTransform) {
 			refreshVisual();
 		}
 	};
@@ -37,8 +37,7 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
-		visualListener.register(anchorage.getVisual(),
-				((FXRootPart) getRoot()).getLayerStackPane());
+		visualListener.register(anchorage.getVisual(), getVisual());
 	};
 
 	@Override
@@ -46,5 +45,4 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 			String role) {
 		visualListener.unregister();
 	}
-
 }

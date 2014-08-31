@@ -44,31 +44,31 @@ public class FXChopBoxHelper {
 				// start anchor change
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-							.removeListener(startPCL);
+					.removeListener(startPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-							.addListener(startPCL);
+					.addListener(startPCL);
 				}
 			} else if (change.getKey().equals(connection.getEndAnchorKey())) {
 				// end anchor key
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-							.removeListener(endPCL);
+					.removeListener(endPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-							.addListener(endPCL);
+					.addListener(endPCL);
 				}
 			} else {
 				// waypoint change
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-							.removeListener(waypointPCL);
+					.removeListener(waypointPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-							.addListener(waypointPCL);
+					.addListener(waypointPCL);
 				}
 			}
 		}
@@ -115,8 +115,8 @@ public class FXChopBoxHelper {
 					@Override
 					public void changed(
 							ObservableValue<? extends ObservableMap<AnchorKey, IFXAnchor>> observable,
-							ObservableMap<AnchorKey, IFXAnchor> oldValue,
-							ObservableMap<AnchorKey, IFXAnchor> newValue) {
+									ObservableMap<AnchorKey, IFXAnchor> oldValue,
+									ObservableMap<AnchorKey, IFXAnchor> newValue) {
 						if (oldValue != null) {
 							oldValue.removeListener(anchorsChangeListener);
 						}
@@ -145,9 +145,6 @@ public class FXChopBoxHelper {
 		Node startNode = connection.getStartAnchor().getAnchorage();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
-				if (p == null) {
-					continue;
-				}
 				Point2D local = startNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!startNode.contains(local)) {
@@ -162,9 +159,6 @@ public class FXChopBoxHelper {
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
-				if (p == null) {
-					continue;
-				}
 				Point2D local = endNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!endNode.contains(local)) {
@@ -178,9 +172,8 @@ public class FXChopBoxHelper {
 		// anchorage position or end anchor position
 		if (startReference == null) {
 			if (connection.isEndConnected()) {
-				Node anchorageNode = connection.getEndAnchor().getAnchorage();
-				if (anchorageNode != null) {
-					startReference = getCenter(anchorageNode);
+				if (endNode != null) {
+					startReference = getCenter(endNode);
 				}
 			}
 		}
@@ -195,9 +188,8 @@ public class FXChopBoxHelper {
 		// anchorage position or start anchor position
 		if (endReference == null) {
 			if (connection.isStartConnected()) {
-				Node anchorageNode = connection.getStartAnchor().getAnchorage();
-				if (anchorageNode != null) {
-					endReference = getCenter(anchorageNode);
+				if (startNode != null) {
+					endReference = getCenter(startNode);
 				}
 			}
 		}
@@ -240,10 +232,10 @@ public class FXChopBoxHelper {
 		if (startAnchor != null && startAnchor instanceof FXChopBoxAnchor) {
 			Point[] refPoints = computeReferencePoints();
 			FXChopBoxAnchor a = (FXChopBoxAnchor) startAnchor;
-			AnchorKey endAnchorKey = connection.getStartAnchorKey();
-			Point oldRef = a.getReferencePoint(endAnchorKey);
+			AnchorKey startAnchorKey = connection.getStartAnchorKey();
+			Point oldRef = a.getReferencePoint(startAnchorKey);
 			if (oldRef == null || !oldRef.equals(refPoints[0])) {
-				a.setReferencePoint(endAnchorKey, refPoints[0]);
+				a.setReferencePoint(startAnchorKey, refPoints[0]);
 			}
 		}
 	}

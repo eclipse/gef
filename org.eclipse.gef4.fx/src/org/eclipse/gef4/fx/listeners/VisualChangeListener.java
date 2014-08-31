@@ -11,9 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.listeners;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
@@ -29,9 +28,9 @@ import javafx.scene.transform.Transform;
  * for catching changes in the visual representation of a JavaFX {@link Node}.
  * Depending on the changed property, either the
  * {@link #boundsInLocalChanged(Bounds, Bounds)} or the
- * {@link #localToParentTransformChanged(Transform, Transform)} method is called. A
- * bounds-in-local change occurs when the target node's effect, clip, stroke,
- * local transformations, or geometric bounds change. A
+ * {@link #localToParentTransformChanged(Node, Transform, Transform)} method is
+ * called. A bounds-in-local change occurs when the target node's effect, clip,
+ * stroke, local transformations, or geometric bounds change. A
  * local-to-parent-transform change occurs when the node undergoes a
  * transformation change. Transformation listeners are registered for all nodes
  * in the hierarchy up to a specific parent.
@@ -41,17 +40,7 @@ import javafx.scene.transform.Transform;
  */
 public abstract class VisualChangeListener {
 
-	private final ChangeListener<? super Transform> transformListener = new ChangeListener<Transform>() {
-		@Override
-		public void changed(ObservableValue<? extends Transform> observable,
-				Transform oldValue, Transform newValue) {
-			// only fire a visual change event if the new transform is valid
-			if (isValidTransform(newValue)) {
-				localToParentTransformChanged(oldValue, newValue);
-			}
-		}
-	};
-
+	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
 	private final ChangeListener<? super Bounds> boundsInLocalListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
@@ -62,13 +51,12 @@ public abstract class VisualChangeListener {
 			}
 		}
 	};
-	private Node node;
+	private Node observed;
 
 	private Node parent;
 
-	private List<Node> relatives = new ArrayList<Node>();
-
-	protected abstract void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds);
+	protected abstract void boundsInLocalChanged(Bounds oldBounds,
+			Bounds newBounds);
 
 	private Node getNearestCommonAncestor(Node source, Node target) {
 		if (source == target) {
@@ -170,6 +158,9 @@ public abstract class VisualChangeListener {
 		return true;
 	}
 
+	protected abstract void localToParentTransformChanged(Node observed,
+			Transform oldTransform, Transform newTransform);
+
 	/**
 	 * Registers this listener on the given pair of observed and observer nodes
 	 * to recognize visual changes of the observed node relative to the common
@@ -182,7 +173,7 @@ public abstract class VisualChangeListener {
 	 * <li>changes to the local-to-parent-transform property of any node in the
 	 * observed node hierarchy up to (but excluding) the common parent of the
 	 * observed and observer nodes (
-	 * {@link #localToParentTransformChanged(Transform, Transform)}).</li>
+	 * {@link #localToParentTransformChanged(Node, Transform, Transform)}).</li>
 	 * </ul>
 	 * <p>
 	 * The use of a visual change lister allows to react to relative transform
@@ -228,38 +219,51 @@ public abstract class VisualChangeListener {
 		}
 
 		// unregister old listeners
-		if (this.node != null) {
+		if (this.observed != null) {
 			unregister();
 		}
 
 		// assign new nodes
-		this.node = observed;
+		this.observed = observed;
 		parent = commonAncestor;
 
 		// add bounds listener
 		observed.boundsInLocalProperty().addListener(boundsInLocalListener);
-
 		// add transform listeners
 		tmp = observed;
 		while (tmp != null && tmp != parent) {
-			relatives.add(tmp);
-			tmp.localToParentTransformProperty().addListener(transformListener);
+			final Node current = tmp;
+			ChangeListener<Transform> transformChangeListener = new ChangeListener<Transform>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Transform> observable,
+						Transform oldValue, Transform newValue) {
+					// only fire a visual change event if the new transform is
+					// valid
+					if (isValidTransform(newValue)) {
+						localToParentTransformChanged(current, oldValue,
+								newValue);
+					}
+				}
+			};
+			tmp.localToParentTransformProperty().addListener(
+					transformChangeListener);
+			localToParentTransformListeners.put(transformChangeListener, tmp);
 			tmp = tmp.getParent();
 		}
 	}
 
-	protected abstract void localToParentTransformChanged(Transform oldTransform,
-			Transform newTransform);
-
 	public void unregister() {
 		// remove bounds listener
-		node.boundsInLocalProperty().removeListener(boundsInLocalListener);
+		observed.boundsInLocalProperty().removeListener(boundsInLocalListener);
 
 		// remove transform listeners
-		for (Node n : relatives) {
-			n.localToParentTransformProperty()
-			.removeListener(transformListener);
+		for (ChangeListener<Transform> l : localToParentTransformListeners
+				.keySet()) {
+			localToParentTransformListeners.get(l)
+					.localToParentTransformProperty().removeListener(l);
 		}
+		localToParentTransformListeners.clear();
 	}
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 
-	private final Map<IVisualPart<Node>, VisualChangeListener> visualChangeListeners = new HashMap<IVisualPart<Node>, VisualChangeListener>();
+	private final Map<IVisualPart<Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
@@ -33,21 +33,21 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 		if (!visualChangeListeners.containsKey(anchorage)) {
 			VisualChangeListener listener = new VisualChangeListener() {
 				@Override
-				protected void boundsInLocalChanged(Bounds oldBounds, Bounds newBounds) {
+				protected void boundsInLocalChanged(Bounds oldBounds,
+						Bounds newBounds) {
 					refreshVisual();
 				}
 
 				@Override
-				protected void localToParentTransformChanged(Transform oldTransform,
-						Transform newTransform) {
+				protected void localToParentTransformChanged(
+						Node observed, Transform oldTransform, Transform newTransform) {
 					refreshVisual();
 				}
 			};
 			visualChangeListeners.put(anchorage, listener);
-			listener.register(anchorage.getVisual(),
-					((FXRootPart) getRoot()).getLayerStackPane());
+			listener.register(anchorage.getVisual(), getVisual());
 		}
-	};
+	}
 
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,

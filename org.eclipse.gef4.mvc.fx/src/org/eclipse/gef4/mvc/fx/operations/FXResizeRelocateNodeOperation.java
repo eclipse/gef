@@ -38,10 +38,11 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
 	public FXResizeRelocateNodeOperation(Node visual, double dx, double dy,
 			double dw, double dh) {
-		this("Resize/Relocate", visual, new Point(visual.getLayoutX(),
-				visual.getLayoutY()), new Dimension(visual.getLayoutBounds()
-						.getWidth(), visual.getLayoutBounds().getHeight()), dx, dy, dw,
-						dh);
+		this("Resize/Relocate", visual, new Point(visual.getLayoutX()
+				+ visual.getLayoutBounds().getMinX(), visual.getLayoutY()
+				+ visual.getLayoutBounds().getMinY()), new Dimension(visual
+						.getLayoutBounds().getWidth(), visual.getLayoutBounds()
+						.getHeight()), dx, dy, dw, dh);
 	}
 
 	public FXResizeRelocateNodeOperation(String label, Node visual,
@@ -69,10 +70,12 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (dx != 0) {
-			visual.setLayoutX(oldLocation.x + dx);
+			visual.setLayoutX(oldLocation.x + dx
+					- visual.getLayoutBounds().getMinX());
 		}
 		if (dy != 0) {
-			visual.setLayoutY(oldLocation.y + dy);
+			visual.setLayoutY(oldLocation.y + dy
+					- visual.getLayoutBounds().getMinY());
 		}
 		if (dw != 0 || dh != 0) {
 			visual.resize(oldSize.getWidth() + dw, oldSize.getHeight() + dh);
@@ -138,10 +141,12 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (dx != 0) {
-			visual.setLayoutX(oldLocation.x);
+			visual.setLayoutX(oldLocation.x
+					- visual.getLayoutBounds().getMinX());
 		}
 		if (dy != 0) {
-			visual.setLayoutY(oldLocation.y);
+			visual.setLayoutY(oldLocation.y
+					- visual.getLayoutBounds().getMinY());
 		}
 		if (dw != 0 || dh != 0) {
 			visual.resize(oldSize.getWidth(), oldSize.getHeight());
