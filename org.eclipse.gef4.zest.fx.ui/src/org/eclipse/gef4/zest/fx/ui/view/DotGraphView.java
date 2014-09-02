@@ -34,9 +34,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.dot.DotImport;
+import org.eclipse.gef4.internal.dot.DotDirStore;
 import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
@@ -44,118 +44,136 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
 
 /**
  * Render DOT content with ZestFx and Graphviz
- * 
+ *
  * @author Fabian Steeg (fsteeg)
- * 
+ *
  */
 public class DotGraphView extends ZestFxUiView {
 
-	/**
-	 * Store and access the path to the 'dot' executable in the preference
-	 * store. The path can be set by the user, using a directory selection
-	 * dialog. The selected location is stored in the bundle's preferences and
-	 * available from there after the initial setting.
-	 */
-	private static class DotDirStore {
+	public static final String STYLES_CSS_FILE = DotGraphView.class
+			.getResource("styles.css").toExternalForm();
+	private static final String EXTENSION = "dot";
+	private static final String LOAD_DOT_FILE = "Load *.dot file...";
+	private static final String SYNC_EXPORT_PDF = "Sync with printable PDF using Graphviz";
+	private static final String SYNC_IMPORT_DOT = "Sync with *.dot files in the workspace";
+	private static final String FORMAT_PDF = "pdf";
+	private boolean listenToDotContent = false;
+	private boolean linkImage = false;
+	private String currentDot = "digraph{}";
+	private IFile currentFile = null;
+	private ExportToggle exportAction;
 
-		private static boolean containsDot(final File folder) {
-			String[] files = folder.list();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].equals("dot") || files[i].equals("dot.exe")) {
-					return true;
-				}
-			}
-			return false;
-		}
+	public DotGraphView() {
+		super(Guice.createInjector(Modules.override(new ZestFxModule())//
+				.with(new ZestFxUiModule())));
+		setGraph(new DotImport(currentDot).newGraphInstance());
+	}
 
-		private static String dotPathFromPreferences() {
-			return zestFxUiPrefs().get("dotpath", "");
-		}
+	@Override
+	public void createPartControl(final Composite parent) {
+		exportAction = new ExportToggle();
+		add(new UpdateToggle().action(this), ISharedImages.IMG_ELCL_SYNCED);
+		add(new LoadFile().action(this), ISharedImages.IMG_OBJ_FILE);
+		add(exportAction.action(this), ISharedImages.IMG_ETOOL_PRINT_EDIT);
+		super.createPartControl(parent);
+		Scene scene = getViewer().getScene();
+		scene.getStylesheets().add(STYLES_CSS_FILE);
+	}
 
-		/** @return The path to the folder containing the local 'dot' executable */
-		public static String getDotDirPath() {
-			if (dotPathFromPreferences().length() == 0) {
-				setDotDirPath(); // set the preferences
-			}
-			return dotPathFromPreferences();
-		}
+	private void add(Action action, String imageName) {
+		action.setId(action.getText());
+		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(imageName));
+		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		mgr.add(action);
+	}
 
-		private static void processUserInput(final IWorkbenchWindow parent,
-				final DirectoryDialog dialog) {
-			String selectedPath = dialog.open();
-			if (selectedPath != null) {
-				if (!containsDot(new File(selectedPath))) {
-					MessageDialog.openError(parent.getShell(), NOT_FOUND_SHORT,
-							NOT_FOUND_LONG);
-				} else {
-					Preferences preferences = zestFxUiPrefs();
-					preferences.put("dotpath", selectedPath + File.separator);
-					try {
-						preferences.flush();
-					} catch (BackingStoreException e) {
-						e.printStackTrace();
+	private void setGraphAsync(final String dot) {
+		final DotGraphView view = this;
+		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (!dot.trim().isEmpty()) {
+					DotImport dotImport = new DotImport(dot);
+					if (dotImport.getErrors().size() > 0) {
+						System.err.println(String.format(
+								"Could not import DOT: %s, DOT: %s",
+								dotImport.getErrors(), dot));
+						return;
 					}
+					setGraph(dotImport.newGraphInstance());
+					exportAction.linkCorrespondingImage(view);
 				}
 			}
-		}
-
-		/** Sets the path to the local 'dot' executable based on user selection. */
-		public static void setDotDirPath() {
-			IWorkbenchWindow parent = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			DirectoryDialog dialog = new DirectoryDialog(parent.getShell());
-			dialog.setMessage(DOT_SELECT_LONG);
-			dialog.setText(DOT_SELECT_SHORT);
-			processUserInput(parent, dialog);
-		}
-
-		private static Preferences zestFxUiPrefs() {
-			Preferences preferences = ConfigurationScope.INSTANCE
-					.getNode("corg.eclipse.gef4");
-			Preferences sub1 = preferences.node("zest.fx.ui");
-			return sub1;
-		}
-
-		private DotDirStore() {/* Enforce non-instantiability */
-		}
+		});
 
 	}
 
-	private class ExportToggle {
-
-		Action action(final DotGraphView view) {
-			return new Action(DotGraphView.SYNC_EXPORT_PDF, SWT.TOGGLE) {
-				@Override
-				public void run() {
-					linkImage = toggle(this, linkImage);
-					if (view.currentFile != null) {
-						linkCorrespondingImage(view);
-					}
-				}
-			};
+	private boolean toggle(Action action, boolean input) {
+		action.setChecked(!action.isChecked());
+		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		for (IContributionItem item : mgr.getItems()) {
+			if (item.getId() != null && item.getId().equals(action.getText())) {
+				ActionContributionItem i = (ActionContributionItem) item;
+				i.getAction().setChecked(!i.getAction().isChecked());
+				return !input;
+			}
 		}
+		return input;
+	}
+
+	private boolean updateGraph(IFile file) {
+		if (file == null || file.getLocationURI() == null || !file.exists()) {
+			return false;
+		}
+		String dotString = currentDot;
+		try {
+			dotString = DotFileUtils.read(DotFileUtils.resolve(file
+					.getLocationURI().toURL()));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		currentDot = dotString;
+		setGraphAsync(dotString);
+		return true;
+	}
+
+	private IWorkspaceRunnable updateGraphRunnable(final IFile f) {
+		if (!listenToDotContent
+				&& !f.getLocation().toString().endsWith(EXTENSION)) {
+			return null;
+		}
+		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
+			@Override
+			public void run(final IProgressMonitor monitor)
+					throws CoreException {
+				if (updateGraph(f)) {
+					currentFile = f;
+				}
+			}
+		};
+		return workspaceRunnable;
+	}
+
+	private class ExportToggle {
 
 		private File generateImageFromGraph(final boolean refresh,
 				final String format, DotGraphView view) {
@@ -178,14 +196,6 @@ public class DotGraphView extends ZestFxUiView {
 				refreshParent(view.currentFile);
 			}
 			return image;
-		}
-
-		void linkCorrespondingImage(DotGraphView view) {
-			if (view.linkImage) {
-				File image = generateImageFromGraph(true,
-						DotGraphView.FORMAT_PDF, view);
-				openFile(image, view);
-			}
 		}
 
 		private void openFile(File file, DotGraphView view) {
@@ -227,6 +237,26 @@ public class DotGraphView extends ZestFxUiView {
 				file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 			} catch (CoreException e) {
 				e.printStackTrace();
+			}
+		}
+
+		Action action(final DotGraphView view) {
+			return new Action(DotGraphView.SYNC_EXPORT_PDF, SWT.TOGGLE) {
+				@Override
+				public void run() {
+					linkImage = toggle(this, linkImage);
+					if (view.currentFile != null) {
+						linkCorrespondingImage(view);
+					}
+				}
+			};
+		}
+
+		void linkCorrespondingImage(DotGraphView view) {
+			if (view.linkImage) {
+				File image = generateImageFromGraph(true,
+						DotGraphView.FORMAT_PDF, view);
+				openFile(image, view);
 			}
 		}
 
@@ -327,120 +357,5 @@ public class DotGraphView extends ZestFxUiView {
 			};
 			return toggleUpdateModeAction;
 		}
-	}
-
-	public static final String STYLES_CSS_FILE = DotGraphView.class
-			.getResource("styles.css").toExternalForm();
-
-	private static final String EXTENSION = "dot";
-	private static final String LOAD_DOT_FILE = "Load *.dot file...";
-	private static final String SYNC_EXPORT_PDF = "Sync with printable PDF using Graphviz";
-	private static final String SYNC_IMPORT_DOT = "Sync with *.dot files in the workspace";
-	private static final String DOT_SELECT_SHORT = "Where is 'dot'?";
-	private static final String DOT_SELECT_LONG = "Please specify the folder that contains 'dot' (http://www.graphviz.org/)";
-	private static final String NOT_FOUND_LONG = "The application 'dot' was not found in the specified directory";
-	private static final String NOT_FOUND_SHORT = "Not found";
-	private static final String FORMAT_PDF = "pdf";
-	private boolean listenToDotContent = false;
-
-	private boolean linkImage = false;
-
-	private String currentDot = "digraph{}";
-
-	private IFile currentFile = null;
-
-	private ExportToggle exportAction;
-
-	public DotGraphView() {
-		super(Guice.createInjector(Modules.override(new ZestFxModule())//
-				.with(new ZestFxUiModule())));
-		setGraph(new DotImport(currentDot).newGraphInstance());
-	}
-
-	private void add(Action action, String imageName) {
-		action.setId(action.getText());
-		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(imageName));
-		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-		mgr.add(action);
-	}
-
-	@Override
-	public void createPartControl(final Composite parent) {
-		exportAction = new ExportToggle();
-		add(new UpdateToggle().action(this), ISharedImages.IMG_ELCL_SYNCED);
-		add(new LoadFile().action(this), ISharedImages.IMG_OBJ_FILE);
-		add(exportAction.action(this), ISharedImages.IMG_ETOOL_PRINT_EDIT);
-		super.createPartControl(parent);
-		Scene scene = getViewer().getScene();
-		scene.getStylesheets().add(STYLES_CSS_FILE);
-	}
-
-	private void setGraphAsync(final String dot) {
-		final DotGraphView view = this;
-		getViewSite().getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!dot.trim().isEmpty()) {
-					DotImport dotImport = new DotImport(dot);
-					if (dotImport.getErrors().size() > 0) {
-						System.err.println(String.format(
-								"Could not import DOT: %s, DOT: %s",
-								dotImport.getErrors(), dot));
-						return;
-					}
-					setGraph(dotImport.newGraphInstance());
-					exportAction.linkCorrespondingImage(view);
-				}
-			}
-		});
-
-	}
-
-	private boolean toggle(Action action, boolean input) {
-		action.setChecked(!action.isChecked());
-		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-		for (IContributionItem item : mgr.getItems()) {
-			if (item.getId() != null && item.getId().equals(action.getText())) {
-				ActionContributionItem i = (ActionContributionItem) item;
-				i.getAction().setChecked(!i.getAction().isChecked());
-				return !input;
-			}
-		}
-		return input;
-	}
-
-	private boolean updateGraph(IFile file) {
-		if (file == null || file.getLocationURI() == null || !file.exists()) {
-			return false;
-		}
-		String dotString = currentDot;
-		try {
-			dotString = DotFileUtils.read(DotFileUtils.resolve(file
-					.getLocationURI().toURL()));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		currentDot = dotString;
-		setGraphAsync(dotString);
-		return true;
-	}
-
-	private IWorkspaceRunnable updateGraphRunnable(final IFile f) {
-		if (!listenToDotContent
-				&& !f.getLocation().toString().endsWith(EXTENSION)) {
-			return null;
-		}
-		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(final IProgressMonitor monitor)
-					throws CoreException {
-				if (updateGraph(f)) {
-					currentFile = f;
-				}
-			}
-		};
-		return workspaceRunnable;
 	}
 }
