@@ -12,7 +12,7 @@
 package org.eclipse.gef4.mvc.fx.behaviors;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.transform.Scale;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
@@ -30,13 +30,7 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 		IRootPart<Node> root = getHost().getRoot();
 		if (root instanceof FXRootPart) {
 			FXRootPart fxRootPart = (FXRootPart) root;
-			// TODO: obtain the list of scaled layers and scale them all
-			Parent zoomTarget = fxRootPart.getContentLayer();
-			if (zoomTarget != null) {
-				zoomTarget.setScaleX(zoomFactor);
-				zoomTarget.setScaleY(zoomFactor);
-			}
+			fxRootPart.zoomProperty().set(new Scale(zoomFactor, zoomFactor));
 		}
 	}
-
 }

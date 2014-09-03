@@ -11,19 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.Arrays;
 import java.util.List;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
@@ -42,11 +41,13 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 
 	private ScrollPane scrollPane;
-	private StackPane layersStackPane;
 
-	private Pane contentLayer;
-	private Pane handleLayer;
-	private Pane feedbackLayer;
+	public Group contentLayer;
+	public Group handleLayer;
+	public Group feedbackLayer;
+
+	private final SimpleObjectProperty<Scale> zoomProperty = new SimpleObjectProperty<Scale>(
+			new Scale());
 
 	public FXRootPart() {
 	}
@@ -86,29 +87,24 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		}
 	}
 
-	protected Pane createContentLayer() {
-		Pane contentLayer = createLayer(false);
+	protected Group createContentLayer() {
+		Group contentLayer = createLayer(false);
 		contentLayer.setPickOnBounds(true);
-		// prevent scrollbar in cases where node are moved beyond the origin
-		// (and the viewport can hold the complete layer contents)
-		contentLayer.setManaged(false);
 		return contentLayer;
 	}
 
-	protected Pane createFeedbackLayer() {
-		Pane feedbackLayer = createLayer(true);
-		return feedbackLayer;
+	protected Group createFeedbackLayer() {
+		return createLayer(true);
 	}
 
-	protected Pane createHandleLayer() {
+	protected Group createHandleLayer() {
 		return createLayer(false);
 	}
 
-	protected Pane createLayer(boolean mouseTransparent) {
-		Pane layer = new Pane();
+	protected Group createLayer(boolean mouseTransparent) {
+		Group layer = new Group();
 		layer.setPickOnBounds(false);
 		layer.setMouseTransparent(mouseTransparent);
-		layer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		return layer;
 	}
 
@@ -126,11 +122,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 *
+		 * 
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 *
+		 * 
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -156,29 +152,26 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 		handleLayer = createHandleLayer();
 
-		layersStackPane = createLayersStackPane(Arrays.asList(new Node[] {
-				contentLayer, feedbackLayer, handleLayer }));
+		scrollPane = createScrollPane(new Group(contentLayer, feedbackLayer,
+				handleLayer));
 
-		scrollPane = createScrollPane(new Group(layersStackPane));
+		// TODO: provide a ZoomedLayer with a zoom property here
+		// we can remove the zoomProperty then and bind others to it
+		zoomProperty.addListener(new ChangeListener<Scale>() {
 
-		// ensure the layers stack pane is as large as the viewport
-		scrollPane.viewportBoundsProperty().addListener(
-				new ChangeListener<Bounds>() {
-
-					@Override
-					public void changed(
-							ObservableValue<? extends Bounds> observable,
-							Bounds oldValue, Bounds newValue) {
-						// set the min size of the layered pane to match the
-						// viewport size
-						layersStackPane.setMinWidth(newValue.getWidth());
-						layersStackPane.setMinHeight(newValue.getHeight());
-					}
-
-				});
+			@Override
+			public void changed(ObservableValue<? extends Scale> observable,
+					Scale oldValue, Scale newValue) {
+				if (contentLayer.getTransforms().isEmpty()) {
+					contentLayer.getTransforms().add(zoomProperty.get());
+				} else {
+					contentLayer.getTransforms().set(0, zoomProperty.get());
+				}
+			}
+		});
 	}
 
-	protected ScrollPane createScrollPane(final Parent scrollPaneInput) {
+	protected ScrollPane createScrollPane(final Group scrollPaneInput) {
 		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setContent(scrollPaneInput);
 		scrollPane.setPannable(false);
@@ -191,32 +184,25 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		// nothing to do
 	}
 
-	public Pane getContentLayer() {
+	public Group getContentLayer() {
 		if (contentLayer == null) {
 			createRootVisuals();
 		}
 		return contentLayer;
 	}
 
-	public Pane getFeedbackLayer() {
+	public Group getFeedbackLayer() {
 		if (feedbackLayer == null) {
 			createRootVisuals();
 		}
 		return feedbackLayer;
 	}
 
-	public Pane getHandleLayer() {
+	public Group getHandleLayer() {
 		if (handleLayer == null) {
 			createRootVisuals();
 		}
 		return handleLayer;
-	}
-
-	public StackPane getLayerStackPane() {
-		if (layersStackPane == null) {
-			createRootVisuals();
-		}
-		return layersStackPane;
 	}
 
 	public ScrollPane getScrollPane() {
@@ -244,9 +230,9 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	protected void registerAtVisualPartMap() {
-		StackPane layersStackPane = getLayerStackPane();
-		getViewer().getVisualPartMap().put(layersStackPane, this);
-		for (Node child : layersStackPane.getChildren()) {
+		Group scrollPaneContent = (Group) getScrollPane().getContent();
+		getViewer().getVisualPartMap().put(scrollPaneContent, this);
+		for (Node child : scrollPaneContent.getChildren()) {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().put(child, this);
 		}
@@ -282,15 +268,20 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	protected void unregisterFromVisualPartMap() {
-		StackPane layersStackPane = getLayerStackPane();
-		getViewer().getVisualPartMap().remove(layersStackPane);
-		for (Node child : layersStackPane.getChildren()) {
+		Group scrollPaneContent = (Group) getScrollPane().getContent();
+		getViewer().getVisualPartMap().remove(scrollPaneContent);
+		for (Node child : scrollPaneContent.getChildren()) {
 			// register root edit part also for the layers
 			getViewer().getVisualPartMap().remove(child);
 		}
 
 		// unregister root visual as well
 		getViewer().getVisualPartMap().remove(getVisual());
+	}
+
+	// TODO: move into root visual
+	public SimpleObjectProperty<Scale> zoomProperty() {
+		return zoomProperty;
 	}
 
 }
