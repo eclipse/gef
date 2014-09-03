@@ -76,6 +76,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
 
+	// TODO: refactor FXLabeledConnection
 	private FXLabeledConnection visual;
 
 	{
@@ -211,19 +212,28 @@ public class EdgeContentPart extends AbstractFXContentPart {
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToScene(visual, visual
-								.getConnection().getCurveNode().getGeometry());
+						return FXUtils.localToParent(
+								visual,
+								FXUtils.localToParent(
+										visual.getConnection().getCurveNode(),
+										((FXGeometryNode<?>) visual
+												.getConnection().getCurveNode())
+												.getGeometry()));
 					}
 				});
 		setAdapter(AdapterKey.get(Provider.class,
 				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
-			@Override
-			public IGeometry get() {
-				return FXUtils.localToScene(visual, visual
-						.getConnection().getCurveNode().getGeometry());
-			}
-		});
-
+					@Override
+					public IGeometry get() {
+						return FXUtils.localToParent(
+								visual,
+								FXUtils.localToParent(
+										visual.getConnection().getCurveNode(),
+										((FXGeometryNode<?>) visual
+												.getConnection().getCurveNode())
+												.getGeometry()));
+					}
+				});
 	}
 }
