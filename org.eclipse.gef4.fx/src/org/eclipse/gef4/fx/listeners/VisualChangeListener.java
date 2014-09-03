@@ -68,6 +68,9 @@ public abstract class VisualChangeListener {
 		Node n = target;
 		while (m != null || n != null) {
 			if (m != null) {
+				if (parents.contains(m)) {
+					return m;
+				}
 				parents.add(m);
 				if (n != null && parents.contains(n)) {
 					return n;
@@ -75,6 +78,9 @@ public abstract class VisualChangeListener {
 				m = m.getParent();
 			}
 			if (n != null) {
+				if (parents.contains(n)) {
+					return n;
+				}
 				parents.add(n);
 				if (m != null && parents.contains(m)) {
 					return m;
@@ -261,7 +267,7 @@ public abstract class VisualChangeListener {
 		for (ChangeListener<Transform> l : localToParentTransformListeners
 				.keySet()) {
 			localToParentTransformListeners.get(l)
-					.localToParentTransformProperty().removeListener(l);
+			.localToParentTransformProperty().removeListener(l);
 		}
 		localToParentTransformListeners.clear();
 	}
