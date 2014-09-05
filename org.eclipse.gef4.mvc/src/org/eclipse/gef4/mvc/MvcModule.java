@@ -22,12 +22,9 @@ import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
-import org.eclipse.gef4.mvc.models.DefaultContentModel;
-import org.eclipse.gef4.mvc.models.DefaultViewportModel;
-import org.eclipse.gef4.mvc.models.DefaultZoomModel;
-import org.eclipse.gef4.mvc.models.IContentModel;
-import org.eclipse.gef4.mvc.models.IViewportModel;
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.ViewportModel;
+import org.eclipse.gef4.mvc.models.ZoomModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
@@ -190,12 +187,12 @@ public class MvcModule<VR> extends AbstractModule {
 	protected void bindAbstractViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind (default) viewer models as adapters
-		adapterMapBinder.addBinding(AdapterKey.get(IContentModel.class)).to(
-				IContentModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(IViewportModel.class)).to(
-				IViewportModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(IZoomModel.class)).to(
-				IZoomModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ContentModel.class)).to(
+				ContentModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class)).to(
+				ViewportModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ZoomModel.class)).to(
+				ZoomModel.class);
 	}
 
 	/**
@@ -216,10 +213,6 @@ public class MvcModule<VR> extends AbstractModule {
 		// nothing to bind by default
 	}
 
-	protected void bindIContentModel() {
-		binder().bind(IContentModel.class).to(DefaultContentModel.class);
-	}
-
 	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class)
 				.to(DefaultOperationHistory.class);
@@ -229,23 +222,11 @@ public class MvcModule<VR> extends AbstractModule {
 		binder().bind(IUndoContext.class).to(UndoContext.class);
 	}
 
-	protected void bindIViewportModel() {
-		binder().bind(IViewportModel.class).to(DefaultViewportModel.class);
-	}
-
-	protected void bindIZoomModel() {
-		binder().bind(IZoomModel.class).to(DefaultZoomModel.class);
-	}
-
 	@Override
 	protected void configure() {
 		// TODO: could rather install a module that is provided by
 		// org.eclipse.gef4.common.inject (which contains the enabling code)
 		enableAdapterMapInjection();
-
-		bindIContentModel();
-		bindIViewportModel();
-		bindIZoomModel();
 
 		bindIUndoContext();
 		bindIOperationHistory();

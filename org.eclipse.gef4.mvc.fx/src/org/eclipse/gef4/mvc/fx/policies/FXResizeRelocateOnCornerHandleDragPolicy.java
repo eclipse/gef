@@ -25,13 +25,14 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // up to now only usable with FXCornerHandleParts
 // we could also implement to work with FXSegmentParts, maybe it is also better so use a different implementation for this.
 public class FXResizeRelocateOnCornerHandleDragPolicy extends
-AbstractFXDragPolicy {
+		AbstractFXDragPolicy {
 
 	/**
 	 * <p>
@@ -50,9 +51,9 @@ AbstractFXDragPolicy {
 	public static enum ReferencePoint {
 		TOP(true, false, false, false), LEFT(false, true, false, false), RIGHT(
 				false, false, true, false), BOTTOM(false, false, false, true), TOP_LEFT(
-						true, true, false, false), TOP_RIGHT(true, false, true, false), BOTTOM_LEFT(
-								false, true, false, true), BOTTOM_RIGHT(false, false, true,
-										true);
+				true, true, false, false), TOP_RIGHT(true, false, true, false), BOTTOM_LEFT(
+				false, true, false, true), BOTTOM_RIGHT(false, false, true,
+				true);
 
 		private boolean t, l, r, b;
 
@@ -199,7 +200,7 @@ AbstractFXDragPolicy {
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {
-		return getHost().getRoot().getViewer().getSelectionModel()
+		return getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
 				.getSelected();
 	}
 

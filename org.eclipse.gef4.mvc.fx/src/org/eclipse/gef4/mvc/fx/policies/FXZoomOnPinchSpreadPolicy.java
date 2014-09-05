@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.scene.Node;
 import javafx.scene.input.ZoomEvent;
 
+import org.eclipse.gef4.mvc.models.ZoomModel;
 import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 
 public class FXZoomOnPinchSpreadPolicy extends AbstractFXPinchSpreadPolicy {
@@ -28,8 +29,8 @@ public class FXZoomOnPinchSpreadPolicy extends AbstractFXPinchSpreadPolicy {
 	@Override
 	public void zoomDetected(ZoomEvent e, double partialFactor,
 			double totalFactor) {
-		initialZoomFactor = getHost().getRoot().getViewer().getZoomModel()
-				.getZoomFactor();
+		initialZoomFactor = getHost().getRoot().getViewer()
+				.getAdapter(ZoomModel.class).getZoomFactor();
 		ZoomPolicy<Node> policy = getZoomPolicy();
 		if (policy != null) {
 			policy.zoomAbsolute(initialZoomFactor * totalFactor);

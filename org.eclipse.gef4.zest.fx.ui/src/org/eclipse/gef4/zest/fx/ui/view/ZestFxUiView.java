@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.ui.view;
 
@@ -19,6 +19,8 @@ import javafx.embed.swt.FXCanvas;
 
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -45,8 +47,10 @@ public class ZestFxUiView extends FXView {
 			@Override
 			public void controlResized(ControlEvent e) {
 				Rectangle bounds = getCanvas().getBounds();
-				getViewer().getViewportModel().setWidth(bounds.width);
-				getViewer().getViewportModel().setHeight(bounds.height);
+				getViewer().getAdapter(ViewportModel.class).setWidth(
+						bounds.width);
+				getViewer().getAdapter(ViewportModel.class).setHeight(
+						bounds.height);
 			}
 		});
 		return canvas;
@@ -61,8 +65,9 @@ public class ZestFxUiView extends FXView {
 
 	public void setGraph(Graph graph) {
 		this.graph = graph;
-		if (!getViewer().getContents().isEmpty()) {
-			getViewer().setContents(getContents());
+		if (!getViewer().getAdapter(ContentModel.class).getContents().isEmpty()) {
+			getViewer().getAdapter(ContentModel.class).setContents(
+					getContents());
 		}
 	}
 

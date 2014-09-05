@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this class have been transferred from org.eclipse.gef.SelectionManager.
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
@@ -19,18 +19,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * 
+ * The {@link SelectionModel} is used to store the current viewer's
+ * {@link IContentPart} selection. A selection tool is used to update the
+ * {@link SelectionModel} as the result of input events.
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *
  */
-public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
+public class SelectionModel<VR> implements IPropertyChangeNotifier {
+
+	public static final String SELECTION_PROPERTY = "selection";
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
@@ -41,7 +48,6 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	@Override
 	public void appendSelection(IContentPart<VR> editpart) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.add(editpart);
@@ -49,7 +55,6 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 				oldSelection, getSelected());
 	}
 
-	@Override
 	public void deselect(IContentPart<VR> editpart) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.remove(editpart);
@@ -57,7 +62,6 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 				oldSelection, getSelected());
 	}
 
-	@Override
 	public void deselectAll() {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.clear();
@@ -65,7 +69,6 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 				oldSelection, getSelected());
 	}
 
-	@Override
 	public List<IContentPart<VR>> getSelected() {
 		return Collections.unmodifiableList(selection);
 	}
@@ -81,7 +84,6 @@ public class DefaultSelectionModel<VR> implements ISelectionModel<VR> {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
-	@Override
 	public void select(List<IContentPart<VR>> newlySelected) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.removeAll(newlySelected);

@@ -19,6 +19,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
+import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -33,7 +34,7 @@ public class FXFocusTool extends AbstractTool<Node> {
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
 				// TODO: use FocusPolicy for this
-				viewer.getFocusModel().setViewerFocused(newValue);
+				viewer.getAdapter(FocusModel.class).setViewerFocused(newValue);
 			}
 		};
 	}

@@ -22,8 +22,8 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.models.IContentModel;
-import org.eclipse.gef4.mvc.models.IViewportModel;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
@@ -39,7 +39,7 @@ public class GraphRootPart extends FXRootPart {
 	private PropertyChangeListener contentChanged = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (IContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
+			if (ContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
 				Object content = evt.getNewValue();
 				final GraphLayoutContext context = createLayoutContext(content);
 
@@ -49,7 +49,7 @@ public class GraphRootPart extends FXRootPart {
 				// set layout context. other parts listen for the layout model
 				// to send in their layout data
 				getViewer().getDomain().getAdapter(ILayoutModel.class)
-						.setLayoutContext(context);
+				.setLayoutContext(context);
 				applyLayout(context);
 			}
 		}
@@ -59,8 +59,8 @@ public class GraphRootPart extends FXRootPart {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			String name = evt.getPropertyName();
-			if (IViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(name)
-					|| IViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(name)) {
+			if (ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(name)
+					|| ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(name)) {
 				GraphLayoutContext context = getLayoutContext();
 				if (context != null) {
 					applyLayout(context);
@@ -71,7 +71,8 @@ public class GraphRootPart extends FXRootPart {
 
 	protected void applyLayout(final GraphLayoutContext context) {
 		// get current viewport size
-		IViewportModel viewportModel = getViewer().getViewportModel();
+		ViewportModel viewportModel = getViewer().getAdapter(
+				ViewportModel.class);
 		double width = viewportModel.getWidth();
 		double height = viewportModel.getHeight();
 		// FIXME: insets of 20px should not be hard coded
@@ -96,11 +97,11 @@ public class GraphRootPart extends FXRootPart {
 		if (!(content instanceof Graph)) {
 			throw new IllegalStateException(
 					"Wrong content! Expected <Graph> but got <" + content
-							+ ">.");
+					+ ">.");
 		}
 		final GraphLayoutContext context = new GraphLayoutContext(
 				(Graph) content);
-		IViewportModel viewport = getViewer().getViewportModel();
+		ViewportModel viewport = getViewer().getAdapter(ViewportModel.class);
 		PropertiesHelper.setBounds(context,
 				new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()));
 		return context;
@@ -109,8 +110,9 @@ public class GraphRootPart extends FXRootPart {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getViewer().getContentModel().addPropertyChangeListener(contentChanged);
-		getViewer().getViewportModel().addPropertyChangeListener(
+		getViewer().getAdapter(ContentModel.class).addPropertyChangeListener(
+				contentChanged);
+		getViewer().getAdapter(ViewportModel.class).addPropertyChangeListener(
 				viewportChanged);
 
 		// load stylesheet
@@ -120,10 +122,10 @@ public class GraphRootPart extends FXRootPart {
 	@Override
 	protected void doDeactivate() {
 		super.doDeactivate();
-		getViewer().getContentModel().removePropertyChangeListener(
-				contentChanged);
-		getViewer().getViewportModel().removePropertyChangeListener(
-				viewportChanged);
+		getViewer().getAdapter(ContentModel.class)
+				.removePropertyChangeListener(contentChanged);
+		getViewer().getAdapter(ViewportModel.class)
+				.removePropertyChangeListener(viewportChanged);
 
 		// un-load stylesheet
 		getVisual().getScene().getStylesheets().remove(STYLES_CSS_FILE);

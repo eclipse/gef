@@ -6,33 +6,33 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class DefaultViewportModel implements IViewportModel {
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+
+public class ContentModel implements IPropertyChangeNotifier {
+
+	public static final String CONTENTS_PROPERTY = "contents";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private double width = 0;
-	private double height = 0;
+	private List<Object> contents = new ArrayList<Object>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	@Override
-	public double getHeight() {
-		return height;
-	}
-
-	@Override
-	public double getWidth() {
-		return width;
+	public List<? extends Object> getContents() {
+		return Collections.unmodifiableList(this.contents);
 	}
 
 	@Override
@@ -40,18 +40,11 @@ public class DefaultViewportModel implements IViewportModel {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	@Override
-	public void setHeight(double height) {
-		double oldHeight = this.height;
-		this.height = height;
-		pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
+	public void setContents(List<? extends Object> contents) {
+		List<Object> oldContents = Collections
+				.unmodifiableList(new ArrayList<Object>(this.contents));
+		this.contents.clear();
+		this.contents.addAll(contents);
+		pcs.firePropertyChange(CONTENTS_PROPERTY, oldContents, getContents());
 	}
-
-	@Override
-	public void setWidth(double width) {
-		double oldWidth = this.width;
-		this.width = width;
-		pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
-	}
-
 }

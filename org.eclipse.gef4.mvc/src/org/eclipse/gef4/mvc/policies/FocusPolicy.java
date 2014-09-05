@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
+import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-// TODO: extract interface and use for binding
 // TODO: make ITransactional
 public class FocusPolicy<VR> extends AbstractPolicy<VR> {
 
@@ -24,7 +24,7 @@ public class FocusPolicy<VR> extends AbstractPolicy<VR> {
 	public void focus() {
 		IVisualPart<VR> host = getHost();
 		if (host instanceof IContentPart) {
-			host.getRoot().getViewer().getFocusModel()
+			host.getRoot().getViewer().getAdapter(FocusModel.class)
 					.setFocused((IContentPart<VR>) host);
 		}
 	}

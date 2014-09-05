@@ -7,29 +7,22 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
-import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
-import org.eclipse.gef4.mvc.parts.IRootPart;
 
 /**
- * The {@link IZoomModel} is used to store the current viewer's zoom factor,
- * which should get adjusted by a zooming tool as a response to user interaction
- * (via mouse or gesture events, or by using scroll bars).
- * 
- * An {@link AbstractZoomBehavior} of the {@link IRootPart} is responsible to
- * listen to {@link IZoomModel} changes and to apply the zoom factor to the
- * view.
- * 
+ *
  * @author mwienand
- * 
+ *
  */
-public interface IZoomModel extends IPropertyChangeNotifier {
+public class ZoomModel implements IPropertyChangeNotifier {
 
 	/**
 	 * The IZoomingModel fires {@link PropertyChangeEvent}s when its zoom factor
@@ -43,22 +36,46 @@ public interface IZoomModel extends IPropertyChangeNotifier {
 	 */
 	public static final double DEFAULT_ZOOM_FACTOR = 1d;
 
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private double zoom = DEFAULT_ZOOM_FACTOR;
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
 	/**
 	 * Returns the zoom factor. The zoom factor is a positive value.
-	 * 
+	 *
 	 * @return the zoom factor
 	 */
-	public double getZoomFactor();
+	public double getZoomFactor() {
+		return zoom;
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
 
 	/**
 	 * Sets the zoom factor to the given value. Fires a
 	 * {@link PropertyChangeEvent}.
-	 * 
+	 *
 	 * @param zoomFactor
 	 *            a positive floating point value stored as the zoom factor
 	 * @throws IllegalArgumentException
 	 *             when <code><i>zoomFactor</i> &lt;= 0</code>
 	 */
-	public void setZoomFactor(double zoomFactor);
+	public void setZoomFactor(double zoomFactor) {
+		if (zoomFactor <= 0) {
+			throw new IllegalArgumentException(
+					"Expected: Positive double value. Given: <" + zoomFactor
+					+ ">.");
+		}
+		double oldZoom = zoom;
+		zoom = zoomFactor;
+		pcs.firePropertyChange(ZOOM_FACTOR_PROPERTY, oldZoom, zoom);
+	}
 
 }

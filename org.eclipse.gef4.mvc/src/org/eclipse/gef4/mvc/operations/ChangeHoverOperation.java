@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -26,7 +27,7 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	 * <pre>
 	 * &quot;change-hover&quot;
 	 * </pre>
-	 * 
+	 *
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
@@ -37,8 +38,8 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	private IVisualPart<VR> newHovered;
 
 	public ChangeHoverOperation(IViewer<VR> viewer, IVisualPart<VR> newHovered) {
-		this(DEFAULT_LABEL, viewer, viewer.getHoverModel().getHover(),
-				newHovered);
+		this(DEFAULT_LABEL, viewer, viewer.getAdapter(HoverModel.class)
+				.getHover(), newHovered);
 	}
 
 	public ChangeHoverOperation(IViewer<VR> viewer, IVisualPart<VR> oldHovered,
@@ -57,7 +58,7 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getHoverModel().setHover(newHovered);
+		viewer.getAdapter(HoverModel.class).setHover(newHovered);
 		return Status.OK_STATUS;
 	}
 
@@ -70,7 +71,7 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getHoverModel().setHover(oldHovered);
+		viewer.getAdapter(HoverModel.class).setHover(oldHovered);
 		return Status.OK_STATUS;
 	}
 

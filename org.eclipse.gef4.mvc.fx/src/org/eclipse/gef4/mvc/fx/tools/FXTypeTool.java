@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
@@ -22,6 +22,7 @@ import javafx.scene.input.KeyEvent;
 
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -70,8 +71,8 @@ public class FXTypeTool extends AbstractTool<Node> {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
 				if (((FXViewer) viewer).getScene() == scene) {
-					IVisualPart<Node> part = viewer.getFocusModel()
-							.getFocused();
+					IVisualPart<Node> part = viewer
+							.getAdapter(FocusModel.class).getFocused();
 					if (part != null) {
 						targetPart = part;
 						break;

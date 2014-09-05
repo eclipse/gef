@@ -44,12 +44,9 @@ import org.eclipse.gef4.mvc.fx.tools.FXPinchSpreadTool;
 import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.models.DefaultFocusModel;
-import org.eclipse.gef4.mvc.models.DefaultHoverModel;
-import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
-import org.eclipse.gef4.mvc.models.IFocusModel;
-import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
@@ -186,14 +183,14 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// bind parameterized default viewer models (others are already bound in
 		// superclass)
-		adapterMapBinder.addBinding(AdapterKey.get(IFocusModel.class)).to(
-				new TypeLiteral<IFocusModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
+				new TypeLiteral<FocusModel<Node>>() {
 				});
-		adapterMapBinder.addBinding(AdapterKey.get(IHoverModel.class)).to(
-				new TypeLiteral<IHoverModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(HoverModel.class)).to(
+				new TypeLiteral<HoverModel<Node>>() {
 				});
-		adapterMapBinder.addBinding(AdapterKey.get(ISelectionModel.class)).to(
-				new TypeLiteral<ISelectionModel<Node>>() {
+		adapterMapBinder.addBinding(AdapterKey.get(SelectionModel.class)).to(
+				new TypeLiteral<SelectionModel<Node>>() {
 				});
 	}
 
@@ -212,32 +209,14 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).to(FXDefaultFeedbackPartFactory.class);
 	}
 
-	protected void bindIFocusModel() {
-		binder().bind(new TypeLiteral<IFocusModel<Node>>() {
-		}).to(new TypeLiteral<DefaultFocusModel<Node>>() {
-		});
-	}
-
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).to(FXDefaultHandlePartFactory.class);
 	}
 
-	protected void bindIHoverModel() {
-		binder().bind(new TypeLiteral<IHoverModel<Node>>() {
-		}).to(new TypeLiteral<DefaultHoverModel<Node>>() {
-		});
-	}
-
 	protected void bindIRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node>>() {
 		}).to(FXRootPart.class);
-	}
-
-	protected void bindISelectionModel() {
-		binder().bind(new TypeLiteral<ISelectionModel<Node>>() {
-		}).to(new TypeLiteral<DefaultSelectionModel<Node>>() {
-		});
 	}
 
 	protected void bindIViewer() {
@@ -248,11 +227,6 @@ public class MvcFxModule extends MvcModule<Node> {
 	@Override
 	protected void configure() {
 		super.configure();
-
-		// bind default (parameterized) viewer models
-		bindIFocusModel();
-		bindIHoverModel();
-		bindISelectionModel();
 
 		// bind default factories for handles and feedback
 		bindIHandlePartFactory();

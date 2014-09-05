@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
-import org.eclipse.gef4.mvc.models.IHoverModel;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -34,12 +34,14 @@ PropertyChangeListener {
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getHoverModel()
-				.addPropertyChangeListener(this);
+		HoverModel hoverModel = getHost().getRoot().getViewer()
+				.getAdapter(HoverModel.class);
+
+		// register
+		hoverModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already hovered
-		addFeedbackAndHandles(getHost().getRoot().getViewer().getHoverModel()
-				.getHover());
+		addFeedbackAndHandles(hoverModel.getHover());
 	}
 
 	protected final void addFeedbackAndHandles(IVisualPart<VR> newHovered) {
@@ -51,19 +53,21 @@ PropertyChangeListener {
 
 	@Override
 	public void deactivate() {
-		// remove any pending feedback and handles
-		removeFeedbackAndHandles(getHost().getRoot().getViewer()
-				.getHoverModel().getHover());
+		HoverModel hoverModel = getHost().getRoot().getViewer()
+				.getAdapter(HoverModel.class);
 
-		getHost().getRoot().getViewer().getHoverModel()
-				.removePropertyChangeListener(this);
+		// remove any pending feedback and handles
+		removeFeedbackAndHandles(hoverModel.getHover());
+
+		// unregister
+		hoverModel.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(IHoverModel.HOVER_PROPERTY)) {
+		if (event.getPropertyName().equals(HoverModel.HOVER_PROPERTY)) {
 			IVisualPart<VR> oldHovered = (IVisualPart<VR>) event.getOldValue();
 			IVisualPart<VR> newHovered = (IVisualPart<VR>) event.getNewValue();
 

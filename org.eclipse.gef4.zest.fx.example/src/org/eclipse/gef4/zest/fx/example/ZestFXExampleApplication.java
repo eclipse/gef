@@ -30,6 +30,8 @@ import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -101,10 +103,10 @@ public class ZestFXExampleApplication extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		viewer.setContents(Collections.singletonList(DEFAULT_GRAPH));
+		viewer.getAdapter(ContentModel.class).setContents(Collections.singletonList(DEFAULT_GRAPH));
 		
-		viewer.getViewportModel().setWidth(primaryStage.getWidth());
-		viewer.getViewportModel().setHeight(primaryStage.getHeight());
+		viewer.getAdapter(ViewportModel.class).setWidth(primaryStage.getWidth());
+		viewer.getAdapter(ViewportModel.class).setHeight(primaryStage.getHeight());
 
 		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
 
@@ -116,7 +118,7 @@ public class ZestFXExampleApplication extends Application {
 
 						@Override
 						public void run() {
-							viewer.getViewportModel().setWidth(
+							viewer.getAdapter(ViewportModel.class).setWidth(
 									newValue.doubleValue());
 						}
 					});
@@ -133,7 +135,7 @@ public class ZestFXExampleApplication extends Application {
 
 						@Override
 						public void run() {
-							viewer.getViewportModel().setHeight(
+							viewer.getAdapter(ViewportModel.class).setHeight(
 									newValue.doubleValue());
 						}
 

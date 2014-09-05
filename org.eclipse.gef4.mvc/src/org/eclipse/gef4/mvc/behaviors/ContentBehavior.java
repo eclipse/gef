@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.gef4.mvc.models.IContentModel;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -59,10 +61,10 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	public void activate() {
 		super.activate();
 		if (getHost() == getHost().getRoot()) {
-			synchronizeContentChildren(getHost().getRoot().getViewer()
-					.getContentModel().getContents());
-			getHost().getRoot().getViewer().getContentModel()
-					.addPropertyChangeListener(this);
+			ContentModel contentModel = getHost().getRoot().getViewer()
+					.getAdapter(ContentModel.class);
+			synchronizeContentChildren(contentModel.getContents());
+			contentModel.addPropertyChangeListener(this);
 		} else {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())
 					.getContentChildren());
@@ -75,7 +77,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void deactivate() {
 		if (getHost() == getHost().getRoot()) {
-			getHost().getRoot().getViewer().getContentModel()
+			getHost().getRoot().getViewer().getAdapter(ContentModel.class)
 					.removePropertyChangeListener(this);
 			synchronizeContentChildren(Collections.emptyList());
 		} else {
@@ -136,12 +138,14 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (IContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())) {
+		if (ContentModel.CONTENTS_PROPERTY.equals(event.getPropertyName())) {
 			synchronizeContentChildren((List<Object>) event.getNewValue());
 			// TODO: flushing of models should be done somewhere more
 			// appropriate
-			getHost().getRoot().getViewer().getSelectionModel().deselectAll();
-			getHost().getRoot().getViewer().getHoverModel().clearHover();
+			getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+					.deselectAll();
+			getHost().getRoot().getViewer().getAdapter(HoverModel.class)
+					.clearHover();
 		} else if (IContentPart.CONTENT_PROPERTY
 				.equals(event.getPropertyName())) {
 			synchronizeContentChildren(((IContentPart<VR>) getHost())

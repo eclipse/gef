@@ -13,18 +13,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.viewer;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.models.IContentModel;
-import org.eclipse.gef4.mvc.models.IFocusModel;
-import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
-import org.eclipse.gef4.mvc.models.IViewportModel;
-import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -49,8 +42,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 // present via the interface)
 public interface IViewer<VR> extends IAdaptable, IActivatable {
 
-	public IContentModel getContentModel();
-
 	/**
 	 * Returns the {@link IContentPartFactory} for this viewer, used to create
 	 * {@link IContentPart}s.
@@ -66,8 +57,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The content part map
 	 */
 	public Map<Object, IContentPart<VR>> getContentPartMap();
-
-	public List<? extends Object> getContents();
 
 	/**
 	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
@@ -86,8 +75,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 */
 	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
 
-	public IFocusModel<VR> getFocusModel();
-
 	/**
 	 * Returns the {@link IHandlePartFactory} for this viewer, used to create
 	 * {@link IHandlePart}s.
@@ -95,8 +82,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The {@link IHandlePartFactory} being used
 	 */
 	public IHandlePartFactory<VR> getHandlePartFactory();
-
-	public IHoverModel<VR> getHoverModel();
 
 	/**
 	 * Returns the {@link IRootPart} of this viewer. The {@link IRootPart} is a
@@ -107,10 +92,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 */
 	public IRootPart<VR> getRootPart();
 
-	public ISelectionModel<VR> getSelectionModel();
-
-	public IViewportModel getViewportModel();
-
 	/**
 	 * Returns the {@link Map} for registering {@link IVisualPart}s by their
 	 * <i>visual</i>. This map is used for hit-testing. Hit testing is performed
@@ -120,9 +101,5 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 * @return The visual part map
 	 */
 	public Map<VR, IVisualPart<VR>> getVisualPartMap();
-
-	public IZoomModel getZoomModel();
-
-	public void setContents(List<? extends Object> contents);
 
 }

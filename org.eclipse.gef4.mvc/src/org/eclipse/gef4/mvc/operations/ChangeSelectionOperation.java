@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -41,8 +42,8 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer, viewer.getSelectionModel().getSelected(),
-				newSelection);
+		this(DEFAULT_LABEL, viewer, viewer.getAdapter(SelectionModel.class)
+				.getSelected(), newSelection);
 	}
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
@@ -63,8 +64,9 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getSelectionModel().deselectAll();
-		viewer.getSelectionModel().select(newSelection);
+		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
+		selectionModel.deselectAll();
+		selectionModel.select(newSelection);
 		return Status.OK_STATUS;
 	}
 
@@ -77,8 +79,9 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getSelectionModel().deselectAll();
-		viewer.getSelectionModel().select(oldSelection);
+		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
+		selectionModel.deselectAll();
+		selectionModel.select(oldSelection);
 		return Status.OK_STATUS;
 	}
 

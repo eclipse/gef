@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
@@ -23,6 +23,9 @@ import javafx.scene.input.KeyEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.HoverModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
 import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
@@ -100,9 +103,10 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	protected ChangeFocusOperation<Node> getChangeFocusOperation(
 			IViewer<Node> viewer) {
 		// focus first un-selected content leaf
-		Set<Object> isSelected = new HashSet<Object>(viewer.getSelectionModel()
-				.getSelected());
-		for (Object content : viewer.getContents()) {
+		Set<Object> isSelected = new HashSet<Object>(viewer.getAdapter(
+				SelectionModel.class).getSelected());
+		for (Object content : viewer.getAdapter(ContentModel.class)
+				.getContents()) {
 			IContentPart<Node> part = viewer.getContentPartMap().get(content);
 			IContentPart<Node> newFocus = findNewFocus(isSelected, part);
 			if (newFocus != null) {
@@ -115,7 +119,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 	protected ChangeHoverOperation<Node> getChangeHoverOperation(
 			IViewer<Node> viewer) {
-		IVisualPart<Node> hover = viewer.getHoverModel().getHover();
+		IVisualPart<Node> hover = viewer.getAdapter(HoverModel.class)
+				.getHover();
 		ChangeHoverOperation<Node> changeHoverOperation = null;
 		if (hover == getHost()) {
 			changeHoverOperation = new ChangeHoverOperation<Node>(viewer, null);
@@ -151,9 +156,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 				if (deleteOperation != null) {
 					contentChildrenOperations.add(deleteOperation);
 					contentChildrenOperations
-							.add(new SynchronizeContentChildrenOperation<Node>(
-									"SynchronizeChildren",
-									(IContentPart<Node>) parent));
+					.add(new SynchronizeContentChildrenOperation<Node>(
+							"SynchronizeChildren",
+							(IContentPart<Node>) parent));
 				}
 			}
 
@@ -175,9 +180,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 					// synchronize content anchorages once per anchored
 					if (addedOperations) {
 						contentAnchoragesOperations
-								.add(new SynchronizeContentAnchoragesOperation<Node>(
-										"SynchronizeAnchorages",
-										(IContentPart<Node>) anchored));
+						.add(new SynchronizeContentAnchoragesOperation<Node>(
+								"SynchronizeAnchorages",
+								(IContentPart<Node>) anchored));
 					}
 				}
 			}
@@ -224,8 +229,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 		// get current selection
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<IContentPart<Node>> selected = viewer.getSelectionModel()
-				.getSelected();
+		List<IContentPart<Node>> selected = viewer.getAdapter(
+				SelectionModel.class).getSelected();
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {

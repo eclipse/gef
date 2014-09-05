@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-//TODO: extract interface and use for binding
 //TODO: make ITransactional
 public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 
@@ -28,8 +27,8 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 	public void select(boolean append) {
 		IVisualPart<VR> host = getHost();
 
-		ISelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
-				.getSelectionModel();
+		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
+				.getAdapter(SelectionModel.class);
 
 		// retrieve old selection
 		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(

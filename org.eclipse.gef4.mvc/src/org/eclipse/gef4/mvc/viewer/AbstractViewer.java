@@ -16,7 +16,6 @@ package org.eclipse.gef4.mvc.viewer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
@@ -25,18 +24,6 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.models.DefaultContentModel;
-import org.eclipse.gef4.mvc.models.DefaultFocusModel;
-import org.eclipse.gef4.mvc.models.DefaultHoverModel;
-import org.eclipse.gef4.mvc.models.DefaultSelectionModel;
-import org.eclipse.gef4.mvc.models.DefaultViewportModel;
-import org.eclipse.gef4.mvc.models.DefaultZoomModel;
-import org.eclipse.gef4.mvc.models.IContentModel;
-import org.eclipse.gef4.mvc.models.IFocusModel;
-import org.eclipse.gef4.mvc.models.IHoverModel;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
-import org.eclipse.gef4.mvc.models.IViewportModel;
-import org.eclipse.gef4.mvc.models.IZoomModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -54,7 +41,6 @@ import com.google.inject.Inject;
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
-@SuppressWarnings("unchecked")
 public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		IAdaptable.Bound<IDomain<VR>> {
 
@@ -119,20 +105,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		return ads.getAdapters(classKey);
 	}
 
-	/**
-	 * @see IViewer#getContentModel()
-	 */
-	@Override
-	public IContentModel getContentModel() {
-		IContentModel contentModel = getAdapter(AdapterKey
-				.get(IContentModel.class));
-		if (contentModel == null) {
-			contentModel = new DefaultContentModel();
-			setAdapter(AdapterKey.get(IContentModel.class), contentModel);
-		}
-		return contentModel;
-	}
-
 	@Override
 	public IContentPartFactory<VR> getContentPartFactory() {
 		return ads.getAdapter(IContentPartFactory.class);
@@ -144,11 +116,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	@Override
 	public Map<Object, IContentPart<VR>> getContentPartMap() {
 		return contentsToContentPartMap;
-	}
-
-	@Override
-	public List<? extends Object> getContents() {
-		return getContentModel().getContents();
 	}
 
 	/**
@@ -165,57 +132,13 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public IFocusModel<VR> getFocusModel() {
-		IFocusModel<VR> focusModel = getAdapter(AdapterKey
-				.get(IFocusModel.class));
-		if (focusModel == null) {
-			focusModel = new DefaultFocusModel<VR>();
-			setAdapter(AdapterKey.get(IFocusModel.class), focusModel);
-		}
-		return focusModel;
-	}
-
-	@Override
 	public IHandlePartFactory<VR> getHandlePartFactory() {
 		return ads.getAdapter(IHandlePartFactory.class);
 	}
 
 	@Override
-	public IHoverModel<VR> getHoverModel() {
-		IHoverModel<VR> hoverModel = getAdapter(AdapterKey
-				.get(IHoverModel.class));
-		if (hoverModel == null) {
-			hoverModel = new DefaultHoverModel<VR>();
-			setAdapter(AdapterKey.get(IHoverModel.class), hoverModel);
-		}
-		return hoverModel;
-	}
-
-	@Override
 	public IRootPart<VR> getRootPart() {
 		return ads.getAdapter(IRootPart.class);
-	}
-
-	@Override
-	public ISelectionModel<VR> getSelectionModel() {
-		ISelectionModel<VR> selectionModel = getAdapter(AdapterKey
-				.get(ISelectionModel.class));
-		if (selectionModel == null) {
-			selectionModel = new DefaultSelectionModel<VR>();
-			setAdapter(AdapterKey.get(ISelectionModel.class), selectionModel);
-		}
-		return selectionModel;
-	}
-
-	@Override
-	public IViewportModel getViewportModel() {
-		IViewportModel viewportModel = getAdapter(AdapterKey
-				.get(IViewportModel.class));
-		if (viewportModel == null) {
-			viewportModel = new DefaultViewportModel();
-			setAdapter(AdapterKey.get(IViewportModel.class), viewportModel);
-		}
-		return viewportModel;
 	}
 
 	/**
@@ -224,16 +147,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	@Override
 	public Map<VR, IVisualPart<VR>> getVisualPartMap() {
 		return visualsToVisualPartMap;
-	}
-
-	@Override
-	public IZoomModel getZoomModel() {
-		IZoomModel zoomModel = getAdapter(AdapterKey.get(IZoomModel.class));
-		if (zoomModel == null) {
-			zoomModel = new DefaultZoomModel();
-			setAdapter(AdapterKey.get(IZoomModel.class), zoomModel);
-		}
-		return zoomModel;
 	}
 
 	@Override
@@ -267,22 +180,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		// do not override locally registered adapters (e.g. within constructor
 		// of respective AbstractViewer) with those injected by Guice
 		ads.setAdapters(adaptersWithKeys, false);
-	}
-
-	/**
-	 * @see IViewer#setContents(List)
-	 */
-	@Override
-	public void setContents(List<? extends Object> contents) {
-		if (getContentPartFactory() == null) {
-			throw new IllegalStateException(
-					"ContentPartFactory has to be set before passing contents in.");
-		}
-		if (getRootPart() == null) {
-			throw new IllegalStateException(
-					"Root part has to be set before passing contents in.");
-		}
-		getContentModel().setContents(contents);
 	}
 
 	@Override

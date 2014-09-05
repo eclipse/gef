@@ -9,6 +9,7 @@ import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.viewer.FXStageSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Guice;
@@ -35,8 +36,8 @@ public class FXExampleApplication extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		viewer.setContents(Collections
-				.<Object> singletonList(new FXGeometricModel()));
+		viewer.getAdapter(ContentModel.class).setContents(
+				Collections.<Object> singletonList(new FXGeometricModel()));
 
 		primaryStage.setTitle("GEF4 MVC.FX Example");
 		primaryStage.sizeToScene();

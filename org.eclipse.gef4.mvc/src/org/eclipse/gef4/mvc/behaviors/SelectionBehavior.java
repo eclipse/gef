@@ -17,7 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -38,12 +38,14 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getSelectionModel()
-				.addPropertyChangeListener(this);
+		SelectionModel selectionModel = getHost().getRoot().getViewer()
+				.getAdapter(SelectionModel.class);
+
+		// register
+		selectionModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already selected
-		addFeedbackAndHandles(getHost().getRoot().getViewer()
-				.getSelectionModel().getSelected());
+		addFeedbackAndHandles(selectionModel.getSelected());
 	}
 
 	protected void addFeedbackAndHandles(
@@ -65,18 +67,18 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void deactivate() {
 		// remove any pending feedback
-		removeFeedbackAndHandles(getHost().getRoot().getViewer()
-				.getSelectionModel().getSelected());
+		SelectionModel selectionModel = getHost().getRoot().getViewer()
+				.getAdapter(SelectionModel.class);
+		removeFeedbackAndHandles(selectionModel.getSelected());
 
-		getHost().getRoot().getViewer().getSelectionModel()
-				.removePropertyChangeListener(this);
+		selectionModel.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(ISelectionModel.SELECTION_PROPERTY)) {
+		if (event.getPropertyName().equals(SelectionModel.SELECTION_PROPERTY)) {
 			List<IContentPart<VR>> oldSelection = (List<IContentPart<VR>>) event
 					.getOldValue();
 			List<IContentPart<VR>> newSelection = (List<IContentPart<VR>>) event

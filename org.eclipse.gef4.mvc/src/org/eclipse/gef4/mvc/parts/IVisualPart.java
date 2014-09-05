@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.EditPart
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -22,7 +22,6 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -53,25 +52,24 @@ import com.google.common.collect.SetMultimap;
  * (see {@link IAdaptable}). {@link IBehavior}s are used to react to changes of
  * the attached model (in case of an {@link IContentPart}s), the viewer models,
  * or others sources (e.g. adapters of the {@link IViewer} or {@link IDomain}),
- * thereby reacting to changes of the interactive state (e.g. the
- * {@link ISelectionModel} reporting a selection change).
+ * thereby reacting to changes of the interactive state.
  * <p>
  * {@link IVisualPart}s are activatable ({@link IActivatable}), and an
  * activation/deactivation of an {@link IVisualPart} will result in the
  * activation/deactivation of all registered adapters (i.e. {@link IPolicy}s and
  * {@link IBehavior}s).
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractVisualPart} should be subclassed.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public interface IVisualPart<VR> extends IActivatable, IAdaptable,
-		IPropertyChangeNotifier {
+IPropertyChangeNotifier {
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
@@ -91,11 +89,11 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * anchorage to its anchored via the {@link #addAnchorage(IVisualPart)} and
 	 * {@link #addAnchorage(IVisualPart, String)} operations, which will
 	 * indirectly lead to a call here.
-	 * 
+	 *
 	 * @param anchored
 	 *            An {@link IVisualPart} to attach to this anchorage
 	 *            {@link IVisualPart} as anchored.
-	 * 
+	 *
 	 * @noreference Clients should call {@link #addAnchorage(IVisualPart)},
 	 *              {@link #addAnchorage(IVisualPart, String)} instead to
 	 *              establish an anchored-anchorage relationship.
@@ -126,7 +124,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * Returns the {@link IRootPart}. This method should only be called
 	 * internally or by helpers such as edit policies. The root can be used to
 	 * get the viewer.
-	 * 
+	 *
 	 * @return <code>null</code> or the {@link IRootPart}
 	 */
 	public IRootPart<VR> getRoot();
@@ -150,12 +148,12 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * anchorage from its anchored via the {@link #removeAnchorage(IVisualPart)}
 	 * or {@link #removeAnchorage(IVisualPart, String)} operations, which will
 	 * indirectly lead to a call here.
-	 * 
+	 *
 	 * @param anchored
 	 *            An {@link IVisualPart} (currently attached as anchored to this
 	 *            anchorage {@link IVisualPart}) to detach from this anchorage
 	 *            {@link IVisualPart} as anchored.
-	 * 
+	 *
 	 * @noreference Clients should call {@link #removeAnchorage(IVisualPart)} or
 	 *              {@link #removeAnchorage(IVisualPart, String)} instead to
 	 *              unestablish an anchored-anchorage relationship.
@@ -178,10 +176,10 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * {@link #addChildren(List, int)} or remove it via the
 	 * {@link #removeChild(IVisualPart)} or {@link #removeChildren(List)}
 	 * operations, which will indirectly lead to a call here.
-	 * 
+	 *
 	 * @param parent
 	 *            The new parent {@link IVisualPart} or <code>null</code>.
-	 * 
+	 *
 	 * @noreference Clients should use {@link #addChild(IVisualPart)},
 	 *              {@link #addChild(IVisualPart, int)},
 	 *              {@link #addChildren(List)}, {@link #addChildren(List, int)},
@@ -196,7 +194,7 @@ public interface IVisualPart<VR> extends IActivatable, IAdaptable,
 	 * operation. This may for instance be used to disable visual updates that
 	 * are initiated by the model (in case of {@link IContentPart}s) while
 	 * interacting with the {@link IVisualPart}.
-	 * 
+	 *
 	 * @param refreshVisual
 	 *            Whether {@link #refreshVisual()} should perform updates of the
 	 *            visual (<code>true</code>) or behave like a no-op operation (

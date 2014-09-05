@@ -78,6 +78,7 @@ public class FXGridLayer extends Pane {
 				return;
 			}
 
+			// TODO: extract (unscaled) grid size into properties
 			gc.setStroke(Color.GREY);
 			final Scale scale = scaleProperty.get();
 			for (double x = ((-getParent().getLayoutX()) / scale.getX()) % 10; x < width; x += 10) {

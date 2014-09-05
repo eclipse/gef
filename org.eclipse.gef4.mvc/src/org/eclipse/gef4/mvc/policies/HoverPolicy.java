@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-//TODO: extract interface and use for binding
+import org.eclipse.gef4.mvc.models.HoverModel;
+
 //TODO: make ITransactional
 public class HoverPolicy<VR> extends AbstractPolicy<VR> {
 
@@ -19,7 +20,8 @@ public class HoverPolicy<VR> extends AbstractPolicy<VR> {
 	// whether it should be executed on the operation history)
 
 	public void hover() {
-		getHost().getRoot().getViewer().getHoverModel().setHover(getHost());
+		getHost().getRoot().getViewer().getAdapter(HoverModel.class)
+		.setHover(getHost());
 	}
 
 }

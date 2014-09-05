@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -26,7 +27,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	 * <pre>
 	 * &quot;change-focus&quot;
 	 * </pre>
-	 * 
+	 *
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
@@ -37,8 +38,8 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	private IContentPart<VR> newFocused;
 
 	public ChangeFocusOperation(IViewer<VR> viewer, IContentPart<VR> newFocused) {
-		this(DEFAULT_LABEL, viewer, viewer.getFocusModel().getFocused(),
-				newFocused);
+		this(DEFAULT_LABEL, viewer, viewer.getAdapter(FocusModel.class)
+				.getFocused(), newFocused);
 	}
 
 	public ChangeFocusOperation(IViewer<VR> viewer,
@@ -57,7 +58,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getFocusModel().setFocused(newFocused);
+		viewer.getAdapter(FocusModel.class).setFocused(newFocused);
 		return Status.OK_STATUS;
 	}
 
@@ -70,7 +71,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		viewer.getFocusModel().setFocused(oldFocused);
+		viewer.getAdapter(FocusModel.class).setFocused(oldFocused);
 		return Status.OK_STATUS;
 	}
 

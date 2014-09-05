@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -35,7 +36,8 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				Point2D initialPosInLocal = part.getVisual().sceneToLocal(
-						initialMouseLocationInScene.x, initialMouseLocationInScene.y);
+						initialMouseLocationInScene.x,
+						initialMouseLocationInScene.y);
 				Point2D currentPosInLocal = part.getVisual().sceneToLocal(
 						e.getSceneX(), e.getSceneY());
 				Point2D deltaPoint = new Point2D(currentPosInLocal.getX()
@@ -53,7 +55,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {
-		return getHost().getRoot().getViewer().getSelectionModel()
+		return getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
 				.getSelected();
 	}
 

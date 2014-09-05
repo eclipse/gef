@@ -14,11 +14,11 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.models.ZoomModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * The AbstractZoomPolicy registers a listener on the {@link IZoomModel} and
+ * The AbstractZoomPolicy registers a listener on the {@link ZoomModel} and
  * notifies subclasses about zoom factor changes in order for subclasses to
  * apply the new zoom factor.
  *
@@ -29,13 +29,13 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractZoomBehavior<VR> extends AbstractBehavior<VR>
-implements PropertyChangeListener {
+		implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getRoot().getViewer().getZoomModel()
-		.addPropertyChangeListener(this);
+		getHost().getRoot().getViewer().getAdapter(ZoomModel.class)
+				.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -50,14 +50,14 @@ implements PropertyChangeListener {
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getZoomModel()
-		.removePropertyChangeListener(this);
+		getHost().getRoot().getViewer().getAdapter(ZoomModel.class)
+				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (IZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {
+		if (ZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {
 			applyZoom((Double) evt.getNewValue());
 		}
 	}

@@ -25,7 +25,7 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
-import org.eclipse.gef4.mvc.models.ISelectionModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
@@ -153,7 +153,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-								.getSegmentParameter() == 1)) {
+						.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
@@ -179,8 +179,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		executeOperation(operation);
 
 		// TODO: move into operation and ensure its also done on undo!!
-		ISelectionModel<Node> selm = getHost().getRoot().getViewer()
-				.getSelectionModel();
+		SelectionModel<Node> selm = getHost().getRoot().getViewer()
+				.getAdapter(SelectionModel.class);
 		// TODO: reselect all anchorages that were selected
 		if (selm.getSelected().contains(anchorage)) {
 			selm.deselect((IContentPart<Node>) anchorage);

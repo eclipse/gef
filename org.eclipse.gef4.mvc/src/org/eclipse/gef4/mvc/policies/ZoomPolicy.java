@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.gef4.mvc.models.IZoomModel;
+import org.eclipse.gef4.mvc.models.ZoomModel;
 
 //TODO: extract interface and use for binding
 //TODO: make ITransactional
@@ -21,12 +21,14 @@ public class ZoomPolicy<VR> extends AbstractPolicy<VR> {
 	// whether it should be executed on the operation history)
 
 	public void zoomAbsolute(double absoluteZoom) {
-		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		ZoomModel zoomModel = getHost().getRoot().getViewer()
+				.getAdapter(ZoomModel.class);
 		zoomModel.setZoomFactor(absoluteZoom);
 	}
 
 	public void zoomRelative(double relativeZoom) {
-		IZoomModel zoomModel = getHost().getRoot().getViewer().getZoomModel();
+		ZoomModel zoomModel = getHost().getRoot().getViewer()
+				.getAdapter(ZoomModel.class);
 		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
 	}
 }

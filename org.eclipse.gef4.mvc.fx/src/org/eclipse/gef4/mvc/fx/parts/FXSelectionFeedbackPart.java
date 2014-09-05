@@ -25,7 +25,8 @@ import javafx.scene.shape.StrokeType;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.models.IFocusModel;
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -37,9 +38,9 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (IFocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			if (FocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
 				refreshVisual();
-			} else if (IFocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			} else if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
 				refreshVisual();
 			}
 		}
@@ -68,13 +69,13 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getRoot().getViewer().getFocusModel()
+		getRoot().getViewer().getAdapter(FocusModel.class)
 				.addPropertyChangeListener(focusModelListener);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getRoot().getViewer().getFocusModel()
+		getRoot().getViewer().getAdapter(FocusModel.class)
 				.removePropertyChangeListener(focusModelListener);
 		super.doDeactivate();
 	}
@@ -96,10 +97,10 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 		IVisualPart<Node> anchorage = anchorages.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
 
-		boolean focused = viewer.getFocusModel().isViewerFocused()
-				&& viewer.getFocusModel().getFocused() == anchorage;
-		List<IContentPart<Node>> selected = viewer.getSelectionModel()
-				.getSelected();
+		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
+				&& viewer.getAdapter(FocusModel.class).getFocused() == anchorage;
+		List<IContentPart<Node>> selected = viewer.getAdapter(
+				SelectionModel.class).getSelected();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			getVisual().setEffect(getPrimarySelectionFeedbackEffect(focused));

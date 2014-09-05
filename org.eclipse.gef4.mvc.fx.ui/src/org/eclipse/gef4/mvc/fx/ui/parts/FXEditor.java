@@ -22,6 +22,8 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.ui.viewer.FXCanvasSceneContainer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.ui.properties.UndoablePropertySheetPage;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -83,13 +85,13 @@ public abstract class FXEditor extends EditorPart {
 		domain.activate();
 
 		// populate viewer
-		viewer.setContents(getContents());
+		viewer.getAdapter(ContentModel.class).setContents(getContents());
 
 		// register listener to provide selection to workbench
 		if (selectionProvider != null) {
 			selectionForwarder = new SelectionForwarder(selectionProvider);
-			getViewer().getSelectionModel().addPropertyChangeListener(
-					selectionForwarder);
+			getViewer().getAdapter(SelectionModel.class)
+					.addPropertyChangeListener(selectionForwarder);
 		}
 	}
 
@@ -104,8 +106,8 @@ public abstract class FXEditor extends EditorPart {
 
 		// unregister listener to provide selections
 		if (selectionProvider != null) {
-			getViewer().getSelectionModel().removePropertyChangeListener(
-					selectionForwarder);
+			getViewer().getAdapter(SelectionModel.class)
+					.removePropertyChangeListener(selectionForwarder);
 		}
 		super.dispose();
 	}
