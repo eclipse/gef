@@ -36,7 +36,6 @@ public class FXChopBoxHelper {
 	 */
 
 	private MapChangeListener<AnchorKey, IFXAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IFXAnchor>() {
-
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
@@ -44,31 +43,36 @@ public class FXChopBoxHelper {
 				// start anchor change
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-					.removeListener(startPCL);
+							.removeListener(startPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-					.addListener(startPCL);
+							.addListener(startPCL);
+					updateStartReferencePoint();
 				}
 			} else if (change.getKey().equals(connection.getEndAnchorKey())) {
 				// end anchor key
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-					.removeListener(endPCL);
+							.removeListener(endPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-					.addListener(endPCL);
+							.addListener(endPCL);
+					updateEndReferencePoint();
 				}
 			} else {
 				// waypoint change
 				if (change.getValueRemoved() != null) {
 					change.getValueRemoved().positionProperty()
-					.removeListener(waypointPCL);
+							.removeListener(waypointPCL);
 				}
 				if (change.getValueAdded() != null) {
 					change.getValueAdded().positionProperty()
-					.addListener(waypointPCL);
+							.addListener(waypointPCL);
+					updateStartReferencePoint();
+					updateEndReferencePoint();
+					// TODO: updateWayRefPoint();
 				}
 			}
 		}
@@ -111,12 +115,11 @@ public class FXChopBoxHelper {
 		this.connection = connection;
 		connection.anchorsProperty().addListener(
 				new ChangeListener<ObservableMap<AnchorKey, IFXAnchor>>() {
-
 					@Override
 					public void changed(
 							ObservableValue<? extends ObservableMap<AnchorKey, IFXAnchor>> observable,
-									ObservableMap<AnchorKey, IFXAnchor> oldValue,
-									ObservableMap<AnchorKey, IFXAnchor> newValue) {
+							ObservableMap<AnchorKey, IFXAnchor> oldValue,
+							ObservableMap<AnchorKey, IFXAnchor> newValue) {
 						if (oldValue != null) {
 							oldValue.removeListener(anchorsChangeListener);
 						}
@@ -124,7 +127,6 @@ public class FXChopBoxHelper {
 							newValue.addListener(anchorsChangeListener);
 						}
 					}
-
 				});
 	}
 

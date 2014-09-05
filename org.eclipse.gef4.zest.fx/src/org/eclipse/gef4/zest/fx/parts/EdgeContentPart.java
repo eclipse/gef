@@ -18,7 +18,6 @@ import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
@@ -89,23 +88,15 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
-
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		FXCurveConnection connection = visual.getConnection();
 		if (role.equals("START")) {
 			connection.setStartAnchor(anchor);
-		} else {
+		} else if (role.equals("END")) {
 			connection.setEndAnchor(anchor);
-		}
-
-		if (connection.isStartConnected() && connection.isEndConnected()) {
-			IFXAnchor startAl = connection.getStartAnchor();
-			IFXAnchor endAl = connection.getEndAnchor();
-			((FXChopBoxAnchor) startAl).setReferencePoint(
-					connection.getStartAnchorKey(), getAnchorageCenter(endAl));
-			((FXChopBoxAnchor) endAl).setReferencePoint(
-					connection.getEndAnchorKey(),
-					startAl.getPosition(connection.getStartAnchorKey()));
+		} else {
+			throw new IllegalStateException(
+					"Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
@@ -114,9 +105,12 @@ public class EdgeContentPart extends AbstractFXContentPart {
 			String role) {
 		FXCurveConnection connection = visual.getConnection();
 		if (role.equals("START")) {
-			connection.setStartPoint(connection.getStartPoint());
+			Point startPoint = connection.getStartPoint();
+			connection.setStartPoint(startPoint == null ? new Point()
+					: startPoint);
 		} else {
-			connection.setEndPoint(connection.getEndPoint());
+			Point endPoint = connection.getEndPoint();
+			connection.setEndPoint(endPoint == null ? new Point() : endPoint);
 		}
 	}
 

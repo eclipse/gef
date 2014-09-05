@@ -338,7 +338,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
-		// anchorages are ordered, thus we may use the index here
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
 		if (role.equals("START")) {
 			visual.setStartAnchor(anchor);

@@ -97,8 +97,10 @@ implements IFXConnection {
 		}
 
 		AnchorKey anchorKey = getWayAnchorKey(index);
-		anchorsProperty.put(anchorKey, anchor);
+		// Important: attach() before putting into the anchors-map, so that
+		// listeners on the anchors-map can retrieve the anchor position.
 		anchor.attach(anchorKey);
+		anchorsProperty.put(anchorKey, anchor);
 
 		// TODO: listen on map property to add position change listener
 		anchor.positionProperty().addListener(positionChangeListener);
@@ -395,13 +397,15 @@ implements IFXConnection {
 	@Override
 	public boolean isEndConnected() {
 		IFXAnchor anchor = getEndAnchor();
-		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
+		return anchor != null && anchor.getAnchorage() != null
+				&& anchor.getAnchorage() != this;
 	}
 
 	@Override
 	public boolean isStartConnected() {
 		IFXAnchor anchor = getStartAnchor();
-		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
+		return anchor != null && anchor.getAnchorage() != null
+				&& anchor.getAnchorage() != this;
 	}
 
 	@Override
@@ -494,13 +498,18 @@ implements IFXConnection {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// Important: detach() after removing from the anchors-map, so
+				// that listeners on the anchors-map can retrieve the anchor
+				// position.
 				anchorsProperty.remove(anchorKey);
 				oldAnchor.detach(anchorKey);
 				oldAnchor.positionProperty().removeListener(
 						positionChangeListener);
 			}
-			anchorsProperty.put(anchorKey, anchor);
+			// Important: attach() before putting into anchors-map, so that
+			// listeners on the anchors-map can retrieve the anchor position.
 			anchor.attach(anchorKey);
+			anchorsProperty.put(anchorKey, anchor);
 			anchor.positionProperty().addListener(positionChangeListener);
 			refreshGeometry();
 		}
@@ -537,13 +546,18 @@ implements IFXConnection {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// Important: detach() after removing from the anchors-map, so
+				// that listeners on the anchors-map can retrieve the anchor
+				// position.
 				anchorsProperty.remove(anchorKey);
 				oldAnchor.detach(anchorKey);
 				oldAnchor.positionProperty().removeListener(
 						positionChangeListener);
 			}
-			anchorsProperty.put(anchorKey, anchor);
+			// Important: attach() before putting into the anchors-map, so that
+			// listeners on the anchors-map can retrieve the anchor position.
 			anchor.attach(anchorKey);
+			anchorsProperty.put(anchorKey, anchor);
 			anchor.positionProperty().addListener(positionChangeListener);
 			refreshGeometry();
 		}
@@ -580,13 +594,18 @@ implements IFXConnection {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
+				// Important: detach() after removing from the anchors-map, so
+				// that listeners on the anchors-map can retrieve the anchor
+				// position.
 				anchorsProperty.remove(anchorKey);
 				oldAnchor.detach(anchorKey);
 				oldAnchor.positionProperty().removeListener(
 						positionChangeListener);
 			}
-			anchorsProperty.put(anchorKey, anchor);
+			// Important: attach() before putting into the anchors-map, so that
+			// listeners on the anchors-map can retrieve the anchor position.
 			anchor.attach(anchorKey);
+			anchorsProperty.put(anchorKey, anchor);
 			anchor.positionProperty().addListener(positionChangeListener);
 			refreshGeometry();
 		}

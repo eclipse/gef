@@ -93,11 +93,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	@Override
 	public void attach(AnchorKey key) {
-		// System.out.println(String.format("%4X", Integer.parseInt(Integer
-		// .toString(System.identityHashCode(this)).substring(6)))
-		// + " :: attach(" + key + ")");
 		Node anchored = key.getAnchored();
-
 		if (!keys.containsKey(anchored)) {
 			keys.put(anchored, new HashSet<AnchorKey>());
 		}
@@ -145,9 +141,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	@Override
 	public void detach(AnchorKey key) {
-		// System.out.println(String.format("%4X", Integer.parseInt(Integer
-		// .toString(System.identityHashCode(this)).substring(6)))
-		// + " :: detach(" + key + ")");
 		Node anchored = key.getAnchored();
 		if (!isAttached(key)) {
 			throw new IllegalArgumentException(
