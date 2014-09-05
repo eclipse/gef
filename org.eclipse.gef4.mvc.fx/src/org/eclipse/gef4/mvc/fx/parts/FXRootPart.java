@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.List;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,6 +25,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Scale;
 
+import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -42,12 +44,15 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	private ScrollPane scrollPane;
 
+	private FXGridLayer gridLayer;
 	public Group contentLayer;
 	public Group handleLayer;
 	public Group feedbackLayer;
 
 	private final SimpleObjectProperty<Scale> zoomProperty = new SimpleObjectProperty<Scale>(
 			new Scale());
+
+	private Group scrollPaneContent;
 
 	public FXRootPart() {
 	}
@@ -95,6 +100,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	protected Group createFeedbackLayer() {
 		return createLayer(true);
+	}
+
+	protected FXGridLayer createGridLayer() {
+		return new FXGridLayer();
 	}
 
 	protected Group createHandleLayer() {
@@ -152,8 +161,12 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 		handleLayer = createHandleLayer();
 
-		scrollPane = createScrollPane(new Group(contentLayer, feedbackLayer,
-				handleLayer));
+		gridLayer = createGridLayer();
+
+		scrollPaneContent = createScrollPaneContent(new Node[] { gridLayer,
+				contentLayer, feedbackLayer, handleLayer });
+
+		scrollPane = createScrollPane(scrollPaneContent);
 
 		// TODO: provide a ZoomedLayer with a zoom property here
 		// we can remove the zoomProperty then and bind others to it
@@ -169,6 +182,19 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				}
 			}
 		});
+
+		// TODO: turn content layer and grid layer into scalable layers, then
+		// bind
+		// grid layer scale to content layer scale and remove the zoom property
+		gridLayer.bindToScale(zoomProperty());
+		// TODO: move this into grid layer, so that contained canvas min and
+		// pref size are adjusted, rather then the layer sizes (this way we can
+		// separate the size computations from the scale compensation)
+		gridLayer.bindMinSizeToBounds(getScrollPane().viewportBoundsProperty());
+		gridLayer.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] {
+				contentLayer.boundsInParentProperty(),
+				feedbackLayer.boundsInParentProperty(),
+				handleLayer.boundsInParentProperty() });
 	}
 
 	protected ScrollPane createScrollPane(final Group scrollPaneInput) {
@@ -177,6 +203,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		scrollPane.setPannable(false);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
 		return scrollPane;
+	}
+
+	protected Group createScrollPaneContent(Node... layers) {
+		return new Group(layers);
 	}
 
 	@Override
@@ -196,6 +226,13 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			createRootVisuals();
 		}
 		return feedbackLayer;
+	}
+
+	public FXGridLayer getGridLayer() {
+		if (gridLayer == null) {
+			createRootVisuals();
+		}
+		return gridLayer;
 	}
 
 	public Group getHandleLayer() {
@@ -250,6 +287,15 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		} else {
 			getHandleLayer().getChildren().remove(child.getVisual());
 		}
+	}
+
+	public void removeGridLayer() {
+		FXGridLayer gridLayer = getGridLayer();
+		if (!scrollPaneContent.getChildren().contains(gridLayer)) {
+			return;
+		}
+		scrollPaneContent.getChildren().remove(gridLayer);
+		// TODO: unbind the grid layer
 	}
 
 	@Override

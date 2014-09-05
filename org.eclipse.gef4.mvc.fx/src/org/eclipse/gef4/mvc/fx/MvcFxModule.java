@@ -17,12 +17,14 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractGridBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
@@ -161,6 +163,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		});
 		adapterMapBinder.addBinding(AdapterKey.get(AbstractZoomBehavior.class))
 		.to(FXZoomBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(AbstractGridBehavior.class))
+		.to(FXGridBehavior.class);
 	}
 
 	protected void bindFXViewerAdapters(

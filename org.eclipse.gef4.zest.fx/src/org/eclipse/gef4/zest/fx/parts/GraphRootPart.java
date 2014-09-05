@@ -23,6 +23,7 @@ import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.ILayoutModel;
@@ -49,7 +50,7 @@ public class GraphRootPart extends FXRootPart {
 				// set layout context. other parts listen for the layout model
 				// to send in their layout data
 				getViewer().getDomain().getAdapter(ILayoutModel.class)
-				.setLayoutContext(context);
+						.setLayoutContext(context);
 				applyLayout(context);
 			}
 		}
@@ -97,7 +98,7 @@ public class GraphRootPart extends FXRootPart {
 		if (!(content instanceof Graph)) {
 			throw new IllegalStateException(
 					"Wrong content! Expected <Graph> but got <" + content
-					+ ">.");
+							+ ">.");
 		}
 		final GraphLayoutContext context = new GraphLayoutContext(
 				(Graph) content);
@@ -115,6 +116,8 @@ public class GraphRootPart extends FXRootPart {
 		getViewer().getAdapter(ViewportModel.class).addPropertyChangeListener(
 				viewportChanged);
 
+		getViewer().getAdapter(GridModel.class).setGridEnabled(false);
+
 		// load stylesheet
 		getVisual().getScene().getStylesheets().add(STYLES_CSS_FILE);
 	}
@@ -123,9 +126,9 @@ public class GraphRootPart extends FXRootPart {
 	protected void doDeactivate() {
 		super.doDeactivate();
 		getViewer().getAdapter(ContentModel.class)
-				.removePropertyChangeListener(contentChanged);
+		.removePropertyChangeListener(contentChanged);
 		getViewer().getAdapter(ViewportModel.class)
-				.removePropertyChangeListener(viewportChanged);
+		.removePropertyChangeListener(viewportChanged);
 
 		// un-load stylesheet
 		getVisual().getScene().getStylesheets().remove(STYLES_CSS_FILE);

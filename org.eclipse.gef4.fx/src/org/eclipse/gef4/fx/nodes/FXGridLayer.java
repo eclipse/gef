@@ -14,7 +14,9 @@ package org.eclipse.gef4.fx.nodes;
 
 import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -74,15 +76,19 @@ public class FXGridLayer extends Pane {
 
 			// don't paint grid if size is to large (TODO: remove canvas (make
 			// invisible)
-			if ((width > 2500) || (height > 2500)) {
+			if ((width * height > 5000000)) {
 				return;
 			}
 
 			// TODO: extract (unscaled) grid size into properties
 			gc.setStroke(Color.GREY);
 			final Scale scale = scaleProperty.get();
-			for (double x = ((-getParent().getLayoutX()) / scale.getX()) % 10; x < width; x += 10) {
-				for (double y = ((-getParent().getLayoutY()) / scale.getY()) % 10; y < height; y += 10) {
+			for (double x = ((-getParent().getLayoutX()) / scale.getX())
+					% gridWidthProperty.get(); x < width; x += gridWidthProperty
+					.get()) {
+				for (double y = ((-getParent().getLayoutY()) / scale.getY())
+						% gridHeightProperty.get(); y < height; y += gridHeightProperty
+						.get()) {
 					// TODO: use circle
 					gc.strokeLine(x, y, x, y);
 				}
@@ -91,8 +97,14 @@ public class FXGridLayer extends Pane {
 	}
 
 	private final FXGridLayer.GridCanvas gridCanvas;
+
 	private final SimpleObjectProperty<Scale> scaleProperty = new SimpleObjectProperty<Scale>(
 			new Scale());
+
+	private final DoubleProperty gridHeightProperty = new SimpleDoubleProperty(
+			10);
+	private final DoubleProperty gridWidthProperty = new SimpleDoubleProperty(
+			10);
 
 	public FXGridLayer() {
 		final Scale scale = new Scale();
@@ -114,6 +126,22 @@ public class FXGridLayer extends Pane {
 		setPickOnBounds(false);
 		setMouseTransparent(true);
 
+		gridWidthProperty.addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(
+					final ObservableValue<? extends Number> observable,
+					final Number oldValue, final Number newValue) {
+				gridCanvas.repaintGrid();
+			}
+		});
+		gridHeightProperty.addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(
+					final ObservableValue<? extends Number> observable,
+					final Number oldValue, final Number newValue) {
+				gridCanvas.repaintGrid();
+			}
+		});
 		layoutXProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(
@@ -170,17 +198,17 @@ public class FXGridLayer extends Pane {
 	}
 
 	public void bindPrefSizeToUnionedBounds(
-			@SuppressWarnings("unchecked") final ReadOnlyObjectProperty<Bounds>... unscaledBoundsProperties) {
+			@SuppressWarnings("unchecked") final ReadOnlyObjectProperty<Bounds>... boundsProperties) {
 
 		layoutXProperty().bind(new DoubleBinding() {
 			{
-				super.bind(unscaledBoundsProperties);
+				super.bind(boundsProperties);
 			}
 
 			@Override
 			protected double computeValue() {
 				double minX = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : unscaledBoundsProperties) {
+				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
 					minX = Math.min(minX, b.get().getMinX());
 				}
 				return minX;
@@ -189,13 +217,13 @@ public class FXGridLayer extends Pane {
 
 		layoutYProperty().bind(new DoubleBinding() {
 			{
-				super.bind(unscaledBoundsProperties);
+				super.bind(boundsProperties);
 			}
 
 			@Override
 			protected double computeValue() {
 				double minY = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : unscaledBoundsProperties) {
+				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
 					minY = Math.min(minY, b.get().getMinY());
 				}
 				return minY;
@@ -204,11 +232,11 @@ public class FXGridLayer extends Pane {
 
 		prefWidthProperty().bind(new DoubleBinding() {
 			{
-				final Observable[] observables = new Observable[unscaledBoundsProperties.length + 2];
+				final Observable[] observables = new Observable[boundsProperties.length + 2];
 				observables[0] = layoutXProperty();
 				observables[1] = scaleProperty.get().xProperty();
-				for (int i = 0; i < unscaledBoundsProperties.length; i++) {
-					observables[i + 2] = unscaledBoundsProperties[i];
+				for (int i = 0; i < boundsProperties.length; i++) {
+					observables[i + 2] = boundsProperties[i];
 				}
 				super.bind(observables);
 			}
@@ -216,21 +244,21 @@ public class FXGridLayer extends Pane {
 			@Override
 			protected double computeValue() {
 				double maxX = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : unscaledBoundsProperties) {
+				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
 					maxX = Math.max(maxX, b.get().getMaxX());
 				}
-				return maxX
-						- (layoutXProperty().get() / scaleProperty.get().getX());
+				return maxX / scaleProperty.get().getX()
+						- layoutXProperty().get() / scaleProperty.get().getX();
 			}
 		});
 
 		prefHeightProperty().bind(new DoubleBinding() {
 			{
-				final Observable[] observables = new Observable[unscaledBoundsProperties.length + 2];
+				final Observable[] observables = new Observable[boundsProperties.length + 2];
 				observables[0] = layoutYProperty();
 				observables[1] = scaleProperty.get().yProperty();
-				for (int i = 0; i < unscaledBoundsProperties.length; i++) {
-					observables[i + 2] = unscaledBoundsProperties[i];
+				for (int i = 0; i < boundsProperties.length; i++) {
+					observables[i + 2] = boundsProperties[i];
 				}
 				super.bind(observables);
 			}
@@ -238,11 +266,11 @@ public class FXGridLayer extends Pane {
 			@Override
 			protected double computeValue() {
 				double maxY = 0;
-				for (final ReadOnlyObjectProperty<Bounds> b : unscaledBoundsProperties) {
+				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
 					maxY = Math.max(maxY, b.get().getMaxY());
 				}
-				return maxY
-						- (layoutYProperty().get() / scaleProperty.get().getY());
+				return maxY - layoutYProperty().get()
+						/ scaleProperty.get().getY();
 			}
 		});
 
@@ -252,4 +280,12 @@ public class FXGridLayer extends Pane {
 		this.scaleProperty.bind(scaleProperty);
 	}
 
+	public void setGridHeight(double height) {
+		gridHeightProperty.set(height);
+	}
+
+	public void setGridWidth(double height) {
+		gridWidthProperty.set(height);
+
+	}
 }
