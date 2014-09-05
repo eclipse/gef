@@ -190,8 +190,8 @@ ITransactional {
 		Point delta = new Point(mouseInLocal.getX() - startPointInLocal.getX(),
 				mouseInLocal.getY() - startPointInLocal.getY());
 
-		currentPoint.x = startPointInLocal.getX() + delta.x;
-		currentPoint.y = startPointInLocal.getY() + delta.y;
+		currentPoint.x = startPoint.x + delta.x;
+		currentPoint.y = startPoint.y + delta.y;
 
 		// update
 		hideShowOverlaid();
