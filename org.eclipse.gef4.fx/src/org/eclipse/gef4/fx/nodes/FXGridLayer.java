@@ -75,13 +75,13 @@ public class FXGridLayer extends Pane {
 			gc.setFill(Color.WHITE);
 			gc.fillRect(0, 0, width, height);
 
+			final Scale scale = gridScaleProperty.get();
 			// don't paint grid points if size is to large
-			if ((width * height > GRID_THRESHOLD)) {
+			if (((width / scale.getX()) * (height / scale.getY()) > GRID_THRESHOLD)) {
 				return;
 			}
 
 			gc.setFill(Color.GREY);
-			final Scale scale = gridScaleProperty.get();
 
 			double scaledGridCellWidth = gridCellWidthProperty.get()
 					* scale.getX();
