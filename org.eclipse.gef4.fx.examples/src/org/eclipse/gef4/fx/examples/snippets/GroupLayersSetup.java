@@ -1,5 +1,7 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
+import java.util.Calendar;
+
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -54,11 +56,12 @@ public class GroupLayersSetup extends Application {
 
 	public Scene createScene() {
 		// scale
-		scaleProperty.get().setX(0.5);
-		scaleProperty.get().setY(0.5);
+		scaleProperty.get().setX(1);
+		scaleProperty.get().setY(1);
 
 		// layers
 		bgLayer = new Group();
+		bgLayer.setManaged(false);
 		final Rectangle bgContent = getBGRect(0.5, 0, 0, 0.5);
 		final Rectangle bgFeedback = getBGRect(0, 0.5, 0, 0.5);
 		final Rectangle bgHandle = getBGRect(0, 0, 0.5, 0.5);
@@ -83,7 +86,7 @@ public class GroupLayersSetup extends Application {
 		// scrolling
 		final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
 		scrollPane = new ScrollPane();
-		final Group spi = new Group(bgLayer, gridLayer, contentLayer,
+		final Group spi = new Group(gridLayer, contentLayer,
 				feedbackLayer, handleLayer);
 		scrollPane.setContent(spi);
 		scrollPane.setPannable(false);
@@ -99,6 +102,39 @@ public class GroupLayersSetup extends Application {
 				contentLayer.boundsInParentProperty(),
 				feedbackLayer.boundsInParentProperty(),
 				handleLayer.boundsInParentProperty() });
+		
+		scrollPane.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldValue, Bounds newValue) {
+				System.out.println("viewport width " + newValue.getWidth());
+			}
+		});
+		gridLayer.minWidthProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+				System.out.println("grid min width (unscaled)" + (newValue.doubleValue()));
+			}
+		});
+		gridLayer.prefWidthProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+				System.out.println("grid pref width (unscaled)" + (newValue.doubleValue()));
+			}
+		});
+		gridLayer.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Bounds> observable,
+					Bounds oldValue, Bounds newValue) {
+				System.out.println("Bounds in parent " + newValue.getWidth());
+			}
+		});
 
 		// create content and feedback
 		final FXGeometryNode red = new FXGeometryNode<org.eclipse.gef4.geometry.planar.Rectangle>(
@@ -112,7 +148,8 @@ public class GroupLayersSetup extends Application {
 		red.setStrokeWidth(25);
 		blue.setStrokeWidth(25);
 
-		contentLayer.getChildren().addAll(red, q(50, Color.RED));
+		Rectangle smallRed = q(50, Color.RED);
+		contentLayer.getChildren().addAll(red, smallRed);
 		final Rectangle feedbackElement = q(50, Color.BLUE);
 		feedbackElement.setLayoutX(200);
 		feedbackElement.setLayoutY(0);
@@ -153,8 +190,22 @@ public class GroupLayersSetup extends Application {
 		}.register(red, blue);
 
 		draggable(red);
+		scalable(smallRed);
 
 		return scene;
+	}
+
+	private void scalable(Node n) {
+		n.addEventHandler(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(final MouseEvent event) {
+				if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
+					Scale s = Scale.scale(scaleProperty.get().getX() + 0.1, scaleProperty.get().getY() + 0.1);
+					scaleProperty.get().setX(s.getX());
+					scaleProperty.get().setY(s.getY());
+				}
+			}
+		});
 	}
 
 	private void showBg(final Node layer, final Rectangle bg) {
@@ -163,7 +214,6 @@ public class GroupLayersSetup extends Application {
 			public void changed(
 					final ObservableValue<? extends Bounds> observable,
 					final Bounds oldValue, final Bounds newValue) {
-				System.out.println("show bg for " + layer);
 				bg.setX(newValue.getMinX() + layer.getLayoutX());
 				bg.setY(newValue.getMinY() + layer.getLayoutY());
 				bg.setWidth(newValue.getWidth());

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
-import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -30,6 +29,8 @@ import javafx.scene.transform.Scale;
 public class FXGridLayer extends Pane {
 
 	private class GridCanvas extends Canvas {
+
+		private static final int GRID_THRESHOLD = 5000000;
 
 		public GridCanvas() {
 			// Redraw canvas when size changes.
@@ -74,23 +75,24 @@ public class FXGridLayer extends Pane {
 			gc.setFill(Color.WHITE);
 			gc.fillRect(0, 0, width, height);
 
-			// don't paint grid if size is to large (TODO: remove canvas (make
-			// invisible)
-			if ((width * height > 5000000)) {
+			// don't paint grid points if size is to large
+			if ((width * height > GRID_THRESHOLD)) {
 				return;
 			}
 
-			// TODO: extract (unscaled) grid size into properties
-			gc.setStroke(Color.GREY);
-			final Scale scale = scaleProperty.get();
-			for (double x = ((-getParent().getLayoutX()) / scale.getX())
-					% gridWidthProperty.get(); x < width; x += gridWidthProperty
-					.get()) {
-				for (double y = ((-getParent().getLayoutY()) / scale.getY())
-						% gridHeightProperty.get(); y < height; y += gridHeightProperty
-						.get()) {
-					// TODO: use circle
-					gc.strokeLine(x, y, x, y);
+			gc.setFill(Color.GREY);
+			final Scale scale = gridScaleProperty.get();
+
+			double scaledGridCellWidth = gridCellWidthProperty.get()
+					* scale.getX();
+			double scaledGridCellHeight = gridCellHeightProperty.get()
+					* scale.getY();
+			for (double x = (-getParent().getLayoutX()) % scaledGridCellWidth; x < width; x += scaledGridCellWidth) {
+				for (double y = (-getParent().getLayoutY())
+						% scaledGridCellHeight; y < height; y += scaledGridCellHeight) {
+					gc.fillRect(Math.floor(x) - 0.5 * scale.getX(),
+							Math.floor(y) - 0.5 * scale.getY(), scale.getX(),
+							scale.getY());
 				}
 			}
 		}
@@ -98,27 +100,17 @@ public class FXGridLayer extends Pane {
 
 	private final FXGridLayer.GridCanvas gridCanvas;
 
-	private final SimpleObjectProperty<Scale> scaleProperty = new SimpleObjectProperty<Scale>(
+	private final SimpleObjectProperty<Scale> gridScaleProperty = new SimpleObjectProperty<Scale>(
 			new Scale());
 
-	private final DoubleProperty gridHeightProperty = new SimpleDoubleProperty(
+	private final DoubleProperty gridCellHeightProperty = new SimpleDoubleProperty(
 			10);
-	private final DoubleProperty gridWidthProperty = new SimpleDoubleProperty(
+	private final DoubleProperty gridCellWidthProperty = new SimpleDoubleProperty(
 			10);
 
 	public FXGridLayer() {
-		final Scale scale = new Scale();
-		getTransforms().add(scale);
-		scaleProperty.addListener(new ChangeListener<Scale>() {
-			@Override
-			public void changed(
-					final ObservableValue<? extends Scale> observable,
-					final Scale oldValue, final Scale newValue) {
-				scale.setX(newValue.getX());
-				scale.setY(newValue.getY());
-			}
-		});
 		gridCanvas = new GridCanvas();
+		gridCanvas.setManaged(false);
 		getChildren().add(gridCanvas);
 		setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 		gridCanvas.widthProperty().bind(widthProperty());
@@ -126,7 +118,16 @@ public class FXGridLayer extends Pane {
 		setPickOnBounds(false);
 		setMouseTransparent(true);
 
-		gridWidthProperty.addListener(new ChangeListener<Number>() {
+		gridScaleProperty.addListener(new ChangeListener<Scale>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Scale> observable,
+					Scale oldValue, Scale newValue) {
+				gridCanvas.repaintGrid();
+			}
+
+		});
+		gridCellWidthProperty.addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(
 					final ObservableValue<? extends Number> observable,
@@ -134,7 +135,7 @@ public class FXGridLayer extends Pane {
 				gridCanvas.repaintGrid();
 			}
 		});
-		gridHeightProperty.addListener(new ChangeListener<Number>() {
+		gridCellHeightProperty.addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(
 					final ObservableValue<? extends Number> observable,
@@ -161,45 +162,38 @@ public class FXGridLayer extends Pane {
 	}
 
 	public void bindMinSizeToBounds(
-			final ReadOnlyObjectProperty<Bounds> unscaledMinSizeProperty) {
+			final ReadOnlyObjectProperty<Bounds> minSizeProperty) {
 		minWidthProperty().bind(new DoubleBinding() {
 			{
-				super.bind(unscaledMinSizeProperty, scaleProperty.get()
-						.xProperty());
+				super.bind(minSizeProperty, gridScaleProperty.get().xProperty());
 			}
 
 			@Override
 			protected double computeValue() {
-				if (unscaledMinSizeProperty.get() == null) {
+				if (minSizeProperty.get() == null) {
 					return 0;
 				}
-				return Math
-						.ceil(((unscaledMinSizeProperty.get().getWidth() / scaleProperty
-								.get().getX()) - 1));
+				return minSizeProperty.get().getWidth();
 			}
 		});
 
 		minHeightProperty().bind(new DoubleBinding() {
 			{
-				super.bind(unscaledMinSizeProperty, scaleProperty.get()
-						.yProperty());
+				super.bind(minSizeProperty, gridScaleProperty.get().yProperty());
 			}
 
 			@Override
 			protected double computeValue() {
-				if (unscaledMinSizeProperty.get() == null) {
+				if (minSizeProperty.get() == null) {
 					return 0;
 				}
-				return Math
-						.ceil((unscaledMinSizeProperty.get().getHeight() / scaleProperty
-								.get().getY()) - 1);
+				return minSizeProperty.get().getHeight();
 			}
 		});
 	}
 
 	public void bindPrefSizeToUnionedBounds(
 			@SuppressWarnings("unchecked") final ReadOnlyObjectProperty<Bounds>... boundsProperties) {
-
 		layoutXProperty().bind(new DoubleBinding() {
 			{
 				super.bind(boundsProperties);
@@ -214,7 +208,6 @@ public class FXGridLayer extends Pane {
 				return minX;
 			}
 		});
-
 		layoutYProperty().bind(new DoubleBinding() {
 			{
 				super.bind(boundsProperties);
@@ -229,63 +222,52 @@ public class FXGridLayer extends Pane {
 				return minY;
 			}
 		});
-
 		prefWidthProperty().bind(new DoubleBinding() {
 			{
-				final Observable[] observables = new Observable[boundsProperties.length + 2];
-				observables[0] = layoutXProperty();
-				observables[1] = scaleProperty.get().xProperty();
-				for (int i = 0; i < boundsProperties.length; i++) {
-					observables[i + 2] = boundsProperties[i];
-				}
-				super.bind(observables);
+				super.bind(boundsProperties);
 			}
 
 			@Override
 			protected double computeValue() {
+				double minX = 0;
 				double maxX = 0;
 				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
+					minX = Math.min(minX, b.get().getMinX());
 					maxX = Math.max(maxX, b.get().getMaxX());
 				}
-				return maxX / scaleProperty.get().getX()
-						- layoutXProperty().get() / scaleProperty.get().getX();
+				// fill up to viewport width
+				return maxX - minX;
 			}
 		});
-
 		prefHeightProperty().bind(new DoubleBinding() {
 			{
-				final Observable[] observables = new Observable[boundsProperties.length + 2];
-				observables[0] = layoutYProperty();
-				observables[1] = scaleProperty.get().yProperty();
-				for (int i = 0; i < boundsProperties.length; i++) {
-					observables[i + 2] = boundsProperties[i];
-				}
-				super.bind(observables);
+				super.bind(boundsProperties);
 			}
 
 			@Override
 			protected double computeValue() {
+				double minY = 0;
 				double maxY = 0;
 				for (final ReadOnlyObjectProperty<Bounds> b : boundsProperties) {
+					minY = Math.min(minY, b.get().getMinY());
 					maxY = Math.max(maxY, b.get().getMaxY());
 				}
-				return maxY - layoutYProperty().get()
-						/ scaleProperty.get().getY();
+				// fill up to viewport height
+				return maxY - minY;
 			}
 		});
-
 	}
 
 	public void bindToScale(ReadOnlyObjectProperty<Scale> scaleProperty) {
-		this.scaleProperty.bind(scaleProperty);
+		this.gridScaleProperty.bind(scaleProperty);
 	}
 
 	public void setGridHeight(double height) {
-		gridHeightProperty.set(height);
+		gridCellHeightProperty.set(height);
 	}
 
 	public void setGridWidth(double height) {
-		gridWidthProperty.set(height);
+		gridCellWidthProperty.set(height);
 
 	}
 }
