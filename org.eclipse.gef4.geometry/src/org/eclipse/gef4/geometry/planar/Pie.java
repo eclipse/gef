@@ -15,7 +15,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * The {@link Pie} is a closed {@link AbstractArcBasedGeometry}. It is the

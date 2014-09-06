@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * <p>

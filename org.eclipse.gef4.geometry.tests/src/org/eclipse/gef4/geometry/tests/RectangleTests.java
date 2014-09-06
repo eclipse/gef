@@ -23,7 +23,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Polygon;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
 /**

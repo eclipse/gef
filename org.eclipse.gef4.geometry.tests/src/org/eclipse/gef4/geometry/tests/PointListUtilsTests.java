@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 import org.junit.Test;
 
 public class PointListUtilsTests {

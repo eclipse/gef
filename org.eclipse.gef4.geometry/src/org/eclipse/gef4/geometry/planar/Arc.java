@@ -14,7 +14,7 @@
 package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of an {@link Arc}, which is defined by its

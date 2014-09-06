@@ -20,7 +20,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.projective.Straight3D;
 import org.eclipse.gef4.geometry.projective.Vector3D;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents a straight line within 2-dimensional Euclidean space.

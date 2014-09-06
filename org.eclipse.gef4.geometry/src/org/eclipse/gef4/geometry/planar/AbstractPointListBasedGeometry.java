@@ -15,7 +15,7 @@ package org.eclipse.gef4.geometry.planar;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
+import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
 
 /**
  * Abstract superclass of geometries that are defined by means of a point list.

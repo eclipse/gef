@@ -11,7 +11,7 @@
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
  *     
  *******************************************************************************/
-package org.eclipse.gef4.geometry.utils;
+package org.eclipse.gef4.internal.geometry.utils;
 
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;

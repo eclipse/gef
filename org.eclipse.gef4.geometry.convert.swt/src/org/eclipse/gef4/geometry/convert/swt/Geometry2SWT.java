@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Polyline;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.geometry.planar.Region;
 import org.eclipse.gef4.geometry.planar.Ring;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
+import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
 import org.eclipse.swt.graphics.PathData;
 
 /**

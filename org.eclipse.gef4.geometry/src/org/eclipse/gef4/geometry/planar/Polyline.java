@@ -14,8 +14,8 @@ package org.eclipse.gef4.geometry.planar;
 
 import java.util.Arrays;
 
-import org.eclipse.gef4.geometry.utils.PointListUtils;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a polyline.

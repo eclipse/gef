@@ -19,8 +19,8 @@ import java.util.Set;
 import org.eclipse.gef4.geometry.euclidean.Straight;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.projective.Vector3D;
-import org.eclipse.gef4.geometry.utils.PointListUtils;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PointListUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * Represents the geometric shape of a line (or linear curve).

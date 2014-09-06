@@ -14,7 +14,7 @@ package org.eclipse.gef4.geometry.euclidean;
 
 import java.io.Serializable;
 
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * <p>

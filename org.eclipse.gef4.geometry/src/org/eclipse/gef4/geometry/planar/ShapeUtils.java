@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.planar.BezierCurve.IntervalPair;
-import org.eclipse.gef4.geometry.utils.PrecisionUtils;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 /**
  * The {@link ShapeUtils} class provides functionality that can be used for all
