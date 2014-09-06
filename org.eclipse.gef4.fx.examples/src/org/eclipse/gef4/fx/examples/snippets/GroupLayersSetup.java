@@ -96,7 +96,7 @@ public class GroupLayersSetup extends Application {
 		scene = new Scene(scrollPane, 800, 600);
 
 		// register the grid layer
-		gridLayer.bindToScale(scaleProperty);
+		gridLayer.gridScaleProperty().bind(scaleProperty);
 		gridLayer.bindMinSizeToBounds(scrollPane.viewportBoundsProperty());
 		gridLayer.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] {
 				contentLayer.boundsInParentProperty(),

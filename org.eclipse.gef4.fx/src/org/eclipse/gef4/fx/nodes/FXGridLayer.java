@@ -14,6 +14,7 @@ package org.eclipse.gef4.fx.nodes;
 
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -258,8 +259,8 @@ public class FXGridLayer extends Pane {
 		});
 	}
 
-	public void bindToScale(ReadOnlyObjectProperty<Scale> scaleProperty) {
-		this.gridScaleProperty.bind(scaleProperty);
+	public ObjectProperty<Scale> gridScaleProperty() {
+		return gridScaleProperty;
 	}
 
 	public void setGridHeight(double height) {

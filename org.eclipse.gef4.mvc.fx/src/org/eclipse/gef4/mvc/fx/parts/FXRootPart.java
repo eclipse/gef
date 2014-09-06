@@ -131,11 +131,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -168,8 +168,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 		scrollPane = createScrollPane(scrollPaneContent);
 
-		// TODO: provide a ZoomedLayer with a zoom property here
-		// we can remove the zoomProperty then and bind others to it
+		// TODO: the zoom property could be provided directly by the content
+		// layer (make it a ZoomableLyer/ScalableLayer).
 		zoomProperty.addListener(new ChangeListener<Scale>() {
 
 			@Override
@@ -183,13 +183,13 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			}
 		});
 
-		// TODO: turn content layer and grid layer into scalable layers, then
-		// bind
-		// grid layer scale to content layer scale and remove the zoom property
-		gridLayer.bindToScale(zoomProperty());
-		// TODO: move this into grid layer, so that contained canvas min and
-		// pref size are adjusted, rather then the layer sizes (this way we can
-		// separate the size computations from the scale compensation)
+		// bind grid scale to zoom property because we want to have a scaled
+		// grid (by default)
+		gridLayer.gridScaleProperty().bind(zoomProperty());
+
+		// TODO: These could each be extracted to a helper, because its generic
+		// functionality not specific to a grid layer (ensure layer is as large
+		// as viewport; ensure layer is as large as other layers).
 		gridLayer.bindMinSizeToBounds(getScrollPane().viewportBoundsProperty());
 		gridLayer.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] {
 				contentLayer.boundsInParentProperty(),
