@@ -185,6 +185,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 		// bind grid scale to zoom property because we want to have a scaled
 		// grid (by default)
+		// TODO: this could move into GridBehavior, so we could offer an option
+		// to scale grid or keep it constant there
 		gridLayer.gridScaleProperty().bind(zoomProperty());
 
 		// TODO: These could each be extracted to a helper, because its generic
