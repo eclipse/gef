@@ -17,7 +17,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
-import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -79,7 +78,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * intersection. We choose the scene coordinate system here. Therefore,
 		 * we need access to a local-to-scene-transform for the anchorage and
 		 * the anchored.
-		 *
+		 * 
 		 * Important: JavaFX Node provides a (lazily computed)
 		 * local-to-scene-transform property which we could access to get that
 		 * transform. Unfortunately, this property is not updated correctly,
@@ -87,19 +86,17 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * This is reflected in the different values of a) the
 		 * Node#localToScene(...) method, and b) transforming using the
 		 * concatenated local-to-parent-transforms.
-		 *
+		 * 
 		 * Therefore, we compute the local-to-scene-transform for anchorage and
 		 * anchored by concatenating the local-to-parent-transforms in the
 		 * hierarchy, respectively.
 		 */
-		AffineTransform anchorageToSceneTransform = JavaFX2Geometry
-				.toAffineTransform(getLocalToSceneTx(getAnchorage()));
+		AffineTransform anchorageToSceneTransform = getLocalToSceneTx(getAnchorage());
 		if (!isValidTransform(anchorageToSceneTransform)) {
 			anchorageToSceneTransform = new AffineTransform();
 		}
 
-		AffineTransform anchoredToSceneTransform = JavaFX2Geometry
-				.toAffineTransform(getLocalToSceneTx(anchored));
+		AffineTransform anchoredToSceneTransform = getLocalToSceneTx(anchored);
 		if (!isValidTransform(anchoredToSceneTransform)) {
 			anchoredToSceneTransform = new AffineTransform();
 		}
@@ -160,12 +157,14 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @param node
 	 * @return
 	 */
-	private Transform getLocalToSceneTx(Node node) {
-		Transform tx = node.getLocalToParentTransform();
+	private AffineTransform getLocalToSceneTx(Node node) {
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
+				.getLocalToParentTransform());
 		Node tmp = node;
 		while (tmp.getParent() != null) {
 			tmp = tmp.getParent();
-			tx = tmp.getLocalToParentTransform().createConcatenation(tx);
+			tx = JavaFX2Geometry.toAffineTransform(
+					tmp.getLocalToParentTransform()).concatenate(tx);
 		}
 		return tx;
 	}
