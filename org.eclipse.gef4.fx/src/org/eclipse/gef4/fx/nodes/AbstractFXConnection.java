@@ -36,7 +36,7 @@ import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public abstract class AbstractFXConnection<T extends ICurve> extends Group
-implements IFXConnection {
+		implements IFXConnection {
 
 	/**
 	 * CSS class assigned to decoration visuals.
@@ -484,6 +484,8 @@ implements IFXConnection {
 		setStartAnchor(anchors.get(0));
 		if (anchors.size() > 2) {
 			setWayAnchors(anchors.subList(1, anchors.size() - 1));
+		} else {
+			removeAllWayPoints();
 		}
 		setEndAnchor(anchors.get(anchors.size() - 1));
 	}

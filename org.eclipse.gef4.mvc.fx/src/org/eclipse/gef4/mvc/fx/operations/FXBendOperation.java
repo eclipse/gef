@@ -84,8 +84,15 @@ public class FXBendOperation extends AbstractOperation {
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
+			// System.out.println("--- execute bending ---");
+			// System.out.println("current connection:");
+			// printAnchors(connection.getAnchors());
+			// System.out.println("new anchors:");
+			// printAnchors(newAnchors);
 			connection.setAnchors(newAnchors);
-
+			// System.out.println("new connection:");
+			// printAnchors(connection.getAnchors());
+			// System.out.println();
 		}
 		return Status.OK_STATUS;
 	}
@@ -101,6 +108,34 @@ public class FXBendOperation extends AbstractOperation {
 	public List<IFXAnchor> getOldAnchors() {
 		return oldAnchors;
 	}
+
+	// private void printAnchors(List<IFXAnchor> anchors) {
+	// System.out
+	// .println("  start: "
+	// + anchors.get(0)
+	// + (anchors.get(0).isAttached(
+	// connection.getStartAnchorKey()) ? " ("
+	// + anchors.get(0).getPosition(
+	// connection.getStartAnchorKey()) + ")"
+	// : ""));
+	// for (int i = 1; i < anchors.size() - 1; i++) {
+	// System.out.println("  "
+	// + i
+	// + ". wp: "
+	// + anchors.get(i)
+	// + (anchors.get(i).isAttached(
+	// connection.getWayAnchorKey(i - 1)) ? " ("
+	// + anchors.get(i).getPosition(
+	// connection.getWayAnchorKey(i - 1)) + ")"
+	// : ""));
+	// }
+	// System.out.println("  end: "
+	// + anchors.get(anchors.size() - 1)
+	// + (anchors.get(anchors.size() - 1).isAttached(
+	// connection.getEndAnchorKey()) ? " ("
+	// + anchors.get(anchors.size() - 1).getPosition(
+	// connection.getEndAnchorKey()) + ")" : ""));
+	// }
 
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
@@ -121,8 +156,15 @@ public class FXBendOperation extends AbstractOperation {
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		if (connection != null) {
+			// System.out.println("--- undo bending ---");
+			// System.out.println("current connection:");
+			// printAnchors(connection.getAnchors());
+			// System.out.println("new anchors:");
+			// printAnchors(newAnchors);
 			connection.setAnchors(oldAnchors);
-
+			// System.out.println("new connection:");
+			// printAnchors(connection.getAnchors());
+			// System.out.println();
 		}
 		return Status.OK_STATUS;
 	}
