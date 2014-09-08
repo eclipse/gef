@@ -25,7 +25,6 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
-import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
@@ -177,17 +176,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 				.iterator().next();
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
-
-		// TODO: move into operation and ensure its also done on undo!!
-		SelectionModel<Node> selm = getHost().getRoot().getViewer()
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
-		// TODO: reselect all anchorages that were selected
-		if (anchorage instanceof IContentPart
-				&& selm.isSelected((IContentPart<Node>) anchorage)) {
-			selm.deselect(Collections.singleton((IContentPart<Node>) anchorage));
-			selm.select(Collections
-					.singletonList((IContentPart<Node>) anchorage));
-		}
 	}
 
 	private void setSegmentIndex(FXSegmentHandlePart part, int value) {

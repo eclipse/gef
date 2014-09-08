@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.List;
+import java.util.Set;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -26,11 +27,14 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * The {@link FXBendPolicy} can be used to manipulate the points constituting an
@@ -66,12 +70,34 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	@Override
 	public IUndoableOperation commit() {
 		if (op != null) {
+			// get current selection
+			IViewer<Node> viewer = getHost().getRoot().getViewer();
+			SelectionModel<Node> selectionModel = viewer
+					.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+			List<IContentPart<Node>> selection = selectionModel.getSelected();
+
+			// get selection without anchorages
+			List<IContentPart<Node>> selectionWithoutAnchorages = selectionModel
+					.getSelectionCopy();
+			Set<IVisualPart<Node>> anchorages = getHost().getAnchorages()
+					.keySet();
+			selectionWithoutAnchorages.removeAll(anchorages);
+
+			// build "deselect anchorages" operation
+			ChangeSelectionOperation<Node> deselectOperation = new ChangeSelectionOperation<Node>(
+					viewer, selection, selectionWithoutAnchorages);
+
+			// build "select anchorages" operation
+			ChangeSelectionOperation<Node> selectOperation = new ChangeSelectionOperation<Node>(
+					viewer, selectionWithoutAnchorages, selection);
+
+			// assemble operations
 			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 					op.getLabel());
 			fwd.add(op);
-			// TODO: deselect anchorages, fwd.add();
-			// TODO: select anchorages, fwd.add();
-			return op;
+			fwd.add(deselectOperation);
+			fwd.add(selectOperation);
+			return fwd;
 		}
 		return null;
 	}

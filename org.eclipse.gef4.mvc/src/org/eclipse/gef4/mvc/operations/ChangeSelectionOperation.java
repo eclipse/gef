@@ -39,7 +39,6 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR>> oldSelection;
 	private List<IContentPart<VR>> newSelection;
-	private boolean deselectAll = false;
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR>> newSelection) {
@@ -62,26 +61,12 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 		this.newSelection = new ArrayList<IContentPart<VR>>(newSelection);
 	}
 
-	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
-			List<IContentPart<VR>> oldSelection,
-			List<IContentPart<VR>> newSelection, boolean deselectAll) {
-		super(label);
-		this.viewer = viewer;
-		this.oldSelection = new ArrayList<IContentPart<VR>>(oldSelection);
-		this.newSelection = new ArrayList<IContentPart<VR>>(newSelection);
-		this.deselectAll = deselectAll;
-	}
-
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
-		if (deselectAll) {
-			selectionModel.deselectAll();
-			selectionModel.select(newSelection);
-		} else {
-
-		}
+		selectionModel.deselectAll();
+		selectionModel.select(newSelection);
 		return Status.OK_STATUS;
 	}
 
