@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.models;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -37,46 +41,115 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public class SelectionModel<VR> implements IPropertyChangeNotifier {
 
+	/**
+	 * <pre>
+	 * &quot;selection&quot;
+	 * </pre>
+	 *
+	 * The property name which is used for {@link PropertyChangeEvent}s.
+	 */
 	public static final String SELECTION_PROPERTY = "selection";
 
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
+
+	// TODO: Use OrderedSet (insertion order, like LinkedHashSet) instead of
+	// List + Set
 	private List<IContentPart<VR>> selection = new ArrayList<IContentPart<VR>>();
+	private Set<IContentPart<VR>> selectionSet = new HashSet<IContentPart<VR>>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	public void appendSelection(IContentPart<VR> editpart) {
+	/**
+	 * Appends the given {@link IContentPart}s to the current selection, i.e.
+	 * inserts them at the end of the selection.
+	 *
+	 * @param contentParts
+	 *            The {@link IContentPart}s which are appended to the selection.
+	 */
+	public void appendSelection(List<IContentPart<VR>> contentParts) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		selection.add(editpart);
+		for (IContentPart<VR> p : contentParts) {
+			if (!selectionSet.contains(p)) {
+				selection.add(p);
+				selectionSet.add(p);
+			}
+		}
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
-	public void deselect(IContentPart<VR> editpart) {
+	/**
+	 * Removes the given {@link IContentPart}s from the current selection.
+	 *
+	 * @param contentParts
+	 *            The {@link IContentPart}s which are removed from the
+	 *            selection.
+	 */
+	public void deselect(Collection<IContentPart<VR>> contentParts) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		selection.remove(editpart);
+		selection.removeAll(contentParts);
+		selectionSet.removeAll(contentParts);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
+	/**
+	 * Clears the current selection.
+	 */
 	public void deselectAll() {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.clear();
+		selectionSet.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
 
+	/**
+	 * Returns an unmodifiable list of the currently selected
+	 * {@link IContentPart}s.
+	 *
+	 * @return An unmodifiable list of the currently selected
+	 *         {@link IContentPart}s.
+	 */
 	public List<IContentPart<VR>> getSelected() {
 		return Collections.unmodifiableList(selection);
 	}
 
-	private List<IContentPart<VR>> getSelectionCopy() {
-		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
-				selection);
-		return oldSelection;
+	/**
+	 * Returns a modifiable list of the currently selected {@link IContentPart}
+	 * s.
+	 *
+	 * @return A modifiable list of the currently selected {@link IContentPart}
+	 *         s.
+	 */
+	public List<IContentPart<VR>> getSelectionCopy() {
+		return new ArrayList<IContentPart<VR>>(selection);
+	}
+
+	/**
+	 * Returns a {@link Set} view of the current selection.
+	 *
+	 * @return A {@link Set} view of the current selection.
+	 */
+	public Set<IContentPart<VR>> getSelectionSet() {
+		return Collections.unmodifiableSet(selectionSet);
+	}
+
+	/**
+	 * Returns <code>true</code> if the given {@link IContentPart} is part of
+	 * the current selection.
+	 *
+	 * @param contentPart
+	 *            The {@link IContentPart} which is checked for containment.
+	 * @return <code>true</code> if the {@link IContentPart} is contained by the
+	 *         current selection.
+	 */
+	public boolean isSelected(IContentPart<VR> contentPart) {
+		return selectionSet.contains(contentPart);
 	}
 
 	@Override
@@ -84,11 +157,40 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 		propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 
+	/**
+	 * Selects the given list of {@link IContentPart}s. The parts are inserted
+	 * at the beginning of the selection list.
+	 *
+	 * @param newlySelected
+	 *            The {@link IContentPart}s to select.
+	 */
 	public void select(List<IContentPart<VR>> newlySelected) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		selection.removeAll(newlySelected);
-		selection.addAll(0, newlySelected);
+		selectionSet.removeAll(newlySelected);
+		int i = 0;
+		for (IContentPart<VR> p : newlySelected) {
+			if (!selectionSet.contains(p)) {
+				selection.add(i++, p);
+				selectionSet.add(p);
+			}
+		}
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
 	}
+
+	/**
+	 * Replaces the whole selection with the given list of {@link IContentPart}
+	 * s.
+	 *
+	 * @param newSelection
+	 *            The list of {@link IContentPart}s constituting the new
+	 *            selection.
+	 */
+	public void updateSelection(List<IContentPart<VR>> newSelection) {
+		selection.clear();
+		selectionSet.clear();
+		select(newSelection);
+	}
+
 }

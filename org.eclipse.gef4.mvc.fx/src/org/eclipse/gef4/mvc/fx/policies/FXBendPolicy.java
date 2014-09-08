@@ -26,6 +26,7 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -45,7 +46,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
  * @author mwienand
  */
 public class FXBendPolicy extends AbstractPolicy<Node> implements
-ITransactional {
+		ITransactional {
 
 	// constants (TODO: make configurable)
 	protected static final double REMOVE_THRESHOLD = 10;
@@ -64,7 +65,15 @@ ITransactional {
 
 	@Override
 	public IUndoableOperation commit() {
-		return op;
+		if (op != null) {
+			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
+					op.getLabel());
+			fwd.add(op);
+			// TODO: deselect anchorages, fwd.add();
+			// TODO: select anchorages, fwd.add();
+			return op;
+		}
+		return null;
 	}
 
 	public void createWayPoint(int segmentIndex, Point mouseInScene) {

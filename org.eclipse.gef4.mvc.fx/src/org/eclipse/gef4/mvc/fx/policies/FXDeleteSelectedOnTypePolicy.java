@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -78,7 +77,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IContentPart<Node> findNewFocus(Set<Object> isSelected,
+	private IContentPart<Node> findNewFocus(Set<IContentPart<Node>> isSelected,
 			IContentPart<Node> part) {
 		if (isSelected.contains(part)) {
 			return null;
@@ -103,9 +102,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	protected ChangeFocusOperation<Node> getChangeFocusOperation(
 			IViewer<Node> viewer) {
 		// focus first un-selected content leaf
-		Set<Object> isSelected = new HashSet<Object>(viewer
+		Set<IContentPart<Node>> isSelected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected());
+				.getSelectionSet();
 		for (Object content : viewer.getAdapter(ContentModel.class)
 				.getContents()) {
 			IContentPart<Node> part = viewer.getContentPartMap().get(content);
@@ -157,9 +156,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 				if (deleteOperation != null) {
 					contentChildrenOperations.add(deleteOperation);
 					contentChildrenOperations
-					.add(new SynchronizeContentChildrenOperation<Node>(
-							"SynchronizeChildren",
-							(IContentPart<Node>) parent));
+							.add(new SynchronizeContentChildrenOperation<Node>(
+									"SynchronizeChildren",
+									(IContentPart<Node>) parent));
 				}
 			}
 
@@ -181,9 +180,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 					// synchronize content anchorages once per anchored
 					if (addedOperations) {
 						contentAnchoragesOperations
-						.add(new SynchronizeContentAnchoragesOperation<Node>(
-								"SynchronizeAnchorages",
-								(IContentPart<Node>) anchored));
+								.add(new SynchronizeContentAnchoragesOperation<Node>(
+										"SynchronizeAnchorages",
+										(IContentPart<Node>) anchored));
 					}
 				}
 			}

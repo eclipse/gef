@@ -182,8 +182,9 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		SelectionModel<Node> selm = getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 		// TODO: reselect all anchorages that were selected
-		if (selm.getSelected().contains(anchorage)) {
-			selm.deselect((IContentPart<Node>) anchorage);
+		if (anchorage instanceof IContentPart
+				&& selm.isSelected((IContentPart<Node>) anchorage)) {
+			selm.deselect(Collections.singleton((IContentPart<Node>) anchorage));
 			selm.select(Collections
 					.singletonList((IContentPart<Node>) anchorage));
 		}

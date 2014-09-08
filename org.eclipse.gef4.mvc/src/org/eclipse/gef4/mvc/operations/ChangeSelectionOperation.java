@@ -28,7 +28,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 
 	/**
 	 * <pre>
-	 * &quot;change-focus&quot;
+	 * &quot;change-selection&quot;
 	 * </pre>
 	 *
 	 * The default label for this operation (i.e. used if no label is
@@ -39,11 +39,12 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR>> oldSelection;
 	private List<IContentPart<VR>> newSelection;
+	private boolean deselectAll = false;
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
 			List<IContentPart<VR>> newSelection) {
-		this(DEFAULT_LABEL, viewer, viewer.getAdapter(SelectionModel.class)
-				.getSelected(), newSelection);
+		this(DEFAULT_LABEL, viewer, viewer.<SelectionModel<VR>> getAdapter(
+				SelectionModel.class).getSelected(), newSelection);
 	}
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
@@ -61,12 +62,26 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 		this.newSelection = new ArrayList<IContentPart<VR>>(newSelection);
 	}
 
+	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
+			List<IContentPart<VR>> oldSelection,
+			List<IContentPart<VR>> newSelection, boolean deselectAll) {
+		super(label);
+		this.viewer = viewer;
+		this.oldSelection = new ArrayList<IContentPart<VR>>(oldSelection);
+		this.newSelection = new ArrayList<IContentPart<VR>>(newSelection);
+		this.deselectAll = deselectAll;
+	}
+
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
-		selectionModel.deselectAll();
-		selectionModel.select(newSelection);
+		if (deselectAll) {
+			selectionModel.deselectAll();
+			selectionModel.select(newSelection);
+		} else {
+
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -79,7 +94,8 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = viewer
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		selectionModel.deselectAll();
 		selectionModel.select(oldSelection);
 		return Status.OK_STATUS;

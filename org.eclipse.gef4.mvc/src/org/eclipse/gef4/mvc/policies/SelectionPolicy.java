@@ -28,7 +28,7 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 		IVisualPart<VR> host = getHost();
 
 		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
-				.getAdapter(SelectionModel.class);
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 
 		// retrieve old selection
 		List<IContentPart<VR>> oldSelection = new ArrayList<IContentPart<VR>>(
@@ -42,7 +42,8 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 				if (append) {
 					// deselect the target edit part (ensure we get a new
 					// primary selection)
-					selectionModel.deselect((IContentPart<VR>) host);
+					selectionModel.deselect(Collections
+							.singleton((IContentPart<VR>) host));
 				} else {
 					// target should become the new primary selection
 					// selectionModel.select(targetEditPart);
@@ -62,5 +63,4 @@ public class SelectionPolicy<VR> extends AbstractPolicy<VR> {
 			}
 		}
 	}
-
 }
