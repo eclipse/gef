@@ -13,7 +13,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Provider;
 
 public class VisualOutlineGeometryProvider implements
-		IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
+IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
 
 	private IVisualPart<Node> host;
 
@@ -41,10 +41,10 @@ public class VisualOutlineGeometryProvider implements
 			Node curveNode = ((IFXConnection) visual).getCurveNode();
 			if (curveNode instanceof FXGeometryNode) {
 				return FXUtils.localToParent(curveNode,
-						((FXGeometryNode) curveNode).getGeometry());
+						((FXGeometryNode<?>) curveNode).getGeometry());
 			}
 		} else if (visual instanceof FXGeometryNode) {
-			return ((FXGeometryNode) visual).getGeometry();
+			return ((FXGeometryNode<?>) visual).getGeometry();
 		}
 		return JavaFX2Geometry.toRectangle(visual.getLayoutBounds());
 	}

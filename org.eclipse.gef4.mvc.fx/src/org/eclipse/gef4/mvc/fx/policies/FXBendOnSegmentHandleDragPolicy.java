@@ -153,7 +153,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			for (FXSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
-						.getSegmentParameter() == 1)) {
+								.getSegmentParameter() == 1)) {
 					p.setSegmentIndex(p.getSegmentIndex() + 1);
 				}
 			}
@@ -180,7 +180,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 		// TODO: move into operation and ensure its also done on undo!!
 		SelectionModel<Node> selm = getHost().getRoot().getViewer()
-				.getAdapter(SelectionModel.class);
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 		// TODO: reselect all anchorages that were selected
 		if (selm.getSelected().contains(anchorage)) {
 			selm.deselect((IContentPart<Node>) anchorage);

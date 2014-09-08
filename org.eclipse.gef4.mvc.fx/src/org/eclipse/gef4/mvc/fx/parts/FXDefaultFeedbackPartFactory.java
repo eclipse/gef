@@ -74,8 +74,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IContentPart<Node> target = targets.iterator().next();
 
 		final Provider<IGeometry> hoverFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey.get(Provider.class,
-						HOVER_FEEDBACK_GEOMETRY_PROVIDER));
+				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+						Provider.class, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 		if (hoverFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 
@@ -115,10 +115,12 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			// TODO: need own providers for link feedback (computation might be
 			// different)
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
-					.getAdapter(AdapterKey.get(Provider.class,
+					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+							Provider.class,
 							SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
 			final Provider<IGeometry> anchoredGeometryProvider = anchored
-					.getAdapter(AdapterKey.get(Provider.class,
+					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+							Provider.class,
 							SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
 			if (anchoredGeometryProvider != null
 					&& anchorageGeometryProvider != null) {
@@ -196,8 +198,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		// selection outline feedback
 		final IContentPart<Node> target = targets.iterator().next();
 		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
-				.getAdapter(AdapterKey.get(Provider.class,
-						SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
+						Provider.class, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 

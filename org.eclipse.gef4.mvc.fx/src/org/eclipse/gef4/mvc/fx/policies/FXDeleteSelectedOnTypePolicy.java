@@ -103,8 +103,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	protected ChangeFocusOperation<Node> getChangeFocusOperation(
 			IViewer<Node> viewer) {
 		// focus first un-selected content leaf
-		Set<Object> isSelected = new HashSet<Object>(viewer.getAdapter(
-				SelectionModel.class).getSelected());
+		Set<Object> isSelected = new HashSet<Object>(viewer
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+				.getSelected());
 		for (Object content : viewer.getAdapter(ContentModel.class)
 				.getContents()) {
 			IContentPart<Node> part = viewer.getContentPartMap().get(content);
@@ -119,8 +120,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 	protected ChangeHoverOperation<Node> getChangeHoverOperation(
 			IViewer<Node> viewer) {
-		IVisualPart<Node> hover = viewer.getAdapter(HoverModel.class)
-				.getHover();
+		IVisualPart<Node> hover = viewer.<HoverModel<Node>> getAdapter(
+				HoverModel.class).getHover();
 		ChangeHoverOperation<Node> changeHoverOperation = null;
 		if (hover == getHost()) {
 			changeHoverOperation = new ChangeHoverOperation<Node>(viewer, null);
@@ -229,8 +230,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 		// get current selection
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<IContentPart<Node>> selected = viewer.getAdapter(
-				SelectionModel.class).getSelected();
+		List<IContentPart<Node>> selected = viewer
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+				.getSelected();
 
 		// if no parts are selected, we do not delete anything
 		if (selected.isEmpty()) {

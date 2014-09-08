@@ -1,7 +1,5 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
-import java.util.Calendar;
-
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

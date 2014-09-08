@@ -99,8 +99,9 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 
 		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
 				&& viewer.getAdapter(FocusModel.class).getFocused() == anchorage;
-		List<IContentPart<Node>> selected = viewer.getAdapter(
-				SelectionModel.class).getSelected();
+		List<IContentPart<Node>> selected = viewer
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
+				.getSelected();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
 			getVisual().setEffect(getPrimarySelectionFeedbackEffect(focused));

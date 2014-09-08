@@ -55,7 +55,8 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	public List<IContentPart<Node>> getTargetParts() {
-		return getHost().getRoot().getViewer().getAdapter(SelectionModel.class)
+		return getHost().getRoot().getViewer()
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
 	}
 
