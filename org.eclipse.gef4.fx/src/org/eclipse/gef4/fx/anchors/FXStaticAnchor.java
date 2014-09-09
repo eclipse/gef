@@ -25,7 +25,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 public class FXStaticAnchor extends AbstractFXAnchor {
 
 	// TODO: expose reference position as a property, and make sure positions
-	// are re-compute when anchorage or reference position changes.
+	// are re-computed when anchorage or reference position changes.
 	private Point referencePosition;
 
 	/**
@@ -65,17 +65,24 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	}
 
 	@Override
-	protected void recomputePositions(Node anchored) {
+	public void recomputePosition(AnchorKey key) {
 		// in case an anchorage is set, the position is interpreted to be in its
 		// local coordinate system, so transform it into scene coordinates
+		Node anchored = key.getAnchored();
 		Node anchorage = getAnchorage();
 		Point positionInScene = anchorage == null ? referencePosition
 				: JavaFX2Geometry.toPoint(anchorage.localToScene(
 						referencePosition.x, referencePosition.y));
 		Point positionInAnchoredLocal = JavaFX2Geometry.toPoint(anchored
 				.sceneToLocal(positionInScene.x, positionInScene.y));
+		positionProperty().put(key, positionInAnchoredLocal);
+	}
+
+	@Override
+	protected void recomputePositions(Node anchored) {
 		for (AnchorKey key : getKeys().get(anchored)) {
-			positionProperty().put(key, positionInAnchoredLocal);
+			recomputePosition(key);
 		}
 	}
+
 }

@@ -186,6 +186,14 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		return true;
 	}
 
+	@Override
+	public void recomputePosition(AnchorKey key) {
+		Point referencePoint = referencePointProperty.get(key);
+		if (referencePoint != null) {
+			recomputePosition(key, referencePoint);
+		}
+	}
+
 	/**
 	 * Recomputes the position of this anchor w.r.t. the given anchored
 	 * {@link Node} and reference {@link Point}. The

@@ -107,7 +107,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			}
 		}
 
-		recomputePositions(key.getAnchored());
+		recomputePosition(key);
 	}
 
 	private VisualChangeListener createVCL(final Node anchored) {
@@ -192,6 +192,8 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	public ReadOnlyMapProperty<AnchorKey, Point> positionProperty() {
 		return positionProperty.getReadOnlyProperty();
 	}
+
+	abstract public void recomputePosition(AnchorKey key);
 
 	protected abstract void recomputePositions(Node anchored);
 
