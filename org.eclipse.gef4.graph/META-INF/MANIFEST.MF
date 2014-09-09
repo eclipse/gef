@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Graph
 Bundle-SymbolicName: org.eclipse.gef4.graph
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: eclipse.org
+Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.graph;x-internal:=true

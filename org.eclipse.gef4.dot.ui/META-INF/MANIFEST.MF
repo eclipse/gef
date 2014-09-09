@@ -32,3 +32,4 @@ Export-Package: org.eclipse.gef4.internal.dot;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser.ui.labeling;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser.ui.outline;x-internal:=true,
  org.eclipse.gef4.internal.dot.parser.ui.quickfix;x-internal:=true
+Bundle-Vendor: Eclipse.org
