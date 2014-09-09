@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -77,8 +77,8 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IContentPart<Node> findNewFocus(Set<IContentPart<Node>> isSelected,
-			IContentPart<Node> part) {
+	private IContentPart<Node> findNewFocus(
+			Collection<IContentPart<Node>> isSelected, IContentPart<Node> part) {
 		if (isSelected.contains(part)) {
 			return null;
 		}
@@ -102,9 +102,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 	protected ChangeFocusOperation<Node> getChangeFocusOperation(
 			IViewer<Node> viewer) {
 		// focus first un-selected content leaf
-		Set<IContentPart<Node>> isSelected = viewer
+		List<IContentPart<Node>> isSelected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelectionSet();
+				.getSelected();
 		for (Object content : viewer.getAdapter(ContentModel.class)
 				.getContents()) {
 			IContentPart<Node> part = viewer.getContentPartMap().get(content);

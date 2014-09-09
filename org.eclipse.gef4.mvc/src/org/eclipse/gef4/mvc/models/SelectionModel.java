@@ -53,9 +53,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
-	// TODO: Use OrderedSet (insertion order, like LinkedHashSet) instead of
-	// List + Set
-	private List<IContentPart<VR>> selection = new ArrayList<IContentPart<VR>>();
+	private List<IContentPart<VR>> selectionList = new ArrayList<IContentPart<VR>>();
 	private Set<IContentPart<VR>> selectionSet = new HashSet<IContentPart<VR>>();
 
 	@Override
@@ -74,7 +72,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
 		for (IContentPart<VR> p : contentParts) {
 			if (!selectionSet.contains(p)) {
-				selection.add(p);
+				selectionList.add(p);
 				selectionSet.add(p);
 			}
 		}
@@ -91,7 +89,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void deselect(Collection<IContentPart<VR>> contentParts) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		selection.removeAll(contentParts);
+		selectionList.removeAll(contentParts);
 		selectionSet.removeAll(contentParts);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
@@ -102,7 +100,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void deselectAll() {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		selection.clear();
+		selectionList.clear();
 		selectionSet.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
 				oldSelection, getSelected());
@@ -116,7 +114,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *         {@link IContentPart}s.
 	 */
 	public List<IContentPart<VR>> getSelected() {
-		return Collections.unmodifiableList(selection);
+		return Collections.unmodifiableList(selectionList);
 	}
 
 	/**
@@ -126,17 +124,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return A modifiable list of the currently selected {@link IContentPart}
 	 *         s.
 	 */
-	public List<IContentPart<VR>> getSelectionCopy() {
-		return new ArrayList<IContentPart<VR>>(selection);
-	}
-
-	/**
-	 * Returns a {@link Set} view of the current selection.
-	 *
-	 * @return A {@link Set} view of the current selection.
-	 */
-	public Set<IContentPart<VR>> getSelectionSet() {
-		return Collections.unmodifiableSet(selectionSet);
+	private List<IContentPart<VR>> getSelectionCopy() {
+		return new ArrayList<IContentPart<VR>>(selectionList);
 	}
 
 	/**
@@ -166,12 +155,12 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 */
 	public void select(List<IContentPart<VR>> newlySelected) {
 		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		selection.removeAll(newlySelected);
+		selectionList.removeAll(newlySelected);
 		selectionSet.removeAll(newlySelected);
 		int i = 0;
 		for (IContentPart<VR> p : newlySelected) {
 			if (!selectionSet.contains(p)) {
-				selection.add(i++, p);
+				selectionList.add(i++, p);
 				selectionSet.add(p);
 			}
 		}
@@ -188,7 +177,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *            selection.
 	 */
 	public void updateSelection(List<IContentPart<VR>> newSelection) {
-		selection.clear();
+		selectionList.clear();
 		selectionSet.clear();
 		select(newSelection);
 	}

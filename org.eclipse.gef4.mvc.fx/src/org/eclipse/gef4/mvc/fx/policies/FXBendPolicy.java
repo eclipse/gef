@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -75,8 +76,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			List<IContentPart<Node>> selection = selectionModel.getSelected();
 
 			// get selection without host
-			List<IContentPart<Node>> selectionWithoutHost = selectionModel
-					.getSelectionCopy();
+			List<IContentPart<Node>> selectionWithoutHost = new ArrayList<IContentPart<Node>>(
+					selectionModel.getSelected());
 			selectionWithoutHost.remove(getHost());
 
 			// build "deselect anchorages" operation
