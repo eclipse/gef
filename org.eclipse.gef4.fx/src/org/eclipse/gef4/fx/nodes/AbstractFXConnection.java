@@ -63,24 +63,28 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
-
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
 
 	private ReadOnlyMapWrapper<AnchorKey, IFXAnchor> anchorsProperty = new ReadOnlyMapWrapper<AnchorKey, IFXAnchor>(
 			FXCollections.<AnchorKey, IFXAnchor> observableHashMap());
+	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
+
+	private boolean inRefresh = false;
 
 	// refresh geometry on position changes
 	protected MapChangeListener<? super AnchorKey, ? super Point> positionChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			refreshGeometry();
+			if (change.getKey().getAnchored() == getCurveNode()) {
+				refreshGeometry();
+			}
 		}
 	};
 
-	private boolean inRefresh = false;
+	private int nextWayPointNr = 0;
 
 	{
 		// disable resizing children which would change their layout positions
@@ -96,16 +100,17 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
 
-		AnchorKey anchorKey = getWayAnchorKey(index);
+		AnchorKey anchorKey = generateWayAnchorKey();
 		// Important: attach() before putting into the anchors-map, so that
 		// listeners on the anchors-map can retrieve the anchor position.
+		anchor.positionProperty().removeListener(positionChangeListener);
 		anchor.attach(anchorKey);
-		anchorsProperty.put(anchorKey, anchor);
-
 		// TODO: listen on map property to add position change listener
 		anchor.positionProperty().addListener(positionChangeListener);
+		wayAnchorKeys.add(anchorKey);
+		anchorsProperty.put(anchorKey, anchor);
 
-		refreshGeometry();
+		refreshGeometry(); // TODO: possibly unnecessary
 	}
 
 	@Override
@@ -231,9 +236,18 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	public abstract T computeGeometry(Point[] points);
 
+	private AnchorKey generateWayAnchorKey() {
+		if (nextWayPointNr == Integer.MAX_VALUE) {
+			// TODO: reorder way points, so that they use IDs 0 to N
+			nextWayPointNr = 0;
+		}
+		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX
+				+ nextWayPointNr++);
+	}
+
 	@Override
 	public List<IFXAnchor> getAnchors() {
-		int wayPointCount = getWayPointSize();
+		int wayPointCount = getWayAnchorsSize();
 		List<IFXAnchor> anchors = new ArrayList<>(wayPointCount + 2);
 
 		IFXAnchor startAnchor = getStartAnchor();
@@ -287,7 +301,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public Point[] getPoints() {
-		int wayPointCount = getWayPointSize();
+		int wayPointCount = getWayAnchorsSize();
 		Point[] points = new Point[wayPointCount + 2];
 
 		points[0] = getStartPoint();
@@ -348,20 +362,29 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchorsProperty.get(getWayAnchorKey(index));
 	}
 
-	@Override
+	// @Override
 	public AnchorKey getWayAnchorKey(int index) {
-		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
+		if (0 <= index && index < wayAnchorKeys.size()) {
+			return wayAnchorKeys.get(index);
+		}
+		return null;
+		// return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
 	}
 
 	@Override
 	public List<IFXAnchor> getWayAnchors() {
-		int wayPointsCount = getWayPointSize();
+		int wayPointsCount = getWayAnchorsSize();
 		List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>(
 				wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
 			wayPointAnchors.add(getWayAnchor(i));
 		}
 		return wayPointAnchors;
+	}
+
+	@Override
+	public int getWayAnchorsSize() {
+		return wayAnchorKeys.size();
 	}
 
 	@Override
@@ -385,13 +408,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 					.getPosition(getWayAnchorKey(i)));
 		}
 		return wayPoints;
-	}
-
-	private int getWayPointSize() {
-		int wayPointsCount = anchorsProperty.size()
-				- (getStartAnchor() != null ? 1 : 0)
-				- (getEndAnchor() != null ? 1 : 0);
-		return wayPointsCount;
 	}
 
 	@Override
@@ -451,7 +467,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void removeAllWayPoints() {
-		for (int i = getWayPointSize() - 1; i >= 0; i--) {
+		for (int i = getWayAnchorsSize() - 1; i >= 0; i--) {
 			removeWayPoint(i);
 		}
 	}
@@ -459,18 +475,25 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	@Override
 	public void removeWayPoint(int index) {
 		// check index out of range
-		if (index < 0 || index >= getWayPointSize()) {
+		if (index < 0 || index >= getWayAnchorsSize()) {
 			throw new IllegalArgumentException("Index out of range (index: "
-					+ index + ", size: " + getWayPointSize() + ").");
+					+ index + ", size: " + getWayAnchorsSize() + ").");
 		}
 
 		AnchorKey anchorKey = getWayAnchorKey(index);
-		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
-		if (oldAnchor != null) {
-			oldAnchor.detach(anchorKey);
-			// TODO: listen on map property to add position change listener
-			oldAnchor.positionProperty().removeListener(positionChangeListener);
+		if (!anchorsProperty.containsKey(anchorKey)) {
+			throw new IllegalStateException(
+					"Inconsistent state: way anchor not in map!");
 		}
+
+		wayAnchorKeys.remove(index);
+		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
+		if (oldAnchor == null) {
+			throw new IllegalStateException("old anchor is null!");
+		}
+
+		oldAnchor.detach(anchorKey);
+		oldAnchor.positionProperty().removeListener(positionChangeListener);
 
 		refreshGeometry();
 	}
@@ -510,9 +533,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			}
 			// Important: attach() before putting into anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
+			anchor.positionProperty().removeListener(positionChangeListener);
 			anchor.attach(anchorKey);
-			anchorsProperty.put(anchorKey, anchor);
+			// TODO: listen on anchors map to add the PCL
 			anchor.positionProperty().addListener(positionChangeListener);
+			anchorsProperty.put(anchorKey, anchor);
 			refreshGeometry();
 		}
 	}
@@ -558,9 +583,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			}
 			// Important: attach() before putting into the anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
+			anchor.positionProperty().removeListener(positionChangeListener);
 			anchor.attach(anchorKey);
-			anchorsProperty.put(anchorKey, anchor);
+			// TODO: listen on anchors map to add the PCL
 			anchor.positionProperty().addListener(positionChangeListener);
+			anchorsProperty.put(anchorKey, anchor);
 			refreshGeometry();
 		}
 	}
@@ -588,6 +615,9 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public void setWayAnchor(int index, IFXAnchor anchor) {
+		if (index < 0 || index >= wayAnchorKeys.size()) {
+			throw new IllegalArgumentException("index out of range.");
+		}
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
@@ -595,36 +625,33 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		AnchorKey anchorKey = getWayAnchorKey(index);
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
-			if (oldAnchor != null) {
-				// Important: detach() after removing from the anchors-map, so
-				// that listeners on the anchors-map can retrieve the anchor
-				// position.
-				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey);
-				oldAnchor.positionProperty().removeListener(
-						positionChangeListener);
-			}
+			// Important: detach() after removing from the anchors-map, so
+			// that listeners on the anchors-map can retrieve the anchor
+			// position.
+			anchorsProperty.remove(anchorKey);
+			oldAnchor.detach(anchorKey);
+			oldAnchor.positionProperty().removeListener(positionChangeListener);
 			// Important: attach() before putting into the anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
+			anchor.positionProperty().removeListener(positionChangeListener);
 			anchor.attach(anchorKey);
-			anchorsProperty.put(anchorKey, anchor);
+			// TODO: listen on anchors map to add the PCL
 			anchor.positionProperty().addListener(positionChangeListener);
-			refreshGeometry();
+			anchorsProperty.put(anchorKey, anchor);
+			refreshGeometry(); // TODO: possibly unnecessary
 		}
 	}
 
 	@Override
 	public void setWayAnchors(List<IFXAnchor> anchors) {
-		int wayPointsSize = getWayPointSize();
-		for (int i = 0; i < wayPointsSize; i++) {
-			if (i < anchors.size()) {
-				setWayAnchor(i, anchors.get(i));
-			} else {
-				for (int j = wayPointsSize - 1; j >= i; j--) {
-					removeWayPoint(j);
-				}
-				break;
-			}
+		int wayPointsSize = getWayAnchorsSize();
+		// Important: We have to do the removal of way anchors before
+		// changing/adding anchors.
+		for (int i = wayPointsSize - 1; i >= anchors.size(); i--) {
+			removeWayPoint(i);
+		}
+		for (int i = 0; i < wayPointsSize && i < anchors.size(); i++) {
+			setWayAnchor(i, anchors.get(i));
 		}
 		for (int i = wayPointsSize; i < anchors.size(); i++) {
 			addWayAnchor(i, anchors.get(i));
@@ -643,7 +670,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	public void setWayPoints(List<Point> wayPoints) {
 		removeAllWayPoints();
 		for (Point wp : wayPoints) {
-			addWayPoint(getWayPointSize(), wp);
+			addWayPoint(getWayAnchorsSize(), wp);
 		}
 	}
 

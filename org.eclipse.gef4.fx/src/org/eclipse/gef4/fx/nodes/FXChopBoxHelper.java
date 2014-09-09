@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -39,37 +41,74 @@ public class FXChopBoxHelper {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
+			// System.out.println("[" + connection.hashCode() +
+			// "] anchor change");
+			// System.out.println("start: " +
+			// astr(connection.getStartAnchor()));
+			// for (int i = 0; i < connection.getWayAnchorsSize(); i++) {
+			// System.out.println(connection.getWayAnchorKey(i).getId() + ": "
+			// + astr(connection.getWayAnchor(i)));
+			// }
+			// System.out.println("end: " + astr(connection.getEndAnchor()));
+			// System.out.println();
+
+			// System.out.println("  key: " + change.getKey().getId());
+			// System.out
+			// .println("  removed: "
+			// + change.getValueRemoved().hashCode()
+			// + " ("
+			// + change.getValueRemoved().getClass()
+			// .getSimpleName() + ")");
+			// System.out.println("  added: " +
+			// change.getValueAdded().hashCode());
+			// System.out.println();
+
 			if (change.getKey().equals(connection.getStartAnchorKey())) {
 				// start anchor change
-				if (change.getValueRemoved() != null) {
-					change.getValueRemoved().positionProperty()
-							.removeListener(startPCL);
+				if (change.getValueRemoved() != null
+						&& startPCL.containsKey(change.getValueRemoved())) {
+					change.getValueRemoved()
+							.positionProperty()
+							.removeListener(
+									startPCL.remove(change.getValueRemoved()));
 				}
 				if (change.getValueAdded() != null) {
-					change.getValueAdded().positionProperty()
-							.addListener(startPCL);
+					MapChangeListener<? super AnchorKey, ? super Point> pcl = createStartPCL(change
+							.getValueAdded());
+					startPCL.put(change.getValueAdded(), pcl);
+					change.getValueAdded().positionProperty().addListener(pcl);
 					updateStartReferencePoint();
 				}
 			} else if (change.getKey().equals(connection.getEndAnchorKey())) {
 				// end anchor key
-				if (change.getValueRemoved() != null) {
-					change.getValueRemoved().positionProperty()
-							.removeListener(endPCL);
+				if (change.getValueRemoved() != null
+						&& endPCL.containsKey(change.getValueRemoved())) {
+					change.getValueRemoved()
+							.positionProperty()
+							.removeListener(
+									endPCL.remove(change.getValueRemoved()));
 				}
 				if (change.getValueAdded() != null) {
-					change.getValueAdded().positionProperty()
-							.addListener(endPCL);
+					MapChangeListener<? super AnchorKey, ? super Point> pcl = createEndPCL(change
+							.getValueAdded());
+					endPCL.put(change.getValueAdded(), pcl);
+					change.getValueAdded().positionProperty().addListener(pcl);
 					updateEndReferencePoint();
 				}
 			} else {
 				// waypoint change
-				if (change.getValueRemoved() != null) {
-					change.getValueRemoved().positionProperty()
-							.removeListener(waypointPCL);
+				if (change.getValueRemoved() != null
+						&& waypointPCL.containsKey(change.getValueRemoved())) {
+					change.getValueRemoved()
+							.positionProperty()
+							.removeListener(
+									waypointPCL.remove(change.getValueRemoved()));
 				}
 				if (change.getValueAdded() != null) {
-					change.getValueAdded().positionProperty()
-							.addListener(waypointPCL);
+					MapChangeListener<? super AnchorKey, ? super Point> pcl = createWaypointPCL(change
+							.getValueAdded());
+					waypointPCL.put(change.getValueAdded(), pcl);
+					change.getValueAdded().positionProperty().addListener(pcl);
 					updateStartReferencePoint();
 					updateEndReferencePoint();
 					// TODO: updateWayRefPoint();
@@ -80,36 +119,9 @@ public class FXChopBoxHelper {
 
 	private IFXConnection connection;
 
-	private MapChangeListener<? super AnchorKey, ? super Point> startPCL = new MapChangeListener<AnchorKey, Point>() {
-		@Override
-		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			if (change.wasAdded()) {
-				updateEndReferencePoint();
-			}
-		}
-	};
-
-	private MapChangeListener<? super AnchorKey, ? super Point> endPCL = new MapChangeListener<AnchorKey, Point>() {
-		@Override
-		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			if (change.wasAdded()) {
-				updateStartReferencePoint();
-			}
-		}
-	};
-
-	private MapChangeListener<AnchorKey, Point> waypointPCL = new MapChangeListener<AnchorKey, Point>() {
-		@Override
-		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			if (change.wasAdded()) {
-				updateStartReferencePoint();
-				updateEndReferencePoint();
-			}
-		}
-	};
+	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> startPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
+	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> endPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
+	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> waypointPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
 
 	public FXChopBoxHelper(IFXConnection connection) {
 		this.connection = connection;
@@ -147,6 +159,10 @@ public class FXChopBoxHelper {
 		Node startNode = connection.getStartAnchor().getAnchorage();
 		if (startNode != null) {
 			for (Point p : wayPoints) {
+				if (p == null) {
+					// XXX: This should never happen.
+					continue;
+				}
 				Point2D local = startNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!startNode.contains(local)) {
@@ -161,6 +177,10 @@ public class FXChopBoxHelper {
 		if (endNode != null) {
 			for (int i = wayPoints.size() - 1; i >= 0; i--) {
 				Point p = wayPoints.get(i);
+				if (p == null) {
+					// XXX: This should never happen.
+					continue;
+				}
 				Point2D local = endNode.sceneToLocal(connection.getVisual()
 						.localToScene(p.x, p.y));
 				if (!endNode.contains(local)) {
@@ -203,6 +223,50 @@ public class FXChopBoxHelper {
 		}
 
 		return new Point[] { startReference, endReference };
+	}
+
+	private MapChangeListener<? super AnchorKey, ? super Point> createEndPCL(
+			final IFXAnchor anchor) {
+		return new MapChangeListener<AnchorKey, Point>() {
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (change.wasAdded() && anchor.isAttached(change.getKey())
+						&& change.getKey().equals(connection.getEndAnchorKey())) {
+					updateStartReferencePoint();
+				}
+			}
+		};
+	}
+
+	private MapChangeListener<? super AnchorKey, ? super Point> createStartPCL(
+			final IFXAnchor anchor) {
+		return new MapChangeListener<AnchorKey, Point>() {
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (change.wasAdded()
+						&& anchor.isAttached(change.getKey())
+						&& change.getKey().equals(
+								connection.getStartAnchorKey())) {
+					updateEndReferencePoint();
+				}
+			}
+		};
+	}
+
+	private MapChangeListener<AnchorKey, Point> createWaypointPCL(
+			final IFXAnchor anchor) {
+		return new MapChangeListener<AnchorKey, Point>() {
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (change.wasAdded() && anchor.isAttached(change.getKey())) {
+					// updateStartReferencePoint();
+					// updateEndReferencePoint();
+				}
+			}
+		};
 	}
 
 	private Point getCenter(Node anchorageNode) {

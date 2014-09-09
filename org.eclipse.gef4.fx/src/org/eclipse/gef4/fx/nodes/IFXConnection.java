@@ -65,7 +65,7 @@ public interface IFXConnection {
 	 */
 	public IFXAnchor getEndAnchor();
 
-	public AnchorKey getEndAnchorKey();
+	AnchorKey getEndAnchorKey();
 
 	/**
 	 * Returns the current end decoration of this connection. Per default, a
@@ -98,7 +98,7 @@ public interface IFXConnection {
 	 */
 	public IFXAnchor getStartAnchor();
 
-	public AnchorKey getStartAnchorKey();
+	AnchorKey getStartAnchorKey();
 
 	/**
 	 * Returns the current start decoration of this connection. Per default, a
@@ -135,14 +135,14 @@ public interface IFXConnection {
 	 */
 	public IFXAnchor getWayAnchor(int index);
 
-	public AnchorKey getWayAnchorKey(int index);
-
 	/**
 	 * Returns an unmodifiable list of way point {@link IFXAnchor}s.
 	 *
 	 * @return An unmodifiable list of way point {@link IFXAnchor}s.
 	 */
 	public List<IFXAnchor> getWayAnchors();
+
+	public int getWayAnchorsSize();
 
 	/**
 	 * Returns the specified way point (not anchor).
