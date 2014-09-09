@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Layout
 Bundle-SymbolicName: org.eclipse.gef4.layout;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Export-Package: org.eclipse.gef4.layout;x-internal:=true,
  org.eclipse.gef4.layout.algorithms;x-internal:=true,
  org.eclipse.gef4.layout.interfaces;x-internal:=true

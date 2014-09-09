@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Layout Documentation
 Bundle-SymbolicName: org.eclipse.gef4.layout.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.gef4.geometry;bundle-version="0.1.0";resolution:=optional,
  org.eclipse.gef4.geometry.doc;bundle-version="0.1.0"

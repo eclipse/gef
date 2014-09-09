@@ -3,7 +3,7 @@
       id="org.eclipse.gef4.layout.sdk"
       label="GEF4 Layout SDK"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org"
+      provider-name="Eclipse GEF"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
 

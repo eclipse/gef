@@ -6,5 +6,5 @@ Bundle-Version: 0.1.0.qualifier
 Require-Bundle: org.eclipse.swt;bundle-version="3.7.0",
  org.eclipse.gef4.geometry;bundle-version="0.1.0",
  org.eclipse.gef4.geometry.convert.swt;bundle-version="0.1.0"
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -13,4 +13,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.cloudio;x-internal:=true,
  org.eclipse.gef4.cloudio.layout;x-internal:=true,
  org.eclipse.gef4.cloudio.util;x-internal:=true
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF

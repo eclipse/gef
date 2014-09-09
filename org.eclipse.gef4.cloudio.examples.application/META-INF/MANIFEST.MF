@@ -10,4 +10,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef4.cloudio;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF

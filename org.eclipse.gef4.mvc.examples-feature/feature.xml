@@ -3,7 +3,7 @@
       id="org.eclipse.gef4.mvc.examples"
       label="GEF4 MVC Examples"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org"
+      provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.mvc.fx.ui.example"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

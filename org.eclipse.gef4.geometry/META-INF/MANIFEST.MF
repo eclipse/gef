@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Geometry
 Bundle-SymbolicName: org.eclipse.gef4.geometry
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.gef4.geometry.convert.awt;x-internal:=true,
  org.eclipse.gef4.geometry.euclidean;x-internal:=true,

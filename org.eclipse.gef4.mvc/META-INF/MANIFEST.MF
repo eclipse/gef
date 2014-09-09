@@ -25,4 +25,4 @@ Export-Package: org.eclipse.gef4.mvc;x-internal:=true,
  org.eclipse.gef4.mvc.policies;x-internal:=true,
  org.eclipse.gef4.mvc.tools;x-internal:=true,
  org.eclipse.gef4.mvc.viewer;x-internal:=true
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF

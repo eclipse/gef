@@ -4,7 +4,7 @@ Bundle-Name: GEF4 Zest.FX Example
 Bundle-SymbolicName: org.eclipse.gef4.zest.fx.example;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Require-Bundle: com.google.inject;bundle-version="[3.0.0,4.0.0)",
  org.eclipse.gef4.common;bundle-version="0.1.0",
  org.eclipse.gef4.geometry;bundle-version="0.1.0",

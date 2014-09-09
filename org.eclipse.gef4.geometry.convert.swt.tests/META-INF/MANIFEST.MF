@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Geometry SWT Conversions Tests
 Bundle-SymbolicName: org.eclipse.gef4.geometry.convert.swt.tests
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.8.1",
  org.eclipse.swt;bundle-version="3.7.0",

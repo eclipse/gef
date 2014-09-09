@@ -46,4 +46,4 @@ Import-Package: javafx.animation,
  javafx.scene.web,
  javafx.stage,
  javafx.util
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF

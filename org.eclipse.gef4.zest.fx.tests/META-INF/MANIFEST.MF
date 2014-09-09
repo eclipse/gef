@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GEF4 Zest.FX Tests
 Bundle-SymbolicName: org.eclipse.gef4.zest.fx.tests
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javafx.animation;version="[2.0.0,3.0.0)",
  javafx.application;version="[2.0.0,3.0.0)",

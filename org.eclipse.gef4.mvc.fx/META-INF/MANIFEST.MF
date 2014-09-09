@@ -50,6 +50,6 @@ Import-Package: javafx.animation,
  javafx.util,
  javax.annotation,
  javax.inject
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
 Bundle-Activator: org.eclipse.gef4.mvc.fx.MvcFxBundle
 Bundle-ActivationPolicy: lazy

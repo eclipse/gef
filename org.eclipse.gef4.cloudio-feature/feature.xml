@@ -3,7 +3,7 @@
       id="org.eclipse.gef4.cloudio"
       label="GEF4 Cloudio"
       version="0.1.0.qualifier"
-      provider-name="Eclipse.org"
+      provider-name="Eclipse GEF"
       plugin="org.eclipse.gef4.cloudio"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">

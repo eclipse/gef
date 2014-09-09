@@ -13,4 +13,4 @@ Export-Package: org.eclipse.gef4.mvc.ui;x-internal:=true,
  org.eclipse.gef4.mvc.ui.properties;x-internal:=true
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.gef4.mvc.ui.MvcUiBundle
-Bundle-Vendor: Eclipse.org
+Bundle-Vendor: Eclipse GEF
