@@ -33,7 +33,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 
 		setAdapter(
 				AdapterKey
-				.get(FXDeleteSelectedOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
+						.get(FXDeleteSelectedOnTypePolicy.DELETE_CONTENT_CHILDREN_POLICY_KEY),
 				new FXExampleDeleteContentChildrenPolicy());
 	}
 

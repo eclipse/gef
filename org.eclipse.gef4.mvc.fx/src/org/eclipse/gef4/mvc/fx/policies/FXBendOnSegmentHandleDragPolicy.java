@@ -133,12 +133,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 
-		// IMPORTANT: The anchorage should not be refreshed from model data
-		// while this policy is altering the part's visual.
-		// TODO: Disabling refreshVisual() should be done in an abstract drag
-		// policy.
-		anchorage.setRefreshVisual(false);
-
 		getBendPolicy(anchorage).init();
 
 		if (hp.getSegmentParameter() == 0.5) {
@@ -182,12 +176,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 				.iterator().next();
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
-
-		// IMPORTANT: After executing the (visual) operation, the anchorage is
-		// allowed to update itself from model data.
-		// TODO: Enabling refreshVisual() should be done in an abstract drag
-		// policy.
-		anchorage.setRefreshVisual(true);
 	}
 
 	private void setSegmentIndex(FXSegmentHandlePart part, int value) {

@@ -30,6 +30,8 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.SetRefreshVisualOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -88,13 +90,28 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			ChangeSelectionOperation<Node> selectOperation = new ChangeSelectionOperation<Node>(
 					viewer, selectionWithoutHost, selection);
 
-			// assemble operations
-			ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
+			// assemble deselect and select operations to form a reselect
+			ReverseUndoCompositeOperation reselectOperation = new ReverseUndoCompositeOperation(
+					"re-select");
+			reselectOperation.add(deselectOperation);
+			reselectOperation.add(selectOperation);
+
+			// assemble visual and reselect operations to form an update
+			ForwardUndoCompositeOperation updateOperation = new ForwardUndoCompositeOperation(
 					op.getLabel());
-			fwd.add(op);
-			fwd.add(deselectOperation);
-			fwd.add(selectOperation);
-			return fwd;
+			updateOperation.add(op);
+			updateOperation.add(reselectOperation);
+
+			// guard the update operation from model refreshes
+			ReverseUndoCompositeOperation guardedUpdateOperation = new ReverseUndoCompositeOperation(
+					op.getLabel());
+			guardedUpdateOperation.add(new SetRefreshVisualOperation<Node>(
+					getHost(), getHost().isRefreshVisual(), false));
+			guardedUpdateOperation.add(updateOperation);
+			guardedUpdateOperation.add(new SetRefreshVisualOperation<Node>(
+					getHost(), false, getHost().isRefreshVisual()));
+
+			return guardedUpdateOperation;
 		}
 		return op;
 	}
