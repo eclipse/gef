@@ -76,9 +76,7 @@ public class GraphRootPart extends FXRootPart {
 				ViewportModel.class);
 		double width = viewportModel.getWidth();
 		double height = viewportModel.getHeight();
-		// FIXME: insets of 20px should not be hard coded
-		PropertiesHelper.setBounds(context, new Rectangle(0, 0, width - 20,
-				height - 20));
+		PropertiesHelper.setBounds(context, new Rectangle(0, 0, width, height));
 
 		// apply layout algorithm
 		context.applyStaticLayout(true);
@@ -126,9 +124,9 @@ public class GraphRootPart extends FXRootPart {
 	protected void doDeactivate() {
 		super.doDeactivate();
 		getViewer().getAdapter(ContentModel.class)
-		.removePropertyChangeListener(contentChanged);
+				.removePropertyChangeListener(contentChanged);
 		getViewer().getAdapter(ViewportModel.class)
-		.removePropertyChangeListener(viewportChanged);
+				.removePropertyChangeListener(viewportChanged);
 
 		// un-load stylesheet
 		getVisual().getScene().getStylesheets().remove(STYLES_CSS_FILE);
