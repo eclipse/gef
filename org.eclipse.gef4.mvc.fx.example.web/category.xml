@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <bundle id="com.google.inject" version="0.0.0"/>
-   <bundle id="com.google.inject.assistedinject" version="0.0.0"/>
    <bundle id="com.google.inject.multibindings" version="0.0.0"/>
    <bundle id="javax.inject" version="0.0.0"/>
    <bundle id="javax.xml" version="0.0.0"/>
