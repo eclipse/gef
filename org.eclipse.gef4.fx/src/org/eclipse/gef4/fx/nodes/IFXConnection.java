@@ -261,8 +261,8 @@ public interface IFXConnection {
 	public void setStartPoint(Point start);
 
 	/**
-	 * Sets the {@link IFXAnchor} for the specified way point to the given
-	 * value.
+	 * Replaces an existing way point anchor (specified by index) with the given
+	 * {@link IFXAnchor}.
 	 *
 	 * @param index
 	 * @param wayAnchor
@@ -279,8 +279,8 @@ public interface IFXConnection {
 	public void setWayAnchors(List<IFXAnchor> wayAnchors);
 
 	/**
-	 * Sets the specified way point anchor to a static anchor pointing to the
-	 * given position.
+	 * Replaces an existing way point anchor (specified by index) with a new
+	 * static anchor yielding the given position.
 	 *
 	 * @param index
 	 * @param wayPoint

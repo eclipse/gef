@@ -28,10 +28,11 @@ public class FXCurveConnectionTests {
 		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);
 		connection.setStartPoint(startPoint);
-		connection.setWayPoint(0, wayPoint);
+		connection.addWayPoint(0, wayPoint);
 		connection.setEndPoint(endPoint);
 		assertEquals(startPoint, connection.getStartPoint());
 		assertEquals(wayPoint, connection.getWayPoint(0));
 		assertEquals(endPoint, connection.getEndPoint());
 	}
+	
 }
