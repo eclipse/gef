@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="MARS" sequenceNumber="4">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.inject.source" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
+<repository location="http://download.itemis.de/updates/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
+<repository location="http://download.eclipse.org/cbi/updates/license"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.fx.target.rcp.feature.feature.group" version="1.0.0.201408150602"/>
+<repository location="http://download.eclipse.org/efxclipse/runtime-released/1.0.0/site"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.6.2.v201407030533"/>
+<unit id="org.eclipse.sdk.ide" version="4.5.0.I20140806-2000"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.10.0.v20140519-0339"/>
+<repository location="http://download.eclipse.org/releases/mars"/>
+</location>
+</locations>
+</target>

@@ -18,7 +18,7 @@
 
 	<profiles>
 		<profile>
-			<id>Luna_4_4.target</id>
+			<id>LUNA.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -40,9 +40,9 @@
 									<artifacts>
 										<artifact>
 											<!-- note: the file name must be ${classifier}.target -->
-											<file>Luna_4_4.target</file>
+											<file>LUNA.target</file>
 											<type>target</type>
-											<classifier>LUNA_4_4</classifier>
+											<classifier>LUNA</classifier>
 										</artifact>
 									</artifacts>
 								</configuration>
