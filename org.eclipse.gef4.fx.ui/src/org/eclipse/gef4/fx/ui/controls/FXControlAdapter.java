@@ -137,8 +137,8 @@ public class FXControlAdapter<T extends Control> extends Region {
 			// Obtain FXCanvas by accessing outer class
 			// of
 			// FXCanvas$HostContainer
-			FXCanvas canvas = ReflectionUtils.getPrivateField(
-					ReflectionUtils.<Object> getPrivateField(window, "host"),
+			FXCanvas canvas = ReflectionUtils.getPrivateFieldValue(
+					ReflectionUtils.<Object> getPrivateFieldValue(window, "host"),
 					"this$0");
 			return canvas;
 		}

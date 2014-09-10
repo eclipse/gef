@@ -84,7 +84,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	};
 
-	private int nextWayPointNr = 0;
+	private int nextWayAnchorId = 0;
 
 	{
 		// disable resizing children which would change their layout positions
@@ -237,12 +237,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	public abstract T computeGeometry(Point[] points);
 
 	private AnchorKey generateWayAnchorKey() {
-		if (nextWayPointNr == Integer.MAX_VALUE) {
-			// TODO: reorder way points, so that they use IDs 0 to N
-			nextWayPointNr = 0;
+		if (nextWayAnchorId == Integer.MAX_VALUE) {
+			List<IFXAnchor> wayAnchors = getWayAnchors();
+			removeAllWayPoints();
+			nextWayAnchorId = 0;
+			setWayAnchors(wayAnchors);
 		}
 		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX
-				+ nextWayPointNr++);
+				+ nextWayAnchorId++);
 	}
 
 	@Override
@@ -362,13 +364,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchorsProperty.get(getWayAnchorKey(index));
 	}
 
-	// @Override
 	public AnchorKey getWayAnchorKey(int index) {
 		if (0 <= index && index < wayAnchorKeys.size()) {
 			return wayAnchorKeys.get(index);
 		}
 		return null;
-		// return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX + index);
 	}
 
 	@Override

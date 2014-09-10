@@ -191,13 +191,13 @@ public class SwtToFXGestureConverter implements GestureListener {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				final Object scenePeer = ReflectionUtils.getPrivateField(
+				final Object scenePeer = ReflectionUtils.getPrivateFieldValue(
 						canvas, "scenePeer");
 				AccessController.doPrivileged(new PrivilegedAction<Void>() {
 					@Override
 					public Void run() {
 						TKSceneListener sceneListener = ReflectionUtils
-								.getPrivateField(scenePeer, "sceneListener");
+								.getPrivateFieldValue(scenePeer, "sceneListener");
 						if (sceneListener == null) {
 							return null;
 						}
@@ -224,7 +224,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 						return null;
 					}
 
-				}, (AccessControlContext) ReflectionUtils.getPrivateField(
+				}, (AccessControlContext) ReflectionUtils.getPrivateFieldValue(
 						scenePeer, "accessCtrlCtx"));
 			}
 		});

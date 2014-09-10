@@ -76,7 +76,7 @@ public class FXCanvasEx extends FXCanvas {
 	}
 
 	public Window getStage() {
-		return ReflectionUtils.getPrivateField(this, "stage");
+		return ReflectionUtils.getPrivateFieldValue(this, "stage");
 	}
 
 	@Override
