@@ -141,20 +141,6 @@
 								</configuration>
 							</execution>
 							<execution>
-								<id>sign-com.google.inject.assistedinject</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>sh</executable>
-									<arguments>
-										<argument>-c</argument>
-										<argument>curl -o ${project.build.directory}/web-files/com.google.inject.assistedinject_3.0.0.v201402270930_resigned.jar -F filedata=@${project.build.directory}/web-files/com.google.inject.assistedinject_3.0.0.v201402270930.jar http://build.eclipse.org:31338/sign</argument>
-									</arguments>
-								</configuration>
-							</execution>
-							<execution>
 								<id>sign-com.google.inject.multibindings</id>
 								<phase>verify</phase>
 								<goals>
