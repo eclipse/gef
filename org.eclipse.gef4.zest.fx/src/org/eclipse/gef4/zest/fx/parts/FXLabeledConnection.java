@@ -16,23 +16,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.text.Text;
 
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-// TODO: this should be an IFXConnection
-public class FXLabeledConnection extends Group {
+public class FXLabeledConnection extends FXCurveConnection {
 
 	protected Text text = new Text();
-	protected FXCurveConnection connection = new FXCurveConnection() {
-		@Override
-		protected void refreshGeometry() {
-			super.refreshGeometry();
-			onBoundsChange();
-		}
-	};
 
 	private ChangeListener<Bounds> changeListener = new ChangeListener<Bounds>() {
 		@Override
@@ -43,19 +34,12 @@ public class FXLabeledConnection extends Group {
 	};
 
 	public FXLabeledConnection() {
-		this(new Text(), new FXCurveConnection());
+		this(new Text());
 	}
 
-	public FXLabeledConnection(Text text, FXCurveConnection curveConnection) {
+	public FXLabeledConnection(Text text) {
 		setTextShape(text);
-		setConnection(curveConnection);
-		setAutoSizeChildren(false);
-		getChildren().addAll(connection, text);
 		text.setTextOrigin(VPos.TOP);
-	}
-
-	public FXCurveConnection getConnection() {
-		return connection;
 	}
 
 	public String getLabel() {
@@ -63,22 +47,22 @@ public class FXLabeledConnection extends Group {
 	}
 
 	private void onBoundsChange() {
-		if (text == null || connection == null
-				|| connection.getCurveNode().getGeometry() == null) {
+		if (text == null || getCurveNode().getGeometry() == null) {
 			return;
 		}
 
 		Bounds textBounds = text.getLayoutBounds();
-		Rectangle bounds = connection.getCurveNode().getGeometry().getBounds();
+		Rectangle bounds = getCurveNode().getGeometry().getBounds();
 		text.setTranslateX(bounds.getX() + bounds.getWidth() / 2
 				- textBounds.getWidth() / 2);
 		text.setTranslateY(bounds.getY() + bounds.getHeight() / 2
 				- textBounds.getHeight());
 	}
 
-	public void setConnection(FXCurveConnection curveConnection) {
-		this.connection = curveConnection;
-		connection.layoutBoundsProperty().addListener(changeListener);
+	@Override
+	protected void refreshGeometry() {
+		super.refreshGeometry();
+		getChildren().add(text);
 	}
 
 	public void setLabel(String label) {

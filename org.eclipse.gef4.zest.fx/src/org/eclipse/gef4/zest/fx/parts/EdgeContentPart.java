@@ -76,16 +76,16 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	{
 		visual = new FXLabeledConnection();
-		new FXChopBoxHelper(visual.getConnection());
+		new FXChopBoxHelper(visual);
 		visual.getStyleClass().add(CSS_CLASS);
-		visual.getConnection().getCurveNode().getStyleClass().add("curve");
+		visual.getCurveNode().getStyleClass().add("curve");
 	}
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		FXCurveConnection connection = visual.getConnection();
+		FXCurveConnection connection = visual;
 		if (role.equals("START")) {
 			connection.setStartAnchor(anchor);
 		} else if (role.equals("END")) {
@@ -99,7 +99,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
-		FXCurveConnection connection = visual.getConnection();
+		FXCurveConnection connection = visual;
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
 			connection.setStartPoint(startPoint == null ? new Point()
@@ -119,7 +119,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		}
 
 		// decoration
-		FXCurveConnection connection = visual.getConnection();
+		FXCurveConnection connection = visual;
 		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs()
 				.get(Attr.Key.GRAPH_TYPE.toString()))) {
 			connection.setEndDecoration(new ArrowHead());
@@ -195,13 +195,10 @@ public class EdgeContentPart extends AbstractFXContentPart {
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(
-								visual,
-								FXUtils.localToParent(
-										visual.getConnection().getCurveNode(),
+						return FXUtils.localToParent(visual, FXUtils
+								.localToParent(visual.getCurveNode(),
 										((FXGeometryNode<?>) visual
-												.getConnection().getCurveNode())
-												.getGeometry()));
+												.getCurveNode()).getGeometry()));
 					}
 				});
 		setAdapter(AdapterKey.get(Provider.class,
@@ -209,13 +206,10 @@ public class EdgeContentPart extends AbstractFXContentPart {
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(
-								visual,
-								FXUtils.localToParent(
-										visual.getConnection().getCurveNode(),
+						return FXUtils.localToParent(visual, FXUtils
+								.localToParent(visual.getCurveNode(),
 										((FXGeometryNode<?>) visual
-												.getConnection().getCurveNode())
-												.getGeometry()));
+												.getCurveNode()).getGeometry()));
 					}
 				});
 	}
