@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.nodes;
+package org.eclipse.gef4.zest.fx.parts;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +19,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.text.Text;
 
+import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
 // TODO: this should be an IFXConnection

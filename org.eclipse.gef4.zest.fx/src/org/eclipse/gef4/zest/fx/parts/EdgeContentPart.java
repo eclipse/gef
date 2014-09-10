@@ -22,14 +22,11 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
-import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
@@ -75,7 +72,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
 
-	// TODO: refactor FXLabeledConnection
 	private FXLabeledConnection visual;
 
 	{
@@ -150,13 +146,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		} else {
 			curveNode.getStrokeDashArray().clear();
 		}
-	}
-
-	private Point getAnchorageCenter(IFXAnchor al) {
-		Node anchorage = al.getAnchorage();
-		Rectangle bounds = JavaFX2Geometry.toRectangle(anchorage
-				.localToScene(anchorage.getLayoutBounds()));
-		return bounds.getCenter();
 	}
 
 	@Override

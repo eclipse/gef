@@ -16,11 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polyline;
-import javafx.scene.text.Text;
 
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
-import org.eclipse.gef4.fx.nodes.FXLabeledConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Line;
@@ -57,8 +55,7 @@ public class FXConnectionSnippet extends FXApplication {
 
 	@Override
 	public Scene createScene() {
-		FXLabeledConnection connection = new FXLabeledConnection(new Text(),
-				new FXCurveConnection() {
+		FXCurveConnection connection = new FXCurveConnection() {
 					@Override
 					public ICurve computeGeometry(Point[] points) {
 						if (points == null || points.length < 2) {
@@ -66,17 +63,15 @@ public class FXConnectionSnippet extends FXApplication {
 						}
 						return PolyBezier.interpolateCubic(points);
 					}
-				});
-		connection.setLabel("FXLabeledConnection");
+				};
 
-		FXCurveConnection c = connection.getConnection();
-		c.setStartDecoration(new ArrowHead());
-		c.setEndDecoration(new ArrowHead());
+		connection.setStartDecoration(new ArrowHead());
+		connection.setEndDecoration(new ArrowHead());
 
-		c.setStartPoint(new Point(100, 100));
-		c.setEndPoint(new Point(300, 300));
+		connection.setStartPoint(new Point(100, 100));
+		connection.setEndPoint(new Point(300, 300));
 
-		c.addWayPoint(0, new Point(300, 100));
+		connection.addWayPoint(0, new Point(300, 100));
 
 		Pane root = new Pane();
 		root.getChildren().addAll(connection);

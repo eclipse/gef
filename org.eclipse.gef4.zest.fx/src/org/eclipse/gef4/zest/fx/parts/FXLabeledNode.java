@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  * 
  *******************************************************************************/
-package org.eclipse.gef4.fx.nodes;
+package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Arrays;
 
