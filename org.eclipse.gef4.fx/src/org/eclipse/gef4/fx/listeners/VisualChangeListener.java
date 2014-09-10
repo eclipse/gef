@@ -40,7 +40,6 @@ import javafx.scene.transform.Transform;
  */
 public abstract class VisualChangeListener {
 
-	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
 	private final ChangeListener<? super Bounds> boundsInLocalListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
@@ -51,9 +50,10 @@ public abstract class VisualChangeListener {
 			}
 		}
 	};
-	private Node observed;
 
+	private Node observed;
 	private Node parent;
+	private HashMap<ChangeListener<Transform>, Node> localToParentTransformListeners = new HashMap<>();
 
 	protected abstract void boundsInLocalChanged(Bounds oldBounds,
 			Bounds newBounds);
@@ -91,6 +91,10 @@ public abstract class VisualChangeListener {
 
 		// could not find a common parent
 		return null;
+	}
+
+	public boolean isRegistered() {
+		return parent != null;
 	}
 
 	/**
@@ -260,6 +264,10 @@ public abstract class VisualChangeListener {
 	}
 
 	public void unregister() {
+		if (!isRegistered()) {
+			return;
+		}
+
 		// remove bounds listener
 		observed.boundsInLocalProperty().removeListener(boundsInLocalListener);
 
@@ -267,8 +275,12 @@ public abstract class VisualChangeListener {
 		for (ChangeListener<Transform> l : localToParentTransformListeners
 				.keySet()) {
 			localToParentTransformListeners.get(l)
-			.localToParentTransformProperty().removeListener(l);
+					.localToParentTransformProperty().removeListener(l);
 		}
+
+		// reset fields
+		parent = null;
+		observed = null;
 		localToParentTransformListeners.clear();
 	}
 

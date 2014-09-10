@@ -63,14 +63,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	// visuals
 	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
+
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
-
 	private ReadOnlyMapWrapper<AnchorKey, IFXAnchor> anchorsProperty = new ReadOnlyMapWrapper<AnchorKey, IFXAnchor>(
 			FXCollections.<AnchorKey, IFXAnchor> observableHashMap());
-	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
 
+	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
 	private boolean inRefresh = false;
 
 	// refresh geometry on position changes
@@ -90,8 +90,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
-		setStartPoint(new Point());
-		setEndPoint(new Point());
 	}
 
 	@Override
@@ -276,7 +274,12 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public IFXAnchor getEndAnchor() {
-		return anchorsProperty.get(getEndAnchorKey());
+		IFXAnchor endAnchor = anchorsProperty.get(getEndAnchorKey());
+		if (endAnchor == null) {
+			setEndPoint(new Point());
+		}
+		endAnchor = anchorsProperty.get(getEndAnchorKey());
+		return endAnchor;
 	}
 
 	@Override
@@ -328,8 +331,12 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 
 	@Override
 	public IFXAnchor getStartAnchor() {
-		IFXAnchor anchor = anchorsProperty.get(getStartAnchorKey());
-		return anchor;
+		IFXAnchor startAnchor = anchorsProperty.get(getStartAnchorKey());
+		if (startAnchor == null) {
+			setStartPoint(new Point());
+		}
+		startAnchor = anchorsProperty.get(getStartAnchorKey());
+		return startAnchor;
 	}
 
 	@Override

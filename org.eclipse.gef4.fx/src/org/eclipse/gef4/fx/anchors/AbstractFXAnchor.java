@@ -38,19 +38,17 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			FXCollections.<AnchorKey, Point> observableHashMap());
 	private Map<Node, Set<AnchorKey>> keys = new HashMap<Node, Set<AnchorKey>>();
 	private Map<Node, VisualChangeListener> vcls = new HashMap<Node, VisualChangeListener>();
-	private boolean vclsRegistered = false;
+	private Set<Node> registerLater = new HashSet<Node>();
 
 	private ChangeListener<Scene> anchorageVisualSceneChangeListener = new ChangeListener<Scene>() {
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable,
 				Scene oldValue, Scene newValue) {
 			if (oldValue != null) {
-				vclsRegistered = false;
 				unregisterVCLs();
 			}
 			if (newValue != null) {
 				registerVCLs();
-				vclsRegistered = true;
 			}
 		}
 	};
@@ -60,7 +58,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		public void changed(ObservableValue<? extends Node> observable,
 				Node oldAnchorage, Node newAnchorage) {
 			if (oldAnchorage != null) {
-				vclsRegistered = false;
 				unregisterVCLs();
 				oldAnchorage.sceneProperty().removeListener(
 						anchorageVisualSceneChangeListener);
@@ -75,7 +72,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				Scene scene = newAnchorage.getScene();
 				if (scene != null) {
 					registerVCLs();
-					vclsRegistered = true;
 				}
 			}
 		}
@@ -102,12 +98,19 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		if (!vcls.containsKey(anchored)) {
 			VisualChangeListener vcl = createVCL(anchored);
 			vcls.put(anchored, vcl);
-			if (vclsRegistered) {
+			if (canRegister(anchored)) {
 				vcl.register(anchorageProperty.get(), anchored);
+			} else {
+				registerLater(anchored);
 			}
 		}
 
 		recomputePosition(key);
+	}
+
+	private boolean canRegister(Node anchored) {
+		return getAnchorage() != null && getAnchorage().getScene() != null
+				&& anchored != null && anchored.getScene() != null;
 	}
 
 	private VisualChangeListener createVCL(final Node anchored) {
@@ -153,7 +156,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			keys.remove(anchored);
 			VisualChangeListener vcl = vcls.remove(anchored);
 			// unregister if currently registered
-			if (vclsRegistered) {
+			if (vcl.isRegistered()) {
 				vcl.unregister();
 			}
 		}
@@ -197,9 +200,47 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	protected abstract void recomputePositions(Node anchored);
 
+	private void registerLater(final Node anchored) {
+		if (registerLater.contains(anchored)) {
+			return;
+		}
+		registerLater.add(anchored);
+
+		ChangeListener<Scene> changeListener = new ChangeListener<Scene>() {
+			@Override
+			public void changed(ObservableValue<? extends Scene> observed,
+					Scene oldScene, Scene newScene) {
+				if (getAnchorage() == null || getAnchorage().getScene() == null) {
+					return;
+				}
+				VisualChangeListener vcl = vcls.get(anchored);
+				if (vcl == null) {
+					return;
+				}
+				if (oldScene != null) {
+					if (vcl.isRegistered()) {
+						registerLater.remove(anchored);
+						vcl.unregister();
+					}
+				}
+				if (newScene != null) {
+					if (!vcl.isRegistered()) {
+						vcl.register(getAnchorage(), anchored);
+						observed.removeListener(this);
+					}
+				}
+			}
+		};
+		anchored.sceneProperty().addListener(changeListener);
+	}
+
 	protected void registerVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
-			vcls.get(anchored).register(getAnchorage(), anchored);
+			if (canRegister(anchored)) {
+				vcls.get(anchored).register(getAnchorage(), anchored);
+			} else {
+				registerLater(anchored);
+			}
 		}
 	}
 
