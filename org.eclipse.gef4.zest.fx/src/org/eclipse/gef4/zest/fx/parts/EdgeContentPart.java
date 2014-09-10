@@ -85,11 +85,18 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-		FXCurveConnection connection = visual;
+
+		/*
+		 * XXX: This is a bug: It should not be necessary to set start and end
+		 * point here explicitly to (0, 0) before the anchor establishment.
+		 */
+		visual.setStartPoint(new Point());
+		visual.setEndPoint(new Point());
+
 		if (role.equals("START")) {
-			connection.setStartAnchor(anchor);
+			visual.setStartAnchor(anchor);
 		} else if (role.equals("END")) {
-			connection.setEndAnchor(anchor);
+			visual.setEndAnchor(anchor);
 		} else {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");

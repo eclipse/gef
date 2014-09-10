@@ -276,6 +276,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	public IFXAnchor getEndAnchor() {
 		IFXAnchor endAnchor = anchorsProperty.get(getEndAnchorKey());
 		if (endAnchor == null) {
+			// in order not to return null as start/end anchor, we set it to
+			// static (0, 0) here
 			setEndPoint(new Point());
 		}
 		endAnchor = anchorsProperty.get(getEndAnchorKey());
@@ -333,6 +335,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	public IFXAnchor getStartAnchor() {
 		IFXAnchor startAnchor = anchorsProperty.get(getStartAnchorKey());
 		if (startAnchor == null) {
+			// in order not to return null as start/end anchor, we set it to
+			// static (0, 0) here
 			setStartPoint(new Point());
 		}
 		startAnchor = anchorsProperty.get(getStartAnchorKey());
