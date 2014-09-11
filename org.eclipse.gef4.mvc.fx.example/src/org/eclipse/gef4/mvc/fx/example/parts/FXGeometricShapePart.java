@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.transform.Transform;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,10 +26,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -44,6 +49,8 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
 	private FXGeometryNode<IShape> visual;
 	private IFXAnchor anchor;
+	private VisualChangeListener vcl;
+	protected boolean inResizeRelocate;
 
 	public FXGeometricShapePart() {
 		visual = new FXGeometryNode<IShape>();
@@ -56,65 +63,141 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		// transaction policies
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
 				new FXResizeRelocatePolicy() {
-			@Override
-			public IUndoableOperation commit() {
-				final IUndoableOperation updateVisualOperation = super
-						.commit();
-				if (updateVisualOperation == null) {
-					return null;
-				}
+					@Override
+					public IUndoableOperation commit() {
+						final IUndoableOperation updateVisualOperation = super
+								.commit();
+						if (updateVisualOperation == null) {
+							return null;
+						}
 
-				// commit changes to model
-				final FXGeometricShape shape = getContent();
-				final IShape newGeometry = visual.getGeometry();
-				final IShape oldGeometry = shape.getGeometry();
+						// commit changes to model
+						final FXGeometricShape shape = getContent();
+						final IShape newGeometry = visual.getGeometry();
+						final IShape oldGeometry = shape.getGeometry();
 
-				final AffineTransform oldTransform = shape
-						.getTransform();
-				final AffineTransform newTransform = new AffineTransform(
-						1, 0, 0, 1, visual.getLayoutX(), visual
-						.getLayoutY());
+						final AffineTransform oldTransform = shape
+								.getTransform();
+						final AffineTransform newTransform = new AffineTransform(
+								1, 0, 0, 1, visual.getLayoutX(), visual
+										.getLayoutY());
 
-				final IUndoableOperation updateModelOperation = new AbstractOperation(
-						"Update Model") {
+						final IUndoableOperation updateModelOperation = new AbstractOperation(
+								"Update Model") {
+
+							@Override
+							public IStatus execute(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								shape.setGeometry(newGeometry);
+								shape.setTransform(newTransform);
+								return Status.OK_STATUS;
+							}
+
+							@Override
+							public IStatus redo(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								return execute(monitor, info);
+							}
+
+							@Override
+							public IStatus undo(IProgressMonitor monitor,
+									IAdaptable info) throws ExecutionException {
+								shape.setGeometry(oldGeometry);
+								shape.setTransform(oldTransform);
+								return Status.OK_STATUS;
+							}
+						};
+						// compose both operations
+						IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+								updateVisualOperation.getLabel()) {
+							{
+								add(updateVisualOperation);
+								add(updateModelOperation);
+							}
+						};
+
+						inResizeRelocate = false;
+						return compositeOperation;
+					}
 
 					@Override
-					public IStatus execute(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						shape.setGeometry(newGeometry);
-						shape.setTransform(newTransform);
-						return Status.OK_STATUS;
+					public void init() {
+						super.init();
+						inResizeRelocate = true;
 					}
-
-					@Override
-					public IStatus redo(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						return execute(monitor, info);
-					}
-
-					@Override
-					public IStatus undo(IProgressMonitor monitor,
-							IAdaptable info) throws ExecutionException {
-						shape.setGeometry(oldGeometry);
-						shape.setTransform(oldTransform);
-						return Status.OK_STATUS;
-					}
-				};
-				// compose both operations
-				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
-						updateVisualOperation.getLabel()) {
-					{
-						add(updateVisualOperation);
-						add(updateModelOperation);
-					}
-				};
-
-				return compositeOperation;
-			}
-		});
+				});
 
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
 				new FXDeleteSelectedOnTypePolicy());
+	}
+
+	@Override
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		if (role.equals("link")) {
+			if (vcl != null) {
+				throw new IllegalStateException(
+						"Only one 'link' anchorage can be attached!");
+			}
+			vcl = new VisualChangeListener() {
+				@Override
+				protected void boundsInLocalChanged(Bounds oldBounds,
+						Bounds newBounds) {
+				}
+
+				@Override
+				protected void localToParentTransformChanged(Node observed,
+						Transform oldTransform, Transform newTransform) {
+					// if we are currently being relocated (by means of mouse
+					// interaction or something else), we do not want to update
+					// here
+					if (inResizeRelocate) {
+						// MAYBE: Provide ITransactional#isInProgress() which is
+						// true only if #init() was called but #commit() was
+						// not,
+						// yet. Then we could remove the inResizeRelocate flag.
+						return;
+					}
+					// compute relocation
+					double otx = oldTransform.getTx();
+					double oty = oldTransform.getTy();
+					double ntx = newTransform.getTx();
+					double nty = newTransform.getTy();
+					double dx = ntx - otx;
+					double dy = nty - oty;
+					// apply relocation to this part too
+					FXResizeRelocatePolicy rrPolicy = getAdapter(FXResizeRelocatePolicy.class);
+					rrPolicy.init();
+					rrPolicy.performResizeRelocate(dx, dy, 0, 0);
+					IUndoableOperation rrOp = rrPolicy.commit();
+					// execute the resulting operation in the domain undo
+					// context
+					IDomain<Node> domain = getViewer().getDomain();
+					IOperationHistory operationHistory = domain
+							.getOperationHistory();
+					rrOp.addContext(domain.getUndoContext());
+					try {
+						operationHistory.execute(rrOp, null, null);
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			vcl.register(anchorage.getVisual(), getVisual());
+		}
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		if (role.equals("link")) {
+			if (vcl == null) {
+				throw new IllegalStateException(
+						"No 'link' anchorage is attached!");
+			}
+			vcl.unregister();
+			vcl = null;
+		}
 	}
 
 	@Override

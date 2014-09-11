@@ -26,7 +26,6 @@ import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChopBoxSnippet extends FXApplication {
 
