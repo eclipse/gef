@@ -33,9 +33,10 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	 * anchorage. It will provide the passed in position (in the local
 	 * coordinate system of the anchorage {@link Node}) for all attached
 	 * {@link AnchorKey}s (i.e anchored {@link Node} s), after having
-	 * transformed them into scene coordinates. In case the anchorage
-	 * {@link Node} or any of its ancestors are changed in a way that will
-	 * affect the position, the {@link #positionProperty()} will be updated.
+	 * transformed them into the local coordinate system of the anchoreds,
+	 * respectively. In case the anchorage {@link Node} or any of its ancestors
+	 * are changed in a way that will affect the position, the
+	 * {@link #positionProperty()} will be updated.
 	 *
 	 * @param anchorage
 	 * @param referencePositionInAnchorageLocal

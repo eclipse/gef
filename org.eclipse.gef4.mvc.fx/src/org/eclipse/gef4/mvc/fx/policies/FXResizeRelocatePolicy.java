@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
 
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
-IPolicy<Node>, ITransactional {
+		IPolicy<Node>, ITransactional {
 
 	private FXResizeRelocateNodeOperation operation;
 
@@ -49,7 +49,7 @@ IPolicy<Node>, ITransactional {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
