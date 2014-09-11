@@ -248,8 +248,8 @@ public class FXChopBoxHelper {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.wasAdded() && anchor.isAttached(change.getKey())) {
-					updateStartReferencePoint();
-					updateEndReferencePoint();
+					// updateStartReferencePoint();
+					// updateEndReferencePoint();
 				}
 			}
 		};
