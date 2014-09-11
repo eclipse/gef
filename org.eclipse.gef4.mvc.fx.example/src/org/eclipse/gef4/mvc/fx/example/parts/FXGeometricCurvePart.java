@@ -21,6 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -228,8 +229,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 					@Override
 					public IUndoableOperation commit() {
-						// TODO: chain model ops
-						return op;
+						return chainModelChanges(op);
 					}
 
 					@Override
@@ -282,6 +282,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 											.toPoint(visual.localToScene(p.x
 													+ dx, p.y + dy))));
 						}
+
+						try {
+							op.execute(null, null);
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				});
 
@@ -291,35 +298,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			public IUndoableOperation commit() {
 				// retrieve visual operation
 				final IUndoableOperation updateVisualOperation = super.commit();
-				if (updateVisualOperation == null) {
-					return null;
-				}
-
-				// determine model values
-				final FXGeometricCurve curve = getContent();
-				final List<Point> oldWayPoints = curve.getWayPointsCopy();
-				final List<Point> newWayPoints = visual.getWayPoints();
-
-				final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
-						"Update model", curve, oldWayPoints, newWayPoints);
-				AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
-						.getStartAnchor());
-				AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
-						.getEndAnchor());
-				final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(
-						newSource, newTarget);
-
-				// compose both operations
-				IUndoableOperation compositeOperation = new AbstractCompositeOperation(
-						updateVisualOperation.getLabel()) {
-					{
-						add(updateVisualOperation);
-						add(updateModelOperation);
-						add(updateAnchoragesOperation);
-					}
-				};
-
-				return compositeOperation;
+				return chainModelChanges(updateVisualOperation);
 			}
 		});
 
@@ -344,6 +323,39 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");
 		}
+	}
+
+	private IUndoableOperation chainModelChanges(
+			final IUndoableOperation updateVisualOperation) {
+		if (updateVisualOperation == null) {
+			return null;
+		}
+
+		// determine model values
+		final FXGeometricCurve curve = getContent();
+		final List<Point> oldWayPoints = curve.getWayPointsCopy();
+		final List<Point> newWayPoints = visual.getWayPoints();
+
+		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
+				"Update model", curve, oldWayPoints, newWayPoints);
+		AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
+				.getStartAnchor());
+		AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
+				.getEndAnchor());
+		final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(
+				newSource, newTarget);
+
+		// compose both operations
+		IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+				updateVisualOperation.getLabel()) {
+			{
+				add(updateVisualOperation);
+				add(updateModelOperation);
+				add(updateAnchoragesOperation);
+			}
+		};
+
+		return compositeOperation;
 	}
 
 	@Override
