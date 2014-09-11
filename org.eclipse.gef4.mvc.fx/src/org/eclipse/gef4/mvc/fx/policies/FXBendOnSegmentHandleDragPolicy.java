@@ -21,7 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
@@ -104,7 +104,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			List<IContentPart<Node>> partsUnderMouse) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
-		IFXConnection connection = (IFXConnection) anchorage.getVisual();
+		FXConnection connection = (FXConnection) anchorage.getVisual();
 
 		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
 

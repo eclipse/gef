@@ -17,8 +17,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -42,7 +42,7 @@ import com.google.inject.Provider;
  *
  */
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
-Comparable<FXSegmentHandlePart> {
+		Comparable<FXSegmentHandlePart> {
 
 	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
 
@@ -130,8 +130,8 @@ Comparable<FXSegmentHandlePart> {
 			} else {
 				// determine connected state for end point handles
 				boolean connected = false;
-				if (targetPart.getVisual() instanceof IFXConnection) {
-					IFXConnection connection = (IFXConnection) targetPart
+				if (targetPart.getVisual() instanceof FXConnection) {
+					FXConnection connection = (FXConnection) targetPart
 							.getVisual();
 					if (segmentIndex == 0 && segmentParameter == 0.0) {
 						connected = connection.isStartConnected();

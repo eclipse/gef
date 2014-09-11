@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -58,7 +58,7 @@ public class FXRelocateCurvePolicy extends FXResizeRelocatePolicy {
 
 	@Override
 	public void init() {
-		op = new FXBendOperation((FXCurveConnection) getHost().getVisual());
+		op = new FXBendOperation((FXConnection) getHost().getVisual());
 		initialPositions = op.getConnection().getPoints();
 	}
 

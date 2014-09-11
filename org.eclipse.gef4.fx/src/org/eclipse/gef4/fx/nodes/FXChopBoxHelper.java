@@ -41,28 +41,6 @@ public class FXChopBoxHelper {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
-			// System.out.println("[" + connection.hashCode() +
-			// "] anchor change");
-			// System.out.println("start: " +
-			// astr(connection.getStartAnchor()));
-			// for (int i = 0; i < connection.getWayAnchorsSize(); i++) {
-			// System.out.println(connection.getWayAnchorKey(i).getId() + ": "
-			// + astr(connection.getWayAnchor(i)));
-			// }
-			// System.out.println("end: " + astr(connection.getEndAnchor()));
-			// System.out.println();
-
-			// System.out.println("  key: " + change.getKey().getId());
-			// System.out
-			// .println("  removed: "
-			// + change.getValueRemoved().hashCode()
-			// + " ("
-			// + change.getValueRemoved().getClass()
-			// .getSimpleName() + ")");
-			// System.out.println("  added: " +
-			// change.getValueAdded().hashCode());
-			// System.out.println();
-
 			if (change.getKey().equals(connection.getStartAnchorKey())) {
 				// start anchor change
 				if (change.getValueRemoved() != null
@@ -117,13 +95,13 @@ public class FXChopBoxHelper {
 		}
 	};
 
-	private IFXConnection connection;
+	private FXConnection connection;
 
 	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> startPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
 	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> endPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
 	private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> waypointPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
 
-	public FXChopBoxHelper(IFXConnection connection) {
+	public FXChopBoxHelper(FXConnection connection) {
 		this.connection = connection;
 		connection.anchorsProperty().addListener(
 				new ChangeListener<ObservableMap<AnchorKey, IFXAnchor>>() {
@@ -132,6 +110,9 @@ public class FXChopBoxHelper {
 							ObservableValue<? extends ObservableMap<AnchorKey, IFXAnchor>> observable,
 							ObservableMap<AnchorKey, IFXAnchor> oldValue,
 							ObservableMap<AnchorKey, IFXAnchor> newValue) {
+						if (oldValue == newValue) {
+							return;
+						}
 						if (oldValue != null) {
 							oldValue.removeListener(anchorsChangeListener);
 						}
@@ -140,6 +121,7 @@ public class FXChopBoxHelper {
 						}
 					}
 				});
+		connection.anchorsProperty().addListener(anchorsChangeListener);
 	}
 
 	/**
@@ -231,9 +213,12 @@ public class FXChopBoxHelper {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-				if (change.wasAdded() && anchor.isAttached(change.getKey())
-						&& change.getKey().equals(connection.getEndAnchorKey())) {
-					updateStartReferencePoint();
+				if (change.wasAdded()) {
+					if (anchor.isAttached(change.getKey())
+							&& change.getKey().equals(
+									connection.getEndAnchorKey())) {
+						updateStartReferencePoint();
+					}
 				}
 			}
 		};
@@ -245,11 +230,12 @@ public class FXChopBoxHelper {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-				if (change.wasAdded()
-						&& anchor.isAttached(change.getKey())
-						&& change.getKey().equals(
-								connection.getStartAnchorKey())) {
-					updateEndReferencePoint();
+				if (change.wasAdded()) {
+					if (anchor.isAttached(change.getKey())
+							&& change.getKey().equals(
+									connection.getStartAnchorKey())) {
+						updateEndReferencePoint();
+					}
 				}
 			}
 		};
@@ -262,8 +248,8 @@ public class FXChopBoxHelper {
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.wasAdded() && anchor.isAttached(change.getKey())) {
-					// updateStartReferencePoint();
-					// updateEndReferencePoint();
+					updateStartReferencePoint();
+					updateEndReferencePoint();
 				}
 			}
 		};

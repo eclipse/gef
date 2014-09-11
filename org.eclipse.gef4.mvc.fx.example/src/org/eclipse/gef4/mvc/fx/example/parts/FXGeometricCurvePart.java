@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.FXPolybezierConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
@@ -204,15 +204,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
-	private FXCurveConnection visual;
+	private FXConnection visual;
 
 	public FXGeometricCurvePart() {
-		visual = new FXCurveConnection() {
-			@Override
-			public ICurve computeGeometry(Point[] points) {
-				return FXGeometricCurve.constructCurveFromWayPoints(points);
-			}
-		};
+		visual = new FXConnection();
+		visual.setRouter(new FXPolybezierConnectionRouter());
 		new FXChopBoxHelper(visual);
 
 		// TODO: use binding

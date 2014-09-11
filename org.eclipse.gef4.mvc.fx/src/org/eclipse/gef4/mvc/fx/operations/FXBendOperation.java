@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 
 /**
  * An {@link FXBendOperation} can be used to manipulate an {@link IFXConnection}
@@ -32,7 +32,7 @@ import org.eclipse.gef4.fx.nodes.IFXConnection;
  */
 public class FXBendOperation extends AbstractOperation {
 
-	private final IFXConnection connection;
+	private final FXConnection connection;
 	private List<IFXAnchor> oldAnchors;
 	private List<IFXAnchor> newAnchors;
 
@@ -49,7 +49,7 @@ public class FXBendOperation extends AbstractOperation {
 	 *
 	 * @param connection
 	 */
-	public FXBendOperation(IFXConnection connection) {
+	public FXBendOperation(FXConnection connection) {
 		super("bend");
 		this.connection = connection;
 		this.oldAnchors = new ArrayList<IFXAnchor>(connection.getAnchors());
@@ -64,7 +64,7 @@ public class FXBendOperation extends AbstractOperation {
 	 * @param newAnchors
 	 *            List of new {@link IFXAnchor}s.
 	 */
-	public FXBendOperation(String label, IFXConnection connection,
+	public FXBendOperation(String label, FXConnection connection,
 			List<IFXAnchor> oldAnchors, List<IFXAnchor> newAnchors) {
 		super(label);
 		this.connection = connection;
@@ -89,7 +89,7 @@ public class FXBendOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
-	public IFXConnection getConnection() {
+	public FXConnection getConnection() {
 		return connection;
 	}
 

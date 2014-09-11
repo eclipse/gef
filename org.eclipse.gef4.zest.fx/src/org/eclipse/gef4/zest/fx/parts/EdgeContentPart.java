@@ -20,7 +20,7 @@ import javafx.scene.shape.Polyline;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
@@ -76,23 +76,15 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	{
 		visual = new FXLabeledConnection();
-		new FXChopBoxHelper(visual);
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getCurveNode().getStyleClass().add("curve");
+		new FXChopBoxHelper(visual);
 	}
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
 		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
-
-		/*
-		 * XXX: This is a bug: It should not be necessary to set start and end
-		 * point here explicitly to (0, 0) before the anchor establishment.
-		 */
-		visual.setStartPoint(new Point());
-		visual.setEndPoint(new Point());
-
 		if (role.equals("START")) {
 			visual.setStartAnchor(anchor);
 		} else if (role.equals("END")) {
@@ -106,7 +98,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
-		FXCurveConnection connection = visual;
+		FXConnection connection = visual;
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
 			connection.setStartPoint(startPoint == null ? new Point()
@@ -126,7 +118,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		}
 
 		// decoration
-		FXCurveConnection connection = visual;
+		FXConnection connection = visual;
 		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs()
 				.get(Attr.Key.GRAPH_TYPE.toString()))) {
 			connection.setEndDecoration(new ArrowHead());

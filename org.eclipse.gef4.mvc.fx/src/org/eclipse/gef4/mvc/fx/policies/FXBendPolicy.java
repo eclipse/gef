@@ -21,7 +21,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -200,7 +200,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	@Override
 	public void init() {
-		op = new FXBendOperation((IFXConnection) getHostVisual());
+		op = new FXBendOperation((FXConnection) getHostVisual());
 		removedAnchor = null;
 	}
 

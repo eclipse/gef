@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
@@ -111,7 +111,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 		// only show anchor link feedback if anchorage and anchored provider is
 		// not null (and anchored is no connection)
-		if (!(anchored.getVisual() instanceof IFXConnection)) {
+		if (!(anchored.getVisual() instanceof FXConnection)) {
 			// TODO: need own providers for link feedback (computation might be
 			// different)
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
@@ -137,26 +137,26 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 										anchoredGeometryProvider.get());
 						ICurve linkSourceOutlineInScene = linkSourceGeometryInScene instanceof ICurve ? (ICurve) linkSourceGeometryInScene
 								: ((IShape) linkSourceGeometryInScene)
-								.getOutline();
+										.getOutline();
 
 						IGeometry linkTargetGeometryInScene = FXUtils
 								.localToScene(anchorage.getVisual(),
 										anchorageGeometryProvider.get());
 						ICurve linkTargetOutlineInScene = linkTargetGeometryInScene instanceof ICurve ? (ICurve) linkTargetGeometryInScene
 								: ((IShape) linkTargetGeometryInScene)
-								.getOutline();
+										.getOutline();
 
 						// TODO: use centroid, not center!! -> also in bounds
 						// anchor
 						final Line centerLineInScene = new Line(
 								linkSourceGeometryInScene.getBounds()
-								.getCenter(), linkTargetGeometryInScene
-								.getBounds().getCenter());
+										.getCenter(), linkTargetGeometryInScene
+										.getBounds().getCenter());
 
 						Point sourcePointInScene = linkSourceOutlineInScene
 								.getNearestIntersection(centerLineInScene,
 										linkTargetGeometryInScene.getBounds()
-										.getCenter());
+												.getCenter());
 						if (sourcePointInScene == null) {
 							sourcePointInScene = linkSourceGeometryInScene
 									.getBounds().getCenter();
@@ -164,7 +164,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 						Point targetPointInScene = linkTargetOutlineInScene
 								.getNearestIntersection(centerLineInScene,
 										linkSourceGeometryInScene.getBounds()
-										.getCenter());
+												.getCenter());
 						if (targetPointInScene == null) {
 							targetPointInScene = linkTargetGeometryInScene
 									.getBounds().getCenter();

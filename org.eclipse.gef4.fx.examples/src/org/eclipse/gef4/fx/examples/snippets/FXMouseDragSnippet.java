@@ -46,7 +46,7 @@ import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 
 public class FXMouseDragSnippet extends FXApplication {
 
@@ -238,7 +238,7 @@ public class FXMouseDragSnippet extends FXApplication {
 						(int) (Math.random() * count / 2));
 			}
 
-			FXCurveConnection connection = new FXCurveConnection();
+			FXConnection connection = new FXConnection();
 
 			IFXAnchor an, am;
 			if (anchors.containsKey(n)) {

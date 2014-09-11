@@ -17,16 +17,15 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Field;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.junit.Test;
 
-public class FXCurveConnectionTests {
+public class FXConnectionTests {
 
 	@Test
 	public void test_PointConversions() {
-		IFXConnection connection = new FXCurveConnection();
+		FXConnection connection = new FXConnection();
 		Point startPoint = new Point(123, 456);
 		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);
@@ -41,7 +40,7 @@ public class FXCurveConnectionTests {
 	@Test
 	public void test_generateWayAnchorKey() throws IllegalArgumentException,
 			IllegalAccessException {
-		IFXConnection connection = new FXCurveConnection();
+		FXConnection connection = new FXConnection();
 		Point startPoint = new Point(123, 456);
 		Point wayPoint = new Point(789, 123);
 		Point endPoint = new Point(456, 789);

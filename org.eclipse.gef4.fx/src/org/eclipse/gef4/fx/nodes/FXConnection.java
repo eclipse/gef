@@ -35,8 +35,7 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public abstract class AbstractFXConnection<T extends ICurve> extends Group
-		implements IFXConnection {
+public class FXConnection extends Group {
 
 	/**
 	 * CSS class assigned to decoration visuals.
@@ -62,7 +61,8 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 	private static final String WAY_POINT_ROLE_PREFIX = "waypoint-";
 
 	// visuals
-	private FXGeometryNode<T> curveNode = new FXGeometryNode<T>();
+	private FXGeometryNode<ICurve> curveNode = new FXGeometryNode<ICurve>();
+	private IFXConnectionRouter router = new FXPolylineConnectionRouter();
 
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IFXDecoration startDecoration = null;
@@ -92,7 +92,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setAutoSizeChildren(false);
 	}
 
-	@Override
 	public void addWayAnchor(int index, IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
@@ -111,7 +110,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		refreshGeometry(); // TODO: possibly unnecessary
 	}
 
-	@Override
 	public void addWayPoint(int index, Point wayPointInLocal) {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
@@ -119,7 +117,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		addWayAnchor(index, anchor);
 	}
 
-	@Override
 	public ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty() {
 		return anchorsProperty.getReadOnlyProperty();
 	}
@@ -232,8 +229,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				decoStartPoint, decoDirection);
 	}
 
-	public abstract T computeGeometry(Point[] points);
-
 	private AnchorKey generateWayAnchorKey() {
 		if (nextWayAnchorId == Integer.MAX_VALUE) {
 			List<IFXAnchor> wayAnchors = getWayAnchors();
@@ -245,7 +240,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 				+ nextWayAnchorId++);
 	}
 
-	@Override
 	public List<IFXAnchor> getAnchors() {
 		int wayPointCount = getWayAnchorsSize();
 		List<IFXAnchor> anchors = new ArrayList<>(wayPointCount + 2);
@@ -267,12 +261,10 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchors;
 	}
 
-	@Override
-	public FXGeometryNode<T> getCurveNode() {
+	public FXGeometryNode<ICurve> getCurveNode() {
 		return curveNode;
 	}
 
-	@Override
 	public IFXAnchor getEndAnchor() {
 		IFXAnchor endAnchor = anchorsProperty.get(getEndAnchorKey());
 		if (endAnchor == null) {
@@ -284,17 +276,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return endAnchor;
 	}
 
-	@Override
 	public AnchorKey getEndAnchorKey() {
 		return new AnchorKey(getCurveNode(), END_ROLE);
 	}
 
-	@Override
 	public IFXDecoration getEndDecoration() {
 		return endDecoration;
 	}
 
-	@Override
 	public Point getEndPoint() {
 		IFXAnchor anchor = getEndAnchor();
 		if (anchor == null) {
@@ -306,7 +295,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchor.getPosition(getEndAnchorKey());
 	}
 
-	@Override
 	public Point[] getPoints() {
 		int wayPointCount = getWayAnchorsSize();
 		Point[] points = new Point[wayPointCount + 2];
@@ -331,7 +319,10 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return points;
 	}
 
-	@Override
+	public IFXConnectionRouter getRouter() {
+		return router;
+	}
+
 	public IFXAnchor getStartAnchor() {
 		IFXAnchor startAnchor = anchorsProperty.get(getStartAnchorKey());
 		if (startAnchor == null) {
@@ -343,17 +334,14 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return startAnchor;
 	}
 
-	@Override
 	public AnchorKey getStartAnchorKey() {
 		return new AnchorKey(getCurveNode(), START_ROLE);
 	}
 
-	@Override
 	public IFXDecoration getStartDecoration() {
 		return startDecoration;
 	}
 
-	@Override
 	public Point getStartPoint() {
 		IFXAnchor anchor = getStartAnchor();
 		if (anchor == null) {
@@ -365,12 +353,10 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchor.getPosition(getStartAnchorKey());
 	}
 
-	@Override
 	public Node getVisual() {
 		return this;
 	}
 
-	@Override
 	public IFXAnchor getWayAnchor(int index) {
 		return anchorsProperty.get(getWayAnchorKey(index));
 	}
@@ -382,7 +368,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return null;
 	}
 
-	@Override
 	public List<IFXAnchor> getWayAnchors() {
 		int wayPointsCount = getWayAnchorsSize();
 		List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>(
@@ -393,12 +378,10 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return wayPointAnchors;
 	}
 
-	@Override
 	public int getWayAnchorsSize() {
 		return wayAnchorKeys.size();
 	}
 
-	@Override
 	public Point getWayPoint(int index) {
 		IFXAnchor anchor = getWayAnchor(index);
 		if (anchor == null) {
@@ -410,7 +393,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return anchor.getPosition(getWayAnchorKey(index));
 	}
 
-	@Override
 	public List<Point> getWayPoints() {
 		List<IFXAnchor> wayPointAnchors = getWayAnchors();
 		List<Point> wayPoints = new ArrayList<Point>(wayPointAnchors.size());
@@ -421,21 +403,18 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		return wayPoints;
 	}
 
-	@Override
 	public boolean isEndConnected() {
 		IFXAnchor anchor = getEndAnchor();
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
 
-	@Override
 	public boolean isStartConnected() {
 		IFXAnchor anchor = getStartAnchor();
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
 
-	@Override
 	public boolean isWayConnected(int index) {
 		IFXAnchor anchor = getWayAnchor(index);
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
@@ -448,7 +427,7 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 			return;
 		}
 
-		T newGeometry = computeGeometry(getPoints());
+		ICurve newGeometry = router.routeConnection(getPoints());
 		if (curveNode != null && curveNode.getGeometry() != null
 				&& curveNode.getGeometry().equals(newGeometry)) {
 			return;
@@ -476,14 +455,12 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		inRefresh = false;
 	}
 
-	@Override
 	public void removeAllWayPoints() {
 		for (int i = getWayAnchorsSize() - 1; i >= 0; i--) {
 			removeWayPoint(i);
 		}
 	}
 
-	@Override
 	public void removeWayPoint(int index) {
 		// check index out of range
 		if (index < 0 || index >= getWayAnchorsSize()) {
@@ -509,7 +486,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		refreshGeometry();
 	}
 
-	@Override
 	public void setAnchors(java.util.List<IFXAnchor> anchors) {
 		if (anchors.size() < 2) {
 			throw new IllegalArgumentException(
@@ -524,7 +500,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setEndAnchor(anchors.get(anchors.size() - 1));
 	}
 
-	@Override
 	public void setEndAnchor(IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
@@ -553,7 +528,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	}
 
-	@Override
 	public void setEndDecoration(IFXDecoration endDeco) {
 		endDecoration = endDeco;
 		if (endDecoration != null) {
@@ -566,7 +540,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		refreshGeometry();
 	}
 
-	@Override
 	public void setEndPoint(Point endPointInLocal) {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(endPointInLocal.x,
@@ -574,7 +547,11 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setEndAnchor(anchor);
 	}
 
-	@Override
+	public void setRouter(IFXConnectionRouter router) {
+		this.router = router;
+		refreshGeometry();
+	}
+
 	public void setStartAnchor(IFXAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
@@ -603,7 +580,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	}
 
-	@Override
 	public void setStartDecoration(IFXDecoration startDeco) {
 		startDecoration = startDeco;
 		if (startDecoration != null) {
@@ -616,7 +592,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		refreshGeometry();
 	}
 
-	@Override
 	public void setStartPoint(Point startPointInLocal) {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(startPointInLocal.x,
@@ -624,7 +599,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setStartAnchor(anchor);
 	}
 
-	@Override
 	public void setWayAnchor(int index, IFXAnchor anchor) {
 		if (index < 0 || index >= wayAnchorKeys.size()) {
 			throw new IllegalArgumentException("index out of range.");
@@ -653,7 +627,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	}
 
-	@Override
 	public void setWayAnchors(List<IFXAnchor> anchors) {
 		int wayPointsSize = getWayAnchorsSize();
 		// Important: We have to do the removal of way anchors before
@@ -669,7 +642,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		}
 	}
 
-	@Override
 	public void setWayPoint(int index, Point wayPointInLocal) {
 		FXStaticAnchor anchor = new FXStaticAnchor(
 				JavaFX2Geometry.toPoint(localToScene(wayPointInLocal.x,
@@ -677,7 +649,6 @@ public abstract class AbstractFXConnection<T extends ICurve> extends Group
 		setWayAnchor(index, anchor);
 	}
 
-	@Override
 	public void setWayPoints(List<Point> wayPoints) {
 		removeAllWayPoints();
 		for (Point wp : wayPoints) {

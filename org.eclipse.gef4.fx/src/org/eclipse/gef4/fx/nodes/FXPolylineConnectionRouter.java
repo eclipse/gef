@@ -7,17 +7,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Alexander Nyßen (itemis AG) - initial API and implementation
+ *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.tests;
+package org.eclipse.gef4.fx.nodes;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Polyline;
 
-@RunWith(Suite.class)
-@SuiteClasses({ FXConnectionTests.class })
-public class AllTests {
+public class FXPolylineConnectionRouter implements IFXConnectionRouter {
+
+	@Override
+	public Polyline routeConnection(Point[] points) {
+		return new Polyline(points);
+	}
 
 }

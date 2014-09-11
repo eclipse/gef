@@ -16,10 +16,10 @@ import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.text.Text;
 
-import org.eclipse.gef4.fx.nodes.FXCurveConnection;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-public class FXLabeledConnection extends FXCurveConnection {
+public class FXLabeledConnection extends FXConnection {
 
 	protected Text text = new Text();
 

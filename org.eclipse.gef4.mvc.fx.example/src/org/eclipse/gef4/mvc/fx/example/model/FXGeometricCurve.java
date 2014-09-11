@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Ny??en (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.model;
 
@@ -29,33 +29,39 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 // TODO: parameterize with concrete ICurve and encapsulate construction of geometry; limit the number of waypoints if needed
 public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 
-	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
-	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
-
 	public enum Decoration {
 		NONE, ARROW, CIRCLE
 	}
 
+	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
+		if (waypoints == null || waypoints.length == 0) {
+			waypoints = new Point[] { new Point(), new Point() };
+		} else if (waypoints.length == 1) {
+			waypoints = new Point[] { new Point(), waypoints[0] };
+		}
+		return PolyBezier.interpolateCubic(waypoints);
+	}
+
+	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
+
+	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
+
 	public double[] dashes = new double[0];
 
-	private List<Point> waypoints = new ArrayList<>();
-
+	private final List<Point> waypoints = new ArrayList<>();
 	private Decoration sourceDecoration = Decoration.NONE;
+
 	private Decoration targetDecoration = Decoration.NONE;
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 
-	private Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
-	private Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
+	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 
-	public Decoration getSourceDecoration() {
-		return sourceDecoration;
-	}
-
-	public Set<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
-		return sourceAnchorages;
-	}
-
-	public Set<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
-		return targetAnchorages;
+	public FXGeometricCurve(Point[] waypoints, Color stroke,
+			double strokeWidth, double[] dashes, Effect effect) {
+		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
+				effect);
+		this.waypoints.addAll(Arrays.asList(waypoints));
+		this.dashes = dashes;
 	}
 
 	public void addSourceAnchorage(
@@ -68,46 +74,27 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		targetAnchorages.add(anchored);
 	}
 
-	public void setSourceDecoration(Decoration sourceDecoration) {
-		Decoration oldSourceDecoration = this.sourceDecoration;
-		this.sourceDecoration = sourceDecoration;
-		pcs.firePropertyChange((String) SOURCE_DECORATION_PROPERTY,
-				oldSourceDecoration, sourceDecoration);
+	public void addWayPoint(int i, Point p) {
+		// TODO: check index != 0 && index != end
+		List<Point> points = getWayPointsCopy();
+		points.add(i, p);
+		setWayPoints(points.toArray(new Point[] {}));
+	}
+
+	public Set<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {
+		return sourceAnchorages;
+	}
+
+	public Decoration getSourceDecoration() {
+		return sourceDecoration;
+	}
+
+	public Set<AbstractFXGeometricElement<? extends IGeometry>> getTargetAnchorages() {
+		return targetAnchorages;
 	}
 
 	public Decoration getTargetDecoration() {
 		return targetDecoration;
-	}
-
-	public void setTargetDecoration(Decoration targetDecoration) {
-		Decoration oldTargetDecoration = this.targetDecoration;
-		this.targetDecoration = targetDecoration;
-		pcs.firePropertyChange((String) TARGET_DECORATION_PROPERTY,
-				oldTargetDecoration, targetDecoration);
-	}
-
-	public FXGeometricCurve(Point[] waypoints, Color stroke,
-			double strokeWidth, double[] dashes, Effect effect) {
-		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
-				effect);
-		this.waypoints.addAll(Arrays.asList(waypoints));
-		this.dashes = dashes;
-	}
-
-	protected void setWayPoints(Point... waypoints) {
-		// cache waypoints and polybezier
-		this.waypoints.clear();
-		this.waypoints.addAll(Arrays.asList(waypoints));
-		setGeometry(constructCurveFromWayPoints(waypoints));
-	}
-
-	public static ICurve constructCurveFromWayPoints(Point... waypoints) {
-		if (waypoints == null || waypoints.length == 0) {
-			waypoints = new Point[] { new Point(), new Point() };
-		} else if (waypoints.length == 1) {
-			waypoints = new Point[] { new Point(), waypoints[0] };
-		}
-		return PolyBezier.interpolateCubic(waypoints);
 	}
 
 	public List<Point> getWayPoints() {
@@ -118,13 +105,6 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		return new ArrayList<Point>(waypoints);
 	}
 
-	public void addWayPoint(int i, Point p) {
-		// TODO: check index != 0 && index != end
-		List<Point> points = getWayPointsCopy();
-		points.add(i, p);
-		setWayPoints(points.toArray(new Point[] {}));
-	}
-
 	public void removeWayPoint(int i) {
 		// TODO: check index
 		List<Point> points = getWayPointsCopy();
@@ -132,10 +112,31 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		setWayPoints(points.toArray(new Point[] {}));
 	}
 
+	public void setSourceDecoration(Decoration sourceDecoration) {
+		Decoration oldSourceDecoration = this.sourceDecoration;
+		this.sourceDecoration = sourceDecoration;
+		pcs.firePropertyChange(SOURCE_DECORATION_PROPERTY, oldSourceDecoration,
+				sourceDecoration);
+	}
+
+	public void setTargetDecoration(Decoration targetDecoration) {
+		Decoration oldTargetDecoration = this.targetDecoration;
+		this.targetDecoration = targetDecoration;
+		pcs.firePropertyChange(TARGET_DECORATION_PROPERTY, oldTargetDecoration,
+				targetDecoration);
+	}
+
 	public void setWayPoint(int i, Point p) {
 		List<Point> points = getWayPointsCopy();
 		points.set(i, p);
 		setWayPoints(points.toArray(new Point[] {}));
+	}
+
+	protected void setWayPoints(Point... waypoints) {
+		// cache waypoints and polybezier
+		this.waypoints.clear();
+		this.waypoints.addAll(Arrays.asList(waypoints));
+		setGeometry(constructCurveFromWayPoints(waypoints));
 	}
 
 }

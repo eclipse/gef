@@ -3,9 +3,9 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.fx.nodes.IFXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -13,7 +13,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Provider;
 
 public class VisualOutlineGeometryProvider implements
-IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
+		IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
 
 	private IVisualPart<Node> host;
 
@@ -37,8 +37,8 @@ IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
 	 * @return
 	 */
 	protected IGeometry getGeometry(Node visual) {
-		if (visual instanceof IFXConnection) {
-			Node curveNode = ((IFXConnection) visual).getCurveNode();
+		if (visual instanceof FXConnection) {
+			Node curveNode = ((FXConnection) visual).getCurveNode();
 			if (curveNode instanceof FXGeometryNode) {
 				return FXUtils.localToParent(curveNode,
 						((FXGeometryNode<?>) curveNode).getGeometry());
