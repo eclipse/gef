@@ -21,7 +21,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -29,19 +28,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXCurveConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
-import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDetachCurveAnchoragesPolicy;
-import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -219,94 +215,26 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		};
 		new FXChopBoxHelper(visual);
 
-		// TODO: move operations and policies to their own types and use binding
+		// TODO: use binding
 		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
-				new FXResizeRelocatePolicy() {
-					FXBendOperation op;
-					List<Point> initialPositions;
-
+				new FXRelocateCurvePolicy() {
 					@Override
 					public IUndoableOperation commit() {
-						return chainModelChanges(op);
-					}
-
-					@Override
-					public void init() {
-						op = new FXBendOperation(visual);
-						// get initial positions
-						initialPositions = new ArrayList<Point>(op
-								.getOldAnchors().size());
-						initialPositions.add(op.getOldAnchors().get(0)
-								.getPosition(visual.getStartAnchorKey()));
-						for (int i = 1; i < op.getOldAnchors().size() - 1; i++) {
-							initialPositions.add(op.getOldAnchors().get(i)
-									.getPosition(visual.getWayAnchorKey(i - 1)));
-						}
-						initialPositions.add(op.getOldAnchors()
-								.get(op.getOldAnchors().size() - 1)
-								.getPosition(visual.getEndAnchorKey()));
-					}
-
-					@Override
-					public void performResizeRelocate(double dx, double dy,
-							double dw, double dh) {
-						// move start point
-						if (!visual.isStartConnected()) {
-							Point p = initialPositions.get(0);
-							op.getNewAnchors().set(
-									0,
-									new FXStaticAnchor(JavaFX2Geometry
-											.toPoint(visual.localToScene(p.x
-													+ dx, p.y + dy))));
-						}
-						// move way points
-						for (int i = 1; i < op.getNewAnchors().size() - 1; i++) {
-							if (!visual.isWayConnected(i - 1)) {
-								Point p = initialPositions.get(i);
-								op.getNewAnchors().set(
-										i,
-										new FXStaticAnchor(JavaFX2Geometry
-												.toPoint(visual.localToScene(
-														p.x + dx, p.y + dy))));
-							}
-						}
-						// move end point
-						if (!visual.isEndConnected()) {
-							Point p = initialPositions.get(op.getOldAnchors()
-									.size() - 1);
-							op.getNewAnchors().set(
-									op.getNewAnchors().size() - 1,
-									new FXStaticAnchor(JavaFX2Geometry
-											.toPoint(visual.localToScene(p.x
-													+ dx, p.y + dy))));
-						}
-
-						try {
-							op.execute(null, null);
-						} catch (ExecutionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						return chainModelChanges(super.commit());
 					}
 				});
-
-		// transaction policies
 		setAdapter(AdapterKey.get(FXBendPolicy.class), new FXBendPolicy() {
 			@Override
 			public IUndoableOperation commit() {
-				// retrieve visual operation
-				final IUndoableOperation updateVisualOperation = super.commit();
-				return chainModelChanges(updateVisualOperation);
+				return chainModelChanges(super.commit());
 			}
 		});
-
 		setAdapter(
 				AdapterKey
 						.get(FXDeleteSelectedOnTypePolicy.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
 				new FXExampleDetachCurveAnchoragesPolicy());
-
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
 				new FXDeleteSelectedOnTypePolicy());
 	}
@@ -325,7 +253,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
-	private IUndoableOperation chainModelChanges(
+	IUndoableOperation chainModelChanges(
 			final IUndoableOperation updateVisualOperation) {
 		if (updateVisualOperation == null) {
 			return null;
