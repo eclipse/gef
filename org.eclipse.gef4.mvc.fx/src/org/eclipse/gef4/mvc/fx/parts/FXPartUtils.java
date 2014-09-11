@@ -37,9 +37,15 @@ public class FXPartUtils {
 	 * visual part that controls a visual in the hierarchy is returned.
 	 *
 	 * @param viewers
+	 *            {@link Collection} of all {@link IViewer}s.
 	 * @param visual
+	 *            {@link Node} visual of the target part.
 	 * @param supportedPolicy
-	 * @return the target part
+	 *            Class of the {@link IPolicy} which has to be supported by the
+	 *            target part. May be <code>null</code> to indicate that the
+	 *            target part does not have to support a specific policy.
+	 * @return The first suitable target part, or <code>null</code> if no
+	 *         suitable target part can be found.
 	 */
 	public static <T extends IPolicy<Node>> IVisualPart<Node> getTargetPart(
 			Collection<IViewer<Node>> viewers, Node visual,
@@ -53,8 +59,8 @@ public class FXPartUtils {
 					targetNode);
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
-					&& targetPart.getAdapters(supportedPolicy)
-					.isEmpty()) && targetNode != rootVisual) {
+							&& targetPart.getAdapters(supportedPolicy)
+									.isEmpty()) && targetNode != rootVisual) {
 				targetNode = targetNode.getParent();
 				targetPart = viewer.getVisualPartMap().get(targetNode);
 			}

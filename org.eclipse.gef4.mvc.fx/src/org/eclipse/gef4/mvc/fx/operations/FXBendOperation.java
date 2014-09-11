@@ -24,7 +24,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
 /**
- * An {@link FXBendOperation} can be used to manipulate an {@link IFXConnection}
+ * An {@link FXBendOperation} can be used to manipulate an {@link FXConnection}
  * in an undo-context.
  *
  * @author mwienand
@@ -48,6 +48,8 @@ public class FXBendOperation extends AbstractOperation {
 	 * and new {@link IFXAnchor}s are initialized based on the connection.
 	 *
 	 * @param connection
+	 *            The {@link FXConnection} which will be modified by this
+	 *            operation.
 	 */
 	public FXBendOperation(FXConnection connection) {
 		super("bend");
@@ -59,6 +61,11 @@ public class FXBendOperation extends AbstractOperation {
 	/**
 	 * Constructs a new operation from the given values.
 	 *
+	 * @param label
+	 *            The description for this operation.
+	 * @param connection
+	 *            The {@link FXConnection} which will be modified by this
+	 *            operation.
 	 * @param oldAnchors
 	 *            List of old {@link IFXAnchor}s.
 	 * @param newAnchors

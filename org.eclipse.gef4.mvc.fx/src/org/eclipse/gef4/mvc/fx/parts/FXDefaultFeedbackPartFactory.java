@@ -100,8 +100,11 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	 * anchorage.
 	 *
 	 * @param anchored
+	 *            The anchored {@link IContentPart}.
 	 * @param anchorage
+	 *            The anchorage {@link IContentPart}.
 	 * @param anchorageRole
+	 *            The role under which the anchorage is stored at the anchored.
 	 * @return The {@link IFeedbackPart} for this anchor link, or
 	 *         <code>null</code> if no feedback should be rendered.
 	 */

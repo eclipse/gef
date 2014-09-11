@@ -45,16 +45,18 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	/**
 	 * Constructs a non-root, i.e. child entry, which may obtain the
 	 * {@link IOperationHistory} from its parent.
-	 * 
+	 *
 	 */
 	private UndoablePropertySheetEntry() {
 	}
 
 	/**
 	 * Constructs the root entry using the given {@link IOperationHistory}.
-	 * 
+	 *
 	 * @param operationHistory
 	 *            the operation history to use
+	 * @param undoContext
+	 *            the undo context to use
 	 */
 	public UndoablePropertySheetEntry(IOperationHistory operationHistory,
 			IUndoContext undoContext) {
@@ -74,6 +76,7 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	/**
 	 * @see org.eclipse.ui.views.properties.PropertySheetEntry#createChildEntry()
 	 */
+	@Override
 	protected PropertySheetEntry createChildEntry() {
 		return new UndoablePropertySheetEntry();
 	}
@@ -81,35 +84,40 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if (operationHistory != null)
+		if (operationHistory != null) {
 			operationHistory
 					.removeOperationHistoryListener(operationHistoryListener);
+		}
 		super.dispose();
 	}
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this entry. It is
 	 * obtained from the parent in case the entry is not a root entry.
-	 * 
+	 *
 	 * @return the {@link IOperationHistory} to be used.
 	 */
 	protected IOperationHistory getOperationHistory() {
 		// only the root has, and is listening too, the IOperationHistory
-		if (getParent() != null)
+		if (getParent() != null) {
 			return ((UndoablePropertySheetEntry) getParent())
 					.getOperationHistory();
+		}
 		return operationHistory;
 	}
 
 	/**
 	 * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
 	 */
+	@Override
 	public void resetPropertyValue() {
 		ICompositeOperation cc = new ReverseUndoCompositeOperation("");
-		if (getParent() == null)
+		if (getParent() == null) {
 			// root does not have a default value
 			return;
+		}
 
 		// Use our parent's values to reset our values.
 		boolean change = false;
@@ -139,6 +147,7 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	/**
 	 * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
 	 */
+	@Override
 	protected void valueChanged(PropertySheetEntry child) {
 		// the update of values into a command and pass that to our parent (or
 		// execute it on the operation history, if we have no parent)
@@ -158,10 +167,10 @@ public class UndoablePropertySheetEntry extends PropertySheetEntry {
 	private void valueChanged(UndoablePropertySheetEntry child,
 			IUndoableOperation operation) {
 		// inform our parent
-		if (getParent() != null)
+		if (getParent() != null) {
 			((UndoablePropertySheetEntry) getParent()).valueChanged(this,
 					operation);
-		else {
+		} else {
 			// I am the root entry
 			try {
 				operation.addContext(undoContext);

@@ -39,7 +39,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * The {@link FXBendPolicy} can be used to manipulate the points constituting an
- * {@link IFXConnection}, i.e. its start point, way points, and end point. When
+ * {@link FXConnection}, i.e. its start point, way points, and end point. When
  * moving a point the policy takes care of:
  * <ul>
  * <li>Removing overlaid neighbor points.</li>

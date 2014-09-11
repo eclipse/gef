@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.behaviors;
 
@@ -29,7 +29,7 @@ public class BehaviorUtils {
 	 * Adds the given list of anchoreds as children to the given
 	 * {@link IRootPart}. Additionally, all given anchorages will be added to
 	 * the given anchoreds.
-	 * 
+	 *
 	 * @param root
 	 *            The {@link IRootPart}, the anchored {@link IVisualPart}s are
 	 *            to be added to as children
@@ -39,6 +39,10 @@ public class BehaviorUtils {
 	 * @param anchoreds
 	 *            the {@link IVisualPart}s to which the given anchorages are to
 	 *            be added.
+	 * @param <VR>
+	 *            The visual root node of the UI toolkit this
+	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
+	 *            of JavaFX.
 	 * @see #removeAnchorages(IRootPart, List, List)
 	 */
 	public static <VR> void addAnchorages(IRootPart<VR> root,
@@ -80,7 +84,7 @@ public class BehaviorUtils {
 	 * Removes the given list of anchoreds as children from the given
 	 * {@link IRootPart}. Additionally removes the given anchorages from the
 	 * anchoreds.
-	 * 
+	 *
 	 * @param root
 	 *            The {@link IRootPart} from which the anchoreds are to be
 	 *            removed as children.
@@ -88,6 +92,10 @@ public class BehaviorUtils {
 	 *            The anchorages to be removed from the given anchoreds.
 	 * @param anchoreds
 	 *            The anchoreds from which to remove the given anchorages.
+	 * @param <VR>
+	 *            The visual root node of the UI toolkit this
+	 *            {@link IVisualPart} is used in, e.g. javafx.scene.Node in case
+	 *            of JavaFX.
 	 * @see #addAnchorages(IRootPart, List, List)
 	 */
 	public static <VR> void removeAnchorages(IRootPart<VR> root,
