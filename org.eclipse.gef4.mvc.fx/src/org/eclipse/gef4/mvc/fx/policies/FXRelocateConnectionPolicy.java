@@ -9,7 +9,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.example.parts;
+package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,8 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 
-public class FXRelocateCurvePolicy extends FXResizeRelocatePolicy {
+public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
 
 	private FXBendOperation op;
 	private Point[] initialPositions;

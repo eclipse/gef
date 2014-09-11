@@ -31,7 +31,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXConnection;
-import org.eclipse.gef4.fx.nodes.FXPolybezierConnectionRouter;
+import org.eclipse.gef4.fx.nodes.FXPolyBezierConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -41,6 +41,7 @@ import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDetachCurveAnchoragesPo
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -208,14 +209,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	public FXGeometricCurvePart() {
 		visual = new FXConnection();
-		visual.setRouter(new FXPolybezierConnectionRouter());
+		visual.setRouter(new FXPolyBezierConnectionRouter());
 		new FXChopBoxHelper(visual);
 
 		// TODO: use binding
 		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
 				new FXRelocateOnDragPolicy());
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
-				new FXRelocateCurvePolicy() {
+				new FXRelocateConnectionPolicy() {
 					@Override
 					public IUndoableOperation commit() {
 						return chainModelChanges(super.commit());

@@ -161,7 +161,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public Node getVisual() {
+	public FXConnection getVisual() {
 		return visual;
 	}
 

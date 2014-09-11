@@ -117,7 +117,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void createWayPoint(int segmentIndex, Point mouseInScene) {
-		Node hostVisual = getHostVisual();
+		FXConnection hostVisual = getConnection();
 		Point2D mouseInLocal = hostVisual.sceneToLocal(mouseInScene.x,
 				mouseInScene.y);
 
@@ -146,8 +146,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return null;
 	}
 
-	protected Node getHostVisual() {
-		return getHost().getVisual();
+	protected FXConnection getConnection() {
+		return (FXConnection) getHost().getVisual();
 	}
 
 	protected void hideShowOverlaid() {
@@ -200,7 +200,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	@Override
 	public void init() {
-		op = new FXBendOperation((FXConnection) getHostVisual());
+		op = new FXBendOperation(getConnection());
 		removedAnchor = null;
 	}
 
@@ -215,9 +215,9 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	public void movePoint(Point mouseInScene,
 			List<IContentPart<Node>> partsUnderMouse) {
 		// update position
-		Point2D mouseInLocal = getHostVisual().sceneToLocal(mouseInScene.x,
+		Point2D mouseInLocal = getConnection().sceneToLocal(mouseInScene.x,
 				mouseInScene.y);
-		Point2D startPointInLocal = getHostVisual().sceneToLocal(
+		Point2D startPointInLocal = getConnection().sceneToLocal(
 				startPointInScene);
 		Point delta = new Point(mouseInLocal.getX() - startPointInLocal.getX(),
 				mouseInLocal.getY() - startPointInLocal.getY());
@@ -270,7 +270,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 		if (anchor == null) {
 			// use static anchor, re-use key
-			anchor = new FXStaticAnchor(JavaFX2Geometry.toPoint(getHostVisual()
+			anchor = new FXStaticAnchor(JavaFX2Geometry.toPoint(getConnection()
 					.localToScene(currentPoint.x, currentPoint.y)));
 		}
 

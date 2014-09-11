@@ -17,7 +17,7 @@ import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
-public class FXPolybezierConnectionRouter implements IFXConnectionRouter {
+public class FXPolyBezierConnectionRouter implements IFXConnectionRouter {
 
 	@Override
 	public ICurve routeConnection(Point[] points) {
