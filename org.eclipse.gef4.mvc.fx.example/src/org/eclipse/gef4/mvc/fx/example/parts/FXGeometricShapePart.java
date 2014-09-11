@@ -17,7 +17,6 @@ import javafx.scene.transform.Transform;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,7 +30,6 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
-import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -170,14 +168,21 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					rrPolicy.init();
 					rrPolicy.performResizeRelocate(dx, dy, 0, 0);
 					IUndoableOperation rrOp = rrPolicy.commit();
-					// execute the resulting operation in the domain undo
-					// context
-					IDomain<Node> domain = getViewer().getDomain();
-					IOperationHistory operationHistory = domain
-							.getOperationHistory();
-					rrOp.addContext(domain.getUndoContext());
+					/*
+					 * The anchorage's RR is still in progress, that's why we
+					 * are not allowed to put this operation on the undo
+					 * context. Therefore we execute it only locally to keep us
+					 * in sync with the anchorage.
+					 *
+					 * XXX: This definitely needs to change for a 'proper'
+					 * implementation. The RR for this anchored should be kept
+					 * in sync with the RR for the anchorage, i.e. init(),
+					 * perform(), and commit() would be called for both. We
+					 * still have to evaluate how to handle other anchorage
+					 * changes.
+					 */
 					try {
-						operationHistory.execute(rrOp, null, null);
+						rrOp.execute(null, null);
 					} catch (ExecutionException e) {
 						e.printStackTrace();
 					}
