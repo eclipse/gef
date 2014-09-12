@@ -39,6 +39,7 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
 public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private int createdSegmentIndex;
+	private boolean wasRefreshVisual;
 
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
@@ -133,6 +134,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 
+		wasRefreshVisual = anchorage.isRefreshVisual();
+		anchorage.setRefreshVisual(false);
 		getBendPolicy(anchorage).init();
 
 		if (hp.getSegmentParameter() == 0.5) {
@@ -174,6 +177,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
+		anchorage.setRefreshVisual(wasRefreshVisual);
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
 	}
