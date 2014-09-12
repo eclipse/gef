@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -25,10 +27,12 @@ import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
+	private final Map<IVisualPart<Node>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<Node>, Boolean>();
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
@@ -71,6 +75,8 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 		for (IContentPart<Node> part : getTargetParts()) {
 			ITransactional policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
+				initialRefreshVisual.put(part, part.isRefreshVisual());
+				part.setRefreshVisual(false);
 				policy.init();
 			}
 		}
@@ -86,6 +92,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
+				part.setRefreshVisual(initialRefreshVisual.remove(part));
 				IUndoableOperation commit = policy.commit();
 				if (commit != null) {
 					operation.add(commit);
@@ -97,6 +104,10 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 			executeOperation(operation);
 		}
 		setInitialMouseLocationInScene(null);
+		if (!initialRefreshVisual.isEmpty()) {
+			throw new IllegalStateException(
+					"The refresh-visual flag was not properly reset for all (initial) target parts.");
+		}
 	}
 
 	protected void setInitialMouseLocationInScene(Point point) {
