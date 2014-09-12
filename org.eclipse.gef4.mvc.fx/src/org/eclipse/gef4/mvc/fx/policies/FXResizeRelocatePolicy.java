@@ -51,7 +51,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -90,8 +90,20 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 			// have to take not only the delta for our calculations, but also
 			// the old position)
 			Point oldLocation = operation.getOldLocation();
-			layoutDx = layoutDx - (oldLocation.x + layoutDx) % gridCellWidth;
-			layoutDy = layoutDy - (oldLocation.y + layoutDy) % gridCellHeight;
+
+			double snapOffsetX = (oldLocation.x + layoutDx) % gridCellWidth;
+			if (snapOffsetX > gridCellWidth / 2) {
+				snapOffsetX = gridCellWidth - snapOffsetX;
+				snapOffsetX *= -1;
+			}
+			layoutDx = layoutDx - snapOffsetX;
+
+			double snapOffsetY = (oldLocation.y + layoutDy) % gridCellHeight;
+			if (snapOffsetY > gridCellHeight / 2) {
+				snapOffsetY = gridCellHeight - snapOffsetY;
+				snapOffsetY *= -1;
+			}
+			layoutDy = layoutDy - snapOffsetY;
 		}
 
 		// update operation
