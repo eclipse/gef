@@ -132,7 +132,7 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		setWayPoints(points.toArray(new Point[] {}));
 	}
 
-	protected void setWayPoints(Point... waypoints) {
+	public void setWayPoints(Point... waypoints) {
 		// cache waypoints and polybezier
 		this.waypoints.clear();
 		this.waypoints.addAll(Arrays.asList(waypoints));

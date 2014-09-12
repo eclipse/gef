@@ -150,17 +150,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			this.newWayPoints = newWayPoints;
 		}
 
-		private void addCurveWayPoints(List<Point> wayPoints) {
-			int i = 0;
-			for (Point p : wayPoints) {
-				curve.addWayPoint(i++, new Point(p));
-			}
-		}
-
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
-			removeCurveWayPoints();
-			addCurveWayPoints(newWayPoints);
+			curve.setWayPoints(newWayPoints.toArray(new Point[] {}));
 			return Status.OK_STATUS;
 		}
 
@@ -169,17 +161,9 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return execute(monitor, info);
 		}
 
-		private void removeCurveWayPoints() {
-			List<Point> wayPoints = curve.getWayPoints();
-			for (int i = wayPoints.size() - 1; i >= 0; --i) {
-				curve.removeWayPoint(i);
-			}
-		}
-
 		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
-			removeCurveWayPoints();
-			addCurveWayPoints(oldWayPoints);
+			curve.setWayPoints(oldWayPoints.toArray(new Point[] {}));
 			return Status.OK_STATUS;
 		}
 	}
