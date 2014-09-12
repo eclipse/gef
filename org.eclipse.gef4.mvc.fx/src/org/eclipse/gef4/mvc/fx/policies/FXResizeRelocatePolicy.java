@@ -15,6 +15,7 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
@@ -45,9 +46,38 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return FXSegmentHandlePart.SIZE;
 	}
 
+	protected Dimension getSnapToGridOffset(double layoutDx, double layoutDy) {
+		GridModel gridModel = getHost().getRoot().getViewer()
+				.getAdapter(GridModel.class);
+		double snapOffsetX = 0, snapOffsetY = 0;
+		if (gridModel != null && gridModel.isSnapToGrid()) {
+			double gridCellWidth = gridModel.getGridCellWidth();
+			double gridCellHeight = gridModel.getGridCellHeight();
+
+			// snap-to-grid
+			// IMPORTANT: we might not have been snapped to grid before, thus we
+			// have to take not only the delta for our calculations, but also
+			// the old position)
+			Point oldLocation = operation.getOldLocation();
+
+			snapOffsetX = (oldLocation.x + layoutDx) % gridCellWidth;
+			if (snapOffsetX > gridCellWidth / 2) {
+				snapOffsetX = gridCellWidth - snapOffsetX;
+				snapOffsetX *= -1;
+			}
+
+			snapOffsetY = (oldLocation.y + layoutDy) % gridCellHeight;
+			if (snapOffsetY > gridCellHeight / 2) {
+				snapOffsetY = gridCellHeight - snapOffsetY;
+				snapOffsetY *= -1;
+			}
+		}
+		return new Dimension(snapOffsetX, snapOffsetY);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -67,42 +97,19 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		double layoutDh = resizable ? dh : 0;
 
 		// ensure visual is not resized below threshold
-		if (resizable
-				&& operation.getOldSize().width + layoutDw < getMinimumWidth()) {
-			layoutDw = getMinimumWidth() - operation.getOldSize().width;
-		}
-		if (resizable
-				&& operation.getOldSize().height + layoutDh < getMinimumHeight()) {
-			layoutDh = getMinimumHeight() - operation.getOldSize().height;
+		if (resizable) {
+			if (operation.getOldSize().width + layoutDw < getMinimumWidth()) {
+				layoutDw = getMinimumWidth() - operation.getOldSize().width;
+			}
+			if (operation.getOldSize().height + layoutDh < getMinimumHeight()) {
+				layoutDh = getMinimumHeight() - operation.getOldSize().height;
+			}
 		}
 
 		// snap-to-grid
-		GridModel gridModel = getHost().getRoot().getViewer()
-				.getAdapter(GridModel.class);
-		if (gridModel != null && gridModel.isSnapToGrid()) {
-			double gridCellWidth = gridModel.getGridCellWidth();
-			double gridCellHeight = gridModel.getGridCellHeight();
-
-			// snap-to-grid
-			// IMPORTANT: we might not have been snapped to grid before, thus we
-			// have to take not only the delta for our calculations, but also
-			// the old position)
-			Point oldLocation = operation.getOldLocation();
-
-			double snapOffsetX = (oldLocation.x + layoutDx) % gridCellWidth;
-			if (snapOffsetX > gridCellWidth / 2) {
-				snapOffsetX = gridCellWidth - snapOffsetX;
-				snapOffsetX *= -1;
-			}
-			layoutDx = layoutDx - snapOffsetX;
-
-			double snapOffsetY = (oldLocation.y + layoutDy) % gridCellHeight;
-			if (snapOffsetY > gridCellHeight / 2) {
-				snapOffsetY = gridCellHeight - snapOffsetY;
-				snapOffsetY *= -1;
-			}
-			layoutDy = layoutDy - snapOffsetY;
-		}
+		Dimension snapOffset = getSnapToGridOffset(layoutDx, layoutDy);
+		layoutDx = layoutDx - snapOffset.width;
+		layoutDy = layoutDy - snapOffset.height;
 
 		// update operation
 		operation.setDx(layoutDx);

@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.tests;
 
@@ -33,19 +33,6 @@ import org.junit.Test;
 
 public class NodeLayoutPolicyTests {
 
-	@Test
-	public void test_provide() {
-		final Point location = new Point(10, 20);
-		final Dimension size = new Dimension(120, 60);
-		NodeLayoutPolicy policy = createPolicy(location, size);
-
-		GraphNodeLayout nodeLayout = createNodeLayout();
-		policy.provideLayoutInformation(nodeLayout);
-
-		assertEquals(location, PropertiesHelper.getLocation(nodeLayout));
-		assertEquals(size, PropertiesHelper.getSize(nodeLayout));
-	}
-
 	private GraphNodeLayout createNodeLayout() {
 		Node node = new Node.Builder().build();
 		Graph graph = new Graph.Builder().nodes(node).build();
@@ -61,7 +48,7 @@ public class NodeLayoutPolicyTests {
 
 			@Override
 			public IVisualPart<javafx.scene.Node> getHost() {
-				if (host == null)
+				if (host == null) {
 					host = new AbstractFXContentPart() {
 						private Pane visual;
 
@@ -74,7 +61,17 @@ public class NodeLayoutPolicyTests {
 										public IUndoableOperation commit() {
 											return null;
 										}
+
+										@Override
+										protected Dimension getSnapToGridOffset(
+												double layoutDx, double layoutDy) {
+											return new Dimension();
+										}
 									});
+						}
+
+						@Override
+						protected void doRefreshVisual() {
 						}
 
 						@Override
@@ -87,11 +84,8 @@ public class NodeLayoutPolicyTests {
 							}
 							return visual;
 						}
-
-						@Override
-						protected void doRefreshVisual() {
-						}
 					};
+				}
 				return host;
 			}
 		};
@@ -115,6 +109,19 @@ public class NodeLayoutPolicyTests {
 				new Point(visual.getLayoutX(), visual.getLayoutY()));
 		assertEquals(size, new Dimension(visual.getLayoutBounds().getWidth(),
 				visual.getLayoutBounds().getHeight()));
+	}
+
+	@Test
+	public void test_provide() {
+		final Point location = new Point(10, 20);
+		final Dimension size = new Dimension(120, 60);
+		NodeLayoutPolicy policy = createPolicy(location, size);
+
+		GraphNodeLayout nodeLayout = createNodeLayout();
+		policy.provideLayoutInformation(nodeLayout);
+
+		assertEquals(location, PropertiesHelper.getLocation(nodeLayout));
+		assertEquals(size, PropertiesHelper.getSize(nodeLayout));
 	}
 
 }
