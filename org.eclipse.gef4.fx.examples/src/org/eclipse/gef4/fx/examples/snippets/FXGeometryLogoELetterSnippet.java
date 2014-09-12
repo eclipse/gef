@@ -51,7 +51,6 @@ public class FXGeometryLogoELetterSnippet extends FXApplication {
 		eLetterShape.resize(200, 250);
 		eLetterShape.setEffect(GEF_SHADOW_EFFECT);
 		eLetterShape.setFill(GEF_COLOR_BLUE);
-		eLetterShape.setManaged(false);
 
 		final HBox hbox = new HBox();
 		hbox.getChildren().add(eLetterShape);
