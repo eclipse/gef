@@ -131,11 +131,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -182,12 +182,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 				}
 			}
 		});
-
-		// bind grid scale to zoom property because we want to have a scaled
-		// grid (by default)
-		// TODO: this could move into GridBehavior, so we could offer an option
-		// to scale grid or keep it constant there
-		gridLayer.gridScaleProperty().bind(zoomProperty());
 
 		// TODO: These could each be extracted to a helper, because its generic
 		// functionality not specific to a grid layer (ensure layer is as large

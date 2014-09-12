@@ -41,7 +41,7 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *
 	 * @see #setFocused(IContentPart)
 	 */
-	final public static String FOCUS_PROPERTY = "Focus";
+	final public static String FOCUS_PROPERTY = "focus";
 
 	/**
 	 * The {@link FocusModel} fires {@link PropertyChangeEvent}s when the viewer

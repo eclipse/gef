@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -36,8 +37,8 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				Point2D initialPosInLocal = part.getVisual().sceneToLocal(
-						initialMouseLocationInScene.x,
-						initialMouseLocationInScene.y);
+						Geometry2JavaFX
+								.toFXPoint(getInitialMouseLocationInScene()));
 				Point2D currentPosInLocal = part.getVisual().sceneToLocal(
 						e.getSceneX(), e.getSceneY());
 				Point2D deltaPoint = new Point2D(currentPosInLocal.getX()
@@ -47,6 +48,10 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 						deltaPoint.getY(), 0, 0);
 			}
 		}
+	}
+
+	protected Point getInitialMouseLocationInScene() {
+		return initialMouseLocationInScene;
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
@@ -62,7 +67,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		initialMouseLocationInScene = new Point(e.getSceneX(), e.getSceneY());
+		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node> part : getTargetParts()) {
 			ITransactional policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
@@ -91,7 +96,11 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 		if (performCommit) {
 			executeOperation(operation);
 		}
-		initialMouseLocationInScene = null;
+		setInitialMouseLocationInScene(null);
+	}
+
+	protected void setInitialMouseLocationInScene(Point point) {
+		initialMouseLocationInScene = point;
 	}
 
 }

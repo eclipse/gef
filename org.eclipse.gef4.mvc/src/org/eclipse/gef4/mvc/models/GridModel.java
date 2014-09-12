@@ -18,31 +18,46 @@ import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
 public class GridModel implements IPropertyChangeNotifier {
 
-	public static final String GRID_WIDTH_PROPERTY = "gridWidth";
-	public static final String GRID_HEIGHT_PROPERTY = "gridHeight";
-	public static final String GRID_ENABLED_PROPERTY = "gridEnabled";
+	// add grid styles??
+	public static final String GRID_CELL_WIDTH_PROPERTY = "gridCellWidth";
+	public static final String GRID_CELL_HEIGHT_PROPERTY = "gridCellHeight";
+
+	// whether grid should be shown
+	public static final String SHOW_GRID_PROPERTY = "showGrid";
+	public static final String ZOOM_GRID_PROPERTY = "zoomGrid";
+	public static final String SNAP_TO_GRID_PROPERTY = "snapToGrid";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private double gridWidth = 10;
-	private double gridHeight = 10;
-	private boolean gridEnabled = true;
+	private double gridCellWidth = 10;
+	private double gridCellHeight = 10;
+	private boolean showGrid = true;
+	private boolean snapToGrid = false;
+	private boolean zoomGrid = true;
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public double getGridHeight() {
-		return gridHeight;
+	public double getGridCellHeight() {
+		return gridCellHeight;
 	}
 
-	public double getGridWidth() {
-		return gridWidth;
+	public double getGridCellWidth() {
+		return gridCellWidth;
 	}
 
-	public boolean isGridEnabled() {
-		return gridEnabled;
+	public boolean isShowGrid() {
+		return showGrid;
+	}
+
+	public boolean isSnapToGrid() {
+		return snapToGrid;
+	}
+
+	public boolean isZoomGrid() {
+		return zoomGrid;
 	}
 
 	@Override
@@ -50,23 +65,36 @@ public class GridModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void setGridEnabled(boolean gridEnabled) {
-		boolean oldGridEnabled = this.gridEnabled;
-		this.gridEnabled = gridEnabled;
-		pcs.firePropertyChange(GRID_ENABLED_PROPERTY, oldGridEnabled,
-				gridEnabled);
+	public void setGridCellHeight(double gridCellHeight) {
+		double oldGridHeight = this.gridCellHeight;
+		this.gridCellHeight = gridCellHeight;
+		pcs.firePropertyChange(GRID_CELL_WIDTH_PROPERTY, oldGridHeight,
+				gridCellHeight);
 	}
 
-	public void setGridHeight(double gridHeight) {
-		double oldGridHeight = this.gridHeight;
-		this.gridHeight = gridHeight;
-		pcs.firePropertyChange(GRID_WIDTH_PROPERTY, oldGridHeight, gridHeight);
+	public void setGridCellWidth(double gridCellWidth) {
+		double oldGridCellWidth = this.gridCellWidth;
+		this.gridCellWidth = gridCellWidth;
+		pcs.firePropertyChange(GRID_CELL_WIDTH_PROPERTY, oldGridCellWidth,
+				gridCellWidth);
 	}
 
-	public void setGridWidth(double gridWidth) {
-		double oldGridWidth = this.gridWidth;
-		this.gridWidth = gridWidth;
-		pcs.firePropertyChange(GRID_WIDTH_PROPERTY, oldGridWidth, gridWidth);
+	public void setShowGrid(boolean showGrid) {
+		boolean oldShowGrid = this.showGrid;
+		this.showGrid = showGrid;
+		pcs.firePropertyChange(SHOW_GRID_PROPERTY, oldShowGrid, showGrid);
+	}
+
+	public void setSnapToGrid(boolean snapToGrid) {
+		boolean oldSnapToGrid = this.snapToGrid;
+		this.snapToGrid = snapToGrid;
+		pcs.firePropertyChange(SNAP_TO_GRID_PROPERTY, oldSnapToGrid, snapToGrid);
+	}
+
+	public void setZoomGrid(boolean zoomGrid) {
+		boolean oldZoomGrid = this.zoomGrid;
+		this.zoomGrid = zoomGrid;
+		pcs.firePropertyChange(ZOOM_GRID_PROPERTY, oldZoomGrid, zoomGrid);
 	}
 
 }

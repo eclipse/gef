@@ -34,7 +34,7 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 * hovered part changes. This is the name of the property that is delivered
 	 * with the event.
 	 */
-	final public static String HOVER_PROPERTY = "Hover";
+	final public static String HOVER_PROPERTY = "hover";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IVisualPart<VR> hovered = null;

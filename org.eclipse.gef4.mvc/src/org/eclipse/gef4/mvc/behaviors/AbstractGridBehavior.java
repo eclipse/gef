@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractGridBehavior<VR> extends AbstractBehavior<VR>
-implements PropertyChangeListener {
+		implements PropertyChangeListener {
 
 	@Override
 	public void activate() {
@@ -34,32 +34,37 @@ implements PropertyChangeListener {
 		GridModel gridModel = getHost().getRoot().getViewer()
 				.getAdapter(GridModel.class);
 		gridModel.addPropertyChangeListener(this);
-		applyGridEnabled(gridModel.isGridEnabled());
-		applyGridWidth(gridModel.getGridWidth());
-		applyGridHeight(gridModel.getGridHeight());
+		applyShowGrid(gridModel.isShowGrid());
+		applyZoomGrid(gridModel.isZoomGrid());
+		applyGridCellWidth(gridModel.getGridCellWidth());
+		applyGridCellHeight(gridModel.getGridCellHeight());
 	}
 
-	protected abstract void applyGridEnabled(boolean enabled);
+	protected abstract void applyGridCellHeight(double gridCellHeight);
 
-	protected abstract void applyGridHeight(double height);
+	protected abstract void applyGridCellWidth(double gridCellWidth);
 
-	protected abstract void applyGridWidth(double width);
+	protected abstract void applyShowGrid(boolean showGrid);
+
+	protected abstract void applyZoomGrid(boolean zoomGrid);
 
 	@Override
 	public void deactivate() {
 		getHost().getRoot().getViewer().getAdapter(GridModel.class)
-		.removePropertyChangeListener(this);
+				.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (GridModel.GRID_ENABLED_PROPERTY.equals(evt.getPropertyName())) {
-			applyGridEnabled(((Boolean) evt.getNewValue()).booleanValue());
-		} else if (GridModel.GRID_WIDTH_PROPERTY.equals(evt.getPropertyName())) {
-			applyGridWidth(((Double) evt.getNewValue()).doubleValue());
-		} else if (GridModel.GRID_HEIGHT_PROPERTY.equals(evt.getPropertyName())) {
-			applyGridHeight(((Double) evt.getNewValue()).doubleValue());
+		if (GridModel.SHOW_GRID_PROPERTY.equals(evt.getPropertyName())) {
+			applyShowGrid(((Boolean) evt.getNewValue()).booleanValue());
+		} else if (GridModel.GRID_CELL_WIDTH_PROPERTY.equals(evt
+				.getPropertyName())) {
+			applyGridCellWidth(((Double) evt.getNewValue()).doubleValue());
+		} else if (GridModel.GRID_CELL_HEIGHT_PROPERTY.equals(evt
+				.getPropertyName())) {
+			applyGridCellHeight(((Double) evt.getNewValue()).doubleValue());
 		}
 	}
 

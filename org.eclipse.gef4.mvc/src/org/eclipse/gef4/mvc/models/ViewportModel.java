@@ -28,13 +28,13 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 * When the viewport width changes, this is the property name reported by a
 	 * corresponding property change event.
 	 */
-	public static final String VIEWPORT_WIDTH_PROPERTY = "ViewportWidth";
+	public static final String VIEWPORT_WIDTH_PROPERTY = "viewportWidth";
 
 	/**
 	 * When the viewport height changes, this is the property name reported by a
 	 * corresponding property change event.
 	 */
-	public static final String VIEWPORT_HEIGHT_PROPERTY = "ViewportHeight";
+	public static final String VIEWPORT_HEIGHT_PROPERTY = "viewportHeight";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private double width = 0;

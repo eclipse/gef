@@ -29,7 +29,7 @@ public class ZoomModel implements IPropertyChangeNotifier {
 	 * changes. This is the key used to identify the zoom factor property when
 	 * listening to multiple property change supporters.
 	 */
-	public static final String ZOOM_FACTOR_PROPERTY = "ZoomFactor";
+	public static final String ZOOM_FACTOR_PROPERTY = "zoomFactor";
 
 	/**
 	 * This is the default/initial zoom factor.
@@ -71,7 +71,7 @@ public class ZoomModel implements IPropertyChangeNotifier {
 		if (zoomFactor <= 0) {
 			throw new IllegalArgumentException(
 					"Expected: Positive double value. Given: <" + zoomFactor
-					+ ">.");
+							+ ">.");
 		}
 		double oldZoom = zoom;
 		zoom = zoomFactor;

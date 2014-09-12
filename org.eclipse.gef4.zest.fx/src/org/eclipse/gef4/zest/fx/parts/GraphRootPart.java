@@ -114,7 +114,7 @@ public class GraphRootPart extends FXRootPart {
 		getViewer().getAdapter(ViewportModel.class).addPropertyChangeListener(
 				viewportChanged);
 
-		getViewer().getAdapter(GridModel.class).setGridEnabled(false);
+		getViewer().getAdapter(GridModel.class).setShowGrid(false);
 
 		// load stylesheet
 		getVisual().getScene().getStylesheets().add(STYLES_CSS_FILE);

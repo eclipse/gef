@@ -31,6 +31,9 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 		if (root instanceof FXRootPart) {
 			FXRootPart fxRootPart = (FXRootPart) root;
 			fxRootPart.zoomProperty().set(new Scale(zoomFactor, zoomFactor));
+			// TODO: set zoom on content layer rather than via zoomProperty() on
+			// FXRootPart
+			// also set it on grid layer in case zoom grid is enabled??
 		}
 	}
 }
