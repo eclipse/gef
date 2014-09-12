@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import javafx.geometry.Bounds;
 import javafx.scene.shape.Path;
 
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Arc;
-import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Ellipse;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IScalable;
@@ -51,6 +51,21 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 
 	public T getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	protected Bounds impl_computeLayoutBounds() {
+		/*
+		 * We have to ensure, that the size that gets passed in to #resize() is
+		 * reflected in the layout bounds of this node. As we cannot compensate
+		 * the offset between geometric bounds and layout bounds, we set the
+		 * geometric bounds to the resize width and height and tweak the layout
+		 * bounds here to match the geometric bounds.
+		 * 
+		 * TODO: Re-implement this fix by only using public API, for example, a
+		 * Group can be used as the super class. (Bug #443954)
+		 */
+		return Geometry2JavaFX.toFXBounds(geometry.getBounds());
 	}
 
 	@Override
@@ -98,10 +113,10 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 			throw new IllegalArgumentException("Cannot resize: height < 0.");
 		}
 
-		Rectangle bounds = geometry.getBounds();
-
 		// prevent unnecessary updates
-		if (bounds.getSize().equals(new Dimension(width, height))) {
+		Bounds layoutBounds = getLayoutBounds();
+		if (layoutBounds.getWidth() == width
+				&& layoutBounds.getHeight() == height) {
 			return;
 		}
 
@@ -118,27 +133,28 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		} else if (geometry instanceof Arc) {
 			((Arc) geometry).setSize(width, height);
 		} else {
-			double sx = width / bounds.getWidth();
-			double sy = height / bounds.getHeight();
+			Rectangle geometricBounds = geometry.getBounds();
+			double sx = width / geometricBounds.getWidth();
+			double sy = height / geometricBounds.getHeight();
 			if (geometry instanceof IScalable) {
 				// Line, Polyline, PolyBezier, BezierCurve, CubicCurve,
 				// QuadraticCurve, Polygon, CurvedPolygon, Region, and Ring are
 				// not directly resizable but scalable
-				((IScalable<T>) geometry).scale(sx, sy, bounds.getX(),
-						bounds.getY());
+				((IScalable<T>) geometry).scale(sx, sy, geometricBounds.getX(),
+						geometricBounds.getY());
 			} else {
 				// apply transform to path
-				Point boundsOrigin = new Point(bounds.getX(), bounds.getY());
+				Point boundsOrigin = new Point(geometricBounds.getX(),
+						geometricBounds.getY());
 				geometry = (T) geometry
 						.getTransformed(
 								new AffineTransform(1, 0, 0, 1,
 										-boundsOrigin.x, -boundsOrigin.y))
-										.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
-										.getTransformed(
-												new AffineTransform(1, 0, 0, 1, boundsOrigin.x,
-														boundsOrigin.y));
+						.getTransformed(new AffineTransform(sx, 0, 0, sy, 0, 0))
+						.getTransformed(
+								new AffineTransform(1, 0, 0, 1, boundsOrigin.x,
+										boundsOrigin.y));
 			}
-
 		}
 		updatePathElements();
 	}
@@ -157,5 +173,4 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 	private void updatePathElements() {
 		getElements().setAll(Geometry2JavaFX.toPathElements(geometry.toPath()));
 	}
-
 }
