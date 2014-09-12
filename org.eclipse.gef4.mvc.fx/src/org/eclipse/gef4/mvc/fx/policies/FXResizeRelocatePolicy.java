@@ -34,10 +34,6 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	public IUndoableOperation commit() {
 		FXResizeRelocateNodeOperation commit = operation;
 		operation = null;
-
-		if (commit == null || commit.isNoOp()) {
-			return null;
-		}
 		return commit;
 	}
 
@@ -51,7 +47,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -71,10 +67,12 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		double layoutDh = resizable ? dh : 0;
 
 		// ensure visual is not resized below threshold
-		if (operation.getOldSize().width + layoutDw < getMinimumWidth()) {
+		if (resizable
+				&& operation.getOldSize().width + layoutDw < getMinimumWidth()) {
 			layoutDw = getMinimumWidth() - operation.getOldSize().width;
 		}
-		if (operation.getOldSize().height + layoutDh < getMinimumHeight()) {
+		if (resizable
+				&& operation.getOldSize().height + layoutDh < getMinimumHeight()) {
 			layoutDh = getMinimumHeight() - operation.getOldSize().height;
 		}
 
