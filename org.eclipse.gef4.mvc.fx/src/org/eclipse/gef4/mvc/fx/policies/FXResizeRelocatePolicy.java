@@ -15,8 +15,10 @@ import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.policies.IPolicy;
@@ -49,7 +51,7 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -74,6 +76,22 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 		if (operation.getOldSize().height + layoutDh < getMinimumHeight()) {
 			layoutDh = getMinimumHeight() - operation.getOldSize().height;
+		}
+
+		// snap-to-grid
+		GridModel gridModel = getHost().getRoot().getViewer()
+				.getAdapter(GridModel.class);
+		if (gridModel != null && gridModel.isSnapToGrid()) {
+			double gridCellWidth = gridModel.getGridCellWidth();
+			double gridCellHeight = gridModel.getGridCellHeight();
+
+			// snap-to-grid
+			// IMPORTANT: we might not have been snapped to grid before, thus we
+			// have to take not only the delta for our calculations, but also
+			// the old position)
+			Point oldLocation = operation.getOldLocation();
+			layoutDx = layoutDx - (oldLocation.x + layoutDx) % gridCellWidth;
+			layoutDy = layoutDy - (oldLocation.y + layoutDy) % gridCellHeight;
 		}
 
 		// update operation
