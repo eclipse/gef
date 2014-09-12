@@ -14,7 +14,9 @@ package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyMapWrapper;
@@ -71,20 +73,11 @@ public class FXConnection extends Group {
 			FXCollections.<AnchorKey, IFXAnchor> observableHashMap());
 
 	private List<AnchorKey> wayAnchorKeys = new ArrayList<AnchorKey>();
-	private boolean inRefresh = false;
+	private int nextWayAnchorId = 0;
 
 	// refresh geometry on position changes
-	protected MapChangeListener<? super AnchorKey, ? super Point> positionChangeListener = new MapChangeListener<AnchorKey, Point>() {
-		@Override
-		public void onChanged(
-				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-			if (change.getKey().getAnchored() == getCurveNode()) {
-				refreshGeometry();
-			}
-		}
-	};
-
-	private int nextWayAnchorId = 0;
+	private boolean inRefresh = false;
+	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
 	{
 		// disable resizing children which would change their layout positions
@@ -100,11 +93,18 @@ public class FXConnection extends Group {
 		AnchorKey anchorKey = generateWayAnchorKey();
 		// Important: attach() before putting into the anchors-map, so that
 		// listeners on the anchors-map can retrieve the anchor position.
-		anchor.positionProperty().removeListener(positionChangeListener);
+		if (anchorKeyPCL.containsKey(anchorKey)) {
+			anchor.positionProperty().removeListener(
+					anchorKeyPCL.remove(anchorKey));
+		}
+		wayAnchorKeys.add(anchorKey);
 		anchor.attach(anchorKey);
 		// TODO: listen on map property to add position change listener
-		anchor.positionProperty().addListener(positionChangeListener);
-		wayAnchorKeys.add(anchorKey);
+		if (!anchorKeyPCL.containsKey(anchorKey)) {
+			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+			anchorKeyPCL.put(anchorKey, pcl);
+			anchor.positionProperty().addListener(pcl);
+		}
 		anchorsProperty.put(anchorKey, anchor);
 
 		refreshGeometry(); // TODO: possibly unnecessary
@@ -227,6 +227,19 @@ public class FXConnection extends Group {
 
 		arrangeDecoration(startDecoration, startPoint, curveStartDirection,
 				decoStartPoint, decoDirection);
+	}
+
+	protected MapChangeListener<? super AnchorKey, ? super Point> createPCL(
+			final AnchorKey anchorKey) {
+		return new MapChangeListener<AnchorKey, Point>() {
+			@Override
+			public void onChanged(
+					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
+				if (change.getKey().equals(anchorKey)) {
+					refreshGeometry();
+				}
+			}
+		};
 	}
 
 	private AnchorKey generateWayAnchorKey() {
@@ -481,7 +494,10 @@ public class FXConnection extends Group {
 		}
 
 		oldAnchor.detach(anchorKey);
-		oldAnchor.positionProperty().removeListener(positionChangeListener);
+		if (anchorKeyPCL.containsKey(anchorKey)) {
+			oldAnchor.positionProperty().removeListener(
+					anchorKeyPCL.remove(anchorKey));
+		}
 
 		refreshGeometry();
 	}
@@ -514,15 +530,24 @@ public class FXConnection extends Group {
 				// position.
 				anchorsProperty.remove(anchorKey);
 				oldAnchor.detach(anchorKey);
-				oldAnchor.positionProperty().removeListener(
-						positionChangeListener);
+				if (anchorKeyPCL.containsKey(anchorKey)) {
+					oldAnchor.positionProperty().removeListener(
+							anchorKeyPCL.remove(anchorKey));
+				}
 			}
 			// Important: attach() before putting into anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
-			anchor.positionProperty().removeListener(positionChangeListener);
+			if (anchorKeyPCL.containsKey(anchorKey)) {
+				anchor.positionProperty().removeListener(
+						anchorKeyPCL.remove(anchorKey));
+			}
 			anchor.attach(anchorKey);
 			// TODO: listen on anchors map to add the PCL
-			anchor.positionProperty().addListener(positionChangeListener);
+			if (!anchorKeyPCL.containsKey(anchorKey)) {
+				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+				anchorKeyPCL.put(anchorKey, pcl);
+				anchor.positionProperty().addListener(pcl);
+			}
 			anchorsProperty.put(anchorKey, anchor);
 			refreshGeometry();
 		}
@@ -566,15 +591,24 @@ public class FXConnection extends Group {
 				// position.
 				anchorsProperty.remove(anchorKey);
 				oldAnchor.detach(anchorKey);
-				oldAnchor.positionProperty().removeListener(
-						positionChangeListener);
+				if (anchorKeyPCL.containsKey(anchorKey)) {
+					oldAnchor.positionProperty().removeListener(
+							anchorKeyPCL.remove(anchorKey));
+				}
 			}
 			// Important: attach() before putting into the anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
-			anchor.positionProperty().removeListener(positionChangeListener);
+			if (anchorKeyPCL.containsKey(anchorKey)) {
+				anchor.positionProperty().removeListener(
+						anchorKeyPCL.remove(anchorKey));
+			}
 			anchor.attach(anchorKey);
 			// TODO: listen on anchors map to add the PCL
-			anchor.positionProperty().addListener(positionChangeListener);
+			if (!anchorKeyPCL.containsKey(anchorKey)) {
+				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+				anchorKeyPCL.put(anchorKey, pcl);
+				anchor.positionProperty().addListener(pcl);
+			}
 			anchorsProperty.put(anchorKey, anchor);
 			refreshGeometry();
 		}
@@ -613,17 +647,29 @@ public class FXConnection extends Group {
 			// Important: detach() after removing from the anchors-map, so
 			// that listeners on the anchors-map can retrieve the anchor
 			// position.
+			// TODO: extract to method
 			anchorsProperty.remove(anchorKey);
 			oldAnchor.detach(anchorKey);
-			oldAnchor.positionProperty().removeListener(positionChangeListener);
+			if (anchorKeyPCL.containsKey(anchorKey)) {
+				oldAnchor.positionProperty().removeListener(
+						anchorKeyPCL.remove(anchorKey));
+			}
 			// Important: attach() before putting into the anchors-map, so that
 			// listeners on the anchors-map can retrieve the anchor position.
-			anchor.positionProperty().removeListener(positionChangeListener);
+			// TODO: extract to method
+			if (anchorKeyPCL.containsKey(anchorKey)) {
+				anchor.positionProperty().removeListener(
+						anchorKeyPCL.remove(anchorKey));
+			}
 			anchor.attach(anchorKey);
 			// TODO: listen on anchors map to add the PCL
-			anchor.positionProperty().addListener(positionChangeListener);
+			if (!anchorKeyPCL.containsKey(anchorKey)) {
+				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+				anchorKeyPCL.put(anchorKey, pcl);
+				anchor.positionProperty().addListener(pcl);
+			}
 			anchorsProperty.put(anchorKey, anchor);
-			refreshGeometry(); // TODO: possibly unnecessary
+			refreshGeometry();
 		}
 	}
 
@@ -650,10 +696,16 @@ public class FXConnection extends Group {
 	}
 
 	public void setWayPoints(List<Point> wayPoints) {
-		removeAllWayPoints();
-		for (Point wp : wayPoints) {
-			addWayPoint(getWayAnchorsSize(), wp);
+		int waySize = wayAnchorKeys.size();
+		int i = 0;
+		for (; i < waySize && i < wayPoints.size(); i++) {
+			setWayPoint(i, wayPoints.get(i));
+		}
+		for (; i < wayPoints.size(); i++) {
+			addWayPoint(i, wayPoints.get(i));
+		}
+		for (; i < waySize; i++) {
+			removeWayPoint(i);
 		}
 	}
-
 }
