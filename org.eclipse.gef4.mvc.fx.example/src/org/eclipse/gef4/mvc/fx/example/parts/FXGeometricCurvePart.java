@@ -284,15 +284,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public void doRefreshVisual() {
 		FXGeometricCurve content = getContent();
 
-		// TODO: compare way points to identify if we need to refresh
 		List<Point> wayPoints = content.getWayPoints();
 
 		if (content.getTransform() != null) {
 			Point[] transformedWayPoints = content.getTransform()
 					.getTransformed(wayPoints.toArray(new Point[] {}));
-			visual.setWayPoints(Arrays.asList(transformedWayPoints));
+			if (!Arrays.equals(visual.getWayPoints().toArray(new Point[] {}),
+					transformedWayPoints)) {
+				visual.setWayPoints(Arrays.asList(transformedWayPoints));
+			}
 		} else {
-			visual.setWayPoints(wayPoints);
+			if (!Arrays.equals(visual.getWayPoints().toArray(new Point[] {}),
+					wayPoints.toArray(new Point[] {}))) {
+				visual.setWayPoints(wayPoints);
+			}
 		}
 
 		// decorations
