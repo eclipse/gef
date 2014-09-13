@@ -15,6 +15,7 @@ import javafx.beans.property.ReadOnlyMapProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.geometry.planar.Point;
 
 /**
@@ -45,16 +46,26 @@ public interface IFXAnchor {
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be attached.
+	 * @param info
+	 *            An {@link IAdaptable}, which may be adapted by the
+	 *            {@link IFXAnchor} to obtain additional information. May be
+	 *            <code>null</code> if the respective {@link IFXAnchor} does not
+	 *            require additional information.
 	 */
-	void attach(AnchorKey key);
+	void attach(AnchorKey key, IAdaptable info);
 
 	/**
 	 * Detaches the given {@link AnchorKey} from this {@link IFXAnchor}.
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to be detached.
+	 * @param info
+	 *            An {@link IAdaptable}, which may be adapted by the
+	 *            {@link IFXAnchor} to obtain additional information. May be
+	 *            <code>null</code> if the respective {@link IFXAnchor} does not
+	 *            require additional information.
 	 */
-	void detach(AnchorKey key);
+	void detach(AnchorKey key, IAdaptable info);
 
 	/**
 	 * Provides the anchorage {@link Node} this {@link IFXAnchor} is bound to.
@@ -67,11 +78,11 @@ public interface IFXAnchor {
 	/**
 	 * Provides a position for the given {@link AnchorKey}. The provided
 	 * {@link AnchorKey} has to be attached to this {@link IFXAnchor} (see
-	 * {@link #attach(AnchorKey)}).
+	 * {@link #attach(AnchorKey, IAdaptable)}).
 	 *
 	 * @param key
 	 *            The {@link AnchorKey} to retrieve a position for. It has to be
-	 *            attached ({@link #attach(AnchorKey)}) to this
+	 *            attached ({@link #attach(AnchorKey, IAdaptable)}) to this
 	 *            {@link IFXAnchor} before.
 	 * @return The position for the given {@link AnchorKey} within local
 	 *         coordinates of the {@link AnchorKey}'s anchored {@link Node}.

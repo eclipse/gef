@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXPolyBezierConnectionRouter;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
@@ -194,7 +193,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	public FXGeometricCurvePart() {
 		visual = new FXConnection();
 		visual.setRouter(new FXPolyBezierConnectionRouter());
-		new FXChopBoxHelper(visual);
 
 		// TODO: use binding
 		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),

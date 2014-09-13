@@ -27,6 +27,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -66,6 +68,9 @@ public class FXConnection extends Group {
 	private FXGeometryNode<ICurve> curveNode = new FXGeometryNode<ICurve>();
 	private IFXConnectionRouter router = new FXPolylineConnectionRouter();
 
+	// used to pass as argument to IFXAnchor#attach() and #detach()
+	private AdapterStore as = new AdapterStore();
+
 	// TODO: use ReadOnlyObjectWrapper (JavaFX Property) for decorations
 	private IFXDecoration startDecoration = null;
 	private IFXDecoration endDecoration = null;
@@ -79,10 +84,14 @@ public class FXConnection extends Group {
 	private boolean inRefresh = false;
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorKeyPCL = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
-	{
+	public FXConnection() {
 		// disable resizing children which would change their layout positions
 		// in some cases
 		setAutoSizeChildren(false);
+
+		// register an FXChopBoxHelper, which is passed to the attached anchors.
+		as.setAdapter(AdapterKey.get(FXChopBoxHelper.class),
+				new FXChopBoxHelper(this));
 	}
 
 	public void addWayAnchor(int index, IFXAnchor anchor) {
@@ -98,7 +107,7 @@ public class FXConnection extends Group {
 					anchorKeyPCL.remove(anchorKey));
 		}
 		wayAnchorKeys.add(anchorKey);
-		anchor.attach(anchorKey);
+		anchor.attach(anchorKey, as);
 		// TODO: listen on map property to add position change listener
 		if (!anchorKeyPCL.containsKey(anchorKey)) {
 			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
@@ -493,7 +502,7 @@ public class FXConnection extends Group {
 			throw new IllegalStateException("old anchor is null!");
 		}
 
-		oldAnchor.detach(anchorKey);
+		oldAnchor.detach(anchorKey, as);
 		if (anchorKeyPCL.containsKey(anchorKey)) {
 			oldAnchor.positionProperty().removeListener(
 					anchorKeyPCL.remove(anchorKey));
@@ -529,7 +538,7 @@ public class FXConnection extends Group {
 				// that listeners on the anchors-map can retrieve the anchor
 				// position.
 				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey);
+				oldAnchor.detach(anchorKey, as);
 				if (anchorKeyPCL.containsKey(anchorKey)) {
 					oldAnchor.positionProperty().removeListener(
 							anchorKeyPCL.remove(anchorKey));
@@ -541,7 +550,7 @@ public class FXConnection extends Group {
 				anchor.positionProperty().removeListener(
 						anchorKeyPCL.remove(anchorKey));
 			}
-			anchor.attach(anchorKey);
+			anchor.attach(anchorKey, as);
 			// TODO: listen on anchors map to add the PCL
 			if (!anchorKeyPCL.containsKey(anchorKey)) {
 				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
@@ -590,7 +599,7 @@ public class FXConnection extends Group {
 				// that listeners on the anchors-map can retrieve the anchor
 				// position.
 				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey);
+				oldAnchor.detach(anchorKey, as);
 				if (anchorKeyPCL.containsKey(anchorKey)) {
 					oldAnchor.positionProperty().removeListener(
 							anchorKeyPCL.remove(anchorKey));
@@ -602,7 +611,7 @@ public class FXConnection extends Group {
 				anchor.positionProperty().removeListener(
 						anchorKeyPCL.remove(anchorKey));
 			}
-			anchor.attach(anchorKey);
+			anchor.attach(anchorKey, as);
 			// TODO: listen on anchors map to add the PCL
 			if (!anchorKeyPCL.containsKey(anchorKey)) {
 				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
@@ -649,7 +658,7 @@ public class FXConnection extends Group {
 			// position.
 			// TODO: extract to method
 			anchorsProperty.remove(anchorKey);
-			oldAnchor.detach(anchorKey);
+			oldAnchor.detach(anchorKey, as);
 			if (anchorKeyPCL.containsKey(anchorKey)) {
 				oldAnchor.positionProperty().removeListener(
 						anchorKeyPCL.remove(anchorKey));
@@ -661,7 +670,7 @@ public class FXConnection extends Group {
 				anchor.positionProperty().removeListener(
 						anchorKeyPCL.remove(anchorKey));
 			}
-			anchor.attach(anchorKey);
+			anchor.attach(anchorKey, as);
 			// TODO: listen on anchors map to add the PCL
 			if (!anchorKeyPCL.containsKey(anchorKey)) {
 				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);

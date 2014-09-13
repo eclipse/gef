@@ -68,8 +68,6 @@ public class FXChopBoxSnippet extends FXApplication {
 		
 		FXConnection connectionAB = new FXConnection();
 		FXConnection connectionBC = new FXConnection();
-		new FXChopBoxHelper(connectionAB);
-		new FXChopBoxHelper(connectionBC);
 
 		Group group = new Group(nodeA, nodeB, nodeC, connectionAB, connectionBC, btnA, btnB, btnC);
 		root.getChildren().add(group);

@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
@@ -30,6 +32,9 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChopBoxHelper {
+
+	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
+			FXCollections.<AnchorKey, Point> observableHashMap());
 
 	/*
 	 * TODO: Support FXChopBoxAnchor at way points. Currently no reference
@@ -131,7 +136,7 @@ public class FXChopBoxHelper {
 	 * @return an array of size 2 containing the reference points for the start
 	 *         and end anchors
 	 */
-	public Point[] computeReferencePoints() {
+	protected Point[] computeReferencePoints() {
 		// find reference points
 		Point startReference = null;
 		Point endReference = null;
@@ -266,28 +271,31 @@ public class FXChopBoxHelper {
 		return center;
 	}
 
+	public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
+		return referencePointProperty;
+	}
+
 	private void updateEndReferencePoint() {
 		IFXAnchor endAnchor = connection.getEndAnchor();
 		if (endAnchor != null && endAnchor instanceof FXChopBoxAnchor) {
 			Point[] refPoints = computeReferencePoints();
-			FXChopBoxAnchor a = (FXChopBoxAnchor) endAnchor;
 			AnchorKey endAnchorKey = connection.getEndAnchorKey();
-			Point oldRef = a.getReferencePoint(endAnchorKey);
+			Point oldRef = referencePointProperty.get(endAnchorKey);
 			if (oldRef == null || !oldRef.equals(refPoints[1])) {
-				a.setReferencePoint(endAnchorKey, refPoints[1]);
+				referencePointProperty.put(endAnchorKey, refPoints[1]);
 			}
 		}
 	}
 
 	private void updateStartReferencePoint() {
+		// TODO: put reference point into local property
 		IFXAnchor startAnchor = connection.getStartAnchor();
 		if (startAnchor != null && startAnchor instanceof FXChopBoxAnchor) {
 			Point[] refPoints = computeReferencePoints();
-			FXChopBoxAnchor a = (FXChopBoxAnchor) startAnchor;
 			AnchorKey startAnchorKey = connection.getStartAnchorKey();
-			Point oldRef = a.getReferencePoint(startAnchorKey);
+			Point oldRef = referencePointProperty.get(startAnchorKey);
 			if (oldRef == null || !oldRef.equals(refPoints[0])) {
-				a.setReferencePoint(startAnchorKey, refPoints[0]);
+				referencePointProperty.put(startAnchorKey, refPoints[0]);
 			}
 		}
 	}

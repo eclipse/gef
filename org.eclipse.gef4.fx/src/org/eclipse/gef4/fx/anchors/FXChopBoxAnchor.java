@@ -11,13 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.anchors;
 
-import javafx.beans.property.MapProperty;
-import javafx.beans.property.SimpleMapProperty;
-import javafx.collections.FXCollections;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -30,14 +31,14 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 //       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
-	private SimpleMapProperty<AnchorKey, Point> referencePointProperty = new SimpleMapProperty<AnchorKey, Point>(
-			FXCollections.<AnchorKey, Point> observableHashMap());
-
 	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
 				javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 			if (change.wasAdded()) {
+				// Do some defensive checks here. However, if we run into null
+				// key or value here, this will be an inconsistency of the
+				// FXChopBoxHelper#referencePointProperty()
 				if (change.getKey() == null) {
 					throw new IllegalStateException(
 							"Attempt to put <null> key into reference point map!");
@@ -46,14 +47,54 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 					throw new IllegalStateException(
 							"Attempt to put <null> value into reference point map!");
 				}
-				recomputePosition(change.getKey(), change.getValueAdded());
+				if (helpers.containsKey(change.getKey())) {
+					// only recompute position, if one of our own keys changed
+					// (FXChopBoxHelper#referencePointProperty() may contain
+					// AnchorKeys registered at other anchors as well)
+					recomputePosition(change.getKey(), change.getValueAdded());
+				}
 			}
 		}
 	};
 
+	private Map<AnchorKey, FXChopBoxHelper> helpers = new HashMap<>();
+
 	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);
-		referencePointProperty.addListener(referencePointChangeListener);
+	}
+
+	/**
+	 * Attaches the given {@link AnchorKey} to this {@link FXChopBoxAnchor}.
+	 * Requires that an {@link FXChopBoxHelper} can be obtained from the passed
+	 * in {@link IAdaptable}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} to be attached.
+	 * @param info
+	 *            An {@link IAdaptable}, which will be used to obtain an
+	 *            {@link FXChopBoxHelper} that provides reference points for
+	 *            this {@link FXChopBoxAnchor}.
+	 *
+	 */
+	@Override
+	public void attach(AnchorKey key, IAdaptable info) {
+		FXChopBoxHelper helper = info.getAdapter(FXChopBoxHelper.class);
+		if (helper == null) {
+			throw new IllegalArgumentException(
+					"No FXChopBoxHelper could be obtained via info.");
+		}
+
+		// we need to keep track of it, otherwise we will not be able to access
+		// the reference point information (in case of other changes).
+		helpers.put(key, helper);
+
+		// will enforce a re-computation of positions, so we need to have
+		// obtained the helper beforehand.
+		super.attach(key, info);
+
+		// add listener to reference point changes
+		helper.referencePointProperty().addListener(
+				referencePointChangeListener);
 	}
 
 	/**
@@ -71,14 +112,14 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @return Point The anchor position within the local coordinate system of
 	 *         the to be anchored {@link Node}.
 	 */
-	public Point computePosition(Node anchored, Point referencePoint) {
+	protected Point computePosition(Node anchored, Point referencePoint) {
 		/*
 		 * The reference shapes/lines/points have to be transformed into the
 		 * same coordinate system in order to be able to compute the correct
 		 * intersection. We choose the scene coordinate system here. Therefore,
 		 * we need access to a local-to-scene-transform for the anchorage and
 		 * the anchored.
-		 * 
+		 *
 		 * Important: JavaFX Node provides a (lazily computed)
 		 * local-to-scene-transform property which we could access to get that
 		 * transform. Unfortunately, this property is not updated correctly,
@@ -86,7 +127,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * This is reflected in the different values of a) the
 		 * Node#localToScene(...) method, and b) transforming using the
 		 * concatenated local-to-parent-transforms.
-		 * 
+		 *
 		 * Therefore, we compute the local-to-scene-transform for anchorage and
 		 * anchored by concatenating the local-to-parent-transforms in the
 		 * hierarchy, respectively.
@@ -130,6 +171,41 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	/**
+	 * Detaches the given {@link AnchorKey} from this {@link FXChopBoxAnchor}.
+	 * Requires that an {@link FXChopBoxHelper} can be obtained from the passed
+	 * in {@link IAdaptable}.
+	 *
+	 * @param key
+	 *            The {@link AnchorKey} to be detached.
+	 * @param info
+	 *            An {@link IAdaptable}, which will be used to obtain an
+	 *            {@link FXChopBoxHelper} that provides reference points for
+	 *            this {@link FXChopBoxAnchor}.
+	 *
+	 */
+	@Override
+	public void detach(AnchorKey key, IAdaptable info) {
+		FXChopBoxHelper helper = info.getAdapter(FXChopBoxHelper.class);
+		if (helper == null) {
+			throw new IllegalArgumentException(
+					"No FXChopBoxHelper could be obtained via info.");
+		}
+		if (helpers.get(key) != helper) {
+			throw new IllegalStateException(
+					"The passed in FXChopBoxHelper had not been obtained for "
+							+ key + " within attach() before.");
+		}
+
+		// unregister reference point listener
+		helper.referencePointProperty().removeListener(
+				referencePointChangeListener);
+
+		super.detach(key, info);
+
+		helpers.remove(key);
+	}
+
+	/**
 	 * @return The anchorage reference point within the local coordinate system
 	 *         of the anchorage {@link Node}.
 	 */
@@ -157,6 +233,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 * @param node
 	 * @return
 	 */
+	// TODO: Move to utilities
 	private AffineTransform getLocalToSceneTx(Node node) {
 		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
 				.getLocalToParentTransform());
@@ -169,14 +246,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		return tx;
 	}
 
-	/**
-	 * @param key
-	 * @return reference point for the given anchored
-	 */
-	public Point getReferencePoint(AnchorKey key) {
-		return referencePointProperty.get(key);
-	}
-
 	private boolean isValidTransform(AffineTransform t) {
 		for (double d : t.getMatrix()) {
 			if (Double.isNaN(d)) {
@@ -187,8 +256,9 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	@Override
-	public void recomputePosition(AnchorKey key) {
-		Point referencePoint = referencePointProperty.get(key);
+	protected void recomputePosition(AnchorKey key) {
+		Point referencePoint = helpers.get(key).referencePointProperty()
+				.get(key);
 		if (referencePoint != null) {
 			recomputePosition(key, referencePoint);
 		}
@@ -214,36 +284,14 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	}
 
 	@Override
-	public void recomputePositions(Node anchored) {
-		ObservableMap<AnchorKey, Point> ref = referencePointProperty == null ? null
-				: referencePointProperty.get();
-		if (ref == null) {
-			return;
-		}
+	protected void recomputePositions(Node anchored) {
 		for (AnchorKey key : getKeys().get(anchored)) {
-			Point referencePoint = referencePointProperty().get(key);
+			Point referencePoint = helpers.get(key).referencePointProperty()
+					.get(key);
 			if (referencePoint != null) {
 				recomputePosition(key, referencePoint);
 			}
 		}
-	}
-
-	/**
-	 * @return property storing reference points for anchoreds (map)
-	 */
-	public MapProperty<AnchorKey, Point> referencePointProperty() {
-		return referencePointProperty;
-	}
-
-	/**
-	 * Assigns the given reference point to the given anchored in the reference
-	 * point map.
-	 *
-	 * @param key
-	 * @param referencePoint
-	 */
-	public void setReferencePoint(AnchorKey key, Point referencePoint) {
-		referencePointProperty.put(key, referencePoint);
 	}
 
 }

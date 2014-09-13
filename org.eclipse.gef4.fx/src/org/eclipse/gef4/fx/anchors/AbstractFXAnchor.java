@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.transform.Transform;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 
@@ -88,7 +89,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public void attach(AnchorKey key) {
+	public void attach(AnchorKey key, IAdaptable info) {
 		Node anchored = key.getAnchored();
 		if (!keys.containsKey(anchored)) {
 			keys.put(anchored, new HashSet<AnchorKey>());
@@ -143,7 +144,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	}
 
 	@Override
-	public void detach(AnchorKey key) {
+	public void detach(AnchorKey key, IAdaptable info) {
 		Node anchored = key.getAnchored();
 		if (!isAttached(key)) {
 			throw new IllegalArgumentException(
@@ -196,7 +197,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return positionProperty.getReadOnlyProperty();
 	}
 
-	abstract public void recomputePosition(AnchorKey key);
+	protected abstract void recomputePosition(AnchorKey key);
 
 	protected abstract void recomputePositions(Node anchored);
 

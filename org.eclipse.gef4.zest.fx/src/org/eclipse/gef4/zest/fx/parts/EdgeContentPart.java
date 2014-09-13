@@ -19,7 +19,6 @@ import javafx.scene.shape.Polyline;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
@@ -78,7 +77,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		visual = new FXLabeledConnection();
 		visual.getStyleClass().add(CSS_CLASS);
 		visual.getCurveNode().getStyleClass().add("curve");
-		new FXChopBoxHelper(visual);
 	}
 
 	@Override
