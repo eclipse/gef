@@ -49,12 +49,12 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * with an {@link AdapterKey}, whose key ( {@link AdapterKey#getKey()})
 	 * refers to a sub-class or a sub-interface of the given class key
 	 * 
-	 * @param classKey
+	 * @param key
 	 *            The {@link Class} key used to retrieve a registered adapter.
 	 * @return The unambiguously retrievable adapter for the given {@link Class}
 	 *         key or <code>null</code> if none could be retrieved.
 	 */
-	public <T> T getAdapter(Class<? super T> classKey);
+	public <T> T getAdapter(Class<? super T> key);
 
 	// public <T> T getAdapter(Class<T> classKey, String qualifier);
 
@@ -65,7 +65,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * adapters whose {@link AdapterKey}'s key {@link AdapterKey#getKey()})
 	 * either is the same or a sub-class or sub-interface of the given classKey.
 	 * 
-	 * @param classKey
+	 * @param key
 	 *            The classKey used to retrieve registered adapters.
 	 * @return A {@link Map} containing all those adapters registered at this
 	 *         {@link IAdaptable}, whose {@link AdapterKey}'s key (
@@ -74,7 +74,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 *         {@link AdapterKey}s.
 	 */
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
-			Class<? super T> classKey);
+			Class<? super T> key);
 
 	public <T> T getAdapter(AdapterKey<? super T> key);
 

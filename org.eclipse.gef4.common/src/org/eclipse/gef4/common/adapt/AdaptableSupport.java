@@ -86,16 +86,16 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 	@SuppressWarnings("unchecked")
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
-			Class<? super T> classKey) {
+			Class<? super T> key) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
 		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
 		if (adapters != null) {
-			for (AdapterKey<?> key : adapters.keySet()) {
-				if (classKey.isAssignableFrom(key.getKey())) {
-					typeSafeAdapters.put((AdapterKey<? extends T>) key,
-							(T) adapters.get(key));
+			for (AdapterKey<?> k : adapters.keySet()) {
+				if (key.isAssignableFrom(k.getKey())) {
+					typeSafeAdapters.put((AdapterKey<? extends T>) k,
+							(T) adapters.get(k));
 				}
 			}
 		}
