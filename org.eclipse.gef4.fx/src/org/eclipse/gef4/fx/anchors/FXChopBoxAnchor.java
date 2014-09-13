@@ -18,6 +18,7 @@ import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
@@ -32,10 +33,53 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 //       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
+	/**
+	 * A {@link ReferencePointProvider} needs to be provided as default adapter
+	 * (see {@link AdapterKey#get(Class)}) on the {@link IAdaptable} info that
+	 * gets passed into {@link FXChopBoxAnchor#attach(AnchorKey, IAdaptable)}
+	 * and {@link FXChopBoxAnchor#detach(AnchorKey, IAdaptable)}. The
+	 * {@link ReferencePointProvider} has to provide a reference point for each
+	 * {@link AdapterKey} that is attached to the {@link FXChopBoxAnchor}. It
+	 * will be used when computing anchor positions for the respective
+	 * {@link AnchorKey}.
+	 *
+	 * @author anyssen
+	 *
+	 */
 	public interface ReferencePointProvider {
 
+		/**
+		 * Provides a read-only (map) property with positions (in local
+		 * coordinates of the anchored {@link Node}) for all attached
+		 * {@link AnchorKey}s.
+		 *
+		 * @return A read-only (map) property storing reference positions for
+		 *         all {@link AnchorKey}s attached to the
+		 *         {@link FXChopBoxAnchor}s it is forwarded to.
+		 */
 		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
 
+	}
+
+	private static AffineTransform getLocalToSceneTx(Node node) {
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
+				.getLocalToParentTransform());
+		Node tmp = node;
+		while (tmp.getParent() != null) {
+			tmp = tmp.getParent();
+			tx = JavaFX2Geometry.toAffineTransform(
+					tmp.getLocalToParentTransform()).concatenate(tx);
+		}
+		return tx;
+	}
+
+	private static boolean isValidTransform(AffineTransform t) {
+		for (double d : t.getMatrix()) {
+			if (Double.isNaN(d)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private Map<AnchorKey, ReferencePointProvider> referencePointProviders = new HashMap<>();
@@ -233,34 +277,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected IShape getAnchorageReferenceShape() {
 		return JavaFX2Geometry.toRectangle(getAnchorage().getLayoutBounds());
-	}
-
-	/**
-	 * Concatenates the local-to-parent transforms of the given
-	 *
-	 * @param node
-	 * @return
-	 */
-	// TODO: Move to utilities
-	private AffineTransform getLocalToSceneTx(Node node) {
-		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
-				.getLocalToParentTransform());
-		Node tmp = node;
-		while (tmp.getParent() != null) {
-			tmp = tmp.getParent();
-			tx = JavaFX2Geometry.toAffineTransform(
-					tmp.getLocalToParentTransform()).concatenate(tx);
-		}
-		return tx;
-	}
-
-	private boolean isValidTransform(AffineTransform t) {
-		for (double d : t.getMatrix()) {
-			if (Double.isNaN(d)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	@Override

@@ -102,10 +102,10 @@ public interface IFXAnchor {
 
 	/**
 	 * Provides a read-only (map) property with positions (in local coordinates
-	 * of the anchored) for all attached {@link AnchorKey}s. The positions will
-	 * be updated for all attached {@link AnchorKey}s if the anchorage
-	 * {@link Node} or any of its ancestors changes in a way that will effect
-	 * them.
+	 * of the anchored {@link Node}) for all attached {@link AnchorKey}s. The
+	 * positions will be updated for all attached {@link AnchorKey}s if the
+	 * anchorage {@link Node} or any of its ancestors changes in a way that will
+	 * effect them.
 	 *
 	 * @return A read-only (map) property storing positions for all attached
 	 *         {@link AnchorKey}s.
