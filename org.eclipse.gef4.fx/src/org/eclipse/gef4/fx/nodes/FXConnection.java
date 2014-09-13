@@ -29,6 +29,7 @@ import javafx.scene.transform.Rotate;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
+import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -89,9 +90,9 @@ public class FXConnection extends Group {
 		// in some cases
 		setAutoSizeChildren(false);
 
-		// register an FXChopBoxHelper, which is passed to the attached anchors.
-		as.setAdapter(AdapterKey.get(FXChopBoxHelper.class),
-				new FXChopBoxHelper(this));
+		// register any adapters that will be needed during attach() and
+		// detach() at anchors
+		registerAnchorInfos(as);
 	}
 
 	public void addWayAnchor(int index, IFXAnchor anchor) {
@@ -475,6 +476,12 @@ public class FXConnection extends Group {
 		}
 
 		inRefresh = false;
+	}
+
+	protected void registerAnchorInfos(IAdaptable adaptable) {
+		// register an FXChopBoxHelper, which is passed to the attached anchors.
+		adaptable.setAdapter(AdapterKey.get(FXChopBoxHelper.class),
+				new FXChopBoxHelper(this));
 	}
 
 	public void removeAllWayPoints() {
