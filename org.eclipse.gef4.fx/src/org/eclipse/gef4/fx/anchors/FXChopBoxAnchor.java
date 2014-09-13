@@ -14,6 +14,7 @@ package org.eclipse.gef4.fx.anchors;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 
@@ -31,6 +32,14 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 //       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
 
+	public interface ReferencePointProvider {
+
+		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
+
+	}
+
+	private Map<AnchorKey, ReferencePointProvider> referencePointProviders = new HashMap<>();
+
 	private MapChangeListener<AnchorKey, Point> referencePointChangeListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
 		public void onChanged(
@@ -47,7 +56,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 					throw new IllegalStateException(
 							"Attempt to put <null> value into reference point map!");
 				}
-				if (helpers.containsKey(change.getKey())) {
+				if (referencePointProviders.containsKey(change.getKey())) {
 					// only recompute position, if one of our own keys changed
 					// (FXChopBoxHelper#referencePointProperty() may contain
 					// AnchorKeys registered at other anchors as well)
@@ -56,8 +65,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			}
 		}
 	};
-
-	private Map<AnchorKey, FXChopBoxHelper> helpers = new HashMap<>();
 
 	public FXChopBoxAnchor(Node anchorage) {
 		super(anchorage);
@@ -72,13 +79,14 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *            The {@link AnchorKey} to be attached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link FXChopBoxHelper} that provides reference points for
-	 *            this {@link FXChopBoxAnchor}.
+	 *            {@link ReferencePointProvider} that provides reference points
+	 *            for this {@link FXChopBoxAnchor}.
 	 *
 	 */
 	@Override
 	public void attach(AnchorKey key, IAdaptable info) {
-		FXChopBoxHelper helper = info.getAdapter(FXChopBoxHelper.class);
+		ReferencePointProvider helper = info
+				.getAdapter(ReferencePointProvider.class);
 		if (helper == null) {
 			throw new IllegalArgumentException(
 					"No FXChopBoxHelper could be obtained via info.");
@@ -86,7 +94,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 		// we need to keep track of it, otherwise we will not be able to access
 		// the reference point information (in case of other changes).
-		helpers.put(key, helper);
+		referencePointProviders.put(key, helper);
 
 		// will enforce a re-computation of positions, so we need to have
 		// obtained the helper beforehand.
@@ -179,18 +187,18 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *            The {@link AnchorKey} to be detached.
 	 * @param info
 	 *            An {@link IAdaptable}, which will be used to obtain an
-	 *            {@link FXChopBoxHelper} that provides reference points for
-	 *            this {@link FXChopBoxAnchor}.
+	 *            {@link ReferencePointProvider} that provides reference points
+	 *            for this {@link FXChopBoxAnchor}.
 	 *
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
-		FXChopBoxHelper helper = info.getAdapter(FXChopBoxHelper.class);
+		ReferencePointProvider helper = info.getAdapter(FXChopBoxHelper.class);
 		if (helper == null) {
 			throw new IllegalArgumentException(
 					"No FXChopBoxHelper could be obtained via info.");
 		}
-		if (helpers.get(key) != helper) {
+		if (referencePointProviders.get(key) != helper) {
 			throw new IllegalStateException(
 					"The passed in FXChopBoxHelper had not been obtained for "
 							+ key + " within attach() before.");
@@ -202,7 +210,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 		super.detach(key, info);
 
-		helpers.remove(key);
+		referencePointProviders.remove(key);
 	}
 
 	/**
@@ -257,8 +265,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 
 	@Override
 	protected void recomputePosition(AnchorKey key) {
-		Point referencePoint = helpers.get(key).referencePointProperty()
-				.get(key);
+		Point referencePoint = referencePointProviders.get(key)
+				.referencePointProperty().get(key);
 		if (referencePoint != null) {
 			recomputePosition(key, referencePoint);
 		}
@@ -286,8 +294,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	@Override
 	protected void recomputePositions(Node anchored) {
 		for (AnchorKey key : getKeys().get(anchored)) {
-			Point referencePoint = helpers.get(key).referencePointProperty()
-					.get(key);
+			Point referencePoint = referencePointProviders.get(key)
+					.referencePointProperty().get(key);
 			if (referencePoint != null) {
 				recomputePosition(key, referencePoint);
 			}

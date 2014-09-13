@@ -31,7 +31,7 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class FXChopBoxHelper {
+public class FXChopBoxHelper implements FXChopBoxAnchor.ReferencePointProvider {
 
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 			FXCollections.<AnchorKey, Point> observableHashMap());
@@ -271,6 +271,13 @@ public class FXChopBoxHelper {
 		return center;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
+	 * referencePointProperty()
+	 */
+	@Override
 	public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
 		return referencePointProperty;
 	}
