@@ -24,7 +24,6 @@ import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
 public class FXChopBoxSnippet extends FXApplication {
@@ -50,26 +49,27 @@ public class FXChopBoxSnippet extends FXApplication {
 
 		nodeB = new Rectangle(50, 50);
 		nodeB.setFill(Color.BLUE);
-		
+
 		nodeC = new Rectangle(50, 50);
 		nodeC.setFill(Color.GREEN);
 
 		Button btnA = new Button("move A");
 		btnA.setOnAction(createMoveHandler("A", nodeA, 100, 100, 200));
 		btnA.relocate(0, 0);
-		
+
 		Button btnB = new Button("move B");
 		btnB.setOnAction(createMoveHandler("B", nodeB, 300, 100, 200));
 		btnB.relocate(70, 0);
-		
+
 		Button btnC = new Button("move C");
 		btnC.setOnAction(createMoveHandler("C", nodeC, 200, 200, 300));
 		btnC.relocate(140, 0);
-		
+
 		FXConnection connectionAB = new FXConnection();
 		FXConnection connectionBC = new FXConnection();
 
-		Group group = new Group(nodeA, nodeB, nodeC, connectionAB, connectionBC, btnA, btnB, btnC);
+		Group group = new Group(nodeA, nodeB, nodeC, connectionAB,
+				connectionBC, btnA, btnB, btnC);
 		root.getChildren().add(group);
 
 		anchorA = new FXChopBoxAnchor(nodeA);
@@ -79,15 +79,16 @@ public class FXChopBoxSnippet extends FXApplication {
 		connectionAB.setEndAnchor(anchorB);
 		connectionBC.setStartAnchor(anchorB);
 		connectionBC.setEndAnchor(anchorC);
-		
+
 		nodeA.relocate(100, 100);
 		nodeB.relocate(300, 100);
 		nodeC.relocate(200, 200);
-		
+
 		return scene;
 	}
 
-	private EventHandler<ActionEvent> createMoveHandler(final String label, final Node node, final double x, final double y0, final double y1) {
+	private EventHandler<ActionEvent> createMoveHandler(final String label,
+			final Node node, final double x, final double y0, final double y1) {
 		return new EventHandler<ActionEvent>() {
 			boolean flag = false;
 

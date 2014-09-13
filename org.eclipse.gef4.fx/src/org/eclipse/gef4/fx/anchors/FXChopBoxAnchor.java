@@ -20,7 +20,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
-import org.eclipse.gef4.fx.nodes.FXChopBoxHelper;
+import org.eclipse.gef4.fx.nodes.FXConnection.FXChopBoxHelper;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -171,7 +171,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * intersection. We choose the scene coordinate system here. Therefore,
 		 * we need access to a local-to-scene-transform for the anchorage and
 		 * the anchored.
-		 *
+		 * 
 		 * Important: JavaFX Node provides a (lazily computed)
 		 * local-to-scene-transform property which we could access to get that
 		 * transform. Unfortunately, this property is not updated correctly,
@@ -179,7 +179,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * This is reflected in the different values of a) the
 		 * Node#localToScene(...) method, and b) transforming using the
 		 * concatenated local-to-parent-transforms.
-		 *
+		 * 
 		 * Therefore, we compute the local-to-scene-transform for anchorage and
 		 * anchored by concatenating the local-to-parent-transforms in the
 		 * hierarchy, respectively.
@@ -237,7 +237,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
-		ReferencePointProvider helper = info.getAdapter(FXChopBoxHelper.class);
+		ReferencePointProvider helper = info
+				.getAdapter(ReferencePointProvider.class);
 		if (helper == null) {
 			throw new IllegalArgumentException(
 					"No FXChopBoxHelper could be obtained via info.");
