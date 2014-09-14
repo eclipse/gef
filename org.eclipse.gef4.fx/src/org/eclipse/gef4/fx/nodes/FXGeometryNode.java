@@ -32,7 +32,8 @@ import org.eclipse.gef4.geometry.planar.RoundedRectangle;
  * performing a scale in case the underlying {@link IGeometry} is not directly
  * resizable.
  *
- * @author nyssen
+ * @author mwienand
+ * @author anyssen
  *
  * @param <T>
  *            An {@link IGeometry} used to define this {@link FXGeometryNode}

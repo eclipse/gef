@@ -66,7 +66,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 	}
 
 	@Override
-	public void recomputePosition(AnchorKey key) {
+	protected Point computePosition(AnchorKey key) {
 		// in case an anchorage is set, the position is interpreted to be in its
 		// local coordinate system, so transform it into scene coordinates
 		Node anchored = key.getAnchored();
@@ -76,14 +76,7 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 						referencePosition.x, referencePosition.y));
 		Point positionInAnchoredLocal = JavaFX2Geometry.toPoint(anchored
 				.sceneToLocal(positionInScene.x, positionInScene.y));
-		positionProperty().put(key, positionInAnchoredLocal);
-	}
-
-	@Override
-	protected void recomputePositions(Node anchored) {
-		for (AnchorKey key : getKeys().get(anchored)) {
-			recomputePosition(key);
-		}
+		return positionInAnchoredLocal;
 	}
 
 }

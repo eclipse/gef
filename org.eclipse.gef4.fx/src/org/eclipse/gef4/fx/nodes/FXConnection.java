@@ -296,7 +296,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */

@@ -32,6 +32,21 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.geometry.planar.Point;
 
+/**
+ * Abstract base implementation for visual anchors. It provides the facility for
+ * {@link AnchorKey}s to be attached (see {@link #attach(AnchorKey, IAdaptable)}
+ * ) and detached (see {@link #detach(AnchorKey, IAdaptable)}), and to provide
+ * anchor positions for all attached {@link AnchorKey}s (see
+ * {@link #positionProperty()}).
+ *
+ * Each {@link AbstractFXAnchor} anchor is bound to an anchorage {@link Node}
+ * (see {@link #anchorageProperty()}). Computation is left to If it needs
+ * additional information to compute {@link AnchorKey}s, it may request this
+ * from the {@link IAdaptable} info passed into
+ * {@link #attach(AnchorKey, IAdaptable)}.
+ *
+ * @author anyssen
+ */
 public abstract class AbstractFXAnchor implements IFXAnchor {
 
 	private ReadOnlyObjectWrapper<Node> anchorageProperty = new ReadOnlyObjectWrapper<Node>();
@@ -106,7 +121,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 			}
 		}
 
-		recomputePosition(key);
+		updatePosition(key);
 	}
 
 	private boolean canRegister(Node anchored) {
@@ -114,18 +129,20 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				&& anchored != null && anchored.getScene() != null;
 	}
 
+	protected abstract Point computePosition(AnchorKey key);
+
 	private VisualChangeListener createVCL(final Node anchored) {
 		return new VisualChangeListener() {
 			@Override
 			protected void boundsInLocalChanged(Bounds oldBounds,
 					Bounds newBounds) {
-				recomputePositions(anchored);
+				updatePositions(anchored);
 			}
 
 			@Override
 			protected void localToParentTransformChanged(Node observed,
 					Transform oldTransform, Transform newTransform) {
-				recomputePositions(anchored);
+				updatePositions(anchored);
 			}
 
 			@Override
@@ -138,7 +155,7 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 				 * registration, so we have to recompute anchored's positions
 				 * now.
 				 */
-				recomputePositions(anchored);
+				updatePositions(anchored);
 			}
 		};
 	}
@@ -197,10 +214,6 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 		return positionProperty.getReadOnlyProperty();
 	}
 
-	protected abstract void recomputePosition(AnchorKey key);
-
-	protected abstract void recomputePositions(Node anchored);
-
 	private void registerLater(final Node anchored) {
 		if (registerLater.contains(anchored)) {
 			return;
@@ -252,6 +265,25 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 	protected void unregisterVCLs() {
 		for (Node anchored : vcls.keySet().toArray(new Node[] {})) {
 			vcls.get(anchored).unregister();
+		}
+	}
+
+	protected void updatePosition(AnchorKey key) {
+		Point oldPosition = getPosition(key);
+		Point newPosition = computePosition(key);
+		if (oldPosition == null || !oldPosition.equals(newPosition)) {
+			// TODO: we could enforce that computePosition may never return
+			// null or an invalid position
+			if (newPosition != null && !Double.isNaN(newPosition.x)
+					&& !Double.isNaN(newPosition.y)) {
+				positionProperty().put(key, newPosition);
+			}
+		}
+	}
+
+	private void updatePositions(Node anchored) {
+		for (AnchorKey key : getKeys().get(anchored)) {
+			updatePosition(key);
 		}
 	}
 

@@ -104,7 +104,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 					// only recompute position, if one of our own keys changed
 					// (FXChopBoxHelper#referencePointProperty() may contain
 					// AnchorKeys registered at other anchors as well)
-					recomputePosition(change.getKey(), change.getValueAdded());
+					updatePosition(change.getKey());
 				}
 			}
 		}
@@ -147,6 +147,26 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		// add listener to reference point changes
 		helper.referencePointProperty().addListener(
 				referencePointChangeListener);
+	}
+
+	/**
+	 * Recomputes the position of this anchor w.r.t. the given anchored
+	 * {@link Node} and the reference point provided for it.
+	 *
+	 * @param key
+	 */
+	@Override
+	protected Point computePosition(AnchorKey key) {
+		Point referencePoint = referencePointProviders.get(key)
+				.referencePointProperty().get(key);
+		if (referencePoint != null) {
+			// TODO: we should enforce the reference point is not null
+			// throw new IllegalStateException(
+			// "Reference point provider does not provide a reference point for "
+			// + key);
+			return computePosition(key.getAnchored(), referencePoint);
+		}
+		return null;
 	}
 
 	/**
@@ -278,45 +298,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	protected IShape getAnchorageReferenceShape() {
 		return JavaFX2Geometry.toRectangle(getAnchorage().getLayoutBounds());
-	}
-
-	@Override
-	protected void recomputePosition(AnchorKey key) {
-		Point referencePoint = referencePointProviders.get(key)
-				.referencePointProperty().get(key);
-		if (referencePoint != null) {
-			recomputePosition(key, referencePoint);
-		}
-	}
-
-	/**
-	 * Recomputes the position of this anchor w.r.t. the given anchored
-	 * {@link Node} and reference {@link Point}. The
-	 * {@link #computePosition(Node, Point)} method is used to determine the new
-	 * position, which in turn is put into the {@link #positionProperty()}.
-	 *
-	 * @param key
-	 * @param referencePoint
-	 */
-	protected void recomputePosition(AnchorKey key, Point referencePoint) {
-		Point old = getPosition(key);
-		Point position = computePosition(key.getAnchored(), referencePoint);
-		if (!position.equals(old)) {
-			if (!Double.isNaN(position.x) && !Double.isNaN(position.y)) {
-				positionProperty().put(key, position);
-			}
-		}
-	}
-
-	@Override
-	protected void recomputePositions(Node anchored) {
-		for (AnchorKey key : getKeys().get(anchored)) {
-			Point referencePoint = referencePointProviders.get(key)
-					.referencePointProperty().get(key);
-			if (referencePoint != null) {
-				recomputePosition(key, referencePoint);
-			}
-		}
 	}
 
 }
