@@ -79,4 +79,9 @@ public class FXStaticAnchor extends AbstractFXAnchor {
 		return positionInAnchoredLocal;
 	}
 
+	@Override
+	public String toString() {
+		return "FXStaticAnchor[referencePosition = " + referencePosition + "]";
+	}
+
 }
