@@ -33,15 +33,8 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 public class FXBendOperation extends AbstractOperation {
 
 	private final FXConnection connection;
-	private List<IFXAnchor> oldAnchors;
+	private final List<IFXAnchor> oldAnchors;
 	private List<IFXAnchor> newAnchors;
-
-	/**
-	 * Constructs an "empty" operation which will not change anything.
-	 */
-	public FXBendOperation() {
-		this("no-op", null, null, null);
-	}
 
 	/**
 	 * Constructs a new operation from the given connection. The lists of old
@@ -56,35 +49,6 @@ public class FXBendOperation extends AbstractOperation {
 		this.connection = connection;
 		this.oldAnchors = new ArrayList<IFXAnchor>(connection.getAnchors());
 		this.newAnchors = new ArrayList<IFXAnchor>(oldAnchors);
-	}
-
-	/**
-	 * Constructs a new operation from the given values.
-	 *
-	 * @param label
-	 *            The description for this operation.
-	 * @param connection
-	 *            The {@link FXConnection} which will be modified by this
-	 *            operation.
-	 * @param oldAnchors
-	 *            List of old {@link IFXAnchor}s.
-	 * @param newAnchors
-	 *            List of new {@link IFXAnchor}s.
-	 */
-	public FXBendOperation(String label, FXConnection connection,
-			List<IFXAnchor> oldAnchors, List<IFXAnchor> newAnchors) {
-		super(label);
-		this.connection = connection;
-		if (oldAnchors == null) {
-			this.oldAnchors = new ArrayList<IFXAnchor>();
-		} else {
-			this.oldAnchors = new ArrayList<IFXAnchor>(oldAnchors);
-		}
-		if (newAnchors == null) {
-			this.newAnchors = new ArrayList<IFXAnchor>();
-		} else {
-			this.newAnchors = new ArrayList<IFXAnchor>(newAnchors);
-		}
 	}
 
 	@Override

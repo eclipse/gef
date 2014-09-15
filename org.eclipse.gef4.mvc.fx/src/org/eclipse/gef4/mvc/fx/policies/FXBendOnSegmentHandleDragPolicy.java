@@ -140,7 +140,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 		if (hp.getSegmentParameter() == 0.5) {
 			// create new way point
-			getBendPolicy(anchorage).createAnchor(hp.getSegmentIndex(),
+			getBendPolicy(anchorage).createAndSelectAnchor(
+					hp.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
