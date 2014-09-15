@@ -60,10 +60,13 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	private Point2D startPointInScene;
 	private Point startPoint;
 	private Point currentPoint;
+
 	private IFXAnchor removedAnchor;
 	private int removedAnchorIndex;
+
 	private int anchorIndex;
-	private int oldAnchorIndex;
+
+	private int anchorIndexBeforeRemoval;
 
 	// operation
 	private FXBendOperation op;
@@ -116,7 +119,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return op;
 	}
 
-	public void createWayPoint(int segmentIndex, Point mouseInScene) {
+	public void createAnchor(int segmentIndex, Point mouseInScene) {
 		FXConnection hostVisual = getConnection();
 		Point2D mouseInLocal = hostVisual.sceneToLocal(mouseInScene.x,
 				mouseInScene.y);
@@ -131,7 +134,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		locallyExecuteOperation();
 
 		// select newly created way point
-		selectPoint(segmentIndex, 0, mouseInScene);
+		selectAnchor(segmentIndex, 0, mouseInScene);
 	}
 
 	protected AbstractFXContentPart getAnchorPart(
@@ -153,7 +156,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	protected void hideShowOverlaid() {
 		// put removed back in
 		if (removedAnchor != null) {
-			anchorIndex = oldAnchorIndex;
+			anchorIndex = anchorIndexBeforeRemoval;
 			op.getNewAnchors().add(removedAnchorIndex, removedAnchor);
 			locallyExecuteOperation();
 			removedAnchor = null;
@@ -165,7 +168,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 
 		removedAnchorIndex = -1;
-		oldAnchorIndex = anchorIndex;
+		anchorIndexBeforeRemoval = anchorIndex;
 
 		// determine overlaid neighbor
 		if (anchorIndex > 0) {
@@ -212,7 +215,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	public void movePoint(Point mouseInScene,
+	public void moveSelectedAnchor(Point mouseInScene,
 			List<IContentPart<Node>> partsUnderMouse) {
 		// update position
 		Point2D mouseInLocal = getConnection().sceneToLocal(mouseInScene.x,
@@ -230,7 +233,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		updateCurrentAnchorLink(mouseInScene, partsUnderMouse);
 	}
 
-	public void selectPoint(int segmentIndex, double segmentParameter,
+	public void selectAnchor(int segmentIndex, double segmentParameter,
 			Point mouseInScene) {
 		// store handle part information
 		if (segmentParameter == 1) {

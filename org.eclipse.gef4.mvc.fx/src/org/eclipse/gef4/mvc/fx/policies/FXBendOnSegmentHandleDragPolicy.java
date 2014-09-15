@@ -109,7 +109,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
 
-		getBendPolicy(anchorage).movePoint(
+		getBendPolicy(anchorage).moveSelectedAnchor(
 				new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
 
 		List<Point> after = new ArrayList<Point>(connection.getWayPoints());
@@ -140,7 +140,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 		if (hp.getSegmentParameter() == 0.5) {
 			// create new way point
-			getBendPolicy(anchorage).createWayPoint(hp.getSegmentIndex(),
+			getBendPolicy(anchorage).createAnchor(hp.getSegmentIndex(),
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
@@ -166,7 +166,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			createdSegmentIndex = hp.getSegmentIndex();
 		} else {
 			// select existing way point
-			getBendPolicy(anchorage).selectPoint(hp.getSegmentIndex(),
+			getBendPolicy(anchorage).selectAnchor(hp.getSegmentIndex(),
 					hp.getSegmentParameter(),
 					new Point(e.getSceneX(), e.getSceneY()));
 		}
