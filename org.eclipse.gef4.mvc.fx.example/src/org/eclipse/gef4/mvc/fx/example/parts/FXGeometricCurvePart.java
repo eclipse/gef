@@ -242,7 +242,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		final FXGeometricCurve curve = getContent();
 		final List<Point> oldWayPoints = curve.getWayPointsCopy();
 		final List<Point> newWayPoints = visual.getWayPoints();
-
+		// translate waypoints
 		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
 				"Update model", curve, oldWayPoints, newWayPoints);
 		AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
@@ -283,20 +283,12 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
-
 		if (content.getTransform() != null) {
 			Point[] transformedWayPoints = content.getTransform()
 					.getTransformed(wayPoints.toArray(new Point[] {}));
-			if (!Arrays.equals(visual.getWayPoints().toArray(new Point[] {}),
-					transformedWayPoints)) {
-				visual.setWayPoints(Arrays.asList(transformedWayPoints));
-			}
-		} else {
-			if (!Arrays.equals(visual.getWayPoints().toArray(new Point[] {}),
-					wayPoints.toArray(new Point[] {}))) {
-				visual.setWayPoints(wayPoints);
-			}
+			wayPoints = Arrays.asList(transformedWayPoints);
 		}
+		visual.setWayPoints(wayPoints);
 
 		// decorations
 		switch (content.getSourceDecoration()) {

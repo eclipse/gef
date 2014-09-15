@@ -173,7 +173,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 					 * are not allowed to put this operation on the undo
 					 * context. Therefore we execute it only locally to keep us
 					 * in sync with the anchorage.
-					 *
+					 * 
 					 * XXX: This definitely needs to change for a 'proper'
 					 * implementation. The RR for this anchored should be kept
 					 * in sync with the RR for the anchorage, i.e. init(),
@@ -210,7 +210,6 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 		FXGeometricShape shapeVisual = getContent();
 		if (visual.getGeometry() != shapeVisual.getGeometry()) {
 			visual.setGeometry(shapeVisual.getGeometry());
-
 		}
 
 		if (shapeVisual.getTransform() != null) {
