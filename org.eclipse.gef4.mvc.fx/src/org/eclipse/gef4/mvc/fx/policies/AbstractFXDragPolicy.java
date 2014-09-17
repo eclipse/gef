@@ -11,23 +11,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.List;
-
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 public abstract class AbstractFXDragPolicy extends AbstractPolicy<Node> {
 
-	public abstract void drag(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse);
+	public abstract void drag(MouseEvent e, Dimension delta);
 
 	public abstract void press(MouseEvent e);
 
-	public abstract void release(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse);
+	public abstract void release(MouseEvent e, Dimension delta);
 
 }

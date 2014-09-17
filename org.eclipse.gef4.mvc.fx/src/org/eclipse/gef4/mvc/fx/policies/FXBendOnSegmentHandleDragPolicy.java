@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
@@ -30,10 +32,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
- *
+ * 
  * @author mwienand
  * @author anyssen
- *
+ * 
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
 public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
@@ -101,16 +103,18 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 		FXConnection connection = (FXConnection) anchorage.getVisual();
 
 		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
 
+		List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
+				.getVisual(), e.getSceneX(), e.getSceneY());
+
 		getBendPolicy(anchorage).moveSelectedAnchor(
-				new Point(e.getSceneX(), e.getSceneY()), partsUnderMouse);
+				new Point(e.getSceneX(), e.getSceneY()), getParts(pickedNodes));
 
 		List<Point> after = new ArrayList<Point>(connection.getWayPoints());
 
@@ -125,6 +129,22 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public FXSegmentHandlePart getHost() {
 		return (FXSegmentHandlePart) super.getHost();
+	}
+
+	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
+		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
+
+		Map<Node, IVisualPart<Node>> partMap = getHost().getRoot().getViewer()
+				.getVisualPartMap();
+		for (Node node : nodesUnderMouse) {
+			if (partMap.containsKey(node)) {
+				IVisualPart<Node> part = partMap.get(node);
+				if (part instanceof IContentPart) {
+					parts.add((IContentPart<Node>) part);
+				}
+			}
+		}
+		return parts;
 	}
 
 	@Override
@@ -174,8 +194,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 		anchorage.setRefreshVisual(initialRefreshVisual);

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.AbstractTool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -53,22 +51,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				DRAG_TOOL_POLICY_KEY).values();
 	}
 
-	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
-		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
-		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			Map<Node, IVisualPart<Node>> partMap = viewer.getVisualPartMap();
-			for (Node node : nodesUnderMouse) {
-				if (partMap.containsKey(node)) {
-					IVisualPart<Node> part = partMap.get(node);
-					if (part instanceof IContentPart) {
-						parts.add((IContentPart<Node>) part);
-					}
-				}
-			}
-		}
-		return parts;
-	}
-
 	public boolean isDragging() {
 		return dragInProgress;
 	}
@@ -91,8 +73,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 								.getSceneY());
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {
-							policy.drag(e, new Dimension(dx, dy), pickedNodes,
-									getParts(pickedNodes));
+							policy.drag(e, new Dimension(dx, dy));
 						}
 					}
 				}
@@ -134,15 +115,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 							Collections.singleton(viewer), target,
 							DRAG_TOOL_POLICY_KEY);
 					if (targetPart != null) {
-						List<Node> pickedNodes = FXUtils.getNodesAt(viewer
-								.getRootPart().getVisual(), e.getSceneX(), e
-								.getSceneY());
-						List<IContentPart<Node>> parts = getParts(pickedNodes);
-
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {
-							policy.release(e, new Dimension(dx, dy),
-									pickedNodes, parts);
+							policy.release(e, new Dimension(dx, dy));
 						}
 					}
 

@@ -35,8 +35,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	private final Map<IVisualPart<Node>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<Node>, Boolean>();
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta) {
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
@@ -83,8 +82,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta) {
 		// perform operation
 		boolean performCommit = false;
 		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(

@@ -18,7 +18,6 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.SelectionPolicy;
@@ -127,8 +126,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta) {
 		updateMarquee(delta);
 		updateFeedback();
 	}
@@ -163,8 +161,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta) {
 		updateMarquee(delta);
 
 		FXRootPart root = (FXRootPart) getHost().getRoot();

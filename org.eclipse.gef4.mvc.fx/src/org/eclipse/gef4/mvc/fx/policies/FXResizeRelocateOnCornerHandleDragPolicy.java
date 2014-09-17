@@ -124,8 +124,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	@Override
-	public void drag(MouseEvent e, Dimension delta, List<Node> nodesUnderMouse,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public void drag(MouseEvent e, Dimension delta) {
 		if (selectionBounds == null) {
 			return;
 		}
@@ -231,8 +230,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	@Override
-	public void release(MouseEvent e, Dimension delta,
-			List<Node> nodesUnderMouse, List<IContentPart<Node>> partsUnderMouse) {
+	public void release(MouseEvent e, Dimension delta) {
 		boolean performCommit = false;
 		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
 				"Relocate");
