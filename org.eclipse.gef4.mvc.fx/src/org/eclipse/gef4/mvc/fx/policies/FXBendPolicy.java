@@ -117,7 +117,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return op;
 	}
 
-	public void createAndSelectAnchor(int segmentIndex, Point mouseInScene) {
+	public void createAndSelectSegmentPoint(int segmentIndex, Point mouseInScene) {
 		// create new way point
 		op.getNewAnchors().add(segmentIndex + 1,
 				new FXStaticAnchor(mouseInScene));
@@ -125,7 +125,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		locallyExecuteOperation();
 
 		// select newly created way point
-		selectAnchor(segmentIndex + 1, 0, mouseInScene);
+		selectSegmentPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
 	protected AbstractFXContentPart getAnchorPart(
@@ -224,15 +224,12 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	public void moveSelectedAnchor(Point mouseInScene) {
+	public void moveSelectedSegmentPoint(Point mouseInScene) {
 		// update current position
 		currentPoint = JavaFX2Geometry.toPoint(getConnection().sceneToLocal(
 				mouseInScene.x, mouseInScene.y));
 
-		// update
-		hideShowOverlaid();
-
-		// snaps for start and end (TODO: configurable)
+		// snaps for start and end (TODO: configurable also for waypoints)
 		boolean snaps = currentAnchorIndex == 0
 				|| currentAnchorIndex == op.getNewAnchors().size() - 1;
 		IFXAnchor anchor = null;
@@ -245,17 +242,20 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 				anchor = anchorPart.getAnchor(getHost());
 			}
 		}
-
 		if (anchor == null) {
-			// use static anchor, re-use key
+			// use static anchor in case we do not snap to an anchorage bound
+			// anchor
 			anchor = new FXStaticAnchor(mouseInScene);
 		}
 
 		op.getNewAnchors().set(currentAnchorIndex, anchor);
 		locallyExecuteOperation();
+
+		// update
+		hideShowOverlaid();
 	}
 
-	public void selectAnchor(int segmentIndex, double segmentParameter,
+	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
 			Point mouseInScene) {
 		// store handle part information
 		if (segmentParameter == 1) {
