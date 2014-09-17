@@ -128,7 +128,23 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		selectSegmentPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
-	protected AbstractFXContentPart getAnchorPart(
+	protected IFXAnchor findAnchor(Point mouseInScene) {
+		IFXAnchor anchor = null;
+		// try to find an anchor that is provided from an underlying node
+		List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
+				.getVisual(), mouseInScene.x, mouseInScene.y);
+		AbstractFXContentPart anchorPart = getAnchorPart(getParts(pickedNodes));
+		if (anchorPart != null) {
+			// use anchor returned by part
+			anchor = anchorPart.getAnchor(getHost());
+		}
+		if (anchor == null) {
+			anchor = new FXStaticAnchor(mouseInScene);
+		}
+		return anchor;
+	}
+
+	private AbstractFXContentPart getAnchorPart(
 			List<IContentPart<Node>> partsUnderMouse) {
 		for (IContentPart<Node> cp : partsUnderMouse) {
 			AbstractFXContentPart part = (AbstractFXContentPart) cp;
@@ -182,7 +198,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		if (currentAnchorIndex > 0) {
 			int candidateIndex = currentAnchorIndex - 1;
 			if (isOverlain(candidateIndex, currentAnchorIndex)) {
-				// remove previous
+				// remove previous (in case of start point, ensure we stay
+				// anchored to the same anchorage)
 				removedOverlainAnchorIndex = candidateIndex;
 				currentAnchorIndex--;
 			}
@@ -193,7 +210,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 				&& currentAnchorIndex < op.getNewAnchors().size() - 1) {
 			int candidateIndex = currentAnchorIndex + 1;
 			if (isOverlain(candidateIndex, currentAnchorIndex)) {
-				// remove next
+				// remove next (in case of end point, ensure we stay
+				// anchored to the same anchorage)
 				removedOverlainAnchorIndex = candidateIndex;
 			}
 		}
@@ -212,18 +230,22 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		removedOverlainAnchor = null;
 	}
 
-	private boolean isOverlain(int overlayCandidateIndex, int currentIndex) {
+	protected boolean isOverlain(int candidateIndex, int currentIndex) {
 		Point candidateLocation = null;
-		if (overlayCandidateIndex == 0) {
+		if (candidateIndex == 0) {
 			candidateLocation = op.getConnection().getStartPoint();
-		} else if (overlayCandidateIndex == op.getConnection()
-				.getWayAnchorsSize() + 1) {
+		} else if (candidateIndex == op.getConnection().getWayAnchorsSize() + 1) {
 			candidateLocation = op.getConnection().getEndPoint();
 		} else {
 			candidateLocation = op.getConnection().getWayPoint(
-					overlayCandidateIndex - 1);
+					candidateIndex - 1);
 		}
-		return candidateLocation.getDistance(currentPoint) < REMOVE_THRESHOLD;
+		// overlay if distance is small enough and we do not change the
+		// anchorage
+		return candidateLocation.getDistance(currentPoint) < REMOVE_THRESHOLD
+				&& op.getConnection().getAnchors().get(candidateIndex)
+						.getAnchorage() == op.getConnection().getAnchors()
+						.get(currentIndex).getAnchorage();
 	}
 
 	protected void locallyExecuteOperation() {
@@ -239,30 +261,26 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		currentPoint = JavaFX2Geometry.toPoint(getConnection().sceneToLocal(
 				mouseInScene.x, mouseInScene.y));
 
-		// snaps for start and end (TODO: configurable also for waypoints)
-		boolean snaps = currentAnchorIndex == 0
-				|| currentAnchorIndex == op.getNewAnchors().size() - 1;
-		IFXAnchor anchor = null;
-		if (snaps) {
-			List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
-					.getVisual(), mouseInScene.x, mouseInScene.y);
-			AbstractFXContentPart anchorPart = getAnchorPart(getParts(pickedNodes));
-			if (anchorPart != null) {
-				// use anchor returned by part
-				anchor = anchorPart.getAnchor(getHost());
-			}
-		}
-		if (anchor == null) {
-			// use static anchor in case we do not snap to an anchorage bound
-			// anchor
-			anchor = new FXStaticAnchor(mouseInScene);
-		}
-
-		op.getNewAnchors().set(currentAnchorIndex, anchor);
+		op.getNewAnchors().set(currentAnchorIndex, findAnchor(mouseInScene));
 		locallyExecuteOperation();
 
 		// update
 		hideShowOverlain();
+
+		// FIXME: up to now we cannot snap waypoints to other than static
+		// anchors (because FXChopBoxHelper does not return reference points),
+		// so
+		// we have to ensure that we use a static anchor in case we did not
+		// overlay another.
+		if (removedOverlainAnchorIndex == -1) {
+			if (currentAnchorIndex != 0
+					&& currentAnchorIndex != op.getConnection().getAnchors()
+							.size() - 1) {
+				op.getNewAnchors().set(currentAnchorIndex,
+						new FXStaticAnchor(mouseInScene));
+				locallyExecuteOperation();
+			}
+		}
 	}
 
 	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
