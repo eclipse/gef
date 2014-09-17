@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
@@ -55,13 +56,15 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			final Provider<IGeometry> handleGeometryProvider, int segmentIndex,
-			double segmentParameter) {
+			final Provider<IGeometry> handleGeometryProvider,
+			ICurve[] segments, int segmentIndex, double segmentParameter) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, segmentIndex, segmentParameter);
+						handleGeometryProvider, segments, segmentIndex,
+						segmentParameter);
 
-		if (segmentIndex > 0 && segmentParameter != 1.0) {
+		if (segmentIndex + segmentParameter > 0
+				&& segmentIndex + segmentParameter < segments.length) {
 			// make way points (middle segment vertices) draggable
 			// TODO: binding the following policy requires dynamic binding
 			part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),

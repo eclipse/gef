@@ -110,8 +110,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	protected IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
-			double segmentParameter) {
+			Provider<IGeometry> handleGeometryProvider, ICurve[] segments,
+			int segmentIndex, double segmentParameter) {
 		FXSegmentHandlePart part = new FXSegmentHandlePart(
 				handleGeometryProvider, segmentIndex, segmentParameter);
 		injector.injectMembers(part);
@@ -140,14 +140,14 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				.toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			hps.add(createCurveSelectionHandlePart(targetPart,
-					handleGeometryProvider, i, 0.0));
+					handleGeometryProvider, beziers, i, 0.0));
 			hps.add(createCurveSelectionHandlePart(targetPart,
-					handleGeometryProvider, i, 0.5));
+					handleGeometryProvider, beziers, i, 0.5));
 
 			// create handlepart for the curve's end point, too
 			if (i == beziers.length - 1) {
 				hps.add(createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, i, 1.0));
+						handleGeometryProvider, beziers, i, 1.0));
 			}
 		}
 		return hps;
