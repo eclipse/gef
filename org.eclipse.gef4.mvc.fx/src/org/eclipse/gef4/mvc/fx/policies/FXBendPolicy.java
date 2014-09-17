@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javafx.scene.Node;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -142,6 +144,22 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return (FXConnection) getHost().getVisual();
 	}
 
+	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
+		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
+
+		Map<Node, IVisualPart<Node>> partMap = getHost().getRoot().getViewer()
+				.getVisualPartMap();
+		for (Node node : nodesUnderMouse) {
+			if (partMap.containsKey(node)) {
+				IVisualPart<Node> part = partMap.get(node);
+				if (part instanceof IContentPart) {
+					parts.add((IContentPart<Node>) part);
+				}
+			}
+		}
+		return parts;
+	}
+
 	protected void hideShowOverlaid() {
 		// put removed back in
 		if (removedOverlaidAnchor != null) {
@@ -206,8 +224,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 	}
 
-	public void moveSelectedAnchor(Point mouseInScene,
-			List<IContentPart<Node>> partsUnderMouse) {
+	public void moveSelectedAnchor(Point mouseInScene) {
 		// update current position
 		currentPoint = JavaFX2Geometry.toPoint(getConnection().sceneToLocal(
 				mouseInScene.x, mouseInScene.y));
@@ -220,7 +237,9 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 				|| currentAnchorIndex == op.getNewAnchors().size() - 1;
 		IFXAnchor anchor = null;
 		if (snaps) {
-			AbstractFXContentPart anchorPart = getAnchorPart(partsUnderMouse);
+			List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
+					.getVisual(), mouseInScene.x, mouseInScene.y);
+			AbstractFXContentPart anchorPart = getAnchorPart(getParts(pickedNodes));
 			if (anchorPart != null) {
 				// use anchor returned by part
 				anchor = anchorPart.getAnchor(getHost());
