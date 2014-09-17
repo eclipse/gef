@@ -18,8 +18,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.geometry.planar.BezierCurve;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
@@ -58,12 +56,12 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	public IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
 			final Provider<IGeometry> handleGeometryProvider, int segmentIndex,
-			final boolean isEndPoint) {
+			double segmentParameter) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, segmentIndex, isEndPoint);
+						handleGeometryProvider, segmentIndex, segmentParameter);
 
-		if (segmentIndex > 0 && !isEndPoint) {
+		if (segmentIndex > 0 && segmentParameter != 1.0) {
 			// make way points (middle segment vertices) draggable
 			// TODO: binding the following policy requires dynamic binding
 			part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
@@ -76,31 +74,6 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		}
 
 		return part;
-	}
-
-	@Override
-	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
-			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider,
-			Map<Object, Object> contextMap) {
-		parts = super.createCurveSelectionHandleParts(targetPart,
-				handleGeometryProvider, contextMap);
-
-		// create mid point (insertion) handles
-		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get())
-				.toBezier();
-		for (int i = 0; i < beziers.length; i++) {
-			int segmentIndex = i;
-			final FXSegmentHandlePart hp = new FXSegmentHandlePart(
-					handleGeometryProvider, segmentIndex, 0.5);
-			injector.injectMembers(hp);
-			// TODO: binding the following policy requires dynamic binding
-			hp.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
-					new FXBendOnSegmentHandleDragPolicy());
-			parts.add(hp);
-		}
-
-		return parts;
 	}
 
 	// @Override

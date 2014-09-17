@@ -102,18 +102,18 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param segmentIndex
 	 *            Index of the segment of the provided {@link IGeometry} for
 	 *            which an {@link IHandlePart} is to be created.
-	 * @param isEndPoint
-	 *            Signifies if the handle is to be created for the end point of
-	 *            the segment.
+	 * @param segmentParameter
+	 *            Parameter between 0 and 1 that specifies the location on the
+	 *            segment
 	 * @return {@link IHandlePart} for the specified segment vertex of the
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
 	protected IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
 			Provider<IGeometry> handleGeometryProvider, int segmentIndex,
-			boolean isEndPoint) {
+			double segmentParameter) {
 		FXSegmentHandlePart part = new FXSegmentHandlePart(
-				handleGeometryProvider, segmentIndex, isEndPoint ? 1 : 0);
+				handleGeometryProvider, segmentIndex, segmentParameter);
 		injector.injectMembers(part);
 		return part;
 	}
@@ -139,14 +139,15 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		BezierCurve[] beziers = ((ICurve) handleGeometryProvider.get())
 				.toBezier();
 		for (int i = 0; i < beziers.length; i++) {
-			IHandlePart<Node> hp = createCurveSelectionHandlePart(targetPart,
-					handleGeometryProvider, i, false);
-			hps.add(hp);
+			hps.add(createCurveSelectionHandlePart(targetPart,
+					handleGeometryProvider, i, 0.0));
+			hps.add(createCurveSelectionHandlePart(targetPart,
+					handleGeometryProvider, i, 0.5));
+
 			// create handlepart for the curve's end point, too
 			if (i == beziers.length - 1) {
-				hp = createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, i, true);
-				hps.add(hp);
+				hps.add(createCurveSelectionHandlePart(targetPart,
+						handleGeometryProvider, i, 1.0));
 			}
 		}
 		return hps;
