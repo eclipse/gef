@@ -60,8 +60,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	private Point currentPoint;
 
-	private IFXAnchor removedOverlaidAnchor;
-	private int removedOverlaidAnchorIndex;
+	private IFXAnchor removedOverlainAnchor;
+	private int removedOverlainAnchorIndex;
 
 	private int currentAnchorIndex;
 	private int currentAnchorIndexBeforeOverlaidRemoval;
@@ -160,14 +160,14 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return parts;
 	}
 
-	protected void hideShowOverlaid() {
-		// put removed back in
-		if (removedOverlaidAnchor != null) {
+	protected void hideShowOverlain() {
+		// put removed back in (may be removed againg before returning)
+		if (removedOverlainAnchor != null) {
 			currentAnchorIndex = currentAnchorIndexBeforeOverlaidRemoval;
-			op.getNewAnchors().add(removedOverlaidAnchorIndex,
-					removedOverlaidAnchor);
+			op.getNewAnchors().add(removedOverlainAnchorIndex,
+					removedOverlainAnchor);
 			locallyExecuteOperation();
-			removedOverlaidAnchor = null;
+			removedOverlainAnchor = null;
 		}
 
 		// do not remove overlaid if there are no way points
@@ -175,37 +175,33 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			return;
 		}
 
-		removedOverlaidAnchorIndex = -1;
+		removedOverlainAnchorIndex = -1;
 		currentAnchorIndexBeforeOverlaidRemoval = currentAnchorIndex;
 
-		// determine overlaid neighbor
+		// determine if right neighbor is overlain (and can be removed)
 		if (currentAnchorIndex > 0) {
-			int prevIndex = currentAnchorIndex - 1;
-			Point prevLocation = prevIndex == 0 ? op.getConnection()
-					.getStartPoint() : op.getConnection().getWayPoint(
-					prevIndex - 1);
-			if (prevLocation.getDistance(currentPoint) < REMOVE_THRESHOLD) {
+			int candidateIndex = currentAnchorIndex - 1;
+			if (isOverlain(candidateIndex, currentAnchorIndex)) {
 				// remove previous
-				removedOverlaidAnchorIndex = prevIndex;
+				removedOverlainAnchorIndex = candidateIndex;
 				currentAnchorIndex--;
 			}
 		}
-		if (removedOverlaidAnchorIndex == -1
+		// if left neighbor is not overlain (and not removed), determine if
+		// right neighbor is overlain (and can be removed)
+		if (removedOverlainAnchorIndex == -1
 				&& currentAnchorIndex < op.getNewAnchors().size() - 1) {
-			int nextIndex = currentAnchorIndex + 1;
-			Point nextLocation = nextIndex == op.getConnection()
-					.getWayAnchorsSize() + 1 ? op.getConnection().getEndPoint()
-					: op.getConnection().getWayPoint(nextIndex - 1);
-			if (nextLocation.getDistance(currentPoint) < REMOVE_THRESHOLD) {
+			int candidateIndex = currentAnchorIndex + 1;
+			if (isOverlain(candidateIndex, currentAnchorIndex)) {
 				// remove next
-				removedOverlaidAnchorIndex = nextIndex;
+				removedOverlainAnchorIndex = candidateIndex;
 			}
 		}
 
 		// remove neighbor if overlaid
-		if (removedOverlaidAnchorIndex != -1) {
-			removedOverlaidAnchor = op.getNewAnchors().remove(
-					removedOverlaidAnchorIndex);
+		if (removedOverlainAnchorIndex != -1) {
+			removedOverlainAnchor = op.getNewAnchors().remove(
+					removedOverlainAnchorIndex);
 			locallyExecuteOperation();
 		}
 	}
@@ -213,7 +209,21 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	@Override
 	public void init() {
 		op = new FXBendOperation(getConnection());
-		removedOverlaidAnchor = null;
+		removedOverlainAnchor = null;
+	}
+
+	private boolean isOverlain(int overlayCandidateIndex, int currentIndex) {
+		Point candidateLocation = null;
+		if (overlayCandidateIndex == 0) {
+			candidateLocation = op.getConnection().getStartPoint();
+		} else if (overlayCandidateIndex == op.getConnection()
+				.getWayAnchorsSize() + 1) {
+			candidateLocation = op.getConnection().getEndPoint();
+		} else {
+			candidateLocation = op.getConnection().getWayPoint(
+					overlayCandidateIndex - 1);
+		}
+		return candidateLocation.getDistance(currentPoint) < REMOVE_THRESHOLD;
 	}
 
 	protected void locallyExecuteOperation() {
@@ -252,7 +262,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		locallyExecuteOperation();
 
 		// update
-		hideShowOverlaid();
+		hideShowOverlain();
 	}
 
 	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
