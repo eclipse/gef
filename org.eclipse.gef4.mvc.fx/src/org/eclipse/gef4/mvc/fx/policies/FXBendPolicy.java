@@ -56,7 +56,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
 	// constants (TODO: make configurable)
-	protected static final double REMOVE_THRESHOLD = 10;
+	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
 	private Point currentPoint;
 
@@ -242,10 +242,14 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 		// overlay if distance is small enough and we do not change the
 		// anchorage
-		return candidateLocation.getDistance(currentPoint) < REMOVE_THRESHOLD
+		return candidateLocation.getDistance(currentPoint) < getOverlayThreshold()
 				&& op.getConnection().getAnchors().get(candidateIndex)
 						.getAnchorage() == op.getConnection().getAnchors()
 						.get(currentIndex).getAnchorage();
+	}
+
+	protected double getOverlayThreshold() {
+		return DEFAULT_OVERLAY_THRESHOLD;
 	}
 
 	protected void locallyExecuteOperation() {
