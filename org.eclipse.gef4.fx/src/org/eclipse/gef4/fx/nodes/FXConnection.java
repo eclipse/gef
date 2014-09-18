@@ -44,6 +44,7 @@ import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXConnection extends Group {
@@ -63,11 +64,8 @@ public class FXConnection extends Group {
 				}
 
 				AnchorKey ak = (AnchorKey) key;
-				if (ak.equals(connection.getStartAnchorKey())) {
-					updateStartReferencePoint();
-				} else if (ak.equals(connection.getEndAnchorKey())) {
-					updateEndReferencePoint();
-				}
+				// System.out.println("ref.get -> update ref for " + ak);
+				updateReferencePoint(getAnchorIndex(ak), ak);
 
 				return super.get(ak);
 			}
@@ -186,89 +184,6 @@ public class FXConnection extends Group {
 			connection.anchorsProperty().addListener(anchorsChangeListener);
 		}
 
-		/**
-		 * Returns a {@link Point} array containing reference points for the
-		 * start and end anchors.
-		 *
-		 * @return an array of size 2 containing the reference points for the
-		 *         start and end anchors
-		 */
-		protected Point[] computeReferencePoints() {
-			// find reference points
-			Point startReference = null;
-			Point endReference = null;
-			List<Point> wayPoints = connection.getWayPoints();
-
-			// first uncontained way point is start reference
-			Node startNode = connection.getStartAnchor().getAnchorage();
-			if (startNode != null) {
-				for (Point p : wayPoints) {
-					if (p == null) {
-						// XXX: This should never happen.
-						continue;
-					}
-					Point2D local = startNode.sceneToLocal(connection
-							.getVisual().localToScene(p.x, p.y));
-					if (!startNode.contains(local)) {
-						startReference = p;
-						break;
-					}
-				}
-			}
-
-			// last uncontained way point is end reference
-			Node endNode = connection.getEndAnchor().getAnchorage();
-			if (endNode != null) {
-				for (int i = wayPoints.size() - 1; i >= 0; i--) {
-					Point p = wayPoints.get(i);
-					if (p == null) {
-						// XXX: This should never happen.
-						continue;
-					}
-					Point2D local = endNode.sceneToLocal(connection.getVisual()
-							.localToScene(p.x, p.y));
-					if (!endNode.contains(local)) {
-						endReference = p;
-						break;
-					}
-				}
-			}
-
-			// if we did not find a startReference yet, we have to use the end
-			// anchorage position or end anchor position
-			if (startReference == null) {
-				if (connection.isEndConnected()) {
-					if (endNode != null) {
-						startReference = getCenter(endNode);
-					}
-				}
-			}
-			if (startReference == null) {
-				startReference = connection.getEndPoint();
-			}
-			if (startReference == null) {
-				startReference = new Point();
-			}
-
-			// if we did not find an endReference yet, we have to use the start
-			// anchorage position or start anchor position
-			if (endReference == null) {
-				if (connection.isStartConnected()) {
-					if (startNode != null) {
-						endReference = getCenter(startNode);
-					}
-				}
-			}
-			if (endReference == null) {
-				endReference = connection.getStartPoint();
-			}
-			if (endReference == null) {
-				endReference = new Point();
-			}
-
-			return new Point[] { startReference, endReference };
-		}
-
 		private MapChangeListener<? super AnchorKey, ? super Point> createEndPCL(
 				final IFXAnchor anchor) {
 			return new MapChangeListener<AnchorKey, Point>() {
@@ -279,7 +194,8 @@ public class FXConnection extends Group {
 						if (anchor.isAttached(change.getKey())
 								&& change.getKey().equals(
 										connection.getEndAnchorKey())) {
-							updateStartReferencePoint();
+							updateReferencePoint(0,
+									connection.getStartAnchorKey());
 						}
 					}
 				}
@@ -296,7 +212,9 @@ public class FXConnection extends Group {
 						if (anchor.isAttached(change.getKey())
 								&& change.getKey().equals(
 										connection.getStartAnchorKey())) {
-							updateEndReferencePoint();
+							updateReferencePoint(
+									connection.getAnchors().size() - 1,
+									connection.getEndAnchorKey());
 						}
 					}
 				}
@@ -310,11 +228,37 @@ public class FXConnection extends Group {
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 					if (change.wasAdded() && anchor.isAttached(change.getKey())) {
-						updateStartReferencePoint();
-						updateEndReferencePoint();
+						int anchorIndex = getAnchorIndex(change.getKey());
+						List<IFXAnchor> anchors = connection.getAnchors();
+						for (int i = 0; i < anchors.size() - 1; i++) {
+							if (i == anchorIndex) {
+								continue;
+							}
+							updateReferencePoint(i, getAnchorKey(i));
+						}
 					}
 				}
 			};
+		}
+
+		public int getAnchorIndex(AnchorKey ak) {
+			if (ak.equals(connection.getStartAnchorKey())) {
+				return 0;
+			} else if (ak.equals(connection.getEndAnchorKey())) {
+				return connection.getAnchors().size() - 1;
+			} else {
+				return connection.getWayIndex(ak) + 1;
+			}
+		}
+
+		public AnchorKey getAnchorKey(int i) {
+			if (i == 0) {
+				return connection.getStartAnchorKey();
+			} else if (i == connection.getAnchors().size() - 1) {
+				return connection.getEndAnchorKey();
+			} else {
+				return connection.getWayAnchorKey(i - 1);
+			}
 		}
 
 		private Point getCenter(Node anchorageNode) {
@@ -328,6 +272,68 @@ public class FXConnection extends Group {
 			return center;
 		}
 
+		/**
+		 * Called only for FXChopBoxAnchor
+		 *
+		 * @param anchorIndex
+		 * @param anchorKey
+		 * @param step
+		 * @return
+		 */
+		private Point getNeighbor(int anchorIndex, int step) {
+			List<IFXAnchor> anchors = connection.getAnchors();
+			IFXAnchor anchor = anchors.get(anchorIndex);
+			if (!(anchor instanceof FXChopBoxAnchor)) {
+				throw new IllegalStateException(
+						"specified anchor is no FXChopBoxAnchor");
+			}
+			Node anchorage = anchor.getAnchorage();
+
+			// first uncontained static anchor (no anchorage)
+			// or first anchorage center
+			for (int i = anchorIndex + step; i < anchors.size() && i >= 0; i += step) {
+				IFXAnchor predAnchor = anchors.get(i);
+				if (predAnchor == null) {
+					throw new IllegalStateException(
+							"connection inconsistent (null anchor)");
+				}
+				Node predAnchorage = predAnchor.getAnchorage();
+				if (predAnchorage == null) {
+					AnchorKey anchorKey = getAnchorKey(i);
+					// anchor is static
+					Point position = predAnchor.getPosition(anchorKey);
+					if (position == null) {
+						throw new IllegalStateException(
+								"connection inconsistent (null position)");
+					}
+					Point2D local = anchorage.sceneToLocal(connection
+							.getVisual().localToScene(position.x, position.y));
+					if (!anchorage.contains(local)) {
+						return position;
+					}
+				} else {
+					// anchor position depends on anchorage
+					Point position = getCenter(predAnchorage);
+					if (position == null) {
+						throw new IllegalStateException(
+								"cannot determine anchorage center");
+					}
+					return position;
+				}
+			}
+
+			// no neighbor found
+			return null;
+		}
+
+		private Point getPred(int anchorIndex) {
+			return getNeighbor(anchorIndex, -1);
+		}
+
+		private Point getSucc(int anchorIndex) {
+			return getNeighbor(anchorIndex, 1);
+		}
+
 		/*
 		 * (non-Javadoc)
 		 *
@@ -339,30 +345,34 @@ public class FXConnection extends Group {
 			return referencePointProperty;
 		}
 
-		private void updateEndReferencePoint() {
-			IFXAnchor endAnchor = connection.getEndAnchor();
-			if (endAnchor != null && endAnchor instanceof FXChopBoxAnchor) {
-				Point[] refPoints = computeReferencePoints();
-				AnchorKey endAnchorKey = connection.getEndAnchorKey();
-				Point oldEndReference = referencePoints.getRaw(endAnchorKey);
-				if (oldEndReference == null
-						|| !oldEndReference.equals(refPoints[1])) {
-					referencePointProperty.put(endAnchorKey, refPoints[1]);
-				}
+		public void updateReferencePoint(int anchorIndex, AnchorKey key) {
+			if (!(connection.getAnchors().get(anchorIndex) instanceof FXChopBoxAnchor)) {
+				return;
 			}
-		}
 
-		private void updateStartReferencePoint() {
-			IFXAnchor startAnchor = connection.getStartAnchor();
-			if (startAnchor != null && startAnchor instanceof FXChopBoxAnchor) {
-				Point[] refPoints = computeReferencePoints();
-				AnchorKey startAnchorKey = connection.getStartAnchorKey();
-				Point oldStartReference = referencePoints
-						.getRaw(startAnchorKey);
-				if (oldStartReference == null
-						|| !oldStartReference.equals(refPoints[0])) {
-					referencePointProperty.put(startAnchorKey, refPoints[0]);
-				}
+			// get old reference point
+			Point oldRef = referencePoints.getRaw(key);
+
+			// compute new reference point
+			Point newRef = null;
+			Point pred = getPred(anchorIndex);
+			Point succ = getSucc(anchorIndex);
+			if (pred == null && succ == null) {
+				throw new IllegalStateException(
+						"Neither predecessor nor successor can be identified.");
+				// we are the only force right now!
+				// therefore, let's not update anything!
+			} else if (pred != null) {
+				newRef = pred;
+			} else if (succ != null) {
+				newRef = succ;
+			} else {
+				newRef = new Line(pred, succ).get(0.5);
+			}
+
+			// only update if necessary (when it changes)
+			if (oldRef == null || !newRef.equals(oldRef)) {
+				referencePointProperty.put(key, newRef);
 			}
 		}
 
@@ -615,7 +625,6 @@ public class FXConnection extends Group {
 	public IFXAnchor getEndAnchor() {
 		IFXAnchor endAnchor = anchorsProperty.get(getEndAnchorKey());
 		if (endAnchor == null) {
-			System.out.println("initializing end point");
 			// in order not to return null as start/end anchor, we set it to
 			// static (0, 0) here
 			setEndPoint(new Point());
@@ -728,6 +737,17 @@ public class FXConnection extends Group {
 
 	public int getWayAnchorsSize() {
 		return wayAnchorKeys.size();
+	}
+
+	public int getWayIndex(AnchorKey key) {
+		int index = wayAnchorKeys.indexOf(key);
+		if (index == -1) {
+			throw new IllegalArgumentException(
+					"The given AnchorKey ("
+							+ key
+							+ ") is not registered as a way point anchor for this connection.");
+		}
+		return index;
 	}
 
 	public Point getWayPoint(int index) {
