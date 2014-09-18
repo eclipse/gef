@@ -262,29 +262,13 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	public void moveSelectedSegmentPoint(Point mouseInScene) {
 		// update current position
+		// TODO: fix computation does not account for LCS changes
 		currentPoint = JavaFX2Geometry.toPoint(getConnection().sceneToLocal(
 				mouseInScene.x, mouseInScene.y));
 
 		op.getNewAnchors().set(currentAnchorIndex, findAnchor(mouseInScene));
 		locallyExecuteOperation();
-
-		// update
 		hideShowOverlain();
-
-		// FIXME: up to now we cannot snap waypoints to other than static
-		// anchors (because FXChopBoxHelper does not return reference points),
-		// so
-		// we have to ensure that we use a static anchor in case we did not
-		// overlay another.
-		if (removedOverlainAnchorIndex == -1) {
-			if (currentAnchorIndex != 0
-					&& currentAnchorIndex != op.getConnection().getAnchors()
-							.size() - 1) {
-				op.getNewAnchors().set(currentAnchorIndex,
-						new FXStaticAnchor(mouseInScene));
-				locallyExecuteOperation();
-			}
-		}
 	}
 
 	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
