@@ -110,10 +110,11 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	protected IHandlePart<Node> createCurveSelectionHandlePart(
 			final IContentPart<Node> targetPart,
-			Provider<IGeometry> handleGeometryProvider, ICurve[] segments,
+			Provider<IGeometry> handleGeometryProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
 		FXSegmentHandlePart part = new FXSegmentHandlePart(
-				handleGeometryProvider, segmentIndex, segmentParameter);
+				handleGeometryProvider, segmentCount, segmentIndex,
+				segmentParameter);
 		injector.injectMembers(part);
 		return part;
 	}
@@ -140,14 +141,14 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				.toBezier();
 		for (int i = 0; i < beziers.length; i++) {
 			hps.add(createCurveSelectionHandlePart(targetPart,
-					handleGeometryProvider, beziers, i, 0.0));
+					handleGeometryProvider, beziers.length, i, 0.0));
 			hps.add(createCurveSelectionHandlePart(targetPart,
-					handleGeometryProvider, beziers, i, 0.5));
+					handleGeometryProvider, beziers.length, i, 0.5));
 
 			// create handlepart for the curve's end point, too
 			if (i == beziers.length - 1) {
 				hps.add(createCurveSelectionHandlePart(targetPart,
-						handleGeometryProvider, beziers, i, 1.0));
+						handleGeometryProvider, beziers.length, i, 1.0));
 			}
 		}
 		return hps;
@@ -196,7 +197,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param handleGeometryProvider
 	 *            Provides an {@link IGeometry} for which an {@link IHandlePart}
 	 *            is to be created.
-	 * @param vertexIndex
+	 * @param segmentIndex
 	 *            Index of the vertex of the provided {@link IGeometry} for
 	 *            which an {@link IHandlePart} is to be created.
 	 * @param contextMap
@@ -206,10 +207,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
 	protected IHandlePart<Node> createSegmentHandlePart(
-			Provider<IGeometry> handleGeometryProvider, int vertexIndex,
-			Map<Object, Object> contextMap) {
+			Provider<IGeometry> handleGeometryProvider, int segmentCount,
+			int segmentIndex, Map<Object, Object> contextMap) {
 		FXSegmentHandlePart part = new FXSegmentHandlePart(
-				handleGeometryProvider, vertexIndex);
+				handleGeometryProvider, segmentCount, segmentIndex);
 		injector.injectMembers(part);
 		return part;
 	}
@@ -274,8 +275,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				ICurve[] edges = selectionHandlesShape.getOutlineSegments();
 				for (int i = 0; i < edges.length; i++) {
 					IHandlePart<Node> hp = createSegmentHandlePart(
-							selectionHandlesGeometryInSceneProvider, i,
-							contextMap);
+							selectionHandlesGeometryInSceneProvider,
+							edges.length, i, contextMap);
 					handleParts.add(hp);
 				}
 			}

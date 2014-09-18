@@ -53,18 +53,20 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	protected Circle visual;
 
 	protected Provider<IGeometry> handleGeometryProvider;
+	private int segmentCount = 0;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
 	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
-			int segmentIndex) {
-		this(handleGeometryProvider, segmentIndex, 0);
+			int segmentCount, int segmentIndex) {
+		this(handleGeometryProvider, segmentCount, segmentIndex, 0);
 	}
 
 	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
-			int segmentIndex, double segmentParameter) {
+			int segmentCount, int segmentIndex, double segmentParameter) {
 		super();
 		this.handleGeometryProvider = handleGeometryProvider;
+		this.segmentCount = segmentCount;
 		this.segmentIndex = segmentIndex;
 		this.segmentParameter = segmentParameter;
 	}
@@ -182,6 +184,10 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		}
 
 		return position;
+	}
+
+	public int getSegmentCount() {
+		return segmentCount;
 	}
 
 	/**
