@@ -168,8 +168,14 @@ public abstract class AbstractFXAnchor implements IFXAnchor {
 					"The given AnchorKey was not previously attached to this IFXAnchor.");
 		}
 
+		// remove from positions map so that a change event is fired when it is
+		// attached again
+		positionProperty.remove(key);
+
+		// remove from keys to indicate it is detached
 		keys.get(anchored).remove(key);
 
+		// clean-up for this anchored if necessary
 		if (keys.get(anchored).isEmpty()) {
 			keys.remove(anchored);
 			VisualChangeListener vcl = vcls.remove(anchored);

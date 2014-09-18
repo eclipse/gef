@@ -159,14 +159,12 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	protected Point computePosition(AnchorKey key) {
 		Point referencePoint = referencePointProviders.get(key)
 				.referencePointProperty().get(key);
-		if (referencePoint != null) {
-			// TODO: we should enforce the reference point is not null
-			// throw new IllegalStateException(
-			// "Reference point provider does not provide a reference point for "
-			// + key);
-			return computePosition(key.getAnchored(), referencePoint);
+		if (referencePoint == null) {
+			throw new IllegalStateException(
+					"The ReferencePointProvider does not provide a reference point for this key: "
+							+ key);
 		}
-		return null;
+		return computePosition(key.getAnchored(), referencePoint);
 	}
 
 	/**
