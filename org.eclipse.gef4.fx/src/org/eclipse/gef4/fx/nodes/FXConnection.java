@@ -48,7 +48,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXConnection extends Group {
 
-	public class FXChopBoxHelper implements
+	public static class FXChopBoxHelper implements
 			FXChopBoxAnchor.ReferencePointProvider {
 
 		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
@@ -297,7 +297,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
