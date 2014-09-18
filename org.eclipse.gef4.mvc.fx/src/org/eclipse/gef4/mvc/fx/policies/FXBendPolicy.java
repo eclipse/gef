@@ -160,6 +160,10 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return (FXConnection) getHost().getVisual();
 	}
 
+	protected double getOverlayThreshold() {
+		return DEFAULT_OVERLAY_THRESHOLD;
+	}
+
 	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
 		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
 
@@ -246,10 +250,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 				&& op.getConnection().getAnchors().get(candidateIndex)
 						.getAnchorage() == op.getConnection().getAnchors()
 						.get(currentIndex).getAnchorage();
-	}
-
-	protected double getOverlayThreshold() {
-		return DEFAULT_OVERLAY_THRESHOLD;
 	}
 
 	protected void locallyExecuteOperation() {

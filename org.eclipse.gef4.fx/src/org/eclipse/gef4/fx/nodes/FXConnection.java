@@ -36,6 +36,7 @@ import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
+import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
@@ -296,7 +297,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
@@ -770,7 +771,7 @@ public class FXConnection extends Group {
 
 	protected void registerAnchorInfos(IAdaptable adaptable) {
 		// register an FXChopBoxHelper, which is passed to the attached anchors.
-		adaptable.setAdapter(AdapterKey.get(FXChopBoxHelper.class),
+		adaptable.setAdapter(AdapterKey.get(ReferencePointProvider.class),
 				new FXChopBoxHelper(this));
 	}
 

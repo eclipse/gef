@@ -129,23 +129,23 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 */
 	@Override
 	public void attach(AnchorKey key, IAdaptable info) {
-		ReferencePointProvider helper = info
+		ReferencePointProvider referencePointProvider = info
 				.getAdapter(ReferencePointProvider.class);
-		if (helper == null) {
+		if (referencePointProvider == null) {
 			throw new IllegalArgumentException(
-					"No FXChopBoxHelper could be obtained via info.");
+					"No ReferencePointProvider could be obtained via info.");
 		}
 
 		// we need to keep track of it, otherwise we will not be able to access
 		// the reference point information (in case of other changes).
-		referencePointProviders.put(key, helper);
+		referencePointProviders.put(key, referencePointProvider);
 
 		// will enforce a re-computation of positions, so we need to have
 		// obtained the helper beforehand.
 		super.attach(key, info);
 
 		// add listener to reference point changes
-		helper.referencePointProperty().addListener(
+		referencePointProvider.referencePointProperty().addListener(
 				referencePointChangeListener);
 	}
 
@@ -191,7 +191,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * intersection. We choose the scene coordinate system here. Therefore,
 		 * we need access to a local-to-scene-transform for the anchorage and
 		 * the anchored.
-		 * 
+		 *
 		 * Important: JavaFX Node provides a (lazily computed)
 		 * local-to-scene-transform property which we could access to get that
 		 * transform. Unfortunately, this property is not updated correctly,
@@ -199,7 +199,7 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * This is reflected in the different values of a) the
 		 * Node#localToScene(...) method, and b) transforming using the
 		 * concatenated local-to-parent-transforms.
-		 * 
+		 *
 		 * Therefore, we compute the local-to-scene-transform for anchorage and
 		 * anchored by concatenating the local-to-parent-transforms in the
 		 * hierarchy, respectively.
