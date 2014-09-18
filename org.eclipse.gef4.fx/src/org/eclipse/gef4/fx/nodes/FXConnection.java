@@ -64,7 +64,6 @@ public class FXConnection extends Group {
 				}
 
 				AnchorKey ak = (AnchorKey) key;
-				// System.out.println("ref.get -> update ref for " + ak);
 				updateReferencePoint(getAnchorIndex(ak), ak);
 
 				return super.get(ak);
@@ -89,12 +88,6 @@ public class FXConnection extends Group {
 		private ReferencePointMap referencePoints = new ReferencePointMap();
 		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 				FXCollections.observableMap(referencePoints));
-
-		/*
-		 * TODO: Support FXChopBoxAnchor at way points. Currently no reference
-		 * points are computed for FXChopBoxAnchors at way points. The reference
-		 * point for a way point could be the middle point of both neighbors.
-		 */
 
 		private MapChangeListener<AnchorKey, IFXAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IFXAnchor>() {
 			@Override
@@ -194,8 +187,7 @@ public class FXConnection extends Group {
 						if (anchor.isAttached(change.getKey())
 								&& change.getKey().equals(
 										connection.getEndAnchorKey())) {
-							updateReferencePoint(0,
-									connection.getStartAnchorKey());
+							updateReferencePoints(change.getKey());
 						}
 					}
 				}
@@ -212,9 +204,7 @@ public class FXConnection extends Group {
 						if (anchor.isAttached(change.getKey())
 								&& change.getKey().equals(
 										connection.getStartAnchorKey())) {
-							updateReferencePoint(
-									connection.getAnchors().size() - 1,
-									connection.getEndAnchorKey());
+							updateReferencePoints(change.getKey());
 						}
 					}
 				}
@@ -228,19 +218,13 @@ public class FXConnection extends Group {
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 					if (change.wasAdded() && anchor.isAttached(change.getKey())) {
-						int anchorIndex = getAnchorIndex(change.getKey());
-						List<IFXAnchor> anchors = connection.getAnchors();
-						for (int i = 0; i < anchors.size() - 1; i++) {
-							if (i == anchorIndex) {
-								continue;
-							}
-							updateReferencePoint(i, getAnchorKey(i));
-						}
+						updateReferencePoints(change.getKey());
 					}
 				}
 			};
 		}
 
+		// TODO: Re-think FXConnection interface
 		public int getAnchorIndex(AnchorKey ak) {
 			if (ak.equals(connection.getStartAnchorKey())) {
 				return 0;
@@ -251,6 +235,7 @@ public class FXConnection extends Group {
 			}
 		}
 
+		// TODO: Re-think FXConnection interface
 		public AnchorKey getAnchorKey(int i) {
 			if (i == 0) {
 				return connection.getStartAnchorKey();
@@ -261,6 +246,7 @@ public class FXConnection extends Group {
 			}
 		}
 
+		// TODO: move to utility && replace with safe algorithm
 		private Point getCenter(Node anchorageNode) {
 			Point center = JavaFX2Geometry.toRectangle(
 					connection.getVisual().sceneToLocal(
@@ -272,14 +258,6 @@ public class FXConnection extends Group {
 			return center;
 		}
 
-		/**
-		 * Called only for FXChopBoxAnchor
-		 *
-		 * @param anchorIndex
-		 * @param anchorKey
-		 * @param step
-		 * @return
-		 */
 		private Point getNeighbor(int anchorIndex, int step) {
 			List<IFXAnchor> anchors = connection.getAnchors();
 			IFXAnchor anchor = anchors.get(anchorIndex);
@@ -358,10 +336,15 @@ public class FXConnection extends Group {
 			Point pred = getPred(anchorIndex);
 			Point succ = getSucc(anchorIndex);
 			if (pred == null && succ == null) {
-				throw new IllegalStateException(
-						"Neither predecessor nor successor can be identified.");
-				// we are the only force right now!
-				// therefore, let's not update anything!
+				// Neither predecessor nor successor can be identified.
+				/*
+				 * This can happen for the initialization of connections when
+				 * there are no uncontained static points. This means, the
+				 * reference point that is returned now will be discarded in a
+				 * succeeding call. FIXME: Therefore, we can return *any* point
+				 * here.
+				 */
+				newRef = new Point();
 			} else if (pred != null) {
 				newRef = pred;
 			} else if (succ != null) {
@@ -373,6 +356,20 @@ public class FXConnection extends Group {
 			// only update if necessary (when it changes)
 			if (oldRef == null || !newRef.equals(oldRef)) {
 				referencePointProperty.put(key, newRef);
+			}
+		}
+
+		private void updateReferencePoints(AnchorKey key) {
+			int anchorIndex = getAnchorIndex(key);
+			List<IFXAnchor> anchors = connection.getAnchors();
+			for (int i = 0; i < anchors.size(); i++) {
+				// we do not have to update the reference point for the
+				// given key, because the corresponding position just
+				// changed, so it was updated already
+				if (anchorIndex == i) {
+					continue;
+				}
+				updateReferencePoint(i, getAnchorKey(i));
 			}
 		}
 
@@ -439,19 +436,7 @@ public class FXConnection extends Group {
 		AnchorKey anchorKey = generateWayAnchorKey();
 		// assert(!anchorKeyPCL.containsKey(anchorKey));
 		wayAnchorKeys.add(anchorKey);
-
-		/*
-		 * IMPORTANT: The anchor is put into the map before attaching it, so
-		 * that listeners can register position change listeners on the anchor.
-		 */
-		anchorsProperty.put(anchorKey, anchor);
-		anchor.attach(anchorKey, as);
-		if (!anchorKeyPCL.containsKey(anchorKey)) {
-			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
-			anchorKeyPCL.put(anchorKey, pcl);
-			anchor.positionProperty().addListener(pcl);
-		}
-		refreshGeometry();
+		putAnchor(anchor, anchorKey);
 	}
 
 	public void addWayPoint(int index, Point wayPointInLocal) {
@@ -601,14 +586,17 @@ public class FXConnection extends Group {
 		int wayPointCount = getWayAnchorsSize();
 		List<IFXAnchor> anchors = new ArrayList<>(wayPointCount + 2);
 
+		// start anchor
 		IFXAnchor startAnchor = getStartAnchor();
 		if (startAnchor == null) {
 			return Collections.emptyList();
 		}
 		anchors.add(startAnchor);
 
+		// way anchors
 		anchors.addAll(getWayAnchors());
 
+		// end anchor
 		IFXAnchor endAnchor = getEndAnchor();
 		if (endAnchor == null) {
 			return Collections.emptyList();
@@ -788,6 +776,22 @@ public class FXConnection extends Group {
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
+	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey) {
+		/*
+		 * IMPORTANT: The anchor is put into the map before attaching it, so
+		 * that listeners on the map can register position change listeners on
+		 * the anchor (but cannot query its position, yet).
+		 */
+		anchorsProperty.put(anchorKey, anchor);
+		anchor.attach(anchorKey, as);
+		if (!anchorKeyPCL.containsKey(anchorKey)) {
+			MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
+			anchorKeyPCL.put(anchorKey, pcl);
+			anchor.positionProperty().addListener(pcl);
+		}
+		refreshGeometry();
+	}
+
 	protected void refreshGeometry() {
 		// TODO: this should not be here
 		// guard against recomputing the curve while recomputing the curve
@@ -835,6 +839,19 @@ public class FXConnection extends Group {
 		}
 	}
 
+	private void removeAnchor(AnchorKey anchorKey, IFXAnchor oldAnchor) {
+		if (anchorKeyPCL.containsKey(anchorKey)) {
+			oldAnchor.positionProperty().removeListener(
+					anchorKeyPCL.remove(anchorKey));
+		}
+		/*
+		 * Important: detach() after removing from the anchors-map, so that
+		 * listeners on the anchors-map can retrieve the anchor position.
+		 */
+		anchorsProperty.remove(anchorKey);
+		oldAnchor.detach(anchorKey, as);
+	}
+
 	public void removeWayPoint(int index) {
 		// check index out of range
 		if (index < 0 || index >= getWayAnchorsSize()) {
@@ -849,16 +866,9 @@ public class FXConnection extends Group {
 		}
 
 		wayAnchorKeys.remove(index);
-		IFXAnchor oldAnchor = anchorsProperty.remove(anchorKey);
-		if (oldAnchor == null) {
-			throw new IllegalStateException("old anchor is null!");
-		}
 
-		oldAnchor.detach(anchorKey, as);
-		if (anchorKeyPCL.containsKey(anchorKey)) {
-			oldAnchor.positionProperty().removeListener(
-					anchorKeyPCL.remove(anchorKey));
-		}
+		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
+		removeAnchor(anchorKey, oldAnchor);
 
 		refreshGeometry();
 	}
@@ -886,30 +896,9 @@ public class FXConnection extends Group {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				if (anchorKeyPCL.containsKey(anchorKey)) {
-					oldAnchor.positionProperty().removeListener(
-							anchorKeyPCL.remove(anchorKey));
-				}
-				// Important: detach() after removing from the anchors-map, so
-				// that listeners on the anchors-map can retrieve the anchor
-				// position.
-				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey, as);
+				removeAnchor(anchorKey, oldAnchor);
 			}
-			// assert(!anchorKeyPCL.containsKey(anchorKey));
-			/*
-			 * IMPORTANT: The anchor is put into the map before attaching it, so
-			 * that listeners can register position change listeners on the
-			 * anchor.
-			 */
-			anchorsProperty.put(anchorKey, anchor);
-			anchor.attach(anchorKey, as);
-			if (!anchorKeyPCL.containsKey(anchorKey)) {
-				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
-				anchorKeyPCL.put(anchorKey, pcl);
-				anchor.positionProperty().addListener(pcl);
-			}
-			refreshGeometry();
+			putAnchor(anchor, anchorKey);
 		}
 	}
 
@@ -946,27 +935,9 @@ public class FXConnection extends Group {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				if (anchorKeyPCL.containsKey(anchorKey)) {
-					oldAnchor.positionProperty().removeListener(
-							anchorKeyPCL.remove(anchorKey));
-				}
-				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey, as);
+				removeAnchor(anchorKey, oldAnchor);
 			}
-			// assert(!anchorKeyPCL.containsKey(anchorKey));
-			/*
-			 * IMPORTANT: The anchor is put into the map before attaching it, so
-			 * that listeners can register position change listeners on the
-			 * anchor.
-			 */
-			anchorsProperty.put(anchorKey, anchor);
-			anchor.attach(anchorKey, as);
-			if (!anchorKeyPCL.containsKey(anchorKey)) {
-				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
-				anchorKeyPCL.put(anchorKey, pcl);
-				anchor.positionProperty().addListener(pcl);
-			}
-			refreshGeometry();
+			putAnchor(anchor, anchorKey);
 		}
 	}
 
@@ -1001,35 +972,15 @@ public class FXConnection extends Group {
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		if (oldAnchor != anchor) {
 			if (oldAnchor != null) {
-				if (anchorKeyPCL.containsKey(anchorKey)) {
-					oldAnchor.positionProperty().removeListener(
-							anchorKeyPCL.remove(anchorKey));
-				}
-				// Important: detach() after removing from the anchors-map, so
-				// that listeners on the anchors-map can retrieve the anchor
-				// position.
-				anchorsProperty.remove(anchorKey);
-				oldAnchor.detach(anchorKey, as);
+				removeAnchor(anchorKey, oldAnchor);
 			}
-			/*
-			 * IMPORTANT: The anchor is put into the map before attaching it, so
-			 * that listeners can register position change listeners on the
-			 * anchor.
-			 */
-			anchorsProperty.put(anchorKey, anchor);
-			anchor.attach(anchorKey, as);
-			if (!anchorKeyPCL.containsKey(anchorKey)) {
-				MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(anchorKey);
-				anchorKeyPCL.put(anchorKey, pcl);
-				anchor.positionProperty().addListener(pcl);
-			}
-			refreshGeometry();
+			putAnchor(anchor, anchorKey);
 		}
 	}
 
 	public void setWayAnchors(List<IFXAnchor> anchors) {
 		int wayPointsSize = getWayAnchorsSize();
-		// Important: We have to do the removal of way anchors before
+		// IMPORTANT: We have to do the removal of way anchors before
 		// changing/adding anchors.
 		for (int i = wayPointsSize - 1; i >= anchors.size(); i--) {
 			removeWayPoint(i);
@@ -1062,4 +1013,5 @@ public class FXConnection extends Group {
 			removeWayPoint(i);
 		}
 	}
+
 }
