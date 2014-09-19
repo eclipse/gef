@@ -21,7 +21,6 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
-import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -52,21 +51,19 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	protected Circle visual;
 
-	protected Provider<IGeometry> handleGeometryProvider;
-	private int segmentCount = 0;
+	protected Provider<BezierCurve[]> segmentsProvider;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
 
-	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
-			int segmentCount, int segmentIndex) {
-		this(handleGeometryProvider, segmentCount, segmentIndex, 0);
+	public FXSegmentHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider,
+			int segmentIndex) {
+		this(segmentsInSceneProvider, segmentIndex, 0);
 	}
 
-	public FXSegmentHandlePart(Provider<IGeometry> handleGeometryProvider,
-			int segmentCount, int segmentIndex, double segmentParameter) {
+	public FXSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
+			int segmentIndex, double segmentParameter) {
 		super();
-		this.handleGeometryProvider = handleGeometryProvider;
-		this.segmentCount = segmentCount;
+		this.segmentsProvider = segmentsProvider;
 		this.segmentIndex = segmentIndex;
 		this.segmentParameter = segmentParameter;
 	}
@@ -105,18 +102,18 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 			return;
 		}
 
-		if (getSegmentIndex() == -1) {
-			// hide those that have "invalid" index (this may happen during
-			// life-feedback, when a waypoint is removed)
+		BezierCurve[] segmentsInScene = getSegmentsInScene();
+		if (segmentIndex < 0 || segmentIndex > segmentsInScene.length - 1) {
+			// hide those that have "invalid" index. (this may happen during
+			// life-feedback, when a way-point is removed)
 			visual.setVisible(false);
 		} else {
 			visual.setVisible(true);
 
 			// get new position (in parent coordinate space)
-			IGeometry handleGeometryInScene = handleGeometryProvider.get();
-			IGeometry handleGeometryInParent = FXUtils.sceneToLocal(
-					visual.getParent(), handleGeometryInScene);
-			Point positionInParent = getPosition(handleGeometryInParent);
+			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
+					visual.getParent(), segmentsInScene[segmentIndex]);
+			Point positionInParent = getPosition(segmentInParent);
 
 			// transform to handle space
 			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
@@ -135,16 +132,10 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 				if (targetPart.getVisual() instanceof FXConnection) {
 					FXConnection connection = (FXConnection) targetPart
 							.getVisual();
-					if (segmentIndex == 0 && segmentParameter == 0.0) {
+					if (segmentIndex + segmentParameter == 0.0) {
 						connected = connection.isStartConnected();
-					} else if (segmentParameter == 1.0) {
-						IGeometry geom = handleGeometryInScene;
-						if (geom instanceof ICurve) {
-							BezierCurve[] beziers = ((ICurve) geom).toBezier();
-							if (beziers.length - 1 == segmentIndex) {
-								connected = connection.isEndConnected();
-							}
-						}
+					} else if (segmentParameter + segmentIndex == segmentsInScene.length) {
+						connected = connection.isEndConnected();
 					}
 				}
 				if (connected) {
@@ -154,40 +145,14 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 				}
 			}
 		}
-
 	}
 
-	protected Point getPosition(IGeometry handleGeometry) {
-		Point position = null;
-
-		if (handleGeometry instanceof IShape) {
-			IShape shape = (IShape) handleGeometry;
-			// use the bounds to place the shape handles
-			// TODO: we should be able to deal with an arbitrary shape here
-			ICurve[] segments = shape.getOutlineSegments();
-			position = segments[segmentIndex].toBezier()[0]
-					.get(segmentParameter);
-		} else if (handleGeometry instanceof ICurve) {
-			ICurve curve = (ICurve) handleGeometry;
-			BezierCurve[] beziers = curve.toBezier();
-			if (beziers == null) {
-				position = new Point();
-			} else if (segmentIndex >= beziers.length) {
-				position = new Point();
-			} else {
-				position = beziers[segmentIndex].get(segmentParameter);
-			}
-		} else {
-			throw new IllegalStateException(
-					"Unable to determine handle position: Expected IShape or ICurve but got: "
-							+ handleGeometry);
-		}
-
-		return position;
+	protected Point getPosition(BezierCurve segment) {
+		return segment.get(segmentParameter);
 	}
 
 	public int getSegmentCount() {
-		return segmentCount;
+		return getSegmentsInScene().length;
 	}
 
 	/**
@@ -218,6 +183,10 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	 */
 	public double getSegmentParameter() {
 		return segmentParameter;
+	}
+
+	public BezierCurve[] getSegmentsInScene() {
+		return segmentsProvider.get();
 	}
 
 	@Override
