@@ -49,9 +49,30 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXConnection extends Group {
 
+	/**
+	 * The {@link FXChopBoxHelper} can be registered for an {@link FXConnection}
+	 * and serves as a {@link ReferencePointProvider} for all {@link AnchorKey}s
+	 * of that {@link FXConnection} which are registered at
+	 * {@link FXChopBoxAnchor}s.
+	 *
+	 * @author wienand
+	 *
+	 */
 	public static class FXChopBoxHelper implements
 			FXChopBoxAnchor.ReferencePointProvider {
 
+		/**
+		 * The {@link ReferencePointMap} is used to store the reference points
+		 * for the individual {@link AnchorKey}s. A reference point is computed
+		 * whenever it is requested (i.e. {@link #get(Object)} is called).
+		 * Currently, the computation is always performed (space to improve). In
+		 * order to query a currently set reference point, you can use
+		 * {@link #getRaw(Object)}, which will not trigger a reference point
+		 * computation, but instead simply look it up in the map.
+		 *
+		 * @author wienand
+		 *
+		 */
 		public class ReferencePointMap extends HashMap<AnchorKey, Point> {
 
 			private static final long serialVersionUID = 1L;
@@ -89,6 +110,10 @@ public class FXConnection extends Group {
 		private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty = new ReadOnlyMapWrapper<AnchorKey, Point>(
 				FXCollections.observableMap(referencePoints));
 
+		/**
+		 * Manages the addition and removal of position-change-listeners for the
+		 * {@link AnchorKey}s of the {@link FXConnection}.
+		 */
 		private MapChangeListener<AnchorKey, IFXAnchor> anchorsChangeListener = new MapChangeListener<AnchorKey, IFXAnchor>() {
 			@Override
 			public void onChanged(
@@ -156,6 +181,10 @@ public class FXConnection extends Group {
 
 		public FXChopBoxHelper(FXConnection connection) {
 			this.connection = connection;
+			/*
+			 * If the map behind the anchors-property is replaced, we have to
+			 * update our anchorsChangeListener accordingly.
+			 */
 			connection.anchorsProperty().addListener(
 					new ChangeListener<ObservableMap<AnchorKey, IFXAnchor>>() {
 						@Override
@@ -277,8 +306,8 @@ public class FXConnection extends Group {
 				}
 				Node predAnchorage = predAnchor.getAnchorage();
 				if (predAnchorage == null) {
-					AnchorKey anchorKey = getAnchorKey(i);
 					// anchor is static
+					AnchorKey anchorKey = getAnchorKey(i);
 					Point position = predAnchor.getPosition(anchorKey);
 					if (position == null) {
 						throw new IllegalStateException(
@@ -314,7 +343,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
@@ -336,13 +365,13 @@ public class FXConnection extends Group {
 			Point pred = getPred(anchorIndex);
 			Point succ = getSucc(anchorIndex);
 			if (pred == null && succ == null) {
-				// Neither predecessor nor successor can be identified.
 				/*
-				 * This can happen for the initialization of connections when
-				 * there are no uncontained static points. This means, the
-				 * reference point that is returned now will be discarded in a
-				 * succeeding call. FIXME: Therefore, we can return *any* point
-				 * here.
+				 * Neither predecessor nor successor can be identified. This can
+				 * happen for the initialization of connections when a static
+				 * position is inside the anchorage of the current anchor. This
+				 * means, the reference point that is returned now will be
+				 * discarded in a succeeding call (we have to come up with some
+				 * value here for the FXChopBoxAnchor to work with).
 				 */
 				newRef = new Point();
 			} else if (pred != null) {
