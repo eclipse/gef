@@ -26,6 +26,33 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
+	protected static Dimension getSnapToGridOffset(GridModel gridModel,
+			final double localX, final double localY,
+			final double gridCellWidthFraction,
+			final double gridCellHeightFraction) {
+		double snapOffsetX = 0, snapOffsetY = 0;
+		if ((gridModel != null) && gridModel.isSnapToGrid()) {
+			// determine snap width
+			final double snapWidth = gridModel.getGridCellWidth()
+					* gridCellWidthFraction;
+			final double snapHeight = gridModel.getGridCellHeight()
+					* gridCellHeightFraction;
+
+			snapOffsetX = localX % snapWidth;
+			if (snapOffsetX > (snapWidth / 2)) {
+				snapOffsetX = snapWidth - snapOffsetX;
+				snapOffsetX *= -1;
+			}
+
+			snapOffsetY = localY % snapHeight;
+			if (snapOffsetY > (snapHeight / 2)) {
+				snapOffsetY = snapHeight - snapOffsetY;
+				snapOffsetY *= -1;
+			}
+		}
+		return new Dimension(snapOffsetX, snapOffsetY);
+	}
+
 	private FXResizeRelocateNodeOperation operation;
 
 	// can be overridden by subclasses to add an operation for model changes
@@ -45,38 +72,9 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return FXSegmentHandlePart.SIZE;
 	}
 
-	protected Dimension getSnapToGridOffset(final double startX,
-			final double startY, final double layoutDx, final double layoutDy,
-			final double gridCellWidthFraction,
-			final double gridCellHeightFraction) {
-		final GridModel gridModel = getHost().getRoot().getViewer()
-				.getAdapter(GridModel.class);
-		double snapOffsetX = 0, snapOffsetY = 0;
-		if ((gridModel != null) && gridModel.isSnapToGrid()) {
-			// determine snap width
-			final double snapWidth = gridModel.getGridCellWidth()
-					* gridCellWidthFraction;
-			final double snapHeight = gridModel.getGridCellHeight()
-					* gridCellHeightFraction;
-
-			snapOffsetX = (startX + layoutDx) % snapWidth;
-			if (snapOffsetX > (snapWidth / 2)) {
-				snapOffsetX = snapWidth - snapOffsetX;
-				snapOffsetX *= -1;
-			}
-
-			snapOffsetY = ((startY + layoutDy) % snapHeight);
-			if (snapOffsetY > (snapHeight / 2)) {
-				snapOffsetY = snapHeight - snapOffsetY;
-				snapOffsetY *= -1;
-			}
-		}
-		return new Dimension(snapOffsetX, snapOffsetY);
-	}
-
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
@@ -107,11 +105,11 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 		// snap-to-grid
 		Point start = operation.getOldLocation();
-		// TODO: make stepping (0.5) configurable
-		Dimension snapOffset = getSnapToGridOffset(start.x, start.y, layoutDx,
-				layoutDy, 0.5, 0.5);
-		layoutDx = layoutDx - snapOffset.width;
-		layoutDy = layoutDy - snapOffset.height;
+		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
+				.getViewer().<GridModel> getAdapter(GridModel.class), start.x
+				+ layoutDx, start.y + layoutDy, 0.5, 0.5);
+		layoutDx = layoutDx - snapToGridOffset.width;
+		layoutDy = layoutDy - snapToGridOffset.height;
 
 		// update operation
 		operation.setDx(layoutDx);

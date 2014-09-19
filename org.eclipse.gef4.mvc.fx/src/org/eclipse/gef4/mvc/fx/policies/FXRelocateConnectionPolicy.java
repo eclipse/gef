@@ -22,6 +22,7 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
+import org.eclipse.gef4.mvc.models.GridModel;
 
 public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
 
@@ -79,8 +80,10 @@ public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
 			// TODO: make stepping (0.5) configurable
-			final Dimension snapToGridOffset = getSnapToGridOffset(p.x, p.y,
-					dx, dy, 0.5, 0.5);
+			Dimension snapToGridOffset = getSnapToGridOffset(
+					getHost().getRoot().getViewer()
+							.<GridModel> getAdapter(GridModel.class), p.x + dx,
+					p.y + dy, 0.5, 0.5);
 			op.getNewAnchors().set(
 					i,
 					new FXStaticAnchor(JavaFX2Geometry.toPoint(getHost()

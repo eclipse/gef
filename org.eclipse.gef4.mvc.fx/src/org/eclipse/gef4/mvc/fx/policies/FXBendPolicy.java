@@ -25,9 +25,11 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -200,6 +202,35 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return parts;
 	}
 
+	protected Dimension getSnapToGridOffset(final double startX,
+			final double startY, final double layoutDx, final double layoutDy,
+			final double gridCellWidthFraction,
+			final double gridCellHeightFraction) {
+		final GridModel gridModel = getHost().getRoot().getViewer()
+				.getAdapter(GridModel.class);
+		double snapOffsetX = 0, snapOffsetY = 0;
+		if ((gridModel != null) && gridModel.isSnapToGrid()) {
+			// snap to half grid height
+			final double gridCellWidth = gridModel.getGridCellWidth()
+					* gridCellWidthFraction;
+			final double gridCellHeight = gridModel.getGridCellHeight()
+					* gridCellHeightFraction;
+
+			snapOffsetX = (startX + layoutDx) % gridCellWidth;
+			if (snapOffsetX > (gridCellWidth / 2)) {
+				snapOffsetX = gridCellWidth - snapOffsetX;
+				snapOffsetX *= -1;
+			}
+
+			snapOffsetY = ((startY + layoutDy) % gridCellHeight);
+			if (snapOffsetY > (gridCellHeight / 2)) {
+				snapOffsetY = gridCellHeight - snapOffsetY;
+				snapOffsetY *= -1;
+			}
+		}
+		return new Dimension(snapOffsetX, snapOffsetY);
+	}
+
 	protected void hideShowOverlain(Point currentPositionInScene) {
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
@@ -315,10 +346,19 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		Point currentReferencePositionInLocal = this.initialReferencePositionInLocal
 				.getTranslated(deltaInLocal);
 
+		// TODO: make snapping (0.5) configurable
+		Dimension snapToGridOffset = FXResizeRelocatePolicy
+				.getSnapToGridOffset(getHost().getRoot().getViewer()
+						.<GridModel> getAdapter(GridModel.class),
+						currentReferencePositionInLocal.x,
+						currentReferencePositionInLocal.y, 0.5, 0.5);
+
 		Point currentReferencePositionInScene = JavaFX2Geometry
 				.toPoint(getConnection().localToScene(
 						Geometry2JavaFX
-								.toFXPoint(currentReferencePositionInLocal)));
+								.toFXPoint(currentReferencePositionInLocal
+										.getTranslated(snapToGridOffset
+												.getNegated()))));
 
 		op.getNewAnchors().set(currentAnchorIndex,
 				findAnchor(currentReferencePositionInScene, canAttach()));
