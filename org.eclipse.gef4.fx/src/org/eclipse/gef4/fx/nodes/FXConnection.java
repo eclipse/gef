@@ -120,66 +120,33 @@ public class FXConnection extends Group {
 			@Override
 			public void onChanged(
 					javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends IFXAnchor> change) {
-				if (change.getKey().equals(connection.getStartAnchorKey())) {
-					// start anchor change
-					if (change.getValueRemoved() != null
-							&& startPCL.containsKey(change.getValueRemoved())) {
-						change.getValueRemoved()
-								.positionProperty()
-								.removeListener(
-										startPCL.remove(change
-												.getValueRemoved()));
-					}
-					if (change.getValueAdded() != null) {
-						MapChangeListener<? super AnchorKey, ? super Point> pcl = createStartPCL(change
-								.getValueAdded());
-						startPCL.put(change.getValueAdded(), pcl);
-						change.getValueAdded().positionProperty()
-								.addListener(pcl);
-					}
-				} else if (change.getKey().equals(connection.getEndAnchorKey())) {
-					// end anchor key
-					if (change.getValueRemoved() != null
-							&& endPCL.containsKey(change.getValueRemoved())) {
-						change.getValueRemoved()
-								.positionProperty()
-								.removeListener(
-										endPCL.remove(change.getValueRemoved()));
-					}
-					if (change.getValueAdded() != null) {
-						MapChangeListener<? super AnchorKey, ? super Point> pcl = createEndPCL(change
-								.getValueAdded());
-						endPCL.put(change.getValueAdded(), pcl);
-						change.getValueAdded().positionProperty()
-								.addListener(pcl);
-					}
-				} else {
-					// waypoint change
-					if (change.getValueRemoved() != null
-							&& waypointPCL
-									.containsKey(change.getValueRemoved())) {
-						change.getValueRemoved()
-								.positionProperty()
-								.removeListener(
-										waypointPCL.remove(change
-												.getValueRemoved()));
-					}
-					if (change.getValueAdded() != null) {
-						MapChangeListener<? super AnchorKey, ? super Point> pcl = createWaypointPCL(change
-								.getValueAdded());
-						waypointPCL.put(change.getValueAdded(), pcl);
-						change.getValueAdded().positionProperty()
-								.addListener(pcl);
-					}
+				AnchorKey key = change.getKey();
+				IFXAnchor oldAnchor = change.getValueRemoved();
+				if (oldAnchor != null && pcls.containsKey(key)) {
+					oldAnchor.positionProperty().removeListener(
+							pcls.remove(key));
+					// TODO: update all positions
+				}
+				IFXAnchor newAnchor = change.getValueAdded();
+				if (newAnchor != null) {
+					MapChangeListener<? super AnchorKey, ? super Point> pcl = createPCL(
+							newAnchor, key);
+					pcls.put(key, pcl);
+					newAnchor.positionProperty().addListener(pcl);
 				}
 			}
 		};
 
+		/**
+		 * {@link FXConnection} to work with.
+		 */
 		private FXConnection connection;
 
-		private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> startPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
-		private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> endPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
-		private Map<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>> waypointPCL = new HashMap<IFXAnchor, MapChangeListener<? super AnchorKey, ? super Point>>();
+		/**
+		 * Map to store/manage position change listeners for individual
+		 * {@link AnchorKey}s.
+		 */
+		private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> pcls = new HashMap<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>>();
 
 		public FXChopBoxHelper(FXConnection connection) {
 			this.connection = connection;
@@ -208,48 +175,17 @@ public class FXConnection extends Group {
 			connection.anchorsProperty().addListener(anchorsChangeListener);
 		}
 
-		private MapChangeListener<? super AnchorKey, ? super Point> createEndPCL(
-				final IFXAnchor anchor) {
+		private MapChangeListener<? super AnchorKey, ? super Point> createPCL(
+				final IFXAnchor anchor, final AnchorKey key) {
 			return new MapChangeListener<AnchorKey, Point>() {
 				@Override
 				public void onChanged(
 						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 					if (change.wasAdded()) {
-						if (anchor.isAttached(change.getKey())
-								&& change.getKey().equals(
-										connection.getEndAnchorKey())) {
-							updateReferencePoints(change.getKey());
+						if (change.getKey().equals(key)
+								&& anchor.isAttached(key)) {
+							updateReferencePoints(key);
 						}
-					}
-				}
-			};
-		}
-
-		private MapChangeListener<? super AnchorKey, ? super Point> createStartPCL(
-				final IFXAnchor anchor) {
-			return new MapChangeListener<AnchorKey, Point>() {
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-					if (change.wasAdded()) {
-						if (anchor.isAttached(change.getKey())
-								&& change.getKey().equals(
-										connection.getStartAnchorKey())) {
-							updateReferencePoints(change.getKey());
-						}
-					}
-				}
-			};
-		}
-
-		private MapChangeListener<AnchorKey, Point> createWaypointPCL(
-				final IFXAnchor anchor) {
-			return new MapChangeListener<AnchorKey, Point>() {
-				@Override
-				public void onChanged(
-						javafx.collections.MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
-					if (change.wasAdded() && anchor.isAttached(change.getKey())) {
-						updateReferencePoints(change.getKey());
 					}
 				}
 			};
@@ -323,7 +259,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
@@ -369,9 +305,8 @@ public class FXConnection extends Group {
 		}
 
 		private void updateReferencePoints(AnchorKey key) {
-			int anchorIndex = connection.getAnchorIndex(key);
+			int anchorIndex = key == null ? -1 : connection.getAnchorIndex(key);
 			List<IFXAnchor> anchors = connection.getAnchors();
-			System.out.println("URP anchors: " + anchors.size());
 			for (int i = 0; i < anchors.size(); i++) {
 				// we do not have to update the reference point for the
 				// given key, because the corresponding position just
