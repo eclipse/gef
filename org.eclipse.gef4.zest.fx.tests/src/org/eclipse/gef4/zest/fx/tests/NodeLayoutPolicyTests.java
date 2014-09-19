@@ -61,12 +61,6 @@ public class NodeLayoutPolicyTests {
 										public IUndoableOperation commit() {
 											return null;
 										}
-
-										@Override
-										protected Dimension getSnapToGridOffset(
-												double layoutDx, double layoutDy) {
-											return new Dimension();
-										}
 									});
 						}
 
