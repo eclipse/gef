@@ -65,10 +65,11 @@ public class FXConnection extends Group {
 		 * The {@link ReferencePointMap} is used to store the reference points
 		 * for the individual {@link AnchorKey}s. A reference point is computed
 		 * whenever it is requested (i.e. {@link #get(Object)} is called).
-		 * Currently, the computation is always performed (space to improve). In
-		 * order to query a currently set reference point, you can use
-		 * {@link #getRaw(Object)}, which will not trigger a reference point
-		 * computation, but instead simply look it up in the map.
+		 * Currently, the computation is only performed if no reference point is
+		 * available (i.e. on the anchor attachment). In order to query a
+		 * currently set reference point, you can use {@link #getRaw(Object)},
+		 * which will never trigger a reference point computation, but instead
+		 * simply look it up in the map.
 		 *
 		 * @author wienand
 		 *
@@ -85,8 +86,9 @@ public class FXConnection extends Group {
 				}
 
 				AnchorKey ak = (AnchorKey) key;
-				updateReferencePoint(getAnchorIndex(ak), ak);
-
+				if (!containsKey(ak)) {
+					updateReferencePoint(connection.getAnchorIndex(ak), ak);
+				}
 				return super.get(ak);
 			}
 
@@ -253,28 +255,6 @@ public class FXConnection extends Group {
 			};
 		}
 
-		// TODO: Re-think FXConnection interface
-		public int getAnchorIndex(AnchorKey ak) {
-			if (ak.equals(connection.getStartAnchorKey())) {
-				return 0;
-			} else if (ak.equals(connection.getEndAnchorKey())) {
-				return connection.getAnchors().size() - 1;
-			} else {
-				return connection.getWayIndex(ak) + 1;
-			}
-		}
-
-		// TODO: Re-think FXConnection interface
-		public AnchorKey getAnchorKey(int i) {
-			if (i == 0) {
-				return connection.getStartAnchorKey();
-			} else if (i == connection.getAnchors().size() - 1) {
-				return connection.getEndAnchorKey();
-			} else {
-				return connection.getWayAnchorKey(i - 1);
-			}
-		}
-
 		// TODO: move to utility && replace with safe algorithm
 		private Point getCenter(Node anchorageNode) {
 			Point center = JavaFX2Geometry.toRectangle(
@@ -307,7 +287,7 @@ public class FXConnection extends Group {
 				Node predAnchorage = predAnchor.getAnchorage();
 				if (predAnchorage == null) {
 					// anchor is static
-					AnchorKey anchorKey = getAnchorKey(i);
+					AnchorKey anchorKey = connection.getAnchorKey(i);
 					Point position = predAnchor.getPosition(anchorKey);
 					if (position == null) {
 						throw new IllegalStateException(
@@ -352,7 +332,7 @@ public class FXConnection extends Group {
 			return referencePointProperty;
 		}
 
-		public void updateReferencePoint(int anchorIndex, AnchorKey key) {
+		private void updateReferencePoint(int anchorIndex, AnchorKey key) {
 			if (!(connection.getAnchors().get(anchorIndex) instanceof FXChopBoxAnchor)) {
 				return;
 			}
@@ -389,8 +369,9 @@ public class FXConnection extends Group {
 		}
 
 		private void updateReferencePoints(AnchorKey key) {
-			int anchorIndex = getAnchorIndex(key);
+			int anchorIndex = connection.getAnchorIndex(key);
 			List<IFXAnchor> anchors = connection.getAnchors();
+			System.out.println("URP anchors: " + anchors.size());
 			for (int i = 0; i < anchors.size(); i++) {
 				// we do not have to update the reference point for the
 				// given key, because the corresponding position just
@@ -398,7 +379,7 @@ public class FXConnection extends Group {
 				if (anchorIndex == i) {
 					continue;
 				}
-				updateReferencePoint(i, getAnchorKey(i));
+				updateReferencePoint(i, connection.getAnchorKey(i));
 			}
 		}
 
@@ -600,7 +581,7 @@ public class FXConnection extends Group {
 		};
 	}
 
-	private AnchorKey generateWayAnchorKey() {
+	protected AnchorKey generateWayAnchorKey() {
 		if (nextWayAnchorId == Integer.MAX_VALUE) {
 			List<IFXAnchor> wayAnchors = getWayAnchors();
 			removeAllWayPoints();
@@ -609,6 +590,26 @@ public class FXConnection extends Group {
 		}
 		return new AnchorKey(getCurveNode(), WAY_POINT_ROLE_PREFIX
 				+ nextWayAnchorId++);
+	}
+
+	public int getAnchorIndex(AnchorKey ak) {
+		if (ak.equals(getStartAnchorKey())) {
+			return 0;
+		} else if (ak.equals(getEndAnchorKey())) {
+			return getAnchors().size() - 1;
+		} else {
+			return getWayIndex(ak) + 1;
+		}
+	}
+
+	public AnchorKey getAnchorKey(int i) {
+		if (i == 0) {
+			return getStartAnchorKey();
+		} else if (i == getAnchors().size() - 1) {
+			return getEndAnchorKey();
+		} else {
+			return getWayAnchorKey(i - 1);
+		}
 	}
 
 	public List<IFXAnchor> getAnchors() {
@@ -871,7 +872,7 @@ public class FXConnection extends Group {
 		}
 	}
 
-	private void removeAnchor(AnchorKey anchorKey, IFXAnchor oldAnchor) {
+	protected void removeAnchor(AnchorKey anchorKey, IFXAnchor oldAnchor) {
 		if (anchorKeyPCL.containsKey(anchorKey)) {
 			oldAnchor.positionProperty().removeListener(
 					anchorKeyPCL.remove(anchorKey));
