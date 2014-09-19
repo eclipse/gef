@@ -38,7 +38,7 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
 public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private int createdSegmentIndex;
-	private boolean initialRefreshVisual;
+	private boolean initialRefreshVisual = true;
 
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
@@ -99,6 +99,13 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		}
 	}
 
+	protected void disableRefreshVisuals() {
+		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
+				.iterator().next();
+		anchorage.setRefreshVisual(false);
+		initialRefreshVisual = anchorage.isRefreshVisual();
+	}
+
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
@@ -115,7 +122,13 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		adjustHandles(before, after);
 	}
 
-	private FXBendPolicy getBendPolicy(IVisualPart<Node> targetPart) {
+	protected void enableRefreshVisuals() {
+		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
+				.iterator().next();
+		anchorage.setRefreshVisual(initialRefreshVisual);
+	}
+
+	protected FXBendPolicy getBendPolicy(IVisualPart<Node> targetPart) {
 		// retrieve the default bend policy
 		return targetPart.getAdapter(FXBendPolicy.class);
 	}
@@ -132,8 +145,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 
-		initialRefreshVisual = anchorage.isRefreshVisual();
-		anchorage.setRefreshVisual(false);
+		disableRefreshVisuals();
 		getBendPolicy(anchorage).init();
 
 		if (hp.getSegmentParameter() == 0.5) {
@@ -175,7 +187,7 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	public void release(MouseEvent e, Dimension delta) {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
-		anchorage.setRefreshVisual(initialRefreshVisual);
+		enableRefreshVisuals();
 		IUndoableOperation operation = getBendPolicy(anchorage).commit();
 		executeOperation(operation);
 	}

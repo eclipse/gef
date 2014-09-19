@@ -23,6 +23,7 @@ import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
@@ -57,8 +58,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	protected static final double DEFAULT_OVERLAY_THRESHOLD = 10;
 
-	private Point currentPoint;
-
 	private IFXAnchor removedOverlainAnchor;
 	private int removedOverlainAnchorIndex;
 
@@ -67,6 +66,10 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 
 	// operation
 	private FXBendOperation op;
+
+	private Point initialPositionInScene;
+
+	private Point initialPositionInLocal;
 
 	protected boolean canAttach() {
 		// up to now, only allow attaching start and end point.
@@ -133,12 +136,14 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		selectSegmentPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
-	protected IFXAnchor findAnchor(Point mouseInScene, boolean canAttach) {
+	protected IFXAnchor findAnchor(Point currentPositionInScene,
+			boolean canAttach) {
 		IFXAnchor anchor = null;
 		// try to find an anchor that is provided from an underlying node
 		if (canAttach) {
 			List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
-					.getVisual(), mouseInScene.x, mouseInScene.y);
+					.getVisual(), currentPositionInScene.x,
+					currentPositionInScene.y);
 			AbstractFXContentPart anchorPart = getAnchorPart(getParts(pickedNodes));
 			if (anchorPart != null) {
 				// use anchor returned by part
@@ -146,7 +151,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			}
 		}
 		if (anchor == null) {
-			anchor = new FXStaticAnchor(mouseInScene);
+			anchor = new FXStaticAnchor(currentPositionInScene);
 		}
 		return anchor;
 	}
@@ -187,7 +192,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return parts;
 	}
 
-	protected void hideShowOverlain(Point mouseInScene) {
+	protected void hideShowOverlain(Point currentPositionInScene) {
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
 			currentAnchorIndex = currentAnchorIndexBeforeOverlaidRemoval;
@@ -208,7 +213,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		// determine if right neighbor is overlain (and can be removed)
 		if (currentAnchorIndex > 0) {
 			int candidateIndex = currentAnchorIndex - 1;
-			if (isOverlain(candidateIndex, currentAnchorIndex, mouseInScene)) {
+			if (isOverlain(candidateIndex, currentAnchorIndex,
+					currentPositionInScene)) {
 				// remove previous (in case of start point, ensure we stay
 				// anchored to the same anchorage)
 				removedOverlainAnchorIndex = candidateIndex;
@@ -220,7 +226,8 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		if (removedOverlainAnchorIndex == -1
 				&& currentAnchorIndex < op.getNewAnchors().size() - 1) {
 			int candidateIndex = currentAnchorIndex + 1;
-			if (isOverlain(candidateIndex, currentAnchorIndex, mouseInScene)) {
+			if (isOverlain(candidateIndex, currentAnchorIndex,
+					currentPositionInScene)) {
 				// remove next (in case of end point, ensure we stay
 				// anchored to the same anchorage)
 				removedOverlainAnchorIndex = candidateIndex;
@@ -242,7 +249,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	protected boolean isOverlain(int candidateIndex, int currentIndex,
-			Point mouseInScene) {
+			Point currentPositionInScene) {
 		Point candidateLocation = null;
 		if (candidateIndex == 0) {
 			candidateLocation = op.getConnection().getStartPoint();
@@ -254,7 +261,13 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		}
 		// overlay if distance is small enough and we do not change the
 		// anchorage
-		IFXAnchor candidateAnchor = findAnchor(mouseInScene, true);
+		IFXAnchor candidateAnchor = findAnchor(currentPositionInScene, true);
+		// TODO: compensate that getStartPoint(), etc. of connection is
+		// actually in the coordinate space of the curve node
+		Point currentPoint = JavaFX2Geometry.toPoint(getConnection()
+				.getCurveNode().sceneToLocal(currentPositionInScene.x,
+						currentPositionInScene.y));
+
 		boolean overlay = candidateLocation.getDistance(currentPoint) < getOverlayThreshold()
 				&& op.getConnection().getAnchors().get(candidateIndex)
 						.getAnchorage() == candidateAnchor.getAnchorage();
@@ -275,16 +288,31 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	public void moveSelectedSegmentPoint(Point mouseInScene) {
-		// update current position
-		// TODO: fix computation does not account for LCS changes
-		currentPoint = JavaFX2Geometry.toPoint(getConnection().sceneToLocal(
-				mouseInScene.x, mouseInScene.y));
+		Point mouseInLocal = JavaFX2Geometry.toPoint(getConnection()
+				.sceneToLocal(Geometry2JavaFX.toFXPoint(mouseInScene)));
 
-		// TODO: externalize this logic (snapping for end points only)
+		// compensate the movement of the local coordinate system w.r.t. the
+		// scene coordinate system (the scene coordinate system stays consistent
+		// w.r.t. to mouse movement)
+		Point deltaInLocal = mouseInLocal.getTranslated(JavaFX2Geometry
+				.toPoint(
+						getConnection().sceneToLocal(
+								Geometry2JavaFX
+										.toFXPoint(initialPositionInScene)))
+				.getNegated());
+
+		Point currentPositionInLocal = this.initialPositionInLocal
+				.getTranslated(deltaInLocal);
+
+		Point currentPositionInScene = JavaFX2Geometry
+				.toPoint(getConnection().localToScene(
+						Geometry2JavaFX.toFXPoint(currentPositionInLocal)));
+
 		op.getNewAnchors().set(currentAnchorIndex,
-				findAnchor(mouseInScene, canAttach()));
+				findAnchor(currentPositionInScene, canAttach()));
+
 		locallyExecuteOperation();
-		hideShowOverlain(mouseInScene);
+		hideShowOverlain(currentPositionInScene);
 	}
 
 	public void selectSegmentPoint(int segmentIndex, double segmentParameter,
@@ -295,6 +323,11 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		} else {
 			currentAnchorIndex = segmentIndex;
 		}
+
+		initialPositionInScene = mouseInScene.getCopy();
+		initialPositionInLocal = JavaFX2Geometry
+				.toPoint(op.getConnection().sceneToLocal(
+						Geometry2JavaFX.toFXPoint(initialPositionInScene)));
 	}
 
 	@Override

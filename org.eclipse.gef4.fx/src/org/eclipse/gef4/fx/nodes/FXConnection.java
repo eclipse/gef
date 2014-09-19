@@ -666,6 +666,7 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
+		// TODO: transform to parent
 		return anchor.getPosition(getEndAnchorKey());
 	}
 
@@ -724,6 +725,7 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
+		// TODO: transform to parent
 		return anchor.getPosition(getStartAnchorKey());
 	}
 
@@ -775,6 +777,7 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getWayAnchorKey(index))) {
 			return null;
 		}
+		// TODO: transform to parent
 		return anchor.getPosition(getWayAnchorKey(index));
 	}
 
