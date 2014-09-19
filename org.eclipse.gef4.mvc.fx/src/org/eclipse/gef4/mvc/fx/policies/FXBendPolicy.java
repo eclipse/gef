@@ -183,6 +183,12 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 	}
 
 	protected double getOverlayThreshold() {
+		GridModel model = getHost().getRoot().getViewer()
+				.getAdapter(GridModel.class);
+		if (model != null && model.isSnapToGrid()) {
+			return Math
+					.min(model.getGridCellWidth(), model.getGridCellHeight()) / 4;
+		}
 		return DEFAULT_OVERLAY_THRESHOLD;
 	}
 
