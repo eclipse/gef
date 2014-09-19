@@ -45,29 +45,29 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return FXSegmentHandlePart.SIZE;
 	}
 
-	protected Dimension getSnapToGridOffset(double layoutDx, double layoutDy) {
-		GridModel gridModel = getHost().getRoot().getViewer()
+	protected Dimension getSnapToGridOffset(final double startX,
+			final double startY, final double layoutDx, final double layoutDy,
+			final double gridCellWidthFraction,
+			final double gridCellHeightFraction) {
+		final GridModel gridModel = getHost().getRoot().getViewer()
 				.getAdapter(GridModel.class);
 		double snapOffsetX = 0, snapOffsetY = 0;
-		if (gridModel != null && gridModel.isSnapToGrid()) {
-			double gridCellWidth = gridModel.getGridCellWidth();
-			double gridCellHeight = gridModel.getGridCellHeight();
+		if ((gridModel != null) && gridModel.isSnapToGrid()) {
+			// determine snap width
+			final double snapWidth = gridModel.getGridCellWidth()
+					* gridCellWidthFraction;
+			final double snapHeight = gridModel.getGridCellHeight()
+					* gridCellHeightFraction;
 
-			// snap-to-grid
-			// IMPORTANT: we might not have been snapped to grid before, thus we
-			// have to take not only the delta for our calculations, but also
-			// the old position)
-			Point oldLocation = operation.getOldLocation();
-
-			snapOffsetX = (oldLocation.x + layoutDx) % gridCellWidth;
-			if (snapOffsetX > gridCellWidth / 2) {
-				snapOffsetX = gridCellWidth - snapOffsetX;
+			snapOffsetX = (startX + layoutDx) % snapWidth;
+			if (snapOffsetX > (snapWidth / 2)) {
+				snapOffsetX = snapWidth - snapOffsetX;
 				snapOffsetX *= -1;
 			}
 
-			snapOffsetY = (oldLocation.y + layoutDy) % gridCellHeight;
-			if (snapOffsetY > gridCellHeight / 2) {
-				snapOffsetY = gridCellHeight - snapOffsetY;
+			snapOffsetY = ((startY + layoutDy) % snapHeight);
+			if (snapOffsetY > (snapHeight / 2)) {
+				snapOffsetY = snapHeight - snapOffsetY;
 				snapOffsetY *= -1;
 			}
 		}
@@ -106,7 +106,10 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		}
 
 		// snap-to-grid
-		Dimension snapOffset = getSnapToGridOffset(layoutDx, layoutDy);
+		Point start = operation.getOldLocation();
+		// TODO: make stepping (0.5) configurable
+		Dimension snapOffset = getSnapToGridOffset(start.x, start.y, layoutDx,
+				layoutDy, 0.5, 0.5);
 		layoutDx = layoutDx - snapOffset.width;
 		layoutDy = layoutDy - snapOffset.height;
 

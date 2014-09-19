@@ -19,6 +19,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 
@@ -77,10 +78,15 @@ public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
+			// TODO: make stepping (0.5) configurable
+			final Dimension snapToGridOffset = getSnapToGridOffset(p.x, p.y,
+					dx, dy, 0.5, 0.5);
 			op.getNewAnchors().set(
 					i,
 					new FXStaticAnchor(JavaFX2Geometry.toPoint(getHost()
-							.getVisual().localToScene(p.x + dx, p.y + dy))));
+							.getVisual().localToScene(
+									p.x + dx - snapToGridOffset.width,
+									p.y + dy - snapToGridOffset.height))));
 		}
 		locallyExecuteOperation();
 	}
