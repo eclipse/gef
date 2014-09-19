@@ -13,7 +13,6 @@
 package org.eclipse.gef4.fx.nodes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +86,12 @@ public class FXConnection extends Group {
 
 				AnchorKey ak = (AnchorKey) key;
 				if (!containsKey(ak)) {
-					updateReferencePoint(connection.getAnchorIndex(ak), ak);
+					if (!(connection.getStartAnchor() == null || connection
+							.getEndAnchor() == null)) {
+						updateReferencePoint(connection.getAnchorIndex(ak), ak);
+					} else {
+						put(ak, new Point());
+					}
 				}
 				return super.get(ak);
 			}
@@ -125,7 +129,7 @@ public class FXConnection extends Group {
 				if (oldAnchor != null && pcls.containsKey(key)) {
 					oldAnchor.positionProperty().removeListener(
 							pcls.remove(key));
-					// TODO: update all positions
+					updateReferencePoints(null);
 				}
 				IFXAnchor newAnchor = change.getValueAdded();
 				if (newAnchor != null) {
@@ -259,7 +263,7 @@ public class FXConnection extends Group {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see org.eclipse.gef4.fx.nodes.FXChopBoxReferencePointProvider#
 		 * referencePointProperty()
 		 */
@@ -269,6 +273,13 @@ public class FXConnection extends Group {
 		}
 
 		private void updateReferencePoint(int anchorIndex, AnchorKey key) {
+			// FIXME: cannot query connection if start/end is unset
+			if (connection.getStartAnchor() == null
+					|| connection.getEndAnchor() == null) {
+				return;
+			}
+
+			// only compute reference points for chop box anchors
 			if (!(connection.getAnchors().get(anchorIndex) instanceof FXChopBoxAnchor)) {
 				return;
 			}
@@ -305,6 +316,12 @@ public class FXConnection extends Group {
 		}
 
 		private void updateReferencePoints(AnchorKey key) {
+			// FIXME: cannot query connection if start/end is unset
+			if (connection.getStartAnchor() == null
+					|| connection.getEndAnchor() == null) {
+				return;
+			}
+
 			int anchorIndex = key == null ? -1 : connection.getAnchorIndex(key);
 			List<IFXAnchor> anchors = connection.getAnchors();
 			for (int i = 0; i < anchors.size(); i++) {
@@ -380,8 +397,7 @@ public class FXConnection extends Group {
 
 		AnchorKey anchorKey = generateWayAnchorKey();
 		// assert(!anchorKeyPCL.containsKey(anchorKey));
-		wayAnchorKeys.add(anchorKey);
-		putAnchor(anchor, anchorKey);
+		putAnchor(anchor, anchorKey, index);
 	}
 
 	public void addWayPoint(int index, Point wayPointInLocal) {
@@ -391,7 +407,7 @@ public class FXConnection extends Group {
 		addWayAnchor(index, anchor);
 	}
 
-	public ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty() {
+	protected ReadOnlyMapProperty<AnchorKey, IFXAnchor> anchorsProperty() {
 		return anchorsProperty.getReadOnlyProperty();
 	}
 
@@ -527,23 +543,28 @@ public class FXConnection extends Group {
 				+ nextWayAnchorId++);
 	}
 
-	public int getAnchorIndex(AnchorKey ak) {
-		if (ak.equals(getStartAnchorKey())) {
+	public int getAnchorIndex(AnchorKey anchorKey) {
+		if (anchorKey.equals(getStartAnchorKey())) {
 			return 0;
-		} else if (ak.equals(getEndAnchorKey())) {
+		} else if (anchorKey.equals(getEndAnchorKey())) {
 			return getAnchors().size() - 1;
 		} else {
-			return getWayIndex(ak) + 1;
+			return getWayIndex(anchorKey) + 1;
 		}
 	}
 
-	public AnchorKey getAnchorKey(int i) {
-		if (i == 0) {
+	public AnchorKey getAnchorKey(int anchorIndex) {
+		if (anchorIndex < 0 || anchorIndex >= getAnchors().size()) {
+			throw new IllegalArgumentException(
+					"The given anchor index is out of bounds.");
+		}
+
+		if (anchorIndex == 0) {
 			return getStartAnchorKey();
-		} else if (i == getAnchors().size() - 1) {
+		} else if (anchorIndex == getAnchors().size() - 1) {
 			return getEndAnchorKey();
 		} else {
-			return getWayAnchorKey(i - 1);
+			return getWayAnchorKey(anchorIndex - 1);
 		}
 	}
 
@@ -554,7 +575,7 @@ public class FXConnection extends Group {
 		// start anchor
 		IFXAnchor startAnchor = getStartAnchor();
 		if (startAnchor == null) {
-			return Collections.emptyList();
+			throw new IllegalStateException("Start anchor may never be null.");
 		}
 		anchors.add(startAnchor);
 
@@ -564,7 +585,7 @@ public class FXConnection extends Group {
 		// end anchor
 		IFXAnchor endAnchor = getEndAnchor();
 		if (endAnchor == null) {
-			return Collections.emptyList();
+			throw new IllegalStateException("End anchor may never be null.");
 		}
 		anchors.add(endAnchor);
 
@@ -576,14 +597,7 @@ public class FXConnection extends Group {
 	}
 
 	public IFXAnchor getEndAnchor() {
-		IFXAnchor endAnchor = anchorsProperty.get(getEndAnchorKey());
-		if (endAnchor == null) {
-			// in order not to return null as start/end anchor, we set it to
-			// static (0, 0) here
-			setEndPoint(new Point());
-		}
-		endAnchor = anchorsProperty.get(getEndAnchorKey());
-		return endAnchor;
+		return anchorsProperty.get(getEndAnchorKey());
 	}
 
 	public AnchorKey getEndAnchorKey() {
@@ -635,14 +649,7 @@ public class FXConnection extends Group {
 	}
 
 	public IFXAnchor getStartAnchor() {
-		IFXAnchor startAnchor = anchorsProperty.get(getStartAnchorKey());
-		if (startAnchor == null) {
-			// in order not to return null as start/end anchor, we set it to
-			// static (0, 0) here
-			setStartPoint(new Point());
-		}
-		startAnchor = anchorsProperty.get(getStartAnchorKey());
-		return startAnchor;
+		return anchorsProperty.get(getStartAnchorKey());
 	}
 
 	public AnchorKey getStartAnchorKey() {
@@ -685,7 +692,11 @@ public class FXConnection extends Group {
 		List<IFXAnchor> wayPointAnchors = new ArrayList<IFXAnchor>(
 				wayPointsCount);
 		for (int i = 0; i < wayPointsCount; i++) {
-			wayPointAnchors.add(getWayAnchor(i));
+			IFXAnchor wayAnchor = getWayAnchor(i);
+			if (wayAnchor == null) {
+				throw new IllegalStateException("Way anchor may never be null.");
+			}
+			wayPointAnchors.add(wayAnchor);
 		}
 		return wayPointAnchors;
 	}
@@ -744,12 +755,16 @@ public class FXConnection extends Group {
 		return anchor.getAnchorage() != null && anchor.getAnchorage() != this;
 	}
 
-	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey) {
+	protected void putAnchor(IFXAnchor anchor, AnchorKey anchorKey, int wayIndex) {
 		/*
 		 * IMPORTANT: The anchor is put into the map before attaching it, so
 		 * that listeners on the map can register position change listeners on
 		 * the anchor (but cannot query its position, yet).
 		 */
+		if (!anchorKey.equals(getStartAnchorKey())
+				&& !anchorKey.equals(getEndAnchorKey())) {
+			wayAnchorKeys.add(wayIndex, anchorKey);
+		}
 		anchorsProperty.put(anchorKey, anchor);
 		anchor.attach(anchorKey, as);
 		if (!anchorKeyPCL.containsKey(anchorKey)) {
@@ -816,6 +831,12 @@ public class FXConnection extends Group {
 		 * Important: detach() after removing from the anchors-map, so that
 		 * listeners on the anchors-map can retrieve the anchor position.
 		 */
+		if (wayAnchorKeys.contains(anchorKey)) {
+			// remove from way anchor keys so that the anchors.size is
+			// consistent with the way anchor size + (start present) + (end
+			// present)
+			wayAnchorKeys.remove(anchorKey);
+		}
 		anchorsProperty.remove(anchorKey);
 		oldAnchor.detach(anchorKey, as);
 	}
@@ -832,8 +853,6 @@ public class FXConnection extends Group {
 			throw new IllegalStateException(
 					"Inconsistent state: way anchor not in map!");
 		}
-
-		wayAnchorKeys.remove(index);
 
 		IFXAnchor oldAnchor = anchorsProperty.get(anchorKey);
 		removeAnchor(anchorKey, oldAnchor);
@@ -866,7 +885,7 @@ public class FXConnection extends Group {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
 			}
-			putAnchor(anchor, anchorKey);
+			putAnchor(anchor, anchorKey, -1);
 		}
 	}
 
@@ -905,7 +924,7 @@ public class FXConnection extends Group {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
 			}
-			putAnchor(anchor, anchorKey);
+			putAnchor(anchor, anchorKey, -1);
 		}
 	}
 
@@ -942,7 +961,7 @@ public class FXConnection extends Group {
 			if (oldAnchor != null) {
 				removeAnchor(anchorKey, oldAnchor);
 			}
-			putAnchor(anchor, anchorKey);
+			putAnchor(anchor, anchorKey, index);
 		}
 	}
 
