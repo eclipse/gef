@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.FXConnection.FXChopBoxHelper;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -59,18 +60,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 */
 		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
 
-	}
-
-	private static AffineTransform getLocalToSceneTx(Node node) {
-		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
-				.getLocalToParentTransform());
-		Node tmp = node;
-		while (tmp.getParent() != null) {
-			tmp = tmp.getParent();
-			tx = JavaFX2Geometry.toAffineTransform(
-					tmp.getLocalToParentTransform()).concatenate(tx);
-		}
-		return tx;
 	}
 
 	private static boolean isValidTransform(AffineTransform t) {
@@ -202,12 +191,16 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 * anchored by concatenating the local-to-parent-transforms in the
 		 * hierarchy, respectively.
 		 */
-		AffineTransform anchorageToSceneTransform = getLocalToSceneTx(getAnchorage());
+		// TODO: provide helper methods for transforming points in FXUtils and
+		// replace the code here
+		AffineTransform anchorageToSceneTransform = FXUtils
+				.getLocalToSceneTx(getAnchorage());
 		if (!isValidTransform(anchorageToSceneTransform)) {
 			anchorageToSceneTransform = new AffineTransform();
 		}
 
-		AffineTransform anchoredToSceneTransform = getLocalToSceneTx(anchored);
+		AffineTransform anchoredToSceneTransform = FXUtils
+				.getLocalToSceneTx(anchored);
 		if (!isValidTransform(anchoredToSceneTransform)) {
 			anchoredToSceneTransform = new AffineTransform();
 		}

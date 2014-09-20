@@ -26,6 +26,31 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 
 public class FXUtils {
 
+	public static AffineTransform getLocalToSceneTx(Node node) {
+		/*
+		 * Important: JavaFX Node provides a (lazily computed)
+		 * local-to-scene-transform property which we could access to get that
+		 * transform. Unfortunately, this property is not updated correctly,
+		 * i.e. its value can differ from the actual local-to-scene-transform.
+		 * This is reflected in the different values of a) the
+		 * Node#localToScene(...) method, and b) transforming using the
+		 * concatenated local-to-parent-transforms.
+		 *
+		 * Therefore, we compute the local-to-scene-transform for anchorage and
+		 * anchored by concatenating the local-to-parent-transforms in the
+		 * hierarchy, respectively.
+		 */
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
+				.getLocalToParentTransform());
+		Node tmp = node;
+		while (tmp.getParent() != null) {
+			tmp = tmp.getParent();
+			tx = JavaFX2Geometry.toAffineTransform(
+					tmp.getLocalToParentTransform()).concatenate(tx);
+		}
+		return tx;
+	}
+
 	/**
 	 * Performs picking on the scene graph beginning at the specified root node.
 	 *
@@ -64,6 +89,17 @@ public class FXUtils {
 		return picked;
 	}
 
+	public static AffineTransform getSceneToLocalTx(Node node) {
+		try {
+			// IMPORTANT: we make use of getLocalToSceneTx(Node) here to
+			// compensate that the Transform provided by FX is updated lazily.
+			// See getLocalToSceneTx(Node) for details.
+			return getLocalToSceneTx(node).invert();
+		} catch (NoninvertibleTransformException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
 	public static IGeometry localToParent(Node n, IGeometry g) {
 		AffineTransform localToParentTx = JavaFX2Geometry.toAffineTransform(n
 				.getLocalToParentTransform());
@@ -71,8 +107,8 @@ public class FXUtils {
 	}
 
 	public static IGeometry localToScene(Node n, IGeometry g) {
-		AffineTransform localToSceneTx = JavaFX2Geometry.toAffineTransform(n
-				.getLocalToSceneTransform());
+		//
+		AffineTransform localToSceneTx = getLocalToSceneTx(n);
 		return g.getTransformed(localToSceneTx);
 	}
 
@@ -94,15 +130,7 @@ public class FXUtils {
 	public static IGeometry sceneToLocal(Node n, IGeometry g) {
 		// retrieve transform from scene to target parent, by inverting target
 		// parent to scene
-		AffineTransform localToSceneTx = JavaFX2Geometry.toAffineTransform(n
-				.getLocalToSceneTransform());
-		AffineTransform sceneToLocalTx = null;
-		try {
-			sceneToLocalTx = localToSceneTx.getCopy().invert();
-		} catch (NoninvertibleTransformException e) {
-			// TODO: How do we recover from this?!
-			throw new IllegalStateException(e);
-		}
+		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
 		return g.getTransformed(sceneToLocalTx);
 	}
 }
