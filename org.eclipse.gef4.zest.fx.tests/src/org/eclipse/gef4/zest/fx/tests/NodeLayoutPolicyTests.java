@@ -23,7 +23,9 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -79,6 +81,9 @@ public class NodeLayoutPolicyTests {
 							return visual;
 						}
 					};
+					FXRootPart rootPart = new FXRootPart();
+					rootPart.setAdaptable(new FXViewer());
+					host.setParent(rootPart);
 				}
 				return host;
 			}
