@@ -208,35 +208,6 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return parts;
 	}
 
-	protected Dimension getSnapToGridOffset(final double startX,
-			final double startY, final double layoutDx, final double layoutDy,
-			final double gridCellWidthFraction,
-			final double gridCellHeightFraction) {
-		final GridModel gridModel = getHost().getRoot().getViewer()
-				.getAdapter(GridModel.class);
-		double snapOffsetX = 0, snapOffsetY = 0;
-		if ((gridModel != null) && gridModel.isSnapToGrid()) {
-			// snap to half grid height
-			final double gridCellWidth = gridModel.getGridCellWidth()
-					* gridCellWidthFraction;
-			final double gridCellHeight = gridModel.getGridCellHeight()
-					* gridCellHeightFraction;
-
-			snapOffsetX = (startX + layoutDx) % gridCellWidth;
-			if (snapOffsetX > (gridCellWidth / 2)) {
-				snapOffsetX = gridCellWidth - snapOffsetX;
-				snapOffsetX *= -1;
-			}
-
-			snapOffsetY = ((startY + layoutDy) % gridCellHeight);
-			if (snapOffsetY > (gridCellHeight / 2)) {
-				snapOffsetY = gridCellHeight - snapOffsetY;
-				snapOffsetY *= -1;
-			}
-		}
-		return new Dimension(snapOffsetX, snapOffsetY);
-	}
-
 	protected void hideShowOverlain(Point currentPositionInScene) {
 		// put removed back in (may be removed againg before returning)
 		if (removedOverlainAnchor != null) {
