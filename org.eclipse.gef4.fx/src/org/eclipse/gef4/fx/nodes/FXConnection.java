@@ -38,6 +38,7 @@ import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor.ReferencePointProvider;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
@@ -616,8 +617,10 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getEndAnchorKey())) {
 			return null;
 		}
-		// TODO: transform to parent
-		return anchor.getPosition(getEndAnchorKey());
+		return JavaFX2Geometry.toPoint(getCurveNode()
+				.localToParent(
+						Geometry2JavaFX.toFXPoint(anchor
+								.getPosition(getEndAnchorKey()))));
 	}
 
 	public Point[] getPoints() {
@@ -668,8 +671,9 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getStartAnchorKey())) {
 			return null;
 		}
-		// TODO: transform to parent
-		return anchor.getPosition(getStartAnchorKey());
+		return JavaFX2Geometry.toPoint(getCurveNode().localToParent(
+				Geometry2JavaFX.toFXPoint(anchor
+						.getPosition(getStartAnchorKey()))));
 	}
 
 	public Node getVisual() {
@@ -724,8 +728,9 @@ public class FXConnection extends Group {
 		if (!anchor.isAttached(getWayAnchorKey(index))) {
 			return null;
 		}
-		// TODO: transform to parent
-		return anchor.getPosition(getWayAnchorKey(index));
+		return JavaFX2Geometry.toPoint(getCurveNode().localToParent(
+				Geometry2JavaFX.toFXPoint(anchor
+						.getPosition(getWayAnchorKey(index)))));
 	}
 
 	public List<Point> getWayPoints() {
