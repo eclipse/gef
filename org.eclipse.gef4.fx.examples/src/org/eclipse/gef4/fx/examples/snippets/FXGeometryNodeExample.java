@@ -34,7 +34,7 @@ import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
-public class FXGeometryLogoELetterSnippet extends FXApplication {
+public class FXGeometryNodeExample extends FXApplication {
 
 	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
 	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
@@ -58,7 +58,7 @@ public class FXGeometryLogoELetterSnippet extends FXApplication {
 		return new Scene(hbox, 250, 300);
 	}
 
-	private CurvedPolygon createEShapeGeometry() {
+	protected static CurvedPolygon createEShapeGeometry() {
 		final List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(1, 10, 6, 10));
 		segments.addAll(Arrays.asList(PolyBezier.interpolateCubic(6, 10, 5, 25,
