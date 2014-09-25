@@ -22,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -48,25 +49,37 @@ import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXChopBoxELetterSnippet extends FXApplication {
 
+	// TODO: use CSS for styling
 	// configuration (colors and sizes)
 	private static final double E_LETTER_STROKE_WIDTH = 1.5;
+
 	private static final Color VERTEX_STROKE = Color.BLACK;
 	private static final Color VERTEX_FILL = Color.WHITE;
 	private static final double VERTEX_RADIUS = 3;
+	
 	private static final Color DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
 	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
 	private static final double DISTANCE_LINE_STROKE_WIDTH = 1;
-	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 3.5;
+	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
+	
+	private static final double DISTANCE_TEXT_SCALE = 1.5;
+	private static final Color DISTANCE_TEXT_STROKE = Color.BLACK;
+	private static final Color DISTANCE_TEXT_FILL = Color.DARKGREEN;
+	
 	private static final Color CENTER_POINT_STROKE = Color.BLACK;
 	private static final Color CENTER_POINT_FILL = Color.ORANGE;
 	private static final double CENTER_POINT_RADIUS = 3;
+
 	private static final Color REFERENCE_POINT_FILL = Color.BLUE;
 	private static final Color REFERENCE_POINT_STROKE = Color.TRANSPARENT;
 	private static final double REFERENCE_POINT_RADIUS = 5;
+	
 	private static final Color CHOP_BOX_POINT_FILL = Color.RED;
 	private static final Paint CHOP_BOX_POINT_STROKE = Color.TRANSPARENT;
 	private static final double CHOP_BOX_POINT_RADIUS = 3;
+	
 	private static final Paint CHOP_BOX_LINE_STROKE = Color.DARKRED;
+	
 	private static final double PAD = 100;
 	private static final double HEIGHT = 480;
 	private static final double WIDTH = 640;
@@ -137,10 +150,19 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		root = new BorderPane();
 		scene = new Scene(root, WIDTH, HEIGHT);
 
+		// description (what is demonstrated)
+		Label descriptionLabel = new Label(
+				"This example demonstrates the chop box anchor position computation. An FXChopBoxAnchor is associated with the E letter shape. The blue points are reference points for the anchor position computation. The red points are the resulting anchor positions.");
+		descriptionLabel.setWrapText(true);
+		descriptionLabel.resizeRelocate(10, 10, WIDTH - 20, PAD - 20);
+		descriptionLabel.setAlignment(Pos.TOP_LEFT);
+		root.getChildren().add(descriptionLabel);
+
 		// legend (how to interact)
 		Label legendLabel = new Label(
-				"You can...\n...drag the blue reference points\n...press <V> to hide/show shape vertices\n...press <L> to hide/show distance lines");
-		legendLabel.resizeRelocate(20, 0, WIDTH - PAD, PAD);
+				"You can...\n...drag the blue reference points\n...press <V> to toggle shape vertices\n...press <L> to toggle distance lines");
+		legendLabel.resizeRelocate(10, HEIGHT - PAD + 10, WIDTH - 20, PAD - 20);
+		legendLabel.setAlignment(Pos.BOTTOM_RIGHT);
 		root.getChildren().add(legendLabel);
 
 		eLetterShape = createELetterShape();
@@ -163,18 +185,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		root.getChildren().add(centerNode);
 
 		// create draggable reference points around the shape
-		// for (int i = -1; i <= 1; i++) {
-		// for (int j = -1; j <= 1; j++) {
-		// if (i == 0 && j == 0)
-		// continue;
-		// createReferencePoint((WIDTH / 2) * (1 + i) - i * (PAD / 2),
-		// (HEIGHT / 2) * (1 + j) - j * (PAD / 2));
-		// }
-		// }
-		createReferencePoint(PAD / 2, PAD);
-		createReferencePoint(WIDTH - PAD / 2, HEIGHT - PAD);
+		createReferencePoint(PAD / 2, HEIGHT / 2);
+		createReferencePoint(WIDTH - PAD / 2, HEIGHT / 2);
 
-		// TODO: refactor
 		// show outline vertices and distance to the bounds center
 		for (BezierCurve seg : eLetterShape.getGeometry().getOutlineSegments()) {
 			// vertex
@@ -199,10 +212,10 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 					.getDistance(JavaFX2Geometry.toPoint(boundsCenterInScene));
 			final Text distanceText = new Text(String.format("%.2f", distance));
 			// TODO: make configurable
-			distanceText.setScaleX(1.5);
-			distanceText.setScaleY(1.5);
-			distanceText.setStroke(Color.BLACK);
-			distanceText.setFill(Color.DARKGREEN);
+			distanceText.setScaleX(DISTANCE_TEXT_SCALE);
+			distanceText.setScaleY(DISTANCE_TEXT_SCALE);
+			distanceText.setStroke(DISTANCE_TEXT_STROKE);
+			distanceText.setFill(DISTANCE_TEXT_FILL);
 			distanceText.relocate(
 					(vertexInScene.getX() + boundsCenterInScene.getX()) / 2,
 					(vertexInScene.getY() + boundsCenterInScene.getY()) / 2);
@@ -243,10 +256,10 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			private boolean distanceLinesVisible = false;
 
 			public void handle(KeyEvent event) {
-				if (event.getText().equals("v")) {
+				if (event.getText().toLowerCase().equals("v")) {
 					verticesVisible = !verticesVisible;
 					setVisible(vertices, verticesVisible);
-				} else if (event.getText().equals("l")) {
+				} else if (event.getText().toLowerCase().equals("l")) {
 					distanceLinesVisible = !distanceLinesVisible;
 					setVisible(distanceLines, distanceLinesVisible);
 				}
