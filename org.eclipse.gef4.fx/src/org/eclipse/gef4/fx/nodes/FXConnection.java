@@ -199,9 +199,9 @@ public class FXConnection extends Group {
 		// TODO: move to utility && replace with safe algorithm
 		private Point getCenter(Node anchorageNode) {
 			Point center = JavaFX2Geometry.toRectangle(
-					connection.getVisual().sceneToLocal(
-							anchorageNode.localToScene(anchorageNode
-									.getLayoutBounds()))).getCenter();
+					connection.sceneToLocal(anchorageNode
+							.localToScene(anchorageNode.getLayoutBounds())))
+					.getCenter();
 			if (Double.isNaN(center.x) || Double.isNaN(center.y)) {
 				return null;
 			}
@@ -235,7 +235,7 @@ public class FXConnection extends Group {
 								"connection inconsistent (null position)");
 					}
 					Point2D local = anchorage.sceneToLocal(connection
-							.getVisual().localToScene(position.x, position.y));
+							.localToScene(position.x, position.y));
 					if (!anchorage.contains(local)) {
 						return position;
 					}
@@ -544,7 +544,7 @@ public class FXConnection extends Group {
 				+ nextWayAnchorId++);
 	}
 
-	public int getAnchorIndex(AnchorKey anchorKey) {
+	protected int getAnchorIndex(AnchorKey anchorKey) {
 		if (anchorKey.equals(getStartAnchorKey())) {
 			return 0;
 		} else if (anchorKey.equals(getEndAnchorKey())) {
@@ -554,7 +554,7 @@ public class FXConnection extends Group {
 		}
 	}
 
-	public AnchorKey getAnchorKey(int anchorIndex) {
+	protected AnchorKey getAnchorKey(int anchorIndex) {
 		if (anchorIndex < 0 || anchorIndex >= getAnchors().size()) {
 			throw new IllegalArgumentException(
 					"The given anchor index is out of bounds.");
@@ -601,7 +601,7 @@ public class FXConnection extends Group {
 		return anchorsProperty.get(getEndAnchorKey());
 	}
 
-	public AnchorKey getEndAnchorKey() {
+	protected AnchorKey getEndAnchorKey() {
 		return new AnchorKey(getCurveNode(), END_ROLE);
 	}
 
@@ -655,7 +655,7 @@ public class FXConnection extends Group {
 		return anchorsProperty.get(getStartAnchorKey());
 	}
 
-	public AnchorKey getStartAnchorKey() {
+	protected AnchorKey getStartAnchorKey() {
 		return new AnchorKey(getCurveNode(), START_ROLE);
 	}
 
@@ -676,15 +676,11 @@ public class FXConnection extends Group {
 						.getPosition(getStartAnchorKey()))));
 	}
 
-	public Node getVisual() {
-		return this;
-	}
-
 	public IFXAnchor getWayAnchor(int index) {
 		return anchorsProperty.get(getWayAnchorKey(index));
 	}
 
-	public AnchorKey getWayAnchorKey(int index) {
+	protected AnchorKey getWayAnchorKey(int index) {
 		if (0 <= index && index < wayAnchorKeys.size()) {
 			return wayAnchorKeys.get(index);
 		}
@@ -709,7 +705,7 @@ public class FXConnection extends Group {
 		return wayAnchorKeys.size();
 	}
 
-	public int getWayIndex(AnchorKey key) {
+	protected int getWayIndex(AnchorKey key) {
 		int index = wayAnchorKeys.indexOf(key);
 		if (index == -1) {
 			throw new IllegalArgumentException(
