@@ -16,15 +16,19 @@ import java.util.Map;
 
 import javafx.beans.property.ReadOnlyMapWrapper;
 import javafx.collections.MapChangeListener;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.fx.nodes.FXConnection.FXChopBoxHelper;
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -33,6 +37,145 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 // TODO: Find an appropriate name for this (outline anchor or shape anchor or perimeter anchor)
 //       It has nothing to do with a ChopBox, so this does not seem to be intuitive.
 public class FXChopBoxAnchor extends AbstractFXAnchor {
+
+	/*
+	 * TODO: Evaluate if we rather want to have an IFXAnchorComputationStrategy
+	 * and FXChopBoxAnchorComputationStrategy.
+	 */
+	public static class ChopBoxCalculator {
+
+		private static Rectangle getLayoutBounds(Node n) {
+			Bounds layoutBounds = n.getLayoutBounds();
+			return JavaFX2Geometry.toRectangle(layoutBounds);
+		}
+
+		private static boolean isValidTransform(AffineTransform t) {
+			for (double d : t.getMatrix()) {
+				if (Double.isNaN(d)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private static IShape toShape(IGeometry g) {
+			if (g instanceof IShape) {
+				return (IShape) g;
+			}
+			return g.getBounds();
+		}
+
+		private Node anchorage;
+		private Node anchored;
+		private IShape anchorageReferenceShapeInLocal;
+		private Point anchoredReferencePointInLocal;
+		private Point anchorageReferencePointInLocal;
+		private Point position;
+
+		public ChopBoxCalculator(Node anchorage, Node anchored,
+				IGeometry anchorageGeometryInLocal,
+				Point anchoredReferencePointInLocal) {
+			this(anchorage, anchored, toShape(anchorageGeometryInLocal),
+					anchoredReferencePointInLocal);
+		}
+
+		// this is the only real constructor, the others call this one
+		public ChopBoxCalculator(Node anchorage, Node anchored,
+				IShape anchorageShapeInLocal,
+				Point anchoredReferencePointInLocal) {
+			this.anchorage = anchorage;
+			this.anchored = anchored;
+			this.anchorageReferenceShapeInLocal = anchorageShapeInLocal;
+			this.anchoredReferencePointInLocal = anchoredReferencePointInLocal;
+
+			Point center = anchorageShapeInLocal.getBounds().getCenter();
+			if (anchorageShapeInLocal.contains(center)) {
+				anchorageReferencePointInLocal = center;
+			} else {
+				anchorageReferencePointInLocal = computeCenterInside(center);
+			}
+		}
+
+		public ChopBoxCalculator(Node anchorage, Node anchored,
+				Point anchoredReferencePointInLocal) {
+			this(anchorage, anchored, getLayoutBounds(anchorage),
+					anchoredReferencePointInLocal);
+		}
+
+		private Point computeCenterInside(Point boundsCenter) {
+			ICurve[] outlineSegments = anchorageReferenceShapeInLocal
+					.getOutlineSegments();
+			// find vertex nearest to boundsCenter
+			Point nearestVertex = outlineSegments[0].getP1();
+			double minDistance = boundsCenter.getDistance(nearestVertex);
+			for (int i = 1; i < outlineSegments.length; i++) {
+				Point v = outlineSegments[i].getP1();
+				double d = boundsCenter.getDistance(v);
+				if (d < minDistance) {
+					nearestVertex = v;
+					minDistance = d;
+				}
+			}
+			return nearestVertex;
+		}
+
+		private Point computePosition() {
+			AffineTransform anchorageToSceneTransform = FXUtils
+					.getLocalToSceneTx(anchorage);
+			if (!isValidTransform(anchorageToSceneTransform)) {
+				throw new IllegalStateException(
+						"The anchorage-to-scene-transform is invalid!");
+			}
+
+			AffineTransform anchoredToSceneTransform = FXUtils
+					.getLocalToSceneTx(anchored);
+			if (!isValidTransform(anchoredToSceneTransform)) {
+				throw new IllegalStateException(
+						"The anchored-to-scene-transform is invalid!");
+			}
+
+			// transform into scene coordinates
+			Point anchorageReferencePointInScene = anchorageToSceneTransform
+					.getTransformed(anchorageReferencePointInLocal);
+			Point anchoredReferencePointInScene = anchoredToSceneTransform
+					.getTransformed(anchoredReferencePointInLocal);
+			IShape anchorageReferenceShapeInScene = anchorageReferenceShapeInLocal
+					.getTransformed(anchorageToSceneTransform);
+
+			// construct reference line
+			Line referenceLineInScene = new Line(
+					anchorageReferencePointInScene,
+					anchoredReferencePointInScene);
+
+			// compute intersection
+			Point nearestIntersectionInScene = anchorageReferenceShapeInScene
+					.getOutline().getNearestIntersection(referenceLineInScene,
+							anchoredReferencePointInScene);
+			if (nearestIntersectionInScene != null) {
+				// transform to anchored coordinate system
+				return JavaFX2Geometry.toPoint(anchored
+						.sceneToLocal(Geometry2JavaFX
+								.toFXPoint(nearestIntersectionInScene)));
+			}
+
+			// in case of emergency, return the anchorage reference point
+			return JavaFX2Geometry.toPoint(anchored
+					.sceneToLocal(Geometry2JavaFX
+							.toFXPoint(anchorageReferencePointInScene)));
+		}
+
+		public Point getAnchorageReferencePoint() {
+			return anchorageReferencePointInLocal;
+		}
+
+		public Point getPosition() {
+			if (position == null) {
+				position = computePosition();
+			}
+			return position;
+		}
+
+	}
 
 	/**
 	 * A {@link ReferencePointProvider} needs to be provided as default adapter
@@ -60,15 +203,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		 */
 		public abstract ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty();
 
-	}
-
-	private static boolean isValidTransform(AffineTransform t) {
-		for (double d : t.getMatrix()) {
-			if (Double.isNaN(d)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private Map<AnchorKey, ReferencePointProvider> referencePointProviders = new HashMap<>();
@@ -172,65 +306,16 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *         the to be anchored {@link Node}.
 	 */
 	protected Point computePosition(Node anchored, Point referencePoint) {
-		/*
-		 * The reference shapes/lines/points have to be transformed into the
-		 * same coordinate system in order to be able to compute the correct
-		 * intersection. We choose the scene coordinate system here. Therefore,
-		 * we need access to a local-to-scene-transform for the anchorage and
-		 * the anchored.
-		 *
-		 * Important: JavaFX Node provides a (lazily computed)
-		 * local-to-scene-transform property which we could access to get that
-		 * transform. Unfortunately, this property is not updated correctly,
-		 * i.e. its value can differ from the actual local-to-scene-transform.
-		 * This is reflected in the different values of a) the
-		 * Node#localToScene(...) method, and b) transforming using the
-		 * concatenated local-to-parent-transforms.
-		 *
-		 * Therefore, we compute the local-to-scene-transform for anchorage and
-		 * anchored by concatenating the local-to-parent-transforms in the
-		 * hierarchy, respectively.
-		 */
-		// TODO: provide helper methods for transforming points in FXUtils and
-		// replace the code here
-		AffineTransform anchorageToSceneTransform = FXUtils
-				.getLocalToSceneTx(getAnchorage());
-		if (!isValidTransform(anchorageToSceneTransform)) {
-			anchorageToSceneTransform = new AffineTransform();
+		Node anchorage = getAnchorage();
+		if (anchorage instanceof FXGeometryNode) {
+			IGeometry geometry = ((FXGeometryNode<?>) anchorage).getGeometry();
+			if (geometry instanceof IShape) {
+				return new ChopBoxCalculator(getAnchorage(), anchored,
+						(IShape) geometry, referencePoint).getPosition();
+			}
 		}
-
-		AffineTransform anchoredToSceneTransform = FXUtils
-				.getLocalToSceneTx(anchored);
-		if (!isValidTransform(anchoredToSceneTransform)) {
-			anchoredToSceneTransform = new AffineTransform();
-		}
-
-		// transform into scene coordinates
-		Point anchorageReferencePointInScene = anchorageToSceneTransform
-				.getTransformed(getAnchorageReferencePoint());
-		Point anchoredReferencePointInScene = anchoredToSceneTransform
-				.getTransformed(referencePoint);
-		IShape anchorageReferenceShapeInScene = getAnchorageReferenceShape()
-				.getTransformed(anchorageToSceneTransform);
-
-		// construct reference line
-		Line referenceLineInScene = new Line(anchorageReferencePointInScene,
-				anchoredReferencePointInScene);
-
-		// compute intersection
-		Point nearestIntersectionInScene = anchorageReferenceShapeInScene
-				.getOutline().getNearestIntersection(referenceLineInScene,
-						anchoredReferencePointInScene);
-		if (nearestIntersectionInScene != null) {
-			// transform to anchored coordinate system
-			return JavaFX2Geometry.toPoint(anchored
-					.sceneToLocal(Geometry2JavaFX
-							.toFXPoint(nearestIntersectionInScene)));
-		}
-
-		// do not fail hard... use center
-		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
-				.toFXPoint(anchorageReferencePointInScene)));
+		return new ChopBoxCalculator(getAnchorage(), anchored, referencePoint)
+				.getPosition();
 	}
 
 	/**
@@ -244,7 +329,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 	 *            An {@link IAdaptable}, which will be used to obtain an
 	 *            {@link ReferencePointProvider} that provides reference points
 	 *            for this {@link FXChopBoxAnchor}.
-	 *
 	 */
 	@Override
 	public void detach(AnchorKey key, IAdaptable info) {
@@ -267,28 +351,6 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		super.detach(key, info);
 
 		referencePointProviders.remove(key);
-	}
-
-	/**
-	 * @return The anchorage reference point within the local coordinate system
-	 *         of the anchorage {@link Node}.
-	 */
-	protected Point getAnchorageReferencePoint() {
-		return getAnchorageReferenceShape().getBounds().getCenter();
-	}
-
-	/**
-	 * Returns the anchorage reference {@link IShape} which is used to compute
-	 * the intersection point which is used as the anchor position. By default,
-	 * a {@link Rectangle} matching the layout-bounds of the anchorage
-	 * {@link Node} is returned. Clients may override this method to use other
-	 * geometric shapes instead.
-	 *
-	 * @return The anchorage reference {@link IShape} within the local
-	 *         coordinate system of the anchorage {@link Node}
-	 */
-	protected IShape getAnchorageReferenceShape() {
-		return JavaFX2Geometry.toRectangle(getAnchorage().getLayoutBounds());
 	}
 
 }
