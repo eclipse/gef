@@ -19,6 +19,7 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -26,20 +27,31 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 
 public class FXUtils {
 
+	/**
+	 * Returns an {@link AffineTransform} which represents the transformation
+	 * matrix to transform geometries from the local coordinate system of the
+	 * given {@link Node} into the coordinate system of the {@link Scene}.
+	 * <p>
+	 * JavaFX {@link Node} provides a (lazily computed) local-to-scene-transform
+	 * property which we could access to get that transform. Unfortunately, this
+	 * property is not updated correctly, i.e. its value can differ from the
+	 * actual local-to-scene-transform. Therefore, we compute the
+	 * local-to-scene-transform for the given node here by concatenating the
+	 * local-to-parent-transforms along the hierarchy.
+	 * <p>
+	 * Note that in situations where you do not need the actual transform, but
+	 * instead perform a transformation, you can use the
+	 * {@link Node#localToScene(Point2D) Node#localToScene(...)} methods on the
+	 * <i>node</i> directly, because it does not make use of the
+	 * local-to-scene-transform property, but uses localToParent() internally.
+	 *
+	 * @param node
+	 *            The JavaFX {@link Node} for which the local-to-scene
+	 *            transformation matrix is to be computed.
+	 * @return An {@link AffineTransform} representing the local-to-scene
+	 *         transformation matrix for the given {@link Node}.
+	 */
 	public static AffineTransform getLocalToSceneTx(Node node) {
-		/*
-		 * Important: JavaFX Node provides a (lazily computed)
-		 * local-to-scene-transform property which we could access to get that
-		 * transform. Unfortunately, this property is not updated correctly,
-		 * i.e. its value can differ from the actual local-to-scene-transform.
-		 * This is reflected in the different values of a) the
-		 * Node#localToScene(...) method, and b) transforming using the
-		 * concatenated local-to-parent-transforms.
-		 *
-		 * Therefore, we compute the local-to-scene-transform for anchorage and
-		 * anchored by concatenating the local-to-parent-transforms in the
-		 * hierarchy, respectively.
-		 */
 		AffineTransform tx = JavaFX2Geometry.toAffineTransform(node
 				.getLocalToParentTransform());
 		Node tmp = node;
