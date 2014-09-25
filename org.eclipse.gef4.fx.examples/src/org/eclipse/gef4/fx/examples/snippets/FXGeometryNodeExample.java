@@ -89,7 +89,7 @@ public class FXGeometryNodeExample extends FXApplication {
 		return new CurvedPolygon(segments);
 	}
 
-	private static Effect createShadowEffect() {
+	protected static Effect createShadowEffect() {
 		final DropShadow outerShadow = new DropShadow();
 		outerShadow.setRadius(3);
 		outerShadow.setSpread(0.2);
