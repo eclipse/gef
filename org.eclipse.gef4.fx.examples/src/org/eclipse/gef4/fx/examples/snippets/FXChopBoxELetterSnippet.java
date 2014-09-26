@@ -59,7 +59,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	
 	private static final Color DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
 	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
-	private static final double DISTANCE_LINE_STROKE_WIDTH = 1;
+	private static final double DISTANCE_LINE_STROKE_WIDTH_NORMAL = 1;
+	private static final double DISTANCE_LINE_STROKE_WIDTH_HOVER = 2.5;
 	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
 	
 	private static final double DISTANCE_TEXT_SCALE = 1.5;
@@ -234,6 +235,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 				@Override
 				public void handle(MouseEvent event) {
 					distanceLine.setStroke(DISTANCE_LINE_STROKE_HOVER);
+					distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_HOVER);
 					distanceText.setVisible(true);
 				}
 			});
@@ -241,6 +243,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 				@Override
 				public void handle(MouseEvent event) {
 					distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
+					distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
 					distanceText.setVisible(false);
 				}
 			});
@@ -274,7 +277,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		final Line distanceLine = new Line(vertexInScene.getX(),
 				vertexInScene.getY(), boundsCenterInScene.getX(),
 				boundsCenterInScene.getY());
-		distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH);
+		distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
 		distanceLine.getStrokeDashArray().addAll(10d, 5d);
 		distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
 		return distanceLine;
