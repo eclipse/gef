@@ -23,6 +23,7 @@ import javafx.collections.MapChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -127,6 +128,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 
 	private Scene scene;
 	private BorderPane root;
+	private Group markerLayer; // between shape and ref points
+	private Group interactionLayer; // always on top
 	private FXGeometryNode<CurvedPolygon> eLetterShape;
 	private FXChopBoxAnchor chopBoxAnchor;
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty;
@@ -181,6 +184,10 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 
 		eLetterShape = createELetterShape();
 		root.getChildren().add(eLetterShape);
+		
+		markerLayer = new Group();
+		interactionLayer = new Group();
+		root.getChildren().addAll(markerLayer, interactionLayer);
 
 		// create chop box anchor and reference point property (so we can access
 		// the reference points easily)
@@ -195,8 +202,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		Point2D boundsCenterInScene = eLetterShape.localToScene(
 				boundsCenterInLocal.x, boundsCenterInLocal.y);
 
-		root.getChildren().add(createBoundsCenterNode(boundsCenterInScene));
-		root.getChildren().add(createELetterReferenceNode());
+		markerLayer.getChildren().add(createBoundsCenterNode(boundsCenterInScene));
+		markerLayer.getChildren().add(createELetterReferenceNode());
 
 		// create draggable reference points around the shape
 		createReferencePoint(PAD / 2, HEIGHT / 2);
@@ -209,7 +216,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			Point2D vertexInScene = eLetterShape.localToScene(vertexInLocal.x,
 					vertexInLocal.y);
 			Circle vertexNode = createVertexNode(vertexInScene);
-			root.getChildren().add(vertexNode);
+			markerLayer.getChildren().add(vertexNode);
 			vertexNode.toBack();
 
 			// add to vertices list so we can disable/enable later
@@ -218,7 +225,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			// distance to bounds center
 			final Line distanceLine = createDistanceLine(boundsCenterInScene,
 					vertexInScene);
-			root.getChildren().add(distanceLine);
+			markerLayer.getChildren().add(distanceLine);
 			distanceLine.toBack();
 
 			// show distance on mouse hover
@@ -234,7 +241,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 					(vertexInScene.getX() + boundsCenterInScene.getX()) / 2,
 					(vertexInScene.getY() + boundsCenterInScene.getY()) / 2);
 			distanceText.setVisible(false);
-			root.getChildren().add(distanceText);
+			markerLayer.getChildren().add(distanceText);
 
 			// invisible selection line
 			Line selectionLine = new Line(distanceLine.getStartX(),
@@ -242,7 +249,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 					distanceLine.getEndY());
 			selectionLine.setStrokeWidth(DISTANCE_LINE_SELECTION_STROKE_WIDTH);
 			selectionLine.setStroke(Color.TRANSPARENT);
-			root.getChildren().add(selectionLine);
+			markerLayer.getChildren().add(selectionLine);
 
 			selectionLine.setOnMouseEntered(new EventHandler<MouseEvent>() {
 				@Override
@@ -345,6 +352,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 
 	private void createReferencePoint(final double x, final double y) {
 		final Circle referencePointNode = createReferencePointNode(x, y);
+		interactionLayer.getChildren().add(referencePointNode);
 		Circle chopBoxPointNode = createChopBoxNode();
 
 		// create key for the anchor relation (role is arbitrary)
@@ -353,8 +361,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		// create real and imaginary chop box lines
 		Line chopBoxLineReal = createChopBoxLineReal(ak);
 		Line chopBoxLineImaginary = createChopBoxLineImaginary(ak);
-		root.getChildren().addAll(chopBoxLineReal, chopBoxLineImaginary,
-				referencePointNode, chopBoxPointNode);
+		markerLayer.getChildren().addAll(chopBoxLineReal, chopBoxLineImaginary,
+				chopBoxPointNode);
 		chopBoxLineReal.toBack();
 		chopBoxLineImaginary.toBack();
 
@@ -413,7 +421,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		// update intersection points
 		if (intersections.containsKey(ak)) {
 			List<Node> toRemove = intersections.remove(ak);
-			root.getChildren().removeAll(toRemove);
+			markerLayer.getChildren().removeAll(toRemove);
 		}
 		List<Node> intersectionNodes = new ArrayList<Node>();
 		ICurve eLetterOutline = chopBoxAnchor
@@ -429,7 +437,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 					&& !unpreciseEquals(eLetterReferencePoint, p)) {
 				Node node = createIntersectionNode(p);
 				intersectionNodes.add(node);
-				root.getChildren().add(node);
+				markerLayer.getChildren().add(node);
 			}
 		}
 		intersections.put(ak, intersectionNodes);
