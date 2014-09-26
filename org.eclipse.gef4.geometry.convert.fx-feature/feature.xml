@@ -22,6 +22,7 @@
 
    <requires>
       <import feature="org.eclipse.gef4.geometry" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.fx.runtime.min.feature" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
