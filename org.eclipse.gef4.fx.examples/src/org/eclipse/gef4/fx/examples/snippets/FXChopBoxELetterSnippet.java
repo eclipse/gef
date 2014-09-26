@@ -38,7 +38,6 @@ import javafx.scene.text.Text;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
-import org.eclipse.gef4.fx.anchors.DefaultChopBoxAlgorithm;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
@@ -46,7 +45,9 @@ import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 public class FXChopBoxELetterSnippet extends FXApplication {
 
@@ -54,33 +55,42 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	// configuration (colors and sizes)
 	private static final double E_LETTER_STROKE_WIDTH = 1.5;
 
-	private static final Color VERTEX_STROKE = Color.BLACK;
-	private static final Color VERTEX_FILL = Color.WHITE;
+	private static final Paint VERTEX_STROKE = Color.BLACK;
+	private static final Paint VERTEX_FILL = Color.WHITE;
 	private static final double VERTEX_RADIUS = 3;
 
-	private static final Color DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
+	private static final Paint DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
 	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
 	private static final double DISTANCE_LINE_STROKE_WIDTH_NORMAL = 1;
 	private static final double DISTANCE_LINE_STROKE_WIDTH_HOVER = 2.5;
 	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
 
 	private static final double DISTANCE_TEXT_SCALE = 1.5;
-	private static final Color DISTANCE_TEXT_STROKE = Color.BLACK;
-	private static final Color DISTANCE_TEXT_FILL = Color.DARKGREEN;
+	private static final Paint DISTANCE_TEXT_STROKE = Color.TRANSPARENT;
+	private static final Paint DISTANCE_TEXT_FILL = Color.BLACK;
 
-	private static final Color CENTER_POINT_STROKE = Color.BLACK;
-	private static final Color CENTER_POINT_FILL = Color.ORANGE;
+	private static final Paint CENTER_POINT_STROKE = Color.BLACK;
+	private static final Paint CENTER_POINT_FILL = Color.ORANGE;
 	private static final double CENTER_POINT_RADIUS = 3;
 
-	private static final Color REFERENCE_POINT_FILL = Color.BLUE;
-	private static final Color REFERENCE_POINT_STROKE = Color.TRANSPARENT;
+	private static final double ELETTER_REFERENCE_POINT_RADIUS = 3;
+	private static final Paint ELETTER_REFERENCE_POINT_STROKE = Color.TRANSPARENT;
+	private static final Paint ELETTER_REFERENCE_POINT_FILL = Color.ORANGE;
+
+	private static final Paint REFERENCE_POINT_FILL = Color.BLUE;
+	private static final Paint REFERENCE_POINT_STROKE = Color.TRANSPARENT;
 	private static final double REFERENCE_POINT_RADIUS = 5;
 
-	private static final Color CHOP_BOX_POINT_FILL = Color.RED;
+	private static final Paint CHOP_BOX_POINT_FILL = Color.RED;
 	private static final Paint CHOP_BOX_POINT_STROKE = Color.TRANSPARENT;
 	private static final double CHOP_BOX_POINT_RADIUS = 3;
 
-	private static final Paint CHOP_BOX_LINE_STROKE = Color.DARKRED;
+	private static final double INTERSECTION_RADIUS = 3;
+	private static final Paint INTERSECTION_STROKE = Color.BLACK;
+	private static final Paint INTERSECTION_FILL = Color.DARKRED;
+
+	private static final Paint CHOP_BOX_LINE_STROKE_REAL = Color.DARKGREEN;
+	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY = Color.DARKRED;
 
 	private static final double PAD = 100;
 	private static final double HEIGHT = 480;
@@ -121,7 +131,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private FXChopBoxAnchor chopBoxAnchor;
 	private ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty;
 	private Map<AnchorKey, Circle> chopBoxPoints = new HashMap<AnchorKey, Circle>();
-	private Map<AnchorKey, Line> chopBoxLines = new HashMap<AnchorKey, Line>();
+	private Map<AnchorKey, Line> chopBoxLinesReal = new HashMap<AnchorKey, Line>();
+	private Map<AnchorKey, Line> chopBoxLinesImaginary = new HashMap<AnchorKey, Line>();
+	private Map<AnchorKey, List<Node>> intersections = new HashMap<AnchorKey, List<Node>>();
 	private List<Node> vertices = new ArrayList<Node>();
 	private List<Node> distanceLines = new ArrayList<Node>();
 
@@ -183,8 +195,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		Point2D boundsCenterInScene = eLetterShape.localToScene(
 				boundsCenterInLocal.x, boundsCenterInLocal.y);
 
-		Circle centerNode = createBoundsCenterNode(boundsCenterInScene);
-		root.getChildren().add(centerNode);
+		root.getChildren().add(createBoundsCenterNode(boundsCenterInScene));
+		root.getChildren().add(createELetterReferenceNode());
 
 		// create draggable reference points around the shape
 		createReferencePoint(PAD / 2, HEIGHT / 2);
@@ -256,10 +268,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			distanceLines.add(distanceLine);
 		}
 
-		setVisible(distanceLines, false);
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			private boolean verticesVisible = true;
-			private boolean distanceLinesVisible = false;
+			private boolean distanceLinesVisible = true;
 
 			public void handle(KeyEvent event) {
 				if (event.getText().toLowerCase().equals("v")) {
@@ -275,13 +286,25 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		return scene;
 	}
 
+	private Node createELetterReferenceNode() {
+		Circle node = new Circle(ELETTER_REFERENCE_POINT_RADIUS);
+		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
+		node.setFill(ELETTER_REFERENCE_POINT_FILL);
+		Point p = chopBoxAnchor.getComputationStrategy()
+				.computeReferencePointInScene(eLetterShape,
+						eLetterShape.getGeometry());
+		node.setCenterX(p.x);
+		node.setCenterY(p.y);
+		return node;
+	}
+
 	private Line createDistanceLine(Point2D boundsCenterInScene,
 			Point2D vertexInScene) {
 		final Line distanceLine = new Line(vertexInScene.getX(),
 				vertexInScene.getY(), boundsCenterInScene.getX(),
 				boundsCenterInScene.getY());
 		distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
-		distanceLine.getStrokeDashArray().addAll(10d, 5d);
+		distanceLine.getStrokeDashArray().addAll(5d, 5d);
 		distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
 		return distanceLine;
 	}
@@ -323,17 +346,22 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private void createReferencePoint(final double x, final double y) {
 		final Circle referencePointNode = createReferencePointNode(x, y);
 		Circle chopBoxPointNode = createChopBoxNode();
-		Line chopBoxLine = createChopBoxLine(x, y);
-		root.getChildren().addAll(chopBoxLine, referencePointNode,
-				chopBoxPointNode);
-		chopBoxLine.toBack();
 
 		// create key for the anchor relation (role is arbitrary)
 		final AnchorKey ak = new AnchorKey(referencePointNode, "link");
 
+		// create real and imaginary chop box lines
+		Line chopBoxLineReal = createChopBoxLineReal(ak);
+		Line chopBoxLineImaginary = createChopBoxLineImaginary(ak);
+		root.getChildren().addAll(chopBoxLineReal, chopBoxLineImaginary,
+				referencePointNode, chopBoxPointNode);
+		chopBoxLineReal.toBack();
+		chopBoxLineImaginary.toBack();
+
 		// associate the chop box point and line with that key
 		chopBoxPoints.put(ak, chopBoxPointNode);
-		chopBoxLines.put(ak, chopBoxLine);
+		chopBoxLinesReal.put(ak, chopBoxLineReal);
+		chopBoxLinesImaginary.put(ak, chopBoxLineImaginary);
 
 		// put initial reference point
 		referencePointProperty.put(ak, new Point(x, y));
@@ -347,7 +375,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 				referencePointNode.setCenterY(y);
 				// update reference point
 				referencePointProperty.put(ak, new Point(x, y));
-				updateChopBoxLine(x, y, chopBoxLines.get(ak));
+				updateChopBoxLines(ak);
 			}
 		};
 		dragGesture.setScene(scene);
@@ -355,26 +383,76 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		attachToChopBoxAnchor(ak, referencePointProperty);
 	}
 
-	private Line createChopBoxLine(final double x, final double y) {
-		Line chopBoxLine = new Line(x, y, x, y);
-		chopBoxLine.setStroke(CHOP_BOX_LINE_STROKE);
-		updateChopBoxLine(x, y, chopBoxLine);
-		return chopBoxLine;
+	private Line createChopBoxLineImaginary(AnchorKey ak) {
+		Line chopBoxLineImaginary = new Line();
+		chopBoxLineImaginary.getStrokeDashArray().addAll(5d, 5d);
+		chopBoxLineImaginary.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY);
+		return chopBoxLineImaginary;
 	}
 
-	private void updateChopBoxLine(final double x, final double y,
-			Line chopBoxLine) {
-		Point center = computeShapeCenter();
-		chopBoxLine.setStartX(x);
-		chopBoxLine.setStartY(y);
-		chopBoxLine.setEndX(center.x);
-		chopBoxLine.setEndY(center.y);
-	}
+	private void updateChopBoxLines(AnchorKey ak) {
+		// update real line
+		Line lineReal = chopBoxLinesReal.get(ak);
+		Point referencePosition = referencePointProperty.get(ak);
+		Point anchorPosition = chopBoxAnchor.getPosition(ak);
+		lineReal.setStartX(referencePosition.x);
+		lineReal.setStartY(referencePosition.y);
+		lineReal.setEndX(anchorPosition.x);
+		lineReal.setEndY(anchorPosition.y);
 
-	private Point computeShapeCenter() {
-		return DefaultChopBoxAlgorithm.getInstance()
+		// update imaginary line
+		Point eLetterReferencePoint = chopBoxAnchor.getComputationStrategy()
 				.computeReferencePointInScene(eLetterShape,
 						eLetterShape.getGeometry());
+		Line lineImaginary = chopBoxLinesImaginary.get(ak);
+		lineImaginary.setStartX(anchorPosition.x);
+		lineImaginary.setStartY(anchorPosition.y);
+		lineImaginary.setEndX(eLetterReferencePoint.x);
+		lineImaginary.setEndY(eLetterReferencePoint.y);
+
+		// update intersection points
+		if (intersections.containsKey(ak)) {
+			List<Node> toRemove = intersections.remove(ak);
+			root.getChildren().removeAll(toRemove);
+		}
+		List<Node> intersectionNodes = new ArrayList<Node>();
+		ICurve eLetterOutline = chopBoxAnchor
+				.getComputationStrategy()
+				.computeOutlineInScene(eLetterShape, eLetterShape.getGeometry());
+		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(
+				referencePosition, eLetterReferencePoint);
+		Point[] intersectionPoints = eLetterOutline
+				.getIntersections(referenceLine);
+		for (Point p : intersectionPoints) {
+			// TODO: precision problem!
+			if (!unpreciseEquals(anchorPosition, p)
+					&& !unpreciseEquals(eLetterReferencePoint, p)) {
+				Node node = createIntersectionNode(p);
+				intersectionNodes.add(node);
+				root.getChildren().add(node);
+			}
+		}
+		intersections.put(ak, intersectionNodes);
+	}
+
+	private boolean unpreciseEquals(Point p, Point q) {
+		return PrecisionUtils.equal(q.x, p.x, -2)
+				&& PrecisionUtils.equal(q.y, p.y, -2);
+	}
+
+	private Node createIntersectionNode(Point p) {
+		Circle c = new Circle(INTERSECTION_RADIUS);
+		c.setStroke(INTERSECTION_STROKE);
+		c.setFill(INTERSECTION_FILL);
+		c.setCenterX(p.x);
+		c.setCenterY(p.y);
+		return c;
+	}
+
+	private Line createChopBoxLineReal(AnchorKey ak) {
+		Line chopBoxLineReal = new Line();
+		chopBoxLineReal.setStroke(CHOP_BOX_LINE_STROKE_REAL);
+		return chopBoxLineReal;
 	}
 
 	private void attachToChopBoxAnchor(final AnchorKey ak,
@@ -389,6 +467,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 					}
 				});
 		chopBoxAnchor.attach(ak, as);
+		updateChopBoxLines(ak);
 	}
 
 	private Circle createChopBoxNode() {

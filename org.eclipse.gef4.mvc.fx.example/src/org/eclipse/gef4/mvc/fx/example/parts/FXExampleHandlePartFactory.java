@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import java.util.List;
 import java.util.Map;
 
 import javafx.geometry.Pos;
@@ -29,16 +28,9 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
-
-	@Inject
-	private Injector injector;
-
-	private List<IHandlePart<Node>> parts;
 
 	@Override
 	public IHandlePart<Node> createCornerHandlePart(
@@ -77,38 +69,6 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 		return part;
 	}
-
-	// @Override
-	// public IHandlePart<Node> createSegmentHandlePart(
-	// Provider<IGeometry> handleGeometryProvider, int vertexIndex,
-	// Map<Object, Object> contextMap) {
-	// IHandlePart<Node> part = super.createSegmentHandlePart(
-	// handleGeometryProvider, vertexIndex, contextMap);
-	// // TODO: binding the following policy requires dynamic binding
-	// part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
-	// new FXResizeRelocateOnCornerHandleDragPolicy(
-	// toReferencePoint(vertexIndex)));
-	// return part;
-	// }
-
-	// // TODO -> this has to be done somewhere else, or we need to use box
-	// handle
-	// // parts -> better compute this from position of vertex??
-	// private ReferencePoint toReferencePoint(int vertexIndex) {
-	// switch (vertexIndex) {
-	// case 0:
-	// return ReferencePoint.TOP_LEFT;
-	// case 1:
-	// return ReferencePoint.TOP_RIGHT;
-	// case 2:
-	// return ReferencePoint.BOTTOM_RIGHT;
-	// case 3:
-	// return ReferencePoint.BOTTOM_LEFT;
-	// default:
-	// throw new IllegalStateException("Unsupported vertex index ("
-	// + vertexIndex + "), expected 0 to 3.");
-	// }
-	// }
 
 	private ReferencePoint toReferencePoint(Pos position) {
 		switch (position) {

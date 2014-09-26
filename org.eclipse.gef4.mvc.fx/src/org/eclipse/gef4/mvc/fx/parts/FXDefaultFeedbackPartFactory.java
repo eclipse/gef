@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
-import org.eclipse.gef4.fx.anchors.DefaultChopBoxAlgorithm;
+import org.eclipse.gef4.fx.anchors.FXChopBoxComputationStrategy;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -132,21 +132,19 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 
+					// TODO: inject
+					private final FXChopBoxComputationStrategy computationStrategy = new FXChopBoxComputationStrategy();
+
 					private Point computePosition(Node anchoredVisual,
 							IGeometry anchoredGeometryInLocal,
 							Node anchorageVisual,
 							IGeometry anchorageGeometryInLocal) {
-						return DefaultChopBoxAlgorithm
-								.getInstance()
-								.computePositionInScene(
-										anchorageVisual,
-										anchorageGeometryInLocal,
-										anchoredVisual,
-										DefaultChopBoxAlgorithm
-												.getInstance()
-												.computeReferencePointInLocal(
-														anchoredVisual,
-														anchoredGeometryInLocal));
+						return computationStrategy.computePositionInScene(
+								anchorageVisual, anchorageGeometryInLocal,
+								anchoredVisual, computationStrategy
+										.computeReferencePointInLocal(
+												anchoredVisual,
+												anchoredGeometryInLocal));
 					}
 
 					@Override

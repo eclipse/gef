@@ -21,16 +21,7 @@ import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class DefaultChopBoxAlgorithm {
-
-	public static DefaultChopBoxAlgorithm getInstance() {
-		if (instance == null) {
-			instance = new DefaultChopBoxAlgorithm();
-		}
-		return instance;
-	}
-
-	private static DefaultChopBoxAlgorithm instance = null;
+public class FXChopBoxComputationStrategy {
 
 	public ICurve computeOutlineInScene(Node node, IGeometry geometryInLocal) {
 		// TODO: we cannot handle Path yet

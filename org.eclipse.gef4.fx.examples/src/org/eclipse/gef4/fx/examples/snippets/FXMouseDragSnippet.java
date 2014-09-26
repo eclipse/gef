@@ -223,7 +223,7 @@ public class FXMouseDragSnippet extends FXApplication {
 		handleLayer.getChildren().clear();
 
 		// generate contents
-		int count = 128;
+		int count = 64;
 		for (int i = 0; i < count; i++) {
 			handleLayer.getChildren().add(draggable(generate(width, height)));
 		}
@@ -272,8 +272,8 @@ public class FXMouseDragSnippet extends FXApplication {
 	private Node generate(double w, double h) {
 		double rx = Math.random() * (w - 100);
 		double ry = Math.random() * (h - 100);
-		double rw = Math.random() * 100;
-		double rh = Math.random() * 100;
+		double rw = Math.random() * 90 + 10;
+		double rh = Math.random() * 90 + 10;
 		Rectangle rectangle = new Rectangle(0, 0, rw, rh);
 		rectangle.setLayoutX(rx);
 		rectangle.setLayoutY(ry);

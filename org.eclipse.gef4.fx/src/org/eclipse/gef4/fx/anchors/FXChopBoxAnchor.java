@@ -88,8 +88,16 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		}
 	};
 
+	private FXChopBoxComputationStrategy computationStrategy;
+
 	public FXChopBoxAnchor(Node anchorage) {
+		this(anchorage, new FXChopBoxComputationStrategy());
+	}
+
+	public FXChopBoxAnchor(Node anchorage,
+			FXChopBoxComputationStrategy computationStrategy) {
 		super(anchorage);
+		this.computationStrategy = computationStrategy;
 	}
 
 	/**
@@ -171,9 +179,8 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 			geometry = JavaFX2Geometry.toRectangle(anchorage.getLayoutBounds());
 		}
 		return JavaFX2Geometry.toPoint(anchored.sceneToLocal(Geometry2JavaFX
-				.toFXPoint(DefaultChopBoxAlgorithm.getInstance()
-						.computePositionInScene(anchorage, geometry, anchored,
-								referencePoint))));
+				.toFXPoint(computationStrategy.computePositionInScene(
+						anchorage, geometry, anchored, referencePoint))));
 	}
 
 	/**
@@ -209,6 +216,11 @@ public class FXChopBoxAnchor extends AbstractFXAnchor {
 		super.detach(key, info);
 
 		referencePointProviders.remove(key);
+	}
+
+	// TODO: allow switching the strategy on the fly
+	public FXChopBoxComputationStrategy getComputationStrategy() {
+		return computationStrategy;
 	}
 
 }
