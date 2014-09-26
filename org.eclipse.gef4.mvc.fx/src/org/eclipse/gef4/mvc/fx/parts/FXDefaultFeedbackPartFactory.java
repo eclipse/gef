@@ -9,11 +9,10 @@ import java.util.Map.Entry;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.anchors.DefaultChopBoxAlgorithm;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
-import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
@@ -133,49 +132,47 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				}
 				Provider<IGeometry> linkFeedbackGeometryProvider = new Provider<IGeometry>() {
 
+					private Point computePosition(Node anchoredVisual,
+							IGeometry anchoredGeometryInLocal,
+							Node anchorageVisual,
+							IGeometry anchorageGeometryInLocal) {
+						return DefaultChopBoxAlgorithm
+								.getInstance()
+								.computePositionInScene(
+										anchorageVisual,
+										anchorageGeometryInLocal,
+										anchoredVisual,
+										DefaultChopBoxAlgorithm
+												.getInstance()
+												.computeReferencePointInLocal(
+														anchoredVisual,
+														anchoredGeometryInLocal));
+					}
+
 					@Override
 					public IGeometry get() {
-						IGeometry linkSourceGeometryInScene = FXUtils
-								.localToScene(anchored.getVisual(),
-										anchoredGeometryProvider.get());
-						ICurve linkSourceOutlineInScene = linkSourceGeometryInScene instanceof ICurve ? (ICurve) linkSourceGeometryInScene
-								: ((IShape) linkSourceGeometryInScene)
-										.getOutline();
+						// get anchored visual and geometry
+						Node anchoredVisual = anchored.getVisual();
+						IGeometry anchoredGeometryInLocal = anchoredGeometryProvider
+								.get();
 
-						IGeometry linkTargetGeometryInScene = FXUtils
-								.localToScene(anchorage.getVisual(),
-										anchorageGeometryProvider.get());
-						ICurve linkTargetOutlineInScene = linkTargetGeometryInScene instanceof ICurve ? (ICurve) linkTargetGeometryInScene
-								: ((IShape) linkTargetGeometryInScene)
-										.getOutline();
+						// get anchorage visual and geometry
+						Node anchorageVisual = anchorage.getVisual();
+						IGeometry anchorageGeometryInLocal = anchorageGeometryProvider
+								.get();
 
-						// TODO: use centroid, not center!! -> also in bounds
-						// anchor
-						final Line centerLineInScene = new Line(
-								linkSourceGeometryInScene.getBounds()
-										.getCenter(), linkTargetGeometryInScene
-										.getBounds().getCenter());
+						// determine link source point
+						Point sourcePointInScene = computePosition(
+								anchoredVisual, anchoredGeometryInLocal,
+								anchorageVisual, anchorageGeometryInLocal);
 
-						Point sourcePointInScene = linkSourceOutlineInScene
-								.getNearestIntersection(centerLineInScene,
-										linkTargetGeometryInScene.getBounds()
-												.getCenter());
-						if (sourcePointInScene == null) {
-							sourcePointInScene = linkSourceGeometryInScene
-									.getBounds().getCenter();
-						}
-						Point targetPointInScene = linkTargetOutlineInScene
-								.getNearestIntersection(centerLineInScene,
-										linkSourceGeometryInScene.getBounds()
-												.getCenter());
-						if (targetPointInScene == null) {
-							targetPointInScene = linkTargetGeometryInScene
-									.getBounds().getCenter();
-						}
+						// determine link target point
+						Point targetPointInScene = computePosition(
+								anchorageVisual, anchorageGeometryInLocal,
+								anchoredVisual, anchoredGeometryInLocal);
 
-						final Line linkLineInScene = new Line(
-								sourcePointInScene, targetPointInScene);
-						return linkLineInScene;
+						// construct link line
+						return new Line(sourcePointInScene, targetPointInScene);
 					}
 
 				};

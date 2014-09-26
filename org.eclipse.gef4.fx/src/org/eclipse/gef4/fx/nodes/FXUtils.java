@@ -119,7 +119,6 @@ public class FXUtils {
 	}
 
 	public static IGeometry localToScene(Node n, IGeometry g) {
-		//
 		AffineTransform localToSceneTx = getLocalToSceneTx(n);
 		return g.getTransformed(localToSceneTx);
 	}

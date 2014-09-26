@@ -38,6 +38,7 @@ import javafx.scene.text.Text;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
+import org.eclipse.gef4.fx.anchors.DefaultChopBoxAlgorithm;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
@@ -56,17 +57,17 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private static final Color VERTEX_STROKE = Color.BLACK;
 	private static final Color VERTEX_FILL = Color.WHITE;
 	private static final double VERTEX_RADIUS = 3;
-	
+
 	private static final Color DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
 	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
 	private static final double DISTANCE_LINE_STROKE_WIDTH_NORMAL = 1;
 	private static final double DISTANCE_LINE_STROKE_WIDTH_HOVER = 2.5;
 	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
-	
+
 	private static final double DISTANCE_TEXT_SCALE = 1.5;
 	private static final Color DISTANCE_TEXT_STROKE = Color.BLACK;
 	private static final Color DISTANCE_TEXT_FILL = Color.DARKGREEN;
-	
+
 	private static final Color CENTER_POINT_STROKE = Color.BLACK;
 	private static final Color CENTER_POINT_FILL = Color.ORANGE;
 	private static final double CENTER_POINT_RADIUS = 3;
@@ -74,13 +75,13 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private static final Color REFERENCE_POINT_FILL = Color.BLUE;
 	private static final Color REFERENCE_POINT_STROKE = Color.TRANSPARENT;
 	private static final double REFERENCE_POINT_RADIUS = 5;
-	
+
 	private static final Color CHOP_BOX_POINT_FILL = Color.RED;
 	private static final Paint CHOP_BOX_POINT_STROKE = Color.TRANSPARENT;
 	private static final double CHOP_BOX_POINT_RADIUS = 3;
-	
+
 	private static final Paint CHOP_BOX_LINE_STROKE = Color.DARKRED;
-	
+
 	private static final double PAD = 100;
 	private static final double HEIGHT = 480;
 	private static final double WIDTH = 640;
@@ -235,7 +236,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 				@Override
 				public void handle(MouseEvent event) {
 					distanceLine.setStroke(DISTANCE_LINE_STROKE_HOVER);
-					distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_HOVER);
+					distanceLine
+							.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_HOVER);
 					distanceText.setVisible(true);
 				}
 			});
@@ -243,7 +245,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 				@Override
 				public void handle(MouseEvent event) {
 					distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
-					distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
+					distanceLine
+							.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
 					distanceText.setVisible(false);
 				}
 			});
@@ -369,12 +372,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	}
 
 	private Point computeShapeCenter() {
-		Point shapeCenterInLocal = new FXChopBoxAnchor.ChopBoxCalculator(
-				eLetterShape, null, eLetterShape.getGeometry(), null)
-				.getAnchorageReferencePoint();
-		Point2D shapeCenterInScene = eLetterShape.localToScene(
-				shapeCenterInLocal.x, shapeCenterInLocal.y);
-		return JavaFX2Geometry.toPoint(shapeCenterInScene);
+		return DefaultChopBoxAlgorithm.getInstance()
+				.computeReferencePointInScene(eLetterShape,
+						eLetterShape.getGeometry());
 	}
 
 	private void attachToChopBoxAnchor(final AnchorKey ak,
