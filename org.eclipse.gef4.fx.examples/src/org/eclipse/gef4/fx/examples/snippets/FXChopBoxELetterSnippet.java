@@ -115,8 +115,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private static final Paint ELETTER_REFERENCE_POINT_FILL = Color.ORANGE;
 	private static final Paint REFERENCE_POINT_FILL = Color.BLUE;
 
-	private static final Paint REFERENCE_POINT_STROKE = Color.TRANSPARENT;
-	private static final double REFERENCE_POINT_RADIUS = 5;
+	private static final Paint REFERENCE_POINT_STROKE = Color.BLACK;
+	private static final double REFERENCE_POINT_RADIUS = 3;
 	private static final Paint CHOP_BOX_POINT_FILL = Color.RED;
 
 	private static final Paint CHOP_BOX_POINT_STROKE = Color.BLACK;
@@ -465,6 +465,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		interactionLayer.getChildren().add(eLetterReferenceNode);
 
 		// create draggable reference points around the shape
+		// For the purpose of demonstrating intersection points, the following
+		// second reference point can be used:
+		// createReferencePoint(PAD / 2, HEIGHT / 2);
 		createReferencePoint(WIDTH - PAD / 2, HEIGHT / 2);
 
 		// initialize toggle states
