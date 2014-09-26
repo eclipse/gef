@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
@@ -114,6 +114,25 @@ public class FXMouseDragSnippet extends FXApplication {
 		return scene;
 	}
 
+	private Node draggable(Node node) {
+		node.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
+		return node;
+	}
+
+	private Node generate(double w, double h) {
+		double rx = Math.random() * (w - 100);
+		double ry = Math.random() * (h - 100);
+		double rw = Math.random() * 90 + 10;
+		double rh = Math.random() * 90 + 10;
+		Rectangle rectangle = new Rectangle(0, 0, rw, rh);
+		rectangle.setLayoutX(rx);
+		rectangle.setLayoutY(ry);
+		rectangle.setFill(new Color(Math.random(), Math.random(),
+				Math.random(), 0.5));
+		rectangle.setStroke(Color.TRANSPARENT);
+		return rectangle;
+	}
+
 	protected void onMouseEvent(MouseEvent event) {
 		if (pressed == null) {
 			// no processing if no node is pressed
@@ -146,56 +165,6 @@ public class FXMouseDragSnippet extends FXApplication {
 						+ Arrays.asList(nodesUnderMouse.toArray()));
 			}
 		}
-	}
-
-	public Set<Node> pickNodes(double sceneX, double sceneY, Node root) {
-		Set<Node> picked = new HashSet<Node>();
-
-		// start with given root node
-		Queue<Node> nodes = new LinkedList<Node>();
-		nodes.add(root);
-
-		while (!nodes.isEmpty()) {
-			Node current = nodes.remove();
-			if (current.contains(current.sceneToLocal(sceneX, sceneY))) {
-				picked.add(current);
-				// test all children, too
-				if (current instanceof Parent) {
-					nodes.addAll(((Parent) current).getChildrenUnmodifiable());
-				}
-			}
-		}
-
-		return picked;
-	}
-
-	private boolean updateNodesUnderMouse(double sceneX, double sceneY) {
-		boolean changed = false;
-		Set<Node> picked = pickNodes(sceneX, sceneY, stackPane);
-
-		// update entered nodes
-		for (Node n : picked) {
-			if (!nodesUnderMouse.contains(n)) {
-				nodesUnderMouse.add(n);
-				changed = true;
-			}
-		}
-
-		// update exited nodes
-		List<Node> toRemove = new LinkedList<Node>();
-		for (Node n : nodesUnderMouse) {
-			if (!picked.contains(n)) {
-				toRemove.add(n);
-			}
-		}
-		if (!toRemove.isEmpty()) {
-			changed = true;
-		}
-		for (Node n : toRemove) {
-			nodesUnderMouse.remove(n);
-		}
-
-		return changed;
 	}
 
 	protected void onMousePress(MouseEvent event) {
@@ -264,23 +233,54 @@ public class FXMouseDragSnippet extends FXApplication {
 		}
 	}
 
-	private Node draggable(Node node) {
-		node.addEventHandler(MouseEvent.MOUSE_PRESSED, pressedHandler);
-		return node;
+	public Set<Node> pickNodes(double sceneX, double sceneY, Node root) {
+		Set<Node> picked = new HashSet<Node>();
+
+		// start with given root node
+		Queue<Node> nodes = new LinkedList<Node>();
+		nodes.add(root);
+
+		while (!nodes.isEmpty()) {
+			Node current = nodes.remove();
+			if (current.contains(current.sceneToLocal(sceneX, sceneY))) {
+				picked.add(current);
+				// test all children, too
+				if (current instanceof Parent) {
+					nodes.addAll(((Parent) current).getChildrenUnmodifiable());
+				}
+			}
+		}
+
+		return picked;
 	}
 
-	private Node generate(double w, double h) {
-		double rx = Math.random() * (w - 100);
-		double ry = Math.random() * (h - 100);
-		double rw = Math.random() * 90 + 10;
-		double rh = Math.random() * 90 + 10;
-		Rectangle rectangle = new Rectangle(0, 0, rw, rh);
-		rectangle.setLayoutX(rx);
-		rectangle.setLayoutY(ry);
-		rectangle.setFill(new Color(Math.random(), Math.random(),
-				Math.random(), 0.5));
-		rectangle.setStroke(Color.TRANSPARENT);
-		return rectangle;
+	private boolean updateNodesUnderMouse(double sceneX, double sceneY) {
+		boolean changed = false;
+		Set<Node> picked = pickNodes(sceneX, sceneY, stackPane);
+
+		// update entered nodes
+		for (Node n : picked) {
+			if (!nodesUnderMouse.contains(n)) {
+				nodesUnderMouse.add(n);
+				changed = true;
+			}
+		}
+
+		// update exited nodes
+		List<Node> toRemove = new LinkedList<Node>();
+		for (Node n : nodesUnderMouse) {
+			if (!picked.contains(n)) {
+				toRemove.add(n);
+			}
+		}
+		if (!toRemove.isEmpty()) {
+			changed = true;
+		}
+		for (Node n : toRemove) {
+			nodesUnderMouse.remove(n);
+		}
+
+		return changed;
 	}
 
 }

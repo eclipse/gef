@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.fx.examples.snippets;
 
@@ -54,61 +54,6 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 public class FXChopBoxELetterSnippet extends FXApplication {
 
-	// TODO: use CSS for styling
-	// configuration (colors and sizes)
-	private static final Paint VERTEX_STROKE = Color.web("#5a61af");
-	private static final Paint VERTEX_FILL = Color.web("#d5faff");
-	private static final double VERTEX_RADIUS = 2.5;
-
-	private static final Paint DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
-	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
-	private static final double DISTANCE_LINE_STROKE_WIDTH_NORMAL = 0.5;
-	private static final double DISTANCE_LINE_STROKE_WIDTH_HOVER = 2.5;
-	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
-
-	private static final double DISTANCE_TEXT_SCALE = 1.5;
-	private static final Paint DISTANCE_TEXT_STROKE = Color.TRANSPARENT;
-	private static final Paint DISTANCE_TEXT_FILL = Color.BLACK;
-
-	private static final Paint CENTER_POINT_STROKE = Color.BLACK;
-	private static final Paint CENTER_POINT_FILL = Color.ORANGE;
-	private static final double CENTER_POINT_RADIUS = 3;
-
-	private static final double ELETTER_REFERENCE_POINT_RADIUS = 3;
-	private static final Paint ELETTER_REFERENCE_POINT_STROKE = Color.BLACK;
-	private static final Paint ELETTER_REFERENCE_POINT_FILL = Color.ORANGE;
-
-	private static final Paint REFERENCE_POINT_FILL = Color.BLUE;
-	private static final Paint REFERENCE_POINT_STROKE = Color.TRANSPARENT;
-	private static final double REFERENCE_POINT_RADIUS = 5;
-
-	private static final Paint CHOP_BOX_POINT_FILL = Color.RED;
-	private static final Paint CHOP_BOX_POINT_STROKE = Color.BLACK;
-	private static final double CHOP_BOX_POINT_RADIUS = 3;
-
-	private static final double INTERSECTION_RADIUS = 3;
-	private static final Paint INTERSECTION_STROKE = Color.BLACK;
-	private static final Paint INTERSECTION_FILL = Color.DARKRED;
-
-	private static final Paint CHOP_BOX_LINE_STROKE_REAL = Color.rgb(99, 123,
-			71);
-	private static final double CHOP_BOX_LINE_STROKE_WIDTH_REAL = 2;
-	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY = Color.DARKRED;
-	private static final double CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY = 2;
-	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL = Color.WHITE;
-
-	private static final double PAD = 100;
-	private static final double HEIGHT = 480;
-	private static final double WIDTH = 640;
-
-	private static final boolean INITIAL_VERTICES_VISIBLE = false;
-	private static final boolean INITIAL_LINES_VISIBLE = false;
-	private static final boolean INITIAL_FILL_VISIBLE = true;
-	private static final boolean INITIAL_MIN_DISTANCE_VISIBLE = false;
-	private static final boolean INITIAL_INTERSECTIONS_VISIBLE = true;
-	private static final boolean INITIAL_CENTER_VISIBLE = false;
-	private static final boolean INITIAL_ELETTER_REFERENCE_VISIBLE = true;
-
 	private abstract static class OnDrag extends FXMouseDragGesture {
 		private Node target;
 
@@ -116,17 +61,19 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			this.target = target;
 		}
 
-		public abstract void dragTo(double x, double y);
-
 		@Override
 		protected void drag(Node target, MouseEvent event, double dx, double dy) {
 			// consider only mouse drags on our target
-			if (target == this.target)
+			if (target == this.target) {
 				// do not drag outside of scene
 				if (event.getX() >= 0 && event.getY() >= 0
-						&& event.getX() <= WIDTH && event.getY() <= HEIGHT)
+						&& event.getX() <= WIDTH && event.getY() <= HEIGHT) {
 					dragTo(event.getX(), event.getY());
+				}
+			}
 		}
+
+		public abstract void dragTo(double x, double y);
 
 		@Override
 		protected void press(Node target, MouseEvent event) {
@@ -138,6 +85,66 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		}
 	}
 
+	public static void main(String[] args) {
+		launch();
+	}
+
+	// TODO: use CSS for styling
+	// configuration (colors and sizes)
+	private static final Paint VERTEX_STROKE = Color.web("#5a61af");
+
+	private static final Paint VERTEX_FILL = Color.web("#d5faff");
+	private static final double VERTEX_RADIUS = 2.5;
+	private static final Paint DISTANCE_LINE_STROKE_NORMAL = Color.GREY;
+	private static final Paint DISTANCE_LINE_STROKE_HOVER = Color.BLACK;
+	private static final double DISTANCE_LINE_STROKE_WIDTH_NORMAL = 0.5;
+
+	private static final double DISTANCE_LINE_STROKE_WIDTH_HOVER = 2.5;
+	private static final double DISTANCE_LINE_SELECTION_STROKE_WIDTH = 5.5;
+	private static final double DISTANCE_TEXT_SCALE = 1.5;
+
+	private static final Paint DISTANCE_TEXT_STROKE = Color.TRANSPARENT;
+	private static final Paint DISTANCE_TEXT_FILL = Color.BLACK;
+	private static final Paint CENTER_POINT_STROKE = Color.BLACK;
+
+	private static final Paint CENTER_POINT_FILL = Color.ORANGE;
+	private static final double CENTER_POINT_RADIUS = 3;
+	private static final double ELETTER_REFERENCE_POINT_RADIUS = 3;
+
+	private static final Paint ELETTER_REFERENCE_POINT_STROKE = Color.BLACK;
+	private static final Paint ELETTER_REFERENCE_POINT_FILL = Color.ORANGE;
+	private static final Paint REFERENCE_POINT_FILL = Color.BLUE;
+
+	private static final Paint REFERENCE_POINT_STROKE = Color.TRANSPARENT;
+	private static final double REFERENCE_POINT_RADIUS = 5;
+	private static final Paint CHOP_BOX_POINT_FILL = Color.RED;
+
+	private static final Paint CHOP_BOX_POINT_STROKE = Color.BLACK;
+	private static final double CHOP_BOX_POINT_RADIUS = 3;
+	private static final double INTERSECTION_RADIUS = 3;
+
+	private static final Paint INTERSECTION_STROKE = Color.BLACK;
+	private static final Paint INTERSECTION_FILL = Color.DARKRED;
+	private static final Paint CHOP_BOX_LINE_STROKE_REAL = Color.rgb(99, 123,
+			71);
+	private static final double CHOP_BOX_LINE_STROKE_WIDTH_REAL = 2;
+	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY = Color.DARKRED;
+
+	private static final double CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY = 2;
+	private static final Paint CHOP_BOX_LINE_STROKE_IMAGINARY_WITH_FILL = Color.WHITE;
+	private static final double PAD = 100;
+
+	private static final double HEIGHT = 480;
+	private static final double WIDTH = 640;
+	private static final boolean INITIAL_VERTICES_VISIBLE = false;
+	private static final boolean INITIAL_LINES_VISIBLE = false;
+	private static final boolean INITIAL_FILL_VISIBLE = true;
+	private static final boolean INITIAL_MIN_DISTANCE_VISIBLE = false;
+	private static final boolean INITIAL_INTERSECTIONS_VISIBLE = true;
+
+	private static final boolean INITIAL_CENTER_VISIBLE = false;
+
+	private static final boolean INITIAL_ELETTER_REFERENCE_VISIBLE = true;
 	private Scene scene;
 	private BorderPane root;
 	private Group markerLayer; // between shape and intersections
@@ -154,6 +161,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private List<Node> distanceLines = new ArrayList<Node>();
 	private List<Node> minDistanceNodes = new ArrayList<Node>();
 	private Circle boundsCenterNode;
+
 	private Node eLetterReferenceNode;
 
 	private MapChangeListener<AnchorKey, Point> anchorPositionListener = new MapChangeListener<AnchorKey, Point>() {
@@ -167,15 +175,155 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		}
 	};
 
-	public static void main(String[] args) {
-		launch();
+	private void attachToChopBoxAnchor(final AnchorKey ak,
+			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
+		AdapterStore as = new AdapterStore();
+		as.setAdapter(
+				AdapterKey.get(FXChopBoxAnchor.ReferencePointProvider.class),
+				new FXChopBoxAnchor.ReferencePointProvider() {
+					@Override
+					public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
+						return referencePointProperty;
+					}
+				});
+		chopBoxAnchor.attach(ak, as);
+		updateChopBoxLines(ak);
 	}
 
-	protected void onAnchorPositionChange(AnchorKey key, Point anchorPosition) {
-		// update chop box point
-		Circle chopBoxPoint = chopBoxPoints.get(key);
-		chopBoxPoint.setCenterX(anchorPosition.x);
-		chopBoxPoint.setCenterY(anchorPosition.y);
+	private Circle createBoundsCenterNode(Point2D boundsCenterInScene) {
+		Circle centerNode = new Circle(CENTER_POINT_RADIUS);
+		centerNode.setFill(CENTER_POINT_FILL);
+		centerNode.setStroke(CENTER_POINT_STROKE);
+		centerNode.setCenterX(boundsCenterInScene.getX());
+		centerNode.setCenterY(boundsCenterInScene.getY());
+		return centerNode;
+	}
+
+	private Line createChopBoxLineImaginary(AnchorKey ak) {
+		Line chopBoxLineImaginary = new Line();
+		chopBoxLineImaginary.getStrokeDashArray().addAll(10d, 10d);
+		chopBoxLineImaginary
+				.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY);
+		chopBoxLineImaginary.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY);
+		return chopBoxLineImaginary;
+	}
+
+	private Line createChopBoxLineReal(AnchorKey ak) {
+		Line chopBoxLineReal = new Line();
+		chopBoxLineReal.setStrokeLineCap(StrokeLineCap.BUTT);
+		chopBoxLineReal.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_REAL);
+		chopBoxLineReal.setStroke(CHOP_BOX_LINE_STROKE_REAL);
+		return chopBoxLineReal;
+	}
+
+	private Circle createChopBoxNode() {
+		Circle chopBoxPointNode = new Circle(CHOP_BOX_POINT_RADIUS);
+		chopBoxPointNode.setFill(CHOP_BOX_POINT_FILL);
+		chopBoxPointNode.setStroke(CHOP_BOX_POINT_STROKE);
+		return chopBoxPointNode;
+	}
+
+	private Line createDistanceLine(Point2D boundsCenterInScene,
+			Point2D vertexInScene) {
+		final Line distanceLine = new Line(vertexInScene.getX(),
+				vertexInScene.getY(), boundsCenterInScene.getX(),
+				boundsCenterInScene.getY());
+		distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
+		distanceLine.getStrokeDashArray().addAll(5d, 5d);
+		distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
+		return distanceLine;
+	}
+
+	private Text createDistanceText(double distance) {
+		final Text distanceText = new Text(String.format("%.2f", distance));
+		// TODO: make configurable
+		distanceText.setScaleX(DISTANCE_TEXT_SCALE);
+		distanceText.setScaleY(DISTANCE_TEXT_SCALE);
+		distanceText.setStroke(DISTANCE_TEXT_STROKE);
+		distanceText.setFill(DISTANCE_TEXT_FILL);
+		return distanceText;
+	}
+
+	private Node createELetterReferenceNode() {
+		Circle node = new Circle(ELETTER_REFERENCE_POINT_RADIUS);
+		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
+		node.setFill(ELETTER_REFERENCE_POINT_FILL);
+		Point p = chopBoxAnchor.getComputationStrategy()
+				.computeReferencePointInScene(eLetterShape,
+						eLetterShape.getGeometry());
+		node.setCenterX(p.x);
+		node.setCenterY(p.y);
+		return node;
+	}
+
+	private FXGeometryNode<CurvedPolygon> createELetterShape() {
+		FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
+				FXGeometryNodeExample.createEShapeGeometry());
+		eLetterShape.relocate(PAD, PAD);
+		eLetterShape.resize(WIDTH - PAD - PAD, HEIGHT - PAD - PAD);
+		return eLetterShape;
+	}
+
+	private Node createIntersectionNode(Point p) {
+		Circle c = new Circle(INTERSECTION_RADIUS);
+		c.setStroke(INTERSECTION_STROKE);
+		c.setFill(INTERSECTION_FILL);
+		c.setCenterX(p.x);
+		c.setCenterY(p.y);
+		return c;
+	}
+
+	private void createReferencePoint(final double x, final double y) {
+		final Circle referencePointNode = createReferencePointNode(x, y);
+		interactionLayer.getChildren().add(referencePointNode);
+		Circle chopBoxPointNode = createChopBoxNode();
+
+		// create key for the anchor relation (role is arbitrary)
+		final AnchorKey ak = new AnchorKey(referencePointNode, "link");
+
+		// create real and imaginary chop box lines
+		Line chopBoxLineReal = createChopBoxLineReal(ak);
+		Line chopBoxLineImaginary = createChopBoxLineImaginary(ak);
+		intersectionLayer.getChildren().addAll(chopBoxLineImaginary,
+				chopBoxPointNode);
+		markerLayer.getChildren().add(chopBoxLineReal);
+		chopBoxLineReal.toBack();
+		chopBoxLineImaginary.toBack();
+
+		// associate the chop box point and line with that key
+		chopBoxPoints.put(ak, chopBoxPointNode);
+		chopBoxLinesReal.put(ak, chopBoxLineReal);
+		chopBoxLinesImaginary.put(ak, chopBoxLineImaginary);
+
+		// put initial reference point
+		referencePointProperty.put(ak, new Point(x, y));
+
+		// adjust reference point on drag
+		OnDrag dragGesture = new OnDrag(referencePointNode) {
+			@Override
+			public void dragTo(double x, double y) {
+				// update center point
+				referencePointNode.setCenterX(x);
+				referencePointNode.setCenterY(y);
+				// update reference point
+				referencePointProperty.put(ak, new Point(x, y));
+				updateChopBoxLines(ak);
+			}
+		};
+		dragGesture.setScene(scene);
+
+		attachToChopBoxAnchor(ak, referencePointProperty);
+	}
+
+	private Circle createReferencePointNode(final double x, final double y) {
+		final Circle referencePointNode = new Circle(REFERENCE_POINT_RADIUS);
+		referencePointNode.setFill(REFERENCE_POINT_FILL);
+		referencePointNode.setStroke(REFERENCE_POINT_STROKE);
+		referencePointNode.setCenterX(x);
+		referencePointNode.setCenterY(y);
+		referencePointNode
+				.setEffect(FXGeometryNodeExample.createShadowEffect());
+		return referencePointNode;
 	}
 
 	@Override
@@ -334,6 +482,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			private boolean fillVisible = INITIAL_FILL_VISIBLE;
 			private boolean minDistanceVisible = INITIAL_MIN_DISTANCE_VISIBLE;
 
+			@Override
 			public void handle(KeyEvent event) {
 				String pressedKey = event.getText().toLowerCase();
 				if (pressedKey.equals("v")) {
@@ -362,6 +511,37 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		return scene;
 	}
 
+	private Line createSelectionLine(final Line distanceLine) {
+		Line selectionLine = new Line(distanceLine.getStartX(),
+				distanceLine.getStartY(), distanceLine.getEndX(),
+				distanceLine.getEndY());
+		selectionLine.setStrokeWidth(DISTANCE_LINE_SELECTION_STROKE_WIDTH);
+		selectionLine.setStroke(Color.TRANSPARENT);
+		return selectionLine;
+	}
+
+	private Circle createVertexNode(Point2D vertexInScene) {
+		Circle vertexNode = new Circle(VERTEX_RADIUS);
+		vertexNode.setFill(VERTEX_FILL);
+		vertexNode.setStroke(VERTEX_STROKE);
+		vertexNode.setCenterX(vertexInScene.getX());
+		vertexNode.setCenterY(vertexInScene.getY());
+		return vertexNode;
+	}
+
+	protected void onAnchorPositionChange(AnchorKey key, Point anchorPosition) {
+		// update chop box point
+		Circle chopBoxPoint = chopBoxPoints.get(key);
+		chopBoxPoint.setCenterX(anchorPosition.x);
+		chopBoxPoint.setCenterY(anchorPosition.y);
+	}
+
+	private void setVisible(List<Node> nodes, boolean isVisible) {
+		for (Node n : nodes) {
+			n.setVisible(isVisible);
+		}
+	}
+
 	private void styleELetterShape(boolean fillVisible) {
 		eLetterShape.setFill(fillVisible ? Color.rgb(135, 150, 220)
 				: Color.TRANSPARENT);
@@ -376,129 +556,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		}
 	}
 
-	private Line createSelectionLine(final Line distanceLine) {
-		Line selectionLine = new Line(distanceLine.getStartX(),
-				distanceLine.getStartY(), distanceLine.getEndX(),
-				distanceLine.getEndY());
-		selectionLine.setStrokeWidth(DISTANCE_LINE_SELECTION_STROKE_WIDTH);
-		selectionLine.setStroke(Color.TRANSPARENT);
-		return selectionLine;
-	}
-
-	private Text createDistanceText(double distance) {
-		final Text distanceText = new Text(String.format("%.2f", distance));
-		// TODO: make configurable
-		distanceText.setScaleX(DISTANCE_TEXT_SCALE);
-		distanceText.setScaleY(DISTANCE_TEXT_SCALE);
-		distanceText.setStroke(DISTANCE_TEXT_STROKE);
-		distanceText.setFill(DISTANCE_TEXT_FILL);
-		return distanceText;
-	}
-
-	private Node createELetterReferenceNode() {
-		Circle node = new Circle(ELETTER_REFERENCE_POINT_RADIUS);
-		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
-		node.setFill(ELETTER_REFERENCE_POINT_FILL);
-		Point p = chopBoxAnchor.getComputationStrategy()
-				.computeReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry());
-		node.setCenterX(p.x);
-		node.setCenterY(p.y);
-		return node;
-	}
-
-	private Line createDistanceLine(Point2D boundsCenterInScene,
-			Point2D vertexInScene) {
-		final Line distanceLine = new Line(vertexInScene.getX(),
-				vertexInScene.getY(), boundsCenterInScene.getX(),
-				boundsCenterInScene.getY());
-		distanceLine.setStrokeWidth(DISTANCE_LINE_STROKE_WIDTH_NORMAL);
-		distanceLine.getStrokeDashArray().addAll(5d, 5d);
-		distanceLine.setStroke(DISTANCE_LINE_STROKE_NORMAL);
-		return distanceLine;
-	}
-
-	private Circle createVertexNode(Point2D vertexInScene) {
-		Circle vertexNode = new Circle(VERTEX_RADIUS);
-		vertexNode.setFill(VERTEX_FILL);
-		vertexNode.setStroke(VERTEX_STROKE);
-		vertexNode.setCenterX(vertexInScene.getX());
-		vertexNode.setCenterY(vertexInScene.getY());
-		return vertexNode;
-	}
-
-	private Circle createBoundsCenterNode(Point2D boundsCenterInScene) {
-		Circle centerNode = new Circle(CENTER_POINT_RADIUS);
-		centerNode.setFill(CENTER_POINT_FILL);
-		centerNode.setStroke(CENTER_POINT_STROKE);
-		centerNode.setCenterX(boundsCenterInScene.getX());
-		centerNode.setCenterY(boundsCenterInScene.getY());
-		return centerNode;
-	}
-
-	private FXGeometryNode<CurvedPolygon> createELetterShape() {
-		FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
-				FXGeometryNodeExample.createEShapeGeometry());
-		eLetterShape.relocate(PAD, PAD);
-		eLetterShape.resize(WIDTH - PAD - PAD, HEIGHT - PAD - PAD);
-		return eLetterShape;
-	}
-
-	private void setVisible(List<Node> nodes, boolean isVisible) {
-		for (Node n : nodes) {
-			n.setVisible(isVisible);
-		}
-	}
-
-	private void createReferencePoint(final double x, final double y) {
-		final Circle referencePointNode = createReferencePointNode(x, y);
-		interactionLayer.getChildren().add(referencePointNode);
-		Circle chopBoxPointNode = createChopBoxNode();
-
-		// create key for the anchor relation (role is arbitrary)
-		final AnchorKey ak = new AnchorKey(referencePointNode, "link");
-
-		// create real and imaginary chop box lines
-		Line chopBoxLineReal = createChopBoxLineReal(ak);
-		Line chopBoxLineImaginary = createChopBoxLineImaginary(ak);
-		intersectionLayer.getChildren().addAll(chopBoxLineImaginary,
-				chopBoxPointNode);
-		markerLayer.getChildren().add(chopBoxLineReal);
-		chopBoxLineReal.toBack();
-		chopBoxLineImaginary.toBack();
-
-		// associate the chop box point and line with that key
-		chopBoxPoints.put(ak, chopBoxPointNode);
-		chopBoxLinesReal.put(ak, chopBoxLineReal);
-		chopBoxLinesImaginary.put(ak, chopBoxLineImaginary);
-
-		// put initial reference point
-		referencePointProperty.put(ak, new Point(x, y));
-
-		// adjust reference point on drag
-		OnDrag dragGesture = new OnDrag(referencePointNode) {
-			@Override
-			public void dragTo(double x, double y) {
-				// update center point
-				referencePointNode.setCenterX(x);
-				referencePointNode.setCenterY(y);
-				// update reference point
-				referencePointProperty.put(ak, new Point(x, y));
-				updateChopBoxLines(ak);
-			}
-		};
-		dragGesture.setScene(scene);
-
-		attachToChopBoxAnchor(ak, referencePointProperty);
-	}
-
-	private Line createChopBoxLineImaginary(AnchorKey ak) {
-		Line chopBoxLineImaginary = new Line();
-		chopBoxLineImaginary.getStrokeDashArray().addAll(10d, 10d);
-		chopBoxLineImaginary
-				.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_IMAGINARY);
-		chopBoxLineImaginary.setStroke(CHOP_BOX_LINE_STROKE_IMAGINARY);
-		return chopBoxLineImaginary;
+	private boolean unpreciseEquals(Point p, Point q) {
+		return PrecisionUtils.equal(q.x, p.x, -2)
+				&& PrecisionUtils.equal(q.y, p.y, -2);
 	}
 
 	private void updateChopBoxLines(AnchorKey ak) {
@@ -544,61 +604,6 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			}
 		}
 		intersections.put(ak, intersectionNodes);
-	}
-
-	private boolean unpreciseEquals(Point p, Point q) {
-		return PrecisionUtils.equal(q.x, p.x, -2)
-				&& PrecisionUtils.equal(q.y, p.y, -2);
-	}
-
-	private Node createIntersectionNode(Point p) {
-		Circle c = new Circle(INTERSECTION_RADIUS);
-		c.setStroke(INTERSECTION_STROKE);
-		c.setFill(INTERSECTION_FILL);
-		c.setCenterX(p.x);
-		c.setCenterY(p.y);
-		return c;
-	}
-
-	private Line createChopBoxLineReal(AnchorKey ak) {
-		Line chopBoxLineReal = new Line();
-		chopBoxLineReal.setStrokeLineCap(StrokeLineCap.BUTT);
-		chopBoxLineReal.setStrokeWidth(CHOP_BOX_LINE_STROKE_WIDTH_REAL);
-		chopBoxLineReal.setStroke(CHOP_BOX_LINE_STROKE_REAL);
-		return chopBoxLineReal;
-	}
-
-	private void attachToChopBoxAnchor(final AnchorKey ak,
-			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
-		AdapterStore as = new AdapterStore();
-		as.setAdapter(
-				AdapterKey.get(FXChopBoxAnchor.ReferencePointProvider.class),
-				new FXChopBoxAnchor.ReferencePointProvider() {
-					@Override
-					public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
-						return referencePointProperty;
-					}
-				});
-		chopBoxAnchor.attach(ak, as);
-		updateChopBoxLines(ak);
-	}
-
-	private Circle createChopBoxNode() {
-		Circle chopBoxPointNode = new Circle(CHOP_BOX_POINT_RADIUS);
-		chopBoxPointNode.setFill(CHOP_BOX_POINT_FILL);
-		chopBoxPointNode.setStroke(CHOP_BOX_POINT_STROKE);
-		return chopBoxPointNode;
-	}
-
-	private Circle createReferencePointNode(final double x, final double y) {
-		final Circle referencePointNode = new Circle(REFERENCE_POINT_RADIUS);
-		referencePointNode.setFill(REFERENCE_POINT_FILL);
-		referencePointNode.setStroke(REFERENCE_POINT_STROKE);
-		referencePointNode.setCenterX(x);
-		referencePointNode.setCenterY(y);
-		referencePointNode
-				.setEffect(FXGeometryNodeExample.createShadowEffect());
-		return referencePointNode;
 	}
 
 }

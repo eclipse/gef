@@ -36,28 +36,6 @@ import org.eclipse.gef4.geometry.planar.PolyBezier;
 
 public class FXGeometryNodeExample extends FXApplication {
 
-	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
-	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
-
-	public static void main(final String[] args) {
-		Application.launch(args);
-	}
-
-	@Override
-	public Scene createScene() {
-		final FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
-				createEShapeGeometry());
-		eLetterShape.relocate(25, 25);
-		eLetterShape.resize(200, 250);
-		eLetterShape.setEffect(GEF_SHADOW_EFFECT);
-		eLetterShape.setFill(GEF_COLOR_BLUE);
-
-		final HBox hbox = new HBox();
-		hbox.getChildren().add(eLetterShape);
-
-		return new Scene(hbox, 250, 300);
-	}
-
 	protected static CurvedPolygon createEShapeGeometry() {
 		final List<BezierCurve> segments = new ArrayList<BezierCurve>();
 		segments.add(new Line(1, 10, 6, 10));
@@ -109,6 +87,29 @@ public class FXGeometryNodeExample extends FXApplication {
 		effects.setBottomInput(outerShadow);
 
 		return effects;
+	}
+
+	public static void main(final String[] args) {
+		Application.launch(args);
+	}
+
+	private static final Color GEF_COLOR_BLUE = Color.rgb(135, 150, 220);
+
+	private static final Effect GEF_SHADOW_EFFECT = createShadowEffect();
+
+	@Override
+	public Scene createScene() {
+		final FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
+				createEShapeGeometry());
+		eLetterShape.relocate(25, 25);
+		eLetterShape.resize(200, 250);
+		eLetterShape.setEffect(GEF_SHADOW_EFFECT);
+		eLetterShape.setFill(GEF_COLOR_BLUE);
+
+		final HBox hbox = new HBox();
+		hbox.getChildren().add(eLetterShape);
+
+		return new Scene(hbox, 250, 300);
 	}
 
 }
