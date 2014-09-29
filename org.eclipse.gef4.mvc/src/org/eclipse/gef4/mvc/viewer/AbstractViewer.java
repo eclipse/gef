@@ -107,7 +107,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public IContentPartFactory<VR> getContentPartFactory() {
-		return ads.getAdapter(IContentPartFactory.class);
+		return ads
+				.<IContentPartFactory<VR>> getAdapter(IContentPartFactory.class);
 	}
 
 	/**
@@ -128,17 +129,19 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return ads.getAdapter(IFeedbackPartFactory.class);
+		return ads
+				.<IFeedbackPartFactory<VR>> getAdapter(IFeedbackPartFactory.class);
 	}
 
 	@Override
 	public IHandlePartFactory<VR> getHandlePartFactory() {
-		return ads.getAdapter(IHandlePartFactory.class);
+		return ads
+				.<IHandlePartFactory<VR>> getAdapter(IHandlePartFactory.class);
 	}
 
 	@Override
 	public IRootPart<VR> getRootPart() {
-		return ads.getAdapter(IRootPart.class);
+		return ads.<IRootPart<VR>> getAdapter(IRootPart.class);
 	}
 
 	/**

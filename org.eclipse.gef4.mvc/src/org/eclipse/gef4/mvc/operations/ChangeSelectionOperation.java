@@ -64,7 +64,8 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		SelectionModel selectionModel = viewer.getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = viewer
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		selectionModel.deselectAll();
 		selectionModel.select(newSelection);
 		return Status.OK_STATUS;
