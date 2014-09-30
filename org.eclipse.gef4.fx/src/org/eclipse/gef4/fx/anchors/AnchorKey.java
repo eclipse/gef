@@ -60,7 +60,7 @@ public class AnchorKey {
 		return result;
 	}
 
-	public void setAnchored(Node anchored) {
+	protected void setAnchored(Node anchored) {
 		if (anchored == null) {
 			throw new IllegalArgumentException(
 					"The given Anchored may not be <null>.");
@@ -68,7 +68,7 @@ public class AnchorKey {
 		this.anchored = anchored;
 	}
 
-	public void setId(String id) {
+	protected void setId(String id) {
 		if (id == null) {
 			throw new IllegalArgumentException(
 					"The given Id may not be <null>.");
