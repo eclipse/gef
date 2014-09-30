@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.geometry.planar.Point;
 
 public class FXUtils {
 
@@ -121,6 +122,11 @@ public class FXUtils {
 	public static IGeometry localToScene(Node n, IGeometry g) {
 		AffineTransform localToSceneTx = getLocalToSceneTx(n);
 		return g.getTransformed(localToSceneTx);
+	}
+
+	public static Point localToScene(Node n, Point p) {
+		AffineTransform localToSceneTx = getLocalToSceneTx(n);
+		return localToSceneTx.getTransformed(p);
 	}
 
 	public static IGeometry parentToLocal(Node n, IGeometry g) {

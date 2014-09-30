@@ -44,15 +44,33 @@ import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.examples.FXApplication;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.ICurve;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
 public class FXChopBoxELetterSnippet extends FXApplication {
+
+	private static class ComputationStrategy extends
+			FXChopBoxAnchor.ComputationStrategy.Impl {
+
+		@Override
+		protected Point computeAnchorageReferencePointInScene(Node node,
+				IGeometry geometryInLocal) {
+			return super.computeAnchorageReferencePointInScene(node,
+					geometryInLocal);
+		}
+
+		@Override
+		protected ICurve getOutline(IGeometry geometry) {
+			return super.getOutline(geometry);
+		}
+	}
 
 	private abstract static class OnDrag extends FXMouseDragGesture {
 		private Node target;
@@ -163,6 +181,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private Circle boundsCenterNode;
 
 	private Node eLetterReferenceNode;
+	private ComputationStrategy computationStrategy = new ComputationStrategy();
 
 	private MapChangeListener<AnchorKey, Point> anchorPositionListener = new MapChangeListener<AnchorKey, Point>() {
 		@Override
@@ -178,8 +197,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private void attachToChopBoxAnchor(final AnchorKey ak,
 			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
 		AdapterStore as = new AdapterStore();
-		as.setAdapter(
-				AdapterKey.get(FXChopBoxAnchor.ReferencePointProvider.class),
+		as.setAdapter(AdapterKey
+				.get(FXChopBoxAnchor.ReferencePointProvider.class),
 				new FXChopBoxAnchor.ReferencePointProvider() {
 					@Override
 					public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
@@ -248,9 +267,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		Circle node = new Circle(ELETTER_REFERENCE_POINT_RADIUS);
 		node.setStroke(ELETTER_REFERENCE_POINT_STROKE);
 		node.setFill(ELETTER_REFERENCE_POINT_FILL);
-		Point p = chopBoxAnchor.getComputationStrategy()
-				.computeReferencePointInScene(eLetterShape,
-						eLetterShape.getGeometry());
+		Point p = computationStrategy.computeAnchorageReferencePointInScene(
+				eLetterShape, eLetterShape.getGeometry());
 		node.setCenterX(p.x);
 		node.setCenterY(p.y);
 		return node;
@@ -382,9 +400,9 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		boundsCenterNode = createBoundsCenterNode(boundsCenterInScene);
 		markerLayer.getChildren().add(boundsCenterNode);
 
-		Point eLetterShapeReferencePoint = chopBoxAnchor
-				.getComputationStrategy().computeReferencePointInScene(
-						eLetterShape, eLetterShape.getGeometry());
+		Point eLetterShapeReferencePoint = computationStrategy
+				.computeAnchorageReferencePointInScene(eLetterShape,
+						eLetterShape.getGeometry());
 
 		// show outline vertices and distance to the bounds center
 		for (BezierCurve seg : eLetterShape.getGeometry().getOutlineSegments()) {
@@ -575,8 +593,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		lineReal.setEndY(anchorPosition.y);
 
 		// update imaginary line
-		Point eLetterReferencePoint = chopBoxAnchor.getComputationStrategy()
-				.computeReferencePointInScene(eLetterShape,
+		Point eLetterReferencePoint = computationStrategy
+				.computeAnchorageReferencePointInScene(eLetterShape,
 						eLetterShape.getGeometry());
 		Line lineImaginary = chopBoxLinesImaginary.get(ak);
 		lineImaginary.setStartX(anchorPosition.x);
@@ -590,9 +608,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 			intersectionLayer.getChildren().removeAll(toRemove);
 		}
 		List<Node> intersectionNodes = new ArrayList<Node>();
-		ICurve eLetterOutline = chopBoxAnchor
-				.getComputationStrategy()
-				.computeOutlineInScene(eLetterShape, eLetterShape.getGeometry());
+		ICurve eLetterOutline = (ICurve) FXUtils.localToScene(eLetterShape,
+				computationStrategy.getOutline(eLetterShape.getGeometry()));
 		org.eclipse.gef4.geometry.planar.Line referenceLine = new org.eclipse.gef4.geometry.planar.Line(
 				referencePosition, eLetterReferencePoint);
 		Point[] intersectionPoints = eLetterOutline
