@@ -17,14 +17,15 @@ import javafx.scene.Node;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
-import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
+import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.FocusPolicy;
@@ -32,14 +33,18 @@ import org.eclipse.gef4.mvc.policies.HoverPolicy;
 import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.SubgraphBehavior;
 import org.eclipse.gef4.zest.fx.models.DefaultLayoutModel;
 import org.eclipse.gef4.zest.fx.models.ILayoutModel;
+import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
+import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.PruneOnTypePolicy;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -72,11 +77,11 @@ public class ZestFxModule extends MvcFxModule {
 
 		// geometry provider for selection feedback
 		adapterMapBinder
-		.addBinding(
-				AdapterKey
-				.get(Provider.class,
-						FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-						.to(VisualBoundsGeometryProvider.class);
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover feedback
 		adapterMapBinder
@@ -93,6 +98,8 @@ public class ZestFxModule extends MvcFxModule {
 		super.bindAbstractDomainAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.get(ILayoutModel.class)).to(
 				DefaultLayoutModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(SubgraphModel.class)).to(
+				SubgraphModel.class);
 	}
 
 	protected void bindEdgeContentPartAdapters(
@@ -122,10 +129,16 @@ public class ZestFxModule extends MvcFxModule {
 				NodeLayoutPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
 				.to(NodeLayoutBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(
+				PruneNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(SubgraphBehavior.class)).to(
+				SubgraphBehavior.class);
 		// interaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
 				FXRelocateOnDragPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+				.to(PruneOnTypePolicy.class);
 		// transaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocatePolicy.class)).to(

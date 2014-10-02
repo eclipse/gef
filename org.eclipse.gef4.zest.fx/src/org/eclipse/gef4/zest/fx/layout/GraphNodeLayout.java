@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
@@ -82,21 +82,11 @@ public class GraphNodeLayout implements NodeLayout {
 
 	@Override
 	public NodeLayout[] getPredecessingNodes() {
-		NodeLayout[] nodes = context.getNodes();
-
-		int index = 0;
-		while (nodes[index] != this) {
-			index++;
-		}
-
-		int length = index;
-		if (length == 0) {
-			return new NodeLayout[0];
-		}
-
-		NodeLayout[] predecessors = new NodeLayout[length];
-		for (int i = 0; i < predecessors.length; i++) {
-			predecessors[i] = nodes[i];
+		ConnectionLayout[] incomingConnections = getIncomingConnections();
+		NodeLayout[] predecessors = new NodeLayout[incomingConnections.length];
+		int i = 0;
+		for (ConnectionLayout incomingConnection : incomingConnections) {
+			predecessors[i++] = incomingConnection.getSource();
 		}
 		return predecessors;
 	}
@@ -118,21 +108,11 @@ public class GraphNodeLayout implements NodeLayout {
 
 	@Override
 	public NodeLayout[] getSuccessingNodes() {
-		NodeLayout[] nodes = context.getNodes();
-
-		int index = 0;
-		while (nodes[index] != this) {
-			index++;
-		}
-
-		int offset = index + 1;
-		if (offset >= nodes.length) {
-			return new NodeLayout[0];
-		}
-
-		NodeLayout[] successors = new NodeLayout[nodes.length - offset];
-		for (int i = 0; i < successors.length; i++) {
-			successors[i] = nodes[offset + i];
+		ConnectionLayout[] outgoingConnections = getOutgoingConnections();
+		NodeLayout[] successors = new NodeLayout[outgoingConnections.length];
+		int i = 0;
+		for (ConnectionLayout outgoingConnection : outgoingConnections) {
+			successors[i++] = outgoingConnection.getTarget();
 		}
 		return successors;
 	}

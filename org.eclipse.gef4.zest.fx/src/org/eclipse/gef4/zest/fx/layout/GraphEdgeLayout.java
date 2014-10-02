@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -36,7 +36,7 @@ public class GraphEdgeLayout implements ConnectionLayout {
 				.get(Graph.Attr.Key.GRAPH_TYPE.toString());
 		if (type == Graph.Attr.Value.CONNECTIONS_DIRECTED
 				|| type == Graph.Attr.Value.GRAPH_DIRECTED) {
-			setProperty(PropertiesHelper.DIRECTED_PROPERTY, true);
+			setProperty(IProperties.DIRECTED_PROPERTY, true);
 		}
 
 		// copy properties
