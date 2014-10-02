@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -21,20 +19,15 @@ import javafx.scene.input.KeyEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.mvc.fx.operations.FXClearInteractionModelsOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.ChangeFocusOperation;
-import org.eclipse.gef4.mvc.operations.ChangeHoverOperation;
-import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.mvc.policies.IDeleteContentChildrenPolicy;
 import org.eclipse.gef4.mvc.policies.IDetachContentAnchoragesPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -50,88 +43,13 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 			List<IContentPart<Node>> toDelete) {
 		// delete content
 		IUndoableOperation contentOperations = getContentOperations(toDelete);
-		// clear selection
-		ChangeSelectionOperation<Node> changeSelectionOperation = getChangeSelectionOperation(viewer);
-		// clear hover
-		ChangeHoverOperation<Node> changeHoverOperation = getChangeHoverOperation(viewer);
-		// clear focus
-		ChangeFocusOperation<Node> changeFocusOperation = getChangeFocusOperation(viewer);
-
-		// assemble operations
-		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(
-				"Delete");
-		if (changeHoverOperation != null) {
-			revOp.add(changeHoverOperation);
-		}
-		if (changeFocusOperation != null) {
-			revOp.add(changeFocusOperation);
-		}
-		if (changeSelectionOperation != null) {
-			revOp.add(changeSelectionOperation);
-		}
+		ReverseUndoCompositeOperation revOp = new FXClearInteractionModelsOperation(
+				viewer);
 		if (contentOperations != null) {
 			revOp.add(contentOperations);
 		}
 
 		return revOp;
-	}
-
-	@SuppressWarnings("unchecked")
-	private IContentPart<Node> findNewFocus(
-			Collection<IContentPart<Node>> isSelected, IContentPart<Node> part) {
-		if (isSelected.contains(part)) {
-			return null;
-		}
-
-		List<IContentPart<Node>> contentPartChildren = PartUtils.filterParts(
-				part.getChildren(), IContentPart.class);
-		if (contentPartChildren.isEmpty()) {
-			return part;
-		}
-
-		for (IContentPart<Node> child : contentPartChildren) {
-			IContentPart<Node> newFocus = findNewFocus(isSelected, child);
-			if (newFocus != null) {
-				return newFocus;
-			}
-		}
-
-		return null;
-	}
-
-	protected ChangeFocusOperation<Node> getChangeFocusOperation(
-			IViewer<Node> viewer) {
-		// focus first un-selected content leaf
-		List<IContentPart<Node>> isSelected = viewer
-				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
-				.getSelected();
-		for (Object content : viewer.getAdapter(ContentModel.class)
-				.getContents()) {
-			IContentPart<Node> part = viewer.getContentPartMap().get(content);
-			IContentPart<Node> newFocus = findNewFocus(isSelected, part);
-			if (newFocus != null) {
-				return new ChangeFocusOperation<Node>(viewer, newFocus);
-			}
-		}
-		// otherwise focus nothing
-		return new ChangeFocusOperation<Node>(viewer, null);
-	}
-
-	protected ChangeHoverOperation<Node> getChangeHoverOperation(
-			IViewer<Node> viewer) {
-		IVisualPart<Node> hover = viewer.<HoverModel<Node>> getAdapter(
-				HoverModel.class).getHover();
-		ChangeHoverOperation<Node> changeHoverOperation = null;
-		if (hover == getHost()) {
-			changeHoverOperation = new ChangeHoverOperation<Node>(viewer, null);
-		}
-		return changeHoverOperation;
-	}
-
-	protected ChangeSelectionOperation<Node> getChangeSelectionOperation(
-			IViewer<Node> viewer) {
-		return new ChangeSelectionOperation<Node>(viewer,
-				Collections.<IContentPart<Node>> emptyList());
 	}
 
 	protected IUndoableOperation getContentOperations(

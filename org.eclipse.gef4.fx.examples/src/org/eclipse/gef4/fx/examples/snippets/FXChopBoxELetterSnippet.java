@@ -161,8 +161,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private static final boolean INITIAL_INTERSECTIONS_VISIBLE = true;
 
 	private static final boolean INITIAL_CENTER_VISIBLE = false;
-
 	private static final boolean INITIAL_ELETTER_REFERENCE_VISIBLE = true;
+
 	private Scene scene;
 	private BorderPane root;
 	private Group markerLayer; // between shape and intersections
@@ -197,8 +197,8 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private void attachToChopBoxAnchor(final AnchorKey ak,
 			final ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty) {
 		AdapterStore as = new AdapterStore();
-		as.setAdapter(AdapterKey
-				.get(FXChopBoxAnchor.ReferencePointProvider.class),
+		as.setAdapter(
+				AdapterKey.get(FXChopBoxAnchor.ReferencePointProvider.class),
 				new FXChopBoxAnchor.ReferencePointProvider() {
 					@Override
 					public ReadOnlyMapWrapper<AnchorKey, Point> referencePointProperty() {
