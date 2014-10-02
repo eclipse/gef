@@ -16,20 +16,18 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class SubgraphModel implements IPropertyChangeNotifier {
-
-	/*
-	 * TODO: Allow property change listeners to specify the source node for
-	 * change notifications.
-	 */
 
 	public static final String SUBGRAPHS_PROPERTY = "subgraphs";
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -57,7 +55,8 @@ public class SubgraphModel implements IPropertyChangeNotifier {
 			oldEntry = null;
 		}
 
-		contained.addAll(Arrays.asList(toAdd));
+		List<NodeContentPart> addList = Arrays.asList(toAdd);
+		contained.addAll(addList);
 		subgraphs.put(sourceNode, contained);
 
 		pcs.firePropertyChange(
@@ -73,7 +72,33 @@ public class SubgraphModel implements IPropertyChangeNotifier {
 	}
 
 	public Set<NodeContentPart> getContainedNodes(NodeContentPart sourceNode) {
-		return subgraphs.get(sourceNode);
+		Set<NodeContentPart> contained = subgraphs.get(sourceNode);
+		if (contained == null || contained.isEmpty()) {
+			return Collections.emptySet();
+		}
+		return new HashSet<NodeContentPart>(contained);
+	}
+
+	public Set<NodeContentPart> getSubgraphNodes(NodeContentPart pruned) {
+		Set<NodeContentPart> subgraphNodes = new HashSet<NodeContentPart>();
+		Set<Entry<NodeContentPart, Set<NodeContentPart>>> entries = subgraphs
+				.entrySet();
+		for (Entry<NodeContentPart, Set<NodeContentPart>> e : entries) {
+			if (e.getValue() == pruned) {
+				subgraphNodes.add(e.getKey());
+			}
+		}
+		return subgraphNodes;
+	}
+
+	public boolean isPruned(NodeContentPart node) {
+		for (NodeContentPart subgraphNode : subgraphs.keySet()) {
+			Set<NodeContentPart> pruned = subgraphs.get(subgraphNode);
+			if (pruned != null && pruned.contains(node)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isSubgraphAssociated(NodeContentPart sourceNode) {

@@ -46,10 +46,14 @@ public class NodeContentPart extends AbstractFXContentPart {
 		if (attrs == null) {
 			return;
 		}
+
+		// show label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
 		String str = label instanceof String ? (String) label
 				: label == null ? "-" : label.toString();
 		visual.setLabel(str);
+
+		// pruned?
 	}
 
 	@Override

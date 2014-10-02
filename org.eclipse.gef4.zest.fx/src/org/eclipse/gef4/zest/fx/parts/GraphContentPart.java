@@ -17,9 +17,12 @@ import java.util.List;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 
 public class GraphContentPart extends AbstractFXContentPart {
 
@@ -27,6 +30,17 @@ public class GraphContentPart extends AbstractFXContentPart {
 
 	{
 		group.setAutoSizeChildren(false);
+	}
+
+	public GraphContentPart() {
+		// we set the hover policy adapter here to disable hovering this part
+		// TODO: move to NoHoverPolicy
+		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class),
+				new AbstractFXHoverPolicy() {
+					@Override
+					public void hover(MouseEvent e) {
+					}
+				});
 	}
 
 	@Override

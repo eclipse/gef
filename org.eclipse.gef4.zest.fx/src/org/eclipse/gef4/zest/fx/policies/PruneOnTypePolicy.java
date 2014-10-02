@@ -17,40 +17,64 @@ import java.util.Set;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXClearInteractionModelsOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class PruneOnTypePolicy extends AbstractFXTypePolicy {
 
+	private void clearInteractionModels() {
+		IUndoableOperation operation = new FXClearInteractionModelsOperation(
+				getHost().getRoot().getViewer());
+		try {
+			operation.execute(null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public NodeContentPart getHost() {
+		return (NodeContentPart) super.getHost();
+	}
+
 	@Override
 	public void pressed(KeyEvent event) {
 		KeyCode keyCode = event.getCode();
-
 		if (KeyCode.P.equals(keyCode)) {
-			PruneNodePolicy prunePolicy = getHost().getAdapter(
-					PruneNodePolicy.class);
-			prunePolicy.prune();
+			prune();
+			clearInteractionModels();
 		} else if (KeyCode.E.equals(keyCode)) {
-			SubgraphModel subgraphModel = getHost().getRoot().getViewer()
-					.getDomain().getAdapter(SubgraphModel.class);
-			Set<NodeContentPart> containedNodes = subgraphModel
-					.getContainedNodes((NodeContentPart) getHost());
-			if (containedNodes == null || containedNodes.isEmpty()) {
-				return;
-			}
+			unprune();
+			clearInteractionModels();
+		}
+	}
+
+	protected void prune() {
+		PruneNodePolicy prunePolicy = getHost().getAdapter(
+				PruneNodePolicy.class);
+		prunePolicy.prune();
+	}
+
+	@Override
+	public void released(KeyEvent event) {
+	}
+
+	protected void unprune() {
+		SubgraphModel subgraphModel = getHost().getRoot().getViewer()
+				.getDomain().getAdapter(SubgraphModel.class);
+		Set<NodeContentPart> containedNodes = subgraphModel
+				.getContainedNodes(getHost());
+		if (containedNodes != null && !containedNodes.isEmpty()) {
 			for (NodeContentPart node : containedNodes) {
 				PruneNodePolicy prunePolicy = node
 						.getAdapter(PruneNodePolicy.class);
 				prunePolicy.unprune();
 			}
-			subgraphModel.removeNodesFromSubgraph((NodeContentPart) getHost(),
-					containedNodes.toArray(new NodeContentPart[] {}));
 		}
-	}
-
-	@Override
-	public void released(KeyEvent event) {
 	}
 
 }

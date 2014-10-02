@@ -41,8 +41,21 @@ public class PrunedSuccessorsSubgraphPart extends AbstractFXFeedbackPart {
 	}
 
 	@Override
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		super.attachToAnchorageVisual(anchorage, role);
+		visuals.visibleProperty().bind(anchorage.getVisual().visibleProperty());
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		super.detachFromAnchorageVisual(anchorage, role);
+		visuals.visibleProperty().unbind();
+	}
+
+	@Override
 	protected void doRefreshVisual() {
-		// TODO: add checks
 		Set<IVisualPart<Node>> keySet = getAnchorages().keySet();
 		if (keySet.isEmpty()) {
 			return;
