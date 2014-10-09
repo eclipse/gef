@@ -30,15 +30,17 @@ import org.osgi.service.prefs.Preferences;
  */
 public class DotDirStore {
 
-	private static final String DOT_SELECT_SHORT = "Where is 'dot'?";
-	private static final String DOT_SELECT_LONG = "Please specify the folder that contains 'dot' (http://www.graphviz.org/)";
-	private static final String NOT_FOUND_LONG = "The application 'dot' was not found in the specified directory";
-	private static final String NOT_FOUND_SHORT = "Not found";
+	private static final String DOT_SELECT_SHORT = DotUiMessages.DotDirStore_0;
+	private static final String DOT_SELECT_LONG = DotUiMessages.DotDirStore_1;
+	private static final String NOT_FOUND_LONG = DotUiMessages.DotDirStore_2;
+	private static final String NOT_FOUND_SHORT = DotUiMessages.DotDirStore_3;
+
+	private static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
 
 	private static boolean containsDot(final File folder) {
 		String[] files = folder.list();
 		for (int i = 0; i < files.length; i++) {
-			if (files[i].equals("dot") || files[i].equals("dot.exe")) {
+			if (files[i].equals("dot") || files[i].equals("dot.exe")) { //$NON-NLS-1$//$NON-NLS-2$
 				return true;
 			}
 		}
@@ -46,7 +48,7 @@ public class DotDirStore {
 	}
 
 	private static String dotPathFromPreferences() {
-		return dotUiPrefs().get("dotpath", "");
+		return dotUiPrefs().get(DOT_PATH_PREF_KEY, ""); //$NON-NLS-1$
 	}
 
 	/** @return The path to the folder containing the local 'dot' executable */
@@ -66,7 +68,8 @@ public class DotDirStore {
 						NOT_FOUND_LONG);
 			} else {
 				Preferences preferences = dotUiPrefs();
-				preferences.put("dotpath", selectedPath + File.separator);
+				preferences.put(DOT_PATH_PREF_KEY, selectedPath
+						+ File.separator);
 				try {
 					preferences.flush();
 				} catch (BackingStoreException e) {
@@ -88,8 +91,8 @@ public class DotDirStore {
 
 	private static Preferences dotUiPrefs() {
 		Preferences preferences = ConfigurationScope.INSTANCE
-				.getNode("corg.eclipse.gef4");
-		Preferences node = preferences.node("dot.ui");
+				.getNode("org.eclipse.gef4"); //$NON-NLS-1$
+		Preferences node = preferences.node("dot.ui"); //$NON-NLS-1$
 		return node;
 	}
 

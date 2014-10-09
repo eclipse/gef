@@ -68,15 +68,15 @@ import com.google.inject.util.Modules;
 public class DotGraphView extends ZestFxUiView {
 
 	public static final String STYLES_CSS_FILE = DotGraphView.class
-			.getResource("styles.css").toExternalForm();
-	private static final String EXTENSION = "dot";
-	private static final String LOAD_DOT_FILE = "Load *.dot file...";
-	private static final String SYNC_EXPORT_PDF = "Sync with printable PDF using Graphviz";
-	private static final String SYNC_IMPORT_DOT = "Sync with *.dot files in the workspace";
-	private static final String FORMAT_PDF = "pdf";
+			.getResource("styles.css").toExternalForm(); //$NON-NLS-1$
+	private static final String EXTENSION = "dot"; //$NON-NLS-1$
+	private static final String LOAD_DOT_FILE = ZestFxUiMessages.DotGraphView_0;
+	private static final String SYNC_EXPORT_PDF = ZestFxUiMessages.DotGraphView_1;
+	private static final String SYNC_IMPORT_DOT = ZestFxUiMessages.DotGraphView_2;
+	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
 	private boolean listenToDotContent = false;
 	private boolean linkImage = false;
-	private String currentDot = "digraph{}";
+	private String currentDot = "digraph{}"; //$NON-NLS-1$
 	private IFile currentFile = null;
 	private ExportToggle exportAction;
 
@@ -114,7 +114,7 @@ public class DotGraphView extends ZestFxUiView {
 					DotImport dotImport = new DotImport(dot);
 					if (dotImport.getErrors().size() > 0) {
 						System.err.println(String.format(
-								"Could not import DOT: %s, DOT: %s",
+								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
 								dotImport.getErrors(), dot));
 						return;
 					}
@@ -187,7 +187,7 @@ public class DotGraphView extends ZestFxUiView {
 				URL url = view.currentFile.getParent().getLocationURI().toURL();
 				File copy = DotFileUtils.copySingleFile(
 						DotFileUtils.resolve(url), view.currentFile.getName()
-								+ "." + format, image);
+								+ "." + format, image); //$NON-NLS-1$
 				return copy;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -201,7 +201,7 @@ public class DotGraphView extends ZestFxUiView {
 		private void openFile(File file, DotGraphView view) {
 			if (view.currentFile == null) { // no workspace file for cur. graph
 				IFileStore fileStore = EFS.getLocalFileSystem().getStore(
-						new Path(""));
+						new Path("")); //$NON-NLS-1$
 				fileStore = fileStore.getChild(file.getAbsolutePath());
 				if (!fileStore.fetchInfo().isDirectory()
 						&& fileStore.fetchInfo().exists()) {
