@@ -34,11 +34,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.internal.dot.DotDirStore;
+import org.eclipse.gef4.internal.dot.DotUiActivator;
 import org.eclipse.gef4.internal.dot.export.DotFileUtils;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
+import org.eclipse.gef4.zest.fx.ui.ZestFxUiMessages;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -113,9 +116,14 @@ public class DotGraphView extends ZestFxUiView {
 				if (!dot.trim().isEmpty()) {
 					DotImport dotImport = new DotImport(dot);
 					if (dotImport.getErrors().size() > 0) {
-						System.err.println(String.format(
+						String message = String.format(
 								"Could not import DOT: %s, DOT: %s", //$NON-NLS-1$
-								dotImport.getErrors(), dot));
+								dotImport.getErrors(), dot);
+						DotUiActivator
+								.getDefault()
+								.getLog()
+								.log(new Status(Status.ERROR,
+										"org.eclipse.gef4.zest.fx.ui", message)); //$NON-NLS-1$
 						return;
 					}
 					setGraph(dotImport.newGraphInstance());
