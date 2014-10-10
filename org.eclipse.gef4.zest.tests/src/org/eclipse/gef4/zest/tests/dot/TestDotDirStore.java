@@ -12,8 +12,8 @@ import java.io.File;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.dot.tests.dot.TestImageExport;
+import org.eclipse.gef4.internal.dot.DotDirStore;
 import org.eclipse.gef4.internal.dot.DotUiActivator;
-import org.eclipse.gef4.zest.internal.ui.DotDirStore;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +29,6 @@ public final class TestDotDirStore {
 		if (!Platform.isRunning()) {
 			Assert.fail("Please run as JUnit Plug-in test"); //$NON-NLS-1$
 		}
-		Assert.assertNotNull(
-				"TestImageExport.DOT_DIR should point to the directory containing the local Graphviz DOT executable;", //$NON-NLS-1$
-				TestImageExport.dotBinDir());
 	}
 
 	@Test
@@ -41,7 +38,7 @@ public final class TestDotDirStore {
 		 * tests asking even if clearing workspace is disabled:
 		 */
 		DotUiActivator.getDefault().getPreferenceStore()
-				.setValue(DotDirStore.DOTPATH_KEY, TestImageExport.dotBinDir());
+				.setValue(DotDirStore.DOT_PATH_PREF_KEY, TestImageExport.dotBinDir());
 		/* If not set, the DOT dir is requested: */
 		check(DotDirStore.getDotDirPath());
 	}

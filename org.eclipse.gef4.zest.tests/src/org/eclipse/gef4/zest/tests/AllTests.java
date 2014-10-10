@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.zest.tests.dot.TestDotExtractor;
 import org.eclipse.gef4.zest.tests.dot.TestDotGraph;
 import org.eclipse.gef4.zest.tests.dot.TestGraphInstanceDotImport;
-import org.eclipse.gef4.zest.tests.dot.TestZestGraphView;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -27,8 +26,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({ GraphTests.class, GraphViewerTests.class,
 		GraphSelectionTests.class, IFigureProviderTests.class,
 		TestDotGraph.class, TestGraphInstanceDotImport.class,
-		/* TestDotDirStore.class, */TestDotExtractor.class,
-		TestZestGraphView.class })
+		/* TestDotDirStore.class, */TestDotExtractor.class })
 public final class AllTests {
 	@Before
 	public void setup() {

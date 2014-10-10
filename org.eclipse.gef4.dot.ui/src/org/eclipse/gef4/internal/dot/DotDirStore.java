@@ -35,7 +35,7 @@ public class DotDirStore {
 	private static final String NOT_FOUND_LONG = DotUiMessages.DotDirStore_2;
 	private static final String NOT_FOUND_SHORT = DotUiMessages.DotDirStore_3;
 
-	private static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
+	public static final String DOT_PATH_PREF_KEY = "dotpath"; //$NON-NLS-1$
 
 	private static boolean containsDot(final File folder) {
 		String[] files = folder.list();

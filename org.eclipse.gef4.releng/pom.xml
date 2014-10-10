@@ -505,7 +505,6 @@
 		<!-- TODO: remove old Zest2 bundles -->
 		<module>../org.eclipse.gef4.zest.core</module>
 		<module>../org.eclipse.gef4.zest.jface</module>
-		<module>../org.eclipse.gef4.zest.ui</module>
 		<module>../org.eclipse.gef4.zest.tests</module>
 		<!-- END TODO -->
 
