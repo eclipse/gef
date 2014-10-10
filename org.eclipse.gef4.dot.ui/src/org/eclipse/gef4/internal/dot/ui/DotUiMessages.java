@@ -7,12 +7,12 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
 
-package org.eclipse.gef4.internal.dot;
+package org.eclipse.gef4.internal.dot.ui;
 
 import org.eclipse.osgi.util.NLS;
 
 public class DotUiMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.gef4.internal.dot.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.gef4.internal.dot.ui.messages"; //$NON-NLS-1$
 	public static String DotDirStore_0;
 	public static String DotDirStore_1;
 	public static String DotDirStore_2;

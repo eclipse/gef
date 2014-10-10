@@ -7,7 +7,7 @@
  * Contributors: Fabian Steeg - initial API and implementation; see bug 277380
  *******************************************************************************/
 
-package org.eclipse.gef4.internal.dot;
+package org.eclipse.gef4.internal.dot.ui;
 
 import org.eclipse.gef4.internal.dot.parser.DotParserActivator;
 import org.eclipse.jface.resource.ImageDescriptor;

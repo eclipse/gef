@@ -10,7 +10,7 @@
  *     Fabian Steeg, hbz - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.internal.dot;
+package org.eclipse.gef4.internal.dot.ui;
 
 import java.io.File;
 

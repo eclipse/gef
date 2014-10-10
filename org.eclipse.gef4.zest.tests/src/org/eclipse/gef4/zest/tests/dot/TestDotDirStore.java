@@ -12,8 +12,8 @@ import java.io.File;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.gef4.dot.tests.dot.TestImageExport;
-import org.eclipse.gef4.internal.dot.DotDirStore;
-import org.eclipse.gef4.internal.dot.DotUiActivator;
+import org.eclipse.gef4.internal.dot.ui.DotDirStore;
+import org.eclipse.gef4.internal.dot.ui.DotUiActivator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
