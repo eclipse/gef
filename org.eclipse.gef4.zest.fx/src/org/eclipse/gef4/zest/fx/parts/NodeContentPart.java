@@ -15,6 +15,7 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.Map;
 
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -28,6 +29,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String ATTR_CLASS = "class";
 	public static final String ATTR_ID = "id";
 	public static final String ATTR_STYLE = "style";
+	public static final String ATTR_IMAGE = "image";
 
 	protected FXLabeledNode visual = new FXLabeledNode();
 	protected IFXAnchor anchor;
@@ -38,22 +40,8 @@ public class NodeContentPart extends AbstractFXContentPart {
 
 	@Override
 	public void doRefreshVisual() {
-		org.eclipse.gef4.graph.Node content = getContent();
-		if (content == null) {
-			return;
-		}
-		Map<String, Object> attrs = content.getAttrs();
-		if (attrs == null) {
-			return;
-		}
-
-		// show label
-		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label
-				: label == null ? "-" : label.toString();
-		visual.setLabel(str);
-
-		// pruned?
+		// currently, the attributes cannot change, therefore we never have to
+		// refresh a node here
 	}
 
 	@Override
@@ -77,12 +65,15 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
+
 		if (content == null) {
 			return;
 		}
 		if (!(content instanceof org.eclipse.gef4.graph.Node)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
+
+		// set CSS properties
 		org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) content;
 		Map<String, Object> attrs = node.getAttrs();
 		if (attrs.containsKey(ATTR_CLASS)) {
@@ -93,6 +84,18 @@ public class NodeContentPart extends AbstractFXContentPart {
 		}
 		if (attrs.containsKey(ATTR_STYLE)) {
 			visual.setStyle((String) attrs.get(ATTR_STYLE));
+		}
+
+		// show label
+		Object label = attrs.get(Attr.Key.LABEL.toString());
+		String str = label instanceof String ? (String) label
+				: label == null ? "-" : label.toString();
+		visual.setLabel(str);
+
+		// set image
+		Object imageFileUrl = attrs.get(ATTR_IMAGE);
+		if (imageFileUrl instanceof String) {
+			visual.getImageView().setImage(new Image((String) imageFileUrl));
 		}
 	}
 

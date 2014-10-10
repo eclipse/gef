@@ -30,8 +30,8 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 public class SubgraphModel implements IPropertyChangeNotifier {
 
 	public static final String SUBGRAPHS_PROPERTY = "subgraphs";
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private Map<NodeContentPart, Set<NodeContentPart>> subgraphs = new HashMap<NodeContentPart, Set<NodeContentPart>>();
 
 	public SubgraphModel() {

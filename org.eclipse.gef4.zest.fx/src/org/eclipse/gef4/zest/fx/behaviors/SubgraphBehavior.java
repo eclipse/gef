@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.gef4.zest.fx.parts.PrunedSuccessorsSubgraphPart;
+import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsSubgraphPart;
 
 import com.google.common.collect.Multiset;
 
@@ -59,7 +59,7 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 
 	protected void createSubgraph() {
 		// TODO: delegate to factory
-		subgraphPart = new PrunedSuccessorsSubgraphPart();
+		subgraphPart = new PrunedNeighborsSubgraphPart();
 		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(),
 				Collections.singletonList(getHost()),
 				Collections.singletonList(subgraphPart));

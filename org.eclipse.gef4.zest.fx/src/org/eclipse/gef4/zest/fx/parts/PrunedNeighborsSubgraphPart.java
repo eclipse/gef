@@ -26,7 +26,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 
 // TODO: only applicable for NodeContentPart (anchorage)
-public class PrunedSuccessorsSubgraphPart extends AbstractFXFeedbackPart {
+public class PrunedNeighborsSubgraphPart extends AbstractFXFeedbackPart {
 
 	// TODO: extract visual to its own type
 	private Group visuals = new Group();
@@ -36,6 +36,7 @@ public class PrunedSuccessorsSubgraphPart extends AbstractFXFeedbackPart {
 	{
 		visuals.setAutoSizeChildren(false);
 		visuals.getChildren().addAll(circle, text);
+		// TODO: move to CSS
 		circle.setFill(Color.RED);
 		circle.setStroke(Color.BLACK);
 	}

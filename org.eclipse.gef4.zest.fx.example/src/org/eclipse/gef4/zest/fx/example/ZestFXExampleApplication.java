@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.example;
 
@@ -40,8 +40,6 @@ import com.google.inject.Injector;
 
 public class ZestFXExampleApplication extends Application {
 
-	public static Graph DEFAULT_GRAPH = build09();
-
 	private static Graph build09() {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
@@ -72,6 +70,10 @@ public class ZestFXExampleApplication extends Application {
 		return new Edge.Builder(n, m).attr(Key.LABEL, label).build();
 	}
 
+	public static void main(String[] args) {
+		Application.launch(args);
+	}
+
 	private static org.eclipse.gef4.graph.Node n(String label) {
 		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
 				.build();
@@ -82,9 +84,15 @@ public class ZestFXExampleApplication extends Application {
 				.attr(NodeContentPart.ATTR_CLASS, cssClass).build();
 	}
 
-	public static void main(String[] args) {
-		Application.launch(args);
-	}
+	// private static org.eclipse.gef4.graph.Node n(String label, String
+	// cssClass,
+	// String img) {
+	// return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
+	// .attr(NodeContentPart.ATTR_CLASS, cssClass)
+	// .attr(NodeContentPart.ATTR_IMAGE, img).build();
+	// }
+
+	public static Graph DEFAULT_GRAPH = build09();
 
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
@@ -103,10 +111,13 @@ public class ZestFXExampleApplication extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		viewer.getAdapter(ContentModel.class).setContents(Collections.singletonList(DEFAULT_GRAPH));
-		
-		viewer.getAdapter(ViewportModel.class).setWidth(primaryStage.getWidth());
-		viewer.getAdapter(ViewportModel.class).setHeight(primaryStage.getHeight());
+		viewer.getAdapter(ContentModel.class).setContents(
+				Collections.singletonList(DEFAULT_GRAPH));
+
+		viewer.getAdapter(ViewportModel.class)
+				.setWidth(primaryStage.getWidth());
+		viewer.getAdapter(ViewportModel.class).setHeight(
+				primaryStage.getHeight());
 
 		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
 

@@ -1,11 +1,13 @@
 /*
  * classes:
  * .node: node visual
+ * .node Rectangle: background rectangle of the node
+ * .node Text: label of the node
+ * .node ImageView: image of the node
  * .edge: connection visual
- * .decoration: start/end decoration of a connection
- * 
- * A node consists of a Rectangle and a Text, which can be styled separately.
- * An edge consists of a .curve and a Text, which can be styled separately.
+ * .edge .curve: connection line
+ * .edge Text: connection label
+ * .decoration: start/end arrow of a connection
  */
 
 .node Rectangle {
@@ -26,7 +28,6 @@
 	-fx-fill: black;
 }
 
-/* TODO: the following should read .edge .decoration */
 .decoration {
 	-fx-stroke: rgb(99, 123, 71);
 	-fx-stroke-width: 1.5px;

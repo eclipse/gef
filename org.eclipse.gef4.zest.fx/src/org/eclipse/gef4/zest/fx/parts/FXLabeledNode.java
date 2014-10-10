@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
@@ -19,6 +19,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -31,12 +33,15 @@ public class FXLabeledNode extends Group {
 	public static final String DEFAULT_LABEL = "-";
 
 	protected Rectangle box = new Rectangle();
+	protected HBox hbox = new HBox();
 	protected Text text = new Text();
+	protected ImageView imageView = new ImageView();
 	protected double padding = 5;
 
 	{
 		setAutoSizeChildren(false);
-		getChildren().addAll(box, text);
+		hbox.getChildren().addAll(imageView, text);
+		getChildren().addAll(box, hbox);
 		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
 				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
 		box.setStroke(new Color(0, 0, 0, 1));
@@ -46,7 +51,24 @@ public class FXLabeledNode extends Group {
 			@Override
 			public void changed(ObservableValue<? extends Bounds> observable,
 					Bounds oldBounds, Bounds newBounds) {
-				refreshLayout(newBounds);
+				hbox.autosize();
+			}
+		});
+		imageView.setImage(null);
+		imageView.boundsInLocalProperty().addListener(
+				new ChangeListener<Bounds>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Bounds> observable,
+							Bounds oldBounds, Bounds newBounds) {
+						hbox.autosize();
+					}
+				});
+		hbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
+			@Override
+			public void changed(ObservableValue<? extends Bounds> arg0,
+					Bounds arg1, Bounds arg2) {
+				refreshLayout();
 			}
 		});
 	}
@@ -63,15 +85,19 @@ public class FXLabeledNode extends Group {
 		return box.getWidth();
 	}
 
+	public ImageView getImageView() {
+		return imageView;
+	}
+
 	public String getLabel() {
 		return text.getText();
 	}
 
-	protected void refreshLayout(Bounds textBounds) {
-		text.setTranslateX(padding);
-		text.setTranslateY(padding);
-		box.setWidth(textBounds.getWidth() + 2 * padding);
-		box.setHeight(textBounds.getHeight() + 2 * padding);
+	protected void refreshLayout() {
+		hbox.setTranslateX(padding);
+		hbox.setTranslateY(padding);
+		box.setWidth(hbox.getWidth() + 2 * padding);
+		box.setHeight(hbox.getHeight() + 2 * padding);
 	}
 
 	public void setBoxHeight(double height) {

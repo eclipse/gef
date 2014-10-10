@@ -64,8 +64,12 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	public static final String CSS_CLASS = "edge";
-	public static final Object ATTR_CLASS = "class";
-	public static final Object ATTR_ID = "id";
+	public static final String ATTR_CLASS = "class";
+	public static final String ATTR_ID = "id";
+	// TODO: public static final String ATTR_STYLE = "style";
+	// TODO: public static final String ATTR_VISIBLE = "visible";
+	// TODO: public static final String ATTR_PRUNED = "pruned";
+	// TODO: public static final String ATTR_IMAGE = "image";
 
 	private static final double GAP_LENGTH = 7d;
 	private static final double DASH_LENGTH = 7d;

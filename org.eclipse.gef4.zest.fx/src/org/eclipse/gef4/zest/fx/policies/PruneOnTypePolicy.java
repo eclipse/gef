@@ -17,24 +17,11 @@ import java.util.Set;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXClearInteractionModelsOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class PruneOnTypePolicy extends AbstractFXTypePolicy {
-
-	private void clearInteractionModels() {
-		IUndoableOperation operation = new FXClearInteractionModelsOperation(
-				getHost().getRoot().getViewer());
-		try {
-			operation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public NodeContentPart getHost() {
@@ -46,10 +33,8 @@ public class PruneOnTypePolicy extends AbstractFXTypePolicy {
 		KeyCode keyCode = event.getCode();
 		if (KeyCode.P.equals(keyCode)) {
 			prune();
-			clearInteractionModels();
 		} else if (KeyCode.E.equals(keyCode)) {
 			unprune();
-			clearInteractionModels();
 		}
 	}
 
