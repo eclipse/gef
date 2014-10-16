@@ -33,7 +33,6 @@ import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -43,9 +42,17 @@ public class ZestFXExampleApplication extends Application {
 	private static Graph build09() {
 		// create nodes "0" to "9"
 		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
-		nodes.addAll(Arrays.asList(n("0"), n("1"), n("2"), n("3"), n("4"),
-				n("5"), n("6"), n("7", "custom"), n("8", "custom"),
-				n("9", "custom")));
+		nodes.addAll(Arrays.asList(
+				n(Key.LABEL.toString(), "0", "tooltip", "zero"),
+				n(Key.LABEL.toString(), "1", "tooltip", "one"),
+				n(Key.LABEL.toString(), "2", "tooltip", "two"),
+				n(Key.LABEL.toString(), "3", "tooltip", "three"),
+				n(Key.LABEL.toString(), "4", "tooltip", "four"),
+				n(Key.LABEL.toString(), "5", "tooltip", "five"),
+				n(Key.LABEL.toString(), "6", "tooltip", "six"),
+				n(Key.LABEL.toString(), "7", "tooltip", "seven"),
+				n(Key.LABEL.toString(), "8", "tooltip", "eight"),
+				n(Key.LABEL.toString(), "9", "tooltip", "nine")));
 
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<Edge>();
@@ -74,23 +81,13 @@ public class ZestFXExampleApplication extends Application {
 		Application.launch(args);
 	}
 
-	private static org.eclipse.gef4.graph.Node n(String label) {
-		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
-				.build();
+	private static org.eclipse.gef4.graph.Node n(String... attr) {
+		org.eclipse.gef4.graph.Node.Builder builder = new org.eclipse.gef4.graph.Node.Builder();
+		for (int i = 0; i < attr.length; i += 2) {
+			builder.attr(attr[i], attr[i + 1]);
+		}
+		return builder.build();
 	}
-
-	private static org.eclipse.gef4.graph.Node n(String label, String cssClass) {
-		return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
-				.attr(NodeContentPart.ATTR_CLASS, cssClass).build();
-	}
-
-	// private static org.eclipse.gef4.graph.Node n(String label, String
-	// cssClass,
-	// String img) {
-	// return new org.eclipse.gef4.graph.Node.Builder().attr(Key.LABEL, label)
-	// .attr(NodeContentPart.ATTR_CLASS, cssClass)
-	// .attr(NodeContentPart.ATTR_IMAGE, img).build();
-	// }
 
 	public static Graph DEFAULT_GRAPH = build09();
 

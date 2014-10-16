@@ -15,6 +15,7 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.Map;
 
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
@@ -30,6 +31,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String ATTR_ID = "id";
 	public static final String ATTR_STYLE = "style";
 	public static final String ATTR_IMAGE = "image";
+	public static final Object ATTR_TOOLTIP = "tooltip";
 
 	protected FXLabeledNode visual = new FXLabeledNode();
 	protected IFXAnchor anchor;
@@ -86,7 +88,7 @@ public class NodeContentPart extends AbstractFXContentPart {
 			visual.setStyle((String) attrs.get(ATTR_STYLE));
 		}
 
-		// show label
+		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
 		String str = label instanceof String ? (String) label
 				: label == null ? "-" : label.toString();
@@ -96,6 +98,12 @@ public class NodeContentPart extends AbstractFXContentPart {
 		Object imageFileUrl = attrs.get(ATTR_IMAGE);
 		if (imageFileUrl instanceof String) {
 			visual.getImageView().setImage(new Image((String) imageFileUrl));
+		}
+
+		// set tooltip
+		Object tooltip = attrs.get(ATTR_TOOLTIP);
+		if (tooltip instanceof String) {
+			Tooltip.install(visual, new Tooltip((String) tooltip));
 		}
 	}
 
