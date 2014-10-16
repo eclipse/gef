@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import java.util.List;
 import java.util.Map;
 
 import javafx.geometry.Pos;
@@ -34,9 +35,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	public IHandlePart<Node> createCornerHandlePart(
+			final List<IContentPart<Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		IHandlePart<Node> part = super.createCornerHandlePart(
+		IHandlePart<Node> part = super.createCornerHandlePart(targets,
 				handleGeometryProvider, position, contextMap);
 		// TODO: bind the policy in module
 		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
