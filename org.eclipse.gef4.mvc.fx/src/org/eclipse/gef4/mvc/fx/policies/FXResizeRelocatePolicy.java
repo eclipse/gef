@@ -65,11 +65,11 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	}
 
 	protected double getMinimumHeight() {
-		return FXSegmentHandlePart.SIZE;
+		return FXSegmentHandlePart.DEFAULT_SIZE;
 	}
 
 	protected double getMinimumWidth() {
-		return FXSegmentHandlePart.SIZE;
+		return FXSegmentHandlePart.DEFAULT_SIZE;
 	}
 
 	/*

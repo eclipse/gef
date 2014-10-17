@@ -94,7 +94,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 			{
 				rect.setFill(Color.TRANSPARENT);
-				rect.setStroke(FXSegmentHandlePart.STROKE_DARK_BLUE);
+				rect.setStroke(FXSegmentHandlePart.DEFAULT_STROKE);
 				rect.setStrokeWidth(1);
 				rect.setStrokeType(StrokeType.CENTERED);
 				rect.getStrokeDashArray().setAll(5d, 5d);

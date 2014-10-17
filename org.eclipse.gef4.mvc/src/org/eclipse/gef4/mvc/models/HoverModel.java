@@ -78,9 +78,11 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
 	public void setHover(IVisualPart<VR> cp) {
-		IVisualPart<VR> oldHover = hovered;
+		IVisualPart<VR> oldHovered = hovered;
 		hovered = cp;
-		pcs.firePropertyChange(HOVER_PROPERTY, oldHover, hovered);
+		if (oldHovered != hovered) {
+			pcs.firePropertyChange(HOVER_PROPERTY, oldHovered, hovered);
+		}
 	}
 
 }

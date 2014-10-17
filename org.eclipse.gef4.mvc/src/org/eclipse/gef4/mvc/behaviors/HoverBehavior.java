@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
-PropertyChangeListener {
+		PropertyChangeListener {
 
 	@Override
 	public void activate() {

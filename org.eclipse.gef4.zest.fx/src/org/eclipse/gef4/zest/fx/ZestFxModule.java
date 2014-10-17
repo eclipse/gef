@@ -18,6 +18,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
@@ -27,6 +28,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.FocusPolicy;
 import org.eclipse.gef4.mvc.policies.HoverPolicy;
@@ -42,6 +44,8 @@ import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
+import org.eclipse.gef4.zest.fx.parts.ZestFxPruningHandlePart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneOnTypePolicy;
@@ -90,6 +94,14 @@ public class ZestFxModule extends MvcFxModule {
 								.get(Provider.class,
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
+
+		// geometry provider for hover handles
+		adapterMapBinder
+				.addBinding(
+						AdapterKey
+								.get(Provider.class,
+										FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
+				.to(VisualBoundsGeometryProvider.class);
 	}
 
 	@Override
@@ -115,6 +127,12 @@ public class ZestFxModule extends MvcFxModule {
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).to(ContentPartFactory.class);
+	}
+
+	@Override
+	protected void bindIHandlePartFactory() {
+		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
+		}).to(ZestFxHandlePartFactory.class);
 	}
 
 	@Override
@@ -145,6 +163,14 @@ public class ZestFxModule extends MvcFxModule {
 				FXResizeRelocatePolicy.class);
 	}
 
+	protected void bindPruningHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// FIXME: bind NoHoverPolicy to TypeLiteral<HoverPolicy<Node>>
+		// Are type literal bindings global?
+		// adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
+		// NoHoverPolicy.class);
+	}
+
 	@Override
 	protected void configure() {
 		super.configure();
@@ -155,6 +181,8 @@ public class ZestFxModule extends MvcFxModule {
 				NodeContentPart.class));
 		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				EdgeContentPart.class));
+		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
+				ZestFxPruningHandlePart.class));
 	}
 
 }

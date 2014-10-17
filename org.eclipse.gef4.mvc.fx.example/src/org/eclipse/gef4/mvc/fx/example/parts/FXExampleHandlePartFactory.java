@@ -34,11 +34,11 @@ import com.google.inject.Provider;
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
-	public IHandlePart<Node> createCornerHandlePart(
+	public IHandlePart<Node> createBoundsSelectionCornerHandlePart(
 			final List<IContentPart<Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		IHandlePart<Node> part = super.createCornerHandlePart(targets,
+		IHandlePart<Node> part = super.createBoundsSelectionCornerHandlePart(targets,
 				handleGeometryProvider, position, contextMap);
 		// TODO: bind the policy in module
 		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),

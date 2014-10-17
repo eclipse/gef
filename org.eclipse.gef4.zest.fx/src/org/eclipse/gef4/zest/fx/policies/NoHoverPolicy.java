@@ -10,22 +10,17 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.example.parts;
+package org.eclipse.gef4.zest.fx.policies;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
-public class ZestFxExampleFeedbackPartFactory extends
-		FXDefaultFeedbackPartFactory {
+public class NoHoverPolicy extends HoverPolicy<Node> {
 
 	@Override
-	protected IFeedbackPart<Node> createLinkFeedbackPart(
-			IContentPart<Node> anchored, IContentPart<Node> anchorage,
-			String anchorageRole) {
-		return null;
+	public void hover() {
+		// do not hover my host
 	}
 
 }

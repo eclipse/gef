@@ -62,10 +62,12 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets,
 				IContentPart.class);
-		feedbackParts = BehaviorUtils.createFeedback(contentParts, this,
-				contextMap);
-		BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
-				feedbackParts);
+		if (contentParts != null && !contentParts.isEmpty()) {
+			feedbackParts = BehaviorUtils.createFeedback(contentParts, this,
+					contextMap);
+			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
+					feedbackParts);
+		}
 	}
 
 	protected void addHandles(List<? extends IVisualPart<VR>> targets) {
@@ -78,10 +80,12 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		@SuppressWarnings("unchecked")
 		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets,
 				IContentPart.class);
-		handleParts = BehaviorUtils.createHandles(contentParts, this,
-				contextMap);
-		BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
-				handleParts);
+		if (contentParts != null && !contentParts.isEmpty()) {
+			handleParts = BehaviorUtils.createHandles(contentParts, this,
+					contextMap);
+			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
+					handleParts);
+		}
 	}
 
 	@Override
@@ -119,9 +123,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			@SuppressWarnings("unchecked")
 			List<IContentPart<VR>> contentParts = PartUtils.filterParts(
 					targets, IContentPart.class);
-			BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-					contentParts, feedbackParts);
-			feedbackParts.clear();
+			if (contentParts != null && !contentParts.isEmpty()) {
+				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
+						contentParts, feedbackParts);
+				feedbackParts.clear();
+			}
 		}
 	}
 
@@ -130,9 +136,11 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			@SuppressWarnings("unchecked")
 			List<IContentPart<VR>> contentParts = PartUtils.filterParts(
 					targets, IContentPart.class);
-			BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-					contentParts, handleParts);
-			handleParts.clear();
+			if (contentParts != null && !contentParts.isEmpty()) {
+				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
+						contentParts, handleParts);
+				handleParts.clear();
+			}
 		}
 	}
 

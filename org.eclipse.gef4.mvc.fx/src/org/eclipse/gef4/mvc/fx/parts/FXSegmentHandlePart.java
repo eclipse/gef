@@ -14,10 +14,8 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.ICurve;
@@ -43,22 +41,15 @@ import com.google.inject.Provider;
 public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		Comparable<FXSegmentHandlePart> {
 
-	public static final Color STROKE_DARK_BLUE = Color.web("#5a61af");
+	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+	public static final Color DEFAULT_FILL = Color.WHITE;
+	public static final double DEFAULT_SIZE = 5d;
 
-	private final static Color FILL_CONNECTED = Color.web("#ff0000");
-	public static final Color FILL_UNCONNECTED = Color.web("#d5faff");
-	public static final double SIZE = 5d;
-
-	protected Circle visual;
-
+	protected Node visual;
 	protected Provider<BezierCurve[]> segmentsProvider;
+	private BezierCurve[] segments;
 	private int segmentIndex = -1;
 	private double segmentParameter = 0.0;
-
-	public FXSegmentHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider,
-			int segmentIndex) {
-		this(segmentsInSceneProvider, segmentIndex, 0);
-	}
 
 	public FXSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
 			int segmentIndex, double segmentParameter) {
@@ -83,12 +74,13 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	/**
 	 * Creates the visual representation of this selection handle.
 	 *
-	 * @return {@link Shape} representing the handle visually
+	 * @return {@link Node} representing the handle visually
 	 */
-	protected Circle createVisual() {
-		Circle circle = new Circle(SIZE / 2d);
+	protected Node createVisual() {
+		Circle circle = new Circle(DEFAULT_SIZE / 2d);
 		// initialize invariant visual properties
-		circle.setStroke(STROKE_DARK_BLUE);
+		circle.setStroke(DEFAULT_STROKE);
+		circle.setFill(DEFAULT_FILL);
 		circle.setStrokeWidth(1);
 		circle.setStrokeType(StrokeType.OUTSIDE);
 		return circle;
@@ -96,55 +88,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 
 	@Override
 	public void doRefreshVisual() {
-		FXRootPart rootPart = (FXRootPart) getRoot();
-		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
-		if (rootPart == null || anchorages.keySet().size() != 1) {
-			return;
-		}
-
-		BezierCurve[] segmentsInScene = getSegmentsInScene();
-		if (segmentIndex < 0 || segmentIndex > segmentsInScene.length - 1) {
-			// hide those that have "invalid" index. (this may happen during
-			// life-feedback, when a way-point is removed)
-			visual.setVisible(false);
-		} else {
-			visual.setVisible(true);
-
-			// get new position (in parent coordinate space)
-			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
-					visual.getParent(), segmentsInScene[segmentIndex]);
-			Point positionInParent = getPosition(segmentInParent);
-
-			// transform to handle space
-			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
-					.next();
-
-			visual.relocate(positionInParent.x
-					+ visual.getLayoutBounds().getMinX(), positionInParent.y
-					+ visual.getLayoutBounds().getMinY());
-
-			// update color
-			if (segmentParameter != 0.0 && segmentParameter != 1.0) {
-				visual.setFill(Color.WHITE);
-			} else {
-				// determine connected state for end point handles
-				boolean connected = false;
-				if (targetPart.getVisual() instanceof FXConnection) {
-					FXConnection connection = (FXConnection) targetPart
-							.getVisual();
-					if (segmentIndex + segmentParameter == 0.0) {
-						connected = connection.isStartConnected();
-					} else if (segmentParameter + segmentIndex == segmentsInScene.length) {
-						connected = connection.isEndConnected();
-					}
-				}
-				if (connected) {
-					visual.setFill(FILL_CONNECTED);
-				} else {
-					visual.setFill(FILL_UNCONNECTED);
-				}
-			}
-		}
+		updateLocation();
 	}
 
 	protected Point getPosition(BezierCurve segment) {
@@ -152,7 +96,7 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 	}
 
 	public int getSegmentCount() {
-		return getSegmentsInScene().length;
+		return segments == null ? 0 : segments.length;
 	}
 
 	/**
@@ -185,8 +129,8 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		return segmentParameter;
 	}
 
-	public BezierCurve[] getSegmentsInScene() {
-		return segmentsProvider.get();
+	protected BezierCurve[] getSegmentsInScene() {
+		return segments;
 	}
 
 	@Override
@@ -222,6 +166,34 @@ public class FXSegmentHandlePart extends AbstractFXHandlePart implements
 		this.segmentParameter = segmentParameter;
 		if (oldSegmentParameter != segmentParameter) {
 			refreshVisual();
+		}
+	}
+
+	protected void updateLocation() {
+		// only update when bound to anchorage
+		FXRootPart rootPart = (FXRootPart) getRoot();
+		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		if (rootPart == null || anchorages.keySet().size() != 1) {
+			return;
+		}
+
+		segments = segmentsProvider.get();
+		if (segmentIndex < 0 || segmentIndex > segments.length - 1) {
+			// hide those that have "invalid" index. (this may happen during
+			// life-feedback, when a way-point is removed)
+			visual.setVisible(false);
+		} else {
+			visual.setVisible(true);
+
+			// get new position (in parent coordinate space)
+			BezierCurve segmentInParent = (BezierCurve) FXUtils.sceneToLocal(
+					visual.getParent(), segments[segmentIndex]);
+			Point positionInParent = getPosition(segmentInParent);
+
+			// transform to handle space
+			visual.relocate(positionInParent.x
+					+ visual.getLayoutBounds().getMinX(), positionInParent.y
+					+ visual.getLayoutBounds().getMinY());
 		}
 	}
 
