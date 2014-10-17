@@ -23,31 +23,36 @@ import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
-
-	@Inject
-	private Injector injector;
 
 	@Override
 	protected IHandlePart<Node> createHoverSegmentHandlePart(
 			final IContentPart<Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
-		if (target instanceof NodeContentPart && segmentIndex == 0) {
-			// create prune/expand handle
-			IHandlePart<Node> pruningHandlePart = new ZestFxPruningHandlePart(
-					hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
-			injector.injectMembers(pruningHandlePart);
-			return pruningHandlePart;
-		} else {
-			// do not create handles for the other segments
-			return null;
+		if (target instanceof NodeContentPart) {
+			if (segmentIndex == 0) {
+				// create prune handle at first vertex
+				return new ZestFxPruningHandlePart(
+						hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
+			} else if (segmentIndex == 1) {
+				// create expand handle at second vertex
+				// but check if we have pruned neighbors, first
+				SubgraphModel subgraphModel = target.getRoot().getViewer()
+						.getDomain().getAdapter(SubgraphModel.class);
+				if (subgraphModel
+						.isSubgraphAssociated((NodeContentPart) target)) {
+					return new ZestFxExpandingHandlePart(
+							hoverHandlesSegmentsInSceneProvider, segmentIndex,
+							0);
+				}
+			}
 		}
+		return null;
 	}
 
 	@Override

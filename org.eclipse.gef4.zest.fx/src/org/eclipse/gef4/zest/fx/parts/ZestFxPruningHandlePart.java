@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.parts;
 
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -23,9 +24,12 @@ import javafx.scene.shape.Polygon;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.HoverPolicy;
 import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchoragePolicy;
+import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 
+import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
 public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
@@ -53,10 +57,10 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 	@Override
 	protected StackPane createVisual() {
 		StackPane stackPane = new StackPane();
-		stackPane.setTranslateX(-5);
-		stackPane.setTranslateY(-5);
+		stackPane.setTranslateX(-6);
+		stackPane.setTranslateY(-6);
 		stackPane.setPickOnBounds(false);
-		icon = createIcon(5, 1);
+		icon = createIcon(4, 1);
 		shape = new Circle(6);
 		shape.setStroke(Color.BLACK);
 		shape.setFill(Color.WHITE);
@@ -66,7 +70,7 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		stackPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				// TODO: prune this node
+				onClicked(event);
 			}
 		});
 
@@ -98,6 +102,17 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 	@Override
 	public StackPane getVisual() {
 		return (StackPane) super.getVisual();
+	}
+
+	protected void onClicked(MouseEvent event) {
+		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		if (anchorages == null || anchorages.isEmpty()) {
+			return;
+		}
+		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
+		PruneNodePolicy pruneNodePolicy = anchorage
+				.getAdapter(PruneNodePolicy.class);
+		pruneNodePolicy.prune();
 	}
 
 	@Override

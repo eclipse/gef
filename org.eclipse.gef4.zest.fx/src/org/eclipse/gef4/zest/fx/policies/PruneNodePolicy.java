@@ -22,12 +22,6 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 // TODO: only applicable for NodeContentPart
 public class PruneNodePolicy extends AbstractPolicy<Node> {
 
-	private boolean pruned = false;
-
-	public boolean isPruned() {
-		return pruned;
-	}
-
 	public void prune() {
 		FXClearInteractionModelsOperation revOp = new FXClearInteractionModelsOperation(
 				getHost().getRoot().getViewer());
