@@ -14,13 +14,23 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
-public class NoHoverPolicy extends HoverPolicy<Node> {
+import com.google.common.collect.SetMultimap;
+
+public class HoverFirstAnchoragePolicy extends HoverPolicy<Node> {
 
 	@Override
 	public void hover() {
-		// do not hover my host
+		SetMultimap<IVisualPart<Node>, String> anchorages = getHost()
+				.getAnchorages();
+		if (anchorages == null || anchorages.isEmpty()) {
+			return;
+		}
+		HoverPolicy<?> anchorageHoverPolicy = anchorages.keySet().iterator()
+				.next().getAdapter(HoverPolicy.class);
+		anchorageHoverPolicy.hover();
 	}
 
 }
