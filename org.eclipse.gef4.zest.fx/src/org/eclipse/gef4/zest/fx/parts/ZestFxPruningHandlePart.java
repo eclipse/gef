@@ -12,8 +12,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -33,11 +35,17 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 	}
 
 	@Override
-	protected Circle createVisual() {
-		Circle circle = (Circle) super.createVisual();
-		circle.setRadius(10);
-		circle.setFill(Color.BLUEVIOLET);
-		return circle;
+	protected StackPane createVisual() {
+		StackPane stackPane = new StackPane();
+		Circle shape = new Circle(10);
+		shape.setStroke(Color.BLUE);
+		shape.setFill(Color.WHITE);
+		Polygon plus = new Polygon(-15, -2, -15, 2, -2, 2, -2, 15, 2, 15, 2, 2,
+				15, 2, 15, -2, 2, -2, 2, -15, -2, -15, -2, -2);
+		plus.setStroke(Color.BLACK);
+		plus.setFill(Color.GREEN);
+		stackPane.getChildren().addAll(shape, plus);
+		return stackPane;
 	}
 
 	@Override
@@ -47,8 +55,8 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 	}
 
 	@Override
-	public Circle getVisual() {
-		return (Circle) super.getVisual();
+	public StackPane getVisual() {
+		return (StackPane) super.getVisual();
 	}
 
 }

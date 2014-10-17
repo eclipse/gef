@@ -108,8 +108,14 @@ public class ZestFXExampleApplication extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		viewer.getAdapter(ContentModel.class).setContents(
-				Collections.singletonList(DEFAULT_GRAPH));
+		// set contents in JavaFX thread because it alters the scene graph
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				viewer.getAdapter(ContentModel.class).setContents(
+						Collections.singletonList(DEFAULT_GRAPH));
+			}
+		});
 
 		viewer.getAdapter(ViewportModel.class)
 				.setWidth(primaryStage.getWidth());
