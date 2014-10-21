@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,10 +20,22 @@ import java.util.Map;
 import org.eclipse.gef4.common.activate.IActivatable;
 
 /**
- * Support class to manage adapters for an {@link IAdaptable}. If the
- * {@link IAdaptable} is also {@link IActivatable}, it will ensure adapters are
- * activated/deactivated upon registration dependent on the active state of the
- * adaptable.
+ * Support class to manage adapters for an {@link IAdaptable}.
+ * 
+ * It is expected that the source {@link IAdaptable} holds an instance of this
+ * class as a delegate, forwarding the calls of all {@link IAdaptable}
+ * operations to it.
+ * 
+ * In addition to the source {@link IAdaptable} a {@link PropertyChangeSupport}
+ * is expected during construction. It will be used to fire
+ * {@link PropertyChangeEvent}s whenever an adapter is set (
+ * {@link #setAdapter(AdapterKey, Object)}) or unset (
+ * {@link #unsetAdapter(AdapterKey)}). {@link IAdaptable#ADAPTERS_PROPERTY} will
+ * be used as the property name within all those events.
+ * 
+ * If the {@link IAdaptable} is also {@link IActivatable}, it will ensure
+ * adapters are activated/deactivated upon registration dependent on the active
+ * state of the adaptable.
  * 
  * @author anyssen
  * 
@@ -34,12 +47,24 @@ import org.eclipse.gef4.common.activate.IActivatable;
  */
 public class AdaptableSupport<A extends IAdaptable> {
 
-	private A adaptable;
+	private A source;
 	private PropertyChangeSupport pcs;
 	private Map<AdapterKey<?>, Object> adapters;
 
-	public AdaptableSupport(A adaptable, PropertyChangeSupport pcs) {
-		this.adaptable = adaptable;
+	/**
+	 * Creates a new {@link AdaptableSupport} for the given source
+	 * {@link IAdaptable} and a related {@link PropertyChangeSupport}.
+	 * 
+	 * @param source
+	 *            The {@link IAdaptable} that encloses the to be created
+	 *            {@link AdaptableSupport}, delegating calls to it.
+	 * @param pcs
+	 *            An {@link PropertyChangeSupport}, which will be used to fire
+	 *            {@link PropertyChangeEvent}'s whenever adapters are set or
+	 *            unset.
+	 */
+	public AdaptableSupport(A source, PropertyChangeSupport pcs) {
+		this.source = source;
 		this.pcs = pcs;
 	}
 
@@ -85,8 +110,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
-			Class<? super T> key) {
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> key) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -110,8 +134,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 		// deactivate already registered adapters, if adaptable is IActivatable
 		// and currently active
-		if (adaptable instanceof IActivatable
-				&& ((IActivatable) adaptable).isActive()) {
+		if (source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
 			deactivateAdapters();
 		}
 
@@ -120,13 +144,13 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 		adapters.put(key, adapter);
 		if (adapter instanceof IAdaptable.Bound) {
-			((IAdaptable.Bound<A>) adapter).setAdaptable(adaptable);
+			((IAdaptable.Bound<A>) adapter).setAdaptable(source);
 		}
 
 		// activate all adapters, if adaptable is IActivatable and currently
 		// active
-		if (adaptable instanceof IActivatable
-				&& ((IActivatable) adaptable).isActive()) {
+		if (source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
 			activateAdapters();
 		}
 
@@ -135,9 +159,10 @@ public class AdaptableSupport<A extends IAdaptable> {
 	}
 
 	/**
-	 * Registers the given adapters under the provided keys. Note, that only
-	 * those adapters are registered, for which no key is already existent in
-	 * case <i>overwrite</i> is set to <code>false</code>.
+	 * Registers the given adapters under the provided keys by delegating to
+	 * {@link #setAdapter(AdapterKey, Object)}. Note, that delegation will only
+	 * occur for those adapters, whose key is not already bound to an adapter,
+	 * in case <i>overwrite</i> is set to <code>false</code>.
 	 * 
 	 * @param adaptersWithKeys
 	 *            A map of class keys and related adapters to be added via
@@ -174,8 +199,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 		// deactivate already registered adapters, if adaptable is IActivatable
 		// and currently active
-		if (adaptable instanceof IActivatable
-				&& ((IActivatable) adaptable).isActive()) {
+		if (source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
 			deactivateAdapters();
 		}
 
@@ -191,8 +216,8 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 		// re-activate remaining adapters, if adaptable is IActivatable
 		// and currently active
-		if (adaptable instanceof IActivatable
-				&& ((IActivatable) adaptable).isActive()) {
+		if (source instanceof IActivatable
+				&& ((IActivatable) source).isActive()) {
 			activateAdapters();
 		}
 
