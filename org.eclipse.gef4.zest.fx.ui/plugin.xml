@@ -7,13 +7,5 @@
             id="org.eclipse.gef4.zest"
             name="Visualization">
       </category>
-      <view
-            class="org.eclipse.gef4.zest.fx.ui.view.DotGraphView"
-            id="org.eclipse.gef4.zest.fx.ui.view.DotGraphView"
-            icon="resources/icons/graph.gif"
-            category="org.eclipse.gef4.zest"
-            name="DOT Graph"
-            restorable="true">
-      </view>
    </extension>
 </plugin>

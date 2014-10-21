@@ -10,7 +10,7 @@
  *     Fabian Steeg, hbz - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.zest.fx.ui.view;
+package org.eclipse.gef4.internal.dot.ui;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -38,11 +38,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.dot.DotExport;
 import org.eclipse.gef4.dot.DotImport;
 import org.eclipse.gef4.internal.dot.export.DotFileUtils;
-import org.eclipse.gef4.internal.dot.ui.DotDirStore;
-import org.eclipse.gef4.internal.dot.ui.DotUiActivator;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
-import org.eclipse.gef4.zest.fx.ui.ZestFxUiMessages;
 import org.eclipse.gef4.zest.fx.ui.ZestFxUiModule;
+import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -68,14 +66,15 @@ import com.google.inject.util.Modules;
  * @author Fabian Steeg (fsteeg)
  *
  */
+/* provisional API */@SuppressWarnings("restriction")
 public class DotGraphView extends ZestFxUiView {
 
-	public static final String STYLES_CSS_FILE = DotGraphView.class
+	public static final String STYLES_CSS_FILE = ZestFxUiView.class
 			.getResource("styles.css").toExternalForm(); //$NON-NLS-1$
 	private static final String EXTENSION = "dot"; //$NON-NLS-1$
-	private static final String LOAD_DOT_FILE = ZestFxUiMessages.DotGraphView_0;
-	private static final String SYNC_EXPORT_PDF = ZestFxUiMessages.DotGraphView_1;
-	private static final String SYNC_IMPORT_DOT = ZestFxUiMessages.DotGraphView_2;
+	private static final String LOAD_DOT_FILE = DotUiMessages.DotGraphView_0;
+	private static final String SYNC_EXPORT_PDF = DotUiMessages.DotGraphView_1;
+	private static final String SYNC_IMPORT_DOT = DotUiMessages.DotGraphView_2;
 	private static final String FORMAT_PDF = "pdf"; //$NON-NLS-1$
 	private boolean listenToDotContent = false;
 	private boolean linkImage = false;
@@ -84,8 +83,8 @@ public class DotGraphView extends ZestFxUiView {
 	private ExportToggle exportAction;
 
 	public DotGraphView() {
-		super(Guice.createInjector(Modules.override(new ZestFxModule())//
-				.with(new ZestFxUiModule())));
+		super(Guice.createInjector(Modules.override(new ZestFxUiModule())//
+				.with(new ZestFxModule())));
 		setGraph(new DotImport(currentDot).newGraphInstance());
 	}
 

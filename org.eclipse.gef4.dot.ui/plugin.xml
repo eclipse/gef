@@ -179,4 +179,17 @@
             class="org.eclipse.gef4.internal.dot.parser.ui.DotExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator">
       </markerResolutionGenerator>
    </extension>
+   <!-- DOT view -->
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.gef4.internal.dot.ui.DotGraphView"
+            id="org.eclipse.gef4.dot.view"
+            icon="resources/icons/graph.gif"
+            category="org.eclipse.gef4.zest"
+            name="DOT Graph"
+            restorable="true">
+      </view>
+   </extension>
+   
 </plugin>

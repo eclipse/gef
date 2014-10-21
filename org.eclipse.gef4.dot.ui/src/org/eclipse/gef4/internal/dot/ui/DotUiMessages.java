@@ -17,6 +17,9 @@ public class DotUiMessages extends NLS {
 	public static String DotDirStore_1;
 	public static String DotDirStore_2;
 	public static String DotDirStore_3;
+	public static String DotGraphView_0;
+	public static String DotGraphView_1;
+	public static String DotGraphView_2;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, DotUiMessages.class);
