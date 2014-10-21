@@ -122,7 +122,7 @@ public class DotGraphView extends ZestFxUiView {
 								.getDefault()
 								.getLog()
 								.log(new Status(Status.ERROR,
-										"org.eclipse.gef4.zest.fx.ui", message)); //$NON-NLS-1$
+										DotUiActivator.PLUGIN_ID, message));
 						return;
 					}
 					setGraph(dotImport.newGraphInstance());
