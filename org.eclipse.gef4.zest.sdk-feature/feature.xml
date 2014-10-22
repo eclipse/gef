@@ -46,7 +46,6 @@
 
    <requires>
       <import feature="org.eclipse.gef4.common.sdk" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.gef4.dot.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.fx.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.geometry.sdk" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.mvc.sdk" version="0.1.0.qualifier"/>
