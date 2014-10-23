@@ -76,10 +76,25 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 		return getHost().getRoot().getViewer().getDomain().getAdapter(key);
 	}
 
+	/**
+	 * Called when the GLC changes.
+	 *
+	 * @param glc
+	 */
 	protected abstract void initializeLayout(GraphLayoutContext glc);
 
+	/**
+	 * Called when the visual bounds of the host visual (e.g. a node) are
+	 * changed.
+	 *
+	 * @param oldBounds
+	 * @param newBounds
+	 */
 	protected abstract void onBoundsChange(Bounds oldBounds, Bounds newBounds);
 
+	/**
+	 * Called after a layout pass.
+	 */
 	protected abstract void onFlushChanges();
 
 	protected void onLayoutContextChange(GraphLayoutContext oldGlc,

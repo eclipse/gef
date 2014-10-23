@@ -65,6 +65,7 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 				visual.getLayoutY());
 		PropertiesHelper.setSize(nodeLayout, layoutBounds.getWidth(),
 				layoutBounds.getHeight());
+		nodeLayout.setProperty("pruned", !visual.isVisible());
 	}
 
 }

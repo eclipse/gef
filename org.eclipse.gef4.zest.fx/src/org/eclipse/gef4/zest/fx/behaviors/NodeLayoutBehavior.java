@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.behaviors;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
@@ -25,8 +27,29 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	public static Class<NodeLayoutPolicy> LAYOUT_POLICY_KEY = NodeLayoutPolicy.class;
 
 	protected GraphNodeLayout nodeLayout;
+	private ChangeListener<Boolean> visibilityChangeListener = new ChangeListener<Boolean>() {
+		@Override
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
+			onVisibilityChanged(oldValue, newValue);
+		}
+	};
 
 	public NodeLayoutBehavior() {
+	}
+
+	@Override
+	public void activate() {
+		super.activate();
+		getHost().getVisual().visibleProperty()
+				.addListener(visibilityChangeListener);
+	}
+
+	@Override
+	public void deactivate() {
+		super.deactivate();
+		getHost().getVisual().visibleProperty()
+				.removeListener(visibilityChangeListener);
 	}
 
 	@Override
@@ -56,6 +79,13 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(
 					nodeLayout);
 			getHost().refreshVisual();
+		}
+	}
+
+	protected void onVisibilityChanged(Boolean oldValue, Boolean newValue) {
+		if (nodeLayout != null) {
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
+					nodeLayout);
 		}
 	}
 
