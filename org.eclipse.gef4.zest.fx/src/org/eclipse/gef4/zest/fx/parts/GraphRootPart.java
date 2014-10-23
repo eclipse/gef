@@ -21,6 +21,7 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.GridModel;
@@ -37,20 +38,45 @@ public class GraphRootPart extends FXRootPart {
 
 	private LayoutAlgorithm layoutAlgorithm = DEFAULT_LAYOUT_ALGORITHM;
 
+	private PropertyChangeListener pruningChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if ("pruned".equals(evt.getPropertyName())) {
+				GraphLayoutContext context = getLayoutContext();
+				if (context != null) {
+					applyLayout(context);
+				}
+			}
+		}
+	};
+
 	private PropertyChangeListener contentChanged = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (ContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
+				// create GLC from content
 				Object content = evt.getNewValue();
 				final GraphLayoutContext context = createLayoutContext(content);
+
+				// get layout model
+				ILayoutModel layoutModel = getViewer().getDomain().getAdapter(
+						ILayoutModel.class);
+
+				// remove pruning listener from old context
+				LayoutContext oldContext = layoutModel.getLayoutContext();
+				if (oldContext instanceof GraphLayoutContext) {
+					((GraphLayoutContext) oldContext)
+							.removePropertyChangeListener(pruningChangeListener);
+				}
+				// add pruning listener to new context
+				context.addPropertyChangeListener(pruningChangeListener);
 
 				// set layout algorithm
 				context.setStaticLayoutAlgorithm(layoutAlgorithm);
 
 				// set layout context. other parts listen for the layout model
 				// to send in their layout data
-				getViewer().getDomain().getAdapter(ILayoutModel.class)
-						.setLayoutContext(context);
+				layoutModel.setLayoutContext(context);
 				applyLayout(context);
 			}
 		}
