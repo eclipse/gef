@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -130,7 +131,7 @@ public class GraphNodeLayout implements NodeLayout {
 	@Override
 	public void setProperty(String name, Object value) {
 		// TODO: remove NaN check here and ensure NaN is not passed in
-		if ("location".equals(name)) {
+		if (IProperties.LOCATION_PROPERTY.equals(name)) {
 			if (value instanceof Point) {
 				Point p = (Point) value;
 				if (Double.isNaN(p.x)) {
@@ -142,6 +143,14 @@ public class GraphNodeLayout implements NodeLayout {
 			}
 		}
 		ps.setProperty(name, value);
+		// send notification
+		if (IProperties.LOCATION_PROPERTY.equals(name)) {
+			context.fireNodeMovedEvent(this);
+		} else if (IProperties.SIZE_PROPERTY.equals(name)) {
+			context.fireNodeResizedEvent(this);
+		} else if ("pruned".equals(name)) {
+			context.firePruningChanged(this);
+		}
 	}
 
 }

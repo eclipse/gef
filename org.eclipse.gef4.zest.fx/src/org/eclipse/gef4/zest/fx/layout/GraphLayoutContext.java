@@ -12,20 +12,25 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
+import org.eclipse.gef4.layout.IProperties;
 import org.eclipse.gef4.layout.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
-public class GraphLayoutContext extends AbstractLayoutContext {
+public class GraphLayoutContext extends AbstractLayoutContext implements
+		IPropertyChangeNotifier {
 
 	private Graph g;
 	private final Map<Node, GraphNodeLayout> nodeMap = new HashMap<Node, GraphNodeLayout>();
@@ -35,7 +40,8 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	// something when layouting finishes
 	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
 
-	private PropertyStoreSupport pss = new PropertyStoreSupport();
+	protected PropertyStoreSupport pss = new PropertyStoreSupport();
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
@@ -46,6 +52,11 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 			throw new IllegalArgumentException("Runnable may not be null.");
 		}
 		onFlushChanges.add(runnable);
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -62,14 +73,27 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		}
 	}
 
+	public void firePruningChanged(GraphNodeLayout node) {
+		pcs.firePropertyChange("pruned", 0, 1);
+	}
+
 	public GraphEdgeLayout getEdgeLayout(Edge edge) {
 		return edgeMap.get(edge);
 	}
 
 	@Override
 	public EntityLayout[] getEntities() {
-		// TODO: subgraphs
-		return getNodes();
+		List<EntityLayout> entities = new ArrayList<EntityLayout>();
+		NodeLayout[] nodes = getNodes();
+		for (NodeLayout n : nodes) {
+			Object pruned = n.getProperty("pruned");
+			// TODO: add 'pruned' property to layout model
+			if (pruned instanceof Boolean && (Boolean) pruned) {
+				continue;
+			}
+			entities.add(n);
+		}
+		return entities.toArray(new EntityLayout[] {});
 	}
 
 	public Graph getGraph() {
@@ -94,6 +118,11 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 		onFlushChanges.remove(runnable);
 	}
 
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
 	public void setGraph(Graph graph) {
 		this.g = graph;
 		transferNodes();
@@ -103,6 +132,14 @@ public class GraphLayoutContext extends AbstractLayoutContext {
 	@Override
 	public void setProperty(String name, Object value) {
 		pss.setProperty(name, value);
+		// send notification
+		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+			fireBoundsChangedEvent();
+		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+			fireBackgroundEnableChangedEvent();
+		} else if (IProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
+			firePruningEnableChangedEvent();
+		}
 	}
 
 	private void transferEdges() {
