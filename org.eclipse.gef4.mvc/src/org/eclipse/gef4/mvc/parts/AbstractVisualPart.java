@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.editparts.AbstractEditPart and org.eclipse.gef.editparts.AbstractGraphicalEditPart.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -37,9 +37,9 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -69,7 +69,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * {@link #doActivate()}, {@link #isActive()} will thus already return
 	 * <code>true</code>. If the {@link IVisualPart} is already active, this
 	 * operation will be a no-op.
-	 * 
+	 *
 	 * @see #deactivate()
 	 * @see #isActive()
 	 */
@@ -121,6 +121,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void addAnchored(IVisualPart<VR> anchored) {
+		// copy anchoreds (required for the change notification)
+		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
+				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
+
 		if (anchoreds == null) {
 			anchoreds = HashMultiset.create();
 		}
@@ -131,6 +135,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (parent == null && anchoreds.size() == 1) {
 			register();
 		}
+
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds, getAnchoreds());
 	}
 
 	@Override
@@ -173,7 +179,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	/**
 	 * Performs the addition of the child's <i>visual</i> to this
 	 * {@link IVisualPart}'s visual.
-	 * 
+	 *
 	 * @param child
 	 *            The {@link IVisualPart} being added
 	 * @param index
@@ -203,7 +209,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * active state afterwards. During the call to {@link #doDeactivate()},
 	 * {@link #isActive()} will thus still return <code>true</code>. If the
 	 * {@link IVisualPart} is not active, this operation will be a no-op.
-	 * 
+	 *
 	 * @see #activate()
 	 * @see #isActive()
 	 */
@@ -405,6 +411,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	@Override
 	public void removeAnchored(IVisualPart<VR> anchored) {
+		// copy anchoreds (required for the change notification)
+		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
+				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
+
 		// if we loose the link to the viewer via the anchored, unregister
 		if (parent == null && anchoreds.size() == 1) {
 			unregister();
@@ -414,6 +424,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		if (anchoreds.size() == 0) {
 			anchoreds = null;
 		}
+
+		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds, getAnchoreds());
 	}
 
 	@Override
@@ -443,7 +455,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 	/**
 	 * Removes the child's visual from this {@link IVisualPart}'s visual.
-	 * 
+	 *
 	 * @param child
 	 *            The child {@link IVisualPart}.
 	 * @param index
@@ -466,7 +478,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	/**
 	 * Moves a child {@link IVisualPart} into a lower index than it currently
 	 * occupies.
-	 * 
+	 *
 	 * @param child
 	 *            the child {@link IVisualPart} being reordered
 	 * @param index
