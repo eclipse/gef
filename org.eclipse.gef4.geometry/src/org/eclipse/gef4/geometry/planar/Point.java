@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2012 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Nyßen (itemis AG) - migration do double precision
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -29,18 +29,16 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
  * Represents a point (x, y) in 2-dimensional space. This class provides various
  * methods for manipulating this point or creating new derived geometrical
  * objects.
- * 
+ *
  * @author ebordeau
  * @author rhudson
  * @author pshah
  * @author ahunter
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class Point implements Cloneable, Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	private static Point[] eliminateDuplicates(Point... points) {
 		// sort points by x and y
@@ -72,7 +70,7 @@ public class Point implements Cloneable, Serializable {
 	 * Returns the smallest {@link Rectangle} that encloses all {@link Point}s
 	 * in the given sequence. Note that the right and bottom borders of a
 	 * {@link Rectangle} are regarded as being part of the {@link Rectangle}.
-	 * 
+	 *
 	 * @param points
 	 *            a sequence of {@link Point}s which should all be contained in
 	 *            the to be computed {@link Rectangle}
@@ -101,7 +99,7 @@ public class Point implements Cloneable, Serializable {
 	 * {@link Point}s is made of a material of constant density, it will be in a
 	 * balanced state, if you put it on a pin that is placed exactly on its
 	 * centroid.
-	 * 
+	 *
 	 * @param points
 	 * @return the center {@link Point} (or centroid) of the given {@link Point}
 	 *         s
@@ -134,7 +132,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Computes the convex hull of the given set of {@link Point}s using the
 	 * Graham scan algorithm.
-	 * 
+	 *
 	 * @param points
 	 *            the set of {@link Point}s to calculate the convex hull for
 	 * @return the convex hull of the given set of {@link Point}s
@@ -146,7 +144,7 @@ public class Point implements Cloneable, Serializable {
 			return Point.getCopy(points);
 		}
 
-		// Remove duplicate points from the given point list in orde to be able
+		// Remove duplicate points from the given point list in order to be able
 		// to apply the Graham scan.
 		points = eliminateDuplicates(points);
 
@@ -173,7 +171,10 @@ public class Point implements Cloneable, Serializable {
 			@Override
 			public int compare(Point p1, Point p2) {
 				double d = Straight.getSignedDistanceCCW(p0, p1, p2);
-				return d == 0 ? 0 : d < 0 ? -1 : 1;
+				if (PrecisionUtils.equal(d, 0)) {
+					return 0;
+				}
+				return d < 0 ? -1 : 1;
 			}
 		});
 
@@ -199,7 +200,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Copies an array of points, by copying each point contained in the array.
-	 * 
+	 *
 	 * @param points
 	 *            the array of {@link Point}s to copy
 	 * @return a new array, which contains copies of the given {@link Point}s at
@@ -216,7 +217,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Returns a copy of the given array of points, where the points are placed
 	 * in reversed order.
-	 * 
+	 *
 	 * @param points
 	 *            the array of {@link Point}s to reverse
 	 * @return a new array, which contains a copy of each {@link Point} of the
@@ -232,7 +233,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a new Point representing the MAX of two provided Points.
-	 * 
+	 *
 	 * @param p1
 	 *            first point
 	 * @param p2
@@ -245,7 +246,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a new Point representing the MIN of two provided Points.
-	 * 
+	 *
 	 * @param p1
 	 *            first point
 	 * @param p2
@@ -259,7 +260,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Rotates (in-place) the given {@link Point}s counter-clock-wise (CCW) by
 	 * the specified {@link Angle} around the given center {@link Point}.
-	 * 
+	 *
 	 * @param points
 	 * @param angle
 	 * @param cx
@@ -279,7 +280,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Rotates (in-place) the given {@link Point}s clock-wise (CW) by the
 	 * specified {@link Angle} around the given center {@link Point}.
-	 * 
+	 *
 	 * @param points
 	 * @param angle
 	 * @param cx
@@ -299,7 +300,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Scales the given array of {@link Point}s by the given x and y scale
 	 * factors around the given center {@link Point} (cx, cy).
-	 * 
+	 *
 	 * @param points
 	 * @param fx
 	 * @param fy
@@ -318,7 +319,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Translates an array of {@link Point}s by translating each individual
 	 * point by a given x and y offset.
-	 * 
+	 *
 	 * @param points
 	 *            an array of points to translate
 	 * @param dx
@@ -333,6 +334,8 @@ public class Point implements Cloneable, Serializable {
 		}
 	}
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The x value.
 	 */
@@ -345,14 +348,14 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Constructs a Point at location (0,0).
-	 * 
+	 *
 	 */
 	public Point() {
 	}
 
 	/**
 	 * Constructs a Point at the specified x and y locations.
-	 * 
+	 *
 	 * @param x
 	 *            x value
 	 * @param y
@@ -365,7 +368,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Constructs a Point at the same location as the given Point.
-	 * 
+	 *
 	 * @param p
 	 *            Point from which the initial values are taken.
 	 */
@@ -385,7 +388,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Returns <code>true</code> if this Points x and y are equal to the given x
 	 * and y.
-	 * 
+	 *
 	 * @param x
 	 *            the x value
 	 * @param y
@@ -400,7 +403,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Test for equality.
-	 * 
+	 *
 	 * @param o
 	 *            Object being tested for equality
 	 * @return true if both x and y values are equal
@@ -423,7 +426,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Calculates the distance from this Point to the one specified.
-	 * 
+	 *
 	 * @param p
 	 *            The Point being compared to this
 	 * @return The distance
@@ -436,7 +439,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a Point with negated x and y values.
-	 * 
+	 *
 	 * @return A new Point
 	 */
 	public Point getNegated() {
@@ -445,7 +448,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a new Point from this Point by scaling by the specified amount.
-	 * 
+	 *
 	 * @param factor
 	 *            scale factor
 	 * @return A new Point
@@ -456,7 +459,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a new Point from this Point by scaling by the specified values.
-	 * 
+	 *
 	 * @param xFactor
 	 *            horizontal scale factor
 	 * @param yFactor
@@ -470,7 +473,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Returns a new {@link Point} scaled by the given scale-factors. The
 	 * scaling is performed relative to the given {@link Point} center.
-	 * 
+	 *
 	 * @param factorX
 	 *            The horizontal scale-factor
 	 * @param factorY
@@ -486,7 +489,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Creates a new Point which is translated by the values of the input
 	 * Dimension.
-	 * 
+	 *
 	 * @param d
 	 *            Dimension which provides the translation amounts.
 	 * @return A new Point
@@ -497,7 +500,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Creates a new Point which is translated by the specified x and y values
-	 * 
+	 *
 	 * @param x
 	 *            horizontal component
 	 * @param y
@@ -511,7 +514,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Creates a new Point which is translated by the values of the provided
 	 * Point.
-	 * 
+	 *
 	 * @param p
 	 *            Point which provides the translation amounts.
 	 * @return A new Point
@@ -523,7 +526,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Creates a new Point with the transposed values of this Point. Can be
 	 * useful in orientation change calculations.
-	 * 
+	 *
 	 * @return A new Point
 	 */
 	public Point getTransposed() {
@@ -542,7 +545,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Negates the x and y values of this Point.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public Point negate() {
@@ -552,7 +555,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Scales this Point by the specified amount.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 * @param factor
 	 *            scale factor
@@ -563,7 +566,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Scales this Point by the specified values.
-	 * 
+	 *
 	 * @param xFactor
 	 *            horizontal scale factor
 	 * @param yFactor
@@ -579,7 +582,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Scales this {@link Point} by the given scale-factors. The scaling is
 	 * performed relative to the given {@link Point} center.
-	 * 
+	 *
 	 * @param factorX
 	 *            The horizontal scale-factor
 	 * @param factorY
@@ -597,7 +600,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Sets the location of this Point to the provided x and y locations.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 * @param x
 	 *            the x location
@@ -612,7 +615,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Sets the location of this Point to the specified Point.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 * @param p
 	 *            the Location
@@ -625,7 +628,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Sets the x value of this Point to the given value.
-	 * 
+	 *
 	 * @param x
 	 *            The new x value
 	 * @return this for convenience
@@ -637,7 +640,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Sets the y value of this Point to the given value;
-	 * 
+	 *
 	 * @param y
 	 *            The new y value
 	 * @return this for convenience
@@ -658,7 +661,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Shifts this Point by the values of the Dimension along each axis, and
 	 * returns this for convenience.
-	 * 
+	 *
 	 * @param d
 	 *            Dimension by which the origin is being shifted.
 	 * @return <code>this</code> for convenience
@@ -670,7 +673,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Shifts this Point by the values supplied along each axes, and returns
 	 * this for convenience.
-	 * 
+	 *
 	 * @param dx
 	 *            Amount by which point is shifted along X axis.
 	 * @param dy
@@ -686,7 +689,7 @@ public class Point implements Cloneable, Serializable {
 	/**
 	 * Shifts the location of this Point by the location of the input Point
 	 * along each of the axes, and returns this for convenience.
-	 * 
+	 *
 	 * @param p
 	 *            Point to which the origin is being shifted.
 	 * @return <code>this</code> for convenience
@@ -697,7 +700,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Transposes this object. X and Y values are exchanged.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public Point transpose() {
@@ -709,7 +712,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Returns the x value of this Point.
-	 * 
+	 *
 	 * @return The current x value
 	 */
 	public double x() {
@@ -718,7 +721,7 @@ public class Point implements Cloneable, Serializable {
 
 	/**
 	 * Returns the y value of this Point.
-	 * 
+	 *
 	 * @return The current y value
 	 */
 	public double y() {

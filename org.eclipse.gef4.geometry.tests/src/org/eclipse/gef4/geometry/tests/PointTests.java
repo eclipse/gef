@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2010, 2012 IBM Corporation and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthias Wienand (itemis AG) - contribution for Bugzilla #355997
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.tests;
 
@@ -29,10 +29,10 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link Point}.
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class PointTests {
 
@@ -96,6 +96,47 @@ public class PointTests {
 	}
 
 	@Test
+	public void test_getConvexHull_448546() {
+		// bugzilla #448546
+		Point[] points = PointListUtils.toPointsArray(new double[] {
+				-22.27172999999999, 100.0, -22.27172999999999,
+				129.33333333333334, 222.27173, 100.0, 222.27173,
+				129.33333333333334, 224.27173, 100.0, 224.27173,
+				129.33333333333334, 468.81519, 100.0, 468.81519,
+				129.33333333333334, 505.81519000000003, 100.0,
+				505.81519000000003, 129.33333333333334, 592.66301, 100.0,
+				592.66301, 129.33333333333334, 594.66301, 100.0, 594.66301,
+				129.33333333333334, 681.5108299999999, 100.0,
+				681.5108299999999, 129.33333333333334, 470.81519, 100.0,
+				470.81519, 150.0, 503.81519, 100.0, 503.81519, 150.0,
+				683.5108299999999, 100.0, 683.5108299999999,
+				129.33333333333334, 927.7896999999999, 100.0,
+				927.7896999999999, 129.33333333333334, 929.7896999999999,
+				100.0, 929.7896999999999, 129.33333333333334,
+				1095.3089466666665, 100.0, 1095.3089466666665,
+				129.33333333333334, 1167.3089466666665, 100.0,
+				1167.3089466666665, 129.33333333333334, 1254.06857, 100.0,
+				1254.06857, 129.33333333333334, 1256.06857, 100.0, 1256.06857,
+				129.33333333333334, 1342.8281933333333, 100.0,
+				1342.8281933333333, 129.33333333333334, 1097.3089466666665,
+				100.0, 1097.3089466666665, 150.0, 1130.3089466666665, 100.0,
+				1130.3089466666665, 150.0, 1132.3089466666665, 100.0,
+				1132.3089466666665, 150.0, 1165.3089466666665, 100.0,
+				1165.3089466666665, 150.0 });
+
+		// check that no exception is thrown
+		boolean thrown = false;
+		try {
+			// TODO: verify result is correct
+			Point.getConvexHull(points);
+		} catch (Exception x) {
+			thrown = true;
+		}
+
+		assertEquals(false, thrown);
+	}
+
+	@Test
 	public void test_getConvexHull1() {
 		// test case from
 		// http://stackoverflow.com/questions/482278/test-case-data-for-convex-hull
@@ -149,7 +190,7 @@ public class PointTests {
 				new Polygon(PointListUtils.toPointsArray(new double[] { 0, 75,
 						0.3333333333333333, 0.9411910020934172,
 						0.6666666666666666, -60, 1, -60 })), new Polygon(
-						convexHull));
+								convexHull));
 	}
 
 	@Test
