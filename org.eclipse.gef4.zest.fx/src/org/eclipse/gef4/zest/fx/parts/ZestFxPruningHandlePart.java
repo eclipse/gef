@@ -12,14 +12,18 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
+import javafx.util.Duration;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -34,40 +38,55 @@ import com.google.inject.Provider;
 
 public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 
-	private Circle shape;
-	private Polygon icon;
+	public static final String IMG_PRUNE = "/res/collapseall.png";
+	public static final String IMG_PRUNE_DISABLED = "/res/collapseall_disabled.png";
+
+	private boolean isVisible = false;
 
 	public ZestFxPruningHandlePart(
 			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
+		// FIXME: hover hierarchy
 		setAdapter(AdapterKey.get(HoverPolicy.class),
 				new HoverFirstAnchoragePolicy());
 	}
 
-	protected Polygon createIcon(double size, double width) {
-		// minus shape
-		Polygon icon = new Polygon(-size, -width, -size, width, size, width,
-				size, -width);
-		icon.setStroke(Color.TRANSPARENT);
-		icon.setFill(Color.RED);
-		return icon;
+	@Override
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
+		if (!(anchorage instanceof NodeContentPart)) {
+			throw new IllegalArgumentException("Anchorage not applicable <"
+					+ anchorage + ">. Can only attach to NodeContentPart.");
+		}
+		super.attachToAnchorageVisual(anchorage, role);
 	}
 
 	@Override
-	protected StackPane createVisual() {
-		StackPane stackPane = new StackPane();
-		stackPane.setTranslateX(-6);
-		stackPane.setTranslateY(-6);
-		stackPane.setPickOnBounds(false);
-		icon = createIcon(4, 1);
-		shape = new Circle(6);
-		shape.setStroke(Color.BLACK);
-		shape.setFill(Color.WHITE);
-		stackPane.getChildren().addAll(shape, icon);
+	protected Node createVisual() {
+		// get image and hover image
+		final Image hoverImage = getHoverImage();
+		final Image image = getImage();
+
+		// create ImageView for both
+		final ImageView imageView = new ImageView(image);
+		final ImageView hoverImageView = new ImageView(hoverImage);
+
+		// set translation to center
+		imageView.setTranslateX(-image.getWidth() / 2);
+		imageView.setTranslateY(-image.getHeight() / 2);
+		hoverImageView.setTranslateX(-hoverImage.getWidth() / 2);
+		hoverImageView.setTranslateY(-hoverImage.getHeight() / 2);
+
+		// create group to blend images
+		final Group blendGroup = new Group(imageView, hoverImageView);
+		blendGroup.setBlendMode(BlendMode.SRC_OVER);
+
+		// set starting opacity of the hover image to 0
+		hoverImageView.setOpacity(0);
 
 		// register click action
-		stackPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		blendGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				onClicked(event);
@@ -75,33 +94,53 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		});
 
 		// TODO: allow hierarchical hover
-		stackPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
+		// TODO: extract magic numbers to properties
+
+		// register hover effect
+		blendGroup.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				DropShadow effect = new DropShadow();
-				effect.setRadius(5);
-				shape.setEffect(effect);
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						imageView.opacityProperty(), 0), new KeyValue(
+						hoverImageView.opacityProperty(), 1))).play();
 			}
 		});
-		stackPane.setOnMouseExited(new EventHandler<MouseEvent>() {
+		blendGroup.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				shape.setEffect(null);
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						imageView.opacityProperty(), 1), new KeyValue(
+						hoverImageView.opacityProperty(), 0))).play();
 			}
 		});
 
-		return stackPane;
+		return blendGroup;
 	}
 
 	@Override
 	public void doRefreshVisual() {
-		// TODO: animate visibility by fading in/out
+		boolean wasVisible = isVisible;
 		super.doRefreshVisual();
+		isVisible = getVisual().isVisible();
+		DoubleProperty opacityProperty = getVisual().opacityProperty();
+		// TODO: extract magic numbers to properties
+		if (!wasVisible && isVisible) {
+			opacityProperty.set(0);
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 1))).play();
+		} else if (wasVisible && !isVisible) {
+			opacityProperty.set(1);
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 0))).play();
+		}
 	}
 
-	@Override
-	public StackPane getVisual() {
-		return (StackPane) super.getVisual();
+	protected Image getHoverImage() {
+		return new Image(IMG_PRUNE);
+	}
+
+	protected Image getImage() {
+		return new Image(IMG_PRUNE_DISABLED);
 	}
 
 	protected void onClicked(MouseEvent event) {
@@ -113,20 +152,6 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		PruneNodePolicy pruneNodePolicy = anchorage
 				.getAdapter(PruneNodePolicy.class);
 		pruneNodePolicy.prune();
-	}
-
-	@Override
-	protected void registerAtVisualPartMap() {
-		super.registerAtVisualPartMap();
-		getViewer().getVisualPartMap().put(shape, this);
-		getViewer().getVisualPartMap().put(icon, this);
-	}
-
-	@Override
-	protected void unregisterFromVisualPartMap() {
-		super.unregisterFromVisualPartMap();
-		getViewer().getVisualPartMap().remove(shape);
-		getViewer().getVisualPartMap().remove(icon);
 	}
 
 }

@@ -3,9 +3,8 @@ package org.eclipse.gef4.zest.fx.parts;
 import java.util.Set;
 
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -17,6 +16,9 @@ import com.google.inject.Provider;
 
 public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 
+	public static final String IMG_EXPAND = "/res/expandall.gif";
+	public static final String IMG_EXPAND_DISABLED = "/res/expandall_disabled.gif";
+
 	public ZestFxExpandingHandlePart(
 			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
@@ -24,47 +26,13 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		if (!(anchorage instanceof NodeContentPart)) {
-			throw new IllegalArgumentException("Anchorage not applicable <"
-					+ anchorage + ">. Can only attach to NodeContentPart.");
-		}
-		super.attachToAnchorageVisual(anchorage, role);
+	protected Image getHoverImage() {
+		return new Image(IMG_EXPAND);
 	}
 
-	/**
-	 * Creates a "plus" shaped polygon with the given size (s) and width (w).
-	 * The coordinates of the polygon are as follows:
-	 *
-	 * <pre>
-	 *    (-w, -s) X-X (w, -s)
-	 *             | |
-	 *    (-w, -w) | | (w, -w)
-	 * (-s, -w) X--X X--X (s, -w)
-	 *          |       |
-	 *  (-s, w) X--X X--X (s, w)
-	 *     (-w, w) | | (w, w)
-	 *             | |
-	 *     (-w, s) X-X (w, s)
-	 * </pre>
-	 *
-	 * Therefore, the polygon will have a width and height of
-	 * <code>2 * size</code>.
-	 *
-	 * @param size
-	 * @param width
-	 * @return
-	 */
 	@Override
-	protected Polygon createIcon(double size, double width) {
-		Polygon icon = new Polygon(-size, -width, -size, width, -width, width,
-				-width, size, width, size, width, width, size, width, size,
-				-width, width, -width, width, -size, -width, -size, -width,
-				-width);
-		icon.setStroke(Color.TRANSPARENT);
-		icon.setFill(Color.GREEN);
-		return icon;
+	protected Image getImage() {
+		return new Image(IMG_EXPAND_DISABLED);
 	}
 
 	@Override
