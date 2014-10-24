@@ -62,11 +62,12 @@ public class FXGeometryNode<T extends IGeometry> extends Path {
 		 * the offset between geometric bounds and layout bounds, we set the
 		 * geometric bounds to the resize width and height and tweak the layout
 		 * bounds here to match the geometric bounds.
-		 * 
+		 *
 		 * TODO: Re-implement this fix by only using public API, for example, a
 		 * Group can be used as the super class. (Bug #443954)
 		 */
-		return Geometry2JavaFX.toFXBounds(geometry.getBounds());
+		return Geometry2JavaFX.toFXBounds(geometry == null ? new Rectangle()
+				: geometry.getBounds());
 	}
 
 	@Override
