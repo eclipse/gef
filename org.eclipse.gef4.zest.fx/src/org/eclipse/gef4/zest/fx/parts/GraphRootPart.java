@@ -20,7 +20,7 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.PropertiesHelper;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.ContentModel;
@@ -34,7 +34,7 @@ public class GraphRootPart extends FXRootPart {
 	public static final String STYLES_CSS_FILE = GraphRootPart.class
 			.getResource("styles.css").toExternalForm();
 
-	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SpringLayoutAlgorithm();
+	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SugiyamaLayoutAlgorithm();
 
 	private LayoutAlgorithm layoutAlgorithm = DEFAULT_LAYOUT_ALGORITHM;
 

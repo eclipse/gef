@@ -21,6 +21,8 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.PropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 public class NodeLayoutPolicy extends AbstractPolicy<Node> {
@@ -44,8 +46,10 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			Point location = PropertiesHelper.getLocation(nodeLayout);
 			Dimension size = PropertiesHelper.getSize(nodeLayout);
 
-			double dx = location.x - x;
-			double dy = location.y - y;
+			// location is the center of the node, therefore we subtract half
+			// width/height from it
+			double dx = location.x - size.width / 2 - x;
+			double dy = location.y - size.height / 2 - y;
 			double dw = size.width - w;
 			double dh = size.height - h;
 
@@ -60,11 +64,29 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 
 	public void provideLayoutInformation(NodeLayout nodeLayout) {
 		Node visual = getHost().getVisual();
-		Bounds layoutBounds = visual.getLayoutBounds();
-		PropertiesHelper.setLocation(nodeLayout, visual.getLayoutX(),
-				visual.getLayoutY());
-		PropertiesHelper.setSize(nodeLayout, layoutBounds.getWidth(),
-				layoutBounds.getHeight());
+		Bounds hostBounds = visual.getLayoutBounds();
+		double minx = hostBounds.getMinX();
+		double miny = hostBounds.getMinY();
+		double maxx = hostBounds.getMaxX();
+		double maxy = hostBounds.getMaxY();
+		// union node bounds with bounds of feedback visuals
+		for (IVisualPart<Node> anchored : getHost().getAnchoreds()) {
+			if (!(anchored instanceof IFeedbackPart)) {
+				continue;
+			}
+			Node anchoredVisual = anchored.getVisual();
+			Bounds anchoredBounds = anchoredVisual.getLayoutBounds();
+			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual
+					.localToScene(anchoredBounds));
+			minx = Math.min(minx, anchoredBoundsInHost.getMinX());
+			miny = Math.min(miny, anchoredBoundsInHost.getMinY());
+			maxx = Math.max(maxx, anchoredBoundsInHost.getMaxX());
+			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
+		}
+
+		PropertiesHelper.setLocation(nodeLayout, visual.getLayoutX() + minx,
+				visual.getLayoutY() + miny);
+		PropertiesHelper.setSize(nodeLayout, maxx - minx, maxy - miny);
 		nodeLayout.setProperty("pruned", !visual.isVisible());
 	}
 

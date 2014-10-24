@@ -83,17 +83,7 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 
 	@Override
 	public EntityLayout[] getEntities() {
-		List<EntityLayout> entities = new ArrayList<EntityLayout>();
-		NodeLayout[] nodes = getNodes();
-		for (NodeLayout n : nodes) {
-			Object pruned = n.getProperty("pruned");
-			// TODO: add 'pruned' property to layout model
-			if (pruned instanceof Boolean && (Boolean) pruned) {
-				continue;
-			}
-			entities.add(n);
-		}
-		return entities.toArray(new EntityLayout[] {});
+		return getNodes();
 	}
 
 	public Graph getGraph() {
@@ -102,6 +92,21 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 
 	public GraphNodeLayout getNodeLayout(Node node) {
 		return nodeMap.get(node);
+	}
+
+	@Override
+	public NodeLayout[] getNodes() {
+		List<NodeLayout> nodes = new ArrayList<NodeLayout>();
+		NodeLayout[] allNodes = super.getNodes();
+		for (NodeLayout n : allNodes) {
+			Object pruned = n.getProperty("pruned");
+			// TODO: add 'pruned' property to layout model
+			if (pruned instanceof Boolean && (Boolean) pruned) {
+				continue;
+			}
+			nodes.add(n);
+		}
+		return nodes.toArray(new NodeLayout[] {});
 	}
 
 	@Override
