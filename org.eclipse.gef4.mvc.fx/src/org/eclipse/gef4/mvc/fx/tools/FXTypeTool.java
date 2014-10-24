@@ -74,10 +74,12 @@ public class FXTypeTool extends AbstractTool<Node> {
 					IVisualPart<Node> part = viewer
 							.<FocusModel<Node>> getAdapter(FocusModel.class)
 							.getFocused();
-					if (part != null) {
+					if (part == null) {
+						targetPart = viewer.getRootPart();
+					} else {
 						targetPart = part;
-						break;
 					}
+					break;
 				}
 			}
 		}
@@ -93,9 +95,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			viewer.getRootPart().getVisual().getScene()
-			.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
+					.addEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			viewer.getRootPart().getVisual().getScene()
-			.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+					.addEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
 		}
 	}
 
@@ -103,9 +105,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 	protected void unregisterListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			viewer.getRootPart().getVisual().getScene()
-			.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
+					.removeEventFilter(KeyEvent.KEY_PRESSED, pressedFilter);
 			viewer.getRootPart().getVisual().getScene()
-			.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
+					.removeEventFilter(KeyEvent.KEY_RELEASED, releasedFilter);
 		}
 	}
 

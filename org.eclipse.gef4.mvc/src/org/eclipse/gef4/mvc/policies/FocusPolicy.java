@@ -26,6 +26,9 @@ public class FocusPolicy<VR> extends AbstractPolicy<VR> {
 		if (host instanceof IContentPart) {
 			host.getRoot().getViewer().getAdapter(FocusModel.class)
 					.setFocused((IContentPart<VR>) host);
+		} else {
+			host.getRoot().getViewer().getAdapter(FocusModel.class)
+					.setFocused(null);
 		}
 	}
 
