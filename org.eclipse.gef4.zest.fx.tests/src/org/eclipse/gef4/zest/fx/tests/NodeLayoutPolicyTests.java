@@ -104,8 +104,13 @@ public class NodeLayoutPolicyTests {
 		policy.adaptLayoutInformation(nodeLayout);
 
 		javafx.scene.Node visual = policy.getHost().getVisual();
-		assertEquals(location,
-				new Point(visual.getLayoutX(), visual.getLayoutY()));
+		/*
+		 * <i>location</i> is the center, <i>layout-xy</i> is the top left
+		 * corner, therefore we expect <code>layout-xy = location - size /
+		 * 2</code>.
+		 */
+		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(
+				visual.getLayoutX(), visual.getLayoutY()));
 		assertEquals(size, new Dimension(visual.getLayoutBounds().getWidth(),
 				visual.getLayoutBounds().getHeight()));
 	}
