@@ -108,6 +108,14 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return getHost();
 	}
 
+	protected List<IFeedbackPart<VR>> getFeedbackParts() {
+		return feedbackParts;
+	}
+
+	protected List<IHandlePart<VR>> getHandleParts() {
+		return handleParts;
+	}
+
 	@Override
 	public IVisualPart<VR> getHost() {
 		return host;

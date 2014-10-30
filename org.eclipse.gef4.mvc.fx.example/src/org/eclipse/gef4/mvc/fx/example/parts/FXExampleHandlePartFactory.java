@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import javafx.scene.Node;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
+import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
@@ -29,17 +31,22 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
+
+	@Inject
+	private Injector injector;
 
 	@Override
 	public IHandlePart<Node> createBoundsSelectionCornerHandlePart(
 			final List<IContentPart<Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		IHandlePart<Node> part = super.createBoundsSelectionCornerHandlePart(targets,
-				handleGeometryProvider, position, contextMap);
+		IHandlePart<Node> part = super.createBoundsSelectionCornerHandlePart(
+				targets, handleGeometryProvider, position, contextMap);
 		// TODO: bind the policy in module
 		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 				new FXResizeRelocateOnCornerHandleDragPolicy(
@@ -70,6 +77,21 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 		}
 
 		return part;
+	}
+
+	@Override
+	protected List<IHandlePart<Node>> createHoverHandleParts(
+			IContentPart<Node> target, HoverBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
+		List<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
+		if (target instanceof FXGeometricShapePart) {
+			FXExampleDeleteHandlePart hp = new FXExampleDeleteHandlePart();
+			injector.injectMembers(hp);
+			handles.add(hp);
+			return handles;
+		}
+		return super
+				.createHoverHandleParts(target, contextBehavior, contextMap);
 	}
 
 	private ReferencePoint toReferencePoint(Pos position) {

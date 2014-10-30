@@ -233,6 +233,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	protected void doDeactivate() {
+		// FIXME: CME
 		for (IVisualPart<VR> child : getChildren()) {
 			child.deactivate();
 		}

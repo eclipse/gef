@@ -14,9 +14,12 @@ package org.eclipse.gef4.mvc.fx.example;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
+import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
@@ -90,6 +93,15 @@ public class FXExampleModule extends MvcFxModule {
 				.to(VisualBoundsGeometryProvider.class);
 	}
 
+	protected void bindFXExampleDeleteHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder
+				.addBinding(
+						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+								"delete")).to(
+						FXExampleDeleteFirstAnchorageOnClickPolicy.class);
+	}
+
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).toInstance(new FXExampleContentPartFactory());
@@ -105,6 +117,8 @@ public class FXExampleModule extends MvcFxModule {
 	protected void configure() {
 		super.configure();
 		bindIContentPartFactory();
+		bindFXExampleDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXExampleDeleteHandlePart.class));
 	}
 
 }
