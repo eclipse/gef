@@ -14,14 +14,12 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
-import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.FXPartUtils;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
@@ -68,9 +66,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 							Collections.singleton(viewer), target,
 							DRAG_TOOL_POLICY_KEY);
 					if (targetPart != null) {
-						List<Node> pickedNodes = FXUtils.getNodesAt(viewer
-								.getRootPart().getVisual(), e.getSceneX(), e
-								.getSceneY());
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {
 							policy.drag(e, new Dimension(dx, dy));
