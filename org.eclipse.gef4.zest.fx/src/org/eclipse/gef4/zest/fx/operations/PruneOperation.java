@@ -88,6 +88,7 @@ public class PruneOperation extends AbstractOperation {
 					.getContentPartMap().get(p.getItems()[0]);
 			subgraphModel.addNodesToSubgraph(pNodePart, node);
 		}
+		node.deactivate();
 	}
 
 	@Override
@@ -108,6 +109,7 @@ public class PruneOperation extends AbstractOperation {
 	}
 
 	protected void unprune() {
+		node.activate();
 		IViewer<Node> viewer = node.getRoot().getViewer();
 		SubgraphModel subgraphModel = viewer.getDomain().getAdapter(
 				SubgraphModel.class);
