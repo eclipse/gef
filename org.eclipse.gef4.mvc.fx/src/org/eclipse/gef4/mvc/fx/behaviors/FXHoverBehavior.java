@@ -12,7 +12,6 @@
 package org.eclipse.gef4.mvc.fx.behaviors;
 
 import java.awt.Point;
-import java.awt.PointerInfo;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,28 +22,51 @@ import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * A hover behavior that in addition to the {@link HoverBehavior} adds
- * lightweight hover feedback to handles.
+ * A hover behavior that in addition to the {@link HoverBehavior} adds hover
+ * handles and lightweight (JavaFX effect) hover feedback to IHandlePart hosts.
  *
  * @author anyssen
+ * @author wienand
  *
  */
 public class FXHoverBehavior extends HoverBehavior<Node> {
+
+	public static final int REMOVAL_DELAY_MILLIS = 500;
+	public static final int CREATION_DELAY_MILLIS = 750;
+	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
 	private final Map<IVisualPart<Node>, Effect> effects = new HashMap<IVisualPart<Node>, Effect>();
 
 	private PauseTransition creationDelayTransition;
 	private PauseTransition removalDelayTransition;
+
+	private Point initialPointerLocation;
+
+	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent event) {
+			double dx = event.getScreenX() - initialPointerLocation.x;
+			double dy = event.getScreenY() - initialPointerLocation.y;
+			if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
+					|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
+				// restart creation timer when the mouse is moved beyond
+				// the threshold
+				creationDelayTransition.playFromStart();
+			}
+		}
+	};
 
 	@Override
 	protected void addFeedback(List<? extends IVisualPart<Node>> targets,
@@ -79,7 +101,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	public void deactivate() {
 		// stop timers
 		if (creationDelayTransition != null) {
-			creationDelayTransition.stop();
+			stopCreationTimer();
 		}
 		if (removalDelayTransition != null) {
 			removalDelayTransition.stop();
@@ -92,6 +114,12 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(5);
 		return effect;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected HoverModel<Node> getHoverModel() {
+		return super.getHoverModel();
 	}
 
 	/**
@@ -116,8 +144,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void onHoverChange(IVisualPart<Node> oldHovered,
 			IVisualPart<Node> newHovered) {
-		System.out.println("hover changed from <" + oldHovered + "> to <"
-				+ newHovered + ">.");
 		// determine is the host or any TT handle part is/was hovered
 		boolean isHovered = isaHoverPart(newHovered);
 		boolean wasHovered = isaHoverPart(oldHovered);
@@ -130,29 +156,22 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				removalDelayTransition.stop();
 				return;
 			}
-			// otherwise, we start the creation delay
-			PointerInfo pointerInfo = java.awt.MouseInfo.getPointerInfo();
-			final Point location = pointerInfo.getLocation();
-			getHost()
-					.getVisual()
-					.getScene()
-					.addEventFilter(MouseEvent.MOUSE_MOVED,
-							new EventHandler<MouseEvent>() {
-								@Override
-								public void handle(MouseEvent event) {
-									double x = event.getScreenX();
-									double y = event.getScreenY();
-									System.out.println("initial <" + location.x
-											+ ", " + location.y
-											+ "> moved to <" + x + ", " + y
-											+ ">.");
-								}
-							});
-			creationDelayTransition = new PauseTransition(Duration.millis(500));
+			initialPointerLocation = java.awt.MouseInfo.getPointerInfo()
+					.getLocation();
+			final Scene scene = getHost().getVisual().getScene();
+			scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
+			scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
+			// and start the creation delay
+			creationDelayTransition = new PauseTransition(
+					Duration.millis(CREATION_DELAY_MILLIS));
 			creationDelayTransition
 					.setOnFinished(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent event) {
+							scene.removeEventFilter(MouseEvent.MOUSE_MOVED,
+									mouseMoveHandler);
+							scene.removeEventFilter(MouseEvent.MOUSE_DRAGGED,
+									mouseMoveHandler);
 							afterCreationDelay();
 						}
 					});
@@ -164,13 +183,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			if (creationDelayTransition != null
 					&& Animation.Status.RUNNING.equals(creationDelayTransition
 							.getStatus())) {
-				creationDelayTransition.stop();
+				stopCreationTimer();
 				// and remove feedback
 				removeFeedback(Collections.singletonList(getHost()));
 				return;
 			}
 			// otherwise, we start the removal display
-			removalDelayTransition = new PauseTransition(Duration.millis(500));
+			removalDelayTransition = new PauseTransition(
+					Duration.millis(REMOVAL_DELAY_MILLIS));
 			removalDelayTransition
 					.setOnFinished(new EventHandler<ActionEvent>() {
 						@Override
@@ -192,6 +212,15 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		} else {
 			super.removeFeedback(targets);
 		}
+	}
+
+	protected void stopCreationTimer() {
+		// unregister mouse move handler
+		final Scene scene = getHost().getVisual().getScene();
+		scene.removeEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
+		scene.removeEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
+		// and stop transition
+		creationDelayTransition.stop();
 	}
 
 }
