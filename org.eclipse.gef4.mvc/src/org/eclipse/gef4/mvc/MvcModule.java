@@ -218,7 +218,7 @@ public class MvcModule<VR> extends AbstractModule {
 
 	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class)
-		.to(DefaultOperationHistory.class);
+				.to(DefaultOperationHistory.class);
 	}
 
 	protected void bindIUndoContext() {
@@ -256,7 +256,7 @@ public class MvcModule<VR> extends AbstractModule {
 	}
 
 	/**
-	 * Installs en {@link AdapterMapInjectionSupport} module, which binds an
+	 * Installs an {@link AdapterMapInjectionSupport} module, which binds an
 	 * {@link AdaptableTypeListener} and ensures it gets properly injected.
 	 */
 	protected void enableAdapterMapInjection() {
