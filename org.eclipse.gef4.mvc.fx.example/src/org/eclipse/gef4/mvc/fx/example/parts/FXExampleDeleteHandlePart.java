@@ -31,8 +31,8 @@ import com.google.common.collect.SetMultimap;
 
 public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 
-	public static final String IMG_DELETE = "/res/delete_obj.gif";
-	public static final String IMG_DELETE_DISABLED = "/res/delete_obj_disabled.gif";
+	public static final String IMG_DELETE = "/images/delete_obj.gif";
+	public static final String IMG_DELETE_DISABLED = "/images/delete_obj_disabled.gif";
 
 	private Group blendGroup;
 
