@@ -31,19 +31,16 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
 
-	private HoverModel hoverModel;
-
 	@Override
 	public void activate() {
 		super.activate();
-		hoverModel = getHost().getRoot().getViewer()
-				.getAdapter(HoverModel.class);
+		HoverModel<VR> hoverModel = getHoverModel();
 
 		// register
 		hoverModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already hovered
-		IVisualPart hover = hoverModel.getHover();
+		IVisualPart<VR> hover = hoverModel.getHover();
 		if (hover != null) {
 			onHoverChange(null, hover);
 		}
@@ -51,8 +48,7 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 
 	@Override
 	public void deactivate() {
-		HoverModel hoverModel = getHost().getRoot().getViewer()
-				.getAdapter(HoverModel.class);
+		HoverModel<VR> hoverModel = getHoverModel();
 
 		// remove any pending feedback and handles
 		removeFeedback(Collections.singletonList(getHost()));
@@ -63,8 +59,9 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 		super.deactivate();
 	}
 
-	protected HoverModel getHoverModel() {
-		return hoverModel;
+	@SuppressWarnings("unchecked")
+	protected HoverModel<VR> getHoverModel() {
+		return getHost().getRoot().getViewer().getAdapter(HoverModel.class);
 	}
 
 	protected void onHoverChange(IVisualPart<VR> oldHovered,
