@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
+import org.eclipse.gef4.mvc.fx.MvcFxBundle;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -156,9 +157,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				return;
 			}
 
-			// FIXME: platform specific workaround for Mac
+			// FIXME: platform specific workaround for Mac (if we run
+			// standalone)
 			String osName = System.getProperty("os.name").toLowerCase();
-			if (osName.startsWith("mac os x")) {
+			if (MvcFxBundle.getContext() == null
+					&& osName.startsWith("mac os x")) {
 				com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
 						.GetApplication().createRobot();
 				initialPointerLocation = new Point(robot.getMouseX(),
