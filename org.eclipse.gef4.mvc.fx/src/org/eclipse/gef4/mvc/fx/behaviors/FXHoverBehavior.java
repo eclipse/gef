@@ -116,7 +116,6 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		return effect;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected HoverModel<Node> getHoverModel() {
 		return super.getHoverModel();
@@ -156,8 +155,19 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				removalDelayTransition.stop();
 				return;
 			}
-			initialPointerLocation = java.awt.MouseInfo.getPointerInfo()
-					.getLocation();
+
+			// FIXME: platform specific workaround for Mac
+			String osName = System.getProperty("os.name").toLowerCase();
+			if (osName.startsWith("mac os x")) {
+				com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
+						.GetApplication().createRobot();
+				initialPointerLocation = new Point(robot.getMouseX(),
+						robot.getMouseY());
+			} else {
+				initialPointerLocation = java.awt.MouseInfo.getPointerInfo()
+						.getLocation();
+			}
+
 			final Scene scene = getHost().getVisual().getScene();
 			scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 			scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
