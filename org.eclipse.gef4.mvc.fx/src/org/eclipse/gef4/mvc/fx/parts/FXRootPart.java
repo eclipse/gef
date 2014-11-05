@@ -11,18 +11,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import java.util.List;
-
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Scale;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
@@ -117,13 +113,6 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		return layer;
 	}
 
-	protected StackPane createLayersStackPane(List<? extends Node> layers) {
-		StackPane layersStackPane = new StackPane();
-		layersStackPane.setAlignment(Pos.TOP_LEFT);
-		layersStackPane.getChildren().addAll(layers);
-		return layersStackPane;
-	}
-
 	protected void createRootVisuals() {
 		contentLayer = createContentLayer();
 		/*
@@ -131,11 +120,11 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 *
+		 * 
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 *
+		 * 
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -245,6 +234,13 @@ public class FXRootPart extends AbstractRootPart<Node> {
 			createRootVisuals();
 		}
 		return scrollPane;
+	}
+
+	public Group getScrollPaneContent() {
+		if (scrollPaneContent == null) {
+			createRootVisuals();
+		}
+		return scrollPaneContent;
 	}
 
 	@Override

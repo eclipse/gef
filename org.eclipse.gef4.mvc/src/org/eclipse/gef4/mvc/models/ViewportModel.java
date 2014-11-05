@@ -18,11 +18,17 @@ import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 
 public class ViewportModel implements IPropertyChangeNotifier {
 
-	/*
-	 * An IViewportModel fires PropertyChangeEvents when its width or height
-	 * changes. These are the keys used to identify those properties when
-	 * listening to property change events.
+	/**
+	 * When the viewport x-position changes, this is the property name reported
+	 * by a corresponding property change event.
 	 */
+	public static final String VIEWPORT_TRANSLATE_X_PROPERTY = "viewportTranslateX";
+
+	/**
+	 * When the viewport y-position changes, this is the property name reported
+	 * by a corresponding property change event.
+	 */
+	public static final String VIEWPORT_TRANSLATE_Y_PROPERTY = "viewportTranslateY";
 
 	/**
 	 * When the viewport width changes, this is the property name reported by a
@@ -37,6 +43,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	public static final String VIEWPORT_HEIGHT_PROPERTY = "viewportHeight";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	private double x = 0;
+	private double y = 0;
 	private double width = 0;
 	private double height = 0;
 
@@ -53,6 +62,14 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 */
 	public double getHeight() {
 		return height;
+	}
+
+	public double getTranslateX() {
+		return x;
+	}
+
+	public double getTranslateY() {
+		return y;
 	}
 
 	/**
@@ -87,6 +104,18 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		double oldHeight = this.height;
 		this.height = height;
 		pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
+	}
+
+	public void setTranslateX(double x) {
+		double oldX = this.x;
+		this.x = x;
+		pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldX, x);
+	}
+
+	public void setTranslateY(double y) {
+		double oldY = this.y;
+		this.y = y;
+		pcs.firePropertyChange(VIEWPORT_TRANSLATE_Y_PROPERTY, oldY, y);
 	}
 
 	/**

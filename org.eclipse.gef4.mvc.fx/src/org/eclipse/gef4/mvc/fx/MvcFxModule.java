@@ -18,6 +18,7 @@ import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractGridBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractViewportBehavior;
 import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
@@ -26,6 +27,7 @@ import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
+import org.eclipse.gef4.mvc.fx.behaviors.FXViewportBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
@@ -37,6 +39,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXPanOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -138,8 +141,11 @@ public class MvcFxModule extends MvcModule<Node> {
 				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 						FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(
-				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnScrollPolicy.class);
+				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "zoomOnScroll"))
+				.to(FXZoomOnScrollPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "panOnScroll"))
+				.to(FXPanOnScrollPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
 				FXZoomOnPinchSpreadPolicy.class);
@@ -169,6 +175,9 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXZoomBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(AbstractGridBehavior.class))
 				.to(FXGridBehavior.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(AbstractViewportBehavior.class)).to(
+				FXViewportBehavior.class);
 	}
 
 	protected void bindFXViewerAdapters(
