@@ -38,8 +38,8 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void activate() {
 		super.activate();
-		SelectionModel selectionModel = getHost().getRoot().getViewer()
-				.getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 
 		// register
 		selectionModel.addPropertyChangeListener(this);
@@ -67,8 +67,8 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void deactivate() {
 		// remove any pending feedback
-		SelectionModel selectionModel = getHost().getRoot().getViewer()
-				.getAdapter(SelectionModel.class);
+		SelectionModel<VR> selectionModel = getHost().getRoot().getViewer()
+				.<SelectionModel<VR>> getAdapter(SelectionModel.class);
 		removeFeedbackAndHandles(selectionModel.getSelected());
 
 		selectionModel.removePropertyChangeListener(this);
