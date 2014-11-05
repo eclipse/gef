@@ -71,6 +71,7 @@ public class SwtFXCanvasGesturesDemo {
 		Scene scene = createScene();
 		canvas.setScene(scene);
 		shell.open();
+		shell.pack();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
