@@ -16,6 +16,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
@@ -54,13 +55,24 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 		IVisualPart<Node> host = anchorages.keys().iterator().next();
 		Node hostVisual = host.getVisual();
 		Bounds hostBounds = hostVisual.getLayoutBounds();
-		double cx = hostVisual.getLayoutX() + hostBounds.getWidth() / 2;
-		double cy = hostVisual.getLayoutY() + hostBounds.getHeight() / 2;
+
+		double cx = hostVisual.getLayoutX()
+				+ hostVisual.getLayoutBounds().getMinX()
+				+ hostBounds.getWidth();
+
+		double cy = hostVisual.getLayoutY()
+				+ hostVisual.getLayoutBounds().getMinY();
+
+		Point2D locationInScene = hostVisual.getParent().localToScene(cx, cy);
+		Point2D locationInLocal = blendGroup.getParent().sceneToLocal(
+				locationInScene);
 
 		// position handle at center of host
-		blendGroup.setLayoutX(cx);
-		blendGroup.setLayoutY(cy);
-
+		blendGroup.setLayoutX(locationInLocal.getX()
+				- blendGroup.getLayoutBounds().getMinX());
+		blendGroup.setLayoutY(locationInLocal.getY()
+				- blendGroup.getLayoutBounds().getWidth() / 2
+				- blendGroup.getLayoutBounds().getMinY());
 	}
 
 	protected Image getHoverImage() {
