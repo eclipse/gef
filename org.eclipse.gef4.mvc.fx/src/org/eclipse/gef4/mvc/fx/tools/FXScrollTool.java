@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -31,13 +32,11 @@ public class FXScrollTool extends AbstractTool<Node> {
 	public static final Class<AbstractFXScrollPolicy> TOOL_POLICY_KEY = AbstractFXScrollPolicy.class;
 
 	private final EventHandler<ScrollEvent> scrollListener = new EventHandler<ScrollEvent>() {
-		@Override
-		public void handle(ScrollEvent event) {
-			event.consume();
-
+		protected Collection<? extends AbstractFXScrollPolicy> getTargetPolicies(
+				ScrollEvent event) {
 			EventTarget target = event.getTarget();
 			if (!(target instanceof Node)) {
-				return;
+				return Collections.emptyList();
 			}
 
 			Node targetNode = (Node) target;
@@ -46,12 +45,20 @@ public class FXScrollTool extends AbstractTool<Node> {
 					TOOL_POLICY_KEY);
 
 			if (targetPart == null) {
-				return;
+				return Collections.emptyList();
 			}
 
 			Collection<? extends AbstractFXScrollPolicy> policies = getScrollPolicies(targetPart);
+			return policies;
+		}
+
+		@Override
+		public void handle(ScrollEvent event) {
+			event.consume();
+
+			Collection<? extends AbstractFXScrollPolicy> policies = getTargetPolicies(event);
 			for (AbstractFXScrollPolicy policy : policies) {
-				policy.scroll(event, event.getDeltaY());
+				policy.scroll(event);
 			}
 		}
 	};

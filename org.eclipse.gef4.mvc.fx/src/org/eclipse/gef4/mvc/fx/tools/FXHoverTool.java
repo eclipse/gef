@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.event.EventHandler;
@@ -32,21 +33,16 @@ public class FXHoverTool extends AbstractTool<Node> {
 	public static final Class<AbstractFXHoverPolicy> TOOL_POLICY_KEY = AbstractFXHoverPolicy.class;
 
 	private final EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
-		@Override
-		public void handle(MouseEvent event) {
-			if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
-					&& !event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-				return;
-			}
-
+		protected Collection<? extends AbstractFXHoverPolicy> getTargetPolicies(
+				MouseEvent event) {
 			EventTarget target = event.getTarget();
 			if (!(target instanceof Node)) {
-				return;
+				return Collections.emptyList();
 			}
 
 			Scene scene = ((Node) target).getScene();
 			if (scene == null) {
-				return;
+				return Collections.emptyList();
 			}
 
 			// pick target nodes
@@ -71,10 +67,21 @@ public class FXHoverTool extends AbstractTool<Node> {
 			}
 
 			if (targetPart == null) {
-				return;
+				return Collections.emptyList();
 			}
 
 			Collection<? extends AbstractFXHoverPolicy> policies = getHoverPolicies(targetPart);
+			return policies;
+		}
+
+		@Override
+		public void handle(MouseEvent event) {
+			if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
+					&& !event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+				return;
+			}
+
+			Collection<? extends AbstractFXHoverPolicy> policies = getTargetPolicies(event);
 			for (AbstractFXHoverPolicy policy : policies) {
 				policy.hover(event);
 			}

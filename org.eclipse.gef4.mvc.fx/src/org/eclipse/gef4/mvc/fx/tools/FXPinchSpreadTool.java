@@ -38,8 +38,25 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 
 	protected Collection<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node> targetPart) {
-		return targetPart.<AbstractFXPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
-				.values();
+		return targetPart.<AbstractFXPinchSpreadPolicy> getAdapters(
+				TOOL_POLICY_KEY).values();
+	}
+
+	protected Collection<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
+			ZoomEvent e) {
+		EventTarget target = e.getTarget();
+		if (!(target instanceof Node)) {
+			return null;
+		}
+
+		Node targetNode = (Node) target;
+		IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(getDomain()
+				.getViewers().values(), targetNode, TOOL_POLICY_KEY);
+		if (targetPart == null) {
+			return null;
+		}
+
+		return getPinchSpreadPolicies(targetPart);
 	}
 
 	@Override
@@ -47,23 +64,6 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		super.registerListeners();
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			FXPinchSpreadGesture gesture = new FXPinchSpreadGesture() {
-				protected Collection<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
-						ZoomEvent e) {
-					EventTarget target = e.getTarget();
-					if (!(target instanceof Node)) {
-						return null;
-					}
-
-					Node targetNode = (Node) target;
-					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-							getDomain().getViewers().values(), targetNode,
-							TOOL_POLICY_KEY);
-					if (targetPart == null) {
-						return null;
-					}
-
-					return getPinchSpreadPolicies(targetPart);
-				}
 
 				@Override
 				protected void zoomDetected(ZoomEvent e) {

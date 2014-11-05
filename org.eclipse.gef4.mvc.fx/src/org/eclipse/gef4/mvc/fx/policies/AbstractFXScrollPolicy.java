@@ -18,5 +18,5 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
 public abstract class AbstractFXScrollPolicy extends AbstractPolicy<Node> {
 
-	public abstract void scroll(ScrollEvent event, double deltaY);
+	public abstract void scroll(ScrollEvent event);
 }
