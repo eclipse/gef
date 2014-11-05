@@ -197,28 +197,35 @@ public class SwtToFXGestureConverter implements GestureListener {
 					@Override
 					public Void run() {
 						TKSceneListener sceneListener = ReflectionUtils
-								.getPrivateFieldValue(scenePeer, "sceneListener");
+								.getPrivateFieldValue(scenePeer,
+										"sceneListener");
 						if (sceneListener == null) {
 							return null;
 						}
 						switch (event.detail) {
 						case SWT.GESTURE_BEGIN:
+							System.out.println("BEGIN");
 							break;
 						case SWT.GESTURE_END:
+							System.out.println("END");
 							changeState(StateType.IDLE, event, sceneListener);
 							break;
 						case SWT.GESTURE_MAGNIFY:
+							System.out.println("MAGNIFY");
 							changeState(StateType.ZOOMING, event, sceneListener);
 							break;
 						case SWT.GESTURE_PAN:
+							System.out.println("PAN");
 							changeState(StateType.SCROLLING, event,
 									sceneListener);
 							break;
 						case SWT.GESTURE_ROTATE:
+							System.out.println("ROTATE");
 							changeState(StateType.ROTATING, event,
 									sceneListener);
 							break;
 						case SWT.GESTURE_SWIPE:
+							System.out.println("SWIPE");
 							changeState(StateType.IDLE, event, sceneListener);
 						}
 						return null;
