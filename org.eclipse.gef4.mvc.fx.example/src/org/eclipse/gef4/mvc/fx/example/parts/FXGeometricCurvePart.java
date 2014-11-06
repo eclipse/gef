@@ -45,6 +45,8 @@ import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
+import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -75,62 +77,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		public Node getVisual() {
 			return this;
 		}
-	}
-
-	public static final class ChangeContentAnchoragesOperation extends
-			AbstractOperation {
-
-		private final FXGeometricCurve curve;
-		private final AbstractFXGeometricElement<?> oldSource;
-		private final AbstractFXGeometricElement<?> oldTarget;
-		private final AbstractFXGeometricElement<?> newSource;
-		private final AbstractFXGeometricElement<?> newTarget;
-
-		public ChangeContentAnchoragesOperation(String label,
-				FXGeometricCurve curve,
-				AbstractFXGeometricElement<?> oldSource,
-				AbstractFXGeometricElement<?> oldTarget,
-				AbstractFXGeometricElement<?> newSource,
-				AbstractFXGeometricElement<?> newTarget) {
-			super(label);
-			this.curve = curve;
-			this.oldSource = oldSource;
-			this.oldTarget = oldTarget;
-			this.newSource = newSource;
-			this.newTarget = newTarget;
-		}
-
-		@Override
-		public IStatus execute(IProgressMonitor monitor, IAdaptable info) {
-			curve.getSourceAnchorages().clear();
-			if (newSource != null) {
-				curve.getSourceAnchorages().add(newSource);
-			}
-			curve.getTargetAnchorages().clear();
-			if (newTarget != null) {
-				curve.getTargetAnchorages().add(newTarget);
-			}
-			return Status.OK_STATUS;
-		}
-
-		@Override
-		public IStatus redo(IProgressMonitor monitor, IAdaptable info) {
-			return execute(monitor, info);
-		}
-
-		@Override
-		public IStatus undo(IProgressMonitor monitor, IAdaptable info) {
-			curve.getSourceAnchorages().clear();
-			if (oldSource != null) {
-				curve.getSourceAnchorages().add(oldSource);
-			}
-			curve.getTargetAnchorages().clear();
-			if (oldTarget != null) {
-				curve.getTargetAnchorages().add(oldTarget);
-			}
-			return Status.OK_STATUS;
-		}
-
 	}
 
 	private static final class ChangeWayPointsOperation extends
@@ -434,20 +380,35 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				.getSourceAnchorages();
 		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
 				.getTargetAnchorages();
-		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
-				"Synchronize Anchorages", this);
-		ChangeContentAnchoragesOperation modelOp = new ChangeContentAnchoragesOperation(
-				"anchorages", getContent(),
-				sourceAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) sourceAnchorages
-								.toArray()[0],
-				targetAnchorages.isEmpty() ? null
-						: (AbstractFXGeometricElement<?>) targetAnchorages
-								.toArray()[0], newSource, newTarget);
+
 		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation(
 				"Change Content Anchorages");
-		op.add(modelOp);
+
+		if (!sourceAnchorages.isEmpty()) {
+			DetachFromContentAnchorageOperation<Node> detachSourceOp = new DetachFromContentAnchorageOperation<Node>(
+					this, sourceAnchorages.toArray()[0], "START");
+			op.add(detachSourceOp);
+		}
+		if (!targetAnchorages.isEmpty()) {
+			DetachFromContentAnchorageOperation<Node> detachTargetOp = new DetachFromContentAnchorageOperation<Node>(
+					this, targetAnchorages.toArray()[0], "END");
+			op.add(detachTargetOp);
+		}
+		if (newSource != null) {
+			AttachToContentAnchorageOperation<Node> attachSourceOp = new AttachToContentAnchorageOperation<Node>(
+					this, newSource, "START");
+			op.add(attachSourceOp);
+		}
+		if (newTarget != null) {
+			AttachToContentAnchorageOperation<Node> attachTargetOp = new AttachToContentAnchorageOperation<Node>(
+					this, newTarget, "END");
+			op.add(attachTargetOp);
+		}
+
+		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
+				"Synchronize Anchorages", this);
 		op.add(syncOp);
+
 		return op;
 	}
 

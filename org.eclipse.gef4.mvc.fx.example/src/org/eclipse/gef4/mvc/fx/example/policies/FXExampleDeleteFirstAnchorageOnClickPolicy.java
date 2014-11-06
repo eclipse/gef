@@ -16,8 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXDeleteOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
+import org.eclipse.gef4.mvc.operations.DeleteContentOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -37,7 +37,7 @@ public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
 		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		if (anchorage instanceof IContentPart) {
-			IUndoableOperation deleteOperation = new FXDeleteOperation(viewer,
+			IUndoableOperation deleteOperation = new DeleteContentOperation(viewer,
 					(IContentPart<Node>) anchorage);
 			executeOperation(deleteOperation);
 		}

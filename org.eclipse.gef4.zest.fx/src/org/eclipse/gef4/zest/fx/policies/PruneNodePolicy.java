@@ -14,7 +14,7 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.fx.operations.FXClearHoverFocusSelectionOperation;
+import org.eclipse.gef4.mvc.operations.ClearHoverFocusSelectionOperation;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.zest.fx.operations.PruneOperation;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
@@ -23,14 +23,14 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 public class PruneNodePolicy extends AbstractPolicy<Node> {
 
 	public void prune() {
-		FXClearHoverFocusSelectionOperation revOp = new FXClearHoverFocusSelectionOperation(
+		ClearHoverFocusSelectionOperation revOp = new ClearHoverFocusSelectionOperation(
 				getHost().getRoot().getViewer());
 		revOp.add(PruneOperation.prune((NodeContentPart) getHost()));
 		executeOperation(revOp);
 	}
 
 	public void unprune() {
-		FXClearHoverFocusSelectionOperation revOp = new FXClearHoverFocusSelectionOperation(
+		ClearHoverFocusSelectionOperation revOp = new ClearHoverFocusSelectionOperation(
 				getHost().getRoot().getViewer());
 		revOp.add(PruneOperation.unprune((NodeContentPart) getHost()));
 		executeOperation(revOp);
