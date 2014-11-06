@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import java.net.URL;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -32,8 +34,8 @@ import com.google.common.collect.SetMultimap;
 
 public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 
-	public static final String IMG_DELETE = "/images/delete_obj.gif";
-	public static final String IMG_DELETE_DISABLED = "/images/delete_obj_disabled.gif";
+	public static final String IMG_DELETE = "/delete_obj.gif";
+	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
 
 	private Group blendGroup;
 
@@ -70,11 +72,22 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 	}
 
 	protected Image getHoverImage() {
-		return new Image(IMG_DELETE);
+		URL resource = FXExampleDeleteHandlePart.class.getResource(IMG_DELETE);
+		if (resource == null) {
+			throw new IllegalStateException("Cannot find resource <"
+					+ IMG_DELETE + ">.");
+		}
+		return new Image(resource.toExternalForm());
 	}
 
 	protected Image getImage() {
-		return new Image(IMG_DELETE_DISABLED);
+		URL resource = FXExampleDeleteHandlePart.class
+				.getResource(IMG_DELETE_DISABLED);
+		if (resource == null) {
+			throw new IllegalStateException("Cannot find resource <"
+					+ IMG_DELETE_DISABLED + ">.");
+		}
+		return new Image(resource.toExternalForm());
 	}
 
 	@Override
