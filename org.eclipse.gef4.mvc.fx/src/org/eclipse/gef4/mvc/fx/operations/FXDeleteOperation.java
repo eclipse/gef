@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javafx.scene.Node;
@@ -75,7 +76,7 @@ public class FXDeleteOperation extends ReverseUndoCompositeOperation {
 	public static class FXDetachContentOperation extends AbstractOperation {
 		private final IContentPart<Node> contentPart;
 		private final IContentPart<Node> anchored;
-		private Set<String> roles;
+		private final Set<String> roles = new HashSet<String>();
 
 		public FXDetachContentOperation(IContentPart<Node> anchored,
 				IContentPart<Node> contentPart) {
@@ -87,6 +88,7 @@ public class FXDeleteOperation extends ReverseUndoCompositeOperation {
 		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 				throws ExecutionException {
+			roles.clear();
 			for (String role : anchored.getAnchorages().get(contentPart)) {
 				roles.add(role); // remember for undo
 				anchored.detachFromContentAnchorage(contentPart.getContent(),
@@ -135,8 +137,8 @@ public class FXDeleteOperation extends ReverseUndoCompositeOperation {
 
 		// delete from content children
 		IContentPart<Node> parent = (IContentPart<Node>) toDelete.getParent();
-		contentChildrenOperations.add(new FXDeleteContentOperation(
-				parent, toDelete.getContent()));
+		contentChildrenOperations.add(new FXDeleteContentOperation(parent,
+				toDelete.getContent()));
 		contentChildrenOperations
 				.add(new SynchronizeContentChildrenOperation<Node>(
 						"SynchronizeChildren", parent));
@@ -147,8 +149,8 @@ public class FXDeleteOperation extends ReverseUndoCompositeOperation {
 				continue;
 			}
 			IContentPart<Node> cp = (IContentPart<Node>) anchored;
-			contentAnchoragesOperations.add(new FXDetachContentOperation(
-					cp, toDelete));
+			contentAnchoragesOperations.add(new FXDetachContentOperation(cp,
+					toDelete));
 			// synchronize content anchorages once per anchored
 			contentAnchoragesOperations
 					.add(new SynchronizeContentAnchoragesOperation<Node>(
