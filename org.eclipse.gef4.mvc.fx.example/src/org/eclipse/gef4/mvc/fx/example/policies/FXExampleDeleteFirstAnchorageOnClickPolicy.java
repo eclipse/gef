@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.policies;
 
-import java.util.Collections;
-
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -40,7 +38,7 @@ public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		if (anchorage instanceof IContentPart) {
 			IUndoableOperation deleteOperation = new FXDeleteOperation(viewer,
-					Collections.singletonList((IContentPart<Node>) anchorage));
+					(IContentPart<Node>) anchorage);
 			executeOperation(deleteOperation);
 		}
 	}

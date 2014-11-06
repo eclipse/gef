@@ -17,10 +17,10 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.operations.FXDeleteOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
@@ -60,11 +60,14 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 		}
 
 		// compose complex delete operation
-		IUndoableOperation deleteOperation = new FXDeleteOperation(viewer,
-				selected);
+		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
+				"delete-ops");
+		for (IContentPart<Node> p : selected) {
+			deleteOps.add(new FXDeleteOperation(viewer, p));
+		}
 
 		// execute on the stack
-		executeOperation(deleteOperation);
+		executeOperation(deleteOps);
 	}
 
 	@Override

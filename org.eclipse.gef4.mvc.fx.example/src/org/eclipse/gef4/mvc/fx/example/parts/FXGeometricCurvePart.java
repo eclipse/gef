@@ -36,8 +36,6 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDetachCurveAnchoragesPolicy;
-import org.eclipse.gef4.mvc.fx.operations.FXDeleteOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -211,10 +209,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return chainModelChanges(super.commit());
 			}
 		});
-		setAdapter(
-				AdapterKey
-						.get(FXDeleteOperation.DETACH_CONTENT_ANCHORAGES_POLICY_KEY),
-				new FXExampleDetachCurveAnchoragesPolicy());
 		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
 				new FXDeleteSelectedOnTypePolicy());
 	}
