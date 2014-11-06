@@ -10,27 +10,29 @@
  *     Matthias Wienand (itemis AG) - initial API & implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.mvc.fx.example.policies;
+package org.eclipse.gef4.zest.fx.policies;
 
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 
+import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
 
 import com.google.common.collect.SetMultimap;
 
-public class HoverFirstAnchoragePolicy extends HoverPolicy<Node> {
+public class HoverFirstAnchorageOnHoverPolicy extends FXHoverOnHoverPolicy {
 
 	@Override
-	public void hover() {
+	public void hover(MouseEvent e) {
 		SetMultimap<IVisualPart<Node>, String> anchorages = getHost()
 				.getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		HoverPolicy<?> anchorageHoverPolicy = anchorages.keySet().iterator()
-				.next().getAdapter(HoverPolicy.class);
-		anchorageHoverPolicy.hover();
+		getHost().getRoot().getViewer()
+				.<HoverModel<Node>> getAdapter(HoverModel.class)
+				.setHover(anchorages.keySet().iterator().next());
 	}
 
 }

@@ -18,9 +18,10 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 
 public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
@@ -131,23 +132,16 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		updateFeedback();
 	}
 
-	// TODO: move to utility
-	protected List<IVisualPart<Node>> getParts(List<Node> nodes) {
-		List<IVisualPart<Node>> parts = new ArrayList<IVisualPart<Node>>();
+	protected List<IContentPart<Node>> getParts(List<Node> nodes) {
+		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
 		for (Node node : nodes) {
 			IVisualPart<Node> part = getHost().getRoot().getViewer()
 					.getVisualPartMap().get(node);
-			if (part != null) {
-				parts.add(part);
+			if (part != null && part instanceof IContentPart) {
+				parts.add((IContentPart<Node>) part);
 			}
 		}
 		return parts;
-	}
-
-	@SuppressWarnings("unchecked")
-	protected SelectionPolicy<Node> getSelectionPolicy(
-			IVisualPart<Node> part) {
-		return part.getAdapter(SelectionPolicy.class);
 	}
 
 	@Override
@@ -173,16 +167,12 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		List<Node> nodes = findContainedNodes(getHost().getVisual().getScene()
 				.getRoot(), bbox[0], bbox[1], bbox[2], bbox[3]);
 
-		List<IVisualPart<Node>> parts = getParts(nodes);
+		List<IContentPart<Node>> parts = getParts(nodes);
 
-		boolean appendSelection = false;
-		for (IVisualPart<Node> part : parts) {
-			SelectionPolicy<Node> selectionPolicy = getSelectionPolicy(part);
-			if (selectionPolicy != null) {
-				selectionPolicy.select(appendSelection);
-				appendSelection = true;
-			}
-		}
+		// change selection within selection model
+		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+		selectionModel.select(parts);
 
 		removeFeedback();
 	}

@@ -45,9 +45,4 @@ public interface IDetachContentAnchoragesPolicy<VR> extends IPolicy<VR> {
 	public abstract IUndoableOperation getDeleteOperation(
 			IContentPart<VR> anchorage, String role);
 
-	// TODO: deleting an anchorage for all roles could be an extra operation
-	// public abstract IUndoableOperation
-	// getDeleteAllOperation(IContentPart<Node>
-	// anchorage);
-
 }

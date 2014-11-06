@@ -37,12 +37,6 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 
 	private Group blendGroup;
 
-	public FXExampleDeleteHandlePart() {
-		// TODO: Make it easy to overwrite bindings for more specific parts
-		// setAdapter(AdapterKey.get(HoverPolicy.class),
-		// new HoverFirstAnchoragePolicy());
-	}
-
 	@Override
 	protected void doRefreshVisual() {
 		// check if we have a host

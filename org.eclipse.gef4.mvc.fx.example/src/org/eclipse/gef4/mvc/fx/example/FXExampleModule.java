@@ -30,9 +30,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
-import org.eclipse.gef4.mvc.policies.FocusPolicy;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -52,16 +49,6 @@ public class FXExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 						FXHoverOnHoverPolicy.class);
-
-		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
-				new TypeLiteral<HoverPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionPolicy.class)).to(
-				new TypeLiteral<SelectionPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(FocusPolicy.class)).to(
-				new TypeLiteral<FocusPolicy<Node>>() {
-				});
 
 		// geometry provider for selection feedback
 		adapterMapBinder

@@ -30,9 +30,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.FocusPolicy;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.SubgraphBehavior;
@@ -57,71 +54,42 @@ import com.google.inject.multibindings.MapBinder;
 public class ZestFxModule extends MvcFxModule {
 
 	@Override
-	protected void bindAbstractContentPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
 		// register (default) interaction policies (which are based on viewer
 		// models and do not depend on transaction policies)
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
 				FXFocusAndSelectOnClickPolicy.class);
-		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
-
-		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
-				new TypeLiteral<HoverPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionPolicy.class)).to(
-				new TypeLiteral<SelectionPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(FocusPolicy.class)).to(
-				new TypeLiteral<FocusPolicy<Node>>() {
-				});
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 
 		// geometry provider for selection feedback
-		adapterMapBinder
-				.addBinding(
-						AdapterKey
-								.get(Provider.class,
-										FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(
+				VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover feedback
-		adapterMapBinder
-				.addBinding(
-						AdapterKey
-								.get(Provider.class,
-										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(
+				VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover handles
-		adapterMapBinder
-				.addBinding(
-						AdapterKey
-								.get(Provider.class,
-										FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER))
-				.to(VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(Provider.class, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(
+				VisualBoundsGeometryProvider.class);
 	}
 
 	@Override
-	protected void bindAbstractDomainAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindAbstractDomainAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractDomainAdapters(adapterMapBinder);
-		adapterMapBinder.addBinding(AdapterKey.get(ILayoutModel.class)).to(
-				DefaultLayoutModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(SubgraphModel.class)).to(
-				SubgraphModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(ILayoutModel.class)).to(DefaultLayoutModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(SubgraphModel.class)).to(SubgraphModel.class);
 	}
 
-	protected void bindEdgeContentPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class))
-				.to(EdgeLayoutBehavior.class);
+	protected void bindEdgeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(EdgeLayoutBehavior.class)).to(EdgeLayoutBehavior.class);
 	}
 
-	protected void bindGraphContentPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindGraphContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 	}
 
 	protected void bindIContentPartFactory() {
@@ -141,30 +109,20 @@ public class ZestFxModule extends MvcFxModule {
 		}).to(GraphRootPart.class);
 	}
 
-	protected void bindNodeContentPartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(
-				NodeLayoutPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
-				.to(NodeLayoutBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(
-				PruneNodePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(SubgraphBehavior.class)).to(
-				SubgraphBehavior.class);
+	protected void bindNodeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(NodeLayoutPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class)).to(NodeLayoutBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(PruneNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(SubgraphBehavior.class)).to(SubgraphBehavior.class);
 		// interaction
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
 				FXRelocateOnDragPolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
-				.to(PruneOnTypePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY)).to(PruneOnTypePolicy.class);
 		// transaction
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
-				FXResizeRelocatePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXResizeRelocatePolicy.class)).to(FXResizeRelocatePolicy.class);
 	}
 
-	protected void bindPruningHandlePartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+	protected void bindPruningHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// FIXME: bind NoHoverPolicy to TypeLiteral<HoverPolicy<Node>>
 		// Are type literal bindings global?
 		// adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
@@ -175,14 +133,10 @@ public class ZestFxModule extends MvcFxModule {
 	protected void configure() {
 		super.configure();
 		bindIContentPartFactory();
-		bindGraphContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				GraphContentPart.class));
-		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				NodeContentPart.class));
-		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				EdgeContentPart.class));
-		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				ZestFxPruningHandlePart.class));
+		bindGraphContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), GraphContentPart.class));
+		bindNodeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), NodeContentPart.class));
+		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(), EdgeContentPart.class));
+		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(), ZestFxPruningHandlePart.class));
 	}
 
 }

@@ -11,17 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 
-import org.eclipse.gef4.mvc.policies.ZoomPolicy;
+import org.eclipse.gef4.mvc.models.ZoomModel;
 
 public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
-
-	@SuppressWarnings("unchecked")
-	private ZoomPolicy<Node> getZoomPolicy() {
-		return getHost().getAdapter(ZoomPolicy.class);
-	}
 
 	protected boolean isZoom(ScrollEvent event) {
 		return event.isControlDown() || event.isAltDown();
@@ -30,11 +24,14 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 	@Override
 	public void scroll(ScrollEvent event) {
 		if (isZoom(event)) {
-			ZoomPolicy<Node> policy = getZoomPolicy();
-			if (policy != null) {
-				policy.zoomRelative(event.getDeltaY() > 0 ? 1.25 : 0.8);
-			}
+			zoomRelative(event.getDeltaY() > 0 ? 1.25 : 0.8);
 		}
+	}
+
+	public void zoomRelative(double relativeZoom) {
+		ZoomModel zoomModel = getHost().getRoot().getViewer()
+				.getAdapter(ZoomModel.class);
+		zoomModel.setZoomFactor(zoomModel.getZoomFactor() * relativeZoom);
 	}
 
 }

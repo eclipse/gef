@@ -11,35 +11,56 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.Collections;
+
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.gef4.mvc.policies.FocusPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
+import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.parts.IContentPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		FocusPolicy<Node> focusPolicy = getFocusPolicy();
-		if (focusPolicy != null) {
-			focusPolicy.focus();
+		IVisualPart<Node> host = getHost();
+
+		FocusModel<Node> focusModel = host.getRoot().getViewer()
+				.<FocusModel<Node>> getAdapter(FocusModel.class);
+		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
+				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
+
+		if (host instanceof IContentPart) {
+			focusModel.setFocused((IContentPart<Node>) host);
+
+			boolean append = e.isControlDown();
+			if (selectionModel.isSelected((IContentPart<Node>) host)) {
+				if (append) {
+					// deselect the target edit part (ensure we get a new
+					// primary selection)
+					selectionModel.deselect(Collections
+							.singleton((IContentPart<Node>) host));
+				}
+			} else {
+				if (append) {
+					// append to current selection (as new primary)
+					selectionModel.select(Collections
+							.singletonList((IContentPart<Node>) host));
+				} else {
+					// clear old selection, target should become the only
+					// selected
+					selectionModel.deselectAll();
+					selectionModel.select(Collections
+							.singletonList((IContentPart<Node>) host));
+				}
+			}
+		} else {
+			// unset focus
+			focusModel.setFocused(null);
+			// remove all selected
+			selectionModel.deselectAll();
 		}
-
-		SelectionPolicy<Node> selectionPolicy = getSelectionPolicy();
-		if (selectionPolicy != null) {
-			selectionPolicy.select(e.isControlDown());
-		}
 	}
-
-	@SuppressWarnings("unchecked")
-	private FocusPolicy<Node> getFocusPolicy() {
-		return getHost().getAdapter(FocusPolicy.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	private SelectionPolicy<Node> getSelectionPolicy() {
-		return getHost().getAdapter(SelectionPolicy.class);
-	}
-
 }

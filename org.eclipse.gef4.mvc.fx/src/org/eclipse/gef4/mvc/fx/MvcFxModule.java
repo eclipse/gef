@@ -56,10 +56,6 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.policies.FocusPolicy;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.mvc.policies.SelectionPolicy;
-import org.eclipse.gef4.mvc.policies.ZoomPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.TypeLiteral;
@@ -96,10 +92,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 						FXHoverOnHoverPolicy.class);
-		// register hover policy, which updates the hover model
-		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
-				new TypeLiteral<HoverPolicy<Node>>() {
-				});
 		// register behavior which reacts to changes of the hover model and
 		// updates selection (and handles)
 		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
@@ -149,20 +141,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
 				FXZoomOnPinchSpreadPolicy.class);
-
-		// register further (default) policies
-		adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
-				new TypeLiteral<HoverPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(SelectionPolicy.class)).to(
-				new TypeLiteral<SelectionPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(ZoomPolicy.class)).to(
-				new TypeLiteral<ZoomPolicy<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(FocusPolicy.class)).to(
-				new TypeLiteral<FocusPolicy<Node>>() {
-				});
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(

@@ -28,9 +28,9 @@ import javafx.util.Duration;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.HoverPolicy;
-import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchoragePolicy;
+import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 
 import com.google.common.collect.SetMultimap;
@@ -43,21 +43,18 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 
 	private boolean isVisible = false;
 
-	public ZestFxPruningHandlePart(
-			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxPruningHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 		// FIXME: hover hierarchy
-		setAdapter(AdapterKey.get(HoverPolicy.class),
-				new HoverFirstAnchoragePolicy());
+		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY), new HoverFirstAnchorageOnHoverPolicy());
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage, String role) {
 		if (!(anchorage instanceof NodeContentPart)) {
-			throw new IllegalArgumentException("Anchorage not applicable <"
-					+ anchorage + ">. Can only attach to NodeContentPart.");
+			throw new IllegalArgumentException("Anchorage not applicable <" + anchorage
+					+ ">. Can only attach to NodeContentPart.");
 		}
 		super.attachToAnchorageVisual(anchorage, role);
 	}
@@ -100,17 +97,15 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		blendGroup.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 0), new KeyValue(
-						hoverImageView.opacityProperty(), 1))).play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(imageView.opacityProperty(), 0),
+						new KeyValue(hoverImageView.opacityProperty(), 1))).play();
 			}
 		});
 		blendGroup.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 1), new KeyValue(
-						hoverImageView.opacityProperty(), 0))).play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(imageView.opacityProperty(), 1),
+						new KeyValue(hoverImageView.opacityProperty(), 0))).play();
 			}
 		});
 
@@ -126,12 +121,10 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		// TODO: extract magic numbers to properties
 		if (!wasVisible && isVisible) {
 			opacityProperty.set(0);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-					opacityProperty, 1))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 1))).play();
 		} else if (wasVisible && !isVisible) {
 			opacityProperty.set(1);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-					opacityProperty, 0))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 0))).play();
 		}
 	}
 
@@ -149,8 +142,7 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 			return;
 		}
 		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
-		PruneNodePolicy pruneNodePolicy = anchorage
-				.getAdapter(PruneNodePolicy.class);
+		PruneNodePolicy pruneNodePolicy = anchorage.getAdapter(PruneNodePolicy.class);
 		pruneNodePolicy.prune();
 	}
 

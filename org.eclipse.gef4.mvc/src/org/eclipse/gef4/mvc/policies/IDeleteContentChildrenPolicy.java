@@ -45,8 +45,4 @@ public interface IDeleteContentChildrenPolicy<VR> extends IPolicy<VR> {
 	 */
 	public abstract IUndoableOperation getDeleteOperation(IContentPart<VR> child);
 
-	// TODO: deleting multiple parts at one go could be an extra operation
-	// public abstract IUndoableOperation getDeleteOperation(
-	// Set<IContentPart<Node>> children);
-
 }
