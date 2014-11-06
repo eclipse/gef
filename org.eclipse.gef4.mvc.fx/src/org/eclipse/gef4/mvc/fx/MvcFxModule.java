@@ -16,10 +16,6 @@ import javafx.scene.Node;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
-import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractGridBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractViewportBehavior;
-import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
@@ -75,9 +71,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
 				.to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
-		adapterMapBinder
-				.addBinding(AdapterKey.get(AbstractFocusBehavior.class)).to(
-						FXFocusBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
+				FXFocusBehavior.class);
 	}
 
 	protected void bindAbstractFXFeedbackPartAdapters(
@@ -149,13 +144,12 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
 				.to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
-		adapterMapBinder.addBinding(AdapterKey.get(AbstractZoomBehavior.class))
-				.to(FXZoomBehavior.class);
-		adapterMapBinder.addBinding(AdapterKey.get(AbstractGridBehavior.class))
-				.to(FXGridBehavior.class);
-		adapterMapBinder.addBinding(
-				AdapterKey.get(AbstractViewportBehavior.class)).to(
-				FXViewportBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXZoomBehavior.class)).to(
+				FXZoomBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class)).to(
+				FXGridBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
+				.to(FXViewportBehavior.class);
 	}
 
 	protected void bindFXViewerAdapters(

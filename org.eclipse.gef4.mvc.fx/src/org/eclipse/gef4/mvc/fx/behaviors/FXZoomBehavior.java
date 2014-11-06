@@ -11,16 +11,35 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javafx.scene.Node;
 import javafx.scene.transform.Scale;
 
-import org.eclipse.gef4.mvc.behaviors.AbstractZoomBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.models.ZoomModel;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 
-public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
+public class FXZoomBehavior extends AbstractBehavior<Node> implements
+		PropertyChangeListener {
 
 	@Override
+	public void activate() {
+		super.activate();
+		getHost().getRoot().getViewer().getAdapter(ZoomModel.class)
+				.addPropertyChangeListener(this);
+	}
+
+	/**
+	 * Applies the given zoom factor in the context of this policy. For example,
+	 * you can register the policy on the root visual part and apply it to all
+	 * layers.
+	 *
+	 * @param zoom
+	 *            The factor by which to apply the zoom.
+	 */
 	protected void applyZoom(double zoomFactor) {
 		if (zoomFactor <= 0) {
 			throw new IllegalArgumentException(
@@ -34,6 +53,20 @@ public class FXZoomBehavior extends AbstractZoomBehavior<Node> {
 			// TODO: set zoom on content layer rather than via zoomProperty() on
 			// FXRootPart
 			// also set it on grid layer in case zoom grid is enabled??
+		}
+	}
+
+	@Override
+	public void deactivate() {
+		getHost().getRoot().getViewer().getAdapter(ZoomModel.class)
+				.removePropertyChangeListener(this);
+		super.deactivate();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (ZoomModel.ZOOM_FACTOR_PROPERTY.equals(evt.getPropertyName())) {
+			applyZoom((Double) evt.getNewValue());
 		}
 	}
 }

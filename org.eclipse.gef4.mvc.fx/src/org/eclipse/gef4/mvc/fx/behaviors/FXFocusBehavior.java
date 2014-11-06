@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javafx.scene.Node;
 
-import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
+import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
+import org.eclipse.gef4.mvc.models.FocusModel;
 
 /**
  *
@@ -23,11 +25,35 @@ import org.eclipse.gef4.mvc.behaviors.AbstractFocusBehavior;
  * @author anyssen
  *
  */
-public class FXFocusBehavior extends AbstractFocusBehavior<Node> implements
-PropertyChangeListener {
+public class FXFocusBehavior extends AbstractBehavior<Node> implements
+		PropertyChangeListener {
 
 	@Override
+	public void activate() {
+		super.activate();
+		getHost().getRoot().getViewer().getAdapter(FocusModel.class)
+				.addPropertyChangeListener(this);
+	}
+
 	protected void applyFocus() {
 		getHost().getVisual().requestFocus();
+	}
+
+	@Override
+	public void deactivate() {
+		getHost().getRoot().getViewer().getAdapter(FocusModel.class)
+				.removePropertyChangeListener(this);
+		super.deactivate();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (FocusModel.VIEWER_FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			// viewer focus changed
+		} else if (FocusModel.FOCUS_PROPERTY.equals(evt.getPropertyName())) {
+			if (evt.getNewValue() == getHost()) {
+				applyFocus();
+			}
+		}
 	}
 }
