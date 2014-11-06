@@ -11,20 +11,106 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.operations;
 
+import java.util.Set;
+
 import javafx.scene.Node;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.operations.SynchronizeContentChildrenOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IDeleteContentChildrenPolicy;
-import org.eclipse.gef4.mvc.policies.IDetachContentAnchoragesPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXDeleteOperation extends ReverseUndoCompositeOperation {
+
+	/**
+	 * The {@link FXDeleteContentOperation} uses the {@link IContentPart} API to
+	 * remove a content object from an {@link IContentPart}.
+	 */
+	public static class FXDeleteContentOperation extends AbstractOperation {
+		private final IContentPart<Node> parent;
+		private final Object contentChild;
+
+		public FXDeleteContentOperation(IContentPart<Node> parent,
+				Object contentChild) {
+			super("deleteContent");
+			this.parent = parent;
+			this.contentChild = contentChild;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			parent.removeContentChild(contentChild);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			parent.addContentChild(contentChild);
+			return Status.OK_STATUS;
+		}
+	}
+
+	/**
+	 * The {@link FXDetachContentOperation} uses the {@link IContentPart} API to
+	 * detach a content object as an anchorage from all of its anchoreds.
+	 */
+	public static class FXDetachContentOperation extends AbstractOperation {
+		private final IContentPart<Node> contentPart;
+		private final IContentPart<Node> anchored;
+		private Set<String> roles;
+
+		public FXDetachContentOperation(IContentPart<Node> anchored,
+				IContentPart<Node> contentPart) {
+			super("deleteContent");
+			this.anchored = anchored;
+			this.contentPart = contentPart;
+		}
+
+		@Override
+		public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			for (String role : anchored.getAnchorages().get(contentPart)) {
+				roles.add(role); // remember for undo
+				anchored.detachFromContentAnchorage(contentPart.getContent(),
+						role);
+			}
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			return execute(monitor, info);
+		}
+
+		@Override
+		public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+				throws ExecutionException {
+			for (String role : roles) {
+				anchored.attachToContentAnchorage(contentPart.getContent(),
+						role);
+			}
+			return Status.OK_STATUS;
+		}
+	}
 
 	protected final IContentPart<Node> toDelete;
 	protected final IViewer<Node> viewer;
@@ -48,46 +134,26 @@ public class FXDeleteOperation extends ReverseUndoCompositeOperation {
 				"DetachAnchorages");
 
 		// delete from content children
-		IVisualPart<Node> parent = toDelete.getParent();
-		IDeleteContentChildrenPolicy<Node> deleteContentChildrenPolicy = null;
-		if (deleteContentChildrenPolicy != null) {
-			IUndoableOperation deleteOperation = deleteContentChildrenPolicy
-					.getDeleteOperation(toDelete);
-			if (deleteOperation != null) {
-				contentChildrenOperations.add(deleteOperation);
-				contentChildrenOperations
-						.add(new SynchronizeContentChildrenOperation<Node>(
-								"SynchronizeChildren",
-								(IContentPart<Node>) parent));
-			}
-		}
+		IContentPart<Node> parent = (IContentPart<Node>) toDelete.getParent();
+		contentChildrenOperations.add(new FXDeleteContentOperation(
+				parent, toDelete.getContent()));
+		contentChildrenOperations
+				.add(new SynchronizeContentChildrenOperation<Node>(
+						"SynchronizeChildren", parent));
 
 		// detach from content anchorages
 		for (IVisualPart<Node> anchored : toDelete.getAnchoreds()) {
-			IDetachContentAnchoragesPolicy<Node> deleteContentAnchoragesPolicy = null;
-			if (deleteContentAnchoragesPolicy != null) {
-				boolean addedOperations = false;
-				for (String r : anchored.getAnchorages().get(toDelete)) {
-					IUndoableOperation deleteOperation = deleteContentAnchoragesPolicy
-							.getDeleteOperation(toDelete, r);
-					if (deleteOperation != null) {
-						contentAnchoragesOperations.add(deleteOperation);
-						addedOperations = true;
-					}
-				}
-				// synchronize content anchorages once per anchored
-				if (addedOperations) {
-					contentAnchoragesOperations
-							.add(new SynchronizeContentAnchoragesOperation<Node>(
-									"SynchronizeAnchorages",
-									(IContentPart<Node>) anchored));
-				}
+			if (!(anchored instanceof IContentPart)) {
+				continue;
 			}
-		}
-
-		if (contentChildrenOperations.isEmpty()
-				&& contentAnchoragesOperations.isEmpty()) {
-			return null;
+			IContentPart<Node> cp = (IContentPart<Node>) anchored;
+			contentAnchoragesOperations.add(new FXDetachContentOperation(
+					cp, toDelete));
+			// synchronize content anchorages once per anchored
+			contentAnchoragesOperations
+					.add(new SynchronizeContentAnchoragesOperation<Node>(
+							"SynchronizeAnchorages",
+							(IContentPart<Node>) anchored));
 		}
 
 		ReverseUndoCompositeOperation revOp = new ReverseUndoCompositeOperation(

@@ -41,6 +41,48 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 	 */
 	public static final String CONTENT_PROPERTY = "content";
 
+	/**
+	 * Inserts the given <i>contentChild</i> as a child to this part's content,
+	 * so that it will be returned by subsequent calls to
+	 * {@link #getContentChildren()}.
+	 *
+	 * @param contentChild
+	 *            An {@link Object} which should be added as a child to this
+	 *            part's content.
+	 */
+	public void addContentChild(Object contentChild);
+
+	/**
+	 * Attaches this part's content to the given <i>contentAnchorage</i> under
+	 * the specified <i>role</i>, so that it will be returned by subsequent
+	 * calls to {@link #getContentAnchorages()}.
+	 *
+	 * @param contentAnchorage
+	 *            An {@link Object} to which this part's content should be
+	 *            attached to.
+	 * @param role
+	 *            The role under which the attachment is to be established.
+	 */
+	public void attachToContentAnchorage(Object contentAnchorage, String role);
+
+	/**
+	 * Detaches this part's content from the given <i>contentAnchorage</i> under
+	 * the specified <i>role</i>, so that it will no longer be returned by
+	 * subsequent calls to {@link #getContentAnchorages()}.
+	 *
+	 * @param contentAnchorage
+	 *            An {@link Object} from which this part's content should be
+	 *            detached from.
+	 * @param role
+	 *            The role under which the attachment is established.
+	 */
+	public void detachFromContentAnchorage(Object contentAnchorage, String role);
+
+	/**
+	 * Returns this part's content.
+	 *
+	 * @return This part's content.
+	 */
 	public Object getContent();
 
 	/**
@@ -62,8 +104,30 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 	 */
 	public SetMultimap<? extends Object, String> getContentAnchorages();
 
+	/**
+	 * Returns a {@link List} of all of this part's content children.
+	 *
+	 * @return A {@link List} of all of this part's content children.
+	 */
 	public List<? extends Object> getContentChildren();
 
+	/**
+	 * Removes the given <i>contentChild</i> from this part's content children,
+	 * so that it will no longer be returned by subsequent calls to
+	 * {@link #getContentChildren()}.
+	 *
+	 * @param contentChild
+	 *            An {@link Object} which should be removed from this part's
+	 *            content children.
+	 */
+	public void removeContentChild(Object contentChild);
+
+	/**
+	 * Sets this part's content to the given {@link Object value}.
+	 *
+	 * @param content
+	 *            The new content for this part.
+	 */
 	public void setContent(Object content);
 
 }

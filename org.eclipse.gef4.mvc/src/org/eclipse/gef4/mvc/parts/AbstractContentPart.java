@@ -37,6 +37,21 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 
 	private Object content;
 
+	@Override
+	public void addContentChild(Object contentChild) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void attachToContentAnchorage(Object contentAnchorage, String role) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+		throw new UnsupportedOperationException();
+	}
+
 	/**
 	 * @see IContentPart#getContent()
 	 */
@@ -70,6 +85,11 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	 */
 	protected void registerAtContentPartMap() {
 		getViewer().getContentPartMap().put(getContent(), this);
+	}
+
+	@Override
+	public void removeContentChild(Object contentChild) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
