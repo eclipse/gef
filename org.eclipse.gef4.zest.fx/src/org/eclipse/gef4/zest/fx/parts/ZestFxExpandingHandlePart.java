@@ -16,8 +16,8 @@ import com.google.inject.Provider;
 
 public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 
-	public static final String IMG_EXPAND = "/res/expandall.gif";
-	public static final String IMG_EXPAND_DISABLED = "/res/expandall_disabled.gif";
+	public static final String IMG_EXPAND = "/expandall.gif";
+	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
 
 	public ZestFxExpandingHandlePart(
 			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,

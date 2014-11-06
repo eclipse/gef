@@ -38,23 +38,26 @@ import com.google.inject.Provider;
 
 public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 
-	public static final String IMG_PRUNE = "/res/collapseall.png";
-	public static final String IMG_PRUNE_DISABLED = "/res/collapseall_disabled.png";
+	public static final String IMG_PRUNE = "/collapseall.png";
+	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
 
 	private boolean isVisible = false;
 
-	public ZestFxPruningHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxPruningHandlePart(
+			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 		// FIXME: hover hierarchy
-		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY), new HoverFirstAnchorageOnHoverPolicy());
+		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY),
+				new HoverFirstAnchorageOnHoverPolicy());
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
+			String role) {
 		if (!(anchorage instanceof NodeContentPart)) {
-			throw new IllegalArgumentException("Anchorage not applicable <" + anchorage
-					+ ">. Can only attach to NodeContentPart.");
+			throw new IllegalArgumentException("Anchorage not applicable <"
+					+ anchorage + ">. Can only attach to NodeContentPart.");
 		}
 		super.attachToAnchorageVisual(anchorage, role);
 	}
@@ -97,15 +100,17 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		blendGroup.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(imageView.opacityProperty(), 0),
-						new KeyValue(hoverImageView.opacityProperty(), 1))).play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						imageView.opacityProperty(), 0), new KeyValue(
+						hoverImageView.opacityProperty(), 1))).play();
 			}
 		});
 		blendGroup.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(imageView.opacityProperty(), 1),
-						new KeyValue(hoverImageView.opacityProperty(), 0))).play();
+				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+						imageView.opacityProperty(), 1), new KeyValue(
+						hoverImageView.opacityProperty(), 0))).play();
 			}
 		});
 
@@ -121,10 +126,12 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		// TODO: extract magic numbers to properties
 		if (!wasVisible && isVisible) {
 			opacityProperty.set(0);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 1))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 1))).play();
 		} else if (wasVisible && !isVisible) {
 			opacityProperty.set(1);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 0))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 0))).play();
 		}
 	}
 
@@ -142,7 +149,8 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 			return;
 		}
 		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
-		PruneNodePolicy pruneNodePolicy = anchorage.getAdapter(PruneNodePolicy.class);
+		PruneNodePolicy pruneNodePolicy = anchorage
+				.getAdapter(PruneNodePolicy.class);
 		pruneNodePolicy.prune();
 	}
 
