@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.behaviors;
 
-import java.awt.Point;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,8 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
+import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.fx.MvcFxBundle;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -45,26 +44,32 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	public static final int REMOVAL_DELAY_MILLIS = 500;
-	public static final int CREATION_DELAY_MILLIS = 750;
+	public static final int CREATION_DELAY_MILLIS = 500;
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
 	private final Map<IVisualPart<Node>, Effect> effects = new HashMap<IVisualPart<Node>, Effect>();
-
 	private PauseTransition creationDelayTransition;
 	private PauseTransition removalDelayTransition;
-
 	private Point initialPointerLocation;
 
 	private final EventHandler<MouseEvent> mouseMoveHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent event) {
-			double dx = event.getScreenX() - initialPointerLocation.x;
-			double dy = event.getScreenY() - initialPointerLocation.y;
-			if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
-					|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
-				// restart creation timer when the mouse is moved beyond
-				// the threshold
-				creationDelayTransition.playFromStart();
+			if (initialPointerLocation == null) {
+				// TODO: Find out how to read the current pointer location, so
+				// that we do not have to use the first position after a mouse
+				// move.
+				initialPointerLocation = new Point(event.getScreenX(),
+						event.getScreenY());
+			} else {
+				double dx = event.getScreenX() - initialPointerLocation.x;
+				double dy = event.getScreenY() - initialPointerLocation.y;
+				if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
+						|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
+					// restart creation timer when the mouse is moved beyond
+					// the threshold
+					creationDelayTransition.playFromStart();
+				}
 			}
 		}
 	};
@@ -156,21 +161,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				removalDelayTransition.stop();
 				return;
 			}
-
-			// FIXME: platform specific workaround for Mac (if we run
-			// standalone)
-			String osName = System.getProperty("os.name").toLowerCase();
-			if (MvcFxBundle.getContext() == null
-					&& osName.startsWith("mac os x")) {
-				com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
-						.GetApplication().createRobot();
-				initialPointerLocation = new Point(robot.getMouseX(),
-						robot.getMouseY());
-			} else {
-				initialPointerLocation = java.awt.MouseInfo.getPointerInfo()
-						.getLocation();
-			}
-
+			// register mouse move filters
 			final Scene scene = getHost().getVisual().getScene();
 			scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 			scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
@@ -232,6 +223,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 		final Scene scene = getHost().getVisual().getScene();
 		scene.removeEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.removeEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
+		// reset initial pointer location
+		initialPointerLocation = null;
 		// and stop transition
 		creationDelayTransition.stop();
 	}
