@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,18 +22,17 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 /**
  * The {@link AddContentChildOperation} uses the {@link IContentPart} API to
  * remove a content object from an {@link IContentPart}.
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
  */
 public class AddContentChildOperation<VR> extends AbstractOperation {
 
-	private final IContentPart<Node> parent;
+	private final IContentPart<VR> parent;
 	private final Object contentChild;
 
-	public AddContentChildOperation(IContentPart<Node> parent,
-			Object contentChild) {
+	public AddContentChildOperation(IContentPart<VR> parent, Object contentChild) {
 		super("addContentChild()");
 		this.parent = parent;
 		this.contentChild = contentChild;
