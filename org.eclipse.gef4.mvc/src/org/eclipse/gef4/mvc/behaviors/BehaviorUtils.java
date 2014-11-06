@@ -21,8 +21,17 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
-// TODO: Transfer this into a utility class that can be injected (and thus replaced) in the parts/policies where its needed, providing non-static functions.
+/**
+ * The {@link BehaviorUtils} class provides utility methods for the
+ * implementation of {@link IBehavior}s, such as the creation of
+ * {@link IFeedbackPart}s and {@link IHandlePart}s, or the
+ * establishment/unestablishment of anchor relations.
+ */
+// TODO: Transfer this into a utility class that can be injected (and thus
+// replaced) in the parts/policies where its needed, providing non-static
+// functions.
 public class BehaviorUtils {
 
 	/**
@@ -58,6 +67,24 @@ public class BehaviorUtils {
 		}
 	}
 
+	/**
+	 * This method is called in the context of an {@link IBehavior} (
+	 * {@link SelectionBehavior}, {@link HoverBehavior}, etc.) to create
+	 * {@link IFeedbackPart}s for the given <i>targets</i> using the
+	 * {@link IFeedbackPartFactory} of the {@link IViewer} which is associated
+	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
+	 *
+	 * @param targets
+	 *            {@link List} of {@link IContentPart}s for which feedback is to
+	 *            be created.
+	 * @param behavior
+	 *            The {@link IBehavior} from which this method is called.
+	 * @param contextMap
+	 *            A {@link Map} storing state information for the
+	 *            <i>behavior</i> to further specify the context as an
+	 *            {@link IBehavior} is stateless.
+	 * @return {@link List} of {@link IFeedbackPart}s created by the factory.
+	 */
 	public static <VR> List<IFeedbackPart<VR>> createFeedback(
 			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
 			Map<Object, Object> contextMap) {
@@ -69,6 +96,24 @@ public class BehaviorUtils {
 		return feedbackParts;
 	}
 
+	/**
+	 * This method is called in the context of an {@link IBehavior} (
+	 * {@link SelectionBehavior}, {@link HoverBehavior}, etc.) to create
+	 * {@link IHandlePart}s for the given <i>targets</i> using the
+	 * {@link IHandlePartFactory} of the {@link IViewer} which is associated
+	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
+	 *
+	 * @param targets
+	 *            {@link List} of {@link IContentPart}s for which feedback is to
+	 *            be created.
+	 * @param behavior
+	 *            The {@link IBehavior} from which this method is called.
+	 * @param contextMap
+	 *            A {@link Map} storing state information for the
+	 *            <i>behavior</i> to further specify the context as an
+	 *            {@link IBehavior} is stateless.
+	 * @return {@link List} of {@link IHandlePart}s created by the factory.
+	 */
 	public static <VR> List<IHandlePart<VR>> createHandles(
 			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
 			Map<Object, Object> contextMap) {

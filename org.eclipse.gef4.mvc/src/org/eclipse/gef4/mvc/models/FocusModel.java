@@ -56,6 +56,11 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	private IContentPart<VR> focused = null;
 	private boolean isViewerFocused = false;
 
+	/**
+	 * Constructs a new {@link FocusModel}. The {@link #getFocused() focused}
+	 * {@link IContentPart} is set to <code>null</code> and the
+	 * {@link #isViewerFocused()} flag is set to <code>false</code>.
+	 */
 	public FocusModel() {
 	}
 

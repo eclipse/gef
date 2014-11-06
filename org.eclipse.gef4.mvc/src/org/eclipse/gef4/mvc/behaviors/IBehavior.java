@@ -29,5 +29,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public interface IBehavior<VR> extends IActivatable,
 		IAdaptable.Bound<IVisualPart<VR>> {
 
+	/**
+	 * Returns the host {@link IVisualPart} of this {@link IBehavior}, i.e. the
+	 * part where this behavior is registered as an adapter.
+	 *
+	 * @return The host {@link IVisualPart} of this {@link IBehavior}.
+	 */
 	public IVisualPart<VR> getHost();
+
 }
