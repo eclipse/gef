@@ -37,7 +37,7 @@ public class FXZoomBehavior extends AbstractBehavior<Node> implements
 	 * you can register the policy on the root visual part and apply it to all
 	 * layers.
 	 *
-	 * @param zoom
+	 * @param zoomFactor
 	 *            The factor by which to apply the zoom.
 	 */
 	protected void applyZoom(double zoomFactor) {
