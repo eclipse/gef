@@ -29,10 +29,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXClearInteractionModelsOperation extends
+public class FXClearHoverFocusSelectionOperation extends
 		ReverseUndoCompositeOperation {
 
-	public FXClearInteractionModelsOperation(IViewer<Node> viewer) {
+	public FXClearHoverFocusSelectionOperation(IViewer<Node> viewer) {
 		super("clear-interaction-models");
 
 		// clear hover first
