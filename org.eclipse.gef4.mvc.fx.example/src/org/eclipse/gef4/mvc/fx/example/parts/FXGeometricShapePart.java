@@ -193,6 +193,16 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
+	public void attachToContentAnchorage(Object contentAnchorage, String role) {
+		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException(
+					"Cannot attach to content anchorage: wrong type!");
+		}
+		getContent().getAnchorages().add(
+				(AbstractFXGeometricElement<?>) contentAnchorage);
+	}
+
+	@Override
 	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
 			String role) {
 		if (role.equals("link")) {
@@ -203,6 +213,11 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			vcl.unregister();
 			vcl = null;
 		}
+	}
+
+	@Override
+	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+		getContent().getAnchorages().remove(contentAnchorage);
 	}
 
 	@Override

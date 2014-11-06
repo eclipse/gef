@@ -17,6 +17,7 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
@@ -27,6 +28,16 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	public FXGeometricModelPart() {
 		g = new Group();
 		g.setAutoSizeChildren(false);
+	}
+
+	@Override
+	public void addContentChild(Object contentChild) {
+		if (!(contentChild instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException(
+					"Cannot add content child: wrong type!");
+		}
+		getContent().getShapeVisuals().add(
+				(AbstractFXGeometricElement<?>) contentChild);
 	}
 
 	@Override
@@ -54,6 +65,11 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	@Override
 	public Node getVisual() {
 		return g;
+	}
+
+	@Override
+	public void removeContentChild(Object contentChild) {
+		getContent().getShapeVisuals().remove(contentChild);
 	}
 
 }

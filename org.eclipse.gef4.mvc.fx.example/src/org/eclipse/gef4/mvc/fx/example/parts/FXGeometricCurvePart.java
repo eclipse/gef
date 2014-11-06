@@ -227,6 +227,20 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
+	@Override
+	public void attachToContentAnchorage(Object contentAnchorage, String role) {
+		if (!(contentAnchorage instanceof AbstractFXGeometricElement)) {
+			throw new IllegalArgumentException(
+					"Inappropriate content anchorage: wrong type.");
+		}
+		AbstractFXGeometricElement<?> geom = (AbstractFXGeometricElement<?>) contentAnchorage;
+		if ("START".equals(role)) {
+			getContent().getSourceAnchorages().add(geom);
+		} else if ("END".equals(role)) {
+			getContent().getTargetAnchorages().add(geom);
+		}
+	}
+
 	IUndoableOperation chainModelChanges(
 			final IUndoableOperation updateVisualOperation) {
 		if (updateVisualOperation == null) {
@@ -270,6 +284,15 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		} else {
 			throw new IllegalStateException(
 					"Cannot detach from anchor with role <" + role + ">.");
+		}
+	}
+
+	@Override
+	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
+		if ("START".equals(role)) {
+			getContent().getSourceAnchorages().remove(contentAnchorage);
+		} else if ("END".equals(role)) {
+			getContent().getTargetAnchorages().remove(contentAnchorage);
 		}
 	}
 
