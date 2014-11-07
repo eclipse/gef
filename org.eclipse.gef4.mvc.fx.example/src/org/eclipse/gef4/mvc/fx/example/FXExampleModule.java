@@ -21,6 +21,8 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXRelocateLinkedOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXResizeRelocateShapePolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
@@ -29,6 +31,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
@@ -95,13 +98,25 @@ public class FXExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// relocate on drag
+
+		// interaction policies to relocate on drag (including anchored
+		// elements, which are linked)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
 				FXRelocateOnDragPolicy.class);
-		// delete on key type
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
+						"relocateLinked")).to(
+				FXRelocateLinkedOnDragPolicy.class);
+
+		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
+
+		// transaction policy to relocate (writing changes also to model)
+		adapterMapBinder.addBinding(
+				(AdapterKey.get(FXResizeRelocatePolicy.class))).to(
+				FXResizeRelocateShapePolicy.class);
 	}
 
 	protected void bindIContentPartFactory() {

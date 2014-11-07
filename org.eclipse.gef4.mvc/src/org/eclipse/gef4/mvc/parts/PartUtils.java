@@ -7,19 +7,23 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Multiset;
 
 /**
  * Provides utilities neeeded in the context of {@link IVisualPart}s.
- * 
+ *
  * @author nyssen
- * 
+ *
  */
 public class PartUtils {
 
@@ -53,16 +57,27 @@ public class PartUtils {
 		return anchoreds;
 	}
 
+	public static <VR> Set<IVisualPart<VR>> getAnchoreds(
+			IVisualPart<VR> anchorage, String role) {
+		HashSet<IVisualPart<VR>> result = new HashSet<IVisualPart<VR>>();
+		Multiset<IVisualPart<VR>> anchoreds = anchorage.getAnchoreds();
+		for (IVisualPart<VR> anchored : anchoreds) {
+			if (anchored.getAnchorages().containsEntry(anchorage, role)) {
+				result.add(anchored);
+			}
+		}
+		return result;
+	}
 	/*
 	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
-	 * 
+	 *
 	 * Searches the visual part hierarchy for a common ancestor of the given
 	 * parts. Returns this ancestor if one is found, otherwise returns null.
-	 * 
+	 *
 	 * @param parts
-	 * 
+	 *
 	 * @return common ancestor of given parts, or null
-	 * 
+	 *
 	 * Note: This method can be transferred to here from the GEF 3.x
 	 * ToolUtilities class.
 	 */
