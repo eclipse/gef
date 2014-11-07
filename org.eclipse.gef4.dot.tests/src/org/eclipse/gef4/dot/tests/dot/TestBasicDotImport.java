@@ -104,6 +104,24 @@ public final class TestBasicDotImport {
 	}
 
 	/**
+	 * Test execution of File-based DOT-to-Zest transformations for a graph with
+	 * a node group (unamed subgraph)
+	 */
+	@Test
+	public void nodeGroupsGraph() {
+		importFrom(new File(RESOURCES_TESTS + "node_groups.dot")); //$NON-NLS-1$
+	}
+
+	/**
+	 * Test execution of File-based DOT-to-Zest transformations for a graph with
+	 * an ID that matches a keyword (edge)
+	 */
+	@Test
+	public void idMatchesKeyword() {
+		importFrom(new File(RESOURCES_TESTS + "id_matches_keyword.dot")); //$NON-NLS-1$
+	}
+
+	/**
 	 * Test error handling for invalid graph syntax (instance import).
 	 */
 	@Test(expected = IllegalArgumentException.class)

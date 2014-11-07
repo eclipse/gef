@@ -12,67 +12,89 @@
 grammar org.eclipse.gef4.internal.dot.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
 
 generate dot "http://www.eclipse.org/gef4/internal/dot/parser/Dot"
-
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-GraphvizModel: (graphs+=MainGraph)* ;
+GraphvizModel:
+	(graphs+=MainGraph)*;
 
-MainGraph: (strict?="strict")? type=GraphType (name=ID)? "{" 
-	(stmts+=Stmt)* 
-"}";
+MainGraph:
+	(strict?="strict")? type=GraphType (name=XID)? "{"
+	(stmts+=Stmt)*
+	"}";
 
-Stmt: ( Attribute | EdgeStmtNode |  EdgeStmtSubgraph |  NodeStmt | AttrStmt | Subgraph ) (";")?;
+Stmt:
+	(Attribute | EdgeStmtNode | EdgeStmtSubgraph | NodeStmt | AttrStmt | Subgraph) (";")?;
 
-EdgeStmtNode : node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+EdgeStmtNode:
+	node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
-EdgeStmtSubgraph : subgraph=Subgraph  (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+EdgeStmtSubgraph:
+	subgraph=Subgraph (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
-NodeStmt     :  name=ID (port=Port)? (attributes+=AttrList)*;
+NodeStmt:
+	name=XID (port=Port)? (attributes+=AttrList)*;
 
-Attribute: name=ID "=" value=ID;
+Attribute:
+	name=XID "=" value=XID;
 
-AttrStmt  	:  	type=AttributeType (attributes+=AttrList)+;
+AttrStmt:
+	type=AttributeType (attributes+=AttrList)+;
 
-AttrList : "[" {AttrList} (a_list+=AList)* "]";
+AttrList:
+	"[" {AttrList} (a_list+=AList)* "]";
 
-AList: name=ID ("=" value=ID)? (",")?;
+AList:
+	name=XID ("=" value=XID)? (",")?;
 
-Subgraph : ( "subgraph" {Subgraph} name=ID? ) "{" (stmts+=Stmt)* "}";
+Subgraph:
+	{Subgraph} ("subgraph" name=XID?)? "{" (stmts+=Stmt)* "}";
 
-Port : ":" name=ID ( ":" compass_pt=CompassPt )? | ":" compass_pt=CompassPt;
+Port:
+	":" name=XID (":" compass_pt=CompassPt)? | ":" compass_pt=CompassPt;
 
-EdgeRhs: (EdgeRhsNode | EdgeRhsSubgraph);
+EdgeRhs:
+	(EdgeRhsNode | EdgeRhsSubgraph);
 
-EdgeRhsNode: op=EdgeOp node=NodeId;
+EdgeRhsNode:
+	op=EdgeOp node=NodeId;
 
-EdgeRhsSubgraph: op=EdgeOp subgraph=Subgraph;
+EdgeRhsSubgraph:
+	op=EdgeOp subgraph=Subgraph;
 
-NodeId  : name=ID (port=Port)?;
+NodeId:
+	name=XID (port=Port)?;
 
-enum EdgeOp :
- directed="->"|undirected="--";
- 
-enum GraphType :
- graph="graph"|digraph="digraph";
- 
-enum AttributeType :
- graph="graph"|node="node"|edge="edge";
+	// compass point values are no keywords (and thus allowed as part of an ID), 
+	// whereas node, edge, graph, digraph, subgraph, strict are keywords (and thus not allowed as part of an ID)
+XID:
+	ID | "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_";
 
-enum CompassPt: north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw";
+enum EdgeOp:
+	directed="->" | undirected="--";
 
-terminal ID :
-    ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* |
-    ('-')?('.'('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)? |
-    ('"' ( '\\'('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') | !('\\'|'"') )* '"');
-    
-terminal ML_COMMENT  : 
-  '/*' -> '*/';
+enum GraphType:
+	graph="graph" | digraph="digraph";
 
-terminal SL_COMMENT : 
-  ('//' | '#') !('\n'|'\r')* ('\r'? '\n')?;
- 
-terminal WS  : 
-  (' '|'\t'|'\r'|'\n')+;
- 
-terminal ANY_OTHER: 
-  .;
+enum AttributeType:
+	graph="graph" | node="node" | edge="edge";
+
+enum CompassPt:
+	north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw" |
+	center="c" | wildcard="_";
+
+terminal ID:
+	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')* |
+	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)? |
+	('"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | "'" | '\\') | !('\\' | '"'))* '"');
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	('//' | '#') !('\n' | '\r')* ('\r'? '\n')?;
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;
