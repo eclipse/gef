@@ -41,12 +41,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	protected void doActivate() {
-		super.doActivate();
-		// getViewer().getAdapter(GridModel.class).setSnapToGrid(true);
-	}
-
-	@Override
 	public void doRefreshVisual() {
 	}
 
