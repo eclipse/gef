@@ -140,7 +140,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			return true;
 		}
 		List<IHandlePart<Node>> handleParts = getHandleParts();
-		if (handleParts == null || handleParts.isEmpty()) {
+		if (handleParts == null || handleParts.isEmpty() || part == null) {
 			return false;
 		}
 		return handleParts.contains(part);
@@ -149,7 +149,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void onHoverChange(IVisualPart<Node> oldHovered,
 			IVisualPart<Node> newHovered) {
-		// determine is the host or any TT handle part is/was hovered
+		// determine if the host or any hover handle part is/was hovered
 		boolean isHovered = isaHoverPart(newHovered);
 		boolean wasHovered = isaHoverPart(oldHovered);
 		// check if initially hovered
@@ -192,7 +192,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 				removeFeedback(Collections.singletonList(getHost()));
 				return;
 			}
-			// otherwise, we start the removal display
+			// otherwise, we start the removal delay
 			removalDelayTransition = new PauseTransition(
 					Duration.millis(REMOVAL_DELAY_MILLIS));
 			removalDelayTransition

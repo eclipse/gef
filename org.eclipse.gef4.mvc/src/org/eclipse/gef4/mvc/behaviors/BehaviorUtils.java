@@ -14,7 +14,6 @@ package org.eclipse.gef4.mvc.behaviors;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
@@ -75,7 +74,7 @@ public class BehaviorUtils {
 	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
 	 *
 	 * @param targets
-	 *            {@link List} of {@link IContentPart}s for which feedback is to
+	 *            {@link List} of {@link IVisualPart}s for which feedback is to
 	 *            be created.
 	 * @param behavior
 	 *            The {@link IBehavior} from which this method is called.
@@ -86,7 +85,7 @@ public class BehaviorUtils {
 	 * @return {@link List} of {@link IFeedbackPart}s created by the factory.
 	 */
 	public static <VR> List<IFeedbackPart<VR>> createFeedback(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			List<? extends IVisualPart<VR>> targets, IBehavior<VR> behavior,
 			Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
@@ -104,7 +103,7 @@ public class BehaviorUtils {
 	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
 	 *
 	 * @param targets
-	 *            {@link List} of {@link IContentPart}s for which feedback is to
+	 *            {@link List} of {@link IVisualPart}s for which feedback is to
 	 *            be created.
 	 * @param behavior
 	 *            The {@link IBehavior} from which this method is called.
@@ -115,7 +114,7 @@ public class BehaviorUtils {
 	 * @return {@link List} of {@link IHandlePart}s created by the factory.
 	 */
 	public static <VR> List<IHandlePart<VR>> createHandles(
-			List<IContentPart<VR>> targets, IBehavior<VR> behavior,
+			List<? extends IVisualPart<VR>> targets, IBehavior<VR> behavior,
 			Map<Object, Object> contextMap) {
 		IVisualPart<VR> host = behavior.getAdaptable();
 		IHandlePartFactory<VR> factory = host.getRoot().getViewer()

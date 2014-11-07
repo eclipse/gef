@@ -59,7 +59,8 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 		double cy = hostVisual.getLayoutY()
 				+ hostVisual.getLayoutBounds().getMinY();
 
-		Point2D locationInScene = hostVisual.getParent().localToScene(cx, cy);
+		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
+				cx, cy) : hostVisual.getParent().localToScene(cx, cy);
 		Point2D locationInLocal = blendGroup.getParent().sceneToLocal(
 				locationInScene);
 

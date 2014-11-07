@@ -20,11 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.parts.PartUtils;
 
 /**
  *
@@ -59,31 +57,24 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	protected void addFeedback(List<? extends IVisualPart<VR>> targets,
 			Map<Object, Object> contextMap) {
-		@SuppressWarnings("unchecked")
-		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets,
-				IContentPart.class);
-		if (contentParts != null && !contentParts.isEmpty()) {
-			feedbackParts = BehaviorUtils.createFeedback(contentParts, this,
+		if (targets != null && !targets.isEmpty()) {
+			feedbackParts = BehaviorUtils.createFeedback(targets, this,
 					contextMap);
-			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
+			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
 					feedbackParts);
 		}
 	}
 
 	protected void addHandles(List<? extends IVisualPart<VR>> targets) {
-		// create handles for content parts only
 		addHandles(targets, Collections.<Object, Object> emptyMap());
 	}
 
 	protected void addHandles(List<? extends IVisualPart<VR>> targets,
 			Map<Object, Object> contextMap) {
-		@SuppressWarnings("unchecked")
-		List<IContentPart<VR>> contentParts = PartUtils.filterParts(targets,
-				IContentPart.class);
-		if (contentParts != null && !contentParts.isEmpty()) {
-			handleParts = BehaviorUtils.createHandles(contentParts, this,
-					contextMap);
-			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), contentParts,
+		if (targets != null && !targets.isEmpty()) {
+			handleParts = BehaviorUtils
+					.createHandles(targets, this, contextMap);
+			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
 					handleParts);
 		}
 	}
@@ -128,12 +119,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	protected void removeFeedback(List<? extends IVisualPart<VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
-			@SuppressWarnings("unchecked")
-			List<IContentPart<VR>> contentParts = PartUtils.filterParts(
-					targets, IContentPart.class);
-			if (contentParts != null && !contentParts.isEmpty()) {
+			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-						contentParts, feedbackParts);
+						targets, feedbackParts);
 				feedbackParts.clear();
 			}
 		}
@@ -141,12 +129,9 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	protected void removeHandles(List<? extends IVisualPart<VR>> targets) {
 		if (handleParts != null && !handleParts.isEmpty()) {
-			@SuppressWarnings("unchecked")
-			List<IContentPart<VR>> contentParts = PartUtils.filterParts(
-					targets, IContentPart.class);
-			if (contentParts != null && !contentParts.isEmpty()) {
+			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
-						contentParts, handleParts);
+						targets, handleParts);
 				handleParts.clear();
 			}
 		}

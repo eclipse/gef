@@ -53,4 +53,5 @@ public class VisualOutlineGeometryProvider implements
 	public void setAdaptable(IVisualPart<Node> adaptable) {
 		this.host = adaptable;
 	}
+
 }
