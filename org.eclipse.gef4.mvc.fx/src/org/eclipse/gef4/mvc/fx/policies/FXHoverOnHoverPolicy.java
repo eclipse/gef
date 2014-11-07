@@ -23,7 +23,6 @@ public class FXHoverOnHoverPolicy extends AbstractFXHoverPolicy {
 		getHost().getRoot().getViewer()
 				.<HoverModel<Node>> getAdapter(HoverModel.class)
 				.setHover(getHost());
-
 	}
 
 }

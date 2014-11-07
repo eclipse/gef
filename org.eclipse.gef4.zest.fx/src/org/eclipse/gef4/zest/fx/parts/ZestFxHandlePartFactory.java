@@ -21,8 +21,8 @@ import javafx.scene.Node;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 
 import com.google.inject.Provider;
@@ -31,7 +31,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	protected IHandlePart<Node> createHoverSegmentHandlePart(
-			final IContentPart<Node> target,
+			final IVisualPart<Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
 		if (target instanceof NodeContentPart) {
@@ -57,7 +57,7 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	protected List<IHandlePart<Node>> createSelectionHandleParts(
-			List<IContentPart<Node>> targets,
+			List<? extends IVisualPart<Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		return Collections.emptyList();

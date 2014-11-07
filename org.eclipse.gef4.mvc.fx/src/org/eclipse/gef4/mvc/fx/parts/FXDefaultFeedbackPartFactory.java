@@ -18,7 +18,6 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
@@ -40,8 +39,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 	@Override
 	public List<IFeedbackPart<Node>> createFeedbackParts(
-			List<IContentPart<Node>> targets, IBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
+			List<? extends IVisualPart<Node>> targets,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		// no targets
 		if (targets == null || targets.isEmpty()) {
 			return Collections.emptyList();
@@ -61,7 +60,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	}
 
 	protected List<IFeedbackPart<Node>> createHoverFeedbackParts(
-			List<IContentPart<Node>> targets,
+			List<? extends IVisualPart<Node>> targets,
 			HoverBehavior<Node> hoverBehavior, Map<Object, Object> contextMap) {
 		// no feedback for empty or multiple selection
 		if (targets.size() == 0 || targets.size() > 1) {
@@ -70,7 +69,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
 
-		final IContentPart<Node> target = targets.iterator().next();
+		final IVisualPart<Node> target = targets.iterator().next();
 
 		final Provider<IGeometry> hoverFeedbackGeometryProvider = target
 				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
@@ -99,17 +98,17 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	 * anchorage.
 	 *
 	 * @param anchored
-	 *            The anchored {@link IContentPart}.
+	 *            The anchored {@link IVisualPart}.
 	 * @param anchorage
-	 *            The anchorage {@link IContentPart}.
+	 *            The anchorage {@link IVisualPart}.
 	 * @param anchorageRole
 	 *            The role under which the anchorage is stored at the anchored.
 	 * @return The {@link IFeedbackPart} for this anchor link, or
 	 *         <code>null</code> if no feedback should be rendered.
 	 */
 	protected IFeedbackPart<Node> createLinkFeedbackPart(
-			final IContentPart<Node> anchored,
-			final IContentPart<Node> anchorage, String anchorageRole) {
+			final IVisualPart<Node> anchored,
+			final IVisualPart<Node> anchorage, String anchorageRole) {
 
 		// only show anchor link feedback if anchorage and anchored provider is
 		// not null (and anchored is no connection)
@@ -182,7 +181,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	}
 
 	protected List<IFeedbackPart<Node>> createSelectionFeedbackParts(
-			List<IContentPart<Node>> targets,
+			List<? extends IVisualPart<Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		// no feedback for empty or multiple selection
@@ -194,13 +193,12 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		List<IFeedbackPart<Node>> feedbackParts = new ArrayList<IFeedbackPart<Node>>();
 
 		// selection outline feedback
-		final IContentPart<Node> target = targets.iterator().next();
+		final IVisualPart<Node> target = targets.iterator().next();
 		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
 				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
 						Provider.class, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
-
 				@Override
 				public IGeometry get() {
 					return FXUtils.localToScene(target.getVisual(),
@@ -215,14 +213,13 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		}
 
 		// selection link feedback parts
-		for (IContentPart<Node> t : targets) {
+		for (IVisualPart<Node> t : targets) {
 			if (!t.getAnchorages().isEmpty()) {
 				for (Entry<IVisualPart<Node>, String> entry : t.getAnchorages()
 						.entries()) {
-					if (entry.getKey() instanceof IContentPart) {
+					if (entry.getKey() instanceof IVisualPart) {
 						IFeedbackPart<Node> anchorLinkFeedbackPart = createLinkFeedbackPart(
-								t, (IContentPart<Node>) entry.getKey(),
-								entry.getValue());
+								t, entry.getKey(), entry.getValue());
 						if (anchorLinkFeedbackPart != null) {
 							injector.injectMembers(anchorLinkFeedbackPart);
 							feedbackParts.add(anchorLinkFeedbackPart);

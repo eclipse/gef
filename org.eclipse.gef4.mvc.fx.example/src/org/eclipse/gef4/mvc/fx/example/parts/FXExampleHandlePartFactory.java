@@ -28,8 +28,8 @@ import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy.ReferencePoint;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -42,7 +42,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	public IHandlePart<Node> createBoundsSelectionCornerHandlePart(
-			final List<IContentPart<Node>> targets,
+			final List<? extends IVisualPart<Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
 		IHandlePart<Node> part = super.createBoundsSelectionCornerHandlePart(
@@ -56,7 +56,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	public IHandlePart<Node> createCurveSelectionHandlePart(
-			final IContentPart<Node> targetPart,
+			final IVisualPart<Node> targetPart,
 			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
@@ -81,7 +81,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
 	protected List<IHandlePart<Node>> createHoverHandleParts(
-			IContentPart<Node> target, HoverBehavior<Node> contextBehavior,
+			IVisualPart<Node> target, HoverBehavior<Node> contextBehavior,
 			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
 		if (target instanceof FXGeometricShapePart) {

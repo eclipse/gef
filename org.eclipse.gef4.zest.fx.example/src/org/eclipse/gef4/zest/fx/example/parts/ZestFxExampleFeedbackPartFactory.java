@@ -15,15 +15,15 @@ package org.eclipse.gef4.zest.fx.example.parts;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class ZestFxExampleFeedbackPartFactory extends
 		FXDefaultFeedbackPartFactory {
 
 	@Override
 	protected IFeedbackPart<Node> createLinkFeedbackPart(
-			IContentPart<Node> anchored, IContentPart<Node> anchorage,
+			IVisualPart<Node> anchored, IVisualPart<Node> anchorage,
 			String anchorageRole) {
 		return null;
 	}

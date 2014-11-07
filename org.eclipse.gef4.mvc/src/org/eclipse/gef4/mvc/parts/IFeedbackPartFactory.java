@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -17,9 +17,9 @@ import java.util.Map;
 import org.eclipse.gef4.mvc.behaviors.IBehavior;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -30,11 +30,11 @@ public interface IFeedbackPartFactory<VR> {
 	 * Creates specific {@link IFeedbackPart}s for the given <i>targets</i>, in
 	 * the context specified by the given <i>contextBehavior</i> and
 	 * <i>contextMap</i>.
-	 * 
+	 *
 	 * As all {@link IBehavior}s should be stateless, all data required for the
 	 * <i>contextBehavior</i> to be able to deliver certain information to the
 	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
-	 * 
+	 *
 	 * <pre>
 	 * create(List targets, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
 	 * 	if (ctxb instanceof ConcreteBehavior) {
@@ -42,9 +42,9 @@ public interface IFeedbackPartFactory<VR> {
 	 * 	}
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param targets
-	 *            The target {@link IContentPart}s for which feedback is to be
+	 *            The target {@link IVisualPart}s for which feedback is to be
 	 *            created
 	 * @param contextBehavior
 	 *            The context {@link IBehavior} which initiated the creation of
@@ -57,7 +57,7 @@ public interface IFeedbackPartFactory<VR> {
 	 *         feedback of the given targets.
 	 */
 	public List<IFeedbackPart<VR>> createFeedbackParts(
-			List<IContentPart<VR>> targets, IBehavior<VR> contextBehavior,
-			Map<Object, Object> contextMap);
+			List<? extends IVisualPart<VR>> targets,
+			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap);
 
 }
