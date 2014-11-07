@@ -8,6 +8,9 @@
  *    Michael Clay    - initial API and implementation (#277380)
  *    Fabian Steeg    - updates for current Xtext and minor tweaks
  *    Alexander Nyßen - fixed grammar generation problems w.r.t. terminals (#429512)
+ *                    - fixed problems resulting from non-optional subgraph names 
+ *                      and shadowing of IDs by CommentPt literals (#430132)
+ * 
  *******************************************************************************/
 grammar org.eclipse.gef4.internal.dot.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
 
@@ -65,7 +68,7 @@ NodeId:
 	name=XID (port=Port)?;
 
 	// compass point values are no keywords (and thus allowed as part of an ID), 
-	// whereas node, edge, graph, digraph, subgraph, strict are keywords (and thus not allowed as part of an ID)
+// whereas node, edge, graph, digraph, subgraph, strict are keywords (and thus not allowed as part of an ID)
 XID:
 	ID | "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_";
 
