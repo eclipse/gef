@@ -19,15 +19,19 @@ import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
+import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
+import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 
@@ -89,6 +93,17 @@ public class FXExampleModule extends MvcFxModule {
 						FXExampleDeleteFirstAnchorageOnClickPolicy.class);
 	}
 
+	protected void bindFXGeometricShapePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// relocate on drag
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
+				FXRelocateOnDragPolicy.class);
+		// delete on key type
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+				.to(FXDeleteSelectedOnTypePolicy.class);
+	}
+
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).toInstance(new FXExampleContentPartFactory());
@@ -103,7 +118,12 @@ public class FXExampleModule extends MvcFxModule {
 	@Override
 	protected void configure() {
 		super.configure();
+
 		bindIContentPartFactory();
+
+		bindFXGeometricShapePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXGeometricShapePart.class));
+
 		bindFXExampleDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXExampleDeleteHandlePart.class));
 	}

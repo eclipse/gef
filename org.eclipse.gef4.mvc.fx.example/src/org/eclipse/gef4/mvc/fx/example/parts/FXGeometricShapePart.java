@@ -32,11 +32,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -45,88 +41,89 @@ import com.google.common.collect.SetMultimap;
 
 public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 
-	private FXGeometryNode<IShape> visual;
+	public class FXResizeRelocateShapePolicy extends FXResizeRelocatePolicy {
+
+		@Override
+		public IUndoableOperation commit() {
+			final IUndoableOperation updateVisualOperation = super.commit();
+			if (updateVisualOperation == null) {
+				return null;
+			}
+
+			// commit changes to model
+			final FXGeometricShape hostContent = getHost().getContent();
+			FXGeometryNode<IShape> hostVisual = getHost().getVisual();
+			final IShape newGeometry = hostVisual.getGeometry();
+			final IShape oldGeometry = hostContent.getGeometry();
+
+			final AffineTransform oldTransform = hostContent.getTransform();
+			final AffineTransform newTransform = new AffineTransform(1, 0, 0,
+					1, hostVisual.getLayoutX(), hostVisual.getLayoutY());
+
+			final IUndoableOperation updateModelOperation = new AbstractOperation(
+					"Update Model") {
+
+				@Override
+				public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+						throws ExecutionException {
+					hostContent.setGeometry(newGeometry);
+					hostContent.setTransform(newTransform);
+					return Status.OK_STATUS;
+				}
+
+				@Override
+				public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+						throws ExecutionException {
+					return execute(monitor, info);
+				}
+
+				@Override
+				public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+						throws ExecutionException {
+					hostContent.setGeometry(oldGeometry);
+					hostContent.setTransform(oldTransform);
+					return Status.OK_STATUS;
+				}
+			};
+			// compose both operations
+			IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+					updateVisualOperation.getLabel()) {
+				{
+					add(updateVisualOperation);
+					add(updateModelOperation);
+				}
+			};
+
+			inResizeRelocate = false;
+			return compositeOperation;
+		}
+
+		@Override
+		public FXGeometricShapePart getHost() {
+			return (FXGeometricShapePart) super.getHost();
+		}
+
+		@Override
+		public void init() {
+			super.init();
+			inResizeRelocate = true;
+		}
+	}
+
+	// TODO: This is dirty. Remove it ...
+	protected boolean inResizeRelocate;
+
+	private final FXGeometryNode<IShape> visual;
 	private IFXAnchor anchor;
 	private VisualChangeListener vcl;
-	protected boolean inResizeRelocate;
 
 	public FXGeometricShapePart() {
 		visual = new FXGeometryNode<IShape>();
 
-		// TODO: inject these adapters
-		// interaction policies
-		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
-				new FXRelocateOnDragPolicy());
-
 		// transaction policies
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
-				new FXResizeRelocatePolicy() {
-					@Override
-					public IUndoableOperation commit() {
-						final IUndoableOperation updateVisualOperation = super
-								.commit();
-						if (updateVisualOperation == null) {
-							return null;
-						}
+				new FXResizeRelocateShapePolicy());
 
-						// commit changes to model
-						final FXGeometricShape shape = getContent();
-						final IShape newGeometry = visual.getGeometry();
-						final IShape oldGeometry = shape.getGeometry();
-
-						final AffineTransform oldTransform = shape
-								.getTransform();
-						final AffineTransform newTransform = new AffineTransform(
-								1, 0, 0, 1, visual.getLayoutX(), visual
-										.getLayoutY());
-
-						final IUndoableOperation updateModelOperation = new AbstractOperation(
-								"Update Model") {
-
-							@Override
-							public IStatus execute(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								shape.setGeometry(newGeometry);
-								shape.setTransform(newTransform);
-								return Status.OK_STATUS;
-							}
-
-							@Override
-							public IStatus redo(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								return execute(monitor, info);
-							}
-
-							@Override
-							public IStatus undo(IProgressMonitor monitor,
-									IAdaptable info) throws ExecutionException {
-								shape.setGeometry(oldGeometry);
-								shape.setTransform(oldTransform);
-								return Status.OK_STATUS;
-							}
-						};
-						// compose both operations
-						IUndoableOperation compositeOperation = new AbstractCompositeOperation(
-								updateVisualOperation.getLabel()) {
-							{
-								add(updateVisualOperation);
-								add(updateModelOperation);
-							}
-						};
-
-						inResizeRelocate = false;
-						return compositeOperation;
-					}
-
-					@Override
-					public void init() {
-						super.init();
-						inResizeRelocate = true;
-					}
-				});
-
-		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new FXDeleteSelectedOnTypePolicy());
 	}
 
 	@Override
