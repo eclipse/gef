@@ -17,14 +17,30 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.DeleteContentOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
+public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy
+		implements ITransactional {
+
+	private AbstractCompositeOperation commitOperation;
+
+	@Override
+	public IUndoableOperation commit() {
+		return commitOperation.unwrap();
+	}
+
+	@Override
+	public void init() {
+		commitOperation = new ForwardUndoCompositeOperation("Delete");
+	}
 
 	protected boolean isDelete(KeyEvent event) {
 		// only delete on <DELETE> key
@@ -59,15 +75,9 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 			return;
 		}
 
-		// compose complex delete operation
-		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
-				"delete-ops");
 		for (IContentPart<Node> p : selected) {
-			deleteOps.add(new DeleteContentOperation<Node>(viewer, p));
+			commitOperation.add(new DeleteContentOperation<Node>(viewer, p));
 		}
-
-		// execute on the stack
-		executeOperation(deleteOps);
 	}
 
 	@Override

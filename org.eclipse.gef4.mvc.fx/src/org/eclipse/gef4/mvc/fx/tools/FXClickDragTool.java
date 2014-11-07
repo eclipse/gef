@@ -79,15 +79,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					e.consume();
 
 					// click first
-					// TODO: why do we not pass in the click policy key here??
 					IVisualPart<Node> clickTargetPart = FXPartUtils
 							.getTargetPart(getDomain().getViewers().values(),
 									target, null);
 					if (clickTargetPart != null) {
 						Collection<? extends AbstractFXClickPolicy> policies = getClickPolicies(clickTargetPart);
+						init(policies);
 						for (AbstractFXClickPolicy policy : policies) {
 							policy.click(e);
 						}
+						commit(policies);
 					}
 
 					// drag second
@@ -96,6 +97,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 									target, DRAG_TOOL_POLICY_KEY);
 					if (dragTargetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
+						init(policies);
 						for (AbstractFXDragPolicy policy : policies) {
 							dragInProgress = true;
 							policy.press(e);
@@ -114,8 +116,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						for (AbstractFXDragPolicy policy : policies) {
 							policy.release(e, new Dimension(dx, dy));
 						}
+						commit(policies);
 					}
-
 					dragInProgress = false;
 				}
 			};
@@ -132,5 +134,4 @@ public class FXClickDragTool extends AbstractTool<Node> {
 		}
 		super.unregisterListeners();
 	}
-
 }

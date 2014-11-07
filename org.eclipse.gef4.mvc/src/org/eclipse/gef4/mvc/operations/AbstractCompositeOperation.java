@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -131,7 +131,9 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 	}
 
 	public IUndoableOperation unwrap() {
-		if (operations.size() == 1) {
+		if (operations.size() == 0) {
+			return null;
+		} else if (operations.size() == 1) {
 			return operations.get(0);
 		} else {
 			return this;

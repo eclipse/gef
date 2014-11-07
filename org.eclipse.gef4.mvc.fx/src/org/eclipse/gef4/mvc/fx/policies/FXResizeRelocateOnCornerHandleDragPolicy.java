@@ -26,13 +26,15 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // up to now only usable with FXCornerHandleParts
 // we could also implement to work with FXSegmentParts, maybe it is also better so use a different implementation for this.
 public class FXResizeRelocateOnCornerHandleDragPolicy extends
-		AbstractFXDragPolicy {
+		AbstractFXDragPolicy implements ITransactional {
 
 	/**
 	 * <p>
@@ -96,8 +98,15 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	private Map<IContentPart<Node>, Double> relX2 = null;
 	private Map<IContentPart<Node>, Double> relY2 = null;
 
+	private AbstractCompositeOperation commitOperation;
+
 	public FXResizeRelocateOnCornerHandleDragPolicy(ReferencePoint refPoint) {
 		this.referencePoint = refPoint;
+	}
+
+	@Override
+	public IUndoableOperation commit() {
+		return commitOperation.unwrap();
 	}
 
 	/**
@@ -213,6 +222,11 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	@Override
+	public void init() {
+		commitOperation = new ForwardUndoCompositeOperation("Relocate");
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
@@ -231,26 +245,15 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		boolean performCommit = false;
-		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
-				"Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				IUndoableOperation commit = policy.commit();
 				if (commit != null) {
-					operation.add(commit);
-					performCommit = true;
+					commitOperation.add(commit);
 				}
 			}
 		}
-		if (performCommit) {
-			// TODO: for performance optimization, refreshing visuals could be
-			// disabled during execution (so that model changes do not trigger
-			// refresh)
-			executeOperation(operation);
-		}
-
 		// null resize context vars
 		selectionBounds = null;
 		initialMouseLocation = null;

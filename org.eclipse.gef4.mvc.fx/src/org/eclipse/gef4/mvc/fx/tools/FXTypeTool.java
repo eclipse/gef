@@ -34,7 +34,9 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private final EventHandler<? super KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			for (AbstractFXTypePolicy policy : getTargetPolicies(event)) {
+			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
+			init(policies);
+			for (AbstractFXTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
 		}
@@ -43,9 +45,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
-			for (AbstractFXTypePolicy policy : getTargetPolicies(event)) {
+			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
+			for (AbstractFXTypePolicy policy : policies) {
 				policy.released(event);
 			}
+			commit(policies);
 		}
 	};
 

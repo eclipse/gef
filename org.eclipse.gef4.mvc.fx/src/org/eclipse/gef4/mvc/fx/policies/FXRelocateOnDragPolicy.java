@@ -24,15 +24,24 @@ import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
+public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy implements
+		ITransactional {
+
+	private AbstractCompositeOperation commitOperation = null;
 
 	private Point initialMouseLocationInScene = null;
 	private final Map<IVisualPart<Node>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<Node>, Boolean>();
+
+	@Override
+	public IUndoableOperation commit() {
+		return commitOperation.unwrap();
+	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -69,6 +78,13 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
+	public void init() {
+		// FIXME: if we change this to forward undo, the example does not
+		// properly work (connections are not properly undone after moving).
+		commitOperation = new ReverseUndoCompositeOperation("Relocate");
+	}
+
+	@Override
 	public void press(MouseEvent e) {
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node> part : getTargetParts()) {
@@ -83,23 +99,15 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		// perform operation
-		boolean performCommit = false;
-		ReverseUndoCompositeOperation operation = new ReverseUndoCompositeOperation(
-				"Resize/Relocate");
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				part.setRefreshVisual(initialRefreshVisual.remove(part));
 				IUndoableOperation commit = policy.commit();
 				if (commit != null) {
-					operation.add(commit);
-					performCommit = true;
+					commitOperation.add(commit);
 				}
 			}
-		}
-		if (performCommit) {
-			executeOperation(operation);
 		}
 		setInitialMouseLocationInScene(null);
 		if (!initialRefreshVisual.isEmpty()) {

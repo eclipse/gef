@@ -25,6 +25,9 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ITransactional;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
@@ -35,10 +38,12 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy
+		implements ITransactional {
 
 	private int createdSegmentIndex;
 	private boolean initialRefreshVisual = true;
+	private AbstractCompositeOperation commitOperation;
 
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
@@ -99,6 +104,11 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		}
 	}
 
+	@Override
+	public IUndoableOperation commit() {
+		return commitOperation.unwrap();
+	}
+
 	protected void disableRefreshVisuals() {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
@@ -136,6 +146,11 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public FXSegmentHandlePart getHost() {
 		return (FXSegmentHandlePart) super.getHost();
+	}
+
+	@Override
+	public void init() {
+		commitOperation = new ReverseUndoCompositeOperation("Bend");
 	}
 
 	@Override
@@ -188,8 +203,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 		enableRefreshVisuals();
-		IUndoableOperation operation = getBendPolicy(anchorage).commit();
-		executeOperation(operation);
+
+		FXBendPolicy policy = getBendPolicy(anchorage);
+		if (policy != null) {
+			IUndoableOperation commit = policy.commit();
+			if (commit != null) {
+				commitOperation.add(commit);
+			}
+		}
 	}
 
 	private void setSegmentIndex(FXSegmentHandlePart part, int value) {
