@@ -13,35 +13,37 @@ package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.scene.input.ZoomEvent;
 
-import org.eclipse.gef4.mvc.models.ZoomModel;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXZoomOnPinchSpreadPolicy extends AbstractFXPinchSpreadPolicy {
 
-	private double initialZoomFactor;
+	private AffineTransform initialContentsTx;
 
-	public void zoomAbsolute(double absoluteZoom) {
-		ZoomModel zoomModel = getHost().getRoot().getViewer()
-				.getAdapter(ZoomModel.class);
-		zoomModel.setZoomFactor(absoluteZoom);
+	public void zoom(double zoom) {
+		ViewportModel viewportModel = getHost().getRoot().getViewer()
+				.getAdapter(ViewportModel.class);
+		viewportModel.setContentsTransform(initialContentsTx
+				.concatenate(new AffineTransform().setToScale(zoom, zoom)));
 	}
 
 	@Override
 	public void zoomDetected(ZoomEvent e, double partialFactor,
 			double totalFactor) {
-		initialZoomFactor = getHost().getRoot().getViewer()
-				.getAdapter(ZoomModel.class).getZoomFactor();
-		zoomAbsolute(initialZoomFactor * totalFactor);
+		initialContentsTx = getHost().getRoot().getViewer()
+				.getAdapter(ViewportModel.class).getContentsTransform();
+		zoom(totalFactor);
 	}
 
 	@Override
 	public void zoomed(ZoomEvent e, double partialFactor, double totalFactor) {
-		zoomAbsolute(initialZoomFactor * totalFactor);
+		zoom(totalFactor);
 	}
 
 	@Override
 	public void zoomFinished(ZoomEvent e, double partialFactor,
 			double totalFactor) {
-		zoomAbsolute(initialZoomFactor * totalFactor);
+		zoom(totalFactor);
 	}
 
 }

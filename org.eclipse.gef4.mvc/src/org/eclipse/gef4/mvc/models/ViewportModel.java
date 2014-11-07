@@ -15,7 +15,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 
+/**
+ * The {@link ViewportModel} stores viewport width and height, horizontal and
+ * vertical translation, and a general contents transformation.
+ */
 public class ViewportModel implements IPropertyChangeNotifier {
 
 	/**
@@ -42,16 +47,32 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	 */
 	public static final String VIEWPORT_HEIGHT_PROPERTY = "viewportHeight";
 
+	/**
+	 * When the contents transform changes, this is the property name reported
+	 * by a corresponding property change event.
+	 */
+	public static final String VIEWPORT_CONTENTS_TRANSFORM_PROPERTY = "viewportContentsTransform";
+
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private double x = 0;
 	private double y = 0;
 	private double width = 0;
 	private double height = 0;
+	private AffineTransform contentsTx = new AffineTransform();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
+	}
+
+	/**
+	 * Returns the contents transformation.
+	 *
+	 * @return The contents transformation.
+	 */
+	public AffineTransform getContentsTransform() {
+		return contentsTx.getCopy();
 	}
 
 	/**
@@ -64,10 +85,20 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		return height;
 	}
 
+	/**
+	 * Returns the horizontal translation of the contents in this model.
+	 *
+	 * @return The horizontal translation.
+	 */
 	public double getTranslateX() {
 		return x;
 	}
 
+	/**
+	 * Returns the vertical translation of the contents in this model.
+	 *
+	 * @return The vertical translation.
+	 */
 	public double getTranslateY() {
 		return y;
 	}
@@ -85,6 +116,21 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);
+	}
+
+	/**
+	 * Sets the contents transformation to the given value.
+	 *
+	 * @param contentsTransform
+	 *            The new contents transformation.
+	 */
+	public void setContentsTransform(AffineTransform contentsTransform) {
+		if (!contentsTx.equals(contentsTransform)) {
+			AffineTransform oldTx = contentsTx.getCopy();
+			contentsTx = contentsTransform.getCopy();
+			pcs.firePropertyChange(VIEWPORT_CONTENTS_TRANSFORM_PROPERTY, oldTx,
+					contentsTx);
+		}
 	}
 
 	/**
@@ -106,12 +152,24 @@ public class ViewportModel implements IPropertyChangeNotifier {
 		pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
 	}
 
+	/**
+	 * Sets the horizontal translation of the contents in this model.
+	 *
+	 * @param x
+	 *            The new horizontal translation.
+	 */
 	public void setTranslateX(double x) {
 		double oldX = this.x;
 		this.x = x;
 		pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldX, x);
 	}
 
+	/**
+	 * Sets the vertical translation of the contents in this model.
+	 *
+	 * @param y
+	 *            The new vertical translation.
+	 */
 	public void setTranslateY(double y) {
 		double oldY = this.y;
 		this.y = y;

@@ -25,7 +25,6 @@ import org.eclipse.gef4.mvc.domain.AbstractDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.models.ZoomModel;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
@@ -192,8 +191,6 @@ public class MvcModule<VR> extends AbstractModule {
 				ContentModel.class);
 		adapterMapBinder.addBinding(AdapterKey.get(ViewportModel.class)).to(
 				ViewportModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(ZoomModel.class)).to(
-				ZoomModel.class);
 		adapterMapBinder.addBinding(AdapterKey.get(GridModel.class)).to(
 				GridModel.class);
 	}

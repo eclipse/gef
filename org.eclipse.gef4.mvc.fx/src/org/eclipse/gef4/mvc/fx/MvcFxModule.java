@@ -24,7 +24,6 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXFocusBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXViewportBehavior;
-import org.eclipse.gef4.mvc.fx.behaviors.FXZoomBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
@@ -144,8 +143,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
 				.to(new TypeLiteral<SelectionBehavior<Node>>() {
 				});
-		adapterMapBinder.addBinding(AdapterKey.get(FXZoomBehavior.class)).to(
-				FXZoomBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class)).to(
 				FXGridBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
