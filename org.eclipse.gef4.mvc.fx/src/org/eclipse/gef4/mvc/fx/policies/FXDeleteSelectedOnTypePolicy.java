@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -75,9 +76,16 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy
 			return;
 		}
 
-		for (IContentPart<Node> p : selected) {
-			commitOperation.add(new DeleteContentOperation<Node>(viewer, p));
+		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
+				"delete()");
+		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
+			// FIXME: we can only delete children of content parts
+			if (p.getParent() instanceof IContentPart) {
+				deleteOps.add(new DeleteContentOperation<Node>(viewer, p));
+			}
 		}
+		// execute on the stack
+		executeOperation(deleteOps);
 	}
 
 	@Override
