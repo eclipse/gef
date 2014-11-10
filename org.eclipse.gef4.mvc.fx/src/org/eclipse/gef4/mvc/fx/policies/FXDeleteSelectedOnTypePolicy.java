@@ -64,6 +64,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
 				init(policy);
+				// FIXME: this is only valid in case of single selection
 				policy.deleteContent();
 				commit(policy);
 			}
