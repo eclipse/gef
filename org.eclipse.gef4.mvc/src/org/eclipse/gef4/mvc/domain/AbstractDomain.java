@@ -65,7 +65,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void closeTransaction() {
+	public void closeExecutionTransaction() {
 		// check if the transaction has an effect (or is empty)
 		if (!transaction.getOperations().isEmpty()) {
 			// adjust the label
@@ -150,7 +150,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
-	public void openTransaction() {
+	public void openExecutionTransaction() {
 		transaction = new ForwardUndoCompositeOperation("Transaction");
 		transaction.addContext(getUndoContext());
 		getOperationHistory().openOperation(transaction,

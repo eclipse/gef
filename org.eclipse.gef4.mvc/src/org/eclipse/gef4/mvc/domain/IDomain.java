@@ -45,8 +45,30 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  */
 public interface IDomain<VR> extends IAdaptable, IActivatable {
 
-	public void closeTransaction();
+	/**
+	 * Closes the active execution transition (see
+	 * {@link #openExecutionTransaction()}).
+	 */
+	public void closeExecutionTransaction();
 
+	/**
+	 * Will execute the given {@link IUndoableOperation} on the
+	 * {@link IOperationHistory} used by this {@link IDomain} (see
+	 * {@link #getOperationHistory()}), using the {@link IUndoContext} of this
+	 * {@link IDomain}.
+	 *
+	 * In case an execution transition is currently open (see
+	 * {@link #openExecutionTransaction()}, {@link #closeExecutionTransaction()}
+	 * ) the enclosing transaction will refer to the {@link IUndoContext} used
+	 * by this {@link IDomain}) (so that no specific {@link IUndoContext} is set
+	 * on the passed in {@link IUndoableOperation}). If no transaction is
+	 * currently open, the {@link IUndoContext} of this {@link IDomain} will be
+	 * set on the passed in {@link IUndoableOperation}.
+	 *
+	 * @param operation
+	 *            The {@link IUndoableOperation} to be executed on the
+	 *            {@link IOperationHistory} of this {@link IDomain}.
+	 */
 	public void execute(IUndoableOperation operation);
 
 	/**
@@ -87,6 +109,12 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	 */
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
 
-	public void openTransaction();
+	/**
+	 * Opens a new transaction for executing operations (via
+	 * {@link #execute(IUndoableOperation)}) on the {@link IOperationHistory}
+	 * used by this {@link IDomain} (see {@link #getOperationHistory()}), using
+	 * the {@link IUndoContext} of this {@link IDomain}.
+	 */
+	public void openExecutionTransaction();
 
 }
