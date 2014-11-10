@@ -31,7 +31,7 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "change-focus";
+	public static final String DEFAULT_LABEL = "Change Focus";
 
 	private IViewer<VR> viewer;
 	private IContentPart<VR> oldFocused;

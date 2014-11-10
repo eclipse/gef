@@ -31,7 +31,7 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "change-hover";
+	public static final String DEFAULT_LABEL = "Change Hover";
 
 	private IViewer<VR> viewer;
 	private IVisualPart<VR> oldHovered;

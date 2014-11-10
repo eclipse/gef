@@ -35,7 +35,7 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 
 	public DetachFromContentAnchorageOperation(IContentPart<VR> anchored,
 			Object contentAnchorage, String role) {
-		super("detachFromContentAnchorage()");
+		super("Detach From Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;
 		this.role = role;

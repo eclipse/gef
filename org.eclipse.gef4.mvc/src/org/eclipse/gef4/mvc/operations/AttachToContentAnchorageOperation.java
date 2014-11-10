@@ -35,7 +35,7 @@ public class AttachToContentAnchorageOperation<VR> extends AbstractOperation {
 
 	public AttachToContentAnchorageOperation(IContentPart<VR> anchored,
 			Object contentAnchorage, String role) {
-		super("attachToContentAnchorage()");
+		super("Attach To Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;
 		this.role = role;

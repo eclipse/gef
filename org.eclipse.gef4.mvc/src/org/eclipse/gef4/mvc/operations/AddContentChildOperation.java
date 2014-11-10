@@ -33,7 +33,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 	private final Object contentChild;
 
 	public AddContentChildOperation(IContentPart<VR> parent, Object contentChild) {
-		super("addContentChild()");
+		super("Add Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
 	}

@@ -26,7 +26,7 @@ public class DeleteContentOperation<VR> extends ReverseUndoCompositeOperation {
 	protected final IViewer<VR> viewer;
 
 	public DeleteContentOperation(IViewer<VR> viewer, IContentPart<VR> toDelete) {
-		super("Delete()");
+		super("Delete");
 		this.viewer = viewer;
 		this.toDelete = toDelete;
 		add(new ClearHoverFocusSelectionOperation<VR>(viewer));

@@ -22,7 +22,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 /**
  * The {@link RemoveContentChildOperation} uses the {@link IContentPart} API to
  * remove a content object from an {@link IContentPart}.
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit, e.g. javafx.scene.Node in
  *            case of JavaFX.
@@ -34,7 +34,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 
 	public RemoveContentChildOperation(IContentPart<VR> parent,
 			Object contentChild) {
-		super("deleteContent");
+		super("Remove Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
 	}

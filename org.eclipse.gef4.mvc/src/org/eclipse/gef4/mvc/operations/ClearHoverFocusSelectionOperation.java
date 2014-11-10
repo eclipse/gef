@@ -27,7 +27,7 @@ public class ClearHoverFocusSelectionOperation<VR> extends
 		ReverseUndoCompositeOperation {
 
 	public ClearHoverFocusSelectionOperation(IViewer<VR> viewer) {
-		super("clearHoverFocusSelection()");
+		super("Clear Hover, Focus, Selection");
 
 		// clear hover first
 		ChangeHoverOperation<VR> changeHoverOperation = getChangeHoverOperation(viewer);

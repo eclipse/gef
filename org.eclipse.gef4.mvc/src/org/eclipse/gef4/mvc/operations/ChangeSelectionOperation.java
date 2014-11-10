@@ -34,7 +34,7 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	 * The default label for this operation (i.e. used if no label is
 	 * specified).
 	 */
-	public static final String DEFAULT_LABEL = "change-selection";
+	public static final String DEFAULT_LABEL = "Change Selection";
 
 	private IViewer<VR> viewer;
 	private List<IContentPart<VR>> oldSelection;
