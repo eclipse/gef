@@ -15,7 +15,6 @@ package org.eclipse.gef4.mvc.domain;
 
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -46,7 +45,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  */
 public interface IDomain<VR> extends IAdaptable, IActivatable {
 
-	void closeTransaction();
+	public void closeTransaction();
+
+	public void execute(IUndoableOperation operation);
 
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
@@ -86,8 +87,6 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	 */
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
 
-	void openTransaction();
-
-	void execute(IUndoableOperation operation);
+	public void openTransaction();
 
 }
