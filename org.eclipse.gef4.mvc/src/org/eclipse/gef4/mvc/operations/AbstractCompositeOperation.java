@@ -97,7 +97,7 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 		return status;
 	}
 
-	protected List<IUndoableOperation> getOperations() {
+	public List<IUndoableOperation> getOperations() {
 		return operations;
 	}
 

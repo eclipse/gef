@@ -84,11 +84,11 @@ public class FXClickDragTool extends AbstractTool<Node> {
 									target, null);
 					if (clickTargetPart != null) {
 						Collection<? extends AbstractFXClickPolicy> policies = getClickPolicies(clickTargetPart);
-						init(policies);
+						getDomain().openTransaction();
 						for (AbstractFXClickPolicy policy : policies) {
 							policy.click(e);
 						}
-						commit(policies);
+						getDomain().closeTransaction();
 					}
 
 					// drag second
@@ -97,7 +97,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 									target, DRAG_TOOL_POLICY_KEY);
 					if (dragTargetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
-						init(policies);
+						getDomain().openTransaction();
 						for (AbstractFXDragPolicy policy : policies) {
 							dragInProgress = true;
 							policy.press(e);
@@ -116,7 +116,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						for (AbstractFXDragPolicy policy : policies) {
 							policy.release(e, new Dimension(dx, dy));
 						}
-						commit(policies);
+						getDomain().closeTransaction();
 					}
 					dragInProgress = false;
 				}

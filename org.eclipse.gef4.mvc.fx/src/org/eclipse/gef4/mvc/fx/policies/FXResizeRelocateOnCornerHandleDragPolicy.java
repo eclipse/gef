@@ -20,21 +20,17 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 // up to now only usable with FXCornerHandleParts
 // we could also implement to work with FXSegmentParts, maybe it is also better so use a different implementation for this.
 public class FXResizeRelocateOnCornerHandleDragPolicy extends
-		AbstractFXDragPolicy implements ITransactional {
+		AbstractFXDragPolicy {
 
 	/**
 	 * <p>
@@ -98,15 +94,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	private Map<IContentPart<Node>, Double> relX2 = null;
 	private Map<IContentPart<Node>, Double> relY2 = null;
 
-	private AbstractCompositeOperation commitOperation;
-
 	public FXResizeRelocateOnCornerHandleDragPolicy(ReferencePoint refPoint) {
 		this.referencePoint = refPoint;
-	}
-
-	@Override
-	public IUndoableOperation commit() {
-		return commitOperation.unwrap();
 	}
 
 	/**
@@ -222,11 +211,6 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	@Override
-	public void init() {
-		commitOperation = new ForwardUndoCompositeOperation("Relocate");
-	}
-
-	@Override
 	public void press(MouseEvent e) {
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
@@ -237,9 +221,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		relY2 = new HashMap<IContentPart<Node>, Double>();
 		for (IContentPart<Node> targetPart : getTargetParts()) {
 			computeRelatives(targetPart);
-			if (getResizeRelocatePolicy(targetPart) != null) {
-				getResizeRelocatePolicy(targetPart).init();
-			}
+			init(getResizeRelocatePolicy(targetPart));
 		}
 	}
 
@@ -248,10 +230,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				IUndoableOperation commit = policy.commit();
-				if (commit != null) {
-					commitOperation.add(commit);
-				}
+				commit(policy);
 			}
 		}
 		// null resize context vars

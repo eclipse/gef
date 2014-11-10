@@ -20,14 +20,10 @@ import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
@@ -38,12 +34,10 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
  *
  */
 // TODO: this is only applicable to FXSegmentHandlePart hosts
-public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy
-		implements ITransactional {
+public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private int createdSegmentIndex;
 	private boolean initialRefreshVisual = true;
-	private AbstractCompositeOperation commitOperation;
 
 	private void adjustHandles(List<Point> oldWaypoints,
 			List<Point> newWaypoints) {
@@ -104,11 +98,6 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy
 		}
 	}
 
-	@Override
-	public IUndoableOperation commit() {
-		return commitOperation.unwrap();
-	}
-
 	protected void disableRefreshVisuals() {
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
@@ -149,19 +138,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy
 	}
 
 	@Override
-	public void init() {
-		commitOperation = new ReverseUndoCompositeOperation("Bend");
-	}
-
-	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 
-		disableRefreshVisuals();
-		getBendPolicy(anchorage).init();
+		disableRefreshVisuals(anchorage);
+		init(getBendPolicy(anchorage));
 
 		if (hp.getSegmentParameter() == 0.5) {
 			// create new way point
@@ -203,14 +187,10 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy
 		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
 				.iterator().next();
 		enableRefreshVisuals();
-
-		FXBendPolicy policy = getBendPolicy(anchorage);
-		if (policy != null) {
-			IUndoableOperation commit = policy.commit();
-			if (commit != null) {
-				commitOperation.add(commit);
-			}
-		}
+		// TODO: we need to ensure this can be done before
+		// enableRefreshVisuals(), because visuals should already be up to date
+		// (and we thus save a potential refresh)
+		commit(getBendPolicy(anchorage));
 	}
 
 	private void setSegmentIndex(FXSegmentHandlePart part, int value) {

@@ -35,7 +35,6 @@ public class FXTypeTool extends AbstractTool<Node> {
 		@Override
 		public void handle(KeyEvent event) {
 			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
-			init(policies);
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
@@ -49,7 +48,6 @@ public class FXTypeTool extends AbstractTool<Node> {
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.released(event);
 			}
-			commit(policies);
 		}
 	};
 

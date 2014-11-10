@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.mvc.domain.IDomain;
+import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
@@ -30,16 +31,23 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
 	private IVisualPart<VR> host;
+	private final Map<IVisualPart<?>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<?>, Boolean>();
 
-	protected void executeOperation(IUndoableOperation operation) {
-		IDomain<VR> domain = getHost().getRoot().getViewer().getDomain();
-		IOperationHistory operationHistory = domain.getOperationHistory();
-		operation.addContext(domain.getUndoContext());
-		try {
-			operationHistory.execute(operation, null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+	protected void commit(IPolicy<VR> policy) {
+		if (policy != null && policy instanceof ITransactional) {
+			IUndoableOperation o = ((ITransactional) policy).commit();
+			if (o != null && o.canExecute()) {
+				getHost().getRoot().getViewer().getDomain().execute(o);
+			}
 		}
+	}
+
+	protected void disableRefreshVisuals(IVisualPart<?> anchorage) {
+		initialRefreshVisual.put(anchorage, anchorage.isRefreshVisual());
+	}
+
+	protected void enableRefreshVisuals(IVisualPart<VR> part) {
+		part.setRefreshVisual(initialRefreshVisual.remove(part));
 	}
 
 	@Override
@@ -50,6 +58,12 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 	@Override
 	public IVisualPart<VR> getHost() {
 		return host;
+	}
+
+	protected void init(IPolicy<VR> policy) {
+		if (policy != null && policy instanceof ITransactional) {
+			((ITransactional) policy).init();
+		}
 	}
 
 	@Override

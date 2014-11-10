@@ -11,37 +11,21 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy implements
-		ITransactional {
-
-	private AbstractCompositeOperation commitOperation = null;
+public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialMouseLocationInScene = null;
-	private final Map<IVisualPart<Node>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<Node>, Boolean>();
-
-	@Override
-	public IUndoableOperation commit() {
-		return commitOperation.unwrap();
-	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
@@ -78,22 +62,13 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy implements
 	}
 
 	@Override
-	public void init() {
-		// FIXME: if we change this to forward undo, the example does not
-		// properly work (connections are not properly undone after moving).
-		commitOperation = new ReverseUndoCompositeOperation("Relocate");
-	}
-
-	@Override
 	public void press(MouseEvent e) {
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
 		for (IContentPart<Node> part : getTargetParts()) {
-			ITransactional policy = getResizeRelocatePolicy(part);
-			if (policy != null) {
-				initialRefreshVisual.put(part, part.isRefreshVisual());
-				part.setRefreshVisual(false);
-				policy.init();
-			}
+			disableRefreshVisuals(part);
+			part.setRefreshVisual(false);
+			// init transaction policy
+			init(getResizeRelocatePolicy(part));
 		}
 	}
 
@@ -102,18 +77,15 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy implements
 		for (IContentPart<Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				part.setRefreshVisual(initialRefreshVisual.remove(part));
-				IUndoableOperation commit = policy.commit();
-				if (commit != null) {
-					commitOperation.add(commit);
-				}
+				enableRefreshVisuals(part);
+				// TODO: we need to ensure this can be done before
+				// enableRefreshVisuals(), because visuals should already be up
+				// to date
+				// (and we thus save a potential refresh)
+				commit(policy);
 			}
 		}
 		setInitialMouseLocationInScene(null);
-		if (!initialRefreshVisual.isEmpty()) {
-			throw new IllegalStateException(
-					"The refresh-visual flag was not properly reset for all (initial) target parts.");
-		}
 	}
 
 	protected void setInitialMouseLocationInScene(Point point) {

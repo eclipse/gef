@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  * Note: Parts of this interface have been transferred from org.eclipse.gef.EditDomain.
- * 
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -33,21 +34,23 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * with these. It also holds a reference to the {@link IOperationHistory} and
  * {@link UndoContext} used by all {@link ITool} as well as {@link IPolicy}s (in
  * the {@link IViewer}s) to execute {@link IUndoableOperation}s.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractDomain} should be sub-classed.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
  */
 public interface IDomain<VR> extends IAdaptable, IActivatable {
 
+	void closeTransaction();
+
 	/**
 	 * Returns the {@link IOperationHistory} that is used by this domain.
-	 * 
+	 *
 	 * @return The {@link IOperationHistory}.
 	 */
 	public IOperationHistory getOperationHistory();
@@ -56,17 +59,17 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	 * Returns the {@link ITool}s registered at this {@link IDomain} (via
 	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
 	 * used for registration.
-	 * 
+	 *
 	 * @return A {@link Map} containing the registered {@link ITool}s mapped to
 	 *         their respective {@link AdapterKey}s.
-	 * 
+	 *
 	 * @see IAdaptable#setAdapter(AdapterKey, Object)
 	 */
 	public Map<AdapterKey<? extends ITool<VR>>, ITool<VR>> getTools();
 
 	/**
 	 * Returns the {@link UndoContext} that is used by this domain.
-	 * 
+	 *
 	 * @return The {@link UndoContext}.
 	 */
 	public IUndoContext getUndoContext();
@@ -75,12 +78,16 @@ public interface IDomain<VR> extends IAdaptable, IActivatable {
 	 * Returns the {@link IViewer}s registered at this {@link IDomain} (via
 	 * {@link #setAdapter(AdapterKey, Object)}) with the {@link AdapterKey}s
 	 * used for registration.
-	 * 
+	 *
 	 * @return A {@link Map} containing the registered {@link IViewer}s mapped
 	 *         to their respective {@link AdapterKey}s.
-	 * 
+	 *
 	 * @see IAdaptable#setAdapter(AdapterKey, Object)
 	 */
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers();
+
+	void openTransaction();
+
+	void execute(IUndoableOperation operation);
 
 }

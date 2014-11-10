@@ -33,8 +33,7 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 	}
 
 	public void adaptLayoutInformation(NodeLayout nodeLayout) {
-		FXResizeRelocatePolicy policy = getHost().getAdapter(
-				RESIZE_RELOCATE_POLICY_KEY);
+		FXResizeRelocatePolicy policy = getHost().getAdapter(RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
 			Node visual = getHost().getVisual();
 			Bounds layoutBounds = visual.getLayoutBounds();
@@ -57,7 +56,7 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			policy.performResizeRelocate(dx, dy, dw, dh);
 			IUndoableOperation operation = policy.commit();
 			if (operation != null) {
-				executeOperation(operation);
+				getHost().getRoot().getViewer().getDomain().execute(operation);
 			}
 		}
 	}
@@ -76,16 +75,14 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			}
 			Node anchoredVisual = anchored.getVisual();
 			Bounds anchoredBounds = anchoredVisual.getLayoutBounds();
-			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual
-					.localToScene(anchoredBounds));
+			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual.localToScene(anchoredBounds));
 			minx = Math.min(minx, anchoredBoundsInHost.getMinX());
 			miny = Math.min(miny, anchoredBoundsInHost.getMinY());
 			maxx = Math.max(maxx, anchoredBoundsInHost.getMaxX());
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		PropertiesHelper.setLocation(nodeLayout, visual.getLayoutX() + minx,
-				visual.getLayoutY() + miny);
+		PropertiesHelper.setLocation(nodeLayout, visual.getLayoutX() + minx, visual.getLayoutY() + miny);
 		PropertiesHelper.setSize(nodeLayout, maxx - minx, maxy - miny);
 		nodeLayout.setProperty("pruned", !visual.isVisible());
 	}

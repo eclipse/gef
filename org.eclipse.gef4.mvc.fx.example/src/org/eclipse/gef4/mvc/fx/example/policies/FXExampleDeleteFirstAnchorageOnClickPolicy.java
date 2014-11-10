@@ -17,10 +17,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.DeleteContentOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -28,9 +25,7 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.common.collect.SetMultimap;
 
 public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
-		AbstractFXClickPolicy implements ITransactional {
-
-	private AbstractCompositeOperation commitOperation;
+		AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
@@ -42,22 +37,13 @@ public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
 		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		if (anchorage instanceof IContentPart) {
+			// TODO: extract delection policy
 			IUndoableOperation o = new DeleteContentOperation<Node>(viewer,
 					(IContentPart<Node>) anchorage);
 			if (o != null) {
-				commitOperation.add(o);
+				getHost().getRoot().getViewer().getDomain().execute(o);
 			}
 		}
-	}
-
-	@Override
-	public IUndoableOperation commit() {
-		return commitOperation.unwrap();
-	}
-
-	@Override
-	public void init() {
-		commitOperation = new ForwardUndoCompositeOperation("Delete");
 	}
 
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.domain;
 
@@ -15,12 +15,15 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMap;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.tools.ITool;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -28,9 +31,9 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 import com.google.inject.Inject;
 
 /**
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
@@ -47,6 +50,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
+	private ForwardUndoCompositeOperation transaction;
 
 	@Override
 	public void activate() {
@@ -61,9 +65,42 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	}
 
 	@Override
+	public void closeTransaction() {
+		// check if the transaction has an effect (or is empty)
+		if (!transaction.getOperations().isEmpty()) {
+			// adjust the label
+			transaction.setLabel(transaction.getOperations().iterator().next()
+					.getLabel());
+			// successfully close operation
+			getOperationHistory().closeOperation(true, true,
+					IOperationHistory.EXECUTE);
+		} else {
+			getOperationHistory().closeOperation(true, false,
+					IOperationHistory.EXECUTE);
+		}
+		transaction = null;
+	}
+
+	@Override
 	public void deactivate() {
 		if (acs.isActive()) {
 			acs.deactivate();
+		}
+	}
+
+	@Override
+	public void execute(IUndoableOperation operation) {
+		IOperationHistory operationHistory = getOperationHistory();
+		// IMPORTANT: if we have an open transaction in the domain, we should
+		// not add an undo context, because our operation will be added to the
+		// transaction (which has the undo context).
+		if (!isTransactionOpen()) {
+			operation.addContext(getUndoContext());
+		}
+		try {
+			operationHistory.execute(operation, null, null);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -106,6 +143,18 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	@Override
 	public boolean isActive() {
 		return acs.isActive();
+	}
+
+	private boolean isTransactionOpen() {
+		return transaction != null;
+	}
+
+	@Override
+	public void openTransaction() {
+		transaction = new ForwardUndoCompositeOperation("Transaction");
+		transaction.addContext(getUndoContext());
+		getOperationHistory().openOperation(transaction,
+				IOperationHistory.EXECUTE);
 	}
 
 	@Override

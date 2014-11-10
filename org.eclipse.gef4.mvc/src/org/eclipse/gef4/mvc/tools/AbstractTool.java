@@ -13,17 +13,10 @@ package org.eclipse.gef4.mvc.tools;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Collection;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.policies.IPolicy;
 
 /**
  *
@@ -63,24 +56,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	protected void commit(Collection<? extends IPolicy<VR>> policies) {
-		ForwardUndoCompositeOperation operation = new ForwardUndoCompositeOperation(
-				"Commit");
-		for (IPolicy<VR> policy : policies) {
-			if (policy instanceof ITransactional) {
-				IUndoableOperation o = ((ITransactional) policy).commit();
-				if (o != null) {
-					operation.add(o);
-				}
-			}
-		}
-
-		IUndoableOperation executeOperation = operation.unwrap();
-		if (executeOperation != null && executeOperation.canExecute()) {
-			executeOperation(executeOperation);
-		}
-	}
-
 	@Override
 	public void deactivate() {
 		unregisterListeners();
@@ -93,16 +68,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 		}
 	}
 
-	protected void executeOperation(IUndoableOperation operation) {
-		IOperationHistory operationHistory = domain.getOperationHistory();
-		operation.addContext(domain.getUndoContext());
-		try {
-			operationHistory.execute(operation, null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public IDomain<VR> getAdaptable() {
 		return domain;
@@ -111,14 +76,6 @@ public abstract class AbstractTool<VR> implements ITool<VR> {
 	@Override
 	public IDomain<VR> getDomain() {
 		return getAdaptable();
-	}
-
-	protected void init(Collection<? extends IPolicy<VR>> policies) {
-		for (IPolicy<VR> policy : policies) {
-			if (policy instanceof ITransactional) {
-				((ITransactional) policy).init();
-			}
-		}
 	}
 
 	@Override
