@@ -12,6 +12,8 @@
 package org.eclipse.gef4.mvc.policies;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.mvc.operations.AddContentChildOperation;
+import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
@@ -37,12 +39,24 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 
 	private ForwardUndoCompositeOperation commitOperation;
 
-	public void addContentChild(Object child) {
-		throw new UnsupportedOperationException("Not yet implemented");
+	public void addContentChild(Object contentChild) {
+		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
+				"Add Content Child");
+		addOperation.add(new AddContentChildOperation<VR>(getHost(),
+				contentChild));
+		addOperation.add(new SynchronizeContentChildrenOperation<VR>(
+				"Synchronize Children", getHost()));
+		commitOperation.add(addOperation);
 	}
 
-	public void attachToContentAnchorage(Object anchorage, String role) {
-		throw new UnsupportedOperationException("Not yet implemented");
+	public void attachToContentAnchorage(Object contentAnchorage, String role) {
+		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
+				"Attach To Content Anchorage");
+		attachOperation.add(new AttachToContentAnchorageOperation<VR>(
+				getHost(), contentAnchorage, role));
+		attachOperation.add(new SynchronizeContentAnchoragesOperation<VR>(
+				"Synchronize Anchorages", getHost()));
+		commitOperation.add(attachOperation);
 	}
 
 	@Override
