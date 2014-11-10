@@ -51,6 +51,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.TypeLiteral;
@@ -72,6 +73,11 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
 				FXFocusBehavior.class);
+
+		// register default policies
+		adapterMapBinder.addBinding(AdapterKey.get(ContentPolicy.class)).to(
+				new TypeLiteral<ContentPolicy<Node>>() {
+				});
 	}
 
 	protected void bindAbstractFXFeedbackPartAdapters(

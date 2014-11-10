@@ -15,12 +15,10 @@ package org.eclipse.gef4.mvc.fx.example.policies;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
-import org.eclipse.gef4.mvc.operations.DeleteContentOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
+import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.SetMultimap;
 
@@ -35,13 +33,13 @@ public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
 			return;
 		}
 		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
-		IViewer<Node> viewer = getHost().getRoot().getViewer();
 		if (anchorage instanceof IContentPart) {
-			// TODO: extract delection policy
-			IUndoableOperation o = new DeleteContentOperation<Node>(viewer,
-					(IContentPart<Node>) anchorage);
-			if (o != null) {
-				getHost().getRoot().getViewer().getDomain().execute(o);
+			ContentPolicy<Node> policy = anchorage
+					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
+			if (policy != null) {
+				init(policy);
+				policy.deleteContent();
+				commit(policy);
 			}
 		}
 	}
