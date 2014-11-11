@@ -19,6 +19,7 @@ import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXRelocateLinkedOnDragPolicy;
@@ -96,6 +97,19 @@ public class FXExampleModule extends MvcFxModule {
 						FXExampleDeleteFirstAnchorageOnClickPolicy.class);
 	}
 
+	protected void bindFXGeometricCurvePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// interaction policy to relocate on drag
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
+				FXRelocateOnDragPolicy.class);
+
+		// interaction policy to delete on key type
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
+				.to(FXDeleteSelectedOnTypePolicy.class);
+
+	}
+
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 
@@ -138,6 +152,9 @@ public class FXExampleModule extends MvcFxModule {
 
 		bindFXGeometricShapePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXGeometricShapePart.class));
+
+		bindFXGeometricCurvePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXGeometricCurvePart.class));
 
 		bindFXExampleDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXExampleDeleteHandlePart.class));

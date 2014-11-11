@@ -38,12 +38,8 @@ import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
-import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
 import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
 import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
@@ -139,9 +135,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		visual = new FXConnection();
 		visual.setRouter(new FXPolyBezierConnectionRouter());
 
-		// TODO: use binding
-		setAdapter(AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY),
-				new FXRelocateOnDragPolicy());
+		// TODO: extract into own classes and use binding
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
 				new FXRelocateConnectionPolicy() {
 					@Override
@@ -155,8 +149,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 				return chainModelChanges(super.commit());
 			}
 		});
-		setAdapter(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY),
-				new FXDeleteSelectedOnTypePolicy());
 	}
 
 	@Override
