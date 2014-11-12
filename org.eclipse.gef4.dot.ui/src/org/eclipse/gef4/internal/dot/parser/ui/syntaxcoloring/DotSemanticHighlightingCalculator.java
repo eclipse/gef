@@ -12,9 +12,8 @@
 package org.eclipse.gef4.internal.dot.parser.ui.syntaxcoloring;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef4.internal.dot.parser.dot.AList;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
-import org.eclipse.gef4.internal.dot.parser.dot.MainGraph;
+import org.eclipse.gef4.internal.dot.parser.dot.DotGraph;
 import org.eclipse.gef4.internal.dot.parser.dot.NodeId;
 import org.eclipse.gef4.internal.dot.parser.dot.NodeStmt;
 import org.eclipse.gef4.internal.dot.parser.dot.Port;
@@ -44,7 +43,7 @@ public class DotSemanticHighlightingCalculator extends
 				// handle ID elements specifically
 				if (r.getName().equals("ID")
 						&& ((Assignment) c).getFeature().equals("name")) {
-					if (node.getSemanticElement() instanceof MainGraph) {
+					if (node.getSemanticElement() instanceof DotGraph) {
 						acceptor.addPosition(node.getOffset(),
 								node.getLength(),
 								DotHighlightingConfiguration.GRAPH_NAME_ID);
@@ -53,8 +52,7 @@ public class DotSemanticHighlightingCalculator extends
 						acceptor.addPosition(node.getOffset(),
 								node.getLength(),
 								DotHighlightingConfiguration.NODE_NAME_ID);
-					} else if (node.getSemanticElement() instanceof Attribute
-							|| node.getSemanticElement() instanceof AList) {
+					} else if (node.getSemanticElement() instanceof Attribute) {
 						acceptor.addPosition(node.getOffset(),
 								node.getLength(),
 								DotHighlightingConfiguration.ATTRIBUTE_NAME_ID);

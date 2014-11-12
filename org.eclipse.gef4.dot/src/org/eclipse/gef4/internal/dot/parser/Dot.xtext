@@ -10,6 +10,7 @@
  *    Alexander Nyßen - fixed grammar generation problems w.r.t. terminals (#429512)
  *                    - fixed problems resulting from non-optional subgraph names 
  *                      and shadowing of IDs by CommentPt literals (#430132)
+ *                    - refactored grammar to be more consistent (#451097)
  * 
  *******************************************************************************/
 grammar org.eclipse.gef4.internal.dot.parser.Dot hidden(WS, ML_COMMENT, SL_COMMENT)
@@ -18,36 +19,33 @@ generate dot "http://www.eclipse.org/gef4/internal/dot/parser/Dot"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 GraphvizModel:
-	(graphs+=MainGraph)*;
+	(graphs+=DotGraph)*;
 
-MainGraph:
+DotGraph:
 	(strict?="strict")? type=GraphType (name=ID)? "{"
-	(stmts+=Stmt)*
+		(stmts+=Stmt)*
 	"}";
 
 Stmt:
 	(Attribute | EdgeStmtNode | EdgeStmtSubgraph | NodeStmt | AttrStmt | Subgraph) (";")?;
 
 EdgeStmtNode:
-	node_id=NodeId (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+	node=NodeId (edgeRHS+=EdgeRhs)+ (attrLists+=AttrList)*;
 
 EdgeStmtSubgraph:
-	subgraph=Subgraph (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
+	subgraph=Subgraph (edgeRHS+=EdgeRhs)+ (attrLists+=AttrList)*;
 
 NodeStmt:
-	name=ID (port=Port)? (attributes+=AttrList)*;
+	node=NodeId (attrLists+=AttrList)*;
+
+AttrStmt:
+	type=AttributeType (attrLists+=AttrList)+;
+
+AttrList:
+	"[" (attributes+=Attribute ("," | ";")? )+ "]";
 
 Attribute:
 	name=ID "=" value=ID;
-
-AttrStmt:
-	type=AttributeType (attributes+=AttrList)+;
-
-AttrList:
-	"[" {AttrList} (a_list+=AList)* "]";
-
-AList:
-	name=ID ("=" value=ID)? (",")?;
 
 Subgraph:
 	{Subgraph} ("subgraph" name=ID?)? "{" (stmts+=Stmt)* "}";

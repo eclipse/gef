@@ -22,15 +22,14 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.internal.dot.DotAst.Layout;
 import org.eclipse.gef4.internal.dot.DotAst.Style;
-import org.eclipse.gef4.internal.dot.parser.dot.AList;
 import org.eclipse.gef4.internal.dot.parser.dot.AttrList;
 import org.eclipse.gef4.internal.dot.parser.dot.AttrStmt;
 import org.eclipse.gef4.internal.dot.parser.dot.Attribute;
 import org.eclipse.gef4.internal.dot.parser.dot.AttributeType;
+import org.eclipse.gef4.internal.dot.parser.dot.DotGraph;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeRhsNode;
 import org.eclipse.gef4.internal.dot.parser.dot.EdgeStmtNode;
 import org.eclipse.gef4.internal.dot.parser.dot.GraphType;
-import org.eclipse.gef4.internal.dot.parser.dot.MainGraph;
 import org.eclipse.gef4.internal.dot.parser.dot.NodeId;
 import org.eclipse.gef4.internal.dot.parser.dot.NodeStmt;
 import org.eclipse.gef4.internal.dot.parser.dot.Stmt;
@@ -54,7 +53,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	private String currentEdgeStyleValue;
 	private String currentEdgeLabelValue;
 	private String currentEdgeSourceNodeId;
-	private boolean gotSource;
+	private boolean createConnection;
 
 	public Graph create(DotAst dotAst) {
 		return create(dotAst, new Graph.Builder().attr(Graph.Attr.Key.LAYOUT,
@@ -78,9 +77,9 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	}
 
 	@Override
-	public Object caseMainGraph(MainGraph object) {
+	public Object caseDotGraph(DotGraph object) {
 		createGraph(object);
-		return super.caseMainGraph(object);
+		return super.caseDotGraph(object);
 	}
 
 	@Override
@@ -94,8 +93,6 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 			TreeLayoutAlgorithm algorithm = new TreeLayoutAlgorithm(
 					TreeLayoutAlgorithm.LEFT_RIGHT);
 			graph.attr(Graph.Attr.Key.LAYOUT.toString(), algorithm);
-		} else if (graph != null && object.getName().equals("label")) { //$NON-NLS-1$
-			graph.attr(Graph.Attr.Key.LABEL.toString(), object.getValue());
 		}
 		return super.caseAttribute(object);
 	}
@@ -121,17 +118,17 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
 	@Override
 	public Object caseNodeId(NodeId object) {
-		if (!gotSource) {
-			gotSource = true;
+		if (!createConnection) {
+			currentEdgeSourceNodeId = escaped(object.getName());
 		} else {
 			String targetNodeId = escaped(object.getName());
 			if (currentEdgeSourceNodeId != null && targetNodeId != null) {
 				addConnectionTo(targetNodeId);
+				// current target node may be source for next EdgeRHS
+				currentEdgeSourceNodeId = targetNodeId;
 			}
-			gotSource = false;
+			createConnection = false;
 		}
-		/* Current node is potential source in case next is caseEdgeRhsNode: */
-		currentEdgeSourceNodeId = escaped(object.getName());
 		return super.caseNodeId(object);
 	}
 
@@ -170,7 +167,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	@Override
 	public Object caseEdgeRhsNode(EdgeRhsNode object) {
 		// Set the flag for the node_id case handled above
-		gotSource = true;
+		createConnection = true;
 		return super.caseEdgeRhsNode(object);
 	}
 
@@ -181,7 +178,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 
 	// private implementation of the cases above
 
-	private void createGraph(MainGraph object) {
+	private void createGraph(DotGraph object) {
 		graph.attr(Graph.Attr.Key.LAYOUT.toString(),
 				DotImport.DEFAULT_LAYOUT_ALGORITHM);
 		GraphType graphType = object.getType();
@@ -204,8 +201,10 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 			break;
 		}
 		case GRAPH: {
-			for (AList a : attrStmt.getAttributes().get(0).getA_list()) {
-				graph.attr(a.getName(), a.getValue());
+			for (AttrList al : attrStmt.getAttrLists()) {
+				for (Attribute a : al.getAttributes()) {
+					graph.attr(a.getName(), a.getValue());
+				}
 			}
 			String graphLayout = getAttributeValue(attrStmt, "layout"); //$NON-NLS-1$
 			if (graphLayout != null) {
@@ -219,7 +218,7 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 	}
 
 	private void createNode(final NodeStmt nodeStatement) {
-		String nodeId = escaped(nodeStatement.getName());
+		String nodeId = escaped(nodeStatement.getNode().getName());
 		Node.Builder node = new Node.Builder();
 		if (nodes.containsKey(nodeId)) {
 			node = nodes.get(nodeId);
@@ -268,8 +267,8 @@ public final class GraphCreatorInterpreter extends DotSwitch<Object> {
 						.eContents().iterator();
 				while (attributeContents.hasNext()) {
 					EObject next = attributeContents.next();
-					if (next instanceof AList) {
-						AList attributeElement = (AList) next;
+					if (next instanceof Attribute) {
+						Attribute attributeElement = (Attribute) next;
 						if (attributeElement.getName().equals(attributeName)) {
 							return escaped(attributeElement.getValue());
 						}
