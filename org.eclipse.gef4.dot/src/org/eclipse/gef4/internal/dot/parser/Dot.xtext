@@ -21,7 +21,7 @@ GraphvizModel:
 	(graphs+=MainGraph)*;
 
 MainGraph:
-	(strict?="strict")? type=GraphType (name=XID)? "{"
+	(strict?="strict")? type=GraphType (name=ID)? "{"
 	(stmts+=Stmt)*
 	"}";
 
@@ -35,10 +35,10 @@ EdgeStmtSubgraph:
 	subgraph=Subgraph (edgeRHS+=EdgeRhs)+ (attributes+=AttrList)*;
 
 NodeStmt:
-	name=XID (port=Port)? (attributes+=AttrList)*;
+	name=ID (port=Port)? (attributes+=AttrList)*;
 
 Attribute:
-	name=XID "=" value=XID;
+	name=ID "=" value=ID;
 
 AttrStmt:
 	type=AttributeType (attributes+=AttrList)+;
@@ -47,13 +47,13 @@ AttrList:
 	"[" {AttrList} (a_list+=AList)* "]";
 
 AList:
-	name=XID ("=" value=XID)? (",")?;
+	name=ID ("=" value=ID)? (",")?;
 
 Subgraph:
-	{Subgraph} ("subgraph" name=XID?)? "{" (stmts+=Stmt)* "}";
+	{Subgraph} ("subgraph" name=ID?)? "{" (stmts+=Stmt)* "}";
 
 Port:
-	":" name=XID (":" compass_pt=CompassPt)? | ":" compass_pt=CompassPt;
+	":" name=ID (":" compass_pt=CompassPt)? | ":" compass_pt=CompassPt;
 
 EdgeRhs:
 	(EdgeRhsNode | EdgeRhsSubgraph);
@@ -65,12 +65,12 @@ EdgeRhsSubgraph:
 	op=EdgeOp subgraph=Subgraph;
 
 NodeId:
-	name=XID (port=Port)?;
+	name=ID (port=Port)?;
 
-	// compass point values are no keywords (and thus allowed as part of an ID), 
+// compass point values are no keywords (and thus allowed as part of an ID), 
 // whereas node, edge, graph, digraph, subgraph, strict are keywords (and thus not allowed as part of an ID)
-XID:
-	ID | "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_";
+ID:
+	STRING | QUOTED_STRING | NUMERAL | "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_";
 
 enum EdgeOp:
 	directed="->" | undirected="--";
@@ -85,9 +85,13 @@ enum CompassPt:
 	north="n" | northeast="ne" | east="e" | southeast="se" | south="s" | southwest="sw" | west="w" | northwest="nw" |
 	center="c" | wildcard="_";
 
-terminal ID:
-	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')* |
-	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)? |
+terminal STRING:
+	('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+	
+terminal NUMERAL: 
+	('-')? ('.' ('0'..'9')+) | ('0'..'9')+ ('.' ('0'..'9')*)?;
+	
+terminal QUOTED_STRING:
 	('"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | "'" | '\\') | !('\\' | '"'))* '"');
 
 terminal ML_COMMENT:
