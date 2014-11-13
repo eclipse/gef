@@ -59,13 +59,25 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 			return;
 		}
 
+		// unestablish anchor relations
 		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
 			ContentPolicy<Node> policy = p
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
 				init(policy);
-				// FIXME: this is only valid in case of single selection
-				policy.deleteContent();
+				policy.detachAllContentAnchoreds();
+				policy.detachFromAllContentAnchorages();
+				commit(policy);
+			}
+		}
+
+		// remove content from parent
+		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
+			ContentPolicy<Node> policy = p
+					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
+			if (policy != null) {
+				init(policy);
+				policy.removeFromParent();
 				commit(policy);
 			}
 		}
