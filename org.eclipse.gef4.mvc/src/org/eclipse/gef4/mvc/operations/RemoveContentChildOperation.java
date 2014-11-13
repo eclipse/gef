@@ -42,6 +42,8 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("EXEC remove content " + contentChild + " from "
+		// + parent + ".");
 		parent.removeContentChild(contentChild);
 		return Status.OK_STATUS;
 	}
@@ -55,6 +57,8 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("UNDO remove content " + contentChild + " from "
+		// + parent + ".");
 		parent.addContentChild(contentChild);
 		return Status.OK_STATUS;
 	}

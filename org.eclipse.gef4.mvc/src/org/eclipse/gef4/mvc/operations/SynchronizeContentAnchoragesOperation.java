@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -34,6 +34,7 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("EXEC sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored
@@ -50,6 +51,7 @@ public class SynchronizeContentAnchoragesOperation<VR> extends
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("UNDO sync content anchorages for " + anchored);
 		ContentBehavior<?> contentBehavior = anchored
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentAnchorages(anchored

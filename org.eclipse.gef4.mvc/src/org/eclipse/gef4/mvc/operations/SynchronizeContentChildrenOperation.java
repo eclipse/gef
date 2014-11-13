@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.operations;
 
@@ -33,6 +33,7 @@ public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("EXEC sync content children for " + parent);
 		ContentBehavior contentBehavior = parent
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());
@@ -48,6 +49,7 @@ public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("UNDO sync content children for " + parent);
 		ContentBehavior contentBehavior = parent
 				.getAdapter(ContentBehavior.class);
 		contentBehavior.synchronizeContentChildren(parent.getContentChildren());

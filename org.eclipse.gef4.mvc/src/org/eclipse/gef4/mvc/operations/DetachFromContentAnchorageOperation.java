@@ -44,6 +44,8 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("EXEC detach " + anchored + " from content "
+		// + contentAnchorage + " with role " + role + ".");
 		anchored.detachFromContentAnchorage(contentAnchorage, role);
 		return Status.OK_STATUS;
 	}
@@ -57,6 +59,8 @@ public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		// System.out.println("UNDO detach " + anchored + " from content "
+		// + contentAnchorage + " with role " + role + ".");
 		anchored.attachToContentAnchorage(contentAnchorage, role);
 		return Status.OK_STATUS;
 	}
