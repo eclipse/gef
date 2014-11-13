@@ -40,7 +40,8 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
@@ -189,41 +190,47 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		// create model operation
 		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
-				"Update model", curve, oldWayPoints, newWayPoints);
+				"Update Model", curve, oldWayPoints, newWayPoints);
 
-		// create anchorage operations
+		// create anchorage operations, start with detaching all anchorages
 		ContentPolicy<Node> contentPolicy = this
 				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 		contentPolicy.init();
 		contentPolicy.detachFromAllContentAnchorages();
+		final IUndoableOperation detachOperation = contentPolicy.commit();
+
+		// then attach source and target (if available)
+		contentPolicy.init();
 		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(visual
 				.getStartAnchor());
-		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(visual
-				.getEndAnchor());
 		if (sourceContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(sourceContentAnchorage,
 					"START");
 		}
+		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(visual
+				.getEndAnchor());
 		if (targetContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
 					"END");
 		}
-		final IUndoableOperation updateAnchoragesOperation = contentPolicy
-				.commit();
+		final IUndoableOperation attachOperation = contentPolicy.commit();
 
 		// compose operations
-		AbstractCompositeOperation compositeOperation = new AbstractCompositeOperation(
+		return new ForwardUndoCompositeOperation(
 				updateVisualOperation.getLabel()) {
 			{
 				add(updateVisualOperation);
 				add(updateModelOperation);
-				if (updateAnchoragesOperation != null) {
-					add(updateAnchoragesOperation);
+				if (detachOperation != null || attachOperation != null) {
+					add(new ReverseUndoCompositeOperation("Change Anchorages") {
+						{
+							add(detachOperation);
+							add(attachOperation);
+						}
+					});
 				}
 			}
 		};
-
-		return compositeOperation;
 	}
 
 	@Override
