@@ -37,11 +37,21 @@ public abstract class AbstractCompositeOperation extends AbstractOperation
 
 	@Override
 	public void add(IUndoableOperation operation) {
+		if (operation == null) {
+			throw new IllegalArgumentException(
+					"The given operation may not be null.");
+		}
 		operations.add(operation);
 	}
 
 	public void addAll(List<IUndoableOperation> operations) {
-		this.operations.addAll(operations);
+		/*
+		 * Do not use <code>operations.addAll()</code> because we need to check
+		 * for <code>null</code> operations.
+		 */
+		for (IUndoableOperation op : operations) {
+			add(op);
+		}
 	}
 
 	@Override
