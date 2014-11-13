@@ -84,12 +84,4 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 		this.viewer = viewer;
 	}
 
-	@Override
-	protected void unregister() {
-		// only if we lose the viewer
-		if (getViewer() == null) {
-			super.unregister();
-		}
-	}
-
 }

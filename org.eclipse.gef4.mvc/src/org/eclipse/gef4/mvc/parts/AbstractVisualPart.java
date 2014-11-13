@@ -125,14 +125,17 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
 				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
 
+		// determine the viewer before adding the anchored
+		IViewer<VR> oldViewer = getViewer();
+
 		if (anchoreds == null) {
 			anchoreds = HashMultiset.create();
 		}
 		anchoreds.add(anchored);
 
-		// if we obtain a link to the viewer (via anchored) then register
-		// visuals
-		if (parent == null && anchoreds.size() == 1) {
+		// register if we obtain a link to the viewer
+		IViewer<VR> newViewer = getViewer();
+		if (oldViewer == null && newViewer != null) {
 			register();
 		}
 
@@ -416,8 +419,14 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
 				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
 
-		// if we loose the link to the viewer via the anchored, unregister
-		if (parent == null && anchoreds.size() == 1) {
+		// determine viewer before and after removing the anchored
+		IViewer<VR> oldViewer = getViewer();
+		anchoreds.remove(anchored);
+		IViewer<VR> newViewer = getViewer();
+		anchoreds.add(anchored);
+
+		// unregister if we loose the link to the viewer
+		if (oldViewer != null && newViewer == null) {
 			unregister();
 		}
 
@@ -512,30 +521,36 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * Sets the parent {@link IVisualPart}.
 	 */
 	@Override
-	public void setParent(IVisualPart<VR> parent) {
-		if (this.parent == parent) {
+	public void setParent(IVisualPart<VR> newParent) {
+		if (this.parent == newParent) {
 			return;
 		}
 
+		// save old parent for the change notifictaion
 		IVisualPart<VR> oldParent = this.parent;
 
-		// unregister if we have no (remaining) link to the viewer
-		if (this.parent != null) {
-			if (parent == null && anchoreds == null) {
+		// determine viewer before and after setting the parent
+		IViewer<VR> oldViewer = getViewer();
+		this.parent = newParent;
+		IViewer<VR> newViewer = getViewer();
+		this.parent = oldParent;
+
+		// unregister if we were registered (oldViewer != null) and the viewer
+		// changes (newViewer != oldViewer)
+		if (oldViewer != null && newViewer != oldViewer) {
+			if (newParent == null && anchoreds == null) {
 				unregister();
 			}
 		}
 
-		this.parent = parent;
+		this.parent = newParent;
 
-		// if we obtain a link to the viewer (via parent) then register visuals
-		if (this.parent != null && anchoreds == null) {
-			// TODO: why anchorages == null?? we cannot add anchorages before
-			// adding the parent??
+		// if we obtain a link to the viewer then register visuals
+		if (newViewer != null && newViewer != oldViewer) {
 			register();
 		}
 
-		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, parent);
+		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, newParent);
 	}
 
 	@Override
