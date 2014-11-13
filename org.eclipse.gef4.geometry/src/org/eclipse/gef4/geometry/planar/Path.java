@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -25,20 +25,20 @@ import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 /**
  * Represents the geometric shape of a path, which may consist of independent
  * subgraphs.
- * 
+ *
  * Note that while all manipulations (e.g. within shrink, expand) within this
  * class are based on double precision, all comparisons (e.g. within contains,
  * intersects, equals, etc.) are based on a limited precision (with an accuracy
  * defined within {@link PrecisionUtils}) to compensate for rounding effects.
- * 
+ *
  * @author anyssen
- * 
+ *
  */
 public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Representation for different types of {@link Segment}s.
-	 * 
+	 *
 	 * @see #MOVE_TO
 	 * @see #LINE_TO
 	 * @see #QUAD_TO
@@ -50,7 +50,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		 * A {@link #MOVE_TO} {@link Segment} represents a change of position
 		 * while piecewise building a {@link Path}, without inserting a new
 		 * curve.
-		 * 
+		 *
 		 * @see Path#moveTo(double, double)
 		 */
 		public static final int MOVE_TO = 0;
@@ -59,7 +59,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		 * A {@link #LINE_TO} {@link Segment} represents a {@link Line} from the
 		 * previous position of a {@link Path} to the {@link Point} at index 0
 		 * associated with the {@link Segment}.
-		 * 
+		 *
 		 * @see Path#lineTo(double, double)
 		 */
 		public static final int LINE_TO = 1;
@@ -70,7 +70,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		 * to the {@link Point} at index 1 associated with the {@link Segment}.
 		 * The {@link Point} at index 0 is used as the handle {@link Point} of
 		 * the {@link QuadraticCurve}.
-		 * 
+		 *
 		 * @see Path#quadTo(double, double, double, double)
 		 */
 		public static final int QUAD_TO = 2;
@@ -81,7 +81,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		 * index 2 associated with the {@link Segment}. The {@link Point}s at
 		 * indices 0 and 1 are used as the handle {@link Point}s of the
 		 * {@link CubicCurve}.
-		 * 
+		 *
 		 * @see Path#cubicTo(double, double, double, double, double, double)
 		 */
 		public static final int CUBIC_TO = 3;
@@ -90,7 +90,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		 * A {@link #CLOSE} {@link Segment} represents the link from the current
 		 * position of a {@link Path} to the position of the last
 		 * {@link #MOVE_TO} {@link Segment}.
-		 * 
+		 *
 		 * @see Path#close()
 		 */
 		public static final int CLOSE = 4;
@@ -101,7 +101,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		/**
 		 * Constructs a new {@link Segment} of the given type. The passed-in
 		 * {@link Point}s are associated with this {@link Segment}.
-		 * 
+		 *
 		 * @param type
 		 *            The type of the new {@link Segment}. It is one of
 		 *            <ul>
@@ -174,7 +174,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		/**
 		 * Returns a copy of this {@link Segment}. The associated {@link Point}s
 		 * are copied, too.
-		 * 
+		 *
 		 * @return a copy of this {@link Segment}
 		 */
 		public Segment getCopy() {
@@ -184,7 +184,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 		/**
 		 * Returns a copy of the {@link Point}s associated with this
 		 * {@link Segment}.
-		 * 
+		 *
 		 * @return a copy of the {@link Point}s associated with this
 		 *         {@link Segment}.
 		 */
@@ -194,7 +194,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 		/**
 		 * Returns the type of this {@link Segment}.
-		 * 
+		 *
 		 * @return the type of this {@link Segment}
 		 * @see #MOVE_TO
 		 * @see #LINE_TO
@@ -210,6 +210,72 @@ public class Path extends AbstractGeometry implements IGeometry {
 			return type;
 		}
 
+	}
+
+	/**
+	 * Unions the two specified {@link Path}s
+	 *
+	 * @param pa
+	 *            the first area to add
+	 * @param pb
+	 *            the second area to add
+	 * @return the sum of the areas
+	 */
+	public static Path add(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.add(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Computes the area covered by the first or the second but not both given
+	 * areas.
+	 *
+	 * @param pa
+	 *            the first area to compute the xor for
+	 * @param pb
+	 *            the second area to compute the xor for
+	 * @return the exclusive-or of the areas
+	 */
+	public static Path exclusiveOr(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.exclusiveOr(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Intersects the given areas.
+	 *
+	 * @param pa
+	 *            the first area to intersect
+	 * @param pb
+	 *            the second area to intersect
+	 * @return the intersection of the areas, i.e. the area covered by both
+	 *         areas
+	 */
+	public static Path intersect(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.intersect(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
+	}
+
+	/**
+	 * Subtracts the second given area from the first given area.
+	 *
+	 * @param pa
+	 *            the area to subtract from
+	 * @param pb
+	 *            the area to subtract
+	 * @return the area covered by the first but not the second given area
+	 */
+	public static Path subtract(Path pa, Path pb) {
+		Area a = new Area(Geometry2AWT.toAWTPath(pa));
+		Area b = new Area(Geometry2AWT.toAWTPath(pb));
+		a.subtract(b);
+		return AWT2Geometry.toPath(new Path2D.Double(a));
 	}
 
 	/**
@@ -231,72 +297,6 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Adds the given areas.
-	 * 
-	 * @param pa
-	 *            the first area to add
-	 * @param pb
-	 *            the second area to add
-	 * @return the sum of the areas
-	 */
-	public static Path add(Path pa, Path pb) {
-		Area a = new Area(Geometry2AWT.toAWTPath(pa));
-		Area b = new Area(Geometry2AWT.toAWTPath(pb));
-		a.add(b);
-		return AWT2Geometry.toPath(new Path2D.Double(a));
-	}
-
-	/**
-	 * Computes the area covered by the first or the second but not both given
-	 * areas.
-	 * 
-	 * @param pa
-	 *            the first area to compute the xor for
-	 * @param pb
-	 *            the second area to compute the xor for
-	 * @return the exclusive-or of the areas
-	 */
-	public static Path exclusiveOr(Path pa, Path pb) {
-		Area a = new Area(Geometry2AWT.toAWTPath(pa));
-		Area b = new Area(Geometry2AWT.toAWTPath(pb));
-		a.exclusiveOr(b);
-		return AWT2Geometry.toPath(new Path2D.Double(a));
-	}
-
-	/**
-	 * Intersects the given areas.
-	 * 
-	 * @param pa
-	 *            the first area to intersect
-	 * @param pb
-	 *            the second area to intersect
-	 * @return the intersection of the areas, i.e. the area covered by both
-	 *         areas
-	 */
-	public static Path intersect(Path pa, Path pb) {
-		Area a = new Area(Geometry2AWT.toAWTPath(pa));
-		Area b = new Area(Geometry2AWT.toAWTPath(pb));
-		a.intersect(b);
-		return AWT2Geometry.toPath(new Path2D.Double(a));
-	}
-
-	/**
-	 * Subtracts the second given area from the first given area.
-	 * 
-	 * @param pa
-	 *            the area to subtract from
-	 * @param pb
-	 *            the area to subtract
-	 * @return the area covered by the first but not the second given area
-	 */
-	public static Path subtract(Path pa, Path pb) {
-		Area a = new Area(Geometry2AWT.toAWTPath(pa));
-		Area b = new Area(Geometry2AWT.toAWTPath(pb));
-		a.subtract(b);
-		return AWT2Geometry.toPath(new Path2D.Double(a));
-	}
-
 	private int windingRule = WIND_NON_ZERO;
 
 	private List<Segment> segments = new ArrayList<Segment>();
@@ -310,7 +310,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Creates a new empty path with given winding rule.
-	 * 
+	 *
 	 * @param windingRule
 	 *            the winding rule to use; one of {@link #WIND_EVEN_ODD} or
 	 *            {@link #WIND_NON_ZERO}
@@ -321,7 +321,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Creates a path from the given segments, using the given winding rule.
-	 * 
+	 *
 	 * @param windingRule
 	 *            the winding rule to use; one of {@link #WIND_EVEN_ODD} or
 	 *            {@link #WIND_NON_ZERO}
@@ -338,7 +338,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Creates a path from the given segments, using the default winding rule
 	 * {@link #WIND_NON_ZERO}.
-	 * 
+	 *
 	 * @param segments
 	 *            The segments to initialize the path with
 	 */
@@ -347,9 +347,33 @@ public class Path extends AbstractGeometry implements IGeometry {
 	}
 
 	/**
+	 * Adds the given {@link List} of {@link Segment}s to this {@link Path}.
+	 *
+	 * @param segments
+	 *            The {@link Segment}s to add to this {@link Path}.
+	 * @return <code>this</code> for convenience.
+	 */
+	public final Path add(List<Segment> segments) {
+		this.segments.addAll(segments);
+		return this;
+	}
+
+	/**
+	 * Adds the given {@link Segment}s to this {@link Path}.
+	 *
+	 * @param segments
+	 *            The {@link Segment}s to add to this {@link Path}.
+	 * @return <code>this</code> for convenience.
+	 */
+	public final Path add(Segment... segments) {
+		this.segments.addAll(Arrays.asList(segments));
+		return this;
+	}
+
+	/**
 	 * Closes the current sub-path by drawing a straight line (line-to) to the
 	 * location of the last move to.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public final Path close() {
@@ -366,9 +390,9 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Returns <code>true</code> if the given {@link Rectangle} is contained
 	 * within {@link IGeometry}, <code>false</code> otherwise.
-	 * 
+	 *
 	 * TODO: Generalize to arbitrary {@link IGeometry} objects.
-	 * 
+	 *
 	 * @param r
 	 *            The {@link Rectangle} to test
 	 * @return <code>true</code> if the {@link Rectangle} is fully contained
@@ -383,7 +407,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * Adds a cubic Bezier curve segment from the current position to the
 	 * specified end position, using the two provided control points as Bezier
 	 * control points.
-	 * 
+	 *
 	 * @param control1X
 	 *            The x-coordinate of the first Bezier control point
 	 * @param control1Y
@@ -431,7 +455,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Returns the segments that make up this path.
-	 * 
+	 *
 	 * @return an array of {@link Segment}s representing the segments of this
 	 *         path
 	 */
@@ -451,7 +475,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Returns the winding rule used to determine the interior of this path.
-	 * 
+	 *
 	 * @return the winding rule, i.e. one of {@link #WIND_EVEN_ODD} or
 	 *         {@link #WIND_NON_ZERO}
 	 */
@@ -462,7 +486,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Adds a straight line segment from the current position to the specified
 	 * end position.
-	 * 
+	 *
 	 * @param x
 	 *            The x-coordinate of the desired target point
 	 * @param y
@@ -477,7 +501,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Changes the current position. A new {@link Segment} of type
 	 * {@link Segment#MOVE_TO} is added to this Path.
-	 * 
+	 *
 	 * @param x
 	 *            The x-coordinate of the desired target point
 	 * @param y
@@ -493,7 +517,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * Adds a quadratic curve segment from the current position to the specified
 	 * end position, using the provided control point as a parametric control
 	 * point.
-	 * 
+	 *
 	 * @param controlX
 	 *            The x-coordinate of the control point
 	 * @param controlY
@@ -513,7 +537,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 
 	/**
 	 * Resets the path to be empty.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public final Path reset() {
@@ -528,7 +552,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	 * <li>{@link #WIND_NON_ZERO} (default)</li>
 	 * <li>{@link #WIND_EVEN_ODD}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param windingRule
 	 *            the new winding rule of this {@link Path}
 	 * @return <code>this</code> for convenience
@@ -549,7 +573,7 @@ public class Path extends AbstractGeometry implements IGeometry {
 	/**
 	 * Tests whether this {@link Path} and the given {@link Rectangle} touch,
 	 * i.e. they have at least one {@link Point} in common.
-	 * 
+	 *
 	 * @param r
 	 *            the {@link Rectangle} to test for at least one {@link Point}
 	 *            in common with this {@link Path}
