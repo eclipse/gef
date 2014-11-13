@@ -18,8 +18,12 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
+import org.eclipse.gef4.mvc.operations.ClearHoverFocusSelectionOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
@@ -60,14 +64,19 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 		}
 
 		// unestablish anchor relations
+		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
+				"Unestablish Anchor Relations");
 		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
 			ContentPolicy<Node> policy = p
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
-				init(policy);
+				policy.init();
 				policy.detachAllContentAnchoreds();
 				policy.detachFromAllContentAnchorages();
-				commit(policy);
+				IUndoableOperation detachOperation = policy.commit();
+				if (detachOperation != null) {
+					rev.add(detachOperation);
+				}
 			}
 		}
 
@@ -76,11 +85,34 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 			ContentPolicy<Node> policy = p
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
-				init(policy);
+				policy.init();
 				policy.removeFromParent();
-				commit(policy);
+				IUndoableOperation removeOperation = policy.commit();
+				if (removeOperation != null) {
+					rev.add(removeOperation);
+				}
 			}
 		}
+
+		/*
+		 * FIXME: Refactor so that users can chain more operations to the delete
+		 * operation, such as clearing the intersection models, which has to be
+		 * provided by the user, because we cannot know which interaction models
+		 * need to be cleared.
+		 *
+		 * Therefore, when this is refactored, the following Clear*Operation
+		 * should be chained within the example.
+		 */
+
+		// clear interaction models
+		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
+				"Delete Selected");
+		fwd.add(rev);
+		fwd.add(new ClearHoverFocusSelectionOperation<Node>(getHost().getRoot()
+				.getViewer()));
+
+		// execute composite operation
+		getHost().getRoot().getViewer().getDomain().execute(fwd);
 	}
 
 	@Override
