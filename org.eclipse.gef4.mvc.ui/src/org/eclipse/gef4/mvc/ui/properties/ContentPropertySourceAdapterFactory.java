@@ -20,12 +20,13 @@ import org.eclipse.ui.views.properties.IPropertySource;
 /**
  * An {@link IAdapterFactory} that adapts the {@link IContentPart#getContent()}
  * to {@link IPropertySource}.
- * 
+ *
  * @author anyssen
  *
  */
 public class ContentPropertySourceAdapterFactory implements IAdapterFactory {
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		// Check model of content part for adaptability
@@ -46,10 +47,19 @@ public class ContentPropertySourceAdapterFactory implements IAdapterFactory {
 				return adapter;
 			}
 		}
+		/*
+		 * TODO: Verify if this is the correct approach.
+		 *
+		 * Return null when the model is null (no adapter available).
+		 */
+		if (model == null) {
+			return null;
+		}
 		// fall back to adapter manager
 		return Platform.getAdapterManager().getAdapter(model, adapterType);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return new Class[] { IPropertySource.class };
