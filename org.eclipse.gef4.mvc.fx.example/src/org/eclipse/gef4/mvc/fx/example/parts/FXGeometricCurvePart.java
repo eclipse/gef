@@ -41,12 +41,9 @@ import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
-import org.eclipse.gef4.mvc.operations.AttachToContentAnchorageOperation;
-import org.eclipse.gef4.mvc.operations.DetachFromContentAnchorageOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.SynchronizeContentAnchoragesOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -185,27 +182,44 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			return null;
 		}
 
-		// determine model values
+		// determine old and new points
 		final FXGeometricCurve curve = getContent();
 		final List<Point> oldWayPoints = curve.getWayPointsCopy();
 		final List<Point> newWayPoints = visual.getWayPoints();
-		// translate waypoints
+
+		// create model operation
 		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
 				"Update model", curve, oldWayPoints, newWayPoints);
-		AbstractFXGeometricElement<?> newSource = getAnchorageContent(visual
-				.getStartAnchor());
-		AbstractFXGeometricElement<?> newTarget = getAnchorageContent(visual
-				.getEndAnchor());
-		final IUndoableOperation updateAnchoragesOperation = getContentAnchoragesOperation(
-				newSource, newTarget);
 
-		// compose both operations
-		IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+		// create anchorage operations
+		ContentPolicy<Node> contentPolicy = this
+				.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
+		contentPolicy.init();
+		contentPolicy.detachFromAllContentAnchorages();
+		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(visual
+				.getStartAnchor());
+		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(visual
+				.getEndAnchor());
+		if (sourceContentAnchorage != null) {
+			contentPolicy.attachToContentAnchorage(sourceContentAnchorage,
+					"START");
+		}
+		if (targetContentAnchorage != null) {
+			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
+					"END");
+		}
+		final IUndoableOperation updateAnchoragesOperation = contentPolicy
+				.commit();
+
+		// compose operations
+		AbstractCompositeOperation compositeOperation = new AbstractCompositeOperation(
 				updateVisualOperation.getLabel()) {
 			{
 				add(updateVisualOperation);
 				add(updateModelOperation);
-				add(updateAnchoragesOperation);
+				if (updateAnchoragesOperation != null) {
+					add(updateAnchoragesOperation);
+				}
 			}
 		};
 
@@ -363,45 +377,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			anchorages.put(dst, "END");
 		}
 		return anchorages;
-	}
-
-	public IUndoableOperation getContentAnchoragesOperation(
-			AbstractFXGeometricElement<?> newSource,
-			AbstractFXGeometricElement<?> newTarget) {
-		Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = getContent()
-				.getSourceAnchorages();
-		Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = getContent()
-				.getTargetAnchorages();
-
-		ForwardUndoCompositeOperation op = new ForwardUndoCompositeOperation(
-				"Change Content Anchorages");
-
-		if (!sourceAnchorages.isEmpty()) {
-			DetachFromContentAnchorageOperation<Node> detachSourceOp = new DetachFromContentAnchorageOperation<Node>(
-					this, sourceAnchorages.toArray()[0], "START");
-			op.add(detachSourceOp);
-		}
-		if (!targetAnchorages.isEmpty()) {
-			DetachFromContentAnchorageOperation<Node> detachTargetOp = new DetachFromContentAnchorageOperation<Node>(
-					this, targetAnchorages.toArray()[0], "END");
-			op.add(detachTargetOp);
-		}
-		if (newSource != null) {
-			AttachToContentAnchorageOperation<Node> attachSourceOp = new AttachToContentAnchorageOperation<Node>(
-					this, newSource, "START");
-			op.add(attachSourceOp);
-		}
-		if (newTarget != null) {
-			AttachToContentAnchorageOperation<Node> attachTargetOp = new AttachToContentAnchorageOperation<Node>(
-					this, newTarget, "END");
-			op.add(attachTargetOp);
-		}
-
-		SynchronizeContentAnchoragesOperation<Node> syncOp = new SynchronizeContentAnchoragesOperation<Node>(
-				"Synchronize Anchorages", this);
-		op.add(syncOp);
-
-		return op;
 	}
 
 	@Override
