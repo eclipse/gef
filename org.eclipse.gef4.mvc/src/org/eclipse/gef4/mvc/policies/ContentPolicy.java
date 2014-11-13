@@ -67,9 +67,16 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	}
 
 	public void deleteContent() {
-		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
-				"Delete Content");
-		// detach all anchored
+		// unestablish anchor relations
+		detachAllContentAnchoreds();
+		detachFromAllContentAnchorages();
+		// remove content from parent
+		removeFromParent();
+	}
+
+	public void detachAllContentAnchoreds() {
+		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
+				"Detach All Anchoreds");
 		for (IVisualPart<VR> anchored : getHost().getAnchoreds()) {
 			if (anchored instanceof IContentPart) {
 				ContentPolicy<VR> policy = anchored
@@ -82,12 +89,15 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 					}
 					IUndoableOperation detachOperation = policy.commit();
 					if (detachOperation != null) {
-						deleteOps.add(detachOperation);
+						detachOps.add(detachOperation);
 					}
 				}
 			}
 		}
-		// detach from anchorages
+		commitOperation.add(detachOps);
+	}
+
+	public void detachFromAllContentAnchorages() {
 		for (IVisualPart<VR> anchorage : getHost().getAnchorages().keySet()) {
 			if (anchorage instanceof IContentPart) {
 				for (String role : getHost().getAnchorages().get(anchorage)) {
@@ -96,20 +106,6 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 				}
 			}
 		}
-		// remove from parent
-		if (getHost().getParent() instanceof IContentPart) {
-			ContentPolicy<VR> policy = getHost().getParent()
-					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				policy.removeContentChild(getHost().getContent());
-				IUndoableOperation removeOperation = policy.commit();
-				if (removeOperation != null) {
-					deleteOps.add(removeOperation);
-				}
-			}
-		}
-		commitOperation.add(deleteOps.unwrap());
 	}
 
 	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
@@ -143,5 +139,23 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		removeOperation.add(new SynchronizeContentChildrenOperation<VR>(
 				"Synchronize Children", getHost()));
 		commitOperation.add(removeOperation);
+	}
+
+	public void removeFromParent() {
+		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
+				"Delete Content");
+		if (getHost().getParent() instanceof IContentPart) {
+			ContentPolicy<VR> policy = getHost().getParent()
+					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
+			if (policy != null) {
+				policy.init();
+				policy.removeContentChild(getHost().getContent());
+				IUndoableOperation removeOperation = policy.commit();
+				if (removeOperation != null) {
+					deleteOps.add(removeOperation);
+				}
+			}
+		}
+		commitOperation.add(deleteOps.unwrap());
 	}
 }
