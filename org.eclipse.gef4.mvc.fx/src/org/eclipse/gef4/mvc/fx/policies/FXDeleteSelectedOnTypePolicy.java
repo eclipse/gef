@@ -62,15 +62,16 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 		DeletionPolicy<Node> deletionPolicy = getHost()
 				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
 		if (deletionPolicy == null) {
-			throw new IllegalStateException(
-					"No DeletionPolicy registered for <" + getHost() + ">.");
+			// ignore this event when no DeletionPolicy is available
+			return;
 		}
 
+		// delete part
 		deletionPolicy.init();
 		deletionPolicy.delete(selected);
 		IUndoableOperation deleteOperation = deletionPolicy.commit();
 
-		// execute composite operation
+		// execute on stack
 		getHost().getRoot().getViewer().getDomain().execute(deleteOperation);
 	}
 
