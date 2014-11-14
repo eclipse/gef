@@ -38,7 +38,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	private Object content;
 
 	@Override
-	public void addContentChild(Object contentChild) {
+	public void addContentChild(Object contentChild, int index) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -88,7 +88,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	}
 
 	@Override
-	public void removeContentChild(Object contentChild) {
+	public void removeContentChild(Object contentChild, int index) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.policies;
 
-import java.util.HashMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
@@ -21,22 +25,30 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 		ITransactional {
 
-	private HashMap<Object, IContentPart<VR>> contentToCreate;
+	private List<Entry<IContentPart<VR>, Object>> contentToCreate;
 
 	@Override
 	public IUndoableOperation commit() {
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"Create Content");
-		for (Object content : contentToCreate.keySet()) {
-			IContentPart<VR> parent = contentToCreate.get(content);
+		for (Entry<IContentPart<VR>, Object> entry : contentToCreate) {
+			IContentPart<VR> parent = entry.getKey();
+			Object content = entry.getValue();
+
+			// retrieve content policy for the parent
 			ContentPolicy<VR> contentPolicy = parent
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 			if (contentPolicy == null) {
 				throw new IllegalStateException(
 						"No ContentPolicy registered for <" + parent + ">.");
 			}
+
+			// determine index (create inserts at the end)
+			int index = parent.getContentChildren().size();
+
+			// insert content
 			contentPolicy.init();
-			contentPolicy.addContentChild(content);
+			contentPolicy.addContentChild(content, index);
 			fwd.add(contentPolicy.commit());
 		}
 		return fwd.unwrap();
@@ -46,13 +58,13 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 	 * Adds the given <i>content</i> to the collection of to-be-created contents
 	 * in the specified <i>parent</i>.
 	 *
+	 * @param parent
+	 *            The {@link IContentPart} where the <i>content</i> is inserted.
 	 * @param content
 	 *            The {@link Object} to be created as a content-child of the
 	 *            given <i>parent</i>.
-	 * @param parent
-	 *            The {@link IContentPart} where the <i>content</i> is inserted.
 	 */
-	public void create(Object content, IContentPart<VR> parent) {
+	public void create(IContentPart<VR> parent, Object content) {
 		if (content == null) {
 			throw new IllegalArgumentException(
 					"The given content may not be null.");
@@ -60,12 +72,13 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 			throw new IllegalArgumentException(
 					"The given parent may not be null.");
 		}
-		contentToCreate.put(content, parent);
+		contentToCreate.add(new SimpleEntry<IContentPart<VR>, Object>(parent,
+				content));
 	}
 
 	@Override
 	public void init() {
-		contentToCreate = new HashMap<Object, IContentPart<VR>>();
+		contentToCreate = new ArrayList<Map.Entry<IContentPart<VR>, Object>>();
 	}
 
 }

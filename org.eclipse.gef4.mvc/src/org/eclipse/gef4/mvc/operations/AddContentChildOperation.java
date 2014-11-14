@@ -31,11 +31,14 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 
 	private final IContentPart<VR> parent;
 	private final Object contentChild;
+	private int index;
 
-	public AddContentChildOperation(IContentPart<VR> parent, Object contentChild) {
+	public AddContentChildOperation(IContentPart<VR> parent,
+			Object contentChild, int index) {
 		super("Add Content Child");
 		this.parent = parent;
 		this.contentChild = contentChild;
+		this.index = index;
 	}
 
 	@Override
@@ -44,7 +47,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 		// System.out.println("EXEC add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		parent.addContentChild(contentChild);
+		parent.addContentChild(contentChild, index);
 		return Status.OK_STATUS;
 	}
 
@@ -60,7 +63,7 @@ public class AddContentChildOperation<VR> extends AbstractOperation {
 		// System.out.println("UNDO add content " + contentChild + " to " +
 		// parent
 		// + ".");
-		parent.removeContentChild(contentChild);
+		parent.removeContentChild(contentChild, index);
 		return Status.OK_STATUS;
 	}
 

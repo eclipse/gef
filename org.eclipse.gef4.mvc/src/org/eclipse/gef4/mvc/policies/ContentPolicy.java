@@ -39,11 +39,11 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 
 	private ForwardUndoCompositeOperation commitOperation;
 
-	public void addContentChild(Object contentChild) {
+	public void addContentChild(Object contentChild, int index) {
 		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
 				"Add Content Child");
 		addOperation.add(new AddContentChildOperation<VR>(getHost(),
-				contentChild));
+				contentChild, index));
 		addOperation.add(new SynchronizeContentChildrenOperation<VR>(
 				"Synchronize Children", getHost()));
 		commitOperation.add(addOperation);

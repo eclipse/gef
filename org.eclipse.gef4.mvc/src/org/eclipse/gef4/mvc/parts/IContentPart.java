@@ -49,8 +49,10 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 	 * @param contentChild
 	 *            An {@link Object} which should be added as a child to this
 	 *            part's content.
+	 * @param index
+	 *            The index at which the <i>contentChild</i> should be added.
 	 */
-	public void addContentChild(Object contentChild);
+	public void addContentChild(Object contentChild, int index);
 
 	/**
 	 * Attaches this part's content to the given <i>contentAnchorage</i> under
@@ -119,8 +121,10 @@ public interface IContentPart<VR> extends IVisualPart<VR> {
 	 * @param contentChild
 	 *            An {@link Object} which should be removed from this part's
 	 *            content children.
+	 * @param index
+	 *            The index of the <i>contentChild</i> that is removed.
 	 */
-	public void removeContentChild(Object contentChild);
+	public void removeContentChild(Object contentChild, int index);
 
 	/**
 	 * Sets this part's content to the given {@link Object value}.

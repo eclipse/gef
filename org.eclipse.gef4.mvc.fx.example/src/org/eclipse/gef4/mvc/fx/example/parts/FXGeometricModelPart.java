@@ -31,12 +31,12 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public void addContentChild(Object contentChild) {
+	public void addContentChild(Object contentChild, int index) {
 		if (!(contentChild instanceof AbstractFXGeometricElement)) {
 			throw new IllegalArgumentException(
 					"Cannot add content child: wrong type!");
 		}
-		getContent().getShapeVisuals().add(
+		getContent().getShapeVisuals().add(index,
 				(AbstractFXGeometricElement<?>) contentChild);
 	}
 
@@ -62,7 +62,7 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public void removeContentChild(Object contentChild) {
+	public void removeContentChild(Object contentChild, int index) {
 		getContent().getShapeVisuals().remove(contentChild);
 	}
 

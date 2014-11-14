@@ -31,11 +31,13 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 
 	private final IContentPart<VR> parent;
 	private final Object contentChild;
+	private int index;
 
 	public RemoveContentChildOperation(IContentPart<VR> parent,
 			Object contentChild) {
 		super("Remove Content Child");
 		this.parent = parent;
+		index = parent.getContentChildren().indexOf(contentChild);
 		this.contentChild = contentChild;
 	}
 
@@ -44,7 +46,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 			throws ExecutionException {
 		// System.out.println("EXEC remove content " + contentChild + " from "
 		// + parent + ".");
-		parent.removeContentChild(contentChild);
+		parent.removeContentChild(contentChild, index);
 		return Status.OK_STATUS;
 	}
 
@@ -59,7 +61,7 @@ public class RemoveContentChildOperation<VR> extends AbstractOperation {
 			throws ExecutionException {
 		// System.out.println("UNDO remove content " + contentChild + " from "
 		// + parent + ".");
-		parent.addContentChild(contentChild);
+		parent.addContentChild(contentChild, index);
 		return Status.OK_STATUS;
 	}
 

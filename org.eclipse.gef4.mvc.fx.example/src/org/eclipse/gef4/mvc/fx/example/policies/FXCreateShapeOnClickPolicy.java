@@ -65,7 +65,7 @@ public class FXCreateShapeOnClickPolicy extends AbstractFXClickPolicy {
 				FXGeometricModel.createHandleShapeGeometry(),
 				new AffineTransform(1, 0, 0, 1, 12, 15), Color.WHITE,
 				FXGeometricModel.GEF_SHADOW_EFFECT);
-		creationPolicy.create(content, (FXGeometricModelPart) modelPart);
+		creationPolicy.create((FXGeometricModelPart) modelPart, content);
 		IUndoableOperation createOperation = creationPolicy.commit();
 
 		// execute on stack
