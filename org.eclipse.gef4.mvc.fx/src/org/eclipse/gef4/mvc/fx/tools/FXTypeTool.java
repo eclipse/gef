@@ -34,20 +34,24 @@ public class FXTypeTool extends AbstractTool<Node> {
 	private final EventHandler<? super KeyEvent> pressedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
+			getDomain().openExecutionTransaction();
 			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.pressed(event);
 			}
+			getDomain().closeExecutionTransaction();
 		}
 	};
 
 	private final EventHandler<? super KeyEvent> releasedFilter = new EventHandler<KeyEvent>() {
 		@Override
 		public void handle(KeyEvent event) {
+			getDomain().openExecutionTransaction();
 			Collection<? extends AbstractFXTypePolicy> policies = getTargetPolicies(event);
 			for (AbstractFXTypePolicy policy : policies) {
 				policy.released(event);
 			}
+			getDomain().closeExecutionTransaction();
 		}
 	};
 
