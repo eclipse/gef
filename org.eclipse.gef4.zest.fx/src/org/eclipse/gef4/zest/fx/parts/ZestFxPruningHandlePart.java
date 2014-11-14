@@ -17,15 +17,13 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.FXBlendImageView;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
@@ -67,54 +65,18 @@ public class ZestFxPruningHandlePart extends FXSegmentHandlePart {
 		// get image and hover image
 		final Image hoverImage = getHoverImage();
 		final Image image = getImage();
-
-		// create ImageView for both
-		final ImageView imageView = new ImageView(image);
-		final ImageView hoverImageView = new ImageView(hoverImage);
-
-		// set translation to center
-		imageView.setTranslateX(-image.getWidth() / 2);
-		imageView.setTranslateY(-image.getHeight() / 2);
-		hoverImageView.setTranslateX(-hoverImage.getWidth() / 2);
-		hoverImageView.setTranslateY(-hoverImage.getHeight() / 2);
-
-		// create group to blend images
-		final Group blendGroup = new Group(imageView, hoverImageView);
-		blendGroup.setBlendMode(BlendMode.SRC_OVER);
-
-		// set starting opacity of the hover image to 0
-		hoverImageView.setOpacity(0);
-
+		// create blending image view for both
+		FXBlendImageView blendImageView = new FXBlendImageView();
+		blendImageView.imageProperty().set(image);
+		blendImageView.hoverImageProperty().set(hoverImage);
 		// register click action
-		blendGroup.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		blendImageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				onClicked(event);
 			}
 		});
-
-		// TODO: allow hierarchical hover
-		// TODO: extract magic numbers to properties
-
-		// register hover effect
-		blendGroup.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 0), new KeyValue(
-						hoverImageView.opacityProperty(), 1))).play();
-			}
-		});
-		blendGroup.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
-						imageView.opacityProperty(), 1), new KeyValue(
-						hoverImageView.opacityProperty(), 0))).play();
-			}
-		});
-
-		return blendGroup;
+		return blendImageView;
 	}
 
 	@Override
