@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -21,11 +20,8 @@ import javafx.scene.input.KeyEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.operations.ClearHoverFocusSelectionOperation;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
-import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.policies.ContentPolicy;
+import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
@@ -63,56 +59,19 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 			return;
 		}
 
-		// unestablish anchor relations
-		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
-				"Unestablish Anchor Relations");
-		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
-			ContentPolicy<Node> policy = p
-					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				policy.detachAllContentAnchoreds();
-				policy.detachFromAllContentAnchorages();
-				IUndoableOperation detachOperation = policy.commit();
-				if (detachOperation != null) {
-					rev.add(detachOperation);
-				}
-			}
+		DeletionPolicy<Node> deletionPolicy = getHost()
+				.<DeletionPolicy<Node>> getAdapter(DeletionPolicy.class);
+		if (deletionPolicy == null) {
+			throw new IllegalStateException(
+					"No DeletionPolicy registered for <" + getHost() + ">.");
 		}
 
-		// remove content from parent
-		for (IContentPart<Node> p : new ArrayList<IContentPart<Node>>(selected)) {
-			ContentPolicy<Node> policy = p
-					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
-			if (policy != null) {
-				policy.init();
-				policy.removeFromParent();
-				IUndoableOperation removeOperation = policy.commit();
-				if (removeOperation != null) {
-					rev.add(removeOperation);
-				}
-			}
-		}
-
-		/*
-		 * FIXME: Refactor so that users can chain more operations to the delete
-		 * operation, such as clearing the intersection models, which has to be
-		 * provided by the user, because we cannot know which interaction models
-		 * need to be cleared.
-		 *
-		 * Therefore, when this is refactored, the following Clear*Operation
-		 * should be chained within the example.
-		 */
-
-		// clear interaction models
-		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
-				"Delete Selected");
-		fwd.add(rev);
-		fwd.add(new ClearHoverFocusSelectionOperation<Node>(getHost().getRoot()
-				.getViewer()));
+		deletionPolicy.init();
+		deletionPolicy.delete(selected);
+		IUndoableOperation deleteOperation = deletionPolicy.commit();
 
 		// execute composite operation
-		getHost().getRoot().getViewer().getDomain().execute(fwd);
+		getHost().getRoot().getViewer().getDomain().execute(deleteOperation);
 	}
 
 	@Override
