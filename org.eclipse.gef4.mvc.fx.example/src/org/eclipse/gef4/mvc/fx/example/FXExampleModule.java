@@ -21,7 +21,9 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
+import org.eclipse.gef4.mvc.fx.example.policies.FXCreateShapeOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeletionPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXResizeRelocateShapePolicy;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
@@ -38,6 +40,8 @@ import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
+import org.eclipse.gef4.mvc.policies.CreationPolicy;
+import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
@@ -86,6 +90,22 @@ public class FXExampleModule extends MvcFxModule {
 								.get(Provider.class,
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
+
+		// deletion policy
+		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class)).to(
+				FXExampleDeletionPolicy.class);
+	}
+
+	@Override
+	protected void bindAbstractRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindAbstractRootPartAdapters(adapterMapBinder);
+		adapterMapBinder.addBinding(AdapterKey.get(CreationPolicy.class)).to(
+				CreationPolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+						"FXCreateShapeOnClick")).to(
+				FXCreateShapeOnClickPolicy.class);
 	}
 
 	protected void bindFXExampleDeleteHandlePartAdapters(
