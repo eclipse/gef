@@ -13,6 +13,7 @@
 package org.eclipse.gef4.mvc.fx.example.policies;
 
 import javafx.event.EventTarget;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -76,15 +77,17 @@ public class FXCreateShapeOnClickPolicy extends AbstractFXClickPolicy {
 
 		// get the visual location
 		Node visual = contentPart.getVisual();
-		double x = visual.getLayoutBounds().getMinX() + visual.getLayoutX();
-		double y = visual.getLayoutBounds().getMinY() + visual.getLayoutY();
-		Point2D locationInLocal = visual.sceneToLocal(sceneX, sceneY);
+		Bounds bounds = visual.getLayoutBounds();
+		double cx = bounds.getMinX() + bounds.getWidth() / 2;
+		double cy = bounds.getMinY() + bounds.getHeight() / 2;
+		Point2D finalLocationInLocal = visual.sceneToLocal(sceneX, sceneY);
 
+		// relocate shape to specified location
 		FXResizeRelocatePolicy resizeRelocatePolicy = contentPart
 				.getAdapter(FXResizeRelocatePolicy.class);
 		resizeRelocatePolicy.init();
-		resizeRelocatePolicy.performResizeRelocate(locationInLocal.getX() - x,
-				locationInLocal.getY() - y, 0, 0);
+		resizeRelocatePolicy.performResizeRelocate(finalLocationInLocal.getX()
+				- cx, finalLocationInLocal.getY() - cy, 0, 0);
 		IUndoableOperation relocateOperation = resizeRelocatePolicy.commit();
 
 		// execute on stack
