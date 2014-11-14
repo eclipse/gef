@@ -21,7 +21,7 @@ import javafx.scene.paint.Color;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.geometry.planar.Rectangle;
+import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricModelPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
@@ -60,8 +60,10 @@ public class FXCreateShapeOnClickPolicy extends AbstractFXClickPolicy {
 		}
 
 		// create new shape
-		FXGeometricShape content = new FXGeometricShape(new Rectangle(0, 0, 50,
-				50), new AffineTransform(), Color.MAGENTA, null);
+		FXGeometricShape content = new FXGeometricShape(
+				FXGeometricModel.createHandleShapeGeometry(),
+				new AffineTransform(1, 0, 0, 1, 12, 15), Color.WHITE,
+				FXGeometricModel.GEF_SHADOW_EFFECT);
 		creationPolicy.create(content, (FXGeometricModelPart) modelPart);
 		IUndoableOperation createOperation = creationPolicy.commit();
 
