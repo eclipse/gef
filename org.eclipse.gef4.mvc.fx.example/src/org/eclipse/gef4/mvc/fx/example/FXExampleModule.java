@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.fx.example.parts.FXGeometricShapePart;
-import org.eclipse.gef4.mvc.fx.example.policies.FXCreateShapeOnClickPolicy;
+import org.eclipse.gef4.mvc.fx.example.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeletionPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXRelocateLinkedOnDragPolicy;
@@ -104,8 +104,8 @@ public class FXExampleModule extends MvcFxModule {
 				CreationPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
-						"FXCreateShapeOnClick")).to(
-				FXCreateShapeOnClickPolicy.class);
+						"FXCreationMenuOnClick")).to(
+				FXCreationMenuOnClickPolicy.class);
 	}
 
 	protected void bindFXExampleDeleteHandlePartAdapters(
