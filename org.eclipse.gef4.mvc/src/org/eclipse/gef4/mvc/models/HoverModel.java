@@ -24,8 +24,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author mwienand
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 public class HoverModel<VR> implements IPropertyChangeNotifier {
 

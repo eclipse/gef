@@ -45,8 +45,8 @@ import com.google.common.collect.SetMultimap;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {

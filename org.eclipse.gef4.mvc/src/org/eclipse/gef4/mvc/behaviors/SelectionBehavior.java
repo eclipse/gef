@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IRootPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The default selection behavior is responsible for creating and removing
@@ -29,8 +28,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {

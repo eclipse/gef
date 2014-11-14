@@ -22,6 +22,17 @@ import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
+/**
+ * The {@link CreationPolicy} is an {@link ITransactional}
+ * {@link AbstractPolicy} that handles the creation of new content objects via
+ * the {@link ContentPolicy}.
+ *
+ * @author wienand
+ *
+ * @param <VR>
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
+ */
 public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 		ITransactional {
 

@@ -16,7 +16,6 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.mvc.domain.IDomain;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  *
@@ -24,8 +23,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author mwienand
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractTool<VR> implements ITool<VR> {
 

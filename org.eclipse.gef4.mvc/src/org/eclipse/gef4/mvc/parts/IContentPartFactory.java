@@ -21,11 +21,11 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * {@link IContentPart} in that viewer needs to create another child
  * {@link IContentPart}, it can use the viewer's {@link IContentPartFactory},
  * passing in itself as context behavior.
- * 
+ *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
- * 
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
+ *
  */
 public interface IContentPartFactory<VR> {
 
@@ -33,11 +33,11 @@ public interface IContentPartFactory<VR> {
 	 * Creates a specific {@link IContentPart} for the given <i>content</i>, in
 	 * the context specified by the given <i>contextBehavior</i> and
 	 * <i>contextMap</i>.
-	 * 
+	 *
 	 * As all {@link IBehavior}s should be stateless, all data required for the
 	 * <i>contextBehavior</i> to be able to deliver certain information to the
 	 * factory should be encapsulated in the <i>contextMap</i>, i.e.:
-	 * 
+	 *
 	 * <pre>
 	 * create(Object target, IBehavior ctxb, Map&lt;Object, Object&gt; ctxm) {
 	 * 	if (ctxb instanceof ConcreteBehavior) {
@@ -45,7 +45,7 @@ public interface IContentPartFactory<VR> {
 	 * 	}
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param content
 	 *            The model {@link Object} for which an {@link IContentPart} is
 	 *            to be created.

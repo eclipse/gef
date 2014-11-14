@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -15,12 +15,12 @@ package org.eclipse.gef4.mvc.parts;
  * An {@link IHandlePart} is a controller that controls a visual, which is used
  * simply for tool interaction and does not correspond to anything in the
  * visualized model.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractHandlePart} should be subclassed.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.

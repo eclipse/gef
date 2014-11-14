@@ -17,7 +17,6 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The {@link FocusModel} stores the {@link IContentPart} which has keyboard
@@ -28,8 +27,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  *
  */
 public class FocusModel<VR> implements IPropertyChangeNotifier {

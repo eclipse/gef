@@ -21,8 +21,8 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 public interface IHandlePartFactory<VR> {
 

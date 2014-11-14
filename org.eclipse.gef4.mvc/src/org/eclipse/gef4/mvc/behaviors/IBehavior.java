@@ -22,8 +22,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
 // TODO: change generic parameter to specify IVisualPart<VR> rather than VR
 public interface IBehavior<VR> extends IActivatable,

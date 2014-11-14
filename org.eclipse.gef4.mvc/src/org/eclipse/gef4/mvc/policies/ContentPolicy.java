@@ -30,15 +30,25 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  */
-// TODO: ensure this can only be attached to content parts
 public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		ITransactional {
 
 	private ForwardUndoCompositeOperation commitOperation;
 
+	/**
+	 * Creates and records operations to add the given <i>contentChild</i> to
+	 * the {@link #getHost() host} of this {@link ContentPolicy} at the
+	 * specified <i>index</i>.
+	 *
+	 * @param contentChild
+	 *            The content {@link Object} that is to be added to the
+	 *            {@link #getHost() host} of this {@link ContentPolicy}.
+	 * @param index
+	 *            The index of the new content child.
+	 */
 	public void addContentChild(Object contentChild, int index) {
 		ForwardUndoCompositeOperation addOperation = new ForwardUndoCompositeOperation(
 				"Add Content Child");
@@ -49,6 +59,18 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		commitOperation.add(addOperation);
 	}
 
+	/**
+	 * Creates and records operations to attach the {@link #getHost() host} of
+	 * this {@link ContentPolicy} to the specified <i>contentAnchorage</i> under
+	 * the specified <i>role</i>.
+	 *
+	 * @param contentAnchorage
+	 *            The content {@link Object} to which the {@link #getHost()
+	 *            host} of this {@link ContentPolicy} is to be attached.
+	 * @param role
+	 *            The role for the attachment.
+	 *
+	 */
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
 		ForwardUndoCompositeOperation attachOperation = new ForwardUndoCompositeOperation(
 				"Attach To Content Anchorage");
@@ -66,6 +88,12 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		return commit;
 	}
 
+	/**
+	 * Creates and records operations to delete the {@link #getHost() host} of
+	 * this {@link ContentPolicy} from the content model, i.e. detaches all
+	 * content anchoreds, detaches from all content anchorages, and removes from
+	 * its parent's content children.
+	 */
 	public void deleteContent() {
 		// unestablish anchor relations
 		detachAllContentAnchoreds();
@@ -74,6 +102,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		removeFromParent();
 	}
 
+	/**
+	 * Creates and records operations to detach all content anchoreds from the
+	 * {@link #getHost() host} of this {@link ContentPolicy}.
+	 */
 	public void detachAllContentAnchoreds() {
 		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
 				"Detach All Anchoreds");
@@ -100,6 +132,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		}
 	}
 
+	/**
+	 * Creates and records operations to detach the {@link #getHost() host} of
+	 * this {@link ContentPolicy} from all content anchorages.
+	 */
 	public void detachFromAllContentAnchorages() {
 		for (IVisualPart<VR> anchorage : getHost().getAnchorages().keySet()) {
 			if (anchorage instanceof IContentPart) {
@@ -111,6 +147,17 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		}
 	}
 
+	/**
+	 * Creates and records operations to detach the {@link #getHost() host} of
+	 * this {@link ContentPolicy} from the specified <i>contentAnchorage</i>
+	 * under the specified <i>role</i>.
+	 *
+	 * @param contentAnchorage
+	 *            The content {@link Object} from which the {@link #getHost()}
+	 *            of this {@link ContentPolicy} is detached.
+	 * @param role
+	 *            The role under which the anchorage is detached.
+	 */
 	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
 		// assemble content operations in forward-undo-operations, so that
 		// synchronization is always performed after changing the content
@@ -134,6 +181,16 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		commitOperation = new ForwardUndoCompositeOperation("Content Change");
 	}
 
+	/**
+	 * Creates and records operations to remove the given <i>contentChild</i>
+	 * from the content children of the {@link #getHost() host} of this
+	 * {@link ContentPolicy}.
+	 *
+	 * @param contentChild
+	 *            The content {@link Object} that is removed from content
+	 *            children of the {@link #getHost() host} of this
+	 *            {@link ContentPolicy}.
+	 */
 	public void removeContentChild(Object contentChild) {
 		ForwardUndoCompositeOperation removeOperation = new ForwardUndoCompositeOperation(
 				"Remove Content Child");
@@ -144,6 +201,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 		commitOperation.add(removeOperation);
 	}
 
+	/**
+	 * Creates and records operations to remove the content of this
+	 * {@link ContentPolicy}'s {@link #getHost() host} from its parent.
+	 */
 	public void removeFromParent() {
 		ForwardUndoCompositeOperation deleteOps = new ForwardUndoCompositeOperation(
 				"Delete Content");
@@ -164,4 +225,14 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 			commitOperation.add(deleteOperation);
 		}
 	}
+
+	@Override
+	public void setAdaptable(IVisualPart<VR> adaptable) {
+		if (!(adaptable instanceof IContentPart)) {
+			throw new IllegalStateException(
+					"A ContentPolicy may only be attached to an IContentPart.");
+		}
+		super.setAdaptable(adaptable);
+	}
+
 }

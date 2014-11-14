@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
  * The {@link SelectionModel} is used to store the current viewer's
@@ -35,8 +34,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit used, e.g.
+ *            javafx.scene.Node in case of JavaFX.
  *
  */
 public class SelectionModel<VR> implements IPropertyChangeNotifier {
