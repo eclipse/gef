@@ -94,7 +94,10 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 				}
 			}
 		}
-		commitOperation.add(detachOps);
+		IUndoableOperation detachOperation = detachOps.unwrap();
+		if (detachOperation != null) {
+			commitOperation.add(detachOperation);
+		}
 	}
 
 	public void detachFromAllContentAnchorages() {
@@ -156,6 +159,9 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 				}
 			}
 		}
-		commitOperation.add(deleteOps.unwrap());
+		IUndoableOperation deleteOperation = deleteOps.unwrap();
+		if (deleteOperation != null) {
+			commitOperation.add(deleteOperation);
+		}
 	}
 }
