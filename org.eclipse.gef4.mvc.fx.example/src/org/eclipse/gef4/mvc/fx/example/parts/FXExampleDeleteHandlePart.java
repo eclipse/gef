@@ -50,26 +50,8 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 		// determine center location of host visual
 		IVisualPart<Node> host = anchorages.keys().iterator().next();
 		Node hostVisual = host.getVisual();
-		Bounds hostBounds = hostVisual.getLayoutBounds();
 
-		double cx = hostVisual.getLayoutX()
-				+ hostVisual.getLayoutBounds().getMinX()
-				+ hostBounds.getWidth();
-
-		double cy = hostVisual.getLayoutY()
-				+ hostVisual.getLayoutBounds().getMinY();
-
-		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
-				cx, cy) : hostVisual.getParent().localToScene(cx, cy);
-		Point2D locationInLocal = blendGroup.getParent().sceneToLocal(
-				locationInScene);
-
-		// position handle at center of host
-		blendGroup.setLayoutX(locationInLocal.getX()
-				- blendGroup.getLayoutBounds().getMinX());
-		blendGroup.setLayoutY(locationInLocal.getY()
-				- blendGroup.getLayoutBounds().getWidth() / 2
-				- blendGroup.getLayoutBounds().getMinY());
+		refreshHandleLocation(hostVisual);
 	}
 
 	protected Image getHoverImage() {
@@ -141,6 +123,26 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 			});
 		}
 		return blendGroup;
+	}
+
+	protected void refreshHandleLocation(Node hostVisual) {
+		Bounds hostBounds = hostVisual.getLayoutBounds();
+		double cx = hostVisual.getLayoutX()
+				+ hostVisual.getLayoutBounds().getMinX()
+				+ hostBounds.getWidth();
+		double cy = hostVisual.getLayoutY()
+				+ hostVisual.getLayoutBounds().getMinY();
+		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
+				cx, cy) : hostVisual.getParent().localToScene(cx, cy);
+		Point2D locationInLocal = blendGroup.getParent().sceneToLocal(
+				locationInScene);
+
+		// position handle at center of host
+		blendGroup.setLayoutX(locationInLocal.getX()
+				- blendGroup.getLayoutBounds().getMinX());
+		blendGroup.setLayoutY(locationInLocal.getY()
+				- blendGroup.getLayoutBounds().getWidth() / 2
+				- blendGroup.getLayoutBounds().getMinY());
 	}
 
 }
