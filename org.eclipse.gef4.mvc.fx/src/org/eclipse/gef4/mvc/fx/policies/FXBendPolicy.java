@@ -86,10 +86,11 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			IViewer<Node> viewer = getHost().getRoot().getViewer();
 			SelectionModel<Node> selectionModel = viewer
 					.<SelectionModel<Node>> getAdapter(SelectionModel.class);
-			List<IContentPart<Node>> selection = selectionModel.getSelected();
+			List<IContentPart<Node, ? extends Node>> selection = selectionModel
+					.getSelected();
 
 			// get selection without host
-			List<IContentPart<Node>> selectionWithoutHost = new ArrayList<IContentPart<Node>>(
+			List<IContentPart<Node, ? extends Node>> selectionWithoutHost = new ArrayList<IContentPart<Node, ? extends Node>>(
 					selectionModel.getSelected());
 			selectionWithoutHost.remove(getHost());
 
@@ -146,7 +147,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
 					.getVisual(), currentReferencePositionInScene.x,
 					currentReferencePositionInScene.y);
-			AbstractFXContentPart anchorPart = getAnchorPart(getParts(pickedNodes));
+			AbstractFXContentPart<? extends Node> anchorPart = getAnchorPart(getParts(pickedNodes));
 			if (anchorPart != null) {
 				// use anchor returned by part
 				anchor = anchorPart.getAnchor(getHost());
@@ -158,10 +159,10 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return anchor;
 	}
 
-	private AbstractFXContentPart getAnchorPart(
-			List<IContentPart<Node>> partsUnderMouse) {
-		for (IContentPart<Node> cp : partsUnderMouse) {
-			AbstractFXContentPart part = (AbstractFXContentPart) cp;
+	private AbstractFXContentPart<? extends Node> getAnchorPart(
+			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
+		for (IContentPart<Node, ? extends Node> cp : partsUnderMouse) {
+			AbstractFXContentPart<? extends Node> part = (AbstractFXContentPart<? extends Node>) cp;
 			IFXAnchor anchor = part.getAnchor(getHost());
 			if (anchor != null) {
 				return part;
@@ -192,16 +193,17 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return DEFAULT_OVERLAY_THRESHOLD;
 	}
 
-	private List<IContentPart<Node>> getParts(List<Node> nodesUnderMouse) {
-		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
+	private List<IContentPart<Node, ? extends Node>> getParts(
+			List<Node> nodesUnderMouse) {
+		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
 
-		Map<Node, IVisualPart<Node>> partMap = getHost().getRoot().getViewer()
-				.getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> partMap = getHost()
+				.getRoot().getViewer().getVisualPartMap();
 		for (Node node : nodesUnderMouse) {
 			if (partMap.containsKey(node)) {
-				IVisualPart<Node> part = partMap.get(node);
+				IVisualPart<Node, ? extends Node> part = partMap.get(node);
 				if (part instanceof IContentPart) {
-					parts.add((IContentPart<Node>) part);
+					parts.add((IContentPart<Node, ? extends Node>) part);
 				}
 			}
 		}

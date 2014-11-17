@@ -56,7 +56,7 @@ public interface IContentPartFactory<VR> {
 	 *            stateless.
 	 * @return an {@link IContentPart} for the given content and context
 	 */
-	IContentPart<VR> createContentPart(Object content,
+	IContentPart<VR, ? extends VR> createContentPart(Object content,
 			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap);
 
 }

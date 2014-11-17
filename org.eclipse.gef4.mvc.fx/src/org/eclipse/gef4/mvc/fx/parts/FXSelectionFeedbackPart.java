@@ -33,7 +33,8 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.Provider;
 
-public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
+public class FXSelectionFeedbackPart extends
+		AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
 
 	private final PropertyChangeListener focusModelListener = new PropertyChangeListener() {
 		@Override
@@ -48,14 +49,13 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 
 	private final Provider<IGeometry> feedbackGeometryProvider;
 
-	private FXGeometryNode<IGeometry> visual;
-
 	private static final Color FOCUS_COLOR = Color.rgb(125, 173, 217);
 
 	public FXSelectionFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
 	}
 
+	@Override
 	protected FXGeometryNode<IGeometry> createVisual() {
 		FXGeometryNode<IGeometry> feedbackVisual = new FXGeometryNode<IGeometry>();
 		feedbackVisual.setFill(Color.TRANSPARENT);
@@ -82,7 +82,8 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 
 	@Override
 	public void doRefreshVisual() {
-		Set<IVisualPart<Node>> anchorages = getAnchorages().keySet();
+		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchorages()
+				.keySet();
 		if (anchorages.isEmpty()) {
 			return;
 		}
@@ -94,12 +95,13 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 
 		getVisual().setGeometry(feedbackGeometry);
 
-		IVisualPart<Node> anchorage = anchorages.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
+				.next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
 
 		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
 				&& viewer.getAdapter(FocusModel.class).getFocused() == anchorage;
-		List<IContentPart<Node>> selected = viewer
+		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
 		boolean primary = selected.get(0) == anchorage;
@@ -131,14 +133,6 @@ public class FXSelectionFeedbackPart extends AbstractFXFeedbackPart {
 		effect.setRadius(5);
 		effect.setSpread(0.6);
 		return effect;
-	}
-
-	@Override
-	public FXGeometryNode<IGeometry> getVisual() {
-		if (visual == null) {
-			visual = createVisual();
-		}
-		return visual;
 	}
 
 }

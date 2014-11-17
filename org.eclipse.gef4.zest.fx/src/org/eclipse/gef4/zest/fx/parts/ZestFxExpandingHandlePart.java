@@ -19,8 +19,7 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 	public static final String IMG_EXPAND = "/expandall.gif";
 	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
 
-	public ZestFxExpandingHandlePart(
-			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxExpandingHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 	}
@@ -37,19 +36,16 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 
 	@Override
 	protected void onClicked(MouseEvent event) {
-		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
-		SubgraphModel subgraphModel = anchorage.getRoot().getViewer()
-				.getDomain().getAdapter(SubgraphModel.class);
-		Set<NodeContentPart> containedNodes = subgraphModel
-				.getContainedNodes((NodeContentPart) anchorage);
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
+		SubgraphModel subgraphModel = anchorage.getRoot().getViewer().getDomain().getAdapter(SubgraphModel.class);
+		Set<NodeContentPart> containedNodes = subgraphModel.getContainedNodes((NodeContentPart) anchorage);
 		if (containedNodes != null && !containedNodes.isEmpty()) {
 			for (NodeContentPart node : containedNodes) {
-				PruneNodePolicy prunePolicy = node
-						.getAdapter(PruneNodePolicy.class);
+				PruneNodePolicy prunePolicy = node.getAdapter(PruneNodePolicy.class);
 				prunePolicy.unprune();
 			}
 		}

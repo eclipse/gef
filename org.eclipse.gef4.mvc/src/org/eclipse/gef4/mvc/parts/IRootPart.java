@@ -35,10 +35,11 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * @param <VR>
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
- *
+ * @param <V>
+ *            The visual node used by this {@link IRootPart}.
  *
  */
-public interface IRootPart<VR> extends IVisualPart<VR>,
+public interface IRootPart<VR, V extends VR> extends IVisualPart<VR, V>,
 		IAdaptable.Bound<IViewer<VR>> {
 
 	/**
@@ -47,7 +48,7 @@ public interface IRootPart<VR> extends IVisualPart<VR>,
 	 *
 	 * @return A list containing all {@link IContentPart} children.
 	 */
-	public List<IContentPart<VR>> getContentPartChildren();
+	public List<IContentPart<VR, ? extends VR>> getContentPartChildren();
 
 	/**
 	 * Returns all children of type {@link IFeedbackPart} contained by this
@@ -55,7 +56,7 @@ public interface IRootPart<VR> extends IVisualPart<VR>,
 	 *
 	 * @return A list containing all {@link IFeedbackPart} children.
 	 */
-	public List<IFeedbackPart<VR>> getFeedbackPartChildren();
+	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren();
 
 	/**
 	 * Returns all children of type {@link IHandlePart} contained by this
@@ -63,7 +64,7 @@ public interface IRootPart<VR> extends IVisualPart<VR>,
 	 *
 	 * @return A list containing all {@link IHandlePart} children.
 	 */
-	public List<IHandlePart<VR>> getHandlePartChildren();
+	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren();
 
 	/**
 	 * Returns the {@link IViewer} this {@link IRootPart} is bound to.

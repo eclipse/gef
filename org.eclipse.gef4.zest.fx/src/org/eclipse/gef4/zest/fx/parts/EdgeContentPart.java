@@ -39,12 +39,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
-public class EdgeContentPart extends AbstractFXContentPart {
+public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
-					0.0);
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0, 0.0);
 		}
 
 		@Override
@@ -75,36 +74,32 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	private static final double DASH_LENGTH = 7d;
 	private static final Double DOT_LENGTH = 1d;
 
-	private FXLabeledConnection visual;
-
-	{
-		visual = new FXLabeledConnection();
-		visual.getStyleClass().add(CSS_CLASS);
-		visual.getCurveNode().getStyleClass().add("curve");
-	}
-
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
+	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		IFXAnchor anchor = ((AbstractFXContentPart<? extends Node>) anchorage).getAnchor(this);
 		if (role.equals("START")) {
-			visual.setStartAnchor(anchor);
+			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
-			visual.setEndAnchor(anchor);
+			getVisual().setEndAnchor(anchor);
 		} else {
-			throw new IllegalStateException(
-					"Cannot attach to anchor with role <" + role + ">.");
+			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		FXConnection connection = visual;
+	protected FXLabeledConnection createVisual() {
+		FXLabeledConnection visual = new FXLabeledConnection();
+		visual.getStyleClass().add(CSS_CLASS);
+		visual.getCurveNode().getStyleClass().add("curve");
+		return visual;
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+		FXConnection connection = getVisual();
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
-			connection.setStartPoint(startPoint == null ? new Point()
-					: startPoint);
+			connection.setStartPoint(startPoint == null ? new Point() : startPoint);
 		} else {
 			Point endPoint = connection.getEndPoint();
 			connection.setEndPoint(endPoint == null ? new Point() : endPoint);
@@ -113,16 +108,15 @@ public class EdgeContentPart extends AbstractFXContentPart {
 
 	@Override
 	public void doRefreshVisual() {
-		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain()
-				.getAdapter(ILayoutModel.class).getLayoutContext();
+		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain().getAdapter(ILayoutModel.class)
+				.getLayoutContext();
 		if (glc == null) {
 			return;
 		}
 
 		// decoration
-		FXConnection connection = visual;
-		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs()
-				.get(Attr.Key.GRAPH_TYPE.toString()))) {
+		FXConnection connection = getVisual();
+		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs().get(Attr.Key.GRAPH_TYPE.toString()))) {
 			connection.setEndDecoration(new ArrowHead());
 		} else {
 			connection.setEndDecoration(null);
@@ -132,16 +126,14 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		FXGeometryNode<ICurve> curveNode = connection.getCurveNode();
 
 		// dashes
-		Object style = getContent().getAttrs().get(
-				Graph.Attr.Key.EDGE_STYLE.toString());
+		Object style = getContent().getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString());
 		if (style == Graph.Attr.Value.LINE_DASH) {
 			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
-					DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOTDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
-					DOT_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH, DOT_LENGTH,
+					GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DOT) {
 			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
@@ -163,11 +155,6 @@ public class EdgeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public FXConnection getVisual() {
-		return visual;
-	}
-
-	@Override
 	public void setContent(Object content) {
 		super.setContent(content);
 		if (content == null) {
@@ -176,6 +163,7 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (!(content instanceof Edge)) {
 			throw new IllegalArgumentException("Content of wrong type!");
 		}
+		final FXLabeledConnection visual = getVisual();
 		Edge edge = (Edge) content;
 
 		Map<String, Object> attrs = edge.getAttrs();
@@ -189,28 +177,20 @@ public class EdgeContentPart extends AbstractFXContentPart {
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
-		setAdapter(
-				AdapterKey
-						.get(Provider.class,
-								FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils
-								.localToParent(visual.getCurveNode(),
-										((FXGeometryNode<?>) visual
-												.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
+								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
-		setAdapter(AdapterKey.get(Provider.class,
-				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils
-								.localToParent(visual.getCurveNode(),
-										((FXGeometryNode<?>) visual
-												.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
+								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
 					}
 				});
 	}

@@ -41,12 +41,13 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	private Injector injector;
 
 	@Override
-	public IHandlePart<Node> createBoundsSelectionCornerHandlePart(
-			final List<? extends IVisualPart<Node>> targets,
+	public IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
+			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		IHandlePart<Node> part = super.createBoundsSelectionCornerHandlePart(
-				targets, handleGeometryProvider, position, contextMap);
+		IHandlePart<Node, ? extends Node> part = super
+				.createBoundsSelectionCornerHandlePart(targets,
+						handleGeometryProvider, position, contextMap);
 		// TODO: bind the policy in module
 		part.setAdapter(AdapterKey.get(AbstractFXDragPolicy.class),
 				new FXResizeRelocateOnCornerHandleDragPolicy(
@@ -55,8 +56,8 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	}
 
 	@Override
-	public IHandlePart<Node> createCurveSelectionHandlePart(
-			final IVisualPart<Node> targetPart,
+	public IHandlePart<Node, ? extends Node> createCurveSelectionHandlePart(
+			final IVisualPart<Node, ? extends Node> targetPart,
 			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
 		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
@@ -80,10 +81,10 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	}
 
 	@Override
-	protected List<IHandlePart<Node>> createHoverHandleParts(
-			IVisualPart<Node> target, HoverBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> handles = new ArrayList<IHandlePart<Node>>();
+	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
+			IVisualPart<Node, ? extends Node> target,
+			HoverBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
+		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
 			FXExampleDeleteHandlePart hp = new FXExampleDeleteHandlePart();
 			injector.injectMembers(hp);

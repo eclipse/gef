@@ -7,31 +7,36 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
 /**
  * The abstract base implementation of {@link IFeedbackPart}, intended to be
  * sub-classed by clients to create their own custom {@link IFeedbackPart}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this
+ *            {@link AbstractFeedbackPart} is used in, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ *
+ * @param <V>
+ *            The visual node used by this {@link AbstractFeedbackPart}.
  */
-public abstract class AbstractFeedbackPart<VR> extends AbstractVisualPart<VR>
-		implements IFeedbackPart<VR> {
+public abstract class AbstractFeedbackPart<VR, V extends VR> extends
+		AbstractVisualPart<VR, V> implements IFeedbackPart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support children");
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR> child, int index) {
+	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		throw new UnsupportedOperationException(
 				"IFeedbackParts do not support this");
 	}

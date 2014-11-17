@@ -36,14 +36,14 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 		ITransactional {
 
-	private List<Entry<IContentPart<VR>, Object>> contentToCreate;
+	private List<Entry<IContentPart<VR, ? extends VR>, Object>> contentToCreate;
 
 	@Override
 	public IUndoableOperation commit() {
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"Create Content");
-		for (Entry<IContentPart<VR>, Object> entry : contentToCreate) {
-			IContentPart<VR> parent = entry.getKey();
+		for (Entry<IContentPart<VR, ? extends VR>, Object> entry : contentToCreate) {
+			IContentPart<VR, ? extends VR> parent = entry.getKey();
 			Object content = entry.getValue();
 
 			// retrieve content policy for the parent
@@ -75,7 +75,7 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 	 *            The {@link Object} to be created as a content-child of the
 	 *            given <i>parent</i>.
 	 */
-	public void create(IContentPart<VR> parent, Object content) {
+	public void create(IContentPart<VR, ? extends VR> parent, Object content) {
 		if (content == null) {
 			throw new IllegalArgumentException(
 					"The given content may not be null.");
@@ -83,13 +83,14 @@ public class CreationPolicy<VR> extends AbstractPolicy<VR> implements
 			throw new IllegalArgumentException(
 					"The given parent may not be null.");
 		}
-		contentToCreate.add(new SimpleEntry<IContentPart<VR>, Object>(parent,
-				content));
+		contentToCreate
+				.add(new SimpleEntry<IContentPart<VR, ? extends VR>, Object>(
+						parent, content));
 	}
 
 	@Override
 	public void init() {
-		contentToCreate = new ArrayList<Map.Entry<IContentPart<VR>, Object>>();
+		contentToCreate = new ArrayList<Map.Entry<IContentPart<VR, ? extends VR>, Object>>();
 	}
 
 }

@@ -37,7 +37,7 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	}
 
 	protected Collection<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXPinchSpreadPolicy> getAdapters(
 				TOOL_POLICY_KEY).values();
 	}
@@ -50,8 +50,9 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 		}
 
 		Node targetNode = (Node) target;
-		IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(getDomain()
-				.getViewers().values(), targetNode, TOOL_POLICY_KEY);
+		IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+				.getTargetPart(getDomain().getViewers().values(), targetNode,
+						TOOL_POLICY_KEY);
 		if (targetPart == null) {
 			return null;
 		}

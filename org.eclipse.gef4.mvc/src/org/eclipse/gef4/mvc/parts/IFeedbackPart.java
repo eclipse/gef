@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
@@ -15,16 +15,18 @@ package org.eclipse.gef4.mvc.parts;
  * An {@link IFeedbackPart} is a controller that controls a visual, which is
  * used simply for feedback and does not correspond to anything in the
  * visualized model.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Instead, {@link AbstractFeedbackPart} should be subclassed.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this {@link IFeedbackPart}
+ *            is used in, e.g. javafx.scene.Node in case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link IFeedbackPart}.
  */
-public interface IFeedbackPart<VR> extends IVisualPart<VR> {
+public interface IFeedbackPart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 }

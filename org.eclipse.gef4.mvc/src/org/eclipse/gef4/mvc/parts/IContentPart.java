@@ -27,13 +27,15 @@ import com.google.common.collect.SetMultimap;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this {@link IContentPart}
+ *            is used in, e.g. javafx.scene.Node in case of JavaFX.
  *
+ * @param <V>
+ *            The visual node used by this {@link IContentPart}.
  *
  */
 // TODO: parameterize with content type
-public interface IContentPart<VR> extends IVisualPart<VR> {
+public interface IContentPart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 	/**
 	 * Property name used within {@link PropertyChangeEvent}s, which are fired

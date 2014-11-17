@@ -15,19 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
-public class FXGeometricModelPart extends AbstractFXContentPart {
-
-	private final Group g;
+public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 
 	public FXGeometricModelPart() {
-		g = new Group();
-		g.setAutoSizeChildren(false);
+
 	}
 
 	@Override
@@ -38,6 +34,13 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 		}
 		getContent().getShapeVisuals().add(index,
 				(AbstractFXGeometricElement<?>) contentChild);
+	}
+
+	@Override
+	protected Group createVisual() {
+		Group visual = new Group();
+		visual.setAutoSizeChildren(false);
+		return visual;
 	}
 
 	@Override
@@ -54,11 +57,6 @@ public class FXGeometricModelPart extends AbstractFXContentPart {
 		List<Object> objs = new ArrayList<Object>();
 		objs.addAll(getContent().getShapeVisuals());
 		return objs;
-	}
-
-	@Override
-	public Node getVisual() {
-		return g;
 	}
 
 	@Override

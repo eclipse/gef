@@ -47,7 +47,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	public static final int CREATION_DELAY_MILLIS = 500;
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 
-	private final Map<IVisualPart<Node>, Effect> effects = new HashMap<IVisualPart<Node>, Effect>();
+	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<IVisualPart<Node, ? extends Node>, Effect>();
 	private PauseTransition creationDelayTransition;
 	private PauseTransition removalDelayTransition;
 	private Point initialPointerLocation;
@@ -75,10 +75,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	};
 
 	@Override
-	protected void addFeedback(List<? extends IVisualPart<Node>> targets,
+	protected void addFeedback(
+			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap) {
 		if (getHost() instanceof IHandlePart) {
-			for (IVisualPart<Node> part : targets) {
+			for (IVisualPart<Node, ? extends Node> part : targets) {
 				Node visual = part.getVisual();
 				effects.put(part, visual.getEffect());
 				visual.setEffect(getHandleHoverFeedbackEffect(contextMap));
@@ -135,11 +136,11 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * @param part
 	 * @return
 	 */
-	protected boolean isaHoverPart(IVisualPart<Node> part) {
+	protected boolean isaHoverPart(IVisualPart<Node, ? extends Node> part) {
 		if (getHost() == part) {
 			return true;
 		}
-		List<IHandlePart<Node>> handleParts = getHandleParts();
+		List<IHandlePart<Node, ? extends Node>> handleParts = getHandleParts();
 		if (handleParts == null || handleParts.isEmpty() || part == null) {
 			return false;
 		}
@@ -147,8 +148,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	@Override
-	protected void onHoverChange(IVisualPart<Node> oldHovered,
-			IVisualPart<Node> newHovered) {
+	protected void onHoverChange(IVisualPart<Node, ? extends Node> oldHovered,
+			IVisualPart<Node, ? extends Node> newHovered) {
 		// determine if the host or any hover handle part is/was hovered
 		boolean isHovered = isaHoverPart(newHovered);
 		boolean wasHovered = isaHoverPart(oldHovered);
@@ -207,9 +208,10 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	@Override
-	protected void removeFeedback(List<? extends IVisualPart<Node>> targets) {
+	protected void removeFeedback(
+			List<? extends IVisualPart<Node, ? extends Node>> targets) {
 		if (getHost() instanceof IHandlePart) {
-			for (IVisualPart<Node> part : targets) {
+			for (IVisualPart<Node, ? extends Node> part : targets) {
 				Node visual = part.getVisual();
 				visual.setEffect(effects.remove(part));
 			}

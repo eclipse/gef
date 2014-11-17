@@ -29,12 +29,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  */
 public class DetachFromContentAnchorageOperation<VR> extends AbstractOperation {
 
-	private final IContentPart<VR> anchored;
+	private final IContentPart<VR, ? extends VR> anchored;
 	private final Object contentAnchorage;
 	private final String role;
 
-	public DetachFromContentAnchorageOperation(IContentPart<VR> anchored,
-			Object contentAnchorage, String role) {
+	public DetachFromContentAnchorageOperation(
+			IContentPart<VR, ? extends VR> anchored, Object contentAnchorage,
+			String role) {
 		super("Detach From Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;

@@ -29,11 +29,14 @@ import com.google.common.collect.SetMultimap;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this
+ *            {@link AbstractContentPart} is used in, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link AbstractContentPart}.
  */
-public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
-		implements IContentPart<VR> {
+public abstract class AbstractContentPart<VR, V extends VR> extends
+		AbstractVisualPart<VR, V> implements IContentPart<VR, V> {
 
 	private Object content;
 
@@ -130,7 +133,7 @@ public abstract class AbstractContentPart<VR> extends AbstractVisualPart<VR>
 	 * EditPart in additional ways.
 	 */
 	protected void unregisterFromContentPartMap() {
-		Map<Object, IContentPart<VR>> registry = getViewer()
+		Map<Object, IContentPart<VR, ? extends VR>> registry = getViewer()
 				.getContentPartMap();
 		if (registry.get(getContent()) == this) {
 			registry.remove(getContent());

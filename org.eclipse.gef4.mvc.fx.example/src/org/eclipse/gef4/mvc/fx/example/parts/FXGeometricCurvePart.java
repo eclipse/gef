@@ -49,7 +49,8 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
+public class FXGeometricCurvePart extends
+		AbstractFXGeometricElementPart<FXConnection> {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
@@ -127,12 +128,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		}
 	}
 
-	private FXConnection visual;
-
 	public FXGeometricCurvePart() {
-		visual = new FXConnection();
-		visual.setRouter(new FXPolyBezierConnectionRouter());
-
 		// TODO: extract into own classes and use binding
 		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
 				new FXRelocateConnectionPolicy() {
@@ -150,13 +146,14 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
-		IFXAnchor anchor = ((AbstractFXContentPart) anchorage).getAnchor(this);
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
+		IFXAnchor anchor = ((AbstractFXContentPart<? extends Node>) anchorage)
+				.getAnchor(this);
 		if (role.equals("START")) {
-			visual.setStartAnchor(anchor);
+			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
-			visual.setEndAnchor(anchor);
+			getVisual().setEndAnchor(anchor);
 		} else {
 			throw new IllegalStateException(
 					"Cannot attach to anchor with role <" + role + ">.");
@@ -186,7 +183,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 		// determine old and new points
 		final FXGeometricCurve curve = getContent();
 		final List<Point> oldWayPoints = curve.getWayPointsCopy();
-		final List<Point> newWayPoints = visual.getWayPoints();
+		final List<Point> newWayPoints = getVisual().getWayPoints();
 
 		// create model operation
 		final IUndoableOperation updateModelOperation = new ChangeWayPointsOperation(
@@ -201,13 +198,13 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 		// then attach source and target (if available)
 		contentPolicy.init();
-		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(visual
+		AbstractFXGeometricElement<?> sourceContentAnchorage = getAnchorageContent(getVisual()
 				.getStartAnchor());
 		if (sourceContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(sourceContentAnchorage,
 					"START");
 		}
-		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(visual
+		AbstractFXGeometricElement<?> targetContentAnchorage = getAnchorageContent(getVisual()
 				.getEndAnchor());
 		if (targetContentAnchorage != null) {
 			contentPolicy.attachToContentAnchorage(targetContentAnchorage,
@@ -234,12 +231,19 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected FXConnection createVisual() {
+		FXConnection visual = new FXConnection();
+		visual.setRouter(new FXPolyBezierConnectionRouter());
+		return visual;
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (role.equals("START")) {
-			visual.setStartPoint(visual.getStartPoint());
+			getVisual().setStartPoint(getVisual().getStartPoint());
 		} else if (role.equals("END")) {
-			visual.setEndPoint(visual.getEndPoint());
+			getVisual().setEndPoint(getVisual().getEndPoint());
 		} else {
 			throw new IllegalStateException(
 					"Cannot detach from anchor with role <" + role + ">.");
@@ -257,6 +261,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	@Override
 	public void doRefreshVisual() {
+		FXConnection visual = getVisual();
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
@@ -265,6 +270,7 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 					.getTransformed(wayPoints.toArray(new Point[] {}));
 			wayPoints = Arrays.asList(transformedWayPoints);
 		}
+
 		visual.setWayPoints(wayPoints);
 
 		// decorations
@@ -354,10 +360,11 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(IFXAnchor anchor) {
 		Node anchorageNode = anchor.getAnchorage();
-		IVisualPart<Node> part = getViewer().getVisualPartMap().get(
-				anchorageNode);
+		IVisualPart<Node, ? extends Node> part = getViewer().getVisualPartMap()
+				.get(anchorageNode);
 		if (part instanceof IContentPart) {
-			Object content = ((IContentPart<Node>) part).getContent();
+			Object content = ((IContentPart<Node, ? extends Node>) part)
+					.getContent();
 			if (content instanceof AbstractFXGeometricElement) {
 				return (AbstractFXGeometricElement<?>) content;
 			}
@@ -384,11 +391,6 @@ public class FXGeometricCurvePart extends AbstractFXGeometricElementPart {
 			anchorages.put(dst, "END");
 		}
 		return anchorages;
-	}
-
-	@Override
-	public Node getVisual() {
-		return visual;
 	}
 
 	@Override

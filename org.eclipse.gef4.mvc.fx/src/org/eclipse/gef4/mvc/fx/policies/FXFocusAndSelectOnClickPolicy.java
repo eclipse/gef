@@ -25,7 +25,7 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		IVisualPart<Node> host = getHost();
+		IVisualPart<Node, ? extends Node> host = getHost();
 
 		FocusModel<Node> focusModel = host.getRoot().getViewer()
 				.<FocusModel<Node>> getAdapter(FocusModel.class);
@@ -33,27 +33,31 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 
 		if (host instanceof IContentPart) {
-			focusModel.setFocused((IContentPart<Node>) host);
+			focusModel.setFocused((IContentPart<Node, ? extends Node>) host);
 
 			boolean append = e.isControlDown();
-			if (selectionModel.isSelected((IContentPart<Node>) host)) {
+			if (selectionModel
+					.isSelected((IContentPart<Node, ? extends Node>) host)) {
 				if (append) {
 					// deselect the target edit part (ensure we get a new
 					// primary selection)
-					selectionModel.deselect(Collections
-							.singleton((IContentPart<Node>) host));
+					selectionModel
+							.deselect(Collections
+									.singleton((IContentPart<Node, ? extends Node>) host));
 				}
 			} else {
 				if (append) {
 					// append to current selection (as new primary)
-					selectionModel.select(Collections
-							.singletonList((IContentPart<Node>) host));
+					selectionModel
+							.select(Collections
+									.singletonList((IContentPart<Node, ? extends Node>) host));
 				} else {
 					// clear old selection, target should become the only
 					// selected
 					selectionModel.deselectAll();
-					selectionModel.select(Collections
-							.singletonList((IContentPart<Node>) host));
+					selectionModel
+							.select(Collections
+									.singletonList((IContentPart<Node, ? extends Node>) host));
 				}
 			}
 		} else {

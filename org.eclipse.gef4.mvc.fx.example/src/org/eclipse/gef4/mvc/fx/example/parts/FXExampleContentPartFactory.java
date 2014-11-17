@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
@@ -19,6 +19,7 @@ import org.eclipse.gef4.mvc.behaviors.IBehavior;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 
 import com.google.inject.Inject;
@@ -29,9 +30,9 @@ public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
 	@Inject
 	private Injector injector;
 
-	public org.eclipse.gef4.mvc.parts.IContentPart<Node> createContentPart(
-			Object content, IBehavior<Node> contextBehavior,
-			Map<Object, Object> contextMap) {
+	@Override
+	public IContentPart<Node, ? extends Node> createContentPart(Object content,
+			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		if (content instanceof FXGeometricModel) {
 			return injector.getInstance(FXGeometricModelPart.class);
 		} else if (content instanceof FXGeometricShape) {

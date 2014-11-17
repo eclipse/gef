@@ -56,7 +56,7 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 *
 	 * @return The content part map
 	 */
-	public Map<Object, IContentPart<VR>> getContentPartMap();
+	public Map<Object, IContentPart<VR, ? extends VR>> getContentPartMap();
 
 	/**
 	 * Returns the {@link IDomain} this {@link IViewer} is bound to.
@@ -90,7 +90,7 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 *
 	 * @return The {@link IRootPart} of this viewer.
 	 */
-	public IRootPart<VR> getRootPart();
+	public IRootPart<VR, ? extends VR> getRootPart();
 
 	/**
 	 * Returns the {@link Map} for registering {@link IVisualPart}s by their
@@ -100,6 +100,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 *
 	 * @return The visual part map
 	 */
-	public Map<VR, IVisualPart<VR>> getVisualPartMap();
+	public Map<VR, IVisualPart<VR, ? extends VR>> getVisualPartMap();
 
 }

@@ -41,26 +41,31 @@ import com.google.inject.Inject;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this
+ *            {@link AbstractVisualPart} is used in, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link AbstractVisualPart}.
  */
-public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
+public abstract class AbstractVisualPart<VR, V extends VR> implements
+		IVisualPart<VR, V> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private AdaptableSupport<IVisualPart<VR>> ads = new AdaptableSupport<IVisualPart<VR>>(
+	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<IVisualPart<VR, V>>(
 			this, pcs);
 
-	private ActivatableSupport<IVisualPart<VR>> acs = new ActivatableSupport<IVisualPart<VR>>(
+	private ActivatableSupport<IVisualPart<VR, V>> acs = new ActivatableSupport<IVisualPart<VR, V>>(
 			this, pcs);
 
-	private IVisualPart<VR> parent;
-	private List<IVisualPart<VR>> children;
+	private IVisualPart<VR, ? extends VR> parent;
+	private List<IVisualPart<VR, ? extends VR>> children;
 
-	private Multiset<IVisualPart<VR>> anchoreds;
-	private SetMultimap<IVisualPart<VR>, String> anchorages;
+	private Multiset<IVisualPart<VR, ? extends VR>> anchoreds;
+	private SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages;
 
 	private boolean refreshVisual = true;
+	protected V visual;
 
 	/**
 	 * Activates this {@link IVisualPart} (if it is not already active) by
@@ -82,20 +87,21 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void addAnchorage(IVisualPart<VR> anchorage) {
+	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
 		addAnchorage(anchorage, null);
 	}
 
 	@Override
-	public void addAnchorage(IVisualPart<VR> anchorage, String role) {
+	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
 
 		// copy anchorages by role (required for the change notification)
-		SetMultimap<IVisualPart<VR>, String> oldAnchorages = anchorages == null ? HashMultimap
-				.<IVisualPart<VR>, String> create() : HashMultimap
-				.create(anchorages);
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
+				.<IVisualPart<VR, ? extends VR>, String> create()
+				: HashMultimap.create(anchorages);
 
 		addAnchorageWithoutNotify(anchorage, role);
 		anchorage.addAnchored(this);
@@ -108,8 +114,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 				getAnchorages());
 	}
 
-	private void addAnchorageWithoutNotify(IVisualPart<VR> anchorage,
-			String role) {
+	private void addAnchorageWithoutNotify(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
@@ -120,10 +126,11 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void addAnchored(IVisualPart<VR> anchored) {
+	public void addAnchored(IVisualPart<VR, ? extends VR> anchored) {
 		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
-				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null ? HashMultiset
+				.<IVisualPart<VR, ? extends VR>> create() : HashMultiset
+				.create(anchoreds);
 
 		// determine the viewer before adding the anchored
 		IViewer<VR> oldViewer = getViewer();
@@ -143,13 +150,13 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void addChild(IVisualPart<VR> child) {
+	public void addChild(IVisualPart<VR, ? extends VR> child) {
 		addChild(child, getChildren().size());
 	}
 
 	@Override
-	public void addChild(IVisualPart<VR> child, int index) {
-		List<IVisualPart<VR>> oldChildren = getChildren();
+	public void addChild(IVisualPart<VR, ? extends VR> child, int index) {
+		List<IVisualPart<VR, ? extends VR>> oldChildren = getChildren();
 		addChildWithoutNotify(child, index);
 
 		child.setParent(this);
@@ -166,14 +173,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void addChildren(List<? extends IVisualPart<VR>> children) {
-		for (IVisualPart<VR> child : children) {
+	public void addChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children) {
+		for (IVisualPart<VR, ? extends VR> child : children) {
 			addChild(child);
 		}
 	}
 
 	@Override
-	public void addChildren(List<? extends IVisualPart<VR>> children, int index) {
+	public void addChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children, int index) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			addChild(children.get(i), index);
 		}
@@ -189,11 +198,13 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
-	protected abstract void addChildVisual(IVisualPart<VR> child, int index);
+	protected abstract void addChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index);
 
-	private void addChildWithoutNotify(IVisualPart<VR> child, int index) {
+	private void addChildWithoutNotify(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		if (children == null) {
-			children = new ArrayList<IVisualPart<VR>>(2);
+			children = new ArrayList<IVisualPart<VR, ? extends VR>>(2);
 		}
 		children.add(index, child);
 	}
@@ -203,8 +214,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	protected abstract void attachToAnchorageVisual(IVisualPart<VR> anchorage,
-			String role);
+	protected abstract void attachToAnchorageVisual(
+			IVisualPart<VR, ? extends VR> anchorage, String role);
+
+	protected abstract V createVisual();
 
 	/**
 	 * Deactivates this {@link IVisualPart} (if it is active) by delegating to
@@ -225,19 +238,19 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	protected abstract void detachFromAnchorageVisual(
-			IVisualPart<VR> anchorage, String role);
+			IVisualPart<VR, ? extends VR> anchorage, String role);
 
 	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
 		// when its parent and anchorages are active??
-		for (IVisualPart<VR> child : getChildren()) {
+		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
 			child.activate();
 		}
 	}
 
 	protected void doDeactivate() {
 		// FIXME: CME
-		for (IVisualPart<VR> child : getChildren()) {
+		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
 			child.deactivate();
 		}
 	}
@@ -261,20 +274,20 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public SetMultimap<IVisualPart<VR>, String> getAnchorages() {
+	public SetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchorages() {
 		if (anchorages == null) {
 			return Multimaps.unmodifiableSetMultimap(HashMultimap
-					.<IVisualPart<VR>, String> create());
+					.<IVisualPart<VR, ? extends VR>, String> create());
 		}
 		return Multimaps.unmodifiableSetMultimap(anchorages);
 	}
 
 	@Override
-	public Multiset<IVisualPart<VR>> getAnchoreds() {
+	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds() {
 		if (anchoreds == null) {
 			return Multisets
-					.<IVisualPart<VR>> unmodifiableMultiset(HashMultiset
-							.<IVisualPart<VR>> create());
+					.<IVisualPart<VR, ? extends VR>> unmodifiableMultiset(HashMultiset
+							.<IVisualPart<VR, ? extends VR>> create());
 		}
 		return Multisets.unmodifiableMultiset(anchoreds);
 	}
@@ -285,7 +298,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public List<IVisualPart<VR>> getChildren() {
+	public List<IVisualPart<VR, ? extends VR>> getChildren() {
 		if (children == null) {
 			return Collections.emptyList();
 		}
@@ -293,7 +306,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public IVisualPart<VR> getParent() {
+	public IVisualPart<VR, ? extends VR> getParent() {
 		return parent;
 	}
 
@@ -303,15 +316,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public IRootPart<VR> getRoot() {
+	public IRootPart<VR, ? extends VR> getRoot() {
 		if (getParent() != null) {
-			IRootPart<VR> root = getParent().getRoot();
+			IRootPart<VR, ? extends VR> root = getParent().getRoot();
 			if (root != null) {
 				return root;
 			}
 		}
-		for (IVisualPart<VR> anchored : getAnchoreds().elementSet()) {
-			IRootPart<VR> root = anchored.getRoot();
+		for (IVisualPart<VR, ? extends VR> anchored : getAnchoreds()
+				.elementSet()) {
+			IRootPart<VR, ? extends VR> root = anchored.getRoot();
 			if (root != null) {
 				return root;
 			}
@@ -320,11 +334,19 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	protected IViewer<VR> getViewer() {
-		IRootPart<VR> root = getRoot();
+		IRootPart<VR, ? extends VR> root = getRoot();
 		if (root == null) {
 			return null;
 		}
 		return root.getViewer();
+	}
+
+	@Override
+	public V getVisual() {
+		if (visual == null) {
+			visual = createVisual();
+		}
+		return visual;
 	}
 
 	/**
@@ -365,13 +387,14 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void removeAnchorage(IVisualPart<VR> anchorage) {
+	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
 		removeAnchorage(anchorage, null);
 	}
 
 	// counterpart to setParent(null) in case of hierarchy
 	@Override
-	public void removeAnchorage(IVisualPart<VR> anchorage, String role) {
+	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role) {
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
@@ -383,9 +406,9 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 		}
 
 		// copy anchorages (required for the change notification)
-		SetMultimap<IVisualPart<VR>, String> oldAnchorages = anchorages == null ? HashMultimap
-				.<IVisualPart<VR>, String> create() : HashMultimap
-				.create(anchorages);
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
+				.<IVisualPart<VR, ? extends VR>, String> create()
+				: HashMultimap.create(anchorages);
 
 		removeAnchorageWithoutNotify(anchorage, role);
 
@@ -398,8 +421,8 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 				getAnchorages());
 	}
 
-	private void removeAnchorageWithoutNotify(IVisualPart<VR> anchorage,
-			String role) {
+	private void removeAnchorageWithoutNotify(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		if (anchorages == null) {
 			throw new IllegalStateException(
 					"Cannot remove anchorage: not contained.");
@@ -414,10 +437,11 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void removeAnchored(IVisualPart<VR> anchored) {
+	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored) {
 		// copy anchoreds (required for the change notification)
-		Multiset<IVisualPart<VR>> oldAnchoreds = anchoreds == null ? HashMultiset
-				.<IVisualPart<VR>> create() : HashMultiset.create(anchoreds);
+		Multiset<IVisualPart<VR, ? extends VR>> oldAnchoreds = anchoreds == null ? HashMultiset
+				.<IVisualPart<VR, ? extends VR>> create() : HashMultiset
+				.create(anchoreds);
 
 		// determine viewer before and after removing the anchored
 		IViewer<VR> oldViewer = getViewer();
@@ -439,7 +463,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	}
 
 	@Override
-	public void removeChild(IVisualPart<VR> child) {
+	public void removeChild(IVisualPart<VR, ? extends VR> child) {
 		int index = getChildren().indexOf(child);
 		if (index < 0) {
 			return;
@@ -450,15 +474,16 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 
 		child.setParent(null);
 		removeChildVisual(child, index);
-		List<IVisualPart<VR>> oldChildren = getChildren();
+		List<IVisualPart<VR, ? extends VR>> oldChildren = getChildren();
 		removeChildWithoutNotify(child);
 
 		pcs.firePropertyChange(CHILDREN_PROPERTY, oldChildren, getChildren());
 	}
 
 	@Override
-	public void removeChildren(List<? extends IVisualPart<VR>> children) {
-		for (IVisualPart<VR> child : children) {
+	public void removeChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children) {
+		for (IVisualPart<VR, ? extends VR> child : children) {
 			removeChild(child);
 		}
 	}
@@ -471,9 +496,10 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * @param index
 	 *            The index of the child whose visual is to be removed.
 	 */
-	protected abstract void removeChildVisual(IVisualPart<VR> child, int index);
+	protected abstract void removeChildVisual(
+			IVisualPart<VR, ? extends VR> child, int index);
 
-	private void removeChildWithoutNotify(IVisualPart<VR> child) {
+	private void removeChildWithoutNotify(IVisualPart<VR, ? extends VR> child) {
 		children.remove(child);
 		if (children.size() == 0) {
 			children = null;
@@ -495,7 +521,7 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 *            new index for the child
 	 */
 	@Override
-	public void reorderChild(IVisualPart<VR> child, int index) {
+	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index) {
 		removeChildVisual(child, children.indexOf(child));
 		removeChildWithoutNotify(child);
 		addChildWithoutNotify(child, index);
@@ -521,13 +547,13 @@ public abstract class AbstractVisualPart<VR> implements IVisualPart<VR> {
 	 * Sets the parent {@link IVisualPart}.
 	 */
 	@Override
-	public void setParent(IVisualPart<VR> newParent) {
+	public void setParent(IVisualPart<VR, ? extends VR> newParent) {
 		if (this.parent == newParent) {
 			return;
 		}
 
 		// save old parent for the change notifictaion
-		IVisualPart<VR> oldParent = this.parent;
+		IVisualPart<VR, ? extends VR> oldParent = this.parent;
 
 		// determine viewer before and after setting the parent
 		IViewer<VR> oldViewer = getViewer();

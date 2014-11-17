@@ -52,8 +52,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
-	private List<IContentPart<VR>> selectionList = new ArrayList<IContentPart<VR>>();
-	private Set<IContentPart<VR>> selectionSet = new HashSet<IContentPart<VR>>();
+	private List<IContentPart<VR, ? extends VR>> selectionList = new ArrayList<IContentPart<VR, ? extends VR>>();
+	private Set<IContentPart<VR, ? extends VR>> selectionSet = new HashSet<IContentPart<VR, ? extends VR>>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -67,9 +67,10 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @param contentParts
 	 *            The {@link IContentPart}s which are appended to the selection.
 	 */
-	public void appendSelection(List<IContentPart<VR>> contentParts) {
-		List<IContentPart<VR>> oldSelection = getSelectionCopy();
-		for (IContentPart<VR> p : contentParts) {
+	public void appendSelection(
+			List<? extends IContentPart<VR, ? extends VR>> contentParts) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
+		for (IContentPart<VR, ? extends VR> p : contentParts) {
 			if (!selectionSet.contains(p)) {
 				selectionList.add(p);
 				selectionSet.add(p);
@@ -86,8 +87,9 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *            The {@link IContentPart}s which are removed from the
 	 *            selection.
 	 */
-	public void deselect(Collection<IContentPart<VR>> contentParts) {
-		List<IContentPart<VR>> oldSelection = getSelectionCopy();
+	public void deselect(
+			Collection<? extends IContentPart<VR, ? extends VR>> contentParts) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selectionList.removeAll(contentParts);
 		selectionSet.removeAll(contentParts);
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
@@ -98,7 +100,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * Clears the current selection.
 	 */
 	public void deselectAll() {
-		List<IContentPart<VR>> oldSelection = getSelectionCopy();
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selectionList.clear();
 		selectionSet.clear();
 		propertyChangeSupport.firePropertyChange(SELECTION_PROPERTY,
@@ -112,7 +114,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return An unmodifiable list of the currently selected
 	 *         {@link IContentPart}s.
 	 */
-	public List<IContentPart<VR>> getSelected() {
+	public List<IContentPart<VR, ? extends VR>> getSelected() {
 		return Collections.unmodifiableList(selectionList);
 	}
 
@@ -123,8 +125,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return A modifiable list of the currently selected {@link IContentPart}
 	 *         s.
 	 */
-	private List<IContentPart<VR>> getSelectionCopy() {
-		return new ArrayList<IContentPart<VR>>(selectionList);
+	private List<IContentPart<VR, ? extends VR>> getSelectionCopy() {
+		return new ArrayList<IContentPart<VR, ? extends VR>>(selectionList);
 	}
 
 	/**
@@ -136,7 +138,7 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @return <code>true</code> if the {@link IContentPart} is contained by the
 	 *         current selection.
 	 */
-	public boolean isSelected(IContentPart<VR> contentPart) {
+	public boolean isSelected(IContentPart<VR, ? extends VR> contentPart) {
 		return selectionSet.contains(contentPart);
 	}
 
@@ -152,12 +154,13 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 * @param newlySelected
 	 *            The {@link IContentPart}s to select.
 	 */
-	public void select(List<IContentPart<VR>> newlySelected) {
-		List<IContentPart<VR>> oldSelection = getSelectionCopy();
+	public void select(
+			List<? extends IContentPart<VR, ? extends VR>> newlySelected) {
+		List<IContentPart<VR, ? extends VR>> oldSelection = getSelectionCopy();
 		selectionList.removeAll(newlySelected);
 		selectionSet.removeAll(newlySelected);
 		int i = 0;
-		for (IContentPart<VR> p : newlySelected) {
+		for (IContentPart<VR, ? extends VR> p : newlySelected) {
 			if (!selectionSet.contains(p)) {
 				selectionList.add(i++, p);
 				selectionSet.add(p);
@@ -175,7 +178,8 @@ public class SelectionModel<VR> implements IPropertyChangeNotifier {
 	 *            The list of {@link IContentPart}s constituting the new
 	 *            selection.
 	 */
-	public void updateSelection(List<IContentPart<VR>> newSelection) {
+	public void updateSelection(
+			List<? extends IContentPart<VR, ? extends VR>> newSelection) {
 		selectionList.clear();
 		selectionSet.clear();
 		select(newSelection);

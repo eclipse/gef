@@ -67,19 +67,22 @@ import com.google.common.collect.SetMultimap;
  * @param <VR>
  *            The visual root node of the UI toolkit this {@link IVisualPart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link IVisualPart}.
  */
-public interface IVisualPart<VR> extends IActivatable, IAdaptable,
-IPropertyChangeNotifier {
+public interface IVisualPart<VR, V extends VR> extends IAdaptable,
+		IActivatable, IPropertyChangeNotifier {
 
 	public static final String PARENT_PROPERTY = "parent";
 	public static final String CHILDREN_PROPERTY = "children";
 	public static final String ANCHORAGES_PROPERTY = "anchorages";
 	public static final String ANCHOREDS_PROPERTY = "anchoreds";
 
-	public void addAnchorage(IVisualPart<VR> anchorage);
+	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage);
 
 	// role may be null
-	public void addAnchorage(IVisualPart<VR> anchorage, String role);
+	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to establish an
@@ -98,25 +101,27 @@ IPropertyChangeNotifier {
 	 *              {@link #addAnchorage(IVisualPart, String)} instead to
 	 *              establish an anchored-anchorage relationship.
 	 */
-	public void addAnchored(IVisualPart<VR> anchored);
+	public void addAnchored(IVisualPart<VR, ? extends VR> anchored);
 
-	public void addChild(IVisualPart<VR> child);
+	public void addChild(IVisualPart<VR, ? extends VR> child);
 
-	public void addChild(IVisualPart<VR> child, int index);
+	public void addChild(IVisualPart<VR, ? extends VR> child, int index);
 
-	public void addChildren(List<? extends IVisualPart<VR>> children);
+	public void addChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children);
 
-	public void addChildren(List<? extends IVisualPart<VR>> children, int index);
+	public void addChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children, int index);
 
-	public SetMultimap<IVisualPart<VR>, String> getAnchorages();
+	public SetMultimap<IVisualPart<VR, ? extends VR>, String> getAnchorages();
 
-	public Multiset<IVisualPart<VR>> getAnchoreds();
+	public Multiset<IVisualPart<VR, ? extends VR>> getAnchoreds();
 
 	public Map<AdapterKey<? extends IBehavior<VR>>, IBehavior<VR>> getBehaviors();
 
-	public List<IVisualPart<VR>> getChildren();
+	public List<IVisualPart<VR, ? extends VR>> getChildren();
 
-	public IVisualPart<VR> getParent();
+	public IVisualPart<VR, ? extends VR> getParent();
 
 	public Map<AdapterKey<? extends IPolicy<VR>>, IPolicy<VR>> getPolicies();
 
@@ -127,18 +132,19 @@ IPropertyChangeNotifier {
 	 *
 	 * @return <code>null</code> or the {@link IRootPart}
 	 */
-	public IRootPart<VR> getRoot();
+	public IRootPart<VR, ? extends VR> getRoot();
 
-	public abstract VR getVisual();
+	public abstract V getVisual();
 
 	public boolean isRefreshVisual();
 
 	public void refreshVisual();
 
-	public void removeAnchorage(IVisualPart<VR> anchorage);
+	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage);
 
 	// role may be null
-	public void removeAnchorage(IVisualPart<VR> anchorage, String role);
+	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage,
+			String role);
 
 	/**
 	 * Used by an anchored {@link IVisualPart} to unestablish an
@@ -158,13 +164,14 @@ IPropertyChangeNotifier {
 	 *              {@link #removeAnchorage(IVisualPart, String)} instead to
 	 *              unestablish an anchored-anchorage relationship.
 	 */
-	public void removeAnchored(IVisualPart<VR> anchored);
+	public void removeAnchored(IVisualPart<VR, ? extends VR> anchored);
 
-	public void removeChild(IVisualPart<VR> child);
+	public void removeChild(IVisualPart<VR, ? extends VR> child);
 
-	public void removeChildren(List<? extends IVisualPart<VR>> children);
+	public void removeChildren(
+			List<? extends IVisualPart<VR, ? extends VR>> children);
 
-	public void reorderChild(IVisualPart<VR> child, int index);
+	public void reorderChild(IVisualPart<VR, ? extends VR> child, int index);
 
 	/**
 	 * Used by a parent {@link IVisualPart} to establish/unestablish a
@@ -187,7 +194,7 @@ IPropertyChangeNotifier {
 	 *              {@link #removeChildren(List)} to establish/unestablish a
 	 *              parent-child relationship instead.
 	 */
-	public void setParent(IVisualPart<VR> parent);
+	public void setParent(IVisualPart<VR, ? extends VR> parent);
 
 	/**
 	 * Allows to temporarily turn {@link #refreshVisual()} into a no-op

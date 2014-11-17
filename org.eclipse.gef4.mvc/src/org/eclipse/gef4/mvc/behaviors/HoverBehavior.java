@@ -40,7 +40,7 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 		hoverModel.addPropertyChangeListener(this);
 
 		// create feedback and handles if we are already hovered
-		IVisualPart<VR> hover = hoverModel.getHover();
+		IVisualPart<VR, ? extends VR> hover = hoverModel.getHover();
 		if (hover != null) {
 			onHoverChange(null, hover);
 		}
@@ -64,8 +64,8 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 		return getHost().getRoot().getViewer().getAdapter(HoverModel.class);
 	}
 
-	protected void onHoverChange(IVisualPart<VR> oldHovered,
-			IVisualPart<VR> newHovered) {
+	protected void onHoverChange(IVisualPart<VR, ? extends VR> oldHovered,
+			IVisualPart<VR, ? extends VR> newHovered) {
 		if (getHost() != oldHovered && getHost() == newHovered) {
 			addFeedback(Collections.singletonList(getHost()));
 		} else if (getHost() == oldHovered && getHost() != newHovered) {
@@ -77,8 +77,10 @@ public class HoverBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(HoverModel.HOVER_PROPERTY)) {
-			IVisualPart<VR> oldHovered = (IVisualPart<VR>) event.getOldValue();
-			IVisualPart<VR> newHovered = (IVisualPart<VR>) event.getNewValue();
+			IVisualPart<VR, ? extends VR> oldHovered = (IVisualPart<VR, ? extends VR>) event
+					.getOldValue();
+			IVisualPart<VR, ? extends VR> newHovered = (IVisualPart<VR, ? extends VR>) event
+					.getNewValue();
 			onHoverChange(oldHovered, newHovered);
 		}
 	}

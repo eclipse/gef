@@ -12,11 +12,9 @@
 package org.eclipse.gef4.mvc.fx.parts;
 
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
-import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
@@ -28,39 +26,33 @@ import com.google.inject.Provider;
  * @author anyssen
  *
  */
-public class FXCornerHandlePart extends AbstractFXHandlePart implements
-Comparable<FXCornerHandlePart> {
-
-	private javafx.scene.shape.Rectangle visual = null;
-	private final Provider<IGeometry> handleGeometryProvider;
-	private final Pos pos;
+public class FXCornerHandlePart extends
+		AbstractFXCornerHandlePart<javafx.scene.shape.Rectangle> {
 
 	public FXCornerHandlePart(Provider<IGeometry> handleGeometryProvider,
 			Pos pos) {
-		this.handleGeometryProvider = handleGeometryProvider;
-		this.pos = pos;
-		visual = new javafx.scene.shape.Rectangle();
+		super(handleGeometryProvider, pos);
+	}
+
+	@Override
+	protected javafx.scene.shape.Rectangle createVisual() {
+		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
 		visual.setFill(Color.web("#d5faff"));
 		visual.setStroke(Color.web("#5a61af"));
 		visual.setWidth(5);
 		visual.setHeight(5);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
-	}
-
-	@Override
-	public int compareTo(FXCornerHandlePart o) {
-		// if we are bound to the same anchorages, we may compare positions,
-		// otherwise we are not comparable
-		if (!getAnchorages().equals(o.getAnchorages())) {
-			throw new IllegalArgumentException(
-					"Can only compare FXBoxHandles that are bound to the same anchorages.");
-		}
-		return pos.compareTo(o.pos);
+		return visual;
 	}
 
 	@Override
 	public void doRefreshVisual() {
+		updateLocation();
+	}
+
+	protected void updateLocation() {
+		javafx.scene.shape.Rectangle visual = getVisual();
 		Rectangle handleGeometry = getHandleGeometry();
 
 		if (handleGeometry != null) {
@@ -89,33 +81,6 @@ Comparable<FXCornerHandlePart> {
 						"Unsupported position constant.");
 			}
 		}
-	}
-
-	protected Rectangle getHandleGeometry() {
-		// TODO: we have to ensure we can also work with rotated rectangles
-		// (i.e. polygons) properly (i.e. place the handles in the rotated end
-		// point locations)
-		return FXUtils.sceneToLocal(getVisual().getParent(),
-				handleGeometryProvider.get()).getBounds();
-	}
-
-	public Pos getPos() {
-		return pos;
-	}
-
-	@Override
-	public Node getVisual() {
-		return visual;
-	}
-
-	protected double getXInset() {
-		double xInset = visual.getWidth() / 2.0;
-		return xInset;
-	}
-
-	protected double getYInset() {
-		double yInset = visual.getHeight() / 2.0;
-		return yInset;
 	}
 
 }

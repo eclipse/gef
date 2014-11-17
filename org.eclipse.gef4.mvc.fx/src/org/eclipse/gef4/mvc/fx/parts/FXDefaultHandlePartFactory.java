@@ -66,25 +66,25 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return an {@link IHandlePart} for the specified corner of the bounds of
 	 *         the multi selection
 	 */
-	protected IHandlePart<Node> createBoundsSelectionCornerHandlePart(
-			final List<? extends IVisualPart<Node>> targets,
+	protected IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
+			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
 		return new FXCornerHandlePart(handleGeometryProvider, position);
 	}
 
 	// TODO: maybe inline this method
-	protected List<IHandlePart<Node>> createBoundsSelectionHandleParts(
-			final List<? extends IVisualPart<Node>> targets,
+	protected List<IHandlePart<Node, ? extends Node>> createBoundsSelectionHandleParts(
+			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Provider<IGeometry> handleGeometryProvider,
 			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
 		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
 				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
-			IHandlePart<Node> part = createBoundsSelectionCornerHandlePart(
+			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
 					targets, handleGeometryProvider, pos, contextMap);
 			if (part != null) {
 				injector.injectMembers(part);
@@ -112,8 +112,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return {@link IHandlePart} for the specified segment vertex of the
 	 *         provided {@link BezierCurve}s
 	 */
-	protected IHandlePart<Node> createCurveSelectionHandlePart(
-			final IVisualPart<Node> targetPart,
+	protected IHandlePart<Node, ? extends Node> createCurveSelectionHandlePart(
+			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
 		return new FXConnectionSegmentHandlePart(segmentsProvider,
@@ -133,15 +133,15 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 *            stateless.
 	 * @return {@link IHandlePart}s for the given target part.
 	 */
-	protected List<IHandlePart<Node>> createCurveSelectionHandleParts(
-			final IVisualPart<Node> targetPart,
+	protected List<IHandlePart<Node, ? extends Node>> createCurveSelectionHandleParts(
+			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider,
 			Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> hps = new ArrayList<IHandlePart<Node>>();
+		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		BezierCurve[] segments = segmentsProvider.get();
 		for (int i = 0; i < segments.length; i++) {
-			IHandlePart<Node> part = createCurveSelectionHandlePart(targetPart,
-					segmentsProvider, segments.length, i, 0.0);
+			IHandlePart<Node, ? extends Node> part = createCurveSelectionHandlePart(
+					targetPart, segmentsProvider, segments.length, i, 0.0);
 			if (part != null) {
 				injector.injectMembers(part);
 				hps.add(part);
@@ -168,8 +168,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	// entry point
 	@Override
-	public List<IHandlePart<Node>> createHandleParts(
-			List<? extends IVisualPart<Node>> targets,
+	public List<IHandlePart<Node, ? extends Node>> createHandleParts(
+			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		// no targets
 		if (targets == null || targets.isEmpty()) {
@@ -194,11 +194,11 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return Collections.emptyList();
 	}
 
-	protected List<IHandlePart<Node>> createHoverHandleParts(
-			final IVisualPart<Node> target,
+	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
+			final IVisualPart<Node, ? extends Node> target,
 			final HoverBehavior<Node> contextBehavior,
 			final Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
 		// handle geometry is in target visual local coordinate space.
 		final Provider<IGeometry> hoverHandlesGeometryInTargetLocalProvider = target
@@ -249,9 +249,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		// create segment handles (based on outline)
 		BezierCurve[] segments = hoverHandlesSegmentsInSceneProvider.get();
 		for (int i = 0; i < segments.length; i++) {
-			IHandlePart<Node> hp = createHoverSegmentHandlePart(target,
-					hoverHandlesSegmentsInSceneProvider, segments.length, i,
-					contextMap);
+			IHandlePart<Node, ? extends Node> hp = createHoverSegmentHandlePart(
+					target, hoverHandlesSegmentsInSceneProvider,
+					segments.length, i, contextMap);
 			if (hp != null) {
 				injector.injectMembers(hp);
 				handleParts.add(hp);
@@ -261,16 +261,16 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return handleParts;
 	}
 
-	protected IHandlePart<Node> createHoverSegmentHandlePart(
-			final IVisualPart<Node> target,
+	protected IHandlePart<Node, ? extends Node> createHoverSegmentHandlePart(
+			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
 		return new FXSegmentHandlePart(hoverHandlesSegmentsInSceneProvider,
 				segmentIndex, 0);
 	}
 
-	protected List<IHandlePart<Node>> createMultiSelectionHandleParts(
-			final List<? extends IVisualPart<Node>> targets,
+	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
+			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap) {
 		Provider<IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
 			@Override
@@ -286,8 +286,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				handleGeometryProvider, contextMap);
 	}
 
-	protected List<IHandlePart<Node>> createSelectionHandleParts(
-			List<? extends IVisualPart<Node>> targets,
+	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
+			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		if (targets.isEmpty()) {
@@ -319,16 +319,17 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @return {@link IHandlePart} for the specified vertex of the
 	 *         {@link IGeometry} provided by the <i>handleGeometryProvider</i>
 	 */
-	protected IHandlePart<Node> createSelectionSegmentHandlePart(
-			final IVisualPart<Node> target,
+	protected IHandlePart<Node, ? extends Node> createSelectionSegmentHandlePart(
+			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, Map<Object, Object> contextMap) {
 		return new FXSegmentHandlePart(segmentsProvider, segmentIndex, 0);
 	}
 
-	protected List<IHandlePart<Node>> createSingleSelectionHandleParts(
-			final IVisualPart<Node> target, Map<Object, Object> contextMap) {
-		List<IHandlePart<Node>> handleParts = new ArrayList<IHandlePart<Node>>();
+	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
+			final IVisualPart<Node, ? extends Node> target,
+			Map<Object, Object> contextMap) {
+		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
 		// handle geometry is in target visual local coordinate space.
 		final Provider<IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
@@ -390,7 +391,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				BezierCurve[] segments = selectionHandlesSegmentsInSceneProvider
 						.get();
 				for (int i = 0; i < segments.length; i++) {
-					IHandlePart<Node> hp = createSelectionSegmentHandlePart(
+					IHandlePart<Node, ? extends Node> hp = createSelectionSegmentHandlePart(
 							target, selectionHandlesSegmentsInSceneProvider,
 							segments.length, i, contextMap);
 					if (hp != null) {

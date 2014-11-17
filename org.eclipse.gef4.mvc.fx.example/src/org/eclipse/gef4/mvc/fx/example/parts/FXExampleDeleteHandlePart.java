@@ -24,23 +24,31 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
+public class FXExampleDeleteHandlePart extends
+		AbstractFXHandlePart<FXBlendImageView> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
 
-	private FXBlendImageView blendImageView;
+	@Override
+	protected FXBlendImageView createVisual() {
+		FXBlendImageView blendImageView = new FXBlendImageView();
+		blendImageView.imageProperty().set(getImage());
+		blendImageView.hoverImageProperty().set(getHoverImage());
+		return blendImageView;
+	}
 
 	@Override
 	protected void doRefreshVisual() {
 		// check if we have a host
-		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
 		if (anchorages.isEmpty()) {
 			return;
 		}
 
 		// determine center location of host visual
-		IVisualPart<Node> host = anchorages.keys().iterator().next();
+		IVisualPart<Node, ? extends Node> host = anchorages.keys().iterator()
+				.next();
 		Node hostVisual = host.getVisual();
 
 		refreshHandleLocation(hostVisual);
@@ -65,16 +73,6 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 		return new Image(resource.toExternalForm());
 	}
 
-	@Override
-	public Node getVisual() {
-		if (blendImageView == null) {
-			blendImageView = new FXBlendImageView();
-			blendImageView.imageProperty().set(getImage());
-			blendImageView.hoverImageProperty().set(getHoverImage());
-		}
-		return blendImageView;
-	}
-
 	protected void refreshHandleLocation(Node hostVisual) {
 		Bounds hostBounds = hostVisual.getLayoutBounds();
 		double cx = hostVisual.getLayoutX()
@@ -84,15 +82,17 @@ public class FXExampleDeleteHandlePart extends AbstractFXHandlePart {
 				+ hostVisual.getLayoutBounds().getMinY();
 		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
 				cx, cy) : hostVisual.getParent().localToScene(cx, cy);
-		Point2D locationInLocal = blendImageView.getParent().sceneToLocal(
+		Point2D locationInLocal = getVisual().getParent().sceneToLocal(
 				locationInScene);
 
 		// position handle at center of host
-		blendImageView.setLayoutX(locationInLocal.getX()
-				- blendImageView.getLayoutBounds().getMinX());
-		blendImageView.setLayoutY(locationInLocal.getY()
-				- blendImageView.getLayoutBounds().getWidth() / 2
-				- blendImageView.getLayoutBounds().getMinY());
+		getVisual().setLayoutX(
+				locationInLocal.getX()
+						- getVisual().getLayoutBounds().getMinX());
+		getVisual().setLayoutY(
+				locationInLocal.getY()
+						- getVisual().getLayoutBounds().getWidth() / 2
+						- getVisual().getLayoutBounds().getMinY());
 	}
 
 }

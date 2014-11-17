@@ -24,24 +24,27 @@ import org.eclipse.gef4.mvc.viewer.IViewer;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this
+ *            {@link AbstractRootPart} is used in, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link AbstractRootPart}.
  */
-public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
-		implements IRootPart<VR> {
+public abstract class AbstractRootPart<VR, V extends VR> extends
+		AbstractVisualPart<VR, V> implements IRootPart<VR, V> {
 
 	private IViewer<VR> viewer;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<VR> anchorage,
-			String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<VR> anchorage,
-			String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
 		throw new UnsupportedOperationException(
 				"IRootVisualPart does not support this");
 	}
@@ -53,24 +56,24 @@ public abstract class AbstractRootPart<VR> extends AbstractVisualPart<VR>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IContentPart<VR>> getContentPartChildren() {
+	public List<IContentPart<VR, ? extends VR>> getContentPartChildren() {
 		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IFeedbackPart<VR>> getFeedbackPartChildren() {
+	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren() {
 		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<IHandlePart<VR>> getHandlePartChildren() {
+	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
 
 	@Override
-	public IRootPart<VR> getRoot() {
+	public IRootPart<VR, ? extends VR> getRoot() {
 		return this;
 	}
 

@@ -29,7 +29,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		for (IContentPart<Node> part : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				Point2D initialPosInLocal = part.getVisual().sceneToLocal(
@@ -51,11 +51,11 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
-			IContentPart<Node> part) {
+			IContentPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
-	public List<IContentPart<Node>> getTargetParts() {
+	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
@@ -64,7 +64,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void press(MouseEvent e) {
 		setInitialMouseLocationInScene(new Point(e.getSceneX(), e.getSceneY()));
-		for (IContentPart<Node> part : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			disableRefreshVisuals(part);
 			part.setRefreshVisual(false);
 			// init transaction policy
@@ -74,7 +74,7 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		for (IContentPart<Node> part : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				enableRefreshVisuals(part);

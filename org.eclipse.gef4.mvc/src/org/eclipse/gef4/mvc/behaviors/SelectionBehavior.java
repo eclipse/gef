@@ -48,7 +48,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	protected void addFeedbackAndHandles(
-			List<? extends IContentPart<VR>> selected) {
+			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		// root is responsible for multi selection
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			addFeedback(selected);
@@ -78,9 +78,9 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getPropertyName().equals(SelectionModel.SELECTION_PROPERTY)) {
-			List<IContentPart<VR>> oldSelection = (List<IContentPart<VR>>) event
+			List<IContentPart<VR, ? extends VR>> oldSelection = (List<IContentPart<VR, ? extends VR>>) event
 					.getOldValue();
-			List<IContentPart<VR>> newSelection = (List<IContentPart<VR>>) event
+			List<IContentPart<VR, ? extends VR>> newSelection = (List<IContentPart<VR, ? extends VR>>) event
 					.getNewValue();
 
 			removeFeedbackAndHandles(oldSelection);
@@ -89,7 +89,7 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 	}
 
 	protected void removeFeedbackAndHandles(
-			List<? extends IContentPart<VR>> selected) {
+			List<? extends IContentPart<VR, ? extends VR>> selected) {
 		// root is responsible for multi selection
 		if (getHost() instanceof IRootPart && selected.size() > 1) {
 			removeHandles(selected);

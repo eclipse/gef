@@ -25,13 +25,11 @@ public class HoverFirstAnchorageOnHoverPolicy extends FXHoverOnHoverPolicy {
 
 	@Override
 	public void hover(MouseEvent e) {
-		SetMultimap<IVisualPart<Node>, String> anchorages = getHost()
-				.getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost().getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		getHost().getRoot().getViewer()
-				.<HoverModel<Node>> getAdapter(HoverModel.class)
+		getHost().getRoot().getViewer().<HoverModel<Node>> getAdapter(HoverModel.class)
 				.setHover(anchorages.keySet().iterator().next());
 	}
 

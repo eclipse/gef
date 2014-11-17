@@ -84,44 +84,43 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	private Point2D endPosInFeedbackLayer;
 
 	// feedback
-	private IFeedbackPart<Node> feedback;
+	private IFeedbackPart<Node, ? extends Node> feedback;
 
 	protected void addFeedback() {
 		if (feedback != null) {
 			removeFeedback();
 		}
-		feedback = new AbstractFXFeedbackPart() {
-			private final Rectangle rect = new Rectangle();
+		feedback = new AbstractFXFeedbackPart<Rectangle>() {
 
-			{
-				rect.setFill(Color.TRANSPARENT);
-				rect.setStroke(FXSegmentHandlePart.DEFAULT_STROKE);
-				rect.setStrokeWidth(1);
-				rect.setStrokeType(StrokeType.CENTERED);
-				rect.getStrokeDashArray().setAll(5d, 5d);
+			@Override
+			protected Rectangle createVisual() {
+				Rectangle visual = new Rectangle();
+				visual.setFill(Color.TRANSPARENT);
+				visual.setStroke(FXSegmentHandlePart.DEFAULT_STROKE);
+				visual.setStrokeWidth(1);
+				visual.setStrokeType(StrokeType.CENTERED);
+				visual.getStrokeDashArray().setAll(5d, 5d);
+				return visual;
 			}
 
 			@Override
 			protected void doRefreshVisual() {
 				FXRootPart root = (FXRootPart) getRoot();
-				Point2D start = rect.sceneToLocal(root.getFeedbackLayer()
+				Rectangle visual = getVisual();
+				Point2D start = visual.sceneToLocal(root.getFeedbackLayer()
 						.localToScene(startPosInFeedbackLayer));
-				Point2D end = rect.sceneToLocal(root.getFeedbackLayer()
+				Point2D end = visual.sceneToLocal(root.getFeedbackLayer()
 						.localToScene(endPosInFeedbackLayer));
 				double[] bbox = bbox(start, end);
 
 				// offset x and y by half a pixel to ensure the rectangle gets a
 				// hairline stroke
-				rect.setX(bbox[0] - 0.5);
-				rect.setY(bbox[1] - 0.5);
-				rect.setWidth(bbox[2] - bbox[0]);
-				rect.setHeight(bbox[3] - bbox[1]);
+				visual.setX(bbox[0] - 0.5);
+				visual.setY(bbox[1] - 0.5);
+				visual.setWidth(bbox[2] - bbox[0]);
+				visual.setHeight(bbox[3] - bbox[1]);
 			}
 
-			@Override
-			public Node getVisual() {
-				return rect;
-			}
 		};
 		getHost().getRoot().addChild(feedback);
 	}
@@ -132,13 +131,13 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		updateFeedback();
 	}
 
-	protected List<IContentPart<Node>> getParts(List<Node> nodes) {
-		List<IContentPart<Node>> parts = new ArrayList<IContentPart<Node>>();
+	protected List<IContentPart<Node, ? extends Node>> getParts(List<Node> nodes) {
+		List<IContentPart<Node, ? extends Node>> parts = new ArrayList<IContentPart<Node, ? extends Node>>();
 		for (Node node : nodes) {
-			IVisualPart<Node> part = getHost().getRoot().getViewer()
-					.getVisualPartMap().get(node);
+			IVisualPart<Node, ? extends Node> part = getHost().getRoot()
+					.getViewer().getVisualPartMap().get(node);
 			if (part != null && part instanceof IContentPart) {
-				parts.add((IContentPart<Node>) part);
+				parts.add((IContentPart<Node, ? extends Node>) part);
 			}
 		}
 		return parts;
@@ -167,7 +166,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 		List<Node> nodes = findContainedNodes(getHost().getVisual().getScene()
 				.getRoot(), bbox[0], bbox[1], bbox[2], bbox[3]);
 
-		List<IContentPart<Node>> parts = getParts(nodes);
+		List<IContentPart<Node, ? extends Node>> parts = getParts(nodes);
 
 		// change selection within selection model
 		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()

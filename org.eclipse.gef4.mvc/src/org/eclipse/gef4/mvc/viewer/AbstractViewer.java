@@ -52,8 +52,8 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	private ActivatableSupport<IViewer<VR>> acs = new ActivatableSupport<IViewer<VR>>(
 			this, pcs);
 
-	private Map<Object, IContentPart<VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR>>();
-	private Map<VR, IVisualPart<VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR>>();
+	private Map<Object, IContentPart<VR, ? extends VR>> contentsToContentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>();
+	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR, ? extends VR>>();
 
 	private IDomain<VR> domain;
 
@@ -115,7 +115,7 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	 * @see IViewer#getContentPartMap()
 	 */
 	@Override
-	public Map<Object, IContentPart<VR>> getContentPartMap() {
+	public Map<Object, IContentPart<VR, ? extends VR>> getContentPartMap() {
 		return contentsToContentPartMap;
 	}
 
@@ -140,15 +140,15 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
-	public IRootPart<VR> getRootPart() {
-		return ads.<IRootPart<VR>> getAdapter(IRootPart.class);
+	public IRootPart<VR, ? extends VR> getRootPart() {
+		return ads.<IRootPart<VR, ? extends VR>> getAdapter(IRootPart.class);
 	}
 
 	/**
 	 * @see IViewer#getVisualPartMap()
 	 */
 	@Override
-	public Map<VR, IVisualPart<VR>> getVisualPartMap() {
+	public Map<VR, IVisualPart<VR, ? extends VR>> getVisualPartMap() {
 		return visualsToVisualPartMap;
 	}
 

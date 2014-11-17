@@ -22,10 +22,10 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class SynchronizeContentChildrenOperation<VR> extends AbstractOperation {
 
-	private IContentPart<VR> parent;
+	private IContentPart<VR, ? extends VR> parent;
 
 	public SynchronizeContentChildrenOperation(String label,
-			IContentPart<VR> parent) {
+			IContentPart<VR, ? extends VR> parent) {
 		super(label);
 		this.parent = parent;
 	}

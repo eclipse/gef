@@ -159,7 +159,7 @@ public class MvcFxModule extends MvcModule<Node> {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind root part
 		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
-				new TypeLiteral<IRootPart<Node>>() {
+				new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 				});
 
 		// bind factories
@@ -207,7 +207,7 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	protected void bindIRootPart() {
-		binder().bind(new TypeLiteral<IRootPart<Node>>() {
+		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 		}).to(FXRootPart.class);
 	}
 

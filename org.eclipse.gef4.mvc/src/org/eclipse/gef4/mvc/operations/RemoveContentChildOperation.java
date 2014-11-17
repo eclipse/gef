@@ -29,11 +29,11 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  */
 public class RemoveContentChildOperation<VR> extends AbstractOperation {
 
-	private final IContentPart<VR> parent;
+	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
 	private int index;
 
-	public RemoveContentChildOperation(IContentPart<VR> parent,
+	public RemoveContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild) {
 		super("Remove Content Child");
 		this.parent = parent;

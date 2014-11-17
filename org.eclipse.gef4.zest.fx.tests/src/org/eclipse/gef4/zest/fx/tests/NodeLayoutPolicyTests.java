@@ -43,43 +43,35 @@ public class NodeLayoutPolicyTests {
 		return nodeLayout;
 	}
 
-	private NodeLayoutPolicy createPolicy(final Point location,
-			final Dimension size) {
+	private NodeLayoutPolicy createPolicy(final Point location, final Dimension size) {
 		NodeLayoutPolicy policy = new NodeLayoutPolicy() {
-			private IContentPart<javafx.scene.Node> host;
+			private IContentPart<javafx.scene.Node, ? extends javafx.scene.Node> host;
 
 			@Override
-			public IVisualPart<javafx.scene.Node> getHost() {
+			public IVisualPart<javafx.scene.Node, ? extends javafx.scene.Node> getHost() {
 				if (host == null) {
-					host = new AbstractFXContentPart() {
-						private Pane visual;
-
+					host = new AbstractFXContentPart<Pane>() {
 						{
-							setAdapter(
-									AdapterKey
-											.get(FXResizeRelocatePolicy.class),
-									new FXResizeRelocatePolicy() {
-										@Override
-										public IUndoableOperation commit() {
-											return null;
-										}
-									});
+							setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class), new FXResizeRelocatePolicy() {
+								@Override
+								public IUndoableOperation commit() {
+									return null;
+								}
+							});
+						}
+
+						@Override
+						protected Pane createVisual() {
+							Pane visual = new Pane();
+							visual.setLayoutX(location.x);
+							visual.setLayoutY(location.y);
+							visual.resize(size.width, size.height);
+							return visual;
 						}
 
 						@Override
 						protected void doRefreshVisual() {
-						}
-
-						@Override
-						public javafx.scene.Node getVisual() {
-							if (visual == null) {
-								visual = new Pane();
-								visual.setLayoutX(location.x);
-								visual.setLayoutY(location.y);
-								visual.resize(size.width, size.height);
-							}
-							return visual;
-						}
+						};
 					};
 					FXRootPart rootPart = new FXRootPart();
 					rootPart.setAdaptable(new FXViewer());
@@ -109,10 +101,8 @@ public class NodeLayoutPolicyTests {
 		 * corner, therefore we expect <code>layout-xy = location - size /
 		 * 2</code>.
 		 */
-		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(
-				visual.getLayoutX(), visual.getLayoutY()));
-		assertEquals(size, new Dimension(visual.getLayoutBounds().getWidth(),
-				visual.getLayoutBounds().getHeight()));
+		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(visual.getLayoutX(), visual.getLayoutY()));
+		assertEquals(size, new Dimension(visual.getLayoutBounds().getWidth(), visual.getLayoutBounds().getHeight()));
 	}
 
 	@Test

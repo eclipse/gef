@@ -34,21 +34,24 @@ public class ChangeFocusOperation<VR> extends AbstractOperation {
 	public static final String DEFAULT_LABEL = "Change Focus";
 
 	private IViewer<VR> viewer;
-	private IContentPart<VR> oldFocused;
-	private IContentPart<VR> newFocused;
+	private IContentPart<VR, ? extends VR> oldFocused;
+	private IContentPart<VR, ? extends VR> newFocused;
 
-	public ChangeFocusOperation(IViewer<VR> viewer, IContentPart<VR> newFocused) {
+	public ChangeFocusOperation(IViewer<VR> viewer,
+			IContentPart<VR, ? extends VR> newFocused) {
 		this(DEFAULT_LABEL, viewer, viewer.getAdapter(FocusModel.class)
 				.getFocused(), newFocused);
 	}
 
 	public ChangeFocusOperation(IViewer<VR> viewer,
-			IContentPart<VR> oldFocused, IContentPart<VR> newFocused) {
+			IContentPart<VR, ? extends VR> oldFocused,
+			IContentPart<VR, ? extends VR> newFocused) {
 		this(DEFAULT_LABEL, viewer, oldFocused, newFocused);
 	}
 
 	public ChangeFocusOperation(String label, IViewer<VR> viewer,
-			IContentPart<VR> oldFocused, IContentPart<VR> newFocused) {
+			IContentPart<VR, ? extends VR> oldFocused,
+			IContentPart<VR, ? extends VR> newFocused) {
 		super(label);
 		this.viewer = viewer;
 		this.oldFocused = oldFocused;

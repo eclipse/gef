@@ -28,10 +28,11 @@ import com.google.common.collect.Multiset;
 public class PartUtils {
 
 	@SuppressWarnings("unchecked")
-	public static <T extends IVisualPart<VR>, VR> List<T> filterParts(
-			Collection<? extends IVisualPart<VR>> parts, Class<T> type) {
+	public static <T extends IVisualPart<VR, ? extends VR>, VR> List<T> filterParts(
+			Collection<? extends IVisualPart<VR, ? extends VR>> parts,
+			Class<T> type) {
 		List<T> filtered = new ArrayList<T>();
-		for (IVisualPart<VR> c : parts) {
+		for (IVisualPart<VR, ? extends VR> c : parts) {
 			if (type.isInstance(c)) {
 				filtered.add((T) c);
 			}
@@ -48,20 +49,21 @@ public class PartUtils {
 	// return anchorages;
 	// }
 
-	public static <VR> List<IVisualPart<VR>> getAnchoreds(
-			Collection<? extends IVisualPart<VR>> anchorages) {
-		List<IVisualPart<VR>> anchoreds = new ArrayList<IVisualPart<VR>>();
-		for (IVisualPart<VR> a : anchorages) {
+	public static <VR> List<IVisualPart<VR, ? extends VR>> getAnchoreds(
+			Collection<? extends IVisualPart<VR, ? extends VR>> anchorages) {
+		List<IVisualPart<VR, ? extends VR>> anchoreds = new ArrayList<IVisualPart<VR, ? extends VR>>();
+		for (IVisualPart<VR, ? extends VR> a : anchorages) {
 			anchoreds.addAll(a.getAnchoreds());
 		}
 		return anchoreds;
 	}
 
-	public static <VR> Set<IVisualPart<VR>> getAnchoreds(
-			IVisualPart<VR> anchorage, String role) {
-		HashSet<IVisualPart<VR>> result = new HashSet<IVisualPart<VR>>();
-		Multiset<IVisualPart<VR>> anchoreds = anchorage.getAnchoreds();
-		for (IVisualPart<VR> anchored : anchoreds) {
+	public static <VR> Set<IVisualPart<VR, ? extends VR>> getAnchoreds(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
+		HashSet<IVisualPart<VR, ? extends VR>> result = new HashSet<IVisualPart<VR, ? extends VR>>();
+		Multiset<IVisualPart<VR, ? extends VR>> anchoreds = anchorage
+				.getAnchoreds();
+		for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
 			if (anchored.getAnchorages().containsEntry(anchorage, role)) {
 				result.add(anchored);
 			}
@@ -70,14 +72,14 @@ public class PartUtils {
 	}
 	/*
 	 * TODO: IVisualPart findCommonAncestor(IVisualPart... parts)
-	 *
+	 * 
 	 * Searches the visual part hierarchy for a common ancestor of the given
 	 * parts. Returns this ancestor if one is found, otherwise returns null.
-	 *
+	 * 
 	 * @param parts
-	 *
+	 * 
 	 * @return common ancestor of given parts, or null
-	 *
+	 * 
 	 * Note: This method can be transferred to here from the GEF 3.x
 	 * ToolUtilities class.
 	 */

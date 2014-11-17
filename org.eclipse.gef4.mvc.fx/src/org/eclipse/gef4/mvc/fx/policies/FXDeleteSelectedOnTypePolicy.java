@@ -50,7 +50,7 @@ public class FXDeleteSelectedOnTypePolicy extends AbstractFXTypePolicy {
 
 		// get current selection
 		IViewer<Node> viewer = getHost().getRoot().getViewer();
-		List<IContentPart<Node>> selected = viewer
+		List<IContentPart<Node, ? extends Node>> selected = viewer
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
 

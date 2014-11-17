@@ -38,8 +38,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	private ChangeListener<Boolean> visibilityChangeListener = new ChangeListener<Boolean>() {
 		@Override
-		public void changed(ObservableValue<? extends Boolean> observable,
-				Boolean oldValue, Boolean newValue) {
+		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 			onVisibilityChanged(oldValue, newValue);
 		}
 	};
@@ -49,10 +48,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (IVisualPart.ANCHOREDS_PROPERTY.equals(evt.getPropertyName())) {
 				@SuppressWarnings("unchecked")
-				Multiset<IVisualPart<Node>> oldAnchoreds = (Multiset<IVisualPart<Node>>) evt
+				Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds = (Multiset<IVisualPart<Node, ? extends Node>>) evt
 						.getOldValue();
 				@SuppressWarnings("unchecked")
-				Multiset<IVisualPart<Node>> newAnchoreds = (Multiset<IVisualPart<Node>>) evt
+				Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds = (Multiset<IVisualPart<Node, ? extends Node>>) evt
 						.getNewValue();
 				onAnchoredChange(oldAnchoreds, newAnchoreds);
 			}
@@ -64,13 +63,12 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (IVisualPart.ANCHORAGES_PROPERTY.equals(evt.getPropertyName())) {
 				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node>, String> oldSubgraphAnchorages = (SetMultimap<IVisualPart<Node>, String>) evt
+				SetMultimap<IVisualPart<Node, ? extends Node>, String> oldSubgraphAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
 						.getOldValue();
 				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node>, String> newSubgraphAnchorages = (SetMultimap<IVisualPart<Node>, String>) evt
+				SetMultimap<IVisualPart<Node, ? extends Node>, String> newSubgraphAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
 						.getNewValue();
-				onSubgraphAnchorageChange(oldSubgraphAnchorages,
-						newSubgraphAnchorages);
+				onSubgraphAnchorageChange(oldSubgraphAnchorages, newSubgraphAnchorages);
 			}
 		}
 	};
@@ -81,36 +79,32 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getVisual().visibleProperty()
-				.addListener(visibilityChangeListener);
+		getHost().getVisual().visibleProperty().addListener(visibilityChangeListener);
 		getHost().addPropertyChangeListener(anchoredChangeListener);
 	}
 
 	@Override
 	public void deactivate() {
 		super.deactivate();
-		getHost().getVisual().visibleProperty()
-				.removeListener(visibilityChangeListener);
+		getHost().getVisual().visibleProperty().removeListener(visibilityChangeListener);
 		getHost().removePropertyChangeListener(anchoredChangeListener);
 	}
 
 	@Override
 	protected void initializeLayout(GraphLayoutContext glc) {
 		// find node layout
-		nodeLayout = glc
-				.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node>) getHost())
-						.getContent());
+		nodeLayout = glc.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node, ? extends Node>) getHost())
+				.getContent());
 		getHost().refreshVisual();
 		// initialize layout information
-		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-				nodeLayout);
+		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
 	}
 
-	protected void onAnchoredChange(Multiset<IVisualPart<Node>> oldAnchoreds,
-			Multiset<IVisualPart<Node>> newAnchoreds) {
+	protected void onAnchoredChange(Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
+			Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds) {
 		if (nodeLayout != null) {
 			PrunedNeighborsSubgraphPart oldSubgraphPart = null;
-			for (IVisualPart<Node> oldAnchored : oldAnchoreds) {
+			for (IVisualPart<Node, ? extends Node> oldAnchored : oldAnchoreds) {
 				if (oldAnchored instanceof PrunedNeighborsSubgraphPart) {
 					oldSubgraphPart = (PrunedNeighborsSubgraphPart) oldAnchored;
 					break;
@@ -118,7 +112,7 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			}
 
 			PrunedNeighborsSubgraphPart newSubgraphPart = null;
-			for (IVisualPart<Node> newAnchored : newAnchoreds) {
+			for (IVisualPart<Node, ? extends Node> newAnchored : newAnchoreds) {
 				if (newAnchored instanceof PrunedNeighborsSubgraphPart) {
 					newSubgraphPart = (PrunedNeighborsSubgraphPart) newAnchored;
 					break;
@@ -126,13 +120,10 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			}
 
 			if (oldSubgraphPart != null && newSubgraphPart == null) {
-				oldSubgraphPart
-						.removePropertyChangeListener(subgraphAnchorageChangeListener);
-				getHost().getAdapter(LAYOUT_POLICY_KEY)
-						.provideLayoutInformation(nodeLayout);
+				oldSubgraphPart.removePropertyChangeListener(subgraphAnchorageChangeListener);
+				getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
 			} else if (oldSubgraphPart == null && newSubgraphPart != null) {
-				newSubgraphPart
-						.addPropertyChangeListener(subgraphAnchorageChangeListener);
+				newSubgraphPart.addPropertyChangeListener(subgraphAnchorageChangeListener);
 			}
 		}
 	}
@@ -140,35 +131,31 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	protected void onBoundsChange(Bounds oldBounds, Bounds newBounds) {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-					nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
 		}
 	}
 
 	@Override
 	protected void onFlushChanges() {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(
-					nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(nodeLayout);
 			getHost().refreshVisual();
 		}
 	}
 
 	protected void onSubgraphAnchorageChange(
-			SetMultimap<IVisualPart<Node>, String> oldSubgraphAnchorages,
-			SetMultimap<IVisualPart<Node>, String> newSubgraphAnchorages) {
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> oldSubgraphAnchorages,
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> newSubgraphAnchorages) {
 		boolean hostWasAnchorage = oldSubgraphAnchorages.containsKey(getHost());
 		boolean hostIsAnchorage = newSubgraphAnchorages.containsKey(getHost());
 		if (!hostWasAnchorage && hostIsAnchorage) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-					nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
 		}
 	}
 
 	protected void onVisibilityChanged(Boolean wasVisible, Boolean isVisible) {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
-					nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
 		}
 	}
 

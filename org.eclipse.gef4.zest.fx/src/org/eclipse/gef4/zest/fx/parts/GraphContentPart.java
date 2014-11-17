@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -24,23 +23,23 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
 
-public class GraphContentPart extends AbstractFXContentPart {
-
-	private Group group = new Group();
-
-	{
-		group.setAutoSizeChildren(false);
-	}
+public class GraphContentPart extends AbstractFXContentPart<Group> {
 
 	public GraphContentPart() {
 		// we set the hover policy adapter here to disable hovering this part
 		// TODO: move to NoHoverPolicy
-		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class),
-				new AbstractFXHoverPolicy() {
-					@Override
-					public void hover(MouseEvent e) {
-					}
-				});
+		setAdapter(AdapterKey.get(AbstractFXHoverPolicy.class), new AbstractFXHoverPolicy() {
+			@Override
+			public void hover(MouseEvent e) {
+			}
+		});
+	}
+
+	@Override
+	protected Group createVisual() {
+		Group visual = new Group();
+		visual.setAutoSizeChildren(false);
+		return visual;
 	}
 
 	@Override
@@ -54,11 +53,6 @@ public class GraphContentPart extends AbstractFXContentPart {
 		children.addAll(((Graph) getContent()).getNodes());
 		children.addAll(((Graph) getContent()).getEdges());
 		return children;
-	}
-
-	@Override
-	public Node getVisual() {
-		return group;
 	}
 
 }

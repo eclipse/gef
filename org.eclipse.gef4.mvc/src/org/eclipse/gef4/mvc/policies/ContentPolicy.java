@@ -109,7 +109,7 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	public void detachAllContentAnchoreds() {
 		ForwardUndoCompositeOperation detachOps = new ForwardUndoCompositeOperation(
 				"Detach All Anchoreds");
-		for (IVisualPart<VR> anchored : getHost().getAnchoreds()) {
+		for (IVisualPart<VR, ? extends VR> anchored : getHost().getAnchoreds()) {
 			if (anchored instanceof IContentPart) {
 				ContentPolicy<VR> policy = anchored
 						.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
@@ -137,11 +137,14 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	 * this {@link ContentPolicy} from all content anchorages.
 	 */
 	public void detachFromAllContentAnchorages() {
-		for (IVisualPart<VR> anchorage : getHost().getAnchorages().keySet()) {
+		for (IVisualPart<VR, ? extends VR> anchorage : getHost()
+				.getAnchorages().keySet()) {
 			if (anchorage instanceof IContentPart) {
 				for (String role : getHost().getAnchorages().get(anchorage)) {
 					detachFromContentAnchorage(
-							((IContentPart<VR>) anchorage).getContent(), role);
+							((IContentPart<VR, ? extends VR>) anchorage)
+									.getContent(),
+							role);
 				}
 			}
 		}
@@ -172,8 +175,8 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	}
 
 	@Override
-	public IContentPart<VR> getHost() {
-		return (IContentPart<VR>) super.getHost();
+	public IContentPart<VR, ? extends VR> getHost() {
+		return (IContentPart<VR, ? extends VR>) super.getHost();
 	}
 
 	@Override
@@ -227,7 +230,7 @@ public class ContentPolicy<VR> extends AbstractPolicy<VR> implements
 	}
 
 	@Override
-	public void setAdaptable(IVisualPart<VR> adaptable) {
+	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
 		if (!(adaptable instanceof IContentPart)) {
 			throw new IllegalStateException(
 					"A ContentPolicy may only be attached to an IContentPart.");

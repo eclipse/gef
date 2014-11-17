@@ -56,8 +56,8 @@ public interface IFeedbackPartFactory<VR> {
 	 * @return A list of {@link IFeedbackPart}s that are to be used to indicate
 	 *         feedback of the given targets.
 	 */
-	public List<IFeedbackPart<VR>> createFeedbackParts(
-			List<? extends IVisualPart<VR>> targets,
+	public List<IFeedbackPart<VR, ? extends VR>> createFeedbackParts(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap);
 
 }

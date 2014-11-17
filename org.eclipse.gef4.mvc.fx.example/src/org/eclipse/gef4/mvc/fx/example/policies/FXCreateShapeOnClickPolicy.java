@@ -55,7 +55,8 @@ public class FXCreateShapeOnClickPolicy extends AbstractFXClickPolicy {
 		creationPolicy.init();
 
 		// find model part
-		IVisualPart<Node> modelPart = getHost().getRoot().getChildren().get(0);
+		IVisualPart<Node, ? extends Node> modelPart = getHost().getRoot()
+				.getChildren().get(0);
 		if (!(modelPart instanceof FXGeometricModelPart)) {
 			throw new IllegalStateException("Cannot find FXGeometricModelPart.");
 		}
@@ -72,8 +73,8 @@ public class FXCreateShapeOnClickPolicy extends AbstractFXClickPolicy {
 		getHost().getRoot().getViewer().getDomain().execute(createOperation);
 
 		// find content part
-		IContentPart<Node> contentPart = getHost().getRoot().getViewer()
-				.getContentPartMap().get(content);
+		IContentPart<Node, ? extends Node> contentPart = getHost().getRoot()
+				.getViewer().getContentPartMap().get(content);
 
 		// get the visual location
 		Node visual = contentPart.getVisual();

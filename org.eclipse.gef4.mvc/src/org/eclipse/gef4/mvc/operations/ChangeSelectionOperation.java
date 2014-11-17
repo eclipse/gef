@@ -37,28 +37,30 @@ public class ChangeSelectionOperation<VR> extends AbstractOperation {
 	public static final String DEFAULT_LABEL = "Change Selection";
 
 	private IViewer<VR> viewer;
-	private List<IContentPart<VR>> oldSelection;
-	private List<IContentPart<VR>> newSelection;
+	private List<IContentPart<VR, ? extends VR>> oldSelection;
+	private List<IContentPart<VR, ? extends VR>> newSelection;
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<IContentPart<VR>> newSelection) {
+			List<IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer, viewer.<SelectionModel<VR>> getAdapter(
 				SelectionModel.class).getSelected(), newSelection);
 	}
 
 	public ChangeSelectionOperation(IViewer<VR> viewer,
-			List<IContentPart<VR>> oldSelection,
-			List<IContentPart<VR>> newSelection) {
+			List<IContentPart<VR, ? extends VR>> oldSelection,
+			List<IContentPart<VR, ? extends VR>> newSelection) {
 		this(DEFAULT_LABEL, viewer, oldSelection, newSelection);
 	}
 
 	public ChangeSelectionOperation(String label, IViewer<VR> viewer,
-			List<IContentPart<VR>> oldSelection,
-			List<IContentPart<VR>> newSelection) {
+			List<IContentPart<VR, ? extends VR>> oldSelection,
+			List<IContentPart<VR, ? extends VR>> newSelection) {
 		super(label);
 		this.viewer = viewer;
-		this.oldSelection = new ArrayList<IContentPart<VR>>(oldSelection);
-		this.newSelection = new ArrayList<IContentPart<VR>>(newSelection);
+		this.oldSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
+				oldSelection);
+		this.newSelection = new ArrayList<IContentPart<VR, ? extends VR>>(
+				newSelection);
 	}
 
 	@Override

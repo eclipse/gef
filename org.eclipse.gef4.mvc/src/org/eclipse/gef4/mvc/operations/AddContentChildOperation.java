@@ -29,11 +29,11 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  */
 public class AddContentChildOperation<VR> extends AbstractOperation {
 
-	private final IContentPart<VR> parent;
+	private final IContentPart<VR, ? extends VR> parent;
 	private final Object contentChild;
 	private int index;
 
-	public AddContentChildOperation(IContentPart<VR> parent,
+	public AddContentChildOperation(IContentPart<VR, ? extends VR> parent,
 			Object contentChild, int index) {
 		super("Add Content Child");
 		this.parent = parent;

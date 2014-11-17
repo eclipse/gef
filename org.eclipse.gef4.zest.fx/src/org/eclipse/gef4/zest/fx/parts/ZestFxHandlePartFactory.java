@@ -30,25 +30,20 @@ import com.google.inject.Provider;
 public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Override
-	protected IHandlePart<Node> createHoverSegmentHandlePart(
-			final IVisualPart<Node> target,
-			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
-			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
+	protected IHandlePart<Node, ? extends Node> createHoverSegmentHandlePart(
+			final IVisualPart<Node, ? extends Node> target,
+			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider, int segmentCount, int segmentIndex,
+			Map<Object, Object> contextMap) {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				return new ZestFxPruningHandlePart(
-						hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
+				return new ZestFxPruningHandlePart(hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
 			} else if (segmentIndex == 1) {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
-				SubgraphModel subgraphModel = target.getRoot().getViewer()
-						.getDomain().getAdapter(SubgraphModel.class);
-				if (subgraphModel
-						.isSubgraphAssociated((NodeContentPart) target)) {
-					return new ZestFxExpandingHandlePart(
-							hoverHandlesSegmentsInSceneProvider, segmentIndex,
-							0);
+				SubgraphModel subgraphModel = target.getRoot().getViewer().getDomain().getAdapter(SubgraphModel.class);
+				if (subgraphModel.isSubgraphAssociated((NodeContentPart) target)) {
+					return new ZestFxExpandingHandlePart(hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
 				}
 			}
 		}
@@ -56,9 +51,8 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 	}
 
 	@Override
-	protected List<IHandlePart<Node>> createSelectionHandleParts(
-			List<? extends IVisualPart<Node>> targets,
-			SelectionBehavior<Node> selectionBehavior,
+	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
+			List<? extends IVisualPart<Node, ? extends Node>> targets, SelectionBehavior<Node> selectionBehavior,
 			Map<Object, Object> contextMap) {
 		return Collections.emptyList();
 	}

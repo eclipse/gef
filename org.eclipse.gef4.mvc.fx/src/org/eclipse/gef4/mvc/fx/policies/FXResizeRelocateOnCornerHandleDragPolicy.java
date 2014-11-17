@@ -89,10 +89,10 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	private Rectangle selectionBounds;
 
 	private ReferencePoint referencePoint = null;
-	private Map<IContentPart<Node>, Double> relX1 = null;
-	private Map<IContentPart<Node>, Double> relY1 = null;
-	private Map<IContentPart<Node>, Double> relX2 = null;
-	private Map<IContentPart<Node>, Double> relY2 = null;
+	private Map<IContentPart<Node, ? extends Node>, Double> relX1 = null;
+	private Map<IContentPart<Node, ? extends Node>, Double> relY1 = null;
+	private Map<IContentPart<Node, ? extends Node>, Double> relX2 = null;
+	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
 
 	public FXResizeRelocateOnCornerHandleDragPolicy(ReferencePoint refPoint) {
 		this.referencePoint = refPoint;
@@ -105,7 +105,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	 *
 	 * @param targetPart
 	 */
-	private void computeRelatives(IContentPart<Node> targetPart) {
+	private void computeRelatives(IContentPart<Node, ? extends Node> targetPart) {
 		Rectangle bounds = getVisualBounds(targetPart);
 
 		double left = bounds.getX() - selectionBounds.getX();
@@ -127,7 +127,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 			return;
 		}
 		Rectangle sel = updateSelectionBounds(e);
-		for (IContentPart<Node> targetPart : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
 			double[] initialBounds = getBounds(selectionBounds, targetPart);
 			double[] newBounds = getBounds(sel, targetPart);
 
@@ -158,7 +158,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		}
 	}
 
-	private double[] getBounds(Rectangle sel, IContentPart<Node> targetPart) {
+	private double[] getBounds(Rectangle sel,
+			IContentPart<Node, ? extends Node> targetPart) {
 		double x1 = sel.getX() + sel.getWidth() * relX1.get(targetPart);
 		double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
 		double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
@@ -167,7 +168,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
-			IContentPart<Node> part) {
+			IContentPart<Node, ? extends Node> part) {
 		return part.getAdapter(FXResizeRelocatePolicy.class);
 	}
 
@@ -178,7 +179,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	 * @param targetParts
 	 * @return the unioned visual bounds of all target parts
 	 */
-	private Rectangle getSelectionBounds(List<IContentPart<Node>> targetParts) {
+	private Rectangle getSelectionBounds(
+			List<IContentPart<Node, ? extends Node>> targetParts) {
 		if (targetParts.isEmpty()) {
 			throw new IllegalArgumentException("No target parts given.");
 		}
@@ -188,21 +190,23 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 			return bounds;
 		}
 
-		ListIterator<IContentPart<Node>> iterator = targetParts.listIterator(1);
+		ListIterator<IContentPart<Node, ? extends Node>> iterator = targetParts
+				.listIterator(1);
 		while (iterator.hasNext()) {
-			IContentPart<Node> cp = iterator.next();
+			IContentPart<Node, ? extends Node> cp = iterator.next();
 			bounds.union(getVisualBounds(cp));
 		}
 		return bounds;
 	}
 
-	public List<IContentPart<Node>> getTargetParts() {
+	public List<IContentPart<Node, ? extends Node>> getTargetParts() {
 		return getHost().getRoot().getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class)
 				.getSelected();
 	}
 
-	protected Rectangle getVisualBounds(IContentPart<Node> contentPart) {
+	protected Rectangle getVisualBounds(
+			IContentPart<Node, ? extends Node> contentPart) {
 		if (contentPart == null) {
 			throw new IllegalArgumentException("contentPart may not be null!");
 		}
@@ -215,11 +219,11 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		selectionBounds = getSelectionBounds(getTargetParts());
-		relX1 = new HashMap<IContentPart<Node>, Double>();
-		relY1 = new HashMap<IContentPart<Node>, Double>();
-		relX2 = new HashMap<IContentPart<Node>, Double>();
-		relY2 = new HashMap<IContentPart<Node>, Double>();
-		for (IContentPart<Node> targetPart : getTargetParts()) {
+		relX1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
+		relY1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
+		relX2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
+		relY2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
+		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
 			computeRelatives(targetPart);
 			init(getResizeRelocatePolicy(targetPart));
 		}
@@ -227,7 +231,7 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		for (IContentPart<Node> part : getTargetParts()) {
+		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
 				commit(policy);

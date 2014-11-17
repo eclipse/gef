@@ -23,10 +23,10 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class SynchronizeContentAnchoragesOperation<VR> extends
 		AbstractOperation {
 
-	private IContentPart<VR> anchored;
+	private IContentPart<VR, ? extends VR> anchored;
 
 	public SynchronizeContentAnchoragesOperation(String label,
-			IContentPart<VR> anchored) {
+			IContentPart<VR, ? extends VR> anchored) {
 		super(label);
 		this.anchored = anchored;
 	}

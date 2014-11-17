@@ -35,11 +35,11 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IVisualPart<VR> host;
+	private IVisualPart<VR, ? extends VR> host;
 	private boolean active;
 
-	private List<IHandlePart<VR>> handleParts;
-	private List<IFeedbackPart<VR>> feedbackParts;
+	private List<IHandlePart<VR, ? extends VR>> handleParts;
+	private List<IFeedbackPart<VR, ? extends VR>> feedbackParts;
 
 	@Override
 	public void activate() {
@@ -51,11 +51,13 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
-	protected void addFeedback(List<? extends IVisualPart<VR>> targets) {
+	protected void addFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		addFeedback(targets, Collections.<Object, Object> emptyMap());
 	}
 
-	protected void addFeedback(List<? extends IVisualPart<VR>> targets,
+	protected void addFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
 			feedbackParts = BehaviorUtils.createFeedback(targets, this,
@@ -65,11 +67,13 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
-	protected void addHandles(List<? extends IVisualPart<VR>> targets) {
+	protected void addHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		addHandles(targets, Collections.<Object, Object> emptyMap());
 	}
 
-	protected void addHandles(List<? extends IVisualPart<VR>> targets,
+	protected void addHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
 			handleParts = BehaviorUtils
@@ -95,20 +99,20 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	@Override
-	public IVisualPart<VR> getAdaptable() {
+	public IVisualPart<VR, ? extends VR> getAdaptable() {
 		return getHost();
 	}
 
-	protected List<IFeedbackPart<VR>> getFeedbackParts() {
+	protected List<IFeedbackPart<VR, ? extends VR>> getFeedbackParts() {
 		return feedbackParts;
 	}
 
-	protected List<IHandlePart<VR>> getHandleParts() {
+	protected List<IHandlePart<VR, ? extends VR>> getHandleParts() {
 		return handleParts;
 	}
 
 	@Override
-	public IVisualPart<VR> getHost() {
+	public IVisualPart<VR, ? extends VR> getHost() {
 		return host;
 	}
 
@@ -117,7 +121,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		return active;
 	}
 
-	protected void removeFeedback(List<? extends IVisualPart<VR>> targets) {
+	protected void removeFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (feedbackParts != null && !feedbackParts.isEmpty()) {
 			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
@@ -127,7 +132,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 		}
 	}
 
-	protected void removeHandles(List<? extends IVisualPart<VR>> targets) {
+	protected void removeHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets) {
 		if (handleParts != null && !handleParts.isEmpty()) {
 			if (targets != null && !targets.isEmpty()) {
 				BehaviorUtils.<VR> removeAnchorages(getHost().getRoot(),
@@ -143,7 +149,7 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 	}
 
 	@Override
-	public void setAdaptable(IVisualPart<VR> adaptable) {
+	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
 		this.host = adaptable;
 	}
 

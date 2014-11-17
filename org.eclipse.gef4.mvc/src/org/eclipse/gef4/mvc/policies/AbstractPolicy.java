@@ -30,8 +30,8 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 
-	private IVisualPart<VR> host;
-	private final Map<IVisualPart<?>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<?>, Boolean>();
+	private IVisualPart<VR, ? extends VR> host;
+	private final Map<IVisualPart<VR, ? extends VR>, Boolean> initialRefreshVisual = new HashMap<IVisualPart<VR, ? extends VR>, Boolean>();
 
 	protected void commit(IPolicy<VR> policy) {
 		if (policy != null && policy instanceof ITransactional) {
@@ -42,21 +42,21 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 		}
 	}
 
-	protected void disableRefreshVisuals(IVisualPart<?> anchorage) {
+	protected void disableRefreshVisuals(IVisualPart<VR, ? extends VR> anchorage) {
 		initialRefreshVisual.put(anchorage, anchorage.isRefreshVisual());
 	}
 
-	protected void enableRefreshVisuals(IVisualPart<VR> part) {
+	protected void enableRefreshVisuals(IVisualPart<VR, ? extends VR> part) {
 		part.setRefreshVisual(initialRefreshVisual.remove(part));
 	}
 
 	@Override
-	public IVisualPart<VR> getAdaptable() {
+	public IVisualPart<VR, ? extends VR> getAdaptable() {
 		return getHost();
 	}
 
 	@Override
-	public IVisualPart<VR> getHost() {
+	public IVisualPart<VR, ? extends VR> getHost() {
 		return host;
 	}
 
@@ -67,7 +67,7 @@ public abstract class AbstractPolicy<VR> implements IPolicy<VR> {
 	}
 
 	@Override
-	public void setAdaptable(IVisualPart<VR> adaptable) {
+	public void setAdaptable(IVisualPart<VR, ? extends VR> adaptable) {
 		this.host = adaptable;
 	}
 

@@ -24,7 +24,7 @@ import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class NodeContentPart extends AbstractFXContentPart {
+public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 
 	public static final String CSS_CLASS = "node";
 	public static final String ATTR_CLASS = "class";
@@ -33,11 +33,13 @@ public class NodeContentPart extends AbstractFXContentPart {
 	public static final String ATTR_IMAGE = "image";
 	public static final Object ATTR_TOOLTIP = "tooltip";
 
-	protected FXLabeledNode visual = new FXLabeledNode();
 	protected IFXAnchor anchor;
 
-	{
+	@Override
+	protected FXLabeledNode createVisual() {
+		FXLabeledNode visual = new FXLabeledNode();
 		visual.getStyleClass().add(CSS_CLASS);
+		return visual;
 	}
 
 	@Override
@@ -47,9 +49,9 @@ public class NodeContentPart extends AbstractFXContentPart {
 	}
 
 	@Override
-	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
+	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
 		if (anchor == null) {
-			anchor = new FXChopBoxAnchor(visual);
+			anchor = new FXChopBoxAnchor(getVisual());
 		}
 		return anchor;
 	}
@@ -57,11 +59,6 @@ public class NodeContentPart extends AbstractFXContentPart {
 	@Override
 	public org.eclipse.gef4.graph.Node getContent() {
 		return (org.eclipse.gef4.graph.Node) super.getContent();
-	}
-
-	@Override
-	public Node getVisual() {
-		return visual;
 	}
 
 	@Override
@@ -79,31 +76,30 @@ public class NodeContentPart extends AbstractFXContentPart {
 		org.eclipse.gef4.graph.Node node = (org.eclipse.gef4.graph.Node) content;
 		Map<String, Object> attrs = node.getAttrs();
 		if (attrs.containsKey(ATTR_CLASS)) {
-			visual.getStyleClass().add((String) attrs.get(ATTR_CLASS));
+			getVisual().getStyleClass().add((String) attrs.get(ATTR_CLASS));
 		}
 		if (attrs.containsKey(ATTR_ID)) {
-			visual.setId((String) attrs.get(ATTR_ID));
+			getVisual().setId((String) attrs.get(ATTR_ID));
 		}
 		if (attrs.containsKey(ATTR_STYLE)) {
-			visual.setStyle((String) attrs.get(ATTR_STYLE));
+			getVisual().setStyle((String) attrs.get(ATTR_STYLE));
 		}
 
 		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label
-				: label == null ? "-" : label.toString();
-		visual.setLabel(str);
+		String str = label instanceof String ? (String) label : label == null ? "-" : label.toString();
+		getVisual().setLabel(str);
 
 		// set image
 		Object imageFileUrl = attrs.get(ATTR_IMAGE);
 		if (imageFileUrl instanceof String) {
-			visual.getImageView().setImage(new Image((String) imageFileUrl));
+			getVisual().getImageView().setImage(new Image((String) imageFileUrl));
 		}
 
 		// set tooltip
 		Object tooltip = attrs.get(ATTR_TOOLTIP);
 		if (tooltip instanceof String) {
-			Tooltip.install(visual, new Tooltip((String) tooltip));
+			Tooltip.install(getVisual(), new Tooltip((String) tooltip));
 		}
 	}
 

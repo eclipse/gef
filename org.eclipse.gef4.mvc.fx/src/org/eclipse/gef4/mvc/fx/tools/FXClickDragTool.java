@@ -38,13 +38,13 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private boolean dragInProgress;
 
 	protected Collection<? extends AbstractFXClickPolicy> getClickPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXClickPolicy> getAdapters(
 				CLICK_TOOL_POLICY_KEY).values();
 	}
 
 	protected Collection<? extends AbstractFXDragPolicy> getDragPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXDragPolicy> getAdapters(
 				DRAG_TOOL_POLICY_KEY).values();
 	}
@@ -62,9 +62,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
 						double dy) {
-					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-							Collections.singleton(viewer), target,
-							DRAG_TOOL_POLICY_KEY);
+					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+							.getTargetPart(Collections.singleton(viewer),
+									target, DRAG_TOOL_POLICY_KEY);
 					if (targetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {
@@ -79,7 +79,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					e.consume();
 
 					// click first
-					IVisualPart<Node> clickTargetPart = FXPartUtils
+					IVisualPart<Node, ? extends Node> clickTargetPart = FXPartUtils
 							.getTargetPart(getDomain().getViewers().values(),
 									target, null);
 					if (clickTargetPart != null) {
@@ -92,7 +92,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					}
 
 					// drag second
-					IVisualPart<Node> dragTargetPart = FXPartUtils
+					IVisualPart<Node, ? extends Node> dragTargetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
 					if (dragTargetPart != null) {
@@ -108,9 +108,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				@Override
 				protected void release(Node target, MouseEvent e, double dx,
 						double dy) {
-					IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-							Collections.singleton(viewer), target,
-							DRAG_TOOL_POLICY_KEY);
+					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+							.getTargetPart(Collections.singleton(viewer),
+									target, DRAG_TOOL_POLICY_KEY);
 					if (targetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {

@@ -19,7 +19,8 @@ import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> {
+abstract public class AbstractFXFeedbackPart<N extends Node> extends
+		AbstractFeedbackPart<Node, N> {
 
 	private final VisualChangeListener visualListener = new VisualChangeListener() {
 		@Override
@@ -35,14 +36,14 @@ abstract public class AbstractFXFeedbackPart extends AbstractFeedbackPart<Node> 
 	};
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		visualListener.register(anchorage.getVisual(), getVisual());
 	};
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		visualListener.unregister();
 	}
 }

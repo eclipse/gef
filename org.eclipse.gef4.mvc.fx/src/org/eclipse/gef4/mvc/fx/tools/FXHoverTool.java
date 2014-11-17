@@ -49,13 +49,13 @@ public class FXHoverTool extends AbstractTool<Node> {
 			List<Node> targetNodes = FXUtils.getNodesAt(scene.getRoot(),
 					event.getSceneX(), event.getSceneY());
 
-			IVisualPart<Node> targetPart = null;
+			IVisualPart<Node, ? extends Node> targetPart = null;
 			outer: for (int i = 0; i < targetNodes.size(); i++) {
 				Node n = targetNodes.get(i);
 				for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 					if (viewer instanceof FXViewer) {
 						if (((FXViewer) viewer).getScene() == scene) {
-							IVisualPart<Node> part = ((FXViewer) viewer)
+							IVisualPart<Node, ? extends Node> part = ((FXViewer) viewer)
 									.getVisualPartMap().get(n);
 							if (part != null) {
 								targetPart = part;
@@ -89,7 +89,7 @@ public class FXHoverTool extends AbstractTool<Node> {
 	};
 
 	protected Collection<? extends AbstractFXHoverPolicy> getHoverPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXHoverPolicy> getAdapters(TOOL_POLICY_KEY)
 				.values();
 	}

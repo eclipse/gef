@@ -49,20 +49,22 @@ public class ClearHoverFocusSelectionOperation<VR> extends
 	}
 
 	@SuppressWarnings("unchecked")
-	private IContentPart<VR> findNewFocus(
-			Collection<IContentPart<VR>> isSelected, IContentPart<VR> part) {
+	private IContentPart<VR, ? extends VR> findNewFocus(
+			Collection<IContentPart<VR, ? extends VR>> isSelected,
+			IContentPart<VR, ? extends VR> part) {
 		if (isSelected.contains(part)) {
 			return null;
 		}
 
-		List<IContentPart<VR>> contentPartChildren = PartUtils.filterParts(
-				part.getChildren(), IContentPart.class);
+		List<IContentPart<VR, ? extends VR>> contentPartChildren = PartUtils
+				.filterParts(part.getChildren(), IContentPart.class);
 		if (contentPartChildren.isEmpty()) {
 			return part;
 		}
 
-		for (IContentPart<VR> child : contentPartChildren) {
-			IContentPart<VR> newFocus = findNewFocus(isSelected, child);
+		for (IContentPart<VR, ? extends VR> child : contentPartChildren) {
+			IContentPart<VR, ? extends VR> newFocus = findNewFocus(isSelected,
+					child);
 			if (newFocus != null) {
 				return newFocus;
 			}
@@ -74,13 +76,15 @@ public class ClearHoverFocusSelectionOperation<VR> extends
 	protected ChangeFocusOperation<VR> getChangeFocusOperation(
 			IViewer<VR> viewer) {
 		// focus first un-selected content leaf
-		List<IContentPart<VR>> isSelected = viewer
+		List<IContentPart<VR, ? extends VR>> isSelected = viewer
 				.<SelectionModel<VR>> getAdapter(SelectionModel.class)
 				.getSelected();
 		for (Object content : viewer.getAdapter(ContentModel.class)
 				.getContents()) {
-			IContentPart<VR> part = viewer.getContentPartMap().get(content);
-			IContentPart<VR> newFocus = findNewFocus(isSelected, part);
+			IContentPart<VR, ? extends VR> part = viewer.getContentPartMap()
+					.get(content);
+			IContentPart<VR, ? extends VR> newFocus = findNewFocus(isSelected,
+					part);
 			if (newFocus != null) {
 				return new ChangeFocusOperation<VR>(viewer, newFocus);
 			}
@@ -91,8 +95,8 @@ public class ClearHoverFocusSelectionOperation<VR> extends
 
 	protected ChangeHoverOperation<VR> getChangeHoverOperation(
 			IViewer<VR> viewer) {
-		IVisualPart<VR> hover = viewer.<HoverModel<VR>> getAdapter(
-				HoverModel.class).getHover();
+		IVisualPart<VR, ? extends VR> hover = viewer
+				.<HoverModel<VR>> getAdapter(HoverModel.class).getHover();
 		ChangeHoverOperation<VR> changeHoverOperation = null;
 		if (hover != null) {
 			changeHoverOperation = new ChangeHoverOperation<VR>(viewer, null);
@@ -103,7 +107,7 @@ public class ClearHoverFocusSelectionOperation<VR> extends
 	protected ChangeSelectionOperation<VR> getChangeSelectionOperation(
 			IViewer<VR> viewer) {
 		return new ChangeSelectionOperation<VR>(viewer,
-				Collections.<IContentPart<VR>> emptyList());
+				Collections.<IContentPart<VR, ? extends VR>> emptyList());
 	}
 
 }

@@ -29,12 +29,13 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
  */
 public class AttachToContentAnchorageOperation<VR> extends AbstractOperation {
 
-	private final IContentPart<VR> anchored;
+	private final IContentPart<VR, ? extends VR> anchored;
 	private final Object contentAnchorage;
 	private final String role;
 
-	public AttachToContentAnchorageOperation(IContentPart<VR> anchored,
-			Object contentAnchorage, String role) {
+	public AttachToContentAnchorageOperation(
+			IContentPart<VR, ? extends VR> anchored, Object contentAnchorage,
+			String role) {
 		super("Attach To Content Anchorage");
 		this.anchored = anchored;
 		this.contentAnchorage = contentAnchorage;

@@ -32,7 +32,7 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 	@Override
 	public void activate() {
 		super.activate();
-		IRootPart<Node> root = getHost().getRoot();
+		IRootPart<Node, ? extends Node> root = getHost().getRoot();
 		if (!(root instanceof FXRootPart)) {
 			throw new IllegalStateException(
 					"MVC IRootPart has to be an FXRootPart!");

@@ -22,15 +22,16 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
 
-public class FXHoverFeedbackPart extends AbstractFXFeedbackPart {
+public class FXHoverFeedbackPart extends
+		AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
 
 	private final Provider<IGeometry> feedbackGeometryProvider;
-	private FXGeometryNode<IGeometry> visual;
 
 	public FXHoverFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
 	}
 
+	@Override
 	protected FXGeometryNode<IGeometry> createVisual() {
 		FXGeometryNode<IGeometry> visual = new FXGeometryNode<IGeometry>();
 		visual.setFill(Color.TRANSPARENT);
@@ -68,14 +69,6 @@ public class FXHoverFeedbackPart extends AbstractFXFeedbackPart {
 		DropShadow effect = new DropShadow();
 		effect.setRadius(3);
 		return effect;
-	}
-
-	@Override
-	public FXGeometryNode<IGeometry> getVisual() {
-		if (visual == null) {
-			visual = createVisual();
-		}
-		return visual;
 	}
 
 }

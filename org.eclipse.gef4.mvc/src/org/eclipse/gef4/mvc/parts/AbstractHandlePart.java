@@ -7,31 +7,35 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.parts;
 
 /**
  * The abstract base implementation of {@link IHandlePart}, intended to be
  * sub-classed by clients to create their own custom {@link IHandlePart}.
- * 
+ *
  * @author anyssen
- * 
+ *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
- *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ *            The visual root node of the UI toolkit this
+ *            {@link AbstractHandlePart} is used in, e.g. javafx.scene.Node in
+ *            case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link AbstractHandlePart}.
  */
-public abstract class AbstractHandlePart<VR> extends AbstractVisualPart<VR>
-		implements IHandlePart<VR> {
+public abstract class AbstractHandlePart<VR, V extends VR> extends
+		AbstractVisualPart<VR, V> implements IHandlePart<VR, V> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<VR> child, int index) {
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support children");
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<VR> child, int index) {
+	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
 		throw new UnsupportedOperationException(
 				"IHandleParts do not support this");
 	}

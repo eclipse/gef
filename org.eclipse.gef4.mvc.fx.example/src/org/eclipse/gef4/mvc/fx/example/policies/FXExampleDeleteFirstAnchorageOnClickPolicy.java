@@ -27,12 +27,13 @@ public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node>, String> anchorages = getHost()
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost()
 				.getAnchorages();
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node> anchorage = anchorages.keySet().iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
+				.iterator().next();
 		if (anchorage instanceof IContentPart) {
 			ContentPolicy<Node> policy = anchorage
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);

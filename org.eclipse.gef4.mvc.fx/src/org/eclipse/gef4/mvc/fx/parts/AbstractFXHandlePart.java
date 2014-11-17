@@ -22,13 +22,14 @@ import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
+abstract public class AbstractFXHandlePart<N extends Node> extends
+		AbstractHandlePart<Node, N> {
 
-	private final Map<IVisualPart<Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
+	private final Map<IVisualPart<Node, ? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// we only add one VCL per anchorage
 		if (!visualChangeListeners.containsKey(anchorage)) {
 			VisualChangeListener listener = new VisualChangeListener() {
@@ -39,8 +40,8 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 				}
 
 				@Override
-				protected void localToParentTransformChanged(
-						Node observed, Transform oldTransform, Transform newTransform) {
+				protected void localToParentTransformChanged(Node observed,
+						Transform oldTransform, Transform newTransform) {
 					refreshVisual();
 				}
 			};
@@ -50,8 +51,8 @@ abstract public class AbstractFXHandlePart extends AbstractHandlePart<Node> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// the anchorage might be registered under a different role
 		if (!getAnchorages().containsKey(anchorage)) {
 			// now we are sure that we do not need to listen to visual changes

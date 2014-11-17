@@ -99,16 +99,16 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	protected void disableRefreshVisuals() {
-		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
-				.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
+				.keySet().iterator().next();
 		anchorage.setRefreshVisual(false);
 		initialRefreshVisual = anchorage.isRefreshVisual();
 	}
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
-				.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
+				.keySet().iterator().next();
 		FXConnection connection = (FXConnection) anchorage.getVisual();
 
 		List<Point> before = new ArrayList<Point>(connection.getWayPoints());
@@ -122,12 +122,13 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	protected void enableRefreshVisuals() {
-		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
-				.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
+				.keySet().iterator().next();
 		anchorage.setRefreshVisual(initialRefreshVisual);
 	}
 
-	protected FXBendPolicy getBendPolicy(IVisualPart<Node> targetPart) {
+	protected FXBendPolicy getBendPolicy(
+			IVisualPart<Node, ? extends Node> targetPart) {
 		// retrieve the default bend policy
 		return targetPart.getAdapter(FXBendPolicy.class);
 	}
@@ -141,8 +142,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
 		FXSegmentHandlePart hp = getHost();
-		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
-				.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
+				.keySet().iterator().next();
 
 		disableRefreshVisuals(anchorage);
 		init(getBendPolicy(anchorage));
@@ -184,8 +185,8 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		IVisualPart<Node> anchorage = getHost().getAnchorages().keySet()
-				.iterator().next();
+		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
+				.keySet().iterator().next();
 		enableRefreshVisuals();
 		// TODO: we need to ensure this can be done before
 		// enableRefreshVisuals(), because visuals should already be up to date

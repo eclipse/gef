@@ -40,9 +40,9 @@ public class FXScrollTool extends AbstractTool<Node> {
 			}
 
 			Node targetNode = (Node) target;
-			IVisualPart<Node> targetPart = FXPartUtils.getTargetPart(
-					getDomain().getViewers().values(), targetNode,
-					TOOL_POLICY_KEY);
+			IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
+					.getTargetPart(getDomain().getViewers().values(),
+							targetNode, TOOL_POLICY_KEY);
 
 			if (targetPart == null) {
 				return Collections.emptyList();
@@ -64,7 +64,7 @@ public class FXScrollTool extends AbstractTool<Node> {
 	};
 
 	protected Collection<? extends AbstractFXScrollPolicy> getScrollPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXScrollPolicy> getAdapters(TOOL_POLICY_KEY)
 				.values();
 	}

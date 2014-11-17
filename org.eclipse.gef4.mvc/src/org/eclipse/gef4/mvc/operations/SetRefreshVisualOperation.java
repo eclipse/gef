@@ -34,12 +34,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public class SetRefreshVisualOperation<VR> extends AbstractOperation {
 
-	private IVisualPart<VR> part;
+	private IVisualPart<VR, ? extends VR> part;
 	private boolean from;
 	private boolean to;
 
-	public SetRefreshVisualOperation(IVisualPart<VR> part, boolean from,
-			boolean to) {
+	public SetRefreshVisualOperation(IVisualPart<VR, ? extends VR> part,
+			boolean from, boolean to) {
 		super("Enable/Disable Visual Refresh");
 		this.part = part;
 		this.from = from;

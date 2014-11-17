@@ -35,14 +35,14 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 public class DeletionPolicy<VR> extends AbstractPolicy<VR> implements
 		ITransactional {
 
-	private Set<IContentPart<VR>> partsToDelete;
+	private Set<IContentPart<VR, ? extends VR>> partsToDelete;
 
 	@Override
 	public IUndoableOperation commit() {
 		// unestablish anchor relations
 		ReverseUndoCompositeOperation rev = new ReverseUndoCompositeOperation(
 				"Unestablish Anchor Relations");
-		for (IContentPart<VR> p : partsToDelete) {
+		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
 			ContentPolicy<VR> policy = p
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
@@ -57,7 +57,7 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR> implements
 		}
 
 		// remove content from parent
-		for (IContentPart<VR> p : partsToDelete) {
+		for (IContentPart<VR, ? extends VR> p : partsToDelete) {
 			ContentPolicy<VR> policy = p
 					.<ContentPolicy<VR>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
@@ -80,7 +80,8 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR> implements
 	 * @param contentPartsToDelete
 	 *            The {@link IContentPart}s to mark for deletion.
 	 */
-	public void delete(Collection<IContentPart<VR>> contentPartsToDelete) {
+	public void delete(
+			Collection<IContentPart<VR, ? extends VR>> contentPartsToDelete) {
 		partsToDelete.addAll(contentPartsToDelete);
 	}
 
@@ -90,13 +91,13 @@ public class DeletionPolicy<VR> extends AbstractPolicy<VR> implements
 	 * @param contentPartsToDelete
 	 *            The {@link IContentPart}s to mark for deletion.
 	 */
-	public void delete(IContentPart<VR>... contentPartsToDelete) {
+	public void delete(IContentPart<VR, ? extends VR>... contentPartsToDelete) {
 		partsToDelete.addAll(Arrays.asList(contentPartsToDelete));
 	}
 
 	@Override
 	public void init() {
-		partsToDelete = new HashSet<IContentPart<VR>>();
+		partsToDelete = new HashSet<IContentPart<VR, ? extends VR>>();
 	}
 
 }

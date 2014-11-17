@@ -31,9 +31,9 @@ public class ContentPartFactory implements IContentPartFactory<Node> {
 	private Injector injector;
 
 	@Override
-	public IContentPart<Node> createContentPart(Object content,
-			IBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
-		IContentPart<Node> part = null;
+	public IContentPart<Node, ? extends Node> createContentPart(Object content, IBehavior<Node> contextBehavior,
+			Map<Object, Object> contextMap) {
+		IContentPart<Node, ? extends Node> part = null;
 		if (content instanceof Graph) {
 			part = new GraphContentPart();
 		} else if (content instanceof org.eclipse.gef4.graph.Node) {

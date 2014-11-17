@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
+// TODO: merge with FXSegmentHandlePart
 public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 
 	public static final Color FILL_CONNECTED = Color.web("#ff0000");
@@ -34,25 +35,15 @@ public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 	}
 
 	@Override
-	protected Circle createVisual() {
-		return (Circle) super.createVisual();
-	}
-
-	@Override
 	public void doRefreshVisual() {
 		super.doRefreshVisual();
 		updateColor();
 	}
 
-	@Override
-	public Circle getVisual() {
-		return (Circle) super.getVisual();
-	}
-
 	protected void updateColor() {
 		// only update when bound to anchorage
 		FXRootPart rootPart = (FXRootPart) getRoot();
-		SetMultimap<IVisualPart<Node>, String> anchorages = getAnchorages();
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
 		if (rootPart == null || anchorages.keySet().size() != 1) {
 			return;
 		}
@@ -68,8 +59,8 @@ public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 		} else {
 			// determine connected state for end point handles
 			boolean connected = false;
-			IVisualPart<Node> targetPart = anchorages.keySet().iterator()
-					.next();
+			IVisualPart<Node, ? extends Node> targetPart = anchorages.keySet()
+					.iterator().next();
 			if (targetPart.getVisual() instanceof FXConnection) {
 				FXConnection connection = (FXConnection) targetPart.getVisual();
 				if (getSegmentIndex() + getSegmentParameter() == 0.0) {

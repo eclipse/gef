@@ -53,13 +53,13 @@ public class BehaviorUtils {
 	 *            of JavaFX.
 	 * @see #removeAnchorages(IRootPart, List, List)
 	 */
-	public static <VR> void addAnchorages(IRootPart<VR> root,
-			List<? extends IVisualPart<VR>> anchorages,
-			List<? extends IVisualPart<VR>> anchoreds) {
+	public static <VR> void addAnchorages(IRootPart<VR, ? extends VR> root,
+			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
+			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			root.addChildren(anchoreds);
-			for (IVisualPart<VR> anchored : anchoreds) {
-				for (IVisualPart<VR> anchorage : anchorages) {
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
+				for (IVisualPart<VR, ? extends VR> anchorage : anchorages) {
 					anchored.addAnchorage(anchorage);
 				}
 			}
@@ -84,14 +84,14 @@ public class BehaviorUtils {
 	 *            {@link IBehavior} is stateless.
 	 * @return {@link List} of {@link IFeedbackPart}s created by the factory.
 	 */
-	public static <VR> List<IFeedbackPart<VR>> createFeedback(
-			List<? extends IVisualPart<VR>> targets, IBehavior<VR> behavior,
-			Map<Object, Object> contextMap) {
-		IVisualPart<VR> host = behavior.getAdaptable();
+	public static <VR> List<IFeedbackPart<VR, ? extends VR>> createFeedback(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
+			IBehavior<VR> behavior, Map<Object, Object> contextMap) {
+		IVisualPart<VR, ? extends VR> host = behavior.getAdaptable();
 		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
 				.getFeedbackPartFactory();
-		List<IFeedbackPart<VR>> feedbackParts = factory.createFeedbackParts(
-				targets, behavior, contextMap);
+		List<IFeedbackPart<VR, ? extends VR>> feedbackParts = factory
+				.createFeedbackParts(targets, behavior, contextMap);
 		return feedbackParts;
 	}
 
@@ -113,14 +113,14 @@ public class BehaviorUtils {
 	 *            {@link IBehavior} is stateless.
 	 * @return {@link List} of {@link IHandlePart}s created by the factory.
 	 */
-	public static <VR> List<IHandlePart<VR>> createHandles(
-			List<? extends IVisualPart<VR>> targets, IBehavior<VR> behavior,
-			Map<Object, Object> contextMap) {
-		IVisualPart<VR> host = behavior.getAdaptable();
+	public static <VR> List<IHandlePart<VR, ? extends VR>> createHandles(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
+			IBehavior<VR> behavior, Map<Object, Object> contextMap) {
+		IVisualPart<VR, ? extends VR> host = behavior.getAdaptable();
 		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
 				.getHandlePartFactory();
-		List<IHandlePart<VR>> handleParts = factory.createHandleParts(targets,
-				behavior, contextMap);
+		List<IHandlePart<VR, ? extends VR>> handleParts = factory
+				.createHandleParts(targets, behavior, contextMap);
 		return handleParts;
 	}
 
@@ -142,13 +142,13 @@ public class BehaviorUtils {
 	 *            of JavaFX.
 	 * @see #addAnchorages(IRootPart, List, List)
 	 */
-	public static <VR> void removeAnchorages(IRootPart<VR> root,
-			List<? extends IVisualPart<VR>> anchorages,
-			List<? extends IVisualPart<VR>> anchoreds) {
+	public static <VR> void removeAnchorages(IRootPart<VR, ? extends VR> root,
+			List<? extends IVisualPart<VR, ? extends VR>> anchorages,
+			List<? extends IVisualPart<VR, ? extends VR>> anchoreds) {
 		if (anchoreds != null && !anchoreds.isEmpty()) {
 			root.removeChildren(anchoreds);
-			for (IVisualPart<VR> anchored : anchoreds) {
-				for (IVisualPart<VR> anchorage : anchorages) {
+			for (IVisualPart<VR, ? extends VR> anchored : anchoreds) {
+				for (IVisualPart<VR, ? extends VR> anchorage : anchorages) {
 					anchored.removeAnchorage(anchorage);
 				}
 			}

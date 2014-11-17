@@ -19,10 +19,12 @@ import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
+public abstract class AbstractFXContentPart<N extends Node> extends
+		AbstractContentPart<Node, N> {
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node> child, int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		if (getVisual() instanceof Group) {
 			((Group) getVisual()).getChildren().add(index, child.getVisual());
 		} else if (getVisual() instanceof Pane) {
@@ -33,24 +35,25 @@ public abstract class AbstractFXContentPart extends AbstractContentPart<Node> {
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// do nothing by default
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node> anchorage,
-			String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// do nothing by default
 	}
 
-	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
+	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
 		// no anchor by default
 		return null;
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node> child, int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		if (getVisual() instanceof Group) {
 			((Group) getVisual()).getChildren().remove(child.getVisual());
 		} else if (getVisual() instanceof Pane) {

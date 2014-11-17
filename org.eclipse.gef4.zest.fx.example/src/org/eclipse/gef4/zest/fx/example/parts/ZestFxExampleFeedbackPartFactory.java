@@ -18,13 +18,11 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class ZestFxExampleFeedbackPartFactory extends
-		FXDefaultFeedbackPartFactory {
+public class ZestFxExampleFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
 
 	@Override
-	protected IFeedbackPart<Node> createLinkFeedbackPart(
-			IVisualPart<Node> anchored, IVisualPart<Node> anchorage,
-			String anchorageRole) {
+	protected IFeedbackPart<Node, ? extends Node> createLinkFeedbackPart(IVisualPart<Node, ? extends Node> anchored,
+			IVisualPart<Node, ? extends Node> anchorage, String anchorageRole) {
 		return null;
 	}
 

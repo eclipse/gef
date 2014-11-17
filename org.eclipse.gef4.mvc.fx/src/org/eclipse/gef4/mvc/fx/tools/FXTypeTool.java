@@ -56,7 +56,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 	};
 
 	protected Collection<? extends AbstractFXTypePolicy> getKeyPolicies(
-			IVisualPart<Node> targetPart) {
+			IVisualPart<Node, ? extends Node> targetPart) {
 		return targetPart.<AbstractFXTypePolicy> getAdapters(TOOL_POLICY_KEY)
 				.values();
 	}
@@ -73,11 +73,11 @@ public class FXTypeTool extends AbstractTool<Node> {
 			return Collections.emptyList();
 		}
 
-		IVisualPart<Node> targetPart = null;
+		IVisualPart<Node, ? extends Node> targetPart = null;
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
 			if (viewer instanceof FXViewer) {
 				if (((FXViewer) viewer).getScene() == scene) {
-					IVisualPart<Node> part = viewer
+					IVisualPart<Node, ? extends Node> part = viewer
 							.<FocusModel<Node>> getAdapter(FocusModel.class)
 							.getFocused();
 					if (part == null) {

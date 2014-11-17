@@ -22,9 +22,11 @@ package org.eclipse.gef4.mvc.parts;
  * @author anyssen
  *
  * @param <VR>
- *            The visual root node of the UI toolkit this {@link IVisualPart} is
+ *            The visual root node of the UI toolkit this {@link IHandlePart} is
  *            used in, e.g. javafx.scene.Node in case of JavaFX.
+ * @param <V>
+ *            The visual node used by this {@link IHandlePart}.
  */
-public interface IHandlePart<VR> extends IVisualPart<VR> {
+public interface IHandlePart<VR, V extends VR> extends IVisualPart<VR, V> {
 
 }

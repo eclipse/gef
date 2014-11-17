@@ -13,9 +13,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.inject.Provider;
 
 public class VisualOutlineGeometryProvider implements
-		IAdaptable.Bound<IVisualPart<Node>>, Provider<IGeometry> {
+		IAdaptable.Bound<IVisualPart<Node, ? extends Node>>,
+		Provider<IGeometry> {
 
-	private IVisualPart<Node> host;
+	private IVisualPart<Node, ? extends Node> host;
 
 	@Override
 	public IGeometry get() {
@@ -24,7 +25,7 @@ public class VisualOutlineGeometryProvider implements
 	}
 
 	@Override
-	public IVisualPart<Node> getAdaptable() {
+	public IVisualPart<Node, ? extends Node> getAdaptable() {
 		return host;
 	}
 
@@ -50,7 +51,7 @@ public class VisualOutlineGeometryProvider implements
 	}
 
 	@Override
-	public void setAdaptable(IVisualPart<Node> adaptable) {
+	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
 		this.host = adaptable;
 	}
 

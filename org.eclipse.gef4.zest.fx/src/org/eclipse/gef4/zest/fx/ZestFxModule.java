@@ -105,7 +105,7 @@ public class ZestFxModule extends MvcFxModule {
 
 	@Override
 	protected void bindIRootPart() {
-		binder().bind(new TypeLiteral<IRootPart<Node>>() {
+		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
 		}).to(GraphRootPart.class);
 	}
 

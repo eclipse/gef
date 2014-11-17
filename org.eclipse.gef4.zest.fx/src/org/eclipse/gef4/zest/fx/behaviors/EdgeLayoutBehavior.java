@@ -26,8 +26,7 @@ public class EdgeLayoutBehavior extends AbstractLayoutBehavior {
 
 	@Override
 	protected void initializeLayout(GraphLayoutContext glc) {
-		edgeLayout = glc.getEdgeLayout((Edge) ((IContentPart<Node>) getHost())
-				.getContent());
+		edgeLayout = glc.getEdgeLayout((Edge) ((IContentPart<Node, ? extends Node>) getHost()).getContent());
 	}
 
 	@Override

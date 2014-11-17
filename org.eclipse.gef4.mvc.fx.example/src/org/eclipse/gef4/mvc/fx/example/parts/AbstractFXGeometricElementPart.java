@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
@@ -19,13 +19,8 @@ import javafx.scene.Node;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 
-public abstract class AbstractFXGeometricElementPart extends
-		AbstractFXContentPart implements PropertyChangeListener {
-
-	@Override
-	public AbstractFXGeometricElement<?> getContent() {
-		return (AbstractFXGeometricElement<?>) super.getContent();
-	}
+public abstract class AbstractFXGeometricElementPart<N extends Node> extends
+		AbstractFXContentPart<N> implements PropertyChangeListener {
 
 	@Override
 	protected void doActivate() {
@@ -40,18 +35,23 @@ public abstract class AbstractFXGeometricElementPart extends
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getSource() == getContent()) {
-			refreshVisual();
-		}
-	}
-
-	@Override
 	public void doRefreshVisual() {
 		Node visual = getVisual();
 		AbstractFXGeometricElement<?> content = getContent();
 		if (visual.getEffect() != content.getEffect()) {
 			visual.setEffect(content.getEffect());
+		}
+	}
+
+	@Override
+	public AbstractFXGeometricElement<?> getContent() {
+		return (AbstractFXGeometricElement<?>) super.getContent();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getSource() == getContent()) {
+			refreshVisual();
 		}
 	}
 

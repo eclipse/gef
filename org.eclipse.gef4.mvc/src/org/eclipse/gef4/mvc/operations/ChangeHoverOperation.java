@@ -34,21 +34,24 @@ public class ChangeHoverOperation<VR> extends AbstractOperation {
 	public static final String DEFAULT_LABEL = "Change Hover";
 
 	private IViewer<VR> viewer;
-	private IVisualPart<VR> oldHovered;
-	private IVisualPart<VR> newHovered;
+	private IVisualPart<VR, ? extends VR> oldHovered;
+	private IVisualPart<VR, ? extends VR> newHovered;
 
-	public ChangeHoverOperation(IViewer<VR> viewer, IVisualPart<VR> newHovered) {
+	public ChangeHoverOperation(IViewer<VR> viewer,
+			IVisualPart<VR, ? extends VR> newHovered) {
 		this(DEFAULT_LABEL, viewer, viewer.getAdapter(HoverModel.class)
 				.getHover(), newHovered);
 	}
 
-	public ChangeHoverOperation(IViewer<VR> viewer, IVisualPart<VR> oldHovered,
-			IVisualPart<VR> newHovered) {
+	public ChangeHoverOperation(IViewer<VR> viewer,
+			IVisualPart<VR, ? extends VR> oldHovered,
+			IVisualPart<VR, ? extends VR> newHovered) {
 		this(DEFAULT_LABEL, viewer, oldHovered, newHovered);
 	}
 
 	public ChangeHoverOperation(String label, IViewer<VR> viewer,
-			IVisualPart<VR> oldHovered, IVisualPart<VR> newHovered) {
+			IVisualPart<VR, ? extends VR> oldHovered,
+			IVisualPart<VR, ? extends VR> newHovered) {
 		super(label);
 		this.viewer = viewer;
 		this.oldHovered = oldHovered;

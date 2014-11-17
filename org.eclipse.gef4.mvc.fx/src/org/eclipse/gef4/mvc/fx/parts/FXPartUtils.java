@@ -47,7 +47,7 @@ public class FXPartUtils {
 	 * @return The first suitable target part, or <code>null</code> if no
 	 *         suitable target part can be found.
 	 */
-	public static <T extends IPolicy<Node>> IVisualPart<Node> getTargetPart(
+	public static <T extends IPolicy<Node>> IVisualPart<Node, ? extends Node> getTargetPart(
 			Collection<IViewer<Node>> viewers, Node visual,
 			Class<T> supportedPolicy) {
 		for (IViewer<Node> viewer : viewers) {
@@ -55,8 +55,8 @@ public class FXPartUtils {
 
 			// traverse the node hierarchy to find a suitable part
 			Node targetNode = visual;
-			IVisualPart<Node> targetPart = viewer.getVisualPartMap().get(
-					targetNode);
+			IVisualPart<Node, ? extends Node> targetPart = viewer
+					.getVisualPartMap().get(targetNode);
 			while (targetNode != null
 					&& (targetPart == null || supportedPolicy != null
 							&& targetPart.getAdapters(supportedPolicy)
@@ -80,9 +80,9 @@ public class FXPartUtils {
 	}
 
 	public static Bounds getUnionedVisualBoundsInScene(
-			Collection<? extends IVisualPart<Node>> parts) {
+			Collection<? extends IVisualPart<Node, ? extends Node>> parts) {
 		org.eclipse.gef4.geometry.planar.Rectangle unionedBoundsInScene = null;
-		for (IVisualPart<Node> cp : parts) {
+		for (IVisualPart<Node, ? extends Node> cp : parts) {
 			Bounds boundsInScene = cp.getVisual().localToScene(
 					cp.getVisual().getLayoutBounds());
 			if (unionedBoundsInScene == null) {

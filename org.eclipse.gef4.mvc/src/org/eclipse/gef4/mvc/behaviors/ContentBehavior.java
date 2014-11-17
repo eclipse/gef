@@ -55,7 +55,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	// parts are re-used when re-synchronizing; as such, we put content parts
 	// into this pool within disposeIfObsolete() and relocate them within
 	// findOrCreatePart()
-	private Map<Object, IContentPart<VR>> contentPartPool;
+	private Map<Object, IContentPart<VR, ? extends VR>> contentPartPool;
 
 	@Override
 	public void activate() {
@@ -66,9 +66,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			synchronizeContentChildren(contentModel.getContents());
 			contentModel.addPropertyChangeListener(this);
 		} else {
-			synchronizeContentChildren(((IContentPart<VR>) getHost())
+			synchronizeContentChildren(((IContentPart<VR, ? extends VR>) getHost())
 					.getContentChildren());
-			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
+			synchronizeContentAnchorages(((IContentPart<VR, ? extends VR>) getHost())
 					.getContentAnchorages());
 			getHost().addPropertyChangeListener(this);
 		}
@@ -88,27 +88,27 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		super.deactivate();
 	}
 
-	protected void disposeIfObsolete(IContentPart<VR> contentPart) {
+	protected void disposeIfObsolete(IContentPart<VR, ? extends VR> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
 			// keep track of the removed content part, so we may relocate it
 			// within findOrCreate() later
 			if (contentPartPool == null) {
-				contentPartPool = new HashMap<Object, IContentPart<VR>>();
+				contentPartPool = new HashMap<Object, IContentPart<VR, ? extends VR>>();
 			}
 			contentPartPool.put(contentPart.getContent(), contentPart);
 			contentPart.setContent(null);
 		}
 	}
 
-	protected IContentPart<VR> findOrCreatePartFor(Object content) {
-		Map<Object, IContentPart<VR>> contentPartMap = getHost().getRoot()
-				.getViewer().getContentPartMap();
+	protected IContentPart<VR, ? extends VR> findOrCreatePartFor(Object content) {
+		Map<Object, IContentPart<VR, ? extends VR>> contentPartMap = getHost()
+				.getRoot().getViewer().getContentPartMap();
 		if (contentPartMap.containsKey(content)) {
 			return contentPartMap.get(content);
 		} else {
 			// 'Revive' a content part, if it was removed before
-			IContentPart<VR> contentPart = null;
+			IContentPart<VR, ? extends VR> contentPart = null;
 			if (contentPartPool != null) {
 				contentPart = contentPartPool.remove(content);
 				if (contentPartPool.isEmpty()) {
@@ -148,9 +148,9 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 					.clearHover();
 		} else if (IContentPart.CONTENT_PROPERTY
 				.equals(event.getPropertyName())) {
-			synchronizeContentChildren(((IContentPart<VR>) getHost())
+			synchronizeContentChildren(((IContentPart<VR, ? extends VR>) getHost())
 					.getContentChildren());
-			synchronizeContentAnchorages(((IContentPart<VR>) getHost())
+			synchronizeContentAnchorages(((IContentPart<VR, ? extends VR>) getHost())
 					.getContentAnchorages());
 		}
 	}
@@ -170,42 +170,46 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	 */
 	public void synchronizeContentAnchorages(
 			SetMultimap<? extends Object, String> contentAnchorages) {
-		SetMultimap<IVisualPart<VR>, String> anchorages = getHost()
+		SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages = getHost()
 				.getAnchorages();
 
 		// find anchorages whose content vanished
-		List<Entry<IVisualPart<VR>, String>> toRemove = new ArrayList<Map.Entry<IVisualPart<VR>, String>>();
-		Set<Entry<IVisualPart<VR>, String>> entries = anchorages.entries();
-		for (Entry<IVisualPart<VR>, String> e : entries) {
+		List<Entry<IVisualPart<VR, ? extends VR>, String>> toRemove = new ArrayList<Map.Entry<IVisualPart<VR, ? extends VR>, String>>();
+		Set<Entry<IVisualPart<VR, ? extends VR>, String>> entries = anchorages
+				.entries();
+		for (Entry<IVisualPart<VR, ? extends VR>, String> e : entries) {
 			if (!(e.getKey() instanceof IContentPart)) {
 				continue;
 			}
-			Object content = ((IContentPart<VR>) e.getKey()).getContent();
+			Object content = ((IContentPart<VR, ? extends VR>) e.getKey())
+					.getContent();
 			if (!contentAnchorages.containsEntry(content, e.getValue())) {
 				toRemove.add(e);
 			}
-			disposeIfObsolete((IContentPart<VR>) e.getKey());
+			disposeIfObsolete((IContentPart<VR, ? extends VR>) e.getKey());
 		}
 
 		// Correspondingly remove the anchorages. This is done in a separate
 		// step to prevent ConcurrentModificationException.
-		for (Entry<IVisualPart<VR>, String> e : toRemove) {
+		for (Entry<IVisualPart<VR, ? extends VR>, String> e : toRemove) {
 			getHost().removeAnchorage(e.getKey(), e.getValue());
 		}
 
 		// find content for which no anchorages exist
-		List<Entry<IVisualPart<VR>, String>> toAdd = new ArrayList<Map.Entry<IVisualPart<VR>, String>>();
+		List<Entry<IVisualPart<VR, ? extends VR>, String>> toAdd = new ArrayList<Map.Entry<IVisualPart<VR, ? extends VR>, String>>();
 		for (Entry<? extends Object, String> e : contentAnchorages.entries()) {
-			IContentPart<VR> anchorage = findOrCreatePartFor(e.getKey());
+			IContentPart<VR, ? extends VR> anchorage = findOrCreatePartFor(e
+					.getKey());
 			if (!anchorages.containsEntry(anchorage, e.getValue())) {
-				toAdd.add(Maps.<IVisualPart<VR>, String> immutableEntry(
-						anchorage, e.getValue()));
+				toAdd.add(Maps
+						.<IVisualPart<VR, ? extends VR>, String> immutableEntry(
+								anchorage, e.getValue()));
 			}
 		}
 
 		// Correspondingly add the anchorages. This is done in a separate step
 		// to prevent ConcurrentModificationException.
-		for (Entry<IVisualPart<VR>, String> e : toAdd) {
+		for (Entry<IVisualPart<VR, ? extends VR>, String> e : toAdd) {
 			getHost().addAnchorage(e.getKey(), e.getValue());
 		}
 	}
@@ -229,16 +233,16 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		int i;
 
 		// only synchronize IContentPart children
-		List<IContentPart<VR>> childContentParts = PartUtils.filterParts(
-				getHost().getChildren(), IContentPart.class);
+		List<IContentPart<VR, ? extends VR>> childContentParts = PartUtils
+				.filterParts(getHost().getChildren(), IContentPart.class);
 		int contentChildrenSize = contentChildren.size();
 		int childContentPartsSize = childContentParts.size();
 
-		Map<Object, IContentPart<VR>> contentToContentPartMap = Collections
+		Map<Object, IContentPart<VR, ? extends VR>> contentToContentPartMap = Collections
 				.emptyMap();
-		IContentPart<VR> contentPart;
+		IContentPart<VR, ? extends VR> contentPart;
 		if (childContentPartsSize > 0) {
-			contentToContentPartMap = new HashMap<Object, IContentPart<VR>>(
+			contentToContentPartMap = new HashMap<Object, IContentPart<VR, ? extends VR>>(
 					childContentPartsSize);
 			for (i = 0; i < childContentPartsSize; i++) {
 				contentPart = childContentParts.get(i);
@@ -279,13 +283,13 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		childContentPartsSize = childContentParts.size();
 
 		if (i < childContentPartsSize) {
-			List<IContentPart<VR>> trash = new ArrayList<IContentPart<VR>>(
+			List<IContentPart<VR, ? extends VR>> trash = new ArrayList<IContentPart<VR, ? extends VR>>(
 					childContentPartsSize - i);
 			for (; i < childContentPartsSize; i++) {
 				trash.add(childContentParts.get(i));
 			}
 			for (i = 0; i < trash.size(); i++) {
-				IContentPart<VR> ep = trash.get(i);
+				IContentPart<VR, ? extends VR> ep = trash.get(i);
 				getHost().removeChild(ep);
 				disposeIfObsolete(ep);
 			}

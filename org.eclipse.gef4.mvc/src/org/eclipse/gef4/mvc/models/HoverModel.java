@@ -37,7 +37,7 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	final public static String HOVER_PROPERTY = "hover";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IVisualPart<VR> hovered = null;
+	private IVisualPart<VR, ? extends VR> hovered = null;
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -59,7 +59,7 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 *
 	 * @return the currently hovered {@link IContentPart} or <code>null</code>
 	 */
-	public IVisualPart<VR> getHover() {
+	public IVisualPart<VR, ? extends VR> getHover() {
 		return hovered;
 	}
 
@@ -77,8 +77,8 @@ public class HoverModel<VR> implements IPropertyChangeNotifier {
 	 * @param cp
 	 *            hovered {@link IVisualPart} or <code>null</code>
 	 */
-	public void setHover(IVisualPart<VR> cp) {
-		IVisualPart<VR> oldHovered = hovered;
+	public void setHover(IVisualPart<VR, ? extends VR> cp) {
+		IVisualPart<VR, ? extends VR> oldHovered = hovered;
 		hovered = cp;
 		if (oldHovered != hovered) {
 			pcs.firePropertyChange(HOVER_PROPERTY, oldHovered, hovered);

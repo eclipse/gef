@@ -30,15 +30,13 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXRootPart extends AbstractRootPart<Node> {
+public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 
 	/**
 	 * Per default, a ScrollPane draws a border and background color. We do not
 	 * want either.
 	 */
 	private static final String SCROLL_PANE_STYLE = "-fx-background-insets:0;-fx-padding:0;-fx-background-color:rgba(0,0,0,0);";
-
-	private ScrollPane scrollPane;
 
 	private FXGridLayer gridLayer;
 	public Group contentLayer;
@@ -54,7 +52,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	protected void addChildVisual(IVisualPart<Node> child, int index) {
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		if (child instanceof IContentPart) {
 			int contentLayerIndex = 0;
 			for (int i = 0; i < index; i++) {
@@ -155,7 +154,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		scrollPaneContent = createScrollPaneContent(new Node[] { gridLayer,
 				contentLayer, feedbackLayer, handleLayer });
 
-		scrollPane = createScrollPane(scrollPaneContent);
+		visual = createScrollPane(scrollPaneContent);
 
 		// TODO: the zoom property could be provided directly by the content
 		// layer (make it a ZoomableLyer/ScalableLayer).
@@ -175,7 +174,7 @@ public class FXRootPart extends AbstractRootPart<Node> {
 		// TODO: These could each be extracted to a helper, because its generic
 		// functionality not specific to a grid layer (ensure layer is as large
 		// as viewport; ensure layer is as large as other layers).
-		gridLayer.bindMinSizeToBounds(getScrollPane().viewportBoundsProperty());
+		gridLayer.bindMinSizeToBounds(visual.viewportBoundsProperty());
 		@SuppressWarnings("unchecked")
 		ReadOnlyObjectProperty<Bounds>[] boundsInParentProperties = new ReadOnlyObjectProperty[] {
 				contentLayer.boundsInParentProperty(),
@@ -194,6 +193,12 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	protected Group createScrollPaneContent(Node... layers) {
 		return new Group(layers);
+	}
+
+	@Override
+	protected ScrollPane createVisual() {
+		createRootVisuals();
+		return visual;
 	}
 
 	@Override
@@ -230,10 +235,10 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	public ScrollPane getScrollPane() {
-		if (scrollPane == null) {
+		if (visual == null) {
 			createRootVisuals();
 		}
-		return scrollPane;
+		return visual;
 	}
 
 	public Group getScrollPaneContent() {
@@ -249,14 +254,14 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	public Node getVisual() {
-		if (scrollPane == null) {
-			createRootVisuals();
+	public ScrollPane getVisual() {
+		if (visual == null) {
+			visual = createVisual();
 			if (getViewer() != null) {
 				registerAtVisualPartMap();
 			}
 		}
-		return scrollPane;
+		return visual;
 	}
 
 	@Override
@@ -273,7 +278,8 @@ public class FXRootPart extends AbstractRootPart<Node> {
 	}
 
 	@Override
-	protected void removeChildVisual(IVisualPart<Node> child, int index) {
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child,
+			int index) {
 		if (child instanceof IContentPart) {
 			getContentLayer().getChildren().remove(child.getVisual());
 		} else if (child instanceof IFeedbackPart) {
@@ -294,14 +300,14 @@ public class FXRootPart extends AbstractRootPart<Node> {
 
 	@Override
 	public void setAdaptable(IViewer<Node> viewer) {
-		if (getViewer() != null && scrollPane != null) {
+		if (getViewer() != null && visual != null) {
 			unregisterFromVisualPartMap();
 		}
 		if (viewer != null && !(viewer instanceof FXViewer)) {
 			throw new IllegalArgumentException();
 		}
 		super.setAdaptable(viewer);
-		if (getViewer() != null && scrollPane != null) {
+		if (getViewer() != null && visual != null) {
 			registerAtVisualPartMap();
 		}
 	}

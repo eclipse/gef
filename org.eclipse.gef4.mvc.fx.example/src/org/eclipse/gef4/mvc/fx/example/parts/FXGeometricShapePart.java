@@ -25,14 +25,10 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
+public class FXGeometricShapePart extends
+		AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
 
-	private final FXGeometryNode<IShape> visual;
 	private IFXAnchor anchor;
-
-	public FXGeometricShapePart() {
-		visual = new FXGeometryNode<IShape>();
-	}
 
 	@Override
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
@@ -45,36 +41,43 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
+	protected FXGeometryNode<IShape> createVisual() {
+		return new FXGeometryNode<IShape>();
+	}
+
+	@Override
 	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
 		getContent().getAnchorages().remove(contentAnchorage);
 	}
 
 	@Override
 	public void doRefreshVisual() {
-		FXGeometricShape shapeVisual = getContent();
-		if (visual.getGeometry() != shapeVisual.getGeometry()) {
-			visual.setGeometry(shapeVisual.getGeometry());
+		FXGeometricShape content = getContent();
+		FXGeometryNode<IShape> visual = getVisual();
+
+		if (visual.getGeometry() != content.getGeometry()) {
+			visual.setGeometry(content.getGeometry());
 		}
 
-		if (shapeVisual.getTransform() != null) {
-			visual.relocate(shapeVisual.getTransform().getTranslateX()
-					+ visual.getLayoutBounds().getMinX(), shapeVisual
+		if (content.getTransform() != null) {
+			visual.relocate(content.getTransform().getTranslateX()
+					+ visual.getLayoutBounds().getMinX(), content
 					.getTransform().getTranslateY()
 					+ visual.getLayoutBounds().getMinY());
 		}
 
 		// apply stroke paint
-		if (visual.getStroke() != shapeVisual.getStroke()) {
-			visual.setStroke(shapeVisual.getStroke());
+		if (visual.getStroke() != content.getStroke()) {
+			visual.setStroke(content.getStroke());
 		}
 
 		// stroke width
-		if (visual.getStrokeWidth() != shapeVisual.getStrokeWidth()) {
-			visual.setStrokeWidth(shapeVisual.getStrokeWidth());
+		if (visual.getStrokeWidth() != content.getStrokeWidth()) {
+			visual.setStrokeWidth(content.getStrokeWidth());
 		}
 
-		if (visual.getFill() != shapeVisual.getFill()) {
-			visual.setFill(shapeVisual.getFill());
+		if (visual.getFill() != content.getFill()) {
+			visual.setFill(content.getFill());
 		}
 
 		// apply effect
@@ -82,7 +85,7 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 	}
 
 	@Override
-	public IFXAnchor getAnchor(IVisualPart<Node> anchored) {
+	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
 		if (anchor == null) {
 			anchor = new FXChopBoxAnchor(getVisual());
 		}
@@ -102,11 +105,6 @@ public class FXGeometricShapePart extends AbstractFXGeometricElementPart {
 			anchorages.put(anchorage, "link");
 		}
 		return anchorages;
-	}
-
-	@Override
-	public FXGeometryNode<IShape> getVisual() {
-		return visual;
 	}
 
 	@Override

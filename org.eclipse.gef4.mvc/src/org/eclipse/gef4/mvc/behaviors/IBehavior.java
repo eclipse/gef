@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 // TODO: change generic parameter to specify IVisualPart<VR> rather than VR
 public interface IBehavior<VR> extends IActivatable,
-		IAdaptable.Bound<IVisualPart<VR>> {
+		IAdaptable.Bound<IVisualPart<VR, ? extends VR>> {
 
 	/**
 	 * Returns the host {@link IVisualPart} of this {@link IBehavior}, i.e. the
@@ -35,6 +35,6 @@ public interface IBehavior<VR> extends IActivatable,
 	 *
 	 * @return The host {@link IVisualPart} of this {@link IBehavior}.
 	 */
-	public IVisualPart<VR> getHost();
+	public IVisualPart<VR, ? extends VR> getHost();
 
 }

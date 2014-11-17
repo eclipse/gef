@@ -34,10 +34,9 @@ import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsSubgraphPart;
 import com.google.common.collect.Multiset;
 
 // Only applicable for NodeContentPart
-public class SubgraphBehavior extends AbstractBehavior<Node> implements
-		PropertyChangeListener {
+public class SubgraphBehavior extends AbstractBehavior<Node> implements PropertyChangeListener {
 
-	private IVisualPart<Node> subgraphPart;
+	private IVisualPart<Node, ? extends Node> subgraphPart;
 	private boolean isPruned;
 
 	@Override
@@ -60,8 +59,7 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 	protected void createSubgraph() {
 		// TODO: delegate to factory
 		subgraphPart = new PrunedNeighborsSubgraphPart();
-		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(),
-				Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(subgraphPart));
 	}
 
@@ -85,11 +83,10 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected SubgraphModel getSubgraphModel() {
-		return getHost().getRoot().getViewer().getDomain()
-				.<SubgraphModel> getAdapter(SubgraphModel.class);
+		return getHost().getRoot().getViewer().getDomain().<SubgraphModel> getAdapter(SubgraphModel.class);
 	}
 
-	protected IVisualPart<Node> getSubgraphPart() {
+	protected IVisualPart<Node, ? extends Node> getSubgraphPart() {
 		return subgraphPart;
 	}
 
@@ -136,8 +133,8 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 		getHost().getVisual().setMouseTransparent(true);
 
 		// hide connections
-		Multiset<IVisualPart<Node>> anchoreds = getHost().getAnchoreds();
-		for (IVisualPart<Node> anchored : anchoreds.elementSet()) {
+		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost().getAnchoreds();
+		for (IVisualPart<Node, ? extends Node> anchored : anchoreds.elementSet()) {
 			if (anchored instanceof EdgeContentPart) {
 				anchored.getVisual().setVisible(false);
 				anchored.getVisual().setMouseTransparent(true);
@@ -146,8 +143,7 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected void removeSubgraph() {
-		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(),
-				Collections.singletonList(getHost()),
+		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(), Collections.singletonList(getHost()),
 				Collections.singletonList(subgraphPart));
 		subgraphPart = null;
 	}
@@ -158,19 +154,18 @@ public class SubgraphBehavior extends AbstractBehavior<Node> implements
 		getHost().getVisual().setMouseTransparent(false);
 
 		// show connections
-		Multiset<IVisualPart<Node>> anchoreds = getHost().getAnchoreds();
-		for (IVisualPart<Node> anchored : anchoreds.elementSet()) {
+		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost().getAnchoreds();
+		for (IVisualPart<Node, ? extends Node> anchored : anchoreds.elementSet()) {
 			if (anchored instanceof EdgeContentPart) {
 				// retrieve source and target parts
 				Edge edge = ((EdgeContentPart) anchored).getContent();
-				IContentPart<Node> sourcePart = getHost().getRoot().getViewer()
-						.getContentPartMap().get(edge.getSource());
-				IContentPart<Node> targetPart = getHost().getRoot().getViewer()
-						.getContentPartMap().get(edge.getTarget());
+				IContentPart<Node, ? extends Node> sourcePart = getHost().getRoot().getViewer().getContentPartMap()
+						.get(edge.getSource());
+				IContentPart<Node, ? extends Node> targetPart = getHost().getRoot().getViewer().getContentPartMap()
+						.get(edge.getTarget());
 				// set connection visible if both (source and target) are
 				// visible
-				if (sourcePart.getVisual().isVisible()
-						&& targetPart.getVisual().isVisible()) {
+				if (sourcePart.getVisual().isVisible() && targetPart.getVisual().isVisible()) {
 					anchored.getVisual().setVisible(true);
 					anchored.getVisual().setMouseTransparent(false);
 				}

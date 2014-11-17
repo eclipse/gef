@@ -56,8 +56,8 @@ public interface IHandlePartFactory<VR> {
 	 * @return A list of {@link IHandlePart}s that can be used to manipulate the
 	 *         given targets.
 	 */
-	public List<IHandlePart<VR>> createHandleParts(
-			List<? extends IVisualPart<VR>> targets,
+	public List<IHandlePart<VR, ? extends VR>> createHandleParts(
+			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			IBehavior<VR> contextBehavior, Map<Object, Object> contextMap);
 
 }

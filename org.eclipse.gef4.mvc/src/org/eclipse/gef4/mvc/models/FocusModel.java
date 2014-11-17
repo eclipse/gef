@@ -52,7 +52,7 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	final public static String VIEWER_FOCUS_PROPERTY = "ViewerFocus";
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private IContentPart<VR> focused = null;
+	private IContentPart<VR, ? extends VR> focused = null;
 	private boolean isViewerFocused = false;
 
 	/**
@@ -75,7 +75,7 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *
 	 * @return the IContentPart which has keyboard focus, or <code>null</code>
 	 */
-	public IContentPart<VR> getFocused() {
+	public IContentPart<VR, ? extends VR> getFocused() {
 		return focused;
 	}
 
@@ -104,8 +104,8 @@ public class FocusModel<VR> implements IPropertyChangeNotifier {
 	 *            The {@link IContentPart} which should become the new focus
 	 *            part.
 	 */
-	public void setFocused(IContentPart<VR> focusPart) {
-		IContentPart<VR> old = focused;
+	public void setFocused(IContentPart<VR, ? extends VR> focusPart) {
+		IContentPart<VR, ? extends VR> old = focused;
 		focused = focusPart;
 		pcs.firePropertyChange(FOCUS_PROPERTY, old, focused);
 	}

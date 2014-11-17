@@ -69,7 +69,7 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
 		// union node bounds with bounds of feedback visuals
-		for (IVisualPart<Node> anchored : getHost().getAnchoreds()) {
+		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoreds()) {
 			if (!(anchored instanceof IFeedbackPart)) {
 				continue;
 			}

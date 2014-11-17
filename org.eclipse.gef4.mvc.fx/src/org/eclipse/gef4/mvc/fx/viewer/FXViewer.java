@@ -42,7 +42,7 @@ public class FXViewer extends AbstractViewer<Node> {
 		this.sceneContainer = sceneContainer;
 		if (sceneContainer != null) {
 			if (scene == null) {
-				IRootPart<Node> rootPart = getRootPart();
+				IRootPart<Node, ? extends Node> rootPart = getRootPart();
 				if (rootPart != null) {
 					createAndHookScene(sceneContainer,
 							(Parent) rootPart.getVisual());
