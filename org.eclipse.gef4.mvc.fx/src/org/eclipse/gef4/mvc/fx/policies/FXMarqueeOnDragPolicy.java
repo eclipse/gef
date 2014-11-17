@@ -104,9 +104,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 			}
 
 			@Override
-			protected void doRefreshVisual() {
+			protected void doRefreshVisual(Rectangle visual) {
 				FXRootPart root = (FXRootPart) getRoot();
-				Rectangle visual = getVisual();
 				Point2D start = visual.sceneToLocal(root.getFeedbackLayer()
 						.localToScene(startPosInFeedbackLayer));
 				Point2D end = visual.sceneToLocal(root.getFeedbackLayer()

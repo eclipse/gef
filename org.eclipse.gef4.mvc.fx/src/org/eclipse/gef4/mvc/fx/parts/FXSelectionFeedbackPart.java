@@ -81,7 +81,7 @@ public class FXSelectionFeedbackPart extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXGeometryNode<IGeometry> visual) {
 		Set<IVisualPart<Node, ? extends Node>> anchorages = getAnchorages()
 				.keySet();
 		if (anchorages.isEmpty()) {
@@ -93,7 +93,7 @@ public class FXSelectionFeedbackPart extends
 			return;
 		}
 
-		getVisual().setGeometry(feedbackGeometry);
+		visual.setGeometry(feedbackGeometry);
 
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.iterator()
 				.next();
@@ -106,11 +106,11 @@ public class FXSelectionFeedbackPart extends
 				.getSelected();
 		boolean primary = selected.get(0) == anchorage;
 		if (primary) {
-			getVisual().setEffect(getPrimarySelectionFeedbackEffect(focused));
-			getVisual().setStroke(Color.BLACK);
+			visual.setEffect(getPrimarySelectionFeedbackEffect(focused));
+			visual.setStroke(Color.BLACK);
 		} else {
-			getVisual().setEffect(getSecondarySelectionFeedbackEffect(focused));
-			getVisual().setStroke(Color.GREY);
+			visual.setEffect(getSecondarySelectionFeedbackEffect(focused));
+			visual.setStroke(Color.GREY);
 		}
 	}
 

@@ -255,7 +255,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		}
 	}
 
-	protected abstract void doRefreshVisual();
+	protected abstract void doRefreshVisual(V visual);
 
 	@Override
 	public <T> T getAdapter(AdapterKey<? super T> key) {
@@ -364,14 +364,13 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 	/**
 	 * Refreshes this {@link IVisualPart}'s <i>visuals</i>. Delegates to
-	 * {@link #doRefreshVisual()} in case {@link #isRefreshVisual()} is not set
-	 * to <code>false</code>.
+	 * {@link #doRefreshVisual(Object)} in case {@link #isRefreshVisual()} is
+	 * not set to <code>false</code>.
 	 */
 	@Override
 	public final void refreshVisual() {
 		if (isRefreshVisual()) {
-			// TODO: delegate to visual behavior
-			doRefreshVisual();
+			doRefreshVisual(visual);
 		}
 	}
 

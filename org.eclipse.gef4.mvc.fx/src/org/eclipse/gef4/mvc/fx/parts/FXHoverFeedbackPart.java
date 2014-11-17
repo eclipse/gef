@@ -47,7 +47,7 @@ public class FXHoverFeedbackPart extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXGeometryNode<IGeometry> visual) {
 		if (getAnchorages().size() != 1) {
 			return;
 		}
@@ -57,7 +57,7 @@ public class FXHoverFeedbackPart extends
 			return;
 		}
 
-		getVisual().setGeometry(feedbackGeometry);
+		visual.setGeometry(feedbackGeometry);
 	}
 
 	protected IGeometry getFeedbackGeometry() {

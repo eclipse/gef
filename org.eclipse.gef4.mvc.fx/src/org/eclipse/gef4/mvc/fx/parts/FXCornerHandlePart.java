@@ -47,12 +47,11 @@ public class FXCornerHandlePart extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
-		updateLocation();
+	public void doRefreshVisual(javafx.scene.shape.Rectangle visual) {
+		updateLocation(visual);
 	}
 
-	protected void updateLocation() {
-		javafx.scene.shape.Rectangle visual = getVisual();
+	protected void updateLocation(javafx.scene.shape.Rectangle visual) {
 		Rectangle handleGeometry = getHandleGeometry();
 
 		if (handleGeometry != null) {

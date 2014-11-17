@@ -77,9 +77,9 @@ public class ZestFxPruningHandlePart extends AbstractFXSegmentHandlePart<FXBlend
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXBlendImageView visual) {
 		boolean wasVisible = isVisible;
-		super.doRefreshVisual();
+		super.doRefreshVisual(visual);
 		isVisible = getVisual().isVisible();
 		DoubleProperty opacityProperty = getVisual().opacityProperty();
 		// TODO: extract magic numbers to properties

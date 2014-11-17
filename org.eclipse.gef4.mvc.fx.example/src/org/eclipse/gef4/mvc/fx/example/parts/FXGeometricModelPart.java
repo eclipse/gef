@@ -44,7 +44,8 @@ public class FXGeometricModelPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(Group visual) {
+		// nothing to do
 	}
 
 	@Override

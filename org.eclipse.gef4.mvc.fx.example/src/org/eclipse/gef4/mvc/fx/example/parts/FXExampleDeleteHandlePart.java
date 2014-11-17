@@ -39,7 +39,7 @@ public class FXExampleDeleteHandlePart extends
 	}
 
 	@Override
-	protected void doRefreshVisual() {
+	protected void doRefreshVisual(FXBlendImageView visual) {
 		// check if we have a host
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
 		if (anchorages.isEmpty()) {
@@ -47,11 +47,9 @@ public class FXExampleDeleteHandlePart extends
 		}
 
 		// determine center location of host visual
-		IVisualPart<Node, ? extends Node> host = anchorages.keys().iterator()
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keys().iterator()
 				.next();
-		Node hostVisual = host.getVisual();
-
-		refreshHandleLocation(hostVisual);
+		refreshHandleLocation(anchorage.getVisual());
 	}
 
 	protected Image getHoverImage() {

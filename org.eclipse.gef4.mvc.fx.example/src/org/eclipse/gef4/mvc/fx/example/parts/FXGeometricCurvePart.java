@@ -260,8 +260,7 @@ public class FXGeometricCurvePart extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
-		FXConnection visual = getVisual();
+	public void doRefreshVisual(FXConnection visual) {
 		FXGeometricCurve content = getContent();
 
 		List<Point> wayPoints = content.getWayPoints();
@@ -355,7 +354,7 @@ public class FXGeometricCurvePart extends
 		}
 
 		// apply effect
-		super.doRefreshVisual();
+		super.doRefreshVisual(visual);
 	}
 
 	protected AbstractFXGeometricElement<?> getAnchorageContent(IFXAnchor anchor) {

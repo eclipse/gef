@@ -61,7 +61,7 @@ public class PrunedNeighborsSubgraphPart extends AbstractFXFeedbackPart<Group> {
 	}
 
 	@Override
-	protected void doRefreshVisual() {
+	protected void doRefreshVisual(Group visual) {
 		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages().keySet();
 		if (keySet.isEmpty()) {
 			return;

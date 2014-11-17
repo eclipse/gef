@@ -43,7 +43,7 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(Group visual) {
 		// nothing to do
 	}
 

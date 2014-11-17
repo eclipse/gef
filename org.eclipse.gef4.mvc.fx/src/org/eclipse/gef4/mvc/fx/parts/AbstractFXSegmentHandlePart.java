@@ -43,8 +43,8 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
-		updateLocation();
+	public void doRefreshVisual(N visual) {
+		updateLocation(visual);
 	}
 
 	protected Point getPosition(BezierCurve segment) {
@@ -117,9 +117,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 		}
 	}
 
-	protected void updateLocation() {
-		N visual = getVisual();
-
+	protected void updateLocation(N visual) {
 		// only update when bound to anchorage
 		FXRootPart rootPart = (FXRootPart) getRoot();
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();

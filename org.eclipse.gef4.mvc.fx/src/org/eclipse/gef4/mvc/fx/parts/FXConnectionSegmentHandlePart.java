@@ -35,8 +35,8 @@ public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 	}
 
 	@Override
-	public void doRefreshVisual() {
-		super.doRefreshVisual();
+	public void doRefreshVisual(Circle visual) {
+		super.doRefreshVisual(visual);
 		updateColor();
 	}
 

@@ -43,7 +43,7 @@ public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXLabeledNode visual) {
 		// currently, the attributes cannot change, therefore we never have to
 		// refresh a node here
 	}

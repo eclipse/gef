@@ -107,7 +107,7 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXLabeledConnection visual) {
 		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain().getAdapter(ILayoutModel.class)
 				.getLayoutContext();
 		if (glc == null) {
@@ -115,15 +115,14 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		}
 
 		// decoration
-		FXConnection connection = getVisual();
 		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs().get(Attr.Key.GRAPH_TYPE.toString()))) {
-			connection.setEndDecoration(new ArrowHead());
+			visual.setEndDecoration(new ArrowHead());
 		} else {
-			connection.setEndDecoration(null);
+			visual.setEndDecoration(null);
 		}
 
 		// TODO: visibility
-		FXGeometryNode<ICurve> curveNode = connection.getCurveNode();
+		FXGeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// dashes
 		Object style = getContent().getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString());

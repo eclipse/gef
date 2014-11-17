@@ -51,9 +51,8 @@ public class FXGeometricShapePart extends
 	}
 
 	@Override
-	public void doRefreshVisual() {
+	public void doRefreshVisual(FXGeometryNode<IShape> visual) {
 		FXGeometricShape content = getContent();
-		FXGeometryNode<IShape> visual = getVisual();
 
 		if (visual.getGeometry() != content.getGeometry()) {
 			visual.setGeometry(content.getGeometry());
@@ -81,7 +80,7 @@ public class FXGeometricShapePart extends
 		}
 
 		// apply effect
-		super.doRefreshVisual();
+		super.doRefreshVisual(visual);
 	}
 
 	@Override

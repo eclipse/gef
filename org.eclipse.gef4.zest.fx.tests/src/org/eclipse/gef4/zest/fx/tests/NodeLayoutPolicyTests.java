@@ -70,7 +70,8 @@ public class NodeLayoutPolicyTests {
 						}
 
 						@Override
-						protected void doRefreshVisual() {
+						protected void doRefreshVisual(Pane visual) {
+							// nothing to do
 						};
 					};
 					FXRootPart rootPart = new FXRootPart();
