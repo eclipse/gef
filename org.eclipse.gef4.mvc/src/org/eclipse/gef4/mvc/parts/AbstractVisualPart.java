@@ -65,7 +65,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	private SetMultimap<IVisualPart<VR, ? extends VR>, String> anchorages;
 
 	private boolean refreshVisual = true;
-	protected V visual;
+	private V visual;
 
 	/**
 	 * Activates this {@link IVisualPart} (if it is not already active) by
@@ -143,7 +143,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		// register if we obtain a link to the viewer
 		IViewer<VR> newViewer = getViewer();
 		if (oldViewer == null && newViewer != null) {
-			register();
+			register(newViewer);
 		}
 
 		pcs.firePropertyChange(ANCHOREDS_PROPERTY, oldAnchoreds, getAnchoreds());
@@ -345,6 +345,10 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	public V getVisual() {
 		if (visual == null) {
 			visual = createVisual();
+			IViewer<VR> viewer = getViewer();
+			if (viewer != null) {
+				registerAtVisualPartMap(viewer, visual);
+			}
 		}
 		return visual;
 	}
@@ -369,20 +373,25 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 */
 	@Override
 	public final void refreshVisual() {
-		if (isRefreshVisual()) {
+		if (visual != null && isRefreshVisual()) {
 			doRefreshVisual(visual);
 		}
 	}
 
 	/**
 	 * Called when a link to the Viewer is obtained.
+	 *
+	 * @param viewer
+	 *            The viewer to register at.
 	 */
-	protected void register() {
-		registerAtVisualPartMap();
+	protected void register(IViewer<VR> viewer) {
+		if (visual != null) {
+			registerAtVisualPartMap(viewer, visual);
+		}
 	}
 
-	protected void registerAtVisualPartMap() {
-		getViewer().getVisualPartMap().put(getVisual(), this);
+	protected void registerAtVisualPartMap(IViewer<VR> viewer, V visual) {
+		viewer.getVisualPartMap().put(visual, this);
 	}
 
 	@Override
@@ -450,7 +459,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 		// unregister if we loose the link to the viewer
 		if (oldViewer != null && newViewer == null) {
-			unregister();
+			unregister(oldViewer);
 		}
 
 		anchoreds.remove(anchored);
@@ -564,7 +573,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		// changes (newViewer != oldViewer)
 		if (oldViewer != null && newViewer != oldViewer) {
 			if (newParent == null && anchoreds == null) {
-				unregister();
+				unregister(oldViewer);
 			}
 		}
 
@@ -572,7 +581,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 		// if we obtain a link to the viewer then register visuals
 		if (newViewer != null && newViewer != oldViewer) {
-			register();
+			register(newViewer);
 		}
 
 		pcs.firePropertyChange(PARENT_PROPERTY, oldParent, newParent);
@@ -585,13 +594,23 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 	/**
 	 * Called when the link to the Viewer is lost.
+	 *
+	 * @param viewer
+	 *            The viewer to unregister from.
 	 */
-	protected void unregister() {
-		unregisterFromVisualPartMap();
+	protected void unregister(IViewer<VR> viewer) {
+		if (visual != null) {
+			unregisterFromVisualPartMap(viewer, visual);
+		}
 	}
 
-	protected void unregisterFromVisualPartMap() {
-		getViewer().getVisualPartMap().remove(getVisual());
+	protected void unregisterFromVisualPartMap(IViewer<VR> viewer, V visual) {
+		Map<VR, IVisualPart<VR, ? extends VR>> registry = viewer
+				.getVisualPartMap();
+		if (registry.get(visual) != this) {
+			throw new IllegalArgumentException("Not registered under visual");
+		}
+		registry.remove(visual);
 	}
 
 	@Override

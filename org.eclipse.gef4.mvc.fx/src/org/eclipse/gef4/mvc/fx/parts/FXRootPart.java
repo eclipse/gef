@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
+import java.util.Map;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -112,7 +114,20 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		return layer;
 	}
 
-	protected void createRootVisuals() {
+	protected ScrollPane createScrollPane(final Group scrollPaneInput) {
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setContent(scrollPaneInput);
+		scrollPane.setPannable(false);
+		scrollPane.setStyle(SCROLL_PANE_STYLE);
+		return scrollPane;
+	}
+
+	protected Group createScrollPaneContent(Node... layers) {
+		return new Group(layers);
+	}
+
+	@Override
+	protected ScrollPane createVisual() {
 		contentLayer = createContentLayer();
 		/*
 		 * IMPORTANT: The following is a workaround to ensure that visuals do
@@ -154,7 +169,7 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		scrollPaneContent = createScrollPaneContent(new Node[] { gridLayer,
 				contentLayer, feedbackLayer, handleLayer });
 
-		visual = createScrollPane(scrollPaneContent);
+		ScrollPane scrollPane = createScrollPane(scrollPaneContent);
 
 		// TODO: the zoom property could be provided directly by the content
 		// layer (make it a ZoomableLyer/ScalableLayer).
@@ -174,31 +189,15 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		// TODO: These could each be extracted to a helper, because its generic
 		// functionality not specific to a grid layer (ensure layer is as large
 		// as viewport; ensure layer is as large as other layers).
-		gridLayer.bindMinSizeToBounds(visual.viewportBoundsProperty());
+		gridLayer.bindMinSizeToBounds(scrollPane.viewportBoundsProperty());
 		@SuppressWarnings("unchecked")
 		ReadOnlyObjectProperty<Bounds>[] boundsInParentProperties = new ReadOnlyObjectProperty[] {
 				contentLayer.boundsInParentProperty(),
 				feedbackLayer.boundsInParentProperty(),
 				handleLayer.boundsInParentProperty() };
 		gridLayer.bindPrefSizeToUnionedBounds(boundsInParentProperties);
-	}
 
-	protected ScrollPane createScrollPane(final Group scrollPaneInput) {
-		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setContent(scrollPaneInput);
-		scrollPane.setPannable(false);
-		scrollPane.setStyle(SCROLL_PANE_STYLE);
 		return scrollPane;
-	}
-
-	protected Group createScrollPaneContent(Node... layers) {
-		return new Group(layers);
-	}
-
-	@Override
-	protected ScrollPane createVisual() {
-		createRootVisuals();
-		return visual;
 	}
 
 	@Override
@@ -208,42 +207,39 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 
 	public Group getContentLayer() {
 		if (contentLayer == null) {
-			createRootVisuals();
+			createVisual();
 		}
 		return contentLayer;
 	}
 
 	public Group getFeedbackLayer() {
 		if (feedbackLayer == null) {
-			createRootVisuals();
+			createVisual();
 		}
 		return feedbackLayer;
 	}
 
 	public FXGridLayer getGridLayer() {
 		if (gridLayer == null) {
-			createRootVisuals();
+			createVisual();
 		}
 		return gridLayer;
 	}
 
 	public Group getHandleLayer() {
 		if (handleLayer == null) {
-			createRootVisuals();
+			createVisual();
 		}
 		return handleLayer;
 	}
 
 	public ScrollPane getScrollPane() {
-		if (visual == null) {
-			createRootVisuals();
-		}
-		return visual;
+		return getVisual();
 	}
 
 	public Group getScrollPaneContent() {
 		if (scrollPaneContent == null) {
-			createRootVisuals();
+			createVisual();
 		}
 		return scrollPaneContent;
 	}
@@ -254,27 +250,19 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 	}
 
 	@Override
-	public ScrollPane getVisual() {
-		if (visual == null) {
-			visual = createVisual();
-			if (getViewer() != null) {
-				registerAtVisualPartMap();
-			}
-		}
-		return visual;
-	}
-
-	@Override
-	protected void registerAtVisualPartMap() {
-		Group scrollPaneContent = (Group) getScrollPane().getContent();
-		getViewer().getVisualPartMap().put(scrollPaneContent, this);
+	protected void registerAtVisualPartMap(IViewer<Node> viewer,
+			ScrollPane visual) {
+		Group scrollPaneContent = (Group) visual.getContent();
+		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
+				.getVisualPartMap();
+		registry.put(scrollPaneContent, this);
 		for (Node child : scrollPaneContent.getChildren()) {
 			// register root edit part also for the layers
-			getViewer().getVisualPartMap().put(child, this);
+			registry.put(child, this);
 		}
 
 		// register root visual as well
-		getViewer().getVisualPartMap().put(getVisual(), this);
+		registry.put(getVisual(), this);
 	}
 
 	@Override
@@ -300,29 +288,30 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 
 	@Override
 	public void setAdaptable(IViewer<Node> viewer) {
-		if (getViewer() != null && visual != null) {
-			unregisterFromVisualPartMap();
-		}
-		if (viewer != null && !(viewer instanceof FXViewer)) {
-			throw new IllegalArgumentException();
+		IViewer<Node> oldViewer = getViewer();
+		if (oldViewer != null && viewer != oldViewer) {
+			unregister(oldViewer);
 		}
 		super.setAdaptable(viewer);
-		if (getViewer() != null && visual != null) {
-			registerAtVisualPartMap();
+		if (viewer != null && viewer != oldViewer) {
+			register(viewer);
 		}
 	}
 
 	@Override
-	protected void unregisterFromVisualPartMap() {
-		Group scrollPaneContent = (Group) getScrollPane().getContent();
-		getViewer().getVisualPartMap().remove(scrollPaneContent);
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
+			ScrollPane scrollPane) {
+		Group scrollPaneContent = (Group) scrollPane.getContent();
+		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
+				.getVisualPartMap();
+		registry.remove(scrollPaneContent);
 		for (Node child : scrollPaneContent.getChildren()) {
 			// register root edit part also for the layers
-			getViewer().getVisualPartMap().remove(child);
+			registry.remove(child);
 		}
 
 		// unregister root visual as well
-		getViewer().getVisualPartMap().remove(getVisual());
+		registry.remove(getVisual());
 	}
 
 	// TODO: move into root visual

@@ -74,10 +74,10 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 	}
 
 	@Override
-	protected void register() {
-		super.register();
+	protected void register(IViewer<VR> viewer) {
+		super.register(viewer);
 		if (content != null) {
-			registerAtContentPartMap();
+			registerAtContentPartMap(viewer, content);
 		}
 	}
 
@@ -85,9 +85,15 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 	 * Registers the <i>model</i> in the {@link IViewer#getContentPartMap()}.
 	 * Subclasses should only extend this method if they need to register this
 	 * EditPart in additional ways.
+	 *
+	 * @param viewer
+	 *            The viewer to register at.
+	 *
+	 * @param content
+	 *            The content to register.
 	 */
-	protected void registerAtContentPartMap() {
-		getViewer().getContentPartMap().put(getContent(), this);
+	protected void registerAtContentPartMap(IViewer<VR> viewer, Object content) {
+		viewer.getContentPartMap().put(content, this);
 	}
 
 	@Override
@@ -108,22 +114,22 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 		}
 
 		Object oldContent = this.content;
-		if (oldContent != null && oldContent != content && getRoot() != null) {
-			unregisterFromContentPartMap();
+		if (oldContent != null && oldContent != content && getViewer() != null) {
+			unregisterFromContentPartMap(getViewer(), oldContent);
 		}
 		this.content = content;
-		if (content != null && content != oldContent && getRoot() != null) {
-			registerAtContentPartMap();
+		if (content != null && content != oldContent && getViewer() != null) {
+			registerAtContentPartMap(getViewer(), content);
 		}
 
 		pcs.firePropertyChange(CONTENT_PROPERTY, oldContent, content);
 	}
 
 	@Override
-	protected void unregister() {
-		super.unregister();
+	protected void unregister(IViewer<VR> viewer) {
+		super.unregister(viewer);
 		if (content != null) {
-			unregisterFromContentPartMap();
+			unregisterFromContentPartMap(viewer, content);
 		}
 	}
 
@@ -131,13 +137,21 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 	 * Unregisters the <i>model</i> in the {@link IViewer#getContentPartMap()}.
 	 * Subclasses should only extend this method if they need to unregister this
 	 * EditPart in additional ways.
+	 *
+	 * @param viewer
+	 *            The viewer to unregister from.
+	 *
+	 * @param content
+	 *            The content to unregister.
 	 */
-	protected void unregisterFromContentPartMap() {
-		Map<Object, IContentPart<VR, ? extends VR>> registry = getViewer()
+	protected void unregisterFromContentPartMap(IViewer<VR> viewer,
+			Object content) {
+		Map<Object, IContentPart<VR, ? extends VR>> registry = viewer
 				.getContentPartMap();
-		if (registry.get(getContent()) == this) {
-			registry.remove(getContent());
+		if (registry.get(content) != this) {
+			throw new IllegalArgumentException("Not registered under content");
 		}
+		registry.remove(content);
 	}
 
 }
