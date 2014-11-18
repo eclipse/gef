@@ -23,7 +23,7 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.parts.PartUtils;
 
@@ -47,14 +47,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 			// " waypoints");
 			// System.out.println("After: " + newWaypoints.size() +
 			// " waypoints");
-			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
+			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
-					FXSegmentHandlePart.class);
-			Collections.<FXSegmentHandlePart> sort(parts);
+					FXCircleSegmentHandlePart.class);
+			Collections.<FXCircleSegmentHandlePart> sort(parts);
 			// System.out.println("Found " + parts.size() +
 			// " FXSelectionHandleParts");
-			Iterator<FXSegmentHandlePart> it = parts.iterator();
-			FXSegmentHandlePart part = null;
+			Iterator<FXCircleSegmentHandlePart> it = parts.iterator();
+			FXCircleSegmentHandlePart part = null;
 			for (int i = 0; i <= newWaypoints.size(); i++) {
 				// param 0
 				part = it.next();
@@ -134,14 +134,14 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	@Override
-	public FXSegmentHandlePart getHost() {
-		return (FXSegmentHandlePart) super.getHost();
+	public FXCircleSegmentHandlePart getHost() {
+		return (FXCircleSegmentHandlePart) super.getHost();
 	}
 
 	@Override
 	public void press(MouseEvent e) {
 		createdSegmentIndex = -1;
-		FXSegmentHandlePart hp = getHost();
+		FXCircleSegmentHandlePart hp = getHost();
 		IVisualPart<Node, ? extends Node> anchorage = getHost().getAnchorages()
 				.keySet().iterator().next();
 
@@ -155,15 +155,15 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 					new Point(e.getSceneX(), e.getSceneY()));
 
 			// find other segment handle parts
-			List<FXSegmentHandlePart> parts = PartUtils.filterParts(
+			List<FXCircleSegmentHandlePart> parts = PartUtils.filterParts(
 					PartUtils.getAnchoreds(getHost().getAnchorages().keySet()),
-					FXSegmentHandlePart.class);
+					FXCircleSegmentHandlePart.class);
 
 			// sort parts by segment index and parameter
-			Collections.<FXSegmentHandlePart> sort(parts);
+			Collections.<FXCircleSegmentHandlePart> sort(parts);
 
 			// increment segment index of succeeding parts
-			for (FXSegmentHandlePart p : parts) {
+			for (FXCircleSegmentHandlePart p : parts) {
 				if (p.getSegmentIndex() > hp.getSegmentIndex()
 						|| (p.getSegmentIndex() == hp.getSegmentIndex() && p
 								.getSegmentParameter() == 1)) {
@@ -194,13 +194,13 @@ public class FXBendOnSegmentHandleDragPolicy extends AbstractFXDragPolicy {
 		commit(getBendPolicy(anchorage));
 	}
 
-	private void setSegmentIndex(FXSegmentHandlePart part, int value) {
+	private void setSegmentIndex(FXCircleSegmentHandlePart part, int value) {
 		if (part.getSegmentIndex() != value) {
 			part.setSegmentIndex(value);
 		}
 	}
 
-	private void setSegmentParameter(FXSegmentHandlePart part, double value) {
+	private void setSegmentParameter(FXCircleSegmentHandlePart part, double value) {
 		if (part.getSegmentParameter() != value) {
 			part.setSegmentParameter(value);
 		}

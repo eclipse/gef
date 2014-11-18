@@ -22,25 +22,32 @@ import org.eclipse.gef4.geometry.planar.Rectangle;
 import com.google.inject.Provider;
 
 /**
+ * An {@link AbstractFXCornerHandlePart} with a
+ * {@link javafx.scene.shape.Rectangle} visual.
+ *
  * @author mwienand
  * @author anyssen
  *
  */
-public class FXCornerHandlePart extends
+public class FXRectangleCornerHandlePart extends
 		AbstractFXCornerHandlePart<javafx.scene.shape.Rectangle> {
 
-	public FXCornerHandlePart(Provider<IGeometry> handleGeometryProvider,
-			Pos pos) {
+	private static final double DEFAULT_SIZE = 5;
+	private static final Color DEFAULT_STROKE = Color.web("#5a61af");
+	private static final Color DEFAULT_FILL = Color.web("#d5faff");
+
+	public FXRectangleCornerHandlePart(
+			Provider<IGeometry> handleGeometryProvider, Pos pos) {
 		super(handleGeometryProvider, pos);
 	}
 
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
-		visual.setFill(Color.web("#d5faff"));
-		visual.setStroke(Color.web("#5a61af"));
-		visual.setWidth(5);
-		visual.setHeight(5);
+		visual.setFill(DEFAULT_FILL);
+		visual.setStroke(DEFAULT_STROKE);
+		visual.setWidth(DEFAULT_SIZE);
+		visual.setHeight(DEFAULT_SIZE);
 		visual.setStrokeWidth(1);
 		visual.setStrokeType(StrokeType.OUTSIDE);
 		return visual;

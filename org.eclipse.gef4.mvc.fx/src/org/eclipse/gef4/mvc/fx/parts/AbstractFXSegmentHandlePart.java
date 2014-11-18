@@ -12,6 +12,16 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
+/**
+ * An {@link AbstractFXSegmentHandlePart} is bound to a segment of a poly-bezier
+ * handle geometry. The segmentIndex identifies that segment (0, 1, 2, ...). The
+ * segmentParameter specifies the position of this handle part on the segment (0
+ * = start, 0.5 = mid, 1 = end).
+ *
+ * @author anyssen
+ *
+ * @param <N>
+ */
 public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 		AbstractFXHandlePart<N> implements
 		Comparable<AbstractFXSegmentHandlePart<? extends Node>> {

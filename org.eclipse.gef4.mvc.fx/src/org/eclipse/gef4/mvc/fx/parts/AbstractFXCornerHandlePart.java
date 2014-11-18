@@ -9,6 +9,14 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
 
+/**
+ * An {@link AbstractFXCornerHandlePart} is bound to a corner of a rectilinear
+ * geometry.
+ *
+ * @author nyssen
+ *
+ * @param <N>
+ */
 public abstract class AbstractFXCornerHandlePart<N extends Node> extends
 		AbstractFXHandlePart<Rectangle> implements
 		Comparable<AbstractFXCornerHandlePart<? extends Node>> {

@@ -70,7 +70,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Provider<IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
-		return new FXCornerHandlePart(handleGeometryProvider, position);
+		return new FXRectangleCornerHandlePart(handleGeometryProvider, position);
 	}
 
 	// TODO: maybe inline this method
@@ -116,8 +116,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> targetPart,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
-		return new FXConnectionSegmentHandlePart(segmentsProvider,
-				segmentIndex, segmentParameter);
+		return new FXCircleSegmentHandlePart(segmentsProvider, segmentIndex,
+				segmentParameter);
 	}
 
 	/**
@@ -265,8 +265,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> hoverHandlesSegmentsInSceneProvider,
 			int segmentCount, int segmentIndex, Map<Object, Object> contextMap) {
-		return new FXSegmentHandlePart(hoverHandlesSegmentsInSceneProvider,
-				segmentIndex, 0);
+		return new FXCircleSegmentHandlePart(
+				hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
 	}
 
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
@@ -323,7 +323,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final IVisualPart<Node, ? extends Node> target,
 			Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, Map<Object, Object> contextMap) {
-		return new FXSegmentHandlePart(segmentsProvider, segmentIndex, 0);
+		return new FXCircleSegmentHandlePart(segmentsProvider, segmentIndex, 0);
 	}
 
 	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(

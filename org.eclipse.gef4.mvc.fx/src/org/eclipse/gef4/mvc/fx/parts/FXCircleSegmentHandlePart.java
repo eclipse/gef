@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
@@ -22,16 +23,42 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
-// TODO: merge with FXSegmentHandlePart
-public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
+/**
+ * An {@link AbstractFXSegmentHandlePart} with a {@link Circle} visual.
+ *
+ * @author mwienand
+ * @author anyssen
+ *
+ */
+public class FXCircleSegmentHandlePart extends
+		AbstractFXSegmentHandlePart<Circle> {
 
-	public static final Color FILL_CONNECTED = Color.web("#ff0000");
-	public static final Color FILL_UNCONNECTED = Color.web("#d5faff");
+	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+	public static final Color DEFAULT_FILL = Color.WHITE;
+	public static final Color CONNECTED_FILL = Color.web("#ff0000");
+	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
 
-	public FXConnectionSegmentHandlePart(
-			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter) {
+	public static final double DEFAULT_SIZE = 5d;
+
+	public FXCircleSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
+			int segmentIndex, double segmentParameter) {
 		super(segmentsProvider, segmentIndex, segmentParameter);
+	}
+
+	/**
+	 * Creates the visual representation of this selection handle.
+	 *
+	 * @return {@link Node} representing the handle visually
+	 */
+	@Override
+	protected Circle createVisual() {
+		Circle circle = new Circle(DEFAULT_SIZE / 2d);
+		// initialize invariant visual properties
+		circle.setStroke(DEFAULT_STROKE);
+		circle.setFill(DEFAULT_FILL);
+		circle.setStrokeWidth(1);
+		circle.setStrokeType(StrokeType.OUTSIDE);
+		return circle;
 	}
 
 	@Override
@@ -55,7 +82,7 @@ public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 		}
 		if (getSegmentParameter() != 0.0 && getSegmentParameter() != 1.0) {
 			// handle in the middle of a segment
-			visual.setFill(FXSegmentHandlePart.DEFAULT_FILL);
+			visual.setFill(FXCircleSegmentHandlePart.DEFAULT_FILL);
 		} else {
 			// determine connected state for end point handles
 			boolean connected = false;
@@ -73,9 +100,9 @@ public class FXConnectionSegmentHandlePart extends FXSegmentHandlePart {
 			}
 			// update color according to connected state
 			if (connected) {
-				visual.setFill(FILL_CONNECTED);
+				visual.setFill(CONNECTED_FILL);
 			} else {
-				visual.setFill(FILL_UNCONNECTED);
+				visual.setFill(UNCONNECTED_FILL);
 			}
 		}
 	}

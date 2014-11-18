@@ -23,7 +23,7 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy;
@@ -60,7 +60,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			final IVisualPart<Node, ? extends Node> targetPart,
 			final Provider<BezierCurve[]> segmentsProvider, int segmentCount,
 			int segmentIndex, double segmentParameter) {
-		final FXSegmentHandlePart part = (FXSegmentHandlePart) super
+		final FXCircleSegmentHandlePart part = (FXCircleSegmentHandlePart) super
 				.createCurveSelectionHandlePart(targetPart, segmentsProvider,
 						segmentCount, segmentIndex, segmentParameter);
 

@@ -17,7 +17,7 @@ import javafx.scene.shape.StrokeType;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.parts.FXSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -96,7 +96,7 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 			protected Rectangle createVisual() {
 				Rectangle visual = new Rectangle();
 				visual.setFill(Color.TRANSPARENT);
-				visual.setStroke(FXSegmentHandlePart.DEFAULT_STROKE);
+				visual.setStroke(FXCircleSegmentHandlePart.DEFAULT_STROKE);
 				visual.setStrokeWidth(1);
 				visual.setStrokeType(StrokeType.CENTERED);
 				visual.getStrokeDashArray().setAll(5d, 5d);
