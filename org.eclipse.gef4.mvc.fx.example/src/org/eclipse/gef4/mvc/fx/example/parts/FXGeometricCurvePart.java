@@ -221,8 +221,12 @@ public class FXGeometricCurvePart extends
 				if (detachOperation != null || attachOperation != null) {
 					add(new ReverseUndoCompositeOperation("Change Anchorages") {
 						{
-							add(detachOperation);
-							add(attachOperation);
+							if (detachOperation != null) {
+								add(detachOperation);
+							}
+							if (attachOperation != null) {
+								add(attachOperation);
+							}
 						}
 					});
 				}
