@@ -136,7 +136,7 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 
 	@Override
 	public Map<AdapterKey<? extends IViewer<VR>>, IViewer<VR>> getViewers() {
-		return ads.<IViewer<VR>> getAdapters(IViewer.class);
+		return ads.getAdapters(IViewer.class);
 	}
 
 	@Override
