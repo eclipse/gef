@@ -38,8 +38,6 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            The visual root node of the UI toolkit used, e.g.
  *            javafx.scene.Node in case of JavaFX.
  */
-// TODO: remove getters for default models (we should not enforce these are
-// present via the interface)
 public interface IViewer<VR> extends IAdaptable, IActivatable {
 
 	/**
