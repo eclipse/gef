@@ -23,6 +23,10 @@ import org.eclipse.gef4.geometry.planar.AffineTransform;
  */
 public class ViewportModel implements IPropertyChangeNotifier {
 
+	/*
+	 * TODO: Store x, y, width, and height relative to the underlying contents.
+	 */
+
 	/**
 	 * When the viewport x-position changes, this is the property name reported
 	 * by a corresponding property change event.

@@ -17,12 +17,16 @@ import java.beans.PropertyChangeListener;
 import javafx.scene.Node;
 import javafx.scene.transform.Scale;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXGridBehavior extends AbstractBehavior<Node> implements
 		PropertyChangeListener {
+
+	private boolean isListeningOnViewport = false;
 
 	@Override
 	public void activate() {
@@ -34,6 +38,13 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 		applyZoomGrid(gridModel.isZoomGrid());
 		applyGridCellWidth(gridModel.getGridCellWidth());
 		applyGridCellHeight(gridModel.getGridCellHeight());
+	}
+
+	protected void applyContentsTransform(AffineTransform contentsTransform) {
+		double sx = contentsTransform.getScaleX();
+		double sy = contentsTransform.getScaleY();
+		((FXRootPart) getHost().getRoot()).getGridLayer().gridScaleProperty()
+				.set(new Scale(sx, sy));
 	}
 
 	protected void applyGridCellHeight(double height) {
@@ -55,18 +66,23 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected void applyZoomGrid(boolean zoomGrid) {
-		// TODO: add listener to zoom model instead and update zoom property
-		// accordingly
+		ViewportModel viewportModel = getHost().getRoot().getViewer()
+				.getAdapter(ViewportModel.class);
 		if (zoomGrid) {
-			// bind grid scale to zoom property
-			((FXRootPart) getHost().getRoot()).getGridLayer()
-					.gridScaleProperty()
-					.bind(((FXRootPart) getHost().getRoot()).zoomProperty());
+			if (!isListeningOnViewport) {
+				viewportModel.addPropertyChangeListener(this);
+				isListeningOnViewport = true;
+				// apply current contents transform
+				applyContentsTransform(viewportModel.getContentsTransform());
+			}
 		} else {
-			((FXRootPart) getHost().getRoot()).getGridLayer()
-					.gridScaleProperty().unbind();
-			((FXRootPart) getHost().getRoot()).getGridLayer()
-					.gridScaleProperty().set(new Scale(1, 1));
+			if (isListeningOnViewport) {
+				viewportModel.removePropertyChangeListener(this);
+				isListeningOnViewport = false;
+				// reset grid scale to (1, 1)
+				((FXRootPart) getHost().getRoot()).getGridLayer()
+						.gridScaleProperty().set(new Scale(1, 1));
+			}
 		}
 	}
 
@@ -74,6 +90,13 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 	public void deactivate() {
 		getHost().getRoot().getViewer().getAdapter(GridModel.class)
 				.removePropertyChangeListener(this);
+
+		if (isListeningOnViewport) {
+			ViewportModel viewportModel = getHost().getRoot().getViewer()
+					.getAdapter(ViewportModel.class);
+			viewportModel.removePropertyChangeListener(this);
+		}
+
 		super.deactivate();
 	}
 
@@ -87,6 +110,9 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 		} else if (GridModel.GRID_CELL_HEIGHT_PROPERTY.equals(evt
 				.getPropertyName())) {
 			applyGridCellHeight(((Double) evt.getNewValue()).doubleValue());
+		} else if (ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
+				.equals(evt.getPropertyName())) {
+			applyContentsTransform((AffineTransform) evt.getNewValue());
 		}
 	}
 

@@ -14,14 +14,12 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.Map;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.transform.Scale;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
@@ -44,9 +42,6 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 	public Group contentLayer;
 	public Group handleLayer;
 	public Group feedbackLayer;
-
-	private final SimpleObjectProperty<Scale> zoomProperty = new SimpleObjectProperty<Scale>(
-			new Scale());
 
 	private Group scrollPaneContent;
 
@@ -134,11 +129,11 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 *
+		 * 
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 *
+		 * 
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -170,21 +165,6 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 				contentLayer, feedbackLayer, handleLayer });
 
 		ScrollPane scrollPane = createScrollPane(scrollPaneContent);
-
-		// TODO: the zoom property could be provided directly by the content
-		// layer (make it a ZoomableLyer/ScalableLayer).
-		zoomProperty.addListener(new ChangeListener<Scale>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Scale> observable,
-					Scale oldValue, Scale newValue) {
-				if (contentLayer.getTransforms().isEmpty()) {
-					contentLayer.getTransforms().add(zoomProperty.get());
-				} else {
-					contentLayer.getTransforms().set(0, zoomProperty.get());
-				}
-			}
-		});
 
 		// TODO: These could each be extracted to a helper, because its generic
 		// functionality not specific to a grid layer (ensure layer is as large
@@ -312,11 +292,6 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 
 		// unregister root visual as well
 		registry.remove(getVisual());
-	}
-
-	// TODO: move into root visual
-	public SimpleObjectProperty<Scale> zoomProperty() {
-		return zoomProperty;
 	}
 
 }
