@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2011, 2012 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Alexander Nyßen (itemis AG) - initial API and implementation
  *     Matthias Wienand (itemis AG) - javadoc comment enhancements
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.geometry.planar;
 
@@ -28,10 +28,10 @@ import org.eclipse.gef4.geometry.euclidean.Vector;
  * <p>
  * It delegates to the {@link java.awt.geom.AffineTransform} functionality.
  * </p>
- * 
+ *
  * @author anyssen
  * @author mwienand
- * 
+ *
  */
 public class AffineTransform {
 
@@ -51,7 +51,7 @@ public class AffineTransform {
 	 * Creates a new {@link AffineTransform} with its transformation matrix set
 	 * to the specified values. Note that rotation is a combination of shearing
 	 * and scaling.
-	 * 
+	 *
 	 * @param m00
 	 *            the value of the transformation matrix in row 0 and column 0
 	 *            (x coordinate scaling)
@@ -83,7 +83,7 @@ public class AffineTransform {
 	 * {@link AffineTransform#AffineTransform(double, double, double, double, double, double)}
 	 * or the {@link java.awt.geom.AffineTransform#AffineTransform(double[])}
 	 * method for a specification of the values in the array.
-	 * 
+	 *
 	 * @param flatmatrix
 	 *            the values for the transformation matrix
 	 * @see AffineTransform#AffineTransform(double, double, double, double,
@@ -103,7 +103,7 @@ public class AffineTransform {
 	 * {@link AffineTransform}, multiplying the transformation matrix of this
 	 * {@link AffineTransform} from the left with the transformation matrix of
 	 * the other {@link AffineTransform}.
-	 * 
+	 *
 	 * @param Tx
 	 *            the {@link AffineTransform} that is concatenated with this
 	 *            {@link AffineTransform}
@@ -117,7 +117,7 @@ public class AffineTransform {
 	/**
 	 * Creates a new {@link AffineTransform} that represents the inverse
 	 * transformation of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @return a new {@link AffineTransform} that represents the inverse
 	 *         transformation of this {@link AffineTransform}
 	 * @throws NoninvertibleTransformException
@@ -132,7 +132,7 @@ public class AffineTransform {
 	 * Transforms an array of {@link Point}s specified by their coordinate
 	 * values with this {@link AffineTransform} without applying the translation
 	 * components of the transformation matrix of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param srcPts
 	 *            the array of x and y coordinates specifying the {@link Point}s
 	 *            that are transformed
@@ -157,7 +157,7 @@ public class AffineTransform {
 	 * Transforms the given {@link Point} with this {@link AffineTransform}
 	 * without applying the translation components of the transformation matrix
 	 * of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param pt
 	 *            the {@link Point} to transform
 	 * @return a new, transformed {@link Point}
@@ -177,7 +177,7 @@ public class AffineTransform {
 
 	/**
 	 * Returns a copy of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @return a copy of this {@link AffineTransform}
 	 */
 	public AffineTransform getCopy() {
@@ -187,7 +187,7 @@ public class AffineTransform {
 	/**
 	 * Computes the determinant of the transformation matrix of this
 	 * {@link AffineTransform}.
-	 * 
+	 *
 	 * @return the determinant of the transformation matrix of this
 	 *         {@link AffineTransform}
 	 */
@@ -196,9 +196,45 @@ public class AffineTransform {
 	}
 
 	/**
+	 * Returns the matrix component in the first row and first column.
+	 *
+	 * @return The matrix component in the first row and first column.
+	 */
+	public double getM00() {
+		return delegate.getScaleX();
+	}
+
+	/**
+	 * Returns the matrix component in the first row and second column.
+	 *
+	 * @return The matrix component in the first row and second column.
+	 */
+	public double getM01() {
+		return delegate.getShearX();
+	}
+
+	/**
+	 * Returns the matrix component in the second row and first column.
+	 *
+	 * @return The matrix component in the second row and first column.
+	 */
+	public double getM10() {
+		return delegate.getShearY();
+	}
+
+	/**
+	 * Returns the matrix component in the second row and second column.
+	 *
+	 * @return The matrix component in the second row and second column.
+	 */
+	public double getM11() {
+		return delegate.getScaleY();
+	}
+
+	/**
 	 * Returns the 6 specifiable elements of the transformation matrix of this
 	 * {@link AffineTransform}.
-	 * 
+	 *
 	 * @return the 6 specifiable elements of the transformation matrix of this
 	 *         {@link AffineTransform}
 	 */
@@ -209,54 +245,42 @@ public class AffineTransform {
 	}
 
 	/**
+	 * Returns the rotation component of this {@link AffineTransform}.
+	 *
+	 * @return The rotation component of this {@link AffineTransform}.
+	 */
+	public Angle getRotation() {
+		double rad = Math.atan2(getM01(), getM00());
+		return Angle.fromRad(rad);
+	}
+
+	/**
 	 * Returns the x coordinate scaling of this {@link AffineTransform}'s
 	 * transformation matrix.
-	 * 
+	 *
 	 * @return the x coordinate scaling of this {@link AffineTransform}'s
 	 *         transformation matrix
 	 */
 	public double getScaleX() {
-		return delegate.getScaleX();
+		return Math.sqrt(getM00() * getM00() + getM10() * getM10());
 	}
 
 	/**
 	 * Returns the y coordinate scaling of this {@link AffineTransform}'s
 	 * transformation matrix.
-	 * 
+	 *
 	 * @return the y coordinate scaling of this {@link AffineTransform}'s
 	 *         transformation matrix
 	 */
 	public double getScaleY() {
-		return delegate.getScaleY();
-	}
-
-	/**
-	 * Returns the x coordinate shearing of this {@link AffineTransform}'s
-	 * transformation matrix.
-	 * 
-	 * @return the x coordinate shearing of this {@link AffineTransform}'s
-	 *         transformation matrix
-	 */
-	public double getShearX() {
-		return delegate.getShearX();
-	}
-
-	/**
-	 * Returns the y coordinate shearing of this {@link AffineTransform}'s
-	 * transformation matrix.
-	 * 
-	 * @return the y coordinate shearing of this {@link AffineTransform}'s
-	 *         transformation matrix
-	 */
-	public double getShearY() {
-		return delegate.getShearY();
+		return Math.sqrt(getM01() * getM01() + getM11() * getM11());
 	}
 
 	/**
 	 * Transforms the given {@link Point} with this {@link AffineTransform} by
 	 * multiplying the transformation matrix of this {@link AffineTransform}
 	 * with the given {@link Point}.
-	 * 
+	 *
 	 * @param ptSrc
 	 *            the {@link Point} to transform
 	 * @return a new, transformed {@link Point}
@@ -271,7 +295,7 @@ public class AffineTransform {
 	 * {@link AffineTransform} by multiplying the transformation matrix of this
 	 * {@link AffineTransform} individually with each of the given {@link Point}
 	 * s.
-	 * 
+	 *
 	 * @param points
 	 *            array of {@link Point}s to transform
 	 * @return an array of new, transformed {@link Point}s
@@ -289,7 +313,7 @@ public class AffineTransform {
 	/**
 	 * Returns the x coordinate translation of this {@link AffineTransform}'s
 	 * transformation matrix.
-	 * 
+	 *
 	 * @return the x coordinate translation of this {@link AffineTransform}'s
 	 *         transformation matrix
 	 */
@@ -300,7 +324,7 @@ public class AffineTransform {
 	/**
 	 * Returns the y coordinate translation of this {@link AffineTransform}'s
 	 * transformation matrix.
-	 * 
+	 *
 	 * @return the y coordinate translation of this {@link AffineTransform}'s
 	 *         transformation matrix
 	 */
@@ -313,7 +337,7 @@ public class AffineTransform {
 	 * {@link AffineTransform}. See the
 	 * {@link java.awt.geom.AffineTransform#getType()} method for a
 	 * specification of the return type of this method.
-	 * 
+	 *
 	 * @return the type of transformation represented by this
 	 *         {@link AffineTransform}
 	 */
@@ -329,7 +353,7 @@ public class AffineTransform {
 	/**
 	 * Inverse transforms an array of {@link Point}s specified by their
 	 * coordinate values with this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param srcPts
 	 *            the array of x and y coordinates specifying the {@link Point}s
 	 *            that are inverse transformed
@@ -354,7 +378,7 @@ public class AffineTransform {
 	/**
 	 * Inverse transforms the given {@link Point} with this
 	 * {@link AffineTransform}.
-	 * 
+	 *
 	 * @param pt
 	 *            the {@link Point} to inverse transform
 	 * @return a new, inverse transformed {@link Point}
@@ -368,7 +392,7 @@ public class AffineTransform {
 
 	/**
 	 * Inverts this {@link AffineTransform}.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 * @throws NoninvertibleTransformException
 	 */
@@ -380,7 +404,7 @@ public class AffineTransform {
 	/**
 	 * Checks if the transformation matrix of this {@link AffineTransform}
 	 * equals the identity matrix.
-	 * 
+	 *
 	 * @return <code>true</code> if the transformation matrix of this
 	 *         {@link AffineTransform} equals the identity matrix, otherwise
 	 *         <code>false</code>
@@ -394,7 +418,7 @@ public class AffineTransform {
 	 * {@link AffineTransform} in reverse order, multiplying the transformation
 	 * matrix of this {@link AffineTransform} from the right with the
 	 * transformation matrix of the other {@link AffineTransform}.
-	 * 
+	 *
 	 * @param Tx
 	 *            the {@link AffineTransform} that is concatenated with this
 	 *            {@link AffineTransform} in reverse order
@@ -409,7 +433,7 @@ public class AffineTransform {
 	 * Adds a rotation by an integer multiple of 90deg to the transformation
 	 * matrix of this {@link AffineTransform}. The integer multiple of 90deg is
 	 * specified by the given number of quadrants.
-	 * 
+	 *
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
 	 * @return <code>this</code> for convenience
@@ -423,7 +447,7 @@ public class AffineTransform {
 	 * Adds a rotation by an integer multiple of 90deg around the {@link Point}
 	 * specified by the given x and y coordinates to the transformation matrix
 	 * of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
 	 * @param anchorx
@@ -441,7 +465,7 @@ public class AffineTransform {
 	/**
 	 * Adds a rotation with the given angle (in radians) to the transformation
 	 * matrix of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param theta
 	 *            the rotation angle in radians
 	 * @return <code>this</code> for convenience
@@ -455,7 +479,7 @@ public class AffineTransform {
 	 * Adds a rotation to the transformation matrix of this
 	 * {@link AffineTransform}. The given coordinates specify a {@link Vector}
 	 * whose {@link Angle} to the x-axis is the applied rotation {@link Angle}.
-	 * 
+	 *
 	 * @param vecx
 	 *            the x coordinate of the {@link Vector} specifying the rotation
 	 *            {@link Angle}
@@ -473,7 +497,7 @@ public class AffineTransform {
 	 * Adds a rotation with the given angle (in radians) around the
 	 * {@link Point} specified by the given x and y coordinates to the
 	 * transformation matrix of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param theta
 	 *            the rotation angle in radians
 	 * @param anchorx
@@ -495,7 +519,7 @@ public class AffineTransform {
 	 * this {@link AffineTransform}. The given coordinates specify a
 	 * {@link Vector} whose {@link Angle} to the x-axis is the applied rotation
 	 * {@link Angle} and the anchor {@link Point} for the rotation.
-	 * 
+	 *
 	 * @param vecx
 	 *            the x coordinate of the {@link Vector} specifying the rotation
 	 *            {@link Angle}
@@ -517,7 +541,7 @@ public class AffineTransform {
 	/**
 	 * Adds an x and y scaling to the transformation matrix of this
 	 * {@link AffineTransform}.
-	 * 
+	 *
 	 * @param sx
 	 *            the x scaling factor added to the transformation matrix of
 	 *            this {@link AffineTransform}
@@ -534,7 +558,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to the
 	 * identity matrix.
-	 * 
+	 *
 	 * @return <code>this</code> for convenience
 	 */
 	public AffineTransform setToIdentity() {
@@ -545,7 +569,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * rotation matrix where the rotation angle is an integer multiple of 90deg.
-	 * 
+	 *
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
 	 * @return <code>this</code> for convenience
@@ -560,7 +584,7 @@ public class AffineTransform {
 	 * rotation and translation matrix where the rotation angle is an integer
 	 * multiple of 90deg and the rotation is around the {@link Point} specified
 	 * by the given x and y coordinates.
-	 * 
+	 *
 	 * @param numquadrants
 	 *            the integer that defines the number of quadrants to rotate by
 	 * @param anchorx
@@ -578,7 +602,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * rotation matrix by the given angle specified in radians.
-	 * 
+	 *
 	 * @param theta
 	 *            the rotation angle (in radians)
 	 * @return <code>this</code> for convenience
@@ -592,7 +616,7 @@ public class AffineTransform {
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * rotation matrix. The given x and y coordinates specify a {@link Vector}
 	 * whose {@link Angle} to the x-axis defines the rotation {@link Angle}.
-	 * 
+	 *
 	 * @param vecx
 	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
 	 *            the x-axis defines the rotation {@link Angle}
@@ -611,7 +635,7 @@ public class AffineTransform {
 	 * rotation and translation matrix. Thus, the resulting transformation
 	 * matrix rotates {@link Point}s by the given angle (in radians) around the
 	 * {@link Point} specified by the given x and y coordinates.
-	 * 
+	 *
 	 * @param theta
 	 *            the rotation angle (in radians)
 	 * @param anchorx
@@ -632,7 +656,7 @@ public class AffineTransform {
 	 * specify a {@link Vector} whose {@link Angle} to the x-axis defines the
 	 * rotation {@link Angle}. The secondly given x and y coordinates specify
 	 * the {@link Point} to rotate around.
-	 * 
+	 *
 	 * @param vecx
 	 *            the x coordinate of the {@link Vector} whose {@link Angle} to
 	 *            the x-axis defines the rotation {@link Angle}
@@ -654,7 +678,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * scaling matrix.
-	 * 
+	 *
 	 * @param sx
 	 *            the x scaling factor
 	 * @param sy
@@ -669,7 +693,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * shearing matrix.
-	 * 
+	 *
 	 * @param shx
 	 *            the x shearing factor
 	 * @param shy
@@ -685,7 +709,7 @@ public class AffineTransform {
 	 * Sets the transformation matrix of this {@link AffineTransform} to a pure
 	 * translation matrix that translates {@link Point}s by the given x and y
 	 * values.
-	 * 
+	 *
 	 * @param tx
 	 *            the x translation value
 	 * @param ty
@@ -700,7 +724,7 @@ public class AffineTransform {
 	/**
 	 * Sets the transformation matrix of this {@link AffineTransform} to the
 	 * transformation matrix of the given {@link AffineTransform}.
-	 * 
+	 *
 	 * @param Tx
 	 *            the {@link AffineTransform} specifying the new transformation
 	 *            matrix of this {@link AffineTransform}
@@ -715,7 +739,7 @@ public class AffineTransform {
 	 * Sets the respective values of the transformation matrix of this
 	 * {@link AffineTransform} to the supplied ones. Note that rotation is a
 	 * combination of shearing and scaling.
-	 * 
+	 *
 	 * @param m00
 	 *            the value of the transformation matrix in row 0 and column 0
 	 *            (x coordinate scaling)
@@ -745,7 +769,7 @@ public class AffineTransform {
 	/**
 	 * Adds an x and y shearing to the transformation matrix of this
 	 * {@link AffineTransform}.
-	 * 
+	 *
 	 * @param shx
 	 *            the x shearing factor added to the transformation matrix of
 	 *            this {@link AffineTransform}
@@ -767,7 +791,7 @@ public class AffineTransform {
 	/**
 	 * Sets the translation values of the x and y coordinates of the
 	 * transformation matrix of this {@link AffineTransform}.
-	 * 
+	 *
 	 * @param tx
 	 *            the x coordinate translation
 	 * @param ty
