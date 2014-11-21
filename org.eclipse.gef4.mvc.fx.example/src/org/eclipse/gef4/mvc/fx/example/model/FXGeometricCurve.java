@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import javafx.scene.effect.Effect;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -43,20 +43,16 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 	}
 
 	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
-
 	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
-
-	public double[] dashes = new double[0];
 
 	private final List<Point> waypoints = new ArrayList<>();
 	private Decoration sourceDecoration = Decoration.NONE;
-
 	private Decoration targetDecoration = Decoration.NONE;
+	public double[] dashes = new double[0];
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
-
 	private final Set<AbstractFXGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<AbstractFXGeometricElement<? extends IGeometry>>();
 
-	public FXGeometricCurve(Point[] waypoints, Color stroke,
+	public FXGeometricCurve(Point[] waypoints, Paint stroke,
 			double strokeWidth, double[] dashes, Effect effect) {
 		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth,
 				effect);
@@ -79,6 +75,10 @@ public class FXGeometricCurve extends AbstractFXGeometricElement<ICurve> {
 		List<Point> points = getWayPointsCopy();
 		points.add(i, p);
 		setWayPoints(points.toArray(new Point[] {}));
+	}
+
+	public double[] getDashes() {
+		return Arrays.copyOf(dashes, dashes.length);
 	}
 
 	public Set<AbstractFXGeometricElement<? extends IGeometry>> getSourceAnchorages() {

@@ -25,6 +25,8 @@ import com.google.inject.Provider;
 public class FXHoverFeedbackPart extends
 		AbstractFXFeedbackPart<FXGeometryNode<IGeometry>> {
 
+	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
+
 	private final Provider<IGeometry> feedbackGeometryProvider;
 
 	public FXHoverFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
@@ -42,7 +44,7 @@ public class FXHoverFeedbackPart extends
 
 		// hover specific
 		visual.setEffect(getHoverFeedbackEffect());
-		visual.setStroke(Color.web("#5a61af"));
+		visual.setStroke(DEFAULT_STROKE);
 		return visual;
 	}
 
