@@ -109,10 +109,9 @@ public class DotLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	Object text(AttrStmt attr) {
-		String format = "%s: %s"; //$NON-NLS-1$
+		String format = "%s: Attributes"; //$NON-NLS-1$
 		String attrLiteral = attr.getType().getLiteral();
-		return styled(String.format(format, attrLiteral, attr.getAttrLists()
-				.size() > 1 ? "Attributes" : "Attribute")); //$NON-NLS-1$//$NON-NLS-2$
+		return styled(String.format(format, attrLiteral));
 	}
 
 	Object text(Attribute attr) {
