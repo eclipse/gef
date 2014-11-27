@@ -423,7 +423,7 @@
 		
 		<module>../org.eclipse.gef4.common</module>
 		<module>../org.eclipse.gef4.common-feature</module>
-		<!-- <module>../org.eclipse.gef4.common.tests</module> -->
+		<module>../org.eclipse.gef4.common.tests</module>
 		<module>../org.eclipse.gef4.common.doc</module>
 		<module>../org.eclipse.gef4.common.doc-feature</module>
 		<module>../org.eclipse.gef4.common.sdk-feature</module>

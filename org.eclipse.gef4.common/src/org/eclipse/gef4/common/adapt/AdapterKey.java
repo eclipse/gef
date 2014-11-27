@@ -11,16 +11,20 @@
  *******************************************************************************/
 package org.eclipse.gef4.common.adapt;
 
+import com.google.common.reflect.TypeToken;
+
 /**
  * A pair of {@link Class} key and {@link String} role to register adapters at
  * and retrieve them from {@link IAdaptable}s. Using an {@link AdapterKey}
- * instead of just a {@link Class} key allows to register several adapters under
- * the same key, serving different roles. Nevertheless, adapters can still be
- * accessed in a type-safe manner. To register a default adapter for a certain
- * {@link Class} key, the {@link #DEFAULT_ROLE} may be used.
+ * instead of just a {@link Class} or {@link TypeToken} key allows to register
+ * several adapters under the same key, serving different roles. Nevertheless,
+ * adapters can still be accessed in a type-safe manner. To register a default
+ * adapter for a certain {@link Class} or {@link TypeToken} key, the
+ * {@link #DEFAULT_ROLE} may be used.
  * <P>
  * Creating {@link AdapterKey}s is supported by {@link #get(Class, String)} and
- * {@link #get(Class)} respectively, where the latter will use the
+ * {@link #get(TypeToken, String)}, as well as {@link #get(Class)} and
+ * {@link #get(TypeToken)} respectively, where the latter two will use the
  * {@link #DEFAULT_ROLE}.
  * 
  * @author anyssen
@@ -38,11 +42,11 @@ public class AdapterKey<T> {
 	 */
 	public static final String DEFAULT_ROLE = "default";
 
-	private Class<T> key;
+	private TypeToken<T> key;
 	private String role;
 
-	private AdapterKey(Class<T> key, String role) {
-		this.key = key;
+	private AdapterKey(TypeToken<T> typeKey, String role) {
+		this.key = typeKey;
 		this.role = role;
 	}
 
@@ -51,7 +55,7 @@ public class AdapterKey<T> {
 	 * 
 	 * @return The key being used.
 	 */
-	public Class<T> getKey() {
+	public TypeToken<T> getKey() {
 		return key;
 	}
 
@@ -82,6 +86,27 @@ public class AdapterKey<T> {
 		if (role == null) {
 			throw new NullPointerException("Role may not be null.");
 		}
+		return new AdapterKey<T>(TypeToken.of(key), role);
+	}
+
+	/**
+	 * Creates a new {@link AdapterKey} for the given key and role.
+	 * 
+	 * @param key
+	 *            The key to use for the newly created {@link AdapterKey}. May
+	 *            not be <code>null</code>.
+	 * @param role
+	 *            The role to use for the newly created {@link AdapterKey}. May
+	 *            not be <code>null</code>.
+	 * @return A new {@link AdapterKey} for the given key and role.
+	 */
+	public static <T> AdapterKey<T> get(TypeToken<T> key, String role) {
+		if (key == null) {
+			throw new NullPointerException("Key may not be null.");
+		}
+		if (role == null) {
+			throw new NullPointerException("Role may not be null.");
+		}
 		return new AdapterKey<T>(key, role);
 	}
 
@@ -97,6 +122,21 @@ public class AdapterKey<T> {
 	 * @see #get(Class, String)
 	 */
 	public static <T> AdapterKey<T> get(Class<T> key) {
+		return get(TypeToken.of(key), DEFAULT_ROLE);
+	}
+
+	/**
+	 * Creates a new {@link AdapterKey} for the given key and the
+	 * {@link #DEFAULT_ROLE} role.
+	 * 
+	 * @param key
+	 *            The key to use for the newly created {@link AdapterKey}. May
+	 *            not be <code>null</code>.
+	 * @return A new {@link AdapterKey} for the given key and role.
+	 * 
+	 * @see #get(TypeToken, String)
+	 */
+	public static <T> AdapterKey<T> get(TypeToken<T> key) {
 		return get(key, DEFAULT_ROLE);
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
 /**
@@ -100,9 +101,20 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	}
 
 	@Override
+	public <T> T getAdapter(TypeToken<? super T> key) {
+		return ads.getAdapter(key);
+	}
+
+	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
+	}
+
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			TypeToken<? super T> key) {
+		return ads.getAdapters(key);
 	}
 
 	@Override
@@ -172,6 +184,16 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 
 	@Override
 	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(Class<? super T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
 		ads.setAdapter(key, adapter);
 	}
 

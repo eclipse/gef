@@ -34,6 +34,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
 /**
@@ -268,9 +269,20 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	}
 
 	@Override
+	public <T> T getAdapter(TypeToken<? super T> key) {
+		return ads.getAdapter(key);
+	}
+
+	@Override
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			Class<? super T> classKey) {
 		return ads.getAdapters(classKey);
+	}
+
+	@Override
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			TypeToken<? super T> key) {
+		return ads.getAdapters(key);
 	}
 
 	@Override
@@ -538,6 +550,16 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 	@Override
 	public <T> void setAdapter(AdapterKey<? super T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(Class<? super T> key, T adapter) {
+		ads.setAdapter(key, adapter);
+	}
+
+	@Override
+	public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
 		ads.setAdapter(key, adapter);
 	}
 

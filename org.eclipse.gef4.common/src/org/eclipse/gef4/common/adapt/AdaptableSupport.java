@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 
+import com.google.common.reflect.TypeToken;
+
 /**
  * Support class to manage adapters for an {@link IAdaptable}.
  * 
@@ -90,16 +92,20 @@ public class AdaptableSupport<A extends IAdaptable> {
 		return (T) adapters.get(key);
 	}
 
+	public <T> T getAdapter(Class<? super T> key) {
+		return this.<T> getAdapter(TypeToken.of(key));
+	}
+
 	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(Class<? super T> classKey) {
-		Map<AdapterKey<? extends T>, T> adaptersForClassKey = getAdapters(classKey);
+	public <T> T getAdapter(TypeToken<? super T> key) {
+		Map<AdapterKey<? extends T>, T> adaptersForClassKey = getAdapters(key);
 		// if we have only one adapter for the given class key, return this one
 		if (adaptersForClassKey.size() == 1) {
 			return (T) adaptersForClassKey.values().iterator().next();
 		}
 		// if we have more than one, retrieve the one with the default role
-		return this.<T> getAdapter(AdapterKey.get(classKey,
-				AdapterKey.DEFAULT_ROLE));
+		return this
+				.<T> getAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE));
 	}
 
 	public Map<AdapterKey<?>, Object> getAdapters() {
@@ -109,8 +115,13 @@ public class AdaptableSupport<A extends IAdaptable> {
 		return adapters;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> key) {
+		return getAdapters(TypeToken.of(key));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			TypeToken<? super T> key) {
 		if (adapters == null) {
 			return Collections.emptyMap();
 		}
@@ -118,12 +129,22 @@ public class AdaptableSupport<A extends IAdaptable> {
 		if (adapters != null) {
 			for (AdapterKey<?> k : adapters.keySet()) {
 				if (key.isAssignableFrom(k.getKey())) {
+					// check type compliance...
 					typeSafeAdapters.put((AdapterKey<? extends T>) k,
 							(T) adapters.get(k));
 				}
 			}
 		}
 		return typeSafeAdapters;
+	}
+
+	public <T> void setAdapter(Class<? super T> key, T adapter) {
+		setAdapter(AdapterKey.get(TypeToken.of(key), AdapterKey.DEFAULT_ROLE),
+				adapter);
+	}
+
+	public <T> void setAdapter(TypeToken<? super T> key, T adapter) {
+		setAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE), adapter);
 	}
 
 	@SuppressWarnings("unchecked")
