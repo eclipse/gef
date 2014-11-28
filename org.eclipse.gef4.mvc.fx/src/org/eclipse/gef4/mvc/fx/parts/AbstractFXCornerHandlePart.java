@@ -21,11 +21,11 @@ public abstract class AbstractFXCornerHandlePart<N extends Node> extends
 		AbstractFXHandlePart<Rectangle> implements
 		Comparable<AbstractFXCornerHandlePart<? extends Node>> {
 
-	private final Provider<IGeometry> handleGeometryProvider;
+	private final Provider<? extends IGeometry> handleGeometryProvider;
 	private final Pos pos;
 
 	public AbstractFXCornerHandlePart(
-			Provider<IGeometry> handleGeometryProvider, Pos pos) {
+			Provider<? extends IGeometry> handleGeometryProvider, Pos pos) {
 		this.handleGeometryProvider = handleGeometryProvider;
 		this.pos = pos;
 	}

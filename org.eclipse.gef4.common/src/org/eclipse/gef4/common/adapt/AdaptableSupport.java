@@ -84,12 +84,19 @@ public class AdaptableSupport<A extends IAdaptable> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(AdapterKey<? super T> key) {
 		if (adapters == null) {
 			return null;
 		}
-		return (T) adapters.get(key);
+
+		// see if we can unambiguously retrieve a matching adapter
+		Map<AdapterKey<? extends T>, T> adaptersForTypeKey = getAdapters(
+				key.getKey(), key.getRole());
+		if (adaptersForTypeKey.size() == 1) {
+			return (T) adaptersForTypeKey.values().iterator().next();
+		}
+
+		return null;
 	}
 
 	public <T> T getAdapter(Class<? super T> key) {
@@ -98,14 +105,20 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(TypeToken<? super T> key) {
-		Map<AdapterKey<? extends T>, T> adaptersForClassKey = getAdapters(key);
-		// if we have only one adapter for the given class key, return this one
-		if (adaptersForClassKey.size() == 1) {
-			return (T) adaptersForClassKey.values().iterator().next();
+		// if we have only one adapter for the given type key (disregarding the
+		// role), return this one
+		Map<AdapterKey<? extends T>, T> adaptersForTypeKey = getAdapters(key,
+				null);
+		if (adaptersForTypeKey.size() == 1) {
+			return (T) adaptersForTypeKey.values().iterator().next();
 		}
-		// if we have more than one, retrieve the one with the default role
-		return this
-				.<T> getAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE));
+
+		if (adaptersForTypeKey.size() > 1) {
+			// if we have more than one, retrieve the one with the default role
+			return getAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE));
+		}
+		
+		return null;
 	}
 
 	public Map<AdapterKey<?>, Object> getAdapters() {
@@ -129,6 +142,25 @@ public class AdaptableSupport<A extends IAdaptable> {
 		if (adapters != null) {
 			for (AdapterKey<?> k : adapters.keySet()) {
 				if (key.isAssignableFrom(k.getKey())) {
+					// check type compliance...
+					typeSafeAdapters.put((AdapterKey<? extends T>) k,
+							(T) adapters.get(k));
+				}
+			}
+		}
+		return typeSafeAdapters;
+	}
+
+	private <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			TypeToken<? super T> typeKey, String role) {
+		if (adapters == null) {
+			return Collections.emptyMap();
+		}
+		Map<AdapterKey<? extends T>, T> typeSafeAdapters = new HashMap<AdapterKey<? extends T>, T>();
+		if (adapters != null) {
+			for (AdapterKey<?> k : adapters.keySet()) {
+				if ((typeKey == null || typeKey.isAssignableFrom(k.getKey()))
+						&& (role == null || k.getRole().equals(role))) {
 					// check type compliance...
 					typeSafeAdapters.put((AdapterKey<? extends T>) k,
 							(T) adapters.get(k));

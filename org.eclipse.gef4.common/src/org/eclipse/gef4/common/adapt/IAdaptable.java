@@ -50,8 +50,8 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 
 	/**
 	 * Returns an adapter for the given {@link TypeToken} key if one can
-	 * unambiguously retrieved. That is, if there is only a single adapter that
-	 * matches the given {@link TypeToken} key, this adapter is returned,
+	 * unambiguously be retrieved. That is, if there is only a single adapter
+	 * that matches the given {@link TypeToken} key, this adapter is returned,
 	 * ignoring the role under which it is registered (see
 	 * {@link AdapterKey#getRole()}).
 	 * 
@@ -63,8 +63,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * If there is more than one adapter that matches the given type key, it
 	 * will return the single adapter that is registered for the default role (
 	 * {@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for which
-	 * this applies, not taking into consideration which is the 'best matching'
-	 * {@link TypeToken} key. Otherwise it will return <code>null</code>.
+	 * this applies. Otherwise it will return <code>null</code>.
 	 * 
 	 * @param key
 	 *            The {@link TypeToken} key used to retrieve a registered
@@ -75,6 +74,28 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 */
 	public <T> T getAdapter(TypeToken<? super T> key);
 
+	/**
+	 * Returns an adapter for the given {@link Class} key if one can
+	 * unambiguously be retrieved. That is, if there is only a single adapter
+	 * that matches the given {@link Class} key, this adapter is returned,
+	 * ignoring the role under which it is registered (see
+	 * {@link AdapterKey#getRole()}).
+	 * 
+	 * An adapter 'matching' the {@link Class} key is an adapter, which is
+	 * registered with an {@link AdapterKey}, whose key (
+	 * {@link AdapterKey#getKey()}) refers to the type or a sub-type of the
+	 * given type key (@see {@link Class#isAssignableFrom(Class)}.
+	 * 
+	 * If there is more than one adapter that matches the given {@link Class}
+	 * key, it will return the single adapter that is registered for the default
+	 * role ( {@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for
+	 * which this applies. Otherwise it will return <code>null</code>.
+	 * 
+	 * @param key
+	 *            The {@link Class} key used to retrieve a registered adapter.
+	 * @return The unambiguously retrievable adapter for the given {@link Class}
+	 *         key or <code>null</code> if none could be retrieved.
+	 */
 	public <T> T getAdapter(Class<? super T> key);
 
 	/**
@@ -95,6 +116,25 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
 			TypeToken<? super T> key);
 
+	/**
+	 * Returns an adapter for the given {@link AdapterKey} if one can
+	 * unambiguously be retrieved. That is, if there is only a single adapter
+	 * that matches the given {@link AdapterKey}, this adapter is returned.
+	 * 
+	 * An adapter 'matching' the {@link Class} key is an adapter, which is
+	 * registered with an {@link AdapterKey}, whose key (
+	 * {@link AdapterKey#getKey()}) refers to the type or a sub-type of the
+	 * given type key (@see {@link Class#isAssignableFrom(Class)} and whose role
+	 * ({@link AdapterKey#getRole()})) equals the given role .
+	 * 
+	 * If there is more than one adapter that matches the given {@link AdapterKey}
+	 * key, or none, it will return <code>null</code>.
+	 * 
+	 * @param key
+	 *            The {@link Class} key used to retrieve a registered adapter.
+	 * @return The unambiguously retrievable adapter for the given {@link Class}
+	 *         key or <code>null</code> if none could be retrieved.
+	 */
 	public <T> T getAdapter(AdapterKey<? super T> key);
 
 	public <T> void setAdapter(AdapterKey<? super T> key, T adapter);

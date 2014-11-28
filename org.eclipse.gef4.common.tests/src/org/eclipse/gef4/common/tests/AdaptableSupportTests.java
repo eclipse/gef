@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import com.google.common.reflect.TypeToken;
 
+// TODO: re-write getAdapter() tests systematically, testing all possible combinations of registering and retrieving adapters
 public class AdaptableSupportTests {
 
 	private class AdaptableSupportTestDriver implements IAdaptable {
@@ -104,6 +105,10 @@ public class AdaptableSupportTests {
 	private class ParameterizedType<T> extends ParameterizedSuperType<T> {
 	}
 
+	private class ParameterSubType1 extends ParameterType1 {
+
+	}
+
 	private class ParameterType1 extends Object {
 
 	}
@@ -135,7 +140,7 @@ public class AdaptableSupportTests {
 	}
 
 	@Test
-	public void polymorphicRetrieval() {
+	public void polymorphicRetrievalOfParameterizedTypes() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
 
 		// register adapter
@@ -156,6 +161,34 @@ public class AdaptableSupportTests {
 				parameterType1,
 				td.getAdapter(new TypeToken<ParameterizedSubType<ParameterType1>>() {
 				}));
+		assertEquals(
+				parameterType1,
+				td.getAdapter(new TypeToken<ParameterizedSuperType<? extends ParameterType1>>() {
+				}));
+		assertEquals(
+				parameterType1,
+				td.getAdapter(new TypeToken<ParameterizedType<? extends ParameterType1>>() {
+				}));
+		assertEquals(
+				parameterType1,
+				td.getAdapter(new TypeToken<ParameterizedSubType<? extends ParameterType1>>() {
+				}));
+	}
+
+	@Test
+	public void registrationAndRetrievalOfParameterizedSubTypeWithRoles() {
+		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+
+		// register adapters
+		ParameterizedType<ParameterSubType1> parameterSubType1 = new ParameterizedType<ParameterSubType1>();
+
+		td.setAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedType<ParameterSubType1>>() {
+				}, "role"), parameterSubType1);
+
+		assertEquals(parameterSubType1, td.getAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedType<? extends ParameterType1>>() {
+				}, "role")));
 	}
 
 	@Test
@@ -211,5 +244,21 @@ public class AdaptableSupportTests {
 		// compatible
 		assertEquals(2, td.getAdapters(new TypeToken<ParameterizedType>() {
 		}).size());
+	}
+
+	@Test
+	public void registrationAndRetrievalOfParameterizedWithRoles() {
+		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+
+		// register adapters
+		ParameterizedType<ParameterType1> parameterType1 = new ParameterizedType<ParameterType1>();
+
+		td.setAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedType<ParameterType1>>() {
+				}, "role"), parameterType1);
+
+		assertEquals(parameterType1, td.getAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedType<? extends ParameterType1>>() {
+				}, "role")));
 	}
 }

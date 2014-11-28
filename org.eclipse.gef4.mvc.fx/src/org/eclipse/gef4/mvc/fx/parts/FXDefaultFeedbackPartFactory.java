@@ -22,6 +22,7 @@ import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -59,6 +60,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		return Collections.emptyList();
 	}
 
+	@SuppressWarnings("serial")
 	protected List<IFeedbackPart<Node, ? extends Node>> createHoverFeedbackParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			HoverBehavior<Node> hoverBehavior, Map<Object, Object> contextMap) {
@@ -72,9 +74,10 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		final IVisualPart<Node, ? extends Node> target = targets.iterator()
 				.next();
 
-		final Provider<IGeometry> hoverFeedbackGeometryProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						Provider.class, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
+		final Provider<? extends IGeometry> hoverFeedbackGeometryProvider = target
+				.getAdapter(AdapterKey.get(
+						new TypeToken<Provider<? extends IGeometry>>() {
+						}, HOVER_FEEDBACK_GEOMETRY_PROVIDER));
 		if (hoverFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 
@@ -107,6 +110,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 	 * @return The {@link IFeedbackPart} for this anchor link, or
 	 *         <code>null</code> if no feedback should be rendered.
 	 */
+	@SuppressWarnings("serial")
 	protected IFeedbackPart<Node, ? extends Node> createLinkFeedbackPart(
 			final IVisualPart<Node, ? extends Node> anchored,
 			final IVisualPart<Node, ? extends Node> anchorage,
@@ -119,12 +123,12 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 			// different)
 			final Provider<IGeometry> anchorageGeometryProvider = anchorage
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-							Provider.class,
-							SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
+							new TypeToken<Provider<? extends IGeometry>>() {
+							}, SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
 			final Provider<IGeometry> anchoredGeometryProvider = anchored
 					.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-							Provider.class,
-							SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
+							new TypeToken<Provider<? extends IGeometry>>() {
+							}, SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER));
 			if (anchoredGeometryProvider != null
 					&& anchorageGeometryProvider != null) {
 				if (anchoredGeometryProvider == null
@@ -182,6 +186,7 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 		return null;
 	}
 
+	@SuppressWarnings("serial")
 	protected List<IFeedbackPart<Node, ? extends Node>> createSelectionFeedbackParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
@@ -199,7 +204,8 @@ public class FXDefaultFeedbackPartFactory implements IFeedbackPartFactory<Node> 
 				.next();
 		final Provider<IGeometry> selectionFeedbackGeometryProvider = target
 				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						Provider.class, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
+						new TypeToken<Provider<? extends IGeometry>>() {
+						}, SELECTION_FEEDBACK_GEOMETRY_PROVIDER));
 		if (selectionFeedbackGeometryProvider != null) {
 			Provider<IGeometry> geometryInSceneProvider = new Provider<IGeometry>() {
 				@Override

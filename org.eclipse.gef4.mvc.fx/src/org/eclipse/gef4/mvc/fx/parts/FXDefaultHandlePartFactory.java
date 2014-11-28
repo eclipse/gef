@@ -36,6 +36,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -68,7 +69,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 */
 	protected IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Provider<IGeometry> handleGeometryProvider, Pos position,
+			Provider<? extends IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
 		return new FXRectangleCornerHandlePart(handleGeometryProvider, position);
 	}
@@ -76,7 +77,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	// TODO: maybe inline this method
 	protected List<IHandlePart<Node, ? extends Node>> createBoundsSelectionHandleParts(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Provider<IGeometry> handleGeometryProvider,
+			Provider<? extends IGeometry> handleGeometryProvider,
 			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
@@ -194,6 +195,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return Collections.emptyList();
 	}
 
+	@SuppressWarnings("serial")
 	protected List<IHandlePart<Node, ? extends Node>> createHoverHandleParts(
 			final IVisualPart<Node, ? extends Node> target,
 			final HoverBehavior<Node> contextBehavior,
@@ -201,9 +203,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		List<IHandlePart<Node, ? extends Node>> handleParts = new ArrayList<IHandlePart<Node, ? extends Node>>();
 
 		// handle geometry is in target visual local coordinate space.
-		final Provider<IGeometry> hoverHandlesGeometryInTargetLocalProvider = target
-				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						Provider.class, HOVER_HANDLES_GEOMETRY_PROVIDER));
+		final Provider<? extends IGeometry> hoverHandlesGeometryInTargetLocalProvider = target
+				.getAdapter(AdapterKey.get(
+						new TypeToken<Provider<? extends IGeometry>>() {
+						}, HOVER_HANDLES_GEOMETRY_PROVIDER));
 
 		// generate handles from selection handles geometry
 		IGeometry hoverHandlesGeometry = (hoverHandlesGeometryInTargetLocalProvider != null) ? hoverHandlesGeometryInTargetLocalProvider
@@ -214,7 +217,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// we will need a provider that returns the geometry in scene
 		// coordinates
-		final Provider<IGeometry> hoverHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
+		final Provider<? extends IGeometry> hoverHandlesGeometryInSceneProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
 				return FXUtils.localToScene(target.getVisual(),
@@ -272,7 +275,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	protected List<IHandlePart<Node, ? extends Node>> createMultiSelectionHandleParts(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap) {
-		Provider<IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
+		Provider<? extends IGeometry> handleGeometryProvider = new Provider<IGeometry>() {
 			@Override
 			public IGeometry get() {
 				// TODO: move code out of FXPartUtils into a geometry provider
@@ -326,6 +329,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		return new FXCircleSegmentHandlePart(segmentsProvider, segmentIndex, 0);
 	}
 
+	@SuppressWarnings("serial")
 	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
 			final IVisualPart<Node, ? extends Node> target,
 			Map<Object, Object> contextMap) {
@@ -334,7 +338,8 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		// handle geometry is in target visual local coordinate space.
 		final Provider<IGeometry> selectionHandlesGeometryInTargetLocalProvider = target
 				.<Provider<IGeometry>> getAdapter(AdapterKey.get(
-						Provider.class, SELECTION_HANDLES_GEOMETRY_PROVIDER));
+						new TypeToken<Provider<? extends IGeometry>>() {
+						}, SELECTION_HANDLES_GEOMETRY_PROVIDER));
 
 		// generate handles from selection handles geometry
 		IGeometry selectionHandlesGeometry = (selectionHandlesGeometryInTargetLocalProvider != null) ? selectionHandlesGeometryInTargetLocalProvider

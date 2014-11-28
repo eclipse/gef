@@ -22,8 +22,8 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
-import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXBendOnSegmentHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy;
@@ -43,7 +43,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 	@Override
 	public IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Provider<IGeometry> handleGeometryProvider, Pos position,
+			Provider<? extends IGeometry> handleGeometryProvider, Pos position,
 			Map<Object, Object> contextMap) {
 		IHandlePart<Node, ? extends Node> part = super
 				.createBoundsSelectionCornerHandlePart(targets,

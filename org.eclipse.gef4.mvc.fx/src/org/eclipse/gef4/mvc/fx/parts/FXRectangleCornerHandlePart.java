@@ -37,7 +37,7 @@ public class FXRectangleCornerHandlePart extends
 	private static final Color DEFAULT_FILL = Color.web("#d5faff");
 
 	public FXRectangleCornerHandlePart(
-			Provider<IGeometry> handleGeometryProvider, Pos pos) {
+			Provider<? extends IGeometry> handleGeometryProvider, Pos pos) {
 		super(handleGeometryProvider, pos);
 	}
 

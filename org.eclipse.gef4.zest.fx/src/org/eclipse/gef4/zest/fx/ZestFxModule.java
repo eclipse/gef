@@ -16,6 +16,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
@@ -47,12 +48,14 @@ import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneOnTypePolicy;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 public class ZestFxModule extends MvcFxModule {
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void bindAbstractContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		super.bindAbstractContentPartAdapters(adapterMapBinder);
@@ -63,19 +66,16 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(FXHoverOnHoverPolicy.class);
 
 		// geometry provider for selection feedback
-		adapterMapBinder.addBinding(
-				AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(
-				VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		}, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover feedback
-		adapterMapBinder.addBinding(
-				AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(
-				VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		}, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 
 		// geometry provider for hover handles
-		adapterMapBinder.addBinding(
-				AdapterKey.get(Provider.class, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(
-				VisualBoundsGeometryProvider.class);
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
+		}, FXDefaultHandlePartFactory.HOVER_HANDLES_GEOMETRY_PROVIDER)).to(VisualBoundsGeometryProvider.class);
 	}
 
 	@Override

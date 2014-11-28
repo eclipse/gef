@@ -15,6 +15,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleDeleteHandlePart;
@@ -43,12 +44,14 @@ import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.policies.CreationPolicy;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 public class FXExampleModule extends MvcFxModule {
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void bindAbstractContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -66,20 +69,23 @@ public class FXExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(
 						AdapterKey
-								.get(Provider.class,
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
 										FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 		// geometry provider for selection handles
 		adapterMapBinder
 				.addBinding(
 						AdapterKey
-								.get(Provider.class,
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
 										FXDefaultHandlePartFactory.SELECTION_HANDLES_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 		adapterMapBinder
 				.addBinding(
 						AdapterKey
-								.get(Provider.class,
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
 										FXDefaultFeedbackPartFactory.SELECTION_LINK_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualOutlineGeometryProvider.class);
 
@@ -87,7 +93,8 @@ public class FXExampleModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(
 						AdapterKey
-								.get(Provider.class,
+								.get(new TypeToken<Provider<IGeometry>>() {
+								},
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
 

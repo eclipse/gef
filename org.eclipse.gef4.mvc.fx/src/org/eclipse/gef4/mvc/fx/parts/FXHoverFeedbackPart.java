@@ -27,9 +27,10 @@ public class FXHoverFeedbackPart extends
 
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 
-	private final Provider<IGeometry> feedbackGeometryProvider;
+	private final Provider<? extends IGeometry> feedbackGeometryProvider;
 
-	public FXHoverFeedbackPart(Provider<IGeometry> feedbackGeometryProvider) {
+	public FXHoverFeedbackPart(
+			Provider<? extends IGeometry> feedbackGeometryProvider) {
 		this.feedbackGeometryProvider = feedbackGeometryProvider;
 	}
 
