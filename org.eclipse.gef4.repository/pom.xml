@@ -47,8 +47,6 @@
 								<configuration>
 									<associateSites>
 										<site>http://download.eclipse.org/releases/mars</site>
-										<!-- TODO: remove e(fx)clipse site after they have contributed to Mars -->
-										<site>http://download.eclipse.org/efxclipse/runtime-released/1.0.0/site</site>
 									</associateSites>
 								</configuration>
 							</execution>
