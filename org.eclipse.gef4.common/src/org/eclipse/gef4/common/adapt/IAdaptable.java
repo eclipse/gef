@@ -20,25 +20,36 @@ import com.google.common.reflect.TypeToken;
 
 /**
  * An {@link IAdaptable} allows to register (as well as unregister) and retrieve
- * (registered) adapters under a given {@link AdapterKey}, that is under a
- * {@link Class} or {@link TypeToken} key and a {@link String}-based role.
- * Thereby, adapters of the same type can be registered at an {@link IAdaptable}
- * under different roles.
- * 
- * For convenience, an {@link IAdaptable} supports the registration and
- * retrieval of 'default' adapters by using a simple {@link Class} or
- * {@link TypeToken} ) key instead of an {@link AdapterKey}. This is identical
- * to the use of an {@link AdapterKey} with the given {@link Class} or
- * {@link TypeToken} and the default role ({@link AdapterKey#DEFAULT_ROLE}).
- * 
+ * (registered) adapters under a given {@link AdapterKey}, which combines a
+ * {@link TypeToken}-based type key and a {@link String}-based role.
+ * <p>
+ * The combination of a type key with a role (by means of an {@link AdapterKey})
+ * allows to register multiple adapters with the same type under different
+ * roles. If there is only one adapter for specific type, it can easily be
+ * registered and retrieved without specifying a role, using
+ * {@link #setAdapter(TypeToken, Object)}, {@link #setAdapter(Class, Object)},
+ * {@link #getAdapter(TypeToken)}, and {@link #getAdapter(Class)}. This is
+ * identical to using {@link #setAdapter(AdapterKey, Object)} and
+ * {@link #getAdapter(AdapterKey)} with an {@link AdapterKey} that uses the
+ * 'default' role ({@link AdapterKey#DEFAULT_ROLE}).
+ * <p>
+ * Using a {@link TypeToken}-based type key instead of a simple {@link Class}
+ * -based type key, an {@link IAdaptable} allows to register and retrieve
+ * adapters also for parameterized types (e.g. by using
+ * <code>new TypeToken&lt;Provider&lt;IGeometry&gt;&gt;(){}</code> as a type
+ * key). For convenience, non-parameterized types can also be registered and
+ * retrieved via a simple {@link Class} key (a {@link TypeToken} will internally
+ * be computed for it using {@link TypeToken#of(Class)}).
+ * <p>
  * If a to be registered adapter implements the {@link Bound} interface, it is
- * expected that the {@link IAdaptable} on which the adapter is registered binds
- * itself to the adapter via {@link Bound#setAdaptable(IAdaptable)} within
- * {@link #setAdapter(AdapterKey, Object)}, and accordingly unbinds itself from
- * the adapter (setAdaptable(null)) within {@link #unsetAdapter(AdapterKey)}.
- * 
- * Any client implementing this interface may use an {@link AdaptableSupport} as
- * a delegate.
+ * expected that the {@link IAdaptable}, on which the adapter is registered,
+ * binds itself to the adapter via {@link Bound#setAdaptable(IAdaptable)} during
+ * registration, and accordingly unbinds itself from the adapter
+ * (setAdaptable(null)) during un-registration.
+ * <p>
+ * Any client implementing this interface may internally use an
+ * {@link AdaptableSupport} as a delegate to easily realize the required
+ * functionality.
  * 
  * @author anyssen
  */
@@ -90,7 +101,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * Returns an adapter for the given {@link AdapterKey} if one can
 	 * unambiguously be retrieved. That is, if there is only a single adapter
 	 * that 'matches' the given {@link AdapterKey}, this adapter is returned.
-	 * 
+	 * <p>
 	 * An adapter 'matching' the {@link AdapterKey} is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose {@link TypeToken} key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
@@ -98,7 +109,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * {@link Class#isAssignableFrom(Class)} and whose role (
 	 * {@link AdapterKey#getRole()})) equals the role of the given
 	 * {@link AdapterKey}'s role.
-	 * 
+	 * <p>
 	 * If there is more than one adapter that 'matches' the given
 	 * {@link AdapterKey} or none can be retrieved, <code>null</code> will be
 	 * returned.
@@ -117,12 +128,12 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * that 'matches' the given {@link Class} key, this adapter is returned,
 	 * ignoring the role under which it is registered (see
 	 * {@link AdapterKey#getRole()}).
-	 * 
+	 * <p>
 	 * An adapter 'matching' the {@link Class} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
 	 * given {@link Class} key (see {@link Class#isAssignableFrom(Class)}.
-	 * 
+	 * <p>
 	 * If there is more than one adapter that 'matches' the given {@link Class}
 	 * key, it will return the single adapter that is registered for the default
 	 * role ({@link AdapterKey#DEFAULT_ROLE}), if there is a single adapter for
@@ -141,12 +152,12 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * that 'matches' the given {@link TypeToken} key, this adapter is returned,
 	 * ignoring the role under which it is registered (see
 	 * {@link AdapterKey#getRole()}).
-	 * 
+	 * <p>
 	 * An adapter 'matching' the {@link TypeToken} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
 	 * given type key (see {@link TypeToken#isAssignableFrom(TypeToken)}.
-	 * 
+	 * <p>
 	 * If there is more than one adapter that 'matches' the given
 	 * {@link TypeToken} key, it will return the single adapter that is
 	 * registered for the default role ({@link AdapterKey#DEFAULT_ROLE}), if
@@ -204,7 +215,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * adapter has to be 'matching' the {@link AdapterKey}, i.e. it has to be
 	 * compliant to the {@link AdapterKey}'s {@link TypeToken} key (
 	 * {@link AdapterKey#getKey()}).
-	 * 
+	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
@@ -222,7 +233,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * {@link TypeToken} representing the given {@link Class} key, i.e. using
 	 * {@link TypeToken#of(Class)}, as well as the default role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.
-	 * 
+	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
@@ -240,7 +251,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * Registers the given adapter under an {@link AdapterKey}, which will use
 	 * the given {@link TypeToken} key as well as the default role (see
 	 * {@link AdapterKey#DEFAULT_ROLE}.
-	 * 
+	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
 	 * will obtain a back-reference to this {@link IAdaptable} via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method.
@@ -258,7 +269,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	/**
 	 * Unregisters the adapter registered under the exact {@link AdapterKey}
 	 * given, returning it for convenience.
-	 * 
+	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the
 	 * back-reference to this {@link IAdaptable} will be removed via its
 	 * {@link IAdaptable.Bound#setAdaptable(IAdaptable)} method, passing over
