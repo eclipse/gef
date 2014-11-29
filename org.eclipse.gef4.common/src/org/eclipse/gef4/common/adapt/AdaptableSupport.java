@@ -17,27 +17,32 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.activate.IActivatable;
 
 import com.google.common.reflect.TypeToken;
 
 /**
- * Support class to manage adapters for an {@link IAdaptable}.
- * 
- * It is expected that the source {@link IAdaptable} holds an instance of this
- * class as a delegate, forwarding the calls of all {@link IAdaptable}
- * operations to it.
- * 
+ * A support class to manage adapters for a source {@link IAdaptable}. It is
+ * expected that the source {@link IAdaptable} holds an instance of this class
+ * as a delegate, forwarding the calls of all {@link IAdaptable} operations to
+ * it.
+ * <p>
  * In addition to the source {@link IAdaptable} a {@link PropertyChangeSupport}
- * is expected during construction. It will be used to fire
+ * is expected to be passe in during construction. It will be used to fire
  * {@link PropertyChangeEvent}s whenever an adapter is set (
  * {@link #setAdapter(AdapterKey, Object)}) or unset (
  * {@link #unsetAdapter(AdapterKey)}). {@link IAdaptable#ADAPTERS_PROPERTY} will
- * be used as the property name within all those events.
- * 
+ * be used as the property name within all change events.
+ * <p>
  * If the {@link IAdaptable} is also {@link IActivatable}, it will ensure
- * adapters are activated/deactivated upon registration dependent on the active
- * state of the adaptable.
+ * adapters are activated/deactivated when being set/unset dependent on the
+ * active state of the adaptable at that moment. However, the
+ * {@link AdaptableSupport} will not register a listener for the active state of
+ * the source {@link IAdaptable}, so changes to its active state will not result
+ * in state changes of the registered adapters. For this purpose, an
+ * {@link ActivatableSupport} may be used by the source {@link IAdaptable} as a
+ * second delegate.
  * 
  * @author anyssen
  * 
@@ -117,7 +122,7 @@ public class AdaptableSupport<A extends IAdaptable> {
 			// if we have more than one, retrieve the one with the default role
 			return getAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE));
 		}
-		
+
 		return null;
 	}
 

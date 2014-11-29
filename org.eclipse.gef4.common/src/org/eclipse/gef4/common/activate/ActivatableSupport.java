@@ -16,25 +16,30 @@ package org.eclipse.gef4.common.activate;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 
+import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 
 /**
- * Support class to manage the active state of a source {@link IActivatable}.
- * 
- * It is expected that the source {@link IActivatable} holds an instance of this
+ * Support class to manage the active state of a source {@link IActivatable}. It
+ * is expected that the source {@link IActivatable} holds an instance of this
  * class as a delegate, forwarding the calls of all {@link IActivatable}
  * operations to it.
- * 
+ * <p>
  * In addition to the source {@link IActivatable} a
  * {@link PropertyChangeSupport} is expected during construction. It will be
  * used to fire {@link PropertyChangeEvent}s when the active state changes, i.e.
  * whenever a call to {@link #activate()} or {@link #deactivate()} results in a
  * state change. {@link IActivatable#ACTIVE_PROPERTY} will be used as the
  * property name within all those events.
- * 
+ * <p>
  * If the given {@link IActivatable} is also {@link IAdaptable}, all calls to
  * {@link #activate()} and {@link #deactivate()} will be forwarded to all
- * registered adapters that are {@link IActivatable}.
+ * adapters registered at the {@link IActivatable} at that moment. However, the
+ * {@link ActivatableSupport} will not register a property change listener on
+ * the {@link IAdaptable} to get notified about newly set or unset adapters, so
+ * they will not be automatically activated/deactivated. The source
+ * {@link IActivatable} may use an {@link AdaptableSupport} as a second delegate
+ * for this purpose.
  * 
  * @author anyssen
  * 
