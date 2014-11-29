@@ -12,6 +12,7 @@
 package org.eclipse.gef4.common.adapt;
 
 import java.beans.PropertyChangeEvent;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
@@ -99,20 +100,20 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 
 	/**
 	 * Returns an adapter for the given {@link AdapterKey} if one can
-	 * unambiguously be retrieved. That is, if there is only a single adapter
-	 * that 'matches' the given {@link AdapterKey}, this adapter is returned.
+	 * unambiguously be retrieved, i.e. if there is only a single adapter that
+	 * 'matches' the given {@link AdapterKey}.
 	 * <p>
 	 * An adapter 'matching' the {@link AdapterKey} is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose {@link TypeToken} key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
 	 * given {@link AdapterKey}'s {@link TypeToken} key (@see
-	 * {@link Class#isAssignableFrom(Class)} and whose role (
+	 * {@link TypeToken#isAssignableFrom(TypeToken)} and whose role (
 	 * {@link AdapterKey#getRole()})) equals the role of the given
 	 * {@link AdapterKey}'s role.
 	 * <p>
 	 * If there is more than one adapter that 'matches' the given
-	 * {@link AdapterKey} or none can be retrieved, <code>null</code> will be
-	 * returned.
+	 * {@link AdapterKey}, or there is no one 'matching' it, <code>null</code>
+	 * will be returned.
 	 * 
 	 * @param key
 	 *            The {@link AdapterKey} used to retrieve a registered adapter.
@@ -132,7 +133,7 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * An adapter 'matching' the {@link Class} key is an adapter, which is
 	 * registered with an {@link AdapterKey}, whose key (
 	 * {@link AdapterKey#getKey()}) refers to the same type or a sub-type of the
-	 * given {@link Class} key (see {@link Class#isAssignableFrom(Class)}.
+	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
 	 * <p>
 	 * If there is more than one adapter that 'matches' the given {@link Class}
 	 * key, it will return the single adapter that is registered for the default
@@ -176,18 +177,18 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	/**
 	 * Returns all adapters 'matching' the given {@link Class} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
-	 * {@link AdapterKey#getKey()}) refers to the same or a sub-class or
-	 * sub-interface of the given {@link Class} key.
+	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type of the
+	 * given {@link Class} key (see {@link TypeToken#isAssignableFrom(Type)}).
 	 * 
 	 * @param key
 	 *            The {@link Class} key to retrieve adapters for.
 	 * @return A {@link Map} containing all those adapters registered at this
 	 *         {@link IAdaptable}, whose {@link AdapterKey}'s {@link TypeToken}
 	 *         key ({@link AdapterKey#getKey()}) refers to the same or a
-	 *         sub-class or sub-interface of the given {@link Class} key,
-	 *         qualified by their respective {@link AdapterKey}s.
+	 *         sub-type of the given {@link Class} key, qualified by their
+	 *         respective {@link AdapterKey}s.
 	 * 
-	 * @see #getAdapters(TypeToken)
+	 * @see #getAdapter(Class)
 	 */
 	public <T> Map<AdapterKey<? extends T>, T> getAdapters(Class<? super T> key);
 
@@ -195,7 +196,8 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 	 * Returns all adapters 'matching' the given {@link TypeToken} key, i.e. all
 	 * adapters whose {@link AdapterKey}'s {@link TypeToken} key
 	 * {@link AdapterKey#getKey()}) refers to the same or a sub-type or of the
-	 * given {@link TypeToken} key.
+	 * given {@link TypeToken} key (see
+	 * {@link TypeToken#isAssignableFrom(TypeToken)}).
 	 * 
 	 * @param key
 	 *            The {@link TypeToken} key to retrieve adapters for.
@@ -212,8 +214,8 @@ public interface IAdaptable extends IPropertyChangeNotifier {
 
 	/**
 	 * Registers the given adapter under the given {@link AdapterKey}. The
-	 * adapter has to be 'matching' the {@link AdapterKey}, i.e. it has to be
-	 * compliant to the {@link AdapterKey}'s {@link TypeToken} key (
+	 * adapter has to be compliant to the {@link AdapterKey}, i.e. it has to be
+	 * of the same type or a sub-type of the {@link AdapterKey}'s type key (
 	 * {@link AdapterKey#getKey()}).
 	 * <p>
 	 * If the given adapter implements {@link IAdaptable.Bound}, the adapter
