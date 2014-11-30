@@ -23,10 +23,10 @@ import org.eclipse.gef4.common.activate.IActivatable;
 import com.google.common.reflect.TypeToken;
 
 /**
- * A support class to manage adapters for a source {@link IAdaptable}. It is
- * expected that the source {@link IAdaptable} holds an instance of this class
- * as a delegate, forwarding the calls of all {@link IAdaptable} operations to
- * it.
+ * A support class to manage adapters for a source {@link IAdaptable}. It offers
+ * all methods defined by {@link IAdaptable}, while not formally implementing
+ * the interface, and can thus be used by a source {@link IAdaptable} as a
+ * delegate.
  * <p>
  * In addition to the source {@link IAdaptable} a {@link PropertyChangeSupport}
  * is expected to be passe in during construction. It will be used to fire

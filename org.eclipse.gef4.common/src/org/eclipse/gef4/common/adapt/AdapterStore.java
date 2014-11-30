@@ -6,6 +6,12 @@ import java.util.Map;
 
 import com.google.common.reflect.TypeToken;
 
+/**
+ * An {@link AdapterStore} is a basic {@link IAdaptable} implementation that can
+ * be used standalone.
+ * 
+ * @author anyssen
+ */
 public class AdapterStore implements IAdaptable {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -18,8 +24,8 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
+	public <T> T getAdapter(AdapterKey<? super T> key) {
+		return as.getAdapter(key);
 	}
 
 	@Override
@@ -38,8 +44,14 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> T getAdapter(AdapterKey<? super T> key) {
-		return as.getAdapter(key);
+	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
+			TypeToken<? super T> key) {
+		return as.getAdapters(key);
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 
 	@Override
@@ -48,8 +60,8 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> T unsetAdapter(AdapterKey<? super T> key) {
-		return as.unsetAdapter(key);
+	public <T> void setAdapter(Class<? super T> key, T adapter) {
+		as.setAdapter(key, adapter);
 	}
 
 	@Override
@@ -58,13 +70,7 @@ public class AdapterStore implements IAdaptable {
 	}
 
 	@Override
-	public <T> Map<AdapterKey<? extends T>, T> getAdapters(
-			TypeToken<? super T> key) {
-		return as.getAdapters(key);
-	}
-
-	@Override
-	public <T> void setAdapter(Class<? super T> key, T adapter) {
-		as.setAdapter(key, adapter);
+	public <T> T unsetAdapter(AdapterKey<? super T> key) {
+		return as.unsetAdapter(key);
 	}
 }
