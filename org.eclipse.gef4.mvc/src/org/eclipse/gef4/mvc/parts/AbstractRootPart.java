@@ -50,24 +50,51 @@ public abstract class AbstractRootPart<VR, V extends VR> extends
 	}
 
 	@Override
+	protected void doActivate() {
+		// activate content part children first (which might lead to the
+		// creation of feedback and handle part children)
+		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
+			child.activate();
+		}
+		// activate remaining children
+		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
+			if (!(child instanceof IContentPart)) {
+				child.activate();
+			}
+		}
+	}
+
+	@Override
+	protected void doDeactivate() {
+		// deactivate content part children first (which might lead to the
+		// removal of feedback and handle part children)
+		for (IContentPart<VR, ? extends VR> child : getContentPartChildren()) {
+			child.deactivate();
+		}
+		// deactivate remaining children
+		for (IVisualPart<VR, ? extends VR> child : getChildren()) {
+			if (!(child instanceof IContentPart)) {
+				child.deactivate();
+			}
+		}
+	}
+
+	@Override
 	public IViewer<VR> getAdaptable() {
 		return getViewer();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<IContentPart<VR, ? extends VR>> getContentPartChildren() {
 		return PartUtils.filterParts(getChildren(), IContentPart.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<IFeedbackPart<VR, ? extends VR>> getFeedbackPartChildren() {
 		return PartUtils.filterParts(getChildren(), IFeedbackPart.class);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<IHandlePart<VR, ? extends VR>> getHandlePartChildren() {
 		return PartUtils.filterParts(getChildren(), IHandlePart.class);
 	}
