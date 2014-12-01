@@ -37,6 +37,7 @@ import org.eclipse.gef4.zest.fx.models.ILayoutModel;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> {
@@ -76,7 +77,9 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 	@Override
 	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IFXAnchor anchor = ((AbstractFXContentPart<? extends Node>) anchorage).getAnchor(this);
+		@SuppressWarnings("serial")
+		IFXAnchor anchor = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+		})).get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {

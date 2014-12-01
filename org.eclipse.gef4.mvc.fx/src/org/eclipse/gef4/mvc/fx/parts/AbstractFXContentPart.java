@@ -15,7 +15,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.mvc.parts.AbstractContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -44,11 +43,6 @@ public abstract class AbstractFXContentPart<N extends Node> extends
 	protected void detachFromAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		// do nothing by default
-	}
-
-	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
-		// no anchor by default
-		return null;
 	}
 
 	@Override

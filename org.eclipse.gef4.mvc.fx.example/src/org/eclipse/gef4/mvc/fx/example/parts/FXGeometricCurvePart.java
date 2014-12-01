@@ -36,7 +36,6 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricCurve;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -48,6 +47,8 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 public class FXGeometricCurvePart extends
 		AbstractFXGeometricElementPart<FXConnection> {
@@ -145,11 +146,13 @@ public class FXGeometricCurvePart extends
 		});
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	protected void attachToAnchorageVisual(
 			IVisualPart<Node, ? extends Node> anchorage, String role) {
-		IFXAnchor anchor = ((AbstractFXContentPart<? extends Node>) anchorage)
-				.getAnchor(this);
+		IFXAnchor anchor = anchorage.getAdapter(
+				new TypeToken<Provider<? extends IFXAnchor>>() {
+				}).get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {

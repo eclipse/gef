@@ -15,6 +15,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.example.parts.FXExampleContentPartFactory;
@@ -27,6 +28,7 @@ import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeleteFirstAnchorageOnC
 import org.eclipse.gef4.mvc.fx.example.policies.FXExampleDeletionPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.example.policies.FXResizeRelocateShapePolicy;
+import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
@@ -137,6 +139,7 @@ public class FXExampleModule extends MvcFxModule {
 
 	}
 
+	@SuppressWarnings("serial")
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 
@@ -158,6 +161,11 @@ public class FXExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				(AdapterKey.get(FXResizeRelocatePolicy.class))).to(
 				FXResizeRelocateShapePolicy.class);
+
+		// bind chopbox anchor provider
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<Provider<IFXAnchor>>() {
+				})).to(ChopBoxAnchorProvider.class);
 	}
 
 	protected void bindIContentPartFactory() {

@@ -11,24 +11,17 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
-import javafx.scene.Node;
-
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 public class FXGeometricShapePart extends
 		AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
-
-	private IFXAnchor anchor;
 
 	@Override
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
@@ -81,14 +74,6 @@ public class FXGeometricShapePart extends
 
 		// apply effect
 		super.doRefreshVisual(visual);
-	}
-
-	@Override
-	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
-		if (anchor == null) {
-			anchor = new FXChopBoxAnchor(getVisual());
-		}
-		return anchor;
 	}
 
 	@Override

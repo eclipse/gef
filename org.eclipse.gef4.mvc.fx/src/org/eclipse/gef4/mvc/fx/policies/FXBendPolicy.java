@@ -28,7 +28,6 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.operations.ChangeSelectionOperation;
@@ -40,6 +39,9 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 /**
  * The {@link FXBendPolicy} can be used to manipulate the points constituting an
@@ -139,6 +141,7 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		selectSegmentPoint(segmentIndex + 1, 0, mouseInScene);
 	}
 
+	@SuppressWarnings("serial")
 	protected IFXAnchor findAnchor(Point currentReferencePositionInScene,
 			boolean canAttach) {
 		IFXAnchor anchor = null;
@@ -147,10 +150,12 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 			List<Node> pickedNodes = FXUtils.getNodesAt(getHost().getRoot()
 					.getVisual(), currentReferencePositionInScene.x,
 					currentReferencePositionInScene.y);
-			AbstractFXContentPart<? extends Node> anchorPart = getAnchorPart(getParts(pickedNodes));
+			IVisualPart<Node, ? extends Node> anchorPart = getAnchorPart(getParts(pickedNodes));
 			if (anchorPart != null) {
 				// use anchor returned by part
-				anchor = anchorPart.getAnchor(getHost());
+				anchor = anchorPart.getAdapter(
+						new TypeToken<Provider<? extends IFXAnchor>>() {
+						}).get();
 			}
 		}
 		if (anchor == null) {
@@ -159,12 +164,15 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 		return anchor;
 	}
 
-	private AbstractFXContentPart<? extends Node> getAnchorPart(
+	@SuppressWarnings("serial")
+	private IContentPart<Node, ? extends Node> getAnchorPart(
 			List<IContentPart<Node, ? extends Node>> partsUnderMouse) {
 		for (IContentPart<Node, ? extends Node> cp : partsUnderMouse) {
-			AbstractFXContentPart<? extends Node> part = (AbstractFXContentPart<? extends Node>) cp;
-			IFXAnchor anchor = part.getAnchor(getHost());
-			if (anchor != null) {
+			IContentPart<Node, ? extends Node> part = cp;
+			Provider<? extends IFXAnchor> anchorProvider = part
+					.getAdapter(new TypeToken<Provider<? extends IFXAnchor>>() {
+					});
+			if (anchorProvider != null && anchorProvider.get() != null) {
 				return part;
 			}
 		}

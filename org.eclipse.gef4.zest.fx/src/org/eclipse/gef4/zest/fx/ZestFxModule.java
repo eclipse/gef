@@ -16,8 +16,10 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
+import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
+import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
@@ -109,6 +111,7 @@ public class ZestFxModule extends MvcFxModule {
 		}).to(GraphRootPart.class);
 	}
 
+	@SuppressWarnings("serial")
 	protected void bindNodeContentPartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(NodeLayoutPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class)).to(NodeLayoutBehavior.class);
@@ -120,6 +123,9 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY)).to(PruneOnTypePolicy.class);
 		// transaction
 		adapterMapBinder.addBinding(AdapterKey.get(FXResizeRelocatePolicy.class)).to(FXResizeRelocatePolicy.class);
+
+		adapterMapBinder.addBinding(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+		})).to(ChopBoxAnchorProvider.class);
 	}
 
 	protected void bindPruningHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {

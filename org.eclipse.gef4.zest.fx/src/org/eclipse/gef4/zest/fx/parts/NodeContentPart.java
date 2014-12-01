@@ -14,15 +14,11 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
-import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 
-import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 
@@ -32,8 +28,6 @@ public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 	public static final String ATTR_STYLE = "style";
 	public static final String ATTR_IMAGE = "image";
 	public static final Object ATTR_TOOLTIP = "tooltip";
-
-	protected IFXAnchor anchor;
 
 	@Override
 	protected FXLabeledNode createVisual() {
@@ -46,14 +40,6 @@ public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 	public void doRefreshVisual(FXLabeledNode visual) {
 		// currently, the attributes cannot change, therefore we never have to
 		// refresh a node here
-	}
-
-	@Override
-	public IFXAnchor getAnchor(IVisualPart<Node, ? extends Node> anchored) {
-		if (anchor == null) {
-			anchor = new FXChopBoxAnchor(getVisual());
-		}
-		return anchor;
 	}
 
 	@Override
