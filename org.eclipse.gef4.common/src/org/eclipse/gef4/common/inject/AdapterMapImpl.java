@@ -14,13 +14,15 @@ package org.eclipse.gef4.common.inject;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
+import org.eclipse.gef4.common.adapt.IAdaptable;
+
 @SuppressWarnings("all")
 public class AdapterMapImpl implements AdapterMap, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Class<?> value;
+	private Class<? extends IAdaptable> value;
 
-	public AdapterMapImpl(Class<?> value) {
+	public AdapterMapImpl(Class<? extends IAdaptable> value) {
 		this.value = value;
 	}
 
@@ -30,7 +32,7 @@ public class AdapterMapImpl implements AdapterMap, Serializable {
 	}
 
 	@Override
-	public Class<?> adaptableType() {
+	public Class<? extends IAdaptable> adaptableType() {
 		return value;
 	}
 
