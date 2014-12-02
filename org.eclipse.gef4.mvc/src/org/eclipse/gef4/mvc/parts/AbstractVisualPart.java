@@ -51,6 +51,8 @@ import com.google.inject.Inject;
 public abstract class AbstractVisualPart<VR, V extends VR> implements
 		IVisualPart<VR, V> {
 
+	private static final String DEFAULT_ANCHORAGE_ROLE = "default";
+
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private AdaptableSupport<IVisualPart<VR, V>> ads = new AdaptableSupport<IVisualPart<VR, V>>(
@@ -89,7 +91,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 	@Override
 	public void addAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
-		addAnchorage(anchorage, null);
+		addAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
 	}
 
 	@Override
@@ -98,11 +100,19 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
+		}
 
 		// copy anchorages by role (required for the change notification)
 		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
 				.<IVisualPart<VR, ? extends VR>, String> create()
 				: HashMultimap.create(anchorages);
+
+		if (oldAnchorages.containsEntry(anchorage, role)) {
+			throw new IllegalArgumentException("Already attached to anchorage "
+					+ anchorage + " in role '" + role + "'.");
+		}
 
 		addAnchorageWithoutNotify(anchorage, role);
 		anchorage.addAnchored(this);
@@ -418,7 +428,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 
 	@Override
 	public void removeAnchorage(IVisualPart<VR, ? extends VR> anchorage) {
-		removeAnchorage(anchorage, null);
+		removeAnchorage(anchorage, DEFAULT_ANCHORAGE_ROLE);
 	}
 
 	// counterpart to setParent(null) in case of hierarchy
@@ -428,17 +438,19 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		if (anchorage == null) {
 			throw new IllegalArgumentException("Anchorage may not be null.");
 		}
-
-		if (anchorages == null || !anchorages.containsEntry(anchorage, role)) {
-			throw new IllegalArgumentException(
-					"Anchorage has to be contained under the specified role ("
-							+ role + ").");
+		if (role == null) {
+			throw new IllegalArgumentException("Role may not be null.");
 		}
 
 		// copy anchorages (required for the change notification)
 		SetMultimap<IVisualPart<VR, ? extends VR>, String> oldAnchorages = anchorages == null ? HashMultimap
 				.<IVisualPart<VR, ? extends VR>, String> create()
 				: HashMultimap.create(anchorages);
+
+		if (!oldAnchorages.containsEntry(anchorage, role)) {
+			throw new IllegalArgumentException("Not attached to anchorage "
+					+ anchorage + " in role '" + role + "'.");
+		}
 
 		removeAnchorageWithoutNotify(anchorage, role);
 
