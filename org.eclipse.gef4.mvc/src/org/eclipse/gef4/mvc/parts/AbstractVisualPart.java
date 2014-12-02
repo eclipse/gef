@@ -199,8 +199,11 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 *            The child's position
 	 * @see #addChild(IVisualPart, int)
 	 */
-	protected abstract void addChildVisual(IVisualPart<VR, ? extends VR> child,
-			int index);
+	protected void addChildVisual(IVisualPart<VR, ? extends VR> child, int index) {
+		throw new UnsupportedOperationException(
+				"Need to properly implement addChildVisual(IVisualPart, int) for "
+						+ this.getClass());
+	}
 
 	private void addChildWithoutNotify(IVisualPart<VR, ? extends VR> child,
 			int index) {
@@ -215,8 +218,12 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	protected abstract void attachToAnchorageVisual(
-			IVisualPart<VR, ? extends VR> anchorage, String role);
+	protected void attachToAnchorageVisual(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
+		throw new UnsupportedOperationException(
+				"Need to implement attachToAnchorageVisual(IVisualPart, String) for "
+						+ this.getClass());
+	}
 
 	protected abstract V createVisual();
 
@@ -238,8 +245,12 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 		}
 	}
 
-	protected abstract void detachFromAnchorageVisual(
-			IVisualPart<VR, ? extends VR> anchorage, String role);
+	protected void detachFromAnchorageVisual(
+			IVisualPart<VR, ? extends VR> anchorage, String role) {
+		throw new UnsupportedOperationException(
+				"Need to implement detachFromAnchorageVisual(IVisualPart, String) for "
+						+ this.getClass());
+	}
 
 	protected void doActivate() {
 		// TODO: rather do this via property changes (so a child becomes active
@@ -515,8 +526,12 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 * @param index
 	 *            The index of the child whose visual is to be removed.
 	 */
-	protected abstract void removeChildVisual(
-			IVisualPart<VR, ? extends VR> child, int index);
+	protected void removeChildVisual(IVisualPart<VR, ? extends VR> child,
+			int index) {
+		throw new UnsupportedOperationException(
+				"Need to implement removeChildVisual(IVisualPart, int) for "
+						+ this.getClass());
+	}
 
 	private void removeChildWithoutNotify(IVisualPart<VR, ? extends VR> child) {
 		children.remove(child);

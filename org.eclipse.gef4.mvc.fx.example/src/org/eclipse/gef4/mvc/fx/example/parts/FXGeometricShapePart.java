@@ -11,17 +11,27 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.example.parts;
 
+import javafx.scene.Node;
+
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.fx.example.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.fx.example.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
 public class FXGeometricShapePart extends
 		AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
+
+	@Override
+	protected void attachToAnchorageVisual(
+			org.eclipse.gef4.mvc.parts.IVisualPart<Node, ? extends Node> anchorage,
+			String role) {
+		// nothing to do
+	};
 
 	@Override
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
@@ -36,6 +46,12 @@ public class FXGeometricShapePart extends
 	@Override
 	protected FXGeometryNode<IShape> createVisual() {
 		return new FXGeometryNode<IShape>();
+	}
+
+	@Override
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
+		// nothing to do
 	}
 
 	@Override

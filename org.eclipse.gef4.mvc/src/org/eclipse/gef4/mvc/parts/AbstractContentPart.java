@@ -42,17 +42,23 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 
 	@Override
 	public void addContentChild(Object contentChild, int index) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+				"Need to implement addContentChild(Object, int) for "
+						+ this.getClass());
 	}
 
 	@Override
 	public void attachToContentAnchorage(Object contentAnchorage, String role) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+				"Need to implement attachToContentAnchorage(Object, String) for "
+						+ this.getClass());
 	}
 
 	@Override
 	public void detachFromContentAnchorage(Object contentAnchorage, String role) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+				"Need to implement detachFromContentAnchorage(Object, String) for "
+						+ this.getClass());
 	}
 
 	/**
@@ -98,7 +104,9 @@ public abstract class AbstractContentPart<VR, V extends VR> extends
 
 	@Override
 	public void removeContentChild(Object contentChild, int index) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(
+				"Need to implement removeContentChild(Object, int) for "
+						+ this.getClass());
 	}
 
 	/**

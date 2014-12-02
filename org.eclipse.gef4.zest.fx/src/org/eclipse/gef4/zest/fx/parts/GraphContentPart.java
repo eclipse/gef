@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXHoverPolicy;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class GraphContentPart extends AbstractFXContentPart<Group> {
 
@@ -33,6 +35,11 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 			public void hover(MouseEvent e) {
 			}
 		});
+	}
+
+	@Override
+	protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+		getVisual().getChildren().add(index, child.getVisual());
 	}
 
 	@Override
@@ -55,4 +62,8 @@ public class GraphContentPart extends AbstractFXContentPart<Group> {
 		return children;
 	}
 
+	@Override
+	protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+		getVisual().getChildren().remove(child.getVisual());
+	}
 }
