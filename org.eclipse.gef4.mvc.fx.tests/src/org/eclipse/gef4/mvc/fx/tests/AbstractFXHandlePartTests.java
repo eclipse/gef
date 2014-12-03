@@ -14,10 +14,14 @@ package org.eclipse.gef4.mvc.fx.tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Node;
+
+import javax.swing.SwingUtilities;
 
 import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
@@ -25,6 +29,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -34,6 +39,17 @@ import org.junit.Test;
  *
  */
 public class AbstractFXHandlePartTests {
+
+	@BeforeClass
+	public static void initializeJavaFXToolkit() throws InvocationTargetException, InterruptedException {
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+				// initialize JavaFX toolkit indirectly
+				new JFXPanel();
+			}
+		});
+	}
 
 	private AbstractFXRootPart<Group> rp = new AbstractFXRootPart<Group>() {
 
@@ -89,21 +105,25 @@ public class AbstractFXHandlePartTests {
 	 */
 	@Test
 	public void testProperRegistrationOfVisualChangeListeners() {
-		// ensure the visual of both parts have a common ancestor (the root part
+		// ensure the visual of both parts have a common ancestor (the
+		// root part
 		// visual)
 		rp.addChild(cp);
 		rp.addChild(hp);
 		assertEquals(0, getVisualChangeListeners(hp).size());
 
-		// check we have a single visual change listener after anchoring the
+		// check we have a single visual change listener after anchoring
+		// the
 		// handle part
 		hp.addAnchorage(cp, "r1");
 		assertEquals(1, getVisualChangeListeners(hp).size());
-		// check we still have only a single change listener after anchoring the
+		// check we still have only a single change listener after
+		// anchoring the
 		// same handle part with a different role
 		hp.addAnchorage(cp, "r2");
 		assertEquals(1, getVisualChangeListeners(hp).size());
-		// check we still have a visual change listener, even if one anchorage
+		// check we still have a visual change listener, even if one
+		// anchorage
 		// is removed
 		hp.removeAnchorage(cp, "r2");
 		assertEquals(1, getVisualChangeListeners(hp).size());
