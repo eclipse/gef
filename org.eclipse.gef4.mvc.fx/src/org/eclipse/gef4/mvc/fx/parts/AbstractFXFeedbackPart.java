@@ -17,8 +17,18 @@ import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.parts.AbstractFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+/**
+ * Abstract base implementation for a JavaFX-specific {@link IFeedbackPart}.
+ *
+ * @author anyssen
+ *
+ * @param <N>
+ *            The visual {@link Node} used by this
+ *            {@link AbstractFXFeedbackPart}.
+ */
 abstract public class AbstractFXFeedbackPart<N extends Node> extends
 		AbstractFeedbackPart<Node, N> {
 

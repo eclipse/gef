@@ -23,7 +23,7 @@ import org.eclipse.gef4.common.reflect.ReflectionUtils;
 import org.eclipse.gef4.fx.listeners.VisualChangeListener;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.junit.Test;
 
@@ -35,7 +35,26 @@ import org.junit.Test;
  */
 public class AbstractFXHandlePartTests {
 
-	private FXRootPart rp = new FXRootPart();
+	private AbstractFXRootPart<Group> rp = new AbstractFXRootPart<Group>() {
+
+		@Override
+		protected Group createVisual() {
+			return new Group();
+		}
+
+		@Override
+		protected void doRefreshVisual(Group visual) {
+			// nothing to do
+		}
+
+		protected void addChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+			getVisual().getChildren().add(index, child.getVisual());
+		};
+
+		protected void removeChildVisual(IVisualPart<Node, ? extends Node> child, int index) {
+			getVisual().getChildren().remove(index);
+		};
+	};
 
 	private AbstractFXContentPart<Node> cp = new AbstractFXContentPart<Node>() {
 		@Override

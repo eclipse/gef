@@ -22,15 +22,13 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
-import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
+public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 
 	/**
 	 * Per default, a ScrollPane draws a border and background color. We do not
@@ -129,11 +127,11 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		 * not disappear when the content layer is scaled (zooming). This is,
 		 * because computeBounds() on the (lazy) bounds-in-local property of the
 		 * content layer is not performed when the property is invalidated.
-		 * 
+		 *
 		 * We could register an invalidation listener that explicitly triggers
 		 * computeBounds() (by calling get() on the bounds-in-local property),
 		 * to fix the problems. However, this would be invoked too often.
-		 * 
+		 *
 		 * Instead, we register a dummy change listener (that actually does not
 		 * do anything) to fix the problem by means of a side effect. This is
 		 * sufficient to fix the problems, because the JavaFX ExpressionHelper
@@ -225,11 +223,6 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 	}
 
 	@Override
-	public FXViewer getViewer() {
-		return (FXViewer) super.getViewer();
-	}
-
-	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer,
 			ScrollPane visual) {
 		Group scrollPaneContent = (Group) visual.getContent();
@@ -264,18 +257,6 @@ public class FXRootPart extends AbstractRootPart<Node, ScrollPane> {
 		}
 		scrollPaneContent.getChildren().remove(gridLayer);
 		// TODO: unbind the grid layer
-	}
-
-	@Override
-	public void setAdaptable(IViewer<Node> viewer) {
-		IViewer<Node> oldViewer = getViewer();
-		if (oldViewer != null && viewer != oldViewer) {
-			unregister(oldViewer);
-		}
-		super.setAdaptable(viewer);
-		if (viewer != null && viewer != oldViewer) {
-			register(viewer);
-		}
 	}
 
 	@Override

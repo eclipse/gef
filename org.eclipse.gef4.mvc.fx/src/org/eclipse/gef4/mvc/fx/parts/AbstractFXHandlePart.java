@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 /**
- * Abstract base implementation for {@link IHandlePart}s for JavaFX.
+ * Abstract base implementation for a JavaFX-specific {@link IHandlePart}.
  *
  * @author anyssen
  *
