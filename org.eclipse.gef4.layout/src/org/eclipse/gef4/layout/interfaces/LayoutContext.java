@@ -126,25 +126,6 @@ public interface LayoutContext extends IPropertyStore {
 	 */
 	public LayoutAlgorithm getDynamicLayoutAlgorithm();
 
-	// TODO: move to algorithms
-	/**
-	 * Sets the expand/collapse manager for this context. The manger will be
-	 * used to handle expansion related methods called on the owner of this
-	 * context.
-	 * 
-	 * @param expandCollapseManager
-	 */
-	public void setExpandCollapseManager(
-			ExpandCollapseManager expandCollapseManager);
-
-	// TODO: move to algorithms
-	/**
-	 * 
-	 * @return current expand/collapse manager (can be null, which means that
-	 *         pruning is not enabled).
-	 */
-	public ExpandCollapseManager getExpandCollapseManager();
-
 	/**
 	 * Adds a listener to the context that will be notified about changes in
 	 * this context's layout, that is movement and resizing of nodes /

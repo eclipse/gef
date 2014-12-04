@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2014 itemis AG and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthias Wienand (itemis AG) - initial API & implementation
- *     
+ *
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
@@ -19,7 +19,6 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
-import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.LayoutListener;
@@ -32,7 +31,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
 	private LayoutAlgorithm dynamicAlgorithm = null;
 	private LayoutAlgorithm staticAlgorithm = null;
-	private ExpandCollapseManager expandCollapseManager = null;
 	private final List<NodeLayout> layoutNodes = new ArrayList<NodeLayout>();
 	private final List<ConnectionLayout> layoutEdges = new ArrayList<ConnectionLayout>();
 	private final List<SubgraphLayout> subgraphs = new ArrayList<SubgraphLayout>();
@@ -47,7 +45,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	/**
 	 * Adds the given {@link ConnectionLayout} to the list of edges and fires a
 	 * corresponding connection-added-event.
-	 * 
+	 *
 	 * @param edge
 	 *            {@link ConnectionLayout} to add
 	 */
@@ -69,7 +67,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	/**
 	 * Adds the given {@link NodeLayout} to the list of nodes and fires a
 	 * corresponding node-added-event.
-	 * 
+	 *
 	 * @param node
 	 *            {@link NodeLayout} to add
 	 */
@@ -120,7 +118,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	/**
 	 * As we have to guard invocations of {@link #flushChanges(boolean)}, the
 	 * true flushing of changes happens here.
-	 * 
+	 *
 	 * @param animationHint
 	 */
 	protected abstract void doFlushChanges(boolean animationHint);
@@ -238,11 +236,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
-	public ExpandCollapseManager getExpandCollapseManager() {
-		return expandCollapseManager;
-	}
-
-	@Override
 	public NodeLayout[] getNodes() {
 		return layoutNodes.toArray(new NodeLayout[0]);
 	}
@@ -265,7 +258,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	/**
 	 * Removes the given {@link ConnectionLayout} from the list of edges and
 	 * fires a corresponding connection-removed-event.
-	 * 
+	 *
 	 * @param edge
 	 *            {@link ConnectionLayout} to remove
 	 */
@@ -287,7 +280,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	/**
 	 * Removes the given {@link NodeLayout} from the managed list of nodes and
 	 * fires a corresponding node-removed-event.
-	 * 
+	 *
 	 * @param node
 	 *            {@link NodeLayout} to remove
 	 */
@@ -305,12 +298,6 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
 		dynamicAlgorithm = algorithm;
 		dynamicAlgorithm.setLayoutContext(this);
-	}
-
-	@Override
-	public void setExpandCollapseManager(
-			ExpandCollapseManager expandCollapseManager) {
-		this.expandCollapseManager = expandCollapseManager;
 	}
 
 	@Override

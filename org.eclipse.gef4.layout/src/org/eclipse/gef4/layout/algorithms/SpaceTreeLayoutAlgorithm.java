@@ -27,7 +27,6 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.LayoutListener;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -41,14 +40,64 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
  * to keep the tree structure clearly visible, it also keeps track of the nodes'
  * positions to makes sure they stay in their current layer and don't overlap
  * with each other.
- * 
- * It's recommended to set an <code>ExpandCollapseManger</code> returned by
- * {@link #getExpandCollapseManager()} in the <code>LayoutContext</code> that
- * will be used with this layout algorithm. Other
- * <code>ExpandCollapseManager</code>s could also work, but the algorithm's
- * functionality would be very limited.
  */
 public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
+
+	/**
+	 * A manager that controls expanding and collapsing nodes in a Graph.
+	 * 
+	 * @author Mateusz Matela
+	 * @author Ian Bull
+	 */
+	public static interface ExpandCollapseManager {
+		/**
+		 * Initializes the expansion state of all nodes in given layout context.
+		 * The receiver can initialize its internal state related to the layout
+		 * context and add its listeners if necessary.
+		 * 
+		 * @param context
+		 *            the context to initialize
+		 */
+		public void initExpansion(LayoutContext context);
+
+		/**
+		 * Changes the expanded state of given node. It prunes/unprunes nodes
+		 * and hides/shows connections in the graph according to its policy. If
+		 * requested operation cannot be currently performed on the node, it
+		 * does nothing.
+		 * 
+		 * @param context
+		 *            context in which to perform the operation
+		 * @param node
+		 *            node to expand or collapse
+		 * @param expanded
+		 *            true to expand, false to collapse
+		 */
+		public void setExpanded(LayoutContext context, NodeLayout node,
+				boolean expanded);
+
+		/**
+		 * Checks if given node can be expanded.
+		 * 
+		 * @param context
+		 *            context containing the node
+		 * @param node
+		 *            node to check
+		 * @return whether the give node can be expanded
+		 */
+		public boolean canExpand(LayoutContext context, NodeLayout node);
+
+		/**
+		 * Checks if given node can be collapsed.
+		 * 
+		 * @param context
+		 *            context containing the node
+		 * @param node
+		 *            node to check
+		 * @return whether the given node can be collapsed
+		 */
+		public boolean canCollapse(LayoutContext context, NodeLayout node);
+	}
 
 	/**
 	 * Tree direction constant for which root is placed at the top and branches
@@ -153,7 +202,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					.toArray(new NodeLayout[allChildren.size()]);
 			if (subgraph == null) {
 				subgraph = context.createSubgraph(childrenArray);
-				LayoutPropertiesHelper.setDirection(subgraph, getSubgraphDirection());
+				LayoutPropertiesHelper.setDirection(subgraph,
+						getSubgraphDirection());
 			} else {
 				subgraph.addNodes(childrenArray);
 			}
@@ -187,10 +237,12 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		public void refreshSubgraphLocation() {
-			if (subgraph != null && LayoutPropertiesHelper.isGraphEntity(subgraph)) {
+			if (subgraph != null
+					&& LayoutPropertiesHelper.isGraphEntity(subgraph)) {
 				Point nodeLocation = LayoutPropertiesHelper.getLocation(node);
 				Dimension nodeSize = LayoutPropertiesHelper.getSize(node);
-				Dimension subgraphSize = LayoutPropertiesHelper.getSize(subgraph);
+				Dimension subgraphSize = LayoutPropertiesHelper
+						.getSize(subgraph);
 				double x = 0, y = 0;
 				switch (direction) {
 				case TOP_DOWN:
@@ -415,7 +467,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 					y = bounds.getY() + positionInLayer;
 					break;
 				}
-				Point currentLocation = LayoutPropertiesHelper.getLocation(node);
+				Point currentLocation = LayoutPropertiesHelper
+						.getLocation(node);
 				if (currentLocation.x != x || currentLocation.y != y) {
 					LayoutPropertiesHelper.setLocation(node, x, y);
 					refreshSubgraphLocation();
@@ -1092,7 +1145,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				node = (SpaceTreeNode) node.parent;
 			}
 			if (node != null && node.subgraph == subgraph) {
-				node.adjustPosition(LayoutPropertiesHelper.getLocation(subgraph));
+				node.adjustPosition(LayoutPropertiesHelper
+						.getLocation(subgraph));
 				if (LayoutPropertiesHelper.isDynamicLayoutEnables(context)) {
 					((SpaceTreeNode) treeObserver.getSuperRoot())
 							.flushLocationChanges(0);
@@ -1108,7 +1162,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 				return false;
 			SpaceTreeNode spaceTreeNode = (SpaceTreeNode) treeObserver
 					.getTreeNode(node);
-			spaceTreeNode.adjustPosition(LayoutPropertiesHelper.getLocation(node));
+			spaceTreeNode.adjustPosition(LayoutPropertiesHelper
+					.getLocation(node));
 			if (LayoutPropertiesHelper.isDynamicLayoutEnables(context)) {
 				((SpaceTreeNode) treeObserver.getSuperRoot())
 						.flushLocationChanges(0);
@@ -1287,7 +1342,8 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			SubgraphLayout[] subgraphs = context.getSubgraphs();
 			int subgraphDirection = getSubgraphDirection();
 			for (int i = 0; i < subgraphs.length; i++) {
-				LayoutPropertiesHelper.setDirection(subgraphs[i], subgraphDirection);
+				LayoutPropertiesHelper.setDirection(subgraphs[i],
+						subgraphDirection);
 			}
 			directionChanged = false;
 		}

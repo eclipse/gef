@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
-import org.eclipse.gef4.layout.interfaces.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
