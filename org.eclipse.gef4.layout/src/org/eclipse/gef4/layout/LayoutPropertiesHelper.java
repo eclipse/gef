@@ -107,10 +107,22 @@ public class LayoutPropertiesHelper implements ILayoutProperties {
 	}
 
 	public static void setLocation(EntityLayout entity, double x, double y) {
+		if (Double.isNaN(x)) {
+			x = 0;
+		}
+		if (Double.isNaN(y)) {
+			y = 0;
+		}
 		entity.setProperty(LOCATION_PROPERTY, new Point(x, y));
 	}
 
 	public static void setSize(EntityLayout entity, double w, double h) {
+		if (Double.isNaN(w)) {
+			w = 0;
+		}
+		if (Double.isNaN(h)) {
+			h = 0;
+		}
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
