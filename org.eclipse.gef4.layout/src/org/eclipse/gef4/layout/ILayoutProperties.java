@@ -16,7 +16,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 
-public interface IProperties {
+public interface ILayoutProperties {
 
 	// graphs
 

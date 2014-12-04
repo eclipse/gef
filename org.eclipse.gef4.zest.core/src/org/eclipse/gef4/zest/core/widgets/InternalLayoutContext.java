@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,10 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.Animation;
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IProperties;
+import org.eclipse.gef4.layout.ILayoutProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -45,6 +47,7 @@ class InternalLayoutContext implements LayoutContext {
 	private SubgraphFactory subgraphFactory = new DefaultSubgraph.DefaultSubgraphFactory();
 	private final HashSet<SubgraphLayout> subgraphs = new HashSet<SubgraphLayout>();
 	private boolean dynamicLayoutEnabled = false;
+	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
 	// guard method calls
 	// TODO: Remove if setExpandedInvocation is not really needed; you can
@@ -166,7 +169,7 @@ class InternalLayoutContext implements LayoutContext {
 					result.add(nodeLayout);
 				} else {
 					SubgraphLayout subgraph = nodeLayout.getSubgraph();
-					if (PropertiesHelper.isGraphEntity(subgraph)
+					if (LayoutPropertiesHelper.isGraphEntity(subgraph)
 							&& !addedSubgraphs.contains(subgraph)) {
 						result.add(subgraph);
 						addedSubgraphs.add(subgraph);
@@ -209,7 +212,16 @@ class InternalLayoutContext implements LayoutContext {
 		if (this.dynamicLayoutEnabled != enabled) {
 			this.dynamicLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
+			setp(ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY, enabled);
 		}
+	}
+
+	private void setp(String name, Object value) {
+		ps.setProperty(name, value);
+	}
+
+	private Object getp(String name) {
+		return ps.getProperty(name);
 	}
 
 	public boolean isPruningEnabled() {
@@ -574,31 +586,40 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			// TODO: there is no setBounds() what to do here?
-		} else if (IProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
 			// TODO: there is no setBoundsExpandable()
-		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+				.equals(name)) {
 			if (value instanceof Boolean) {
 				setDynamicLayoutEnabled((Boolean) value);
 			}
 		} else {
-			// TODO: delegate to setp()
+			setp(name, value);
 		}
 	}
 
 	public Object getProperty(String name) {
-		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			return getBounds();
-		} else if (IProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
-			// TODO:
+		} else if (ILayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+			// TODO
 			return false;
-		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+				.equals(name)) {
 			return isDynamicLayoutEnabled();
 		} else {
-			// TODO: delegate to getp()
-			return null;
+			return getp(name);
 		}
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
 	}
 
 }

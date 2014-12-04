@@ -8,10 +8,10 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets.custom;
 
-import static org.eclipse.gef4.layout.IProperties.DIRECTION_BOTTOM_UP;
-import static org.eclipse.gef4.layout.IProperties.DIRECTION_LEFT_RIGHT;
-import static org.eclipse.gef4.layout.IProperties.DIRECTION_RIGHT_LEFT;
-import static org.eclipse.gef4.layout.IProperties.DIRECTION_TOP_DOWN;
+import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_BOTTOM_UP;
+import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_LEFT_RIGHT;
+import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_RIGHT_LEFT;
+import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_TOP_DOWN;
 
 import java.util.HashMap;
 

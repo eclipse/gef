@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.GraphStructureListener;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -398,7 +398,7 @@ public class TreeLayoutObserver {
 				superRoot.precomputeTree();
 				fireParentChanged(target, previousParent);
 			}
-			if (!PropertiesHelper.isDirected(connection)
+			if (!LayoutPropertiesHelper.isDirected(connection)
 					&& source.isBetterParent(target)) {
 				TreeNode previousParent = source.parent;
 				previousParent.children.remove(source);

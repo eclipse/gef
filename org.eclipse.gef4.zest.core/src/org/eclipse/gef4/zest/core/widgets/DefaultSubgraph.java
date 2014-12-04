@@ -9,18 +9,19 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.IProperties;
-import org.eclipse.gef4.layout.PropertiesHelper;
-import org.eclipse.gef4.layout.PropertyStoreSupport;
+import org.eclipse.gef4.layout.ILayoutProperties;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -42,7 +43,7 @@ import org.eclipse.swt.graphics.Color;
  */
 public class DefaultSubgraph implements SubgraphLayout {
 
-	private PropertyStoreSupport ps = new PropertyStoreSupport();
+	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
 	/**
 	 * Default factory for {@link DefaultSubgraph}. It creates one subgraph for
@@ -135,10 +136,10 @@ public class DefaultSubgraph implements SubgraphLayout {
 		 * 
 		 * @param direction
 		 *            direction to use, can be
-		 *            {@link IProperties#DIRECTION_TOP_DOWN},
-		 *            {@link IProperties#DIRECTION_BOTTOM_UP},
-		 *            {@link IProperties#DIRECTION_LEFT_RIGHT}, or
-		 *            {@link IProperties#DIRECTION_RIGHT_LEFT}
+		 *            {@link ILayoutProperties#DIRECTION_TOP_DOWN},
+		 *            {@link ILayoutProperties#DIRECTION_BOTTOM_UP},
+		 *            {@link ILayoutProperties#DIRECTION_LEFT_RIGHT}, or
+		 *            {@link ILayoutProperties#DIRECTION_RIGHT_LEFT}
 		 */
 		public void setDirection(int direction) {
 			parameters.direction = direction;
@@ -297,7 +298,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.remove(nodes[i])) {
 				nodes[i].prune(null);
-				PropertiesHelper.setMinimized(nodes[i], false);
+				LayoutPropertiesHelper.setMinimized(nodes[i], false);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -357,7 +358,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.add(nodes[i])) {
 				nodes[i].prune(this);
-				PropertiesHelper.setMinimized(nodes[i], true);
+				LayoutPropertiesHelper.setMinimized(nodes[i], true);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -366,11 +367,14 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
-			PropertiesHelper.setVisible(
-					connections[i],
-					!PropertiesHelper.isPruned(connections[i].getSource())
-							&& !PropertiesHelper.isPruned(connections[i]
-									.getTarget()));
+			LayoutPropertiesHelper
+					.setVisible(
+							connections[i],
+							!LayoutPropertiesHelper.isPruned(connections[i]
+									.getSource())
+									&& !LayoutPropertiesHelper
+											.isPruned(connections[i]
+													.getTarget()));
 		}
 	}
 
@@ -402,49 +406,48 @@ public class DefaultSubgraph implements SubgraphLayout {
 	}
 
 	public Object getProperty(String name) {
-		if (PropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
 			return getPreferredAspectRatio();
-		} else if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
 			return getLocation();
-		} else if (PropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
 			return isMovable();
-		} else if (PropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
 			return isResizable();
-		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			return getSize();
-		} else if (PropertiesHelper.DIRECTION_DEPENDANT_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.DIRECTION_DEPENDANT_PROPERTY
+				.equals(name)) {
 			return isDirectionDependant();
-		} else if (PropertiesHelper.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
 			return isGraphEntity();
 		} else {
-			return getp(name);
+			return ps.getProperty(name);
 		}
 	}
 
-	// TODO: replace with PropertiesHelper.getX calls
-	private Object getp(String name) {
-		return ps.getProperty(name);
-	}
-
 	public void setProperty(String name, Object value) {
-		if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
 			Point p = (Point) value;
 			setLocation(p.x, p.y);
-		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			Dimension size = (Dimension) value;
 			setSize(size.width, size.height);
-		} else if (PropertiesHelper.DIRECTION_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.DIRECTION_PROPERTY.equals(name)) {
 			if (value instanceof Integer) {
 				setDirection((Integer) value);
 			}
 		} else {
-			setp(name, value);
+			ps.setProperty(name, value);
 		}
 	}
 
-	// TODO: replace with PropertiesHelper.setX calls
-	private void setp(String name, Object value) {
-		ps.setProperty(name, value);
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
 	}
 
-};
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		ps.removePropertyChangeListener(listener);
+	}
+
+}

@@ -21,7 +21,7 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
-public class PropertiesHelper implements IProperties {
+public class LayoutPropertiesHelper implements ILayoutProperties {
 
 	// graphs
 

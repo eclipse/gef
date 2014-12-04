@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.IProperties;
-import org.eclipse.gef4.layout.PropertyStoreSupport;
+import org.eclipse.gef4.layout.ILayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -29,7 +30,7 @@ public class GraphNodeLayout implements NodeLayout {
 
 	// initialization context
 	private GraphLayoutContext context;
-	private PropertyStoreSupport ps = new PropertyStoreSupport();
+	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 	private Node node;
 	private SubgraphLayout subgraph;
 
@@ -40,6 +41,11 @@ public class GraphNodeLayout implements NodeLayout {
 		for (Entry<String, Object> e : node.getAttrs().entrySet()) {
 			setProperty(e.getKey(), e.getValue());
 		}
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -129,9 +135,14 @@ public class GraphNodeLayout implements NodeLayout {
 	}
 
 	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		ps.removePropertyChangeListener(listener);
+	}
+
+	@Override
 	public void setProperty(String name, Object value) {
 		// TODO: remove NaN check here and ensure NaN is not passed in
-		if (IProperties.LOCATION_PROPERTY.equals(name)) {
+		if (ILayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			if (value instanceof Point) {
 				Point p = (Point) value;
 				if (Double.isNaN(p.x)) {
@@ -144,9 +155,9 @@ public class GraphNodeLayout implements NodeLayout {
 		}
 		ps.setProperty(name, value);
 		// send notification
-		if (IProperties.LOCATION_PROPERTY.equals(name)) {
+		if (ILayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			context.fireNodeMovedEvent(this);
-		} else if (IProperties.SIZE_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.SIZE_PROPERTY.equals(name)) {
 			context.fireNodeResizedEvent(this);
 		} else if ("pruned".equals(name)) {
 			context.firePruningChanged(this);

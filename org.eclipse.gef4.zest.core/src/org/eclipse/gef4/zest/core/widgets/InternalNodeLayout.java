@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +19,8 @@ import org.eclipse.draw2d.FigureListener;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef4.layout.PropertiesHelper;
-import org.eclipse.gef4.layout.PropertyStoreSupport;
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -46,7 +47,7 @@ class InternalNodeLayout implements NodeLayout {
 	// FIXME: *static* figure-to-node map?!
 	private final static HashMap<IFigure, GraphNode> figureToNode = new HashMap<IFigure, GraphNode>();
 
-	private PropertyStoreSupport ps = new PropertyStoreSupport();
+	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
 	// internal/layout things
 	private final GraphNode node;
@@ -62,31 +63,29 @@ class InternalNodeLayout implements NodeLayout {
 		figureToNode.put(graphNode.nodeFigure, graphNode);
 	}
 
-	// TODO: replace with PropertiesHelper.setX calls
 	private void setp(String name, Object value) {
 		ps.setProperty(name, value);
 	}
 
-	// TODO: replace with PropertiesHelper.getX calls
 	private Object getp(String name) {
 		return ps.getProperty(name);
 	}
 
 	public org.eclipse.gef4.geometry.planar.Point getLocation() {
-		Object location = getp(PropertiesHelper.LOCATION_PROPERTY);
+		Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
 		if (location == null) {
 			refreshLocation();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Point) getp(PropertiesHelper.LOCATION_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Point) getp(LayoutPropertiesHelper.LOCATION_PROPERTY))
 				.getCopy();
 	}
 
 	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
-		Object size = getp(PropertiesHelper.SIZE_PROPERTY);
+		Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
 		if (size == null) {
 			refreshSize();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Dimension) getp(PropertiesHelper.SIZE_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Dimension) getp(LayoutPropertiesHelper.SIZE_PROPERTY))
 				.getCopy();
 	}
 
@@ -95,11 +94,11 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public boolean isMovable() {
-		Object movable = getp(PropertiesHelper.MOVABLE_PROPERTY);
+		Object movable = getp(LayoutPropertiesHelper.MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
 		}
-		return PropertiesHelper.DEFAULT_MOVABLE;
+		return LayoutPropertiesHelper.DEFAULT_MOVABLE;
 	}
 
 	public boolean isPrunable() {
@@ -142,14 +141,13 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetLocation(double x, double y) {
-		Object location = getp(PropertiesHelper.LOCATION_PROPERTY);
+		Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
 		if (location != null) {
 			((org.eclipse.gef4.geometry.planar.Point) location).setLocation(x,
 					y);
-		} else {
-			setp(PropertiesHelper.LOCATION_PROPERTY,
-					new org.eclipse.gef4.geometry.planar.Point(x, y));
 		}
+		setp(LayoutPropertiesHelper.LOCATION_PROPERTY,
+				new org.eclipse.gef4.geometry.planar.Point(x, y));
 	}
 
 	public void setSize(double width, double height) {
@@ -158,28 +156,26 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetSize(double width, double height) {
-		Object size = getp(PropertiesHelper.SIZE_PROPERTY);
+		Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
 		if (size != null) {
 			((org.eclipse.gef4.geometry.planar.Dimension) size).setSize(width,
 					height);
-		} else {
-			setp(PropertiesHelper.SIZE_PROPERTY,
-					new org.eclipse.gef4.geometry.planar.Dimension(width,
-							height));
 		}
+		setp(LayoutPropertiesHelper.SIZE_PROPERTY,
+				new org.eclipse.gef4.geometry.planar.Dimension(width, height));
 	}
 
 	public void setMinimized(boolean minimized) {
 		layoutContext.checkChangesAllowed();
-		setp(PropertiesHelper.MINIMIZED_PROPERTY, minimized);
+		setp(LayoutPropertiesHelper.MINIMIZED_PROPERTY, minimized);
 	}
 
 	public boolean isMinimized() {
-		Object minimized = getp(PropertiesHelper.MINIMIZED_PROPERTY);
+		Object minimized = getp(LayoutPropertiesHelper.MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
 			return (Boolean) minimized;
 		}
-		return PropertiesHelper.DEFAULT_MINIMIZED;
+		return LayoutPropertiesHelper.DEFAULT_MINIMIZED;
 	}
 
 	public NodeLayout[] getPredecessingNodes() {
@@ -214,12 +210,12 @@ class InternalNodeLayout implements NodeLayout {
 		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] successingNodes = getSuccessingNodes();
 		for (int i = 0; i < successingNodes.length; i++) {
-			if (!PropertiesHelper.isPruned(successingNodes[i])) {
+			if (!LayoutPropertiesHelper.isPruned(successingNodes[i])) {
 				result.add(successingNodes[i]);
 			} else {
 				SubgraphLayout successingSubgraph = successingNodes[i]
 						.getSubgraph();
-				if (PropertiesHelper.isGraphEntity(successingSubgraph)
+				if (LayoutPropertiesHelper.isGraphEntity(successingSubgraph)
 						&& !addedSubgraphs.contains(successingSubgraph)) {
 					result.add(successingSubgraph);
 					addedSubgraphs.add(successingSubgraph);
@@ -237,12 +233,12 @@ class InternalNodeLayout implements NodeLayout {
 		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] predecessingNodes = getPredecessingNodes();
 		for (int i = 0; i < predecessingNodes.length; i++) {
-			if (!PropertiesHelper.isPruned(predecessingNodes[i])) {
+			if (!LayoutPropertiesHelper.isPruned(predecessingNodes[i])) {
 				result.add(predecessingNodes[i]);
 			} else {
 				SubgraphLayout predecessingSubgraph = predecessingNodes[i]
 						.getSubgraph();
-				if (PropertiesHelper.isGraphEntity(predecessingSubgraph)
+				if (LayoutPropertiesHelper.isGraphEntity(predecessingSubgraph)
 						&& !addedSubgraphs.contains(predecessingSubgraph)) {
 					result.add(predecessingSubgraph);
 					addedSubgraphs.add(predecessingSubgraph);
@@ -307,15 +303,15 @@ class InternalNodeLayout implements NodeLayout {
 	void applyLayout() {
 		if (isMinimized()) {
 			node.setSize(0, 0);
-			Object location = getp(PropertiesHelper.LOCATION_PROPERTY);
+			Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				node.setLocation(p.x, p.y);
 			}
 		} else {
 			node.setSize(-1, -1);
-			Object location = getp(PropertiesHelper.LOCATION_PROPERTY);
-			Object size = getp(PropertiesHelper.SIZE_PROPERTY);
+			Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
+			Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				org.eclipse.gef4.geometry.planar.Dimension d = getSize();
@@ -366,20 +362,20 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (PropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
 			// not supported
-		} else if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
 			org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) value;
 			setLocation(p.x, p.y);
-		} else if (PropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
 			setMinimized((Boolean) value);
-		} else if (PropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (PropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (PropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			org.eclipse.gef4.geometry.planar.Dimension size = (org.eclipse.gef4.geometry.planar.Dimension) value;
 			setSize(size.width, size.height);
 		} else {
@@ -388,23 +384,31 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public Object getProperty(String name) {
-		if (PropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
 			return getPreferredAspectRatio();
-		} else if (PropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
 			return getLocation();
-		} else if (PropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
 			return isMinimized();
-		} else if (PropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
 			return isMovable();
-		} else if (PropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
 			return isPrunable();
-		} else if (PropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
 			return isResizable();
-		} else if (PropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
 			return getSize();
 		} else {
 			return getp(name);
 		}
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		ps.removePropertyChangeListener(listener);
 	}
 
 }

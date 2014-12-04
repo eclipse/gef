@@ -10,9 +10,9 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *     
  *******************************************************************************/
-package org.eclipse.gef4.layout;
+package org.eclipse.gef4.common.notify;
 
-public interface IPropertyStore {
+public interface IPropertyStore extends IPropertyChangeNotifier {
 
 	/**
 	 * Sets the value of the property specified by <i>key</i> with the passed-in

@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -50,18 +50,18 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			public int compare(List<EntityLayout> o1, List<EntityLayout> o2) {
 				EntityLayout entity0 = o1.get(0);
 				EntityLayout entity1 = o2.get(0);
-				return (int) (PropertiesHelper.getLocation(entity0).y - PropertiesHelper
+				return (int) (LayoutPropertiesHelper.getLocation(entity0).y - LayoutPropertiesHelper
 						.getLocation(entity1).y);
 			}
 		});
 
 		Comparator<EntityLayout> entityComparator = new Comparator<EntityLayout>() {
 			public int compare(EntityLayout o1, EntityLayout o2) {
-				return (int) (PropertiesHelper.getLocation(o1).y - PropertiesHelper
+				return (int) (LayoutPropertiesHelper.getLocation(o1).y - LayoutPropertiesHelper
 						.getLocation(o2).y);
 			}
 		};
-		Rectangle bounds = PropertiesHelper.getBounds(context);
+		Rectangle bounds = LayoutPropertiesHelper.getBounds(context);
 		int heightSoFar = 0;
 
 		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
@@ -72,13 +72,13 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 			int i = 0;
 			int width = (int) (bounds.getWidth() / 2 - currentRow.size() * 75);
 
-			heightSoFar += PropertiesHelper.getSize(currentRow.get(0)).height
+			heightSoFar += LayoutPropertiesHelper.getSize(currentRow.get(0)).height
 					+ VSPACING;
 			for (Iterator<EntityLayout> iterator2 = currentRow.iterator(); iterator2
 					.hasNext();) {
 				EntityLayout entity = (EntityLayout) iterator2.next();
-				Dimension size = PropertiesHelper.getSize(entity);
-				PropertiesHelper.setLocation(entity, width + 10 * ++i
+				Dimension size = LayoutPropertiesHelper.getSize(entity);
+				LayoutPropertiesHelper.setLocation(entity, width + 10 * ++i
 						+ size.width / 2, heightSoFar + size.height / 2);
 				width += size.width;
 			}
@@ -95,13 +95,13 @@ public class HorizontalShiftAlgorithm implements LayoutAlgorithm {
 
 	private void addToRowList(EntityLayout entity,
 			ArrayList<List<EntityLayout>> rowsList) {
-		double layoutY = PropertiesHelper.getLocation(entity).y;
+		double layoutY = LayoutPropertiesHelper.getLocation(entity).y;
 
 		for (Iterator<List<EntityLayout>> iterator = rowsList.iterator(); iterator
 				.hasNext();) {
 			List<EntityLayout> currentRow = iterator.next();
 			EntityLayout currentRowEntity = currentRow.get(0);
-			double currentRowY = PropertiesHelper.getLocation(currentRowEntity).y;
+			double currentRowY = LayoutPropertiesHelper.getLocation(currentRowEntity).y;
 			if (layoutY >= currentRowY - DELTA
 					&& layoutY <= currentRowY + DELTA) {
 				currentRow.add(entity);

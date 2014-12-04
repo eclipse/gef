@@ -21,7 +21,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.zest.core.widgets.internal.GraphLabel;
@@ -235,7 +235,7 @@ class PrunedSuccessorsSubgraph extends DefaultSubgraph {
 			NodeLayout[] successors = internalNode.getSuccessingNodes();
 			int numberOfHiddenSuccessors = 0;
 			for (int i = 0; i < successors.length; i++) {
-				if (PropertiesHelper.isPruned(successors[i])) {
+				if (LayoutPropertiesHelper.isPruned(successors[i])) {
 					numberOfHiddenSuccessors++;
 				}
 			}

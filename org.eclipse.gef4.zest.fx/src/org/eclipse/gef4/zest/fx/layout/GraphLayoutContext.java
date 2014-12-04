@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.IProperties;
-import org.eclipse.gef4.layout.PropertyStoreSupport;
+import org.eclipse.gef4.layout.ILayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
@@ -40,7 +40,7 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 	// something when layouting finishes
 	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
 
-	protected PropertyStoreSupport pss = new PropertyStoreSupport();
+	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	public GraphLayoutContext(Graph graph) {
@@ -138,11 +138,12 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 	public void setProperty(String name, Object value) {
 		pss.setProperty(name, value);
 		// send notification
-		if (IProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			fireBoundsChangedEvent();
-		} else if (IProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+				.equals(name)) {
 			fireBackgroundEnableChangedEvent();
-		} else if (IProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
+		} else if (ILayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
 			firePruningEnableChangedEvent();
 		}
 	}

@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
@@ -102,7 +102,7 @@ public class GraphRootPart extends FXRootPart {
 				ViewportModel.class);
 		double width = viewportModel.getWidth();
 		double height = viewportModel.getHeight();
-		PropertiesHelper.setBounds(context, new Rectangle(0, 0, width, height));
+		LayoutPropertiesHelper.setBounds(context, new Rectangle(0, 0, width, height));
 
 		// apply layout algorithm
 		context.applyStaticLayout(true);
@@ -127,7 +127,7 @@ public class GraphRootPart extends FXRootPart {
 		final GraphLayoutContext context = new GraphLayoutContext(
 				(Graph) content);
 		ViewportModel viewport = getViewer().getAdapter(ViewportModel.class);
-		PropertiesHelper.setBounds(context,
+		LayoutPropertiesHelper.setBounds(context,
 				new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()));
 		return context;
 	}

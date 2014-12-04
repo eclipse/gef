@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.layout.PropertyStoreSupport;
+import org.eclipse.gef4.common.notify.PropertyStoreSupport;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
@@ -24,7 +25,7 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 public class GraphSubgraphLayout implements SubgraphLayout {
 
 	private List<NodeLayout> nodes = new ArrayList<NodeLayout>();
-	private PropertyStoreSupport ps = new PropertyStoreSupport();
+	private PropertyStoreSupport ps = new PropertyStoreSupport(this);
 
 	@Override
 	public void addNodes(NodeLayout[] nodes) {
@@ -32,6 +33,11 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 			return;
 		}
 		this.nodes.addAll(Arrays.asList(nodes));
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		ps.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -82,6 +88,11 @@ public class GraphSubgraphLayout implements SubgraphLayout {
 			return;
 		}
 		this.nodes.removeAll(Arrays.asList(nodes));
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		ps.removePropertyChangeListener(listener);
 	}
 
 	@Override

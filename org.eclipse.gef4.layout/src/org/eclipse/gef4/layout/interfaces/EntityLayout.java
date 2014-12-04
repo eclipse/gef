@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.layout.IPropertyStore;
+import org.eclipse.gef4.common.notify.IPropertyStore;
 
 /**
  * A common interface for entities that are displayed on a graph, that is

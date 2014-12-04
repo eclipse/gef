@@ -16,7 +16,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.PropertiesHelper;
+import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -151,8 +151,8 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			// TODO Auto-generated method stub
 			for (int i = 0; i < entities.length; i++) {
 				if (entities[i] == node) {
-					locationsX[i] = PropertiesHelper.getLocation(entities[i]).x;
-					locationsY[i] = PropertiesHelper.getLocation(entities[i]).y;
+					locationsX[i] = LayoutPropertiesHelper.getLocation(entities[i]).x;
+					locationsY[i] = LayoutPropertiesHelper.getLocation(entities[i]).y;
 
 				}
 
@@ -218,7 +218,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = PropertiesHelper.getBounds(context);
+		bounds = LayoutPropertiesHelper.getBounds(context);
 		for (int i = 0; i < n; i++) {
 			computeOneIteration();
 			saveLocations();
@@ -232,7 +232,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			loadLocations();
 			initLayout();
 		}
-		bounds = PropertiesHelper.getBounds(context);
+		bounds = LayoutPropertiesHelper.getBounds(context);
 		computeOneIteration();
 		saveLocations();
 		context.flushChanges(false);
@@ -396,7 +396,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 
 	private void initLayout() {
 		entities = context.getEntities();
-		bounds = PropertiesHelper.getBounds(context);
+		bounds = LayoutPropertiesHelper.getBounds(context);
 		loadLocations();
 
 		srcDestToSumOfWeights = new double[entities.length][entities.length];
@@ -414,7 +414,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 					.getTarget()));
 			if (source == null || target == null)
 				continue;
-			double weight = PropertiesHelper.getWeight(connection);
+			double weight = LayoutPropertiesHelper.getWeight(connection);
 			weight = (weight <= 0 ? 0.1 : weight);
 			srcDestToSumOfWeights[source.intValue()][target.intValue()] += weight;
 			srcDestToSumOfWeights[target.intValue()][source.intValue()] += weight;
@@ -429,10 +429,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private EntityLayout getEntity(NodeLayout node) {
-		if (!PropertiesHelper.isPruned(node))
+		if (!LayoutPropertiesHelper.isPruned(node))
 			return node;
 		SubgraphLayout subgraph = node.getSubgraph();
-		if (PropertiesHelper.isGraphEntity(subgraph))
+		if (LayoutPropertiesHelper.isGraphEntity(subgraph))
 			return subgraph;
 		return null;
 	}
@@ -448,10 +448,10 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			forcesY = new double[length];
 		}
 		for (int i = 0; i < entities.length; i++) {
-			Point location = PropertiesHelper.getLocation(entities[i]);
+			Point location = LayoutPropertiesHelper.getLocation(entities[i]);
 			locationsX[i] = location.x;
 			locationsY[i] = location.y;
-			Dimension size = PropertiesHelper.getSize(entities[i]);
+			Dimension size = LayoutPropertiesHelper.getSize(entities[i]);
 			sizeW[i] = size.width;
 			sizeH[i] = size.height;
 		}
@@ -461,7 +461,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		if (entities == null)
 			return;
 		for (int i = 0; i < entities.length; i++) {
-			PropertiesHelper.setLocation(entities[i], locationsX[i],
+			LayoutPropertiesHelper.setLocation(entities[i], locationsX[i],
 					locationsY[i]);
 		}
 	}
@@ -600,7 +600,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 			}
 
 			for (int i = 0; i < entities.length; i++) {
-				if (PropertiesHelper.isMovable(entities[i])) {
+				if (LayoutPropertiesHelper.isMovable(entities[i])) {
 					double deltaX = sprMove * forcesX[k][i];
 					double deltaY = sprMove * forcesY[k][i];
 
@@ -655,7 +655,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 	 */
 	protected void computePositions() {
 		for (int i = 0; i < entities.length; i++) {
-			if (PropertiesHelper.isMovable(entities[i])) {
+			if (LayoutPropertiesHelper.isMovable(entities[i])) {
 				double deltaX = sprMove * forcesX[i];
 				double deltaY = sprMove * forcesY[i];
 
