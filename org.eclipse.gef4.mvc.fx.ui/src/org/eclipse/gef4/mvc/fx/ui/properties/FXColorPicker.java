@@ -20,7 +20,7 @@ import javafx.embed.swt.FXCanvas;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.ColorDialog;

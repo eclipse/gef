@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.Animation;
-import org.eclipse.gef4.common.notify.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.ILayoutProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;

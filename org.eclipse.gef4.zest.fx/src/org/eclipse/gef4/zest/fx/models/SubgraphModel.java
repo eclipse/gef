@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class SubgraphModel implements IPropertyChangeNotifier {

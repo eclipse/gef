@@ -28,7 +28,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

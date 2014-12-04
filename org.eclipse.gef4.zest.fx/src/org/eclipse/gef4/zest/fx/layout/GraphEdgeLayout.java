@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.fx.layout;
 import java.beans.PropertyChangeListener;
 import java.util.Map.Entry;
 
-import org.eclipse.gef4.common.notify.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.layout.ILayoutProperties;

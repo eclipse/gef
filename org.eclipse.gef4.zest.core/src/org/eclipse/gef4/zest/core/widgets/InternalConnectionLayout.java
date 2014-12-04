@@ -2,7 +2,7 @@ package org.eclipse.gef4.zest.core.widgets;
 
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.gef4.common.notify.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.layout.LayoutPropertiesHelper;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;

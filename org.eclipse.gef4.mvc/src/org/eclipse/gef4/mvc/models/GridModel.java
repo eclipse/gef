@@ -14,7 +14,7 @@ package org.eclipse.gef4.mvc.models;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 
 public class GridModel implements IPropertyChangeNotifier {
 

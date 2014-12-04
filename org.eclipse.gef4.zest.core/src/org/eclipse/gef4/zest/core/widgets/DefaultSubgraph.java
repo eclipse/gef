@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.gef4.common.notify.PropertyStoreSupport;
+import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;

@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
 /**

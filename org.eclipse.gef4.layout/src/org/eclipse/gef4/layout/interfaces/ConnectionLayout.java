@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.gef4.layout.interfaces;
 
-import org.eclipse.gef4.common.notify.IPropertyStore;
+import org.eclipse.gef4.common.properties.IPropertyStore;
 
 public interface ConnectionLayout extends IPropertyStore {
 

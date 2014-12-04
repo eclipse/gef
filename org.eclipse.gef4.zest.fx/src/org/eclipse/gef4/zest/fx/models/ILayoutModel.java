@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.models;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 public interface ILayoutModel extends IPropertyChangeNotifier {

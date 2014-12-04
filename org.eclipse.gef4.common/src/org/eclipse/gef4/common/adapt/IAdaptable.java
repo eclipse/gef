@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import org.eclipse.gef4.common.notify.IPropertyChangeNotifier;
+import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 
 import com.google.common.reflect.TypeToken;
 
