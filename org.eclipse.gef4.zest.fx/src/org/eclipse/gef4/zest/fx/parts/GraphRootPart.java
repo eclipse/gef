@@ -27,7 +27,7 @@ import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.ILayoutModel;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public class GraphRootPart extends FXRootPart {
 
@@ -59,8 +59,8 @@ public class GraphRootPart extends FXRootPart {
 				final GraphLayoutContext context = createLayoutContext(content);
 
 				// get layout model
-				ILayoutModel layoutModel = getViewer().getDomain().getAdapter(
-						ILayoutModel.class);
+				LayoutModel layoutModel = getViewer().getDomain().getAdapter(
+						LayoutModel.class);
 
 				// remove pruning listener from old context
 				LayoutContext oldContext = layoutModel.getLayoutContext();
@@ -102,7 +102,8 @@ public class GraphRootPart extends FXRootPart {
 				ViewportModel.class);
 		double width = viewportModel.getWidth();
 		double height = viewportModel.getHeight();
-		LayoutPropertiesHelper.setBounds(context, new Rectangle(0, 0, width, height));
+		LayoutPropertiesHelper.setBounds(context, new Rectangle(0, 0, width,
+				height));
 
 		// apply layout algorithm
 		context.applyStaticLayout(true);
@@ -159,8 +160,8 @@ public class GraphRootPart extends FXRootPart {
 	}
 
 	protected GraphLayoutContext getLayoutContext() {
-		ILayoutModel layoutModel = getViewer().getDomain().getAdapter(
-				ILayoutModel.class);
+		LayoutModel layoutModel = getViewer().getDomain().getAdapter(
+				LayoutModel.class);
 		if (layoutModel == null) {
 			return null;
 		}

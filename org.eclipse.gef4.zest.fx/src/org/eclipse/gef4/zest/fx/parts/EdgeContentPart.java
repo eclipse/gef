@@ -33,7 +33,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.ILayoutModel;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -44,7 +44,8 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {
-			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0, 0.0);
+			super(15.0, 0.0, 10.0, 0.0, 10.0, 3.0, 0.0, 0.0, 10.0, -3.0, 10.0,
+					0.0);
 		}
 
 		@Override
@@ -76,16 +77,19 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	private static final Double DOT_LENGTH = 1d;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		@SuppressWarnings("serial")
-		IFXAnchor anchor = anchorage.getAdapter(AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
-		})).get();
+		IFXAnchor anchor = anchorage.getAdapter(
+				AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
+				})).get();
 		if (role.equals("START")) {
 			getVisual().setStartAnchor(anchor);
 		} else if (role.equals("END")) {
 			getVisual().setEndAnchor(anchor);
 		} else {
-			throw new IllegalStateException("Cannot attach to anchor with role <" + role + ">.");
+			throw new IllegalStateException(
+					"Cannot attach to anchor with role <" + role + ">.");
 		}
 	}
 
@@ -98,11 +102,13 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		FXConnection connection = getVisual();
 		if (role.equals("START")) {
 			Point startPoint = connection.getStartPoint();
-			connection.setStartPoint(startPoint == null ? new Point() : startPoint);
+			connection.setStartPoint(startPoint == null ? new Point()
+					: startPoint);
 		} else {
 			Point endPoint = connection.getEndPoint();
 			connection.setEndPoint(endPoint == null ? new Point() : endPoint);
@@ -111,14 +117,15 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 
 	@Override
 	public void doRefreshVisual(FXLabeledConnection visual) {
-		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain().getAdapter(ILayoutModel.class)
-				.getLayoutContext();
+		GraphLayoutContext glc = (GraphLayoutContext) getViewer().getDomain()
+				.getAdapter(LayoutModel.class).getLayoutContext();
 		if (glc == null) {
 			return;
 		}
 
 		// decoration
-		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs().get(Attr.Key.GRAPH_TYPE.toString()))) {
+		if (Attr.Value.GRAPH_DIRECTED.equals(glc.getGraph().getAttrs()
+				.get(Attr.Key.GRAPH_TYPE.toString()))) {
 			visual.setEndDecoration(new ArrowHead());
 		} else {
 			visual.setEndDecoration(null);
@@ -128,14 +135,16 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		FXGeometryNode<ICurve> curveNode = visual.getCurveNode();
 
 		// dashes
-		Object style = getContent().getAttrs().get(Graph.Attr.Key.EDGE_STYLE.toString());
+		Object style = getContent().getAttrs().get(
+				Graph.Attr.Key.EDGE_STYLE.toString());
 		if (style == Graph.Attr.Value.LINE_DASH) {
 			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
+					DOT_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DASHDOTDOT) {
-			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH, DOT_LENGTH,
-					GAP_LENGTH);
+			curveNode.getStrokeDashArray().setAll(DASH_LENGTH, GAP_LENGTH,
+					DOT_LENGTH, GAP_LENGTH, DOT_LENGTH, GAP_LENGTH);
 		} else if (style == Graph.Attr.Value.LINE_DOT) {
 			curveNode.getStrokeDashArray().setAll(DOT_LENGTH, GAP_LENGTH);
 		} else {
@@ -179,20 +188,28 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		if (attrs.containsKey(ATTR_ID)) {
 			visual.setId((String) attrs.get(ATTR_ID));
 		}
-		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(
+				AdapterKey
+						.get(Provider.class,
+								FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
-								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils
+								.localToParent(visual.getCurveNode(),
+										((FXGeometryNode<?>) visual
+												.getCurveNode()).getGeometry()));
 					}
 				});
-		setAdapter(AdapterKey.get(Provider.class, FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
+		setAdapter(AdapterKey.get(Provider.class,
+				FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER),
 				new Provider<IGeometry>() {
 					@Override
 					public IGeometry get() {
-						return FXUtils.localToParent(visual, FXUtils.localToParent(visual.getCurveNode(),
-								((FXGeometryNode<?>) visual.getCurveNode()).getGeometry()));
+						return FXUtils.localToParent(visual, FXUtils
+								.localToParent(visual.getCurveNode(),
+										((FXGeometryNode<?>) visual
+												.getCurveNode()).getGeometry()));
 					}
 				});
 	}

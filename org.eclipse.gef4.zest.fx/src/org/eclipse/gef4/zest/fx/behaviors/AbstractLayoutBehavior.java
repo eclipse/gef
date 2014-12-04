@@ -22,7 +22,7 @@ import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.ILayoutModel;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 
@@ -31,7 +31,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	private PropertyChangeListener layoutContextListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			if (ILayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
+			if (LayoutModel.LAYOUT_CONTEXT_PROPERTY.equals(evt
 					.getPropertyName())) {
 				onLayoutContextChange((GraphLayoutContext) evt.getOldValue(),
 						(GraphLayoutContext) evt.getNewValue());
@@ -57,7 +57,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
-		getDomainAdapter(ILayoutModel.class).addPropertyChangeListener(
+		getDomainAdapter(LayoutModel.class).addPropertyChangeListener(
 				layoutContextListener);
 		getHost().getVisual().layoutBoundsProperty()
 				.addListener(layoutBoundsListener);
@@ -67,7 +67,7 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	public void deactivate() {
 		getHost().getVisual().layoutBoundsProperty()
 				.removeListener(layoutBoundsListener);
-		getDomainAdapter(ILayoutModel.class).removePropertyChangeListener(
+		getDomainAdapter(LayoutModel.class).removePropertyChangeListener(
 				layoutContextListener);
 		super.deactivate();
 	}

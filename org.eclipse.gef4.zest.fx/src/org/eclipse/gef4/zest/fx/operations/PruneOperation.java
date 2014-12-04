@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.ILayoutModel;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -59,8 +59,8 @@ public class PruneOperation extends AbstractOperation {
 
 	protected NodeLayout[] getNeighbors(NodeContentPart host,
 			IViewer<Node> viewer) {
-		ILayoutModel layoutModel = viewer.getDomain().getAdapter(
-				ILayoutModel.class);
+		LayoutModel layoutModel = viewer.getDomain().getAdapter(
+				LayoutModel.class);
 		GraphLayoutContext layoutContext = (GraphLayoutContext) layoutModel
 				.getLayoutContext();
 		NodeLayout[] predecessors = layoutContext.getNodeLayout(
