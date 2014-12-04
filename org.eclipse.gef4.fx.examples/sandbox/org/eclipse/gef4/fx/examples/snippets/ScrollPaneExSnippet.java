@@ -49,8 +49,8 @@ public class ScrollPaneExSnippet extends FXApplication {
 		Bounds canvasBounds = scrollPane.getCanvas().getBoundsInLocal();
 		double minx = canvasBounds.getMinX();
 		double miny = canvasBounds.getMinY();
-		scrollPane.getCanvas().setTranslateX(-minx);
-		scrollPane.getCanvas().setTranslateY(-miny);
+		// scrollPane.getCanvas().setTranslateX(-minx);
+		// scrollPane.getCanvas().setTranslateY(-miny);
 
 		scrollPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override

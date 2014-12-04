@@ -315,13 +315,13 @@ public class ScrollPaneEx extends Region {
 		});
 	}
 
-	private void scrollToHv(double newValue) {
+	public void scrollToHv(double newValue) {
 		getCanvas().setTranslateX(
 				-lerp(currentScrollableBounds[0], currentScrollableBounds[2]
 						- getWidth(), newValue));
 	}
 
-	private void scrollToVv(double newValue) {
+	public void scrollToVv(double newValue) {
 		getCanvas().setTranslateY(
 				-lerp(currentScrollableBounds[1], currentScrollableBounds[3]
 						- getHeight(), newValue));
@@ -364,7 +364,7 @@ public class ScrollPaneEx extends Region {
 		verticalScrollBar.setUnitIncrement(getHeight() / 10);
 
 		boolean wasVisible = horizontalScrollBar.isVisible();
-		horizontalScrollBar.setVisible(false);
+		// horizontalScrollBar.setVisible(false);
 		// double x = min.getX() + (max.getX() - min.getX());
 		// double hv = (x - horizontalScrollBar.getMin())
 		// / (horizontalScrollBar.getMax() - horizontalScrollBar.getMin());

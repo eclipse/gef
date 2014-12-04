@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,17 +42,21 @@ public final class Edge {
 	}
 
 	private final Map<String, Object> attrs;
-	private final Node source;
-	private final Node target;
+	private Node source;
+	private Node target;
 
 	public Edge(Map<String, Object> attrs, Node source, Node target) {
 		this.attrs = attrs;
 		this.source = source;
 		this.target = target;
 	}
+	
+	public Edge(Node source, Node target) {
+		this(new HashMap<String, Object>(), source, target);
+	}
 
 	public Map<String, Object> getAttrs() {
-		return Collections.unmodifiableMap(attrs);
+		return attrs;
 	}
 
 	public Node getSource() {
@@ -62,6 +65,14 @@ public final class Edge {
 
 	public Node getTarget() {
 		return target;
+	}
+	
+	public void setSource(Node source) {
+		this.source = source;
+	}
+	
+	public void setTarget(Node target) {
+		this.target = target;
 	}
 
 	@Override

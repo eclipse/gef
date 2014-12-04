@@ -8,7 +8,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.graph;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,13 +35,18 @@ public final class Node {
 	}
 
 	private final Map<String, Object> attrs;
+	private Graph nestedGraph;
 
 	public Node(Map<String, Object> attrs) {
 		this.attrs = attrs;
 	}
+	
+	public Node() {
+		this(new HashMap<String, Object>());
+	}
 
 	public Map<String, Object> getAttrs() {
-		return Collections.unmodifiableMap(attrs);
+		return attrs;
 	}
 
 	@Override
@@ -64,4 +68,13 @@ public final class Node {
 	public String toString() {
 		return String.format("Node {%s attrs}", attrs.size()); //$NON-NLS-1$
 	}
+
+	public Graph getNestedGraph() {
+		return nestedGraph;
+	}
+
+	public void setNestedGraph(Graph nestedGraph) {
+		this.nestedGraph = nestedGraph;
+	}
+	
 }

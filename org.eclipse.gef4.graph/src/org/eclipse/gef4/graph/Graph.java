@@ -10,7 +10,6 @@ package org.eclipse.gef4.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import java.util.Map;
 public final class Graph {
 
 	public static class Builder {
+		
 		private List<Node> nodes = new ArrayList<Node>();
 		private List<Edge> edges = new ArrayList<Edge>();
 		private Map<String, Object> attrs = new HashMap<String, Object>();
@@ -70,19 +70,26 @@ public final class Graph {
 		this.nodes = nodes;
 		this.edges = edges;
 	}
+	
+	/**
+	 * Default constructor, using empty collections for attributes, nodes, and edges.
+	 */
+	public Graph() {
+		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
+	}
 
 	public Map<String, Object> getAttrs() {
-		return Collections.unmodifiableMap(attrs);
+		return attrs;
 	}
 
 	public List<Edge> getEdges() {
-		return Collections.unmodifiableList(edges);
+		return edges;
 	}
 
 	public List<Node> getNodes() {
-		return Collections.unmodifiableList(nodes);
+		return nodes;
 	}
-
+	
 	@Override
 	public String toString() {
 		return String.format("Graph {%s nodes, %s edges}", nodes.size(), //$NON-NLS-1$
@@ -110,4 +117,5 @@ public final class Graph {
 		result = 31 * result + getEdges().hashCode();
 		return result;
 	}
+	
 }
