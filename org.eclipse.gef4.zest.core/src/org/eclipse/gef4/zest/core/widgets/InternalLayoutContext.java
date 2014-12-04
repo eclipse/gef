@@ -19,9 +19,8 @@ import java.util.List;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.ILayoutProperties;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
@@ -169,7 +168,7 @@ class InternalLayoutContext implements LayoutContext {
 					result.add(nodeLayout);
 				} else {
 					SubgraphLayout subgraph = nodeLayout.getSubgraph();
-					if (LayoutPropertiesHelper.isGraphEntity(subgraph)
+					if (LayoutProperties.isGraphEntity(subgraph)
 							&& !addedSubgraphs.contains(subgraph)) {
 						result.add(subgraph);
 						addedSubgraphs.add(subgraph);
@@ -212,7 +211,7 @@ class InternalLayoutContext implements LayoutContext {
 		if (this.dynamicLayoutEnabled != enabled) {
 			this.dynamicLayoutEnabled = enabled;
 			fireBackgroundEnableChangedEvent();
-			setp(ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY, enabled);
+			setp(LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY, enabled);
 		}
 	}
 
@@ -586,11 +585,11 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			// TODO: there is no setBounds() what to do here?
-		} else if (ILayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
 			// TODO: there is no setBoundsExpandable()
-		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+		} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
 				.equals(name)) {
 			if (value instanceof Boolean) {
 				setDynamicLayoutEnabled((Boolean) value);
@@ -601,12 +600,12 @@ class InternalLayoutContext implements LayoutContext {
 	}
 
 	public Object getProperty(String name) {
-		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			return getBounds();
-		} else if (ILayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.BOUNDS_EXPANDABLE_PROPERTY.equals(name)) {
 			// TODO
 			return false;
-		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+		} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
 				.equals(name)) {
 			return isDynamicLayoutEnabled();
 		} else {

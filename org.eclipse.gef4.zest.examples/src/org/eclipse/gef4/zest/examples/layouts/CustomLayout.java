@@ -1,7 +1,7 @@
 package org.eclipse.gef4.zest.examples.layouts;
 
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.zest.core.widgets.GraphConnection;
@@ -52,14 +52,14 @@ public class CustomLayout {
 			public void applyLayout(boolean clean) {
 				EntityLayout[] entitiesToLayout = context.getEntities();
 				int totalSteps = entitiesToLayout.length;
-				double distance = LayoutPropertiesHelper.getBounds(context)
+				double distance = LayoutProperties.getBounds(context)
 						.getWidth() / totalSteps;
 				int xLocation = 0;
 
 				for (int currentStep = 0; currentStep < entitiesToLayout.length; currentStep++) {
 					EntityLayout layoutEntity = entitiesToLayout[currentStep];
-					LayoutPropertiesHelper.setLocation(layoutEntity, xLocation,
-							LayoutPropertiesHelper.getLocation(layoutEntity).y);
+					LayoutProperties.setLocation(layoutEntity, xLocation,
+							LayoutProperties.getLocation(layoutEntity).y);
 					xLocation += distance;
 				}
 			}

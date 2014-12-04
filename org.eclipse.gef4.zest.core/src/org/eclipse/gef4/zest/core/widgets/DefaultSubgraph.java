@@ -20,8 +20,7 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.layout.ILayoutProperties;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -298,7 +297,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.remove(nodes[i])) {
 				nodes[i].prune(null);
-				LayoutPropertiesHelper.setMinimized(nodes[i], false);
+				LayoutProperties.setMinimized(nodes[i], false);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -358,7 +357,7 @@ public class DefaultSubgraph implements SubgraphLayout {
 		for (int i = 0; i < nodes.length; i++) {
 			if (this.nodes.add(nodes[i])) {
 				nodes[i].prune(this);
-				LayoutPropertiesHelper.setMinimized(nodes[i], true);
+				LayoutProperties.setMinimized(nodes[i], true);
 				refreshConnectionsVisibility(nodes[i].getIncomingConnections());
 				refreshConnectionsVisibility(nodes[i].getOutgoingConnections());
 			}
@@ -367,12 +366,12 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
-			LayoutPropertiesHelper
+			LayoutProperties
 					.setVisible(
 							connections[i],
-							!LayoutPropertiesHelper.isPruned(connections[i]
+							!LayoutProperties.isPruned(connections[i]
 									.getSource())
-									&& !LayoutPropertiesHelper
+									&& !LayoutProperties
 											.isPruned(connections[i]
 													.getTarget()));
 		}
@@ -406,20 +405,20 @@ public class DefaultSubgraph implements SubgraphLayout {
 	}
 
 	public Object getProperty(String name) {
-		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutProperties.ASPECT_RATIO_PROPERTY.equals(name)) {
 			return getPreferredAspectRatio();
-		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			return getLocation();
-		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.MOVABLE_PROPERTY.equals(name)) {
 			return isMovable();
-		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.RESIZABLE_PROPERTY.equals(name)) {
 			return isResizable();
-		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			return getSize();
-		} else if (LayoutPropertiesHelper.DIRECTION_DEPENDANT_PROPERTY
+		} else if (LayoutProperties.DIRECTION_DEPENDANT_PROPERTY
 				.equals(name)) {
 			return isDirectionDependant();
-		} else if (LayoutPropertiesHelper.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
 			return isGraphEntity();
 		} else {
 			return ps.getProperty(name);
@@ -427,13 +426,13 @@ public class DefaultSubgraph implements SubgraphLayout {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			Point p = (Point) value;
 			setLocation(p.x, p.y);
-		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			Dimension size = (Dimension) value;
 			setSize(size.width, size.height);
-		} else if (LayoutPropertiesHelper.DIRECTION_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.DIRECTION_PROPERTY.equals(name)) {
 			if (value instanceof Integer) {
 				setDirection((Integer) value);
 			}

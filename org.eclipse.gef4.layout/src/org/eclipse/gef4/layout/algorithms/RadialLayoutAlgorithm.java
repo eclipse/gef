@@ -13,7 +13,7 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -43,7 +43,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 			return;
 		treeLayout.internalApplyLayout();
 		EntityLayout[] entities = context.getEntities();
-		Rectangle bounds = LayoutPropertiesHelper.getBounds(context);
+		Rectangle bounds = LayoutProperties.getBounds(context);
 		computeRadialPositions(entities, bounds);
 		if (resize)
 			AlgorithmHelper.maximizeSizes(entities);
@@ -62,7 +62,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 		layoutBounds.setX(bounds.getX());
 		layoutBounds.setWidth(bounds.getWidth());
 		for (int i = 0; i < entities.length; i++) {
-			Point location = LayoutPropertiesHelper.getLocation(entities[i]);
+			Point location = LayoutProperties.getLocation(entities[i]);
 			double percenttheta = (location.x - layoutBounds.getX())
 					/ layoutBounds.getWidth();
 			double distance = (location.y - layoutBounds.getY())
@@ -71,7 +71,7 @@ public class RadialLayoutAlgorithm implements LayoutAlgorithm {
 					* percenttheta;
 			location.x = distance * Math.cos(theta);
 			location.y = distance * Math.sin(theta);
-			LayoutPropertiesHelper.setLocation(entities[i], location.x, location.y);
+			LayoutProperties.setLocation(entities[i], location.x, location.y);
 		}
 	}
 

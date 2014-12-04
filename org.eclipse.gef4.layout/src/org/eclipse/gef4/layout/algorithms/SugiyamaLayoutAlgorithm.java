@@ -31,7 +31,7 @@ import java.util.Set;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -1162,7 +1162,7 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 	}
 
 	private void calculatePositions() {
-		Rectangle boundary = LayoutPropertiesHelper.getBounds(context);
+		Rectangle boundary = LayoutProperties.getBounds(context);
 		if (dimension != null)
 			boundary = new Rectangle(0, 0, dimension.getWidth(),
 					dimension.getHeight());
@@ -1171,13 +1171,13 @@ public class SugiyamaLayoutAlgorithm implements LayoutAlgorithm {
 		if (direction == Direction.HORIZONTAL)
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutPropertiesHelper.setLocation(node,
+				LayoutProperties.setLocation(node,
 						(nw.layer + 0.5d) * dx, (nw.index + 0.5d) * dy);
 			}
 		else
 			for (NodeLayout node : context.getNodes()) {
 				NodeWrapper nw = map.get(node);
-				LayoutPropertiesHelper.setLocation(node,
+				LayoutProperties.setLocation(node,
 						(nw.index + 0.5d) * dx, (nw.layer + 0.5d) * dy);
 			}
 	}

@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.ILayoutProperties;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -142,7 +142,7 @@ public class GraphNodeLayout implements NodeLayout {
 	@Override
 	public void setProperty(String name, Object value) {
 		// TODO: remove NaN check here and ensure NaN is not passed in
-		if (ILayoutProperties.LOCATION_PROPERTY.equals(name)) {
+		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			if (value instanceof Point) {
 				Point p = (Point) value;
 				if (Double.isNaN(p.x)) {
@@ -155,9 +155,9 @@ public class GraphNodeLayout implements NodeLayout {
 		}
 		ps.setProperty(name, value);
 		// send notification
-		if (ILayoutProperties.LOCATION_PROPERTY.equals(name)) {
+		if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			context.fireNodeMovedEvent(this);
-		} else if (ILayoutProperties.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			context.fireNodeResizedEvent(this);
 		} else if ("pruned".equals(name)) {
 			context.firePruningChanged(this);

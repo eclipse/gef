@@ -16,7 +16,7 @@ import java.util.Iterator;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
@@ -188,7 +188,7 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 	void internalApplyLayout() {
 		TreeNode superRoot = treeObserver.getSuperRoot();
-		bounds = LayoutPropertiesHelper.getBounds(context);
+		bounds = LayoutProperties.getBounds(context);
 		updateLeafAndLayerSizes();
 		int leafCountSoFar = 0;
 		for (Iterator<TreeNode> iterator = superRoot.getChildren().iterator(); iterator
@@ -231,19 +231,19 @@ public class TreeLayoutAlgorithm implements LayoutAlgorithm {
 
 		switch (direction) {
 		case TOP_DOWN:
-			LayoutPropertiesHelper.setLocation(entityInfo.getNode(), breadthPosition
+			LayoutProperties.setLocation(entityInfo.getNode(), breadthPosition
 					* leafSize, depthPosition * layerSize);
 			break;
 		case BOTTOM_UP:
-			LayoutPropertiesHelper.setLocation(entityInfo.getNode(), breadthPosition
+			LayoutProperties.setLocation(entityInfo.getNode(), breadthPosition
 					* leafSize, bounds.getHeight() - depthPosition * layerSize);
 			break;
 		case LEFT_RIGHT:
-			LayoutPropertiesHelper.setLocation(entityInfo.getNode(), depthPosition
+			LayoutProperties.setLocation(entityInfo.getNode(), depthPosition
 					* layerSize, breadthPosition * leafSize);
 			break;
 		case RIGHT_LEFT:
-			LayoutPropertiesHelper.setLocation(entityInfo.getNode(),
+			LayoutProperties.setLocation(entityInfo.getNode(),
 					bounds.getWidth() - depthPosition * layerSize,
 					breadthPosition * leafSize);
 			break;

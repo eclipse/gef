@@ -13,7 +13,7 @@ package org.eclipse.gef4.layout.algorithms;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
@@ -46,7 +46,7 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 	public void applyLayout(boolean clean) {
 		if (!clean)
 			return;
-		Rectangle bounds = LayoutPropertiesHelper.getBounds(context);
+		Rectangle bounds = LayoutProperties.getBounds(context);
 		calculateGrid(bounds);
 		applyLayoutInternal(context.getEntities(), bounds);
 	}
@@ -96,17 +96,17 @@ public class GridLayoutAlgorithm implements LayoutAlgorithm {
 			for (int j = 0; j < cols; j++) {
 				if ((i * cols + j) < numChildren) {
 					EntityLayout node = entitiesToLayout[index++];
-					if (resize && LayoutPropertiesHelper.isResizable(node))
-						LayoutPropertiesHelper.setSize(node,
+					if (resize && LayoutProperties.isResizable(node))
+						LayoutProperties.setSize(node,
 								Math.max(childrenWidth, MIN_ENTITY_SIZE),
 								Math.max(childrenHeight, MIN_ENTITY_SIZE));
-					Dimension size = LayoutPropertiesHelper.getSize(node);
+					Dimension size = LayoutProperties.getSize(node);
 					double xmove = bounds.getX() + j * colWidth + offsetX
 							+ size.width / 2;
 					double ymove = bounds.getY() + i * rowHeight + offsetY
 							+ size.height / 2;
-					if (LayoutPropertiesHelper.isMovable(node))
-						LayoutPropertiesHelper.setLocation(node, xmove, ymove);
+					if (LayoutProperties.isMovable(node))
+						LayoutProperties.setLocation(node, xmove, ymove);
 				}
 			}
 		}

@@ -18,7 +18,7 @@ import javafx.scene.Node;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -42,8 +42,8 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			double w = layoutBounds.getWidth();
 			double h = layoutBounds.getHeight();
 
-			Point location = LayoutPropertiesHelper.getLocation(nodeLayout);
-			Dimension size = LayoutPropertiesHelper.getSize(nodeLayout);
+			Point location = LayoutProperties.getLocation(nodeLayout);
+			Dimension size = LayoutProperties.getSize(nodeLayout);
 
 			// location is the center of the node, therefore we subtract half
 			// width/height from it
@@ -82,8 +82,8 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		LayoutPropertiesHelper.setLocation(nodeLayout, visual.getLayoutX() + minx, visual.getLayoutY() + miny);
-		LayoutPropertiesHelper.setSize(nodeLayout, maxx - minx, maxy - miny);
+		LayoutProperties.setLocation(nodeLayout, visual.getLayoutX() + minx, visual.getLayoutY() + miny);
+		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		nodeLayout.setProperty("pruned", !visual.isVisible());
 	}
 

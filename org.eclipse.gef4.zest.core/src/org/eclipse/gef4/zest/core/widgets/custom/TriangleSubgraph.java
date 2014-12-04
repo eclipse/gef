@@ -8,11 +8,6 @@
  ******************************************************************************/
 package org.eclipse.gef4.zest.core.widgets.custom;
 
-import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_BOTTOM_UP;
-import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_LEFT_RIGHT;
-import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_RIGHT_LEFT;
-import static org.eclipse.gef4.layout.ILayoutProperties.DIRECTION_TOP_DOWN;
-
 import java.util.HashMap;
 
 import org.eclipse.draw2d.ColorConstants;
@@ -20,6 +15,7 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeListener;
 import org.eclipse.gef4.layout.algorithms.TreeLayoutObserver.TreeNode;
@@ -69,7 +65,7 @@ public class TriangleSubgraph extends FigureSubgraph {
 	public static class TriangleParameters implements Cloneable {
 		public Color color = ColorConstants.black;
 
-		public int direction = DIRECTION_TOP_DOWN;
+		public int direction = LayoutProperties.DIRECTION_TOP_DOWN;
 
 		public double referenceHeight = 50;
 
@@ -109,22 +105,22 @@ public class TriangleSubgraph extends FigureSubgraph {
 			r.shrink(getInsets());
 			points.removeAllPoints();
 			switch (parameters.direction) {
-			case DIRECTION_TOP_DOWN:
+			case LayoutProperties.DIRECTION_TOP_DOWN:
 				points.addPoint(r.x + r.width / 2, r.y);
 				points.addPoint(r.x, r.y + r.height);
 				points.addPoint(r.x + r.width, r.y + r.height);
 				break;
-			case DIRECTION_BOTTOM_UP:
+			case LayoutProperties.DIRECTION_BOTTOM_UP:
 				points.addPoint(r.x + r.width / 2, r.y + r.height);
 				points.addPoint(r.x, r.y);
 				points.addPoint(r.x + r.width, r.y);
 				break;
-			case DIRECTION_LEFT_RIGHT:
+			case LayoutProperties.DIRECTION_LEFT_RIGHT:
 				points.addPoint(r.x, r.y + r.height / 2);
 				points.addPoint(r.x + r.width, r.y);
 				points.addPoint(r.x + r.width, r.y + r.height);
 				break;
-			case DIRECTION_RIGHT_LEFT:
+			case LayoutProperties.DIRECTION_RIGHT_LEFT:
 				points.addPoint(r.x + r.width, r.y + r.height / 2);
 				points.addPoint(r.x, r.y);
 				points.addPoint(r.x, r.y + r.height);
@@ -198,8 +194,8 @@ public class TriangleSubgraph extends FigureSubgraph {
 		if (parameters.direction == 0) {
 			parameters.direction = parameters.direction;
 		}
-		if (parameters.direction == DIRECTION_TOP_DOWN
-				|| parameters.direction == DIRECTION_BOTTOM_UP) {
+		if (parameters.direction == LayoutProperties.DIRECTION_TOP_DOWN
+				|| parameters.direction == LayoutProperties.DIRECTION_BOTTOM_UP) {
 			figure.setSize((int) (triangleBase + 0.5),
 					(int) (triangleHeight + 0.5));
 		} else {
@@ -232,9 +228,10 @@ public class TriangleSubgraph extends FigureSubgraph {
 		if (figure == null || parameters.direction == direction) {
 			return;
 		}
-		if (direction == DIRECTION_TOP_DOWN || direction == DIRECTION_BOTTOM_UP
-				|| direction == DIRECTION_LEFT_RIGHT
-				|| direction == DIRECTION_RIGHT_LEFT) {
+		if (direction == LayoutProperties.DIRECTION_TOP_DOWN
+				|| direction == LayoutProperties.DIRECTION_BOTTOM_UP
+				|| direction == LayoutProperties.DIRECTION_LEFT_RIGHT
+				|| direction == LayoutProperties.DIRECTION_RIGHT_LEFT) {
 			parameters.direction = direction;
 			updateFigure();
 		} else {

@@ -12,7 +12,7 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm.ExpandCollapseManager;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
@@ -114,19 +114,19 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	}
 
 	public boolean canCollapse(LayoutContext context, NodeLayout node) {
-		return isExpanded(node) && !LayoutPropertiesHelper.isPruned(node)
+		return isExpanded(node) && !LayoutProperties.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
 	public boolean canExpand(LayoutContext context, NodeLayout node) {
-		return !isExpanded(node) && !LayoutPropertiesHelper.isPruned(node)
+		return !isExpanded(node) && !LayoutProperties.isPruned(node)
 				&& node.getOutgoingConnections().length > 0;
 	}
 
 	private void collapseAllConnections(NodeLayout node) {
 		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
-			LayoutPropertiesHelper.setVisible(outgoingConnections[i], false);
+			LayoutProperties.setVisible(outgoingConnections[i], false);
 		}
 		flushChanges(true, true);
 	}
@@ -134,7 +134,7 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 	private void expandAllConnections(NodeLayout node) {
 		ConnectionLayout[] outgoingConnections = node.getOutgoingConnections();
 		for (int i = 0; i < outgoingConnections.length; i++) {
-			LayoutPropertiesHelper.setVisible(outgoingConnections[i], true);
+			LayoutProperties.setVisible(outgoingConnections[i], true);
 		}
 		flushChanges(true, true);
 	}
@@ -259,12 +259,12 @@ public class DAGExpandCollapseManager implements ExpandCollapseManager {
 		if (nodesToPrune.contains(node)) {
 			return true;
 		}
-		return LayoutPropertiesHelper.isPruned(node);
+		return LayoutProperties.isPruned(node);
 	}
 
 	private void flushChanges(boolean force, boolean clean) {
 		cleanLayoutScheduled = cleanLayoutScheduled || clean;
-		if (!force && !LayoutPropertiesHelper.isDynamicLayoutEnables(context)) {
+		if (!force && !LayoutProperties.isDynamicLayoutEnables(context)) {
 			return;
 		}
 

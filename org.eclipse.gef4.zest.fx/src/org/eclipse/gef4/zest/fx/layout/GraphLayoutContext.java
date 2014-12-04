@@ -24,7 +24,7 @@ import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.ILayoutProperties;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
@@ -138,12 +138,12 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 	public void setProperty(String name, Object value) {
 		pss.setProperty(name, value);
 		// send notification
-		if (ILayoutProperties.BOUNDS_PROPERTY.equals(name)) {
+		if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
 			fireBoundsChangedEvent();
-		} else if (ILayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+		} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
 				.equals(name)) {
 			fireBackgroundEnableChangedEvent();
-		} else if (ILayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
 			firePruningEnableChangedEvent();
 		}
 	}

@@ -3,7 +3,7 @@ package org.eclipse.gef4.zest.core.widgets;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
@@ -20,7 +20,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 			InternalLayoutContext layoutContext) {
 		this.graphConnection = graphConnection;
 		this.layoutContext = layoutContext;
-		setp(LayoutPropertiesHelper.VISIBLE_PROPERTY,
+		setp(LayoutProperties.VISIBLE_PROPERTY,
 				graphConnection.isVisible());
 	}
 
@@ -51,13 +51,13 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public boolean isVisible() {
-		return ((Boolean) getp(LayoutPropertiesHelper.VISIBLE_PROPERTY))
+		return ((Boolean) getp(LayoutProperties.VISIBLE_PROPERTY))
 				.booleanValue();
 	}
 
 	public void setVisible(boolean visible) {
 		layoutContext.checkChangesAllowed();
-		setp(LayoutPropertiesHelper.VISIBLE_PROPERTY, visible);
+		setp(LayoutProperties.VISIBLE_PROPERTY, visible);
 	}
 
 	void applyLayout() {
@@ -68,7 +68,7 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (LayoutPropertiesHelper.VISIBLE_PROPERTY.equals(name)) {
+		if (LayoutProperties.VISIBLE_PROPERTY.equals(name)) {
 			setVisible((Boolean) value);
 		} else {
 			setp(name, value);
@@ -76,11 +76,11 @@ class InternalConnectionLayout implements ConnectionLayout {
 	}
 
 	public Object getProperty(String name) {
-		if (LayoutPropertiesHelper.DIRECTED_PROPERTY.equals(name)) {
+		if (LayoutProperties.DIRECTED_PROPERTY.equals(name)) {
 			return isDirected();
-		} else if (LayoutPropertiesHelper.VISIBLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.VISIBLE_PROPERTY.equals(name)) {
 			return isVisible();
-		} else if (LayoutPropertiesHelper.WEIGHT_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.WEIGHT_PROPERTY.equals(name)) {
 			return getWeight();
 		} else {
 			return getp(name);

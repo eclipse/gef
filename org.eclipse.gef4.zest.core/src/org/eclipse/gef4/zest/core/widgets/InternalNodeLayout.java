@@ -20,7 +20,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
@@ -72,20 +72,20 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public org.eclipse.gef4.geometry.planar.Point getLocation() {
-		Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
+		Object location = getp(LayoutProperties.LOCATION_PROPERTY);
 		if (location == null) {
 			refreshLocation();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Point) getp(LayoutPropertiesHelper.LOCATION_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Point) getp(LayoutProperties.LOCATION_PROPERTY))
 				.getCopy();
 	}
 
 	public org.eclipse.gef4.geometry.planar.Dimension getSize() {
-		Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
+		Object size = getp(LayoutProperties.SIZE_PROPERTY);
 		if (size == null) {
 			refreshSize();
 		}
-		return ((org.eclipse.gef4.geometry.planar.Dimension) getp(LayoutPropertiesHelper.SIZE_PROPERTY))
+		return ((org.eclipse.gef4.geometry.planar.Dimension) getp(LayoutProperties.SIZE_PROPERTY))
 				.getCopy();
 	}
 
@@ -94,11 +94,11 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public boolean isMovable() {
-		Object movable = getp(LayoutPropertiesHelper.MOVABLE_PROPERTY);
+		Object movable = getp(LayoutProperties.MOVABLE_PROPERTY);
 		if (movable instanceof Boolean) {
 			return (Boolean) movable;
 		}
-		return LayoutPropertiesHelper.DEFAULT_MOVABLE;
+		return LayoutProperties.DEFAULT_MOVABLE;
 	}
 
 	public boolean isPrunable() {
@@ -141,12 +141,12 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetLocation(double x, double y) {
-		Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
+		Object location = getp(LayoutProperties.LOCATION_PROPERTY);
 		if (location != null) {
 			((org.eclipse.gef4.geometry.planar.Point) location).setLocation(x,
 					y);
 		}
-		setp(LayoutPropertiesHelper.LOCATION_PROPERTY,
+		setp(LayoutProperties.LOCATION_PROPERTY,
 				new org.eclipse.gef4.geometry.planar.Point(x, y));
 	}
 
@@ -156,26 +156,26 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	private void internalSetSize(double width, double height) {
-		Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
+		Object size = getp(LayoutProperties.SIZE_PROPERTY);
 		if (size != null) {
 			((org.eclipse.gef4.geometry.planar.Dimension) size).setSize(width,
 					height);
 		}
-		setp(LayoutPropertiesHelper.SIZE_PROPERTY,
+		setp(LayoutProperties.SIZE_PROPERTY,
 				new org.eclipse.gef4.geometry.planar.Dimension(width, height));
 	}
 
 	public void setMinimized(boolean minimized) {
 		layoutContext.checkChangesAllowed();
-		setp(LayoutPropertiesHelper.MINIMIZED_PROPERTY, minimized);
+		setp(LayoutProperties.MINIMIZED_PROPERTY, minimized);
 	}
 
 	public boolean isMinimized() {
-		Object minimized = getp(LayoutPropertiesHelper.MINIMIZED_PROPERTY);
+		Object minimized = getp(LayoutProperties.MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
 			return (Boolean) minimized;
 		}
-		return LayoutPropertiesHelper.DEFAULT_MINIMIZED;
+		return LayoutProperties.DEFAULT_MINIMIZED;
 	}
 
 	public NodeLayout[] getPredecessingNodes() {
@@ -210,12 +210,12 @@ class InternalNodeLayout implements NodeLayout {
 		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] successingNodes = getSuccessingNodes();
 		for (int i = 0; i < successingNodes.length; i++) {
-			if (!LayoutPropertiesHelper.isPruned(successingNodes[i])) {
+			if (!LayoutProperties.isPruned(successingNodes[i])) {
 				result.add(successingNodes[i]);
 			} else {
 				SubgraphLayout successingSubgraph = successingNodes[i]
 						.getSubgraph();
-				if (LayoutPropertiesHelper.isGraphEntity(successingSubgraph)
+				if (LayoutProperties.isGraphEntity(successingSubgraph)
 						&& !addedSubgraphs.contains(successingSubgraph)) {
 					result.add(successingSubgraph);
 					addedSubgraphs.add(successingSubgraph);
@@ -233,12 +233,12 @@ class InternalNodeLayout implements NodeLayout {
 		HashSet<SubgraphLayout> addedSubgraphs = new HashSet<SubgraphLayout>();
 		NodeLayout[] predecessingNodes = getPredecessingNodes();
 		for (int i = 0; i < predecessingNodes.length; i++) {
-			if (!LayoutPropertiesHelper.isPruned(predecessingNodes[i])) {
+			if (!LayoutProperties.isPruned(predecessingNodes[i])) {
 				result.add(predecessingNodes[i]);
 			} else {
 				SubgraphLayout predecessingSubgraph = predecessingNodes[i]
 						.getSubgraph();
-				if (LayoutPropertiesHelper.isGraphEntity(predecessingSubgraph)
+				if (LayoutProperties.isGraphEntity(predecessingSubgraph)
 						&& !addedSubgraphs.contains(predecessingSubgraph)) {
 					result.add(predecessingSubgraph);
 					addedSubgraphs.add(predecessingSubgraph);
@@ -303,15 +303,15 @@ class InternalNodeLayout implements NodeLayout {
 	void applyLayout() {
 		if (isMinimized()) {
 			node.setSize(0, 0);
-			Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
+			Object location = getp(LayoutProperties.LOCATION_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				node.setLocation(p.x, p.y);
 			}
 		} else {
 			node.setSize(-1, -1);
-			Object location = getp(LayoutPropertiesHelper.LOCATION_PROPERTY);
-			Object size = getp(LayoutPropertiesHelper.SIZE_PROPERTY);
+			Object location = getp(LayoutProperties.LOCATION_PROPERTY);
+			Object size = getp(LayoutProperties.SIZE_PROPERTY);
 			if (location != null) {
 				org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) location;
 				org.eclipse.gef4.geometry.planar.Dimension d = getSize();
@@ -362,20 +362,20 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public void setProperty(String name, Object value) {
-		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutProperties.ASPECT_RATIO_PROPERTY.equals(name)) {
 			// not supported
-		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			org.eclipse.gef4.geometry.planar.Point p = (org.eclipse.gef4.geometry.planar.Point) value;
 			setLocation(p.x, p.y);
-		} else if (LayoutPropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.MINIMIZED_PROPERTY.equals(name)) {
 			setMinimized((Boolean) value);
-		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.MOVABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (LayoutPropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.PRUNABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.RESIZABLE_PROPERTY.equals(name)) {
 			// not supported
-		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			org.eclipse.gef4.geometry.planar.Dimension size = (org.eclipse.gef4.geometry.planar.Dimension) value;
 			setSize(size.width, size.height);
 		} else {
@@ -384,19 +384,19 @@ class InternalNodeLayout implements NodeLayout {
 	}
 
 	public Object getProperty(String name) {
-		if (LayoutPropertiesHelper.ASPECT_RATIO_PROPERTY.equals(name)) {
+		if (LayoutProperties.ASPECT_RATIO_PROPERTY.equals(name)) {
 			return getPreferredAspectRatio();
-		} else if (LayoutPropertiesHelper.LOCATION_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.LOCATION_PROPERTY.equals(name)) {
 			return getLocation();
-		} else if (LayoutPropertiesHelper.MINIMIZED_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.MINIMIZED_PROPERTY.equals(name)) {
 			return isMinimized();
-		} else if (LayoutPropertiesHelper.MOVABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.MOVABLE_PROPERTY.equals(name)) {
 			return isMovable();
-		} else if (LayoutPropertiesHelper.PRUNABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.PRUNABLE_PROPERTY.equals(name)) {
 			return isPrunable();
-		} else if (LayoutPropertiesHelper.RESIZABLE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.RESIZABLE_PROPERTY.equals(name)) {
 			return isResizable();
-		} else if (LayoutPropertiesHelper.SIZE_PROPERTY.equals(name)) {
+		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			return getSize();
 		} else {
 			return getp(name);

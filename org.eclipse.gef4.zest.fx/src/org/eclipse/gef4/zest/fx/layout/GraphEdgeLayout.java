@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.ILayoutProperties;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 
@@ -37,7 +37,7 @@ public class GraphEdgeLayout implements ConnectionLayout {
 				.get(Graph.Attr.Key.GRAPH_TYPE.toString());
 		if (type == Graph.Attr.Value.CONNECTIONS_DIRECTED
 				|| type == Graph.Attr.Value.GRAPH_DIRECTED) {
-			setProperty(ILayoutProperties.DIRECTED_PROPERTY, true);
+			setProperty(LayoutProperties.DIRECTED_PROPERTY, true);
 		}
 
 		// copy properties

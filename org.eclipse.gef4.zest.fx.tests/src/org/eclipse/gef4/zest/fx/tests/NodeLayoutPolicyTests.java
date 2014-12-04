@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutPropertiesHelper;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
@@ -91,8 +91,8 @@ public class NodeLayoutPolicyTests {
 		Point location = new Point(1, 5);
 		Dimension size = new Dimension(100, 200);
 		GraphNodeLayout nodeLayout = createNodeLayout();
-		LayoutPropertiesHelper.setLocation(nodeLayout, location.x, location.y);
-		LayoutPropertiesHelper.setSize(nodeLayout, size.getWidth(), size.getHeight());
+		LayoutProperties.setLocation(nodeLayout, location.x, location.y);
+		LayoutProperties.setSize(nodeLayout, size.getWidth(), size.getHeight());
 
 		policy.adaptLayoutInformation(nodeLayout);
 
@@ -115,8 +115,8 @@ public class NodeLayoutPolicyTests {
 		GraphNodeLayout nodeLayout = createNodeLayout();
 		policy.provideLayoutInformation(nodeLayout);
 
-		assertEquals(location, LayoutPropertiesHelper.getLocation(nodeLayout));
-		assertEquals(size, LayoutPropertiesHelper.getSize(nodeLayout));
+		assertEquals(location, LayoutProperties.getLocation(nodeLayout));
+		assertEquals(size, LayoutProperties.getSize(nodeLayout));
 	}
 
 }
