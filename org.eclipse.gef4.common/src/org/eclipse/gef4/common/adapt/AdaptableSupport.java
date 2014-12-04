@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.gef4.common.activate.ActivatableSupport;
@@ -97,7 +98,10 @@ public class AdaptableSupport<A extends IAdaptable> {
 		// see if we can unambiguously retrieve a matching adapter
 		Map<AdapterKey<? extends T>, T> adaptersForTypeKey = getAdapters(
 				key.getKey(), key.getRole());
-		if (adaptersForTypeKey.size() == 1) {
+
+		// an adapter instance may be registered under different keys
+		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
+		if (adapterCount == 1) {
 			return (T) adaptersForTypeKey.values().iterator().next();
 		}
 
@@ -110,16 +114,21 @@ public class AdaptableSupport<A extends IAdaptable> {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(TypeToken<? super T> key) {
-		// if we have only one adapter for the given type key (disregarding the
+		// if we have only one adapter (instance) for the given type key
+		// (disregarding the
 		// role), return this one
 		Map<AdapterKey<? extends T>, T> adaptersForTypeKey = getAdapters(key,
 				null);
-		if (adaptersForTypeKey.size() == 1) {
+
+		// an adapter instance may be registered under different keys
+		int adapterCount = new HashSet<T>(adaptersForTypeKey.values()).size();
+		if (adapterCount == 1) {
 			return (T) adaptersForTypeKey.values().iterator().next();
 		}
 
-		if (adaptersForTypeKey.size() > 1) {
-			// if we have more than one, retrieve the one with the default role
+		if (adapterCount > 1) {
+			// if we have more than one adapter instance, try to retrieve one
+			// unambiguously by using the default role
 			return getAdapter(AdapterKey.get(key, AdapterKey.DEFAULT_ROLE));
 		}
 

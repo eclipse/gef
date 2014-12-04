@@ -117,6 +117,42 @@ public class AdaptableSupportTests {
 
 	}
 
+	/**
+	 * Test that an adapter instance can be registered and properly retrieved if
+	 * registered under different type keys.
+	 *
+	 */
+	@Test
+	public void adapterInstanceRegisteredUnderDifferentKeys() {
+		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
+
+		ParameterizedType<ParameterType1> parameterizedType1 = new ParameterizedType<ParameterType1>();
+
+		ParameterizedType<ParameterType2> parameterizedType2 = new ParameterizedType<ParameterType2>();
+
+		td.setAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedType<ParameterType1>>() {
+				}), parameterizedType1);
+		td.setAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
+				}), parameterizedType1);
+
+		assertEquals(parameterizedType1, td.getAdapter(AdapterKey
+				.get(new TypeToken<ParameterizedSuperType<ParameterType1>>() {
+				})));
+
+		td.setAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedType<ParameterType2>>() {
+				}, "role"), parameterizedType2);
+		td.setAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedSuperType<ParameterType2>>() {
+				}, "role"), parameterizedType2);
+
+		assertEquals(parameterizedType2, td.getAdapter(AdapterKey.get(
+				new TypeToken<ParameterizedSuperType<ParameterType2>>() {
+				}, "role")));
+	}
+
 	@Test
 	public void polymorphicRegistration() {
 		AdaptableSupportTestDriver td = new AdaptableSupportTestDriver();
