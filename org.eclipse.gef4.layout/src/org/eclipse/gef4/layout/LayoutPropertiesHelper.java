@@ -28,9 +28,9 @@ public class LayoutPropertiesHelper implements ILayoutProperties {
 	public static Rectangle getBounds(LayoutContext graph) {
 		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
 		if (bounds instanceof Rectangle) {
-			return (Rectangle) bounds;
+			return ((Rectangle) bounds).getCopy();
 		}
-		return DEFAULT_BOUNDS;
+		return DEFAULT_BOUNDS.getCopy();
 	}
 
 	public static void setBounds(LayoutContext graph, Rectangle bounds) {
@@ -69,17 +69,17 @@ public class LayoutPropertiesHelper implements ILayoutProperties {
 	public static Point getLocation(EntityLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
 		if (location instanceof Point) {
-			return (Point) location;
+			return ((Point) location).getCopy();
 		}
-		return DEFAULT_LOCATION;
+		return DEFAULT_LOCATION.getCopy();
 	}
 
 	public static Dimension getSize(EntityLayout entity) {
 		Object size = entity.getProperty(SIZE_PROPERTY);
 		if (size instanceof Dimension) {
-			return (Dimension) size;
+			return ((Dimension) size).getCopy();
 		}
-		return DEFAULT_SIZE;
+		return DEFAULT_SIZE.getCopy();
 	}
 
 	public static Double getPreferredAspectRatio(EntityLayout entity) {
