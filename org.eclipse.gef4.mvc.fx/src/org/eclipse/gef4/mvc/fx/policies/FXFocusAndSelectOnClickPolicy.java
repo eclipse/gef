@@ -25,8 +25,12 @@ public class FXFocusAndSelectOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		IVisualPart<Node, ? extends Node> host = getHost();
+		// focus and select are only done on single click
+		if (e.getClickCount() > 1) {
+			return;
+		}
 
+		IVisualPart<Node, ? extends Node> host = getHost();
 		FocusModel<Node> focusModel = host.getRoot().getViewer()
 				.<FocusModel<Node>> getAdapter(FocusModel.class);
 		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
