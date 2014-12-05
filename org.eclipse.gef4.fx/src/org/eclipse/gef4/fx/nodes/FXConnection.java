@@ -452,7 +452,7 @@ public class FXConnection extends Group {
 		// determine curve end point and curve end direction
 		Point endPoint = getEndPoint();
 		ICurve curve = getCurveNode().getGeometry();
-		if (curve == null) {
+		if (curve == null || endPoint == null) {
 			return;
 		}
 
@@ -490,7 +490,7 @@ public class FXConnection extends Group {
 		// determine curve start point and curve start direction
 		Point startPoint = getStartPoint();
 		ICurve curve = getCurveNode().getGeometry();
-		if (curve == null) {
+		if (curve == null || startPoint == null) {
 			return;
 		}
 
