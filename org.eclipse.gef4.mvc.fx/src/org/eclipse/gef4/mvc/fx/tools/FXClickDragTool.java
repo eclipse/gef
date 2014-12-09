@@ -14,7 +14,9 @@ package org.eclipse.gef4.mvc.fx.tools;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -37,16 +39,18 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
 	private boolean dragInProgress;
 
-	protected Collection<? extends AbstractFXClickPolicy> getClickPolicies(
+	protected Set<? extends AbstractFXClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXClickPolicy> getAdapters(
-				CLICK_TOOL_POLICY_KEY).values();
+		return new HashSet<AbstractFXClickPolicy>(targetPart
+				.<AbstractFXClickPolicy> getAdapters(CLICK_TOOL_POLICY_KEY)
+				.values());
 	}
 
-	protected Collection<? extends AbstractFXDragPolicy> getDragPolicies(
+	protected Set<? extends AbstractFXDragPolicy> getDragPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXDragPolicy> getAdapters(
-				DRAG_TOOL_POLICY_KEY).values();
+		return new HashSet<AbstractFXDragPolicy>(targetPart
+				.<AbstractFXDragPolicy> getAdapters(DRAG_TOOL_POLICY_KEY)
+				.values());
 	}
 
 	public boolean isDragging() {

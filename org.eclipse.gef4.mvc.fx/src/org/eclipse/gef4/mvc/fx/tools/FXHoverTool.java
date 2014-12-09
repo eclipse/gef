@@ -13,7 +13,9 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -88,10 +90,10 @@ public class FXHoverTool extends AbstractTool<Node> {
 		}
 	};
 
-	protected Collection<? extends AbstractFXHoverPolicy> getHoverPolicies(
+	protected Set<? extends AbstractFXHoverPolicy> getHoverPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXHoverPolicy> getAdapters(TOOL_POLICY_KEY)
-				.values();
+		return new HashSet<>(targetPart.<AbstractFXHoverPolicy> getAdapters(
+				TOOL_POLICY_KEY).values());
 	}
 
 	@Override

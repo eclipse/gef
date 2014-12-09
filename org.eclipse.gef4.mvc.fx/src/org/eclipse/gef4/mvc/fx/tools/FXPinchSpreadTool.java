@@ -11,9 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.tools;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -36,13 +37,14 @@ public class FXPinchSpreadTool extends AbstractTool<Node> {
 	public FXPinchSpreadTool() {
 	}
 
-	protected Collection<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
+	protected Set<? extends AbstractFXPinchSpreadPolicy> getPinchSpreadPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXPinchSpreadPolicy> getAdapters(
-				TOOL_POLICY_KEY).values();
+		return new HashSet<>(targetPart
+				.<AbstractFXPinchSpreadPolicy> getAdapters(TOOL_POLICY_KEY)
+				.values());
 	}
 
-	protected Collection<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
+	protected Set<? extends AbstractFXPinchSpreadPolicy> getTargetPolicies(
 			ZoomEvent e) {
 		EventTarget target = e.getTarget();
 		if (!(target instanceof Node)) {

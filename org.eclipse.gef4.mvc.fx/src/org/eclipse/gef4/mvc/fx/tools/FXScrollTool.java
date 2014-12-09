@@ -13,6 +13,8 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -63,10 +65,10 @@ public class FXScrollTool extends AbstractTool<Node> {
 		}
 	};
 
-	protected Collection<? extends AbstractFXScrollPolicy> getScrollPolicies(
+	protected Set<? extends AbstractFXScrollPolicy> getScrollPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXScrollPolicy> getAdapters(TOOL_POLICY_KEY)
-				.values();
+		return new HashSet<>(targetPart.<AbstractFXScrollPolicy> getAdapters(
+				TOOL_POLICY_KEY).values());
 	}
 
 	@Override

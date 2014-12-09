@@ -13,6 +13,8 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
@@ -55,22 +57,22 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 	};
 
-	protected Collection<? extends AbstractFXTypePolicy> getKeyPolicies(
+	protected Set<? extends AbstractFXTypePolicy> getKeyPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
-		return targetPart.<AbstractFXTypePolicy> getAdapters(TOOL_POLICY_KEY)
-				.values();
+		return new HashSet<>(targetPart.<AbstractFXTypePolicy> getAdapters(
+				TOOL_POLICY_KEY).values());
 	}
 
-	protected Collection<? extends AbstractFXTypePolicy> getTargetPolicies(
+	protected Set<? extends AbstractFXTypePolicy> getTargetPolicies(
 			KeyEvent event) {
 		EventTarget target = event.getTarget();
 		if (!(target instanceof Node)) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 
 		Scene scene = ((Node) target).getScene();
 		if (scene == null) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 
 		IVisualPart<Node, ? extends Node> targetPart = null;
@@ -91,7 +93,7 @@ public class FXTypeTool extends AbstractTool<Node> {
 		}
 
 		if (targetPart == null) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 
 		return getKeyPolicies(targetPart);
