@@ -118,7 +118,7 @@ public final class Node {
 		return graph;
 	}
 
-	public Set<? extends Edge> getIncomingLocalEdges() {
+	public Set<Edge> getIncomingLocalEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -135,7 +135,7 @@ public final class Node {
 		return nestedGraph;
 	}
 
-	public Set<? extends Edge> getOutgoingLocalEdges() {
+	public Set<Edge> getOutgoingLocalEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -148,7 +148,7 @@ public final class Node {
 		return outgoing;
 	}
 
-	public Set<? extends Node> getPredecessingLocalNodes() {
+	public Set<Node> getPredecessingLocalNodes() {
 		Set<Node> predecessors = new HashSet<Node>();
 		for (Edge incoming : getIncomingLocalEdges()) {
 			predecessors.add(incoming.getSource());
@@ -156,7 +156,7 @@ public final class Node {
 		return predecessors;
 	}
 
-	public Set<? extends Node> getSuccessingLocalNodes() {
+	public Set<Node> getSuccessingLocalNodes() {
 		Set<Node> successors = new HashSet<Node>();
 		for (Edge outgoing : getOutgoingLocalEdges()) {
 			successors.add(outgoing.getTarget());

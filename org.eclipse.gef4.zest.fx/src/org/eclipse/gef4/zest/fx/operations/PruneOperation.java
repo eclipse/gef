@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.operations;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.Node;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -20,10 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.SubgraphModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -57,26 +57,12 @@ public class PruneOperation extends AbstractOperation {
 		return Status.OK_STATUS;
 	}
 
-	protected NodeLayout[] getNeighbors(NodeContentPart host,
-			IViewer<Node> viewer) {
-		LayoutModel layoutModel = viewer.getDomain().getAdapter(
-				LayoutModel.class);
-		GraphLayoutContext layoutContext = (GraphLayoutContext) layoutModel
-				.getLayoutContext();
-		NodeLayout[] predecessors = layoutContext.getNodeLayout(
-				host.getContent()).getPredecessingNodes();
-		NodeLayout[] successors = layoutContext
-				.getNodeLayout(host.getContent()).getSuccessingNodes();
-		NodeLayout[] neighbors = new NodeLayout[predecessors.length
-				+ successors.length];
-
-		for (int i = 0; i < predecessors.length; i++) {
-			neighbors[i] = predecessors[i];
-		}
-		for (int i = 0; i < successors.length; i++) {
-			neighbors[predecessors.length + i] = successors[i];
-		}
-		return neighbors;
+	protected org.eclipse.gef4.graph.Node[] getNeighbors(
+			org.eclipse.gef4.graph.Node node) {
+		Set<org.eclipse.gef4.graph.Node> neighbors = new HashSet<org.eclipse.gef4.graph.Node>();
+		neighbors.addAll(node.getPredecessingLocalNodes());
+		neighbors.addAll(node.getSuccessingLocalNodes());
+		return neighbors.toArray(new org.eclipse.gef4.graph.Node[] {});
 	}
 
 	protected void prune() {
@@ -84,9 +70,9 @@ public class PruneOperation extends AbstractOperation {
 		// add to neighboring subgraphs
 		SubgraphModel subgraphModel = viewer.getDomain().getAdapter(
 				SubgraphModel.class);
-		for (NodeLayout p : getNeighbors(node, viewer)) {
+		for (org.eclipse.gef4.graph.Node n : getNeighbors(node.getContent())) {
 			NodeContentPart pNodePart = (NodeContentPart) viewer
-					.getContentPartMap().get(p.getItems()[0]);
+					.getContentPartMap().get(n);
 			subgraphModel.addNodesToSubgraph(pNodePart, node);
 		}
 		node.deactivate();
@@ -115,9 +101,9 @@ public class PruneOperation extends AbstractOperation {
 		SubgraphModel subgraphModel = viewer.getDomain().getAdapter(
 				SubgraphModel.class);
 		// remove from neighboring subgraphs
-		for (NodeLayout p : getNeighbors(node, viewer)) {
+		for (org.eclipse.gef4.graph.Node n : getNeighbors(node.getContent())) {
 			NodeContentPart pNodePart = (NodeContentPart) viewer
-					.getContentPartMap().get(p.getItems()[0]);
+					.getContentPartMap().get(n);
 			subgraphModel.removeNodesFromSubgraph(pNodePart, node);
 		}
 	}
