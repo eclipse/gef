@@ -23,13 +23,15 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 public class PruneNodePolicy extends AbstractPolicy<Node> {
 
 	public void prune() {
-		ClearHoverFocusSelectionOperation revOp = new ClearHoverFocusSelectionOperation(getHost().getRoot().getViewer());
+		ClearHoverFocusSelectionOperation<Node> revOp = new ClearHoverFocusSelectionOperation<Node>(
+				getHost().getRoot().getViewer());
 		revOp.add(PruneOperation.prune((NodeContentPart) getHost()));
 		getHost().getRoot().getViewer().getDomain().execute(revOp);
 	}
 
 	public void unprune() {
-		ClearHoverFocusSelectionOperation revOp = new ClearHoverFocusSelectionOperation(getHost().getRoot().getViewer());
+		ClearHoverFocusSelectionOperation<Node> revOp = new ClearHoverFocusSelectionOperation<Node>(
+				getHost().getRoot().getViewer());
 		revOp.add(PruneOperation.unprune((NodeContentPart) getHost()));
 		getHost().getRoot().getViewer().getDomain().execute(revOp);
 	}

@@ -36,9 +36,9 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.SubgraphBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.PruningBehavior;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
-import org.eclipse.gef4.zest.fx.models.SubgraphModel;
+import org.eclipse.gef4.zest.fx.models.PruningModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
@@ -99,8 +99,8 @@ public class ZestFxModule extends MvcFxModule {
 		super.bindAbstractDomainAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.get(LayoutModel.class)).to(
 				LayoutModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(SubgraphModel.class)).to(
-				SubgraphModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(PruningModel.class)).to(
+				PruningModel.class);
 	}
 
 	@Override
@@ -148,8 +148,8 @@ public class ZestFxModule extends MvcFxModule {
 				.to(NodeLayoutBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(
 				PruneNodePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(SubgraphBehavior.class)).to(
-				SubgraphBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(PruningBehavior.class)).to(
+				PruningBehavior.class);
 		// interaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(

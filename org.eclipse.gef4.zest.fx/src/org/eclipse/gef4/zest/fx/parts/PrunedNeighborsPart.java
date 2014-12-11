@@ -23,18 +23,20 @@ import javafx.scene.text.Text;
 
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.SubgraphModel;
+import org.eclipse.gef4.zest.fx.models.PruningModel;
 
 // TODO: only applicable for NodeContentPart (anchorage)
-public class PrunedNeighborsSubgraphPart extends AbstractFXFeedbackPart<Group> {
+public class PrunedNeighborsPart extends AbstractFXFeedbackPart<Group> {
 
 	private Circle circle;
 	private Text text;
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.attachToAnchorageVisual(anchorage, role);
-		getVisual().visibleProperty().bind(anchorage.getVisual().visibleProperty());
+		getVisual().visibleProperty().bind(
+				anchorage.getVisual().visibleProperty());
 	}
 
 	// TODO: extract visual to its own type
@@ -55,41 +57,52 @@ public class PrunedNeighborsSubgraphPart extends AbstractFXFeedbackPart<Group> {
 	}
 
 	@Override
-	protected void detachFromAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void detachFromAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		super.detachFromAnchorageVisual(anchorage, role);
 		getVisual().visibleProperty().unbind();
 	}
 
 	@Override
 	protected void doRefreshVisual(Group visual) {
-		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages().keySet();
+		Set<IVisualPart<Node, ? extends Node>> keySet = getAnchorages()
+				.keySet();
 		if (keySet.isEmpty()) {
 			return;
 		}
 		IVisualPart<Node, ? extends Node> anchorage = keySet.iterator().next();
-		Bounds anchorageLayoutBoundsInLocal = getVisual().sceneToLocal(
-				anchorage.getVisual().localToScene(anchorage.getVisual().getLayoutBounds()));
+		if (((NodeContentPart) anchorage).getContent() == null) {
+			return;
+		}
 
+		// update position
+		Bounds anchorageLayoutBoundsInLocal = getVisual().sceneToLocal(
+				anchorage.getVisual().localToScene(
+						anchorage.getVisual().getLayoutBounds()));
 		double x = anchorageLayoutBoundsInLocal.getMaxX();
 		double y = anchorageLayoutBoundsInLocal.getMaxY();
-
 		circle.setCenterX(x);
 		circle.setCenterY(y);
 
-		SubgraphModel subgraphModel = getViewer().getDomain().getAdapter(SubgraphModel.class);
-		Set<NodeContentPart> containedNodes = subgraphModel.getContainedNodes((NodeContentPart) anchorage);
-		int count = containedNodes == null ? 0 : containedNodes.size();
+		// update text
+		PruningModel pruningModel = getViewer().getDomain().getAdapter(
+				PruningModel.class);
+		int count = pruningModel.getPrunedNeighbors(
+				((NodeContentPart) anchorage).getContent()).size();
 		text.setText(Integer.toString(count));
 
 		Bounds textLayoutBounds = text.getLayoutBounds();
 
+		// update circle size
 		double size = textLayoutBounds.getWidth();
 		if (textLayoutBounds.getHeight() > size) {
 			size = textLayoutBounds.getHeight();
 		}
 		circle.setRadius(size / 2);
 
-		text.relocate(x - textLayoutBounds.getWidth() / 2, y - textLayoutBounds.getHeight() / 2);
+		// update text position
+		text.relocate(x - textLayoutBounds.getWidth() / 2,
+				y - textLayoutBounds.getHeight() / 2);
 	}
 
 }

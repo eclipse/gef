@@ -61,9 +61,26 @@ public final class Graph {
 
 	}
 
+	/**
+	 * {@link Node}s directly contained by this {@link Graph}.
+	 */
 	private final List<Node> nodes;
+
+	/**
+	 * {@link Edge}s for which this {@link Graph} is a common ancestor for
+	 * {@link Edge#getSource() source} and {@link Edge#getTarget() target}.
+	 */
 	private final List<Edge> edges;
+
+	/**
+	 * Attributes of this {@link Graph}.
+	 */
 	private final Map<String, Object> attrs;
+
+	/**
+	 * {@link Node} which contains this {@link Graph}. May be <code>null</code>
+	 * .
+	 */
 	private Node nestingNode; // when contained as a nested graph within a node
 
 	/**
@@ -75,6 +92,17 @@ public final class Graph {
 				new ArrayList<Edge>());
 	}
 
+	/**
+	 * Constructs a new {@link Graph} from the given attributes, nodes, and
+	 * edges. Associates all nodes and edges with this {@link Graph}.
+	 *
+	 * @param attrs
+	 *            Map of graph attributes.
+	 * @param nodes
+	 *            List of {@link Node}s.
+	 * @param edges
+	 *            List of {@link Edge}s.
+	 */
 	public Graph(Map<String, Object> attrs, List<Node> nodes, List<Edge> edges) {
 		this.attrs = attrs;
 		this.nodes = nodes;
@@ -103,18 +131,40 @@ public final class Graph {
 		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
+	/**
+	 * Returns the map of attributes of this {@link Graph} by reference.
+	 *
+	 * @return The map of attributes of this {@link Graph} by reference.
+	 */
 	public Map<String, Object> getAttrs() {
 		return attrs;
 	}
 
+	/**
+	 * Returns the list of {@link Edge}s of this {@link Graph} by reference.
+	 *
+	 * @return The list of {@link Edge}s of this {@link Graph} by reference.
+	 */
 	public List<Edge> getEdges() {
 		return edges;
 	}
 
+	/**
+	 * Returns the {@link Node} in which this {@link Graph} is nested. Returns
+	 * <code>null</code> when this {@link Graph} is not nested.
+	 *
+	 * @return The {@link Node} in which this {@link Graph} is nested, or
+	 *         <code>null</code>.
+	 */
 	public Node getNestingNode() {
 		return nestingNode;
 	}
 
+	/**
+	 * Returns the list of {@link Node}s of this {@link Graph} by reference.
+	 *
+	 * @return The list of {@link Node}s of this {@link Graph} by reference.
+	 */
 	public List<Node> getNodes() {
 		return nodes;
 	}
@@ -128,6 +178,12 @@ public final class Graph {
 		return result;
 	}
 
+	/**
+	 * Sets the nesting {@link Node} of this {@link Graph}.
+	 *
+	 * @param nestingNode
+	 *            The new {@link Node} in which this {@link Graph} is nested.
+	 */
 	public void setNestingNode(Node nestingNode) {
 		this.nestingNode = nestingNode;
 	}

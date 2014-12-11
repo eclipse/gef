@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.models.SubgraphModel;
+import org.eclipse.gef4.zest.fx.models.PruningModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class PruneOperation extends AbstractOperation {
@@ -60,21 +60,17 @@ public class PruneOperation extends AbstractOperation {
 	protected org.eclipse.gef4.graph.Node[] getNeighbors(
 			org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = new HashSet<org.eclipse.gef4.graph.Node>();
-		neighbors.addAll(node.getPredecessingLocalNodes());
-		neighbors.addAll(node.getSuccessingLocalNodes());
+		neighbors.addAll(node.getLocalPredecessorNodes());
+		neighbors.addAll(node.getLocalSuccessorNodes());
 		return neighbors.toArray(new org.eclipse.gef4.graph.Node[] {});
 	}
 
 	protected void prune() {
 		IViewer<Node> viewer = node.getRoot().getViewer();
 		// add to neighboring subgraphs
-		SubgraphModel subgraphModel = viewer.getDomain().getAdapter(
-				SubgraphModel.class);
-		for (org.eclipse.gef4.graph.Node n : getNeighbors(node.getContent())) {
-			NodeContentPart pNodePart = (NodeContentPart) viewer
-					.getContentPartMap().get(n);
-			subgraphModel.addNodesToSubgraph(pNodePart, node);
-		}
+		PruningModel pruningModel = viewer.getDomain().getAdapter(
+				PruningModel.class);
+		pruningModel.prune(node.getContent());
 		node.deactivate();
 	}
 
@@ -98,14 +94,9 @@ public class PruneOperation extends AbstractOperation {
 	protected void unprune() {
 		node.activate();
 		IViewer<Node> viewer = node.getRoot().getViewer();
-		SubgraphModel subgraphModel = viewer.getDomain().getAdapter(
-				SubgraphModel.class);
-		// remove from neighboring subgraphs
-		for (org.eclipse.gef4.graph.Node n : getNeighbors(node.getContent())) {
-			NodeContentPart pNodePart = (NodeContentPart) viewer
-					.getContentPartMap().get(n);
-			subgraphModel.removeNodesFromSubgraph(pNodePart, node);
-		}
+		PruningModel pruningModel = viewer.getDomain().getAdapter(
+				PruningModel.class);
+		pruningModel.unprune(node.getContent());
 	}
 
 }

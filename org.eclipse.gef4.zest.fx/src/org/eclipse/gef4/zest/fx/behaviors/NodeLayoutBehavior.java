@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsSubgraphPart;
+import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsPart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 
 import com.google.common.collect.Multiset;
@@ -59,18 +59,18 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	};
 
-	private PropertyChangeListener subgraphAnchorageChangeListener = new PropertyChangeListener() {
+	private PropertyChangeListener pruningAnchorageChangeListener = new PropertyChangeListener() {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (IVisualPart.ANCHORAGES_PROPERTY.equals(evt.getPropertyName())) {
 				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node, ? extends Node>, String> oldSubgraphAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
+				SetMultimap<IVisualPart<Node, ? extends Node>, String> oldPruningAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
 						.getOldValue();
 				@SuppressWarnings("unchecked")
-				SetMultimap<IVisualPart<Node, ? extends Node>, String> newSubgraphAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
+				SetMultimap<IVisualPart<Node, ? extends Node>, String> newPruningAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
 						.getNewValue();
-				onSubgraphAnchorageChange(oldSubgraphAnchorages,
-						newSubgraphAnchorages);
+				onPruningAnchorageChange(oldPruningAnchorages,
+						newPruningAnchorages);
 			}
 		}
 	};
@@ -110,30 +110,30 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
 			Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds) {
 		if (nodeLayout != null) {
-			PrunedNeighborsSubgraphPart oldSubgraphPart = null;
+			PrunedNeighborsPart oldSubgraphPart = null;
 			for (IVisualPart<Node, ? extends Node> oldAnchored : oldAnchoreds) {
-				if (oldAnchored instanceof PrunedNeighborsSubgraphPart) {
-					oldSubgraphPart = (PrunedNeighborsSubgraphPart) oldAnchored;
+				if (oldAnchored instanceof PrunedNeighborsPart) {
+					oldSubgraphPart = (PrunedNeighborsPart) oldAnchored;
 					break;
 				}
 			}
 
-			PrunedNeighborsSubgraphPart newSubgraphPart = null;
+			PrunedNeighborsPart newSubgraphPart = null;
 			for (IVisualPart<Node, ? extends Node> newAnchored : newAnchoreds) {
-				if (newAnchored instanceof PrunedNeighborsSubgraphPart) {
-					newSubgraphPart = (PrunedNeighborsSubgraphPart) newAnchored;
+				if (newAnchored instanceof PrunedNeighborsPart) {
+					newSubgraphPart = (PrunedNeighborsPart) newAnchored;
 					break;
 				}
 			}
 
 			if (oldSubgraphPart != null && newSubgraphPart == null) {
 				oldSubgraphPart
-						.removePropertyChangeListener(subgraphAnchorageChangeListener);
+						.removePropertyChangeListener(pruningAnchorageChangeListener);
 				getHost().getAdapter(LAYOUT_POLICY_KEY)
 						.provideLayoutInformation(nodeLayout);
 			} else if (oldSubgraphPart == null && newSubgraphPart != null) {
 				newSubgraphPart
-						.addPropertyChangeListener(subgraphAnchorageChangeListener);
+						.addPropertyChangeListener(pruningAnchorageChangeListener);
 			}
 		}
 	}
@@ -155,11 +155,11 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		}
 	}
 
-	protected void onSubgraphAnchorageChange(
-			SetMultimap<IVisualPart<Node, ? extends Node>, String> oldSubgraphAnchorages,
-			SetMultimap<IVisualPart<Node, ? extends Node>, String> newSubgraphAnchorages) {
-		boolean hostWasAnchorage = oldSubgraphAnchorages.containsKey(getHost());
-		boolean hostIsAnchorage = newSubgraphAnchorages.containsKey(getHost());
+	protected void onPruningAnchorageChange(
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> oldPruningAnchorages,
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> newPruningAnchorages) {
+		boolean hostWasAnchorage = oldPruningAnchorages.containsKey(getHost());
+		boolean hostIsAnchorage = newPruningAnchorages.containsKey(getHost());
 		if (!hostWasAnchorage && hostIsAnchorage) {
 			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
 					nodeLayout);

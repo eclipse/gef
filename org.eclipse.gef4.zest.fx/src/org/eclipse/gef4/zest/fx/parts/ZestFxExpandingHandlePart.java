@@ -8,7 +8,8 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.SubgraphModel;
+import org.eclipse.gef4.mvc.viewer.IViewer;
+import org.eclipse.gef4.zest.fx.models.PruningModel;
 import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 
 import com.google.common.collect.SetMultimap;
@@ -19,7 +20,8 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 	public static final String IMG_EXPAND = "/expandall.gif";
 	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
 
-	public ZestFxExpandingHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxExpandingHandlePart(
+			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 	}
@@ -40,13 +42,18 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
-		SubgraphModel subgraphModel = anchorage.getRoot().getViewer().getDomain().getAdapter(SubgraphModel.class);
-		Set<NodeContentPart> containedNodes = subgraphModel.getContainedNodes((NodeContentPart) anchorage);
-		if (containedNodes != null && !containedNodes.isEmpty()) {
-			for (NodeContentPart node : containedNodes) {
-				PruneNodePolicy prunePolicy = node.getAdapter(PruneNodePolicy.class);
-				prunePolicy.unprune();
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
+				.iterator().next();
+		IViewer<Node> viewer = anchorage.getRoot().getViewer();
+		PruningModel pruningModel = viewer.getDomain().getAdapter(
+				PruningModel.class);
+		Set<org.eclipse.gef4.graph.Node> prunedNeighbors = pruningModel
+				.getPrunedNeighbors(((NodeContentPart) anchorage).getContent());
+		if (!prunedNeighbors.isEmpty()) {
+			for (org.eclipse.gef4.graph.Node node : prunedNeighbors) {
+				viewer.getContentPartMap().get(node)
+						.<PruneNodePolicy> getAdapter(PruneNodePolicy.class)
+						.unprune();
 			}
 		}
 	}

@@ -38,7 +38,13 @@ public final class Node {
 	}
 
 	private final Map<String, Object> attrs;
+	/**
+	 * The {@link Graph} which this {@link Node} belongs to.
+	 */
 	private Graph graph; // associated graph
+	/**
+	 * The {@link Graph} that is nested inside of this {@link Node}.
+	 */
 	private Graph nestedGraph;
 
 	public Node() {
@@ -61,51 +67,93 @@ public final class Node {
 		return attrsEqual;
 	}
 
+	/**
+	 * Returns all incoming {@link Edge}s of this {@link Node}. The full graph
+	 * hierarchy is scanned for incoming edges, and not just the
+	 * {@link #getGraph() associated graph}.
+	 *
+	 * @return All incoming {@link Edge}s.
+	 */
 	public Set<? extends Edge> getAllIncomingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
 		Set<Edge> incoming = new HashSet<Edge>();
-		incoming.addAll(getIncomingLocalEdges());
+		incoming.addAll(getLocalIncomingEdges());
 		if (graph.getNestingNode() != null) {
 			incoming.addAll(graph.getNestingNode().getAllIncomingEdges());
 		}
 		return incoming;
 	}
 
+	/**
+	 * Returns all neighbors of this {@link Node}. The full graph hierarchy is
+	 * scanned for neighbors, and not just the {@link #getGraph() associated
+	 * graph}.
+	 *
+	 * @return All neighbors.
+	 */
+	public Set<Node> getAllNeighbors() {
+		Set<Node> neighbors = new HashSet<Node>();
+		neighbors.addAll(getAllPredecessorNodes());
+		neighbors.addAll(getAllSuccessorNodes());
+		return neighbors;
+	}
+
+	/**
+	 * Returns all outgoing {@link Edge}s of this {@link Node}. The full graph
+	 * hierarchy is scanned for outgoing edges, and not just the
+	 * {@link #getGraph() associated graph}.
+	 *
+	 * @return All outgoing {@link Edge}s.
+	 */
 	public Set<? extends Edge> getAllOutgoingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
 		Set<Edge> outgoing = new HashSet<Edge>();
-		outgoing.addAll(getOutgoingLocalEdges());
+		outgoing.addAll(getLocalOutgoingEdges());
 		if (graph.getNestingNode() != null) {
 			outgoing.addAll(graph.getNestingNode().getAllOutgoingEdges());
 		}
 		return outgoing;
 	}
 
-	public Set<? extends Node> getAllPredecessingNodes() {
+	/**
+	 * Returns all predecessor {@link Node}s of this {@link Node}. The full
+	 * graph hierarchy is scanned for predecessor nodes, and not just the
+	 * {@link #getGraph() associated graph}.
+	 *
+	 * @return All predecessor {@link Node}s.
+	 */
+	public Set<? extends Node> getAllPredecessorNodes() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
 		Set<Node> predecessors = new HashSet<Node>();
-		predecessors.addAll(getPredecessingLocalNodes());
+		predecessors.addAll(getLocalPredecessorNodes());
 		if (graph.getNestingNode() != null) {
-			predecessors.addAll(graph.getNestingNode()
-					.getAllPredecessingNodes());
+			predecessors
+					.addAll(graph.getNestingNode().getAllPredecessorNodes());
 		}
 		return predecessors;
 	}
 
-	public Set<? extends Node> getAllSuccessingNodes() {
+	/**
+	 * Returns all successor {@link Node}s of this {@link Node}. The full graph
+	 * hierarchy is scanned for successor nodes, and not just the
+	 * {@link #getGraph() associated graph}.
+	 *
+	 * @return All successor {@link Node}s.
+	 */
+	public Set<? extends Node> getAllSuccessorNodes() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
 		Set<Node> successors = new HashSet<Node>();
-		successors.addAll(getSuccessingLocalNodes());
+		successors.addAll(getLocalSuccessorNodes());
 		if (graph.getNestingNode() != null) {
-			successors.addAll(graph.getNestingNode().getAllSuccessingNodes());
+			successors.addAll(graph.getNestingNode().getAllSuccessorNodes());
 		}
 		return successors;
 	}
@@ -118,7 +166,14 @@ public final class Node {
 		return graph;
 	}
 
-	public Set<Edge> getIncomingLocalEdges() {
+	/**
+	 * Returns the local incoming {@link Edge}s of this {@link Node}. Only the
+	 * {@link #getGraph() associated graph} is scanned for incoming edges, and
+	 * not the whole graph hierarchy.
+	 *
+	 * @return The local incoming {@link Edge}s.
+	 */
+	public Set<Edge> getLocalIncomingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -131,11 +186,21 @@ public final class Node {
 		return incoming;
 	}
 
-	public Graph getNestedGraph() {
-		return nestedGraph;
+	public Set<Node> getLocalNeighbors() {
+		Set<Node> neighbors = new HashSet<Node>();
+		neighbors.addAll(getLocalPredecessorNodes());
+		neighbors.addAll(getLocalSuccessorNodes());
+		return neighbors;
 	}
 
-	public Set<Edge> getOutgoingLocalEdges() {
+	/**
+	 * Returns the local outgoing {@link Edge}s of this {@link Node}. Only the
+	 * {@link #getGraph() associated graph} is scanned for outgoing edges, and
+	 * not the whole graph hierarchy.
+	 *
+	 * @return The local outgoing {@link Edge}s.
+	 */
+	public Set<Edge> getLocalOutgoingEdges() {
 		if (graph == null) {
 			return Collections.emptySet();
 		}
@@ -148,20 +213,45 @@ public final class Node {
 		return outgoing;
 	}
 
-	public Set<Node> getPredecessingLocalNodes() {
+	/**
+	 * Returns the local predecessor {@link Node}s of this {@link Node}. Only
+	 * the {@link #getGraph() associated graph} is scanned for predecessor
+	 * nodes, and not the whole graph hierarchy.
+	 *
+	 * @return The local predecessor {@link Node}s.
+	 */
+	public Set<Node> getLocalPredecessorNodes() {
 		Set<Node> predecessors = new HashSet<Node>();
-		for (Edge incoming : getIncomingLocalEdges()) {
+		for (Edge incoming : getLocalIncomingEdges()) {
 			predecessors.add(incoming.getSource());
 		}
 		return predecessors;
 	}
 
-	public Set<Node> getSuccessingLocalNodes() {
+	/**
+	 * Returns the local successor {@link Node}s of this {@link Node}. Only the
+	 * {@link #getGraph() associated graph} is scanned for successor nodes, and
+	 * not the whole graph hierarchy.
+	 *
+	 * @return The local successor {@link Node}s.
+	 */
+	public Set<Node> getLocalSuccessorNodes() {
 		Set<Node> successors = new HashSet<Node>();
-		for (Edge outgoing : getOutgoingLocalEdges()) {
+		for (Edge outgoing : getLocalOutgoingEdges()) {
 			successors.add(outgoing.getTarget());
 		}
 		return successors;
+	}
+
+	/**
+	 * Returns the {@link Graph} that is nested inside of this {@link Node}. May
+	 * be <code>null</code>.
+	 *
+	 * @return The {@link Graph} that is nested inside of this {@link Node}, or
+	 *         <code>null</code>.
+	 */
+	public Graph getNestedGraph() {
+		return nestedGraph;
 	}
 
 	@Override
