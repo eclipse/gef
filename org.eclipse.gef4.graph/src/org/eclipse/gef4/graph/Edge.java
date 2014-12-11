@@ -15,6 +15,11 @@ import org.eclipse.gef4.graph.Graph.Attr;
 
 public final class Edge {
 
+	/*
+	 * TODO: How to check consistency? The associated graph has to be an
+	 * ancestor of both source and target nodes.
+	 */
+
 	public static class Builder {
 
 		private Map<String, Object> attrs = new HashMap<String, Object>();
@@ -26,13 +31,13 @@ public final class Edge {
 			this.target = target;
 		}
 
+		public Builder attr(Attr.Key attr, Object value) {
+			return attr(attr.toString(), value);
+		}
+
 		public Edge.Builder attr(String key, Object value) {
 			attrs.put(key, value);
 			return this;
-		}
-
-		public Builder attr(Attr.Key attr, Object value) {
-			return attr(attr.toString(), value);
 		}
 
 		public Edge build() {
@@ -44,19 +49,39 @@ public final class Edge {
 	private final Map<String, Object> attrs;
 	private Node source;
 	private Node target;
+	private Graph graph; // associated graph
 
 	public Edge(Map<String, Object> attrs, Node source, Node target) {
 		this.attrs = attrs;
 		this.source = source;
 		this.target = target;
 	}
-	
+
 	public Edge(Node source, Node target) {
 		this(new HashMap<String, Object>(), source, target);
 	}
 
+	@Override
+	public boolean equals(Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (!(that instanceof Edge)) {
+			return false;
+		}
+		Edge thatEdge = (Edge) that;
+		boolean attrsEqual = this.getAttrs().equals(thatEdge.getAttrs());
+		boolean sourceEqual = this.getSource().equals(thatEdge.getSource());
+		boolean targetEqual = this.getTarget().equals(thatEdge.getTarget());
+		return attrsEqual && sourceEqual && targetEqual;
+	}
+
 	public Map<String, Object> getAttrs() {
 		return attrs;
+	}
+
+	public Graph getGraph() {
+		return graph;
 	}
 
 	public Node getSource() {
@@ -66,27 +91,6 @@ public final class Edge {
 	public Node getTarget() {
 		return target;
 	}
-	
-	public void setSource(Node source) {
-		this.source = source;
-	}
-	
-	public void setTarget(Node target) {
-		this.target = target;
-	}
-
-	@Override
-	public boolean equals(Object that) {
-		if (this == that)
-			return true;
-		if (!(that instanceof Edge))
-			return false;
-		Edge thatEdge = (Edge) that;
-		boolean attrsEqual = this.getAttrs().equals(thatEdge.getAttrs());
-		boolean sourceEqual = this.getSource().equals(thatEdge.getSource());
-		boolean targetEqual = this.getTarget().equals(thatEdge.getTarget());
-		return attrsEqual && sourceEqual && targetEqual;
-	}
 
 	@Override
 	public int hashCode() {
@@ -95,6 +99,18 @@ public final class Edge {
 		result = 31 * result + getSource().hashCode();
 		result = 31 * result + getTarget().hashCode();
 		return result;
+	}
+
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
+
+	public void setSource(Node source) {
+		this.source = source;
+	}
+
+	public void setTarget(Node target) {
+		this.target = target;
 	}
 
 	@Override

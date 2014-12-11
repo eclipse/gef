@@ -16,44 +16,6 @@ import java.util.Map;
 
 public final class Graph {
 
-	public static class Builder {
-		
-		private List<Node> nodes = new ArrayList<Node>();
-		private List<Edge> edges = new ArrayList<Edge>();
-		private Map<String, Object> attrs = new HashMap<String, Object>();
-
-		public Builder() {
-		}
-
-		public Graph.Builder nodes(Node... nodes) {
-			this.nodes.addAll(Arrays.asList(nodes));
-			return this;
-		}
-
-		public Graph.Builder edges(Edge... edges) {
-			this.edges.addAll(Arrays.asList(edges));
-			return this;
-		}
-
-		public Graph.Builder attr(String key, Object value) {
-			attrs.put(key, value);
-			return this;
-		}
-
-		public Builder attr(Attr.Key attr, Object value) {
-			return attr(attr.toString(), value);
-		}
-
-		public Graph build() {
-			return new Graph(attrs, nodes, edges);
-		}
-
-	}
-
-	private final List<Node> nodes;
-	private final List<Edge> edges;
-	private final Map<String, Object> attrs;
-
 	public static class Attr {
 		public static enum Key {
 			NODE_STYLE, EDGE_STYLE, LABEL, STYLE, ID, IMAGE, LAYOUT, GRAPH_TYPE
@@ -65,17 +27,80 @@ public final class Graph {
 		}
 	}
 
+	public static class Builder {
+
+		private List<Node> nodes = new ArrayList<Node>();
+		private List<Edge> edges = new ArrayList<Edge>();
+		private Map<String, Object> attrs = new HashMap<String, Object>();
+
+		public Builder() {
+		}
+
+		public Builder attr(Attr.Key attr, Object value) {
+			return attr(attr.toString(), value);
+		}
+
+		public Graph.Builder attr(String key, Object value) {
+			attrs.put(key, value);
+			return this;
+		}
+
+		public Graph build() {
+			return new Graph(attrs, nodes, edges);
+		}
+
+		public Graph.Builder edges(Edge... edges) {
+			this.edges.addAll(Arrays.asList(edges));
+			return this;
+		}
+
+		public Graph.Builder nodes(Node... nodes) {
+			this.nodes.addAll(Arrays.asList(nodes));
+			return this;
+		}
+
+	}
+
+	private final List<Node> nodes;
+	private final List<Edge> edges;
+	private final Map<String, Object> attrs;
+	private Node nestingNode; // when contained as a nested graph within a node
+
+	/**
+	 * Default constructor, using empty collections for attributes, nodes, and
+	 * edges.
+	 */
+	public Graph() {
+		this(new HashMap<String, Object>(), new ArrayList<Node>(),
+				new ArrayList<Edge>());
+	}
+
 	public Graph(Map<String, Object> attrs, List<Node> nodes, List<Edge> edges) {
 		this.attrs = attrs;
 		this.nodes = nodes;
 		this.edges = edges;
+		// set graph on nodes and edges
+		for (Node n : nodes) {
+			n.setGraph(this);
+		}
+		for (Edge e : edges) {
+			e.setGraph(this);
+		}
 	}
-	
-	/**
-	 * Default constructor, using empty collections for attributes, nodes, and edges.
-	 */
-	public Graph() {
-		this(new HashMap<String, Object>(), new ArrayList<Node>(), new ArrayList<Edge>());
+
+	@Override
+	public boolean equals(Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (!(that instanceof Graph)) {
+			return false;
+		}
+		Graph thatGraph = (Graph) that;
+		boolean attrsEqual = this.getAttrs().equals(thatGraph.getAttrs());
+		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
+		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
+		return attrsEqual && nodesEqual && edgesEqual;
 	}
 
 	public Map<String, Object> getAttrs() {
@@ -86,27 +111,12 @@ public final class Graph {
 		return edges;
 	}
 
-	public List<Node> getNodes() {
-		return nodes;
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("Graph {%s nodes, %s edges}", nodes.size(), //$NON-NLS-1$
-				edges.size());
+	public Node getNestingNode() {
+		return nestingNode;
 	}
 
-	@Override
-	public boolean equals(Object that) {
-		if (this == that)
-			return true;
-		if (!(that instanceof Graph))
-			return false;
-		Graph thatGraph = (Graph) that;
-		boolean attrsEqual = this.getAttrs().equals(thatGraph.getAttrs());
-		boolean nodesEqual = this.getNodes().equals(thatGraph.getNodes());
-		boolean edgesEqual = this.getEdges().equals(thatGraph.getEdges());
-		return attrsEqual && nodesEqual && edgesEqual;
+	public List<Node> getNodes() {
+		return nodes;
 	}
 
 	@Override
@@ -117,5 +127,15 @@ public final class Graph {
 		result = 31 * result + getEdges().hashCode();
 		return result;
 	}
-	
+
+	public void setNestingNode(Node nestingNode) {
+		this.nestingNode = nestingNode;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Graph {%s nodes, %s edges}", nodes.size(), //$NON-NLS-1$
+				edges.size());
+	}
+
 }
