@@ -24,6 +24,7 @@ import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
@@ -61,7 +62,7 @@ public class FXSelectionFeedbackPart extends
 		feedbackVisual.setFill(Color.TRANSPARENT);
 		feedbackVisual.setMouseTransparent(true);
 		feedbackVisual.setManaged(false);
-		feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
+		// feedbackVisual.setStrokeType(StrokeType.OUTSIDE);
 		feedbackVisual.setStrokeWidth(1);
 		return feedbackVisual;
 	}
@@ -99,6 +100,15 @@ public class FXSelectionFeedbackPart extends
 				.next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
 
+		if (feedbackGeometry instanceof ICurve) {
+			// stroke centered
+			visual.setStrokeType(StrokeType.CENTERED);
+		} else {
+			// stroke outside
+			visual.setStrokeType(StrokeType.OUTSIDE);
+		}
+
+		// update color according to focused and selected state
 		boolean focused = viewer.getAdapter(FocusModel.class).isViewerFocused()
 				&& viewer.getAdapter(FocusModel.class).getFocused() == anchorage;
 		List<IContentPart<Node, ? extends Node>> selected = viewer

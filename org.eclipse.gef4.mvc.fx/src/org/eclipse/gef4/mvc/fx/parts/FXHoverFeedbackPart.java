@@ -18,6 +18,7 @@ import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
+import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 
 import com.google.inject.Provider;
@@ -61,6 +62,14 @@ public class FXHoverFeedbackPart extends
 		}
 
 		visual.setGeometry(feedbackGeometry);
+
+		if (feedbackGeometry instanceof ICurve) {
+			// stroke centered
+			visual.setStrokeType(StrokeType.CENTERED);
+		} else {
+			// stroke outside
+			visual.setStrokeType(StrokeType.OUTSIDE);
+		}
 	}
 
 	protected IGeometry getFeedbackGeometry() {
