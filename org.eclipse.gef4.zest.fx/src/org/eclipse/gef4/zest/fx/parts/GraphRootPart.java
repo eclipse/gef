@@ -12,137 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.List;
-
-import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.graph.Graph;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.GridModel;
-import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 
 public class GraphRootPart extends FXRootPart {
 
 	public static final String STYLES_CSS_FILE = GraphRootPart.class
 			.getResource("styles.css").toExternalForm();
 
-	public static final LayoutAlgorithm DEFAULT_LAYOUT_ALGORITHM = new SpringLayoutAlgorithm();
-
-	private LayoutAlgorithm layoutAlgorithm = DEFAULT_LAYOUT_ALGORITHM;
-
-	private PropertyChangeListener pruningChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if ("pruned".equals(evt.getPropertyName())) {
-				GraphLayoutContext context = getLayoutContext();
-				if (context != null) {
-					applyLayout(context);
-				}
-			}
-		}
-	};
-
-	private PropertyChangeListener contentChanged = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			if (ContentModel.CONTENTS_PROPERTY.equals(evt.getPropertyName())) {
-				// create GLC from content
-				Object content = evt.getNewValue();
-				final GraphLayoutContext context = createLayoutContext(content);
-
-				// get layout model
-				LayoutModel layoutModel = getViewer().getDomain().getAdapter(
-						LayoutModel.class);
-
-				// remove pruning listener from old context
-				LayoutContext oldContext = layoutModel.getLayoutContext();
-				if (oldContext instanceof GraphLayoutContext) {
-					((GraphLayoutContext) oldContext)
-							.removePropertyChangeListener(pruningChangeListener);
-				}
-				// add pruning listener to new context
-				context.addPropertyChangeListener(pruningChangeListener);
-
-				// set layout algorithm
-				context.setStaticLayoutAlgorithm(layoutAlgorithm);
-
-				// set layout context. other parts listen for the layout model
-				// to send in their layout data
-				layoutModel.setLayoutContext(context);
-				applyLayout(context);
-			}
-		}
-	};
-
-	private PropertyChangeListener viewportChanged = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			String name = evt.getPropertyName();
-			if (ViewportModel.VIEWPORT_WIDTH_PROPERTY.equals(name)
-					|| ViewportModel.VIEWPORT_HEIGHT_PROPERTY.equals(name)) {
-				GraphLayoutContext context = getLayoutContext();
-				if (context != null) {
-					applyLayout(context);
-				}
-			}
-		}
-	};
-
-	protected void applyLayout(final GraphLayoutContext context) {
-		// get current viewport size
-		ViewportModel viewportModel = getViewer().getAdapter(
-				ViewportModel.class);
-		double width = viewportModel.getWidth();
-		double height = viewportModel.getHeight();
-		LayoutProperties.setBounds(context, new Rectangle(0, 0, width,
-				height));
-
-		// apply layout algorithm
-		context.applyStaticLayout(true);
-		context.flushChanges(false);
-	}
-
-	protected GraphLayoutContext createLayoutContext(Object content) {
-		if (!(content instanceof List)) {
-			throw new IllegalStateException(
-					"Wrong content! Expected <List> but got <" + content + ">.");
-		}
-		if (((List<?>) content).size() != 1) {
-			throw new IllegalStateException(
-					"Wrong content! Expected <Graph> but got nothing.");
-		}
-		content = ((List<?>) content).get(0);
-		if (!(content instanceof Graph)) {
-			throw new IllegalStateException(
-					"Wrong content! Expected <Graph> but got <" + content
-							+ ">.");
-		}
-		final GraphLayoutContext context = new GraphLayoutContext(
-				(Graph) content);
-		ViewportModel viewport = getViewer().getAdapter(ViewportModel.class);
-		LayoutProperties.setBounds(context,
-				new Rectangle(0, 0, viewport.getWidth(), viewport.getHeight()));
-		return context;
-	}
-
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getViewer().getAdapter(ContentModel.class).addPropertyChangeListener(
-				contentChanged);
-		getViewer().getAdapter(ViewportModel.class).addPropertyChangeListener(
-				viewportChanged);
-
+		// hide grid
 		getViewer().getAdapter(GridModel.class).setShowGrid(false);
-
 		// load stylesheet
 		getVisual().getScene().getStylesheets().add(STYLES_CSS_FILE);
 	}
@@ -150,31 +32,8 @@ public class GraphRootPart extends FXRootPart {
 	@Override
 	protected void doDeactivate() {
 		super.doDeactivate();
-		getViewer().getAdapter(ContentModel.class)
-				.removePropertyChangeListener(contentChanged);
-		getViewer().getAdapter(ViewportModel.class)
-				.removePropertyChangeListener(viewportChanged);
-
 		// un-load stylesheet
 		getVisual().getScene().getStylesheets().remove(STYLES_CSS_FILE);
-	}
-
-	protected GraphLayoutContext getLayoutContext() {
-		LayoutModel layoutModel = getViewer().getDomain().getAdapter(
-				LayoutModel.class);
-		if (layoutModel == null) {
-			return null;
-		}
-		return (GraphLayoutContext) layoutModel.getLayoutContext();
-	}
-
-	public void setLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		layoutAlgorithm = algorithm;
-		GraphLayoutContext context = getLayoutContext();
-		if (context != null) {
-			context.setStaticLayoutAlgorithm(layoutAlgorithm);
-			applyLayout(context);
-		}
 	}
 
 }

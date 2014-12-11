@@ -20,6 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import org.eclipse.gef4.layout.interfaces.LayoutContext;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
@@ -57,10 +58,19 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior<Node> {
 	@Override
 	public void activate() {
 		super.activate();
+
+		// register listeners
 		getDomainAdapter(LayoutModel.class).addPropertyChangeListener(
 				layoutContextListener);
 		getHost().getVisual().layoutBoundsProperty()
 				.addListener(layoutBoundsListener);
+
+		// check if a layout context is already available
+		LayoutContext layoutContext = getDomainAdapter(LayoutModel.class)
+				.getLayoutContext();
+		if (layoutContext instanceof GraphLayoutContext) {
+			onLayoutContextChange(null, (GraphLayoutContext) layoutContext);
+		}
 	}
 
 	@Override

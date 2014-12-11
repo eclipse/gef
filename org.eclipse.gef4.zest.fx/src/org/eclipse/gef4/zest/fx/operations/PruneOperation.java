@@ -69,6 +69,7 @@ public class PruneOperation extends AbstractOperation {
 				.getNodeLayout(host.getContent()).getSuccessingNodes();
 		NodeLayout[] neighbors = new NodeLayout[predecessors.length
 				+ successors.length];
+
 		for (int i = 0; i < predecessors.length; i++) {
 			neighbors[i] = predecessors[i];
 		}

@@ -38,7 +38,8 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 
 	private ChangeListener<Boolean> visibilityChangeListener = new ChangeListener<Boolean>() {
 		@Override
-		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+		public void changed(ObservableValue<? extends Boolean> observable,
+				Boolean oldValue, Boolean newValue) {
 			onVisibilityChanged(oldValue, newValue);
 		}
 	};
@@ -68,7 +69,8 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 				@SuppressWarnings("unchecked")
 				SetMultimap<IVisualPart<Node, ? extends Node>, String> newSubgraphAnchorages = (SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
 						.getNewValue();
-				onSubgraphAnchorageChange(oldSubgraphAnchorages, newSubgraphAnchorages);
+				onSubgraphAnchorageChange(oldSubgraphAnchorages,
+						newSubgraphAnchorages);
 			}
 		}
 	};
@@ -79,28 +81,33 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	public void activate() {
 		super.activate();
-		getHost().getVisual().visibleProperty().addListener(visibilityChangeListener);
+		getHost().getVisual().visibleProperty()
+				.addListener(visibilityChangeListener);
 		getHost().addPropertyChangeListener(anchoredChangeListener);
 	}
 
 	@Override
 	public void deactivate() {
 		super.deactivate();
-		getHost().getVisual().visibleProperty().removeListener(visibilityChangeListener);
+		getHost().getVisual().visibleProperty()
+				.removeListener(visibilityChangeListener);
 		getHost().removePropertyChangeListener(anchoredChangeListener);
 	}
 
 	@Override
 	protected void initializeLayout(GraphLayoutContext glc) {
 		// find node layout
-		nodeLayout = glc.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node, ? extends Node>) getHost())
-				.getContent());
+		nodeLayout = glc
+				.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node, ? extends Node>) getHost())
+						.getContent());
 		getHost().refreshVisual();
 		// initialize layout information
-		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
+		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
+				nodeLayout);
 	}
 
-	protected void onAnchoredChange(Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
+	protected void onAnchoredChange(
+			Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
 			Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds) {
 		if (nodeLayout != null) {
 			PrunedNeighborsSubgraphPart oldSubgraphPart = null;
@@ -120,10 +127,13 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			}
 
 			if (oldSubgraphPart != null && newSubgraphPart == null) {
-				oldSubgraphPart.removePropertyChangeListener(subgraphAnchorageChangeListener);
-				getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
+				oldSubgraphPart
+						.removePropertyChangeListener(subgraphAnchorageChangeListener);
+				getHost().getAdapter(LAYOUT_POLICY_KEY)
+						.provideLayoutInformation(nodeLayout);
 			} else if (oldSubgraphPart == null && newSubgraphPart != null) {
-				newSubgraphPart.addPropertyChangeListener(subgraphAnchorageChangeListener);
+				newSubgraphPart
+						.addPropertyChangeListener(subgraphAnchorageChangeListener);
 			}
 		}
 	}
@@ -131,14 +141,16 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 	@Override
 	protected void onBoundsChange(Bounds oldBounds, Bounds newBounds) {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
+					nodeLayout);
 		}
 	}
 
 	@Override
 	protected void onFlushChanges() {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).adaptLayoutInformation(
+					nodeLayout);
 			getHost().refreshVisual();
 		}
 	}
@@ -149,13 +161,15 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		boolean hostWasAnchorage = oldSubgraphAnchorages.containsKey(getHost());
 		boolean hostIsAnchorage = newSubgraphAnchorages.containsKey(getHost());
 		if (!hostWasAnchorage && hostIsAnchorage) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
+					nodeLayout);
 		}
 	}
 
 	protected void onVisibilityChanged(Boolean wasVisible, Boolean isVisible) {
 		if (nodeLayout != null) {
-			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(nodeLayout);
+			getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
+					nodeLayout);
 		}
 	}
 

@@ -34,6 +34,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.SubgraphBehavior;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
@@ -69,7 +70,6 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder
 				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
 						FXHoverOnHoverPolicy.class);
-
 		// geometry provider for selection feedback
 		adapterMapBinder
 				.addBinding(
@@ -78,7 +78,6 @@ public class ZestFxModule extends MvcFxModule {
 								},
 										FXDefaultFeedbackPartFactory.SELECTION_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
-
 		// geometry provider for hover feedback
 		adapterMapBinder
 				.addBinding(
@@ -87,7 +86,6 @@ public class ZestFxModule extends MvcFxModule {
 								},
 										FXDefaultFeedbackPartFactory.HOVER_FEEDBACK_GEOMETRY_PROVIDER))
 				.to(VisualBoundsGeometryProvider.class);
-
 		// geometry provider for hover handles
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<IGeometry>>() {
@@ -103,6 +101,15 @@ public class ZestFxModule extends MvcFxModule {
 				LayoutModel.class);
 		adapterMapBinder.addBinding(AdapterKey.get(SubgraphModel.class)).to(
 				SubgraphModel.class);
+	}
+
+	@Override
+	protected void bindAbstractRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindAbstractRootPartAdapters(adapterMapBinder);
+		adapterMapBinder
+				.addBinding(AdapterKey.get(LayoutContextBehavior.class)).to(
+						LayoutContextBehavior.class);
 	}
 
 	protected void bindEdgeContentPartAdapters(
@@ -161,10 +168,6 @@ public class ZestFxModule extends MvcFxModule {
 
 	protected void bindPruningHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// FIXME: bind NoHoverPolicy to TypeLiteral<HoverPolicy<Node>>
-		// Are type literal bindings global?
-		// adapterMapBinder.addBinding(AdapterKey.get(HoverPolicy.class)).to(
-		// NoHoverPolicy.class);
 	}
 
 	@Override
