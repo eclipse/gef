@@ -33,7 +33,8 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 	}
 
 	public void adaptLayoutInformation(NodeLayout nodeLayout) {
-		FXResizeRelocatePolicy policy = getHost().getAdapter(RESIZE_RELOCATE_POLICY_KEY);
+		FXResizeRelocatePolicy policy = getHost().getAdapter(
+				RESIZE_RELOCATE_POLICY_KEY);
 		if (policy != null) {
 			Node visual = getHost().getVisual();
 			Bounds layoutBounds = visual.getLayoutBounds();
@@ -69,22 +70,29 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 		double maxx = hostBounds.getMaxX();
 		double maxy = hostBounds.getMaxY();
 		// union node bounds with bounds of feedback visuals
-		for (IVisualPart<Node, ? extends Node> anchored : getHost().getAnchoreds()) {
+		for (IVisualPart<Node, ? extends Node> anchored : getHost()
+				.getAnchoreds()) {
 			if (!(anchored instanceof IFeedbackPart)) {
 				continue;
 			}
 			Node anchoredVisual = anchored.getVisual();
 			Bounds anchoredBounds = anchoredVisual.getLayoutBounds();
-			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual.localToScene(anchoredBounds));
+			Bounds anchoredBoundsInHost = visual.sceneToLocal(anchoredVisual
+					.localToScene(anchoredBounds));
 			minx = Math.min(minx, anchoredBoundsInHost.getMinX());
 			miny = Math.min(miny, anchoredBoundsInHost.getMinY());
 			maxx = Math.max(maxx, anchoredBoundsInHost.getMaxX());
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		LayoutProperties.setLocation(nodeLayout, visual.getLayoutX() + minx, visual.getLayoutY() + miny);
+		LayoutProperties.setLocation(nodeLayout, visual.getLayoutX() + minx,
+				visual.getLayoutY() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
-		nodeLayout.setProperty("pruned", !visual.isVisible());
+		Object wasPruned = nodeLayout.getProperty("pruned");
+		if (visual.isVisible() == (wasPruned == null || wasPruned instanceof Boolean
+				&& (Boolean) wasPruned)) {
+			nodeLayout.setProperty("pruned", !visual.isVisible());
+		}
 	}
 
 }
