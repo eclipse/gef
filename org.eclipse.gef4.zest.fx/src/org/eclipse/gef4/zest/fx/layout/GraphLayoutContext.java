@@ -136,15 +136,18 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 
 	@Override
 	public void setProperty(String name, Object value) {
+		Object oldValue = pss.getProperty(name);
 		pss.setProperty(name, value);
-		// send notification
-		if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
-			fireBoundsChangedEvent();
-		} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
-				.equals(name)) {
-			fireBackgroundEnableChangedEvent();
-		} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
-			firePruningEnableChangedEvent();
+		if (oldValue != value && (value == null || !value.equals(oldValue))) {
+			// send notification
+			if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
+				fireBoundsChangedEvent();
+			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
+					.equals(name)) {
+				fireBackgroundEnableChangedEvent();
+			} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
+				firePruningEnableChangedEvent();
+			}
 		}
 	}
 
