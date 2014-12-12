@@ -186,6 +186,9 @@ public final class Graph {
 	 */
 	public void setNestingNode(Node nestingNode) {
 		this.nestingNode = nestingNode;
+		if (nestingNode.getNestedGraph() != this) {
+			nestingNode.setNestedGraph(this);
+		}
 	}
 
 	@Override

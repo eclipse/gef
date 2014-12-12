@@ -265,6 +265,9 @@ public final class Node {
 
 	public void setNestedGraph(Graph nestedGraph) {
 		this.nestedGraph = nestedGraph;
+		if (nestedGraph.getNestingNode() != this) {
+			nestedGraph.setNestingNode(this);
+		}
 	}
 
 	@Override
