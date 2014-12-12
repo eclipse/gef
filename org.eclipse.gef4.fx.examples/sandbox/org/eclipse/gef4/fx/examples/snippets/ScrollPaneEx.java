@@ -13,6 +13,7 @@
 package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -58,7 +59,7 @@ public class ScrollPaneEx extends Region {
 			updateScrollbars();
 		}
 	};
-	private ChangeListener<? super Bounds> contentBoundsInParentListener = new ChangeListener<Bounds>() {
+	private ChangeListener<? super Bounds> contentBoundsInParentChangeListener = new ChangeListener<Bounds>() {
 		@Override
 		public void changed(ObservableValue<? extends Bounds> observable,
 				Bounds oldValue, Bounds newValue) {
@@ -114,7 +115,8 @@ public class ScrollPaneEx extends Region {
 	protected Group createContentGroup() {
 		Group g = new Group();
 		g.getTransforms().add(viewportTransform);
-		g.boundsInParentProperty().addListener(contentBoundsInParentListener);
+		g.boundsInParentProperty().addListener(
+				contentBoundsInParentChangeListener);
 		return g;
 	}
 
@@ -133,8 +135,20 @@ public class ScrollPaneEx extends Region {
 		verticalScrollBar.setOpacity(0.5);
 
 		// bind horizontal size
+		DoubleBinding vWidth = new DoubleBinding() {
+			{
+				bind(verticalScrollBar.visibleProperty(),
+						verticalScrollBar.widthProperty());
+			}
+
+			@Override
+			protected double computeValue() {
+				return verticalScrollBar.isVisible() ? verticalScrollBar
+						.getWidth() : 0;
+			}
+		};
 		horizontalScrollBar.prefWidthProperty().bind(
-				widthProperty().subtract(verticalScrollBar.widthProperty()));
+				widthProperty().subtract(vWidth));
 
 		// bind horizontal y position
 		horizontalScrollBar.layoutYProperty()
@@ -142,9 +156,20 @@ public class ScrollPaneEx extends Region {
 						horizontalScrollBar.heightProperty()));
 
 		// bind vertical size
-		verticalScrollBar.prefHeightProperty()
-				.bind(heightProperty().subtract(
-						horizontalScrollBar.heightProperty()));
+		DoubleBinding hHeight = new DoubleBinding() {
+			{
+				bind(horizontalScrollBar.visibleProperty(),
+						horizontalScrollBar.heightProperty());
+			}
+
+			@Override
+			protected double computeValue() {
+				return horizontalScrollBar.isVisible() ? horizontalScrollBar
+						.getHeight() : 0;
+			}
+		};
+		verticalScrollBar.prefHeightProperty().bind(
+				heightProperty().subtract(hHeight));
 
 		// bind vertical x position
 		verticalScrollBar.layoutXProperty().bind(
