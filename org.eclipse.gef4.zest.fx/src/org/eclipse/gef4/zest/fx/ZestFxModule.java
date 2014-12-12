@@ -47,6 +47,8 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxPruningHandlePart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
+import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
+import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
 import org.eclipse.gef4.zest.fx.policies.PruneOnTypePolicy;
 
@@ -118,6 +120,16 @@ public class ZestFxModule extends MvcFxModule {
 				.to(EdgeLayoutBehavior.class);
 	}
 
+	@Override
+	protected void bindFXRootPartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		super.bindFXRootPartAdapters(adapterMapBinder);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+						"OpenParentGraphOnDoubleClick")).to(
+				OpenParentGraphOnDoubleClickPolicy.class);
+	}
+
 	protected void bindGraphContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 	}
@@ -142,10 +154,12 @@ public class ZestFxModule extends MvcFxModule {
 	@SuppressWarnings("serial")
 	protected void bindNodeContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// layout
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutPolicy.class)).to(
 				NodeLayoutPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
 				.to(NodeLayoutBehavior.class);
+		// pruning
 		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(
 				PruneNodePolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(PruningBehavior.class)).to(
@@ -156,11 +170,15 @@ public class ZestFxModule extends MvcFxModule {
 				FXRelocateOnDragPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(PruneOnTypePolicy.class);
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
+						"OpenNestedGraphOnDoubleClick")).to(
+				OpenNestedGraphOnDoubleClickPolicy.class);
 		// transaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
 				FXResizeRelocatePolicy.class);
-
+		// provider
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {
 				})).to(ChopBoxAnchorProvider.class);
