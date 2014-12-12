@@ -38,6 +38,17 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 	private final Map<IViewer<Node>, FXMouseDragGesture> gestures = new HashMap<IViewer<Node>, FXMouseDragGesture>();
 	private boolean dragInProgress;
+	private final Map<AbstractFXDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXDragPolicy, MouseEvent>();
+
+	public void cancelDragging() {
+		if (dragInProgress) {
+			for (AbstractFXDragPolicy policy : pressEvents.keySet()) {
+				policy.release(pressEvents.get(policy), new Dimension());
+			}
+			getDomain().closeExecutionTransaction();
+			dragInProgress = false;
+		}
+	}
 
 	protected Set<? extends AbstractFXClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -66,6 +77,9 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				@Override
 				protected void drag(Node target, MouseEvent e, double dx,
 						double dy) {
+					if (!dragInProgress) {
+						return;
+					}
 					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
@@ -104,6 +118,7 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						getDomain().openExecutionTransaction();
 						for (AbstractFXDragPolicy policy : policies) {
 							dragInProgress = true;
+							pressEvents.put(policy, e);
 							policy.press(e);
 						}
 					}
@@ -112,12 +127,16 @@ public class FXClickDragTool extends AbstractTool<Node> {
 				@Override
 				protected void release(Node target, MouseEvent e, double dx,
 						double dy) {
+					if (!dragInProgress) {
+						return;
+					}
 					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
 					if (targetPart != null) {
 						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
 						for (AbstractFXDragPolicy policy : policies) {
+							pressEvents.remove(policy);
 							policy.release(e, new Dimension(dx, dy));
 						}
 						getDomain().closeExecutionTransaction();
