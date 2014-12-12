@@ -54,6 +54,9 @@ public class ZestFXExampleApplication extends Application {
 				n(Key.LABEL.toString(), "8", "tooltip", "eight"),
 				n(Key.LABEL.toString(), "9", "tooltip", "nine")));
 
+		// set nested graph for node "0"
+		nodes.get(0).setNestedGraph(buildAC());
+
 		// create some edges between those nodes
 		List<Edge> edges = new ArrayList<Edge>();
 		edges.addAll(Arrays.asList(e(nodes.get(0), nodes.get(9)),
@@ -63,7 +66,27 @@ public class ZestFXExampleApplication extends Application {
 				e(nodes.get(2), nodes.get(8)), e(nodes.get(3), nodes.get(5)),
 				e(nodes.get(4), nodes.get(7)), e(nodes.get(5), nodes.get(1))));
 
-		// default: directed connections
+		// directed connections
+		HashMap<String, Object> attrs = new HashMap<String, Object>();
+		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
+				Graph.Attr.Value.GRAPH_DIRECTED);
+		return new Graph(attrs, nodes, edges);
+	}
+
+	private static Graph buildAC() {
+		// create nodes "A" to "C"
+		List<org.eclipse.gef4.graph.Node> nodes = new ArrayList<org.eclipse.gef4.graph.Node>();
+		nodes.addAll(Arrays.asList(
+				n(Key.LABEL.toString(), "A", "tooltip", "Alpha"),
+				n(Key.LABEL.toString(), "B", "tooltip", "Beta"),
+				n(Key.LABEL.toString(), "C", "tooltip", "Gamma")));
+
+		// create some edges between those nodes
+		List<Edge> edges = new ArrayList<Edge>();
+		edges.addAll(Arrays.asList(e(nodes.get(0), nodes.get(1)),
+				e(nodes.get(1), nodes.get(2)), e(nodes.get(2), nodes.get(0))));
+
+		// directed connections
 		HashMap<String, Object> attrs = new HashMap<String, Object>();
 		attrs.put(Graph.Attr.Key.GRAPH_TYPE.toString(),
 				Graph.Attr.Value.GRAPH_DIRECTED);
@@ -117,49 +140,50 @@ public class ZestFXExampleApplication extends Application {
 			}
 		});
 
-		viewer.getAdapter(ViewportModel.class)
-				.setWidth(primaryStage.getWidth());
+		// set initial size
+		viewer.getAdapter(ViewportModel.class).setWidth(
+				viewer.getScene().getWidth());
 		viewer.getAdapter(ViewportModel.class).setHeight(
-				primaryStage.getHeight());
+				viewer.getScene().getHeight());
 
-		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, final Number newValue) {
-				if (newValue != null) {
-					Platform.runLater(new Runnable() {
-
-						@Override
-						public void run() {
-							viewer.getAdapter(ViewportModel.class).setWidth(
-									newValue.doubleValue());
+		viewer.getScene().widthProperty()
+				.addListener(new ChangeListener<Number>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Number> observable,
+							Number oldValue, final Number newValue) {
+						if (newValue != null) {
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									viewer.getAdapter(ViewportModel.class)
+											.setWidth(newValue.doubleValue());
+								}
+							});
 						}
-					});
-				}
-			}
-		});
-		primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Number> observable,
-					Number oldValue, final Number newValue) {
-				if (newValue != null) {
-					Platform.runLater(new Runnable() {
-
-						@Override
-						public void run() {
-							viewer.getAdapter(ViewportModel.class).setHeight(
-									newValue.doubleValue());
+					}
+				});
+		viewer.getScene().heightProperty()
+				.addListener(new ChangeListener<Number>() {
+					@Override
+					public void changed(
+							ObservableValue<? extends Number> observable,
+							Number oldValue, final Number newValue) {
+						if (newValue != null) {
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									viewer.getAdapter(ViewportModel.class)
+											.setHeight(newValue.doubleValue());
+								}
+							});
 						}
-
-					});
-				}
-			}
-		});
+					}
+				});
 
 		primaryStage.setTitle("GEF4 Zest.FX Example");
 		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
+
 }
