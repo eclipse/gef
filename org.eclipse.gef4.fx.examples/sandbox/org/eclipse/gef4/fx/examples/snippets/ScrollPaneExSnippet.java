@@ -14,6 +14,8 @@ package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
@@ -22,8 +24,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 
 public class ScrollPaneExSnippet extends FXApplication {
 
@@ -46,17 +52,35 @@ public class ScrollPaneExSnippet extends FXApplication {
 						rect(-100, -100, 30, 60, Color.CYAN));
 
 		// translate to top-left most content node
+		// TODO: implement ScrollPaneEx#reveal(Node);
 		Bounds canvasBounds = scrollPane.getCanvas().getBoundsInLocal();
 		double minx = canvasBounds.getMinX();
 		double miny = canvasBounds.getMinY();
-		// scrollPane.getCanvas().setTranslateX(-minx);
-		// scrollPane.getCanvas().setTranslateY(-miny);
+		scrollPane.getCanvas().setTranslateX(-minx);
+		scrollPane.getCanvas().setTranslateY(-miny);
 
 		scrollPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				if (MouseButton.SECONDARY.equals(event.getButton())) {
-					// TODO: zoom with pivot
+					// determine pivot in content group
+					Group contentGroup = scrollPane.getContentGroup();
+					Point2D contentPivot = contentGroup.sceneToLocal(
+							event.getSceneX(), event.getSceneY());
+					double zoomFactor = event.isControlDown() ? 4d / 5 : 5d / 4;
+
+					// compute zoom transformation
+					Affine tx = scrollPane.getViewportTransform();
+					AffineTransform at = JavaFX2Geometry.toAffineTransform(tx);
+					at.concatenate(new AffineTransform()
+							.translate(contentPivot.getX(), contentPivot.getY())
+							.scale(zoomFactor, zoomFactor)
+							.translate(-contentPivot.getX(),
+									-contentPivot.getY()));
+					Affine affine = Transform.affine(at.getM00(), at.getM01(),
+							at.getM10(), at.getM11(), at.getTranslateX(),
+							at.getTranslateY());
+					scrollPane.setViewportTransform(affine);
 				}
 			}
 		});
