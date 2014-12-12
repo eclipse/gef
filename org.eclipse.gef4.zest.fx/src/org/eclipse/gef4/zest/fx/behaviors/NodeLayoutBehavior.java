@@ -100,8 +100,13 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 		nodeLayout = glc
 				.getNodeLayout((org.eclipse.gef4.graph.Node) ((IContentPart<Node, ? extends Node>) getHost())
 						.getContent());
-		getHost().refreshVisual();
+		if (nodeLayout == null) {
+			// XXX: Why are we still living?
+			return;
+		}
+
 		// initialize layout information
+		getHost().refreshVisual();
 		getHost().getAdapter(LAYOUT_POLICY_KEY).provideLayoutInformation(
 				nodeLayout);
 	}
