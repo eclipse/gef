@@ -189,7 +189,9 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 					&& Animation.Status.RUNNING.equals(creationDelayTransition
 							.getStatus())) {
 				stopCreationTimer();
-				// and remove feedback
+			}
+			// if no hover handles were created, remove feedback and be happy
+			if (getHandleParts() == null || getHandleParts().isEmpty()) {
 				removeFeedback(Collections.singletonList(getHost()));
 				return;
 			}
