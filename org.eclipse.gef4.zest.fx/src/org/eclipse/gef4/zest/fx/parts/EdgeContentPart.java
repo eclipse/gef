@@ -14,8 +14,11 @@ package org.eclipse.gef4.zest.fx.parts;
 
 import java.util.Map;
 
+import javafx.geometry.Bounds;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.shape.Polyline;
+import javafx.scene.text.Text;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
@@ -26,6 +29,7 @@ import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.ICurve;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.geometry.planar.Rectangle;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr;
@@ -34,6 +38,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
+import org.eclipse.gef4.zest.fx.parts.EdgeContentPart.FXLabeledConnection;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -62,6 +67,45 @@ public class EdgeContentPart extends AbstractFXContentPart<FXLabeledConnection> 
 		public Node getVisual() {
 			return this;
 		}
+	}
+
+	public class FXLabeledConnection extends FXConnection {
+
+		protected Text text = new Text();
+		// TODO: protected HBox hbox = new HBox();
+		// TODO: protected ImageView imageView = new ImageView();
+
+		{
+			text.setTextOrigin(VPos.TOP);
+			text.setManaged(false);
+		}
+
+		public String getLabel() {
+			return text.getText();
+		}
+
+		@Override
+		protected void refreshGeometry() {
+			super.refreshGeometry();
+
+			// TODO: image
+
+			Bounds textBounds = text.getLayoutBounds();
+			Rectangle bounds = getCurveNode().getGeometry().getBounds();
+			text.setTranslateX(bounds.getX() + bounds.getWidth() / 2
+					- textBounds.getWidth() / 2);
+			text.setTranslateY(bounds.getY() + bounds.getHeight() / 2
+					- textBounds.getHeight());
+			// FIXME: add to children list at beginning
+			if (!getChildren().contains(text)) {
+				getChildren().add(text);
+			}
+		}
+
+		public void setLabel(String label) {
+			text.setText(label);
+		}
+
 	}
 
 	public static final String CSS_CLASS = "edge";

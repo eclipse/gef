@@ -12,15 +12,97 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.parts;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import org.eclipse.gef4.graph.Graph.Attr;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart.FXLabeledNode;
 
 public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
+
+	public class FXLabeledNode extends Group {
+
+		public static final String DEFAULT_LABEL = "-";
+
+		protected Rectangle box = new Rectangle();
+		protected HBox hbox = new HBox();
+		protected Text text = new Text();
+		protected ImageView imageView = new ImageView();
+		protected double padding = 5;
+
+		{
+			setAutoSizeChildren(false);
+			hbox.getChildren().addAll(imageView, text);
+			getChildren().addAll(box, hbox);
+			box.setFill(new LinearGradient(0, 0, 1, 1, true,
+					CycleMethod.REFLECT, Arrays.asList(new Stop(0, new Color(1,
+							1, 1, 1)))));
+			box.setStroke(new Color(0, 0, 0, 1));
+			text.setTextOrigin(VPos.TOP);
+			text.setText(DEFAULT_LABEL);
+			text.boundsInLocalProperty().addListener(
+					new ChangeListener<Bounds>() {
+						@Override
+						public void changed(
+								ObservableValue<? extends Bounds> observable,
+								Bounds oldBounds, Bounds newBounds) {
+							hbox.autosize();
+						}
+					});
+			imageView.setImage(null);
+			imageView.boundsInLocalProperty().addListener(
+					new ChangeListener<Bounds>() {
+						@Override
+						public void changed(
+								ObservableValue<? extends Bounds> observable,
+								Bounds oldBounds, Bounds newBounds) {
+							hbox.autosize();
+						}
+					});
+			hbox.layoutBoundsProperty().addListener(
+					new ChangeListener<Bounds>() {
+						@Override
+						public void changed(
+								ObservableValue<? extends Bounds> arg0,
+								Bounds arg1, Bounds arg2) {
+							refreshLayout();
+						}
+					});
+		}
+
+		public ImageView getImageView() {
+			return imageView;
+		}
+
+		protected void refreshLayout() {
+			hbox.setTranslateX(padding);
+			hbox.setTranslateY(padding);
+			box.setWidth(hbox.getWidth() + 2 * padding);
+			box.setHeight(hbox.getHeight() + 2 * padding);
+		}
+
+		public void setLabel(String label) {
+			text.setText(label);
+		}
+
+	}
 
 	public static final String CSS_CLASS = "node";
 	public static final String ATTR_CLASS = "class";
@@ -73,13 +155,15 @@ public class NodeContentPart extends AbstractFXContentPart<FXLabeledNode> {
 
 		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label : label == null ? "-" : label.toString();
+		String str = label instanceof String ? (String) label
+				: label == null ? "-" : label.toString();
 		getVisual().setLabel(str);
 
 		// set image
 		Object imageFileUrl = attrs.get(ATTR_IMAGE);
 		if (imageFileUrl instanceof String) {
-			getVisual().getImageView().setImage(new Image((String) imageFileUrl));
+			getVisual().getImageView().setImage(
+					new Image((String) imageFileUrl));
 		}
 
 		// set tooltip
