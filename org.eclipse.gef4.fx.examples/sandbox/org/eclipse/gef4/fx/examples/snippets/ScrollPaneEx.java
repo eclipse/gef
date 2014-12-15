@@ -293,6 +293,14 @@ public class ScrollPaneEx extends Region {
 		return scrollbarGroup;
 	}
 
+	public double getScrollOffsetX() {
+		return getCanvas().getTranslateX();
+	}
+
+	public double getScrollOffsetY() {
+		return getCanvas().getTranslateY();
+	}
+
 	public Affine getViewportTransform() {
 		return viewportTransform;
 	}
@@ -354,6 +362,14 @@ public class ScrollPaneEx extends Region {
 				}
 			}
 		});
+	}
+
+	public void setScrollOffsetX(double scrollOffsetX) {
+		getCanvas().setTranslateX(scrollOffsetX);
+	}
+
+	public void setScrollOffsetY(double scrollOffsetY) {
+		getCanvas().setTranslateY(scrollOffsetY);
 	}
 
 	public void setViewportTransform(Affine tx) {
