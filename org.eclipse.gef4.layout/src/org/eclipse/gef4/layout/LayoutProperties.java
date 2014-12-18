@@ -23,8 +23,6 @@ import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
 public class LayoutProperties {
 
-	// graphs
-
 	/**
 	 * Stores the bounds in which the graph elements can be placed.
 	 */
@@ -50,8 +48,6 @@ public class LayoutProperties {
 	 */
 	public static final String DYNAMIC_LAYOUT_ENABLED_PROPERTY = "dynamic-layout-enabled";
 	public static final Boolean DEFAULT_DYNAMIC_LAYOUT_ENABLED = true;
-
-	// entities
 
 	/**
 	 * Stores the location of this EntityLayout.
@@ -84,7 +80,11 @@ public class LayoutProperties {
 	public static final String ASPECT_RATIO_PROPERTY = "aspect-ratio";
 	public static final Double DEFAULT_ASPECT_RATIO = 0d;
 
-	// nodes
+	/**
+	 * Stores the visibility state of the entity.
+	 */
+	public static final String VISIBLE_PROPERTY = "visible";
+	public static final Boolean DEFAULT_VISIBLE = true;
 
 	/**
 	 * Stores the minimized state of this NodeLayout. A minimized NodeLayout
@@ -102,14 +102,6 @@ public class LayoutProperties {
 	public static final String PRUNABLE_PROPERTY = "prunable";
 	public static final Boolean DEFAULT_PRUNABLE = true;
 
-	// connections
-
-	/**
-	 * Stores the visibility state of this connection.
-	 */
-	public static final String VISIBLE_PROPERTY = "visible";
-	public static final Boolean DEFAULT_VISIBLE = true;
-
 	/**
 	 * Stores a weight for this connection.
 	 */
@@ -121,8 +113,6 @@ public class LayoutProperties {
 	 */
 	public static final String DIRECTED_PROPERTY = "directed";
 	public static final Boolean DEFAULT_DIRECTED = true;
-
-	// subgraphs
 
 	/**
 	 * Constant for top-down direction (default).
@@ -156,17 +146,6 @@ public class LayoutProperties {
 	 */
 	public static final String DIRECTION_DEPENDANT_PROPERTY = "direction-dependant";
 	public static final Boolean DEFAULT_DIRECTION_DEPENDANT = true;
-
-	/**
-	 * Specifies if the subgraph is visualized as a particular object on the
-	 * graph. If a subgraph is not a graph entity, it means that it will not be
-	 * visible, so all methods related to location, size and direction should be
-	 * ignored.
-	 */
-	public static final String IS_GRAPH_ENTITY_PROPERTY = "is-graph-entity";
-	public static final Boolean DEFAULT_IS_GRAPH_ENTITY = true;
-
-	// graphs
 
 	public static Rectangle getBounds(LayoutContext graph) {
 		Object bounds = graph.getProperty(BOUNDS_PROPERTY);
@@ -206,8 +185,6 @@ public class LayoutProperties {
 			boolean dynamicLayoutEnabled) {
 		graph.setProperty(DYNAMIC_LAYOUT_ENABLED_PROPERTY, dynamicLayoutEnabled);
 	}
-
-	// entities
 
 	public static Point getLocation(EntityLayout entity) {
 		Object location = entity.getProperty(LOCATION_PROPERTY);
@@ -269,8 +246,6 @@ public class LayoutProperties {
 		entity.setProperty(SIZE_PROPERTY, new Dimension(w, h));
 	}
 
-	// nodes
-
 	public static Boolean isMinimized(NodeLayout node) {
 		Object minimized = node.getProperty(MINIMIZED_PROPERTY);
 		if (minimized instanceof Boolean) {
@@ -299,8 +274,6 @@ public class LayoutProperties {
 		node.setProperty(PRUNABLE_PROPERTY, prunable);
 	}
 
-	// connections
-
 	public static Boolean isDirected(ConnectionLayout edge) {
 		Object directed = edge.getProperty(DIRECTED_PROPERTY);
 		if (directed instanceof Boolean) {
@@ -311,6 +284,14 @@ public class LayoutProperties {
 
 	public static Boolean isVisible(ConnectionLayout edge) {
 		Object visible = edge.getProperty(VISIBLE_PROPERTY);
+		if (visible instanceof Boolean) {
+			return (Boolean) visible;
+		}
+		return DEFAULT_VISIBLE;
+	}
+
+	public static Boolean isVisible(EntityLayout entity) {
+		Object visible = entity.getProperty(VISIBLE_PROPERTY);
 		if (visible instanceof Boolean) {
 			return (Boolean) visible;
 		}
@@ -337,8 +318,6 @@ public class LayoutProperties {
 		edge.setProperty(WEIGHT_PROPERTY, weight);
 	}
 
-	// subgraphs
-
 	public static void setDirectionDependant(SubgraphLayout subgraph,
 			boolean isDirectionDependant) {
 		subgraph.setProperty(DIRECTION_DEPENDANT_PROPERTY, isDirectionDependant);
@@ -349,11 +328,6 @@ public class LayoutProperties {
 		subgraph.setProperty(DIRECTION_PROPERTY, direction);
 	}
 
-	public static void setIsGraphEntity(SubgraphLayout subgraph,
-			boolean isGraphEntity) {
-		subgraph.setProperty(IS_GRAPH_ENTITY_PROPERTY, isGraphEntity);
-	}
-
 	public static Boolean isDirectionDependant(SubgraphLayout subgraph) {
 		Object directionDependant = subgraph
 				.getProperty(DIRECTION_DEPENDANT_PROPERTY);
@@ -361,14 +335,6 @@ public class LayoutProperties {
 			return (Boolean) directionDependant;
 		}
 		return DEFAULT_DIRECTION_DEPENDANT;
-	}
-
-	public static Boolean isGraphEntity(SubgraphLayout subgraph) {
-		Object isGraphEntity = subgraph.getProperty(IS_GRAPH_ENTITY_PROPERTY);
-		if (isGraphEntity instanceof Boolean) {
-			return (Boolean) isGraphEntity;
-		}
-		return DEFAULT_IS_GRAPH_ENTITY;
 	}
 
 	public static Integer getDirection(SubgraphLayout subgraph) {

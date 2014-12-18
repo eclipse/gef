@@ -168,8 +168,7 @@ class InternalLayoutContext implements LayoutContext {
 					result.add(nodeLayout);
 				} else {
 					SubgraphLayout subgraph = nodeLayout.getSubgraph();
-					if (LayoutProperties.isGraphEntity(subgraph)
-							&& !addedSubgraphs.contains(subgraph)) {
+					if (!addedSubgraphs.contains(subgraph)) {
 						result.add(subgraph);
 						addedSubgraphs.add(subgraph);
 					}

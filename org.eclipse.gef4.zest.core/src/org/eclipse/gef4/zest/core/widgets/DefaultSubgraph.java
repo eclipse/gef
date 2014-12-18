@@ -366,14 +366,11 @@ public class DefaultSubgraph implements SubgraphLayout {
 
 	protected void refreshConnectionsVisibility(ConnectionLayout[] connections) {
 		for (int i = 0; i < connections.length; i++) {
-			LayoutProperties
-					.setVisible(
-							connections[i],
-							!LayoutProperties.isPruned(connections[i]
-									.getSource())
-									&& !LayoutProperties
-											.isPruned(connections[i]
-													.getTarget()));
+			LayoutProperties.setVisible(
+					connections[i],
+					!LayoutProperties.isPruned(connections[i].getSource())
+							&& !LayoutProperties.isPruned(connections[i]
+									.getTarget()));
 		}
 	}
 
@@ -415,11 +412,8 @@ public class DefaultSubgraph implements SubgraphLayout {
 			return isResizable();
 		} else if (LayoutProperties.SIZE_PROPERTY.equals(name)) {
 			return getSize();
-		} else if (LayoutProperties.DIRECTION_DEPENDANT_PROPERTY
-				.equals(name)) {
+		} else if (LayoutProperties.DIRECTION_DEPENDANT_PROPERTY.equals(name)) {
 			return isDirectionDependant();
-		} else if (LayoutProperties.IS_GRAPH_ENTITY_PROPERTY.equals(name)) {
-			return isGraphEntity();
 		} else {
 			return ps.getProperty(name);
 		}

@@ -235,7 +235,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 		}
 
 		public void refreshSubgraphLocation() {
-			if (subgraph != null && LayoutProperties.isGraphEntity(subgraph)) {
+			if (subgraph != null) {
 				Point nodeLocation = LayoutProperties.getLocation(node);
 				Dimension nodeSize = LayoutProperties.getSize(node);
 				Dimension subgraphSize = LayoutProperties.getSize(subgraph);
@@ -588,8 +588,7 @@ public class SpaceTreeLayoutAlgorithm implements LayoutAlgorithm {
 			Dimension size = LayoutProperties.getSize(node.node);
 			nodeThickness = (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 					: size.width;
-			if (node.subgraph != null
-					&& LayoutProperties.isGraphEntity(node.subgraph)) {
+			if (node.subgraph != null) {
 				size = LayoutProperties.getSize(node.subgraph);
 				nodeThickness += (direction == TOP_DOWN || direction == BOTTOM_UP) ? size.height
 						: size.width;

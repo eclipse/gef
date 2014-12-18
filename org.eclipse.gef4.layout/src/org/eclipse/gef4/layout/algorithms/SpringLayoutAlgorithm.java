@@ -432,9 +432,7 @@ public class SpringLayoutAlgorithm implements LayoutAlgorithm {
 		if (!LayoutProperties.isPruned(node))
 			return node;
 		SubgraphLayout subgraph = node.getSubgraph();
-		if (LayoutProperties.isGraphEntity(subgraph))
-			return subgraph;
-		return null;
+		return subgraph;
 	}
 
 	private void loadLocations() {
