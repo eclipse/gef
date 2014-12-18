@@ -23,7 +23,7 @@ import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 
 import com.google.inject.Provider;
 
@@ -37,14 +37,14 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 		if (target instanceof NodeContentPart) {
 			if (segmentIndex == 0) {
 				// create prune handle at first vertex
-				return new ZestFxPruningHandlePart(
+				return new ZestFxHidingHandlePart(
 						hoverHandlesSegmentsInSceneProvider, segmentIndex, 0);
 			} else if (segmentIndex == 1) {
 				// create expand handle at second vertex
 				// but check if we have pruned neighbors, first
-				PruningModel pruningModel = target.getRoot().getViewer()
-						.getDomain().getAdapter(PruningModel.class);
-				if (!pruningModel.getPrunedNeighbors(
+				HidingModel pruningModel = target.getRoot().getViewer()
+						.getDomain().getAdapter(HidingModel.class);
+				if (!pruningModel.getHiddenNeighbors(
 						((NodeContentPart) target).getContent()).isEmpty()) {
 					return new ZestFxExpandingHandlePart(
 							hoverHandlesSegmentsInSceneProvider, segmentIndex,

@@ -24,35 +24,35 @@ import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
 import org.eclipse.gef4.mvc.behaviors.BehaviorUtils;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
-import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsPart;
+import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 
 import com.google.common.collect.Multiset;
 
 // Only applicable for NodeContentPart
-public class PruningBehavior extends AbstractBehavior<Node> implements
+public class HidingBehavior extends AbstractBehavior<Node> implements
 		PropertyChangeListener {
 
-	private IVisualPart<Node, ? extends Node> prunedNeighborsPart;
-	private boolean isPruned;
+	private IVisualPart<Node, ? extends Node> hiddenNeighborsPart;
+	private boolean isHidden;
 
 	@Override
 	public void activate() {
 		super.activate();
-		PruningModel pruningModel = getPruningModel();
+		HidingModel hidingModel = getPruningModel();
 
 		// register for change notifications
-		pruningModel.addPropertyChangeListener(this);
+		hidingModel.addPropertyChangeListener(this);
 
 		// query pruned status
-		isPruned = pruningModel.isPruned(getHost().getContent());
+		isHidden = hidingModel.isHidden(getHost().getContent());
 
 		// create pruned neighbors part if it is already associated with our
 		// host
-		if (hasPrunedNeighbors(getHost().getContent(), pruningModel)) {
-			createPrunedNeighborPart();
+		if (hasPrunedNeighbors(getHost().getContent(), hidingModel)) {
+			createHiddenNeighborPart();
 		}
 	}
 
@@ -68,26 +68,26 @@ public class PruningBehavior extends AbstractBehavior<Node> implements
 		return containsAny;
 	}
 
-	protected void createPrunedNeighborPart() {
+	protected void createHiddenNeighborPart() {
 		// TODO: delegate to factory
-		prunedNeighborsPart = new PrunedNeighborsPart();
+		hiddenNeighborsPart = new HiddenNeighborsPart();
 		BehaviorUtils.<Node> addAnchorages(getHost().getRoot(),
 				Collections.singletonList(getHost()),
-				Collections.singletonList(prunedNeighborsPart));
+				Collections.singletonList(hiddenNeighborsPart));
 	}
 
 	@Override
 	public void deactivate() {
-		PruningModel pruningModel = getPruningModel();
+		HidingModel hidingModel = getPruningModel();
 
 		// remove pruned neighbors part if it is currently associated with our
 		// host
-		if (hasPrunedNeighbors(getHost().getContent(), pruningModel)) {
-			removePrunedNeighborPart();
+		if (hasPrunedNeighbors(getHost().getContent(), hidingModel)) {
+			removeHiddenNeighborPart();
 		}
 
 		// unregister
-		pruningModel.removePropertyChangeListener(this);
+		hidingModel.removePropertyChangeListener(this);
 		super.deactivate();
 	}
 
@@ -97,59 +97,20 @@ public class PruningBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected IVisualPart<Node, ? extends Node> getPrunedNeighborsPart() {
-		return prunedNeighborsPart;
+		return hiddenNeighborsPart;
 	}
 
-	protected PruningModel getPruningModel() {
+	protected HidingModel getPruningModel() {
 		return getHost().getRoot().getViewer().getDomain()
-				.<PruningModel> getAdapter(PruningModel.class);
+				.<HidingModel> getAdapter(HidingModel.class);
 	}
 
 	private boolean hasPrunedNeighbors(org.eclipse.gef4.graph.Node node,
-			PruningModel pruningModel) {
-		return !pruningModel.getPrunedNeighbors(node).isEmpty();
+			HidingModel pruningModel) {
+		return !pruningModel.getHiddenNeighbors(node).isEmpty();
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getPropertyName().equals(PruningModel.PRUNED_PROPERTY)) {
-			// check if we have to prune/unprune the host
-			boolean wasPruned = isPruned;
-			isPruned = getPruningModel().isPruned(getHost().getContent());
-
-			if (wasPruned && !isPruned) {
-				unprune();
-			} else if (!wasPruned && isPruned) {
-				prune();
-			}
-
-			// check if we have to show/hide/update the pruned neighbors part
-			Set<org.eclipse.gef4.graph.Node> oldPruned = (Set<org.eclipse.gef4.graph.Node>) event
-					.getOldValue();
-			Set<org.eclipse.gef4.graph.Node> newPruned = (Set<org.eclipse.gef4.graph.Node>) event
-					.getNewValue();
-
-			org.eclipse.gef4.graph.Node content = getHost().getContent();
-			Set<org.eclipse.gef4.graph.Node> neighbors = content
-					.getLocalNeighbors();
-
-			if (!containsAny(oldPruned, neighbors)
-					&& containsAny(newPruned, neighbors)) {
-				createPrunedNeighborPart();
-			} else if (containsAny(oldPruned, neighbors)
-					&& !containsAny(newPruned, neighbors)) {
-				removePrunedNeighborPart();
-			} else {
-				// TODO: only necessary when neighbors change
-				if (prunedNeighborsPart != null) {
-					updatePrunedNeighborPart();
-				}
-			}
-		}
-	}
-
-	protected void prune() {
+	protected void hide() {
 		// hide visual
 		getHost().getVisual().setVisible(false);
 		getHost().getVisual().setMouseTransparent(true);
@@ -166,14 +127,53 @@ public class PruningBehavior extends AbstractBehavior<Node> implements
 		}
 	}
 
-	protected void removePrunedNeighborPart() {
-		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(),
-				Collections.singletonList(getHost()),
-				Collections.singletonList(prunedNeighborsPart));
-		prunedNeighborsPart = null;
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getPropertyName().equals(HidingModel.HIDDEN_PROPERTY)) {
+			// check if we have to prune/unprune the host
+			boolean wasHidden = isHidden;
+			isHidden = getPruningModel().isHidden(getHost().getContent());
+
+			if (wasHidden && !isHidden) {
+				show();
+			} else if (!wasHidden && isHidden) {
+				hide();
+			}
+
+			// check if we have to show/hide/update the pruned neighbors part
+			Set<org.eclipse.gef4.graph.Node> oldHidden = (Set<org.eclipse.gef4.graph.Node>) event
+					.getOldValue();
+			Set<org.eclipse.gef4.graph.Node> newHidden = (Set<org.eclipse.gef4.graph.Node>) event
+					.getNewValue();
+
+			org.eclipse.gef4.graph.Node content = getHost().getContent();
+			Set<org.eclipse.gef4.graph.Node> neighbors = content
+					.getLocalNeighbors();
+
+			if (!containsAny(oldHidden, neighbors)
+					&& containsAny(newHidden, neighbors)) {
+				createHiddenNeighborPart();
+			} else if (containsAny(oldHidden, neighbors)
+					&& !containsAny(newHidden, neighbors)) {
+				removeHiddenNeighborPart();
+			} else {
+				// TODO: only necessary when neighbors change
+				if (hiddenNeighborsPart != null) {
+					updatePrunedNeighborPart();
+				}
+			}
+		}
 	}
 
-	protected void unprune() {
+	protected void removeHiddenNeighborPart() {
+		BehaviorUtils.<Node> removeAnchorages(getHost().getRoot(),
+				Collections.singletonList(getHost()),
+				Collections.singletonList(hiddenNeighborsPart));
+		hiddenNeighborsPart = null;
+	}
+
+	protected void show() {
 		// show node
 		getHost().getVisual().setVisible(true);
 		getHost().getVisual().setMouseTransparent(false);
@@ -204,7 +204,7 @@ public class PruningBehavior extends AbstractBehavior<Node> implements
 	}
 
 	protected void updatePrunedNeighborPart() {
-		prunedNeighborsPart.refreshVisual();
+		hiddenNeighborsPart.refreshVisual();
 	}
 
 }

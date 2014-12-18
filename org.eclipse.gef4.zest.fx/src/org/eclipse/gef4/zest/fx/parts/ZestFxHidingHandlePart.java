@@ -29,19 +29,19 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
-import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
-public class ZestFxPruningHandlePart extends AbstractFXSegmentHandlePart<FXBlendImageView> {
+public class ZestFxHidingHandlePart extends AbstractFXSegmentHandlePart<FXBlendImageView> {
 
 	public static final String IMG_PRUNE = "/collapseall.png";
 	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
 
 	private boolean isVisible = false;
 
-	public ZestFxPruningHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxHidingHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 		// FIXME: hover hierarchy
@@ -106,7 +106,7 @@ public class ZestFxPruningHandlePart extends AbstractFXSegmentHandlePart<FXBlend
 			return;
 		}
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
-		PruneNodePolicy pruneNodePolicy = anchorage.getAdapter(PruneNodePolicy.class);
+		HideNodePolicy pruneNodePolicy = anchorage.getAdapter(HideNodePolicy.class);
 		pruneNodePolicy.prune();
 	}
 

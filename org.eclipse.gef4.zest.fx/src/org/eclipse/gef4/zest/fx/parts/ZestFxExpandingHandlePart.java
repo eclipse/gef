@@ -9,13 +9,13 @@ import javafx.scene.input.MouseEvent;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
-import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
+import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
 
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
-public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
+public class ZestFxExpandingHandlePart extends ZestFxHidingHandlePart {
 
 	public static final String IMG_EXPAND = "/expandall.gif";
 	public static final String IMG_EXPAND_DISABLED = "/expandall_disabled.gif";
@@ -45,14 +45,14 @@ public class ZestFxExpandingHandlePart extends ZestFxPruningHandlePart {
 		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
 				.iterator().next();
 		IViewer<Node> viewer = anchorage.getRoot().getViewer();
-		PruningModel pruningModel = viewer.getDomain().getAdapter(
-				PruningModel.class);
+		HidingModel pruningModel = viewer.getDomain().getAdapter(
+				HidingModel.class);
 		Set<org.eclipse.gef4.graph.Node> prunedNeighbors = pruningModel
-				.getPrunedNeighbors(((NodeContentPart) anchorage).getContent());
+				.getHiddenNeighbors(((NodeContentPart) anchorage).getContent());
 		if (!prunedNeighbors.isEmpty()) {
 			for (org.eclipse.gef4.graph.Node node : prunedNeighbors) {
 				viewer.getContentPartMap().get(node)
-						.<PruneNodePolicy> getAdapter(PruneNodePolicy.class)
+						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
 						.unprune();
 			}
 		}

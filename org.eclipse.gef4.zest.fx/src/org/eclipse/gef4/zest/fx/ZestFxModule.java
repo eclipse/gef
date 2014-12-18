@@ -36,21 +36,21 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.PruningBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.models.LayoutModel;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
-import org.eclipse.gef4.zest.fx.parts.ZestFxPruningHandlePart;
+import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
-import org.eclipse.gef4.zest.fx.policies.PruneNodePolicy;
-import org.eclipse.gef4.zest.fx.policies.PruneOnTypePolicy;
+import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
@@ -101,8 +101,8 @@ public class ZestFxModule extends MvcFxModule {
 		super.bindAbstractDomainAdapters(adapterMapBinder);
 		adapterMapBinder.addBinding(AdapterKey.get(LayoutModel.class)).to(
 				LayoutModel.class);
-		adapterMapBinder.addBinding(AdapterKey.get(PruningModel.class)).to(
-				PruningModel.class);
+		adapterMapBinder.addBinding(AdapterKey.get(HidingModel.class)).to(
+				HidingModel.class);
 	}
 
 	@Override
@@ -160,16 +160,16 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.get(NodeLayoutBehavior.class))
 				.to(NodeLayoutBehavior.class);
 		// pruning
-		adapterMapBinder.addBinding(AdapterKey.get(PruneNodePolicy.class)).to(
-				PruneNodePolicy.class);
-		adapterMapBinder.addBinding(AdapterKey.get(PruningBehavior.class)).to(
-				PruningBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.get(HideNodePolicy.class)).to(
+				HideNodePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(HidingBehavior.class)).to(
+				HidingBehavior.class);
 		// interaction
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
 				FXRelocateOnDragPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
-				.to(PruneOnTypePolicy.class);
+				.to(HideOnTypePolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 						"OpenNestedGraphOnDoubleClick")).to(
@@ -199,7 +199,7 @@ public class ZestFxModule extends MvcFxModule {
 		bindEdgeContentPartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
 				EdgeContentPart.class));
 		bindPruningHandlePartAdapters(AdapterMaps.getAdapterMapBinder(binder(),
-				ZestFxPruningHandlePart.class));
+				ZestFxHidingHandlePart.class));
 	}
 
 }

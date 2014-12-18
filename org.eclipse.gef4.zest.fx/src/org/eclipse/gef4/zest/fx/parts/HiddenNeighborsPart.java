@@ -23,10 +23,10 @@ import javafx.scene.text.Text;
 
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 
 // TODO: only applicable for NodeContentPart (anchorage)
-public class PrunedNeighborsPart extends AbstractFXFeedbackPart<Group> {
+public class HiddenNeighborsPart extends AbstractFXFeedbackPart<Group> {
 
 	private Circle circle;
 	private Text text;
@@ -85,9 +85,9 @@ public class PrunedNeighborsPart extends AbstractFXFeedbackPart<Group> {
 		circle.setCenterY(y);
 
 		// update text
-		PruningModel pruningModel = getViewer().getDomain().getAdapter(
-				PruningModel.class);
-		int count = pruningModel.getPrunedNeighbors(
+		HidingModel pruningModel = getViewer().getDomain().getAdapter(
+				HidingModel.class);
+		int count = pruningModel.getHiddenNeighbors(
 				((NodeContentPart) anchorage).getContent()).size();
 		text.setText(Integer.toString(count));
 

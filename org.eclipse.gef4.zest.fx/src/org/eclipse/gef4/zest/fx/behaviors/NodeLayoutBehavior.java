@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
-import org.eclipse.gef4.zest.fx.parts.PrunedNeighborsPart;
+import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 
 import com.google.common.collect.Multiset;
@@ -115,18 +115,18 @@ public class NodeLayoutBehavior extends AbstractLayoutBehavior {
 			Multiset<IVisualPart<Node, ? extends Node>> oldAnchoreds,
 			Multiset<IVisualPart<Node, ? extends Node>> newAnchoreds) {
 		if (nodeLayout != null) {
-			PrunedNeighborsPart oldSubgraphPart = null;
+			HiddenNeighborsPart oldSubgraphPart = null;
 			for (IVisualPart<Node, ? extends Node> oldAnchored : oldAnchoreds) {
-				if (oldAnchored instanceof PrunedNeighborsPart) {
-					oldSubgraphPart = (PrunedNeighborsPart) oldAnchored;
+				if (oldAnchored instanceof HiddenNeighborsPart) {
+					oldSubgraphPart = (HiddenNeighborsPart) oldAnchored;
 					break;
 				}
 			}
 
-			PrunedNeighborsPart newSubgraphPart = null;
+			HiddenNeighborsPart newSubgraphPart = null;
 			for (IVisualPart<Node, ? extends Node> newAnchored : newAnchoreds) {
-				if (newAnchored instanceof PrunedNeighborsPart) {
-					newSubgraphPart = (PrunedNeighborsPart) newAnchored;
+				if (newAnchored instanceof HiddenNeighborsPart) {
+					newSubgraphPart = (HiddenNeighborsPart) newAnchored;
 					break;
 				}
 			}

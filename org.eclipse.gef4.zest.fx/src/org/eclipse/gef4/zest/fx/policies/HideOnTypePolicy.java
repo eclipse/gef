@@ -20,10 +20,10 @@ import javafx.scene.input.KeyEvent;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXTypePolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-public class PruneOnTypePolicy extends AbstractFXTypePolicy {
+public class HideOnTypePolicy extends AbstractFXTypePolicy {
 
 	@Override
 	public NodeContentPart getHost() {
@@ -41,8 +41,7 @@ public class PruneOnTypePolicy extends AbstractFXTypePolicy {
 	}
 
 	protected void prune() {
-		getHost().<PruneNodePolicy>getAdapter(
-				PruneNodePolicy.class).prune();
+		getHost().<HideNodePolicy> getAdapter(HideNodePolicy.class).prune();
 	}
 
 	@Override
@@ -51,14 +50,14 @@ public class PruneOnTypePolicy extends AbstractFXTypePolicy {
 
 	protected void unprune() {
 		IViewer<javafx.scene.Node> viewer = getHost().getRoot().getViewer();
-		PruningModel pruningModel = viewer.getDomain().getAdapter(
-				PruningModel.class);
-		Set<Node> prunedNeighbors = pruningModel.getPrunedNeighbors(getHost()
+		HidingModel pruningModel = viewer.getDomain().getAdapter(
+				HidingModel.class);
+		Set<Node> prunedNeighbors = pruningModel.getHiddenNeighbors(getHost()
 				.getContent());
 		if (prunedNeighbors != null && !prunedNeighbors.isEmpty()) {
 			for (Node node : prunedNeighbors) {
 				viewer.getContentPartMap().get(node)
-						.<PruneNodePolicy> getAdapter(PruneNodePolicy.class)
+						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
 						.unprune();
 			}
 		}

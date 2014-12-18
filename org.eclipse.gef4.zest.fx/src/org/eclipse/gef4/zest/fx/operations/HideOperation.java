@@ -15,44 +15,41 @@ package org.eclipse.gef4.zest.fx.operations;
 import java.util.HashSet;
 import java.util.Set;
 
-import javafx.scene.Node;
-
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.gef4.mvc.viewer.IViewer;
-import org.eclipse.gef4.zest.fx.models.PruningModel;
+import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
-public class PruneOperation extends AbstractOperation {
+public class HideOperation extends AbstractOperation {
 
-	public static PruneOperation prune(NodeContentPart toPrune) {
-		return new PruneOperation(toPrune, false);
+	public static HideOperation hide(NodeContentPart toPrune) {
+		return new HideOperation(toPrune, false);
 	}
 
-	public static PruneOperation unprune(NodeContentPart toUnprune) {
-		return new PruneOperation(toUnprune, true);
+	public static HideOperation show(NodeContentPart toUnprune) {
+		return new HideOperation(toUnprune, true);
 	}
 
 	private NodeContentPart node;
-	private boolean isPruned;
+	private boolean isHidden;
 
-	public PruneOperation(NodeContentPart node, boolean isPruned) {
-		super("prune");
+	public HideOperation(NodeContentPart node, boolean isPruned) {
+		super("hide/show");
 		this.node = node;
-		this.isPruned = isPruned;
+		this.isHidden = isPruned;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		if (isPruned) {
-			unprune();
+		if (isHidden) {
+			show();
 		} else {
-			prune();
+			hide();
 		}
 		return Status.OK_STATUS;
 	}
@@ -65,13 +62,10 @@ public class PruneOperation extends AbstractOperation {
 		return neighbors.toArray(new org.eclipse.gef4.graph.Node[] {});
 	}
 
-	protected void prune() {
-		IViewer<Node> viewer = node.getRoot().getViewer();
-		// add to neighboring subgraphs
-		PruningModel pruningModel = viewer.getDomain().getAdapter(
-				PruningModel.class);
-		pruningModel.prune(node.getContent());
-		node.deactivate();
+	protected void hide() {
+		node.getRoot().getViewer().getDomain()
+				.<HidingModel> getAdapter(HidingModel.class)
+				.hide(node.getContent());
 	}
 
 	@Override
@@ -80,23 +74,21 @@ public class PruneOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
+	protected void show() {
+		node.getRoot().getViewer().getDomain()
+				.<HidingModel> getAdapter(HidingModel.class)
+				.show(node.getContent());
+	}
+
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
-		if (isPruned) {
-			prune();
+		if (isHidden) {
+			hide();
 		} else {
-			unprune();
+			show();
 		}
 		return Status.OK_STATUS;
-	}
-
-	protected void unprune() {
-		node.activate();
-		IViewer<Node> viewer = node.getRoot().getViewer();
-		PruningModel pruningModel = viewer.getDomain().getAdapter(
-				PruningModel.class);
-		pruningModel.unprune(node.getContent());
 	}
 
 }

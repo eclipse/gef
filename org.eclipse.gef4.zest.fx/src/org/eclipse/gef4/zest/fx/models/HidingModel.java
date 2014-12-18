@@ -20,42 +20,42 @@ import java.util.Set;
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
 import org.eclipse.gef4.graph.Node;
 
-public class PruningModel implements IPropertyChangeNotifier {
+public class HidingModel implements IPropertyChangeNotifier {
 
-	public static final String PRUNED_PROPERTY = "pruned";
+	public static final String HIDDEN_PROPERTY = "hidden";
 
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private final Set<Node> pruned = new HashSet<Node>();
+	private final Set<Node> hidden = new HashSet<Node>();
 
 	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 
-	public Set<Node> getPruned() {
-		return new HashSet<Node>(pruned);
-	}
-
-	public Set<org.eclipse.gef4.graph.Node> getPrunedNeighbors(
+	public Set<org.eclipse.gef4.graph.Node> getHiddenNeighbors(
 			org.eclipse.gef4.graph.Node node) {
 		Set<org.eclipse.gef4.graph.Node> neighbors = node.getLocalNeighbors();
 		Set<org.eclipse.gef4.graph.Node> prunedNeighbors = new HashSet<org.eclipse.gef4.graph.Node>();
 		for (org.eclipse.gef4.graph.Node n : neighbors) {
-			if (isPruned(n)) {
+			if (isHidden(n)) {
 				prunedNeighbors.add(n);
 			}
 		}
 		return prunedNeighbors;
 	}
 
-	public boolean isPruned(Node node) {
-		return pruned.contains(node);
+	public Set<Node> getHiddenNodes() {
+		return new HashSet<Node>(hidden);
 	}
 
-	public void prune(Node node) {
-		Set<Node> oldPruned = getPruned();
-		pruned.add(node);
-		pcs.firePropertyChange("pruned", oldPruned, getPruned());
+	public void hide(Node node) {
+		Set<Node> oldPruned = getHiddenNodes();
+		hidden.add(node);
+		pcs.firePropertyChange("pruned", oldPruned, getHiddenNodes());
+	}
+
+	public boolean isHidden(Node node) {
+		return hidden.contains(node);
 	}
 
 	@Override
@@ -63,10 +63,10 @@ public class PruningModel implements IPropertyChangeNotifier {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void unprune(Node node) {
-		Set<Node> oldPruned = getPruned();
-		pruned.remove(node);
-		pcs.firePropertyChange("pruned", oldPruned, getPruned());
+	public void show(Node node) {
+		Set<Node> oldPruned = getHiddenNodes();
+		hidden.remove(node);
+		pcs.firePropertyChange("pruned", oldPruned, getHiddenNodes());
 	}
 
 }
