@@ -19,10 +19,13 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 
 	@Override
 	public void scroll(ScrollEvent event) {
-		// TODO obtain policy to manipulate the viewport model
-		// TODO: disable automatic scrolling in scroll pane
+		// do not scroll when a modifier key is down
+		if (event.isAltDown() || event.isControlDown() || event.isMetaDown()
+				|| event.isShiftDown()) {
+			return;
+		}
 
-		// TODO: how to resize viewport below bounds??
+		// TODO obtain policy to manipulate the viewport model
 		double x = event.getDeltaX();
 		double y = event.getDeltaY();
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
