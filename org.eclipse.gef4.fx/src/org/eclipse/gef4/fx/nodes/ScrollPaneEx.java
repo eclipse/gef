@@ -14,9 +14,11 @@ package org.eclipse.gef4.fx.nodes;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
@@ -66,6 +68,8 @@ public class ScrollPaneEx extends Region {
 			updateScrollbars();
 		}
 	};
+	private ObjectBinding<Bounds> contentBoundsBinding;
+	private ObjectBinding<Bounds> scrollableBoundsBinding;
 
 	public ScrollPaneEx() {
 		getChildren().addAll(getCanvas(), getScrollbarGroup());
@@ -73,6 +77,49 @@ public class ScrollPaneEx extends Region {
 				canvasBoundsInLocalChangeListener);
 		widthProperty().addListener(widthChangeListener);
 		heightProperty().addListener(heightChangeListener);
+		contentBoundsBinding = new ObjectBinding<Bounds>() {
+			{
+				bind(contentGroup.boundsInParentProperty(), getCanvas()
+						.localToParentTransformProperty());
+			}
+
+			@Override
+			protected Bounds computeValue() {
+				double[] bb = computeContentBoundsInLocal();
+				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0], bb[3]
+						- bb[1]);
+			}
+		};
+		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
+			{
+				bind(contentGroup.boundsInParentProperty(), getCanvas()
+						.localToParentTransformProperty(), widthProperty(),
+						heightProperty());
+			}
+
+			@Override
+			protected Bounds computeValue() {
+				double[] bb = computeScrollableBoundsInLocal();
+				return new BoundingBox(bb[0], bb[1], bb[2] - bb[0], bb[3]
+						- bb[1]);
+			}
+		};
+	}
+
+	public double[] computeContentBoundsInLocal() {
+		Bounds diagramBoundsInCanvas = contentGroup.getBoundsInParent();
+		double minX = diagramBoundsInCanvas.getMinX();
+		double maxX = diagramBoundsInCanvas.getMaxX();
+		double minY = diagramBoundsInCanvas.getMinY();
+		double maxY = diagramBoundsInCanvas.getMaxY();
+
+		Point2D minInScrolled = getCanvas().localToParent(minX, minY);
+		double realMinX = minInScrolled.getX();
+		double realMinY = minInScrolled.getY();
+		double realMaxX = realMinX + (maxX - minX);
+		double realMaxY = realMinY + (maxY - minY);
+
+		return new double[] { realMinX, realMinY, realMaxX, realMaxY };
 	}
 
 	protected double computeHv(double tx) {
@@ -81,6 +128,32 @@ public class ScrollPaneEx extends Region {
 				horizontalScrollBar.getMax(),
 				norm(currentScrollableBounds[0], currentScrollableBounds[2]
 						- getWidth(), -tx));
+	}
+
+	public double[] computeScrollableBoundsInLocal() {
+		double[] cb = computeContentBoundsInLocal();
+		Bounds db = contentGroup.getBoundsInParent();
+
+		// factor in the viewport extending the content bounds
+		if (cb[0] < 0) {
+			cb[0] = 0;
+		}
+		if (cb[1] < 0) {
+			cb[1] = 0;
+		}
+		if (cb[2] > getWidth()) {
+			cb[2] = 0;
+		} else {
+			cb[2] = getWidth() - cb[2];
+		}
+		if (cb[3] > getHeight()) {
+			cb[3] = 0;
+		} else {
+			cb[3] = getHeight() - cb[3];
+		}
+
+		return new double[] { db.getMinX() - cb[0], db.getMinY() - cb[1],
+				db.getMaxX() + cb[2], db.getMaxY() + cb[3] };
 	}
 
 	protected double computeTx(double hv) {
@@ -237,20 +310,8 @@ public class ScrollPaneEx extends Region {
 		return canvas;
 	}
 
-	public double[] getContentBoundsInScrollPane() {
-		Bounds diagramBoundsInCanvas = contentGroup.getBoundsInParent();
-		double minX = diagramBoundsInCanvas.getMinX();
-		double maxX = diagramBoundsInCanvas.getMaxX();
-		double minY = diagramBoundsInCanvas.getMinY();
-		double maxY = diagramBoundsInCanvas.getMaxY();
-
-		Point2D minInScrolled = getCanvas().localToParent(minX, minY);
-		double realMinX = minInScrolled.getX();
-		double realMinY = minInScrolled.getY();
-		double realMaxX = realMinX + (maxX - minX);
-		double realMaxY = realMinY + (maxY - minY);
-
-		return new double[] { realMinX, realMinY, realMaxX, realMaxY };
+	public ObjectBinding<Bounds> getContentBoundsBinding() {
+		return contentBoundsBinding;
 	}
 
 	public Group getContentGroup() {
@@ -260,30 +321,8 @@ public class ScrollPaneEx extends Region {
 		return contentGroup;
 	}
 
-	public double[] getScrollableBoundsInLocal() {
-		double[] cb = getContentBoundsInScrollPane();
-		Bounds db = contentGroup.getBoundsInParent();
-
-		// factor in the viewport extending the content bounds
-		if (cb[0] < 0) {
-			cb[0] = 0;
-		}
-		if (cb[1] < 0) {
-			cb[1] = 0;
-		}
-		if (cb[2] > getWidth()) {
-			cb[2] = 0;
-		} else {
-			cb[2] = getWidth() - cb[2];
-		}
-		if (cb[3] > getHeight()) {
-			cb[3] = 0;
-		} else {
-			cb[3] = getHeight() - cb[3];
-		}
-
-		return new double[] { db.getMinX() - cb[0], db.getMinY() - cb[1],
-				db.getMaxX() + cb[2], db.getMaxY() + cb[3] };
+	public ObjectBinding<Bounds> getScrollableBoundsBinding() {
+		return scrollableBoundsBinding;
 	}
 
 	public Group getScrollbarGroup() {
@@ -306,11 +345,13 @@ public class ScrollPaneEx extends Region {
 	}
 
 	private double lerp(double min, double max, double ratio) {
-		return min + ratio * (max - min);
+		double d = min + ratio * (max - min);
+		return Double.isNaN(d) ? 0 : d;
 	}
 
 	private double norm(double min, double max, double value) {
-		return (value - min) / (max - min);
+		double d = (value - min) / (max - min);
+		return Double.isNaN(d) ? 0 : d;
 	}
 
 	private void registerInOutTransitions(final Node node) {
@@ -383,7 +424,7 @@ public class ScrollPaneEx extends Region {
 
 	protected void updateScrollbars() {
 		// show/hide scrollbars
-		double[] contentBounds = getContentBoundsInScrollPane();
+		double[] contentBounds = computeContentBoundsInLocal();
 		if (contentBounds[0] < 0 || contentBounds[2] > getWidth()) {
 			horizontalScrollBar.setVisible(true);
 		} else {
@@ -396,7 +437,7 @@ public class ScrollPaneEx extends Region {
 		}
 
 		// determine current scrollable bounds
-		double[] bounds = getScrollableBoundsInLocal();
+		double[] bounds = computeScrollableBoundsInLocal();
 		for (int i = 0; i < bounds.length; i++) {
 			currentScrollableBounds[i] = bounds[i];
 		}
