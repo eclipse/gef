@@ -14,21 +14,22 @@ package org.eclipse.gef4.mvc.fx.parts;
 import java.util.Map;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 
 import org.eclipse.gef4.fx.nodes.FXGridLayer;
+import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
-public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
+public class FXRootPart extends AbstractFXRootPart<ScrollPaneEx> {
 
 	/**
 	 * Per default, a ScrollPane draws a border and background color. We do not
@@ -107,10 +108,9 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 		return layer;
 	}
 
-	protected ScrollPane createScrollPane(final Group scrollPaneInput) {
-		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setContent(scrollPaneInput);
-		scrollPane.setPannable(false);
+	protected ScrollPaneEx createScrollPane(final Group scrollPaneInput) {
+		ScrollPaneEx scrollPane = new ScrollPaneEx();
+		scrollPane.getContentGroup().getChildren().add(scrollPaneInput);
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
 		return scrollPane;
 	}
@@ -120,7 +120,7 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 	}
 
 	@Override
-	protected ScrollPane createVisual() {
+	protected ScrollPaneEx createVisual() {
 		contentLayer = createContentLayer();
 		/*
 		 * IMPORTANT: The following is a workaround to ensure that visuals do
@@ -159,27 +159,31 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 
 		gridLayer = createGridLayer();
 
-		scrollPaneContent = createScrollPaneContent(new Node[] { gridLayer,
-				contentLayer, feedbackLayer, handleLayer });
+		scrollPaneContent = createScrollPaneContent(new Node[] {// gridLayer,
+		contentLayer, feedbackLayer, handleLayer });
 
-		ScrollPane scrollPane = createScrollPane(scrollPaneContent);
+		final ScrollPaneEx scrollPane = createScrollPane(scrollPaneContent);
+		// put gridlayer next to the other layers
+		scrollPane.getCanvas().getChildren().add(gridLayer);
+		gridLayer.toBack();
 
 		// TODO: These could each be extracted to a helper, because its generic
 		// functionality not specific to a grid layer (ensure layer is as large
 		// as viewport; ensure layer is as large as other layers).
-		gridLayer.bindMinSizeToBounds(scrollPane.viewportBoundsProperty());
-		@SuppressWarnings("unchecked")
-		ReadOnlyObjectProperty<Bounds>[] boundsInParentProperties = new ReadOnlyObjectProperty[] {
-				contentLayer.boundsInParentProperty(),
-				feedbackLayer.boundsInParentProperty(),
-				handleLayer.boundsInParentProperty() };
-		gridLayer.bindPrefSizeToUnionedBounds(boundsInParentProperties);
+		SimpleObjectProperty<Bounds> scrollableBoundsProperty = new SimpleObjectProperty<Bounds>() {
+			{
+				bind(scrollPane.getScrollableBoundsBinding());
+			}
+		};
+		gridLayer.bindMinSizeToBounds(scrollableBoundsProperty);
+		gridLayer
+				.bindPrefSizeToUnionedBounds(new ReadOnlyObjectProperty[] { scrollableBoundsProperty });
 
 		return scrollPane;
 	}
 
 	@Override
-	public void doRefreshVisual(ScrollPane visual) {
+	public void doRefreshVisual(ScrollPaneEx visual) {
 		// nothing to do
 	}
 
@@ -211,7 +215,7 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 		return handleLayer;
 	}
 
-	public ScrollPane getScrollPane() {
+	public ScrollPaneEx getScrollPane() {
 		return getVisual();
 	}
 
@@ -224,8 +228,9 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer,
-			ScrollPane visual) {
-		Group scrollPaneContent = (Group) visual.getContent();
+			ScrollPaneEx visual) {
+		Group scrollPaneContent = (Group) visual.getContentGroup()
+				.getChildren().get(0);
 		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
 				.getVisualPartMap();
 		registry.put(scrollPaneContent, this);
@@ -261,8 +266,9 @@ public class FXRootPart extends AbstractFXRootPart<ScrollPane> {
 
 	@Override
 	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
-			ScrollPane scrollPane) {
-		Group scrollPaneContent = (Group) scrollPane.getContent();
+			ScrollPaneEx visual) {
+		Group scrollPaneContent = (Group) visual.getContentGroup()
+				.getChildren().get(0);
 		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
 				.getVisualPartMap();
 		registry.remove(scrollPaneContent);

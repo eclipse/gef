@@ -45,11 +45,12 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 
 	protected void applyViewport(double translateX, double translateY,
 			double width, double height, AffineTransform contentsTransform) {
-		rootPart.getContentLayer().translateXProperty().set(translateX);
-		rootPart.getContentLayer().translateYProperty().set(translateY);
-		rootPart.getScrollPane().setPrefViewportWidth(width);
-		rootPart.getScrollPane().setPrefViewportHeight(height);
+		rootPart.getScrollPane().setScrollOffsetX(translateX);
+		rootPart.getScrollPane().setScrollOffsetY(translateY);
+		rootPart.getScrollPane().setPrefWidth(width);
+		rootPart.getScrollPane().setPrefHeight(height);
 		setTx(contentsTx, contentsTransform);
+		rootPart.getScrollPane().setViewportTransform(contentsTx);
 	}
 
 	@Override
