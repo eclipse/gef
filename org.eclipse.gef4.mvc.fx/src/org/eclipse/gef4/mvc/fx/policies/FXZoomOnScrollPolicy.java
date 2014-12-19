@@ -35,18 +35,16 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
-		FXRootPart root = (FXRootPart) getHost().getRoot();
-		Point2D contentLayerPivot = root.getContentLayer().sceneToLocal(sceneX,
-				sceneY);
-		// TODO: pivot
+		Point2D contentGroupPivot = ((FXRootPart) getHost().getRoot())
+				.getScrollPane().getContentGroup().sceneToLocal(sceneX, sceneY);
 		viewportModel.setContentsTransform(viewportModel.getContentsTransform()
 				.concatenate(
 						new AffineTransform()
-								.translate(-contentLayerPivot.getX(),
-										-contentLayerPivot.getY())
+								.translate(contentGroupPivot.getX(),
+										contentGroupPivot.getY())
 								.scale(relativeZoom, relativeZoom)
-								.translate(contentLayerPivot.getX(),
-										contentLayerPivot.getY())));
+								.translate(-contentGroupPivot.getX(),
+										-contentGroupPivot.getY())));
 	}
 
 }
