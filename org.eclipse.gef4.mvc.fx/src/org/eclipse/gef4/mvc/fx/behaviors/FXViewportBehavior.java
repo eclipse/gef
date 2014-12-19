@@ -14,6 +14,8 @@ package org.eclipse.gef4.mvc.fx.behaviors;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
@@ -28,6 +30,21 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 
 	protected FXRootPart rootPart;
 	protected final Affine contentsTx = new Affine();
+	private ViewportModel viewportModel;
+	private final ChangeListener<Number> translateXListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			viewportModel.setTranslateX(newValue.doubleValue());
+		}
+	};
+	private final ChangeListener<Number> translateYListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldValue, Number newValue) {
+			viewportModel.setTranslateY(newValue.doubleValue());
+		}
+	};
 
 	@Override
 	public void activate() {
@@ -38,9 +55,14 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 					"MVC IRootPart has to be an FXRootPart!");
 		}
 		rootPart = (FXRootPart) root;
-		rootPart.getContentLayer().getTransforms().add(contentsTx);
-		rootPart.getViewer().getAdapter(ViewportModel.class)
-				.addPropertyChangeListener(this);
+		viewportModel = rootPart.getViewer().getAdapter(ViewportModel.class);
+		viewportModel.addPropertyChangeListener(this);
+
+		// TODO: move to adapter within rootpart
+		rootPart.getScrollPane().getCanvas().translateXProperty()
+				.addListener(translateXListener);
+		rootPart.getScrollPane().getCanvas().translateYProperty()
+				.addListener(translateYListener);
 	}
 
 	protected void applyViewport(double translateX, double translateY,
@@ -55,9 +77,11 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 
 	@Override
 	public void deactivate() {
-		getHost().getRoot().getViewer().getAdapter(ViewportModel.class)
-				.removePropertyChangeListener(this);
-		rootPart.getContentLayer().getTransforms().remove(contentsTx);
+		viewportModel.removePropertyChangeListener(this);
+		rootPart.getScrollPane().getCanvas().translateXProperty()
+				.removeListener(translateXListener);
+		rootPart.getScrollPane().getCanvas().translateYProperty()
+				.removeListener(translateYListener);
 		super.deactivate();
 	}
 
@@ -73,8 +97,6 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 						.getPropertyName())
 				|| ViewportModel.VIEWPORT_CONTENTS_TRANSFORM_PROPERTY
 						.equals(evt.getPropertyName())) {
-			ViewportModel viewportModel = getHost().getRoot().getViewer()
-					.getAdapter(ViewportModel.class);
 			applyViewport(viewportModel.getTranslateX(),
 					viewportModel.getTranslateY(), viewportModel.getWidth(),
 					viewportModel.getHeight(),
