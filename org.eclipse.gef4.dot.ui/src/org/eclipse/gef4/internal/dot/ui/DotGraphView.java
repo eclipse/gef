@@ -45,17 +45,22 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.xtext.ui.editor.XtextEditor;
 
 import com.google.inject.Guice;
 import com.google.inject.util.Modules;
@@ -299,6 +304,9 @@ public class DotGraphView extends ZestFxUiView {
 		/** If a *.dot file is visited, update the graph. */
 		private IResourceDeltaVisitor resourceVisitor;
 
+		/** Listen to selection changes and update graph in view. */
+		protected ISelectionListener selectionChangeListener = null;
+
 		Action action(final DotGraphView view) {
 
 			Action toggleUpdateModeAction = new Action(
@@ -312,15 +320,37 @@ public class DotGraphView extends ZestFxUiView {
 
 				private void toggleResourceListener() {
 					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					ISelectionService service = getSite().getWorkbenchWindow()
+							.getSelectionService();
 					if (view.listenToDotContent) {
 						workspace.addResourceChangeListener(
 								resourceChangeListener,
 								IResourceChangeEvent.POST_BUILD
 										| IResourceChangeEvent.POST_CHANGE);
+						service.addSelectionListener(selectionChangeListener);
 					} else {
 						workspace
 								.removeResourceChangeListener(resourceChangeListener);
+						service.removeSelectionListener(selectionChangeListener);
 					}
+				}
+
+			};
+
+			selectionChangeListener = new ISelectionListener() {
+				@Override
+				public void selectionChanged(IWorkbenchPart part,
+						ISelection selection) {
+					if (part instanceof XtextEditor) {
+						XtextEditor editor = (XtextEditor) part;
+						if ("org.eclipse.gef4.internal.dot.parser.Dot" //$NON-NLS-1$
+								.equals(editor.getLanguageName())
+								&& editor.getEditorInput() instanceof FileEditorInput) {
+							view.updateGraph(((FileEditorInput) editor
+									.getEditorInput()).getFile());
+						}
+					}
+
 				}
 			};
 
