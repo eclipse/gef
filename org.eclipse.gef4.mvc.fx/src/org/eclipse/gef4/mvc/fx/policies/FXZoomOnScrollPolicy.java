@@ -15,7 +15,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.geometry.planar.AffineTransform;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
@@ -35,7 +35,7 @@ public class FXZoomOnScrollPolicy extends AbstractFXScrollPolicy {
 	public void zoomRelative(double relativeZoom, double sceneX, double sceneY) {
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
-		Point2D contentGroupPivot = ((FXRootPart) getHost().getRoot())
+		Point2D contentGroupPivot = ((FXViewer) getHost().getRoot().getViewer())
 				.getScrollPane().getContentGroup().sceneToLocal(sceneX, sceneY);
 		viewportModel.setContentsTransform(viewportModel.getContentsTransform()
 				.concatenate(

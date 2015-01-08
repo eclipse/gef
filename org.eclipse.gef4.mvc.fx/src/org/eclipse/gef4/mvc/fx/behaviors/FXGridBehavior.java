@@ -17,12 +17,12 @@ import java.beans.PropertyChangeListener;
 import javafx.scene.Node;
 import javafx.scene.transform.Scale;
 
+import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.behaviors.AbstractBehavior;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
-import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXGridBehavior extends AbstractBehavior<Node> implements
 		PropertyChangeListener {
@@ -44,24 +44,24 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 	protected void applyContentsTransform(AffineTransform contentsTransform) {
 		double sx = contentsTransform.getScaleX();
 		double sy = contentsTransform.getScaleY();
-		getHost().getGridLayer().gridScaleProperty().set(new Scale(sx, sy));
+		getGridLayer().gridScaleProperty().set(new Scale(sx, sy));
 	}
 
 	protected void applyGridCellHeight(double height) {
-		getHost().getGridLayer().setGridHeight(height);
+		getGridLayer().setGridHeight(height);
 	}
 
 	protected void applyGridCellWidth(double width) {
-		getHost().getGridLayer().setGridWidth(width);
+		getGridLayer().setGridWidth(width);
 	}
 
 	protected void applyShowGrid(boolean showGrid) {
 		if (showGrid) {
-			getHost().getGridLayer().setVisible(true);
-			getHost().getGridLayer().setManaged(true);
+			getGridLayer().setVisible(true);
+			getGridLayer().setManaged(true);
 		} else {
-			getHost().getGridLayer().setVisible(false);
-			getHost().getGridLayer().setManaged(false);
+			getGridLayer().setVisible(false);
+			getGridLayer().setManaged(false);
 		}
 	}
 
@@ -80,15 +80,14 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 				viewportModel.removePropertyChangeListener(this);
 				isListeningOnViewport = false;
 				// reset grid scale to (1, 1)
-				getHost().getGridLayer().gridScaleProperty()
-						.set(new Scale(1, 1));
+				getGridLayer().gridScaleProperty().set(new Scale(1, 1));
 			}
 		}
 	}
 
 	@Override
 	public void deactivate() {
-		getHost().getViewer().getAdapter(GridModel.class)
+		getHost().getRoot().getViewer().getAdapter(GridModel.class)
 				.removePropertyChangeListener(this);
 
 		if (isListeningOnViewport) {
@@ -100,9 +99,8 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 		super.deactivate();
 	}
 
-	@Override
-	public FXRootPart getHost() {
-		return (FXRootPart) super.getHost();
+	protected FXGridLayer getGridLayer() {
+		return ((FXViewer) getHost().getRoot().getViewer()).getGridLayer();
 	}
 
 	@Override
@@ -119,15 +117,6 @@ public class FXGridBehavior extends AbstractBehavior<Node> implements
 				.equals(evt.getPropertyName())) {
 			applyContentsTransform((AffineTransform) evt.getNewValue());
 		}
-	}
-
-	@Override
-	public void setAdaptable(IVisualPart<Node, ? extends Node> adaptable) {
-		if (!(adaptable instanceof FXRootPart)) {
-			throw new IllegalStateException(
-					"This behavior may only adapt to an FXRootPart.");
-		}
-		super.setAdaptable(adaptable);
 	}
 
 }

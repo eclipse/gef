@@ -15,7 +15,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
@@ -47,7 +47,7 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 		double y = event.getDeltaY();
 
 		// stop at content bounds
-		ScrollPaneEx scrollPane = ((FXRootPart) getHost().getRoot())
+		ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer())
 				.getScrollPane();
 		Bounds contentBounds = scrollPane.getBoundsInViewport(scrollPane
 				.getContentGroup());
