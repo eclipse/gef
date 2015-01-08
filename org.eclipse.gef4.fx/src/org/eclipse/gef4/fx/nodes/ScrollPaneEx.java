@@ -79,7 +79,7 @@ public class ScrollPaneEx extends Region {
 		heightProperty().addListener(heightChangeListener);
 		contentBoundsBinding = new ObjectBinding<Bounds>() {
 			{
-				bind(contentGroup.boundsInParentProperty(), getCanvas()
+				bind(contentGroup.boundsInParentProperty(), getContentGroup()
 						.localToParentTransformProperty());
 			}
 
@@ -92,7 +92,7 @@ public class ScrollPaneEx extends Region {
 		};
 		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
 			{
-				bind(contentGroup.boundsInParentProperty(), getCanvas()
+				bind(contentGroup.boundsInParentProperty(), getContentGroup()
 						.localToParentTransformProperty(), widthProperty(),
 						heightProperty());
 			}
@@ -303,6 +303,16 @@ public class ScrollPaneEx extends Region {
 		return new Group(horizontalScrollBar, verticalScrollBar);
 	}
 
+	public double getBottomExcess(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return bounds.getMaxY() - getHeight();
+	}
+
+	public Bounds getBoundsInViewport(Node child) {
+		Bounds bounds = canvas.localToParent(child.getBoundsInParent());
+		return bounds;
+	}
+
 	public Pane getCanvas() {
 		if (canvas == null) {
 			canvas = createCanvas();
@@ -325,6 +335,16 @@ public class ScrollPaneEx extends Region {
 		return horizontalScrollBar;
 	}
 
+	public double getLeftExcess(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return -bounds.getMinX();
+	}
+
+	public double getRightExcess(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return bounds.getMaxX() - getWidth();
+	}
+
 	public ObjectBinding<Bounds> getScrollableBoundsBinding() {
 		return scrollableBoundsBinding;
 	}
@@ -344,12 +364,29 @@ public class ScrollPaneEx extends Region {
 		return getCanvas().getTranslateY();
 	}
 
+	public double getTopExcess(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return -bounds.getMinY();
+	}
+
 	public ScrollBar getVerticalScrollBar() {
 		return verticalScrollBar;
 	}
 
 	public Affine getViewportTransform() {
 		return viewportTransform;
+	}
+
+	public boolean isFullyVisible(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return bounds.getMinX() >= 0 && bounds.getMaxX() <= getWidth()
+				&& bounds.getMinY() >= 0 && bounds.getMaxY() <= getHeight();
+	}
+
+	public boolean isVisible(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		return bounds.getMaxX() >= 0 && bounds.getMinX() <= getWidth()
+				&& bounds.getMaxY() >= 0 && bounds.getMinY() <= getHeight();
 	}
 
 	private double lerp(double min, double max, double ratio) {
@@ -413,6 +450,47 @@ public class ScrollPaneEx extends Region {
 		});
 	}
 
+	/**
+	 * Ensure that the specified child {@link Node} is visible to the user by
+	 * scrolling to its position. The effect and style of the node are taken
+	 * into consideration. After revealing a node, it will be fully visible, if
+	 * it fits within the current viewport bounds.
+	 * <p>
+	 * When the child node's left side is left to the viewport, it will touch
+	 * the left border of the viewport after revealing. When the child node's
+	 * right side is right to the viewport, it will touch the right border of
+	 * the viewport after revealing. When the child node's top side is above the
+	 * viewport, it will touch the top border of the viewport after revealing.
+	 * When the child node's bottom side is below the viewport, it will touch
+	 * the bottom border of the viewport after revealing.
+	 * <p>
+	 * TODO: When the child node does not fit within the viewport bounds, it is
+	 * not revealed.
+	 *
+	 * @param child
+	 *            The child {@link Node} to reveal.
+	 */
+	public void reveal(Node child) {
+		Bounds bounds = getBoundsInViewport(child);
+		if (bounds.getHeight() <= getHeight()) {
+			if (bounds.getMinY() < 0) {
+				setScrollOffsetY(getScrollOffsetY() - bounds.getMinY());
+			} else if (bounds.getMaxY() > getHeight()) {
+				setScrollOffsetY(getScrollOffsetY() + getHeight()
+						- bounds.getMaxY());
+			}
+		}
+
+		if (bounds.getWidth() <= getWidth()) {
+			if (bounds.getMinX() < 0) {
+				setScrollOffsetX(getScrollOffsetX() - bounds.getMinX());
+			} else if (bounds.getMaxX() > getWidth()) {
+				setScrollOffsetX(getScrollOffsetX() + getWidth()
+						- bounds.getMaxX());
+			}
+		}
+	}
+
 	public void setScrollOffsetX(double scrollOffsetX) {
 		getCanvas().setTranslateX(scrollOffsetX);
 	}
@@ -428,6 +506,9 @@ public class ScrollPaneEx extends Region {
 		viewportTransform.setMyy(tx.getMyy());
 		viewportTransform.setTx(tx.getTx());
 		viewportTransform.setTy(tx.getTy());
+		updateScrollbars();
+		contentBoundsBinding.invalidate();
+		scrollableBoundsBinding.invalidate();
 	}
 
 	protected void updateScrollbars() {

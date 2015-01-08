@@ -38,11 +38,13 @@ public class ScrollPaneExSnippet extends FXApplication {
 		launch();
 	}
 
+	private ScrollPaneEx scrollPane;
+
 	@Override
 	public Scene createScene() {
 		BorderPane root = new BorderPane();
 
-		final ScrollPaneEx scrollPane = new ScrollPaneEx();
+		scrollPane = new ScrollPaneEx();
 		root.setCenter(scrollPane);
 		scrollPane
 				.getContentGroup()
@@ -50,7 +52,8 @@ public class ScrollPaneExSnippet extends FXApplication {
 				.addAll(rect(25, 25, 100, 50, Color.BLUE),
 						rect(25, 200, 25, 50, Color.BLUE),
 						rect(150, 100, 75, 75, Color.BLUE),
-						rect(-100, -100, 30, 60, Color.CYAN));
+						rect(-100, -100, 30, 60, Color.CYAN),
+						rect(75, 75, 150, 150, Color.RED));
 
 		// translate to top-left most content node
 		// TODO: implement ScrollPaneEx#reveal(Node);
@@ -112,8 +115,19 @@ public class ScrollPaneExSnippet extends FXApplication {
 			public void handle(MouseEvent event) {
 				double dx = event.getSceneX() - initialMouse[0];
 				double dy = event.getSceneY() - initialMouse[1];
+				boolean reveal = dx > 0 && scrollPane.getRightExcess(rect) > 0
+						|| dx < 0 && scrollPane.getLeftExcess(rect) > 0
+						|| dy > 0 && scrollPane.getBottomExcess(rect) > 0
+						|| dy < 0 && scrollPane.getTopExcess(rect) > 0;
 				rect.setLayoutX(initialLayout[0] + dx);
 				rect.setLayoutY(initialLayout[1] + dy);
+				if (reveal) {
+					scrollPane.reveal(rect);
+					initialMouse[0] = event.getSceneX();
+					initialMouse[1] = event.getSceneY();
+					initialLayout[0] = rect.getLayoutX();
+					initialLayout[1] = rect.getLayoutY();
+				}
 			}
 		};
 		rect.setOnMouseDragged(dragHandler);
