@@ -13,8 +13,10 @@ package org.eclipse.gef4.mvc.fx.tools;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javafx.event.EventHandler;
@@ -34,61 +36,64 @@ public class FXHoverTool extends AbstractTool<Node> {
 
 	public static final Class<AbstractFXHoverPolicy> TOOL_POLICY_KEY = AbstractFXHoverPolicy.class;
 
-	private final EventHandler<MouseEvent> hoverFilter = new EventHandler<MouseEvent>() {
-		protected Collection<? extends AbstractFXHoverPolicy> getTargetPolicies(
-				MouseEvent event) {
-			EventTarget target = event.getTarget();
-			if (!(target instanceof Node)) {
-				return Collections.emptyList();
-			}
+	private final Map<FXViewer, EventHandler<MouseEvent>> hoverFilters = new HashMap<FXViewer, EventHandler<MouseEvent>>();
 
-			Scene scene = ((Node) target).getScene();
-			if (scene == null) {
-				return Collections.emptyList();
-			}
+	protected EventHandler<MouseEvent> createHoverFilter(final FXViewer viewer) {
+		return new EventHandler<MouseEvent>() {
+			protected Collection<? extends AbstractFXHoverPolicy> getTargetPolicies(
+					final MouseEvent event) {
+				EventTarget target = event.getTarget();
+				if (!(target instanceof Node)) {
+					return Collections.emptyList();
+				}
 
-			// pick target nodes
-			List<Node> targetNodes = FXUtils.getNodesAt(scene.getRoot(),
-					event.getSceneX(), event.getSceneY());
+				Scene scene = ((Node) target).getScene();
+				if (scene == null) {
+					return Collections.emptyList();
+				}
 
-			IVisualPart<Node, ? extends Node> targetPart = null;
-			outer: for (int i = 0; i < targetNodes.size(); i++) {
-				Node n = targetNodes.get(i);
-				for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-					if (viewer instanceof FXViewer) {
-						if (((FXViewer) viewer).getScene() == scene) {
-							IVisualPart<Node, ? extends Node> part = ((FXViewer) viewer)
-									.getVisualPartMap().get(n);
-							if (part != null) {
-								targetPart = part;
-								break outer;
-							}
+				// pick target nodes
+				List<Node> targetNodes = FXUtils.getNodesAt(scene.getRoot(),
+						event.getSceneX(), event.getSceneY());
+
+				IVisualPart<Node, ? extends Node> targetPart = null;
+				outer: for (int i = 0; i < targetNodes.size(); i++) {
+					Node n = targetNodes.get(i);
+					if (viewer.getScene() == scene) {
+						IVisualPart<Node, ? extends Node> part = viewer
+								.getVisualPartMap().get(n);
+						if (part != null) {
+							targetPart = part;
+							break outer;
 						}
 					}
 				}
+
+				// if no target part could be found, send the event to the root
+				// part
+				if (targetPart == null) {
+					targetPart = viewer.getRootPart();
+				}
+
+				Collection<? extends AbstractFXHoverPolicy> policies = getHoverPolicies(targetPart);
+				return policies;
 			}
 
-			if (targetPart == null) {
-				return Collections.emptyList();
-			}
+			@Override
+			public void handle(MouseEvent event) {
+				if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
+						&& !event.getEventType().equals(
+								MouseEvent.MOUSE_DRAGGED)) {
+					return;
+				}
 
-			Collection<? extends AbstractFXHoverPolicy> policies = getHoverPolicies(targetPart);
-			return policies;
-		}
-
-		@Override
-		public void handle(MouseEvent event) {
-			if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)
-					&& !event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-				return;
+				Collection<? extends AbstractFXHoverPolicy> policies = getTargetPolicies(event);
+				for (AbstractFXHoverPolicy policy : policies) {
+					policy.hover(event);
+				}
 			}
-
-			Collection<? extends AbstractFXHoverPolicy> policies = getTargetPolicies(event);
-			for (AbstractFXHoverPolicy policy : policies) {
-				policy.hover(event);
-			}
-		}
-	};
+		};
+	}
 
 	protected Set<? extends AbstractFXHoverPolicy> getHoverPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
@@ -99,17 +104,23 @@ public class FXHoverTool extends AbstractTool<Node> {
 	@Override
 	protected void registerListeners() {
 		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			viewer.getRootPart().getVisual().getScene()
-					.addEventFilter(MouseEvent.ANY, hoverFilter);
+			if (viewer instanceof FXViewer) {
+				EventHandler<MouseEvent> hoverFilter = createHoverFilter((FXViewer) viewer);
+				hoverFilters.put((FXViewer) viewer, hoverFilter);
+				viewer.getRootPart().getVisual().getScene()
+						.addEventFilter(MouseEvent.ANY, hoverFilter);
+			}
 		}
 	}
 
 	@Override
 	protected void unregisterListeners() {
-		for (IViewer<Node> viewer : getDomain().getViewers().values()) {
-			viewer.getRootPart().getVisual().getScene()
-					.removeEventFilter(MouseEvent.ANY, hoverFilter);
+		for (Map.Entry<FXViewer, EventHandler<MouseEvent>> e : hoverFilters
+				.entrySet()) {
+			e.getKey().getRootPart().getVisual().getScene()
+					.removeEventFilter(MouseEvent.ANY, e.getValue());
 		}
+		hoverFilters.clear();
 	}
 
 }

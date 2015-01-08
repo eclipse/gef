@@ -73,11 +73,14 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
-					if (targetPart != null) {
-						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
-						for (AbstractFXDragPolicy policy : policies) {
-							policy.drag(e, new Dimension(dx, dy));
-						}
+					// when no part processes the event, send it to the root
+					// part
+					if (targetPart == null) {
+						targetPart = viewer.getRootPart();
+					}
+					Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
+					for (AbstractFXDragPolicy policy : policies) {
+						policy.drag(e, new Dimension(dx, dy));
 					}
 				}
 
@@ -88,30 +91,36 @@ public class FXClickDragTool extends AbstractTool<Node> {
 
 					// click first
 					IVisualPart<Node, ? extends Node> clickTargetPart = FXPartUtils
-							.getTargetPart(getDomain().getViewers().values(),
+							.getTargetPart(Collections.singleton(viewer),
 									target, null);
-					if (clickTargetPart != null) {
-						Collection<? extends AbstractFXClickPolicy> policies = getClickPolicies(clickTargetPart);
-						getDomain().openExecutionTransaction();
-						for (AbstractFXClickPolicy policy : policies) {
-							policy.click(e);
-						}
-						getDomain().closeExecutionTransaction();
+					// when no part processes the event, send it to the root
+					// part
+					if (clickTargetPart == null) {
+						clickTargetPart = viewer.getRootPart();
 					}
+					Collection<? extends AbstractFXClickPolicy> clickPolicies = getClickPolicies(clickTargetPart);
+					getDomain().openExecutionTransaction();
+					for (AbstractFXClickPolicy policy : clickPolicies) {
+						policy.click(e);
+					}
+					getDomain().closeExecutionTransaction();
 
 					// drag second, but only for single clicks
 					if (e.getClickCount() == 1) {
 						IVisualPart<Node, ? extends Node> dragTargetPart = FXPartUtils
 								.getTargetPart(Collections.singleton(viewer),
 										target, DRAG_TOOL_POLICY_KEY);
-						if (dragTargetPart != null) {
-							Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
-							getDomain().openExecutionTransaction();
-							for (AbstractFXDragPolicy policy : policies) {
-								dragInProgress = true;
-								pressEvents.put(policy, e);
-								policy.press(e);
-							}
+						// if no part wants to process the drag event, send it
+						// to the root part
+						if (dragTargetPart == null) {
+							dragTargetPart = viewer.getRootPart();
+						}
+						Collection<? extends AbstractFXDragPolicy> dragPolicies = getDragPolicies(dragTargetPart);
+						getDomain().openExecutionTransaction();
+						for (AbstractFXDragPolicy policy : dragPolicies) {
+							dragInProgress = true;
+							pressEvents.put(policy, e);
+							policy.press(e);
 						}
 					}
 				}
@@ -125,12 +134,15 @@ public class FXClickDragTool extends AbstractTool<Node> {
 					IVisualPart<Node, ? extends Node> targetPart = FXPartUtils
 							.getTargetPart(Collections.singleton(viewer),
 									target, DRAG_TOOL_POLICY_KEY);
-					if (targetPart != null) {
-						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
-						for (AbstractFXDragPolicy policy : policies) {
-							pressEvents.remove(policy);
-							policy.release(e, new Dimension(dx, dy));
-						}
+					// if no part wants to process the event, send it to the
+					// root part
+					if (targetPart == null) {
+						targetPart = viewer.getRootPart();
+					}
+					Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(targetPart);
+					for (AbstractFXDragPolicy policy : policies) {
+						pressEvents.remove(policy);
+						policy.release(e, new Dimension(dx, dy));
 					}
 					getDomain().closeExecutionTransaction();
 					dragInProgress = false;
