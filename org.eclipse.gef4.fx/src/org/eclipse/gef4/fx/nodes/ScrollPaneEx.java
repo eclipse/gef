@@ -321,6 +321,10 @@ public class ScrollPaneEx extends Region {
 		return contentGroup;
 	}
 
+	public ScrollBar getHorizontalScrollBar() {
+		return horizontalScrollBar;
+	}
+
 	public ObjectBinding<Bounds> getScrollableBoundsBinding() {
 		return scrollableBoundsBinding;
 	}
@@ -338,6 +342,10 @@ public class ScrollPaneEx extends Region {
 
 	public double getScrollOffsetY() {
 		return getCanvas().getTranslateY();
+	}
+
+	public ScrollBar getVerticalScrollBar() {
+		return verticalScrollBar;
 	}
 
 	public Affine getViewportTransform() {
