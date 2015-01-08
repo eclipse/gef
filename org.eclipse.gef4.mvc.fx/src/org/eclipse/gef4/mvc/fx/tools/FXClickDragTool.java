@@ -40,16 +40,6 @@ public class FXClickDragTool extends AbstractTool<Node> {
 	private boolean dragInProgress;
 	private final Map<AbstractFXDragPolicy, MouseEvent> pressEvents = new HashMap<AbstractFXDragPolicy, MouseEvent>();
 
-	public void cancelDragging() {
-		if (dragInProgress) {
-			for (AbstractFXDragPolicy policy : pressEvents.keySet()) {
-				policy.release(pressEvents.get(policy), new Dimension());
-			}
-			getDomain().closeExecutionTransaction();
-			dragInProgress = false;
-		}
-	}
-
 	protected Set<? extends AbstractFXClickPolicy> getClickPolicies(
 			IVisualPart<Node, ? extends Node> targetPart) {
 		return new HashSet<AbstractFXClickPolicy>(targetPart
@@ -109,17 +99,19 @@ public class FXClickDragTool extends AbstractTool<Node> {
 						getDomain().closeExecutionTransaction();
 					}
 
-					// drag second
-					IVisualPart<Node, ? extends Node> dragTargetPart = FXPartUtils
-							.getTargetPart(Collections.singleton(viewer),
-									target, DRAG_TOOL_POLICY_KEY);
-					if (dragTargetPart != null) {
-						Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
-						getDomain().openExecutionTransaction();
-						for (AbstractFXDragPolicy policy : policies) {
-							dragInProgress = true;
-							pressEvents.put(policy, e);
-							policy.press(e);
+					// drag second, but only for single clicks
+					if (e.getClickCount() == 1) {
+						IVisualPart<Node, ? extends Node> dragTargetPart = FXPartUtils
+								.getTargetPart(Collections.singleton(viewer),
+										target, DRAG_TOOL_POLICY_KEY);
+						if (dragTargetPart != null) {
+							Collection<? extends AbstractFXDragPolicy> policies = getDragPolicies(dragTargetPart);
+							getDomain().openExecutionTransaction();
+							for (AbstractFXDragPolicy policy : policies) {
+								dragInProgress = true;
+								pressEvents.put(policy, e);
+								policy.press(e);
+							}
 						}
 					}
 				}
@@ -139,8 +131,8 @@ public class FXClickDragTool extends AbstractTool<Node> {
 							pressEvents.remove(policy);
 							policy.release(e, new Dimension(dx, dy));
 						}
-						getDomain().closeExecutionTransaction();
 					}
+					getDomain().closeExecutionTransaction();
 					dragInProgress = false;
 				}
 			};

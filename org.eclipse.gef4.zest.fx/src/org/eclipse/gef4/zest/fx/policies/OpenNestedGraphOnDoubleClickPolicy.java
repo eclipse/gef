@@ -18,7 +18,6 @@ import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXClickPolicy;
-import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
@@ -32,10 +31,6 @@ public class OpenNestedGraphOnDoubleClickPolicy extends AbstractFXClickPolicy {
 			org.eclipse.gef4.graph.Node graphNode = nodePart.getContent();
 			Graph nestedGraph = graphNode.getNestedGraph();
 			if (nestedGraph != null) {
-				// cancel dragging
-				FXClickDragTool tool = getHost().getRoot().getViewer()
-						.getDomain().getAdapter(FXClickDragTool.class);
-				tool.cancelDragging();
 				// change contents
 				ContentModel contentModel = getHost().getRoot().getViewer()
 						.getAdapter(ContentModel.class);
