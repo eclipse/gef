@@ -18,8 +18,10 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXRevealOperation;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.GridModel;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 
@@ -53,14 +55,15 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return new Dimension(snapOffsetX, snapOffsetY);
 	}
 
-	private FXResizeRelocateNodeOperation operation;
+	private FXResizeRelocateNodeOperation rrOperation;
+	private ForwardUndoCompositeOperation fwdOperation;
 
 	// can be overridden by subclasses to add an operation for model changes
 	// TODO: pull up to IPolicy interface
 	@Override
 	public IUndoableOperation commit() {
-		FXResizeRelocateNodeOperation commit = operation;
-		operation = null;
+		IUndoableOperation commit = fwdOperation;
+		rrOperation = null;
 		return commit;
 	}
 
@@ -80,7 +83,11 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	@Override
 	public void init() {
 		// create "empty" operation
-		operation = new FXResizeRelocateNodeOperation(getHost().getVisual());
+		rrOperation = new FXResizeRelocateNodeOperation(getHost().getVisual());
+		FXRevealOperation revealOperation = new FXRevealOperation(getHost());
+		fwdOperation = new ForwardUndoCompositeOperation(rrOperation.getLabel());
+		fwdOperation.add(rrOperation);
+		fwdOperation.add(revealOperation);
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
@@ -95,16 +102,16 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 		// ensure visual is not resized below threshold
 		if (resizable) {
-			if (operation.getOldSize().width + layoutDw < getMinimumWidth()) {
-				layoutDw = getMinimumWidth() - operation.getOldSize().width;
+			if (rrOperation.getOldSize().width + layoutDw < getMinimumWidth()) {
+				layoutDw = getMinimumWidth() - rrOperation.getOldSize().width;
 			}
-			if (operation.getOldSize().height + layoutDh < getMinimumHeight()) {
-				layoutDh = getMinimumHeight() - operation.getOldSize().height;
+			if (rrOperation.getOldSize().height + layoutDh < getMinimumHeight()) {
+				layoutDh = getMinimumHeight() - rrOperation.getOldSize().height;
 			}
 		}
 
 		// snap-to-grid
-		Point start = operation.getOldLocation();
+		Point start = rrOperation.getOldLocation();
 		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
 				.getViewer().<GridModel> getAdapter(GridModel.class), start.x
 				+ layoutDx, start.y + layoutDy, 0.5, 0.5);
@@ -112,14 +119,14 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		layoutDy = layoutDy - snapToGridOffset.height;
 
 		// update operation
-		operation.setDx(layoutDx);
-		operation.setDy(layoutDy);
-		operation.setDw(layoutDw);
-		operation.setDh(layoutDh);
+		rrOperation.setDx(layoutDx);
+		rrOperation.setDy(layoutDy);
+		rrOperation.setDw(layoutDw);
+		rrOperation.setDh(layoutDh);
 
 		try {
 			// execute locally
-			operation.execute(null, null);
+			fwdOperation.execute(null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}

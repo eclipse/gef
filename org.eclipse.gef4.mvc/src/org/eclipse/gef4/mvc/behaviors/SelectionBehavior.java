@@ -56,6 +56,9 @@ public class SelectionBehavior<VR> extends AbstractBehavior<VR> implements
 			// TODO: optimize performance (generating feedback and handles) as
 			// this seems to slow down marquee selection
 		} else if (selected.contains(getHost())) {
+			// reveal the clicked part
+			getHost().getRoot().getViewer().reveal(getHost());
+			// add feedback and handles
 			addFeedback(Collections.singletonList(getHost()));
 			if (selected.get(0) == getHost() && selected.size() <= 1) {
 				addHandles(Collections.singletonList(getHost()));

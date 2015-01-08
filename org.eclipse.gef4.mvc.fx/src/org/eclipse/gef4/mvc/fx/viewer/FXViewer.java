@@ -22,6 +22,7 @@ import org.eclipse.gef4.fx.nodes.FXGridLayer;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
 import org.eclipse.gef4.mvc.parts.IRootPart;
+import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
 
 public class FXViewer extends AbstractViewer<Node> {
@@ -75,6 +76,11 @@ public class FXViewer extends AbstractViewer<Node> {
 
 	public ScrollPaneEx getScrollPane() {
 		return scrollPane;
+	}
+
+	@Override
+	public void reveal(IVisualPart<Node, ? extends Node> visualPart) {
+		scrollPane.reveal(visualPart.getVisual());
 	}
 
 	public void setSceneContainer(ISceneContainer sceneContainer) {

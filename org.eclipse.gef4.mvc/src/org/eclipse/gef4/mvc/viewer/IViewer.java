@@ -100,4 +100,13 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 */
 	public Map<VR, IVisualPart<VR, ? extends VR>> getVisualPartMap();
 
+	/**
+	 * Ensure that the visual of the given {@link IVisualPart} is visible in
+	 * this viewer.
+	 *
+	 * @param visualPart
+	 *            The {@link IVisualPart} that is to be revealed.
+	 */
+	public void reveal(IVisualPart<VR, ? extends VR> visualPart);
+
 }
