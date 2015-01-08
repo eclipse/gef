@@ -8,7 +8,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.cloudio.tests;
 
-import org.eclipse.gef4.cloudio.ICloudLabelProvider;
+import org.eclipse.gef4.cloudio.ui.ICloudLabelProvider;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;

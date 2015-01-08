@@ -472,8 +472,8 @@
 		<module>../org.eclipse.gef4.mvc.fx.example.web</module>
 		<module>../org.eclipse.gef4.mvc.examples-feature</module>
 
-		<module>../org.eclipse.gef4.cloudio</module>
-		<module>../org.eclipse.gef4.cloudio-feature</module>
+		<module>../org.eclipse.gef4.cloudio.ui</module>
+		<module>../org.eclipse.gef4.cloudio.ui-feature</module>
 		<module>../org.eclipse.gef4.cloudio.tests</module>
 		<module>../org.eclipse.gef4.cloudio.doc</module>
 		<module>../org.eclipse.gef4.cloudio.doc-feature</module>

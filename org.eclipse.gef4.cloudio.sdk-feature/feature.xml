@@ -25,11 +25,11 @@
    </url>
 
    <includes
-         id="org.eclipse.gef4.cloudio"
+         id="org.eclipse.gef4.cloudio.ui"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.gef4.cloudio.source"
+         id="org.eclipse.gef4.cloudio.ui.source"
          version="0.0.0"/>
 
    <includes

@@ -12,7 +12,7 @@
    <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.qualifier.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.qualifier">
       <category name="GEF4 Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.cloudio_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.gef4.cloudio.ui_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.ui" version="0.1.0.qualifier">
       <category name="GEF4 Cloudio"/>
    </feature>
    <feature url="features/org.eclipse.gef4.cloudio.doc_0.1.0.qualifier.jar" id="org.eclipse.gef4.cloudio.doc" version="0.1.0.qualifier">

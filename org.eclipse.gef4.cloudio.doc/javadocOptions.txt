@@ -1,7 +1,7 @@
 -verbose
 -encoding "UTF-8"
 -charset "UTF-8"
--sourcepath "../org.eclipse.gef4.cloudio/src"
+-sourcepath "../org.eclipse.gef4.cloudio.ui/src"
 -d reference/api
 -classpath "@rt@@args.list.delimiter@@context@"
 -use
@@ -14,6 +14,6 @@
 -link http://docs.oracle.com/javase/7/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
-org.eclipse.gef4.cloudio
-org.eclipse.gef4.cloudio.layout
-org.eclipse.gef4.cloudio.util
+org.eclipse.gef4.cloudio.ui
+org.eclipse.gef4.cloudio.ui.layout
+org.eclipse.gef4.cloudio.ui.util

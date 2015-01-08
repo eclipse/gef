@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.gef4.cloudio.ICloudLabelProvider;
-import org.eclipse.gef4.cloudio.TagCloud;
-import org.eclipse.gef4.cloudio.TagCloudViewer;
+import org.eclipse.gef4.cloudio.ui.ICloudLabelProvider;
+import org.eclipse.gef4.cloudio.ui.TagCloud;
+import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;

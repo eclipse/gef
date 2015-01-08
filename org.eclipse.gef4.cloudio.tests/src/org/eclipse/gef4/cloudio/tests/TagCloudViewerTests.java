@@ -13,10 +13,10 @@ import static org.eclipse.gef4.cloudio.tests.TagCloudTests.DELTA;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.gef4.cloudio.TagCloud;
-import org.eclipse.gef4.cloudio.TagCloudViewer;
-import org.eclipse.gef4.cloudio.Word;
-import org.eclipse.gef4.cloudio.layout.DefaultLayouter;
+import org.eclipse.gef4.cloudio.ui.TagCloud;
+import org.eclipse.gef4.cloudio.ui.TagCloudViewer;
+import org.eclipse.gef4.cloudio.ui.Word;
+import org.eclipse.gef4.cloudio.ui.layout.DefaultLayouter;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;

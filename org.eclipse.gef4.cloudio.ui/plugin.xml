@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.gef4.cloudio.internal.ui.view.TagCloudView"
+            id="org.eclipse.gef4.cloudio.internal.tagcloud"
+            name="Tag Cloud View"
+            restorable="true">
+      </view>
+   </extension>
+      <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="File Actions"
+            visible="true"
+            id="file.actions">
+           <action
+               label="Export Image"
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.ExportImageAction"
+               tooltip="Export image"
+               menubarPath="file/additions"
+               id="org.eclipse.gef4.cloudio.internal.export">
+               </action>
+			<action
+               label="Load Stopwords"
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadStopWordsAction"
+               tooltip="Load stop word list"
+               menubarPath="file/additions"
+               id="org.eclipse.gef4.cloudio.internal.loadwords">
+               </action>
+         <action
+               label="Load File"
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.LoadFileAction"
+               tooltip="Load a new File"
+               menubarPath="file/additions"
+               id="org.eclipse.gef4.cloudio.internal.loadfile">
+         </action>
+      </actionSet>
+      <actionSet
+            id="edit.actions"
+            label="Edit Actions"
+            visible="true">
+         <action
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomInAction"
+               id="org.eclipse.gef4.cloudio.internal.zoomin"
+               label="Zoom In"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomOutAction"
+               id="org.eclipse.gef4.cloudio.internal.zoomout"
+               label="Zoom Out"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomResetAction"
+               id="org.eclipse.gef4.cloudio.internal.zoomreset"
+               label="100 %"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.ZoomFitAction"
+               id="org.eclipse.gef4.cloudio.internal.zoomfit"
+               label="Fit Window"
+               menubarPath="edit/zoom"
+               style="push">
+         </action>
+         <action
+               class="org.eclipse.gef4.cloudio.internal.ui.actions.DeselectAllAction"
+               id="org.eclipse.gef4.cloudio.internal.deselectall"
+               label="Clear Selection"
+               menubarPath="edit/select"
+               style="push">
+         </action>
+          <action
+                class="org.eclipse.gef4.cloudio.internal.ui.actions.SelectAllAction"
+                id="org.eclipse.gef4.cloudio.internal.selectall"
+                label="Select All"
+                menubarPath="edit/select"
+                style="push">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         id="application"
+         name="Tag Cloud"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.gef4.cloudio.internal.ui.application.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.gef4.cloudio.internal.ui.application.PerspectiveFactory"
+            id="org.eclipse.gef4.cloudio.internal.ui.perspective"
+            name="cloudPerspective">
+      </perspective>
+   </extension>
+</plugin>
