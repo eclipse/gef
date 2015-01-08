@@ -17,10 +17,10 @@ import javafx.scene.shape.StrokeType;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
@@ -105,10 +105,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 			@Override
 			protected void doRefreshVisual(Rectangle visual) {
-				FXRootPart root = (FXRootPart) getRoot();
-				Point2D start = visual.sceneToLocal(root.getScrollPaneContent()
+				IRootPart<Node, ? extends Node> root = getRoot();
+				Point2D start = visual.sceneToLocal(root.getVisual()
 						.localToScene(startPosInRoot));
-				Point2D end = visual.sceneToLocal(root.getScrollPaneContent()
+				Point2D end = visual.sceneToLocal(root.getVisual()
 						.localToScene(endPosInRoot));
 				double[] bbox = bbox(start, end);
 
@@ -126,9 +126,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		FXRootPart root = (FXRootPart) getHost().getRoot();
-		endPosInRoot = root.getScrollPaneContent().sceneToLocal(e.getSceneX(),
-				e.getSceneY());
+		endPosInRoot = getHost().getRoot().getVisual()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		updateFeedback();
 	}
 
@@ -146,29 +145,27 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		FXRootPart root = (FXRootPart) getHost().getRoot();
-		startPosInRoot = root.getScrollPaneContent().sceneToLocal(
-				e.getSceneX(), e.getSceneY());
+		startPosInRoot = getHost().getRoot().getVisual()
+				.sceneToLocal(e.getSceneX(), e.getSceneY());
 		endPosInRoot = new Point2D(startPosInRoot.getX(), startPosInRoot.getY());
 		addFeedback();
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		FXRootPart root = (FXRootPart) getHost().getRoot();
-		endPosInRoot = root.getScrollPaneContent().sceneToLocal(e.getSceneX(),
-				e.getSceneY());
-		Point2D start = root.getScrollPaneContent()
-				.localToScene(startPosInRoot);
-		Point2D end = root.getScrollPaneContent().localToScene(endPosInRoot);
+		IRootPart<Node, ? extends Node> root = getHost().getRoot();
+		Node rootVisual = root.getVisual();
+		endPosInRoot = rootVisual.sceneToLocal(e.getSceneX(), e.getSceneY());
+		Point2D start = rootVisual.localToScene(startPosInRoot);
+		Point2D end = rootVisual.localToScene(endPosInRoot);
 		double[] bbox = bbox(start, end);
-		List<Node> nodes = findContainedNodes(getHost().getVisual().getScene()
-				.getRoot(), bbox[0], bbox[1], bbox[2], bbox[3]);
+		List<Node> nodes = findContainedNodes(rootVisual.getScene().getRoot(),
+				bbox[0], bbox[1], bbox[2], bbox[3]);
 
 		List<IContentPart<Node, ? extends Node>> parts = getParts(nodes);
 
 		// change selection within selection model
-		SelectionModel<Node> selectionModel = getHost().getRoot().getViewer()
+		SelectionModel<Node> selectionModel = root.getViewer()
 				.<SelectionModel<Node>> getAdapter(SelectionModel.class);
 		selectionModel.select(parts);
 

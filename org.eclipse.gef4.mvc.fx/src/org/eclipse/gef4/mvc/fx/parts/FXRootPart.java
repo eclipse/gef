@@ -30,7 +30,6 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 	public Group contentLayer;
 	public Group handleLayer;
 	public Group feedbackLayer;
-	private Group scrollPaneContent;
 
 	public FXRootPart() {
 	}
@@ -134,10 +133,8 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 
 		handleLayer = createHandleLayer();
 
-		scrollPaneContent = createScrollPaneContent(new Node[] { contentLayer,
+		return createScrollPaneContent(new Node[] { contentLayer,
 				feedbackLayer, handleLayer });
-
-		return scrollPaneContent;
 	}
 
 	@Override
@@ -166,19 +163,12 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 		return handleLayer;
 	}
 
-	public Group getScrollPaneContent() {
-		if (scrollPaneContent == null) {
-			createVisual();
-		}
-		return scrollPaneContent;
-	}
-
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
 		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
 				.getVisualPartMap();
-		registry.put(scrollPaneContent, this);
-		for (Node child : scrollPaneContent.getChildren()) {
+		registry.put(getVisual(), this);
+		for (Node child : getVisual().getChildren()) {
 			// register root edit part also for the layers
 			registry.put(child, this);
 		}
@@ -201,8 +191,8 @@ public class FXRootPart extends AbstractFXRootPart<Group> {
 			Group visual) {
 		Map<Node, IVisualPart<Node, ? extends Node>> registry = viewer
 				.getVisualPartMap();
-		registry.remove(scrollPaneContent);
-		for (Node child : scrollPaneContent.getChildren()) {
+		registry.remove(getVisual());
+		for (Node child : getVisual().getChildren()) {
 			// register root edit part also for the layers
 			registry.remove(child);
 		}
