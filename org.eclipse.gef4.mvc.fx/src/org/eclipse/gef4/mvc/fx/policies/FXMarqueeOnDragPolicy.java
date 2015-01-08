@@ -16,8 +16,8 @@ import javafx.scene.shape.StrokeType;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
-import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.parts.FXCircleSegmentHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -80,8 +80,8 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	// mouse coordinates
-	private Point2D startPosInFeedbackLayer;
-	private Point2D endPosInFeedbackLayer;
+	private Point2D startPosInRoot;
+	private Point2D endPosInRoot;
 
 	// feedback
 	private IFeedbackPart<Node, ? extends Node> feedback;
@@ -106,10 +106,10 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 			@Override
 			protected void doRefreshVisual(Rectangle visual) {
 				FXRootPart root = (FXRootPart) getRoot();
-				Point2D start = visual.sceneToLocal(root.getFeedbackLayer()
-						.localToScene(startPosInFeedbackLayer));
-				Point2D end = visual.sceneToLocal(root.getFeedbackLayer()
-						.localToScene(endPosInFeedbackLayer));
+				Point2D start = visual.sceneToLocal(root.getScrollPaneContent()
+						.localToScene(startPosInRoot));
+				Point2D end = visual.sceneToLocal(root.getScrollPaneContent()
+						.localToScene(endPosInRoot));
 				double[] bbox = bbox(start, end);
 
 				// offset x and y by half a pixel to ensure the rectangle gets a
@@ -126,7 +126,9 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
-		updateMarquee(delta);
+		FXRootPart root = (FXRootPart) getHost().getRoot();
+		endPosInRoot = root.getScrollPaneContent().sceneToLocal(e.getSceneX(),
+				e.getSceneY());
 		updateFeedback();
 	}
 
@@ -145,22 +147,20 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 	@Override
 	public void press(MouseEvent e) {
 		FXRootPart root = (FXRootPart) getHost().getRoot();
-		startPosInFeedbackLayer = root.getFeedbackLayer().sceneToLocal(
+		startPosInRoot = root.getScrollPaneContent().sceneToLocal(
 				e.getSceneX(), e.getSceneY());
-		endPosInFeedbackLayer = new Point2D(startPosInFeedbackLayer.getX(),
-				startPosInFeedbackLayer.getY());
+		endPosInRoot = new Point2D(startPosInRoot.getX(), startPosInRoot.getY());
 		addFeedback();
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		updateMarquee(delta);
-
 		FXRootPart root = (FXRootPart) getHost().getRoot();
-		Point2D start = root.getFeedbackLayer().localToScene(
-				startPosInFeedbackLayer);
-		Point2D end = root.getFeedbackLayer().localToScene(
-				endPosInFeedbackLayer);
+		endPosInRoot = root.getScrollPaneContent().sceneToLocal(e.getSceneX(),
+				e.getSceneY());
+		Point2D start = root.getScrollPaneContent()
+				.localToScene(startPosInRoot);
+		Point2D end = root.getScrollPaneContent().localToScene(endPosInRoot);
 		double[] bbox = bbox(start, end);
 		List<Node> nodes = findContainedNodes(getHost().getVisual().getScene()
 				.getRoot(), bbox[0], bbox[1], bbox[2], bbox[3]);
@@ -184,11 +184,6 @@ public class FXMarqueeOnDragPolicy extends AbstractFXDragPolicy {
 
 	protected void updateFeedback() {
 		feedback.refreshVisual();
-	}
-
-	private void updateMarquee(Dimension delta) {
-		endPosInFeedbackLayer = new Point2D(startPosInFeedbackLayer.getX()
-				+ delta.width, startPosInFeedbackLayer.getY() + delta.height);
 	}
 
 }
