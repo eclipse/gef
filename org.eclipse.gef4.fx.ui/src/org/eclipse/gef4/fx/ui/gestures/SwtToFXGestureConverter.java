@@ -262,7 +262,7 @@ public class SwtToFXGestureConverter implements GestureListener {
 				0,
 				0, // totalScrollX, totalScrollY
 				-5.0,
-				5.0, // xMultiplier, yMultiplier
+				-5.0, // xMultiplier, yMultiplier
 				0, // touchCount
 				0,
 				0, // scrollTextX, scrollTextY
