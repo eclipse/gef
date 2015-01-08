@@ -69,9 +69,8 @@ public class FXCircleSegmentHandlePart extends
 
 	protected void updateColor() {
 		// only update when bound to anchorage
-		FXRootPart rootPart = (FXRootPart) getRoot();
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
-		if (rootPart == null || anchorages.keySet().size() != 1) {
+		if (getRoot() == null || anchorages.keySet().size() != 1) {
 			return;
 		}
 
