@@ -33,14 +33,14 @@
    </requires>
 
    <plugin
-         id="org.eclipse.gef4.mvc.fx.ui.example"
+         id="org.eclipse.gef4.mvc.examples.logo"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.mvc.fx.example"
+         id="org.eclipse.gef4.mvc.examples.logo.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

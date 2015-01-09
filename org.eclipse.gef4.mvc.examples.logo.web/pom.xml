@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eclipse.gef4</groupId>
+		<artifactId>org.eclipse.gef4.releng</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.gef4.releng/pom.xml</relativePath>
+	</parent>
+	<groupId>org.eclipse.gef4.examples</groupId>
+	<artifactId>org.eclipse.gef4.mvc.examples.logo.web</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>eclipse-repository</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>deploy-jnlp-and-html</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+								<if>
+									<available file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template" />
+									<then>
+										<echo message="Deploying org.eclipse.gef4.mvc.fx.example.web.jnlp." />
+										<copy file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template"
+											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp"
+											overwrite="true" />
+										<echo
+											message="Replacing qualifier token within org.eclipse.gef4.mvc.fx.example.web.jnlp with build qualifier." />
+										<replace
+											file="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp">
+											<replacefilter token="qualifier" value="${buildQualifier}" />
+										</replace>
+									</then>
+								</if>
+								<if>
+									<available file="index.html" />
+									<then>
+										<echo message="Deploying index.html." />
+										<copy file="index.html"
+											tofile="${project.build.directory}/web-files/index.html"
+											overwrite="true" />
+									</then>
+								</if>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>deploy-jars</id>
+						<phase>verify</phase>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
+									classpathref="maven.plugin.classpath" />
+
+								<echo message="Deploying jars." />
+								<copy todir="${project.build.directory}/web-files">
+									<fileset dir="${project.build.directory}/repository/plugins/">
+										<exclude name="**/*.jar.pack.gz" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant-contrib</groupId>
+						<artifactId>ant-contrib</artifactId>
+						<version>20020829</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>hudson.eclipse.org</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<version>1.3</version>
+						<executions>
+							<execution>
+								<id>sign-javax.xml</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>curl -o ${project.build.directory}/web-files/javax.xml_1.3.4.v201005080400_resigned.jar -F filedata=@${project.build.directory}/web-files/javax.xml_1.3.4.v201005080400.jar http://build.eclipse.org:31338/sign</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>sign-javax.inject</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>curl -o ${project.build.directory}/web-files/javax.inject_1.0.0.v20091030_resigned.jar -F filedata=@${project.build.directory}/web-files/javax.inject_1.0.0.v20091030.jar http://build.eclipse.org:31338/sign</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>sign-com.google.inject</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>curl -o ${project.build.directory}/web-files/com.google.inject_3.0.0.v201312141243_resigned.jar -F filedata=@${project.build.directory}/web-files/com.google.inject_3.0.0.v201312141243.jar http://build.eclipse.org:31338/sign</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>sign-com.google.inject.multibindings</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>curl -o ${project.build.directory}/web-files/com.google.inject.multibindings_3.0.0.v201402270930_resigned.jar -F filedata=@${project.build.directory}/web-files/com.google.inject.multibindings_3.0.0.v201402270930.jar http://build.eclipse.org:31338/sign</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
