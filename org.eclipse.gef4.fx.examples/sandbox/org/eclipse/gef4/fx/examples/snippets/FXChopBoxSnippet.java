@@ -23,10 +23,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.examples.AbstractFXSnippet;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
-public class FXChopBoxSnippet extends FXApplication {
+public class FXChopBoxSnippet extends AbstractFXSnippet {
 
 	public static void main(String[] args) {
 		launch();

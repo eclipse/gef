@@ -16,7 +16,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public abstract class FXApplication extends Application {
+public abstract class AbstractFXSnippet extends Application {
 
 	public abstract Scene createScene();
 

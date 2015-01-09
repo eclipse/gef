@@ -27,14 +27,14 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
-import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.examples.AbstractFXSnippet;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
-public class FXGeometryNodeExample extends FXApplication {
+public class FXGeometryNodeSnippet extends AbstractFXSnippet {
 
 	protected static CurvedPolygon createEShapeGeometry() {
 		final List<BezierCurve> segments = new ArrayList<BezierCurve>();

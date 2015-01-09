@@ -17,12 +17,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polyline;
 
-import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.examples.AbstractFXSnippet;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class FXConnectionSnippet extends FXApplication {
+public class FXConnectionSnippet extends AbstractFXSnippet {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {

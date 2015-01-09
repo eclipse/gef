@@ -41,7 +41,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.AdapterStore;
 import org.eclipse.gef4.fx.anchors.AnchorKey;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
-import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.examples.AbstractFXSnippet;
 import org.eclipse.gef4.fx.gestures.FXMouseDragGesture;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.fx.nodes.FXUtils;
@@ -54,7 +54,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
-public class FXChopBoxELetterSnippet extends FXApplication {
+public class FXChopBoxELetterSnippet extends AbstractFXSnippet {
 
 	private static class ComputationStrategy extends
 			FXChopBoxAnchor.ComputationStrategy.Impl {
@@ -276,7 +276,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 
 	private FXGeometryNode<CurvedPolygon> createELetterShape() {
 		FXGeometryNode<CurvedPolygon> eLetterShape = new FXGeometryNode<CurvedPolygon>(
-				FXGeometryNodeExample.createEShapeGeometry());
+				FXGeometryNodeSnippet.createEShapeGeometry());
 		eLetterShape.relocate(PAD, PAD);
 		eLetterShape.resize(WIDTH - PAD - PAD, HEIGHT - PAD - PAD);
 		return eLetterShape;
@@ -340,7 +340,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 		referencePointNode.setCenterX(x);
 		referencePointNode.setCenterY(y);
 		referencePointNode
-				.setEffect(FXGeometryNodeExample.createShadowEffect());
+				.setEffect(FXGeometryNodeSnippet.createShadowEffect());
 		return referencePointNode;
 	}
 
@@ -566,7 +566,7 @@ public class FXChopBoxELetterSnippet extends FXApplication {
 	private void styleELetterShape(boolean fillVisible) {
 		eLetterShape.setFill(fillVisible ? Color.rgb(135, 150, 220)
 				: Color.TRANSPARENT);
-		eLetterShape.setEffect(fillVisible ? FXGeometryNodeExample
+		eLetterShape.setEffect(fillVisible ? FXGeometryNodeSnippet
 				.createShadowEffect() : null);
 		for (Line l : chopBoxLinesImaginary.values()) {
 			if (fillVisible) {

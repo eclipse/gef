@@ -27,12 +27,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
-import org.eclipse.gef4.fx.examples.FXApplication;
+import org.eclipse.gef4.fx.examples.AbstractFXSnippet;
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
-public class ScrollPaneExSnippet extends FXApplication {
+public class ScrollPaneExSnippet extends AbstractFXSnippet {
 
 	public static void main(String[] args) {
 		launch();
