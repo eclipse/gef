@@ -307,8 +307,7 @@ public class ScrollPaneEx extends Region {
 	}
 
 	public Bounds getBoundsInViewport(Node child) {
-		Bounds bounds = canvas.localToParent(child.getBoundsInParent());
-		return bounds;
+		return sceneToLocal(child.localToScene(child.getBoundsInLocal()));
 	}
 
 	public Pane getCanvas() {
