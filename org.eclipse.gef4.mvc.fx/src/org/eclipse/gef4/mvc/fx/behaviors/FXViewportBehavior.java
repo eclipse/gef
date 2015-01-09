@@ -34,14 +34,7 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			// IMPORTANT: When setting the tx, the ScrollPane will convert the
-			// tx into a scrollbar position and convert that scrollbar position
-			// back into a new tx. If those tx values differ, then we could
-			// possibly run into a StackOverflow error, reciprocative updating
-			// the viewport model and the ScrollPane.
-			double stx = getScrollPane().computeTx(
-					getScrollPane().computeHv(viewportModel.getTranslateX()));
-			if (stx != newValue.doubleValue()) {
+			if (!inApplyViewport) {
 				viewportModel.setTranslateX(newValue.doubleValue());
 			}
 		}
@@ -50,14 +43,7 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			// IMPORTANT: When setting the ty, the ScrollPane will convert the
-			// ty into a scrollbar position and convert that scrollbar position
-			// back into a new ty. If those ty values differ, then we could
-			// possibly run into a StackOverflow error, reciprocative updating
-			// the viewport model and the ScrollPane.
-			double sty = getScrollPane().computeTy(
-					getScrollPane().computeVv(viewportModel.getTranslateY()));
-			if (sty != newValue.doubleValue()) {
+			if (!inApplyViewport) {
 				viewportModel.setTranslateY(newValue.doubleValue());
 			}
 		}
@@ -66,16 +52,22 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldWidth, Number newWidth) {
-			viewportModel.setWidth(newWidth.doubleValue());
+			if (!inApplyViewport) {
+				viewportModel.setWidth(newWidth.doubleValue());
+			}
 		}
 	};
 	private final ChangeListener<Number> heightListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldHeight, Number newHeight) {
-			viewportModel.setHeight(newHeight.doubleValue());
+			if (!inApplyViewport) {
+				viewportModel.setHeight(newHeight.doubleValue());
+			}
 		}
 	};
+
+	boolean inApplyViewport = false;
 
 	@Override
 	public void activate() {
@@ -93,12 +85,14 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 
 	protected void applyViewport(double translateX, double translateY,
 			double width, double height, AffineTransform contentsTransform) {
+		inApplyViewport = true;
 		getScrollPane().setScrollOffsetX(translateX);
 		getScrollPane().setScrollOffsetY(translateY);
 		getScrollPane().setPrefWidth(width);
 		getScrollPane().setPrefHeight(height);
 		setTx(contentsTx, contentsTransform);
 		getScrollPane().setViewportTransform(contentsTx);
+		inApplyViewport = false;
 	}
 
 	@Override
