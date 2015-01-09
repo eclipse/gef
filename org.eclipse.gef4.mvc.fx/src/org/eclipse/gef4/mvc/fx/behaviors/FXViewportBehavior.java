@@ -34,14 +34,32 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			viewportModel.setTranslateX(newValue.doubleValue());
+			// IMPORTANT: When setting the tx, the ScrollPane will convert the
+			// tx into a scrollbar position and convert that scrollbar position
+			// back into a new tx. If those tx values differ, then we could
+			// possibly run into a StackOverflow error, reciprocative updating
+			// the viewport model and the ScrollPane.
+			double stx = getScrollPane().computeTx(
+					getScrollPane().computeHv(viewportModel.getTranslateX()));
+			if (stx != newValue.doubleValue()) {
+				viewportModel.setTranslateX(newValue.doubleValue());
+			}
 		}
 	};
 	private final ChangeListener<Number> translateYListener = new ChangeListener<Number>() {
 		@Override
 		public void changed(ObservableValue<? extends Number> observable,
 				Number oldValue, Number newValue) {
-			viewportModel.setTranslateY(newValue.doubleValue());
+			// IMPORTANT: When setting the ty, the ScrollPane will convert the
+			// ty into a scrollbar position and convert that scrollbar position
+			// back into a new ty. If those ty values differ, then we could
+			// possibly run into a StackOverflow error, reciprocative updating
+			// the viewport model and the ScrollPane.
+			double sty = getScrollPane().computeTy(
+					getScrollPane().computeVv(viewportModel.getTranslateY()));
+			if (sty != newValue.doubleValue()) {
+				viewportModel.setTranslateY(newValue.doubleValue());
+			}
 		}
 	};
 	private final ChangeListener<Number> widthListener = new ChangeListener<Number>() {
@@ -65,7 +83,6 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		viewportModel = getHost().getRoot().getViewer()
 				.getAdapter(ViewportModel.class);
 		viewportModel.addPropertyChangeListener(this);
-
 		getScrollPane().widthProperty().addListener(widthListener);
 		getScrollPane().heightProperty().addListener(heightListener);
 		getScrollPane().getCanvas().translateXProperty()
@@ -82,7 +99,7 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		getScrollPane().setPrefHeight(height);
 		setTx(contentsTx, contentsTransform);
 		getScrollPane().setViewportTransform(contentsTx);
-	};
+	}
 
 	@Override
 	public void deactivate() {
