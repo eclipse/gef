@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.examples;
+package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

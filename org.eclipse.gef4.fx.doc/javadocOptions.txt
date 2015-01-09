@@ -9,7 +9,7 @@
 -splitIndex
 -windowtitle "GEF4 FX API Reference"
 -doctitle "GEF4 FX API Reference"
--header "<b>GEF4 FX</b><br>@build@"
+-header "<b>GEF4 FX</b><br>0.1.0.201501091258"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
 -link http://docs.oracle.com/javase/7/docs/api/
 -link http://docs.oracle.com/javafx/2/api/

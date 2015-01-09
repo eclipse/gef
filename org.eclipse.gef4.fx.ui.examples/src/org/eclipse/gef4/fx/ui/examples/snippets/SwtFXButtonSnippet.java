@@ -25,11 +25,10 @@ import javafx.scene.shape.Shape;
 
 import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
-import org.eclipse.gef4.fx.ui.examples.FXUIApplication;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class SwtFXButtonSnippet extends FXUIApplication {
+public class SwtFXButtonSnippet extends AbstractFXUiSnippet {
 
 	protected static FXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {

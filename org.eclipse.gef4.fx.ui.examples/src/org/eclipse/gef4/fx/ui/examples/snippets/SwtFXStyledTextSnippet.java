@@ -25,7 +25,6 @@ import javafx.scene.layout.VBox;
 
 import org.eclipse.gef4.fx.ui.controls.IControlFactory;
 import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
-import org.eclipse.gef4.fx.ui.examples.FXUIApplication;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -35,7 +34,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class SwtFXStyledTextSnippet extends FXUIApplication {
+public class SwtFXStyledTextSnippet extends AbstractFXUiSnippet {
 
 	public static void main(String[] args) {
 		new SwtFXStyledTextSnippet();
