@@ -21,7 +21,6 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.gef4.cloudio" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.common" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.dot" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.gef4.fx" version="0.1.0.qualifier"/>
