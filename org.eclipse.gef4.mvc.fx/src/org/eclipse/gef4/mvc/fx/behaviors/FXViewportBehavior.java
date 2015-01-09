@@ -44,6 +44,20 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 			viewportModel.setTranslateY(newValue.doubleValue());
 		}
 	};
+	private final ChangeListener<Number> widthListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldWidth, Number newWidth) {
+			viewportModel.setWidth(newWidth.doubleValue());
+		}
+	};
+	private final ChangeListener<Number> heightListener = new ChangeListener<Number>() {
+		@Override
+		public void changed(ObservableValue<? extends Number> observable,
+				Number oldHeight, Number newHeight) {
+			viewportModel.setHeight(newHeight.doubleValue());
+		}
+	};
 
 	@Override
 	public void activate() {
@@ -52,7 +66,8 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 				.getAdapter(ViewportModel.class);
 		viewportModel.addPropertyChangeListener(this);
 
-		// TODO: move to adapter within rootpart
+		getScrollPane().widthProperty().addListener(widthListener);
+		getScrollPane().heightProperty().addListener(heightListener);
 		getScrollPane().getCanvas().translateXProperty()
 				.addListener(translateXListener);
 		getScrollPane().getCanvas().translateYProperty()
@@ -72,6 +87,8 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 	@Override
 	public void deactivate() {
 		viewportModel.removePropertyChangeListener(this);
+		getScrollPane().widthProperty().removeListener(widthListener);
+		getScrollPane().heightProperty().removeListener(heightListener);
 		getScrollPane().getCanvas().translateXProperty()
 				.removeListener(translateXListener);
 		getScrollPane().getCanvas().translateYProperty()
