@@ -387,14 +387,58 @@ public class ScrollPaneEx extends Region {
 				&& bounds.getMaxY() >= 0 && bounds.getMinY() <= getHeight();
 	}
 
+	/**
+	 * Linear interpolation between <i>min</i> and <i>max</i> at the given
+	 * <i>ratio</i>. Returns the interpolated value in the interval
+	 * <code>[min;max]</code>.
+	 *
+	 * @param min
+	 *            The lower interval bound.
+	 * @param max
+	 *            The upper interval bound.
+	 * @param ratio
+	 *            A value in the interval <code>[0;1]</code>.
+	 * @return The interpolated value.
+	 */
 	private double lerp(double min, double max, double ratio) {
-		double d = min + ratio * (max - min);
-		return Double.isNaN(d) ? 0 : d;
+		double d = (1 - ratio) * min + ratio * max;
+		return Double.isNaN(d) ? 0 : Math.min(max, Math.max(min, d));
 	}
 
+	public double lerpHvRatio(double hvRatio) {
+		return lerp(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
+				hvRatio);
+	}
+
+	public double lerpVvRatio(double vvRatio) {
+		return lerp(verticalScrollBar.getMin(), verticalScrollBar.getMax(),
+				vvRatio);
+	}
+
+	/**
+	 * Normalizes a given <i>value</i> which is in range <code>[min;max]</code>
+	 * to range <code>[0;1]</code>.
+	 *
+	 * @param min
+	 *            The lower bound of the range.
+	 * @param max
+	 *            The upper bound of the range.
+	 * @param value
+	 *            The value in the range.
+	 * @return The normalized value (in range <code>[0;1]</code>).
+	 */
 	private double norm(double min, double max, double value) {
 		double d = (value - min) / (max - min);
-		return Double.isNaN(d) ? 0 : d;
+		return Double.isNaN(d) ? 0 : Math.min(1, Math.max(0, d));
+	}
+
+	public double normHv(double hv) {
+		return norm(horizontalScrollBar.getMin(), horizontalScrollBar.getMax(),
+				hv);
+	}
+
+	public double normVv(double vv) {
+		return norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv);
 	}
 
 	private void registerInOutTransitions(final Node node) {
@@ -490,10 +534,27 @@ public class ScrollPaneEx extends Region {
 	}
 
 	public void setScrollOffsetX(double scrollOffsetX) {
+		updateScrollbars();
+		double hv = computeHv(scrollOffsetX);
+		if (hv < horizontalScrollBar.getMin()
+				|| hv > horizontalScrollBar.getMax()) {
+			throw new IllegalArgumentException(
+					"Horizontal scrolling offset outside range ["
+							+ horizontalScrollBar.getMin() + ";"
+							+ horizontalScrollBar.getMax() + "]");
+		}
 		getCanvas().setTranslateX(scrollOffsetX);
 	}
 
 	public void setScrollOffsetY(double scrollOffsetY) {
+		updateScrollbars();
+		double vv = computeVv(scrollOffsetY);
+		if (vv < verticalScrollBar.getMin() || vv > verticalScrollBar.getMax()) {
+			throw new IllegalArgumentException(
+					"Vertical scrolling offset outside range ["
+							+ verticalScrollBar.getMin() + ";"
+							+ verticalScrollBar.getMax() + "]");
+		}
 		getCanvas().setTranslateY(scrollOffsetY);
 	}
 
