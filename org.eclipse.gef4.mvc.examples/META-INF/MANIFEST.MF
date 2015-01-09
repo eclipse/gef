@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GEF4 MVC Examples
+Bundle-SymbolicName: org.eclipse.gef4.mvc.examples;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: javafx.animation,
+ javafx.application,
+ javafx.beans,
+ javafx.beans.binding,
+ javafx.beans.property,
+ javafx.beans.value,
+ javafx.collections,
+ javafx.concurrent,
+ javafx.embed.swt,
+ javafx.event,
+ javafx.geometry,
+ javafx.scene,
+ javafx.scene.chart,
+ javafx.scene.control,
+ javafx.scene.control.cell,
+ javafx.scene.effect,
+ javafx.scene.image,
+ javafx.scene.input,
+ javafx.scene.layout,
+ javafx.scene.media,
+ javafx.scene.paint,
+ javafx.scene.shape,
+ javafx.scene.text,
+ javafx.scene.transform,
+ javafx.scene.web,
+ javafx.stage,
+ javafx.util
+Bundle-Vendor: Eclipse GEF

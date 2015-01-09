@@ -467,6 +467,7 @@
 		<module>../org.eclipse.gef4.mvc.doc-feature</module>
 		<module>../org.eclipse.gef4.mvc.sdk-feature</module>
 
+		<module>../org.eclipse.gef4.mvc.examples</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.ui</module>
 		<module>../org.eclipse.gef4.mvc.examples.logo.web</module>

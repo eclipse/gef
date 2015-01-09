@@ -7,7 +7,6 @@
       plugin="org.eclipse.gef4.zest.examples"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
-<!-- TODO: migrate examples bundle as branding bundle as alternative to org.eclipse.gef4.zest.examples.graph.ui -->
    <description>
       %description
    </description>
