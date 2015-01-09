@@ -14,9 +14,9 @@ package org.eclipse.gef4.mvc.examples.logo.ui.view;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.gef4.mvc.examples.logo.FXExampleModule;
+import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
-import org.eclipse.gef4.mvc.examples.logo.ui.FXExampleUiModule;
+import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 
 import com.google.inject.Guice;
@@ -27,8 +27,8 @@ public class MvcLogoExampleView extends FXView {
 	// TODO: create FXView via an executable extension factory (obtaining the
 	// injector via the bundle)
 	public MvcLogoExampleView() {
-		super(Guice.createInjector(Modules.override(new FXExampleModule())
-				.with(new FXExampleUiModule())));
+		super(Guice.createInjector(Modules.override(new MvcLogoExampleModule())
+				.with(new MvcLogoExampleUiModule())));
 	}
 
 	@Override

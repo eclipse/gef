@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.gef4.zest.examples.graph.ui.view.ZestGraphExampleView"
+            id="org.eclipse.gef4.zest.fx.ui.example.view.ZestFxExampleView"
+            name="GEF4 Zest Graph Example"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

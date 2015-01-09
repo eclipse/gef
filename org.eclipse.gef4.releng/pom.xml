@@ -518,8 +518,8 @@
 		<module>../org.eclipse.gef4.zest.doc-feature</module>
 		<module>../org.eclipse.gef4.zest.sdk-feature</module>
 		
-		<module>../org.eclipse.gef4.zest.fx.example</module>
-		<module>../org.eclipse.gef4.zest.fx.ui.example</module>
+		<module>../org.eclipse.gef4.zest.examples.graph</module>
+		<module>../org.eclipse.gef4.zest.examples.graph.ui</module>
 		<module>../org.eclipse.gef4.zest.examples-feature</module>
 
 		<module>../org.eclipse.gef4.repository</module>

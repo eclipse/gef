@@ -4,10 +4,10 @@
       label="GEF4 Zest Examples"
       version="0.1.0.qualifier"
       provider-name="Eclipse GEF"
-      plugin="org.eclipse.gef4.zest.fx.ui.example"
+      plugin="org.eclipse.gef4.zest.examples.graph.ui"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
-
+<!-- TODO: migrate examples bundle as branding bundle as alternative to org.eclipse.gef4.zest.examples.graph.ui -->
    <description>
       %description
    </description>
@@ -38,14 +38,14 @@
    </requires>
 
    <plugin
-         id="org.eclipse.gef4.zest.fx.ui.example"
+         id="org.eclipse.gef4.zest.examples.graph"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.gef4.zest.fx.example"
+         id="org.eclipse.gef4.zest.examples.graph.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

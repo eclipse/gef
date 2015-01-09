@@ -4,10 +4,10 @@
       label="GEF4 MVC Examples"
       version="0.1.0.qualifier"
       provider-name="Eclipse GEF"
-      plugin="org.eclipse.gef4.mvc.fx.ui.example"
+      plugin="org.eclipse.gef4.mvc.examples.logo.ui"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.1">
-
+<!-- TODO: create examples bundle as branding bundle as alternative to org.eclipse.gef4.mvc.examples.logo.ui -->
    <description>
       %description
    </description>

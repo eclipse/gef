@@ -24,7 +24,7 @@ public class MvcLogoExampleApplication extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 		// TODO: inject domain
-		Injector injector = Guice.createInjector(new FXExampleModule());
+		Injector injector = Guice.createInjector(new MvcLogoExampleModule());
 		FXDomain domain = new FXDomain();
 		injector.injectMembers(domain);
 		FXViewer viewer = domain.getAdapter(IViewer.class);
