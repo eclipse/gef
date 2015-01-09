@@ -27,8 +27,7 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 	@Override
 	public void scroll(ScrollEvent event) {
 		// do not scroll when a modifier key is down
-		if (event.isAltDown() || event.isControlDown() || event.isMetaDown()
-				|| event.isShiftDown()) {
+		if (event.isAltDown() || event.isControlDown() || event.isMetaDown()) {
 			return;
 		}
 
@@ -45,6 +44,13 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 
 		double x = event.getDeltaX();
 		double y = event.getDeltaY();
+
+		// swap x/y when shift is pressed
+		if (event.isShiftDown()) {
+			double t = x;
+			x = y;
+			y = t;
+		}
 
 		// stop at content bounds
 		ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer())
