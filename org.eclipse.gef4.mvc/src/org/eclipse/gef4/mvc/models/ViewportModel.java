@@ -153,7 +153,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	public void setHeight(double height) {
 		double oldHeight = this.height;
 		this.height = height;
-		pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
+		if (oldHeight != height) {
+			pcs.firePropertyChange(VIEWPORT_HEIGHT_PROPERTY, oldHeight, height);
+		}
 	}
 
 	/**
@@ -165,7 +167,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	public void setTranslateX(double x) {
 		double oldX = this.x;
 		this.x = x;
-		pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldX, x);
+		if (oldX != x) {
+			pcs.firePropertyChange(VIEWPORT_TRANSLATE_X_PROPERTY, oldX, x);
+		}
 	}
 
 	/**
@@ -177,7 +181,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	public void setTranslateY(double y) {
 		double oldY = this.y;
 		this.y = y;
-		pcs.firePropertyChange(VIEWPORT_TRANSLATE_Y_PROPERTY, oldY, y);
+		if (oldY != y) {
+			pcs.firePropertyChange(VIEWPORT_TRANSLATE_Y_PROPERTY, oldY, y);
+		}
 	}
 
 	/**
@@ -196,7 +202,9 @@ public class ViewportModel implements IPropertyChangeNotifier {
 	public void setWidth(double width) {
 		double oldWidth = this.width;
 		this.width = width;
-		pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
+		if (oldWidth != width) {
+			pcs.firePropertyChange(VIEWPORT_WIDTH_PROPERTY, oldWidth, width);
+		}
 	}
 
 }
