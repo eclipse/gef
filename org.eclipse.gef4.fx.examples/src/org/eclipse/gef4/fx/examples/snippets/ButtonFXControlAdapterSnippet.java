@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.ui.examples.snippets;
+package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,7 +28,7 @@ import org.eclipse.gef4.fx.ui.controls.FXControlAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class SwtFXButtonSnippet extends AbstractFXUiSnippet {
+public class ButtonFXControlAdapterSnippet extends AbstractFXUISnippet {
 
 	protected static FXControlAdapter<org.eclipse.swt.widgets.Button> createButtonAdapter(
 			final String text) {
@@ -47,7 +47,7 @@ public class SwtFXButtonSnippet extends AbstractFXUiSnippet {
 	}
 
 	public static void main(String[] args) {
-		new SwtFXButtonSnippet();
+		new ButtonFXControlAdapterSnippet();
 	}
 
 	private static Shape shape(Shape shape, double r, double g, double b) {

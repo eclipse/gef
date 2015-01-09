@@ -10,7 +10,7 @@
  *     Jan Köhnlein (itemis AG) - initial API and implementation (#427106)
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.ui.examples.snippets;
+package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -28,7 +28,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class SwtFXCanvasGesturesDemo {
+public class SwtToFXGestureConversionDemo {
 
 	private static Scene createScene() {
 		VBox root = new VBox();

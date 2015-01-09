@@ -10,7 +10,7 @@
  *     Matthias Wienand (itemis AG) - initial API and implementation
  *
  *******************************************************************************/
-package org.eclipse.gef4.fx.ui.examples.snippets;
+package org.eclipse.gef4.fx.examples.snippets;
 
 import javafx.scene.Scene;
 
@@ -20,12 +20,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class AbstractFXUiSnippet {
+public abstract class AbstractFXUISnippet {
 
 	protected Shell shell;
 	protected FXCanvasEx canvas;
 
-	public AbstractFXUiSnippet() {
+	public AbstractFXUISnippet() {
 		Display display = new Display();
 		shell = new Shell(display);
 		shell.setLayout(new FillLayout());
