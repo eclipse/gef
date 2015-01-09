@@ -79,8 +79,7 @@ public class ScrollPaneEx extends Region {
 		heightProperty().addListener(heightChangeListener);
 		contentBoundsBinding = new ObjectBinding<Bounds>() {
 			{
-				bind(contentGroup.boundsInParentProperty(), getContentGroup()
-						.localToParentTransformProperty());
+				bind(contentGroup.boundsInParentProperty());
 			}
 
 			@Override
@@ -92,8 +91,7 @@ public class ScrollPaneEx extends Region {
 		};
 		scrollableBoundsBinding = new ObjectBinding<Bounds>() {
 			{
-				bind(contentGroup.boundsInParentProperty(), getContentGroup()
-						.localToParentTransformProperty(), widthProperty(),
+				bind(contentGroup.boundsInParentProperty(), widthProperty(),
 						heightProperty());
 			}
 
@@ -122,7 +120,7 @@ public class ScrollPaneEx extends Region {
 		return new double[] { realMinX, realMinY, realMaxX, realMaxY };
 	}
 
-	protected double computeHv(double tx) {
+	public double computeHv(double tx) {
 		return lerp(
 				horizontalScrollBar.getMin(),
 				horizontalScrollBar.getMax(),
@@ -156,7 +154,7 @@ public class ScrollPaneEx extends Region {
 				db.getMaxX() + cb[2], db.getMaxY() + cb[3] };
 	}
 
-	protected double computeTx(double hv) {
+	public double computeTx(double hv) {
 		return -lerp(
 				currentScrollableBounds[0],
 				currentScrollableBounds[2] - getWidth(),
@@ -164,14 +162,14 @@ public class ScrollPaneEx extends Region {
 						horizontalScrollBar.getMax(), hv));
 	}
 
-	protected double computeTy(double vv) {
+	public double computeTy(double vv) {
 		return -lerp(
 				currentScrollableBounds[1],
 				currentScrollableBounds[3] - getHeight(),
 				norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv));
 	}
 
-	protected double computeVv(double ty) {
+	public double computeVv(double ty) {
 		return lerp(
 				verticalScrollBar.getMin(),
 				verticalScrollBar.getMax(),
