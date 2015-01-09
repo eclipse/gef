@@ -31,12 +31,40 @@ import javafx.scene.layout.Region;
 import javafx.scene.transform.Affine;
 import javafx.util.Duration;
 
+/**
+ * A {@link ScrollPaneEx} provides a scrollable {@link Pane} in which contents
+ * can be placed. {@link ScrollBar}s are automatically added to the ScrollPaneEx
+ * when its contents exceed the viewport.
+ * <p>
+ * On the top level, a ScrollPaneEx consists of a "scrolled pane" and a
+ * "scrollbars group". Inside of the scrolled pane, a "contents group" contains
+ * all user nodes, which can be scrolled by the ScrollPaneEx. The scrollbars
+ * group contains the horizontal and vertical scrollbars. It is rendered above
+ * the scrolled pane.
+ * <p>
+ * In order to rotate or scale the viewport, you can access a
+ * "viewport transformation" which is applied to the contents group. Scrolling
+ * is done independently of this viewport transformation, using the translate-x
+ * and translate-y properties of the scrolled pane.
+ * <p>
+ * The ScrollPaneEx computes two bounds: a) the contents-bounds, and b) the
+ * scrollable bounds. The contents-bounds are the bounds of the contents group
+ * within the ScrollPaneEx's coordinate system. The scrollable bounds are at
+ * least as big as the contents-bounds but also include the viewport, i.e. any
+ * empty space that is currently visible.
+ * <p>
+ * The ScrollPaneEx provides the scroll position in multiple formats: a) the
+ * values of the scrollbars (depends on scrollable bounds), b) the ratios of the
+ * scrollbars (in range <code>[0;1]</code>), and c) the translation values of
+ * the scrolled pane. You can use the various <code>compute()</code> methods to
+ * convert from one format to the other.
+ */
 public class ScrollPaneEx extends Region {
 
 	private Group scrollbarGroup;
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
-	private Pane canvas;
+	private Pane scrolledPane;
 	private Group contentGroup;
 	private Affine viewportTransform = new Affine();
 	private double[] currentScrollableBounds = new double[] { 0d, 0d, 0d, 0d };
@@ -72,8 +100,8 @@ public class ScrollPaneEx extends Region {
 	private ObjectBinding<Bounds> scrollableBoundsBinding;
 
 	public ScrollPaneEx() {
-		getChildren().addAll(getCanvas(), getScrollbarGroup());
-		getCanvas().boundsInLocalProperty().addListener(
+		getChildren().addAll(getScrolledPane(), getScrollbarGroup());
+		getScrolledPane().boundsInLocalProperty().addListener(
 				canvasBoundsInLocalChangeListener);
 		widthProperty().addListener(widthChangeListener);
 		heightProperty().addListener(heightChangeListener);
@@ -111,7 +139,7 @@ public class ScrollPaneEx extends Region {
 		double minY = diagramBoundsInCanvas.getMinY();
 		double maxY = diagramBoundsInCanvas.getMaxY();
 
-		Point2D minInScrolled = getCanvas().localToParent(minX, minY);
+		Point2D minInScrolled = getScrolledPane().localToParent(minX, minY);
 		double realMinX = minInScrolled.getX();
 		double realMinY = minInScrolled.getY();
 		double realMaxX = realMinX + (maxX - minX);
@@ -120,6 +148,15 @@ public class ScrollPaneEx extends Region {
 		return new double[] { realMinX, realMinY, realMaxX, realMaxY };
 	}
 
+	/**
+	 * Converts a horizontal translation distance into the corresponding
+	 * horizontal scrollbar value.
+	 *
+	 * @param tx
+	 *            The horizontal translation distance.
+	 * @return The horizontal scrollbar value corresponding to the given
+	 *         translation.
+	 */
 	public double computeHv(double tx) {
 		return lerp(
 				horizontalScrollBar.getMin(),
@@ -154,6 +191,15 @@ public class ScrollPaneEx extends Region {
 				db.getMaxX() + cb[2], db.getMaxY() + cb[3] };
 	}
 
+	/**
+	 * Converts a horizontal scrollbar value into the corresponding horizontal
+	 * translation distance.
+	 *
+	 * @param hv
+	 *            The horizontal scrollbar value.
+	 * @return The horizontal translation distance corresponding to the given
+	 *         scrollbar value.
+	 */
 	public double computeTx(double hv) {
 		return -lerp(
 				currentScrollableBounds[0],
@@ -162,6 +208,15 @@ public class ScrollPaneEx extends Region {
 						horizontalScrollBar.getMax(), hv));
 	}
 
+	/**
+	 * Converts a vertical scrollbar value into the corresponding vertical
+	 * translation distance.
+	 *
+	 * @param vv
+	 *            The vertical scrollbar value.
+	 * @return The vertical translation distance corresponding to the given
+	 *         scrollbar value.
+	 */
 	public double computeTy(double vv) {
 		return -lerp(
 				currentScrollableBounds[1],
@@ -169,6 +224,15 @@ public class ScrollPaneEx extends Region {
 				norm(verticalScrollBar.getMin(), verticalScrollBar.getMax(), vv));
 	}
 
+	/**
+	 * Converts a vertical translation distance into the corresponding vertical
+	 * scrollbar value.
+	 *
+	 * @param ty
+	 *            The vertical translation distance.
+	 * @return The vertical scrollbar value corresponding to the given
+	 *         translation.
+	 */
 	public double computeVv(double ty) {
 		return lerp(
 				verticalScrollBar.getMin(),
@@ -177,22 +241,12 @@ public class ScrollPaneEx extends Region {
 						- getHeight(), -ty));
 	}
 
-	protected Pane createCanvas() {
-		Pane canvas = new Pane();
-		canvas.getChildren().add(getContentGroup());
-		return canvas;
-	}
-
 	protected Group createContentGroup() {
 		Group g = new Group();
 		g.getTransforms().add(viewportTransform);
 		g.boundsInParentProperty().addListener(
 				contentBoundsInParentChangeListener);
 		return g;
-	}
-
-	protected Group createHudGroup() {
-		return new Group();
 	}
 
 	protected Group createScrollbarGroup() {
@@ -270,7 +324,7 @@ public class ScrollPaneEx extends Region {
 							ObservableValue<? extends Number> observable,
 							Number oldValue, Number newValue) {
 						if (horizontalScrollBar.isVisible()) {
-							getCanvas().setTranslateX(
+							getScrolledPane().setTranslateX(
 									computeTx(newValue.doubleValue()));
 						}
 					}
@@ -282,7 +336,7 @@ public class ScrollPaneEx extends Region {
 							ObservableValue<? extends Number> observable,
 							Number oldValue, Number newValue) {
 						if (verticalScrollBar.isVisible()) {
-							getCanvas().setTranslateY(
+							getScrolledPane().setTranslateY(
 									computeTy(newValue.doubleValue()));
 						}
 					}
@@ -301,6 +355,22 @@ public class ScrollPaneEx extends Region {
 		return new Group(horizontalScrollBar, verticalScrollBar);
 	}
 
+	protected Pane createScrolledPane() {
+		Pane canvas = new Pane();
+		canvas.getChildren().add(getContentGroup());
+		return canvas;
+	}
+
+	/**
+	 * Returns the amount of units the given child {@link Node} exceeds the
+	 * bottom side of the viewport.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return The amount of units the given child {@link Node} exceeds the
+	 *         bottom side of the viewport.
+	 */
 	public double getBottomExcess(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return bounds.getMaxY() - getHeight();
@@ -308,13 +378,6 @@ public class ScrollPaneEx extends Region {
 
 	public Bounds getBoundsInViewport(Node child) {
 		return sceneToLocal(child.localToScene(child.getBoundsInLocal()));
-	}
-
-	public Pane getCanvas() {
-		if (canvas == null) {
-			canvas = createCanvas();
-		}
-		return canvas;
 	}
 
 	public ObjectBinding<Bounds> getContentBoundsBinding() {
@@ -332,11 +395,31 @@ public class ScrollPaneEx extends Region {
 		return horizontalScrollBar;
 	}
 
+	/**
+	 * Returns the amount of units the given child {@link Node} exceeds the left
+	 * side of the viewport.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return The amount of units the given child {@link Node} exceeds the left
+	 *         side of the viewport.
+	 */
 	public double getLeftExcess(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return -bounds.getMinX();
 	}
 
+	/**
+	 * Returns the amount of units the given child {@link Node} exceeds the
+	 * right side of the viewport.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return The amount of units the given child {@link Node} exceeds the
+	 *         right side of the viewport.
+	 */
 	public double getRightExcess(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return bounds.getMaxX() - getWidth();
@@ -353,14 +436,31 @@ public class ScrollPaneEx extends Region {
 		return scrollbarGroup;
 	}
 
+	public Pane getScrolledPane() {
+		if (scrolledPane == null) {
+			scrolledPane = createScrolledPane();
+		}
+		return scrolledPane;
+	}
+
 	public double getScrollOffsetX() {
-		return getCanvas().getTranslateX();
+		return getScrolledPane().getTranslateX();
 	}
 
 	public double getScrollOffsetY() {
-		return getCanvas().getTranslateY();
+		return getScrolledPane().getTranslateY();
 	}
 
+	/**
+	 * Returns the amount of units the given child {@link Node} exceeds the top
+	 * side of the viewport.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return The amount of units the given child {@link Node} exceeds the top
+	 *         side of the viewport.
+	 */
 	public double getTopExcess(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return -bounds.getMinY();
@@ -370,16 +470,45 @@ public class ScrollPaneEx extends Region {
 		return verticalScrollBar;
 	}
 
+	/**
+	 * Returns the transformation that is applied to the
+	 * {@link #getContentGroup()}.
+	 *
+	 * @return The transformation that is applied to the
+	 *         {@link #getContentGroup()}.
+	 */
 	public Affine getViewportTransform() {
 		return viewportTransform;
 	}
 
+	/**
+	 * Returns <code>true</code> when the given direct or indirect child
+	 * {@link Node} is fully visible, i.e. does not exceed the viewport in any
+	 * direction. Otherwise returns <code>false</code>.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return <code>true</code> when the given child {@link Node} is fully
+	 *         visible, otherwise <code>false</code>.
+	 */
 	public boolean isFullyVisible(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return bounds.getMinX() >= 0 && bounds.getMaxX() <= getWidth()
 				&& bounds.getMinY() >= 0 && bounds.getMaxY() <= getHeight();
 	}
 
+	/**
+	 * Returns <code>true</code> when the given direct or indirect child
+	 * {@link Node} is visible, i.e. does not exceed the viewport in all
+	 * directions. Otherwise returns <code>false</code>.
+	 *
+	 * @param child
+	 *            A direct or indirect child {@link Node} of this
+	 *            {@link ScrollPaneEx}.
+	 * @return <code>true</code> when the given child {@link Node} is fully
+	 *         visible, otherwise <code>false</code>.
+	 */
 	public boolean isVisible(Node child) {
 		Bounds bounds = getBoundsInViewport(child);
 		return bounds.getMaxX() >= 0 && bounds.getMinX() <= getWidth()
@@ -542,7 +671,7 @@ public class ScrollPaneEx extends Region {
 							+ horizontalScrollBar.getMin() + ";"
 							+ horizontalScrollBar.getMax() + "]");
 		}
-		getCanvas().setTranslateX(scrollOffsetX);
+		getScrolledPane().setTranslateX(scrollOffsetX);
 	}
 
 	public void setScrollOffsetY(double scrollOffsetY) {
@@ -554,7 +683,7 @@ public class ScrollPaneEx extends Region {
 							+ verticalScrollBar.getMin() + ";"
 							+ verticalScrollBar.getMax() + "]");
 		}
-		getCanvas().setTranslateY(scrollOffsetY);
+		getScrolledPane().setTranslateY(scrollOffsetY);
 	}
 
 	public void setViewportTransform(Affine tx) {
@@ -565,6 +694,7 @@ public class ScrollPaneEx extends Region {
 		viewportTransform.setTx(tx.getTx());
 		viewportTransform.setTy(tx.getTy());
 		updateScrollbars();
+		// update bounds
 		contentBoundsBinding.invalidate();
 		scrollableBoundsBinding.invalidate();
 	}
@@ -603,8 +733,10 @@ public class ScrollPaneEx extends Region {
 
 		// compute scrollbar values from canvas translation (in case the
 		// scrollbar values are incorrect)
-		horizontalScrollBar.setValue(computeHv(getCanvas().getTranslateX()));
-		verticalScrollBar.setValue(computeVv(getCanvas().getTranslateY()));
+		horizontalScrollBar.setValue(computeHv(getScrolledPane()
+				.getTranslateX()));
+		verticalScrollBar
+				.setValue(computeVv(getScrolledPane().getTranslateY()));
 	}
 
 }

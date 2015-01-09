@@ -56,11 +56,11 @@ public class ScrollPaneExSnippet extends AbstractFXSnippet {
 
 		// translate to top-left most content node
 		// TODO: implement ScrollPaneEx#reveal(Node);
-		Bounds canvasBounds = scrollPane.getCanvas().getBoundsInLocal();
+		Bounds canvasBounds = scrollPane.getScrolledPane().getBoundsInLocal();
 		double minx = canvasBounds.getMinX();
 		double miny = canvasBounds.getMinY();
-		scrollPane.getCanvas().setTranslateX(-minx);
-		scrollPane.getCanvas().setTranslateY(-miny);
+		scrollPane.getScrolledPane().setTranslateX(-minx);
+		scrollPane.getScrolledPane().setTranslateY(-miny);
 
 		scrollPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override

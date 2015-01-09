@@ -44,7 +44,7 @@ public class FXViewer extends AbstractViewer<Node> {
 
 		gridLayer = new FXGridLayer();
 		scrollPane.getContentGroup().getChildren().addAll(rootVisual);
-		scrollPane.getCanvas().getChildren().add(gridLayer);
+		scrollPane.getScrolledPane().getChildren().add(gridLayer);
 		gridLayer.toBack();
 
 		// bind grid layer size

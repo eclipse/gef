@@ -77,9 +77,9 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		viewportModel.addPropertyChangeListener(this);
 		getScrollPane().widthProperty().addListener(widthListener);
 		getScrollPane().heightProperty().addListener(heightListener);
-		getScrollPane().getCanvas().translateXProperty()
+		getScrollPane().getScrolledPane().translateXProperty()
 				.addListener(translateXListener);
-		getScrollPane().getCanvas().translateYProperty()
+		getScrollPane().getScrolledPane().translateYProperty()
 				.addListener(translateYListener);
 	}
 
@@ -100,9 +100,9 @@ public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		viewportModel.removePropertyChangeListener(this);
 		getScrollPane().widthProperty().removeListener(widthListener);
 		getScrollPane().heightProperty().removeListener(heightListener);
-		getScrollPane().getCanvas().translateXProperty()
+		getScrollPane().getScrolledPane().translateXProperty()
 				.removeListener(translateXListener);
-		getScrollPane().getCanvas().translateYProperty()
+		getScrollPane().getScrolledPane().translateYProperty()
 				.removeListener(translateYListener);
 		super.deactivate();
 	}
