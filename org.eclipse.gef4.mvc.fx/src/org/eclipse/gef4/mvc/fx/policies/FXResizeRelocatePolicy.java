@@ -55,15 +55,14 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		return new Dimension(snapOffsetX, snapOffsetY);
 	}
 
-	private FXResizeRelocateNodeOperation rrOperation;
-	private ForwardUndoCompositeOperation fwdOperation;
+	protected FXResizeRelocateNodeOperation resizeRelocateOperation;
+	protected ForwardUndoCompositeOperation forwardUndoOperation;
 
 	// can be overridden by subclasses to add an operation for model changes
-	// TODO: pull up to IPolicy interface
 	@Override
 	public IUndoableOperation commit() {
-		IUndoableOperation commit = fwdOperation;
-		rrOperation = null;
+		IUndoableOperation commit = forwardUndoOperation;
+		resizeRelocateOperation = null;
 		return commit;
 	}
 
@@ -83,11 +82,13 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 	@Override
 	public void init() {
 		// create "empty" operation
-		rrOperation = new FXResizeRelocateNodeOperation(getHost().getVisual());
+		resizeRelocateOperation = new FXResizeRelocateNodeOperation(getHost()
+				.getVisual());
 		FXRevealOperation revealOperation = new FXRevealOperation(getHost());
-		fwdOperation = new ForwardUndoCompositeOperation(rrOperation.getLabel());
-		fwdOperation.add(rrOperation);
-		fwdOperation.add(revealOperation);
+		forwardUndoOperation = new ForwardUndoCompositeOperation(
+				resizeRelocateOperation.getLabel());
+		forwardUndoOperation.add(resizeRelocateOperation);
+		forwardUndoOperation.add(revealOperation);
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
@@ -102,33 +103,40 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 		// ensure visual is not resized below threshold
 		if (resizable) {
-			if (rrOperation.getOldSize().width + layoutDw < getMinimumWidth()) {
-				layoutDw = getMinimumWidth() - rrOperation.getOldSize().width;
+			if (resizeRelocateOperation.getOldSize().width + layoutDw < getMinimumWidth()) {
+				layoutDw = getMinimumWidth()
+						- resizeRelocateOperation.getOldSize().width;
 			}
-			if (rrOperation.getOldSize().height + layoutDh < getMinimumHeight()) {
-				layoutDh = getMinimumHeight() - rrOperation.getOldSize().height;
+			if (resizeRelocateOperation.getOldSize().height + layoutDh < getMinimumHeight()) {
+				layoutDh = getMinimumHeight()
+						- resizeRelocateOperation.getOldSize().height;
 			}
 		}
 
 		// snap-to-grid
-		Point start = rrOperation.getOldLocation();
+		Point start = resizeRelocateOperation.getOldLocation();
 		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
 				.getViewer().<GridModel> getAdapter(GridModel.class), start.x
 				+ layoutDx, start.y + layoutDy, 0.5, 0.5);
 		layoutDx = layoutDx - snapToGridOffset.width;
 		layoutDy = layoutDy - snapToGridOffset.height;
 
-		// update operation
-		rrOperation.setDx(layoutDx);
-		rrOperation.setDy(layoutDy);
-		rrOperation.setDw(layoutDw);
-		rrOperation.setDh(layoutDh);
+		updateOperation(layoutDx, layoutDy, layoutDw, layoutDh);
 
+		// locally execute operation
 		try {
-			// execute locally
-			fwdOperation.execute(null, null);
+			forwardUndoOperation.execute(null, null);
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
 	}
+
+	protected void updateOperation(double layoutDx, double layoutDy,
+			double layoutDw, double layoutDh) {
+		resizeRelocateOperation.setDx(layoutDx);
+		resizeRelocateOperation.setDy(layoutDy);
+		resizeRelocateOperation.setDw(layoutDw);
+		resizeRelocateOperation.setDh(layoutDh);
+	}
+
 }
