@@ -273,6 +273,17 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 				// An EditPart for this model doesn't exist yet. Create and
 				// insert one.
 				contentPart = findOrCreatePartFor(content);
+				if (contentPart.getParent() != null) {
+					// TODO: Up to now a model element may only be controlled by
+					// a single content part; unless we differentiate content
+					// elements by context (which is not covered by the current
+					// content part map implementation) it is an illegal state
+					// if we locate a content part, which is already bound to a
+					// parent and whose content is equal to the one we are
+					// processing here.
+					throw new IllegalStateException(
+							"Located a ContentPart which controls the same (or an equal) content element but is already bound to a parent. A content element may only be controlled by a single ContentPart.");
+				}
 				getHost().addChild(contentPart, i);
 			}
 		}
