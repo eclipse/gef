@@ -12,25 +12,19 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
-import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.graph.Edge;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
-import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
-public class GraphLayoutContext extends AbstractLayoutContext implements
-		IPropertyChangeNotifier {
+public class GraphLayoutContext extends AbstractLayoutContext {
 
 	private Graph g;
 	private final Map<Node, GraphNodeLayout> nodeMap = new HashMap<Node, GraphNodeLayout>();
@@ -39,9 +33,6 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 	// TODO: We have to expose a hook for flushChanges() to be able to do
 	// something when layouting finishes
 	private final List<Runnable> onFlushChanges = new ArrayList<Runnable>();
-
-	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	public GraphLayoutContext(Graph graph) {
 		setGraph(graph);
@@ -52,11 +43,6 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 			throw new IllegalArgumentException("Runnable may not be null.");
 		}
 		onFlushChanges.add(runnable);
-	}
-
-	@Override
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
 	}
 
 	@Override
@@ -109,46 +95,17 @@ public class GraphLayoutContext extends AbstractLayoutContext implements
 		return nodes.toArray(new NodeLayout[] {});
 	}
 
-	@Override
-	public Object getProperty(String name) {
-		return pss.getProperty(name);
-	}
-
 	public void removeOnFlushChanges(Runnable runnable) {
 		if (!onFlushChanges.contains(runnable)) {
-			new IllegalArgumentException(
-					"Given Runnable is not contained in the list.")
-					.printStackTrace();
+			new IllegalArgumentException("Given Runnable is not contained in the list.").printStackTrace();
 		}
 		onFlushChanges.remove(runnable);
-	}
-
-	@Override
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
 	}
 
 	public void setGraph(Graph graph) {
 		this.g = graph;
 		transferNodes();
 		transferEdges();
-	}
-
-	@Override
-	public void setProperty(String name, Object value) {
-		Object oldValue = pss.getProperty(name);
-		pss.setProperty(name, value);
-		if (oldValue != value && (value == null || !value.equals(oldValue))) {
-			// send notification
-			if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
-				fireBoundsChangedEvent();
-			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY
-					.equals(name)) {
-				fireBackgroundEnableChangedEvent();
-			} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
-				firePruningEnableChangedEvent();
-			}
-		}
 	}
 
 	private void transferEdges() {

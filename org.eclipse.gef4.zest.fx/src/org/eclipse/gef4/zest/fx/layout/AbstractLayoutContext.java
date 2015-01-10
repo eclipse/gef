@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.fx.layout;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.gef4.common.properties.PropertyStoreSupport;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
+import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.ConnectionLayout;
 import org.eclipse.gef4.layout.interfaces.ContextListener;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
@@ -26,16 +30,20 @@ import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.layout.interfaces.PruningListener;
 import org.eclipse.gef4.layout.interfaces.SubgraphLayout;
 
+// TODO: replace fire* methods with property change mechanisms
 public abstract class AbstractLayoutContext implements LayoutContext {
 
 	private LayoutListenerSupport lls = new LayoutListenerSupport(this);
-	private LayoutAlgorithm dynamicAlgorithm = null;
-	private LayoutAlgorithm staticAlgorithm = null;
+	private LayoutAlgorithm dynamicLayoutAlgorithm = null;
+	private LayoutAlgorithm staticLayoutAlgorithm = null;
 	private final List<NodeLayout> layoutNodes = new ArrayList<NodeLayout>();
 	private final List<ConnectionLayout> layoutEdges = new ArrayList<ConnectionLayout>();
 	private final List<SubgraphLayout> subgraphs = new ArrayList<SubgraphLayout>();
 
 	private boolean flushChangesInvocation = false;
+
+	protected PropertyStoreSupport pss = new PropertyStoreSupport(this);
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	@Override
 	public void addContextListener(ContextListener listener) {
@@ -77,21 +85,26 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+
+	@Override
 	public void addPruningListener(PruningListener listener) {
 		lls.addPruningListener(listener);
 	}
 
 	@Override
 	public void applyDynamicLayout(boolean clear) {
-		if (dynamicAlgorithm != null) {
-			dynamicAlgorithm.applyLayout(clear);
+		if (dynamicLayoutAlgorithm != null) {
+			dynamicLayoutAlgorithm.applyLayout(clear);
 		}
 	}
 
 	@Override
 	public void applyStaticLayout(boolean clear) {
-		if (staticAlgorithm != null) {
-			staticAlgorithm.applyLayout(clear);
+		if (staticLayoutAlgorithm != null) {
+			staticLayoutAlgorithm.applyLayout(clear);
 		}
 	}
 
@@ -209,19 +222,16 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
-	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1,
-			EntityLayout layoutEntity2) {
+	public ConnectionLayout[] getConnections(EntityLayout layoutEntity1, EntityLayout layoutEntity2) {
 		List<ConnectionLayout> connections = new ArrayList<ConnectionLayout>();
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity1)
-				.getOutgoingConnections()) {
+		for (ConnectionLayout c : ((NodeLayout) layoutEntity1).getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity2) {
 				connections.add(c);
 			}
 		}
 
-		for (ConnectionLayout c : ((NodeLayout) layoutEntity2)
-				.getOutgoingConnections()) {
+		for (ConnectionLayout c : ((NodeLayout) layoutEntity2).getOutgoingConnections()) {
 			if (c.getTarget() == layoutEntity1) {
 				connections.add(c);
 			}
@@ -232,7 +242,7 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 
 	@Override
 	public LayoutAlgorithm getDynamicLayoutAlgorithm() {
-		return dynamicAlgorithm;
+		return dynamicLayoutAlgorithm;
 	}
 
 	@Override
@@ -241,8 +251,13 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
+	public Object getProperty(String name) {
+		return pss.getProperty(name);
+	}
+
+	@Override
 	public LayoutAlgorithm getStaticLayoutAlgorithm() {
-		return staticAlgorithm;
+		return staticLayoutAlgorithm;
 	}
 
 	@Override
@@ -290,20 +305,49 @@ public abstract class AbstractLayoutContext implements LayoutContext {
 	}
 
 	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
+	}
+
+	@Override
 	public void removePruningListener(PruningListener listener) {
 		lls.removePruningListener(listener);
 	}
 
 	@Override
-	public void setDynamicLayoutAlgorithm(LayoutAlgorithm algorithm) {
-		dynamicAlgorithm = algorithm;
-		dynamicAlgorithm.setLayoutContext(this);
+	public void setDynamicLayoutAlgorithm(LayoutAlgorithm dynamicLayoutAlgorithm) {
+		LayoutAlgorithm oldDynamicLayoutAlgorithm = this.dynamicLayoutAlgorithm;
+		if (oldDynamicLayoutAlgorithm != dynamicLayoutAlgorithm) {
+			this.dynamicLayoutAlgorithm = dynamicLayoutAlgorithm;
+			dynamicLayoutAlgorithm.setLayoutContext(this);
+			pcs.firePropertyChange(DYNAMIC_LAYOUT_ALGORITHM_PROPERTY, oldDynamicLayoutAlgorithm, dynamicLayoutAlgorithm);
+		}
 	}
 
 	@Override
-	public void setStaticLayoutAlgorithm(LayoutAlgorithm fullLayoutAlgorithm) {
-		this.staticAlgorithm = fullLayoutAlgorithm;
-		fullLayoutAlgorithm.setLayoutContext(this);
+	public void setProperty(String name, Object value) {
+		Object oldValue = pss.getProperty(name);
+		pss.setProperty(name, value);
+		if (oldValue != value && (value == null || !value.equals(oldValue))) {
+			// send notification
+			if (LayoutProperties.BOUNDS_PROPERTY.equals(name)) {
+				fireBoundsChangedEvent();
+			} else if (LayoutProperties.DYNAMIC_LAYOUT_ENABLED_PROPERTY.equals(name)) {
+				fireBackgroundEnableChangedEvent();
+			} else if (LayoutProperties.PRUNING_ENABLED_PROPERTY.equals(name)) {
+				firePruningEnableChangedEvent();
+			}
+		}
+	}
+
+	@Override
+	public void setStaticLayoutAlgorithm(LayoutAlgorithm staticLayoutAlgorithm) {
+		LayoutAlgorithm oldStaticLayoutAlgorithm = this.staticLayoutAlgorithm;
+		if (oldStaticLayoutAlgorithm != staticLayoutAlgorithm) {
+			this.staticLayoutAlgorithm = staticLayoutAlgorithm;
+			staticLayoutAlgorithm.setLayoutContext(this);
+			pcs.firePropertyChange(STATIC_LAYOUT_ALGORITHM_PROPERTY, oldStaticLayoutAlgorithm, staticLayoutAlgorithm);
+		}
 	}
 
 }

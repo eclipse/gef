@@ -49,15 +49,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 			Circle n2 = node(5, -15);
 			Circle n3 = node(15, -25);
 			Circle n4 = node(20, 5);
-			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3),
-					edge(n3, n4), edge(n1, n4), n0, n1, n2, n3, n4);
+			getChildren().addAll(edge(n0, n1), edge(n1, n2), edge(n2, n3), edge(n3, n4), edge(n1, n4), n0, n1, n2, n3,
+					n4);
 			setScaleX(0.5);
 			setScaleY(0.5);
 		}
 
 		private Node edge(Circle n, Circle m) {
-			Line line = new Line(n.getCenterX(), n.getCenterY(),
-					m.getCenterX(), m.getCenterY());
+			Line line = new Line(n.getCenterX(), n.getCenterY(), m.getCenterX(), m.getCenterY());
 			line.setStroke(Color.BLACK);
 			return line;
 		}
@@ -86,6 +85,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	protected Group createVisual() {
 		// container set-up
 		final Group group = new Group();
+		group.setManaged(false);
 		group.setAutoSizeChildren(false);
 		final HBox hbox = new HBox();
 		hbox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -97,15 +97,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		group.getChildren().addAll(box, vbox);
 
 		// box, label, image
-		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT,
-				Arrays.asList(new Stop(0, new Color(1, 1, 1, 1)))));
+		box.setFill(new LinearGradient(0, 0, 1, 1, true, CycleMethod.REFLECT, Arrays.asList(new Stop(0, new Color(1, 1,
+				1, 1)))));
 		box.setStroke(new Color(0, 0, 0, 1));
 		text.setTextOrigin(VPos.TOP);
 		text.setText(DEFAULT_LABEL);
 		ChangeListener<Bounds> boundsChangeListener = new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> observable,
-					Bounds oldBounds, Bounds newBounds) {
+			public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds newBounds) {
 				// TODO: find a replacement for these calls
 				hbox.autosize();
 				decoGroup.layout();
@@ -120,14 +119,12 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 		// layout
 		vbox.layoutBoundsProperty().addListener(new ChangeListener<Bounds>() {
 			@Override
-			public void changed(ObservableValue<? extends Bounds> arg0,
-					Bounds arg1, Bounds arg2) {
+			public void changed(ObservableValue<? extends Bounds> arg0, Bounds arg1, Bounds arg2) {
 				vbox.setTranslateX(padding);
 				vbox.setTranslateY(padding);
 				box.setWidth(vbox.getWidth() + 2 * padding);
 				box.setHeight(vbox.getHeight() + 2 * padding);
-				text.setTranslateX(vbox.getWidth() / 2
-						- text.getLayoutBounds().getWidth() / 2);
+				text.setTranslateX(vbox.getWidth() / 2 - text.getLayoutBounds().getWidth() / 2);
 			}
 		});
 
@@ -156,8 +153,7 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 
 		// set label
 		Object label = attrs.get(Attr.Key.LABEL.toString());
-		String str = label instanceof String ? (String) label
-				: label == null ? DEFAULT_LABEL : label.toString();
+		String str = label instanceof String ? (String) label : label == null ? DEFAULT_LABEL : label.toString();
 		text.setText(str);
 
 		// set image
@@ -192,17 +188,14 @@ public class NodeContentPart extends AbstractFXContentPart<Group> {
 	@Override
 	protected void registerAtVisualPartMap(IViewer<Node> viewer, Group visual) {
 		super.registerAtVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
 		visualPartMap.put(box, this);
 	}
 
 	@Override
-	protected void unregisterFromVisualPartMap(IViewer<Node> viewer,
-			Group visual) {
+	protected void unregisterFromVisualPartMap(IViewer<Node> viewer, Group visual) {
 		super.unregisterFromVisualPartMap(viewer, visual);
-		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer()
-				.getVisualPartMap();
+		Map<Node, IVisualPart<Node, ? extends Node>> visualPartMap = getViewer().getVisualPartMap();
 		visualPartMap.remove(box);
 	}
 

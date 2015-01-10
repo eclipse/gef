@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.gef4.common.properties.IPropertyChangeNotifier;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
 
 public class LayoutModel implements IPropertyChangeNotifier {
@@ -23,6 +24,7 @@ public class LayoutModel implements IPropertyChangeNotifier {
 	public static final String LAYOUT_CONTEXT_PROPERTY = "layoutContext";
 
 	private LayoutContext layoutContext;
+
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	@Override
@@ -42,10 +44,19 @@ public class LayoutModel implements IPropertyChangeNotifier {
 	public void setLayoutContext(LayoutContext context) {
 		LayoutContext oldContext = layoutContext;
 		layoutContext = context;
+
+		// in case new context does not specify an algorithm, transfer old
+		// context (or set default, if no context was set before)
+		if (context.getStaticLayoutAlgorithm() == null) {
+			if (oldContext != null && oldContext.getStaticLayoutAlgorithm() != null) {
+				context.setStaticLayoutAlgorithm(oldContext.getStaticLayoutAlgorithm());
+			} else {
+				context.setStaticLayoutAlgorithm(new SpringLayoutAlgorithm());
+			}
+		}
+
 		if (context != oldContext) {
-			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY, oldContext,
-					layoutContext);
+			pcs.firePropertyChange(LAYOUT_CONTEXT_PROPERTY, oldContext, layoutContext);
 		}
 	}
-
 }
