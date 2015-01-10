@@ -15,7 +15,7 @@ package org.eclipse.gef4.zest.examples.graph;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef4.zest.examples.graph.parts.ZestFxExampleFeedbackPartFactory;
+import org.eclipse.gef4.zest.examples.graph.parts.ZestGraphExampleFeedbackPartFactory;
 import org.eclipse.gef4.zest.fx.ZestFxModule;
 
 import com.google.inject.TypeLiteral;
@@ -25,7 +25,7 @@ public class ZestGraphExampleModule extends ZestFxModule {
 	@Override
 	protected void bindIFeedbackPartFactory() {
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).toInstance(new ZestFxExampleFeedbackPartFactory());
+		}).toInstance(new ZestGraphExampleFeedbackPartFactory());
 	}
 
 }

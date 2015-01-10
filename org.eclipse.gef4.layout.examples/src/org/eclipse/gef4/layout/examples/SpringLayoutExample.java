@@ -25,8 +25,9 @@ import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef4.zest.examples.AbstractZestExample;
 
-public class SpringLayoutExample extends AbstractLayoutExample {
+public class SpringLayoutExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);

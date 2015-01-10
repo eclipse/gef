@@ -20,8 +20,9 @@ import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef4.zest.examples.AbstractZestExample;
 
-public class SugiyamaLayoutExample extends AbstractLayoutExample {
+public class SugiyamaLayoutExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);

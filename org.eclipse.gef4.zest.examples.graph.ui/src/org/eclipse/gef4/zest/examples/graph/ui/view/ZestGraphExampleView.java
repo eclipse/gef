@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.gef4.zest.examples.graph.ui.view;
 
-import org.eclipse.gef4.zest.examples.graph.ZestGraphExampleApplication;
+import org.eclipse.gef4.zest.examples.graph.ZestGraphExample;
 import org.eclipse.gef4.zest.examples.graph.ZestGraphExampleModule;
 import org.eclipse.gef4.zest.examples.graph.ui.ZestGraphExampleUiModule;
 import org.eclipse.gef4.zest.fx.ui.view.ZestFxUiView;
@@ -24,7 +24,7 @@ public class ZestGraphExampleView extends ZestFxUiView {
 
 	public ZestGraphExampleView() {
 		super(Guice.createInjector(Modules.override(new ZestGraphExampleModule()).with(new ZestGraphExampleUiModule())));
-		setGraph(ZestGraphExampleApplication.DEFAULT_GRAPH);
+		setGraph(ZestGraphExample.createDefaultGraph());
 	}
 
 }

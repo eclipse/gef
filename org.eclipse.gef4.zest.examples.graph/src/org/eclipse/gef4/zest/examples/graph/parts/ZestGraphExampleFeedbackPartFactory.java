@@ -18,7 +18,7 @@ import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
-public class ZestFxExampleFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
+public class ZestGraphExampleFeedbackPartFactory extends FXDefaultFeedbackPartFactory {
 
 	@Override
 	protected IFeedbackPart<Node, ? extends Node> createLinkFeedbackPart(IVisualPart<Node, ? extends Node> anchored,

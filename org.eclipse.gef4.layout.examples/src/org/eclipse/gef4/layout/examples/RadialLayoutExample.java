@@ -25,8 +25,9 @@ import org.eclipse.gef4.graph.Graph.Attr.Key;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef4.zest.examples.AbstractZestExample;
 
-public class RadialLayoutExample extends AbstractLayoutExample {
+public class RadialLayoutExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);

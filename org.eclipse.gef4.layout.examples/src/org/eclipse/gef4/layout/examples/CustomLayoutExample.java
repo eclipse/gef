@@ -22,6 +22,7 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.EntityLayout;
 import org.eclipse.gef4.layout.interfaces.LayoutContext;
+import org.eclipse.gef4.zest.examples.AbstractZestExample;
 
 /**
  * This snippet shows how to create a custom layout. All the work is done in the
@@ -31,7 +32,7 @@ import org.eclipse.gef4.layout.interfaces.LayoutContext;
  * @authoer anyssen
  *
  */
-public class CustomLayoutExample extends AbstractLayoutExample {
+public class CustomLayoutExample extends AbstractZestExample {
 
 	public static void main(String[] args) {
 		Application.launch(args);
