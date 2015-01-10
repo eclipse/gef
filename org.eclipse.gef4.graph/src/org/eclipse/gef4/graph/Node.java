@@ -133,8 +133,7 @@ public final class Node {
 		Set<Node> predecessors = new HashSet<Node>();
 		predecessors.addAll(getLocalPredecessorNodes());
 		if (graph.getNestingNode() != null) {
-			predecessors
-					.addAll(graph.getNestingNode().getAllPredecessorNodes());
+			predecessors.addAll(graph.getNestingNode().getAllPredecessorNodes());
 		}
 		return predecessors;
 	}
@@ -272,7 +271,19 @@ public final class Node {
 
 	@Override
 	public String toString() {
-		return String.format("Node {%s attrs}", attrs.size()); //$NON-NLS-1$
+		StringBuilder sb = new StringBuilder();
+		sb.append("Node {");
+		boolean separator = false;
+		for (Object attrKey : attrs.keySet()) {
+			if (separator) {
+				sb.append(", ");
+			} else {
+				separator = true;
+			}
+			sb.append(attrKey.toString() + " : " + attrs.get(attrKey));
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 
 }
