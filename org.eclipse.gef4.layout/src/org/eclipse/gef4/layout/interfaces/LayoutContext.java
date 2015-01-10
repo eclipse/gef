@@ -19,6 +19,9 @@ import org.eclipse.gef4.layout.LayoutAlgorithm;
  */
 public interface LayoutContext extends IPropertyStore {
 
+	public static final String STATIC_LAYOUT_ALGORITHM_PROPERTY = "staticLayoutAlgorithm";
+	public static final String DYNAMIC_LAYOUT_ALGORITHM_PROPERTY = "dynamicLayoutAlgorithm";
+
 	/**
 	 * Applies the background layout algorithm of this LayoutContext. The clean
 	 * flag is passed-in to the background layout algorithm to indicate whether
