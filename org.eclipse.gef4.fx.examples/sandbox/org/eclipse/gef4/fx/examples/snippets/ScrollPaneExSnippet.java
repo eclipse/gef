@@ -31,7 +31,7 @@ import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 
-public class ScrollPaneExSnippet extends AbstractFXSnippet {
+public class ScrollPaneExSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
 		launch();

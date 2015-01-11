@@ -53,7 +53,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.internal.geometry.utils.PrecisionUtils;
 
-public class FXChopBoxELetterSnippet extends AbstractFXSnippet {
+public class FXChopBoxELetterSnippet extends AbstractFXExample {
 
 	private static class ComputationStrategy extends
 			FXChopBoxAnchor.ComputationStrategy.Impl {

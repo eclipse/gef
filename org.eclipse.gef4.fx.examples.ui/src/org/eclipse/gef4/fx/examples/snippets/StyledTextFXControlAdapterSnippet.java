@@ -34,7 +34,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class StyledTextFXControlAdapterSnippet extends AbstractFXUISnippet {
+public class StyledTextFXControlAdapterSnippet extends AbstractFXUIExamples {
 
 	public static void main(String[] args) {
 		new StyledTextFXControlAdapterSnippet();

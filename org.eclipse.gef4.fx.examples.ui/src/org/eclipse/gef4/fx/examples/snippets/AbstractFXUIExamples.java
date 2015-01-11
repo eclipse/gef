@@ -20,12 +20,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class AbstractFXUISnippet {
+public abstract class AbstractFXUIExamples {
 
 	protected Shell shell;
 	protected FXCanvasEx canvas;
 
-	public AbstractFXUISnippet() {
+	public AbstractFXUIExamples() {
 		Display display = new Display();
 		shell = new Shell(display);
 		shell.setLayout(new FillLayout());

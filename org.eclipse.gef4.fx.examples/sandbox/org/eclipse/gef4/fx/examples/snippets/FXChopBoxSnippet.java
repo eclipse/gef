@@ -25,7 +25,7 @@ import javafx.scene.shape.Rectangle;
 import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
-public class FXChopBoxSnippet extends AbstractFXSnippet {
+public class FXChopBoxSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
 		launch();

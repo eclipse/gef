@@ -21,7 +21,7 @@ import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.fx.nodes.IFXDecoration;
 import org.eclipse.gef4.geometry.planar.Point;
 
-public class FXConnectionSnippet extends AbstractFXSnippet {
+public class FXConnectionSnippet extends AbstractFXExample {
 
 	public static class ArrowHead extends Polyline implements IFXDecoration {
 		public ArrowHead() {

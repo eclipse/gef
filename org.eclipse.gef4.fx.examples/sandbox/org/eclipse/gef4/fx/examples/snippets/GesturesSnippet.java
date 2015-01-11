@@ -10,7 +10,7 @@ import javafx.scene.input.SwipeEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.VBox;
 
-public class GesturesSnippet extends AbstractFXSnippet {
+public class GesturesSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
 		launch();

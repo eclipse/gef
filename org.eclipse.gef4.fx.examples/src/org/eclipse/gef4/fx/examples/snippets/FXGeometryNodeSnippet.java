@@ -33,7 +33,7 @@ import org.eclipse.gef4.geometry.planar.CurvedPolygon;
 import org.eclipse.gef4.geometry.planar.Line;
 import org.eclipse.gef4.geometry.planar.PolyBezier;
 
-public class FXGeometryNodeSnippet extends AbstractFXSnippet {
+public class FXGeometryNodeSnippet extends AbstractFXExample {
 
 	protected static CurvedPolygon createEShapeGeometry() {
 		final List<BezierCurve> segments = new ArrayList<BezierCurve>();

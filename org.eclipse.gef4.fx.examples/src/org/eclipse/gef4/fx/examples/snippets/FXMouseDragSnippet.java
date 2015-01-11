@@ -47,7 +47,7 @@ import org.eclipse.gef4.fx.anchors.FXChopBoxAnchor;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 
-public class FXMouseDragSnippet extends AbstractFXSnippet {
+public class FXMouseDragSnippet extends AbstractFXExample {
 
 	public static void main(String[] args) {
 		launch();
