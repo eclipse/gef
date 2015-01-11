@@ -5,6 +5,16 @@ Bundle-SymbolicName: org.eclipse.gef4.mvc.examples;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
+ com.google.inject;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.core.runtime,
+ org.eclipse.core.commands,
+ org.eclipse.gef4.common;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry;bundle-version="0.1.0",
+ org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.mvc;bundle-version="0.1.0",
+ org.eclipse.gef4.mvc.fx;bundle-version="0.1.0"
 Import-Package: javafx.animation,
  javafx.application,
  javafx.beans,
@@ -13,7 +23,6 @@ Import-Package: javafx.animation,
  javafx.beans.value,
  javafx.collections,
  javafx.concurrent,
- javafx.embed.swt,
  javafx.event,
  javafx.geometry,
  javafx.scene,
@@ -31,5 +40,7 @@ Import-Package: javafx.animation,
  javafx.scene.transform,
  javafx.scene.web,
  javafx.stage,
- javafx.util
+ javafx.util,
+ javax.annotation
 Bundle-Vendor: Eclipse GEF
+Export-Package: org.eclipse.gef4.mvc.examples;x-internal:=true

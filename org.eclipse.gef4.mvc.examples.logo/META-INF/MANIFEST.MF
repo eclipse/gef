@@ -17,7 +17,8 @@ Require-Bundle: com.google.guava;bundle-version="[15.0.0,16.0.0)",
  org.eclipse.gef4.geometry.convert.fx;bundle-version="0.1.0",
  org.eclipse.gef4.fx;bundle-version="0.1.0",
  org.eclipse.gef4.mvc;bundle-version="0.1.0",
- org.eclipse.gef4.mvc.fx;bundle-version="0.1.0"
+ org.eclipse.gef4.mvc.fx;bundle-version="0.1.0",
+ org.eclipse.gef4.mvc.examples
 Import-Package: javafx.animation,
  javafx.application,
  javafx.beans,
