@@ -23,6 +23,10 @@ import com.google.inject.Module;
 
 public class MvcLogoExample extends AbstractMvcExample {
 
+	public static List<FXGeometricModel> createDefaultContents() {
+		return Collections.singletonList(new FXGeometricModel());
+	}
+
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
@@ -33,7 +37,7 @@ public class MvcLogoExample extends AbstractMvcExample {
 
 	@Override
 	protected List<? extends Object> createContents() {
-		return Collections.singletonList(new FXGeometricModel());
+		return createDefaultContents();
 	}
 
 	@Override

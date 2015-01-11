@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.ui.view;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.gef4.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleModule;
-import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricModel;
 import org.eclipse.gef4.mvc.examples.logo.ui.MvcLogoExampleUiModule;
 import org.eclipse.gef4.mvc.fx.ui.parts.FXView;
 
@@ -32,8 +31,8 @@ public class MvcLogoExampleView extends FXView {
 	}
 
 	@Override
-	protected List<Object> getContents() {
-		return Collections.<Object> singletonList(new FXGeometricModel());
+	protected List<? extends Object> getContents() {
+		return MvcLogoExample.createDefaultContents();
 	}
 
 }
