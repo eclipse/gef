@@ -28,6 +28,16 @@ import org.eclipse.gef4.mvc.models.ViewportModel;
 public class FXViewportBehavior extends AbstractBehavior<Node> implements
 		PropertyChangeListener {
 
+	/*
+	 * TODO: When applying the translation values stored in the ViewportModel to
+	 * the ScrollPaneEx, the values will be slightly adjusted by the
+	 * ScrollPaneEx. Therefore, the code that is applying the translation stored
+	 * in the ScrollPaneEx back to the ViewportModel has to be secure against
+	 * this adjustment. Currently, this is solved by only applying changes from
+	 * the ScrollPaneEx back to the ViewportModel when #applyViewport() is not
+	 * in progress.
+	 */
+
 	protected final Affine contentsTx = new Affine();
 	private ViewportModel viewportModel;
 	private final ChangeListener<Number> translateXListener = new ChangeListener<Number>() {

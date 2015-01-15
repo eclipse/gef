@@ -15,6 +15,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.models.ViewportModel;
 
 public class FXPanOnTypePolicy extends AbstractFXTypePolicy {
@@ -150,8 +151,13 @@ public class FXPanOnTypePolicy extends AbstractFXTypePolicy {
 		double dy = ((totalMillisUp + currentMillisUp) / 1000d) * scrollAmount
 				- ((totalMillisDown + currentMillisDown) / 1000d)
 				* scrollAmount;
-		getViewportModel().setTranslateX(initialTranslateX + dx);
-		getViewportModel().setTranslateY(initialTranslateY + dy);
+		getHost()
+				.getRoot()
+				.getViewer()
+				.getDomain()
+				.execute(
+						new FXChangeViewportOperation(getViewportModel(),
+								initialTranslateX + dx, initialTranslateY + dy));
 	}
 
 }
