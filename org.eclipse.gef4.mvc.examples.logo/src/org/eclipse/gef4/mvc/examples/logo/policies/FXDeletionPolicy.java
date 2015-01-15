@@ -19,7 +19,7 @@ import org.eclipse.gef4.mvc.operations.ClearHoverFocusSelectionOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.policies.DeletionPolicy;
 
-public class FXExampleDeletionPolicy extends DeletionPolicy<Node> {
+public class FXDeletionPolicy extends DeletionPolicy<Node> {
 
 	@Override
 	public IUndoableOperation commit() {

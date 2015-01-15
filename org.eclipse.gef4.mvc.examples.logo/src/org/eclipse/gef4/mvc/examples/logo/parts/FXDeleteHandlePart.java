@@ -24,7 +24,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXExampleDeleteHandlePart extends
+public class FXDeleteHandlePart extends
 		AbstractFXHandlePart<FXBlendImageView> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
@@ -47,13 +47,13 @@ public class FXExampleDeleteHandlePart extends
 		}
 
 		// determine center location of host visual
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keys().iterator()
-				.next();
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keys()
+				.iterator().next();
 		refreshHandleLocation(anchorage.getVisual());
 	}
 
 	protected Image getHoverImage() {
-		URL resource = FXExampleDeleteHandlePart.class.getResource(IMG_DELETE);
+		URL resource = FXDeleteHandlePart.class.getResource(IMG_DELETE);
 		if (resource == null) {
 			throw new IllegalStateException("Cannot find resource <"
 					+ IMG_DELETE + ">.");
@@ -62,7 +62,7 @@ public class FXExampleDeleteHandlePart extends
 	}
 
 	protected Image getImage() {
-		URL resource = FXExampleDeleteHandlePart.class
+		URL resource = FXDeleteHandlePart.class
 				.getResource(IMG_DELETE_DISABLED);
 		if (resource == null) {
 			throw new IllegalStateException("Cannot find resource <"
@@ -73,13 +73,13 @@ public class FXExampleDeleteHandlePart extends
 
 	protected void refreshHandleLocation(Node hostVisual) {
 		Bounds hostBounds = hostVisual.getLayoutBounds();
-		double cx = hostVisual.getLayoutX()
+		double x = hostVisual.getLayoutX()
 				+ hostVisual.getLayoutBounds().getMinX()
 				+ hostBounds.getWidth();
-		double cy = hostVisual.getLayoutY()
+		double y = hostVisual.getLayoutY()
 				+ hostVisual.getLayoutBounds().getMinY();
 		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
-				cx, cy) : hostVisual.getParent().localToScene(cx, cy);
+				x, y) : hostVisual.getParent().localToScene(x, y);
 		Point2D locationInLocal = getVisual().getParent().sceneToLocal(
 				locationInScene);
 

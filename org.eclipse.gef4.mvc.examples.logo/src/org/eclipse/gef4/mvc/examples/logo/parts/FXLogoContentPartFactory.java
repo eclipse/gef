@@ -25,7 +25,7 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class FXExampleContentPartFactory implements IContentPartFactory<Node> {
+public class FXLogoContentPartFactory implements IContentPartFactory<Node> {
 
 	@Inject
 	private Injector injector;

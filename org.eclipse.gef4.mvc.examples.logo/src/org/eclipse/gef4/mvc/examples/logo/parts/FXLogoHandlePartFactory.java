@@ -35,7 +35,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
+public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 
 	@Inject
 	private Injector injector;
@@ -86,7 +86,7 @@ public class FXExampleHandlePartFactory extends FXDefaultHandlePartFactory {
 			HoverBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
-			FXExampleDeleteHandlePart hp = new FXExampleDeleteHandlePart();
+			FXDeleteHandlePart hp = new FXDeleteHandlePart();
 			injector.injectMembers(hp);
 			handles.add(hp);
 			return handles;

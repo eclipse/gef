@@ -17,14 +17,14 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXExampleContentPartFactory;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXExampleDeleteHandlePart;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXExampleHandlePartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHandlePart;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXExampleDeleteFirstAnchorageOnClickPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXExampleDeletionPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeRelocateShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
@@ -102,7 +102,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		// deletion policy
 		adapterMapBinder.addBinding(AdapterKey.get(DeletionPolicy.class)).to(
-				FXExampleDeletionPolicy.class);
+				FXDeletionPolicy.class);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				.addBinding(
 						AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY,
 								"delete")).to(
-						FXExampleDeleteFirstAnchorageOnClickPolicy.class);
+						FXDeleteFirstAnchorageOnClickPolicy.class);
 	}
 
 	protected void bindFXGeometricCurvePartAdapters(
@@ -170,13 +170,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
-		}).toInstance(new FXExampleContentPartFactory());
+		}).toInstance(new FXLogoContentPartFactory());
 	}
 
 	@Override
 	protected void bindIHandlePartFactory() {
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).toInstance(new FXExampleHandlePartFactory());
+		}).toInstance(new FXLogoHandlePartFactory());
 	}
 
 	@Override
@@ -192,7 +192,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				binder(), FXGeometricCurvePart.class));
 
 		bindFXExampleDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
-				binder(), FXExampleDeleteHandlePart.class));
+				binder(), FXDeleteHandlePart.class));
 	}
 
 }

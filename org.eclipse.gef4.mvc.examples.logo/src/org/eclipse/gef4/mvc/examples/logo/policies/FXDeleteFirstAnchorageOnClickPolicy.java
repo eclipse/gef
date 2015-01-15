@@ -22,8 +22,7 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXExampleDeleteFirstAnchorageOnClickPolicy extends
-		AbstractFXClickPolicy {
+public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
