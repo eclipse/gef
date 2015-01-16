@@ -43,6 +43,29 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  */
 public class FXHoverBehavior extends HoverBehavior<Node> {
 
+	public static boolean isContained(
+			List<? extends IVisualPart<Node, ? extends Node>> rootParts,
+			IVisualPart<Node, ? extends Node> part) {
+		// validate arguments
+		if (part == null) {
+			return false;
+		}
+		// check root parts
+		if (rootParts == null || rootParts.isEmpty()) {
+			return false;
+		}
+		// recurse over root parts
+		for (IVisualPart<Node, ? extends Node> root : rootParts) {
+			if (root == part) {
+				return true;
+			}
+			if (isContained(root.getChildren(), part)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static final int REMOVAL_DELAY_MILLIS = 500;
 	public static final int CREATION_DELAY_MILLIS = 500;
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
@@ -137,14 +160,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * @return
 	 */
 	protected boolean isaHoverPart(IVisualPart<Node, ? extends Node> part) {
-		if (getHost() == part) {
-			return true;
-		}
-		List<IHandlePart<Node, ? extends Node>> handleParts = getHandleParts();
-		if (handleParts == null || handleParts.isEmpty() || part == null) {
-			return false;
-		}
-		return handleParts.contains(part);
+		return getHost() == part || isContained(getHandleParts(), part);
 	}
 
 	@Override
