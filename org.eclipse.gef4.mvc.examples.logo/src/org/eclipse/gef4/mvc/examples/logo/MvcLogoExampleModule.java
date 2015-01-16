@@ -17,16 +17,18 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.fx.anchors.IFXAnchor;
 import org.eclipse.gef4.geometry.planar.IGeometry;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXDeleteHandlePart;
-import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricCurvePart;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoContentPartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXLogoHandlePartFactory;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXRotateHandlePart;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeRelocateShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXRotateHostOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
@@ -117,7 +119,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				FXCreationMenuOnClickPolicy.class);
 	}
 
-	protected void bindFXExampleDeleteHandlePartAdapters(
+	protected void bindFXDeleteHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder
 				.addBinding(
@@ -168,6 +170,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				})).to(ChopBoxAnchorProvider.class);
 	}
 
+	protected void bindFXRotateHandlePartAdapters(
+			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
+				.to(FXRotateHostOnDragPolicy.class);
+	}
+
 	protected void bindIContentPartFactory() {
 		binder().bind(new TypeLiteral<IContentPartFactory<Node>>() {
 		}).toInstance(new FXLogoContentPartFactory());
@@ -185,14 +194,17 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 		bindIContentPartFactory();
 
+		// contents
 		bindFXGeometricShapePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXGeometricShapePart.class));
-
 		bindFXGeometricCurvePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXGeometricCurvePart.class));
 
-		bindFXExampleDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+		// hover handles
+		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXDeleteHandlePart.class));
+		bindFXRotateHandlePartAdapters(AdapterMaps.getAdapterMapBinder(
+				binder(), FXRotateHandlePart.class));
 	}
 
 }

@@ -37,6 +37,14 @@ public class FXRevealOperation extends AbstractOperation {
 		ty = viewportModel.getTranslateY();
 	}
 
+	public FXRevealOperation(IVisualPart<Node, ? extends Node> part,
+			double initialTranslateX, double initialTranslateY) {
+		super("Reveal");
+		this.part = part;
+		tx = initialTranslateX;
+		ty = initialTranslateY;
+	}
+
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
