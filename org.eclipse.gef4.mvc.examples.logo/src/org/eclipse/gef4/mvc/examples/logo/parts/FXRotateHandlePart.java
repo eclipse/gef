@@ -33,6 +33,7 @@ public class FXRotateHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
 
 	private boolean registered = false;
 	private final PropertyChangeListener parentAnchoragesChangeListener = new PropertyChangeListener() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (IVisualPart.ANCHORAGES_PROPERTY.equals(evt.getPropertyName())) {
