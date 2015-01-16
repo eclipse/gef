@@ -11,24 +11,38 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 
 import org.eclipse.gef4.fx.nodes.FXBlendImageView;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXDeleteHandlePart extends
-		AbstractFXHandlePart<FXBlendImageView> {
+public class FXDeleteHandlePart extends AbstractFXHandlePart<FXBlendImageView> {
 
 	public static final String IMG_DELETE = "/delete_obj.gif";
 	public static final String IMG_DELETE_DISABLED = "/delete_obj_disabled.gif";
+
+	private boolean registered = false;
+	private final PropertyChangeListener parentAnchoragesChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (IVisualPart.ANCHORAGES_PROPERTY.equals(evt.getPropertyName())) {
+				onParentAnchoragesChanged(
+						(SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
+								.getOldValue(),
+						(SetMultimap<IVisualPart<Node, ? extends Node>, String>) evt
+								.getNewValue());
+			}
+		}
+	};
 
 	@Override
 	protected FXBlendImageView createVisual() {
@@ -40,16 +54,7 @@ public class FXDeleteHandlePart extends
 
 	@Override
 	protected void doRefreshVisual(FXBlendImageView visual) {
-		// check if we have a host
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
-		if (anchorages.isEmpty()) {
-			return;
-		}
-
-		// determine center location of host visual
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keys()
-				.iterator().next();
-		refreshHandleLocation(anchorage.getVisual());
+		// automatically layed out by its parent
 	}
 
 	protected Image getHoverImage() {
@@ -71,26 +76,42 @@ public class FXDeleteHandlePart extends
 		return new Image(resource.toExternalForm());
 	}
 
-	protected void refreshHandleLocation(Node hostVisual) {
-		Bounds hostBounds = hostVisual.getLayoutBounds();
-		double x = hostVisual.getLayoutX()
-				+ hostVisual.getLayoutBounds().getMinX()
-				+ hostBounds.getWidth();
-		double y = hostVisual.getLayoutY()
-				+ hostVisual.getLayoutBounds().getMinY();
-		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
-				x, y) : hostVisual.getParent().localToScene(x, y);
-		Point2D locationInLocal = getVisual().getParent().sceneToLocal(
-				locationInScene);
+	protected void onParentAnchoragesChanged(
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> oldAnchorages,
+			SetMultimap<IVisualPart<Node, ? extends Node>, String> newAnchorages) {
+		if (!registered && getViewer() != null) {
+			register(getViewer());
+		}
+	}
 
-		// position handle at center of host
-		getVisual().setLayoutX(
-				locationInLocal.getX()
-						- getVisual().getLayoutBounds().getMinX());
-		getVisual().setLayoutY(
-				locationInLocal.getY()
-						- getVisual().getLayoutBounds().getWidth() / 2
-						- getVisual().getLayoutBounds().getMinY());
+	@Override
+	protected void register(IViewer<Node> viewer) {
+		if (registered) {
+			return;
+		}
+		super.register(viewer);
+		registered = true;
+	}
+
+	@Override
+	public void setParent(IVisualPart<Node, ? extends Node> newParent) {
+		if (getParent() != null) {
+			getParent().removePropertyChangeListener(
+					parentAnchoragesChangeListener);
+		}
+		if (newParent != null) {
+			newParent.addPropertyChangeListener(parentAnchoragesChangeListener);
+		}
+		super.setParent(newParent);
+	}
+
+	@Override
+	protected void unregister(IViewer<Node> viewer) {
+		if (!registered) {
+			return;
+		}
+		super.unregister(viewer);
+		registered = false;
 	}
 
 }

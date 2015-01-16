@@ -26,15 +26,9 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXClickPolicy {
 
 	@Override
 	public void click(MouseEvent e) {
-		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getHost()
-				.getAnchorages();
-		if (anchorages == null || anchorages.isEmpty()) {
-			return;
-		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
-				.iterator().next();
-		if (anchorage instanceof IContentPart) {
-			ContentPolicy<Node> policy = anchorage
+		IVisualPart<Node, ? extends Node> host = getHost();
+		if (host instanceof IContentPart) {
+			ContentPolicy<Node> policy = host
 					.<ContentPolicy<Node>> getAdapter(ContentPolicy.class);
 			if (policy != null) {
 				init(policy);
@@ -42,6 +36,16 @@ public class FXDeleteFirstAnchorageOnClickPolicy extends AbstractFXClickPolicy {
 				commit(policy);
 			}
 		}
+	}
+
+	@Override
+	public IVisualPart<Node, ? extends Node> getHost() {
+		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = super
+				.getHost().getParent().getAnchorages();
+		if (anchorages == null || anchorages.isEmpty()) {
+			return null;
+		}
+		return anchorages.keySet().iterator().next();
 	}
 
 }
