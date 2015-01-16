@@ -40,7 +40,7 @@ public class FXBlendImageView extends Group {
 		registerPropertyListeners();
 	}
 
-	private void createImageViews() {
+	protected void createImageViews() {
 		imageView = new ImageView();
 		hoverImageView = new ImageView();
 		getChildren().addAll(imageView, hoverImageView);
@@ -48,6 +48,14 @@ public class FXBlendImageView extends Group {
 		// hide hover image, and show normal image
 		hoverImageView.setOpacity(0);
 		imageView.setOpacity(0.8); // 20% transparent
+	}
+
+	public ImageView getHoverImageView() {
+		return hoverImageView;
+	}
+
+	public ImageView getImageView() {
+		return imageView;
 	}
 
 	public SimpleObjectProperty<Image> hoverImageProperty() {
@@ -58,7 +66,7 @@ public class FXBlendImageView extends Group {
 		return imageProperty;
 	}
 
-	private void registerHoverEffect() {
+	protected void registerHoverEffect() {
 		setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -77,7 +85,7 @@ public class FXBlendImageView extends Group {
 		});
 	}
 
-	private void registerPropertyListeners() {
+	protected void registerPropertyListeners() {
 		imageProperty.addListener(new ChangeListener<Image>() {
 			@Override
 			public void changed(ObservableValue<? extends Image> observable,
@@ -94,7 +102,7 @@ public class FXBlendImageView extends Group {
 		});
 	}
 
-	private void setImage(ImageView imageView, Image image) {
+	protected void setImage(ImageView imageView, Image image) {
 		imageView.setImage(image);
 		// translate to center
 		imageView.setTranslateX(-image.getWidth() / 2);
