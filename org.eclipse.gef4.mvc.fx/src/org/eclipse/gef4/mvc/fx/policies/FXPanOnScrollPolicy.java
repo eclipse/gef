@@ -15,6 +15,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.input.ScrollEvent;
 
 import org.eclipse.gef4.fx.nodes.ScrollPaneEx;
+import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.mvc.fx.operations.FXChangeViewportOperation;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.ViewportModel;
@@ -24,6 +25,10 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 	private static final int SAME_SCROLL_MILLIS = 100;
 	private long lastMillis = 0;
 	private boolean stopped = false;
+
+	/*
+	 * TODO: stoppedHorizontal, stoppedVertical (as context)
+	 */
 
 	protected void applyPanning(double dx, double dy) {
 		ViewportModel viewportModel = getHost().getRoot().getViewer()
@@ -36,6 +41,17 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 						new FXChangeViewportOperation(viewportModel,
 								viewportModel.getTranslateX() + dx,
 								viewportModel.getTranslateY() + dy));
+	}
+
+	protected Dimension computeDelta(ScrollEvent event) {
+		double dx = event.getDeltaX();
+		double dy = event.getDeltaY();
+		if (isSwapDirection(event)) {
+			double t = dx;
+			dx = dy;
+			dy = t;
+		}
+		return new Dimension(dx, dy);
 	}
 
 	protected boolean isSuitable(ScrollEvent event) {
@@ -60,9 +76,9 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 		// event by checking the system time. When events arise in rapid
 		// succession, they are associated with the same gesture.
 		long millis = System.currentTimeMillis();
-		long delta = millis - lastMillis;
+		long deltaMillis = millis - lastMillis;
 		lastMillis = millis;
-		if (delta < SAME_SCROLL_MILLIS) {
+		if (deltaMillis < SAME_SCROLL_MILLIS) {
 			// Cancel processing if the gesture was stopped at the
 			// content-bounds already. The next event that does not belong to
 			// this same scroll gesture will advance the viewport beyond the
@@ -75,42 +91,62 @@ public class FXPanOnScrollPolicy extends AbstractFXScrollPolicy {
 		}
 
 		// Determine horizontal and vertical translation.
-		double dx = event.getDeltaX();
-		double dy = event.getDeltaY();
-		if (isSwapDirection(event)) {
-			double t = dx;
-			dx = dy;
-			dy = t;
-		}
+		Dimension delta = computeDelta(event);
 
 		// Stop scrolling at the content-bounds.
+		stopped = stopAtContentBounds(delta);
+
+		// change viewport via operation
+		applyPanning(delta.width, delta.height);
+	}
+
+	private boolean stopAtContentBounds(Dimension delta) {
 		ScrollPaneEx scrollPane = ((FXViewer) getHost().getRoot().getViewer())
 				.getScrollPane();
 		Bounds contentBounds = scrollPane.getBoundsInViewport(scrollPane
 				.getContentGroup());
-		// horizontal
-		if (contentBounds.getMinX() < 0 && contentBounds.getMinX() + dx >= 0) {
-			dx = -contentBounds.getMinX();
+		boolean stopped = false;
+		if (contentBounds.getMinX() < 0
+				&& contentBounds.getMinX() + delta.width >= 0) {
+			// If the left side of the content-bounds was left-of the viewport
+			// before scrolling and will not be left-of the viewport after
+			// scrolling, then the left side of the content-bounds was reached
+			// by scrolling. Therefore, scrolling should stop at the left side
+			// of the content-bounds now.
+			delta.width = -contentBounds.getMinX();
+			stopped = true;
+		} else if (contentBounds.getMaxX() > scrollPane.getWidth()
+				&& contentBounds.getMaxX() + delta.width <= scrollPane
+						.getWidth()) {
+			// If the right side of the content-bounds was right-of the viewport
+			// before scrolling and will not be right-of the viewport after
+			// scrolling, then the right side of the content-bounds was reached
+			// by scrolling. Therefore, scrolling should stop at the right side
+			// of the content-bounds now.
+			delta.width = scrollPane.getWidth() - contentBounds.getMaxX();
 			stopped = true;
 		}
-		if (contentBounds.getMaxX() > scrollPane.getWidth()
-				&& contentBounds.getMaxX() + dx <= scrollPane.getWidth()) {
-			dx = scrollPane.getWidth() - contentBounds.getMaxX();
+		if (contentBounds.getMinY() < 0
+				&& contentBounds.getMinY() + delta.height >= 0) {
+			// If the top side of the content-bounds was top-of the
+			// viewport before scrolling and will not be top-of the viewport
+			// after scrolling, then the top side of the content-bounds was
+			// reached by scrolling. Therefore, scrolling should stop at the
+			// top side of the content-bounds now.
+			delta.height = -contentBounds.getMinY();
+			stopped = true;
+		} else if (contentBounds.getMaxY() > scrollPane.getHeight()
+				&& contentBounds.getMaxY() + delta.height <= scrollPane
+						.getHeight()) {
+			// If the bottom side of the content-bounds was bottom-of the
+			// viewport before scrolling and will not be top-of the viewport
+			// after scrolling, then the bottom side of the content-bounds was
+			// reached by scrolling. Therefore, scrolling should stop at the
+			// bottom side of the content-bounds now.
+			delta.height = scrollPane.getHeight() - contentBounds.getMaxY();
 			stopped = true;
 		}
-		// vertical
-		if (contentBounds.getMinY() < 0 && contentBounds.getMinY() + dy >= 0) {
-			dy = -contentBounds.getMinY();
-			stopped = true;
-		}
-		if (contentBounds.getMaxY() > scrollPane.getHeight()
-				&& contentBounds.getMaxY() + dy <= scrollPane.getHeight()) {
-			dy = scrollPane.getHeight() - contentBounds.getMaxY();
-			stopped = true;
-		}
-
-		// change viewport via operation
-		applyPanning(dx, dy);
+		return stopped;
 	}
 
 }
