@@ -56,8 +56,9 @@ import javafx.util.Duration;
  * The ScrollPaneEx provides the scroll position in multiple formats: a) the
  * values of the scrollbars (depends on scrollable bounds), b) the ratios of the
  * scrollbars (in range <code>[0;1]</code>), and c) the translation values of
- * the scrolled pane. You can use the various <code>compute()</code> methods to
- * convert from one format to the other.
+ * the scrolled pane. You can use the various <code>compute()</code>,
+ * <code>lerp()</code>, and <code>norm()</code> methods to convert from one
+ * format to the other.
  */
 public class ScrollPaneEx extends Region {
 

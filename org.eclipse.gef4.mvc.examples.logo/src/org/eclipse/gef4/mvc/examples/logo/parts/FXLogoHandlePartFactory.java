@@ -86,9 +86,21 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 			HoverBehavior<Node> contextBehavior, Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
-			FXDeleteHandlePart hp = new FXDeleteHandlePart();
-			injector.injectMembers(hp);
-			handles.add(hp);
+			// create parent handle part
+			FXHoverHandleParentPart parentHp = new FXHoverHandleParentPart();
+			injector.injectMembers(parentHp);
+			handles.add(parentHp);
+
+			// XXX: addChild() should be called automatically?
+			FXDeleteHandlePart deleteHp = new FXDeleteHandlePart();
+			injector.injectMembers(deleteHp);
+			parentHp.addChild(deleteHp);
+
+			// XXX: addChild() should be called automatically?
+			FXRotateHandlePart rotateHp = new FXRotateHandlePart();
+			injector.injectMembers(rotateHp);
+			parentHp.addChild(rotateHp);
+
 			return handles;
 		}
 		return super
