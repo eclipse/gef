@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="org.eclipse.gef4.mvc.fx.example.web.jnlp">
+<jnlp spec="1.0+" xmlns:jfx="http://javafx.com" href="org.eclipse.gef4.mvc.examples.logo.web.jnlp">
 	<information>
-		<title>GEF4 MVC FX Example</title>
+		<title>GEF4 MVC Logo Example</title>
 		<vendor>Eclipse.org</vendor>
-		<description>GEF4 MVC Logo Example Web Application</description>
+		<description>GEF4 MVC Logo Example (Web)</description>
 		<offline-allowed/>
 	</information>
 	<security>
@@ -39,6 +39,6 @@
         <jar href="org.eclipse.gef4.mvc.examples.logo_0.1.0.qualifier.jar"/>
 	</resources>
 	<update check="prompt-update"/>
-	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef4.mvc.fx.example.FXExampleApplication" name="FXExampleApplication" />	
+	<jfx:javafx-desc width="640" height="480" main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExample" name="MvcLogoExample" />	
 	<!--<application-desc main-class="org.eclipse.gef4.mvc.examples.logo.MvcLogoExampleApplication" />-->
 </jnlp>
