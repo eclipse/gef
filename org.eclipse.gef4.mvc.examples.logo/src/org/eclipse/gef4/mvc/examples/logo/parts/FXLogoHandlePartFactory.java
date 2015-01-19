@@ -87,7 +87,7 @@ public class FXLogoHandlePartFactory extends FXDefaultHandlePartFactory {
 		List<IHandlePart<Node, ? extends Node>> handles = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		if (target instanceof FXGeometricShapePart) {
 			// create parent handle part
-			FXHoverHandleParentPart parentHp = new FXHoverHandleParentPart();
+			FXHoverHandleRootPart parentHp = new FXHoverHandleRootPart();
 			injector.injectMembers(parentHp);
 			handles.add(parentHp);
 

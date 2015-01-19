@@ -25,9 +25,9 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
 
-public class FXHoverHandleParentPart extends AbstractFXHandlePart<VBox> {
+public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 
-	public FXHoverHandleParentPart() {
+	public FXHoverHandleRootPart() {
 		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY),
 				new FXHoverOnHoverPolicy() {
 					@Override
