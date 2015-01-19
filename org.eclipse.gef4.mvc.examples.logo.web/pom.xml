@@ -28,16 +28,16 @@
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 									classpathref="maven.plugin.classpath" />
 								<if>
-									<available file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template" />
+									<available file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template" />
 									<then>
-										<echo message="Deploying org.eclipse.gef4.mvc.fx.example.web.jnlp." />
-										<copy file="org.eclipse.gef4.mvc.fx.example.web.jnlp.template"
-											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp"
+										<echo message="Deploying org.eclipse.gef4.mvc.examples.logo.web.jnlp.template." />
+										<copy file="org.eclipse.gef4.mvc.examples.logo.web.jnlp.template"
+											tofile="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp"
 											overwrite="true" />
 										<echo
-											message="Replacing qualifier token within org.eclipse.gef4.mvc.fx.example.web.jnlp with build qualifier." />
+											message="Replacing qualifier token within org.eclipse.gef4.mvc.examples.logo.web.jnlp with build qualifier." />
 										<replace
-											file="${project.build.directory}/web-files/org.eclipse.gef4.mvc.fx.example.web.jnlp">
+											file="${project.build.directory}/web-files/org.eclipse.gef4.mvc.examples.logo.web.jnlp">
 											<replacefilter token="qualifier" value="${buildQualifier}" />
 										</replace>
 									</then>
