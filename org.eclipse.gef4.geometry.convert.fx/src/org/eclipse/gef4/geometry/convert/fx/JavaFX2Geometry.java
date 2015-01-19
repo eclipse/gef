@@ -37,7 +37,7 @@ public class JavaFX2Geometry {
 	}
 
 	public static final AffineTransform toAffineTransform(Transform t) {
-		return new AffineTransform(t.getMxx(), t.getMxy(), t.getMyx(),
+		return new AffineTransform(t.getMxx(), t.getMyx(), t.getMxy(),
 				t.getMyy(), t.getTx(), t.getTy());
 	}
 
