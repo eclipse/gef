@@ -32,14 +32,15 @@ public class FXRelocateOnDragPolicy extends AbstractFXDragPolicy {
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
 			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
 			if (policy != null) {
-				Point2D initialPosInLocal = part.getVisual().sceneToLocal(
-						Geometry2JavaFX
-								.toFXPoint(getInitialMouseLocationInScene()));
-				Point2D currentPosInLocal = part.getVisual().sceneToLocal(
-						e.getSceneX(), e.getSceneY());
-				Point2D deltaPoint = new Point2D(currentPosInLocal.getX()
-						- initialPosInLocal.getX(), currentPosInLocal.getY()
-						- initialPosInLocal.getY());
+				Node visual = part.getVisual();
+				Point2D initialPosInParent = visual.localToParent(visual
+						.sceneToLocal(Geometry2JavaFX
+								.toFXPoint(getInitialMouseLocationInScene())));
+				Point2D currentPosInParent = visual.localToParent(visual
+						.sceneToLocal(e.getSceneX(), e.getSceneY()));
+				Point2D deltaPoint = new Point2D(currentPosInParent.getX()
+						- initialPosInParent.getX(), currentPosInParent.getY()
+						- initialPosInParent.getY());
 				policy.performResizeRelocate(deltaPoint.getX(),
 						deltaPoint.getY(), 0, 0);
 			}
