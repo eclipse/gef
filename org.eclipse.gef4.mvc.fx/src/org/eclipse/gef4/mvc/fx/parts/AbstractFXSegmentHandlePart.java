@@ -152,6 +152,6 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 					+ visual.getLayoutBounds().getMinX(), positionInParent.y
 					+ visual.getLayoutBounds().getMinY());
 		}
-
 	}
+
 }

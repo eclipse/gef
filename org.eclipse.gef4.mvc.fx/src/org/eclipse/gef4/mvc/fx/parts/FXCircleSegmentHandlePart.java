@@ -37,7 +37,6 @@ public class FXCircleSegmentHandlePart extends
 	public static final Color DEFAULT_FILL = Color.WHITE;
 	public static final Color CONNECTED_FILL = Color.web("#ff0000");
 	public static final Color UNCONNECTED_FILL = Color.web("#d5faff");
-
 	public static final double DEFAULT_SIZE = 5d;
 
 	public FXCircleSegmentHandlePart(Provider<BezierCurve[]> segmentsProvider,
