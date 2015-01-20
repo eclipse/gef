@@ -13,6 +13,7 @@ package org.eclipse.gef4.mvc.fx.parts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,14 +65,19 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	 * @param contextMap
 	 *            Stores context information as an {@link IBehavior} is
 	 *            stateless.
+	 * @param segmentsProvider
+	 * @param segmentIndex
+	 * @param segmentParameter
 	 * @return an {@link IHandlePart} for the specified corner of the bounds of
 	 *         the multi selection
 	 */
 	protected IHandlePart<Node, ? extends Node> createBoundsSelectionCornerHandlePart(
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Provider<? extends IGeometry> handleGeometryProvider, Pos position,
-			Map<Object, Object> contextMap) {
-		return new FXRectangleCornerHandlePart(handleGeometryProvider, position);
+			Map<Object, Object> contextMap,
+			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
+			double segmentParameter, Pos position) {
+		return new FXMultiBoundsCornerHandlePart(segmentsProvider,
+				segmentIndex, segmentParameter, position);
 	}
 
 	// TODO: maybe inline this method
@@ -83,10 +89,12 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
+		int i = 0; // XXX
 		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
-				Pos.BOTTOM_LEFT, Pos.BOTTOM_RIGHT }) {
+				Pos.BOTTOM_RIGHT, Pos.BOTTOM_LEFT }) {
 			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
-					targets, handleGeometryProvider, pos, contextMap);
+					targets, contextMap,
+					createSegmentsProvider(handleGeometryProvider), i++, 0, pos);
 			if (part != null) {
 				injector.injectMembers(part);
 				handleParts.add(part);
@@ -289,6 +297,30 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				handleGeometryProvider, contextMap);
 	}
 
+	private Provider<BezierCurve[]> createSegmentsProvider(
+			final Provider<? extends IGeometry> geometryProvider) {
+		Provider<BezierCurve[]> segmentsProvider = new Provider<BezierCurve[]>() {
+			@Override
+			public BezierCurve[] get() {
+				IGeometry geometry = geometryProvider.get();
+				if (geometry instanceof IShape) {
+					List<BezierCurve> segments = new ArrayList<>();
+					for (ICurve os : ((IShape) geometry).getOutlineSegments()) {
+						segments.addAll(Arrays.asList(os.toBezier()));
+					}
+					return segments.toArray(new BezierCurve[] {});
+				} else if (geometry instanceof ICurve) {
+					return ((ICurve) geometry).toBezier();
+				} else {
+					throw new IllegalStateException(
+							"Unable to deduce segments from geometry: Expected IShape or ICurve but got: "
+									+ geometry);
+				}
+			}
+		};
+		return segmentsProvider;
+	}
+
 	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
 			SelectionBehavior<Node> selectionBehavior,
@@ -358,27 +390,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 						selectionHandlesGeometryInTargetLocalProvider.get());
 			}
 		};
-		Provider<BezierCurve[]> selectionHandlesSegmentsInSceneProvider = new Provider<BezierCurve[]>() {
-			@Override
-			public BezierCurve[] get() {
-				IGeometry handleGeometry = selectionHandlesGeometryInSceneProvider
-						.get();
-				if (handleGeometry instanceof IShape) {
-					List<BezierCurve> segments = new ArrayList<>();
-					for (ICurve os : ((IShape) handleGeometry)
-							.getOutlineSegments()) {
-						segments.addAll(Arrays.asList(os.toBezier()));
-					}
-					return segments.toArray(new BezierCurve[] {});
-				} else if (handleGeometry instanceof ICurve) {
-					return ((ICurve) handleGeometry).toBezier();
-				} else {
-					throw new IllegalStateException(
-							"Unable to determine handle position: Expected IShape or ICurve but got: "
-									+ handleGeometry);
-				}
-			}
-		};
+		Provider<BezierCurve[]> selectionHandlesSegmentsInSceneProvider = createSegmentsProvider(selectionHandlesGeometryInSceneProvider);
 
 		if (selectionHandlesGeometry instanceof ICurve) {
 			// assure the geometry provider that is handed over returns the
@@ -388,9 +400,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 		} else if (selectionHandlesGeometry instanceof IShape) {
 			if (selectionHandlesGeometry instanceof Rectangle) {
 				// create corner handles
-				handleParts.addAll(createBoundsSelectionHandleParts(
+				handleParts.addAll(createTightBoundsSelectionHandleParts(
 						Collections.singletonList(target),
-						selectionHandlesGeometryInSceneProvider, contextMap));
+						selectionHandlesSegmentsInSceneProvider, contextMap));
 			} else {
 				// create segment handles (based on outline)
 				BezierCurve[] segments = selectionHandlesSegmentsInSceneProvider
@@ -411,6 +423,23 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 							+ selectionHandlesGeometry);
 		}
 		return handleParts;
+	}
+
+	protected Collection<? extends IHandlePart<Node, ? extends Node>> createTightBoundsSelectionHandleParts(
+			List<? extends IVisualPart<Node, ? extends Node>> targetParts,
+			Provider<BezierCurve[]> segmentsProvider,
+			Map<Object, Object> contextMap) {
+		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<IHandlePart<Node, ? extends Node>>();
+		BezierCurve[] segments = segmentsProvider.get();
+		Pos[] positions = new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
+				Pos.BOTTOM_RIGHT, Pos.BOTTOM_LEFT };
+		for (int i = 0; i < segments.length; i++) {
+			FXTightBoundsCornerHandlePart part = new FXTightBoundsCornerHandlePart(
+					segmentsProvider, i, 0, positions[i]);
+			injector.injectMembers(part);
+			hps.add(part);
+		}
+		return hps;
 	}
 
 }

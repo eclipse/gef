@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -30,8 +31,9 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialHostMidInScene;
 	private Point initialPointerLocationInScene;
-	private double initialRotate;
 	private FXRotateNodeOperation rotateNodeOperation;
+	private boolean invalidGesture = false;
+	private double initialRotate;
 
 	protected Angle computeRotationAngleCW(MouseEvent e) {
 		Vector vStart = new Vector(initialHostMidInScene,
@@ -44,9 +46,13 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		// do nothing when the user does not press control
+		if (invalidGesture) {
+			return;
+		}
+
 		// locally execute operation
-		rotateNodeOperation.setNewDeg(initialRotate
-				+ computeRotationAngleCW(e).deg());
+		updateOperation(e);
 		try {
 			rotateNodeOperation.execute(null, null);
 		} catch (ExecutionException x) {
@@ -56,9 +62,8 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public IVisualPart<Node, ? extends Node> getHost() {
-		// host = FXRotateHandlePart, parent = FXHoverHandleParentPart
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = super
-				.getHost().getParent().getAnchorages();
+				.getHost().getAnchorages();
 		if (anchorages.isEmpty()) {
 			return null;
 		}
@@ -68,24 +73,45 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
+		// do nothing when the user does not press control
+		if (!e.isControlDown()) {
+			invalidGesture = true;
+			return;
+		}
+
 		initialPointerLocationInScene = new Point(e.getSceneX(), e.getSceneY());
 		Node hostVisual = getHost().getVisual();
-		initialRotate = hostVisual.getRotate();
 		Bounds boundsInScene = hostVisual.localToScene(hostVisual
 				.getBoundsInLocal());
 		initialHostMidInScene = new Point(boundsInScene.getMinX()
 				+ boundsInScene.getWidth() / 2, boundsInScene.getMinY()
 				+ boundsInScene.getHeight() / 2);
-		rotateNodeOperation = new FXRotateNodeOperation(getHost().getVisual(),
-				initialRotate, initialRotate);
+		rotateNodeOperation = new FXRotateNodeOperation(getHost().getVisual());
+		initialRotate = rotateNodeOperation.getOldDeg();
+
+		// pivot
+		Point2D pivot = hostVisual.sceneToLocal(initialHostMidInScene.x,
+				initialHostMidInScene.y);
+		rotateNodeOperation.setNewPivotX(pivot.getX());
+		rotateNodeOperation.setNewPivotY(pivot.getY());
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
-		rotateNodeOperation.setNewDeg(initialRotate
-				+ computeRotationAngleCW(e).deg());
+		// do nothing when the user does not press control
+		if (invalidGesture) {
+			invalidGesture = false;
+			return;
+		}
+
+		updateOperation(e);
 		getHost().getRoot().getViewer().getDomain()
 				.execute(rotateNodeOperation);
+	}
+
+	private void updateOperation(MouseEvent e) {
+		rotateNodeOperation.setNewDeg(initialRotate
+				+ computeRotationAngleCW(e).deg());
 	}
 
 }
