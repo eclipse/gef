@@ -29,6 +29,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
+import org.eclipse.gef4.fx.nodes.FXUtils;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
@@ -99,7 +100,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	}
 
 	public static final int REMOVAL_DELAY_MILLIS = 500;
-	public static final int CREATION_DELAY_MILLIS = 500;
+	public static final int CREATION_DELAY_MILLIS = 250;
 	public static final double MOUSE_MOVE_THRESHOLD = 4;
 	private final Map<IVisualPart<Node, ? extends Node>, Effect> effects = new HashMap<IVisualPart<Node, ? extends Node>, Effect>();
 	private boolean isFeedback;
@@ -268,21 +269,15 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 			throw new IllegalStateException(
 					"Mouse handler is active, although the creation timer is not running.");
 		}
-		if (initialPointerLocation == null) {
-			// TODO: Find out how to read the current pointer location, so
-			// that we do not have to use the first position after a mouse
-			// move.
-			initialPointerLocation = new Point(event.getScreenX(),
-					event.getScreenY());
-		} else {
-			double dx = event.getScreenX() - initialPointerLocation.x;
-			double dy = event.getScreenY() - initialPointerLocation.y;
-			if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
-					|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
-				// restart creation timer when the mouse is moved beyond
-				// the threshold
-				creationDelayTransition.playFromStart();
-			}
+		double dx = event.getScreenX() - initialPointerLocation.x;
+		double dy = event.getScreenY() - initialPointerLocation.y;
+		if (Math.abs(dx) > MOUSE_MOVE_THRESHOLD
+				|| Math.abs(dy) > MOUSE_MOVE_THRESHOLD) {
+			// update pointer location
+			initialPointerLocation = FXUtils.getPointerLocation();
+			// restart creation timer when the mouse is moved beyond
+			// the threshold
+			creationDelayTransition.playFromStart();
 		}
 	}
 
@@ -331,6 +326,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * moves.
 	 */
 	protected void registerMouseHandler() {
+		// store current pointer location to measure mouse movement
+		initialPointerLocation = FXUtils.getPointerLocation();
 		final Scene scene = getHost().getVisual().getScene();
 		scene.addEventFilter(MouseEvent.MOUSE_MOVED, mouseMoveHandler);
 		scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, mouseMoveHandler);
