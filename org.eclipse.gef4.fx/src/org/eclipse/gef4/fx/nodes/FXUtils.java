@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2014, 2015 itemis AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.fx.nodes;
 
+import java.awt.AWTException;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,6 +109,26 @@ public class FXUtils {
 		return picked;
 	}
 
+	/**
+	 * Returns the current pointer location.
+	 *
+	 * @return The current pointer location.
+	 */
+	public static Point getPointerLocation() {
+		// find pointer location (OS specific)
+		String os = System.getProperty("os.name");
+		if (os.startsWith("MacOS")) {
+			// use special glass robot for MacOS
+			com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
+					.GetApplication().createRobot();
+			return new Point(robot.getMouseX(), robot.getMouseY());
+		} else {
+			PointerInfo pi = MouseInfo.getPointerInfo();
+			java.awt.Point mp = pi.getLocation();
+			return new Point(mp.x, mp.y);
+		}
+	}
+
 	public static AffineTransform getSceneToLocalTx(Node node) {
 		try {
 			// IMPORTANT: we make use of getLocalToSceneTx(Node) here to
@@ -150,4 +177,5 @@ public class FXUtils {
 		AffineTransform sceneToLocalTx = getSceneToLocalTx(n);
 		return g.getTransformed(sceneToLocalTx);
 	}
+
 }
