@@ -14,6 +14,7 @@ package org.eclipse.gef4.mvc.examples.logo.parts;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -66,16 +67,15 @@ public class FXHoverHandleRootPart extends AbstractFXHandlePart<VBox> {
 
 	protected void refreshHandleLocation(Node hostVisual) {
 		// position vbox top-right next to the host
-		Bounds hostBounds = hostVisual.getLayoutBounds();
-		double x = hostVisual.getLayoutX() + hostBounds.getMinX()
-				+ hostBounds.getWidth();
-		double y = hostVisual.getLayoutY() + hostBounds.getMinY();
-		Point2D locationInScene = hostVisual.getParent() == null ? new Point2D(
-				x, y) : hostVisual.getParent().localToScene(x, y);
-		Point2D locationInLocal = getVisual().getParent().sceneToLocal(
-				locationInScene);
-		getVisual().setLayoutX(locationInLocal.getX());
-		getVisual().setLayoutY(locationInLocal.getY());
+		Bounds hostBounds = hostVisual.getBoundsInParent();
+		Parent parent = hostVisual.getParent();
+		if (parent != null) {
+			hostBounds = parent.localToScene(hostBounds);
+		}
+		Point2D location = getVisual().getParent().sceneToLocal(
+				hostBounds.getMaxX(), hostBounds.getMinY());
+		getVisual().setLayoutX(location.getX());
+		getVisual().setLayoutY(location.getY());
 	}
 
 	@Override

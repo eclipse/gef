@@ -36,6 +36,45 @@ import org.eclipse.gef4.geometry.planar.Point;
 public class FXUtils {
 
 	/**
+	 * Forces the JavaFX runtime to update the mouse cursor. This is useful when
+	 * you want to change the mouse cursor independently of mouse movement.
+	 */
+	public static void forceCursorUpdate() {
+		// save current pointer location
+		Point p = getPointerLocation();
+		// move mouse to force a cursor update (this is OS specific)
+		String os = System.getProperty("os.name");
+		if (os.startsWith("MacOS")) {
+			// use special glass robot for MacOS
+			com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
+					.GetApplication().createRobot();
+			robot.mouseMove((int) p.x + 1, (int) p.y);
+			// restore initial pointer location
+			robot.mouseMove((int) p.x, (int) p.y);
+		} else {
+			try {
+				// get a screen device
+				GraphicsEnvironment localGraphicsEnvironment = GraphicsEnvironment
+						.getLocalGraphicsEnvironment();
+				GraphicsDevice screenDevice = localGraphicsEnvironment
+						.getDefaultScreenDevice();
+				// let the robot work on that device (coordinate system)
+				Robot robot = new Robot(screenDevice);
+				// subtract device bounds
+				Rectangle bounds = screenDevice.getDefaultConfiguration()
+						.getBounds();
+				p.x -= bounds.x;
+				p.y -= bounds.y;
+				robot.mouseMove((int) p.x + 1, (int) p.y);
+				// restore initial pointer location
+				robot.mouseMove((int) p.x, (int) p.y);
+			} catch (AWTException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+	}
+
+	/**
 	 * Returns an {@link AffineTransform} which represents the transformation
 	 * matrix to transform geometries from the local coordinate system of the
 	 * given {@link Node} into the coordinate system of the {@link Scene}.
