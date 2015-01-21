@@ -42,6 +42,8 @@ public class FXRectangleSegmentHandlePart extends
 	@Override
 	protected javafx.scene.shape.Rectangle createVisual() {
 		javafx.scene.shape.Rectangle visual = new javafx.scene.shape.Rectangle();
+		visual.setTranslateX(-DEFAULT_SIZE / 2);
+		visual.setTranslateY(-DEFAULT_SIZE / 2);
 		visual.setFill(DEFAULT_FILL);
 		visual.setStroke(DEFAULT_STROKE);
 		visual.setWidth(DEFAULT_SIZE);
