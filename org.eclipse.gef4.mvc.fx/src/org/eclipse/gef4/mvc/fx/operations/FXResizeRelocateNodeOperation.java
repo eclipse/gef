@@ -25,6 +25,12 @@ import org.eclipse.gef4.geometry.planar.Point;
 public class FXResizeRelocateNodeOperation extends AbstractOperation {
 
 	private final Node visual;
+	/**
+	 * Stores the old location of the visual. Note that this location does
+	 * include the layout-bounds minimum, i.e.
+	 * <code>layout-x + layout-bounds-min-x</code> and
+	 * <code>layout-y + layout-bounds-min-y</code> .
+	 */
 	private final Point oldLocation;
 	private final Dimension oldSize;
 	private double dx;
@@ -45,6 +51,29 @@ public class FXResizeRelocateNodeOperation extends AbstractOperation {
 				.getHeight()), dx, dy, dw, dh);
 	}
 
+	/**
+	 * Constructs a new {@link FXResizeRelocateNodeOperation} from the given
+	 * values. Note that the <i>oldLocation</i> does include the layout-bounds
+	 * minimum.
+	 *
+	 * @param label
+	 *            Descriptive title for the operation.
+	 * @param visual
+	 *            The visual that is resized/relocated.
+	 * @param oldLocation
+	 *            The old location of the visual (including layout-bounds
+	 *            minimum).
+	 * @param oldSize
+	 *            The old size of the visual.
+	 * @param dx
+	 *            The horizontal location difference.
+	 * @param dy
+	 *            The vertical location difference.
+	 * @param dw
+	 *            The horizontal size difference.
+	 * @param dh
+	 *            The vertical size difference.
+	 */
 	public FXResizeRelocateNodeOperation(String label, Node visual,
 			Point oldLocation, Dimension oldSize, double dx, double dy,
 			double dw, double dh) {
