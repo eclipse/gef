@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
@@ -75,9 +74,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			final List<? extends IVisualPart<Node, ? extends Node>> targets,
 			Map<Object, Object> contextMap,
 			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter, Pos position) {
-		return new FXMultiBoundsCornerHandlePart(segmentsProvider,
-				segmentIndex, segmentParameter, position);
+			double segmentParameter) {
+		return new FXRectangleSegmentHandlePart(segmentsProvider, segmentIndex,
+				segmentParameter);
 	}
 
 	// TODO: maybe inline this method
@@ -89,12 +88,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
-		int i = 0; // XXX
-		for (Pos pos : new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
-				Pos.BOTTOM_RIGHT, Pos.BOTTOM_LEFT }) {
+		for (int i = 0; i < 4; i++) {
 			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
 					targets, contextMap,
-					createSegmentsProvider(handleGeometryProvider), i++, 0, pos);
+					createSegmentsProvider(handleGeometryProvider), i++, 0);
 			if (part != null) {
 				injector.injectMembers(part);
 				handleParts.add(part);
@@ -431,11 +428,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			Map<Object, Object> contextMap) {
 		List<IHandlePart<Node, ? extends Node>> hps = new ArrayList<IHandlePart<Node, ? extends Node>>();
 		BezierCurve[] segments = segmentsProvider.get();
-		Pos[] positions = new Pos[] { Pos.TOP_LEFT, Pos.TOP_RIGHT,
-				Pos.BOTTOM_RIGHT, Pos.BOTTOM_LEFT };
 		for (int i = 0; i < segments.length; i++) {
-			FXTightBoundsCornerHandlePart part = new FXTightBoundsCornerHandlePart(
-					segmentsProvider, i, 0, positions[i]);
+			FXRectangleSegmentHandlePart part = new FXRectangleSegmentHandlePart(
+					segmentsProvider, i, 0);
 			injector.injectMembers(part);
 			hps.add(part);
 		}

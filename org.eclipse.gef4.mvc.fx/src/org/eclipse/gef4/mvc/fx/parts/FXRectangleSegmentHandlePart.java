@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.parts;
 
-import javafx.geometry.Pos;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 
@@ -27,17 +26,17 @@ import com.google.inject.Provider;
  * @author anyssen
  *
  */
-public class FXMultiBoundsCornerHandlePart extends
-		AbstractFXCornerHandlePart<javafx.scene.shape.Rectangle> {
+public class FXRectangleSegmentHandlePart extends
+		AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
 
 	public static final double DEFAULT_SIZE = 5;
 	public static final Color DEFAULT_STROKE = Color.web("#5a61af");
 	public static final Color DEFAULT_FILL = Color.web("#d5faff");
 
-	public FXMultiBoundsCornerHandlePart(
+	public FXRectangleSegmentHandlePart(
 			Provider<BezierCurve[]> segmentsProvider, int segmentIndex,
-			double segmentParameter, Pos position) {
-		super(segmentsProvider, segmentIndex, segmentParameter, position);
+			double segmentParameter) {
+		super(segmentsProvider, segmentIndex, segmentParameter);
 	}
 
 	@Override

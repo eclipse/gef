@@ -16,10 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -27,7 +24,7 @@ import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.geometry.planar.Rectangle;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXCornerHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
@@ -44,7 +41,6 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 	private Map<IContentPart<Node, ? extends Node>, Double> relY1 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relX2 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
-	private Pos referencePosition;
 
 	public FXScaleOnCornerHandleDragPolicy() {
 	}
@@ -120,8 +116,8 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractFXCornerHandlePart<Node> getHost() {
-		return (AbstractFXCornerHandlePart<Node>) super.getHost();
+	public AbstractFXSegmentHandlePart<Node> getHost() {
+		return (AbstractFXSegmentHandlePart<Node>) super.getHost();
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
@@ -173,8 +169,6 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
-		// retrieve reference position from host
-		referencePosition = getHost().getPos();
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
 		selectionBounds = getSelectionBounds(getTargetParts());
@@ -216,15 +210,16 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 		double dx = e.getSceneX() - initialMouseLocation.x;
 		double dy = e.getSceneY() - initialMouseLocation.y;
 
-		if (referencePosition.getHpos().equals(HPos.LEFT)) {
+		int segment = getHost().getSegmentIndex();
+		if (segment == 0 || segment == 3) {
 			sel.shrink(dx, 0, 0, 0);
-		} else if (referencePosition.getHpos().equals(HPos.RIGHT)) {
+		} else if (segment == 1 || segment == 2) {
 			sel.expand(0, 0, dx, 0);
 		}
 
-		if (referencePosition.getVpos().equals(VPos.TOP)) {
+		if (segment == 0 || segment == 1) {
 			sel.shrink(0, dy, 0, 0);
-		} else if (referencePosition.getVpos().equals(VPos.BOTTOM)) {
+		} else if (segment == 2 || segment == 3) {
 			sel.expand(0, 0, 0, dy);
 		}
 		return sel;

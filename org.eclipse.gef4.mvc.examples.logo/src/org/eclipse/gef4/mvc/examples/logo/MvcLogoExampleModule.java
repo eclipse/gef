@@ -38,8 +38,7 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
-import org.eclipse.gef4.mvc.fx.parts.FXMultiBoundsCornerHandlePart;
-import org.eclipse.gef4.mvc.fx.parts.FXTightBoundsCornerHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.FXRectangleSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.VisualBoundsGeometryProvider;
 import org.eclipse.gef4.mvc.fx.parts.VisualOutlineGeometryProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
@@ -48,7 +47,6 @@ import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXScaleOnCornerHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
@@ -170,21 +168,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				})).to(ChopBoxAnchorProvider.class);
 	}
 
-	protected void bindFXMultiBoundsCornerHandlePartAdapters(
+	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(
-				AdapterKey.get(FXScaleOnCornerHandleDragPolicy.class)).to(
-				FXScaleOnCornerHandleDragPolicy.class);
-	}
-
-	@SuppressWarnings("serial")
-	protected void bindFXTightBoundsCornerHandlePartAdapters(
-			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// resize relocate on drag
+		// resize relocate on drag without modifier
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocateOnCornerHandleDragPolicy.class))
 				.to(FXResizeRelocateOnCornerHandleDragPolicy.class);
-		// rotation on drag + control
+		// rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
 				.to(FXRotateHostOnDragPolicy.class);
@@ -220,15 +210,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		bindFXGeometricCurvePartAdapters(AdapterMaps.getAdapterMapBinder(
 				binder(), FXGeometricCurvePart.class));
 
-		// single selection handles
-		bindFXTightBoundsCornerHandlePartAdapters(AdapterMaps
+		// rectangle handles
+		bindFXRectangleSegmentHandlePartAdapters(AdapterMaps
 				.getAdapterMapBinder(binder(),
-						FXTightBoundsCornerHandlePart.class));
-
-		// multi/grouping selection handles
-		bindFXMultiBoundsCornerHandlePartAdapters(AdapterMaps
-				.getAdapterMapBinder(binder(),
-						FXMultiBoundsCornerHandlePart.class));
+						FXRectangleSegmentHandlePart.class));
 
 		// hover handles
 		bindFXDeleteHandlePartAdapters(AdapterMaps.getAdapterMapBinder(

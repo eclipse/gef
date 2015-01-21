@@ -11,16 +11,13 @@
  *******************************************************************************/
 package org.eclipse.gef4.mvc.fx.policies;
 
-import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.parts.AbstractFXCornerHandlePart;
+import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 // Only applicable for AbstractFXCornerHandlePart, see #getHost().
@@ -45,8 +42,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 	}
 
 	@Override
-	public AbstractFXCornerHandlePart<? extends Node> getHost() {
-		return (AbstractFXCornerHandlePart<? extends Node>) super.getHost();
+	public AbstractFXSegmentHandlePart<? extends Node> getHost() {
+		return (AbstractFXSegmentHandlePart<? extends Node>) super.getHost();
 	}
 
 	protected FXResizeRelocatePolicy getResizeRelocatePolicy() {
@@ -93,16 +90,16 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		double deltaXParent = endParent.getX() - startParent.getX();
 		double deltaYParent = endParent.getY() - startParent.getY();
 
-		Pos pos = getHost().getPos();
-		if (pos.getHpos().equals(HPos.RIGHT)) {
+		int segment = getHost().getSegmentIndex();
+		if (segment == 1 || segment == 2) {
 			dw = deltaX;
-		} else if (pos.getHpos().equals(HPos.LEFT)) {
+		} else if (segment == 0 || segment == 3) {
 			dx = deltaXParent;
 			dw = -deltaX;
 		}
-		if (pos.getVpos().equals(VPos.BOTTOM)) {
+		if (segment == 2 || segment == 3) {
 			dh = deltaY;
-		} else if (pos.getVpos().equals(VPos.TOP)) {
+		} else if (segment == 0 || segment == 1) {
 			dy = deltaYParent;
 			dh = -deltaY;
 		}
