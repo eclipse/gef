@@ -138,7 +138,7 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 			initialCursor = scene.getCursor();
 		}
 		scene.setCursor(cursor);
-		FXUtils.forceCursorUpdate();
+		FXUtils.forceCursorUpdate(scene);
 	}
 
 	@Override
@@ -166,8 +166,9 @@ public class FXCursorBehavior extends AbstractBehavior<Node> {
 
 	protected void restoreInitialCursor() {
 		inGesture = false;
-		getHost().getVisual().getScene().setCursor(initialCursor);
-		FXUtils.forceCursorUpdate();
+		Scene scene = getHost().getVisual().getScene();
+		scene.setCursor(initialCursor);
+		FXUtils.forceCursorUpdate(scene);
 	}
 
 	private void setNewCursor(boolean isAltDown, boolean isControlDown,
