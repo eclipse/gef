@@ -25,6 +25,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		AbstractFXDragPolicy {
 
 	private Point initialPointerLocation;
+	private double initialLayoutX;
+	private double initialLayoutY;
 	private double dx;
 	private double dy;
 	private double dw;
@@ -62,6 +64,8 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		}
 
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
+		initialLayoutX = getHost().getVisual().getLayoutX();
+		initialLayoutY = getHost().getVisual().getLayoutY();
 		init(getResizeRelocatePolicy());
 	}
 
@@ -85,22 +89,38 @@ public class FXResizeRelocateOnCornerHandleDragPolicy extends
 		double deltaX = endLocal.getX() - startLocal.getX();
 		double deltaY = endLocal.getY() - startLocal.getY();
 
-		Point2D startParent = visual.localToParent(startLocal);
-		Point2D endParent = visual.localToParent(endLocal);
-		double deltaXParent = endParent.getX() - startParent.getX();
-		double deltaYParent = endParent.getY() - startParent.getY();
-
+		// segment index determines logical position (0 = top left, 1 = top
+		// right, 2 = bottom right, 3 = bottom left)
 		int segment = getHost().getSegmentIndex();
+
+		Point2D layout = visual.parentToLocal(initialLayoutX, initialLayoutY);
+		double lx = layout.getX();
+		double ly = layout.getY();
+		if (segment == 0 || segment == 3) {
+			// left side => change x
+			lx += deltaX;
+		}
+		if (segment == 0 || segment == 1) {
+			// top side => change y
+			ly += deltaY;
+		}
+
+		Point2D layoutParent = visual.localToParent(lx, ly);
+		dx = layoutParent.getX() - initialLayoutX;
+		dy = layoutParent.getY() - initialLayoutY;
+
 		if (segment == 1 || segment == 2) {
+			// right side
 			dw = deltaX;
-		} else if (segment == 0 || segment == 3) {
-			dx = deltaXParent;
+		} else {
+			// left side
 			dw = -deltaX;
 		}
 		if (segment == 2 || segment == 3) {
+			// bottom side
 			dh = deltaY;
-		} else if (segment == 0 || segment == 1) {
-			dy = deltaYParent;
+		} else {
+			// top side
 			dh = -deltaY;
 		}
 	}
