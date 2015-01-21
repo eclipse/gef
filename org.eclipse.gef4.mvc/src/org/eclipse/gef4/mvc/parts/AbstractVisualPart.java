@@ -82,7 +82,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 * @see #isActive()
 	 */
 	@Override
-	public void activate() {
+	public final void activate() {
 		if (!acs.isActive()) {
 			acs.activate();
 			doActivate();
@@ -248,7 +248,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 * @see #isActive()
 	 */
 	@Override
-	public void deactivate() {
+	public final void deactivate() {
 		if (acs.isActive()) {
 			doDeactivate();
 			acs.deactivate();
@@ -417,6 +417,7 @@ public abstract class AbstractVisualPart<VR, V extends VR> implements
 	 *            The viewer to register at.
 	 */
 	protected void register(IViewer<VR> viewer) {
+		// TODO: Check if the guard (visual != null) really is necessary.
 		if (visual != null) {
 			registerAtVisualPartMap(viewer, visual);
 		}
