@@ -1,5 +1,7 @@
 package org.eclipse.gef4.mvc.examples.logo.policies;
 
+import javafx.scene.transform.Affine;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -7,16 +9,22 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
 import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
-import org.eclipse.gef4.mvc.operations.AbstractCompositeOperation;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 
-public class FXResizeRelocateShapePolicy extends
-		FXResizeRelocatePolicy {
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
+
+// only applicable for FXGeometricShapePart
+public class FXResizeRelocateShapePolicy extends FXResizeRelocatePolicy {
 
 	@Override
 	public IUndoableOperation commit() {
@@ -26,15 +34,26 @@ public class FXResizeRelocateShapePolicy extends
 		}
 
 		// commit changes to model
-		final FXGeometricShape hostContent = getHost().getContent();
-		FXGeometryNode<IShape> hostVisual = getHost().getVisual();
+		final FXGeometricShapePart host = getHost();
+		final FXGeometricShape hostContent = host.getContent();
+		FXGeometryNode<IShape> hostVisual = host.getVisual();
 		final IShape newGeometry = hostVisual.getGeometry();
 		final IShape oldGeometry = hostContent.getGeometry();
 
+		// determine transformation
+		@SuppressWarnings("serial")
+		Provider<Affine> affineProvider = host.getAdapter(AdapterKey
+				.<Provider<? extends Affine>> get(
+						new TypeToken<Provider<? extends Affine>>() {
+						}, FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE));
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(affineProvider
+				.get());
 		final AffineTransform oldTransform = hostContent.getTransform();
-		final AffineTransform newTransform = new AffineTransform(1, 0, 0,
-				1, hostVisual.getLayoutX(), hostVisual.getLayoutY());
+		final AffineTransform newTransform = new AffineTransform(tx.getM00(),
+				tx.getM10(), tx.getM01(), tx.getM11(), tx.getTranslateX(),
+				tx.getTranslateY());
 
+		// create operation to write the changes to the model
 		final IUndoableOperation updateModelOperation = new AbstractOperation(
 				"Update Model") {
 
@@ -60,8 +79,8 @@ public class FXResizeRelocateShapePolicy extends
 				return Status.OK_STATUS;
 			}
 		};
-		// compose both operations
-		IUndoableOperation compositeOperation = new AbstractCompositeOperation(
+		// compose operations
+		IUndoableOperation compositeOperation = new ForwardUndoCompositeOperation(
 				updateVisualOperation.getLabel()) {
 			{
 				add(updateVisualOperation);
@@ -77,8 +96,4 @@ public class FXResizeRelocateShapePolicy extends
 		return (FXGeometricShapePart) super.getHost();
 	}
 
-	@Override
-	public void init() {
-		super.init();
-	}
 }

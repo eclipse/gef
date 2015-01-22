@@ -12,16 +12,22 @@
 package org.eclipse.gef4.mvc.examples.logo.parts;
 
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.fx.nodes.FXGeometryNode;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 public class FXGeometricShapePart extends
 		AbstractFXGeometricElementPart<FXGeometryNode<IShape>> {
@@ -67,11 +73,22 @@ public class FXGeometricShapePart extends
 			visual.setGeometry(content.getGeometry());
 		}
 
-		if (content.getTransform() != null) {
-			visual.relocate(content.getTransform().getTranslateX()
-					+ visual.getLayoutBounds().getMinX(), content
-					.getTransform().getTranslateY()
-					+ visual.getLayoutBounds().getMinY());
+		AffineTransform transform = content.getTransform();
+		if (transform != null) {
+			// transfer transformation to JavaFX
+			@SuppressWarnings("serial")
+			Affine affine = getAdapter(
+					AdapterKey.<Provider<? extends Affine>> get(
+							new TypeToken<Provider<? extends Affine>>() {
+							},
+							FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE))
+					.get();
+			affine.setMxx(transform.getM00());
+			affine.setMxy(transform.getM01());
+			affine.setMyx(transform.getM10());
+			affine.setMyy(transform.getM11());
+			affine.setTx(transform.getTranslateX());
+			affine.setTy(transform.getTranslateY());
 		}
 
 		// apply stroke paint

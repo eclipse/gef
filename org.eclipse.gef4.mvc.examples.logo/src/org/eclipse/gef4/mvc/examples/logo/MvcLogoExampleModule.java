@@ -168,9 +168,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 				})).to(ChopBoxAnchorProvider.class);
 	}
 
+	@SuppressWarnings("serial")
 	protected void bindFXRectangleSegmentHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		// resize relocate on drag without modifier
+		// resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocateOnCornerHandleDragPolicy.class))
 				.to(FXResizeRelocateOnCornerHandleDragPolicy.class);

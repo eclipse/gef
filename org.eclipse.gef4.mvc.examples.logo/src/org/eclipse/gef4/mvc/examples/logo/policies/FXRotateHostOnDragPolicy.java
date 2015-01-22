@@ -18,18 +18,32 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.fx.nodes.FXGeometryNode;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
+import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.geometry.planar.Point;
+import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
+import org.eclipse.gef4.mvc.examples.logo.parts.FXGeometricShapePart;
 import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.SetMultimap;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
@@ -103,7 +117,63 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 		}
 
 		updateOperation(e);
-		getHost().getRoot().getViewer().getDomain().execute(transformOperation);
+
+		// commit changes to model
+		final FXGeometricShapePart host = (FXGeometricShapePart) getHost();
+		final FXGeometricShape hostContent = host.getContent();
+		FXGeometryNode<IShape> hostVisual = host.getVisual();
+		final IShape newGeometry = hostVisual.getGeometry();
+		final IShape oldGeometry = hostContent.getGeometry();
+
+		// determine transformation
+		@SuppressWarnings("serial")
+		Provider<Affine> affineProvider = host.getAdapter(AdapterKey
+				.<Provider<? extends Affine>> get(
+						new TypeToken<Provider<? extends Affine>>() {
+						}, FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE));
+		AffineTransform tx = JavaFX2Geometry.toAffineTransform(affineProvider
+				.get());
+		final AffineTransform oldTransform = hostContent.getTransform();
+		final AffineTransform newTransform = new AffineTransform(tx.getM00(),
+				tx.getM10(), tx.getM01(), tx.getM11(), tx.getTranslateX(),
+				tx.getTranslateY());
+
+		// create operation to write the changes to the model
+		final IUndoableOperation updateModelOperation = new AbstractOperation(
+				"Update Model") {
+
+			@Override
+			public IStatus execute(IProgressMonitor monitor, IAdaptable info)
+					throws ExecutionException {
+				hostContent.setGeometry(newGeometry);
+				hostContent.setTransform(newTransform);
+				return Status.OK_STATUS;
+			}
+
+			@Override
+			public IStatus redo(IProgressMonitor monitor, IAdaptable info)
+					throws ExecutionException {
+				return execute(monitor, info);
+			}
+
+			@Override
+			public IStatus undo(IProgressMonitor monitor, IAdaptable info)
+					throws ExecutionException {
+				hostContent.setGeometry(oldGeometry);
+				hostContent.setTransform(oldTransform);
+				return Status.OK_STATUS;
+			}
+		};
+		// compose operations
+		IUndoableOperation compositeOperation = new ForwardUndoCompositeOperation(
+				transformOperation.getLabel()) {
+			{
+				add(transformOperation);
+				add(updateModelOperation);
+			}
+		};
+
+		getHost().getRoot().getViewer().getDomain().execute(compositeOperation);
 	}
 
 	private void updateOperation(MouseEvent e) {
