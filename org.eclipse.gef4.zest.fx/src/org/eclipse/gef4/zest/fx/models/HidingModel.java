@@ -51,7 +51,7 @@ public class HidingModel implements IPropertyChangeNotifier {
 	public void hide(Node node) {
 		Set<Node> oldPruned = getHiddenNodes();
 		hidden.add(node);
-		pcs.firePropertyChange("pruned", oldPruned, getHiddenNodes());
+		pcs.firePropertyChange(HIDDEN_PROPERTY, oldPruned, getHiddenNodes());
 	}
 
 	public boolean isHidden(Node node) {
@@ -64,9 +64,9 @@ public class HidingModel implements IPropertyChangeNotifier {
 	}
 
 	public void show(Node node) {
-		Set<Node> oldPruned = getHiddenNodes();
+		Set<Node> oldHidden = getHiddenNodes();
 		hidden.remove(node);
-		pcs.firePropertyChange("pruned", oldPruned, getHiddenNodes());
+		pcs.firePropertyChange(HIDDEN_PROPERTY, oldHidden, getHiddenNodes());
 	}
 
 }

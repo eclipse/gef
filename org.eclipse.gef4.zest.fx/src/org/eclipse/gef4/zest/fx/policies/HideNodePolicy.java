@@ -22,14 +22,14 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 // TODO: only applicable for NodeContentPart
 public class HideNodePolicy extends AbstractPolicy<Node> {
 
-	public void prune() {
+	public void hide() {
 		ClearHoverFocusSelectionOperation<Node> revOp = new ClearHoverFocusSelectionOperation<Node>(
 				getHost().getRoot().getViewer());
 		revOp.add(HideOperation.hide((NodeContentPart) getHost()));
 		getHost().getRoot().getViewer().getDomain().execute(revOp);
 	}
 
-	public void unprune() {
+	public void show() {
 		ClearHoverFocusSelectionOperation<Node> revOp = new ClearHoverFocusSelectionOperation<Node>(
 				getHost().getRoot().getViewer());
 		revOp.add(HideOperation.show((NodeContentPart) getHost()));

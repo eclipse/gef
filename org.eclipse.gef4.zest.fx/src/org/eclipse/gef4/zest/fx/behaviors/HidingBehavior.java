@@ -26,8 +26,8 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
-import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.HiddenNeighborsPart;
+import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 import com.google.common.collect.Multiset;
 
@@ -114,6 +114,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 		// hide visual
 		getHost().getVisual().setVisible(false);
 		getHost().getVisual().setMouseTransparent(true);
+		getHost().deactivate();
 
 		// hide connections
 		Multiset<IVisualPart<Node, ? extends Node>> anchoreds = getHost()
@@ -175,6 +176,7 @@ public class HidingBehavior extends AbstractBehavior<Node> implements
 
 	protected void show() {
 		// show node
+		getHost().activate();
 		getHost().getVisual().setVisible(true);
 		getHost().getVisual().setMouseTransparent(false);
 

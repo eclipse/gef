@@ -53,7 +53,7 @@ public class ZestFxExpandingHandlePart extends ZestFxHidingHandlePart {
 			for (org.eclipse.gef4.graph.Node node : prunedNeighbors) {
 				viewer.getContentPartMap().get(node)
 						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
-						.unprune();
+						.show();
 			}
 		}
 	}

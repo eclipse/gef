@@ -41,7 +41,7 @@ public class HideOnTypePolicy extends AbstractFXTypePolicy {
 	}
 
 	protected void prune() {
-		getHost().<HideNodePolicy> getAdapter(HideNodePolicy.class).prune();
+		getHost().<HideNodePolicy> getAdapter(HideNodePolicy.class).hide();
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class HideOnTypePolicy extends AbstractFXTypePolicy {
 			for (Node node : prunedNeighbors) {
 				viewer.getContentPartMap().get(node)
 						.<HideNodePolicy> getAdapter(HideNodePolicy.class)
-						.unprune();
+						.show();
 			}
 		}
 	}

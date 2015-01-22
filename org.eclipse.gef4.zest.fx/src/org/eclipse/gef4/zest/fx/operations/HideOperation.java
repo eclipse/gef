@@ -26,21 +26,21 @@ import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 
 public class HideOperation extends AbstractOperation {
 
-	public static HideOperation hide(NodeContentPart toPrune) {
-		return new HideOperation(toPrune, false);
+	public static HideOperation hide(NodeContentPart toHide) {
+		return new HideOperation(toHide, false);
 	}
 
-	public static HideOperation show(NodeContentPart toUnprune) {
-		return new HideOperation(toUnprune, true);
+	public static HideOperation show(NodeContentPart toShow) {
+		return new HideOperation(toShow, true);
 	}
 
 	private NodeContentPart node;
 	private boolean isHidden;
 
-	public HideOperation(NodeContentPart node, boolean isPruned) {
+	public HideOperation(NodeContentPart node, boolean isHidden) {
 		super("hide/show");
 		this.node = node;
-		this.isHidden = isPruned;
+		this.isHidden = isHidden;
 	}
 
 	@Override

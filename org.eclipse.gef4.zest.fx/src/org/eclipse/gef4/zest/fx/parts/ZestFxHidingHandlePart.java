@@ -28,31 +28,35 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
 import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.HoverFirstAnchorageOnHoverPolicy;
 
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Provider;
 
-public class ZestFxHidingHandlePart extends AbstractFXSegmentHandlePart<FXBlendImageView> {
+public class ZestFxHidingHandlePart extends
+		AbstractFXSegmentHandlePart<FXBlendImageView> {
 
 	public static final String IMG_PRUNE = "/collapseall.png";
 	public static final String IMG_PRUNE_DISABLED = "/collapseall_disabled.png";
 
 	private boolean isVisible = false;
 
-	public ZestFxHidingHandlePart(Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
+	public ZestFxHidingHandlePart(
+			Provider<BezierCurve[]> segmentsInSceneProvider, int segmentIndex,
 			double segmentParameter) {
 		super(segmentsInSceneProvider, segmentIndex, segmentParameter);
 		// FIXME: hover hierarchy
-		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY), new HoverFirstAnchorageOnHoverPolicy());
+		setAdapter(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY),
+				new HoverFirstAnchorageOnHoverPolicy());
 	}
 
 	@Override
-	protected void attachToAnchorageVisual(IVisualPart<Node, ? extends Node> anchorage, String role) {
+	protected void attachToAnchorageVisual(
+			IVisualPart<Node, ? extends Node> anchorage, String role) {
 		if (!(anchorage instanceof NodeContentPart)) {
-			throw new IllegalArgumentException("Anchorage not applicable <" + anchorage
-					+ ">. Can only attach to NodeContentPart.");
+			throw new IllegalArgumentException("Anchorage not applicable <"
+					+ anchorage + ">. Can only attach to NodeContentPart.");
 		}
 		super.attachToAnchorageVisual(anchorage, role);
 	}
@@ -85,10 +89,12 @@ public class ZestFxHidingHandlePart extends AbstractFXSegmentHandlePart<FXBlendI
 		// TODO: extract magic numbers to properties
 		if (!wasVisible && isVisible) {
 			opacityProperty.set(0);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 1))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 1))).play();
 		} else if (wasVisible && !isVisible) {
 			opacityProperty.set(1);
-			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(opacityProperty, 0))).play();
+			new Timeline(new KeyFrame(Duration.millis(150), new KeyValue(
+					opacityProperty, 0))).play();
 		}
 	}
 
@@ -105,9 +111,11 @@ public class ZestFxHidingHandlePart extends AbstractFXSegmentHandlePart<FXBlendI
 		if (anchorages == null || anchorages.isEmpty()) {
 			return;
 		}
-		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet().iterator().next();
-		HideNodePolicy pruneNodePolicy = anchorage.getAdapter(HideNodePolicy.class);
-		pruneNodePolicy.prune();
+		IVisualPart<Node, ? extends Node> anchorage = anchorages.keySet()
+				.iterator().next();
+		HideNodePolicy hideNodePolicy = anchorage
+				.getAdapter(HideNodePolicy.class);
+		hideNodePolicy.hide();
 	}
 
 }
