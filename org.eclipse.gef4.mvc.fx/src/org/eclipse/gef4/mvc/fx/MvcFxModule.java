@@ -49,6 +49,7 @@ import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
+import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPartFactory;
@@ -190,6 +191,9 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// bind parameterized default viewer models (others are already bound in
 		// superclass)
+		adapterMapBinder.addBinding(AdapterKey.get(GraveyardModel.class)).to(
+				new TypeLiteral<GraveyardModel<Node>>() {
+				});
 		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
 				new TypeLiteral<FocusModel<Node>>() {
 				});

@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.mvc.models.ContentModel;
+import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -50,12 +51,6 @@ import com.google.common.collect.SetMultimap;
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
-
-	// We need to ensure that when undoing model operations, the same content
-	// parts are re-used when re-synchronizing; as such, we put content parts
-	// into this pool within disposeIfObsolete() and relocate them within
-	// findOrCreatePart()
-	private Map<Object, IContentPart<VR, ? extends VR>> contentPartPool;
 
 	@Override
 	public void activate() {
@@ -93,9 +88,10 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 				&& contentPart.getAnchorages().isEmpty()) {
 			// keep track of the removed content part, so we may relocate it
 			// within findOrCreate() later
-			if (contentPartPool == null) {
-				contentPartPool = new HashMap<Object, IContentPart<VR, ? extends VR>>();
-			}
+			Map<Object, IContentPart<VR, ? extends VR>> contentPartPool = getHost()
+					.getRoot().getViewer()
+					.<GraveyardModel<VR>> getAdapter(GraveyardModel.class)
+					.getContentPartPool();
 			contentPartPool.put(contentPart.getContent(), contentPart);
 			contentPart.setContent(null);
 		}
@@ -108,13 +104,12 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			return contentPartMap.get(content);
 		} else {
 			// 'Revive' a content part, if it was removed before
+			Map<Object, IContentPart<VR, ? extends VR>> contentPartPool = getHost()
+					.getRoot().getViewer()
+					.<GraveyardModel<VR>> getAdapter(GraveyardModel.class)
+					.getContentPartPool();
 			IContentPart<VR, ? extends VR> contentPart = null;
-			if (contentPartPool != null) {
-				contentPart = contentPartPool.remove(content);
-				if (contentPartPool.isEmpty()) {
-					contentPartPool = null;
-				}
-			}
+			contentPart = contentPartPool.remove(content);
 
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
