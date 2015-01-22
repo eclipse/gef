@@ -15,13 +15,17 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
-import org.eclipse.gef4.mvc.fx.operations.FXRotateNodeOperation;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.policies.AbstractFXDragPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -31,9 +35,9 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialHostMidInScene;
 	private Point initialPointerLocationInScene;
-	private FXRotateNodeOperation rotateNodeOperation;
+	private FXTransformOperation transformOperation;
 	private boolean invalidGesture = false;
-	private double initialRotate;
+	private Point2D pivot;
 
 	protected Angle computeRotationAngleCW(MouseEvent e) {
 		Vector vStart = new Vector(initialHostMidInScene,
@@ -54,7 +58,7 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 		// locally execute operation
 		updateOperation(e);
 		try {
-			rotateNodeOperation.execute(null, null);
+			transformOperation.execute(null, null);
 		} catch (ExecutionException x) {
 			throw new IllegalStateException(x);
 		}
@@ -86,14 +90,10 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 		initialHostMidInScene = new Point(boundsInScene.getMinX()
 				+ boundsInScene.getWidth() / 2, boundsInScene.getMinY()
 				+ boundsInScene.getHeight() / 2);
-		rotateNodeOperation = new FXRotateNodeOperation(getHost().getVisual());
-		initialRotate = rotateNodeOperation.getOldDeg();
+		transformOperation = new FXTransformOperation(getHost());
 
-		// pivot
-		Point2D pivot = hostVisual.sceneToLocal(initialHostMidInScene.x,
+		pivot = hostVisual.sceneToLocal(initialHostMidInScene.x,
 				initialHostMidInScene.y);
-		rotateNodeOperation.setNewPivotX(pivot.getX());
-		rotateNodeOperation.setNewPivotY(pivot.getY());
 	}
 
 	@Override
@@ -105,13 +105,17 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 		}
 
 		updateOperation(e);
-		getHost().getRoot().getViewer().getDomain()
-				.execute(rotateNodeOperation);
+		getHost().getRoot().getViewer().getDomain().execute(transformOperation);
 	}
 
 	private void updateOperation(MouseEvent e) {
-		rotateNodeOperation.setNewDeg(initialRotate
-				+ computeRotationAngleCW(e).deg());
+		Affine oldTransform = transformOperation.getOldTransform();
+		AffineTransform rotate = new AffineTransform().rotate(
+				computeRotationAngleCW(e).rad(), pivot.getX(), pivot.getY());
+		AffineTransform newTransform = JavaFX2Geometry.toAffineTransform(
+				oldTransform).concatenate(rotate);
+		transformOperation.setNewTransform(Geometry2JavaFX
+				.toFXAffine(newTransform));
 	}
 
 }

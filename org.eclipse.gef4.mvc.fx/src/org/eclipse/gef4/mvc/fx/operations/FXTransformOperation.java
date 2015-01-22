@@ -34,6 +34,23 @@ public class FXTransformOperation extends AbstractOperation {
 	private Affine oldTransform;
 	private Affine newTransform;
 
+	public FXTransformOperation(IVisualPart<Node, ? extends Node> part) {
+		super("Transform");
+		this.part = part;
+		// TODO: Remove this method call from this constructor.
+		this.oldTransform = getNodeTransform();
+		this.newTransform = oldTransform;
+	}
+
+	public FXTransformOperation(IVisualPart<Node, ? extends Node> part,
+			Affine newTransform) {
+		super("Transform");
+		this.part = part;
+		this.newTransform = newTransform;
+		// TODO: Remove this method call from this constructor.
+		this.oldTransform = getNodeTransform();
+	}
+
 	public FXTransformOperation(IVisualPart<Node, ? extends Node> part,
 			Affine oldTransform, Affine newTransform) {
 		super("Transform");
@@ -60,8 +77,11 @@ public class FXTransformOperation extends AbstractOperation {
 						new TypeToken<Provider<? extends Affine>>() {
 						}, TRANSFORMATION_PROVIDER_ROLE));
 		if (affineProvider == null) {
-			throw new IllegalStateException("Part <" + part
-					+ "> is missing an adapter for Provider<Affine>.");
+			throw new IllegalStateException(
+					"Part <"
+							+ part
+							+ "> is missing an adapter for Provider<Affine> under role <"
+							+ TRANSFORMATION_PROVIDER_ROLE + ">.");
 		}
 		return affineProvider.get();
 	}

@@ -22,7 +22,9 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.QuadCurveTo;
+import javafx.scene.transform.Affine;
 
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Path;
 import org.eclipse.gef4.geometry.planar.Path.Segment;
 import org.eclipse.gef4.geometry.planar.Point;
@@ -36,6 +38,17 @@ public class Geometry2JavaFX {
 
 	public static final Bounds toFXBounds(Rectangle r) {
 		return new BoundingBox(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+	}
+	
+	public static final Affine toFXAffine(AffineTransform transform) {
+		Affine affine = new Affine();
+		affine.setMxx(transform.getM00());
+		affine.setMxy(transform.getM01());
+		affine.setMyx(transform.getM10());
+		affine.setMyy(transform.getM11());
+		affine.setTx(transform.getTranslateX());
+		affine.setTy(transform.getTranslateY());
+		return affine;
 	}
 	
 	public static final Point2D toFXPoint(Point p){

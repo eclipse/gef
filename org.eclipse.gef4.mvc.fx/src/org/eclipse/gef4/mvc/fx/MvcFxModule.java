@@ -12,6 +12,7 @@
 package org.eclipse.gef4.mvc.fx;
 
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.inject.AdapterMaps;
@@ -25,12 +26,14 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXViewportBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
+import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.parts.FXTransformationProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
@@ -55,13 +58,22 @@ import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
 public class MvcFxModule extends MvcModule<Node> {
 
+	@SuppressWarnings("serial")
 	protected void bindAbstractFXContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// register default providers
+		adapterMapBinder.addBinding(
+				AdapterKey.get(new TypeToken<Provider<Affine>>() {
+				}, FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE)).to(
+				FXTransformationProvider.class);
+
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				new TypeLiteral<ContentBehavior<Node>>() {
