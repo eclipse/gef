@@ -45,7 +45,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
-public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
+public class FXRotateOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private Point pivotInScene;
 	private Point initialPointerLocationInScene;

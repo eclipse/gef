@@ -29,7 +29,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
+public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	/*
 	 * TODO: allow negative scaling
@@ -43,7 +43,7 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
 	private boolean invalidGesture = false;
 
-	public FXScaleOnCornerHandleDragPolicy() {
+	public FXScaleRelocateOnHandleDragPolicy() {
 	}
 
 	/**

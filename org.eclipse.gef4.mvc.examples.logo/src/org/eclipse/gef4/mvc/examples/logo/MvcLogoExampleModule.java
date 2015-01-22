@@ -32,7 +32,7 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClick
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeRelocateShapePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXRotateHostOnDragPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXRotateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
@@ -45,7 +45,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnCornerHandleDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
@@ -173,12 +173,12 @@ public class MvcLogoExampleModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(
-				AdapterKey.get(FXResizeRelocateOnCornerHandleDragPolicy.class))
-				.to(FXResizeRelocateOnCornerHandleDragPolicy.class);
+				AdapterKey.get(FXResizeRelocateOnHandleDragPolicy.class))
+				.to(FXResizeRelocateOnHandleDragPolicy.class);
 		// rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
-				.to(FXRotateHostOnDragPolicy.class);
+				.to(FXRotateOnHandleDragPolicy.class);
 		// change cursor for rotation
 		adapterMapBinder.addBinding(AdapterKey.get(FXCursorBehavior.class)).to(
 				FXCursorBehavior.class);

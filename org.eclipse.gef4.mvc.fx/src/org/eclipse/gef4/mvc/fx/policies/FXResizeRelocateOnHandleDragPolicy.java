@@ -21,7 +21,7 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 // Only applicable for AbstractFXCornerHandlePart, see #getHost().
-public class FXResizeRelocateOnCornerHandleDragPolicy extends
+public class FXResizeRelocateOnHandleDragPolicy extends
 		AbstractFXDragPolicy {
 
 	private Point initialPointerLocation;
