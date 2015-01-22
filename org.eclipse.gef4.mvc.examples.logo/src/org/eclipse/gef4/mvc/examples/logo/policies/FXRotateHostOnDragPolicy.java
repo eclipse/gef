@@ -33,17 +33,16 @@ import com.google.common.collect.SetMultimap;
 
 public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 
-	private Point initialHostMidInScene;
+	private Point pivotInScene;
 	private Point initialPointerLocationInScene;
 	private FXTransformOperation transformOperation;
 	private boolean invalidGesture = false;
-	private Point2D pivot;
+	private Point2D pivotInHost;
 
 	protected Angle computeRotationAngleCW(MouseEvent e) {
-		Vector vStart = new Vector(initialHostMidInScene,
-				initialPointerLocationInScene);
-		Vector vEnd = new Vector(initialHostMidInScene, new Point(
-				e.getSceneX(), e.getSceneY()));
+		Vector vStart = new Vector(pivotInScene, initialPointerLocationInScene);
+		Vector vEnd = new Vector(pivotInScene, new Point(e.getSceneX(),
+				e.getSceneY()));
 		Angle angle = vStart.getAngleCW(vEnd);
 		return angle;
 	}
@@ -86,14 +85,13 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 		initialPointerLocationInScene = new Point(e.getSceneX(), e.getSceneY());
 		Node hostVisual = getHost().getVisual();
 		Bounds boundsInScene = hostVisual.localToScene(hostVisual
-				.getBoundsInLocal());
-		initialHostMidInScene = new Point(boundsInScene.getMinX()
+				.getLayoutBounds());
+		pivotInScene = new Point(boundsInScene.getMinX()
 				+ boundsInScene.getWidth() / 2, boundsInScene.getMinY()
 				+ boundsInScene.getHeight() / 2);
 		transformOperation = new FXTransformOperation(getHost());
 
-		pivot = hostVisual.sceneToLocal(initialHostMidInScene.x,
-				initialHostMidInScene.y);
+		pivotInHost = hostVisual.sceneToLocal(pivotInScene.x, pivotInScene.y);
 	}
 
 	@Override
@@ -111,7 +109,8 @@ public class FXRotateHostOnDragPolicy extends AbstractFXDragPolicy {
 	private void updateOperation(MouseEvent e) {
 		Affine oldTransform = transformOperation.getOldTransform();
 		AffineTransform rotate = new AffineTransform().rotate(
-				computeRotationAngleCW(e).rad(), pivot.getX(), pivot.getY());
+				computeRotationAngleCW(e).rad(), pivotInHost.getX(),
+				pivotInHost.getY());
 		AffineTransform newTransform = JavaFX2Geometry.toAffineTransform(
 				oldTransform).concatenate(rotate);
 		transformOperation.setNewTransform(Geometry2JavaFX
