@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 itemis AG and others.
+ * Copyright (c) 2014, 2015 itemis AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javafx.geometry.Point2D;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
@@ -28,7 +29,6 @@ import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-// Only applicable for AbstractFXCornerHandlepart
 public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 
 	/*
@@ -41,6 +41,7 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 	private Map<IContentPart<Node, ? extends Node>, Double> relY1 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relX2 = null;
 	private Map<IContentPart<Node, ? extends Node>, Double> relY2 = null;
+	private boolean invalidGesture = false;
 
 	public FXScaleOnCornerHandleDragPolicy() {
 	}
@@ -70,48 +71,31 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void drag(MouseEvent e, Dimension delta) {
+		if (invalidGesture) {
+			return;
+		}
+
 		if (selectionBounds == null) {
 			return;
 		}
 		Rectangle sel = updateSelectionBounds(e);
 		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
-			double[] initialBounds = getBounds(selectionBounds, targetPart);
-			double[] newBounds = getBounds(sel, targetPart);
-
-			// transform initialBounds to target space
-			Node visual = targetPart.getVisual();
-			Point2D initialTopLeft = visual.sceneToLocal(initialBounds[0],
-					initialBounds[1]);
-			Point2D initialBotRight = visual.sceneToLocal(initialBounds[2],
-					initialBounds[3]);
-
-			// transform newBounds to target space
-			Point2D newTopLeft = visual
-					.sceneToLocal(newBounds[0], newBounds[1]);
-			Point2D newBotRight = visual.sceneToLocal(newBounds[2],
-					newBounds[3]);
-
-			double dx = newTopLeft.getX() - initialTopLeft.getX();
-			double dy = newTopLeft.getY() - initialTopLeft.getY();
-			double dw = (newBotRight.getX() - newTopLeft.getX())
-					- (initialBotRight.getX() - initialTopLeft.getX());
-			double dh = (newBotRight.getY() - newTopLeft.getY())
-					- (initialBotRight.getY() - initialTopLeft.getY());
-
-			if (getResizeRelocatePolicy(targetPart) != null) {
-				getResizeRelocatePolicy(targetPart).performResizeRelocate(dx,
-						dy, dw, dh);
+			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(targetPart);
+			if (policy != null) {
+				Bounds initialBounds = getBounds(selectionBounds, targetPart);
+				Bounds newBounds = getBounds(sel, targetPart);
+				policy.performScaleRelocate(initialBounds, newBounds);
 			}
 		}
 	}
 
-	private double[] getBounds(Rectangle sel,
+	private Bounds getBounds(Rectangle sel,
 			IContentPart<Node, ? extends Node> targetPart) {
 		double x1 = sel.getX() + sel.getWidth() * relX1.get(targetPart);
 		double x2 = sel.getX() + sel.getWidth() * relX2.get(targetPart);
 		double y1 = sel.getY() + sel.getHeight() * relY1.get(targetPart);
 		double y2 = sel.getY() + sel.getHeight() * relY2.get(targetPart);
-		return new double[] { x1, y1, x2, y2 };
+		return new BoundingBox(x1, y1, x2 - x1, y2 - y1);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -120,9 +104,9 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 		return (AbstractFXSegmentHandlePart<Node>) super.getHost();
 	}
 
-	protected FXResizeRelocatePolicy getResizeRelocatePolicy(
+	protected FXScaleRelocatePolicy getScaleRelocatePolicy(
 			IContentPart<Node, ? extends Node> part) {
-		return part.getAdapter(FXResizeRelocatePolicy.class);
+		return part.getAdapter(FXScaleRelocatePolicy.class);
 	}
 
 	/**
@@ -169,23 +153,39 @@ public class FXScaleOnCornerHandleDragPolicy extends AbstractFXDragPolicy {
 
 	@Override
 	public void press(MouseEvent e) {
+		// only applicable for multiple targets
+		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
+		if (targetParts.size() < 2) {
+			invalidGesture = true;
+			return;
+		}
+
 		// init resize context vars
 		initialMouseLocation = new Point(e.getSceneX(), e.getSceneY());
-		selectionBounds = getSelectionBounds(getTargetParts());
+		selectionBounds = getSelectionBounds(targetParts);
 		relX1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
 		relY1 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
 		relX2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
 		relY2 = new HashMap<IContentPart<Node, ? extends Node>, Double>();
-		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
-			computeRelatives(targetPart);
-			init(getResizeRelocatePolicy(targetPart));
+		// init scale relocate policies
+		for (IContentPart<Node, ? extends Node> targetPart : targetParts) {
+			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(targetPart);
+			if (policy != null) {
+				computeRelatives(targetPart);
+				init(policy);
+			}
 		}
 	}
 
 	@Override
 	public void release(MouseEvent e, Dimension delta) {
+		if (invalidGesture) {
+			invalidGesture = false;
+			return;
+		}
+
 		for (IContentPart<Node, ? extends Node> part : getTargetParts()) {
-			FXResizeRelocatePolicy policy = getResizeRelocatePolicy(part);
+			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(part);
 			if (policy != null) {
 				commit(policy);
 			}
