@@ -38,8 +38,8 @@ public class FXTransformOperation extends AbstractOperation {
 		super("Transform");
 		this.part = part;
 		// TODO: Remove this method call from this constructor.
-		this.oldTransform = getNodeTransform();
-		this.newTransform = oldTransform;
+		this.oldTransform = setAffine(new Affine(), getNodeTransform());
+		this.newTransform = setAffine(new Affine(), oldTransform);
 	}
 
 	public FXTransformOperation(IVisualPart<Node, ? extends Node> part,
@@ -48,7 +48,7 @@ public class FXTransformOperation extends AbstractOperation {
 		this.part = part;
 		this.newTransform = newTransform;
 		// TODO: Remove this method call from this constructor.
-		this.oldTransform = getNodeTransform();
+		this.oldTransform = setAffine(new Affine(), getNodeTransform());
 	}
 
 	public FXTransformOperation(IVisualPart<Node, ? extends Node> part,
@@ -96,7 +96,7 @@ public class FXTransformOperation extends AbstractOperation {
 		return execute(monitor, info);
 	}
 
-	protected void setAffine(Affine dst, Affine src) {
+	protected Affine setAffine(Affine dst, Affine src) {
 		dst.setMxx(src.getMxx());
 		dst.setMxy(src.getMxy());
 		dst.setMxz(src.getMxz());
@@ -109,6 +109,7 @@ public class FXTransformOperation extends AbstractOperation {
 		dst.setTx(src.getTx());
 		dst.setTy(src.getTy());
 		dst.setTz(src.getTz());
+		return dst;
 	}
 
 	public void setNewTransform(Affine newTransform) {
