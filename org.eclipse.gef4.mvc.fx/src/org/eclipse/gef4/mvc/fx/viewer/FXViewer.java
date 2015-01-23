@@ -38,6 +38,7 @@ public class FXViewer extends AbstractViewer<Node> {
 	private ScrollPaneEx scrollPane;
 	private FXGridLayer gridLayer;
 
+	@SuppressWarnings("unchecked")
 	private void createAndHookScene(ISceneContainer container, Parent rootVisual) {
 		scrollPane = new ScrollPaneEx();
 		scrollPane.setStyle(SCROLL_PANE_STYLE);
