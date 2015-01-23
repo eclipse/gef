@@ -20,6 +20,7 @@ import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
+import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
@@ -67,9 +68,14 @@ public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).get();
 	}
 
+	private boolean isMultiSelection() {
+		return getTargetPart().getRoot().getViewer()
+				.getAdapter(SelectionModel.class).getSelected().size() > 1;
+	}
+
 	@Override
 	public void press(MouseEvent e) {
-		if (e.isControlDown()) {
+		if (e.isControlDown() || isMultiSelection()) {
 			invalidGesture = true;
 			return;
 		}
