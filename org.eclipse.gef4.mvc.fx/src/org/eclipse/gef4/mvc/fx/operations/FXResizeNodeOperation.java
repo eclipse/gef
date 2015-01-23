@@ -45,7 +45,7 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	/**
 	 * Constructs a new {@link FXResizeNodeOperation} from the given values.
 	 * Note that the <i>oldLocation</i> does include the layout-bounds minimum.
-	 *
+	 * 
 	 * @param label
 	 *            Descriptive title for the operation.
 	 * @param visual
@@ -55,10 +55,6 @@ public class FXResizeNodeOperation extends AbstractOperation {
 	 *            minimum).
 	 * @param oldSize
 	 *            The old size of the visual.
-	 * @param dx
-	 *            The horizontal location difference.
-	 * @param dy
-	 *            The vertical location difference.
 	 * @param dw
 	 *            The horizontal size difference.
 	 * @param dh

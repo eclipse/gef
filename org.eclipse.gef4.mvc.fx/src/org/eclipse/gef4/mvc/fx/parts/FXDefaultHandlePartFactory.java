@@ -52,15 +52,9 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
 	 * selection. The corner is specified via the <i>position</i> parameter.
-	 *
+	 * 
 	 * @param targets
 	 *            The selected {@link IVisualPart}s.
-	 * @param handleGeometryProvider
-	 *            Provides an {@link IGeometry} from which the handle positions
-	 *            are derived.
-	 * @param position
-	 *            Relative position of the {@link IHandlePart} on the collective
-	 *            bounds of the multi selection.
 	 * @param contextMap
 	 *            Stores context information as an {@link IBehavior} is
 	 *            stateless.
@@ -103,7 +97,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 *
+	 * 
 	 * @param targetPart
 	 *            The {@link IVisualPart} which is selected.
 	 * @param segmentsProvider
@@ -128,7 +122,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	/**
 	 * Generate handles for the end/join points of the individual beziers.
-	 *
+	 * 
 	 * @param targetPart
 	 *            The {@link IVisualPart} which is selected.
 	 * @param segmentsProvider
@@ -334,7 +328,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 *
+	 * 
 	 * @param target
 	 *            {@link IVisualPart} for which a selection handle is created.
 	 * @param segmentsProvider

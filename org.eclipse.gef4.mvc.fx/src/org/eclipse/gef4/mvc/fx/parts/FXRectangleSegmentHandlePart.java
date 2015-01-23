@@ -19,12 +19,12 @@ import org.eclipse.gef4.geometry.planar.BezierCurve;
 import com.google.inject.Provider;
 
 /**
- * An {@link AbstractFXCornerHandlePart} with a
+ * An {@link AbstractFXSegmentHandlePart} with a
  * {@link javafx.scene.shape.Rectangle} visual.
- *
+ * 
  * @author mwienand
  * @author anyssen
- *
+ * 
  */
 public class FXRectangleSegmentHandlePart extends
 		AbstractFXSegmentHandlePart<javafx.scene.shape.Rectangle> {
