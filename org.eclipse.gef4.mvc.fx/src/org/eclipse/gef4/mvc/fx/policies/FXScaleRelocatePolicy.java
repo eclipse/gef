@@ -18,6 +18,7 @@ import javafx.scene.transform.Scale;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -26,6 +27,7 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
 	private Point2D pivot;
+	private AffineTransform oldTransform;
 
 	@Override
 	public IUndoableOperation commit() {
@@ -50,6 +52,8 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		// initialize delegate policies
 		getTransformPolicy().init();
 		getResizePolicy().init();
+		oldTransform = JavaFX2Geometry.toAffineTransform(getTransformPolicy()
+				.getNodeTransform());
 		// determine pivot point for scale
 		Bounds bounds = getHost().getVisual().getLayoutBounds();
 		pivot = new Point2D(bounds.getMinX() + bounds.getWidth() / 2,
@@ -60,12 +64,19 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 			Bounds newBoundsInScene) {
 		double sx = newBoundsInScene.getWidth() / oldBoundsInScene.getWidth();
 		double sy = newBoundsInScene.getHeight() / oldBoundsInScene.getHeight();
-		Scale scale = new Scale(sx, sy, pivot.getX(), pivot.getY());
-		getTransformPolicy().setConcatenation(
-				JavaFX2Geometry.toAffineTransform(scale));
-		// TODO: relocate
-		// getTransformPolicy().setPreConcatenation(
-		// JavaFX2Geometry.toAffineTransform(translate));
+		AffineTransform scale = JavaFX2Geometry.toAffineTransform(new Scale(sx,
+				sy, pivot.getX(), pivot.getY()));
+
+		double dw = newBoundsInScene.getWidth() - oldBoundsInScene.getWidth();
+		double dh = newBoundsInScene.getHeight() - oldBoundsInScene.getHeight();
+		double dx = newBoundsInScene.getMinX() - oldBoundsInScene.getMinX();
+		double dy = newBoundsInScene.getMinY() - oldBoundsInScene.getMinY();
+
+		AffineTransform translate = new AffineTransform().setToTranslation(dx
+				+ dw / 2, dy + dh / 2);
+
+		getTransformPolicy().setTransform(
+				translate.concatenate(oldTransform).concatenate(scale));
 	}
 
 }

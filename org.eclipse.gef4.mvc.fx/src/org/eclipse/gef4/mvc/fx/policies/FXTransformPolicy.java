@@ -75,7 +75,7 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 	}
 
 	@SuppressWarnings("serial")
-	protected Affine getNodeTransform() {
+	public Affine getNodeTransform() {
 		return getHost().getAdapter(
 				AdapterKey.get(new TypeToken<Provider<Affine>>() {
 				}, TRANSFORMATION_PROVIDER_ROLE)).get();
