@@ -53,8 +53,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 
 	private Point2D startPoint;
 	private Point2D endPoint;
-	private double initialLayoutX;
-	private double initialLayoutY;
+	private double initialTx;
+	private double initialTy;
 	private double initialWidth;
 	private double initialHeight;
 	private Affine affine;
@@ -89,6 +89,8 @@ public class FXLayoutSnippet extends AbstractFXExample {
 				// JavaFX Bug
 			}
 		});
+		affine = new Affine();
+		rect.getTransforms().add(affine);
 
 		// visualize rect's origin
 		final Circle origin = new Circle(1.5, new Color(1, 0, 0, 0.5));
@@ -134,12 +136,11 @@ public class FXLayoutSnippet extends AbstractFXExample {
 			@Override
 			public void handle(MouseEvent event) {
 				startPoint = new Point2D(event.getSceneX(), event.getSceneY());
-				initialLayoutX = rect.getLayoutX();
-				initialLayoutY = rect.getLayoutY();
+				initialTx = affine.getTx();
+				initialTy = affine.getTy();
 				initialWidth = rect.getWidth();
 				initialHeight = rect.getHeight();
 			}
-
 		});
 		handle.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
@@ -150,20 +151,16 @@ public class FXLayoutSnippet extends AbstractFXExample {
 				double dx = end.getX() - start.getX();
 				double dy = end.getY() - start.getY();
 
-				Point2D layout = rect.parentToLocal(initialLayoutX,
-						initialLayoutY);
+				Point2D layout = rect.parentToLocal(initialTx, initialTy);
 				Point2D layoutParent = rect.localToParent(layout.getX(),
 						layout.getY() + dy);
 
 				rect.setWidth(initialWidth + dx);
 				rect.setHeight(initialHeight - dy);
-				rect.setLayoutX(layoutParent.getX());
-				rect.setLayoutY(layoutParent.getY());
+				affine.setTx(layoutParent.getX());
+				affine.setTy(layoutParent.getY());
 			}
 		});
-
-		affine = new Affine();
-		rect.getTransforms().add(affine);
 
 		// add nodes to the scene
 		contentPane.getChildren().addAll(rect, origin, handle);
