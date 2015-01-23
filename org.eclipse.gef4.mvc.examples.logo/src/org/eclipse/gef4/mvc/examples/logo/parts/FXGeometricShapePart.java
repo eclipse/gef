@@ -21,7 +21,7 @@ import org.eclipse.gef4.geometry.planar.IGeometry;
 import org.eclipse.gef4.geometry.planar.IShape;
 import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricShape;
-import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
@@ -81,7 +81,7 @@ public class FXGeometricShapePart extends
 					AdapterKey.<Provider<? extends Affine>> get(
 							new TypeToken<Provider<? extends Affine>>() {
 							},
-							FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE))
+							FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE))
 					.get();
 			affine.setMxx(transform.getM00());
 			affine.setMxy(transform.getM01());

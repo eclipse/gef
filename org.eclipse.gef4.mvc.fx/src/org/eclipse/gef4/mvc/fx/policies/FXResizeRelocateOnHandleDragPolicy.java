@@ -14,19 +14,23 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXSegmentHandlePart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
+
 // Only applicable for AbstractFXCornerHandlePart, see #getHost().
-public class FXResizeRelocateOnHandleDragPolicy extends
-		AbstractFXDragPolicy {
+public class FXResizeRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 
 	private Point initialPointerLocation;
-	private double initialLayoutX;
-	private double initialLayoutY;
+	private double initialTx;
+	private double initialTy;
 	private double dx;
 	private double dy;
 	private double dw;
@@ -56,6 +60,12 @@ public class FXResizeRelocateOnHandleDragPolicy extends
 		return getHost().getAnchorages().keySet().iterator().next();
 	}
 
+	private Affine getTargetTransform() {
+		return getTargetPart().getAdapter(
+				AdapterKey.get(new TypeToken<Provider<Affine>>() {
+				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).get();
+	}
+
 	@Override
 	public void press(MouseEvent e) {
 		if (e.isControlDown()) {
@@ -64,8 +74,8 @@ public class FXResizeRelocateOnHandleDragPolicy extends
 		}
 
 		initialPointerLocation = new Point(e.getSceneX(), e.getSceneY());
-		initialLayoutX = getHost().getVisual().getLayoutX();
-		initialLayoutY = getHost().getVisual().getLayoutY();
+		initialTx = getTargetTransform().getTx();
+		initialTy = getTargetTransform().getTy();
 		init(getResizeRelocatePolicy());
 	}
 
@@ -93,7 +103,7 @@ public class FXResizeRelocateOnHandleDragPolicy extends
 		// right, 2 = bottom right, 3 = bottom left)
 		int segment = getHost().getSegmentIndex();
 
-		Point2D layout = visual.parentToLocal(initialLayoutX, initialLayoutY);
+		Point2D layout = visual.parentToLocal(initialTx, initialTy);
 		double lx = layout.getX();
 		double ly = layout.getY();
 		if (segment == 0 || segment == 3) {
@@ -106,8 +116,8 @@ public class FXResizeRelocateOnHandleDragPolicy extends
 		}
 
 		Point2D layoutParent = visual.localToParent(lx, ly);
-		dx = layoutParent.getX() - initialLayoutX;
-		dy = layoutParent.getY() - initialLayoutY;
+		dx = layoutParent.getX() - initialTx;
+		dy = layoutParent.getY() - initialTy;
 
 		if (segment == 1 || segment == 2) {
 			// right side

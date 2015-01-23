@@ -19,7 +19,7 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.inject.Provider;
 
-public class FXTransformationProvider implements
+public class FXTransformProvider implements
 		IAdaptable.Bound<IVisualPart<Node, ? extends Node>>, Provider<Affine> {
 
 	private IVisualPart<Node, ? extends Node> host;

@@ -38,7 +38,7 @@ import org.eclipse.gef4.mvc.examples.logo.model.AbstractFXGeometricElement;
 import org.eclipse.gef4.mvc.examples.logo.model.FXGeometricCurve;
 import org.eclipse.gef4.mvc.fx.policies.FXBendPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateConnectionPolicy;
-import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ReverseUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -131,7 +131,7 @@ public class FXGeometricCurvePart extends
 
 	public FXGeometricCurvePart() {
 		// TODO: extract into own classes and use binding
-		setAdapter(AdapterKey.get(FXResizeRelocatePolicy.class),
+		setAdapter(AdapterKey.get(FXTransformPolicy.class),
 				new FXRelocateConnectionPolicy() {
 					@Override
 					public IUndoableOperation commit() {

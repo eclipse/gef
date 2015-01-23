@@ -334,11 +334,11 @@ public class FXBendPolicy extends AbstractPolicy<Node> implements
 				.getTranslated(deltaInLocal);
 
 		// TODO: make snapping (0.5) configurable
-		Dimension snapToGridOffset = FXResizeRelocatePolicy
-				.getSnapToGridOffset(getHost().getRoot().getViewer()
+		Dimension snapToGridOffset = FXTransformPolicy.getSnapToGridOffset(
+				getHost().getRoot().getViewer()
 						.<GridModel> getAdapter(GridModel.class),
-						currentReferencePositionInLocal.x,
-						currentReferencePositionInLocal.y, 0.5, 0.5);
+				currentReferencePositionInLocal.x,
+				currentReferencePositionInLocal.y, 0.5, 0.5);
 
 		Point currentReferencePositionInScene = JavaFX2Geometry
 				.toPoint(getConnection().localToScene(

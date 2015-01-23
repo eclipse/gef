@@ -26,19 +26,19 @@ import org.eclipse.gef4.mvc.fx.behaviors.FXGridBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXHoverBehavior;
 import org.eclipse.gef4.mvc.fx.behaviors.FXViewportBehavior;
 import org.eclipse.gef4.mvc.fx.domain.FXDomain;
-import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXFeedbackPart;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXHandlePart;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultFeedbackPartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXDefaultHandlePartFactory;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
-import org.eclipse.gef4.mvc.fx.parts.FXTransformationProvider;
+import org.eclipse.gef4.mvc.fx.parts.FXTransformProvider;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXMarqueeOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXPanOnTypePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnPinchSpreadPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXZoomOnScrollPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
@@ -72,8 +72,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register default providers
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<Affine>>() {
-				}, FXTransformOperation.TRANSFORMATION_PROVIDER_ROLE)).to(
-				FXTransformationProvider.class);
+				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).to(
+				FXTransformProvider.class);
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(

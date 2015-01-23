@@ -14,14 +14,10 @@ package org.eclipse.gef4.mvc.fx.policies;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.transform.Affine;
 import javafx.scene.transform.Scale;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
-import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -29,28 +25,31 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
-	private ForwardUndoCompositeOperation fwdOperation;
-	private FXResizeRelocateNodeOperation rrOperation;
-	private FXTransformOperation txOperation;
 	private Point2D pivot;
 
 	@Override
 	public IUndoableOperation commit() {
-		IUndoableOperation commit = fwdOperation;
-		fwdOperation = null;
-		rrOperation = null;
-		txOperation = null;
-		return commit;
+		// assemble commits of delegate policies to one operation
+		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
+				"ScaleRelocate");
+		fwd.add(getResizePolicy().commit());
+		fwd.add(getTransformPolicy().commit());
+		return fwd;
+	}
+
+	protected FXResizePolicy getResizePolicy() {
+		return getHost().getAdapter(FXResizePolicy.class);
+	}
+
+	protected FXTransformPolicy getTransformPolicy() {
+		return getHost().getAdapter(FXTransformPolicy.class);
 	}
 
 	@Override
 	public void init() {
-		// assemble operations
-		fwdOperation = new ForwardUndoCompositeOperation("Scale");
-		rrOperation = new FXResizeRelocateNodeOperation(getHost().getVisual());
-		txOperation = new FXTransformOperation(getHost());
-		fwdOperation.add(rrOperation);
-		fwdOperation.add(txOperation);
+		// initialize delegate policies
+		getTransformPolicy().init();
+		getResizePolicy().init();
 		// determine pivot point for scale
 		Bounds bounds = getHost().getVisual().getLayoutBounds();
 		pivot = new Point2D(bounds.getMinX() + bounds.getWidth() / 2,
@@ -62,11 +61,11 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		double sx = newBoundsInScene.getWidth() / oldBoundsInScene.getWidth();
 		double sy = newBoundsInScene.getHeight() / oldBoundsInScene.getHeight();
 		Scale scale = new Scale(sx, sy, pivot.getX(), pivot.getY());
-		// concatenate initial transformation with the scale transformation
-		Affine newTransform = Geometry2JavaFX.toFXAffine(JavaFX2Geometry
-				.toAffineTransform(txOperation.getOldTransform()).concatenate(
-						JavaFX2Geometry.toAffineTransform(scale)));
-		txOperation.setNewTransform(newTransform);
+		getTransformPolicy().setConcatenation(
+				JavaFX2Geometry.toAffineTransform(scale));
+		// TODO: relocate
+		// getTransformPolicy().setPreConcatenation(
+		// JavaFX2Geometry.toAffineTransform(translate));
 	}
 
 }

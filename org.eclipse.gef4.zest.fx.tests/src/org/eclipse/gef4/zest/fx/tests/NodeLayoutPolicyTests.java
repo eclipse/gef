@@ -13,6 +13,7 @@
 package org.eclipse.gef4.zest.fx.tests;
 
 import static org.junit.Assert.assertEquals;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -22,12 +23,10 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutProperties;
-import org.eclipse.gef4.mvc.fx.operations.FXResizeRelocateNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
-import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
@@ -66,14 +65,22 @@ public class NodeLayoutPolicyTests {
 
 										@Override
 										public void init() {
-											// create "empty" operation
-											resizeRelocateOperation = new FXResizeRelocateNodeOperation(
-													getHost().getVisual());
-											forwardUndoOperation = new ForwardUndoCompositeOperation(
-													resizeRelocateOperation
-															.getLabel());
-											forwardUndoOperation
-													.add(resizeRelocateOperation);
+										}
+
+										@Override
+										public void performResizeRelocate(
+												double dx, double dy,
+												double dw, double dh) {
+											javafx.scene.Node visual = getHost()
+													.getVisual();
+											Bounds bounds = visual
+													.getLayoutBounds();
+											double x = visual.getLayoutX();
+											double y = visual.getLayoutY();
+											visual.resizeRelocate(x + dx, y
+													+ dy, bounds.getWidth()
+													+ dw, bounds.getHeight()
+													+ dh);
 										}
 									});
 						}

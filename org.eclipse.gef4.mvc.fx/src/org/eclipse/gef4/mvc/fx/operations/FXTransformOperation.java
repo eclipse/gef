@@ -21,14 +21,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 
 public class FXTransformOperation extends AbstractOperation {
-
-	public static final String TRANSFORMATION_PROVIDER_ROLE = "transformationProvider";
 
 	private final IVisualPart<Node, ? extends Node> part;
 	private Affine oldTransform;
@@ -75,13 +74,13 @@ public class FXTransformOperation extends AbstractOperation {
 		Provider<Affine> affineProvider = part.getAdapter(AdapterKey
 				.<Provider<? extends Affine>> get(
 						new TypeToken<Provider<? extends Affine>>() {
-						}, TRANSFORMATION_PROVIDER_ROLE));
+						}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE));
 		if (affineProvider == null) {
 			throw new IllegalStateException(
 					"Part <"
 							+ part
 							+ "> is missing an adapter for Provider<Affine> under role <"
-							+ TRANSFORMATION_PROVIDER_ROLE + ">.");
+							+ FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE + ">.");
 		}
 		return affineProvider.get();
 	}

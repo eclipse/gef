@@ -31,8 +31,9 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXCreationMenuOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClickPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeRelocateShapePolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRotateOnHandleDragPolicy;
+import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
 import org.eclipse.gef4.mvc.fx.parts.ChopBoxAnchorProvider;
@@ -45,8 +46,10 @@ import org.eclipse.gef4.mvc.fx.policies.FXDeleteSelectedOnTypePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
@@ -146,6 +149,15 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	@SuppressWarnings("serial")
 	protected void bindFXGeometricShapePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// register resize/transform policies (writing changes also to model)
+		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class))
+				.to(FXTransformShapePolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXResizePolicy.class)).to(
+				FXResizeShapePolicy.class);
+		// transaction policy for resize + transform
+		adapterMapBinder.addBinding(
+				(AdapterKey.get(FXResizeRelocatePolicy.class))).to(
+				FXResizeRelocatePolicy.class);
 		// interaction policies to relocate on drag (including anchored
 		// elements, which are linked)
 		adapterMapBinder.addBinding(
@@ -158,10 +170,6 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// interaction policy to delete on key type
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
 				.to(FXDeleteSelectedOnTypePolicy.class);
-		// transaction policy to relocate (writing changes also to model)
-		adapterMapBinder.addBinding(
-				(AdapterKey.get(FXResizeRelocatePolicy.class))).to(
-				FXResizeRelocateShapePolicy.class);
 		// bind chopbox anchor provider
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<IFXAnchor>>() {
@@ -173,8 +181,8 @@ public class MvcLogoExampleModule extends MvcFxModule {
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// resize relocate on handle drag without modifier
 		adapterMapBinder.addBinding(
-				AdapterKey.get(FXResizeRelocateOnHandleDragPolicy.class))
-				.to(FXResizeRelocateOnHandleDragPolicy.class);
+				AdapterKey.get(FXResizeRelocateOnHandleDragPolicy.class)).to(
+				FXResizeRelocateOnHandleDragPolicy.class);
 		// rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))

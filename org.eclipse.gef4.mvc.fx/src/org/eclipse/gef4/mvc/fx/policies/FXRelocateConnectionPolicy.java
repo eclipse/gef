@@ -19,12 +19,13 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.fx.anchors.FXStaticAnchor;
 import org.eclipse.gef4.fx.nodes.FXConnection;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
+import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.mvc.fx.operations.FXBendOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 
-public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
+public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	private FXBendOperation op;
 	private Point[] initialPositions;
@@ -76,7 +77,11 @@ public class FXRelocateConnectionPolicy extends FXResizeRelocatePolicy {
 	}
 
 	@Override
-	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
+	public void setConcatenation(AffineTransform transform) {
+		// determine relocation offset
+		double dx = transform.getTranslateX();
+		double dy = transform.getTranslateY();
+		// update operation
 		for (int i : getIndicesOfMovableAnchors()) {
 			Point p = initialPositions[i];
 			// TODO: make stepping (0.5) configurable
