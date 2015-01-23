@@ -26,7 +26,6 @@ import org.eclipse.gef4.mvc.policies.AbstractPolicy;
 public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		ITransactional {
 
-	private Point2D pivot;
 	private AffineTransform oldTransform;
 
 	@Override
@@ -54,27 +53,27 @@ public class FXScaleRelocatePolicy extends AbstractPolicy<Node> implements
 		getResizePolicy().init();
 		oldTransform = JavaFX2Geometry.toAffineTransform(getTransformPolicy()
 				.getNodeTransform());
-		// determine pivot point for scale
-		Bounds bounds = getHost().getVisual().getLayoutBounds();
-		pivot = new Point2D(bounds.getMinX() + bounds.getWidth() / 2,
-				bounds.getMinY() + bounds.getHeight() / 2);
 	}
 
 	public void performScaleRelocate(Bounds oldBoundsInScene,
 			Bounds newBoundsInScene) {
+		// compute scale
 		double sx = newBoundsInScene.getWidth() / oldBoundsInScene.getWidth();
 		double sy = newBoundsInScene.getHeight() / oldBoundsInScene.getHeight();
 		AffineTransform scale = JavaFX2Geometry.toAffineTransform(new Scale(sx,
-				sy, pivot.getX(), pivot.getY()));
-
-		double dw = newBoundsInScene.getWidth() - oldBoundsInScene.getWidth();
-		double dh = newBoundsInScene.getHeight() - oldBoundsInScene.getHeight();
+				sy, 0, 0));
+		// compute translation in host's parent
 		double dx = newBoundsInScene.getMinX() - oldBoundsInScene.getMinX();
 		double dy = newBoundsInScene.getMinY() - oldBoundsInScene.getMinY();
-
-		AffineTransform translate = new AffineTransform().setToTranslation(dx
-				+ dw / 2, dy + dh / 2);
-
+		Point2D originInParent = getHost().getVisual().getParent()
+				.sceneToLocal(0, 0);
+		Point2D deltaInParent = getHost().getVisual().getParent()
+				.sceneToLocal(dx, dy);
+		dx = deltaInParent.getX() - originInParent.getX();
+		dy = deltaInParent.getY() - originInParent.getY();
+		AffineTransform translate = new AffineTransform().setToTranslation(dx,
+				dy);
+		// put together
 		getTransformPolicy().setTransform(
 				translate.concatenate(oldTransform).concatenate(scale));
 	}

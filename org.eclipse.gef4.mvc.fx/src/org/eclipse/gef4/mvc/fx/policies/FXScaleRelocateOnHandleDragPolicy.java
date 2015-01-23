@@ -74,6 +74,7 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 		if (selectionBounds == null) {
 			return;
 		}
+
 		Rectangle sel = updateSelectionBounds(e);
 		for (IContentPart<Node, ? extends Node> targetPart : getTargetParts()) {
 			FXScaleRelocatePolicy policy = getScaleRelocatePolicy(targetPart);
@@ -195,7 +196,7 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	/**
 	 * Returns updated selection bounds. The initial selection bounds are copied
 	 * and the copy is shrinked or expanded depending on the mouse location
-	 * change and the {@link #getReferencePoint() handle-edge}.
+	 * change and the handle edge (top, bottom, left, or right).
 	 *
 	 * @param mouseLocation
 	 * @return
@@ -218,6 +219,7 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 		} else if (segment == 2 || segment == 3) {
 			sel.expand(0, 0, 0, dy);
 		}
+
 		return sel;
 	}
 
