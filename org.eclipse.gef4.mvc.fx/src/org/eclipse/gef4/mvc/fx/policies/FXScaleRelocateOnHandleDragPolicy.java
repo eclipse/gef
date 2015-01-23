@@ -152,7 +152,7 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	public void press(MouseEvent e) {
 		// only applicable for multiple targets
 		List<IContentPart<Node, ? extends Node>> targetParts = getTargetParts();
-		if (targetParts.size() < 2) {
+		if (targetParts.size() < 2 || e.isControlDown()) {
 			invalidGesture = true;
 			return;
 		}
