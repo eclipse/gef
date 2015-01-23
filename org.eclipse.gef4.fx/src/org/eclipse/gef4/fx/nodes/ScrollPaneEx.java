@@ -596,7 +596,6 @@ public class ScrollPaneEx extends Region {
 		};
 
 		// register event handlers
-		// TODO: guarantee that scrollbars fade out when they are not in use
 		node.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -611,10 +610,11 @@ public class ScrollPaneEx extends Region {
 				}
 			}
 		});
-		node.setOnMouseReleased(new EventHandler<MouseEvent>() {
+		node.pressedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
-			public void handle(MouseEvent event) {
-				if (!node.isHover()) {
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if (oldValue.booleanValue() && !newValue.booleanValue()) {
 					fadeOut.run();
 				}
 			}
