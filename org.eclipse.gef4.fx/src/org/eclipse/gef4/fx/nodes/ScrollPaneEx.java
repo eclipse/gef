@@ -701,6 +701,12 @@ public class ScrollPaneEx extends Region {
 	}
 
 	protected void updateScrollbars() {
+		// do not update while a scrollbar is pressed, so that the scrollable
+		// are does not change while using a scrollbar
+		if (horizontalScrollBar.isPressed() || verticalScrollBar.isPressed()) {
+			return;
+		}
+
 		// show/hide scrollbars
 		double[] contentBounds = computeContentBoundsInLocal();
 		if (contentBounds[0] < 0 || contentBounds[2] > getWidth()) {
