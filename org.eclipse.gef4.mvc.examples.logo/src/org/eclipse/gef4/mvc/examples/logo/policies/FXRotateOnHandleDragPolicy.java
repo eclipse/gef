@@ -15,7 +15,9 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 
+import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.euclidean.Angle;
 import org.eclipse.gef4.geometry.euclidean.Vector;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -74,15 +76,25 @@ public class FXRotateOnHandleDragPolicy extends AbstractFXDragPolicy {
 			return;
 		}
 
+		// save pointer location for later angle calculation
 		initialPointerLocationInScene = new Point(e.getSceneX(), e.getSceneY());
+		// determine pivot point in scene
 		Node hostVisual = getHost().getVisual();
 		Bounds boundsInScene = hostVisual.localToScene(hostVisual
 				.getLayoutBounds());
 		pivotInScene = new Point(boundsInScene.getMinX()
 				+ boundsInScene.getWidth() / 2, boundsInScene.getMinY()
 				+ boundsInScene.getHeight() / 2);
+		// transform to local coordinates
 		pivotInHost = hostVisual.sceneToLocal(pivotInScene.x, pivotInScene.y);
-
+		// take scaling into account
+		AffineTransform oldTransform = JavaFX2Geometry
+				.toAffineTransform(getTransformPolicy().getNodeTransform());
+		double scaleX = oldTransform.getScaleX();
+		double scaleY = oldTransform.getScaleY();
+		pivotInHost = new Point2D(pivotInHost.getX() * scaleX,
+				pivotInHost.getY() * scaleY);
+		// initialize transaction policy
 		getTransformPolicy().init();
 	}
 
@@ -99,9 +111,18 @@ public class FXRotateOnHandleDragPolicy extends AbstractFXDragPolicy {
 	}
 
 	private void updateOperation(MouseEvent e) {
-		AffineTransform rotate = new AffineTransform().rotate(
-				computeRotationAngleCW(e).rad(), pivotInHost.getX(),
-				pivotInHost.getY());
+		// determine scaling
+		Affine nodeTransform = getTransformPolicy().getNodeTransform();
+		AffineTransform oldTransform = JavaFX2Geometry
+				.toAffineTransform(nodeTransform);
+		double scaleX = oldTransform.getScaleX();
+		double scaleY = oldTransform.getScaleY();
+		// compute rotation; ensure rotation is done before scaling
+		AffineTransform rotate = new AffineTransform()
+				.scale(1 / scaleX, 1 / scaleY)
+				.rotate(computeRotationAngleCW(e).rad(), pivotInHost.getX(),
+						pivotInHost.getY()).scale(scaleX, scaleY);
+		// apply rotation to the current transformations
 		getTransformPolicy().setConcatenation(rotate);
 	}
 
