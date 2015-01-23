@@ -137,6 +137,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 
 	protected void bindFXGeometricCurvePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
+		// transaction policy for resize + transform
+		adapterMapBinder.addBinding(
+				(AdapterKey.get(FXResizeRelocatePolicy.class))).to(
+				FXResizeRelocatePolicy.class);
 		// interaction policy to relocate on drag
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(

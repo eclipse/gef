@@ -78,6 +78,11 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 
 	@Override
 	public void setConcatenation(AffineTransform transform) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPreConcatenation(AffineTransform transform) {
 		// determine relocation offset
 		double dx = transform.getTranslateX();
 		double dy = transform.getTranslateY();
@@ -97,6 +102,11 @@ public class FXRelocateConnectionPolicy extends FXTransformPolicy {
 									p.y + dy - snapToGridOffset.height))));
 		}
 		locallyExecuteOperation();
+	}
+
+	@Override
+	public void setTransform(AffineTransform newTransform) {
+		throw new UnsupportedOperationException();
 	}
 
 }

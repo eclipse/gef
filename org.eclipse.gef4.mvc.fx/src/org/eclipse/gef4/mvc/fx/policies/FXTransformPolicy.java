@@ -12,9 +12,11 @@
 package org.eclipse.gef4.mvc.fx.policies;
 
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.convert.fx.Geometry2JavaFX;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
@@ -23,6 +25,9 @@ import org.eclipse.gef4.mvc.fx.operations.FXTransformOperation;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.operations.ITransactional;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 public class FXTransformPolicy extends AbstractPolicy<Node> implements
 		ITransactional {
@@ -69,46 +74,30 @@ public class FXTransformPolicy extends AbstractPolicy<Node> implements
 		return commit;
 	}
 
+	@SuppressWarnings("serial")
+	protected Affine getNodeTransform() {
+		return getHost().getAdapter(
+				AdapterKey.get(new TypeToken<Provider<Affine>>() {
+				}, TRANSFORMATION_PROVIDER_ROLE)).get();
+	}
+
 	@Override
 	public void init() {
-		transformOperation = new FXTransformOperation(getHost());
+		transformOperation = new FXTransformOperation(getNodeTransform());
 		oldTransform = JavaFX2Geometry.toAffineTransform(transformOperation
 				.getOldTransform());
 	}
 
 	public void setConcatenation(AffineTransform transform) {
-		// determine new transformation
-		AffineTransform newTransform = oldTransform.getCopy().concatenate(
-				transform);
-
-		// snap to grid if needed
-		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
-				.getViewer().getAdapter(GridModel.class),
-				newTransform.getTranslateX(), newTransform.getTranslateY(),
-				0.5, 0.5);
-		newTransform.setTransform(newTransform.getM00(), newTransform.getM10(),
-				newTransform.getM01(), newTransform.getM11(),
-				newTransform.getTranslateX() - snapToGridOffset.width,
-				newTransform.getTranslateY() - snapToGridOffset.height);
-
-		// update operation
-		transformOperation.setNewTransform(Geometry2JavaFX
-				.toFXAffine(newTransform));
-
-		// locally execute operation
-		try {
-			transformOperation.execute(null, null);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+		setTransform(oldTransform.getCopy().concatenate(transform));
 	}
 
 	public void setPreConcatenation(AffineTransform transform) {
-		// determine new transformation
-		AffineTransform newTransform = oldTransform.getCopy().preConcatenate(
-				transform);
+		setTransform(oldTransform.getCopy().preConcatenate(transform));
+	}
 
-		// snap to grid if needed
+	public void setTransform(AffineTransform newTransform) {
+		// snap to grid if needed (TODO: check that this is correct)
 		Dimension snapToGridOffset = getSnapToGridOffset(getHost().getRoot()
 				.getViewer().getAdapter(GridModel.class),
 				newTransform.getTranslateX(), newTransform.getTranslateY(),

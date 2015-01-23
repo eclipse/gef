@@ -29,7 +29,9 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 		// assemble commits of delegate policies to one operation
 		ForwardUndoCompositeOperation fwd = new ForwardUndoCompositeOperation(
 				"ResizeRelocate");
-		IUndoableOperation commit = getResizePolicy().commit();
+		FXResizePolicy resizePolicy = getResizePolicy();
+		IUndoableOperation commit = resizePolicy == null ? null : resizePolicy
+				.commit();
 		if (commit != null) {
 			fwd.add(commit);
 		}
@@ -58,26 +60,32 @@ public class FXResizeRelocatePolicy extends AbstractPolicy<Node> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.gef4.mvc.fx.policies.ITransactionalPolicy#init()
 	 */
 	@Override
 	public void init() {
 		// initialize delegate policies
 		getTransformPolicy().init();
-		getResizePolicy().init();
+		FXResizePolicy resizePolicy = getResizePolicy();
+		if (resizePolicy != null) {
+			resizePolicy.init();
+		}
 	}
 
 	public void performResizeRelocate(double dx, double dy, double dw, double dh) {
 		// relocate in middle of resize area if visual is not resizable
-		if (!getHost().getVisual().isResizable()) {
+		FXResizePolicy resizePolicy = getResizePolicy();
+		if (!getHost().getVisual().isResizable() || resizePolicy == null) {
 			dw = 0;
 			dh = 0;
 			dx += dw / 2;
 			dy += dh / 2;
 		}
 		// delegate to resize and transform policies
-		getResizePolicy().performResize(dw, dh);
+		if (resizePolicy != null) {
+			resizePolicy.performResize(dw, dh);
+		}
 		getTransformPolicy().setPreConcatenation(
 				new AffineTransform().setToTranslation(dx, dy));
 	}
