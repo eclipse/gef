@@ -31,10 +31,6 @@ import org.eclipse.gef4.mvc.parts.IContentPart;
 
 public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 
-	/*
-	 * TODO: allow negative scaling
-	 */
-
 	private Point initialMouseLocation = null;
 	private Rectangle selectionBounds;
 	private Map<IContentPart<Node, ? extends Node>, Double> relX1 = null;
@@ -148,7 +144,7 @@ public class FXScaleRelocateOnHandleDragPolicy extends AbstractFXDragPolicy {
 			throw new IllegalArgumentException("contentPart may not be null!");
 		}
 		return JavaFX2Geometry.toRectangle(contentPart.getVisual()
-				.localToScene(contentPart.getVisual().getBoundsInLocal()));
+				.localToScene(contentPart.getVisual().getLayoutBounds()));
 	}
 
 	@Override

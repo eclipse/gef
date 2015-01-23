@@ -88,10 +88,10 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 		// per default, handle parts are created for the 4 corners of the
 		// multi selection bounds
+		Provider<BezierCurve[]> segmentsProvider = createSegmentsProvider(handleGeometryProvider);
 		for (int i = 0; i < 4; i++) {
 			IHandlePart<Node, ? extends Node> part = createBoundsSelectionCornerHandlePart(
-					targets, contextMap,
-					createSegmentsProvider(handleGeometryProvider), i++, 0);
+					targets, contextMap, segmentsProvider, i, 0);
 			if (part != null) {
 				injector.injectMembers(part);
 				handleParts.add(part);
@@ -296,7 +296,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	private Provider<BezierCurve[]> createSegmentsProvider(
 			final Provider<? extends IGeometry> geometryProvider) {
-		Provider<BezierCurve[]> segmentsProvider = new Provider<BezierCurve[]>() {
+		return new Provider<BezierCurve[]>() {
 			@Override
 			public BezierCurve[] get() {
 				IGeometry geometry = geometryProvider.get();
@@ -315,7 +315,6 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				}
 			}
 		};
-		return segmentsProvider;
 	}
 
 	protected List<IHandlePart<Node, ? extends Node>> createSelectionHandleParts(

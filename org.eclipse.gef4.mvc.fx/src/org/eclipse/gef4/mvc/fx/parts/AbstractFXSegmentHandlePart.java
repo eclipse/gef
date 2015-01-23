@@ -130,7 +130,7 @@ public abstract class AbstractFXSegmentHandlePart<N extends Node> extends
 	protected void updateLocation(N visual) {
 		// only update when bound to anchorage
 		SetMultimap<IVisualPart<Node, ? extends Node>, String> anchorages = getAnchorages();
-		if (getRoot() == null || anchorages.keySet().size() != 1) {
+		if (anchorages.keySet().size() < 1) {
 			return;
 		}
 
