@@ -21,8 +21,12 @@ import java.util.Map;
 
 import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
+import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
+import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
+
+import com.google.inject.Inject;
 
 /**
  *
@@ -33,6 +37,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
  *            javafx.scene.Node in case of JavaFX.
  */
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
+
+	@Inject
+	protected IFeedbackPartFactory<VR> feedbackPartFactory;
+
+	@Inject
+	protected IHandlePartFactory<VR> handlePartFactory;
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private IVisualPart<VR, ? extends VR> host;
@@ -60,8 +70,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
-			feedbackParts = BehaviorUtils.createFeedback(targets, this,
-					contextMap);
+			feedbackParts = feedbackPartFactory.createFeedbackParts(targets,
+					this, contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
 					feedbackParts);
 		}
@@ -76,8 +86,8 @@ public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 			List<? extends IVisualPart<VR, ? extends VR>> targets,
 			Map<Object, Object> contextMap) {
 		if (targets != null && !targets.isEmpty()) {
-			handleParts = BehaviorUtils
-					.createHandles(targets, this, contextMap);
+			handleParts = handlePartFactory.createHandleParts(targets, this,
+					contextMap);
 			BehaviorUtils.<VR> addAnchorages(getHost().getRoot(), targets,
 					handleParts);
 		}

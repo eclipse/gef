@@ -177,12 +177,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 * {@link #getHandleParts()}).
 	 *
 	 * @param part
+	 *            The {@link IVisualPart} to test.
 	 * @return <code>true</code> if the given {@link IVisualPart} is either the
 	 *         host ({@link #getHost()}) or a handle part controlled by this
 	 *         behavior ({@link #getHandleParts()}), <code>false</code>
 	 *         otherwise.
 	 */
-	protected boolean isaHoverPart(IVisualPart<Node, ? extends Node> part) {
+	protected boolean isHostOrHoverHandlePart(
+			IVisualPart<Node, ? extends Node> part) {
 		return getHost() == part || isContained(getHandleParts(), part);
 	}
 
@@ -255,8 +257,8 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void onHoverChange(IVisualPart<Node, ? extends Node> oldHovered,
 			IVisualPart<Node, ? extends Node> newHovered) {
-		boolean wasHovered = isaHoverPart(oldHovered);
-		boolean isHovered = isaHoverPart(newHovered);
+		boolean wasHovered = isHostOrHoverHandlePart(oldHovered);
+		boolean isHovered = isHostOrHoverHandlePart(newHovered);
 		if (!wasHovered && isHovered) {
 			onHover();
 		} else if (wasHovered && !isHovered) {

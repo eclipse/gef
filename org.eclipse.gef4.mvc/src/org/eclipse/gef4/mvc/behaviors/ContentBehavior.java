@@ -36,6 +36,7 @@ import org.eclipse.gef4.mvc.parts.PartUtils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import com.google.inject.Inject;
 
 /**
  * A behavior that can be adapted to an {@link IRootPart} or an
@@ -51,6 +52,11 @@ import com.google.common.collect.SetMultimap;
  */
 public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
+
+	@Inject
+	IContentPartFactory<VR> contentPartFactory;
+
+	// TODO: inject ContentPartPool
 
 	@Override
 	public void activate() {
@@ -113,8 +119,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 
 			// If the part could not be revived, a new one is created
 			if (contentPart == null) {
-				IContentPartFactory<VR> contentPartFactory = getHost()
-						.getRoot().getViewer().getContentPartFactory();
 				contentPart = contentPartFactory.createContentPart(content,
 						this, Collections.emptyMap());
 				if (contentPart == null) {

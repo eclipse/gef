@@ -12,15 +12,11 @@
 package org.eclipse.gef4.mvc.behaviors;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
-import org.eclipse.gef4.mvc.viewer.IViewer;
 
 /**
  * The {@link BehaviorUtils} class provides utility methods for the
@@ -64,64 +60,6 @@ public class BehaviorUtils {
 				}
 			}
 		}
-	}
-
-	/**
-	 * This method is called in the context of an {@link IBehavior} (
-	 * {@link SelectionBehavior}, {@link HoverBehavior}, etc.) to create
-	 * {@link IFeedbackPart}s for the given <i>targets</i> using the
-	 * {@link IFeedbackPartFactory} of the {@link IViewer} which is associated
-	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
-	 *
-	 * @param targets
-	 *            {@link List} of {@link IVisualPart}s for which feedback is to
-	 *            be created.
-	 * @param behavior
-	 *            The {@link IBehavior} from which this method is called.
-	 * @param contextMap
-	 *            A {@link Map} storing state information for the
-	 *            <i>behavior</i> to further specify the context as an
-	 *            {@link IBehavior} is stateless.
-	 * @return {@link List} of {@link IFeedbackPart}s created by the factory.
-	 */
-	public static <VR> List<IFeedbackPart<VR, ? extends VR>> createFeedback(
-			List<? extends IVisualPart<VR, ? extends VR>> targets,
-			IBehavior<VR> behavior, Map<Object, Object> contextMap) {
-		IVisualPart<VR, ? extends VR> host = behavior.getAdaptable();
-		IFeedbackPartFactory<VR> factory = host.getRoot().getViewer()
-				.getFeedbackPartFactory();
-		List<IFeedbackPart<VR, ? extends VR>> feedbackParts = factory
-				.createFeedbackParts(targets, behavior, contextMap);
-		return feedbackParts;
-	}
-
-	/**
-	 * This method is called in the context of an {@link IBehavior} (
-	 * {@link SelectionBehavior}, {@link HoverBehavior}, etc.) to create
-	 * {@link IHandlePart}s for the given <i>targets</i> using the
-	 * {@link IHandlePartFactory} of the {@link IViewer} which is associated
-	 * with the {@link IBehavior#getHost() host} of the given <i>behavior</i>.
-	 *
-	 * @param targets
-	 *            {@link List} of {@link IVisualPart}s for which feedback is to
-	 *            be created.
-	 * @param behavior
-	 *            The {@link IBehavior} from which this method is called.
-	 * @param contextMap
-	 *            A {@link Map} storing state information for the
-	 *            <i>behavior</i> to further specify the context as an
-	 *            {@link IBehavior} is stateless.
-	 * @return {@link List} of {@link IHandlePart}s created by the factory.
-	 */
-	public static <VR> List<IHandlePart<VR, ? extends VR>> createHandles(
-			List<? extends IVisualPart<VR, ? extends VR>> targets,
-			IBehavior<VR> behavior, Map<Object, Object> contextMap) {
-		IVisualPart<VR, ? extends VR> host = behavior.getAdaptable();
-		IHandlePartFactory<VR> factory = host.getRoot().getViewer()
-				.getHandlePartFactory();
-		List<IHandlePart<VR, ? extends VR>> handleParts = factory
-				.createHandleParts(targets, behavior, contextMap);
-		return handleParts;
 	}
 
 	/**

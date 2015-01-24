@@ -19,11 +19,8 @@ import org.eclipse.gef4.common.activate.IActivatable;
 import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePart;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -41,19 +38,12 @@ import org.eclipse.gef4.mvc.parts.IVisualPart;
 public interface IViewer<VR> extends IAdaptable, IActivatable {
 
 	/**
-	 * Returns the {@link IContentPartFactory} for this viewer, used to create
-	 * {@link IContentPart}s.
-	 *
-	 * @return The {@link IContentPartFactory} being used
-	 */
-	public IContentPartFactory<VR> getContentPartFactory();
-
-	/**
 	 * Returns the {@link Map} for registering {@link IContentPart}s by their
 	 * <i>content</i>.
 	 *
 	 * @return The content part map
 	 */
+	// TODO: move into content model or content behavior
 	public Map<Object, IContentPart<VR, ? extends VR>> getContentPartMap();
 
 	/**
@@ -64,22 +54,6 @@ public interface IViewer<VR> extends IAdaptable, IActivatable {
 	 *         an {@link IDomain}.
 	 */
 	public IDomain<VR> getDomain();
-
-	/**
-	 * Returns the {@link IFeedbackPartFactory} for this viewer, used to create
-	 * {@link IFeedbackPart}s.
-	 *
-	 * @return The {@link IFeedbackPartFactory} being used
-	 */
-	public IFeedbackPartFactory<VR> getFeedbackPartFactory();
-
-	/**
-	 * Returns the {@link IHandlePartFactory} for this viewer, used to create
-	 * {@link IHandlePart}s.
-	 *
-	 * @return The {@link IHandlePartFactory} being used
-	 */
-	public IHandlePartFactory<VR> getHandlePartFactory();
 
 	/**
 	 * Returns the {@link IRootPart} of this viewer. The {@link IRootPart} is a

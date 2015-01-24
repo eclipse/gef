@@ -53,7 +53,6 @@ import org.eclipse.gef4.mvc.models.FocusModel;
 import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
@@ -115,7 +114,7 @@ public class MvcFxModule extends MvcModule<Node> {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<Affine>>() {
 				}, FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE)).to(
-				FXTransformProvider.class);
+						FXTransformProvider.class);
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
@@ -125,8 +124,8 @@ public class MvcFxModule extends MvcModule<Node> {
 				new TypeLiteral<HoverBehavior<Node>>() {
 				});
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
-				.to(new TypeLiteral<SelectionBehavior<Node>>() {
-				});
+		.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		});
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusBehavior.class)).to(
 				FXFocusBehavior.class);
 
@@ -172,8 +171,8 @@ public class MvcFxModule extends MvcModule<Node> {
 		// register tool interaction policy which delegates hover interaction to
 		// hover policy
 		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 		// register behavior which reacts to changes of the hover model and
 		// updates selection (and handles)
 		adapterMapBinder.addBinding(AdapterKey.get(HoverBehavior.class)).to(
@@ -197,17 +196,17 @@ public class MvcFxModule extends MvcModule<Node> {
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-				.toInstance(new FXHoverTool());
+		.toInstance(new FXHoverTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-				.toInstance(new FXClickDragTool());
+		.toInstance(new FXClickDragTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
-				.toInstance(new FXTypeTool());
+		.toInstance(new FXTypeTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-				.toInstance(new FXPinchSpreadTool());
+		.toInstance(new FXPinchSpreadTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-				.toInstance(new FXScrollTool());
+		.toInstance(new FXScrollTool());
 		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-				.toInstance(new FXFocusTool());
+		.toInstance(new FXFocusTool());
 
 		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
 				new TypeLiteral<IViewer<Node>>() {
@@ -233,13 +232,13 @@ public class MvcFxModule extends MvcModule<Node> {
 		// models and do not depend on transaction policies)
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.CLICK_TOOL_POLICY_KEY)).to(
-				FXFocusAndSelectOnClickPolicy.class);
+						FXFocusAndSelectOnClickPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY)).to(
-				FXMarqueeOnDragPolicy.class);
+						FXMarqueeOnDragPolicy.class);
 		adapterMapBinder
-				.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
-						FXHoverOnHoverPolicy.class);
+		.addBinding(AdapterKey.get(FXHoverTool.TOOL_POLICY_KEY)).to(
+				FXHoverOnHoverPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXScrollTool.TOOL_POLICY_KEY, "zoomOnScroll"))
 				.to(FXZoomOnScrollPolicy.class);
@@ -248,21 +247,21 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXPanOnScrollPolicy.class);
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXPinchSpreadTool.TOOL_POLICY_KEY)).to(
-				FXZoomOnPinchSpreadPolicy.class);
+						FXZoomOnPinchSpreadPolicy.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.TOOL_POLICY_KEY))
-				.to(FXPanOnTypePolicy.class);
+		.to(FXPanOnTypePolicy.class);
 
 		// register default behaviors
 		adapterMapBinder.addBinding(AdapterKey.get(ContentBehavior.class)).to(
 				new TypeLiteral<ContentBehavior<Node>>() {
 				});
 		adapterMapBinder.addBinding(AdapterKey.get(SelectionBehavior.class))
-				.to(new TypeLiteral<SelectionBehavior<Node>>() {
-				});
+		.to(new TypeLiteral<SelectionBehavior<Node>>() {
+		});
 		adapterMapBinder.addBinding(AdapterKey.get(FXGridBehavior.class)).to(
 				FXGridBehavior.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXViewportBehavior.class))
-				.to(FXViewportBehavior.class);
+		.to(FXViewportBehavior.class);
 	}
 
 	/**
@@ -283,17 +282,6 @@ public class MvcFxModule extends MvcModule<Node> {
 		// bind root part
 		adapterMapBinder.addBinding(AdapterKey.get(IRootPart.class)).to(
 				new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-				});
-
-		// bind factories
-		adapterMapBinder.addBinding(AdapterKey.get(IContentPartFactory.class))
-				.to(new TypeLiteral<IContentPartFactory<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(IHandlePartFactory.class))
-				.to(new TypeLiteral<IHandlePartFactory<Node>>() {
-				});
-		adapterMapBinder.addBinding(AdapterKey.get(IFeedbackPartFactory.class))
-				.to(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 				});
 
 		// bind parameterized default viewer models (others are already bound in
@@ -323,11 +311,15 @@ public class MvcFxModule extends MvcModule<Node> {
 	}
 
 	protected void bindIFeedbackPartFactory() {
+		// TODO: bind to viewer scope, otherwise stateful factories might not
+		// work properly
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
 		}).to(FXDefaultFeedbackPartFactory.class);
 	}
 
 	protected void bindIHandlePartFactory() {
+		// TODO: bind to viewer scope, otherwise stateful factories might not
+		// work properly
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
 		}).to(FXDefaultHandlePartFactory.class);
 	}

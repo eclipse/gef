@@ -25,9 +25,6 @@ import org.eclipse.gef4.common.adapt.IAdaptable;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
-import org.eclipse.gef4.mvc.parts.IContentPartFactory;
-import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
-import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 
@@ -117,12 +114,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 		return ads.getAdapters(key);
 	}
 
-	@Override
-	public IContentPartFactory<VR> getContentPartFactory() {
-		return ads
-				.<IContentPartFactory<VR>> getAdapter(IContentPartFactory.class);
-	}
-
 	/**
 	 * @see IViewer#getContentPartMap()
 	 */
@@ -137,18 +128,6 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	@Override
 	public IDomain<VR> getDomain() {
 		return domain;
-	}
-
-	@Override
-	public IFeedbackPartFactory<VR> getFeedbackPartFactory() {
-		return ads
-				.<IFeedbackPartFactory<VR>> getAdapter(IFeedbackPartFactory.class);
-	}
-
-	@Override
-	public IHandlePartFactory<VR> getHandlePartFactory() {
-		return ads
-				.<IHandlePartFactory<VR>> getAdapter(IHandlePartFactory.class);
 	}
 
 	@Override

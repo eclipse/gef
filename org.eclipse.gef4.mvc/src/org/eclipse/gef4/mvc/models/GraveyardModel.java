@@ -16,7 +16,8 @@ import java.util.Map;
 
 import org.eclipse.gef4.mvc.parts.IContentPart;
 
-// TODO: we could turn this into a part pool, and let's add the part factories, or merge it with the content model (and add the content part map there as well)
+// TODO: rename in to "content part pool" and inject into behavior (as singleton within viewer scope)
+// -> domain and viewer scope will be needed
 public class GraveyardModel<VR> {
 
 	private Map<Object, IContentPart<VR, ? extends VR>> graveyard = new HashMap<Object, IContentPart<VR, ? extends VR>>();
