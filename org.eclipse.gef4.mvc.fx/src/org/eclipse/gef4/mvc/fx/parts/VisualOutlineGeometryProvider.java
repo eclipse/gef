@@ -35,7 +35,8 @@ public class VisualOutlineGeometryProvider implements
 	 * of that {@link Node}.
 	 *
 	 * @param visual
-	 * @return
+	 *            The {@link Node} for which to retrieve the tight bounds.
+	 * @return An {@link IGeometry} representing the tight bounds.
 	 */
 	protected IGeometry getGeometry(Node visual) {
 		if (visual instanceof FXConnection) {

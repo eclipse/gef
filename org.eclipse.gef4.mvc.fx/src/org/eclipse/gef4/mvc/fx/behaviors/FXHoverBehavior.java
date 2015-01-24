@@ -78,7 +78,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	 */
 	public static boolean isContained(
 			List<? extends IVisualPart<Node, ? extends Node>> rootParts,
-			IVisualPart<Node, ? extends Node> part) {
+					IVisualPart<Node, ? extends Node> part) {
 		// validate arguments
 		if (part == null) {
 			return false;
@@ -126,7 +126,7 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 	@Override
 	protected void addFeedback(
 			List<? extends IVisualPart<Node, ? extends Node>> targets,
-			Map<Object, Object> contextMap) {
+					Map<Object, Object> contextMap) {
 		isFeedback = true;
 		if (getHost() instanceof IHandlePart) {
 			// add effect to handle parts as feedback, because feedback parts
@@ -173,11 +173,14 @@ public class FXHoverBehavior extends HoverBehavior<Node> {
 
 	/**
 	 * Returns <code>true</code> if the given {@link IVisualPart} is either the
-	 * current host or a hover handle part. Otherwise returns <code>false</code>
-	 * .
+	 * host or a handle part controlled by this behavior (
+	 * {@link #getHandleParts()}).
 	 *
 	 * @param part
-	 * @return
+	 * @return <code>true</code> if the given {@link IVisualPart} is either the
+	 *         host ({@link #getHost()}) or a handle part controlled by this
+	 *         behavior ({@link #getHandleParts()}), <code>false</code>
+	 *         otherwise.
 	 */
 	protected boolean isaHoverPart(IVisualPart<Node, ? extends Node> part) {
 		return getHost() == part || isContained(getHandleParts(), part);

@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
@@ -60,12 +61,53 @@ import org.eclipse.gef4.mvc.policies.ContentPolicy;
 import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 
+/**
+ * The Guice module which contains all (default) bindings related to the MVC.FX
+ * bundle. It extends the MVC Guice module of the MVC bundle, which provides
+ * JavaFX-unrelated (default) bindings.
+ * <p>
+ * In an Eclipse UI-integration scenario this module is intended to be
+ * overwritten by the MVC.FX.UI Guice module, which is provided by the MVC.FX.UI
+ * bundle.
+ * <p>
+ * Generally, we recommended that all clients should create an own non-UI
+ * module, which extends this module, as well as an own UI module, which extends
+ * the MVC.FX.UI module, being used to override the non-UI module in an
+ * Eclipse-UI integration scenario, as follows:
+ *
+ * <pre>
+ *
+ *      MVC   &lt;--extends--    MVC.FX   &lt;--extends--  Client-Non-UI-Module
+ *       ^                       ^                           ^
+ *       |                       |                           |
+ *   overrides               overrides                   overrides
+ *       |                       |                           |
+ *       |                       |                           |
+ *    MVC.UI  &lt;--extends--  MVC.FX.UI  &lt;--extends--   Client-UI-Module
+ * </pre>
+ *
+ * @author anyssen
+ */
 public class MvcFxModule extends MvcModule<Node> {
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractFXContentPart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractFXContentPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	@SuppressWarnings("serial")
 	protected void bindAbstractFXContentPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -94,11 +136,37 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractFXFeedbackPart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractFXFeedbackPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindAbstractFXFeedbackPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// nothing to bind by default
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for
+	 * {@link AbstractFXHandlePart} and all sub-classes. May be overwritten by
+	 * sub-classes to change the default bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link AbstractFXHandlePart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindAbstractFXHandlePartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register tool interaction policy which delegates hover interaction to
@@ -113,6 +181,19 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXDomain} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXDomain} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
@@ -133,6 +214,19 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXRootPart} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXRootPart} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindFXRootPartAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// register (default) interaction policies (which are based on viewer
@@ -171,6 +265,19 @@ public class MvcFxModule extends MvcModule<Node> {
 				.to(FXViewportBehavior.class);
 	}
 
+	/**
+	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
+	 * sub-classes. May be overwritten by sub-classes to change the default
+	 * bindings.
+	 *
+	 * @param adapterMapBinder
+	 *            The {@link MapBinder} to be used for the binding registration.
+	 *            In this case, will be obtained from
+	 *            {@link AdapterMaps#getAdapterMapBinder(Binder, Class)} using
+	 *            {@link FXViewer} as a key.
+	 *
+	 * @see AdapterMaps#getAdapterMapBinder(Binder, Class)
+	 */
 	protected void bindFXViewerAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// bind root part

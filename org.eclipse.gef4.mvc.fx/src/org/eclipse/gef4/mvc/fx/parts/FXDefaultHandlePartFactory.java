@@ -52,7 +52,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for one corner of the bounds of a multi
 	 * selection. The corner is specified via the <i>position</i> parameter.
-	 * 
+	 *
 	 * @param targets
 	 *            The selected {@link IVisualPart}s.
 	 * @param contextMap
@@ -97,7 +97,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified segment vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IVisualPart} which is selected.
 	 * @param segmentsProvider
@@ -122,7 +122,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 
 	/**
 	 * Generate handles for the end/join points of the individual beziers.
-	 * 
+	 *
 	 * @param targetPart
 	 *            The {@link IVisualPart} which is selected.
 	 * @param segmentsProvider
@@ -232,7 +232,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 				IGeometry handleGeometry = hoverHandlesGeometryInSceneProvider
 						.get();
 				if (handleGeometry instanceof IShape) {
-					List<BezierCurve> segments = new ArrayList<>();
+					List<BezierCurve> segments = new ArrayList<BezierCurve>();
 					for (ICurve os : ((IShape) handleGeometry)
 							.getOutlineSegments()) {
 						segments.addAll(Arrays.asList(os.toBezier()));
@@ -295,7 +295,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 			public BezierCurve[] get() {
 				IGeometry geometry = geometryProvider.get();
 				if (geometry instanceof IShape) {
-					List<BezierCurve> segments = new ArrayList<>();
+					List<BezierCurve> segments = new ArrayList<BezierCurve>();
 					for (ICurve os : ((IShape) geometry).getOutlineSegments()) {
 						segments.addAll(Arrays.asList(os.toBezier()));
 					}
@@ -328,7 +328,7 @@ public class FXDefaultHandlePartFactory implements IHandlePartFactory<Node> {
 	/**
 	 * Creates an {@link IHandlePart} for the specified vertex of the
 	 * {@link IGeometry} provided by the given <i>handleGeometryProvider</i>.
-	 * 
+	 *
 	 * @param target
 	 *            {@link IVisualPart} for which a selection handle is created.
 	 * @param segmentsProvider
