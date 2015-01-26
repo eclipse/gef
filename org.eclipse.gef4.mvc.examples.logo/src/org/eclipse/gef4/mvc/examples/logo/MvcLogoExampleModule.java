@@ -32,7 +32,6 @@ import org.eclipse.gef4.mvc.examples.logo.policies.FXDeleteFirstAnchorageOnClick
 import org.eclipse.gef4.mvc.examples.logo.policies.FXDeletionPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXRelocateLinkedOnDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXResizeShapePolicy;
-import org.eclipse.gef4.mvc.examples.logo.policies.FXRotateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.examples.logo.policies.FXTransformShapePolicy;
 import org.eclipse.gef4.mvc.fx.MvcFxModule;
 import org.eclipse.gef4.mvc.fx.behaviors.FXCursorBehavior;
@@ -49,6 +48,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXScaleRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXScaleRelocatePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
@@ -196,7 +196,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// single selection: rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
-				.to(FXRotateOnHandleDragPolicy.class);
+				.to(FXRotateSelectedOnHandleDragPolicy.class);
 		// multi selection: scale relocate on handle drag without modifier
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXScaleRelocateOnHandleDragPolicy.class)).to(
