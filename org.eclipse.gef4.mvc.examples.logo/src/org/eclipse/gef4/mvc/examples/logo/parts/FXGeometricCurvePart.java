@@ -408,9 +408,4 @@ public class FXGeometricCurvePart extends
 		super.setContent(model);
 	}
 
-	@Override
-	public String toString() {
-		return "FXGeometricCurvePart@" + System.identityHashCode(this);
-	}
-
 }
