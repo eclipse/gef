@@ -27,6 +27,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXFocusAndSelectOnClickPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXHoverOnHoverPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
@@ -34,11 +35,11 @@ import org.eclipse.gef4.mvc.parts.IContentPartFactory;
 import org.eclipse.gef4.mvc.parts.IHandlePartFactory;
 import org.eclipse.gef4.mvc.parts.IRootPart;
 import org.eclipse.gef4.zest.fx.behaviors.EdgeLayoutBehavior;
+import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.LayoutContextBehavior;
 import org.eclipse.gef4.zest.fx.behaviors.NodeLayoutBehavior;
-import org.eclipse.gef4.zest.fx.behaviors.HidingBehavior;
-import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.models.HidingModel;
+import org.eclipse.gef4.zest.fx.models.LayoutModel;
 import org.eclipse.gef4.zest.fx.parts.ContentPartFactory;
 import org.eclipse.gef4.zest.fx.parts.EdgeContentPart;
 import org.eclipse.gef4.zest.fx.parts.GraphContentPart;
@@ -46,11 +47,11 @@ import org.eclipse.gef4.zest.fx.parts.GraphRootPart;
 import org.eclipse.gef4.zest.fx.parts.NodeContentPart;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHandlePartFactory;
 import org.eclipse.gef4.zest.fx.parts.ZestFxHidingHandlePart;
+import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
+import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenNestedGraphOnDoubleClickPolicy;
 import org.eclipse.gef4.zest.fx.policies.OpenParentGraphOnDoubleClickPolicy;
-import org.eclipse.gef4.zest.fx.policies.HideNodePolicy;
-import org.eclipse.gef4.zest.fx.policies.HideOnTypePolicy;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
@@ -178,6 +179,9 @@ public class ZestFxModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocatePolicy.class)).to(
 				FXResizeRelocatePolicy.class);
+		// transform policy for relocation
+		adapterMapBinder.addBinding(AdapterKey.get(FXTransformPolicy.class))
+				.to(FXTransformPolicy.class);
 		// provider
 		adapterMapBinder.addBinding(
 				AdapterKey.get(new TypeToken<Provider<? extends IFXAnchor>>() {

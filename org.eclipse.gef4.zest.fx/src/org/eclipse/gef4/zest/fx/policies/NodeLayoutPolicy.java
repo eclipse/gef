@@ -14,6 +14,7 @@ package org.eclipse.gef4.zest.fx.policies;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.transform.Affine;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.geometry.planar.Dimension;
@@ -21,6 +22,7 @@ import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.layout.LayoutProperties;
 import org.eclipse.gef4.layout.interfaces.NodeLayout;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.parts.IFeedbackPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.mvc.policies.AbstractPolicy;
@@ -38,8 +40,11 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 		if (policy != null) {
 			Node visual = getHost().getVisual();
 			Bounds layoutBounds = visual.getLayoutBounds();
-			double x = visual.getLayoutX();
-			double y = visual.getLayoutY();
+			FXTransformPolicy txPolicy = getHost().getAdapter(
+					FXTransformPolicy.class);
+			Affine transform = txPolicy.getNodeTransform();
+			double x = transform.getTx();
+			double y = transform.getTy();
 			double w = layoutBounds.getWidth();
 			double h = layoutBounds.getHeight();
 
@@ -85,8 +90,12 @@ public class NodeLayoutPolicy extends AbstractPolicy<Node> {
 			maxy = Math.max(maxy, anchoredBoundsInHost.getMaxY());
 		}
 
-		LayoutProperties.setLocation(nodeLayout, visual.getLayoutX() + minx,
-				visual.getLayoutY() + miny);
+		FXTransformPolicy txPolicy = getHost().getAdapter(
+				FXTransformPolicy.class);
+		Affine transform = txPolicy.getNodeTransform();
+
+		LayoutProperties.setLocation(nodeLayout, transform.getTx() + minx,
+				transform.getTy() + miny);
 		LayoutProperties.setSize(nodeLayout, maxx - minx, maxy - miny);
 		Object wasPruned = nodeLayout.getProperty("pruned");
 		if (visual.isVisible() == (wasPruned == null || wasPruned instanceof Boolean
