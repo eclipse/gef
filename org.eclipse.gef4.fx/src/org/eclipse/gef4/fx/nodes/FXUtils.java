@@ -140,7 +140,7 @@ public class FXUtils {
 	public static Point getPointerLocation() {
 		// find pointer location (OS specific)
 		String os = System.getProperty("os.name");
-		if (os.startsWith("MacOS")) {
+		if (os.startsWith("Mac OS X")) {
 			// use special glass robot for MacOS
 			com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
 					.GetApplication().createRobot();
