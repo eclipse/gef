@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
+import org.eclipse.gef4.fx.FxBundle;
 import org.eclipse.gef4.geometry.convert.fx.JavaFX2Geometry;
 import org.eclipse.gef4.geometry.planar.AffineTransform;
 import org.eclipse.gef4.geometry.planar.IGeometry;
@@ -140,7 +141,7 @@ public class FXUtils {
 	public static Point getPointerLocation() {
 		// find pointer location (OS specific)
 		String os = System.getProperty("os.name");
-		if (os.startsWith("Mac OS X")) {
+		if (os.startsWith("Mac OS X") && FxBundle.getContext() == null) {
 			// use special glass robot for MacOS
 			com.sun.glass.ui.Robot robot = com.sun.glass.ui.Application
 					.GetApplication().createRobot();
