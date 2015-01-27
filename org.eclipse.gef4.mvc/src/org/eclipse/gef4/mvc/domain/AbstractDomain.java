@@ -22,6 +22,9 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.inject.AdaptableScope;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.tools.ITool;
@@ -51,6 +54,17 @@ public abstract class AbstractDomain<VR> implements IDomain<VR> {
 	private IOperationHistory operationHistory;
 	private IUndoContext undoContext;
 	private ForwardUndoCompositeOperation transaction;
+
+	/**
+	 * Creates a new {@link AbstractDomain} instance, setting the
+	 * {@link AdaptableScope} for each of its {@link IAdaptable}-compliant types
+	 * (super classes implementing {@link IAdaptable} and super-interfaces
+	 * extending {@link IAdaptable}) to the newly created instance (see
+	 * AdaptableScopes#scopeTo(IAdaptable)).
+	 */
+	public AbstractDomain() {
+		AdaptableScopes.scopeTo(this);
+	}
 
 	@Override
 	public void activate() {

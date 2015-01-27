@@ -68,8 +68,7 @@ public abstract class AbstractZestExample extends Application {
 	public void start(final Stage primaryStage) throws Exception {
 		// configure application
 		Injector injector = Guice.createInjector(createModule());
-		final FXDomain domain = new FXDomain();
-		injector.injectMembers(domain);
+		final FXDomain domain = injector.getInstance(FXDomain.class);
 
 		final FXViewer viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));

@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.gef4.mvc.models.ContentModel;
-import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -54,9 +53,12 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 		PropertyChangeListener {
 
 	@Inject
+	// scoped to single instance within viewer
 	IContentPartFactory<VR> contentPartFactory;
 
-	// TODO: inject ContentPartPool
+	@Inject
+	// scoped to single instance within viewer
+	ContentPartPool<VR> contentPartPool;
 
 	@Override
 	public void activate() {
@@ -92,13 +94,7 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 	protected void disposeIfObsolete(IContentPart<VR, ? extends VR> contentPart) {
 		if (contentPart.getParent() == null
 				&& contentPart.getAnchorages().isEmpty()) {
-			// keep track of the removed content part, so we may relocate it
-			// within findOrCreate() later
-			Map<Object, IContentPart<VR, ? extends VR>> contentPartPool = getHost()
-					.getRoot().getViewer()
-					.<GraveyardModel<VR>> getAdapter(GraveyardModel.class)
-					.getContentPartPool();
-			contentPartPool.put(contentPart.getContent(), contentPart);
+			contentPartPool.add(contentPart);
 			contentPart.setContent(null);
 		}
 	}
@@ -110,10 +106,6 @@ public class ContentBehavior<VR> extends AbstractBehavior<VR> implements
 			return contentPartMap.get(content);
 		} else {
 			// 'Revive' a content part, if it was removed before
-			Map<Object, IContentPart<VR, ? extends VR>> contentPartPool = getHost()
-					.getRoot().getViewer()
-					.<GraveyardModel<VR>> getAdapter(GraveyardModel.class)
-					.getContentPartPool();
 			IContentPart<VR, ? extends VR> contentPart = null;
 			contentPart = contentPartPool.remove(content);
 

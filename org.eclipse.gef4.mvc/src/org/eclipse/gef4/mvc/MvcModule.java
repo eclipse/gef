@@ -17,11 +17,13 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.UndoContext;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdaptableTypeListener;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMapInjectionSupport;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.domain.AbstractDomain;
+import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.models.ContentModel;
 import org.eclipse.gef4.mvc.models.GridModel;
 import org.eclipse.gef4.mvc.models.ViewportModel;
@@ -31,6 +33,7 @@ import org.eclipse.gef4.mvc.parts.AbstractHandlePart;
 import org.eclipse.gef4.mvc.parts.AbstractRootPart;
 import org.eclipse.gef4.mvc.parts.AbstractVisualPart;
 import org.eclipse.gef4.mvc.viewer.AbstractViewer;
+import org.eclipse.gef4.mvc.viewer.IViewer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -212,13 +215,29 @@ public class MvcModule<VR> extends AbstractModule {
 		// nothing to bind by default
 	}
 
+	protected void bindContentModel() {
+		binder().bind(ContentModel.class).in(
+				AdaptableScopes.typed(IViewer.class));
+	}
+
+	protected void bindGridModel() {
+		binder().bind(GridModel.class).in(AdaptableScopes.typed(IViewer.class));
+	}
+
 	protected void bindIOperationHistory() {
 		binder().bind(IOperationHistory.class)
-				.to(DefaultOperationHistory.class);
+				.to(DefaultOperationHistory.class)
+				.in(AdaptableScopes.typed(IDomain.class));
 	}
 
 	protected void bindIUndoContext() {
-		binder().bind(IUndoContext.class).to(UndoContext.class);
+		binder().bind(IUndoContext.class).to(UndoContext.class)
+				.in(AdaptableScopes.typed(IDomain.class));
+	}
+
+	protected void bindViewportModel() {
+		binder().bind(ViewportModel.class).in(
+				AdaptableScopes.typed(IViewer.class));
 	}
 
 	@Override
@@ -229,6 +248,11 @@ public class MvcModule<VR> extends AbstractModule {
 
 		bindIUndoContext();
 		bindIOperationHistory();
+
+		// bind default viewer models
+		bindContentModel();
+		bindViewportModel();
+		bindGridModel();
 
 		// bind domain adapters
 		bindAbstractDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),

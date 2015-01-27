@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AdaptableSupportTests.class })
+@SuiteClasses({ AdaptableSupportTests.class, AdaptableScopeTests.class })
 public class AllTests {
 
 }

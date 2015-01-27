@@ -39,8 +39,7 @@ public abstract class AbstractMvcExample extends Application {
 	@Override
 	public void start(final Stage primaryStage) throws Exception {
 		Injector injector = Guice.createInjector(createModule());
-		FXDomain domain = new FXDomain();
-		injector.injectMembers(domain);
+		FXDomain domain = injector.getInstance(FXDomain.class);
 
 		FXViewer viewer = domain.getAdapter(IViewer.class);
 		viewer.setSceneContainer(new FXStageSceneContainer(primaryStage));
@@ -48,8 +47,7 @@ public abstract class AbstractMvcExample extends Application {
 		// activate domain only after viewers have been hooked
 		domain.activate();
 
-		viewer.getAdapter(ContentModel.class).setContents(
-				createContents());
+		viewer.getAdapter(ContentModel.class).setContents(createContents());
 
 		primaryStage.setResizable(true);
 		primaryStage.setWidth(640);

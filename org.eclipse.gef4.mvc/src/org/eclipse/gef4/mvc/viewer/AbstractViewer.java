@@ -22,6 +22,8 @@ import org.eclipse.gef4.common.activate.ActivatableSupport;
 import org.eclipse.gef4.common.adapt.AdaptableSupport;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.common.adapt.IAdaptable;
+import org.eclipse.gef4.common.inject.AdaptableScope;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.mvc.domain.IDomain;
 import org.eclipse.gef4.mvc.parts.IContentPart;
@@ -54,6 +56,17 @@ public abstract class AbstractViewer<VR> implements IViewer<VR>,
 	private Map<VR, IVisualPart<VR, ? extends VR>> visualsToVisualPartMap = new HashMap<VR, IVisualPart<VR, ? extends VR>>();
 
 	private IDomain<VR> domain;
+
+	/**
+	 * Creates a new {@link AbstractViewer} instance, setting the
+	 * {@link AdaptableScope} for each of its {@link IAdaptable}-compliant types
+	 * (super classes implementing {@link IAdaptable} and super-interfaces
+	 * extending {@link IAdaptable}) to the newly created instance (see
+	 * AdaptableScopes#scopeTo(IAdaptable)).
+	 */
+	public AbstractViewer() {
+		AdaptableScopes.scopeTo(this);
+	}
 
 	@Override
 	public void activate() {

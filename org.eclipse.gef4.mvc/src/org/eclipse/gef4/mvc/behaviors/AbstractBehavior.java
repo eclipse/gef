@@ -39,9 +39,11 @@ import com.google.inject.Inject;
 public abstract class AbstractBehavior<VR> implements IBehavior<VR> {
 
 	@Inject
+	// scoped to single instance within viewer
 	protected IFeedbackPartFactory<VR> feedbackPartFactory;
 
 	@Inject
+	// scoped to single instance within viewer
 	protected IHandlePartFactory<VR> handlePartFactory;
 
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);

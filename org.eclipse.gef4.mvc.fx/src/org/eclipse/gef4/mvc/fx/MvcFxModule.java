@@ -15,10 +15,12 @@ import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 
 import org.eclipse.gef4.common.adapt.AdapterKey;
+import org.eclipse.gef4.common.inject.AdaptableScopes;
 import org.eclipse.gef4.common.inject.AdapterMap;
 import org.eclipse.gef4.common.inject.AdapterMaps;
 import org.eclipse.gef4.mvc.MvcModule;
 import org.eclipse.gef4.mvc.behaviors.ContentBehavior;
+import org.eclipse.gef4.mvc.behaviors.ContentPartPool;
 import org.eclipse.gef4.mvc.behaviors.HoverBehavior;
 import org.eclipse.gef4.mvc.behaviors.SelectionBehavior;
 import org.eclipse.gef4.mvc.domain.IDomain;
@@ -50,7 +52,6 @@ import org.eclipse.gef4.mvc.fx.tools.FXScrollTool;
 import org.eclipse.gef4.mvc.fx.tools.FXTypeTool;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
 import org.eclipse.gef4.mvc.models.FocusModel;
-import org.eclipse.gef4.mvc.models.GraveyardModel;
 import org.eclipse.gef4.mvc.models.HoverModel;
 import org.eclipse.gef4.mvc.models.SelectionModel;
 import org.eclipse.gef4.mvc.parts.IFeedbackPartFactory;
@@ -180,6 +181,21 @@ public class MvcFxModule extends MvcModule<Node> {
 				});
 	}
 
+	protected void bindContentBehaviorPartPool() {
+		binder().bind(new TypeLiteral<ContentPartPool<Node>>() {
+		}).in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	protected void bindFocusModel() {
+		binder().bind(new TypeLiteral<FocusModel<Node>>() {
+		}).in(AdaptableScopes.typed(IViewer.class));
+	}
+
+	protected void bindFXClickDragTool() {
+		binder().bind(FXClickDragTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
+	}
+
 	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link FXDomain} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
@@ -195,22 +211,37 @@ public class MvcFxModule extends MvcModule<Node> {
 	 */
 	protected void bindFXDomainAdapters(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class))
-		.toInstance(new FXHoverTool());
-		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class))
-		.toInstance(new FXClickDragTool());
-		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class))
-		.toInstance(new FXTypeTool());
+		adapterMapBinder.addBinding(AdapterKey.get(FXHoverTool.class)).to(
+				FXHoverTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXClickDragTool.class)).to(
+				FXClickDragTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXTypeTool.class)).to(
+				FXTypeTool.class);
 		adapterMapBinder.addBinding(AdapterKey.get(FXPinchSpreadTool.class))
-		.toInstance(new FXPinchSpreadTool());
-		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class))
-		.toInstance(new FXScrollTool());
-		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class))
-		.toInstance(new FXFocusTool());
+		.to(FXPinchSpreadTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXScrollTool.class)).to(
+				FXScrollTool.class);
+		adapterMapBinder.addBinding(AdapterKey.get(FXFocusTool.class)).to(
+				FXFocusTool.class);
 
 		adapterMapBinder.addBinding(AdapterKey.get(IViewer.class)).to(
 				new TypeLiteral<IViewer<Node>>() {
 				});
+	}
+
+	protected void bindFXFocusTool() {
+		binder().bind(FXFocusTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
+	}
+
+	protected void bindFXHoverTool() {
+		binder().bind(FXHoverTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
+	}
+
+	protected void bindFXPinchSpreadTool() {
+		binder().bind(FXPinchSpreadTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
 	}
 
 	/**
@@ -264,6 +295,16 @@ public class MvcFxModule extends MvcModule<Node> {
 		.to(FXViewportBehavior.class);
 	}
 
+	protected void bindFXScrollTool() {
+		binder().bind(FXScrollTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
+	}
+
+	protected void bindFXTypeTool() {
+		binder().bind(FXTypeTool.class).in(
+				AdaptableScopes.typed(FXDomain.class));
+	}
+
 	/**
 	 * Adds (default) {@link AdapterMap} bindings for {@link FXViewer} and all
 	 * sub-classes. May be overwritten by sub-classes to change the default
@@ -286,9 +327,6 @@ public class MvcFxModule extends MvcModule<Node> {
 
 		// bind parameterized default viewer models (others are already bound in
 		// superclass)
-		adapterMapBinder.addBinding(AdapterKey.get(GraveyardModel.class)).to(
-				new TypeLiteral<GraveyardModel<Node>>() {
-				});
 		adapterMapBinder.addBinding(AdapterKey.get(FocusModel.class)).to(
 				new TypeLiteral<FocusModel<Node>>() {
 				});
@@ -305,6 +343,11 @@ public class MvcFxModule extends MvcModule<Node> {
 		}).to(FXHoverBehavior.class);
 	}
 
+	protected void bindHoverModel() {
+		binder().bind(new TypeLiteral<HoverModel<Node>>() {
+		}).in(AdaptableScopes.typed(FXViewer.class));
+	}
+
 	protected void bindIDomain() {
 		binder().bind(new TypeLiteral<IDomain<Node>>() {
 		}).to(FXDomain.class);
@@ -314,24 +357,31 @@ public class MvcFxModule extends MvcModule<Node> {
 		// TODO: bind to viewer scope, otherwise stateful factories might not
 		// work properly
 		binder().bind(new TypeLiteral<IFeedbackPartFactory<Node>>() {
-		}).to(FXDefaultFeedbackPartFactory.class);
+		}).to(FXDefaultFeedbackPartFactory.class)
+		.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindIHandlePartFactory() {
 		// TODO: bind to viewer scope, otherwise stateful factories might not
 		// work properly
 		binder().bind(new TypeLiteral<IHandlePartFactory<Node>>() {
-		}).to(FXDefaultHandlePartFactory.class);
+		}).to(FXDefaultHandlePartFactory.class)
+		.in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindIRootPart() {
 		binder().bind(new TypeLiteral<IRootPart<Node, ? extends Node>>() {
-		}).to(FXRootPart.class);
+		}).to(FXRootPart.class).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	protected void bindIViewer() {
 		binder().bind(new TypeLiteral<IViewer<Node>>() {
 		}).to(FXViewer.class);
+	}
+
+	protected void bindSelectionModel() {
+		binder().bind(new TypeLiteral<SelectionModel<Node>>() {
+		}).in(AdaptableScopes.typed(FXViewer.class));
 	}
 
 	@Override
@@ -342,14 +392,31 @@ public class MvcFxModule extends MvcModule<Node> {
 		bindIHandlePartFactory();
 		bindIFeedbackPartFactory();
 
+		// bind default viewer models
+		bindHoverModel();
+		bindSelectionModel();
+		bindFocusModel();
+
 		// bind root IRootPart<Node>, IViewer<Node> and IDomain<Node> to
 		// FXRootPart, FXViewer, and FXDomain
 		bindIDomain();
 		bindIViewer();
+
 		bindIRootPart();
+
+		// bind tools
+		bindFXClickDragTool();
+		bindFXHoverTool();
+		bindFXPinchSpreadTool();
+		bindFXScrollTool();
+		bindFXTypeTool();
+		bindFXFocusTool();
 
 		// bind special behavior implementations
 		bindHoverBehavior();
+
+		// bind part pool being used for behaviors
+		bindContentBehaviorPartPool();
 
 		// bind additional adapters for FXDomain
 		bindFXDomainAdapters(AdapterMaps.getAdapterMapBinder(binder(),
