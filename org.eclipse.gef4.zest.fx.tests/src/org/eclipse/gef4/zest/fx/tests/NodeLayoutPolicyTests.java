@@ -13,26 +13,33 @@
 package org.eclipse.gef4.zest.fx.tests;
 
 import static org.junit.Assert.assertEquals;
-import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Affine;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.gef4.common.adapt.AdapterKey;
 import org.eclipse.gef4.geometry.planar.Dimension;
 import org.eclipse.gef4.geometry.planar.Point;
 import org.eclipse.gef4.graph.Graph;
 import org.eclipse.gef4.graph.Node;
 import org.eclipse.gef4.layout.LayoutProperties;
+import org.eclipse.gef4.mvc.fx.operations.FXResizeNodeOperation;
 import org.eclipse.gef4.mvc.fx.parts.AbstractFXContentPart;
 import org.eclipse.gef4.mvc.fx.parts.FXRootPart;
+import org.eclipse.gef4.mvc.fx.parts.FXTransformProvider;
+import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.viewer.FXViewer;
+import org.eclipse.gef4.mvc.operations.ForwardUndoCompositeOperation;
 import org.eclipse.gef4.mvc.parts.IContentPart;
 import org.eclipse.gef4.mvc.parts.IVisualPart;
 import org.eclipse.gef4.zest.fx.layout.GraphLayoutContext;
 import org.eclipse.gef4.zest.fx.layout.GraphNodeLayout;
 import org.eclipse.gef4.zest.fx.policies.NodeLayoutPolicy;
 import org.junit.Test;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 
 public class NodeLayoutPolicyTests {
 
@@ -59,37 +66,39 @@ public class NodeLayoutPolicyTests {
 											.get(FXResizeRelocatePolicy.class),
 									new FXResizeRelocatePolicy() {
 										@Override
-										public IUndoableOperation commit() {
+										public org.eclipse.core.commands.operations.IUndoableOperation commit() {
 											return null;
 										}
-
+									});
+							setAdapter(AdapterKey.get(FXResizePolicy.class),
+									new FXResizePolicy() {
 										@Override
 										public void init() {
-										}
-
-										@Override
-										public void performResizeRelocate(
-												double dx, double dy,
-												double dw, double dh) {
-											javafx.scene.Node visual = getHost()
-													.getVisual();
-											Bounds bounds = visual
-													.getLayoutBounds();
-											double x = visual.getLayoutX();
-											double y = visual.getLayoutY();
-											visual.resizeRelocate(x + dx, y
-													+ dy, bounds.getWidth()
-													+ dw, bounds.getHeight()
-													+ dh);
+											resizeOperation = new FXResizeNodeOperation(
+													getHost().getVisual());
+											forwardUndoOperation = new ForwardUndoCompositeOperation(
+													"Resize");
+											forwardUndoOperation
+													.add(resizeOperation);
 										}
 									});
+							FXTransformProvider transformProvider = new FXTransformProvider();
+							setAdapter(
+									AdapterKey
+											.get(new TypeToken<Provider<Affine>>() {
+											},
+													FXTransformPolicy.TRANSFORMATION_PROVIDER_ROLE),
+									transformProvider);
+							setAdapter(AdapterKey.get(FXTransformPolicy.class),
+									new FXTransformPolicy());
+							Affine affine = transformProvider.get();
+							affine.setTx(location.x);
+							affine.setTy(location.y);
 						}
 
 						@Override
 						protected Pane createVisual() {
 							Pane visual = new Pane();
-							visual.setLayoutX(location.x);
-							visual.setLayoutY(location.y);
 							visual.resize(size.width, size.height);
 							return visual;
 						}
@@ -123,12 +132,14 @@ public class NodeLayoutPolicyTests {
 
 		javafx.scene.Node visual = policy.getHost().getVisual();
 		/*
-		 * <i>location</i> is the center, <i>layout-xy</i> is the top left
-		 * corner, therefore we expect <code>layout-xy = location - size /
+		 * <i>location</i> is the center, <i>translate-xy</i> is the top left
+		 * corner, therefore we expect <code>translate-xy = location - size /
 		 * 2</code>.
 		 */
+		Affine affine = policy.getHost().getAdapter(FXTransformPolicy.class)
+				.getNodeTransform();
 		assertEquals(location.getTranslated(size.getScaled(-0.5)), new Point(
-				visual.getLayoutX(), visual.getLayoutY()));
+				affine.getTx(), affine.getTy()));
 		assertEquals(size, new Dimension(visual.getLayoutBounds().getWidth(),
 				visual.getLayoutBounds().getHeight()));
 	}
