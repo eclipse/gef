@@ -193,7 +193,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXResizeRelocateOnHandleDragPolicy.class)).to(
 				FXResizeRelocateOnHandleDragPolicy.class);
-		// single selection: rotate on drag + control
+		// rotate on drag + control
 		adapterMapBinder.addBinding(
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
 				.to(FXRotateSelectedOnHandleDragPolicy.class);
