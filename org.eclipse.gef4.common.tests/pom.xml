@@ -51,6 +51,13 @@
 					<useUIHarness>false</useUIHarness>
 					<useUIThread>false</useUIThread>
 					<argLine>${test.vmargs}</argLine>
+					<dependencies>
+						<dependency>
+							<artifactId>com.google.inject.multibindings</artifactId>
+							<version>0.0.0</version>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
 				</configuration>
 			</plugin>
 		</plugins>
