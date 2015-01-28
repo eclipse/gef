@@ -30,6 +30,7 @@ import org.eclipse.gef4.mvc.fx.policies.FXRelocateOnDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizePolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocateOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXResizeRelocatePolicy;
+import org.eclipse.gef4.mvc.fx.policies.FXRotateSelectedOnHandleDragPolicy;
 import org.eclipse.gef4.mvc.fx.policies.FXTransformPolicy;
 import org.eclipse.gef4.mvc.fx.tools.FXClickDragTool;
 import org.eclipse.gef4.mvc.fx.tools.FXHoverTool;
@@ -118,6 +119,10 @@ public class ZestFxModule extends MvcFxModule {
 				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY,
 						"ResizeRelocateOnHandleDrag")).to(
 				FXResizeRelocateOnHandleDragPolicy.class);
+		// rotate on drag + control
+		adapterMapBinder.addBinding(
+				AdapterKey.get(FXClickDragTool.DRAG_TOOL_POLICY_KEY, "rotate"))
+				.to(FXRotateSelectedOnHandleDragPolicy.class);
 	}
 
 	protected void bindEdgeContentPartAdapters(

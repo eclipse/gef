@@ -61,17 +61,4 @@ public class ZestFxHandlePartFactory extends FXDefaultHandlePartFactory {
 		return Collections.emptyList();
 	}
 
-	@Override
-	protected List<IHandlePart<Node, ? extends Node>> createSingleSelectionHandleParts(
-			IVisualPart<Node, ? extends Node> target,
-			Map<Object, Object> contextMap) {
-		if (target instanceof NodeContentPart) {
-			if (((NodeContentPart) target).getContent().getNestedGraph() != null) {
-				return super.createSingleSelectionHandleParts(target,
-						contextMap);
-			}
-		}
-		return Collections.emptyList();
-	}
-
 }
